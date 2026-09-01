@@ -1,0 +1,19 @@
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
+model_verbosity = "low"
+approvals_reviewer = "user"
+
+[features]
+memories = false
+
+[mcp_servers.avito]
+enabled = false
+
+[mcp_servers.mcp-hub]
+enabled = false
+
+[mcp_servers.singularity]
+enabled = false
+
+[plugins."chrome@openai-bundled"]
+enabled = false
