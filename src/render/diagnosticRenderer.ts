@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 
 import type { ArenaDefinition, ArenaBoxSurface } from '../arena/arenaDefinition'
-import type { SimulationSnapshot } from '../simulation'
+import type { SimulationSnapshot } from '../simulation/snapshot'
 
 export const MAX_DEVICE_PIXEL_RATIO = 2
 

@@ -2,17 +2,51 @@ import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from
 
 import { deepFreeze, type DeepReadonly } from './deepFreeze'
 
-export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 1 as const
+export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 2 as const
 
 export type GameDesignProfileSource = 'shipped' | 'local'
 
 export interface GameDesignRules {
   player: {
     startingHealth: number
+    capsule: {
+      radius: number
+      halfHeight: number
+      skinWidth: number
+    }
+    eyeHeight: number
+    movement: {
+      maximumGroundSpeed: number
+      groundAcceleration: number
+      groundDeceleration: number
+      airAcceleration: number
+      gravity: number
+      jumpSpeed: number
+      autostepMaxHeight: number
+      autostepMinWidth: number
+      snapToGroundDistance: number
+      maxSlopeClimbDegrees: number
+      minSlopeSlideDegrees: number
+    }
+  }
+  camera: {
+    horizontalSensitivity: number
+    verticalSensitivity: number
+    maximumPitchDegrees: number
+    fieldOfViewDegrees: number
+    nearPlane: number
+    farPlane: number
   }
   weapons: {
     doubleBarrelShotgun: {
       startingAmmo: number
+      pelletCount: number
+      spreadDegrees: number
+      rangeMeters: number
+      cooldownSeconds: number
+      muzzleFeedbackSeconds: number
+      impactFeedbackSeconds: number
+      hitmarkerSeconds: number
       damage: {
         head: number
         torso: number
@@ -62,6 +96,9 @@ export type ValidatedGameDesignProfile = DeepReadonly<GameDesignProfile>
 
 export type ProfileDescriptorGroup =
   | 'player'
+  | 'player-capsule'
+  | 'player-movement'
+  | 'camera'
   | 'shotgun'
   | 'match'
   | 'scoring-assist'
@@ -72,6 +109,11 @@ export type ProfileDescriptorUnit =
   | 'hp'
   | 'ammo'
   | 'damage'
+  | 'pellets'
+  | 'meters'
+  | 'meters-per-second'
+  | 'meters-per-second-squared'
+  | 'degrees'
   | 'minutes'
   | 'seconds'
   | 'points'
@@ -99,6 +141,216 @@ const descriptors: NumericProfileDescriptor[] = [
     step: 1,
   },
   {
+    path: 'rules.player.capsule.radius',
+    group: 'player-capsule',
+    label: 'Радиус капсулы игрока',
+    description: 'Радиус collision-капсулы игрока.',
+    unit: 'meters',
+    minimum: 0.2,
+    maximum: 1,
+    step: 0.01,
+  },
+  {
+    path: 'rules.player.capsule.halfHeight',
+    group: 'player-capsule',
+    label: 'Полувысота капсулы игрока',
+    description: 'Половина высоты цилиндрической части collision-капсулы.',
+    unit: 'meters',
+    minimum: 0.2,
+    maximum: 1.5,
+    step: 0.01,
+  },
+  {
+    path: 'rules.player.capsule.skinWidth',
+    group: 'player-capsule',
+    label: 'Collision skin игрока',
+    description: 'Минимальный зазор между капсулой игрока и статической геометрией.',
+    unit: 'meters',
+    minimum: 0.001,
+    maximum: 0.1,
+    step: 0.001,
+  },
+  {
+    path: 'rules.player.eyeHeight',
+    group: 'player-capsule',
+    label: 'Высота глаз',
+    description: 'Вертикальное смещение first-person камеры от центра капсулы.',
+    unit: 'meters',
+    minimum: 0.1,
+    maximum: 2.5,
+    step: 0.01,
+  },
+  {
+    path: 'rules.player.movement.maximumGroundSpeed',
+    group: 'player-movement',
+    label: 'Максимальная скорость',
+    description: 'Предельная горизонтальная скорость игрока на земле и в воздухе.',
+    unit: 'meters-per-second',
+    minimum: 1,
+    maximum: 30,
+    step: 0.1,
+  },
+  {
+    path: 'rules.player.movement.groundAcceleration',
+    group: 'player-movement',
+    label: 'Ускорение на земле',
+    description: 'Скорость набора горизонтальной скорости при управлении на земле.',
+    unit: 'meters-per-second-squared',
+    minimum: 0.1,
+    maximum: 200,
+    step: 0.1,
+  },
+  {
+    path: 'rules.player.movement.groundDeceleration',
+    group: 'player-movement',
+    label: 'Торможение на земле',
+    description: 'Скорость остановки игрока без directional input.',
+    unit: 'meters-per-second-squared',
+    minimum: 0.1,
+    maximum: 200,
+    step: 0.1,
+  },
+  {
+    path: 'rules.player.movement.airAcceleration',
+    group: 'player-movement',
+    label: 'Ускорение в воздухе',
+    description: 'Сила изменения горизонтальной скорости directional input в воздухе.',
+    unit: 'meters-per-second-squared',
+    minimum: 0.1,
+    maximum: 100,
+    step: 0.1,
+  },
+  {
+    path: 'rules.player.movement.gravity',
+    group: 'player-movement',
+    label: 'Гравитация',
+    description: 'Положительная величина вертикального ускорения вниз.',
+    unit: 'meters-per-second-squared',
+    minimum: 0.1,
+    maximum: 100,
+    step: 0.1,
+  },
+  {
+    path: 'rules.player.movement.jumpSpeed',
+    group: 'player-movement',
+    label: 'Скорость прыжка',
+    description: 'Вертикальная скорость, задаваемая при новом допустимом прыжке.',
+    unit: 'meters-per-second',
+    minimum: 0.1,
+    maximum: 30,
+    step: 0.1,
+  },
+  {
+    path: 'rules.player.movement.autostepMaxHeight',
+    group: 'player-movement',
+    label: 'Высота autostep',
+    description: 'Максимальная высота препятствия для автоматического шага.',
+    unit: 'meters',
+    minimum: 0,
+    maximum: 1,
+    step: 0.01,
+  },
+  {
+    path: 'rules.player.movement.autostepMinWidth',
+    group: 'player-movement',
+    label: 'Минимальная ширина autostep',
+    description: 'Минимальная доступная опорная ширина для автоматического шага.',
+    unit: 'meters',
+    minimum: 0,
+    maximum: 1,
+    step: 0.01,
+  },
+  {
+    path: 'rules.player.movement.snapToGroundDistance',
+    group: 'player-movement',
+    label: 'Привязка к земле',
+    description: 'Максимальная дистанция привязки капсулы к поверхности под ней.',
+    unit: 'meters',
+    minimum: 0,
+    maximum: 1,
+    step: 0.01,
+  },
+  {
+    path: 'rules.player.movement.maxSlopeClimbDegrees',
+    group: 'player-movement',
+    label: 'Предельный подъём склона',
+    description: 'Наибольший угол склона, по которому игрок может подниматься.',
+    unit: 'degrees',
+    minimum: 0,
+    maximum: 89,
+    step: 1,
+  },
+  {
+    path: 'rules.player.movement.minSlopeSlideDegrees',
+    group: 'player-movement',
+    label: 'Начало скольжения по склону',
+    description: 'Минимальный угол склона, при котором начинается скольжение.',
+    unit: 'degrees',
+    minimum: 1,
+    maximum: 90,
+    step: 1,
+  },
+  {
+    path: 'rules.camera.horizontalSensitivity',
+    group: 'camera',
+    label: 'Горизонтальная чувствительность',
+    description: 'Изменение yaw за единицу нормализованного look input.',
+    unit: 'degrees',
+    minimum: 0.1,
+    maximum: 30,
+    step: 0.1,
+  },
+  {
+    path: 'rules.camera.verticalSensitivity',
+    group: 'camera',
+    label: 'Вертикальная чувствительность',
+    description: 'Изменение pitch за единицу нормализованного look input.',
+    unit: 'degrees',
+    minimum: 0.1,
+    maximum: 30,
+    step: 0.1,
+  },
+  {
+    path: 'rules.camera.maximumPitchDegrees',
+    group: 'camera',
+    label: 'Предельный pitch',
+    description: 'Симметричная граница вертикального угла first-person камеры.',
+    unit: 'degrees',
+    minimum: 30,
+    maximum: 89,
+    step: 1,
+  },
+  {
+    path: 'rules.camera.fieldOfViewDegrees',
+    group: 'camera',
+    label: 'Поле зрения',
+    description: 'Вертикальный угол обзора first-person камеры.',
+    unit: 'degrees',
+    minimum: 50,
+    maximum: 130,
+    step: 1,
+  },
+  {
+    path: 'rules.camera.nearPlane',
+    group: 'camera',
+    label: 'Ближняя плоскость камеры',
+    description: 'Минимальная дистанция отображения first-person камеры.',
+    unit: 'meters',
+    minimum: 0.01,
+    maximum: 10,
+    step: 0.01,
+  },
+  {
+    path: 'rules.camera.farPlane',
+    group: 'camera',
+    label: 'Дальняя плоскость камеры',
+    description: 'Максимальная дистанция отображения first-person камеры.',
+    unit: 'meters',
+    minimum: 1,
+    maximum: 1_000,
+    step: 1,
+  },
+  {
     path: 'rules.weapons.doubleBarrelShotgun.startingAmmo',
     group: 'shotgun',
     label: 'Боезапас двухстволки',
@@ -107,6 +359,76 @@ const descriptors: NumericProfileDescriptor[] = [
     minimum: 0,
     maximum: 200,
     step: 1,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.pelletCount',
+    group: 'shotgun',
+    label: 'Количество дробин',
+    description: 'Количество детерминированных ray pellets в одном выстреле.',
+    unit: 'pellets',
+    minimum: 1,
+    maximum: 64,
+    step: 1,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.spreadDegrees',
+    group: 'shotgun',
+    label: 'Разброс дроби',
+    description: 'Максимальный угловой радиус детерминированного pellet pattern.',
+    unit: 'degrees',
+    minimum: 0,
+    maximum: 45,
+    step: 0.1,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.rangeMeters',
+    group: 'shotgun',
+    label: 'Дальность дроби',
+    description: 'Предельная дистанция hitscan-проверки каждой дробины.',
+    unit: 'meters',
+    minimum: 1,
+    maximum: 200,
+    step: 0.5,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.cooldownSeconds',
+    group: 'shotgun',
+    label: 'Интервал между выстрелами',
+    description: 'Минимальное время между двумя допустимыми выстрелами.',
+    unit: 'seconds',
+    minimum: 0.05,
+    maximum: 5,
+    step: 0.05,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds',
+    group: 'shotgun',
+    label: 'Длительность вспышки',
+    description: 'Время показа visual-only muzzle feedback после выстрела.',
+    unit: 'seconds',
+    minimum: 0,
+    maximum: 2,
+    step: 0.01,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.impactFeedbackSeconds',
+    group: 'shotgun',
+    label: 'Длительность impact feedback',
+    description: 'Время показа visual-only попадания дробины.',
+    unit: 'seconds',
+    minimum: 0,
+    maximum: 2,
+    step: 0.01,
+  },
+  {
+    path: 'rules.weapons.doubleBarrelShotgun.hitmarkerSeconds',
+    group: 'shotgun',
+    label: 'Длительность hitmarker',
+    description: 'Время показа подтверждения нанесённого урона.',
+    unit: 'seconds',
+    minimum: 0,
+    maximum: 2,
+    step: 0.01,
   },
   {
     path: 'rules.weapons.doubleBarrelShotgun.damage.head',
@@ -254,6 +576,11 @@ export type ProfileValidationErrorCode =
   | 'INVALID_STEP'
   | 'MATCH_DURATION_ORDER'
   | 'KILL_CHAIN_TOTALS_NOT_INCREASING'
+  | 'CAPSULE_GEOMETRY_INVALID'
+  | 'EYE_HEIGHT_OUTSIDE_CAPSULE'
+  | 'CAMERA_PLANES_ORDER'
+  | 'SLOPE_ANGLE_ORDER'
+  | 'SHOTGUN_CONTRACT_INVALID'
   | 'CONTENT_HASH_MISMATCH'
 
 export interface ProfileValidationError {
@@ -451,6 +778,100 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
     })
   }
 
+  const capsuleRadius = readPath(value, 'rules.player.capsule.radius')
+  const capsuleHalfHeight = readPath(value, 'rules.player.capsule.halfHeight')
+  const capsuleSkinWidth = readPath(value, 'rules.player.capsule.skinWidth')
+  const eyeHeight = readPath(value, 'rules.player.eyeHeight')
+  if (
+    typeof capsuleRadius === 'number' &&
+    Number.isFinite(capsuleRadius) &&
+    typeof capsuleSkinWidth === 'number' &&
+    Number.isFinite(capsuleSkinWidth) &&
+    capsuleSkinWidth >= capsuleRadius
+  ) {
+    errors.push({
+      code: 'CAPSULE_GEOMETRY_INVALID',
+      paths: ['rules.player.capsule.radius', 'rules.player.capsule.skinWidth'],
+      message: 'Collision skin должен быть меньше радиуса капсулы игрока.',
+    })
+  }
+  if (
+    typeof capsuleRadius === 'number' &&
+    Number.isFinite(capsuleRadius) &&
+    typeof capsuleHalfHeight === 'number' &&
+    Number.isFinite(capsuleHalfHeight) &&
+    typeof capsuleSkinWidth === 'number' &&
+    Number.isFinite(capsuleSkinWidth) &&
+    typeof eyeHeight === 'number' &&
+    Number.isFinite(eyeHeight) &&
+    eyeHeight > capsuleHalfHeight + capsuleRadius - capsuleSkinWidth
+  ) {
+    errors.push({
+      code: 'EYE_HEIGHT_OUTSIDE_CAPSULE',
+      paths: [
+        'rules.player.eyeHeight',
+        'rules.player.capsule.halfHeight',
+        'rules.player.capsule.radius',
+        'rules.player.capsule.skinWidth',
+      ],
+      message: 'Высота глаз должна оставаться внутри верхней границы collision-капсулы.',
+    })
+  }
+
+  const cameraNearPlane = readPath(value, 'rules.camera.nearPlane')
+  const cameraFarPlane = readPath(value, 'rules.camera.farPlane')
+  if (
+    typeof cameraNearPlane === 'number' &&
+    Number.isFinite(cameraNearPlane) &&
+    typeof cameraFarPlane === 'number' &&
+    Number.isFinite(cameraFarPlane) &&
+    cameraNearPlane >= cameraFarPlane
+  ) {
+    errors.push({
+      code: 'CAMERA_PLANES_ORDER',
+      paths: ['rules.camera.nearPlane', 'rules.camera.farPlane'],
+      message: 'Ближняя плоскость камеры должна быть ближе дальней.',
+    })
+  }
+
+  const maxSlopeClimbDegrees = readPath(value, 'rules.player.movement.maxSlopeClimbDegrees')
+  const minSlopeSlideDegrees = readPath(value, 'rules.player.movement.minSlopeSlideDegrees')
+  if (
+    typeof maxSlopeClimbDegrees === 'number' &&
+    Number.isFinite(maxSlopeClimbDegrees) &&
+    typeof minSlopeSlideDegrees === 'number' &&
+    Number.isFinite(minSlopeSlideDegrees) &&
+    maxSlopeClimbDegrees > minSlopeSlideDegrees
+  ) {
+    errors.push({
+      code: 'SLOPE_ANGLE_ORDER',
+      paths: [
+        'rules.player.movement.maxSlopeClimbDegrees',
+        'rules.player.movement.minSlopeSlideDegrees',
+      ],
+      message: 'Угол подъёма по склону не должен превышать угол начала скольжения.',
+    })
+  }
+
+  const pelletCount = readPath(value, 'rules.weapons.doubleBarrelShotgun.pelletCount')
+  const rangeMeters = readPath(value, 'rules.weapons.doubleBarrelShotgun.rangeMeters')
+  const cooldownSeconds = readPath(value, 'rules.weapons.doubleBarrelShotgun.cooldownSeconds')
+  if (
+    (typeof pelletCount === 'number' && Number.isFinite(pelletCount) && pelletCount <= 0) ||
+    (typeof rangeMeters === 'number' && Number.isFinite(rangeMeters) && rangeMeters <= 0) ||
+    (typeof cooldownSeconds === 'number' && Number.isFinite(cooldownSeconds) && cooldownSeconds <= 0)
+  ) {
+    errors.push({
+      code: 'SHOTGUN_CONTRACT_INVALID',
+      paths: [
+        'rules.weapons.doubleBarrelShotgun.pelletCount',
+        'rules.weapons.doubleBarrelShotgun.rangeMeters',
+        'rules.weapons.doubleBarrelShotgun.cooldownSeconds',
+      ],
+      message: 'Количество дробин, дальность и интервал между выстрелами должны быть положительными.',
+    })
+  }
+
   const totals = readPath(value, 'rules.scoring.killChain.cumulativeTotals')
   if (
     Array.isArray(totals) &&
@@ -496,13 +917,45 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 1,
+  revision: 2,
   source: 'shipped',
   rules: {
-    player: { startingHealth: 100 },
+    player: {
+      startingHealth: 100,
+      capsule: { radius: 0.4, halfHeight: 0.5, skinWidth: 0.01 },
+      eyeHeight: 0.55,
+      movement: {
+        maximumGroundSpeed: 9,
+        groundAcceleration: 45,
+        groundDeceleration: 32,
+        airAcceleration: 12,
+        gravity: 24,
+        jumpSpeed: 8.5,
+        autostepMaxHeight: 0.45,
+        autostepMinWidth: 0.25,
+        snapToGroundDistance: 0.2,
+        maxSlopeClimbDegrees: 45,
+        minSlopeSlideDegrees: 60,
+      },
+    },
+    camera: {
+      horizontalSensitivity: 4,
+      verticalSensitivity: 3.2,
+      maximumPitchDegrees: 85,
+      fieldOfViewDegrees: 90,
+      nearPlane: 0.05,
+      farPlane: 250,
+    },
     weapons: {
       doubleBarrelShotgun: {
         startingAmmo: 20,
+        pelletCount: 12,
+        spreadDegrees: 7,
+        rangeMeters: 35,
+        cooldownSeconds: 0.7,
+        muzzleFeedbackSeconds: 0.08,
+        impactFeedbackSeconds: 0.12,
+        hitmarkerSeconds: 0.15,
         damage: { head: 100, torso: 70, limb: 30 },
       },
     },

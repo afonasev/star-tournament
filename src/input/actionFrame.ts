@@ -1,11 +1,51 @@
-import { canonicalSerialize, parseCanonicalJson } from '../core/canonical'
+import {
+  canonicalSerialize,
+  contentHash,
+  parseCanonicalJson,
+  type ContentHash,
+} from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const ACTION_FRAME_SCHEMA_VERSION = 1 as const
+export const ACTION_FRAME_SCHEMA_VERSION = 2 as const
+
+export const CANONICAL_ACTION_IDS = deepFreeze([
+  'move-forward',
+  'move-right',
+  'look-yaw',
+  'look-pitch',
+  'jump',
+  'fire',
+] as const)
+
+export type CanonicalActionId = (typeof CANONICAL_ACTION_IDS)[number]
+export type CanonicalActionValueKind = 'axis' | 'pressed'
+
+export interface CanonicalActionDescriptor {
+  readonly id: CanonicalActionId
+  readonly minimum: number
+  readonly maximum: number
+  readonly valueKind: CanonicalActionValueKind
+}
+
+export const CANONICAL_ACTION_DESCRIPTORS: readonly CanonicalActionDescriptor[] = deepFreeze([
+  { id: 'move-forward', minimum: -1, maximum: 1, valueKind: 'axis' },
+  { id: 'move-right', minimum: -1, maximum: 1, valueKind: 'axis' },
+  { id: 'look-yaw', minimum: -1, maximum: 1, valueKind: 'axis' },
+  { id: 'look-pitch', minimum: -1, maximum: 1, valueKind: 'axis' },
+  { id: 'jump', minimum: 0, maximum: 1, valueKind: 'pressed' },
+  { id: 'fire', minimum: 0, maximum: 1, valueKind: 'pressed' },
+])
+
+const actionDescriptorById = new Map(
+  CANONICAL_ACTION_DESCRIPTORS.map((descriptor) => [descriptor.id, descriptor]),
+)
+const actionOrderById = new Map(
+  CANONICAL_ACTION_IDS.map((actionId, index) => [actionId, index]),
+)
 
 export interface NormalizedAction {
   readonly participantId: string
-  readonly actionId: string
+  readonly actionId: CanonicalActionId
   readonly value: number
 }
 
@@ -37,6 +77,34 @@ function expectNonEmptyString(value: unknown, path: string): string {
   return value
 }
 
+function expectCanonicalActionId(value: unknown, path: string): CanonicalActionId {
+  const actionId = expectNonEmptyString(value, path)
+  if (!actionDescriptorById.has(actionId as CanonicalActionId)) {
+    throw new TypeError(`${path} must be one of: ${CANONICAL_ACTION_IDS.join(', ')}`)
+  }
+  return actionId as CanonicalActionId
+}
+
+function normalizeActionValue(actionId: CanonicalActionId, value: unknown, path: string): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new TypeError(`${path} must be finite`)
+  }
+
+  const descriptor = actionDescriptorById.get(actionId)
+  if (descriptor === undefined) {
+    throw new TypeError(`Unknown canonical action: ${actionId}`)
+  }
+  if (value < descriptor.minimum || value > descriptor.maximum) {
+    throw new RangeError(
+      `${path} for ${actionId} must be between ${descriptor.minimum} and ${descriptor.maximum}`,
+    )
+  }
+  if (descriptor.valueKind === 'pressed' && value !== 0 && value !== 1) {
+    throw new RangeError(`${path} for ${actionId} must be the pressed state 0 or 1`)
+  }
+  return Object.is(value, -0) ? 0 : value
+}
+
 function compareActions(first: NormalizedAction, second: NormalizedAction): number {
   const participantOrder = first.participantId < second.participantId
     ? -1
@@ -46,7 +114,7 @@ function compareActions(first: NormalizedAction, second: NormalizedAction): numb
   if (participantOrder !== 0) {
     return participantOrder
   }
-  return first.actionId < second.actionId ? -1 : first.actionId > second.actionId ? 1 : 0
+  return actionOrderById.get(first.actionId)! - actionOrderById.get(second.actionId)!
 }
 
 export function createActionFrame(tick: number, actions: readonly NormalizedAction[]): ActionFrame {
@@ -56,11 +124,13 @@ export function createActionFrame(tick: number, actions: readonly NormalizedActi
 
   const normalized = actions.map((action, index) => {
     const participantId = expectNonEmptyString(action.participantId, `ActionFrame.actions[${index}].participantId`)
-    const actionId = expectNonEmptyString(action.actionId, `ActionFrame.actions[${index}].actionId`)
-    if (!Number.isFinite(action.value)) {
-      throw new TypeError(`ActionFrame.actions[${index}].value must be finite`)
-    }
-    return { participantId, actionId, value: action.value }
+    const actionId = expectCanonicalActionId(action.actionId, `ActionFrame.actions[${index}].actionId`)
+    const value = normalizeActionValue(
+      actionId,
+      action.value,
+      `ActionFrame.actions[${index}].value`,
+    )
+    return { participantId, actionId, value }
   }).sort(compareActions)
 
   for (let index = 1; index < normalized.length; index += 1) {
@@ -108,7 +178,10 @@ export function parseActionFrame(input: string | unknown): ActionFrame {
         actionRecord.participantId,
         `ActionFrame.actions[${index}].participantId`,
       ),
-      actionId: expectNonEmptyString(actionRecord.actionId, `ActionFrame.actions[${index}].actionId`),
+      actionId: expectCanonicalActionId(
+        actionRecord.actionId,
+        `ActionFrame.actions[${index}].actionId`,
+      ),
       value: actionRecord.value as number,
     }
   })
@@ -118,4 +191,8 @@ export function parseActionFrame(input: string | unknown): ActionFrame {
 
 export function serializeActionFrame(frame: ActionFrame): string {
   return canonicalSerialize(parseActionFrame(frame))
+}
+
+export function computeActionFrameHash(frame: ActionFrame): ContentHash {
+  return contentHash(parseActionFrame(frame))
 }

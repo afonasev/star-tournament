@@ -1,5 +1,6 @@
-import { freezeUiSnapshot, type RuntimeStatus, type UiSnapshot } from './uiSnapshot'
+import { deepFreeze } from '../core/deepFreeze'
 import { SIMULATION_TICKS_PER_SECOND } from '../simulation'
+import type { RuntimeStatus, UiSnapshot } from './uiSnapshot'
 
 // These values protect only the browser scheduler and are deliberately not
 // balance controls. The simulation package owns the compatibility tick rate.
@@ -12,12 +13,13 @@ export interface AnimationScheduler {
   cancel(handle: number): void
 }
 
-export interface BrowserRuntimeOptions<State> {
+export interface BrowserRuntimeOptions<State, UiState = UiSnapshot> {
   readonly initialState: State
   readonly step: (state: State, fixedDeltaSeconds: number) => State
   readonly render: (state: State, interpolationAlpha: number) => void
-  readonly snapshotForUi: (state: State, status: RuntimeStatus) => UiSnapshot
-  readonly publishUiSnapshot: (snapshot: Readonly<UiSnapshot>) => void
+  readonly snapshotForUi: (state: State, status: RuntimeStatus) => UiState
+  readonly publishUiSnapshot: (snapshot: Readonly<UiState>) => void
+  readonly publishUiAfterStep?: boolean
   readonly scheduler?: AnimationScheduler
   readonly disposePresentation?: () => void
 }
@@ -27,7 +29,7 @@ const browserAnimationScheduler: AnimationScheduler = {
   cancel: (handle) => window.cancelAnimationFrame(handle),
 }
 
-export class BrowserRuntime<State> {
+export class BrowserRuntime<State, UiState = UiSnapshot> {
   private readonly scheduler: AnimationScheduler
   private readonly fixedDeltaSeconds = 1 / SIMULATION_TICKS_PER_SECOND
   private state: State
@@ -38,7 +40,7 @@ export class BrowserRuntime<State> {
   private animationHandle: number | null = null
   private disposed = false
 
-  constructor(private readonly options: BrowserRuntimeOptions<State>) {
+  constructor(private readonly options: BrowserRuntimeOptions<State, UiState>) {
     this.state = options.initialState
     this.scheduler = options.scheduler ?? browserAnimationScheduler
   }
@@ -113,6 +115,9 @@ export class BrowserRuntime<State> {
       if (this.accumulatorSeconds >= this.fixedDeltaSeconds) {
         this.accumulatorSeconds %= this.fixedDeltaSeconds
       }
+      if (catchUpTicks > 0 && this.options.publishUiAfterStep) {
+        this.publishUiSnapshot()
+      }
     }
 
     this.options.render(this.state, this.accumulatorSeconds / this.fixedDeltaSeconds)
@@ -127,7 +132,7 @@ export class BrowserRuntime<State> {
 
   private publishUiSnapshot(): void {
     this.options.publishUiSnapshot(
-      freezeUiSnapshot(this.options.snapshotForUi(this.state, this.status)),
+      deepFreeze(this.options.snapshotForUi(this.state, this.status)),
     )
   }
 }

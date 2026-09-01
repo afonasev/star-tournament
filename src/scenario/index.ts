@@ -1,0 +1,22 @@
+export {
+  combatSliceScenarioIdentity,
+  COMBAT_SLICE_SCENARIO_ERROR_CODES,
+  COMBAT_SLICE_SCENARIO_ID,
+  COMBAT_SLICE_SCENARIO_SCHEMA_VERSION,
+  CombatSliceScenarioError,
+  createCombatSliceScenario,
+  parseCombatSliceScenario,
+  serializeCombatSliceScenario,
+  type CombatSliceScenario,
+  type CombatSliceScenarioErrorCode,
+  type CombatSliceScenarioIdentity,
+  type CombatSliceScenarioPayload,
+  type RobotTargetDefinition,
+  type ScenarioPlayerSpawn,
+  type ScenarioVector3,
+  type TargetHeadSphere,
+  type TargetHitVolume,
+  type TargetLimbCapsule,
+  type TargetTorsoBox,
+} from './combatSliceScenario'
+export { COMBAT_SLICE_SCENARIO_V1 } from './combatSliceScenarioV1'
