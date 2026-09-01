@@ -16,6 +16,7 @@ import type { CollisionControllerConfiguration } from '../collision/rapierWorld'
 import { createActionFrame } from '../input/actionFrame'
 import type { PointerLockControllerOptions, PointerLockLifecycleSnapshot } from '../input/pointerLockController'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 import type { FirstPersonRenderer } from '../render/firstPersonRenderer'
 import { WebGlUnavailableError } from '../render/diagnosticRenderer'
 import { PLAYABLE_PLAYER_ID } from '../simulation'
@@ -23,6 +24,7 @@ import {
   bootstrapBrowserRuntime,
   type BrowserApplication,
   type BrowserBootstrapDependencies,
+  type BrowserPerformanceReport,
   type RuntimeCollisionWorld,
   type RuntimeInputAdapter,
   type RuntimePointerLockController,
@@ -181,11 +183,14 @@ function harness(actionValue = 0) {
     pointer = new FakePointerController(options)
     return pointer
   })
+  const createRenderer = vi.fn<
+    NonNullable<BrowserBootstrapDependencies['createRenderer']>
+  >(() => renderer)
   const dependencies: BrowserBootstrapDependencies = {
     scheduler,
     initializeBackend: async () => undefined,
     createCollisionWorld,
-    createRenderer: () => renderer,
+    createRenderer,
     createInput,
     createPointerLockController,
     now: () => 10,
@@ -197,6 +202,7 @@ function harness(actionValue = 0) {
     createCollisionWorld,
     createInput,
     createPointerLockController,
+    createRenderer,
     dependencies,
     get pointer() { return pointer },
     get collision() { return collision },
@@ -258,6 +264,29 @@ describe('playable browser bootstrap', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('MISSING_FIELD')
   })
 
+  it('surfaces presentation profile validation errors before collision or WebGL initialization', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+    const invalidPresentationProfile = JSON.parse(
+      JSON.stringify(PRESENTATION_BALANCED_V1_PROFILE),
+    ) as unknown as { render: { backingBufferPixelBudget?: number } }
+    delete invalidPresentationProfile.render.backingBufferPixelBudget
+
+    application = await bootstrapBrowserRuntime(mount, {
+      ...test.dependencies,
+      presentationProfile: invalidPresentationProfile as never,
+    })
+
+    expect(application.runtime).toBeUndefined()
+    expect(test.createCollisionWorld).not.toHaveBeenCalled()
+    expect(test.createRenderer).not.toHaveBeenCalled()
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(
+      'Presentation profile validation failed',
+    ))
+    expect(screen.getByRole('alert')).toHaveTextContent('MISSING_FIELD')
+  })
+
   it('constructs the configured player capsule but does not tick before explicit lock', async () => {
     const mount = document.createElement('div')
     document.body.append(mount)
@@ -272,6 +301,13 @@ describe('playable browser bootstrap', () => {
       participantId: PLAYABLE_PLAYER_ID,
       pointerLockElement: expect.any(HTMLElement),
     }))
+    expect(test.createRenderer).toHaveBeenCalledWith(expect.objectContaining({
+      pixelBudget: PRESENTATION_BALANCED_V1_PROFILE.render.backingBufferPixelBudget,
+    }))
+    expect(screen.getByLabelText('Игровое поле')).toHaveAttribute(
+      'data-presentation-profile-id',
+      PRESENTATION_BALANCED_V1_PROFILE.id,
+    )
     const [, capsules, configuration] = test.createCollisionWorld.mock.calls[0] as [
       unknown,
       readonly CollisionCapsuleProjection[],
@@ -379,6 +415,55 @@ describe('playable browser bootstrap', () => {
       'data-collision-benchmark-p95-milliseconds',
       '0.4',
     )
+  })
+
+  it('publishes a machine-readable four-phase performance report without pointer lock', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+    let clockMilliseconds = 0
+    const wait = async (durationMilliseconds: number) => {
+      const startedAt = clockMilliseconds
+      if (test.scheduler.pendingCount === 0) {
+        clockMilliseconds += durationMilliseconds
+        return
+      }
+      for (let frame = 0; frame <= 60; frame += 1) {
+        clockMilliseconds = startedAt + durationMilliseconds * (frame / 60)
+        test.scheduler.frame(clockMilliseconds)
+      }
+      clockMilliseconds = startedAt + durationMilliseconds
+    }
+
+    application = await bootstrapBrowserRuntime(mount, {
+      ...test.dependencies,
+      locationSearch: '?performanceBenchmark=1',
+      now: () => clockMilliseconds,
+      wait,
+      performancePhaseDurationMilliseconds: 1_000,
+    })
+
+    const playfield = screen.getByLabelText('Игровое поле')
+    await waitFor(() => expect(playfield).toHaveAttribute(
+      'data-performance-benchmark-status',
+      'passed',
+    ))
+    const report = JSON.parse(
+      playfield.getAttribute('data-performance-benchmark-report') ?? 'null',
+    ) as BrowserPerformanceReport
+    expect(report.referenceId).toBe('performance-reference-v1')
+    expect(report.mode).toBe('reference')
+    expect(report.measurements.map(({ phase }) => phase)).toEqual([
+      'paused',
+      'running-idle',
+      'movement-jump',
+      'combat-burst',
+    ])
+    expect(report.gates.every(({ passed }) => passed)).toBe(true)
+    expect(screen.getByLabelText('Performance benchmark status')).toHaveTextContent(
+      'PERFORMANCE · PASS',
+    )
+    expect(test.pointer?.requestStart).not.toHaveBeenCalled()
   })
 
   it('surfaces WebGL errors and disposes every owned resource once on pagehide', async () => {

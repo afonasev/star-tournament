@@ -2,7 +2,6 @@ import { MAX_DEVICE_PIXEL_RATIO } from '../render/diagnosticRenderer'
 import {
   MAX_CATCH_UP_TICKS,
   MAX_WALL_CLOCK_DELTA_SECONDS,
-  UI_UPDATE_INTERVAL_SECONDS,
 } from '../runtime/browserRuntime'
 import { SIMULATION_TICKS_PER_SECOND } from '../simulation'
 
@@ -27,11 +26,6 @@ export const TECHNICAL_INVARIANTS: readonly TechnicalInvariant[] = Object.freeze
     id: 'runtime.maximumCatchUpTicks',
     value: MAX_CATCH_UP_TICKS,
     rationale: 'Prevents the browser event loop from freezing during scheduler recovery.',
-  }),
-  Object.freeze({
-    id: 'runtime.uiUpdateIntervalSeconds',
-    value: UI_UPDATE_INTERVAL_SECONDS,
-    rationale: 'Decouples diagnostic DOM refresh cadence from simulation and rendering.',
   }),
   Object.freeze({
     id: 'render.maximumDevicePixelRatio',

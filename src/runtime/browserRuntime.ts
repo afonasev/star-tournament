@@ -13,6 +13,12 @@ export interface AnimationScheduler {
   cancel(handle: number): void
 }
 
+export interface RuntimePerformanceRecorder {
+  recordAnimationCallback(durationMilliseconds: number): void
+  recordSimulationStep(durationMilliseconds: number): void
+  recordHudPublication(): void
+}
+
 export interface BrowserRuntimeOptions<State, UiState = UiSnapshot> {
   readonly initialState: State
   readonly step: (state: State, fixedDeltaSeconds: number) => State
@@ -20,6 +26,9 @@ export interface BrowserRuntimeOptions<State, UiState = UiSnapshot> {
   readonly snapshotForUi: (state: State, status: RuntimeStatus) => UiState
   readonly publishUiSnapshot: (snapshot: Readonly<UiState>) => void
   readonly publishUiAfterStep?: boolean
+  readonly uiUpdateIntervalSeconds?: number
+  readonly performanceRecorder?: RuntimePerformanceRecorder
+  readonly now?: () => number
   readonly scheduler?: AnimationScheduler
   readonly disposePresentation?: () => void
 }
@@ -32,6 +41,8 @@ const browserAnimationScheduler: AnimationScheduler = {
 export class BrowserRuntime<State, UiState = UiSnapshot> {
   private readonly scheduler: AnimationScheduler
   private readonly fixedDeltaSeconds = 1 / SIMULATION_TICKS_PER_SECOND
+  private readonly uiUpdateIntervalSeconds: number
+  private readonly now: () => number
   private state: State
   private status: RuntimeStatus = 'stopped'
   private accumulatorSeconds = 0
@@ -43,6 +54,11 @@ export class BrowserRuntime<State, UiState = UiSnapshot> {
   constructor(private readonly options: BrowserRuntimeOptions<State, UiState>) {
     this.state = options.initialState
     this.scheduler = options.scheduler ?? browserAnimationScheduler
+    this.now = options.now ?? (() => performance.now())
+    this.uiUpdateIntervalSeconds = options.uiUpdateIntervalSeconds ?? UI_UPDATE_INTERVAL_SECONDS
+    if (!Number.isFinite(this.uiUpdateIntervalSeconds) || this.uiUpdateIntervalSeconds <= 0) {
+      throw new RangeError('Browser runtime UI update interval must be greater than zero')
+    }
   }
 
   start(): void {
@@ -53,6 +69,7 @@ export class BrowserRuntime<State, UiState = UiSnapshot> {
 
     this.status = 'running'
     this.lastFrameTimeMilliseconds = null
+    this.secondsSinceUiUpdate = 0
     this.publishUiSnapshot()
     this.animationHandle = this.scheduler.request(this.onAnimationFrame)
   }
@@ -86,6 +103,7 @@ export class BrowserRuntime<State, UiState = UiSnapshot> {
 
   private readonly onAnimationFrame: FrameRequestCallback = (timeMilliseconds) => {
     if (this.status !== 'running' || this.disposed) return
+    const animationStartedAt = this.now()
     this.animationHandle = null
 
     if (this.lastFrameTimeMilliseconds === null) {
@@ -107,7 +125,11 @@ export class BrowserRuntime<State, UiState = UiSnapshot> {
         this.accumulatorSeconds >= this.fixedDeltaSeconds &&
         catchUpTicks < MAX_CATCH_UP_TICKS
       ) {
+        const simulationStartedAt = this.now()
         this.state = this.options.step(this.state, this.fixedDeltaSeconds)
+        this.options.performanceRecorder?.recordSimulationStep(
+          this.now() - simulationStartedAt,
+        )
         this.accumulatorSeconds -= this.fixedDeltaSeconds
         catchUpTicks += 1
       }
@@ -121,16 +143,20 @@ export class BrowserRuntime<State, UiState = UiSnapshot> {
     }
 
     this.options.render(this.state, this.accumulatorSeconds / this.fixedDeltaSeconds)
-    if (this.secondsSinceUiUpdate >= UI_UPDATE_INTERVAL_SECONDS) {
-      this.secondsSinceUiUpdate %= UI_UPDATE_INTERVAL_SECONDS
+    if (this.secondsSinceUiUpdate >= this.uiUpdateIntervalSeconds) {
+      this.secondsSinceUiUpdate %= this.uiUpdateIntervalSeconds
       this.publishUiSnapshot()
     }
     if (this.status === 'running' && !this.disposed) {
       this.animationHandle = this.scheduler.request(this.onAnimationFrame)
     }
+    this.options.performanceRecorder?.recordAnimationCallback(
+      this.now() - animationStartedAt,
+    )
   }
 
   private publishUiSnapshot(): void {
+    this.options.performanceRecorder?.recordHudPublication()
     this.options.publishUiSnapshot(
       deepFreeze(this.options.snapshotForUi(this.state, this.status)),
     )

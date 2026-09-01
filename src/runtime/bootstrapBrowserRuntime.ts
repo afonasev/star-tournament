@@ -11,6 +11,7 @@ import {
   KeyboardMouseAdapter,
   type KeyboardMouseAdapterOptions,
 } from '../input/keyboardMouseAdapter'
+import { createActionFrame, type NormalizedAction } from '../input/actionFrame'
 import {
   PointerLockController,
   type PointerLockControllerOptions,
@@ -22,6 +23,20 @@ import {
   type GameDesignProfile,
   type ValidatedGameDesignProfile,
 } from '../profiles/gameDesignProfile'
+import {
+  PRESENTATION_BALANCED_V1_PROFILE,
+  validatePresentationProfile,
+  type PresentationProfile,
+  type ValidatedPresentationProfile,
+} from '../presentation'
+import {
+  PERFORMANCE_REFERENCE_ID,
+  PresentationPerformanceProbe,
+  evaluateHardPerformanceGate,
+  type HardPerformanceGateResult,
+  type PerformancePhaseId,
+  type PerformancePhaseMeasurement,
+} from '../performance'
 import {
   createFirstPersonRenderer,
   type FirstPersonRenderer,
@@ -71,9 +86,55 @@ export interface BrowserApplication {
   readonly dispose: () => void
 }
 
+export interface BrowserPerformanceReport {
+  readonly schemaVersion: 1
+  readonly referenceId: typeof PERFORMANCE_REFERENCE_ID
+  readonly mode: 'reference' | 'thermal-soak'
+  readonly passed: boolean
+  readonly environment: {
+    readonly userAgent: string
+    readonly viewportCssWidth: number
+    readonly viewportCssHeight: number
+    readonly devicePixelRatio: number
+    readonly backingBufferWidth: number
+    readonly backingBufferHeight: number
+    readonly presentationProfileId: string
+    readonly presentationProfileHash: string
+  }
+  readonly measurements: readonly PerformancePhaseMeasurement[]
+  readonly gates: readonly HardPerformanceGateResult[]
+}
+
 interface BrowserShell {
   readonly playfield: HTMLDivElement
   readonly uiLayer: HTMLDivElement
+}
+
+type ActivePerformancePhase = Exclude<PerformancePhaseId, 'paused'> | undefined
+
+function benchmarkActions(tick: number, phase: ActivePerformancePhase): readonly NormalizedAction[] {
+  if (phase === 'movement-jump') {
+    return [
+      { participantId: PLAYABLE_PLAYER_ID, actionId: 'move-forward', value: 1 },
+      { participantId: PLAYABLE_PLAYER_ID, actionId: 'jump', value: tick % 60 === 1 ? 1 : 0 },
+    ]
+  }
+  if (phase === 'combat-burst') {
+    return [
+      { participantId: PLAYABLE_PLAYER_ID, actionId: 'fire', value: tick % 20 === 1 ? 1 : 0 },
+    ]
+  }
+  return []
+}
+
+function createBenchmarkInputAdapter(
+  activePhase: () => ActivePerformancePhase,
+): RuntimeInputAdapter {
+  return {
+    drainActionFrame: (tick) => createActionFrame(tick, benchmarkActions(tick, activePhase())),
+    clearInputState: () => undefined,
+    dispose: () => undefined,
+  }
 }
 
 function createShell(mount: HTMLElement): BrowserShell {
@@ -130,6 +191,7 @@ function errorCode(error: unknown): string {
 
 export interface BrowserBootstrapDependencies {
   readonly profile?: GameDesignProfile | ValidatedGameDesignProfile
+  readonly presentationProfile?: PresentationProfile | ValidatedPresentationProfile
   readonly createCollisionWorld?: (
     arena: typeof COLLISION_FIXTURE_ARENA,
     capsules: readonly CollisionCapsuleProjection[],
@@ -147,6 +209,8 @@ export interface BrowserBootstrapDependencies {
   readonly initializeBackend?: () => Promise<unknown>
   readonly scheduler?: AnimationScheduler
   readonly now?: () => number
+  readonly wait?: (milliseconds: number) => Promise<void>
+  readonly performancePhaseDurationMilliseconds?: number
   readonly locationSearch?: string
 }
 
@@ -158,25 +222,74 @@ export async function bootstrapBrowserRuntime(
   const search = new URLSearchParams(dependencies.locationSearch ?? window.location.search)
   const debugEnabled = search.has('debug')
   const benchmarkEnabled = search.has('collisionBenchmark')
+  const performanceSoakSecondsRaw = search.get('performanceSoakSeconds')
+  const performanceSoakSeconds = performanceSoakSecondsRaw === null
+    ? undefined
+    : Number(performanceSoakSecondsRaw)
+  if (
+    performanceSoakSeconds !== undefined &&
+    (!Number.isFinite(performanceSoakSeconds) || performanceSoakSeconds <= 0 || performanceSoakSeconds > 3_600)
+  ) {
+    throw new RangeError('Performance soak duration must be between 0 and 3600 seconds')
+  }
+  const performanceBenchmarkEnabled = search.has('performanceBenchmark') ||
+    performanceSoakSeconds !== undefined
   const profileValidation = validateGameDesignProfile(
     dependencies.profile ?? PROTOTYPE_V1_PROFILE,
   )
   const profile = profileValidation.ok
     ? profileValidation.profile
     : PROTOTYPE_V1_PROFILE
+  const presentationProfileValidation = validatePresentationProfile(
+    dependencies.presentationProfile ?? PRESENTATION_BALANCED_V1_PROFILE,
+  )
+  const presentationProfile = presentationProfileValidation.ok
+    ? presentationProfileValidation.profile
+    : PRESENTATION_BALANCED_V1_PROFILE
   const projector = new GameplayUiProjector({
     profile,
     ticksPerSecond: SIMULATION_TICKS_PER_SECOND,
   })
   const createCollision = dependencies.createCollisionWorld ?? createRapierCollisionWorld
   const createRenderer = dependencies.createRenderer ?? createFirstPersonRenderer
-  const createInput = dependencies.createInput ?? ((options) => new KeyboardMouseAdapter(options))
+  let activePerformancePhase: ActivePerformancePhase
+  const createInput = dependencies.createInput ?? ((options) => (
+    performanceBenchmarkEnabled
+      ? createBenchmarkInputAdapter(() => activePerformancePhase)
+      : new KeyboardMouseAdapter(options)
+  ))
   const createPointerController = dependencies.createPointerLockController ??
     ((options) => new PointerLockController(options))
   const createUi = dependencies.createUi ?? createGameplayUi
   const initializeBackend = dependencies.initializeBackend ?? initializeCollisionBackend
   const runBenchmark = dependencies.runBenchmark ?? runCollisionBrowserBenchmark
   const now = dependencies.now ?? (() => performance.now())
+  const wait = dependencies.wait ?? ((milliseconds) => new Promise<void>((resolve) => {
+    window.setTimeout(resolve, milliseconds)
+  }))
+  const performancePhaseDurationMilliseconds =
+    dependencies.performancePhaseDurationMilliseconds ?? 2_000
+  if (
+    !Number.isFinite(performancePhaseDurationMilliseconds) ||
+    performancePhaseDurationMilliseconds <= 0
+  ) {
+    throw new RangeError('Performance phase duration must be greater than zero')
+  }
+  const performanceProbe = performanceBenchmarkEnabled
+    ? new PresentationPerformanceProbe(now)
+    : undefined
+  let performanceRecording = false
+  const runtimePerformanceRecorder = performanceProbe === undefined ? undefined : {
+    recordAnimationCallback: (durationMilliseconds: number) => {
+      if (performanceRecording) performanceProbe.recordAnimationCallback(durationMilliseconds)
+    },
+    recordSimulationStep: (durationMilliseconds: number) => {
+      if (performanceRecording) performanceProbe.recordSimulationStep(durationMilliseconds)
+    },
+    recordHudPublication: () => {
+      if (performanceRecording) performanceProbe.recordHudPublication()
+    },
+  }
 
   const initialState = createInitialPlayableSimulationSnapshot({
     rngSeed: COLLISION_FIXTURE_ARENA.seed,
@@ -293,6 +406,14 @@ export async function bootstrapBrowserRuntime(
     ))
     return { requestControl, dispose: cleanup }
   }
+  if (!presentationProfileValidation.ok) {
+    ui.update(projectUi(
+      initialState,
+      'error',
+      `Presentation profile validation failed (${presentationProfileValidation.errors.map((error) => error.code).join(', ')})`,
+    ))
+    return { requestControl, dispose: cleanup }
+  }
 
   try {
     const coldStart = now()
@@ -337,8 +458,16 @@ export async function bootstrapBrowserRuntime(
       arena: COLLISION_FIXTURE_ARENA,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile,
+      pixelBudget: presentationProfile.render.backingBufferPixelBudget,
+      onWebGlSubmission: (rendererInfo) => {
+        if (performanceRecording) {
+          performanceProbe?.recordWebGlSubmission(rendererInfo)
+        }
+      },
       ticksPerSecond: SIMULATION_TICKS_PER_SECOND,
     })
+    playfield.dataset.presentationProfileId = presentationProfile.id
+    playfield.dataset.presentationProfileHash = presentationProfile.contentHash
     renderer.render(initialState)
   } catch (error) {
     const message = error instanceof Error && error.name === 'WebGlUnavailableError'
@@ -356,7 +485,9 @@ export async function bootstrapBrowserRuntime(
   runtime = new BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot>({
     initialState,
     scheduler: dependencies.scheduler,
-    publishUiAfterStep: true,
+    uiUpdateIntervalSeconds: 1 / presentationProfile.ui.maximumPublicationsPerSecond,
+    performanceRecorder: runtimePerformanceRecorder,
+    now,
     step: (state) => {
       const frame = input!.drainActionFrame(state.tick + 1)
       return stepPlayableSimulation(state, frame, collisionWorld!, profile)
@@ -385,6 +516,118 @@ export async function bootstrapBrowserRuntime(
   // projection distinguishes the first start overlay from a later resume.
   pointerState = pointerController.getSnapshot()
   ui.update(projectUi(runtime.getState(), uiStatus(), pointerState.errorMessage))
+
+  if (performanceBenchmarkEnabled && performanceProbe !== undefined) {
+    const badge = document.createElement('output')
+    badge.className = 'performance-benchmark-badge'
+    badge.setAttribute('aria-label', 'Performance benchmark status')
+    badge.textContent = 'PERFORMANCE · RUNNING'
+    mount.append(badge)
+    playfield.dataset.performanceBenchmarkStatus = 'running'
+
+    const runPhase = async (
+      phase: PerformancePhaseId,
+    ): Promise<PerformancePhaseMeasurement | undefined> => {
+      if (disposed || runtime === undefined) return undefined
+      activePerformancePhase = phase === 'paused' ? undefined : phase
+      if (phase !== 'paused') {
+        pointerState = Object.freeze({ status: 'locked' })
+        ui.update(projectUi(runtime.getState(), 'running'))
+        runtime.start()
+      }
+
+      // Initial ResizeObserver delivery and the first RAF wall-clock anchor are
+      // warm-up work, not part of the settled reference window.
+      await wait(500)
+      if (disposed || runtime === undefined) return undefined
+
+      performanceProbe.startPhase(phase)
+      performanceRecording = true
+      performanceProbe.markMetricUnavailable('long-tasks')
+      performanceProbe.markMetricUnavailable('thermal')
+
+      const memory = performance as Performance & {
+        readonly memory?: { readonly usedJSHeapSize?: number }
+      }
+      const initialHeapBytes = memory.memory?.usedJSHeapSize
+      if (typeof initialHeapBytes === 'number') {
+        performanceProbe.recordHeapSample(initialHeapBytes)
+      } else {
+        performanceProbe.markMetricUnavailable('heap')
+      }
+
+      await wait(
+        phase === 'paused'
+          ? 1_000
+          : performanceSoakSeconds === undefined
+            ? performancePhaseDurationMilliseconds
+            : performanceSoakSeconds * 1_000,
+      )
+      if (disposed || runtime === undefined) return undefined
+
+      if (phase !== 'paused') runtime.stop()
+      const finalHeapBytes = memory.memory?.usedJSHeapSize
+      if (typeof finalHeapBytes === 'number') performanceProbe.recordHeapSample(finalHeapBytes)
+      performanceRecording = false
+      activePerformancePhase = undefined
+      return performanceProbe.finishPhase()
+    }
+
+    void (async () => {
+      const measurements: PerformancePhaseMeasurement[] = []
+      const phases: readonly PerformancePhaseId[] = performanceSoakSeconds === undefined
+        ? ['paused', 'running-idle', 'movement-jump', 'combat-burst']
+        : ['combat-burst']
+      if (performanceSoakSeconds !== undefined) {
+        badge.textContent = `PERFORMANCE · SOAK ${performanceSoakSeconds}s`
+      }
+      for (const phase of phases) {
+        const measurement = await runPhase(phase)
+        if (measurement === undefined) return
+        measurements.push(measurement)
+      }
+      const gates = measurements.map((measurement) => evaluateHardPerformanceGate(measurement))
+      const canvas = playfield.querySelector('canvas')
+      const report: BrowserPerformanceReport = Object.freeze({
+        schemaVersion: 1,
+        referenceId: PERFORMANCE_REFERENCE_ID,
+        mode: performanceSoakSeconds === undefined ? 'reference' : 'thermal-soak',
+        passed: gates.every((gate) => gate.passed),
+        environment: Object.freeze({
+          userAgent: navigator.userAgent,
+          viewportCssWidth: playfield.clientWidth,
+          viewportCssHeight: playfield.clientHeight,
+          devicePixelRatio: window.devicePixelRatio || 1,
+          backingBufferWidth: canvas?.width ?? 0,
+          backingBufferHeight: canvas?.height ?? 0,
+          presentationProfileId: presentationProfile.id,
+          presentationProfileHash: presentationProfile.contentHash,
+        }),
+        measurements: Object.freeze(measurements),
+        gates: Object.freeze(gates),
+      })
+      const serializedReport = JSON.stringify(report)
+      const reportWindow = window as typeof window & {
+        __STAR_TOURNAMENT_PERFORMANCE_REPORT__?: BrowserPerformanceReport
+      }
+      reportWindow.__STAR_TOURNAMENT_PERFORMANCE_REPORT__ = report
+      playfield.dataset.performanceBenchmarkStatus = report.passed ? 'passed' : 'failed'
+      playfield.dataset.performanceBenchmarkReport = serializedReport
+      badge.textContent = report.passed ? 'PERFORMANCE · PASS' : 'PERFORMANCE · FAIL'
+      badge.dataset.status = report.passed ? 'passed' : 'failed'
+      pointerState = Object.freeze({ status: 'paused' })
+      ui.update(projectUi(runtime.getState(), 'paused'))
+    })().catch((error: unknown) => {
+      performanceRecording = false
+      activePerformancePhase = undefined
+      playfield.dataset.performanceBenchmarkStatus = 'failed'
+      playfield.dataset.performanceBenchmarkError = error instanceof Error
+        ? error.message
+        : String(error)
+      badge.textContent = 'PERFORMANCE · ERROR'
+      badge.dataset.status = 'failed'
+    })
+  }
 
   if (benchmarkEnabled) {
     playfield.dataset.collisionBenchmarkStatus = 'running'

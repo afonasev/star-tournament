@@ -3,15 +3,20 @@ import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import * as THREE from 'three'
 
 import { DIAGNOSTIC_ARENA } from '../arena'
+import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import type { PlayableSimulationSnapshot } from '../simulation'
 import type { GameplayUiSourceSnapshot } from '../ui/gameplayUiSnapshot'
 import {
+  DEFAULT_WEBGL_POWER_PREFERENCE,
   createFirstPersonRenderer,
+  resolvePixelBudgetDevicePixelRatio,
   type FirstPersonRenderSnapshot,
 } from './firstPersonRenderer'
 import type { RendererPort } from './diagnosticRenderer'
+
+const PIXEL_BUDGET = PRESENTATION_BALANCED_V1_PROFILE.render.backingBufferPixelBudget
 
 function makeRenderer(): RendererPort {
   return {
@@ -70,6 +75,34 @@ afterEach(() => {
 })
 
 describe('createFirstPersonRenderer', () => {
+  it('uses the standard WebGL power preference and resolves Retina/4K DPR from a pixel budget', () => {
+    expect(DEFAULT_WEBGL_POWER_PREFERENCE).toBe('default')
+    expect(resolvePixelBudgetDevicePixelRatio({
+      cssWidth: 960,
+      cssHeight: 540,
+      devicePixelRatio: 3,
+      pixelBudget: PIXEL_BUDGET,
+    })).toBe(2)
+    expect(resolvePixelBudgetDevicePixelRatio({
+      cssWidth: 1440,
+      cssHeight: 900,
+      devicePixelRatio: 2,
+      pixelBudget: PIXEL_BUDGET,
+    })).toBeCloseTo(Math.sqrt(1.6))
+    expect(resolvePixelBudgetDevicePixelRatio({
+      cssWidth: 3840,
+      cssHeight: 2160,
+      devicePixelRatio: 2,
+      pixelBudget: PIXEL_BUDGET,
+    })).toBe(0.5)
+    expect(() => resolvePixelBudgetDevicePixelRatio({
+      cssWidth: 0,
+      cssHeight: 1080,
+      devicePixelRatio: 1,
+      pixelBudget: PIXEL_BUDGET,
+    })).toThrow(/cssWidth/)
+  })
+
   it('accepts the playable snapshot through presentation-only structural boundaries', () => {
     expectTypeOf<PlayableSimulationSnapshot>().toMatchTypeOf<FirstPersonRenderSnapshot>()
     expectTypeOf<PlayableSimulationSnapshot>().toMatchTypeOf<GameplayUiSourceSnapshot>()
@@ -83,6 +116,7 @@ describe('createFirstPersonRenderer', () => {
       arena: DIAGNOSTIC_ARENA,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
       rendererFactory: () => rendererPort,
       devicePixelRatio: () => 3,
     })
@@ -127,6 +161,7 @@ describe('createFirstPersonRenderer', () => {
       arena: DIAGNOSTIC_ARENA,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
       rendererFactory: () => rendererPort,
       resizeObserverFactory: (onResize) => {
         notifyResize = onResize
@@ -134,6 +169,7 @@ describe('createFirstPersonRenderer', () => {
       },
     })
 
+    adapter.render(snapshot())
     vi.mocked(container.getBoundingClientRect).mockReturnValue({
       width: 800,
       height: 400,
@@ -149,7 +185,8 @@ describe('createFirstPersonRenderer', () => {
     adapter.render(snapshot())
 
     expect(rendererPort.setSize).toHaveBeenLastCalledWith(800, 400, false)
-    const camera = vi.mocked(rendererPort.render).mock.calls[0]![1] as THREE.PerspectiveCamera
+    expect(rendererPort.render).toHaveBeenCalledTimes(2)
+    const camera = vi.mocked(rendererPort.render).mock.calls[1]![1] as THREE.PerspectiveCamera
     expect(camera.aspect).toBe(2)
     expect(camera.fov).toBe(PROTOTYPE_V1_PROFILE.rules.camera.fieldOfViewDegrees)
     adapter.dispose()
@@ -164,6 +201,7 @@ describe('createFirstPersonRenderer', () => {
       arena: DIAGNOSTIC_ARENA,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
       rendererFactory: () => rendererPort,
     })
     const destroyedTargetId = COMBAT_SLICE_SCENARIO_V1.targets[0]!.semanticId
@@ -216,6 +254,7 @@ describe('createFirstPersonRenderer', () => {
       arena: DIAGNOSTIC_ARENA,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
       rendererFactory: () => rendererPort,
       resizeObserverFactory: () => observer,
     })
@@ -231,6 +270,72 @@ describe('createFirstPersonRenderer', () => {
     expect(rendererPort.dispose).toHaveBeenCalledTimes(1)
     expect(rendererPort.forceContextLoss).toHaveBeenCalledTimes(1)
     adapter.render(snapshot())
+    adapter.resize()
     expect(rendererPort.render).not.toHaveBeenCalled()
+  })
+
+  it('submits only new ticks or one explicit resize invalidation, including while paused', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const onWebGlSubmission = vi.fn()
+    let notifyResize: () => void = () => undefined
+    const adapter = createFirstPersonRenderer({
+      container,
+      arena: DIAGNOSTIC_ARENA,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      onWebGlSubmission,
+      rendererFactory: () => rendererPort,
+      resizeObserverFactory: (onResize) => {
+        notifyResize = onResize
+        return { observe: vi.fn(), disconnect: vi.fn() }
+      },
+    })
+
+    expect(rendererPort.render).not.toHaveBeenCalled()
+    adapter.render(snapshot({ tick: 8 }))
+    adapter.render(snapshot({ tick: 8 }))
+    adapter.render(snapshot({ tick: 8 }))
+    expect(rendererPort.render).toHaveBeenCalledTimes(1)
+
+    notifyResize()
+    expect(rendererPort.render).toHaveBeenCalledTimes(2)
+    adapter.render(snapshot({ tick: 8 }))
+    expect(rendererPort.render).toHaveBeenCalledTimes(2)
+
+    adapter.render(snapshot({ tick: 9 }))
+    adapter.render(snapshot({ tick: 9 }))
+    expect(rendererPort.render).toHaveBeenCalledTimes(3)
+    expect(onWebGlSubmission).toHaveBeenCalledTimes(3)
+  })
+
+  it('preserves rewind cleanup while suppressing duplicate rewind submissions', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({
+      container,
+      arena: DIAGNOSTIC_ARENA,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => rendererPort,
+    })
+    adapter.render(snapshot({
+      tick: 8,
+      events: [{
+        eventId: 'impact-before-rewind',
+        tick: 8,
+        kind: 'shotgun-impact',
+        position: { x: 0, y: 1, z: 0 },
+      }],
+    }))
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    expect(scene.getObjectByName('presentation:impact:impact-before-rewind')).toBeDefined()
+
+    adapter.render(snapshot({ tick: 3 }))
+    adapter.render(snapshot({ tick: 3 }))
+    expect(scene.getObjectByName('presentation:impact:impact-before-rewind')).toBeUndefined()
+    expect(rendererPort.render).toHaveBeenCalledTimes(2)
   })
 })

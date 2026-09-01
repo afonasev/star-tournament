@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 
 import type { ArenaBoxSurface, ArenaDefinition } from '../arena/arenaDefinition'
+import type { RendererInfoSample } from '../performance'
 import type { ValidatedGameDesignProfile } from '../profiles/gameDesignProfile'
 import type {
   CombatSliceScenario,
@@ -9,13 +10,39 @@ import type {
   TargetHitVolume,
 } from '../scenario'
 import {
-  MAX_DEVICE_PIXEL_RATIO,
   WebGlUnavailableError,
   type ElementResizeObserver,
   type RendererPort,
 } from './diagnosticRenderer'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
+export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
+
+export interface PixelBudgetDevicePixelRatioOptions {
+  readonly cssWidth: number
+  readonly cssHeight: number
+  readonly devicePixelRatio: number
+  readonly pixelBudget: number
+}
+
+export function resolvePixelBudgetDevicePixelRatio({
+  cssWidth,
+  cssHeight,
+  devicePixelRatio,
+  pixelBudget,
+}: PixelBudgetDevicePixelRatioOptions): number {
+  for (const [name, value] of Object.entries({
+    cssWidth,
+    cssHeight,
+    devicePixelRatio,
+    pixelBudget,
+  })) {
+    if (!Number.isFinite(value) || value <= 0) {
+      throw new RangeError(`Pixel budget ${name} must be greater than zero`)
+    }
+  }
+  return Math.min(devicePixelRatio, Math.sqrt(pixelBudget / (cssWidth * cssHeight)))
+}
 
 export interface FirstPersonRenderPlayer {
   readonly position: ScenarioVector3
@@ -88,6 +115,8 @@ export interface FirstPersonRendererOptions {
   readonly arena: ArenaDefinition
   readonly scenario: CombatSliceScenario
   readonly profile: ValidatedGameDesignProfile
+  readonly pixelBudget: number
+  readonly onWebGlSubmission?: (rendererInfo?: RendererInfoSample) => void
   readonly rendererFactory?: () => RendererPort
   readonly devicePixelRatio?: () => number
   readonly resizeObserverFactory?: (
@@ -116,7 +145,10 @@ const materialColors: Record<ArenaBoxSurface['material'], number> = {
 
 function defaultRendererFactory(): RendererPort {
   try {
-    return new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
+    return new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: DEFAULT_WEBGL_POWER_PREFERENCE,
+    })
   } catch (error) {
     throw new WebGlUnavailableError(error)
   }
@@ -230,6 +262,8 @@ export function createFirstPersonRenderer({
   arena,
   scenario,
   profile,
+  pixelBudget,
+  onWebGlSubmission,
   rendererFactory = defaultRendererFactory,
   devicePixelRatio = () => window.devicePixelRatio || 1,
   resizeObserverFactory = defaultResizeObserverFactory,
@@ -299,7 +333,9 @@ export function createFirstPersonRenderer({
   const processedEventIds = new Set<string>()
   const transientByEventId = new Map<string, TransientMesh>()
   let muzzleVisibleThroughTick = -1
-  let lastRenderedTick = -1
+  let lastSubmittedTick: number | undefined
+  let lastSnapshot: FirstPersonRenderSnapshot | undefined
+  let presentationInvalidated = true
 
   const canvas = renderer.domElement
   canvas.dataset.arenaId = arena.id
@@ -317,13 +353,20 @@ export function createFirstPersonRenderer({
     const bounds = container.getBoundingClientRect()
     const width = Math.max(1, Math.round(bounds.width || container.clientWidth || 1))
     const height = Math.max(1, Math.round(bounds.height || container.clientHeight || 1))
-    renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio(), 1), MAX_DEVICE_PIXEL_RATIO))
+    renderer.setPixelRatio(resolvePixelBudgetDevicePixelRatio({
+      cssWidth: width,
+      cssHeight: height,
+      devicePixelRatio: devicePixelRatio(),
+      pixelBudget,
+    }))
     renderer.setSize(width, height, false)
     renderer.setViewport(0, 0, width, height)
     renderer.setScissor(0, 0, width, height)
     renderer.setScissorTest(true)
     camera.aspect = width / height
     camera.updateProjectionMatrix()
+    presentationInvalidated = true
+    if (lastSnapshot !== undefined) submit(lastSnapshot)
   }
 
   function removeExpiredTransientMeshes(tick: number): void {
@@ -377,15 +420,13 @@ export function createFirstPersonRenderer({
     }
   }
 
-  const render = (snapshot: FirstPersonRenderSnapshot) => {
-    if (disposed) return
-    if (snapshot.tick < lastRenderedTick) {
+  function submit(snapshot: FirstPersonRenderSnapshot): void {
+    if (snapshot.tick < (lastSubmittedTick ?? -1)) {
       for (const transient of transientByEventId.values()) scene.remove(transient.mesh)
       transientByEventId.clear()
       processedEventIds.clear()
       muzzleVisibleThroughTick = -1
     }
-    lastRenderedTick = snapshot.tick
     camera.position.set(
       snapshot.player.position.x,
       snapshot.player.position.y + profile.rules.player.eyeHeight,
@@ -414,6 +455,23 @@ export function createFirstPersonRenderer({
     removeExpiredTransientMeshes(snapshot.tick)
     muzzleFlash.visible = snapshot.tick <= muzzleVisibleThroughTick
     renderer.render(scene, camera)
+    const info = renderer.info
+    onWebGlSubmission?.(info === undefined ? undefined : {
+      drawCalls: info.render.calls,
+      triangles: info.render.triangles,
+      geometries: info.memory.geometries,
+      textures: info.memory.textures,
+      shaderPrograms: info.programs?.length ?? 0,
+    })
+    lastSubmittedTick = snapshot.tick
+    presentationInvalidated = false
+  }
+
+  const render = (snapshot: FirstPersonRenderSnapshot) => {
+    if (disposed) return
+    lastSnapshot = snapshot
+    if (!presentationInvalidated && snapshot.tick === lastSubmittedTick) return
+    submit(snapshot)
   }
 
   let resizeObserver: ElementResizeObserver | undefined
@@ -428,6 +486,7 @@ export function createFirstPersonRenderer({
     resizeObserver?.disconnect()
     transientByEventId.clear()
     processedEventIds.clear()
+    lastSnapshot = undefined
     geometries.forEach((geometry) => geometry.dispose())
     materials.forEach((material) => material.dispose())
     renderer.dispose()

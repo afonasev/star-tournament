@@ -33,6 +33,15 @@
 
 - [x] 5.1 Выполнить `npm run typecheck`, `npm test`, `npm run build`, architecture audits, `git diff --check` и `openspec validate add-first-person-combat-slice --strict`; сохранить pass/fail и bundle/performance warnings без маскировки.
 - [x] 5.2 Запустить dev server из change worktree, получить фактический Vite URL и подтвердить `200 OK` HTTP-запросом.
-- [ ] 5.3 Провести обязательный in-app Browser playtest: click-to-lock, physical WASD/strafe, mouse look, jump/landing, fire/ammo, hit/destroy, lock loss/resume, resize, default/debug HUD и console; сохранить screenshots и state/DOM/canvas evidence, не подменяя physical input одними synthetic tests.
+- [x] 5.3 Провести обязательный in-app Browser playtest: click-to-lock, physical WASD/strafe, mouse look, jump/landing, fire/ammo, hit/destroy, lock loss/resume, resize, default/debug HUD и console; сохранить screenshots и state/DOM/canvas evidence, не подменяя physical input одними synthetic tests.
 - [x] 5.4 По фактическому browser outcome обновить `verification.md`, `GAME_SPEC` §§2–3, 5–8, §10 и журнал; явно отметить single-seat/mannequin ограничения и не заявлять готовность gamepad/split-screen/bots/match/network.
 - [x] 5.5 После outcome-правок повторить automated checks, strict validation и browser smoke; проверить согласованность proposal/specs/design/tasks перед одним change-коммитом.
+
+## 6. Performance и power regression gate
+
+- [x] 6.1 Добавить immutable `presentation-balanced-v1` и descriptor registry для backing-buffer pixel budget и maximum HUD publication cadence; проверить path/group/label/description/unit/minimum/maximum/step, range/step validation, stable identity и отсутствие presentation profile в playable snapshot/replay/hash unit-тестами.
+- [x] 6.2 Реализовать pixel-budget resolution, стандартный WebGL power preference и render-on-new-tick/explicit-invalidation lifecycle; проверить Retina/4K scale cases, отсутствие duplicate WebGL submissions, ровно один redraw после paused resize, hidden/pause zero-work и dispose component/integration-тестами.
+- [x] 6.3 Убрать per-tick React publication, использовать profile-defined periodic cadence и immediate lifecycle/error publications; проверить не более shipped budget при running state, отсутствие periodic commits на pause/hidden и bounded health/ammo/feedback latency integration-тестами.
+- [x] 6.4 Добавить presentation-only performance probe и versioned `performance-reference-v1` для pause, running-idle, movement/jump и combat burst; проверить simulation/WebGL/HUD counters, timings, renderer info, unavailable optional metrics и неизменность snapshot/replay/hash automated-тестами.
+- [x] 6.5 Добавить `npm run perf:browser` и `docs/PERFORMANCE_GATES.md` с production-preview protocol, trigger/exemption matrix, hard/provisional budgets, environment evidence, screenshots и 10-minute thermal soak; проверить машинно-читаемый pass/fail отчёт и документацию тестом/CLI smoke.
+- [x] 6.6 Выполнить typecheck/tests/build/architecture audit/diff check/strict OpenSpec validation, затем production-preview browser performance прогон и default/debug/performance screenshots; обновить `verification.md`, `GAME_SPEC` §8/§10 и журнал фактическими результатами, не подменяя оставшийся physical input gate synthetic driver.
