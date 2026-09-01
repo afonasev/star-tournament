@@ -1,0 +1,237 @@
+import { describe, expect, it } from 'vitest'
+
+import {
+  GAME_DESIGN_PROFILE_DESCRIPTORS,
+  PROTOTYPE_V1_PROFILE,
+  canonicalProfileJson,
+  computeProfileContentHash,
+  validateGameDesignProfile,
+  type GameDesignProfile,
+} from './gameDesignProfile'
+
+function cloneProfile(): GameDesignProfile {
+  return JSON.parse(JSON.stringify(PROTOTYPE_V1_PROFILE)) as GameDesignProfile
+}
+
+function collectNumericPaths(value: unknown, prefix: string): string[] {
+  if (typeof value === 'number') return [prefix]
+  if (Array.isArray(value)) {
+    return value.flatMap((child, index) => collectNumericPaths(child, `${prefix}.${index}`))
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Object.entries(value).flatMap(([key, child]) =>
+      collectNumericPaths(child, prefix.length === 0 ? key : `${prefix}.${key}`),
+    )
+  }
+  return []
+}
+
+function reverseObjectKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(reverseObjectKeys)
+  if (typeof value !== 'object' || value === null) return value
+  return Object.fromEntries(
+    Object.entries(value)
+      .reverse()
+      .map(([key, child]) => [key, reverseObjectKeys(child)]),
+  )
+}
+
+function expectDeepFrozen(value: unknown): void {
+  if (typeof value !== 'object' || value === null) return
+  expect(Object.isFrozen(value)).toBe(true)
+  for (const child of Object.values(value)) expectDeepFrozen(child)
+}
+
+describe('prototype-v1 GameDesignProfile', () => {
+  it('contains every approved numeric prototype rule', () => {
+    expect(PROTOTYPE_V1_PROFILE).toMatchObject({
+      schemaVersion: 1,
+      id: 'prototype-v1',
+      revision: 1,
+      source: 'shipped',
+      rules: {
+        player: { startingHealth: 100 },
+        weapons: {
+          doubleBarrelShotgun: {
+            startingAmmo: 20,
+            damage: { head: 100, torso: 70, limb: 30 },
+          },
+        },
+        match: { duration: { defaultMinutes: 5, minimumMinutes: 1, maximumMinutes: 30 } },
+        scoring: {
+          assist: { windowSeconds: 5, points: 50 },
+          killChain: {
+            maximumGapSeconds: 10,
+            cumulativeTotals: [100, 300, 500, 800, 1_200],
+            postFiveIncrementPoints: 400,
+          },
+        },
+        death: { killcamSeconds: 3, corpseSeconds: 10 },
+      },
+    })
+    expect(validateGameDesignProfile(PROTOTYPE_V1_PROFILE)).toMatchObject({ ok: true })
+  })
+
+  it('has exactly one complete descriptor for every numeric rule', () => {
+    const numericPaths = collectNumericPaths(PROTOTYPE_V1_PROFILE.rules, 'rules').sort()
+    const descriptorPaths = GAME_DESIGN_PROFILE_DESCRIPTORS.map(({ path }) => path).sort()
+
+    expect(descriptorPaths).toEqual(numericPaths)
+    expect(new Set(descriptorPaths).size).toBe(descriptorPaths.length)
+    for (const descriptor of GAME_DESIGN_PROFILE_DESCRIPTORS) {
+      expect(descriptor.path).not.toHaveLength(0)
+      expect(descriptor.group).not.toHaveLength(0)
+      expect(descriptor.label).not.toHaveLength(0)
+      expect(descriptor.description).not.toHaveLength(0)
+      expect(descriptor.unit).not.toHaveLength(0)
+      expect(descriptor.minimum).toBeLessThanOrEqual(descriptor.maximum)
+      expect(descriptor.step).toBeGreaterThan(0)
+    }
+  })
+
+  it('deep-freezes shipped rules and descriptor metadata', () => {
+    expectDeepFrozen(PROTOTYPE_V1_PROFILE)
+    expectDeepFrozen(GAME_DESIGN_PROFILE_DESCRIPTORS)
+
+    const rules = PROTOTYPE_V1_PROFILE.rules as unknown as Record<string, unknown>
+    expect(Reflect.set(rules, 'player', { startingHealth: 1 })).toBe(false)
+    expect(PROTOTYPE_V1_PROFILE.rules.player.startingHealth).toBe(100)
+  })
+
+  it('returns a detached immutable snapshot for a valid local profile', () => {
+    const input = cloneProfile()
+    input.source = 'local'
+    input.revision = 2
+    input.contentHash = computeProfileContentHash(input)
+
+    const result = validateGameDesignProfile(input)
+    expect(result.ok).toBe(true)
+    if (!result.ok) throw new Error('Valid local profile was rejected')
+
+    expectDeepFrozen(result.profile)
+    expect(result.profile).not.toBe(input)
+    input.rules.player.startingHealth = 1
+    expect(result.profile.rules.player.startingHealth).toBe(100)
+    expect(Reflect.set(result.profile.rules.player, 'startingHealth', 1)).toBe(false)
+  })
+
+  it('reports stable paths for missing, range and step errors', () => {
+    const missing = cloneProfile() as unknown as { rules: { player: Record<string, unknown> } }
+    delete missing.rules.player.startingHealth
+    expect(validateGameDesignProfile(missing)).toMatchObject({
+      ok: false,
+      errors: [
+        expect.objectContaining({ code: 'MISSING_FIELD', paths: ['rules.player.startingHealth'] }),
+      ],
+    })
+
+    const outOfRange = cloneProfile()
+    outOfRange.rules.weapons.doubleBarrelShotgun.startingAmmo = 201
+    expect(validateGameDesignProfile(outOfRange)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'OUT_OF_RANGE',
+          paths: ['rules.weapons.doubleBarrelShotgun.startingAmmo'],
+        }),
+      ]),
+    })
+
+    const invalidStep = cloneProfile()
+    invalidStep.rules.scoring.assist.windowSeconds = 5.05
+    expect(validateGameDesignProfile(invalidStep)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_STEP', paths: ['rules.scoring.assist.windowSeconds'] }),
+      ]),
+    })
+  })
+
+  it('rejects fields outside the complete schema and descriptor registry', () => {
+    const extraRule = cloneProfile() as GameDesignProfile & {
+      rules: GameDesignProfile['rules'] & { hiddenModifier: number }
+    }
+    extraRule.rules.hiddenModifier = 2
+    expect(validateGameDesignProfile(extraRule)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'UNRECOGNIZED_FIELD', paths: ['rules.hiddenModifier'] }),
+      ]),
+    })
+
+    const extraTotal = cloneProfile()
+    ;(extraTotal.rules.scoring.killChain.cumulativeTotals as number[]).push(1_600)
+    expect(validateGameDesignProfile(extraTotal)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'UNRECOGNIZED_FIELD',
+          paths: ['rules.scoring.killChain.cumulativeTotals.5'],
+        }),
+      ]),
+    })
+  })
+
+  it('rejects deterministic cross-field violations with every related path', () => {
+    const invalidDuration = cloneProfile()
+    invalidDuration.rules.match.duration.defaultMinutes = 15
+    invalidDuration.rules.match.duration.maximumMinutes = 10
+    expect(validateGameDesignProfile(invalidDuration)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'MATCH_DURATION_ORDER',
+          paths: [
+            'rules.match.duration.minimumMinutes',
+            'rules.match.duration.defaultMinutes',
+            'rules.match.duration.maximumMinutes',
+          ],
+        }),
+      ]),
+    })
+
+    const invalidTotals = cloneProfile()
+    invalidTotals.rules.scoring.killChain.cumulativeTotals = [100, 300, 300, 800, 1_200]
+    expect(validateGameDesignProfile(invalidTotals)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'KILL_CHAIN_TOTALS_NOT_INCREASING',
+          paths: [
+            'rules.scoring.killChain.cumulativeTotals.0',
+            'rules.scoring.killChain.cumulativeTotals.1',
+            'rules.scoring.killChain.cumulativeTotals.2',
+            'rules.scoring.killChain.cumulativeTotals.3',
+            'rules.scoring.killChain.cumulativeTotals.4',
+          ],
+        }),
+      ]),
+    })
+  })
+
+  it('derives identity from all effective content except contentHash', () => {
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
+    expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
+      PROTOTYPE_V1_PROFILE.contentHash,
+    )
+
+    const reordered = reverseObjectKeys(PROTOTYPE_V1_PROFILE) as GameDesignProfile
+    expect(computeProfileContentHash(reordered)).toBe(PROTOTYPE_V1_PROFILE.contentHash)
+
+    const changed = cloneProfile()
+    changed.rules.player.startingHealth += 1
+    expect(computeProfileContentHash(changed)).not.toBe(PROTOTYPE_V1_PROFILE.contentHash)
+
+    const wrongHash = cloneProfile()
+    wrongHash.contentHash = 'fnv1a64-v1:0000000000000000'
+    expect(validateGameDesignProfile(wrongHash)).toMatchObject({
+      ok: false,
+      errors: [expect.objectContaining({ code: 'CONTENT_HASH_MISMATCH', paths: ['contentHash'] })],
+    })
+  })
+
+  it('has a canonical JSON representation independent of insertion order', () => {
+    const reordered = reverseObjectKeys(PROTOTYPE_V1_PROFILE) as GameDesignProfile
+    expect(canonicalProfileJson(reordered)).toBe(canonicalProfileJson(PROTOTYPE_V1_PROFILE as GameDesignProfile))
+  })
+})
