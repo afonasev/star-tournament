@@ -25,7 +25,7 @@ rules:
     - Define simulation ownership separately from rendering, HUD/UI, input, cameras, networking, and asset loading.
     - Specify controller action maps, keyboard/mouse focus and pointer-lock behavior, pause/reconnect behavior, per-seat camera policy, viewport layout, and split-screen performance budget when relevant.
     - For online features, state authority, prediction/reconciliation, serialization compatibility, disconnect/reconnect behavior, and local/online parity; do not select these without an approved GAME_SPEC decision.
-  spec:
+  specs:
     - Write testable requirements and scenarios; distinguish single-player, local multiplayer, bots, and online behavior.
     - State how gamepad reconnect/disconnect, unavailable controller slots, mouse focus, and viewport joining/leaving behave when relevant.
   tasks:
