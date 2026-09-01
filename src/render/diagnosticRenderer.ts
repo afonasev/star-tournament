@@ -116,6 +116,12 @@ export function createDiagnosticRenderer({
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = surface.id
     mesh.position.set(surface.center.x, surface.center.y, surface.center.z)
+    mesh.quaternion.set(
+      surface.orientation.x,
+      surface.orientation.y,
+      surface.orientation.z,
+      surface.orientation.w,
+    )
     scene.add(mesh)
     geometries.push(geometry)
     materials.push(material)

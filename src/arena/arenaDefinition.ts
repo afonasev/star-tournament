@@ -1,12 +1,25 @@
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const ARENA_DEFINITION_SCHEMA_VERSION = 1 as const
+export const ARENA_DEFINITION_SCHEMA_VERSION = 2 as const
+
+// A quaternion in serialized arena data must already be normalized. The
+// tolerance only absorbs ordinary floating-point authoring noise; accepting a
+// wider range would make renderer and collision backends interpret the same
+// canonical payload differently.
+export const ARENA_QUATERNION_NORMALIZATION_EPSILON = 1e-6
 
 export interface ArenaVector3 {
   x: number
   y: number
   z: number
+}
+
+export interface ArenaQuaternion {
+  x: number
+  y: number
+  z: number
+  w: number
 }
 
 export type ArenaSurfaceMaterial = 'floor' | 'wall' | 'accent'
@@ -16,6 +29,7 @@ export interface ArenaBoxSurface {
   kind: 'box'
   center: ArenaVector3
   size: ArenaVector3
+  orientation: ArenaQuaternion
   material: ArenaSurfaceMaterial
 }
 
@@ -48,6 +62,7 @@ export type ArenaValidationErrorCode =
   | 'INVALID_SURFACE_KIND'
   | 'INVALID_SURFACE_MATERIAL'
   | 'INVALID_SURFACE_SIZE'
+  | 'INVALID_ORIENTATION'
   | 'DUPLICATE_ID'
   | 'EMPTY_SURFACES'
   | 'EMPTY_SPAWN_ANCHORS'
@@ -112,6 +127,55 @@ function validateVector(
     }
   }
   return valid
+}
+
+function validateQuaternion(
+  value: unknown,
+  path: string,
+  errors: ArenaValidationError[],
+): value is ArenaQuaternion {
+  if (!isRecord(value)) {
+    errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть объектом Quaternion.` })
+    return false
+  }
+
+  validateAllowedKeys(value, ['x', 'y', 'z', 'w'], path, errors)
+
+  let valid = true
+  for (const componentName of ['x', 'y', 'z', 'w'] as const) {
+    const componentPath = `${path}.${componentName}`
+    const component = value[componentName]
+    if (component === undefined) {
+      errors.push({ code: 'MISSING_FIELD', paths: [componentPath], message: `Отсутствует ${componentPath}.` })
+      valid = false
+    } else if (typeof component !== 'number' || !Number.isFinite(component)) {
+      errors.push({
+        code: 'INVALID_NUMBER',
+        paths: [componentPath],
+        message: `${componentPath} должен быть конечным числом.`,
+      })
+      valid = false
+    }
+  }
+
+  if (!valid) return false
+
+  const quaternion = value as unknown as ArenaQuaternion
+  const squaredLength =
+    quaternion.x * quaternion.x +
+    quaternion.y * quaternion.y +
+    quaternion.z * quaternion.z +
+    quaternion.w * quaternion.w
+  if (Math.abs(squaredLength - 1) > ARENA_QUATERNION_NORMALIZATION_EPSILON) {
+    errors.push({
+      code: 'INVALID_ORIENTATION',
+      paths: [path],
+      message: `${path} должен быть нормализованным Quaternion.`,
+    })
+    return false
+  }
+
+  return true
 }
 
 function validateAllowedKeys(
@@ -221,7 +285,7 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
         errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть объектом.` })
         return
       }
-      validateAllowedKeys(surface, ['id', 'kind', 'center', 'size', 'material'], path, errors)
+      validateAllowedKeys(surface, ['id', 'kind', 'center', 'size', 'orientation', 'material'], path, errors)
       validateRequiredString(surface, 'id', `${path}.id`, errors)
       if (surface.kind !== 'box') {
         errors.push({ code: 'INVALID_SURFACE_KIND', paths: [`${path}.kind`], message: 'Поддерживается только primitive surface box.' })
@@ -235,6 +299,15 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
       }
       validateVector(surface.center, `${path}.center`, errors, false)
       validateVector(surface.size, `${path}.size`, errors, true)
+      if (surface.orientation === undefined) {
+        errors.push({
+          code: 'MISSING_FIELD',
+          paths: [`${path}.orientation`],
+          message: `Отсутствует ${path}.orientation.`,
+        })
+      } else {
+        validateQuaternion(surface.orientation, `${path}.orientation`, errors)
+      }
     })
     validateUniqueIds(value.surfaces, 'surfaces', errors)
   }

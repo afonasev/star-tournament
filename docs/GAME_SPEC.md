@@ -67,7 +67,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Один fixed-step runner принимает нормализованные action frames. Локальный матч, replay и будущий online runner являются отдельными адаптерами одной симуляции.
 - Процедурная арена сериализуется как канонический `ArenaDefinition` с seed, версией генератора и content hash; collision, navigation, spawn anchors и renderer description выводятся из одной семантической модели.
 - GLB/glTF 2.0 используется как runtime-формат 3D-ассетов через стабильные manifest-ключи.
-- Rapier рассматривается как кандидат для collision/query foundation и должен быть подтверждён отдельным детерминистическим и производительным spike до окончательного выбора.
+- Collision/query foundation использует exact `@dimforge/rapier3d-deterministic-compat@0.20.0` с compatibility identity `collision-contract-v1`. Backend загружается отдельным lazy chunk и остаётся заменяемым адаптером: статический мир детерминированно выводится из semantic-ID-sorted `ArenaDefinition`, а капсулы участников перед каждым gameplay query проецируются из сериализуемого состояния. Rapier handles и mutable world не входят в simulation snapshot и не являются gameplay authority.
 
 ## 8. Критерии качества
 
@@ -75,6 +75,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Изменения split-screen проверяются в browser playtest с тем количеством игроков и раскладкой viewport, которых касается change.
 - Автотесты и production build обязательны, но не заменяют ручную игровую проверку.
 - Детерминированный replay при одинаковых seed, профиле и action frames должен давать одинаковый state hash.
+- Reference-browser collision gate для восьми капсул включает два независимых прогона по 10 000 fixed ticks, восстановление нового мира на 5 000-м тике и observer cadence 0/1/2/4; обязательны одинаковые checkpoint/final hashes. Prototype budget: p95 не более 2,5 мс, p99 не более 4,2 мс, max не более 8,3 мс на tick.
+- Локальный `go` collision backend не доказывает cross-platform или network determinism. До сетевого режима обязательна hash-матрица на утверждённых ОС и браузерах с той же package/contract identity.
 - Процедурные арены проверяются property-based тестами на множестве seed и browser playtest; формальная валидность не считается доказательством читаемости или интересности арены.
 - Уровни сложности ботов проверяются сериями воспроизводимых матчей; статистическая сила должна возрастать без нарушения одинаковых игровых правил.
 
@@ -99,6 +101,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 | Дата | Решение |
 | --- | --- |
+| 2026-09-01 | Deterministic Rapier compat 0.20.0 получил provisional `go` как локальный collision/query backend: reference Chromium на текущем macOS host прошёл functional/lifecycle gates, три 10 000-тиковых determinism-прогона и browser budget p95 0,4 мс / p99 0,5 мс / max 1,6 мс. Backend остаётся derived adapter; cross-platform/network hash matrix не проверена и обязательна до online-режима. |
 | 2026-09-01 | Утверждён первый полный baseline `prototype-v1`: уже согласованные игровые числа и provisional безопасные диапазоны/шаги хранятся в immutable конфигурации и едином descriptor registry; последующие механики обязаны потреблять этот профиль без дублирующих констант. |
 | 2026-09-01 | Утверждён фундамент first-person прототипа: базовое Quake-подобное движение без расширенных манёвров, двухствольный hitscan-дробовик, death-only восстановление боезапаса, killcam и безопасный respawn, visual-only тела, браузерный Three.js/React DOM runtime и составная Game Design Lab на основе immutable ревизий. Числовые значения вынесены в будущий профиль `prototype-v1`. |
 | 2026-09-01 | Утверждён изолированный workflow: каждое изменение выполняется в отдельном worktree; ветка проверяется на собственном dev-стенде с подтверждённым URL; завершённые ветки вливаются в `main`, OpenSpec changes архивируются, затем деплоится актуальный `main`. |

@@ -7,4 +7,4 @@ if (!mount) {
   throw new Error('Не найден корневой элемент приложения #app')
 }
 
-bootstrapBrowserRuntime(mount)
+void bootstrapBrowserRuntime(mount)

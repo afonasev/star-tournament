@@ -10,7 +10,7 @@ import {
 } from './diagnosticRenderer'
 
 const arena = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   id: 'diagnostic-arena-v1',
   seed: 7,
   generatorVersion: 'diagnostic-v1',
@@ -20,6 +20,7 @@ const arena = {
       kind: 'box',
       center: { x: 0, y: -0.5, z: 0 },
       size: { x: 12, y: 1, z: 12 },
+      orientation: { x: 0, y: 0, z: 0, w: 1 },
       material: 'floor',
     },
   ],
@@ -77,6 +78,45 @@ describe('createDiagnosticRenderer', () => {
     expect(rendererPort.setSize).toHaveBeenCalledWith(960, 540, false)
     adapter.render()
     expect(vi.mocked(rendererPort.render)).toHaveBeenCalledTimes(1)
+    const renderedScene = vi.mocked(rendererPort.render).mock.calls[0]?.[0] as THREE.Scene
+    const floorMesh = renderedScene.getObjectByName('floor') as THREE.Mesh
+    expect(floorMesh.quaternion.toArray()).toEqual([0, 0, 0, 1])
+  })
+
+  it('projects serialized surface orientation without breaking arena identity wiring', () => {
+    const container = document.createElement('div')
+    const rendererPort = makeRenderer()
+    const rotatedArena: ArenaDefinition = {
+      ...arena,
+      surfaces: [
+        {
+          ...arena.surfaces[0],
+          orientation: { x: 0, y: Math.SQRT1_2, z: 0, w: Math.SQRT1_2 },
+        },
+      ],
+    }
+    const adapter = createDiagnosticRenderer({
+      container,
+      arena: rotatedArena,
+      rendererFactory: () => rendererPort,
+    })
+
+    adapter.render()
+
+    const renderedScene = vi.mocked(rendererPort.render).mock.calls[0]?.[0] as THREE.Scene
+    const floorMesh = renderedScene.getObjectByName('floor') as THREE.Mesh
+    expect(floorMesh.quaternion.toArray()).toEqual([
+      0,
+      Math.SQRT1_2,
+      0,
+      Math.SQRT1_2,
+    ])
+    expect(container.querySelector('canvas')).toHaveProperty('dataset.arenaId', rotatedArena.id)
+    expect(container.querySelector('canvas')).toHaveProperty(
+      'dataset.arenaHash',
+      rotatedArena.contentHash,
+    )
+    adapter.dispose()
   })
 
   it('removes resize behavior, canvas and renderer resources on dispose', () => {

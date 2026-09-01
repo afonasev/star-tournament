@@ -17,6 +17,7 @@ function shortHash(hash: string): string {
 
 export function DiagnosticOverlay({ snapshot }: DiagnosticOverlayProps) {
   const isError = snapshot.status === 'error'
+  const benchmark = snapshot.collision.benchmark
 
   return (
     <main className="runtime-shell">
@@ -30,9 +31,9 @@ export function DiagnosticOverlay({ snapshot }: DiagnosticOverlayProps) {
 
       {isError ? (
         <section className="error-panel" role="alert">
-          <p className="eyebrow">WEBGL НЕДОСТУПЕН</p>
-          <h1>Не удалось запустить 3D-сцену</h1>
-          <p>{snapshot.errorMessage ?? 'Браузер не предоставил совместимый WebGL-контекст.'}</p>
+          <p className="eyebrow">RUNTIME НЕДОСТУПЕН</p>
+          <h1>Не удалось запустить прототип</h1>
+          <p>{snapshot.errorMessage ?? 'Браузер не предоставил необходимые runtime-возможности.'}</p>
           <p className="error-panel__hint">
             Проверьте аппаратное ускорение браузера и перезагрузите страницу.
           </p>
@@ -62,6 +63,28 @@ export function DiagnosticOverlay({ snapshot }: DiagnosticOverlayProps) {
               <dd>{snapshot.arenaId}</dd>
               <dd className="hash" title={snapshot.arenaHash}>{shortHash(snapshot.arenaHash)}</dd>
             </div>
+            <div>
+              <dt>Collision</dt>
+              <dd>{snapshot.collision.status} · {snapshot.collision.fixtureStatus}</dd>
+              <dd className="hash" title={snapshot.collision.identity}>{snapshot.collision.identity}</dd>
+              {snapshot.collision.checkpointHash && (
+                <dd className="hash" title={snapshot.collision.checkpointHash}>
+                  {shortHash(snapshot.collision.checkpointHash)}
+                </dd>
+              )}
+              {snapshot.collision.initLatencyMilliseconds && (
+                <dd className="hash">
+                  init {snapshot.collision.initLatencyMilliseconds.cold.toFixed(2)} / warm {snapshot.collision.initLatencyMilliseconds.warm.toFixed(2)} ms
+                </dd>
+              )}
+            </div>
+            {benchmark && (
+              <div>
+                <dt>Collision p95 / p99 / max</dt>
+                <dd>{benchmark.p95Milliseconds.toFixed(3)} / {benchmark.p99Milliseconds.toFixed(3)} / {benchmark.maxMilliseconds.toFixed(3)} ms</dd>
+                <dd className="hash">{benchmark.sampleCount.toLocaleString('ru-RU')} samples</dd>
+              </div>
+            )}
           </dl>
         </section>
       )}

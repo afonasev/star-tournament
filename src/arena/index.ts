@@ -1,5 +1,6 @@
 export {
   ARENA_DEFINITION_SCHEMA_VERSION,
+  ARENA_QUATERNION_NORMALIZATION_EPSILON,
   arenaContentPayload,
   canonicalArenaJson,
   computeArenaContentHash,
@@ -12,6 +13,7 @@ export type {
   ArenaDefinition,
   ArenaDefinitionPayload,
   ArenaPrimitiveSurface,
+  ArenaQuaternion,
   ArenaSpawnAnchor,
   ArenaSurfaceMaterial,
   ArenaValidationError,

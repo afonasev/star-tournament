@@ -19,6 +19,25 @@ const FORBIDDEN_GLOBALS = [
   /\bDate\.now\b/u,
 ]
 
+const COLLISION_FORBIDDEN_IMPORTS = [
+  /(?:from\s+|import\s*\(|require\s*\(|import\s+)['"]three(?:\/[^'"]*)?['"]/u,
+  /(?:from\s+|import\s*\(|require\s*\(|import\s+)['"]react(?:-dom)?(?:\/[^'"]*)?['"]/u,
+  /(?:from\s+|import\s*\(|require\s*\(|import\s+)['"][^'"]*(?:\/render|\/ui|\/input)(?:\/[^'"]*)?['"]/u,
+]
+
+const COLLISION_FORBIDDEN_GLOBALS = [
+  /\bwindow\b/u,
+  /\bdocument\b/u,
+  /\bnavigator\b/u,
+  /\brequestAnimationFrame\b/u,
+]
+
+const SIMULATION_FORBIDDEN_BACKEND_TYPES = [
+  /(?:from\s+|import\s+)['"]@dimforge\/rapier3d[^'"]*['"]/u,
+  /\b(?:Collider|RigidBody|World|KinematicCharacterController)Handle\b/u,
+  /\bRAPIER\.(?:Collider|RigidBody|World|KinematicCharacterController)\b/u,
+]
+
 export function findSimulationBoundaryViolations(
   source: string,
 ): readonly string[] {
@@ -37,6 +56,18 @@ export function findSimulationBoundaryViolations(
   }
 
   return violations
+}
+
+export function findCollisionBoundaryViolations(source: string): readonly string[] {
+  return [...COLLISION_FORBIDDEN_IMPORTS, ...COLLISION_FORBIDDEN_GLOBALS]
+    .filter((pattern) => pattern.test(source))
+    .map((pattern) => `forbidden collision dependency: ${pattern.source}`)
+}
+
+export function findSimulationBackendLeaks(source: string): readonly string[] {
+  return SIMULATION_FORBIDDEN_BACKEND_TYPES
+    .filter((pattern) => pattern.test(source))
+    .map((pattern) => `backend type leaked into simulation: ${pattern.source}`)
 }
 
 function listTypeScriptFiles(directory: string): readonly string[] {
@@ -71,6 +102,55 @@ describe('граница simulation package', () => {
     const simulationDirectory = join(currentDirectory, '../simulation')
     const violations = listTypeScriptFiles(simulationDirectory).flatMap((path) =>
       findSimulationBoundaryViolations(readFileSync(path, 'utf8')).map(
+        (violation) => `${path}: ${violation}`,
+      ),
+    )
+
+    expect(violations).toEqual([])
+  })
+
+  it('не допускает backend handles и Rapier imports в simulation contracts', () => {
+    const currentDirectory = dirname(fileURLToPath(import.meta.url))
+    const simulationDirectory = join(currentDirectory, '../simulation')
+    const violations = listTypeScriptFiles(simulationDirectory).flatMap((path) =>
+      findSimulationBackendLeaks(readFileSync(path, 'utf8')).map(
+        (violation) => `${path}: ${violation}`,
+      ),
+    )
+
+    expect(violations).toEqual([])
+  })
+})
+
+describe('граница collision package', () => {
+  it('допускает data-only и backend imports без presentation/input зависимостей', () => {
+    expect(
+      findCollisionBoundaryViolations(
+        "import type { ArenaDefinition } from '../arena'; import('@dimforge/rapier3d-deterministic-compat')",
+      ),
+    ).toEqual([])
+  })
+
+  it('обнаруживает renderer, React, DOM и input dependencies в fixtures', () => {
+    const fixtures = [
+      "import * as THREE from 'three'",
+      "import React from 'react'",
+      "import { frame } from '../input/actionFrame'",
+      "import { view } from '../render/diagnosticRenderer'",
+      'document.createElement(\'canvas\')',
+      'window.addEventListener(\'resize\', handler)',
+    ]
+
+    for (const fixture of fixtures) {
+      expect(findCollisionBoundaryViolations(fixture)).not.toHaveLength(0)
+    }
+  })
+
+  it('не допускает presentation, DOM и input dependencies в collision production files', () => {
+    const currentDirectory = dirname(fileURLToPath(import.meta.url))
+    const collisionDirectory = join(currentDirectory, '../collision')
+    const violations = listTypeScriptFiles(collisionDirectory).flatMap((path) =>
+      findCollisionBoundaryViolations(readFileSync(path, 'utf8')).map(
         (violation) => `${path}: ${violation}`,
       ),
     )

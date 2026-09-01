@@ -28,14 +28,21 @@ function expectPureSerializableData(value: unknown): void {
 describe('diagnostic ArenaDefinition', () => {
   it('is valid versioned pure data with stable identity', () => {
     expect(DIAGNOSTIC_ARENA).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       id: 'diagnostic-arena',
       seed: 0x53544152,
       generatorVersion: 'diagnostic-v1',
     })
     expect(DIAGNOSTIC_ARENA.surfaces.length).toBeGreaterThan(0)
+    expect(DIAGNOSTIC_ARENA.surfaces.every((surface) =>
+      surface.orientation.x === 0 &&
+      surface.orientation.y === 0 &&
+      surface.orientation.z === 0 &&
+      surface.orientation.w === 1,
+    )).toBe(true)
     expect(DIAGNOSTIC_ARENA.spawnAnchors).toHaveLength(4)
     expect(DIAGNOSTIC_ARENA.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
+    expect(DIAGNOSTIC_ARENA.contentHash).toBe('fnv1a64-v1:f9a2e251dc0be63d')
     expect(validateArenaDefinition(DIAGNOSTIC_ARENA)).toMatchObject({ ok: true })
     expect(computeArenaContentHash(DIAGNOSTIC_ARENA as ArenaDefinition)).toBe(
       DIAGNOSTIC_ARENA.contentHash,
@@ -69,8 +76,42 @@ describe('diagnostic ArenaDefinition', () => {
 
   it('changes identity when semantic arena data changes', () => {
     const changed = cloneArena()
-    changed.surfaces[0]!.size.x += 1
+    changed.surfaces[0]!.orientation = {
+      x: 0,
+      y: Math.SQRT1_2,
+      z: 0,
+      w: Math.SQRT1_2,
+    }
     expect(computeArenaContentHash(changed)).not.toBe(DIAGNOSTIC_ARENA.contentHash)
+  })
+
+  it('requires a finite normalized orientation quaternion on every primitive', () => {
+    const missing = cloneArena()
+    delete (missing.surfaces[0] as unknown as { orientation?: unknown }).orientation
+    expect(validateArenaDefinition(missing)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'MISSING_FIELD', paths: ['surfaces.0.orientation'] }),
+      ]),
+    })
+
+    const nonFinite = cloneArena()
+    nonFinite.surfaces[0]!.orientation.w = Number.POSITIVE_INFINITY
+    expect(validateArenaDefinition(nonFinite)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_NUMBER', paths: ['surfaces.0.orientation.w'] }),
+      ]),
+    })
+
+    const notNormalized = cloneArena()
+    notNormalized.surfaces[0]!.orientation = { x: 0, y: 0, z: 0, w: 0.5 }
+    expect(validateArenaDefinition(notNormalized)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_ORIENTATION', paths: ['surfaces.0.orientation'] }),
+      ]),
+    })
   })
 
   it('rejects invalid geometry, duplicate ids and stale hashes', () => {

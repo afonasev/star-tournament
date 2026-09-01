@@ -5,18 +5,23 @@ import {
   type ArenaBoxSurface,
   type ArenaDefinition,
   type ArenaDefinitionPayload,
+  type ArenaQuaternion,
   type ArenaSpawnAnchor,
 } from './arenaDefinition'
 
+function identityOrientation(): ArenaQuaternion {
+  return { x: 0, y: 0, z: 0, w: 1 }
+}
+
 const surfaces: ArenaBoxSurface[] = [
-  { id: 'floor', kind: 'box', center: { x: 0, y: -0.5, z: 0 }, size: { x: 28, y: 1, z: 20 }, material: 'floor' },
-  { id: 'wall-north', kind: 'box', center: { x: 0, y: 2, z: -10.5 }, size: { x: 28, y: 5, z: 1 }, material: 'wall' },
-  { id: 'wall-south', kind: 'box', center: { x: 0, y: 2, z: 10.5 }, size: { x: 28, y: 5, z: 1 }, material: 'wall' },
-  { id: 'wall-west', kind: 'box', center: { x: -14.5, y: 2, z: 0 }, size: { x: 1, y: 5, z: 22 }, material: 'wall' },
-  { id: 'wall-east', kind: 'box', center: { x: 14.5, y: 2, z: 0 }, size: { x: 1, y: 5, z: 22 }, material: 'wall' },
-  { id: 'cover-center', kind: 'box', center: { x: 0, y: 1, z: 0 }, size: { x: 3, y: 2, z: 3 }, material: 'accent' },
-  { id: 'cover-west', kind: 'box', center: { x: -7, y: 0.75, z: 3 }, size: { x: 3, y: 1.5, z: 5 }, material: 'accent' },
-  { id: 'cover-east', kind: 'box', center: { x: 7, y: 0.75, z: -3 }, size: { x: 3, y: 1.5, z: 5 }, material: 'accent' },
+  { id: 'floor', kind: 'box', center: { x: 0, y: -0.5, z: 0 }, size: { x: 28, y: 1, z: 20 }, orientation: identityOrientation(), material: 'floor' },
+  { id: 'wall-north', kind: 'box', center: { x: 0, y: 2, z: -10.5 }, size: { x: 28, y: 5, z: 1 }, orientation: identityOrientation(), material: 'wall' },
+  { id: 'wall-south', kind: 'box', center: { x: 0, y: 2, z: 10.5 }, size: { x: 28, y: 5, z: 1 }, orientation: identityOrientation(), material: 'wall' },
+  { id: 'wall-west', kind: 'box', center: { x: -14.5, y: 2, z: 0 }, size: { x: 1, y: 5, z: 22 }, orientation: identityOrientation(), material: 'wall' },
+  { id: 'wall-east', kind: 'box', center: { x: 14.5, y: 2, z: 0 }, size: { x: 1, y: 5, z: 22 }, orientation: identityOrientation(), material: 'wall' },
+  { id: 'cover-center', kind: 'box', center: { x: 0, y: 1, z: 0 }, size: { x: 3, y: 2, z: 3 }, orientation: identityOrientation(), material: 'accent' },
+  { id: 'cover-west', kind: 'box', center: { x: -7, y: 0.75, z: 3 }, size: { x: 3, y: 1.5, z: 5 }, orientation: identityOrientation(), material: 'accent' },
+  { id: 'cover-east', kind: 'box', center: { x: 7, y: 0.75, z: -3 }, size: { x: 3, y: 1.5, z: 5 }, orientation: identityOrientation(), material: 'accent' },
 ]
 
 const spawnAnchors: ArenaSpawnAnchor[] = [
@@ -42,6 +47,7 @@ function freezeVector(vector: { x: number; y: number; z: number }): void {
 for (const surface of surfaces) {
   freezeVector(surface.center)
   freezeVector(surface.size)
+  Object.freeze(surface.orientation)
   Object.freeze(surface)
 }
 for (const spawnAnchor of spawnAnchors) {

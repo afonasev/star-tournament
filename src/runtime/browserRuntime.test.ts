@@ -55,6 +55,7 @@ function createRuntime(scheduler: ManualScheduler, disposePresentation = vi.fn()
       profileHash: 'profile-hash',
       arenaId: 'diagnostic-arena',
       arenaHash: 'arena-hash',
+      collision: { status: 'ready', identity: 'collision-test', fixtureId: 'fixture', fixtureStatus: 'passed' },
     }),
     publishUiSnapshot: (snapshot) => statuses.push(snapshot.status),
     disposePresentation,
@@ -148,6 +149,7 @@ describe('BrowserRuntime', () => {
         profileHash: 'profile-hash',
         arenaId: 'arena',
         arenaHash: 'arena-hash',
+        collision: { status: 'ready', identity: 'collision-test', fixtureId: 'fixture', fixtureStatus: 'passed' },
       }),
       publishUiSnapshot: () => undefined,
     })
@@ -175,6 +177,7 @@ describe('BrowserRuntime', () => {
         profileHash: 'profile-hash',
         arenaId: 'arena',
         arenaHash: 'arena-hash',
+        collision: { status: 'ready', identity: 'collision-test', fixtureId: 'fixture', fixtureStatus: 'passed' },
       }),
       publishUiSnapshot: (snapshot) => {
         published = snapshot
