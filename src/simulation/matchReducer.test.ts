@@ -154,6 +154,8 @@ describe('deterministic match reducer', () => {
       schemaVersion: DEFAULT_MATCH_CONFIGURATION.schemaVersion,
       id: DEFAULT_MATCH_CONFIGURATION.id,
       mode: 'teams',
+      arenaSize: DEFAULT_MATCH_CONFIGURATION.arenaSize,
+      arenaSeed: DEFAULT_MATCH_CONFIGURATION.arenaSeed,
       durationMinutes: DEFAULT_MATCH_CONFIGURATION.durationMinutes,
       scoreTargetPoints: 1_000,
       participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({
@@ -174,6 +176,8 @@ describe('deterministic match reducer', () => {
       schemaVersion: DEFAULT_MATCH_CONFIGURATION.schemaVersion,
       id: DEFAULT_MATCH_CONFIGURATION.id,
       mode: 'ffa',
+      arenaSize: DEFAULT_MATCH_CONFIGURATION.arenaSize,
+      arenaSeed: DEFAULT_MATCH_CONFIGURATION.arenaSeed,
       durationMinutes: DEFAULT_MATCH_CONFIGURATION.durationMinutes,
       scoreTargetPoints: 1_000,
       participants: DEFAULT_MATCH_CONFIGURATION.participants,

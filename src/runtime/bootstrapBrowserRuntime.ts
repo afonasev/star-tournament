@@ -1,12 +1,11 @@
 import { collisionCheckpointHash, COLLISION_ERROR_CODES, RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, type CollisionCapsuleProjection, type CollisionCheckpointPayload } from '../collision/contracts'
 import { initializeCollisionBackend } from '../collision/backendInitialization'
-import { COLLISION_FIXTURE_ARENA, COLLISION_FIXTURE_ID } from '../collision/fixture'
+import { requireProceduralArena, type ArenaDefinition } from '../arena'
 import {
   createRapierCollisionWorld,
   type CollisionControllerConfiguration,
 } from '../collision/rapierWorld'
 import { runCollisionBrowserBenchmark } from '../collision/workload'
-import type { ContentHash } from '../core/canonical'
 import {
   KeyboardMouseAdapter,
   type KeyboardMouseAdapterOptions,
@@ -49,6 +48,7 @@ import {
   playableSimulationSnapshotHash,
   PLAYABLE_PLAYER_ID,
   SIMULATION_TICKS_PER_SECOND,
+  livingParticipantCollisionCapsules,
   stepPlayableSimulation,
   localParticipant,
   stationaryParticipants,
@@ -105,6 +105,9 @@ export interface BrowserPerformanceReport {
     readonly backingBufferHeight: number
     readonly presentationProfileId: string
     readonly presentationProfileHash: string
+    readonly arenaSize: string
+    readonly arenaSeed: number
+    readonly arenaContentHash: string
   }
   readonly measurements: readonly PerformancePhaseMeasurement[]
   readonly gates: readonly HardPerformanceGateResult[]
@@ -153,10 +156,6 @@ function createShell(mount: HTMLElement): BrowserShell {
   return { playfield, uiLayer }
 }
 
-function toContentHash(hash: string): ContentHash {
-  return hash as ContentHash
-}
-
 function collisionIdentityLabel(): string {
   const identity = RUNTIME_COLLISION_COMPATIBILITY_IDENTITY
   return `${identity.contractVersion} · ${identity.backendPackage}@${identity.backendVersion}`
@@ -176,19 +175,6 @@ function controllerConfiguration(
   }
 }
 
-function playerCapsule(
-  snapshot: PlayableSimulationSnapshot,
-  profile: ValidatedGameDesignProfile,
-): CollisionCapsuleProjection {
-  const player = localParticipant(snapshot)
-  return {
-    semanticId: player.semanticId,
-    position: player.position,
-    radius: profile.rules.player.capsule.radius,
-    halfHeight: profile.rules.player.capsule.halfHeight,
-  }
-}
-
 function errorCode(error: unknown): string {
   return error !== null && typeof error === 'object' && 'code' in error
     ? String(error.code)
@@ -199,7 +185,7 @@ export interface BrowserBootstrapDependencies {
   readonly profile?: GameDesignProfile | ValidatedGameDesignProfile
   readonly presentationProfile?: PresentationProfile | ValidatedPresentationProfile
   readonly createCollisionWorld?: (
-    arena: typeof COLLISION_FIXTURE_ARENA,
+    arena: ArenaDefinition,
     capsules: readonly CollisionCapsuleProjection[],
     configuration: CollisionControllerConfiguration,
   ) => Promise<RuntimeCollisionWorld>
@@ -219,6 +205,7 @@ export interface BrowserBootstrapDependencies {
   readonly performancePhaseDurationMilliseconds?: number
   readonly locationSearch?: string
   readonly configuration?: MatchConfiguration
+  readonly arena?: ArenaDefinition
   readonly onRepeat?: () => void
   readonly onMainMenu?: () => void
 }
@@ -250,6 +237,7 @@ export async function bootstrapBrowserRuntime(
     ? profileValidation.profile
     : PROTOTYPE_V1_PROFILE
   const configuration = parseMatchConfiguration(dependencies.configuration ?? DEFAULT_MATCH_CONFIGURATION, profile)
+  const arena = dependencies.arena ?? requireProceduralArena({ size: configuration.arenaSize, seed: configuration.arenaSeed, profile })
   const presentationProfileValidation = validatePresentationProfile(
     dependencies.presentationProfile ?? PRESENTATION_BALANCED_V1_PROFILE,
   )
@@ -302,16 +290,11 @@ export async function bootstrapBrowserRuntime(
   }
 
   const initialState = createInitialPlayableSimulationSnapshot({
-    rngSeed: COLLISION_FIXTURE_ARENA.seed,
+    rngSeed: configuration.arenaSeed,
     profile,
     scenario: COMBAT_SLICE_SCENARIO_V1,
     collision: RUNTIME_COLLISION_COMPATIBILITY_IDENTITY,
-    arena: {
-      id: COLLISION_FIXTURE_ARENA.id,
-      seed: COLLISION_FIXTURE_ARENA.seed,
-      generatorVersion: COLLISION_FIXTURE_ARENA.generatorVersion,
-      contentHash: toContentHash(COLLISION_FIXTURE_ARENA.contentHash),
-    },
+    arena,
     configuration,
   })
 
@@ -321,7 +304,7 @@ export async function bootstrapBrowserRuntime(
   let collisionState: CollisionUiState = {
     status: 'loading',
     identity: collisionIdentityLabel(),
-    fixtureId: COLLISION_FIXTURE_ID,
+    fixtureId: arena.id,
     fixtureStatus: 'pending',
   }
   let collisionWorld: RuntimeCollisionWorld | undefined
@@ -402,6 +385,11 @@ export async function bootstrapBrowserRuntime(
       else void document.exitFullscreen?.()
     },
   })
+  const arenaBadge = document.createElement('output')
+  arenaBadge.className = 'arena-session-badge'
+  arenaBadge.setAttribute('aria-label', 'Текущая арена')
+  arenaBadge.textContent = `${arena.size.toUpperCase()} · SEED ${arena.seed} · ${arena.contentHash.slice(-8)}`
+  mount.append(arenaBadge)
   ui.update(projectUi(initialState, 'start'))
 
   const onPageHide = () => {
@@ -452,8 +440,8 @@ export async function bootstrapBrowserRuntime(
     await initializeBackend()
     const warm = now() - warmStart
     collisionWorld = await createCollision(
-      COLLISION_FIXTURE_ARENA,
-      [playerCapsule(initialState, profile)],
+      arena,
+      livingParticipantCollisionCapsules(initialState, profile),
       controllerConfiguration(profile),
     )
     if (disposed) {
@@ -463,7 +451,7 @@ export async function bootstrapBrowserRuntime(
     collisionState = {
       status: 'ready',
       identity: collisionIdentityLabel(),
-      fixtureId: COLLISION_FIXTURE_ID,
+      fixtureId: arena.id,
       fixtureStatus: 'passed',
       checkpointHash: collisionCheckpointHash(collisionWorld.checkpoint(0)),
       initLatencyMilliseconds: { cold, warm },
@@ -473,7 +461,7 @@ export async function bootstrapBrowserRuntime(
     collisionState = {
       status: 'error',
       identity: collisionIdentityLabel(),
-      fixtureId: COLLISION_FIXTURE_ID,
+      fixtureId: arena.id,
       fixtureStatus: 'failed',
       errorCode: code,
     }
@@ -484,7 +472,7 @@ export async function bootstrapBrowserRuntime(
   try {
     renderer = createRenderer({
       container: playfield,
-      arena: COLLISION_FIXTURE_ARENA,
+      arena,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile,
       pixelBudget: presentationProfile.render.backingBufferPixelBudget,
@@ -520,7 +508,7 @@ export async function bootstrapBrowserRuntime(
     step: (state) => {
       const frame = input!.drainActionFrame(state.tick + 1)
       const uiActions = input!.drainUiActionSnapshot?.()
-      const next = stepPlayableSimulation(state, frame, collisionWorld!, profile, configuration)
+      const next = stepPlayableSimulation(state, frame, collisionWorld!, profile, configuration, arena)
       if (uiActions !== undefined && uiActions.scoreboardHeld !== scoreboardVisible) {
         scoreboardVisible = uiActions.scoreboardHeld
         ui.update(projectUi(next))
@@ -651,6 +639,9 @@ export async function bootstrapBrowserRuntime(
           backingBufferHeight: canvas?.height ?? 0,
           presentationProfileId: presentationProfile.id,
           presentationProfileHash: presentationProfile.contentHash,
+          arenaSize: arena.size,
+          arenaSeed: arena.seed,
+          arenaContentHash: arena.contentHash,
         }),
         measurements: Object.freeze(measurements),
         gates: Object.freeze(gates),

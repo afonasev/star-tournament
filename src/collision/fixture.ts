@@ -1,13 +1,13 @@
 import {
   ARENA_DEFINITION_SCHEMA_VERSION,
+  createArenaDefinition,
   computeArenaContentHash,
-  validateArenaDefinition,
-  type ArenaDefinition,
   type ArenaDefinitionPayload,
   type ArenaPrimitiveSurface,
   type ArenaQuaternion,
 } from '../arena/arenaDefinition'
-import { contentHash } from '../core/canonical'
+import { type ContentHash } from '../core/canonical'
+import { PROTOTYPE_V1_PROFILE } from '../profiles/gameDesignProfile'
 
 export const COLLISION_FIXTURE_ID = 'collision-fixture-v1' as const
 
@@ -36,26 +36,29 @@ const payload: ArenaDefinitionPayload = {
   schemaVersion: ARENA_DEFINITION_SCHEMA_VERSION,
   id: COLLISION_FIXTURE_ID,
   seed: 0x434f4c4c,
+  size: 'small',
   generatorVersion: COLLISION_FIXTURE_ID,
+  generatorProfile: {
+    id: PROTOTYPE_V1_PROFILE.id,
+    revision: PROTOTYPE_V1_PROFILE.revision,
+    contentHash: PROTOTYPE_V1_PROFILE.contentHash as ContentHash,
+  },
+  regions: [
+    { id: 'region-fixture', role: 'combat', center: { x: 0, y: 0, z: 0 }, size: { x: 30, y: 1, z: 24 } },
+  ],
+  links: [],
   surfaces,
+  spawnRegions: [
+    { id: 'spawn-region-fixture', regionId: 'region-fixture', anchorIds: ['spawn-clear', 'spawn-overlap'] },
+  ],
   spawnAnchors: [
-    { id: 'spawn-clear', position: { x: -6, y: 1, z: -5 }, yawRadians: 0 },
-    { id: 'spawn-overlap', position: { x: 0, y: 1, z: -3 }, yawRadians: 0 },
+    { id: 'spawn-clear', spawnRegionId: 'spawn-region-fixture', position: { x: -6, y: 1, z: -5 }, yawRadians: 0 },
+    { id: 'spawn-overlap', spawnRegionId: 'spawn-region-fixture', position: { x: 0, y: 1, z: -3 }, yawRadians: 0 },
   ],
 }
 
-const candidate: ArenaDefinition = {
-  ...payload,
-  contentHash: contentHash(payload),
-}
-const validation = validateArenaDefinition(candidate)
-if (!validation.ok) {
-  throw new Error(`Invalid ${COLLISION_FIXTURE_ID}: ${validation.errors.map((error) => error.message).join(' ')}`)
-}
-
-export const COLLISION_FIXTURE_ARENA = validation.arena
+export const COLLISION_FIXTURE_ARENA = createArenaDefinition(payload)
 
 if (computeArenaContentHash(COLLISION_FIXTURE_ARENA) !== COLLISION_FIXTURE_ARENA.contentHash) {
   throw new Error(`${COLLISION_FIXTURE_ID} content hash invariant failed`)
 }
-

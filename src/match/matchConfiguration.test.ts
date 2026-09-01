@@ -16,6 +16,8 @@ function payload(overrides: Partial<MatchConfigurationPayload> = {}): MatchConfi
     schemaVersion: MATCH_CONFIGURATION_SCHEMA_VERSION,
     id: MATCH_CONFIGURATION_ID,
     mode: 'ffa',
+    arenaSize: 'medium',
+    arenaSeed: 0x53544152,
     durationMinutes: 5,
     scoreTargetPoints: null,
     participants: [
@@ -27,6 +29,16 @@ function payload(overrides: Partial<MatchConfigurationPayload> = {}): MatchConfi
 }
 
 describe('MatchConfiguration', () => {
+  it('defaults to a concrete medium arena seed and includes both in identity', () => {
+    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 2, arenaSize: 'medium', arenaSeed: 0x53544152 })
+    const changed = createMatchConfiguration(payload({ arenaSize: 'large', arenaSeed: 7 }))
+    expect(changed.contentHash).not.toBe(DEFAULT_MATCH_CONFIGURATION.contentHash)
+  })
+
+  it('rejects unsupported size and seeds outside uint32', () => {
+    expect(() => createMatchConfiguration(payload({ arenaSize: 'giant' as 'medium' }))).toThrow(/arenaSize/)
+    expect(() => createMatchConfiguration(payload({ arenaSeed: 0x1_0000_0000 }))).toThrow(/arenaSeed/)
+  })
   it('creates a canonical immutable FFA configuration and keeps target disabled by default', () => {
     const configuration = createMatchConfiguration(payload())
     expect(configuration).toMatchObject({ mode: 'ffa', durationMinutes: 5, scoreTargetPoints: null })

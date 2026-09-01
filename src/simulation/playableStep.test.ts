@@ -3,8 +3,12 @@ import { describe, expect, it } from 'vitest'
 import { contentHash } from '../core/canonical'
 import { createActionFrame } from '../input/actionFrame'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
-import { createInitialSimulationSnapshot, localParticipant } from './playableSnapshot'
-import { stepPlayableSimulation, type PlayableCollisionPort } from './playableStep'
+import { createInitialSimulationSnapshot, localParticipant, parseSimulationSnapshot } from './playableSnapshot'
+import {
+  livingParticipantCollisionCapsules,
+  stepPlayableSimulation,
+  type PlayableCollisionPort,
+} from './playableStep'
 
 const arena = {
   id: 'arena',
@@ -18,7 +22,7 @@ function createCollision(): PlayableCollisionPort & { projected: number } {
     projected: 0,
     projectCapsules(capsules) {
       this.projected += 1
-      expect(capsules).toHaveLength(1)
+      expect(capsules).toHaveLength(4)
     },
     moveCapsule(_semanticId, translation) {
       return {
@@ -37,6 +41,31 @@ function createCollision(): PlayableCollisionPort & { projected: number } {
 }
 
 describe('playable simulation step', () => {
+  it('projects only living roster capsules and converts fixture feet anchors to capsule centers', () => {
+    const initial = createInitialSimulationSnapshot({ rngSeed: 1, arena })
+    const deadFixture = initial.participants.find(({ kind }) => kind === 'stationary-fixture')
+    if (deadFixture === undefined) throw new Error('Missing stationary fixture')
+    const snapshot = parseSimulationSnapshot({
+      ...initial,
+      participants: initial.participants.map((participant) => participant.semanticId === deadFixture.semanticId
+        ? { ...participant, health: 0, alive: false, deathTick: 0, respawnTick: null }
+        : participant),
+    })
+
+    const capsules = livingParticipantCollisionCapsules(snapshot, PROTOTYPE_V1_PROFILE)
+    expect(capsules.map(({ semanticId }) => semanticId)).not.toContain(deadFixture.semanticId)
+    expect(capsules).toHaveLength(3)
+    const livingFixture = snapshot.participants.find((participant) =>
+      participant.kind === 'stationary-fixture' && participant.alive
+    )
+    const fixtureCapsule = capsules.find(({ semanticId }) => semanticId === livingFixture?.semanticId)
+    expect(fixtureCapsule?.position.y).toBe(
+      (livingFixture?.position.y ?? 0) +
+      PROTOTYPE_V1_PROFILE.rules.player.capsule.halfHeight +
+      PROTOTYPE_V1_PROFILE.rules.player.capsule.radius,
+    )
+  })
+
   it('projects the authoritative capsule, moves, looks, and advances one tick', () => {
     const initial = createInitialSimulationSnapshot({ rngSeed: 1, arena })
     const initialPlayer = localParticipant(initial)

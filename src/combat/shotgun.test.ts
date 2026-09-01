@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { RobotTargetDefinition } from '../scenario'
+import type { StaticRaycastPort } from './occlusion'
 import {
   calculateZonedPelletDamage,
   resolveShotgunTrigger,
@@ -26,11 +27,26 @@ const clearCollision = { raycast: () => [] }
 
 describe('double-barrel shotgun state rules', () => {
   it('consumes one ammo and destroys a target with a complete head blast', () => {
-    const result = resolveShotgunTrigger(1, 60, true, player, weapon, targets, [targetDefinition], tuning, clearCollision)
+    const raycast = vi.fn((..._arguments: Parameters<StaticRaycastPort['raycast']>) => [])
+    const result = resolveShotgunTrigger(
+      1,
+      60,
+      true,
+      player,
+      weapon,
+      targets,
+      [targetDefinition],
+      tuning,
+      { raycast },
+    )
     expect(result.weapon).toMatchObject({ ammo: 19, shotSequence: 1, previousFirePressed: true })
     expect(result.targets[0]).toMatchObject({ health: 0, active: false })
     expect(result.events.filter((event) => event.kind === 'shotgun-impact')).toHaveLength(12)
     expect(result.events.some((event) => event.kind === 'target-destroyed')).toBe(true)
+    expect(raycast).toHaveBeenCalledTimes(tuning.pelletCount)
+    expect(raycast.mock.calls.every((call) =>
+      call[3]?.includes(player.semanticId) === true && call[3]?.includes(targetDefinition.semanticId) === true
+    )).toBe(true)
   })
 
   it('does not repeat while held or before cooldown expires', () => {

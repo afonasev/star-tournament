@@ -165,7 +165,7 @@ export function resolveShotgunTrigger(
     targetDefinitions,
     activeTargetIds,
     collision,
-    [player.semanticId],
+    [player.semanticId, ...activeTargetIds],
   )
   const events: ShotgunSimulationEvent[] = [{
     kind: 'shotgun-shot',

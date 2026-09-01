@@ -50,6 +50,8 @@ function snapshot(
       color: ['#f59e0b', '#22c55e', '#a855f7'][index]!,
       health: 100,
       alive: true,
+      position: target.position,
+      yaw: target.yawRadians,
     }))],
     corpses: [],
     events: [],

@@ -56,6 +56,8 @@ export interface FirstPersonRenderTarget {
   readonly color: string
   readonly health: number
   readonly alive: boolean
+  readonly position: ScenarioVector3
+  readonly yaw: number
 }
 
 export interface FirstPersonRenderWeapon {
@@ -139,7 +141,7 @@ export interface FirstPersonRendererOptions {
 interface TargetPresentation {
   readonly group: THREE.Group
   readonly material: THREE.MeshStandardMaterial
-  readonly baseY: number
+  baseY: number
   destroyed: boolean
   color: string
 }
@@ -455,12 +457,14 @@ export function createFirstPersonRenderer({
       const target = targetById.get(targetState.semanticId)
       if (target === undefined) continue
       const destroyed = !targetState.alive || targetState.health <= 0
+      target.baseY = targetState.position.y
+      target.group.position.set(targetState.position.x, targetState.position.y + (destroyed ? -0.2 : 0), targetState.position.z)
+      target.group.rotation.y = targetState.yaw
       const presentationColor = destroyed ? '#354148' : targetState.color.toLowerCase()
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
         target.group.userData.presentationState = destroyed ? 'destroyed' : 'active'
         target.group.rotation.z = destroyed ? 0.18 : 0
-        target.group.position.y = target.baseY + (destroyed ? -0.2 : 0)
         target.material.emissiveIntensity = destroyed ? 0.12 : 0.5
       }
       if (presentationColor !== target.color) {

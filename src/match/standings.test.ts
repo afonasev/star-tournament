@@ -43,6 +43,8 @@ describe('standings projector', () => {
       schemaVersion: DEFAULT_MATCH_CONFIGURATION.schemaVersion,
       id: DEFAULT_MATCH_CONFIGURATION.id,
       mode: 'teams',
+      arenaSize: DEFAULT_MATCH_CONFIGURATION.arenaSize,
+      arenaSeed: DEFAULT_MATCH_CONFIGURATION.arenaSeed,
       durationMinutes: 5,
       scoreTargetPoints: null,
       participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({

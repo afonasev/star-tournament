@@ -37,7 +37,7 @@ describe('performance telemetry isolation', () => {
     })
     const replay = createPlayableSimulationReplay(snapshot, [
       createActionFrame(1, []),
-    ])
+    ], undefined, COLLISION_FIXTURE_ARENA)
     const hashBefore = playableSimulationSnapshotHash(snapshot)
     const replayBefore = serializePlayableSimulationReplay(replay)
     let now = 0

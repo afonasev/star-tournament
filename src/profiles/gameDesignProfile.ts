@@ -2,9 +2,28 @@ import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from
 
 import { deepFreeze, type DeepReadonly } from './deepFreeze'
 
-export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 3 as const
+export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 5 as const
 
 export type GameDesignProfileSource = 'shipped' | 'local'
+
+export type ArenaGeneratorSize = 'small' | 'medium' | 'large'
+
+export interface ArenaGeneratorPresetRules {
+  widthMeters: number
+  depthMeters: number
+  wallHeightMeters: number
+  wallThicknessMeters: number
+  corridorWidthMeters: number
+  doorwayWidthMeters: number
+  perimeterInsetMeters: number
+  routeInsetMeters: number
+  coverCount: number
+  coverSizeMeters: number
+  spawnSlotCount: number
+  minimumSpawnSeparationMeters: number
+  maximumInitialEnemyLosRatio: number
+  maximumTeamDistanceRatio: number
+}
 
 export interface GameDesignRules {
   player: {
@@ -82,6 +101,9 @@ export interface GameDesignRules {
     killcamSeconds: number
     corpseSeconds: number
   }
+  arenaGenerator: {
+    presets: Record<ArenaGeneratorSize, ArenaGeneratorPresetRules>
+  }
 }
 
 export interface GameDesignProfilePayload {
@@ -110,6 +132,9 @@ export type ProfileDescriptorGroup =
   | 'scoring-assist'
   | 'scoring-kill-chain'
   | 'death'
+  | 'arena-generator-small'
+  | 'arena-generator-medium'
+  | 'arena-generator-large'
 
 export type ProfileDescriptorUnit =
   | 'hp'
@@ -123,6 +148,8 @@ export type ProfileDescriptorUnit =
   | 'minutes'
   | 'seconds'
   | 'points'
+  | 'count'
+  | 'ratio'
 
 export interface NumericProfileDescriptor {
   path: string
@@ -133,6 +160,30 @@ export interface NumericProfileDescriptor {
   minimum: number
   maximum: number
   step: number
+}
+
+const ARENA_GENERATOR_SIZES = ['small', 'medium', 'large'] as const
+
+function arenaGeneratorDescriptors(size: ArenaGeneratorSize): NumericProfileDescriptor[] {
+  const group = `arena-generator-${size}` as ProfileDescriptorGroup
+  const prefix = `rules.arenaGenerator.presets.${size}`
+  const sizeLabel = size === 'small' ? 'маленькой' : size === 'medium' ? 'средней' : 'большой'
+  return [
+    { path: `${prefix}.widthMeters`, group, label: `Ширина ${sizeLabel} арены`, description: 'Полная ширина playable footprint.', unit: 'meters', minimum: 20, maximum: 80, step: 1 },
+    { path: `${prefix}.depthMeters`, group, label: `Глубина ${sizeLabel} арены`, description: 'Полная глубина playable footprint.', unit: 'meters', minimum: 16, maximum: 64, step: 1 },
+    { path: `${prefix}.wallHeightMeters`, group, label: `Высота стен ${sizeLabel} арены`, description: 'Высота внешних и route-разделяющих стен.', unit: 'meters', minimum: 2, maximum: 10, step: 0.5 },
+    { path: `${prefix}.wallThicknessMeters`, group, label: `Толщина стен ${sizeLabel} арены`, description: 'Толщина связанных perimeter, room и corridor wall runs.', unit: 'meters', minimum: 0.4, maximum: 2, step: 0.1 },
+    { path: `${prefix}.corridorWidthMeters`, group, label: `Ширина коридоров ${sizeLabel} арены`, description: 'Свободная ширина между парными стенами основного коридора.', unit: 'meters', minimum: 2, maximum: 10, step: 0.5 },
+    { path: `${prefix}.doorwayWidthMeters`, group, label: `Ширина дверей ${sizeLabel} арены`, description: 'Свободная ширина читаемого разрыва в стеновой цепочке.', unit: 'meters', minimum: 1.5, maximum: 8, step: 0.5 },
+    { path: `${prefix}.perimeterInsetMeters`, group, label: `Глубина уступов ${sizeLabel} арены`, description: 'Глубина размерно-зависимых ниш замкнутого внешнего контура.', unit: 'meters', minimum: 1, maximum: 10, step: 0.5 },
+    { path: `${prefix}.routeInsetMeters`, group, label: `Отступ маршрута ${sizeLabel} арены`, description: 'Отступ внешнего кольцевого маршрута от границы арены.', unit: 'meters', minimum: 3, maximum: 16, step: 0.5 },
+    { path: `${prefix}.coverCount`, group, label: `Количество укрытий ${sizeLabel} арены`, description: 'Число примыкающих к архитектуре buttress/pilaster cover primitives.', unit: 'count', minimum: 4, maximum: 32, step: 1 },
+    { path: `${prefix}.coverSizeMeters`, group, label: `Размер укрытий ${sizeLabel} арены`, description: 'Базовый footprint примыкающего к стене укрытия.', unit: 'meters', minimum: 1, maximum: 6, step: 0.5 },
+    { path: `${prefix}.spawnSlotCount`, group, label: `Spawn slots ${sizeLabel} арены`, description: 'Общее число distinct spawn slots во всех regions.', unit: 'count', minimum: 12, maximum: 32, step: 4 },
+    { path: `${prefix}.minimumSpawnSeparationMeters`, group, label: `Разделение spawn ${sizeLabel} арены`, description: 'Минимальная дистанция между одновременно выбранными spawn slots.', unit: 'meters', minimum: 1, maximum: 8, step: 0.5 },
+    { path: `${prefix}.maximumInitialEnemyLosRatio`, group, label: `Enemy LOS ${sizeLabel} арены`, description: 'Максимальная доля стартовых пар противников с прямой видимостью.', unit: 'ratio', minimum: 0, maximum: 1, step: 0.05 },
+    { path: `${prefix}.maximumTeamDistanceRatio`, group, label: `Team fairness ${sizeLabel} арены`, description: 'Максимальное отношение средних навигационных дистанций команд до combat regions.', unit: 'ratio', minimum: 1, maximum: 2, step: 0.05 },
+  ]
 }
 
 const descriptors: NumericProfileDescriptor[] = [
@@ -608,6 +659,7 @@ const descriptors: NumericProfileDescriptor[] = [
     maximum: 60,
     step: 0.1,
   },
+  ...ARENA_GENERATOR_SIZES.flatMap(arenaGeneratorDescriptors),
 ]
 
 export const GAME_DESIGN_PROFILE_DESCRIPTORS = deepFreeze(descriptors)
@@ -628,6 +680,7 @@ export type ProfileValidationErrorCode =
   | 'CAMERA_PLANES_ORDER'
   | 'SLOPE_ANGLE_ORDER'
   | 'SHOTGUN_CONTRACT_INVALID'
+  | 'ARENA_GENERATOR_CONTRACT_INVALID'
   | 'CONTENT_HASH_MISMATCH'
 
 export interface ProfileValidationError {
@@ -964,6 +1017,54 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
     })
   }
 
+  const arenaPaths: string[] = []
+  let arenaContractInvalid = false
+  for (const size of ARENA_GENERATOR_SIZES) {
+    const prefix = `rules.arenaGenerator.presets.${size}`
+    const width = readPath(value, `${prefix}.widthMeters`)
+    const depth = readPath(value, `${prefix}.depthMeters`)
+    const wallThickness = readPath(value, `${prefix}.wallThicknessMeters`)
+    const corridorWidth = readPath(value, `${prefix}.corridorWidthMeters`)
+    const doorwayWidth = readPath(value, `${prefix}.doorwayWidthMeters`)
+    const perimeterInset = readPath(value, `${prefix}.perimeterInsetMeters`)
+    const routeInset = readPath(value, `${prefix}.routeInsetMeters`)
+    const coverSize = readPath(value, `${prefix}.coverSizeMeters`)
+    const slotCount = readPath(value, `${prefix}.spawnSlotCount`)
+    const separation = readPath(value, `${prefix}.minimumSpawnSeparationMeters`)
+    const numeric = [width, depth, wallThickness, corridorWidth, doorwayWidth, perimeterInset, routeInset, coverSize, slotCount, separation]
+    if (!numeric.every((entry) => typeof entry === 'number' && Number.isFinite(entry))) continue
+    if (
+      (routeInset as number) * 2 + (coverSize as number) >= Math.min(width as number, depth as number) ||
+      (perimeterInset as number) * 2 + (corridorWidth as number) >= Math.min(width as number, depth as number) ||
+      (doorwayWidth as number) > (corridorWidth as number) ||
+      (doorwayWidth as number) <= 2 * ((capsuleRadius as number) + (capsuleSkinWidth as number)) ||
+      (corridorWidth as number) <= (doorwayWidth as number) + (wallThickness as number) ||
+      (slotCount as number) < 12 ||
+      (separation as number) <= 2 * ((capsuleRadius as number) + (capsuleSkinWidth as number))
+    ) {
+      arenaContractInvalid = true
+      arenaPaths.push(
+        `${prefix}.widthMeters`,
+        `${prefix}.depthMeters`,
+        `${prefix}.wallThicknessMeters`,
+        `${prefix}.corridorWidthMeters`,
+        `${prefix}.doorwayWidthMeters`,
+        `${prefix}.perimeterInsetMeters`,
+        `${prefix}.routeInsetMeters`,
+        `${prefix}.coverSizeMeters`,
+        `${prefix}.spawnSlotCount`,
+        `${prefix}.minimumSpawnSeparationMeters`,
+      )
+    }
+  }
+  if (arenaContractInvalid) {
+    errors.push({
+      code: 'ARENA_GENERATOR_CONTRACT_INVALID',
+      paths: [...new Set(arenaPaths)].sort(),
+      message: 'Generator preset должен оставлять проходимые двери/коридоры, неровный perimeter, минимум 12 slots и capsule-safe opponent separation.',
+    })
+  }
+
   if (errors.length === 0) {
     const profile = value as unknown as GameDesignProfile
     if (computeProfileContentHash(profile) !== profile.contentHash) {
@@ -989,7 +1090,7 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 3,
+  revision: 5,
   source: 'shipped',
   rules: {
     player: {
@@ -1044,6 +1145,13 @@ const prototypePayload: GameDesignProfilePayload = {
       },
     },
     death: { killcamSeconds: 3, corpseSeconds: 10 },
+    arenaGenerator: {
+      presets: {
+        small: { widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.8, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
+        medium: { widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
+        large: { widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.2, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
+      },
+    },
   },
 }
 

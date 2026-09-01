@@ -9,6 +9,8 @@ export {
 } from './gameDesignProfile'
 
 export type {
+  ArenaGeneratorPresetRules,
+  ArenaGeneratorSize,
   GameDesignProfile,
   GameDesignProfilePayload,
   GameDesignProfileSource,

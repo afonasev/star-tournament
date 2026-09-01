@@ -69,6 +69,7 @@ export {
   type PlayableSimulationStep,
 } from './playableReplay'
 export {
+  livingParticipantCollisionCapsules,
   stepPlayableSimulation,
   stepPlayableSimulation as stepSimulation,
   type PlayableCollisionPort,

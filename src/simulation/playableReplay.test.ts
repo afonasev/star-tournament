@@ -48,7 +48,7 @@ const fixtureStepper: PlayableSimulationStep = (snapshot, frame) => parseSimulat
 })
 
 describe('playable replay fixtures', () => {
-  it('canonically round-trips schema v3 with configuration and the full playable initial snapshot', () => {
+  it('canonically round-trips schema v4 with configuration, arena definition and initial snapshot', () => {
     const replay = createPlayableSimulationReplay(initialSnapshot(), frames)
     const restored = parsePlayableSimulationReplay(serializePlayableSimulationReplay(replay))
 
@@ -57,6 +57,7 @@ describe('playable replay fixtures', () => {
     expect(Object.isFrozen(restored)).toBe(true)
     expect(Object.isFrozen(localParticipant(restored.initialSnapshot))).toBe(true)
     expect(Object.isFrozen(restored.frames)).toBe(true)
+    expect(restored.arenaDefinition).toEqual(DIAGNOSTIC_ARENA)
   })
 
   it('runs deterministic injected playable steps and records per-tick hashes', () => {
@@ -74,6 +75,7 @@ describe('playable replay fixtures', () => {
     const replay = createPlayableSimulationReplay(initialSnapshot(), frames)
     expect(() => parsePlayableSimulationReplay({ ...replay, schemaVersion: 1 })).toThrow(/schemaVersion/)
     expect(() => createPlayableSimulationReplay(initialSnapshot(), [frames[1]!])).toThrow(/expected tick 1/)
+    expect(() => parsePlayableSimulationReplay({ ...replay, arenaDefinition: { ...replay.arenaDefinition, seed: replay.arenaDefinition.seed + 1 } })).toThrow(/arenaDefinition/)
 
     const runner = new PlayableFixedStepHeadlessRunner(initialSnapshot(), (snapshot) => snapshot)
     expect(() => runner.step(frames[0]!)).toThrow(/return simulation tick 1/)
@@ -84,6 +86,8 @@ describe('playable replay fixtures', () => {
       schemaVersion: DEFAULT_MATCH_CONFIGURATION.schemaVersion,
       id: DEFAULT_MATCH_CONFIGURATION.id,
       mode: 'teams',
+      arenaSize: DEFAULT_MATCH_CONFIGURATION.arenaSize,
+      arenaSeed: DEFAULT_MATCH_CONFIGURATION.arenaSeed,
       durationMinutes: 1,
       scoreTargetPoints: 1_000,
       participants: [

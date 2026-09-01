@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { computeArenaContentHash, type ArenaDefinition } from '../arena/arenaDefinition'
-import { contentHash } from '../core/canonical'
+import { computeArenaContentHash, createArenaDefinition, type ArenaDefinitionPayload } from '../arena/arenaDefinition'
 import { COLLISION_ERROR_CODES, CollisionContractError, collisionCheckpointHash } from './contracts'
 import { COLLISION_FIXTURE_ARENA } from './fixture'
 import {
@@ -18,14 +17,11 @@ const player = {
 
 describe('Rapier collision world', () => {
   it('constructs static geometry in semantic order independent of descriptors', async () => {
-    const reorderedPayload = {
-      ...COLLISION_FIXTURE_ARENA,
+    const { contentHash: _contentHash, ...payload } = COLLISION_FIXTURE_ARENA
+    const reordered = createArenaDefinition({
+      ...payload,
       surfaces: [...COLLISION_FIXTURE_ARENA.surfaces].reverse(),
-    }
-    const reordered: ArenaDefinition = {
-      ...reorderedPayload,
-      contentHash: contentHash((({ contentHash: _ignored, ...payload }) => payload)(reorderedPayload)),
-    }
+    } as ArenaDefinitionPayload)
     expect(computeArenaContentHash(reordered)).toBe(reordered.contentHash)
 
     const first = await createRapierCollisionWorld(COLLISION_FIXTURE_ARENA, [player])
@@ -75,6 +71,29 @@ describe('Rapier collision world', () => {
       expect(slide.position.x).toBeLessThan(8)
       expect(slide.position.z).toBeGreaterThan(landing.position.z)
       expect(JSON.parse(JSON.stringify(slide))).toEqual(slide)
+    } finally {
+      collision.dispose()
+    }
+  })
+
+  it('blocks movement against living participant capsules and disables them until reprojected', async () => {
+    const mover = { ...player, position: { x: -6, y: 1, z: -5 } }
+    const blocker = { ...player, semanticId: 'player-2', position: { x: -4, y: 1, z: -5 } }
+    const collision = await createRapierCollisionWorld(COLLISION_FIXTURE_ARENA, [mover])
+    try {
+      collision.projectCapsules([mover, blocker])
+      const blocked = collision.moveCapsule(mover.semanticId, { x: 3, y: 0, z: 0 })
+      expect(blocked.position.x).toBeLessThan(-4.7)
+      expect(blocked.contacts.map(({ semanticId }) => semanticId)).toContain(blocker.semanticId)
+
+      collision.projectCapsules([mover])
+      expect(collision.checkpoint(1).capsules.map(({ semanticId }) => semanticId)).toEqual([mover.semanticId])
+      const passed = collision.moveCapsule(mover.semanticId, { x: 3, y: 0, z: 0 })
+      expect(passed.position.x).toBeGreaterThan(-3.5)
+
+      collision.projectCapsules([mover, blocker])
+      const blockedAfterRespawn = collision.moveCapsule(mover.semanticId, { x: 3, y: 0, z: 0 })
+      expect(blockedAfterRespawn.position.x).toBeLessThan(-4.7)
     } finally {
       collision.dispose()
     }

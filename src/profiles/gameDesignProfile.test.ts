@@ -45,9 +45,9 @@ function expectDeepFrozen(value: unknown): void {
 describe('prototype-v1 GameDesignProfile', () => {
   it('contains every approved numeric prototype rule', () => {
     expect(PROTOTYPE_V1_PROFILE).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 5,
       id: 'prototype-v1',
-      revision: 3,
+      revision: 5,
       source: 'shipped',
       rules: {
         player: {
@@ -107,6 +107,13 @@ describe('prototype-v1 GameDesignProfile', () => {
           },
         },
         death: { killcamSeconds: 3, corpseSeconds: 10 },
+        arenaGenerator: {
+          presets: {
+            small: { widthMeters: 34, depthMeters: 26, corridorWidthMeters: 4, doorwayWidthMeters: 3, minimumSpawnSeparationMeters: 4, spawnSlotCount: 16 },
+            medium: { widthMeters: 46, depthMeters: 34, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, minimumSpawnSeparationMeters: 5, spawnSlotCount: 16 },
+            large: { widthMeters: 60, depthMeters: 44, corridorWidthMeters: 6, doorwayWidthMeters: 4, minimumSpawnSeparationMeters: 6, spawnSlotCount: 20 },
+          },
+        },
       },
     })
     expect(validateGameDesignProfile(PROTOTYPE_V1_PROFILE)).toMatchObject({ ok: true })
@@ -141,7 +148,7 @@ describe('prototype-v1 GameDesignProfile', () => {
   it('returns a detached immutable snapshot for a valid local profile', () => {
     const input = cloneProfile()
     input.source = 'local'
-    input.revision = 3
+    input.revision = 4
     input.contentHash = computeProfileContentHash(input)
 
     const result = validateGameDesignProfile(input)
@@ -340,11 +347,42 @@ describe('prototype-v1 GameDesignProfile', () => {
         }),
       ]),
     })
+
+    const invalidArena = cloneProfile()
+    invalidArena.rules.arenaGenerator.presets.small.routeInsetMeters = 14
+    expect(validateGameDesignProfile(invalidArena)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'ARENA_GENERATOR_CONTRACT_INVALID',
+          paths: expect.arrayContaining([
+            'rules.arenaGenerator.presets.small.routeInsetMeters',
+            'rules.arenaGenerator.presets.small.widthMeters',
+          ]),
+        }),
+      ]),
+    })
+
+    const invalidDoorway = cloneProfile()
+    invalidDoorway.rules.arenaGenerator.presets.small.doorwayWidthMeters = 4
+    expect(validateGameDesignProfile(invalidDoorway)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'ARENA_GENERATOR_CONTRACT_INVALID',
+          paths: expect.arrayContaining([
+            'rules.arenaGenerator.presets.small.corridorWidthMeters',
+            'rules.arenaGenerator.presets.small.doorwayWidthMeters',
+            'rules.arenaGenerator.presets.small.wallThicknessMeters',
+          ]),
+        }),
+      ]),
+    })
   })
 
   it('derives identity from all effective content except contentHash', () => {
     expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
-    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:78c61748fe003868')
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:5131adf450ce869c')
     expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
       PROTOTYPE_V1_PROFILE.contentHash,
     )

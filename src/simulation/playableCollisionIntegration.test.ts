@@ -16,7 +16,7 @@ import {
   parseSimulationSnapshot,
   type SimulationSnapshot,
 } from './playableSnapshot'
-import { stepPlayableSimulation } from './playableStep'
+import { livingParticipantCollisionCapsules, stepPlayableSimulation } from './playableStep'
 
 const profile = PROTOTYPE_V1_PROFILE
 
@@ -64,7 +64,7 @@ function playerCapsule(snapshot: SimulationSnapshot): CollisionCapsuleProjection
 async function createWorld(snapshot: SimulationSnapshot): Promise<RapierCollisionWorld> {
   return createRapierCollisionWorld(
     COLLISION_FIXTURE_ARENA,
-    [playerCapsule(snapshot)],
+    livingParticipantCollisionCapsules(snapshot, profile),
     controllerConfiguration,
   )
 }
@@ -97,6 +97,46 @@ function run(
 }
 
 describe('stepPlayableSimulation with RapierCollisionWorld', () => {
+  it('blocks the local seat on a living fixture capsule but permits passage after its death', async () => {
+    const participantSnapshot = (blockerAlive: boolean): SimulationSnapshot => {
+      const base = initialAt({ x: -6, y: 0.91, z: -5 })
+      return parseSimulationSnapshot({
+        ...base,
+        participants: base.participants.map((participant) => {
+          if (participant.kind !== 'stationary-fixture') return participant
+          if (participant.semanticId === 'robot-center') {
+            return {
+              ...participant,
+              position: { x: -4, y: 0, z: -5 },
+              health: blockerAlive ? participant.health : 0,
+              alive: blockerAlive,
+              deathTick: blockerAlive ? null : 0,
+            }
+          }
+          return { ...participant, position: { x: 40, y: 0, z: 40 } }
+        }),
+      })
+    }
+
+    const living = participantSnapshot(true)
+    const livingCollision = await createWorld(living)
+    try {
+      const blocked = run(living, livingCollision, 60, [{ actionId: 'move-right', value: 1 }])
+      expect(localParticipant(blocked).position.x).toBeLessThan(-4.7)
+    } finally {
+      livingCollision.dispose()
+    }
+
+    const dead = participantSnapshot(false)
+    const deadCollision = await createWorld(dead)
+    try {
+      const passed = run(dead, deadCollision, 60, [{ actionId: 'move-right', value: 1 }])
+      expect(localParticipant(passed).position.x).toBeGreaterThan(-4)
+    } finally {
+      deadCollision.dispose()
+    }
+  })
+
   it('places the initial local-seat capsule clear of static geometry before any input tick', async () => {
     const initial = initialAt(localParticipant(createInitialSimulationSnapshot({
       rngSeed: 0x51ce,

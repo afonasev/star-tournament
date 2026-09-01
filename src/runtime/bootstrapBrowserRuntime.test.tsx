@@ -316,11 +316,22 @@ describe('playable browser bootstrap', () => {
       readonly CollisionCapsuleProjection[],
       CollisionControllerConfiguration,
     ]
-    expect(capsules).toEqual([expect.objectContaining({
-      semanticId: PLAYABLE_PLAYER_ID,
+    expect(capsules).toHaveLength(4)
+    expect(capsules.map(({ semanticId }) => semanticId)).toEqual([
+      PLAYABLE_PLAYER_ID,
+      'robot-center',
+      'robot-left',
+      'robot-right',
+    ])
+    expect(capsules).toEqual(capsules.map((capsule) => expect.objectContaining({
+      semanticId: capsule.semanticId,
       radius: PROTOTYPE_V1_PROFILE.rules.player.capsule.radius,
       halfHeight: PROTOTYPE_V1_PROFILE.rules.player.capsule.halfHeight,
-    })])
+    })))
+    expect(capsules.filter(({ semanticId }) => semanticId !== PLAYABLE_PLAYER_ID))
+      .toEqual(capsules.filter(({ semanticId }) => semanticId !== PLAYABLE_PLAYER_ID).map(() =>
+        expect.objectContaining({ position: expect.objectContaining({ y: 0.9 }) })
+      ))
     expect(configuration).toEqual({
       skinWidth: 0.01,
       autostepMaxHeight: 0.45,

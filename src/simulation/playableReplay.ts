@@ -1,5 +1,7 @@
 import { canonicalSerialize, parseCanonicalJson } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
+import { DIAGNOSTIC_ARENA } from '../arena/diagnosticArena'
+import { validateArenaDefinition, type ArenaDefinition } from '../arena/arenaDefinition'
 import { parseActionFrame, type ActionFrame } from '../input/actionFrame'
 import { DEFAULT_MATCH_CONFIGURATION, parseMatchConfiguration, type MatchConfiguration } from '../match'
 import {
@@ -9,11 +11,12 @@ import {
 } from './playableSnapshot'
 import type { ContentHash } from '../core/canonical'
 
-export const PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION = 3 as const
+export const PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION = 4 as const
 
 export interface PlayableSimulationReplay {
   readonly schemaVersion: typeof PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION
   readonly configuration: MatchConfiguration
+  readonly arenaDefinition: ArenaDefinition
   readonly initialSnapshot: SimulationSnapshot
   readonly frames: readonly ActionFrame[]
 }
@@ -50,14 +53,22 @@ export function createPlayableSimulationReplay(
   initialSnapshot: SimulationSnapshot,
   frames: readonly ActionFrame[],
   configurationInput: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION,
+  arenaInput: ArenaDefinition = DIAGNOSTIC_ARENA as ArenaDefinition,
 ): PlayableSimulationReplay {
   const configuration = parseMatchConfiguration(configurationInput)
   const parsedSnapshot = parseSimulationSnapshot(initialSnapshot, configuration)
   const parsedFrames = frames.map((frame) => parseActionFrame(frame))
   validateFrames(parsedSnapshot, parsedFrames)
+  const arenaValidation = validateArenaDefinition(arenaInput)
+  if (!arenaValidation.ok) throw new TypeError(`PlayableSimulationReplay arenaDefinition is invalid: ${arenaValidation.errors.map(({ code }) => code).join(', ')}`)
+  const arenaDefinition = arenaValidation.arena
+  if (parsedSnapshot.arena.id !== arenaDefinition.id || parsedSnapshot.arena.seed !== arenaDefinition.seed || parsedSnapshot.arena.generatorVersion !== arenaDefinition.generatorVersion || parsedSnapshot.arena.contentHash !== arenaDefinition.contentHash) {
+    throw new TypeError('PlayableSimulationReplay arenaDefinition does not match initialSnapshot.arena')
+  }
   return deepFreeze({
     schemaVersion: PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION,
     configuration,
+    arenaDefinition,
     initialSnapshot: parsedSnapshot,
     frames: parsedFrames,
   })
@@ -68,7 +79,7 @@ export function parsePlayableSimulationReplay(input: string | unknown): Playable
   canonicalSerialize(value)
   const data = record(value, 'PlayableSimulationReplay')
   const actualKeys = Object.keys(data).sort()
-  const expectedKeys = ['configuration', 'frames', 'initialSnapshot', 'schemaVersion']
+  const expectedKeys = ['arenaDefinition', 'configuration', 'frames', 'initialSnapshot', 'schemaVersion']
   if (
     actualKeys.length !== expectedKeys.length ||
     actualKeys.some((key, index) => key !== expectedKeys[index])
@@ -84,10 +95,13 @@ export function parsePlayableSimulationReplay(input: string | unknown): Playable
     throw new TypeError('PlayableSimulationReplay.frames must be an array')
   }
   const configuration = parseMatchConfiguration(data.configuration)
+  const arenaValidation = validateArenaDefinition(data.arenaDefinition)
+  if (!arenaValidation.ok) throw new TypeError(`PlayableSimulationReplay arenaDefinition is invalid: ${arenaValidation.errors.map(({ code }) => code).join(', ')}`)
   return createPlayableSimulationReplay(
     parseSimulationSnapshot(data.initialSnapshot, configuration),
     data.frames.map((frame) => parseActionFrame(frame)),
     configuration,
+    arenaValidation.arena,
   )
 }
 

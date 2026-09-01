@@ -13,8 +13,9 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Симуляция, рендеринг, ввод, камеры, HUD и сетевые адаптеры развиваются раздельно. Симуляция должна быть детерминированной и сериализуемой.
 - Поддерживаются режимы каждый сам за себя и командный матч двух команд. В командном матче красная команда играет против синей.
 - Арены процедурно генерируются из воспроизводимого seed и проходят обязательную проверку проходимости, spawn-безопасности и режимной честности до старта матча.
+- Первый procedural playable slice использует одноуровневое семейство «Разорванное кольцо» с размерами `small`, `medium` и `large`; `medium` выбран по умолчанию. Размеры являются разными topology recipes, а не равномерным масштабированием одной геометрии. Внутренние стены образуют связные контуры комнат и парные границы коридоров, переходы читаются как capsule-проходимые дверные проёмы, а замкнутый внешний контур имеет размерно-зависимый неровный ортогональный силуэт вместо четырёх стен прямоугольной коробки. Визуально открытый промежуток между collision solids либо сохраняет полный clearance профильной капсулы, либо конструктивно закрывается непрерывной геометрией: непроходимые узкие щели и ложные маршруты не допускаются. Каждая арена поддерживает FFA, две команды и roster до восьми участников; геометрическая симметрия не обязательна, если versioned navigation/LOS metrics подтверждают честность.
 - В матчах могут участвовать боты трёх уровней сложности. Сложность меняет качество реакции, прицеливания, памяти, планирования и координации, но не даёт скрытой информации и не меняет здоровье, урон, скорость, боезапас, hitbox или правила матча.
-- Первый playable combat slice ограничен одним локальным keyboard/mouse viewport и детерминированными robot target mannequins. Базовый match-loop slice сохраняет один управляемый local seat, но повышает mannequins до неподвижных участников матча без AI: они получают урон, умирают и возрождаются, однако не перемещаются и не атакуют. Это проверочный opponent contract, а не готовые bots. Gamepad, split-screen, bots, процедурная генерация и online adapter остаются последующими changes.
+- Первый playable combat slice ограничен одним локальным keyboard/mouse viewport и детерминированными robot target mannequins. Базовый match-loop slice сохраняет один управляемый local seat, но повышает mannequins до неподвижных участников матча без AI: они получают урон, умирают и возрождаются, однако не перемещаются и не атакуют. Это проверочный opponent contract, а не готовые bots. Gamepad, split-screen, bots и online adapter остаются последующими changes.
 
 ## 3. Игрок, движение и оружие
 
@@ -26,6 +27,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Конкретные значения здоровья, боезапаса, урона, движения и оружия принадлежат именованному профилю `prototype-v1` Game Design Lab и не дублируются в narrative-спецификации.
 - Первый playable slice использует versioned `combat-slice-scenario-v1` с аналитическими head/torso/limb hit volumes и static-world occlusion. Его примитивные роботы являются проверочным fixture и не задают финальный внешний вид персонажей.
 - Начальная позиция local-seat участника обязана быть свободна от статической геометрии уже в initial snapshot: исправление пересечения не должно откладываться до первого движения или другого input tick.
+- Капсулы всех живых участников являются твёрдыми препятствиями для движения: игрок не может пройти сквозь другого живого участника. Неподвижные fixture-участники не сдвигаются от контакта; после смерти их collision capsule отключается и возвращается только при возрождении, поэтому трупы остаются визуальными объектами без коллизии.
 
 ## 4. Смерть, killcam и возрождение
 
@@ -35,12 +37,13 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Во время killcam игрок может удерживать `Tab` и видеть текущую таблицу результатов.
 - После killcam игрок возрождается с полным здоровьем и полным стартовым боезапасом.
 - Точка возрождения выбирается в момент возрождения по текущему состоянию матча. Сначала исключаются занятые и невалидные точки; приоритет имеют точки вне прямой видимости противников, затем наиболее удалённые по навигационной дистанции. Если идеальной точки нет, лучший доступный кандидат выбирается немедленно, без ожидания.
+- Spawn anchors объединяются в regions с несколькими distinct slots. Initial FFA и противостоящие команды соблюдают профильный минимум дистанции; союзники могут появляться рядом и в прямой видимости друг друга. Одновременные respawn назначаются в стабильном participant-ID порядке без общей позиции. Если выбранная region заполнена, остаток batch распределяется по следующим совместимым regions. Точное минимальное число slots, opponent separation и fairness thresholds принадлежат generator preset активного `GameDesignProfile`.
 - Тело каждой погибшей жизни остаётся на арене ограниченное время после смерти. Тело является визуальным non-colliding объектом: не блокирует движение и выстрелы, не меняет LOS, навигацию, урон или выбор spawn.
 - Длительности killcam и существования тела принадлежат профилю `prototype-v1`.
 
 ## 5. Матч и интерфейс
 
-- Перед матчем игрок настраивает участников, команды, цвет, длительность и опциональную цель по очкам. Выбор конкретной длительности и цели относится к конфигурации матча, а их допустимые диапазоны — к Game Design Profile.
+- Перед матчем игрок настраивает участников, команды, цвет, длительность, опциональную цель по очкам, размер арены и необязательный ручной seed. Пустой seed означает автоматический выбор конкретного значения до generation; ручной seed воспроизводит арену только вместе с теми же size, generator version и profile identity. Выбор конкретной длительности, цели, размера и resolved seed относится к конфигурации матча, а их допустимые диапазоны — к Game Design Profile.
 - Матч завершается по времени либо раньше при достижении активной цели по очкам. В командном режиме цель сравнивается с суммой очков команды. Все события одного simulation tick сначала применяются полностью; затем среди достигших лимита выигрывает игрок или команда с наибольшим итогом. Если после достижения лимита или истечения времени лидеров несколько, матч переходит в overtime без сброса состояния и заканчивается на первом последующем tick с единоличным лидером. Если лимит достигнут на последнем tick основного времени, причиной завершения считается цель по очкам.
 - Опциональная цель по очкам по умолчанию выключена. При включении стартовое значение равно 3000 очков; допустимый диапазон 1000–20 000 с шагом 100 принадлежит именованному профилю Game Design Lab.
 - HUD каждого viewport показывает здоровье внизу слева, оружие и боезапас внизу справа, таймер матча сверху по центру.
@@ -59,8 +62,9 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Лаборатория поддерживает поиск и группировку, отдельный выбор профиля и ревизии, сравнение с baseline, полный Changelog и назначение одной точной локальной release-ревизии.
 - Матч всегда использует полную сохранённую ревизию, её identity и content hash; несохранённый черновик не является конфигурацией матча.
 - Параметры генератора влияют только на следующую генерацию арены и не перестраивают уже созданную карту.
+- Generator group содержит отдельные полные presets `small`, `medium` и `large` для topology, dimensions, wall/corridor/doorway geometry, perimeter complexity, cover, spawn separation и fairness budgets; каждое числовое поле использует общий descriptor contract.
 - Технические инварианты, которые не предназначены для настройки игроком или дизайнером, не показываются в лаборатории.
-- `prototype-v1` schema/revision 2 уже содержит полные descriptor metadata для capsule, движения, камеры и дробовика. UI лаборатории и остальные группы полного профиля остаются отдельным change; наличие profile core не означает готовность меню лаборатории.
+- `prototype-v1` schema/revision 5 содержит полные descriptor metadata для capsule, движения, камеры, дробовика и трёх generator presets, включая архитектуру проходов и opponent separation. UI лаборатории и остальные группы полного профиля остаются отдельным change; наличие profile core не означает готовность меню лаборатории.
 - Presentation-параметры, влияющие на нагрузку и читаемость, используют тот же descriptor contract, но живут в отдельном immutable `presentation-balanced-v1`: они не входят в состав match `GameDesignProfile`, simulation snapshot, replay или state hash. Первый профиль ограничивает WebGL backing buffer и частоту публикации HUD; UI его редактирования пока не реализован.
 
 ## 7. Архитектурные принципы
@@ -73,9 +77,11 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Браузерный runtime строится на TypeScript и Vite. Renderer использует Three.js, один WebGL canvas и отдельные viewport/scissor/camera для local seats; HUD, меню и лаборатория реализуются в React DOM.
 - Один fixed-step runner принимает нормализованные action frames. Локальный матч, replay и будущий online runner являются отдельными адаптерами одной симуляции.
 - Процедурная арена сериализуется как канонический `ArenaDefinition` с seed, версией генератора и content hash; collision, navigation, spawn anchors и renderer description выводятся из одной семантической модели.
+- `ArenaDefinition` хранит regions, links, collision surfaces, spawn regions/slots и renderer material slots как pure data в canonical semantic-ID order. Arena RNG отделён от match RNG и завершает generation до initial tick. Snapshot хранит arena identity, а replay включает полную validated definition один раз и проверяет совпадение identity до первого action frame.
+- `Repeat` сохраняет exact arena definition, size, seed, generator/profile identities и configuration. Новый матч с auto seed получает новое конкретное значение; ручной seed используется без подмены. После bounded generation failure матч не стартует и показывает seed, причины и действия retry/new seed/явный shipped fallback; fallback никогда не применяется молча и имеет собственную identity.
 - GLB/glTF 2.0 используется как runtime-формат 3D-ассетов через стабильные manifest-ключи.
 - Collision/query foundation использует exact `@dimforge/rapier3d-deterministic-compat@0.20.0` с compatibility identity `collision-contract-v1`. Backend загружается отдельным lazy chunk и остаётся заменяемым адаптером: статический мир детерминированно выводится из semantic-ID-sorted `ArenaDefinition`, а капсулы участников перед каждым gameplay query проецируются из сериализуемого состояния. Rapier handles и mutable world не входят в simulation snapshot и не являются gameplay authority.
-- Первый playable runner использует action schema v2, playable snapshot schema v2 и `combat-slice-scenario-v1`. Движение, здоровье, боезапас, targets и события принадлежат snapshot; keyboard/mouse adapter, pointer-lock controller, renderer и React HUD не меняют gameplay state напрямую.
+- Первый playable runner использует action schema v2, playable snapshot schema v3 и `match-slice-scenario-v2`. Движение, здоровье, боезапас, targets и события принадлежат snapshot; keyboard/mouse adapter, pointer-lock controller, renderer и React HUD не меняют gameplay state напрямую.
 - Pointer lock запрашивается только после явного действия на start/resume overlay. До lock fixed-step runner не идёт; потеря lock очищает held input и останавливает игру, а ошибка запроса оставляет retryable overlay вместо фатальной подмены игрового экрана.
 - Browser presentation не отправляет один simulation tick в WebGL повторно без явной invalidation. Resize и смена pixel ratio выполняют один redraw последнего snapshot; pause и hidden state не выполняют simulation ticks, WebGL submissions или периодические HUD publications.
 - Performance telemetry является presentation-only: wall-clock timings, renderer counters и доступные browser/device signals не попадают в simulation, RNG, snapshot, replay или state hash.
@@ -108,13 +114,16 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Сетевая модель, платформы и требования к latency/region.
 - Целевые браузеры, ОС/TV, разрешение, минимальный FPS и performance budget для одного, двух и четырёх viewport.
 - Раскладки viewport для двух, трёх и четырёх local seats и допустимые комбинации клавиатуры/мыши с геймпадами.
-- Семантика team spawn, одновременных respawn и аварийный fallback, если все spawn anchors физически заняты.
 - Доступность Game Design Lab из pause menu, поведение несохранённого черновика при закрытии и правила применения ревизии к уже запущенному матчу.
 
 ## 11. Журнал изменений
 
 | Дата | Решение |
 | --- | --- |
+| 2026-09-02 | По результату физического playtest подтверждён participant collision contract: капсулы всех живых участников блокируют движение, stationary fixture не проталкиваются, а после смерти capsule отключается до респавна. Проходить сквозь живых игроков нельзя; трупы остаются неколлизионными. |
+| 2026-09-02 | По результату физического playtest запрещены непроходимые узкие щели между procedural collision solids: любой визуально открытый промежуток обязан иметь полный clearance профильной капсулы, иначе generator закрывает его непрерывной геометрией, а validator отклоняет definition. |
+| 2026-09-02 | По результату visual playtest уточнён контракт procedural arena: отдельные cover-boxes не считаются архитектурой; accepted layout обязан иметь связные стеновые цепочки, комнаты, коридоры, читаемые дверные проёмы и неровный замкнутый внешний контур. Initial FFA и противостоящие команды разводятся по профильной минимальной дистанции даже на `small`; соседний spawn остаётся допустимым для союзников. |
+| 2026-09-02 | Утверждён первый procedural arena slice: одноуровневое асимметричное при допустимых fairness metrics семейство «Разорванное кольцо», три topology size `small`/`medium`/`large` с default `medium`, поддержка FFA/teams и roster до восьми, optional manual seed, новый auto seed для нового матча и exact arena для Repeat. Spawn regions используют distinct соседние slots; союзники могут видеть друг друга. Generation failure показывает причины и допускает только явный shipped fallback. Финальный visual kit остаётся открытым; slice использует аналитические `floor`/`wall`/`accent` slots. |
 | 2026-09-01 | Локальные тесты и browser playtest выполняются с выключенным звуковым выводом игры; включать звук разрешено только на время проверки, непосредственно касающейся аудио. |
 | 2026-09-01 | Таблицы округляют нанесённый и полученный урон до ближайшего целого без изменения точных simulation statistics. Renderer больше не использует один hardcoded цвет для всех mannequins: живой mannequin получает цвет participant из конфигурации и восстанавливает его после respawn. |
 | 2026-09-01 | Исправлен local-seat spawn базового match slice: прежний feet-anchor `z=8` совпадал с гранью `corner-north`, поэтому камера могла видеть сквозь стену до первого движения. Новый anchor `z=6` проверяется реальным collision world на отсутствие пересечений до первого input tick. |

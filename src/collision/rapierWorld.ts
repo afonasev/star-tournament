@@ -107,6 +107,7 @@ interface ParticipantRuntime {
   projection: CollisionCapsuleProjection
   collider: Rapier.Collider
   controller: Rapier.KinematicCharacterController
+  active: boolean
 }
 
 let activeWorlds = 0
@@ -153,6 +154,7 @@ export class RapierCollisionWorld {
 
   private disposed = false
   private readonly staticSemanticIdByHandle = new Map<number, string>()
+  private readonly participantSemanticIdByHandle = new Map<number, string>()
   private readonly participantBySemanticId = new Map<string, ParticipantRuntime>()
 
   constructor(
@@ -178,43 +180,48 @@ export class RapierCollisionWorld {
       this.staticSemanticIdByHandle.set(collider.handle, surface.id)
     }
 
-    for (const projection of assertUniqueCapsules(capsules)) {
-      const collider = world.createCollider(
-        rapier.ColliderDesc.capsule(projection.halfHeight, projection.radius).setTranslation(
-          projection.position.x,
-          projection.position.y,
-          projection.position.z,
-        ),
-      )
-      const controller = world.createCharacterController(controllerConfiguration.skinWidth)
-      controller.setApplyImpulsesToDynamicBodies(false)
-      controller.setSlideEnabled(true)
-      if (
-        controllerConfiguration.autostepMaxHeight === 0 ||
-        controllerConfiguration.autostepMinWidth === 0
-      ) {
-        controller.disableAutostep()
-      } else {
-        controller.enableAutostep(
-          controllerConfiguration.autostepMaxHeight,
-          controllerConfiguration.autostepMinWidth,
-          false,
-        )
-      }
-      if (controllerConfiguration.snapToGroundDistance === 0) {
-        controller.disableSnapToGround()
-      } else {
-        controller.enableSnapToGround(controllerConfiguration.snapToGroundDistance)
-      }
-      controller.setMaxSlopeClimbAngle(controllerConfiguration.maxSlopeClimbDegrees * Math.PI / 180)
-      controller.setMinSlopeSlideAngle(controllerConfiguration.minSlopeSlideDegrees * Math.PI / 180)
-      this.participantBySemanticId.set(projection.semanticId, { projection, collider, controller })
-    }
+    for (const projection of assertUniqueCapsules(capsules)) this.createParticipantRuntime(projection)
     // Rapier refreshes its broad/narrow-phase caches on a world step. With zero
     // gravity and only fixed/parentless colliders this is deterministic derived
     // initialization, not a gameplay simulation step or hidden authority.
     world.step()
     activeWorlds += 1
+  }
+
+  private createParticipantRuntime(projection: CollisionCapsuleProjection): ParticipantRuntime {
+    const collider = this.world.createCollider(
+      this.rapier.ColliderDesc.capsule(projection.halfHeight, projection.radius).setTranslation(
+        projection.position.x,
+        projection.position.y,
+        projection.position.z,
+      ),
+    )
+    const controller = this.world.createCharacterController(this.controllerConfiguration.skinWidth)
+    controller.setApplyImpulsesToDynamicBodies(false)
+    controller.setSlideEnabled(true)
+    if (
+      this.controllerConfiguration.autostepMaxHeight === 0 ||
+      this.controllerConfiguration.autostepMinWidth === 0
+    ) {
+      controller.disableAutostep()
+    } else {
+      controller.enableAutostep(
+        this.controllerConfiguration.autostepMaxHeight,
+        this.controllerConfiguration.autostepMinWidth,
+        false,
+      )
+    }
+    if (this.controllerConfiguration.snapToGroundDistance === 0) {
+      controller.disableSnapToGround()
+    } else {
+      controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)
+    }
+    controller.setMaxSlopeClimbAngle(this.controllerConfiguration.maxSlopeClimbDegrees * Math.PI / 180)
+    controller.setMinSlopeSlideAngle(this.controllerConfiguration.minSlopeSlideDegrees * Math.PI / 180)
+    const runtime = { projection, collider, controller, active: true }
+    this.participantBySemanticId.set(projection.semanticId, runtime)
+    this.participantSemanticIdByHandle.set(collider.handle, projection.semanticId)
+    return runtime
   }
 
   private assertActive(): void {
@@ -229,33 +236,52 @@ export class RapierCollisionWorld {
   projectCapsules(capsules: readonly CollisionCapsuleProjection[]): void {
     this.assertActive()
     const normalized = assertUniqueCapsules(capsules)
-    if (normalized.length !== this.participantBySemanticId.size) {
-      throw new CollisionContractError(
-        COLLISION_ERROR_CODES.invalidData,
-        'Projected capsule set does not match constructed world',
-      )
-    }
     for (const projection of normalized) {
       const runtime = this.participantBySemanticId.get(projection.semanticId)
-      if (
-        runtime === undefined ||
+      if (runtime !== undefined && (
         runtime.projection.radius !== projection.radius ||
         runtime.projection.halfHeight !== projection.halfHeight
-      ) {
+      )) {
         throw new CollisionContractError(
           COLLISION_ERROR_CODES.invalidData,
           `Projected capsule shape does not match ${projection.semanticId}`,
         )
       }
+    }
+    let createdRuntime = false
+    for (const projection of normalized) {
+      if (!this.participantBySemanticId.has(projection.semanticId)) {
+        this.createParticipantRuntime(projection)
+        createdRuntime = true
+      }
+    }
+    if (createdRuntime) {
+      // A restored world may first encounter a participant when that life
+      // respawns. Fixed parentless colliders have no physics state to advance;
+      // this deterministic step only refreshes Rapier's scene-query caches.
+      this.world.step()
+    }
+    const projectedIds = new Set(normalized.map(({ semanticId }) => semanticId))
+    for (const [semanticId, runtime] of this.participantBySemanticId) {
+      if (runtime.active && !projectedIds.has(semanticId)) {
+        runtime.active = false
+        runtime.collider.setEnabled(false)
+      }
+    }
+    for (const projection of normalized) {
+      const runtime = this.participantBySemanticId.get(projection.semanticId)
+      if (runtime === undefined) throw new Error(`Missing collision capsule ${projection.semanticId}`)
       runtime.collider.setTranslation(vector(projection.position))
+      if (!runtime.active) runtime.collider.setEnabled(true)
       runtime.projection = projection
+      runtime.active = true
     }
   }
 
   moveCapsule(semanticId: string, desiredTranslation: CollisionVector3): CollisionCapsuleMovementResult {
     this.assertActive()
     const runtime = this.participantBySemanticId.get(semanticId)
-    if (runtime === undefined) {
+    if (runtime === undefined || !runtime.active) {
       throw new CollisionContractError(
         COLLISION_ERROR_CODES.invalidData,
         `Unknown collision capsule: ${semanticId}`,
@@ -267,7 +293,12 @@ export class RapierCollisionWorld {
       vector(desiredTranslation),
       undefined,
       undefined,
-      (collider) => this.staticSemanticIdByHandle.has(collider.handle),
+      (collider) => {
+        if (this.staticSemanticIdByHandle.has(collider.handle)) return true
+        const otherId = this.participantSemanticIdByHandle.get(collider.handle)
+        return otherId !== undefined && otherId !== semanticId &&
+          this.participantBySemanticId.get(otherId)?.active === true
+      },
     )
     const movement = runtime.controller.computedMovement()
     const position = {
@@ -279,7 +310,7 @@ export class RapierCollisionWorld {
       const collision = runtime.controller.computedCollision(index)
       const hitId = collision?.collider === null || collision === null
         ? undefined
-        : this.staticSemanticIdByHandle.get(collision.collider.handle)
+        : this.semanticIdForHandle(collision.collider.handle)
       if (collision === null || hitId === undefined) return undefined
       return {
         semanticId: hitId,
@@ -400,7 +431,9 @@ export class RapierCollisionWorld {
           : `collision-kcc-config-v1:${this.controllerConfigurationHash}`,
         version: 1,
       },
-      capsules: [...this.participantBySemanticId.values()].map((runtime) => runtime.projection),
+      capsules: [...this.participantBySemanticId.values()]
+        .filter(({ active }) => active)
+        .map((runtime) => runtime.projection),
     })
   }
 
@@ -408,6 +441,7 @@ export class RapierCollisionWorld {
     if (this.disposed) return
     this.disposed = true
     this.staticSemanticIdByHandle.clear()
+    this.participantSemanticIdByHandle.clear()
     this.participantBySemanticId.clear()
     this.world.free()
     activeWorlds -= 1
@@ -416,10 +450,10 @@ export class RapierCollisionWorld {
   private semanticIdForHandle(handle: number): string | undefined {
     const staticId = this.staticSemanticIdByHandle.get(handle)
     if (staticId !== undefined) return staticId
-    for (const [semanticId, runtime] of this.participantBySemanticId) {
-      if (runtime.collider.handle === handle) return semanticId
-    }
-    return undefined
+    const participantId = this.participantSemanticIdByHandle.get(handle)
+    return participantId !== undefined && this.participantBySemanticId.get(participantId)?.active === true
+      ? participantId
+      : undefined
   }
 }
 

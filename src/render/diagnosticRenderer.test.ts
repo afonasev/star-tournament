@@ -10,10 +10,16 @@ import {
 } from './diagnosticRenderer'
 
 const arena = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   id: 'diagnostic-arena-v1',
   seed: 7,
+  size: 'small',
   generatorVersion: 'diagnostic-v1',
+  generatorProfile: { id: 'prototype-v1', revision: 5, contentHash: 'fnv1a64-v1:0000000000000000' },
+  regions: [
+    { id: 'region-a', role: 'spawn', center: { x: 0, y: 0, z: 0 }, size: { x: 12, y: 1, z: 12 } },
+  ],
+  links: [],
   surfaces: [
     {
       id: 'floor',
@@ -24,8 +30,11 @@ const arena = {
       material: 'floor',
     },
   ],
+  spawnRegions: [
+    { id: 'spawn-region-a', regionId: 'region-a', anchorIds: ['spawn-a'] },
+  ],
   spawnAnchors: [
-    { id: 'spawn-a', position: { x: 0, y: 0.02, z: 0 }, yawRadians: 0 },
+    { id: 'spawn-a', spawnRegionId: 'spawn-region-a', position: { x: 0, y: 0.02, z: 0 }, yawRadians: 0 },
   ],
   contentHash: 'fnv1a64-v1:0000000000000000',
 } as const satisfies ArenaDefinition

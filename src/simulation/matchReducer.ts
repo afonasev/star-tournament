@@ -1,4 +1,5 @@
 import { deepFreeze } from '../core/deepFreeze'
+import { allocateArenaSpawns, type ArenaDefinition } from '../arena'
 import type { MatchConfiguration, MatchTeam } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import type { CombatSliceScenario } from '../scenario'
@@ -130,22 +131,33 @@ function respawnDueParticipants(
   profile: ValidatedGameDesignProfile,
   scenario: CombatSliceScenario,
   events: SimulationEvent[],
+  arena?: ArenaDefinition,
 ): void {
   const fixtureById = new Map(scenario.targets.map((fixture) => [fixture.semanticId, fixture]))
-  for (const participant of [...participants]) {
+  const due = [...participants].filter((participant) => participant.kind === 'stationary-fixture' && !participant.alive && participant.respawnTick !== null && participant.respawnTick <= tick).sort(compareId)
+  const allocations = arena === undefined ? undefined : new Map(allocateArenaSpawns({
+    arena,
+    mode: participants.some(({ team }) => team !== null) ? 'teams' : 'ffa',
+    participants: due,
+    occupied: participants.filter(({ alive }) => alive).map(({ semanticId, position, team }) => ({ semanticId, position, team })),
+    capsuleDiameterMeters: (profile.rules.player.capsule.radius + profile.rules.player.capsule.skinWidth) * 2,
+    minimumOpponentSeparationMeters: profile.rules.arenaGenerator.presets[arena.size].minimumSpawnSeparationMeters,
+  }).map((allocation) => [allocation.participantId, allocation]))
+  for (const participant of due) {
     if (participant.kind !== 'stationary-fixture' || participant.alive || participant.respawnTick === null || participant.respawnTick > tick) continue
     const fixture = fixtureById.get(participant.semanticId)
     if (fixture === undefined) throw new TypeError(`Missing fixture anchor ${participant.semanticId}`)
+    const allocation = allocations?.get(participant.semanticId)
     const lifeSequence = participant.lifeSequence + 1
     const lifeId = `${participant.semanticId}:life:${lifeSequence}`
     updateParticipant(participants, participant.semanticId, (current) => ({
       ...current,
       lifeSequence,
       lifeId,
-      position: fixture.position,
+      position: allocation?.position ?? fixture.position,
       velocity: { x: 0, y: 0, z: 0 },
       grounded: true,
-      yaw: fixture.yawRadians,
+      yaw: allocation?.yawRadians ?? fixture.yawRadians,
       pitch: 0,
       health: profile.rules.player.startingHealth,
       alive: true,
@@ -215,6 +227,7 @@ export function reduceMatchTick(
   profile: ValidatedGameDesignProfile,
   configuration: MatchConfiguration,
   scenario: CombatSliceScenario,
+  arena?: ArenaDefinition,
 ): MatchTickReduction {
   if (snapshot.match.phase === 'finished') return deepFreeze({ participants: snapshot.participants, corpses: snapshot.corpses, match: snapshot.match, events: snapshot.events })
   const tick = snapshot.tick + 1
@@ -229,7 +242,7 @@ export function reduceMatchTick(
   const events = [...eventsInput].sort((first, second) => first.eventId.localeCompare(second.eventId, 'en'))
   for (const event of events) if (event.kind === 'target-damaged') applyDamage(participants, event)
   for (const event of events) if (event.kind === 'target-destroyed') applyDeath(participants, corpses, event, profile)
-  respawnDueParticipants(participants, tick, profile, scenario, events)
+  respawnDueParticipants(participants, tick, profile, scenario, events, arena)
   participants.sort(compareId)
   corpses.sort((first, second) => first.corpseId.localeCompare(second.corpseId, 'en'))
   return deepFreeze({ participants, corpses, match: evaluateMatch(snapshot, participants, configuration, tick), events: events.sort((first, second) => first.eventId.localeCompare(second.eventId, 'en')) })

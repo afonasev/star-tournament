@@ -1,8 +1,9 @@
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
+import { ARENA_SIZE_IDS, type ArenaSize } from '../arena'
 import { PROTOTYPE_V1_PROFILE, validateGameDesignProfile, type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
 
-export const MATCH_CONFIGURATION_SCHEMA_VERSION = 1 as const
+export const MATCH_CONFIGURATION_SCHEMA_VERSION = 2 as const
 export const MATCH_CONFIGURATION_ID = 'local-match-v1' as const
 export const TEAM_COLORS = deepFreeze({ red: '#ef4444', blue: '#3b82f6' } as const)
 
@@ -22,6 +23,8 @@ export interface MatchConfigurationPayload {
   readonly schemaVersion: typeof MATCH_CONFIGURATION_SCHEMA_VERSION
   readonly id: typeof MATCH_CONFIGURATION_ID
   readonly mode: MatchMode
+  readonly arenaSize: ArenaSize
+  readonly arenaSeed: number
   readonly durationMinutes: number
   readonly scoreTargetPoints: number | null
   readonly participants: readonly MatchParticipantDescriptor[]
@@ -121,10 +124,13 @@ export function parseMatchConfiguration(
   if (!profileValidation.ok) return fail('profile', 'must be a valid GameDesignProfile')
   const profile = profileValidation.profile
   const data = record(input, '$')
-  exactKeys(data, ['schemaVersion', 'id', 'mode', 'durationMinutes', 'scoreTargetPoints', 'participants', 'contentHash'], '$')
+  exactKeys(data, ['schemaVersion', 'id', 'mode', 'arenaSize', 'arenaSeed', 'durationMinutes', 'scoreTargetPoints', 'participants', 'contentHash'], '$')
   if (data.schemaVersion !== MATCH_CONFIGURATION_SCHEMA_VERSION) fail('schemaVersion', `must equal ${MATCH_CONFIGURATION_SCHEMA_VERSION}`)
   if (data.id !== MATCH_CONFIGURATION_ID) fail('id', `must equal ${MATCH_CONFIGURATION_ID}`)
   if (data.mode !== 'ffa' && data.mode !== 'teams') fail('mode', 'must be ffa or teams')
+  if (!ARENA_SIZE_IDS.includes(data.arenaSize as ArenaSize)) fail('arenaSize', 'must be small, medium, or large')
+  const arenaSeed = integer(data.arenaSeed, 'arenaSeed')
+  if (arenaSeed < 0 || arenaSeed > 0xffffffff) fail('arenaSeed', 'must be an unsigned 32-bit integer')
   const durationMinutes = integer(data.durationMinutes, 'durationMinutes')
   const duration = profile.rules.match.duration
   if (durationMinutes < duration.minimumMinutes || durationMinutes > duration.maximumMinutes) {
@@ -168,6 +174,8 @@ export function parseMatchConfiguration(
     schemaVersion: MATCH_CONFIGURATION_SCHEMA_VERSION,
     id: MATCH_CONFIGURATION_ID,
     mode: data.mode,
+    arenaSize: data.arenaSize as ArenaSize,
+    arenaSeed,
     durationMinutes,
     scoreTargetPoints,
     participants,
@@ -201,6 +209,8 @@ export const DEFAULT_MATCH_CONFIGURATION = createMatchConfiguration({
   schemaVersion: MATCH_CONFIGURATION_SCHEMA_VERSION,
   id: MATCH_CONFIGURATION_ID,
   mode: 'ffa',
+  arenaSize: 'medium',
+  arenaSeed: 0x53544152,
   durationMinutes: PROTOTYPE_V1_PROFILE.rules.match.duration.defaultMinutes,
   scoreTargetPoints: null,
   participants: [

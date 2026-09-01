@@ -4,6 +4,7 @@ import type {
   CollisionHit,
   CollisionVector3,
 } from '../collision/contracts'
+import type { ArenaDefinition } from '../arena'
 import { resolveShotgunTrigger } from '../combat/shotgun'
 import { parseActionFrame, type ActionFrame, type CanonicalActionId } from '../input/actionFrame'
 import { DEFAULT_MATCH_CONFIGURATION, parseMatchConfiguration, type MatchConfiguration } from '../match'
@@ -39,6 +40,25 @@ export interface PlayableCollisionPort {
   ): readonly CollisionHit[]
 }
 
+export function livingParticipantCollisionCapsules(
+  snapshot: SimulationSnapshot,
+  profile: ValidatedGameDesignProfile,
+): readonly CollisionCapsuleProjection[] {
+  const verticalCenterOffset = profile.rules.player.capsule.halfHeight +
+    profile.rules.player.capsule.radius
+  return snapshot.participants
+    .filter(({ alive }) => alive)
+    .map((participant): CollisionCapsuleProjection => ({
+      semanticId: participant.semanticId,
+      position: participant.kind === 'stationary-fixture'
+        ? { ...participant.position, y: participant.position.y + verticalCenterOffset }
+        : participant.position,
+      radius: profile.rules.player.capsule.radius,
+      halfHeight: profile.rules.player.capsule.halfHeight,
+    }))
+    .sort((left, right) => left.semanticId.localeCompare(right.semanticId, 'en'))
+}
+
 function actionValue(
   frame: ActionFrame,
   participantId: string,
@@ -55,6 +75,7 @@ export function stepPlayableSimulation(
   collision: PlayableCollisionPort,
   profileInput: GameDesignProfile | ValidatedGameDesignProfile,
   configurationInput: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION,
+  arena?: ArenaDefinition,
 ): SimulationSnapshot {
   const configuration = parseMatchConfiguration(configurationInput, profileInput)
   const current = parseSimulationSnapshot(snapshot, configuration)
@@ -85,12 +106,7 @@ export function stepPlayableSimulation(
   const participantId = local.semanticId
   const jumpPressed = actionValue(normalizedFrame, participantId, 'jump') === 1
   const firePressed = actionValue(normalizedFrame, participantId, 'fire') === 1
-  collision.projectCapsules([{
-    semanticId: local.semanticId,
-    position: local.position,
-    radius: profile.rules.player.capsule.radius,
-    halfHeight: profile.rules.player.capsule.halfHeight,
-  }])
+  collision.projectCapsules(livingParticipantCollisionCapsules(current, profile))
   const movementIntent = buildMovementIntent(
     local,
     {
@@ -144,7 +160,10 @@ export function stepPlayableSimulation(
       health,
       active: alive,
     })),
-    COMBAT_SLICE_SCENARIO_V1.targets,
+    COMBAT_SLICE_SCENARIO_V1.targets.map((target) => {
+      const participant = current.participants.find(({ semanticId }) => semanticId === target.semanticId)
+      return participant === undefined ? target : { ...target, position: participant.position, yawRadians: participant.yaw }
+    }),
     {
       eyeHeight: profile.rules.player.eyeHeight,
       ...profile.rules.weapons.doubleBarrelShotgun,
@@ -161,6 +180,7 @@ export function stepPlayableSimulation(
     profile,
     configuration,
     COMBAT_SLICE_SCENARIO_V1,
+    arena,
   )
   return parseSimulationSnapshot({
     ...current,

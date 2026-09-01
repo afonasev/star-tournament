@@ -42,6 +42,10 @@ body {
 .match-menu__rules { display: flex; align-items: end; gap: 1rem; margin-top: 1.2rem; }
 .match-menu__check { display: flex !important; flex-direction: row; align-items: center; padding-bottom: 0.65rem; }
 .match-menu__validation { color: #ff9f95; }
+.match-menu__generation-error { margin-top: 1rem; padding: 0.9rem; border: 1px solid rgb(255 159 149 / 40%); border-radius: 0.4rem; background: rgb(72 19 26 / 34%); color: #ffd6d1; }
+.match-menu__generation-error p { margin: 0.35rem 0 0.75rem; color: #e7a9a2; }
+.match-menu__generation-error div { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.match-menu__generation-error button { padding: 0.55rem 0.75rem; border: 1px solid rgb(255 181 171 / 42%); border-radius: 0.3rem; background: #35141c; color: #ffe9e5; cursor: pointer; }
 .match-menu__start { width: 100%; margin-top: 1.4rem; border-color: #72e6ff; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
 .match-menu__start:disabled { cursor: not-allowed; opacity: 0.4; }
 .match-session-host { width: 100%; height: 100%; }
@@ -268,6 +272,23 @@ body {
   letter-spacing: 0.14em;
   pointer-events: none;
   transform: translateX(-50%);
+}
+
+.arena-session-badge {
+  position: fixed;
+  z-index: 29;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.42rem 0.68rem;
+  border: 1px solid rgb(105 224 255 / 28%);
+  border-radius: 0.3rem;
+  background: rgb(3 15 24 / 72%);
+  color: #84cde0;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  pointer-events: none;
 }
 
 .performance-benchmark-badge[data-status="passed"] {

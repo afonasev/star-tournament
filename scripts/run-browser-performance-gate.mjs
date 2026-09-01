@@ -133,11 +133,19 @@ async function readPerformanceReport(client, sessionId) {
   throw new Error('Browser performance report timed out')
 }
 
-async function startDefaultMatch(client, sessionId) {
+async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed) {
   const deadline = Date.now() + 10_000
   while (Date.now() < deadline) {
     const evaluation = await client.send('Runtime.evaluate', {
       expression: `(() => {
+        const size = document.querySelector('[aria-label="Размер арены"]')
+        const seed = document.querySelector('[aria-label="Seed арены"]')
+        if (!(size instanceof HTMLSelectElement) || !(seed instanceof HTMLInputElement)) return false
+        Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(size, ${JSON.stringify(arenaSize)})
+        size.dispatchEvent(new Event('change', { bubbles: true }))
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(seed, ${JSON.stringify(String(arenaSeed))})
+        seed.dispatchEvent(new Event('input', { bubbles: true }))
+        seed.dispatchEvent(new Event('change', { bubbles: true }))
         const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Начать матч')
         if (!button) return false
         button.click()
@@ -153,6 +161,10 @@ async function startDefaultMatch(client, sessionId) {
 
 const previewPort = await reservePort()
 const previewUrl = `http://127.0.0.1:${previewPort}/?performanceBenchmark=1`
+const arenaSize = process.env.STAR_TOURNAMENT_ARENA_SIZE ?? 'medium'
+if (!['small', 'medium', 'large'].includes(arenaSize)) throw new Error('STAR_TOURNAMENT_ARENA_SIZE must be small, medium, or large')
+const arenaSeed = Number(process.env.STAR_TOURNAMENT_ARENA_SEED ?? 0x53544152)
+if (!Number.isSafeInteger(arenaSeed) || arenaSeed < 0 || arenaSeed > 0xffffffff) throw new Error('STAR_TOURNAMENT_ARENA_SEED must be uint32')
 const chromePath = await availablePath([
   process.env.STAR_TOURNAMENT_CHROME_PATH,
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -200,9 +212,12 @@ try {
     mobile: false,
   }, sessionId)
   await client.send('Page.navigate', { url: previewUrl }, sessionId)
-  await startDefaultMatch(client, sessionId)
+  await startDefaultMatch(client, sessionId, arenaSize, arenaSeed)
   const report = await readPerformanceReport(client, sessionId)
-  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`)
+  const output = process.env.STAR_TOURNAMENT_PERF_SUMMARY === '1'
+    ? { passed: report.passed, environment: report.environment, phases: report.gates.map(({ phase, passed }) => ({ phase, passed })) }
+    : report
+  process.stdout.write(`${JSON.stringify(output, null, 2)}\n`)
   if (!report.passed) process.exitCode = 1
 } finally {
   client?.close()
