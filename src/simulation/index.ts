@@ -25,6 +25,8 @@ export {
   SIMULATION_SNAPSHOT_SCHEMA_VERSION,
   SIMULATION_SNAPSHOT_SCHEMA_VERSION as PLAYABLE_SIMULATION_SNAPSHOT_SCHEMA_VERSION,
   SimulationSnapshotError,
+  localParticipant,
+  stationaryParticipants,
   SimulationSnapshotError as PlayableSimulationSnapshotError,
   type ArenaIdentity,
   type ArenaIdentity as PlayableArenaIdentity,

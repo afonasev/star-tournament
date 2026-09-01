@@ -45,9 +45,9 @@ function expectDeepFrozen(value: unknown): void {
 describe('prototype-v1 GameDesignProfile', () => {
   it('contains every approved numeric prototype rule', () => {
     expect(PROTOTYPE_V1_PROFILE).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       id: 'prototype-v1',
-      revision: 2,
+      revision: 3,
       source: 'shipped',
       rules: {
         player: {
@@ -89,7 +89,15 @@ describe('prototype-v1 GameDesignProfile', () => {
             damage: { head: 100, torso: 70, limb: 30 },
           },
         },
-        match: { duration: { defaultMinutes: 5, minimumMinutes: 1, maximumMinutes: 30 } },
+        match: {
+          duration: { defaultMinutes: 5, minimumMinutes: 1, maximumMinutes: 30 },
+          scoreTarget: {
+            defaultPoints: 3_000,
+            minimumPoints: 1_000,
+            maximumPoints: 20_000,
+            stepPoints: 100,
+          },
+        },
         scoring: {
           assist: { windowSeconds: 5, points: 50 },
           killChain: {
@@ -133,7 +141,7 @@ describe('prototype-v1 GameDesignProfile', () => {
   it('returns a detached immutable snapshot for a valid local profile', () => {
     const input = cloneProfile()
     input.source = 'local'
-    input.revision = 2
+    input.revision = 3
     input.contentHash = computeProfileContentHash(input)
 
     const result = validateGameDesignProfile(input)
@@ -217,6 +225,24 @@ describe('prototype-v1 GameDesignProfile', () => {
             'rules.match.duration.minimumMinutes',
             'rules.match.duration.defaultMinutes',
             'rules.match.duration.maximumMinutes',
+          ],
+        }),
+      ]),
+    })
+
+    const invalidTarget = cloneProfile()
+    invalidTarget.rules.match.scoreTarget.defaultPoints = 3_050
+    invalidTarget.contentHash = computeProfileContentHash(invalidTarget)
+    expect(validateGameDesignProfile(invalidTarget)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'MATCH_SCORE_TARGET_ORDER',
+          paths: [
+            'rules.match.scoreTarget.minimumPoints',
+            'rules.match.scoreTarget.defaultPoints',
+            'rules.match.scoreTarget.maximumPoints',
+            'rules.match.scoreTarget.stepPoints',
           ],
         }),
       ]),
@@ -318,7 +344,7 @@ describe('prototype-v1 GameDesignProfile', () => {
 
   it('derives identity from all effective content except contentHash', () => {
     expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
-    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:f5bb1311b3320a05')
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:78c61748fe003868')
     expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
       PROTOTYPE_V1_PROFILE.contentHash,
     )

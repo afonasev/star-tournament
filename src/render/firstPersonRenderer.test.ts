@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 
 import { DIAGNOSTIC_ARENA } from '../arena'
@@ -37,17 +37,21 @@ function snapshot(
 ): FirstPersonRenderSnapshot {
   return {
     tick: 1,
-    player: {
+    participants: [{
+      semanticId: 'local-player-1',
+      kind: 'local-seat',
       position: { x: 1, y: 2, z: 3 },
       yaw: Math.PI / 2,
       pitch: Math.PI / 6,
-    },
-    weapon: { semanticId: 'double-barrel-shotgun', ammo: 20 },
-    targets: COMBAT_SLICE_SCENARIO_V1.targets.map((target) => ({
+      weapon: { semanticId: 'double-barrel-shotgun', ammo: 20 },
+    }, ...COMBAT_SLICE_SCENARIO_V1.targets.map((target, index) => ({
       semanticId: target.semanticId,
+      kind: 'stationary-fixture' as const,
+      color: ['#f59e0b', '#22c55e', '#a855f7'][index]!,
       health: 100,
-      active: true,
-    })),
+      alive: true,
+    }))],
+    corpses: [],
     events: [],
     ...overrides,
   }
@@ -104,8 +108,10 @@ describe('createFirstPersonRenderer', () => {
   })
 
   it('accepts the playable snapshot through presentation-only structural boundaries', () => {
-    expectTypeOf<PlayableSimulationSnapshot>().toMatchTypeOf<FirstPersonRenderSnapshot>()
-    expectTypeOf<PlayableSimulationSnapshot>().toMatchTypeOf<GameplayUiSourceSnapshot>()
+    const acceptsRenderSnapshot = (_snapshot: FirstPersonRenderSnapshot) => true
+    const acceptsUiSnapshot = (_snapshot: GameplayUiSourceSnapshot) => true
+    expect(acceptsRenderSnapshot({} as PlayableSimulationSnapshot)).toBe(true)
+    expect(acceptsUiSnapshot({} as PlayableSimulationSnapshot)).toBe(true)
   })
 
   it('renders one identity-wired arena, primitive robots and profile camera', () => {
@@ -193,6 +199,26 @@ describe('createFirstPersonRenderer', () => {
     expect(observer.disconnect).toHaveBeenCalledTimes(1)
   })
 
+  it('renders each living mannequin with its participant color and restores it after respawn', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
+    const initial = snapshot()
+    adapter.render(initial)
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    for (const participant of initial.participants.filter((entry) => entry.kind === 'stationary-fixture')) {
+      const group = scene.getObjectByName(`target:${participant.semanticId}`) as THREE.Group
+      const material = (group.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial
+      expect(`#${material.color.getHexString()}`).toBe(participant.color)
+    }
+
+    const targetId = COMBAT_SLICE_SCENARIO_V1.targets[0]!.semanticId
+    adapter.render(snapshot({ tick: 2, participants: initial.participants.map((participant) => participant.semanticId === targetId ? { ...participant, health: 0, alive: false } : participant) }))
+    adapter.render(snapshot({ tick: 3, participants: initial.participants }))
+    const restored = scene.getObjectByName(`target:${targetId}`) as THREE.Group
+    expect(`#${((restored.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).color.getHexString()}`).toBe('#f59e0b')
+  })
+
   it('presents shot, impact and destroyed events until their profile-defined expiry', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
@@ -207,10 +233,10 @@ describe('createFirstPersonRenderer', () => {
     const destroyedTargetId = COMBAT_SLICE_SCENARIO_V1.targets[0]!.semanticId
     adapter.render(snapshot({
       tick: 5,
-      targets: snapshot().targets.map((target) =>
-        target.semanticId === destroyedTargetId
-          ? { ...target, health: 0, active: false }
-          : target,
+      participants: snapshot().participants.map((participant) =>
+        participant.kind === 'stationary-fixture' && participant.semanticId === destroyedTargetId
+          ? { ...participant, health: 0, alive: false }
+          : participant,
       ),
       events: [
         { eventId: 'shot-1', tick: 5, kind: 'shotgun-shot' },
@@ -240,6 +266,17 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', false)
     expect(scene.getObjectByName('presentation:impact:impact-1')).toBeUndefined()
     expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
+  })
+
+  it('projects authoritative corpse lifetime independently from a respawned fixture', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
+    adapter.render(snapshot({ tick: 180, corpses: [{ corpseId: 'robot-center:life:1:corpse', position: { x: 0, y: 0, z: -2 }, yaw: 0 }] }))
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeDefined()
+    adapter.render(snapshot({ tick: 601, corpses: [] }))
+    expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeUndefined()
   })
 
   it('fully disposes listeners, canvas, geometries, materials and WebGL resources', () => {

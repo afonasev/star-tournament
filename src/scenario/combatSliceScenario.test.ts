@@ -9,12 +9,18 @@ import {
 } from './combatSliceScenario'
 import { COMBAT_SLICE_SCENARIO_V1 } from './combatSliceScenarioV1'
 
-describe('combat-slice-scenario-v1', () => {
+describe('match-slice-scenario-v2', () => {
   it('has a versioned immutable schema with semantic-sorted targets and hit volumes', () => {
     const scenario = COMBAT_SLICE_SCENARIO_V1
 
-    expect(scenario.schemaVersion).toBe(1)
-    expect(scenario.id).toBe('combat-slice-scenario-v1')
+    expect(scenario.schemaVersion).toBe(2)
+    expect(scenario.id).toBe('match-slice-scenario-v2')
+    expect(scenario.playerSpawn).toMatchObject({
+      semanticId: 'local-player-1',
+      participantKind: 'local-seat',
+      position: { x: 0, y: 0, z: 6 },
+    })
+    expect(scenario.targets.every((target) => target.participantKind === 'stationary-fixture')).toBe(true)
     expect(scenario.targets.map((target) => target.semanticId)).toEqual([
       'robot-center',
       'robot-left',
@@ -38,8 +44,8 @@ describe('combat-slice-scenario-v1', () => {
 
   it('normalizes reordered targets and volumes to the same content hash', () => {
     const reordered = createCombatSliceScenario({
-      schemaVersion: 1,
-      id: 'combat-slice-scenario-v1',
+      schemaVersion: 2,
+      id: 'match-slice-scenario-v2',
       playerSpawn: COMBAT_SLICE_SCENARIO_V1.playerSpawn,
       targets: [...COMBAT_SLICE_SCENARIO_V1.targets]
         .reverse()
@@ -105,7 +111,7 @@ describe('combat-slice-scenario-v1', () => {
   it('rejects unsupported identity and stale content hashes with stable codes', () => {
     const serialized = JSON.parse(serializeCombatSliceScenario(COMBAT_SLICE_SCENARIO_V1)) as Record<string, unknown>
 
-    expect(() => parseCombatSliceScenario({ ...serialized, schemaVersion: 2 })).toThrow(
+    expect(() => parseCombatSliceScenario({ ...serialized, schemaVersion: 1 })).toThrow(
       expect.objectContaining({ code: COMBAT_SLICE_SCENARIO_ERROR_CODES.unsupportedIdentity }),
     )
     expect(() => parseCombatSliceScenario({ ...serialized, contentHash: 'fnv1a64-v1:0000000000000000' })).toThrow(

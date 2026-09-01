@@ -82,6 +82,10 @@ export class PointerLockController {
     return this.requestPointerLock()
   }
 
+  pause(): void {
+    if (!this.disposed) this.pauseForFocusLoss()
+  }
+
   dispose(): void {
     if (this.disposed) return
     this.disposed = true

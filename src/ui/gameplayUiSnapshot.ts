@@ -1,7 +1,9 @@
 import { deepFreeze } from '../core/deepFreeze'
+import { projectStandings, type StandingsProjection } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles/gameDesignProfile'
+import type { MatchFinalResult, MatchParticipantState, MatchPhase, SimulationEvent, SimulationMatchState } from '../simulation/playableSnapshot'
 
-export type GameplayUiStatus = 'start' | 'running' | 'paused' | 'error'
+export type GameplayUiStatus = 'start' | 'running' | 'paused' | 'results' | 'error'
 export type GameplayCrosshairFeedback = 'idle' | 'hit' | 'dry-fire'
 
 export interface GameplayDebugSnapshot {
@@ -10,6 +12,10 @@ export interface GameplayDebugSnapshot {
   readonly profileIdentity: string
   readonly arenaIdentity: string
   readonly collisionIdentity: string
+  readonly scenarioIdentity: string
+  readonly configurationIdentity: string
+  readonly matchPhase: MatchPhase
+  readonly remainingTicks: number
   readonly playerPosition: {
     readonly x: number
     readonly y: number
@@ -24,6 +30,7 @@ export interface GameplayDebugSnapshot {
     readonly health: number
     readonly active: boolean
   }[]
+  readonly participantStatistics: readonly { readonly semanticId: string; readonly kills: number; readonly assists: number; readonly deaths: number; readonly score: number }[]
 }
 
 export interface GameplayUiSnapshot {
@@ -33,28 +40,21 @@ export interface GameplayUiSnapshot {
   readonly weaponName: string
   readonly ammo: number
   readonly crosshairFeedback: GameplayCrosshairFeedback
+  readonly matchPhase: MatchPhase
+  readonly remainingTicks: number
+  readonly timerText: string
+  readonly scoreboardVisible: boolean
+  readonly standings: StandingsProjection
+  readonly result: MatchFinalResult | null
   readonly errorMessage?: string
   readonly debug?: GameplayDebugSnapshot
 }
 
 export interface GameplayUiSourceSnapshot {
   readonly tick: number
-  readonly player: {
-    readonly health: number
-  }
-  readonly weapon: {
-    readonly ammo: number
-  }
-  readonly events: readonly {
-    readonly eventId: string
-    readonly tick: number
-    readonly kind:
-      | 'shotgun-shot'
-      | 'shotgun-impact'
-      | 'target-damaged'
-      | 'target-destroyed'
-      | 'dry-fire'
-  }[]
+  readonly participants: readonly MatchParticipantState[]
+  readonly match: SimulationMatchState
+  readonly events: readonly SimulationEvent[]
 }
 
 export interface GameplayUiProjectorOptions {
@@ -92,6 +92,7 @@ export class GameplayUiProjector {
     status: GameplayUiStatus,
     debug?: GameplayDebugSnapshot,
     errorMessage?: string,
+    scoreboardVisible = false,
   ): Readonly<GameplayUiSnapshot> {
     if (source.tick < this.lastTick) {
       this.hitFeedbackThroughTick = -1
@@ -127,13 +128,26 @@ export class GameplayUiProjector {
           ? 'dry-fire'
           : 'idle'
 
+    const local = source.participants.find(({ kind }) => kind === 'local-seat')
+    if (local === undefined) throw new TypeError('GameplayUiSourceSnapshot requires one local-seat participant')
+    const matchPhase = source.match.phase
+    const effectiveStatus = matchPhase === 'finished' ? 'results' : status
+    const remainingSeconds = Math.ceil(source.match.remainingTicks / this.ticksPerSecond)
+    const minutes = Math.floor(remainingSeconds / 60)
+    const seconds = remainingSeconds % 60
     return createGameplayUiSnapshot({
-      status,
-      health: source.player.health,
+      status: effectiveStatus,
+      health: local.health,
       maximumHealth: this.profile.rules.player.startingHealth,
       weaponName: this.weaponName,
-      ammo: source.weapon.ammo,
+      ammo: local.weapon.ammo,
       crosshairFeedback,
+      matchPhase,
+      remainingTicks: source.match.remainingTicks,
+      timerText: matchPhase === 'overtime' ? 'OVERTIME' : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
+      scoreboardVisible: scoreboardVisible && matchPhase !== 'finished',
+      standings: projectStandings(source.match.mode, source.participants),
+      result: source.match.result,
       ...(debug === undefined ? {} : { debug }),
       ...(errorMessage === undefined ? {} : { errorMessage }),
     })
@@ -152,6 +166,11 @@ export function createGameplayUiSnapshot(
   assertFiniteNonNegative(snapshot.health, 'GameplayUiSnapshot.health')
   assertFiniteNonNegative(snapshot.maximumHealth, 'GameplayUiSnapshot.maximumHealth')
   assertFiniteNonNegative(snapshot.ammo, 'GameplayUiSnapshot.ammo')
+  if (!Number.isSafeInteger(snapshot.remainingTicks) || snapshot.remainingTicks < 0) throw new RangeError('GameplayUiSnapshot.remainingTicks must be a non-negative safe integer')
+  if (!/^\d{2,}:\d{2}$/.test(snapshot.timerText) && snapshot.timerText !== 'OVERTIME') throw new TypeError('GameplayUiSnapshot.timerText must be MM:SS or OVERTIME')
+  if (snapshot.matchPhase === 'overtime' && snapshot.timerText !== 'OVERTIME') throw new TypeError('GameplayUiSnapshot overtime must display OVERTIME')
+  if ((snapshot.matchPhase === 'finished') !== (snapshot.result !== null)) throw new TypeError('GameplayUiSnapshot finished phase must match result')
+  if (snapshot.status === 'results' && snapshot.matchPhase !== 'finished') throw new TypeError('GameplayUiSnapshot results status requires finished phase')
   if (snapshot.health > snapshot.maximumHealth) {
     throw new RangeError('GameplayUiSnapshot.health must not exceed maximumHealth')
   }
@@ -170,6 +189,8 @@ export function createGameplayUiSnapshot(
       ['profileIdentity', snapshot.debug.profileIdentity],
       ['arenaIdentity', snapshot.debug.arenaIdentity],
       ['collisionIdentity', snapshot.debug.collisionIdentity],
+      ['scenarioIdentity', snapshot.debug.scenarioIdentity],
+      ['configurationIdentity', snapshot.debug.configurationIdentity],
     ] as const) {
       if (value.length === 0) {
         throw new TypeError(`GameplayUiSnapshot.debug.${path} must be non-empty`)
@@ -188,6 +209,7 @@ export function createGameplayUiSnapshot(
       }
     }
     assertFiniteNonNegative(snapshot.debug.ammo, 'GameplayUiSnapshot.debug.ammo')
+    if (!Number.isSafeInteger(snapshot.debug.remainingTicks) || snapshot.debug.remainingTicks < 0) throw new RangeError('GameplayUiSnapshot.debug.remainingTicks must be a non-negative safe integer')
     for (const [index, target] of snapshot.debug.targets.entries()) {
       if (target.semanticId.length === 0) {
         throw new TypeError(

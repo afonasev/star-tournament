@@ -10,6 +10,9 @@ export interface GameplayUi {
 
 export interface GameplayUiOptions {
   readonly onRequestControl?: () => void
+  readonly onRepeat?: () => void
+  readonly onMainMenu?: () => void
+  readonly onToggleFullscreen?: () => void
 }
 
 export function createGameplayUi(
@@ -23,14 +26,17 @@ export function createGameplayUi(
     update(snapshot) {
       if (!disposed) {
         root.render(
-          <GameplayHud snapshot={snapshot} onRequestControl={options.onRequestControl} />,
+          <GameplayHud snapshot={snapshot} onRequestControl={options.onRequestControl} onRepeat={options.onRepeat} onMainMenu={options.onMainMenu} onToggleFullscreen={options.onToggleFullscreen} />,
         )
       }
     },
     dispose() {
       if (disposed) return
       disposed = true
-      root.unmount()
+      // The shell callback can replace the parent React tree from inside a HUD
+      // event. Crossing a microtask boundary avoids synchronously unmounting
+      // this nested root while React is still processing that parent update.
+      queueMicrotask(() => root.unmount())
     },
   }
 }

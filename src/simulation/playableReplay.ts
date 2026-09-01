@@ -1,6 +1,7 @@
 import { canonicalSerialize, parseCanonicalJson } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 import { parseActionFrame, type ActionFrame } from '../input/actionFrame'
+import { DEFAULT_MATCH_CONFIGURATION, parseMatchConfiguration, type MatchConfiguration } from '../match'
 import {
   parseSimulationSnapshot,
   simulationSnapshotHash,
@@ -8,10 +9,11 @@ import {
 } from './playableSnapshot'
 import type { ContentHash } from '../core/canonical'
 
-export const PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION = 2 as const
+export const PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION = 3 as const
 
 export interface PlayableSimulationReplay {
   readonly schemaVersion: typeof PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION
+  readonly configuration: MatchConfiguration
   readonly initialSnapshot: SimulationSnapshot
   readonly frames: readonly ActionFrame[]
 }
@@ -47,12 +49,15 @@ function validateFrames(initialSnapshot: SimulationSnapshot, frames: readonly Ac
 export function createPlayableSimulationReplay(
   initialSnapshot: SimulationSnapshot,
   frames: readonly ActionFrame[],
+  configurationInput: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION,
 ): PlayableSimulationReplay {
-  const parsedSnapshot = parseSimulationSnapshot(initialSnapshot)
+  const configuration = parseMatchConfiguration(configurationInput)
+  const parsedSnapshot = parseSimulationSnapshot(initialSnapshot, configuration)
   const parsedFrames = frames.map((frame) => parseActionFrame(frame))
   validateFrames(parsedSnapshot, parsedFrames)
   return deepFreeze({
     schemaVersion: PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION,
+    configuration,
     initialSnapshot: parsedSnapshot,
     frames: parsedFrames,
   })
@@ -63,7 +68,7 @@ export function parsePlayableSimulationReplay(input: string | unknown): Playable
   canonicalSerialize(value)
   const data = record(value, 'PlayableSimulationReplay')
   const actualKeys = Object.keys(data).sort()
-  const expectedKeys = ['frames', 'initialSnapshot', 'schemaVersion']
+  const expectedKeys = ['configuration', 'frames', 'initialSnapshot', 'schemaVersion']
   if (
     actualKeys.length !== expectedKeys.length ||
     actualKeys.some((key, index) => key !== expectedKeys[index])
@@ -78,9 +83,11 @@ export function parsePlayableSimulationReplay(input: string | unknown): Playable
   if (!Array.isArray(data.frames)) {
     throw new TypeError('PlayableSimulationReplay.frames must be an array')
   }
+  const configuration = parseMatchConfiguration(data.configuration)
   return createPlayableSimulationReplay(
-    parseSimulationSnapshot(data.initialSnapshot),
+    parseSimulationSnapshot(data.initialSnapshot, configuration),
     data.frames.map((frame) => parseActionFrame(frame)),
+    configuration,
   )
 }
 
@@ -92,8 +99,9 @@ export class PlayableFixedStepHeadlessRunner {
   private currentSnapshot: SimulationSnapshot
   private readonly hashes: ContentHash[] = []
 
-  constructor(initialSnapshot: SimulationSnapshot, private readonly stepper: PlayableSimulationStep) {
-    this.currentSnapshot = parseSimulationSnapshot(initialSnapshot)
+  constructor(initialSnapshot: SimulationSnapshot, private readonly stepper: PlayableSimulationStep, private readonly configuration: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION) {
+    this.configuration = parseMatchConfiguration(configuration)
+    this.currentSnapshot = parseSimulationSnapshot(initialSnapshot, this.configuration)
   }
 
   get snapshot(): SimulationSnapshot {
@@ -110,11 +118,11 @@ export class PlayableFixedStepHeadlessRunner {
     if (normalizedFrame.tick !== expectedTick) {
       throw new RangeError(`ActionFrame.tick ${normalizedFrame.tick} does not match next simulation tick ${expectedTick}`)
     }
-    this.currentSnapshot = parseSimulationSnapshot(this.stepper(this.currentSnapshot, normalizedFrame))
+    this.currentSnapshot = parseSimulationSnapshot(this.stepper(this.currentSnapshot, normalizedFrame), this.configuration)
     if (this.currentSnapshot.tick !== expectedTick) {
       throw new RangeError(`Playable step must return simulation tick ${expectedTick}`)
     }
-    this.hashes.push(simulationSnapshotHash(this.currentSnapshot))
+    this.hashes.push(simulationSnapshotHash(this.currentSnapshot, this.configuration))
     return this.currentSnapshot
   }
 
@@ -129,5 +137,5 @@ export function runPlayableSimulationReplay(
   stepper: PlayableSimulationStep,
 ): PlayableHeadlessRunResult {
   const parsed = parsePlayableSimulationReplay(replay)
-  return new PlayableFixedStepHeadlessRunner(parsed.initialSnapshot, stepper).run(parsed.frames)
+  return new PlayableFixedStepHeadlessRunner(parsed.initialSnapshot, stepper, parsed.configuration).run(parsed.frames)
 }

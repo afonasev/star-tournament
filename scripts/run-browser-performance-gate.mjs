@@ -133,6 +133,24 @@ async function readPerformanceReport(client, sessionId) {
   throw new Error('Browser performance report timed out')
 }
 
+async function startDefaultMatch(client, sessionId) {
+  const deadline = Date.now() + 10_000
+  while (Date.now() < deadline) {
+    const evaluation = await client.send('Runtime.evaluate', {
+      expression: `(() => {
+        const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Начать матч')
+        if (!button) return false
+        button.click()
+        return true
+      })()`,
+      returnByValue: true,
+    }, sessionId)
+    if (evaluation.result?.value === true) return
+    await delay(100)
+  }
+  throw new Error('Pre-match menu did not become ready')
+}
+
 const previewPort = await reservePort()
 const previewUrl = `http://127.0.0.1:${previewPort}/?performanceBenchmark=1`
 const chromePath = await availablePath([
@@ -182,6 +200,7 @@ try {
     mobile: false,
   }, sessionId)
   await client.send('Page.navigate', { url: previewUrl }, sessionId)
+  await startDefaultMatch(client, sessionId)
   const report = await readPerformanceReport(client, sessionId)
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`)
   if (!report.passed) process.exitCode = 1

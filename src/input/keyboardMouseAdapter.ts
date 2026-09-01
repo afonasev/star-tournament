@@ -23,6 +23,11 @@ export interface KeyboardMouseAdapterOptions {
   readonly window?: Window
 }
 
+export interface UiActionSnapshot {
+  readonly scoreboardHeld: boolean
+  readonly pauseRequested: boolean
+}
+
 type HeldKey = 'KeyW' | 'KeyA' | 'KeyS' | 'KeyD' | 'Space'
 
 const HELD_KEYS = new Set<string>(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space'])
@@ -47,6 +52,8 @@ export class KeyboardMouseAdapter {
   private accumulatedMouseX = 0
   private accumulatedMouseY = 0
   private primaryFireHeld = false
+  private scoreboardHeld = false
+  private pauseRequested = false
   private disposed = false
 
   constructor(private readonly options: KeyboardMouseAdapterOptions) {
@@ -105,12 +112,24 @@ export class KeyboardMouseAdapter {
     return createActionFrame(tick, actions)
   }
 
+  /** Returns local-only UI intent without entering deterministic gameplay frames. */
+  drainUiActionSnapshot(): Readonly<UiActionSnapshot> {
+    const snapshot = Object.freeze({
+      scoreboardHeld: this.isPointerLocked() && this.scoreboardHeld,
+      pauseRequested: this.pauseRequested,
+    })
+    this.pauseRequested = false
+    return snapshot
+  }
+
   /** Clears every held and accumulated action in one synchronous operation. */
   clearInputState(): void {
     this.heldKeys.clear()
     this.accumulatedMouseX = 0
     this.accumulatedMouseY = 0
     this.primaryFireHeld = false
+    this.scoreboardHeld = false
+    this.pauseRequested = false
   }
 
   dispose(): void {
@@ -128,12 +147,27 @@ export class KeyboardMouseAdapter {
   }
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (!this.isPointerLocked() || !HELD_KEYS.has(event.code)) return
+    if (!this.isPointerLocked()) return
+    if (event.code === 'Tab') {
+      event.preventDefault()
+      this.scoreboardHeld = true
+      return
+    }
+    if (event.code === 'Escape') {
+      if (!event.repeat) this.pauseRequested = true
+      return
+    }
+    if (!HELD_KEYS.has(event.code)) return
     event.preventDefault()
     this.heldKeys.add(event.code as HeldKey)
   }
 
   private readonly onKeyUp = (event: KeyboardEvent): void => {
+    if (event.code === 'Tab') {
+      if (this.isPointerLocked()) event.preventDefault()
+      this.scoreboardHeld = false
+      return
+    }
     if (!HELD_KEYS.has(event.code)) return
     if (this.isPointerLocked()) event.preventDefault()
     this.heldKeys.delete(event.code as HeldKey)

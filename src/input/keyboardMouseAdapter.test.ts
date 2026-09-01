@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { parseActionFrame } from './actionFrame'
 import {
@@ -106,6 +106,22 @@ describe('KeyboardMouseAdapter', () => {
     expect(valuesByAction(adapter, 3)[KEYBOARD_MOUSE_ACTION_IDS.moveForward]).toBe(-1)
   })
 
+  it('emits held Tab and edge-triggered Escape only through local UI actions', () => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Tab' }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Tab', repeat: true }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape' }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', repeat: true }))
+
+    expect(adapter.drainUiActionSnapshot()).toEqual({ scoreboardHeld: true, pauseRequested: true })
+    expect(adapter.drainUiActionSnapshot()).toEqual({ scoreboardHeld: true, pauseRequested: false })
+    expect(parseActionFrame(adapter.drainActionFrame(1)).actions.map(({ actionId }) => actionId)).toEqual([
+      'move-forward', 'move-right', 'look-yaw', 'look-pitch', 'jump', 'fire',
+    ])
+
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Tab' }))
+    expect(adapter.drainUiActionSnapshot()).toEqual({ scoreboardHeld: false, pauseRequested: false })
+  })
+
   it('gates every gameplay action behind the configured pointer lock', () => {
     setPointerLockElement(null)
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW' }))
@@ -131,11 +147,26 @@ describe('KeyboardMouseAdapter', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }))
     window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }))
     window.dispatchEvent(new MouseEvent('mousemove', { movementX: 5, movementY: 6 }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Tab' }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape' }))
 
     clear()
     setPointerLockElement(lockElement)
 
     expect(Object.values(valuesByAction(adapter, 1))).toEqual([0, 0, 0, 0, 0, 0])
+    expect(adapter.drainUiActionSnapshot()).toEqual({ scoreboardHeld: false, pauseRequested: false })
+  })
+
+  it('never reads the Gamepad API', () => {
+    const getGamepads = vi.fn(() => [])
+    Object.defineProperty(navigator, 'getGamepads', {
+      configurable: true,
+      value: getGamepads,
+    })
+    adapter.drainActionFrame(1)
+    adapter.drainUiActionSnapshot()
+    expect(getGamepads).not.toHaveBeenCalled()
+    Reflect.deleteProperty(navigator, 'getGamepads')
   })
 
   it('removes all physical-device listeners on dispose', () => {

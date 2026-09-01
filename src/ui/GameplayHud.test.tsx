@@ -16,6 +16,12 @@ function snapshot(
     weaponName: 'Двухстволка',
     ammo: 20,
     crosshairFeedback: 'idle',
+    matchPhase: 'running',
+    remainingTicks: 18_000,
+    timerText: '05:00',
+    scoreboardVisible: false,
+    standings: { mode: 'ffa', rows: [] },
+    result: null,
     ...overrides,
   })
 }
@@ -32,7 +38,38 @@ describe('GameplayHud', () => {
     expect(screen.getByLabelText('Оружие и боезапас')).toHaveTextContent('Двухстволка')
     expect(screen.getByLabelText('Оружие и боезапас')).toHaveTextContent('12')
     expect(screen.getByLabelText('Прицел')).toBeInTheDocument()
+    expect(screen.getByLabelText('Время матча')).toHaveTextContent('05:00')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('renders live standings while held and groups team totals', () => {
+    render(<GameplayHud snapshot={snapshot({
+      scoreboardVisible: true,
+      standings: { mode: 'teams', teams: [{ team: 'red', color: '#ef4444', totalScore: 100, participants: [{ rank: 1, semanticId: 'a', name: 'Ace', kind: 'local-seat', color: '#ef4444', team: 'red', kills: 1, assists: 0, deaths: 0, damageDealt: 123.6, damageReceived: 45.2, score: 100 }] }, { team: 'blue', color: '#3b82f6', totalScore: 0, participants: [] }] },
+    })} />)
+    expect(screen.getByLabelText('Таблица результатов')).toHaveTextContent('Красные 100')
+    expect(screen.getAllByRole('columnheader', { name: 'Очки' })).toHaveLength(2)
+    expect(screen.getByRole('rowheader', { name: /Ace/ }).closest('tr')).toHaveAttribute('data-human', 'true')
+    expect(screen.getByText('ИГРОК')).toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: '124' })).toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: '45' })).toBeInTheDocument()
+  })
+
+  it('offers complete pause and draw-free result actions', () => {
+    const onRepeat = vi.fn()
+    const onMainMenu = vi.fn()
+    const { rerender } = render(<GameplayHud snapshot={snapshot({ status: 'paused' })} onRepeat={onRepeat} onMainMenu={onMainMenu} />)
+    expect(screen.getByRole('button', { name: 'Полноэкранный режим' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Повторить матч' }))
+    expect(onRepeat).toHaveBeenCalledOnce()
+    const result = { winnerType: 'participant' as const, winnerId: 'local-player-1', trigger: 'time-limit' as const, finalTick: 10, finalStandings: ['local-player-1'] }
+    rerender(<GameplayHud snapshot={snapshot({ status: 'results', matchPhase: 'finished', result })} onMainMenu={onMainMenu} />)
+    expect(screen.getByText('Победитель: local-player-1')).toBeInTheDocument()
+    expect(screen.queryByText(/ничья/i)).not.toBeInTheDocument()
+    const teamResult = { ...result, winnerType: 'team' as const, winnerId: 'red' }
+    rerender(<GameplayHud snapshot={snapshot({ status: 'results', matchPhase: 'finished', result: teamResult, standings: { mode: 'teams', teams: [{ team: 'red', color: '#ef4444', totalScore: 100, participants: [] }, { team: 'blue', color: '#3b82f6', totalScore: 0, participants: [] }] } })} />)
+    expect(screen.getByText('Победитель: Красная команда')).toBeInTheDocument()
+    expect(screen.getByText('Красные').closest('section')).toHaveAttribute('data-winner', 'true')
   })
 
   it('shows hit and dry-fire feedback from immutable presentation state', () => {
@@ -84,6 +121,10 @@ describe('GameplayHud', () => {
             profileIdentity: 'prototype-v1@2:profile',
             arenaIdentity: 'diagnostic-arena:arena',
             collisionIdentity: 'collision-contract-v1@0.20.0',
+            scenarioIdentity: 'scenario-v2',
+            configurationIdentity: 'local-match-v1',
+            matchPhase: 'running',
+            remainingTicks: 17_958,
             playerPosition: { x: 1.25, y: 0.9, z: -3.5 },
             playerYawDegrees: 45,
             playerPitchDegrees: -10,
@@ -93,6 +134,7 @@ describe('GameplayHud', () => {
               { semanticId: 'target-alpha', health: 70, active: true },
               { semanticId: 'target-beta', health: 0, active: false },
             ],
+            participantStatistics: [{ semanticId: 'local-player-1', kills: 1, assists: 2, deaths: 3, score: 450 }],
           },
         })}
       />,

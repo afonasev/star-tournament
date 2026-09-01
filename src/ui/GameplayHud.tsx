@@ -1,8 +1,14 @@
+import type { CSSProperties } from 'react'
+
 import type { GameplayUiSnapshot } from './gameplayUiSnapshot'
+import type { StandingsParticipantRow } from '../match'
 
 export interface GameplayHudProps {
   readonly snapshot: Readonly<GameplayUiSnapshot>
   readonly onRequestControl?: () => void
+  readonly onRepeat?: () => void
+  readonly onMainMenu?: () => void
+  readonly onToggleFullscreen?: () => void
 }
 
 function overlayCopy(status: GameplayUiSnapshot['status']): Readonly<{
@@ -17,14 +23,6 @@ function overlayCopy(status: GameplayUiSnapshot['status']): Readonly<{
       title: 'Войти на арену',
       detail: 'WASD — движение · мышь — обзор · Space — прыжок · ЛКМ — огонь',
       action: 'Начать игру',
-    }
-  }
-  if (status === 'paused') {
-    return {
-      eyebrow: 'ПАУЗА',
-      title: 'Управление приостановлено',
-      detail: 'Вернитесь в бой, когда будете готовы.',
-      action: 'Продолжить',
     }
   }
   return null
@@ -42,7 +40,35 @@ function formatAngle(value: number): string {
   return `${value.toFixed(1)}°`
 }
 
-export function GameplayHud({ snapshot, onRequestControl }: GameplayHudProps) {
+function formatDamage(value: number): string {
+  return String(Math.round(value))
+}
+
+function StandingsTable({ snapshot }: { readonly snapshot: Readonly<GameplayUiSnapshot> }) {
+  const table = (rows: readonly StandingsParticipantRow[]) => (
+    <table>
+      <colgroup><col className="gameplay-hud__column-rank" /><col className="gameplay-hud__column-participant" /><col span={3} className="gameplay-hud__column-stat" /><col span={2} className="gameplay-hud__column-damage" /><col className="gameplay-hud__column-score" /></colgroup>
+      <thead><tr><th>#</th><th>Участник</th><th>K</th><th>A</th><th>D</th><th>Урон</th><th>Получено</th><th>Очки</th></tr></thead>
+      <tbody>{rows.map((row) => {
+        const isHuman = row.kind === 'local-seat'
+        return <tr key={row.semanticId} data-leader={row.rank === 1} data-human={isHuman} style={{ '--participant-color': row.color } as CSSProperties}><td>{row.rank}</td><th scope="row"><span>{row.name}</span>{isHuman && <small className="gameplay-hud__human-badge">ИГРОК</small>}</th><td>{row.kills}</td><td>{row.assists}</td><td>{row.deaths}</td><td>{formatDamage(row.damageDealt)}</td><td>{formatDamage(row.damageReceived)}</td><td>{row.score}</td></tr>
+      })}</tbody>
+    </table>
+  )
+  return <section className="gameplay-hud__scoreboard" aria-label="Таблица результатов"><p>LIVE STANDINGS</p>{snapshot.standings.mode === 'ffa' ? table(snapshot.standings.rows) : snapshot.standings.teams.map((team) => <section key={team.team} className="gameplay-hud__team" data-team={team.team} data-winner={snapshot.result?.winnerType === 'team' && snapshot.result.winnerId === team.team}><h2>{team.team === 'red' ? 'Красные' : 'Синие'} <strong>{team.totalScore}</strong></h2>{table(team.participants)}</section>)}</section>
+}
+
+function winnerLabel(snapshot: Readonly<GameplayUiSnapshot>): string {
+  const result = snapshot.result
+  if (result === null) return ''
+  if (result.winnerType === 'team') return result.winnerId === 'red' ? 'Красная команда' : 'Синяя команда'
+  const rows = snapshot.standings.mode === 'ffa'
+    ? snapshot.standings.rows
+    : snapshot.standings.teams.flatMap(({ participants }) => participants)
+  return rows.find(({ semanticId }) => semanticId === result.winnerId)?.name ?? result.winnerId
+}
+
+export function GameplayHud({ snapshot, onRequestControl, onRepeat, onMainMenu, onToggleFullscreen }: GameplayHudProps) {
   const overlay = overlayCopy(snapshot.status)
   const healthPercent = snapshot.maximumHealth === 0
     ? 0
@@ -64,6 +90,8 @@ export function GameplayHud({ snapshot, onRequestControl }: GameplayHudProps) {
               {healthPercent}%
             </meter>
           </section>
+
+          <time className="gameplay-hud__timer" aria-label="Время матча" data-overtime={snapshot.matchPhase === 'overtime'}>{snapshot.timerText}</time>
 
           <div
             className={`gameplay-hud__crosshair gameplay-hud__crosshair--${snapshot.crosshairFeedback}`}
@@ -99,6 +127,30 @@ export function GameplayHud({ snapshot, onRequestControl }: GameplayHudProps) {
         </section>
       )}
 
+      {snapshot.scoreboardVisible && <StandingsTable snapshot={snapshot} />}
+
+      {snapshot.status === 'paused' && (
+        <section className="gameplay-hud__overlay gameplay-hud__pause" aria-label="Меню паузы">
+          <p>ПАУЗА</p><h1>Матч приостановлен</h1>
+          <small>{snapshot.errorMessage ?? 'Таймер и симуляция остановлены.'}</small>
+          <div className="gameplay-hud__actions">
+            <button type="button" onClick={onRequestControl}>Продолжить</button>
+            <button type="button" onClick={onRepeat}>Повторить матч</button>
+            <button type="button" onClick={onToggleFullscreen}>Полноэкранный режим</button>
+            <button type="button" onClick={onMainMenu}>Главное меню</button>
+          </div>
+        </section>
+      )}
+
+      {snapshot.status === 'results' && snapshot.result && (
+        <section className="gameplay-hud__overlay gameplay-hud__results" aria-label="Результаты матча">
+          <p>{snapshot.result.trigger === 'score-limit' ? 'ЛИМИТ ОЧКОВ' : 'ВРЕМЯ ИСТЕКЛО'}</p>
+          <h1>Победитель: {winnerLabel(snapshot)}</h1>
+          <StandingsTable snapshot={snapshot} />
+          <div className="gameplay-hud__actions"><button type="button" onClick={onRepeat}>Повторить матч</button><button type="button" onClick={onMainMenu}>Главное меню</button></div>
+        </section>
+      )}
+
       {snapshot.status === 'error' && (
         <section className="gameplay-hud__error" role="alert">
           <p>RUNTIME НЕДОСТУПЕН</p>
@@ -115,6 +167,9 @@ export function GameplayHud({ snapshot, onRequestControl }: GameplayHudProps) {
             <div><dt>Profile</dt><dd title={snapshot.debug.profileIdentity}>{shortIdentity(snapshot.debug.profileIdentity)}</dd></div>
             <div><dt>Arena</dt><dd title={snapshot.debug.arenaIdentity}>{shortIdentity(snapshot.debug.arenaIdentity)}</dd></div>
             <div><dt>Collision</dt><dd title={snapshot.debug.collisionIdentity}>{shortIdentity(snapshot.debug.collisionIdentity)}</dd></div>
+            <div><dt>Scenario</dt><dd title={snapshot.debug.scenarioIdentity}>{shortIdentity(snapshot.debug.scenarioIdentity)}</dd></div>
+            <div><dt>Config</dt><dd title={snapshot.debug.configurationIdentity}>{shortIdentity(snapshot.debug.configurationIdentity)}</dd></div>
+            <div><dt>Match</dt><dd>{snapshot.debug.matchPhase} · {snapshot.debug.remainingTicks}</dd></div>
             <div>
               <dt>Position</dt>
               <dd>{[
@@ -135,6 +190,7 @@ export function GameplayHud({ snapshot, onRequestControl }: GameplayHudProps) {
                 <dd>{target.active ? target.health.toFixed(1) : 'destroyed'}</dd>
               </div>
             ))}
+            {snapshot.debug.participantStatistics.map((participant) => <div key={`stats:${participant.semanticId}`}><dt>{participant.semanticId}</dt><dd>{participant.score} · {participant.kills}/{participant.assists}/{participant.deaths}</dd></div>)}
           </dl>
         </aside>
       )}

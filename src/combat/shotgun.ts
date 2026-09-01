@@ -23,6 +23,7 @@ export interface ShotgunWeaponState {
 
 export interface ShotgunTargetState {
   readonly semanticId: string
+  readonly lifeId: string
   readonly health: number
   readonly active: boolean
 }
@@ -61,7 +62,9 @@ export type ShotgunSimulationEvent =
       readonly kind: 'target-damaged'
       readonly eventId: string
       readonly tick: number
+      readonly attackerId: string
       readonly targetId: string
+      readonly targetLifeId: string
       readonly damage: number
       readonly healthAfter: number
       readonly zones: readonly TargetHitZone[]
@@ -70,7 +73,9 @@ export type ShotgunSimulationEvent =
       readonly kind: 'target-destroyed'
       readonly eventId: string
       readonly tick: number
+      readonly killerId: string
       readonly targetId: string
+      readonly targetLifeId: string
     }
   | {
       readonly kind: 'dry-fire'
@@ -204,14 +209,17 @@ export function resolveShotgunTrigger(
       tuning.damage,
     )
     const health = Math.max(0, target.health - damage)
+    const appliedDamage = target.health - health
     const active = health > 0
     const zones = [...accumulated.zones].sort((first, second) => ZONE_ORDER[first] - ZONE_ORDER[second])
     events.push({
       kind: 'target-damaged',
       eventId: eventId(tick, `damaged:${target.semanticId}`),
       tick,
+      attackerId: player.semanticId,
       targetId: target.semanticId,
-      damage,
+      targetLifeId: target.lifeId,
+      damage: appliedDamage,
       healthAfter: health,
       zones,
     })
@@ -220,7 +228,9 @@ export function resolveShotgunTrigger(
         kind: 'target-destroyed',
         eventId: eventId(tick, `destroyed:${target.semanticId}`),
         tick,
+        killerId: player.semanticId,
         targetId: target.semanticId,
+        targetLifeId: target.lifeId,
       })
     }
     return { ...target, health, active }

@@ -23,6 +23,21 @@
   backdrop-filter: blur(8px);
 }
 
+.gameplay-hud__timer {
+  position: absolute;
+  top: clamp(1rem, 3vw, 2rem);
+  left: 50%;
+  padding: 0.55rem 0.9rem;
+  translate: -50% 0;
+  border: 1px solid rgb(110 225 255 / 30%);
+  border-radius: 0.3rem;
+  background: rgb(4 12 22 / 78%);
+  font: 800 clamp(1rem, 3vw, 1.5rem)/1 "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.1em;
+}
+
+.gameplay-hud__timer[data-overtime="true"] { color: #ffbc69; border-color: rgb(255 188 105 / 55%); }
+
 .gameplay-hud__health {
   left: clamp(1rem, 3vw, 2rem);
 }
@@ -176,6 +191,46 @@
   outline: 3px solid #fff;
   outline-offset: 3px;
 }
+
+.gameplay-hud__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem; margin-top: 1.4rem; }
+.gameplay-hud__actions button { margin-top: 0; }
+
+.gameplay-hud__scoreboard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(68rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 5rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  overflow: auto;
+  translate: -50% -50%;
+  border: 1px solid rgb(105 224 255 / 38%);
+  border-radius: 0.55rem;
+  background: rgb(3 10 19 / 92%);
+  box-shadow: 0 2rem 8rem rgb(0 0 0 / 65%);
+  pointer-events: auto;
+}
+.gameplay-hud__scoreboard > p { margin: 0 0 1rem; color: #72e6ff; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.2em; }
+.gameplay-hud__scoreboard table { width: 100%; min-width: 48rem; table-layout: fixed; border-collapse: collapse; font: 0.78rem/1.4 "SFMono-Regular", Consolas, monospace; }
+.gameplay-hud__column-rank { width: 3.5rem; }
+.gameplay-hud__column-participant { width: auto; }
+.gameplay-hud__column-stat { width: 4.5rem; }
+.gameplay-hud__column-damage { width: 8.5rem; }
+.gameplay-hud__column-score { width: 7rem; }
+.gameplay-hud__scoreboard th, .gameplay-hud__scoreboard td { padding: 0.55rem; border-bottom: 1px solid rgb(151 211 230 / 12%); text-align: right; }
+.gameplay-hud__scoreboard th:nth-child(2), .gameplay-hud__scoreboard td:nth-child(2) { text-align: left; }
+.gameplay-hud__scoreboard tbody tr { transition: background-color 120ms ease; }
+.gameplay-hud__scoreboard tbody tr[data-human="true"] { background: linear-gradient(90deg, color-mix(in srgb, var(--participant-color) 12%, transparent), transparent 52%); box-shadow: inset 2px 0 var(--participant-color); }
+.gameplay-hud__scoreboard tbody tr[data-leader="true"] > :is(td:first-child, th, td:last-child) { color: var(--participant-color); }
+.gameplay-hud__scoreboard tbody tr[data-leader="true"] th { text-shadow: 0 0 1rem color-mix(in srgb, var(--participant-color) 36%, transparent); }
+.gameplay-hud__scoreboard .gameplay-hud__human-badge { display: inline-block; margin: 0 0 0 0.65rem; padding: 0.08rem 0.3rem; border: 1px solid color-mix(in srgb, var(--participant-color) 45%, transparent); border-radius: 0.2rem; color: color-mix(in srgb, var(--participant-color) 78%, white); font-size: 0.52rem; font-weight: 900; line-height: 1.2; letter-spacing: 0.1em; vertical-align: 0.12rem; opacity: 0.78; }
+.gameplay-hud__team + .gameplay-hud__team { margin-top: 1.2rem; }
+.gameplay-hud__team h2 { display: flex; justify-content: space-between; margin: 0; padding: 0.6rem; font-size: 1rem; }
+.gameplay-hud__team[data-team="red"] h2 { color: #ff8b86; }
+.gameplay-hud__team[data-team="blue"] h2 { color: #83b9ff; }
+.gameplay-hud__team[data-winner="true"] > h2 { text-shadow: 0 0 1.25rem currentColor; }
+.gameplay-hud__results { width: min(72rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); overflow: auto; }
+.gameplay-hud__results .gameplay-hud__scoreboard { position: relative; top: auto; left: auto; width: 100%; max-height: none; margin-top: 1rem; padding: 0; overflow: visible; translate: none; border: 0; background: transparent; box-shadow: none; }
 
 .gameplay-hud__error {
   border-color: rgb(255 119 108 / 50%);

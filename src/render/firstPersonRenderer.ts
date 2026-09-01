@@ -52,13 +52,21 @@ export interface FirstPersonRenderPlayer {
 
 export interface FirstPersonRenderTarget {
   readonly semanticId: string
+  readonly kind: 'stationary-fixture'
+  readonly color: string
   readonly health: number
-  readonly active: boolean
+  readonly alive: boolean
 }
 
 export interface FirstPersonRenderWeapon {
   readonly semanticId: string
   readonly ammo: number
+}
+
+export interface FirstPersonRenderCorpse {
+  readonly corpseId: string
+  readonly position: ScenarioVector3
+  readonly yaw: number
 }
 
 interface FirstPersonRenderEventBase {
@@ -81,7 +89,7 @@ export interface FirstPersonTargetDestroyedRenderEvent extends FirstPersonRender
 }
 
 export interface FirstPersonIgnoredRenderEvent extends FirstPersonRenderEventBase {
-  readonly kind: 'target-damaged' | 'dry-fire'
+  readonly kind: 'target-damaged' | 'participant-respawned' | 'dry-fire'
 }
 
 export type FirstPersonRenderEvent =
@@ -92,9 +100,12 @@ export type FirstPersonRenderEvent =
 
 export interface FirstPersonRenderSnapshot {
   readonly tick: number
-  readonly player: FirstPersonRenderPlayer
-  readonly weapon: FirstPersonRenderWeapon
-  readonly targets: readonly FirstPersonRenderTarget[]
+  readonly participants: readonly ((FirstPersonRenderPlayer & {
+    readonly semanticId: string
+    readonly kind: 'local-seat'
+    readonly weapon: FirstPersonRenderWeapon
+  }) | FirstPersonRenderTarget)[]
+  readonly corpses: readonly FirstPersonRenderCorpse[]
   readonly events: readonly FirstPersonRenderEvent[]
 }
 
@@ -130,6 +141,7 @@ interface TargetPresentation {
   readonly material: THREE.MeshStandardMaterial
   readonly baseY: number
   destroyed: boolean
+  color: string
 }
 
 interface TransientMesh {
@@ -250,7 +262,7 @@ function addRobotTarget(
     group.add(mesh)
   }
   scene.add(group)
-  return { group, material, baseY: target.position.y, destroyed: false }
+  return { group, material, baseY: target.position.y, destroyed: false, color: '#b8dce5' }
 }
 
 function eventDurationTicks(seconds: number, ticksPerSecond: number): number {
@@ -332,6 +344,7 @@ export function createFirstPersonRenderer({
 
   const processedEventIds = new Set<string>()
   const transientByEventId = new Map<string, TransientMesh>()
+  const corpseById = new Map<string, THREE.Mesh>()
   let muzzleVisibleThroughTick = -1
   let lastSubmittedTick: number | undefined
   let lastSnapshot: FirstPersonRenderSnapshot | undefined
@@ -427,28 +440,52 @@ export function createFirstPersonRenderer({
       processedEventIds.clear()
       muzzleVisibleThroughTick = -1
     }
+    const player = snapshot.participants.find((participant) => participant.kind === 'local-seat')
+    if (player === undefined) throw new TypeError('FirstPersonRenderSnapshot requires one local-seat participant')
     camera.position.set(
-      snapshot.player.position.x,
-      snapshot.player.position.y + profile.rules.player.eyeHeight,
-      snapshot.player.position.z,
+      player.position.x,
+      player.position.y + profile.rules.player.eyeHeight,
+      player.position.z,
     )
     // Three.js positive Y rotation turns the -Z camera axis left, while the
     // simulation convention defines positive yaw as turning right.
-    camera.rotation.set(snapshot.player.pitch, -snapshot.player.yaw, 0, 'YXZ')
+    camera.rotation.set(player.pitch, -player.yaw, 0, 'YXZ')
 
-    for (const targetState of snapshot.targets) {
+    for (const targetState of snapshot.participants.filter((participant): participant is FirstPersonRenderTarget => participant.kind === 'stationary-fixture')) {
       const target = targetById.get(targetState.semanticId)
       if (target === undefined) continue
-      const destroyed = !targetState.active || targetState.health <= 0
+      const destroyed = !targetState.alive || targetState.health <= 0
+      const presentationColor = destroyed ? '#354148' : targetState.color.toLowerCase()
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
         target.group.userData.presentationState = destroyed ? 'destroyed' : 'active'
         target.group.rotation.z = destroyed ? 0.18 : 0
         target.group.position.y = target.baseY + (destroyed ? -0.2 : 0)
-        target.material.color.setHex(destroyed ? 0x354148 : 0xb8dce5)
-        target.material.emissive.setHex(destroyed ? 0x210d0a : 0x0c5362)
         target.material.emissiveIntensity = destroyed ? 0.12 : 0.5
       }
+      if (presentationColor !== target.color) {
+        target.color = presentationColor
+        target.material.color.set(presentationColor)
+        if (destroyed) target.material.emissive.setHex(0x210d0a)
+        else target.material.emissive.set(presentationColor).multiplyScalar(0.28)
+      }
+    }
+
+    const visibleCorpseIds = new Set(snapshot.corpses.map(({ corpseId }) => corpseId))
+    for (const [corpseId, corpse] of corpseById) {
+      if (!visibleCorpseIds.has(corpseId)) {
+        scene.remove(corpse)
+        corpseById.delete(corpseId)
+      }
+    }
+    for (const corpseState of snapshot.corpses) {
+      if (corpseById.has(corpseState.corpseId)) continue
+      const corpse = new THREE.Mesh(destroyedGeometry, destroyedMaterial)
+      corpse.name = `corpse:${corpseState.corpseId}`
+      corpse.position.set(corpseState.position.x, corpseState.position.y + 0.25, corpseState.position.z)
+      corpse.rotation.set(0, corpseState.yaw, 0.18)
+      scene.add(corpse)
+      corpseById.set(corpseState.corpseId, corpse)
     }
 
     processEvents(snapshot)
@@ -485,6 +522,7 @@ export function createFirstPersonRenderer({
     }
     resizeObserver?.disconnect()
     transientByEventId.clear()
+    corpseById.clear()
     processedEventIds.clear()
     lastSnapshot = undefined
     geometries.forEach((geometry) => geometry.dispose())

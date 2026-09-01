@@ -2,7 +2,7 @@ import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from
 
 import { deepFreeze, type DeepReadonly } from './deepFreeze'
 
-export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 2 as const
+export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 3 as const
 
 export type GameDesignProfileSource = 'shipped' | 'local'
 
@@ -59,6 +59,12 @@ export interface GameDesignRules {
       defaultMinutes: number
       minimumMinutes: number
       maximumMinutes: number
+    }
+    scoreTarget: {
+      defaultPoints: number
+      minimumPoints: number
+      maximumPoints: number
+      stepPoints: number
     }
   }
   scoring: {
@@ -491,6 +497,46 @@ const descriptors: NumericProfileDescriptor[] = [
     step: 1,
   },
   {
+    path: 'rules.match.scoreTarget.defaultPoints',
+    group: 'match',
+    label: 'Цель по очкам по умолчанию',
+    description: 'Стартовое значение при включении опциональной цели матча.',
+    unit: 'points',
+    minimum: 1_000,
+    maximum: 20_000,
+    step: 100,
+  },
+  {
+    path: 'rules.match.scoreTarget.minimumPoints',
+    group: 'match',
+    label: 'Минимальная цель по очкам',
+    description: 'Нижняя граница цели по очкам в настройках матча.',
+    unit: 'points',
+    minimum: 1_000,
+    maximum: 20_000,
+    step: 100,
+  },
+  {
+    path: 'rules.match.scoreTarget.maximumPoints',
+    group: 'match',
+    label: 'Максимальная цель по очкам',
+    description: 'Верхняя граница цели по очкам в настройках матча.',
+    unit: 'points',
+    minimum: 1_000,
+    maximum: 20_000,
+    step: 100,
+  },
+  {
+    path: 'rules.match.scoreTarget.stepPoints',
+    group: 'match',
+    label: 'Шаг цели по очкам',
+    description: 'Дискретность выбора цели по очкам в настройках матча.',
+    unit: 'points',
+    minimum: 100,
+    maximum: 1_000,
+    step: 100,
+  },
+  {
     path: 'rules.scoring.assist.windowSeconds',
     group: 'scoring-assist',
     label: 'Окно участия в убийстве',
@@ -575,6 +621,7 @@ export type ProfileValidationErrorCode =
   | 'OUT_OF_RANGE'
   | 'INVALID_STEP'
   | 'MATCH_DURATION_ORDER'
+  | 'MATCH_SCORE_TARGET_ORDER'
   | 'KILL_CHAIN_TOTALS_NOT_INCREASING'
   | 'CAPSULE_GEOMETRY_INVALID'
   | 'EYE_HEIGHT_OUTSIDE_CAPSULE'
@@ -778,6 +825,31 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
     })
   }
 
+  const minimumTarget = readPath(value, 'rules.match.scoreTarget.minimumPoints')
+  const defaultTarget = readPath(value, 'rules.match.scoreTarget.defaultPoints')
+  const maximumTarget = readPath(value, 'rules.match.scoreTarget.maximumPoints')
+  const targetStep = readPath(value, 'rules.match.scoreTarget.stepPoints')
+  if (
+    typeof minimumTarget === 'number' && Number.isFinite(minimumTarget) &&
+    typeof defaultTarget === 'number' && Number.isFinite(defaultTarget) &&
+    typeof maximumTarget === 'number' && Number.isFinite(maximumTarget) &&
+    typeof targetStep === 'number' && Number.isFinite(targetStep) &&
+    (!(minimumTarget <= defaultTarget && defaultTarget <= maximumTarget) ||
+      !matchesStep(defaultTarget, minimumTarget, targetStep) ||
+      !matchesStep(maximumTarget, minimumTarget, targetStep))
+  ) {
+    errors.push({
+      code: 'MATCH_SCORE_TARGET_ORDER',
+      paths: [
+        'rules.match.scoreTarget.minimumPoints',
+        'rules.match.scoreTarget.defaultPoints',
+        'rules.match.scoreTarget.maximumPoints',
+        'rules.match.scoreTarget.stepPoints',
+      ],
+      message: 'Цель по очкам должна удовлетворять minimum <= default <= maximum и принятому шагу.',
+    })
+  }
+
   const capsuleRadius = readPath(value, 'rules.player.capsule.radius')
   const capsuleHalfHeight = readPath(value, 'rules.player.capsule.halfHeight')
   const capsuleSkinWidth = readPath(value, 'rules.player.capsule.skinWidth')
@@ -917,7 +989,7 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 2,
+  revision: 3,
   source: 'shipped',
   rules: {
     player: {
@@ -961,6 +1033,7 @@ const prototypePayload: GameDesignProfilePayload = {
     },
     match: {
       duration: { defaultMinutes: 5, minimumMinutes: 1, maximumMinutes: 30 },
+      scoreTarget: { defaultPoints: 3_000, minimumPoints: 1_000, maximumPoints: 20_000, stepPoints: 100 },
     },
     scoring: {
       assist: { windowSeconds: 5, points: 50 },

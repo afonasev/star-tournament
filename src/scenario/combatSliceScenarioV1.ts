@@ -52,27 +52,36 @@ function targetVolumes(): readonly TargetHitVolume[] {
 }
 
 const payload: CombatSliceScenarioPayload = {
-  schemaVersion: 1,
-  id: 'combat-slice-scenario-v1',
+  schemaVersion: 2,
+  id: 'match-slice-scenario-v2',
   playerSpawn: {
-    position: { x: 0, y: 0, z: 8 },
+    semanticId: 'local-player-1',
+    name: 'Pilot',
+    participantKind: 'local-seat',
+    position: { x: 0, y: 0, z: 6 },
     yawRadians: 0,
   },
   targets: [
     {
       semanticId: 'robot-center',
+      name: 'Center',
+      participantKind: 'stationary-fixture',
       position: { x: 0, y: 0, z: 4 },
       yawRadians: Math.PI,
       hitVolumes: targetVolumes(),
     },
     {
       semanticId: 'robot-left',
+      name: 'Left',
+      participantKind: 'stationary-fixture',
       position: { x: -5, y: 0, z: 1.5 },
       yawRadians: Math.PI * 0.75,
       hitVolumes: targetVolumes(),
     },
     {
       semanticId: 'robot-right',
+      name: 'Right',
+      participantKind: 'stationary-fixture',
       position: { x: 5, y: 0, z: -4 },
       yawRadians: Math.PI * 1.25,
       hitVolumes: targetVolumes(),

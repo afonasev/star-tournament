@@ -12,9 +12,11 @@ import { createActionFrame, type ActionFrame } from '../input/actionFrame'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import {
   createInitialSimulationSnapshot,
+  localParticipant,
   parseSimulationSnapshot,
   serializeSimulationSnapshot,
   simulationSnapshotHash,
+  stationaryParticipants,
   type SimulationEvent,
   type SimulationSnapshot,
 } from './playableSnapshot'
@@ -203,11 +205,12 @@ interface CombatRun {
 }
 
 function recordCombatTick(snapshot: SimulationSnapshot): CombatTickRecord {
+  const local = localParticipant(snapshot)
   return {
     tick: snapshot.tick,
-    ammo: snapshot.weapon.ammo,
-    shotSequence: snapshot.weapon.shotSequence,
-    targets: snapshot.targets.map((target) => ({ ...target })),
+    ammo: local.weapon.ammo,
+    shotSequence: local.weapon.shotSequence,
+    targets: stationaryParticipants(snapshot).map((target) => ({ semanticId: target.semanticId, health: target.health, active: target.alive })),
     events: snapshot.events.map((event) => ({ ...event })),
   }
 }
@@ -288,7 +291,9 @@ describe('playable simulation long-run determinism', () => {
   it('keeps combat edges, cooldown, pellet hits, ammo, health, events, and hashes identical after independent and restored runs', () => {
     const aimedInitial = parseSimulationSnapshot({
       ...initialSnapshot(),
-      player: { ...initialSnapshot().player, pitch: -0.06 },
+      participants: initialSnapshot().participants.map((participant) => participant.kind === 'local-seat'
+        ? { ...participant, pitch: -0.06 }
+        : participant),
     })
     const frames = combatFrames()
     const replay = parsePlayableSimulationReplay(serializePlayableSimulationReplay(
@@ -299,7 +304,7 @@ describe('playable simulation long-run determinism', () => {
 
     expect(independent).toEqual(baseline)
     expect(baseline.result.tickHashes).toHaveLength(90)
-    expect(baseline.result.finalSnapshot.weapon).toMatchObject({
+    expect(localParticipant(baseline.result.finalSnapshot).weapon).toMatchObject({
       ammo: 17,
       shotSequence: 3,
     })
@@ -310,7 +315,7 @@ describe('playable simulation long-run determinism', () => {
     expect(orderedHits(baseline.records)).toHaveLength(
       3 * PROTOTYPE_V1_PROFILE.rules.weapons.doubleBarrelShotgun.pelletCount,
     )
-    expect(baseline.result.finalSnapshot.targets.some((target) => target.health < 100)).toBe(true)
+    expect(stationaryParticipants(baseline.result.finalSnapshot).some((target) => target.health < 100)).toBe(true)
 
     const checkpoint = baseline.records[COMBAT_RESTORE_TICK - 1]
     expect(checkpoint?.tick).toBe(COMBAT_RESTORE_TICK)

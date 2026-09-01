@@ -5,6 +5,8 @@ import { intersectTargetHitVolumes } from './hitVolumes'
 
 const target: RobotTargetDefinition = {
   semanticId: 'robot-a',
+  name: 'Robot A',
+  participantKind: 'stationary-fixture',
   position: { x: 0, y: 0, z: 0 },
   yawRadians: 0,
   hitVolumes: [

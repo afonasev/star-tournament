@@ -12,6 +12,7 @@ import {
   type KeyboardMouseAdapterOptions,
 } from '../input/keyboardMouseAdapter'
 import { createActionFrame, type NormalizedAction } from '../input/actionFrame'
+import { DEFAULT_MATCH_CONFIGURATION, parseMatchConfiguration, type MatchConfiguration } from '../match'
 import {
   PointerLockController,
   type PointerLockControllerOptions,
@@ -49,6 +50,8 @@ import {
   PLAYABLE_PLAYER_ID,
   SIMULATION_TICKS_PER_SECOND,
   stepPlayableSimulation,
+  localParticipant,
+  stationaryParticipants,
   type PlayableCollisionPort,
   type PlayableSimulationSnapshot,
 } from '../simulation'
@@ -69,6 +72,7 @@ export interface RuntimeCollisionWorld extends PlayableCollisionPort {
 
 export interface RuntimeInputAdapter {
   drainActionFrame(tick: number): ReturnType<KeyboardMouseAdapter['drainActionFrame']>
+  drainUiActionSnapshot?: KeyboardMouseAdapter['drainUiActionSnapshot']
   clearInputState(): void
   dispose(): void
 }
@@ -77,6 +81,7 @@ export interface RuntimePointerLockController {
   getSnapshot(): Readonly<PointerLockLifecycleSnapshot>
   requestStart(): Promise<boolean>
   requestResume(): Promise<boolean>
+  pause(): void
   dispose(): void
 }
 
@@ -110,7 +115,7 @@ interface BrowserShell {
   readonly uiLayer: HTMLDivElement
 }
 
-type ActivePerformancePhase = Exclude<PerformancePhaseId, 'paused'> | undefined
+type ActivePerformancePhase = Exclude<PerformancePhaseId, 'menu' | 'paused' | 'results'> | undefined
 
 function benchmarkActions(tick: number, phase: ActivePerformancePhase): readonly NormalizedAction[] {
   if (phase === 'movement-jump') {
@@ -175,9 +180,10 @@ function playerCapsule(
   snapshot: PlayableSimulationSnapshot,
   profile: ValidatedGameDesignProfile,
 ): CollisionCapsuleProjection {
+  const player = localParticipant(snapshot)
   return {
-    semanticId: snapshot.player.semanticId,
-    position: snapshot.player.position,
+    semanticId: player.semanticId,
+    position: player.position,
     radius: profile.rules.player.capsule.radius,
     halfHeight: profile.rules.player.capsule.halfHeight,
   }
@@ -212,6 +218,9 @@ export interface BrowserBootstrapDependencies {
   readonly wait?: (milliseconds: number) => Promise<void>
   readonly performancePhaseDurationMilliseconds?: number
   readonly locationSearch?: string
+  readonly configuration?: MatchConfiguration
+  readonly onRepeat?: () => void
+  readonly onMainMenu?: () => void
 }
 
 export async function bootstrapBrowserRuntime(
@@ -240,6 +249,7 @@ export async function bootstrapBrowserRuntime(
   const profile = profileValidation.ok
     ? profileValidation.profile
     : PROTOTYPE_V1_PROFILE
+  const configuration = parseMatchConfiguration(dependencies.configuration ?? DEFAULT_MATCH_CONFIGURATION, profile)
   const presentationProfileValidation = validatePresentationProfile(
     dependencies.presentationProfile ?? PRESENTATION_BALANCED_V1_PROFILE,
   )
@@ -302,6 +312,7 @@ export async function bootstrapBrowserRuntime(
       generatorVersion: COLLISION_FIXTURE_ARENA.generatorVersion,
       contentHash: toContentHash(COLLISION_FIXTURE_ARENA.contentHash),
     },
+    configuration,
   })
 
   let disposed = false
@@ -318,6 +329,7 @@ export async function bootstrapBrowserRuntime(
   let input: RuntimeInputAdapter | undefined
   let pointerController: RuntimePointerLockController | undefined
   let runtime: BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot> | undefined
+  let scoreboardVisible = false
 
   function uiStatus(): GameplayUiStatus {
     if (pointerState.status === 'locked') return 'running'
@@ -339,22 +351,28 @@ export async function bootstrapBrowserRuntime(
 
   function debugSnapshot(state: PlayableSimulationSnapshot): GameplayDebugSnapshot | undefined {
     if (!debugEnabled) return undefined
+    const player = localParticipant(state)
     return {
       tick: state.tick,
-      stateHash: playableSimulationSnapshotHash(state),
+      stateHash: playableSimulationSnapshotHash(state, configuration),
       profileIdentity: `${state.profile.id}@${state.profile.revision} · ${state.profile.contentHash}`,
       arenaIdentity: `${state.arena.id} · ${state.arena.contentHash}`,
       collisionIdentity: collisionDebugLabel(),
-      playerPosition: state.player.position,
-      playerYawDegrees: state.player.yaw * (180 / Math.PI),
-      playerPitchDegrees: state.player.pitch * (180 / Math.PI),
-      playerGrounded: state.player.grounded,
-      ammo: state.weapon.ammo,
-      targets: state.targets.map((target) => ({
+      scenarioIdentity: `${state.scenario.id} · ${state.scenario.contentHash}`,
+      configurationIdentity: `${state.match.configuration.id} · ${state.match.configuration.contentHash}`,
+      matchPhase: state.match.phase,
+      remainingTicks: state.match.remainingTicks,
+      playerPosition: player.position,
+      playerYawDegrees: player.yaw * (180 / Math.PI),
+      playerPitchDegrees: player.pitch * (180 / Math.PI),
+      playerGrounded: player.grounded,
+      ammo: player.weapon.ammo,
+      targets: stationaryParticipants(state).map((target) => ({
         semanticId: target.semanticId,
         health: target.health,
-        active: target.active,
+        active: target.alive,
       })),
+      participantStatistics: state.participants.map(({ semanticId, statistics }) => ({ semanticId, kills: statistics.kills, assists: statistics.assists, deaths: statistics.deaths, score: statistics.score })),
     }
   }
 
@@ -363,7 +381,7 @@ export async function bootstrapBrowserRuntime(
     status = uiStatus(),
     message?: string,
   ): Readonly<GameplayUiSnapshot> {
-    return projector.project(state, status, debugSnapshot(state), message)
+    return projector.project(state, status, debugSnapshot(state), message, scoreboardVisible)
   }
 
   async function requestControl(): Promise<boolean> {
@@ -377,6 +395,12 @@ export async function bootstrapBrowserRuntime(
     onRequestControl: () => {
       void requestControl()
     },
+    onRepeat: dependencies.onRepeat,
+    onMainMenu: dependencies.onMainMenu,
+    onToggleFullscreen: () => {
+      if (document.fullscreenElement === null) void mount.requestFullscreen?.()
+      else void document.exitFullscreen?.()
+    },
   })
   ui.update(projectUi(initialState, 'start'))
 
@@ -384,11 +408,15 @@ export async function bootstrapBrowserRuntime(
     if (runtime !== undefined) runtime.dispose()
     else cleanup()
   }
+  const onFullscreenChange = () => {
+    if (document.fullscreenElement == null && pointerState.status === 'locked') pointerController?.pause()
+  }
 
   function cleanup(): void {
     if (disposed) return
     disposed = true
     window.removeEventListener('pagehide', onPageHide)
+    document.removeEventListener('fullscreenchange', onFullscreenChange)
     pointerController?.dispose()
     input?.dispose()
     collisionWorld?.dispose()
@@ -397,6 +425,7 @@ export async function bootstrapBrowserRuntime(
     mount.replaceChildren()
   }
   window.addEventListener('pagehide', onPageHide, { once: true })
+  document.addEventListener('fullscreenchange', onFullscreenChange)
 
   if (!profileValidation.ok) {
     ui.update(projectUi(
@@ -490,7 +519,24 @@ export async function bootstrapBrowserRuntime(
     now,
     step: (state) => {
       const frame = input!.drainActionFrame(state.tick + 1)
-      return stepPlayableSimulation(state, frame, collisionWorld!, profile)
+      const uiActions = input!.drainUiActionSnapshot?.()
+      const next = stepPlayableSimulation(state, frame, collisionWorld!, profile, configuration)
+      if (uiActions !== undefined && uiActions.scoreboardHeld !== scoreboardVisible) {
+        scoreboardVisible = uiActions.scoreboardHeld
+        ui.update(projectUi(next))
+      }
+      if (uiActions?.pauseRequested) pointerController?.pause()
+      if (next.match.phase === 'finished') {
+        queueMicrotask(() => {
+          if (disposed || runtime === undefined) return
+          runtime.stop()
+          input?.clearInputState()
+          scoreboardVisible = false
+          document.exitPointerLock?.()
+          ui.update(projectUi(runtime.getState(), 'results'))
+        })
+      }
+      return next
     },
     render: (state) => renderer?.render(state),
     snapshotForUi: (state) => projectUi(state),
@@ -500,7 +546,7 @@ export async function bootstrapBrowserRuntime(
 
   pointerController = createPointerController({
     lockElement: playfield,
-    clearInputState: () => input?.clearInputState(),
+    clearInputState: () => { input?.clearInputState(); scoreboardVisible = false },
     startRuntime: () => runtime?.start(),
     stopRuntime: () => runtime?.stop(),
     onStateChange: (snapshot) => {
@@ -529,8 +575,10 @@ export async function bootstrapBrowserRuntime(
       phase: PerformancePhaseId,
     ): Promise<PerformancePhaseMeasurement | undefined> => {
       if (disposed || runtime === undefined) return undefined
-      activePerformancePhase = phase === 'paused' ? undefined : phase
-      if (phase !== 'paused') {
+      const settled = phase === 'menu' || phase === 'paused' || phase === 'results'
+      activePerformancePhase = settled ? undefined : phase
+      scoreboardVisible = phase === 'live-scoreboard'
+      if (!settled) {
         pointerState = Object.freeze({ status: 'locked' })
         ui.update(projectUi(runtime.getState(), 'running'))
         runtime.start()
@@ -557,7 +605,7 @@ export async function bootstrapBrowserRuntime(
       }
 
       await wait(
-        phase === 'paused'
+        settled
           ? 1_000
           : performanceSoakSeconds === undefined
             ? performancePhaseDurationMilliseconds
@@ -565,7 +613,8 @@ export async function bootstrapBrowserRuntime(
       )
       if (disposed || runtime === undefined) return undefined
 
-      if (phase !== 'paused') runtime.stop()
+      if (!settled) runtime.stop()
+      scoreboardVisible = false
       const finalHeapBytes = memory.memory?.usedJSHeapSize
       if (typeof finalHeapBytes === 'number') performanceProbe.recordHeapSample(finalHeapBytes)
       performanceRecording = false
@@ -576,7 +625,7 @@ export async function bootstrapBrowserRuntime(
     void (async () => {
       const measurements: PerformancePhaseMeasurement[] = []
       const phases: readonly PerformancePhaseId[] = performanceSoakSeconds === undefined
-        ? ['paused', 'running-idle', 'movement-jump', 'combat-burst']
+        ? ['menu', 'paused', 'running-idle', 'live-scoreboard', 'movement-jump', 'combat-burst', 'overtime', 'results']
         : ['combat-burst']
       if (performanceSoakSeconds !== undefined) {
         badge.textContent = `PERFORMANCE · SOAK ${performanceSoakSeconds}s`

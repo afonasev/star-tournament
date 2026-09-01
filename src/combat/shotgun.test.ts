@@ -8,7 +8,7 @@ import {
 } from './shotgun'
 
 const targetDefinition: RobotTargetDefinition = {
-  semanticId: 'target', position: { x: 0, y: 0, z: 0 }, yawRadians: 0,
+  semanticId: 'target', name: 'Target', participantKind: 'stationary-fixture', position: { x: 0, y: 0, z: 0 }, yawRadians: 0,
   hitVolumes: [
     { semanticId: 'head', kind: 'sphere', zone: 'head', centerOffset: { x: 0, y: 2, z: 0 }, radius: 2 },
     { semanticId: 'torso', kind: 'box', zone: 'torso', centerOffset: { x: 0, y: -10, z: 0 }, halfExtents: { x: 0.1, y: 0.1, z: 0.1 } },
@@ -20,7 +20,7 @@ const targetDefinition: RobotTargetDefinition = {
 }
 const player = { semanticId: 'player', lifeId: 'life-1', position: { x: 0, y: 1.45, z: 3 }, yaw: 0, pitch: 0 }
 const weapon: ShotgunWeaponState = { semanticId: 'shotgun', ammo: 20, shotSequence: 0, nextAllowedShotTick: 0, previousFirePressed: false }
-const targets = [{ semanticId: 'target', health: 100, active: true }] as const
+const targets = [{ semanticId: 'target', lifeId: 'target:life:1', health: 100, active: true }] as const
 const tuning = { eyeHeight: 0.55, pelletCount: 12, spreadDegrees: 0, rangeMeters: 35, cooldownSeconds: 0.7, damage: { head: 100, torso: 70, limb: 30 } } as const
 const clearCollision = { raycast: () => [] }
 

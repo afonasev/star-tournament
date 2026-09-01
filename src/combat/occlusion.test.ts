@@ -6,6 +6,8 @@ import { resolvePelletImpacts, type StaticRaycastPort } from './occlusion'
 
 const target: RobotTargetDefinition = {
   semanticId: 'target',
+  name: 'Target',
+  participantKind: 'stationary-fixture',
   position: { x: 0, y: 0, z: 0 },
   yawRadians: 0,
   hitVolumes: [

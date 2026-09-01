@@ -7,8 +7,8 @@ import {
 } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const COMBAT_SLICE_SCENARIO_SCHEMA_VERSION = 1 as const
-export const COMBAT_SLICE_SCENARIO_ID = 'combat-slice-scenario-v1' as const
+export const COMBAT_SLICE_SCENARIO_SCHEMA_VERSION = 2 as const
+export const COMBAT_SLICE_SCENARIO_ID = 'match-slice-scenario-v2' as const
 
 export interface ScenarioVector3 {
   readonly x: number
@@ -46,12 +46,17 @@ export type TargetHitVolume = TargetHeadSphere | TargetTorsoBox | TargetLimbCaps
 
 export interface RobotTargetDefinition {
   readonly semanticId: string
+  readonly name: string
+  readonly participantKind: 'stationary-fixture'
   readonly position: ScenarioVector3
   readonly yawRadians: number
   readonly hitVolumes: readonly TargetHitVolume[]
 }
 
 export interface ScenarioPlayerSpawn {
+  readonly semanticId: 'local-player-1'
+  readonly name: string
+  readonly participantKind: 'local-seat'
   /** Feet anchor; the snapshot builder adds capsule half-height plus radius. */
   readonly position: ScenarioVector3
   readonly yawRadians: number
@@ -207,7 +212,8 @@ function parseHitVolume(value: unknown, path: string): TargetHitVolume {
 
 function parseTarget(value: unknown, path: string): RobotTargetDefinition {
   const record = expectRecord(value, path)
-  expectExactKeys(record, ['semanticId', 'position', 'yawRadians', 'hitVolumes'], path)
+  expectExactKeys(record, ['semanticId', 'name', 'participantKind', 'position', 'yawRadians', 'hitVolumes'], path)
+  if (record.participantKind !== 'stationary-fixture') return fail(`${path}.participantKind`, 'must be stationary-fixture')
   if (!Array.isArray(record.hitVolumes)) {
     return fail(`${path}.hitVolumes`, 'must be an array')
   }
@@ -230,6 +236,8 @@ function parseTarget(value: unknown, path: string): RobotTargetDefinition {
 
   return {
     semanticId: expectNonEmptyString(record.semanticId, `${path}.semanticId`),
+    name: expectNonEmptyString(record.name, `${path}.name`),
+    participantKind: 'stationary-fixture',
     position: parseVector3(record.position, `${path}.position`),
     yawRadians: expectFiniteNumber(record.yawRadians, `${path}.yawRadians`),
     hitVolumes,
@@ -238,8 +246,13 @@ function parseTarget(value: unknown, path: string): RobotTargetDefinition {
 
 function parsePlayerSpawn(value: unknown): ScenarioPlayerSpawn {
   const record = expectRecord(value, 'CombatSliceScenario.playerSpawn')
-  expectExactKeys(record, ['position', 'yawRadians'], 'CombatSliceScenario.playerSpawn')
+  expectExactKeys(record, ['semanticId', 'name', 'participantKind', 'position', 'yawRadians'], 'CombatSliceScenario.playerSpawn')
+  if (record.semanticId !== 'local-player-1') return fail('CombatSliceScenario.playerSpawn.semanticId', 'must be local-player-1')
+  if (record.participantKind !== 'local-seat') return fail('CombatSliceScenario.playerSpawn.participantKind', 'must be local-seat')
   return {
+    semanticId: 'local-player-1',
+    name: expectNonEmptyString(record.name, 'CombatSliceScenario.playerSpawn.name'),
+    participantKind: 'local-seat',
     position: parseVector3(record.position, 'CombatSliceScenario.playerSpawn.position'),
     yawRadians: expectFiniteNumber(
       record.yawRadians,

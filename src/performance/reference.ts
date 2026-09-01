@@ -4,14 +4,18 @@ export const PERFORMANCE_REFERENCE_SCHEMA_VERSION = 1 as const
 export const PERFORMANCE_REFERENCE_ID = 'performance-reference-v1' as const
 
 export const PERFORMANCE_PHASE_IDS = [
+  'menu',
   'paused',
   'running-idle',
+  'live-scoreboard',
   'movement-jump',
   'combat-burst',
+  'overtime',
+  'results',
 ] as const
 
 export type PerformancePhaseId = (typeof PERFORMANCE_PHASE_IDS)[number]
-export type RunningPerformancePhaseId = Exclude<PerformancePhaseId, 'paused'>
+export type RunningPerformancePhaseId = Exclude<PerformancePhaseId, 'menu' | 'paused' | 'results'>
 
 export interface PausedHardPerformanceBudget {
   readonly kind: 'zero-work'
@@ -70,10 +74,14 @@ export const PERFORMANCE_REFERENCE_V1: PerformanceReference = deepFreeze({
   id: PERFORMANCE_REFERENCE_ID,
   revision: 1,
   hardBudgets: {
+    menu: pausedBudget,
     paused: pausedBudget,
     'running-idle': runningBudget,
+    'live-scoreboard': runningBudget,
     'movement-jump': runningBudget,
     'combat-burst': runningBudget,
+    overtime: runningBudget,
+    results: pausedBudget,
   },
   provisionalMetrics: [
     'animation-frame-duration-milliseconds',

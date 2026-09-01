@@ -1,4 +1,5 @@
-import { bootstrapBrowserRuntime } from './runtime/bootstrapBrowserRuntime'
+import { createRoot } from 'react-dom/client'
+import { StarTournamentApp } from './ui/StarTournamentApp'
 import './styles.css'
 import './ui/gameplayHud.css'
 
@@ -8,4 +9,4 @@ if (!mount) {
   throw new Error('Не найден корневой элемент приложения #app')
 }
 
-void bootstrapBrowserRuntime(mount)
+createRoot(mount).render(<StarTournamentApp />)

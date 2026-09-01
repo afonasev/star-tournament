@@ -159,10 +159,12 @@ function fakeCollisionWorld(
 function harness(actionValue = 0) {
   const scheduler = new ManualScheduler()
   const renderer = fakeRenderer()
+  let uiState = { scoreboardHeld: false, pauseRequested: false }
   const input: RuntimeInputAdapter = {
     drainActionFrame: vi.fn((tick: number) => createActionFrame(tick, actionValue === 0 ? [] : [
       { participantId: PLAYABLE_PLAYER_ID, actionId: 'move-forward', value: actionValue },
     ])),
+    drainUiActionSnapshot: vi.fn(() => uiState),
     clearInputState: vi.fn(),
     dispose: vi.fn(),
   }
@@ -204,6 +206,7 @@ function harness(actionValue = 0) {
     createPointerLockController,
     createRenderer,
     dependencies,
+    setUiState(next: typeof uiState) { uiState = next },
     get pointer() { return pointer },
     get collision() { return collision },
   }
@@ -343,11 +346,26 @@ describe('playable browser bootstrap', () => {
     test.scheduler.frame(17)
 
     expect(application.runtime?.getState().tick).toBe(1)
-    expect(application.runtime?.getState().player.position.z).toBeLessThan(8)
+    expect(application.runtime?.getState().participants.find(({ kind }) => kind === 'local-seat')?.position.z).toBeLessThan(6)
     expect(test.input.drainActionFrame).toHaveBeenCalledTimes(1)
     expect(test.input.drainActionFrame).toHaveBeenCalledWith(1)
     expect(test.renderer.render).toHaveBeenCalledWith(application.runtime?.getState())
     await waitFor(() => expect(screen.getByLabelText('Здоровье игрока')).toHaveTextContent('100'))
+  })
+
+  it('publishes held scoreboard immediately and hides it on release', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+    application = await bootstrapBrowserRuntime(mount, test.dependencies)
+    await application.requestControl()
+    test.setUiState({ scoreboardHeld: true, pauseRequested: false })
+    test.scheduler.frame(0)
+    test.scheduler.frame(17)
+    expect(await screen.findByLabelText('Таблица результатов')).toBeInTheDocument()
+    test.setUiState({ scoreboardHeld: false, pauseRequested: false })
+    test.scheduler.frame(34)
+    await waitFor(() => expect(screen.queryByLabelText('Таблица результатов')).not.toBeInTheDocument())
   })
 
   it('pauses on lock loss, shows resume and restarts without leaking ticks', async () => {
@@ -370,6 +388,18 @@ describe('playable browser bootstrap', () => {
     await application.requestControl()
     expect(test.pointer!.requestResume).toHaveBeenCalledTimes(1)
     expect(application.runtime?.isRunning()).toBe(true)
+  })
+
+  it('pauses the same session when fullscreen is lost', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+    application = await bootstrapBrowserRuntime(mount, test.dependencies)
+    await application.requestControl()
+    document.dispatchEvent(new Event('fullscreenchange'))
+    expect(application.runtime?.isRunning()).toBe(false)
+    expect(test.input.clearInputState).toHaveBeenCalled()
+    expect(await screen.findByRole('button', { name: 'Продолжить' })).toBeInTheDocument()
   })
 
   it('keeps pointer-lock request failures retryable instead of replacing the game', async () => {
@@ -417,7 +447,7 @@ describe('playable browser bootstrap', () => {
     )
   })
 
-  it('publishes a machine-readable four-phase performance report without pointer lock', async () => {
+  it('publishes a machine-readable match-flow performance report without pointer lock', async () => {
     const mount = document.createElement('div')
     document.body.append(mount)
     const test = harness()
@@ -454,10 +484,14 @@ describe('playable browser bootstrap', () => {
     expect(report.referenceId).toBe('performance-reference-v1')
     expect(report.mode).toBe('reference')
     expect(report.measurements.map(({ phase }) => phase)).toEqual([
+      'menu',
       'paused',
       'running-idle',
+      'live-scoreboard',
       'movement-jump',
       'combat-burst',
+      'overtime',
+      'results',
     ])
     expect(report.gates.every(({ passed }) => passed)).toBe(true)
     expect(screen.getByLabelText('Performance benchmark status')).toHaveTextContent(
