@@ -83,6 +83,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Управление мышью/клавиатурой и геймпадом проверяется в реальном браузере, включая pointer lock, меню, паузу, подключение и отключение контроллера.
 - Изменения split-screen проверяются в browser playtest с тем количеством игроков и раскладкой viewport, которых касается change.
 - Любое изменение видимого результата в игре проверяется в in-app Browser и сопровождается в handoff актуальными скриншотами из dev-стенда изменённой ветки. Для изменения нескольких состояний, экранов или viewport прикладываются скриншоты каждого изменённого состояния; скриншоты не заменяют сам browser playtest.
+- Все локальные тесты и browser playtest по умолчанию выполняются с выключенным звуковым выводом игры. Звук включается только на время проверки, непосредственно касающейся аудио, и после неё снова выключается.
 - Автотесты и production build обязательны, но не заменяют ручную игровую проверку.
 - Если политика in-app Browser немедленно снимает pointer lock, визуальный smoke, DOM/state evidence и component tests можно сохранить как частичную проверку, но physical movement/look/jump/fire gate остаётся незакрытым до устойчивой ручной сессии в том же браузере.
 - Детерминированный replay при одинаковых seed, профиле и action frames должен давать одинаковый state hash.
@@ -114,6 +115,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 | Дата | Решение |
 | --- | --- |
+| 2026-09-01 | Локальные тесты и browser playtest выполняются с выключенным звуковым выводом игры; включать звук разрешено только на время проверки, непосредственно касающейся аудио. |
 | 2026-09-01 | Performance/power foundation реализован и проверен: `presentation-balanced-v1` ограничивает WebGL backing buffer 2 073 600 пикселями и HUD cadence 10 публикациями/с; `performance-reference-v1` прошёл production и in-app Browser. На 120+ Hz RAF renderer отправляет около 60 WebGL кадров/с; 10-minute combat soak дал 36 000 ticks, 35 999 submissions, frame p95 0,70 ms, simulation p95 0,60 ms, peak 43 draw calls и heap slope около 0,40 MiB/min. Pause остаётся zero-work. После стабилизации пользователь подтвердил на текущем устройстве, что заметный нагрев ушёл и вентиляторы перестали работать на высокой скорости; универсальные thermal budgets остаются открыты до утверждения reference hardware. |
 | 2026-09-01 | Для любого визуального изменения обязательны проверка в in-app Browser и актуальные скриншоты из dev-стенда изменённой ветки в итоговом handoff; несколько затронутых состояний, экранов или viewport показываются отдельно. |
 | 2026-09-01 | Первый single-seat combat foundation реализован и полностью принят физической browser-сессией: пользователь подтвердил ходьбу, прыжок, стрельбу, mouse look, уничтожение цели и `Esc` → `Продолжить`; automated checks, HTTP/dev-stand, default/debug/resize smoke и collision browser budget также прошли. Robot mannequins остаются проверочными targets, а gamepad, split-screen, match loop, bots и network не входят в этот slice. |
