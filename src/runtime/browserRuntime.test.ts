@@ -120,6 +120,51 @@ describe('BrowserRuntime', () => {
     expect(statuses).toEqual(['running', 'stopped'])
   })
 
+  it('publishes periodic gameplay UI at the configured cadence instead of every tick', () => {
+    const scheduler = new ManualScheduler()
+    const publishedTicks: number[] = []
+    const runtime = new BrowserRuntime<TestState, { readonly status: RuntimeStatus; readonly tick: number }>({
+      initialState: { tick: 0 },
+      scheduler,
+      uiUpdateIntervalSeconds: 0.1,
+      step: (state) => ({ tick: state.tick + 1 }),
+      render: vi.fn(),
+      snapshotForUi: (state, status) => ({ status, tick: state.tick }),
+      publishUiSnapshot: (snapshot) => publishedTicks.push(snapshot.tick),
+    })
+
+    runtime.start()
+    for (let time = 0; time <= 1_000; time += 10) scheduler.frame(time)
+
+    expect(runtime.getState().tick).toBe(60)
+    expect(publishedTicks.length).toBeGreaterThanOrEqual(10)
+    expect(publishedTicks.length).toBeLessThanOrEqual(11)
+    expect(publishedTicks[0]).toBe(0)
+    expect(publishedTicks.at(-1)).toBeGreaterThanOrEqual(54)
+  })
+
+  it('rejects a non-positive UI publication interval', () => {
+    const scheduler = new ManualScheduler()
+    expect(() => new BrowserRuntime<TestState>({
+      initialState: { tick: 0 },
+      scheduler,
+      uiUpdateIntervalSeconds: 0,
+      step: (state) => state,
+      render: vi.fn(),
+      snapshotForUi: (state, status) => ({
+        status,
+        tick: state.tick,
+        stateHash: 'state',
+        profileId: 'profile',
+        profileHash: 'profile-hash',
+        arenaId: 'arena',
+        arenaHash: 'arena-hash',
+        collision: { status: 'ready', identity: 'collision-test', fixtureId: 'fixture', fixtureStatus: 'passed' },
+      }),
+      publishUiSnapshot: vi.fn(),
+    })).toThrow(/greater than zero/)
+  })
+
   it('disposes presentation once and rejects restart', () => {
     const scheduler = new ManualScheduler()
     const { runtime, disposePresentation } = createRuntime(scheduler)

@@ -33,6 +33,74 @@ export const COLLISION_FIXTURE_CONTROLLER_PROFILE = deepFreeze({
   minSlopeSlideRadians: Math.PI / 3,
 })
 
+/**
+ * Backend-neutral gameplay configuration for Rapier's derived character
+ * controller. Values come from the active Game Design Profile; the collision
+ * adapter only validates and translates them into Rapier units.
+ */
+export interface CollisionControllerConfiguration {
+  readonly skinWidth: number
+  readonly autostepMaxHeight: number
+  readonly autostepMinWidth: number
+  readonly snapToGroundDistance: number
+  readonly maxSlopeClimbDegrees: number
+  readonly minSlopeSlideDegrees: number
+}
+
+const DEFAULT_COLLISION_CONTROLLER_CONFIGURATION: CollisionControllerConfiguration = deepFreeze({
+  skinWidth: COLLISION_FIXTURE_CONTROLLER_PROFILE.offset,
+  autostepMaxHeight: COLLISION_FIXTURE_CONTROLLER_PROFILE.autostepMaxHeight,
+  autostepMinWidth: COLLISION_FIXTURE_CONTROLLER_PROFILE.autostepMinWidth,
+  snapToGroundDistance: COLLISION_FIXTURE_CONTROLLER_PROFILE.snapToGroundDistance,
+  maxSlopeClimbDegrees: COLLISION_FIXTURE_CONTROLLER_PROFILE.maxSlopeClimbRadians * 180 / Math.PI,
+  minSlopeSlideDegrees: COLLISION_FIXTURE_CONTROLLER_PROFILE.minSlopeSlideRadians * 180 / Math.PI,
+})
+
+function parseControllerConfiguration(
+  value: CollisionControllerConfiguration | undefined,
+): Readonly<CollisionControllerConfiguration> {
+  if (value === undefined) return DEFAULT_COLLISION_CONTROLLER_CONFIGURATION
+  const expectedKeys = [
+    'autostepMaxHeight',
+    'autostepMinWidth',
+    'maxSlopeClimbDegrees',
+    'minSlopeSlideDegrees',
+    'skinWidth',
+    'snapToGroundDistance',
+  ]
+  const actualKeys = Object.keys(value).sort()
+  if (actualKeys.length !== expectedKeys.length || actualKeys.some((key, index) => key !== expectedKeys[index])) {
+    throw new CollisionContractError(
+      COLLISION_ERROR_CODES.invalidData,
+      'Collision controller configuration must contain exactly six fields',
+    )
+  }
+  const entries = Object.entries(value)
+  for (const [path, number] of entries) {
+    const allowsZero = path === 'autostepMaxHeight' || path === 'autostepMinWidth' ||
+      path === 'snapToGroundDistance' || path === 'maxSlopeClimbDegrees'
+    if (!Number.isFinite(number) || number < 0 || (!allowsZero && number === 0)) {
+      throw new CollisionContractError(
+        COLLISION_ERROR_CODES.invalidData,
+        `Collision controller configuration ${path} is outside its accepted non-negative range`,
+      )
+    }
+  }
+  if (value.maxSlopeClimbDegrees > value.minSlopeSlideDegrees) {
+    throw new CollisionContractError(
+      COLLISION_ERROR_CODES.invalidData,
+      'Collision controller max climb angle must not exceed min slide angle',
+    )
+  }
+  if (value.minSlopeSlideDegrees > 90) {
+    throw new CollisionContractError(
+      COLLISION_ERROR_CODES.invalidData,
+      'Collision controller slope angles must not exceed 90 degrees',
+    )
+  }
+  return deepFreeze({ ...value })
+}
+
 type RapierModule = typeof import('@dimforge/rapier3d-deterministic-compat')
 
 interface ParticipantRuntime {
@@ -81,6 +149,7 @@ function assertUniqueCapsules(
 
 export class RapierCollisionWorld {
   readonly staticGeometryHash: ContentHash
+  readonly controllerConfigurationHash: ContentHash
 
   private disposed = false
   private readonly staticSemanticIdByHandle = new Map<number, string>()
@@ -91,9 +160,11 @@ export class RapierCollisionWorld {
     private readonly world: Rapier.World,
     private readonly arena: Readonly<ArenaDefinition>,
     capsules: readonly CollisionCapsuleProjection[],
+    readonly controllerConfiguration: Readonly<CollisionControllerConfiguration>,
   ) {
     const sortedSurfaces = [...arena.surfaces].sort((left, right) => left.id.localeCompare(right.id))
     this.staticGeometryHash = contentHash(sortedSurfaces)
+    this.controllerConfigurationHash = contentHash(controllerConfiguration)
 
     for (const surface of sortedSurfaces) {
       const descriptor = rapier.ColliderDesc.cuboid(
@@ -115,17 +186,28 @@ export class RapierCollisionWorld {
           projection.position.z,
         ),
       )
-      const controller = world.createCharacterController(COLLISION_FIXTURE_CONTROLLER_PROFILE.offset)
+      const controller = world.createCharacterController(controllerConfiguration.skinWidth)
       controller.setApplyImpulsesToDynamicBodies(false)
       controller.setSlideEnabled(true)
-      controller.enableAutostep(
-        COLLISION_FIXTURE_CONTROLLER_PROFILE.autostepMaxHeight,
-        COLLISION_FIXTURE_CONTROLLER_PROFILE.autostepMinWidth,
-        false,
-      )
-      controller.enableSnapToGround(COLLISION_FIXTURE_CONTROLLER_PROFILE.snapToGroundDistance)
-      controller.setMaxSlopeClimbAngle(COLLISION_FIXTURE_CONTROLLER_PROFILE.maxSlopeClimbRadians)
-      controller.setMinSlopeSlideAngle(COLLISION_FIXTURE_CONTROLLER_PROFILE.minSlopeSlideRadians)
+      if (
+        controllerConfiguration.autostepMaxHeight === 0 ||
+        controllerConfiguration.autostepMinWidth === 0
+      ) {
+        controller.disableAutostep()
+      } else {
+        controller.enableAutostep(
+          controllerConfiguration.autostepMaxHeight,
+          controllerConfiguration.autostepMinWidth,
+          false,
+        )
+      }
+      if (controllerConfiguration.snapToGroundDistance === 0) {
+        controller.disableSnapToGround()
+      } else {
+        controller.enableSnapToGround(controllerConfiguration.snapToGroundDistance)
+      }
+      controller.setMaxSlopeClimbAngle(controllerConfiguration.maxSlopeClimbDegrees * Math.PI / 180)
+      controller.setMinSlopeSlideAngle(controllerConfiguration.minSlopeSlideDegrees * Math.PI / 180)
       this.participantBySemanticId.set(projection.semanticId, { projection, collider, controller })
     }
     // Rapier refreshes its broad/narrow-phase caches on a world step. With zero
@@ -313,8 +395,10 @@ export class RapierCollisionWorld {
         contentHash: this.arena.contentHash,
       },
       fixture: {
-        id: COLLISION_FIXTURE_CONTROLLER_PROFILE.id,
-        version: COLLISION_FIXTURE_CONTROLLER_PROFILE.version,
+        id: this.controllerConfiguration === DEFAULT_COLLISION_CONTROLLER_CONFIGURATION
+          ? COLLISION_FIXTURE_CONTROLLER_PROFILE.id
+          : `collision-kcc-config-v1:${this.controllerConfigurationHash}`,
+        version: 1,
       },
       capsules: [...this.participantBySemanticId.values()].map((runtime) => runtime.projection),
     })
@@ -342,12 +426,19 @@ export class RapierCollisionWorld {
 export async function createRapierCollisionWorld(
   arena: ArenaDefinition,
   capsules: readonly CollisionCapsuleProjection[],
+  controllerConfiguration?: CollisionControllerConfiguration,
 ): Promise<RapierCollisionWorld> {
   const ready = await initializeCollisionBackend()
   const rapier = ready.module as RapierModule
   const world = new rapier.World({ x: 0, y: 0, z: 0 })
   try {
-    return new RapierCollisionWorld(rapier, world, assertArena(arena), capsules)
+    return new RapierCollisionWorld(
+      rapier,
+      world,
+      assertArena(arena),
+      capsules,
+      parseControllerConfiguration(controllerConfiguration),
+    )
   } catch (error) {
     world.free()
     throw error

@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 
 import type { ArenaDefinition, ArenaBoxSurface } from '../arena/arenaDefinition'
-import type { SimulationSnapshot } from '../simulation'
+import type { SimulationSnapshot } from '../simulation/snapshot'
 
 export const MAX_DEVICE_PIXEL_RATIO = 2
 
@@ -14,6 +14,11 @@ export class WebGlUnavailableError extends Error {
 
 export interface RendererPort {
   readonly domElement: HTMLCanvasElement
+  readonly info?: {
+    readonly render: { readonly calls: number; readonly triangles: number }
+    readonly memory: { readonly geometries: number; readonly textures: number }
+    readonly programs?: readonly unknown[] | null
+  }
   setPixelRatio(pixelRatio: number): void
   setSize(width: number, height: number, updateStyle?: boolean): void
   setViewport(x: number, y: number, width: number, height: number): void

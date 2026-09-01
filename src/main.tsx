@@ -1,5 +1,6 @@
 import { bootstrapBrowserRuntime } from './runtime/bootstrapBrowserRuntime'
 import './styles.css'
+import './ui/gameplayHud.css'
 
 const mount = document.querySelector<HTMLDivElement>('#app')
 

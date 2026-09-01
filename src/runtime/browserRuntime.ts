@@ -1,5 +1,6 @@
-import { freezeUiSnapshot, type RuntimeStatus, type UiSnapshot } from './uiSnapshot'
+import { deepFreeze } from '../core/deepFreeze'
 import { SIMULATION_TICKS_PER_SECOND } from '../simulation'
+import type { RuntimeStatus, UiSnapshot } from './uiSnapshot'
 
 // These values protect only the browser scheduler and are deliberately not
 // balance controls. The simulation package owns the compatibility tick rate.
@@ -12,12 +13,22 @@ export interface AnimationScheduler {
   cancel(handle: number): void
 }
 
-export interface BrowserRuntimeOptions<State> {
+export interface RuntimePerformanceRecorder {
+  recordAnimationCallback(durationMilliseconds: number): void
+  recordSimulationStep(durationMilliseconds: number): void
+  recordHudPublication(): void
+}
+
+export interface BrowserRuntimeOptions<State, UiState = UiSnapshot> {
   readonly initialState: State
   readonly step: (state: State, fixedDeltaSeconds: number) => State
   readonly render: (state: State, interpolationAlpha: number) => void
-  readonly snapshotForUi: (state: State, status: RuntimeStatus) => UiSnapshot
-  readonly publishUiSnapshot: (snapshot: Readonly<UiSnapshot>) => void
+  readonly snapshotForUi: (state: State, status: RuntimeStatus) => UiState
+  readonly publishUiSnapshot: (snapshot: Readonly<UiState>) => void
+  readonly publishUiAfterStep?: boolean
+  readonly uiUpdateIntervalSeconds?: number
+  readonly performanceRecorder?: RuntimePerformanceRecorder
+  readonly now?: () => number
   readonly scheduler?: AnimationScheduler
   readonly disposePresentation?: () => void
 }
@@ -27,9 +38,11 @@ const browserAnimationScheduler: AnimationScheduler = {
   cancel: (handle) => window.cancelAnimationFrame(handle),
 }
 
-export class BrowserRuntime<State> {
+export class BrowserRuntime<State, UiState = UiSnapshot> {
   private readonly scheduler: AnimationScheduler
   private readonly fixedDeltaSeconds = 1 / SIMULATION_TICKS_PER_SECOND
+  private readonly uiUpdateIntervalSeconds: number
+  private readonly now: () => number
   private state: State
   private status: RuntimeStatus = 'stopped'
   private accumulatorSeconds = 0
@@ -38,9 +51,14 @@ export class BrowserRuntime<State> {
   private animationHandle: number | null = null
   private disposed = false
 
-  constructor(private readonly options: BrowserRuntimeOptions<State>) {
+  constructor(private readonly options: BrowserRuntimeOptions<State, UiState>) {
     this.state = options.initialState
     this.scheduler = options.scheduler ?? browserAnimationScheduler
+    this.now = options.now ?? (() => performance.now())
+    this.uiUpdateIntervalSeconds = options.uiUpdateIntervalSeconds ?? UI_UPDATE_INTERVAL_SECONDS
+    if (!Number.isFinite(this.uiUpdateIntervalSeconds) || this.uiUpdateIntervalSeconds <= 0) {
+      throw new RangeError('Browser runtime UI update interval must be greater than zero')
+    }
   }
 
   start(): void {
@@ -51,6 +69,7 @@ export class BrowserRuntime<State> {
 
     this.status = 'running'
     this.lastFrameTimeMilliseconds = null
+    this.secondsSinceUiUpdate = 0
     this.publishUiSnapshot()
     this.animationHandle = this.scheduler.request(this.onAnimationFrame)
   }
@@ -84,6 +103,7 @@ export class BrowserRuntime<State> {
 
   private readonly onAnimationFrame: FrameRequestCallback = (timeMilliseconds) => {
     if (this.status !== 'running' || this.disposed) return
+    const animationStartedAt = this.now()
     this.animationHandle = null
 
     if (this.lastFrameTimeMilliseconds === null) {
@@ -105,7 +125,11 @@ export class BrowserRuntime<State> {
         this.accumulatorSeconds >= this.fixedDeltaSeconds &&
         catchUpTicks < MAX_CATCH_UP_TICKS
       ) {
+        const simulationStartedAt = this.now()
         this.state = this.options.step(this.state, this.fixedDeltaSeconds)
+        this.options.performanceRecorder?.recordSimulationStep(
+          this.now() - simulationStartedAt,
+        )
         this.accumulatorSeconds -= this.fixedDeltaSeconds
         catchUpTicks += 1
       }
@@ -113,21 +137,28 @@ export class BrowserRuntime<State> {
       if (this.accumulatorSeconds >= this.fixedDeltaSeconds) {
         this.accumulatorSeconds %= this.fixedDeltaSeconds
       }
+      if (catchUpTicks > 0 && this.options.publishUiAfterStep) {
+        this.publishUiSnapshot()
+      }
     }
 
     this.options.render(this.state, this.accumulatorSeconds / this.fixedDeltaSeconds)
-    if (this.secondsSinceUiUpdate >= UI_UPDATE_INTERVAL_SECONDS) {
-      this.secondsSinceUiUpdate %= UI_UPDATE_INTERVAL_SECONDS
+    if (this.secondsSinceUiUpdate >= this.uiUpdateIntervalSeconds) {
+      this.secondsSinceUiUpdate %= this.uiUpdateIntervalSeconds
       this.publishUiSnapshot()
     }
     if (this.status === 'running' && !this.disposed) {
       this.animationHandle = this.scheduler.request(this.onAnimationFrame)
     }
+    this.options.performanceRecorder?.recordAnimationCallback(
+      this.now() - animationStartedAt,
+    )
   }
 
   private publishUiSnapshot(): void {
+    this.options.performanceRecorder?.recordHudPublication()
     this.options.publishUiSnapshot(
-      freezeUiSnapshot(this.options.snapshotForUi(this.state, this.status)),
+      deepFreeze(this.options.snapshotForUi(this.state, this.status)),
     )
   }
 }

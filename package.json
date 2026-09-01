@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "tsc -b && vite build",
+    "perf:browser": "npm run build && node scripts/run-browser-performance-gate.mjs",
     "measure:collision-bundle": "node scripts/measure-collision-bundle.mjs",
     "preview": "vite preview --host 127.0.0.1"
   },

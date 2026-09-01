@@ -136,4 +136,57 @@ describe('Rapier collision world', () => {
       expect.objectContaining<Partial<CollisionContractError>>({ code: COLLISION_ERROR_CODES.worldDisposed }),
     )
   })
+
+  it('derives checkpoint fixture identity from gameplay controller configuration', async () => {
+    const configuration = {
+      skinWidth: 0.015,
+      autostepMaxHeight: 0.4,
+      autostepMinWidth: 0.2,
+      snapToGroundDistance: 0.16,
+      maxSlopeClimbDegrees: 42,
+      minSlopeSlideDegrees: 57,
+    }
+    const first = await createRapierCollisionWorld(COLLISION_FIXTURE_ARENA, [player], configuration)
+    const second = await createRapierCollisionWorld(COLLISION_FIXTURE_ARENA, [player], {
+      ...configuration,
+      skinWidth: 0.02,
+    })
+    const reconstructed = await createRapierCollisionWorld(COLLISION_FIXTURE_ARENA, [player], {
+      ...configuration,
+    })
+    try {
+      expect(first.controllerConfigurationHash).not.toBe(second.controllerConfigurationHash)
+      expect(first.controllerConfiguration).toEqual(configuration)
+      expect(Object.isFrozen(first.controllerConfiguration)).toBe(true)
+      expect(first.checkpoint(0).fixture.id).toContain(first.controllerConfigurationHash)
+      expect(second.checkpoint(0).fixture.id).toContain(second.controllerConfigurationHash)
+      expect(first.controllerConfigurationHash).toBe(reconstructed.controllerConfigurationHash)
+      expect(collisionCheckpointHash(first.checkpoint(0))).toBe(
+        collisionCheckpointHash(reconstructed.checkpoint(0)),
+      )
+      expect(collisionCheckpointHash(first.checkpoint(0))).not.toBe(
+        collisionCheckpointHash(second.checkpoint(0)),
+      )
+    } finally {
+      first.dispose()
+      second.dispose()
+      reconstructed.dispose()
+    }
+  })
+
+  it('accepts profile-valid disabled autostep and ground snap values', async () => {
+    const collision = await createRapierCollisionWorld(COLLISION_FIXTURE_ARENA, [player], {
+      skinWidth: 0.01,
+      autostepMaxHeight: 0,
+      autostepMinWidth: 0,
+      snapToGroundDistance: 0,
+      maxSlopeClimbDegrees: 0,
+      minSlopeSlideDegrees: 60,
+    })
+    try {
+      expect(collision.checkpoint(0).fixture.id).toContain(collision.controllerConfigurationHash)
+    } finally {
+      collision.dispose()
+    }
+  })
 })

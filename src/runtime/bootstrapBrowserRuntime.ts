@@ -1,37 +1,147 @@
-import type { ContentHash } from '../core/canonical'
-import { collisionCheckpointHash, COLLISION_ERROR_CODES, RUNTIME_COLLISION_COMPATIBILITY_IDENTITY } from '../collision/contracts'
+import { collisionCheckpointHash, COLLISION_ERROR_CODES, RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, type CollisionCapsuleProjection, type CollisionCheckpointPayload } from '../collision/contracts'
 import { initializeCollisionBackend } from '../collision/backendInitialization'
 import { COLLISION_FIXTURE_ARENA, COLLISION_FIXTURE_ID } from '../collision/fixture'
-import { createRapierCollisionWorld, type RapierCollisionWorld } from '../collision/rapierWorld'
+import {
+  createRapierCollisionWorld,
+  type CollisionControllerConfiguration,
+} from '../collision/rapierWorld'
 import { runCollisionBrowserBenchmark } from '../collision/workload'
-import { createActionFrame } from '../input/actionFrame'
-import { PROTOTYPE_V1_PROFILE } from '../profiles/gameDesignProfile'
+import type { ContentHash } from '../core/canonical'
 import {
-  createDiagnosticRenderer,
-  WebGlUnavailableError,
-} from '../render/diagnosticRenderer'
+  KeyboardMouseAdapter,
+  type KeyboardMouseAdapterOptions,
+} from '../input/keyboardMouseAdapter'
+import { createActionFrame, type NormalizedAction } from '../input/actionFrame'
 import {
-  createInitialSimulationSnapshot,
-  simulationSnapshotHash,
-  stepSimulation,
-  type SimulationSnapshot,
+  PointerLockController,
+  type PointerLockControllerOptions,
+  type PointerLockLifecycleSnapshot,
+} from '../input/pointerLockController'
+import {
+  PROTOTYPE_V1_PROFILE,
+  validateGameDesignProfile,
+  type GameDesignProfile,
+  type ValidatedGameDesignProfile,
+} from '../profiles/gameDesignProfile'
+import {
+  PRESENTATION_BALANCED_V1_PROFILE,
+  validatePresentationProfile,
+  type PresentationProfile,
+  type ValidatedPresentationProfile,
+} from '../presentation'
+import {
+  PERFORMANCE_REFERENCE_ID,
+  PresentationPerformanceProbe,
+  evaluateHardPerformanceGate,
+  type HardPerformanceGateResult,
+  type PerformancePhaseId,
+  type PerformancePhaseMeasurement,
+} from '../performance'
+import {
+  createFirstPersonRenderer,
+  type FirstPersonRenderer,
+  type FirstPersonRendererOptions,
+} from '../render/firstPersonRenderer'
+import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
+import {
+  createInitialPlayableSimulationSnapshot,
+  playableSimulationSnapshotHash,
+  PLAYABLE_PLAYER_ID,
+  SIMULATION_TICKS_PER_SECOND,
+  stepPlayableSimulation,
+  type PlayableCollisionPort,
+  type PlayableSimulationSnapshot,
 } from '../simulation'
-import { createDiagnosticUi } from '../ui/createDiagnosticUi'
-import { BrowserRuntime } from './browserRuntime'
-import { freezeUiSnapshot, type CollisionUiState, type RuntimeStatus, type UiSnapshot } from './uiSnapshot'
+import { createGameplayUi, type GameplayUi, type GameplayUiOptions } from '../ui/createGameplayUi'
+import {
+  GameplayUiProjector,
+  type GameplayDebugSnapshot,
+  type GameplayUiSnapshot,
+  type GameplayUiStatus,
+} from '../ui/gameplayUiSnapshot'
+import { BrowserRuntime, type AnimationScheduler } from './browserRuntime'
+import type { CollisionUiState } from './uiSnapshot'
+
+export interface RuntimeCollisionWorld extends PlayableCollisionPort {
+  checkpoint(tick: number): CollisionCheckpointPayload
+  dispose(): void
+}
+
+export interface RuntimeInputAdapter {
+  drainActionFrame(tick: number): ReturnType<KeyboardMouseAdapter['drainActionFrame']>
+  clearInputState(): void
+  dispose(): void
+}
+
+export interface RuntimePointerLockController {
+  getSnapshot(): Readonly<PointerLockLifecycleSnapshot>
+  requestStart(): Promise<boolean>
+  requestResume(): Promise<boolean>
+  dispose(): void
+}
 
 export interface BrowserApplication {
-  readonly runtime?: BrowserRuntime<SimulationSnapshot>
+  readonly runtime?: BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot>
+  readonly requestControl: () => Promise<boolean>
   readonly dispose: () => void
 }
 
-function createShell(mount: HTMLElement): {
+export interface BrowserPerformanceReport {
+  readonly schemaVersion: 1
+  readonly referenceId: typeof PERFORMANCE_REFERENCE_ID
+  readonly mode: 'reference' | 'thermal-soak'
+  readonly passed: boolean
+  readonly environment: {
+    readonly userAgent: string
+    readonly viewportCssWidth: number
+    readonly viewportCssHeight: number
+    readonly devicePixelRatio: number
+    readonly backingBufferWidth: number
+    readonly backingBufferHeight: number
+    readonly presentationProfileId: string
+    readonly presentationProfileHash: string
+  }
+  readonly measurements: readonly PerformancePhaseMeasurement[]
+  readonly gates: readonly HardPerformanceGateResult[]
+}
+
+interface BrowserShell {
   readonly playfield: HTMLDivElement
   readonly uiLayer: HTMLDivElement
-} {
+}
+
+type ActivePerformancePhase = Exclude<PerformancePhaseId, 'paused'> | undefined
+
+function benchmarkActions(tick: number, phase: ActivePerformancePhase): readonly NormalizedAction[] {
+  if (phase === 'movement-jump') {
+    return [
+      { participantId: PLAYABLE_PLAYER_ID, actionId: 'move-forward', value: 1 },
+      { participantId: PLAYABLE_PLAYER_ID, actionId: 'jump', value: tick % 60 === 1 ? 1 : 0 },
+    ]
+  }
+  if (phase === 'combat-burst') {
+    return [
+      { participantId: PLAYABLE_PLAYER_ID, actionId: 'fire', value: tick % 20 === 1 ? 1 : 0 },
+    ]
+  }
+  return []
+}
+
+function createBenchmarkInputAdapter(
+  activePhase: () => ActivePerformancePhase,
+): RuntimeInputAdapter {
+  return {
+    drainActionFrame: (tick) => createActionFrame(tick, benchmarkActions(tick, activePhase())),
+    clearInputState: () => undefined,
+    dispose: () => undefined,
+  }
+}
+
+function createShell(mount: HTMLElement): BrowserShell {
   const playfield = document.createElement('div')
   playfield.className = 'playfield'
   playfield.setAttribute('aria-label', 'Игровое поле')
+  playfield.tabIndex = -1
   const uiLayer = document.createElement('div')
   uiLayer.className = 'ui-layer'
   mount.replaceChildren(playfield, uiLayer)
@@ -39,26 +149,7 @@ function createShell(mount: HTMLElement): {
 }
 
 function toContentHash(hash: string): ContentHash {
-  // Both shipped inputs were validated before export; this narrows their
-  // intentionally general serialized interface for the simulation contract.
   return hash as ContentHash
-}
-
-function createUiSnapshot(
-  state: SimulationSnapshot,
-  status: RuntimeStatus,
-  collision: CollisionUiState,
-): UiSnapshot {
-  return {
-    status,
-    tick: state.tick,
-    stateHash: simulationSnapshotHash(state),
-    profileId: state.profile.id,
-    profileHash: state.profile.contentHash,
-    arenaId: state.arena.id,
-    arenaHash: state.arena.contentHash,
-    collision,
-  }
 }
 
 function collisionIdentityLabel(): string {
@@ -66,12 +157,61 @@ function collisionIdentityLabel(): string {
   return `${identity.contractVersion} · ${identity.backendPackage}@${identity.backendVersion}`
 }
 
+function controllerConfiguration(
+  profile: ValidatedGameDesignProfile,
+): CollisionControllerConfiguration {
+  const movement = profile.rules.player.movement
+  return {
+    skinWidth: profile.rules.player.capsule.skinWidth,
+    autostepMaxHeight: movement.autostepMaxHeight,
+    autostepMinWidth: movement.autostepMinWidth,
+    snapToGroundDistance: movement.snapToGroundDistance,
+    maxSlopeClimbDegrees: movement.maxSlopeClimbDegrees,
+    minSlopeSlideDegrees: movement.minSlopeSlideDegrees,
+  }
+}
+
+function playerCapsule(
+  snapshot: PlayableSimulationSnapshot,
+  profile: ValidatedGameDesignProfile,
+): CollisionCapsuleProjection {
+  return {
+    semanticId: snapshot.player.semanticId,
+    position: snapshot.player.position,
+    radius: profile.rules.player.capsule.radius,
+    halfHeight: profile.rules.player.capsule.halfHeight,
+  }
+}
+
+function errorCode(error: unknown): string {
+  return error !== null && typeof error === 'object' && 'code' in error
+    ? String(error.code)
+    : COLLISION_ERROR_CODES.backendInitializationFailed
+}
+
 export interface BrowserBootstrapDependencies {
-  readonly createCollisionWorld?: typeof createRapierCollisionWorld
+  readonly profile?: GameDesignProfile | ValidatedGameDesignProfile
+  readonly presentationProfile?: PresentationProfile | ValidatedPresentationProfile
+  readonly createCollisionWorld?: (
+    arena: typeof COLLISION_FIXTURE_ARENA,
+    capsules: readonly CollisionCapsuleProjection[],
+    configuration: CollisionControllerConfiguration,
+  ) => Promise<RuntimeCollisionWorld>
   readonly runBenchmark?: typeof runCollisionBrowserBenchmark
-  readonly createRenderer?: typeof createDiagnosticRenderer
-  readonly initializeBackend?: typeof initializeCollisionBackend
+  readonly createRenderer?: (
+    options: FirstPersonRendererOptions,
+  ) => FirstPersonRenderer
+  readonly createUi?: (mount: HTMLElement, options: GameplayUiOptions) => GameplayUi
+  readonly createInput?: (options: KeyboardMouseAdapterOptions) => RuntimeInputAdapter
+  readonly createPointerLockController?: (
+    options: PointerLockControllerOptions,
+  ) => RuntimePointerLockController
+  readonly initializeBackend?: () => Promise<unknown>
+  readonly scheduler?: AnimationScheduler
   readonly now?: () => number
+  readonly wait?: (milliseconds: number) => Promise<void>
+  readonly performancePhaseDurationMilliseconds?: number
+  readonly locationSearch?: string
 }
 
 export async function bootstrapBrowserRuntime(
@@ -79,19 +219,83 @@ export async function bootstrapBrowserRuntime(
   dependencies: BrowserBootstrapDependencies = {},
 ): Promise<BrowserApplication> {
   const { playfield, uiLayer } = createShell(mount)
-  const ui = createDiagnosticUi(uiLayer)
+  const search = new URLSearchParams(dependencies.locationSearch ?? window.location.search)
+  const debugEnabled = search.has('debug')
+  const benchmarkEnabled = search.has('collisionBenchmark')
+  const performanceSoakSecondsRaw = search.get('performanceSoakSeconds')
+  const performanceSoakSeconds = performanceSoakSecondsRaw === null
+    ? undefined
+    : Number(performanceSoakSecondsRaw)
+  if (
+    performanceSoakSeconds !== undefined &&
+    (!Number.isFinite(performanceSoakSeconds) || performanceSoakSeconds <= 0 || performanceSoakSeconds > 3_600)
+  ) {
+    throw new RangeError('Performance soak duration must be between 0 and 3600 seconds')
+  }
+  const performanceBenchmarkEnabled = search.has('performanceBenchmark') ||
+    performanceSoakSeconds !== undefined
+  const profileValidation = validateGameDesignProfile(
+    dependencies.profile ?? PROTOTYPE_V1_PROFILE,
+  )
+  const profile = profileValidation.ok
+    ? profileValidation.profile
+    : PROTOTYPE_V1_PROFILE
+  const presentationProfileValidation = validatePresentationProfile(
+    dependencies.presentationProfile ?? PRESENTATION_BALANCED_V1_PROFILE,
+  )
+  const presentationProfile = presentationProfileValidation.ok
+    ? presentationProfileValidation.profile
+    : PRESENTATION_BALANCED_V1_PROFILE
+  const projector = new GameplayUiProjector({
+    profile,
+    ticksPerSecond: SIMULATION_TICKS_PER_SECOND,
+  })
   const createCollision = dependencies.createCollisionWorld ?? createRapierCollisionWorld
-  const runBenchmark = dependencies.runBenchmark ?? runCollisionBrowserBenchmark
-  const createRenderer = dependencies.createRenderer ?? createDiagnosticRenderer
+  const createRenderer = dependencies.createRenderer ?? createFirstPersonRenderer
+  let activePerformancePhase: ActivePerformancePhase
+  const createInput = dependencies.createInput ?? ((options) => (
+    performanceBenchmarkEnabled
+      ? createBenchmarkInputAdapter(() => activePerformancePhase)
+      : new KeyboardMouseAdapter(options)
+  ))
+  const createPointerController = dependencies.createPointerLockController ??
+    ((options) => new PointerLockController(options))
+  const createUi = dependencies.createUi ?? createGameplayUi
   const initializeBackend = dependencies.initializeBackend ?? initializeCollisionBackend
+  const runBenchmark = dependencies.runBenchmark ?? runCollisionBrowserBenchmark
   const now = dependencies.now ?? (() => performance.now())
-  const initialState = createInitialSimulationSnapshot({
-    rngSeed: COLLISION_FIXTURE_ARENA.seed,
-    profile: {
-      id: PROTOTYPE_V1_PROFILE.id,
-      revision: PROTOTYPE_V1_PROFILE.revision,
-      contentHash: toContentHash(PROTOTYPE_V1_PROFILE.contentHash),
+  const wait = dependencies.wait ?? ((milliseconds) => new Promise<void>((resolve) => {
+    window.setTimeout(resolve, milliseconds)
+  }))
+  const performancePhaseDurationMilliseconds =
+    dependencies.performancePhaseDurationMilliseconds ?? 2_000
+  if (
+    !Number.isFinite(performancePhaseDurationMilliseconds) ||
+    performancePhaseDurationMilliseconds <= 0
+  ) {
+    throw new RangeError('Performance phase duration must be greater than zero')
+  }
+  const performanceProbe = performanceBenchmarkEnabled
+    ? new PresentationPerformanceProbe(now)
+    : undefined
+  let performanceRecording = false
+  const runtimePerformanceRecorder = performanceProbe === undefined ? undefined : {
+    recordAnimationCallback: (durationMilliseconds: number) => {
+      if (performanceRecording) performanceProbe.recordAnimationCallback(durationMilliseconds)
     },
+    recordSimulationStep: (durationMilliseconds: number) => {
+      if (performanceRecording) performanceProbe.recordSimulationStep(durationMilliseconds)
+    },
+    recordHudPublication: () => {
+      if (performanceRecording) performanceProbe.recordHudPublication()
+    },
+  }
+
+  const initialState = createInitialPlayableSimulationSnapshot({
+    rngSeed: COLLISION_FIXTURE_ARENA.seed,
+    profile,
+    scenario: COMBAT_SLICE_SCENARIO_V1,
+    collision: RUNTIME_COLLISION_COMPATIBILITY_IDENTITY,
     arena: {
       id: COLLISION_FIXTURE_ARENA.id,
       seed: COLLISION_FIXTURE_ARENA.seed,
@@ -100,34 +304,116 @@ export async function bootstrapBrowserRuntime(
     },
   })
 
+  let disposed = false
+  let hasEverLocked = false
+  let pointerState: Readonly<PointerLockLifecycleSnapshot> = Object.freeze({ status: 'paused' })
   let collisionState: CollisionUiState = {
     status: 'loading',
     identity: collisionIdentityLabel(),
     fixtureId: COLLISION_FIXTURE_ID,
     fixtureStatus: 'pending',
   }
-  ui.update(createUiSnapshot(initialState, 'starting', collisionState))
+  let collisionWorld: RuntimeCollisionWorld | undefined
+  let renderer: FirstPersonRenderer | undefined
+  let input: RuntimeInputAdapter | undefined
+  let pointerController: RuntimePointerLockController | undefined
+  let runtime: BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot> | undefined
 
-  let disposed = false
-  let collisionWorld: RapierCollisionWorld | undefined
-  let renderer: ReturnType<typeof createDiagnosticRenderer> | undefined
-  let runtime: BrowserRuntime<SimulationSnapshot> | undefined
+  function uiStatus(): GameplayUiStatus {
+    if (pointerState.status === 'locked') return 'running'
+    return hasEverLocked ? 'paused' : 'start'
+  }
+
+  function collisionDebugLabel(): string {
+    const parts = [collisionState.identity, collisionState.status, collisionState.fixtureStatus]
+    if (collisionState.checkpointHash) parts.push(collisionState.checkpointHash)
+    if (collisionState.benchmark) {
+      parts.push(
+        `p95 ${collisionState.benchmark.p95Milliseconds.toFixed(3)} ms`,
+        `p99 ${collisionState.benchmark.p99Milliseconds.toFixed(3)} ms`,
+        `max ${collisionState.benchmark.maxMilliseconds.toFixed(3)} ms`,
+      )
+    }
+    return parts.join(' · ')
+  }
+
+  function debugSnapshot(state: PlayableSimulationSnapshot): GameplayDebugSnapshot | undefined {
+    if (!debugEnabled) return undefined
+    return {
+      tick: state.tick,
+      stateHash: playableSimulationSnapshotHash(state),
+      profileIdentity: `${state.profile.id}@${state.profile.revision} · ${state.profile.contentHash}`,
+      arenaIdentity: `${state.arena.id} · ${state.arena.contentHash}`,
+      collisionIdentity: collisionDebugLabel(),
+      playerPosition: state.player.position,
+      playerYawDegrees: state.player.yaw * (180 / Math.PI),
+      playerPitchDegrees: state.player.pitch * (180 / Math.PI),
+      playerGrounded: state.player.grounded,
+      ammo: state.weapon.ammo,
+      targets: state.targets.map((target) => ({
+        semanticId: target.semanticId,
+        health: target.health,
+        active: target.active,
+      })),
+    }
+  }
+
+  function projectUi(
+    state: PlayableSimulationSnapshot,
+    status = uiStatus(),
+    message?: string,
+  ): Readonly<GameplayUiSnapshot> {
+    return projector.project(state, status, debugSnapshot(state), message)
+  }
+
+  async function requestControl(): Promise<boolean> {
+    if (disposed || pointerController === undefined) return false
+    return hasEverLocked
+      ? pointerController.requestResume()
+      : pointerController.requestStart()
+  }
+
+  const ui = createUi(uiLayer, {
+    onRequestControl: () => {
+      void requestControl()
+    },
+  })
+  ui.update(projectUi(initialState, 'start'))
 
   const onPageHide = () => {
     if (runtime !== undefined) runtime.dispose()
     else cleanup()
   }
 
-  const cleanup = () => {
+  function cleanup(): void {
     if (disposed) return
     disposed = true
     window.removeEventListener('pagehide', onPageHide)
+    pointerController?.dispose()
+    input?.dispose()
     collisionWorld?.dispose()
     renderer?.dispose()
     ui.dispose()
     mount.replaceChildren()
   }
   window.addEventListener('pagehide', onPageHide, { once: true })
+
+  if (!profileValidation.ok) {
+    ui.update(projectUi(
+      initialState,
+      'error',
+      `Profile validation failed (${profileValidation.errors.map((error) => error.code).join(', ')})`,
+    ))
+    return { requestControl, dispose: cleanup }
+  }
+  if (!presentationProfileValidation.ok) {
+    ui.update(projectUi(
+      initialState,
+      'error',
+      `Presentation profile validation failed (${presentationProfileValidation.errors.map((error) => error.code).join(', ')})`,
+    ))
+    return { requestControl, dispose: cleanup }
+  }
 
   try {
     const coldStart = now()
@@ -136,10 +422,14 @@ export async function bootstrapBrowserRuntime(
     const warmStart = now()
     await initializeBackend()
     const warm = now() - warmStart
-    collisionWorld = await createCollision(COLLISION_FIXTURE_ARENA, [])
+    collisionWorld = await createCollision(
+      COLLISION_FIXTURE_ARENA,
+      [playerCapsule(initialState, profile)],
+      controllerConfiguration(profile),
+    )
     if (disposed) {
       collisionWorld.dispose()
-      return { dispose: cleanup }
+      return { requestControl, dispose: cleanup }
     }
     collisionState = {
       status: 'ready',
@@ -150,71 +440,218 @@ export async function bootstrapBrowserRuntime(
       initLatencyMilliseconds: { cold, warm },
     }
   } catch (error) {
-    const errorCode = error !== null && typeof error === 'object' && 'code' in error
-      ? String(error.code)
-      : COLLISION_ERROR_CODES.backendInitializationFailed
+    const code = errorCode(error)
     collisionState = {
       status: 'error',
       identity: collisionIdentityLabel(),
       fixtureId: COLLISION_FIXTURE_ID,
       fixtureStatus: 'failed',
-      errorCode,
+      errorCode: code,
     }
-    ui.update(freezeUiSnapshot({
-      ...createUiSnapshot(initialState, 'error', collisionState),
-      errorMessage: `Collision initialization failed (${errorCode})`,
-    }))
-    return { dispose: cleanup }
+    ui.update(projectUi(initialState, 'error', `Collision initialization failed (${code})`))
+    return { requestControl, dispose: cleanup }
   }
 
   try {
     renderer = createRenderer({
       container: playfield,
       arena: COLLISION_FIXTURE_ARENA,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile,
+      pixelBudget: presentationProfile.render.backingBufferPixelBudget,
+      onWebGlSubmission: (rendererInfo) => {
+        if (performanceRecording) {
+          performanceProbe?.recordWebGlSubmission(rendererInfo)
+        }
+      },
+      ticksPerSecond: SIMULATION_TICKS_PER_SECOND,
     })
+    playfield.dataset.presentationProfileId = presentationProfile.id
+    playfield.dataset.presentationProfileHash = presentationProfile.contentHash
+    renderer.render(initialState)
   } catch (error) {
-    const message = error instanceof WebGlUnavailableError
+    const message = error instanceof Error && error.name === 'WebGlUnavailableError'
       ? error.message
       : 'Неизвестная ошибка инициализации 3D-сцены'
-    ui.update(
-      freezeUiSnapshot({
-        ...createUiSnapshot(initialState, 'error', collisionState),
-        errorMessage: message,
-      }),
-    )
-    return { dispose: cleanup }
+    ui.update(projectUi(initialState, 'error', message))
+    return { requestControl, dispose: cleanup }
   }
 
-  const disposePresentation = () => {
-    cleanup()
-  }
-
-  runtime = new BrowserRuntime<SimulationSnapshot>({
-    initialState,
-    step: (state) => stepSimulation(state, createActionFrame(state.tick + 1, [])),
-    render: (state) => renderer?.render(state),
-    snapshotForUi: (state, status) => createUiSnapshot(state, status, collisionState),
-    publishUiSnapshot: ui.update,
-    disposePresentation,
+  input = createInput({
+    pointerLockElement: playfield,
+    participantId: PLAYABLE_PLAYER_ID,
   })
-  runtime.start()
 
-  if (new URLSearchParams(window.location.search).has('collisionBenchmark')) {
+  runtime = new BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot>({
+    initialState,
+    scheduler: dependencies.scheduler,
+    uiUpdateIntervalSeconds: 1 / presentationProfile.ui.maximumPublicationsPerSecond,
+    performanceRecorder: runtimePerformanceRecorder,
+    now,
+    step: (state) => {
+      const frame = input!.drainActionFrame(state.tick + 1)
+      return stepPlayableSimulation(state, frame, collisionWorld!, profile)
+    },
+    render: (state) => renderer?.render(state),
+    snapshotForUi: (state) => projectUi(state),
+    publishUiSnapshot: ui.update,
+    disposePresentation: cleanup,
+  })
+
+  pointerController = createPointerController({
+    lockElement: playfield,
+    clearInputState: () => input?.clearInputState(),
+    startRuntime: () => runtime?.start(),
+    stopRuntime: () => runtime?.stop(),
+    onStateChange: (snapshot) => {
+      pointerState = snapshot
+      if (snapshot.status === 'locked') hasEverLocked = true
+      if (!disposed && runtime !== undefined) {
+        ui.update(projectUi(runtime.getState(), uiStatus(), snapshot.errorMessage))
+      }
+    },
+  })
+
+  // The controller constructor synchronously pauses the runtime. This explicit
+  // projection distinguishes the first start overlay from a later resume.
+  pointerState = pointerController.getSnapshot()
+  ui.update(projectUi(runtime.getState(), uiStatus(), pointerState.errorMessage))
+
+  if (performanceBenchmarkEnabled && performanceProbe !== undefined) {
+    const badge = document.createElement('output')
+    badge.className = 'performance-benchmark-badge'
+    badge.setAttribute('aria-label', 'Performance benchmark status')
+    badge.textContent = 'PERFORMANCE · RUNNING'
+    mount.append(badge)
+    playfield.dataset.performanceBenchmarkStatus = 'running'
+
+    const runPhase = async (
+      phase: PerformancePhaseId,
+    ): Promise<PerformancePhaseMeasurement | undefined> => {
+      if (disposed || runtime === undefined) return undefined
+      activePerformancePhase = phase === 'paused' ? undefined : phase
+      if (phase !== 'paused') {
+        pointerState = Object.freeze({ status: 'locked' })
+        ui.update(projectUi(runtime.getState(), 'running'))
+        runtime.start()
+      }
+
+      // Initial ResizeObserver delivery and the first RAF wall-clock anchor are
+      // warm-up work, not part of the settled reference window.
+      await wait(500)
+      if (disposed || runtime === undefined) return undefined
+
+      performanceProbe.startPhase(phase)
+      performanceRecording = true
+      performanceProbe.markMetricUnavailable('long-tasks')
+      performanceProbe.markMetricUnavailable('thermal')
+
+      const memory = performance as Performance & {
+        readonly memory?: { readonly usedJSHeapSize?: number }
+      }
+      const initialHeapBytes = memory.memory?.usedJSHeapSize
+      if (typeof initialHeapBytes === 'number') {
+        performanceProbe.recordHeapSample(initialHeapBytes)
+      } else {
+        performanceProbe.markMetricUnavailable('heap')
+      }
+
+      await wait(
+        phase === 'paused'
+          ? 1_000
+          : performanceSoakSeconds === undefined
+            ? performancePhaseDurationMilliseconds
+            : performanceSoakSeconds * 1_000,
+      )
+      if (disposed || runtime === undefined) return undefined
+
+      if (phase !== 'paused') runtime.stop()
+      const finalHeapBytes = memory.memory?.usedJSHeapSize
+      if (typeof finalHeapBytes === 'number') performanceProbe.recordHeapSample(finalHeapBytes)
+      performanceRecording = false
+      activePerformancePhase = undefined
+      return performanceProbe.finishPhase()
+    }
+
+    void (async () => {
+      const measurements: PerformancePhaseMeasurement[] = []
+      const phases: readonly PerformancePhaseId[] = performanceSoakSeconds === undefined
+        ? ['paused', 'running-idle', 'movement-jump', 'combat-burst']
+        : ['combat-burst']
+      if (performanceSoakSeconds !== undefined) {
+        badge.textContent = `PERFORMANCE · SOAK ${performanceSoakSeconds}s`
+      }
+      for (const phase of phases) {
+        const measurement = await runPhase(phase)
+        if (measurement === undefined) return
+        measurements.push(measurement)
+      }
+      const gates = measurements.map((measurement) => evaluateHardPerformanceGate(measurement))
+      const canvas = playfield.querySelector('canvas')
+      const report: BrowserPerformanceReport = Object.freeze({
+        schemaVersion: 1,
+        referenceId: PERFORMANCE_REFERENCE_ID,
+        mode: performanceSoakSeconds === undefined ? 'reference' : 'thermal-soak',
+        passed: gates.every((gate) => gate.passed),
+        environment: Object.freeze({
+          userAgent: navigator.userAgent,
+          viewportCssWidth: playfield.clientWidth,
+          viewportCssHeight: playfield.clientHeight,
+          devicePixelRatio: window.devicePixelRatio || 1,
+          backingBufferWidth: canvas?.width ?? 0,
+          backingBufferHeight: canvas?.height ?? 0,
+          presentationProfileId: presentationProfile.id,
+          presentationProfileHash: presentationProfile.contentHash,
+        }),
+        measurements: Object.freeze(measurements),
+        gates: Object.freeze(gates),
+      })
+      const serializedReport = JSON.stringify(report)
+      const reportWindow = window as typeof window & {
+        __STAR_TOURNAMENT_PERFORMANCE_REPORT__?: BrowserPerformanceReport
+      }
+      reportWindow.__STAR_TOURNAMENT_PERFORMANCE_REPORT__ = report
+      playfield.dataset.performanceBenchmarkStatus = report.passed ? 'passed' : 'failed'
+      playfield.dataset.performanceBenchmarkReport = serializedReport
+      badge.textContent = report.passed ? 'PERFORMANCE · PASS' : 'PERFORMANCE · FAIL'
+      badge.dataset.status = report.passed ? 'passed' : 'failed'
+      pointerState = Object.freeze({ status: 'paused' })
+      ui.update(projectUi(runtime.getState(), 'paused'))
+    })().catch((error: unknown) => {
+      performanceRecording = false
+      activePerformancePhase = undefined
+      playfield.dataset.performanceBenchmarkStatus = 'failed'
+      playfield.dataset.performanceBenchmarkError = error instanceof Error
+        ? error.message
+        : String(error)
+      badge.textContent = 'PERFORMANCE · ERROR'
+      badge.dataset.status = 'failed'
+    })
+  }
+
+  if (benchmarkEnabled) {
+    playfield.dataset.collisionBenchmarkStatus = 'running'
     window.setTimeout(() => {
       void runBenchmark().then((benchmark) => {
         if (disposed || runtime === undefined) return
         collisionState = { ...collisionState, benchmark }
-        ui.update(freezeUiSnapshot(createUiSnapshot(runtime.getState(), 'running', collisionState)))
+        playfield.dataset.collisionBenchmarkStatus = 'passed'
+        playfield.dataset.collisionBenchmarkP95Milliseconds = String(benchmark.p95Milliseconds)
+        playfield.dataset.collisionBenchmarkP99Milliseconds = String(benchmark.p99Milliseconds)
+        playfield.dataset.collisionBenchmarkMaxMilliseconds = String(benchmark.maxMilliseconds)
+        ui.update(projectUi(runtime.getState()))
       }).catch(() => {
         if (disposed || runtime === undefined) return
         collisionState = { ...collisionState, fixtureStatus: 'failed' }
-        ui.update(freezeUiSnapshot(createUiSnapshot(runtime.getState(), 'running', collisionState)))
+        playfield.dataset.collisionBenchmarkStatus = 'failed'
+        ui.update(projectUi(runtime.getState()))
       })
     }, 0)
   }
 
   return {
     runtime,
+    requestControl,
     dispose: () => runtime?.dispose(),
   }
 }

@@ -14,6 +14,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Поддерживаются режимы каждый сам за себя и командный матч двух команд. В командном матче красная команда играет против синей.
 - Арены процедурно генерируются из воспроизводимого seed и проходят обязательную проверку проходимости, spawn-безопасности и режимной честности до старта матча.
 - В матчах могут участвовать боты трёх уровней сложности. Сложность меняет качество реакции, прицеливания, памяти, планирования и координации, но не даёт скрытой информации и не меняет здоровье, урон, скорость, боезапас, hitbox или правила матча.
+- Первый playable slice ограничен одним локальным keyboard/mouse viewport и детерминированными robot target mannequins. Mannequins нужны только для проверки движения, прицеливания и урона: они не являются ботами или участниками матча. Gamepad, split-screen, match loop, bots, death/respawn, процедурная генерация и online adapter входят в последующие changes.
 
 ## 3. Игрок, движение и оружие
 
@@ -23,6 +24,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Дробовик использует hitscan-набор дробин. Урон полного попадания зависит от зоны: голова получает смертельный урон, корпус — высокий несмертельный, руки и ноги — пониженный. Смешанное попадание складывает пропорциональный урон отдельных дробин.
 - Боезапас не перезаряжается и не пополняется в течение одной жизни. При нулевом боезапасе игрок не может атаковать до следующего возрождения; оружия ближнего боя в первом прототипе нет.
 - Конкретные значения здоровья, боезапаса, урона, движения и оружия принадлежат именованному профилю `prototype-v1` Game Design Lab и не дублируются в narrative-спецификации.
+- Первый playable slice использует versioned `combat-slice-scenario-v1` с аналитическими head/torso/limb hit volumes и static-world occlusion. Его примитивные роботы являются проверочным fixture и не задают финальный внешний вид персонажей.
 
 ## 4. Смерть, killcam и возрождение
 
@@ -45,6 +47,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - В паузе доступны продолжение, повтор того же матча, настройки и выход в главное меню.
 - Главное меню содержит настройки звука, управление полноэкранным режимом и отдельную полноэкранную DOM-лабораторию геймдизайна.
 - Браузер не гарантирует передачу `Esc` приложению в pointer lock и fullscreen. Если `Escape` получен приложением, он открывает паузу; потеря pointer lock или fullscreen также ставит локальный матч на паузу. Продолжение матча повторно запрашивает нужный режим после явного действия пользователя.
+- До появления match loop текущий single-seat HUD показывает здоровье, прицел, оружие и боезапас, а start/resume overlay явно управляет pointer lock. Таймер, live-таблица, pause menu и результаты не считаются реализованными этим срезом.
 
 ## 6. Game Design Lab
 
@@ -55,6 +58,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Матч всегда использует полную сохранённую ревизию, её identity и content hash; несохранённый черновик не является конфигурацией матча.
 - Параметры генератора влияют только на следующую генерацию арены и не перестраивают уже созданную карту.
 - Технические инварианты, которые не предназначены для настройки игроком или дизайнером, не показываются в лаборатории.
+- `prototype-v1` schema/revision 2 уже содержит полные descriptor metadata для capsule, движения, камеры и дробовика. UI лаборатории и остальные группы полного профиля остаются отдельным change; наличие profile core не означает готовность меню лаборатории.
+- Presentation-параметры, влияющие на нагрузку и читаемость, используют тот же descriptor contract, но живут в отдельном immutable `presentation-balanced-v1`: они не входят в состав match `GameDesignProfile`, simulation snapshot, replay или state hash. Первый профиль ограничивает WebGL backing buffer и частоту публикации HUD; UI его редактирования пока не реализован.
 
 ## 7. Архитектурные принципы
 
@@ -68,6 +73,10 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Процедурная арена сериализуется как канонический `ArenaDefinition` с seed, версией генератора и content hash; collision, navigation, spawn anchors и renderer description выводятся из одной семантической модели.
 - GLB/glTF 2.0 используется как runtime-формат 3D-ассетов через стабильные manifest-ключи.
 - Collision/query foundation использует exact `@dimforge/rapier3d-deterministic-compat@0.20.0` с compatibility identity `collision-contract-v1`. Backend загружается отдельным lazy chunk и остаётся заменяемым адаптером: статический мир детерминированно выводится из semantic-ID-sorted `ArenaDefinition`, а капсулы участников перед каждым gameplay query проецируются из сериализуемого состояния. Rapier handles и mutable world не входят в simulation snapshot и не являются gameplay authority.
+- Первый playable runner использует action schema v2, playable snapshot schema v2 и `combat-slice-scenario-v1`. Движение, здоровье, боезапас, targets и события принадлежат snapshot; keyboard/mouse adapter, pointer-lock controller, renderer и React HUD не меняют gameplay state напрямую.
+- Pointer lock запрашивается только после явного действия на start/resume overlay. До lock fixed-step runner не идёт; потеря lock очищает held input и останавливает игру, а ошибка запроса оставляет retryable overlay вместо фатальной подмены игрового экрана.
+- Browser presentation не отправляет один simulation tick в WebGL повторно без явной invalidation. Resize и смена pixel ratio выполняют один redraw последнего snapshot; pause и hidden state не выполняют simulation ticks, WebGL submissions или периодические HUD publications.
+- Performance telemetry является presentation-only: wall-clock timings, renderer counters и доступные browser/device signals не попадают в simulation, RNG, snapshot, replay или state hash.
 
 ## 8. Критерии качества
 
@@ -75,8 +84,11 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Изменения split-screen проверяются в browser playtest с тем количеством игроков и раскладкой viewport, которых касается change.
 - Любое изменение видимого результата в игре проверяется в in-app Browser и сопровождается в handoff актуальными скриншотами из dev-стенда изменённой ветки. Для изменения нескольких состояний, экранов или viewport прикладываются скриншоты каждого изменённого состояния; скриншоты не заменяют сам browser playtest.
 - Автотесты и production build обязательны, но не заменяют ручную игровую проверку.
+- Если политика in-app Browser немедленно снимает pointer lock, визуальный smoke, DOM/state evidence и component tests можно сохранить как частичную проверку, но physical movement/look/jump/fire gate остаётся незакрытым до устойчивой ручной сессии в том же браузере.
 - Детерминированный replay при одинаковых seed, профиле и action frames должен давать одинаковый state hash.
 - Reference-browser collision gate для восьми капсул включает два независимых прогона по 10 000 fixed ticks, восстановление нового мира на 5 000-м тике и observer cadence 0/1/2/4; обязательны одинаковые checkpoint/final hashes. Prototype budget: p95 не более 2,5 мс, p99 не более 4,2 мс, max не более 8,3 мс на tick.
+- `performance-reference-v1` отдельно проверяет production-browser фазы settled pause, running idle, movement/jump и combat burst. Portable hard gates: на pause/hidden — 0 simulation ticks, 0 WebGL submissions и 0 periodic HUD publications; в активной секунде — 59–61 simulation ticks, не более 61 WebGL submissions и не более 11 HUD publications. CPU/frame/simulation percentiles, renderer calls/triangles, long tasks, heap slope и 10-minute thermal soak сохраняются как evidence; device-sensitive thresholds остаются provisional до утверждения reference hardware в §10.
+- Performance-gate обязателен для изменений renderer, lights/shaders/effects/cameras, resolution/DPR/cadence/runtime lifecycle, arenas/entity counts/procedural generation, shipping GLB/textures/animation/LOD, simulation/collision/bots, split-screen, HUD cadence и массовых gameplay presentation events. Text-only, narrative-only и test-only изменения могут пропустить его только с зафиксированной причиной. Synthetic performance driver не заменяет physical input/playability test.
 - Локальный `go` collision backend не доказывает cross-platform или network determinism. До сетевого режима обязательна hash-матрица на утверждённых ОС и браузерах с той же package/contract identity.
 - Процедурные арены проверяются property-based тестами на множестве seed и browser playtest; формальная валидность не считается доказательством читаемости или интересности арены.
 - Уровни сложности ботов проверяются сериями воспроизводимых матчей; статистическая сила должна возрастать без нарушения одинаковых игровых правил.
@@ -89,7 +101,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 10. Открытые решения
 
-- Размер первого вертикального среза: число local seats, режим, карта, оружие и нужны ли боты.
+- Состав следующего вертикального среза после single-seat combat foundation: match loop, процедурная арена, bots или первый настоящий второй local seat.
 - Стартовый visual direction, возрастной тон и уровень реализма.
 - Сетевая модель, платформы и требования к latency/region.
 - Целевые браузеры, ОС/TV, разрешение, минимальный FPS и performance budget для одного, двух и четырёх viewport.
@@ -102,7 +114,9 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 | Дата | Решение |
 | --- | --- |
+| 2026-09-01 | Performance/power foundation реализован и проверен: `presentation-balanced-v1` ограничивает WebGL backing buffer 2 073 600 пикселями и HUD cadence 10 публикациями/с; `performance-reference-v1` прошёл production и in-app Browser. На 120+ Hz RAF renderer отправляет около 60 WebGL кадров/с; 10-minute combat soak дал 36 000 ticks, 35 999 submissions, frame p95 0,70 ms, simulation p95 0,60 ms, peak 43 draw calls и heap slope около 0,40 MiB/min. Pause остаётся zero-work. После стабилизации пользователь подтвердил на текущем устройстве, что заметный нагрев ушёл и вентиляторы перестали работать на высокой скорости; универсальные thermal budgets остаются открыты до утверждения reference hardware. |
 | 2026-09-01 | Для любого визуального изменения обязательны проверка в in-app Browser и актуальные скриншоты из dev-стенда изменённой ветки в итоговом handoff; несколько затронутых состояний, экранов или viewport показываются отдельно. |
+| 2026-09-01 | Первый single-seat combat foundation реализован и полностью принят физической browser-сессией: пользователь подтвердил ходьбу, прыжок, стрельбу, mouse look, уничтожение цели и `Esc` → `Продолжить`; automated checks, HTTP/dev-stand, default/debug/resize smoke и collision browser budget также прошли. Robot mannequins остаются проверочными targets, а gamepad, split-screen, match loop, bots и network не входят в этот slice. |
 | 2026-09-01 | Deterministic Rapier compat 0.20.0 получил provisional `go` как локальный collision/query backend: reference Chromium на текущем macOS host прошёл functional/lifecycle gates, три 10 000-тиковых determinism-прогона и browser budget p95 0,4 мс / p99 0,5 мс / max 1,6 мс. Backend остаётся derived adapter; cross-platform/network hash matrix не проверена и обязательна до online-режима. |
 | 2026-09-01 | Утверждён первый полный baseline `prototype-v1`: уже согласованные игровые числа и provisional безопасные диапазоны/шаги хранятся в immutable конфигурации и едином descriptor registry; последующие механики обязаны потреблять этот профиль без дублирующих констант. |
 | 2026-09-01 | Утверждён фундамент first-person прототипа: базовое Quake-подобное движение без расширенных манёвров, двухствольный hitscan-дробовик, death-only восстановление боезапаса, killcam и безопасный respawn, visual-only тела, браузерный Three.js/React DOM runtime и составная Game Design Lab на основе immutable ревизий. Числовые значения вынесены в будущий профиль `prototype-v1`. |

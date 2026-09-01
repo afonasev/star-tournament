@@ -2,22 +2,21 @@ import { describe, expect, it } from 'vitest'
 
 import { contentHash } from '../core/canonical'
 import { createActionFrame, type ActionFrame } from '../input/actionFrame'
+import { FixedStepHeadlessRunner, runHeadlessSimulation } from './headlessRunner'
 import {
-  createInitialSimulationSnapshot,
-  createSeededRngState,
   createSimulationReplay,
-  FixedStepHeadlessRunner,
-  nextRandomUint32,
   parseSimulationReplay,
-  parseSimulationSnapshot,
-  runHeadlessSimulation,
   runSimulationReplay,
   serializeSimulationReplay,
+} from './replay'
+import { createSeededRngState, nextRandomUint32 } from './rng'
+import {
+  createInitialSimulationSnapshot,
+  parseSimulationSnapshot,
   serializeSimulationSnapshot,
-  SIMULATION_TICKS_PER_SECOND,
   simulationSnapshotHash,
-  stepSimulation,
-} from './index'
+} from './snapshot'
+import { SIMULATION_TICKS_PER_SECOND, stepSimulation } from './step'
 
 const profileHash = contentHash({ profile: 'prototype-v1' })
 const arenaHash = contentHash({ arena: 'diagnostic-v1', seed: 42 })
@@ -40,12 +39,12 @@ function actionFrames(count: number): readonly ActionFrame[] {
     createActionFrame(index + 1, [
       {
         participantId: 'local-1',
-        actionId: 'diagnostic.signal',
+        actionId: 'move-forward',
         value: index % 3 === 0 ? 1 : -0.25,
       },
       {
         participantId: 'bot-1',
-        actionId: 'diagnostic.signal',
+        actionId: 'move-right',
         value: (index % 5) * 0.1,
       },
     ]),
@@ -110,7 +109,7 @@ describe('fixed-step simulation', () => {
   it('does not mutate the snapshot or ActionFrame inputs', () => {
     const source = initialSnapshot()
     const frame = createActionFrame(1, [
-      { participantId: 'local-1', actionId: 'diagnostic.signal', value: 1 },
+      { participantId: 'local-1', actionId: 'move-forward', value: 1 },
     ])
     const sourceBefore = serializeSimulationSnapshot(source)
     const frameBefore = JSON.stringify(frame)

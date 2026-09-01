@@ -45,15 +45,47 @@ function expectDeepFrozen(value: unknown): void {
 describe('prototype-v1 GameDesignProfile', () => {
   it('contains every approved numeric prototype rule', () => {
     expect(PROTOTYPE_V1_PROFILE).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       id: 'prototype-v1',
-      revision: 1,
+      revision: 2,
       source: 'shipped',
       rules: {
-        player: { startingHealth: 100 },
+        player: {
+          startingHealth: 100,
+          capsule: { radius: 0.4, halfHeight: 0.5, skinWidth: 0.01 },
+          eyeHeight: 0.55,
+          movement: {
+            maximumGroundSpeed: 9,
+            groundAcceleration: 45,
+            groundDeceleration: 32,
+            airAcceleration: 12,
+            gravity: 24,
+            jumpSpeed: 8.5,
+            autostepMaxHeight: 0.45,
+            autostepMinWidth: 0.25,
+            snapToGroundDistance: 0.2,
+            maxSlopeClimbDegrees: 45,
+            minSlopeSlideDegrees: 60,
+          },
+        },
+        camera: {
+          horizontalSensitivity: 4,
+          verticalSensitivity: 3.2,
+          maximumPitchDegrees: 85,
+          fieldOfViewDegrees: 90,
+          nearPlane: 0.05,
+          farPlane: 250,
+        },
         weapons: {
           doubleBarrelShotgun: {
             startingAmmo: 20,
+            pelletCount: 12,
+            spreadDegrees: 7,
+            rangeMeters: 35,
+            cooldownSeconds: 0.7,
+            muzzleFeedbackSeconds: 0.08,
+            impactFeedbackSeconds: 0.12,
+            hitmarkerSeconds: 0.15,
             damage: { head: 100, torso: 70, limb: 30 },
           },
         },
@@ -126,23 +158,23 @@ describe('prototype-v1 GameDesignProfile', () => {
     })
 
     const outOfRange = cloneProfile()
-    outOfRange.rules.weapons.doubleBarrelShotgun.startingAmmo = 201
+    outOfRange.rules.weapons.doubleBarrelShotgun.pelletCount = 65
     expect(validateGameDesignProfile(outOfRange)).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
         expect.objectContaining({
           code: 'OUT_OF_RANGE',
-          paths: ['rules.weapons.doubleBarrelShotgun.startingAmmo'],
+          paths: ['rules.weapons.doubleBarrelShotgun.pelletCount'],
         }),
       ]),
     })
 
     const invalidStep = cloneProfile()
-    invalidStep.rules.scoring.assist.windowSeconds = 5.05
+    invalidStep.rules.player.capsule.radius = 0.405
     expect(validateGameDesignProfile(invalidStep)).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
-        expect.objectContaining({ code: 'INVALID_STEP', paths: ['rules.scoring.assist.windowSeconds'] }),
+        expect.objectContaining({ code: 'INVALID_STEP', paths: ['rules.player.capsule.radius'] }),
       ]),
     })
   })
@@ -207,10 +239,86 @@ describe('prototype-v1 GameDesignProfile', () => {
         }),
       ]),
     })
+
+    const invalidCapsule = cloneProfile()
+    invalidCapsule.rules.player.capsule.radius = 0.2
+    invalidCapsule.rules.player.capsule.skinWidth = 0.2
+    expect(validateGameDesignProfile(invalidCapsule)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'CAPSULE_GEOMETRY_INVALID',
+          paths: ['rules.player.capsule.radius', 'rules.player.capsule.skinWidth'],
+        }),
+      ]),
+    })
+
+    const invalidEye = cloneProfile()
+    invalidEye.rules.player.eyeHeight = 1
+    expect(validateGameDesignProfile(invalidEye)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'EYE_HEIGHT_OUTSIDE_CAPSULE',
+          paths: [
+            'rules.player.eyeHeight',
+            'rules.player.capsule.halfHeight',
+            'rules.player.capsule.radius',
+            'rules.player.capsule.skinWidth',
+          ],
+        }),
+      ]),
+    })
+
+    const invalidCamera = cloneProfile()
+    invalidCamera.rules.camera.nearPlane = 10
+    invalidCamera.rules.camera.farPlane = 10
+    expect(validateGameDesignProfile(invalidCamera)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'CAMERA_PLANES_ORDER',
+          paths: ['rules.camera.nearPlane', 'rules.camera.farPlane'],
+        }),
+      ]),
+    })
+
+    const invalidSlope = cloneProfile()
+    invalidSlope.rules.player.movement.maxSlopeClimbDegrees = 70
+    invalidSlope.rules.player.movement.minSlopeSlideDegrees = 60
+    expect(validateGameDesignProfile(invalidSlope)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'SLOPE_ANGLE_ORDER',
+          paths: [
+            'rules.player.movement.maxSlopeClimbDegrees',
+            'rules.player.movement.minSlopeSlideDegrees',
+          ],
+        }),
+      ]),
+    })
+
+    const invalidWeapon = cloneProfile()
+    invalidWeapon.rules.weapons.doubleBarrelShotgun.cooldownSeconds = 0
+    expect(validateGameDesignProfile(invalidWeapon)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'SHOTGUN_CONTRACT_INVALID',
+          paths: [
+            'rules.weapons.doubleBarrelShotgun.pelletCount',
+            'rules.weapons.doubleBarrelShotgun.rangeMeters',
+            'rules.weapons.doubleBarrelShotgun.cooldownSeconds',
+          ],
+        }),
+      ]),
+    })
   })
 
   it('derives identity from all effective content except contentHash', () => {
     expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:f5bb1311b3320a05')
     expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
       PROTOTYPE_V1_PROFILE.contentHash,
     )

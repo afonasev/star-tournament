@@ -1,0 +1,172 @@
+import { describe, expect, it } from 'vitest'
+
+import { DIAGNOSTIC_ARENA } from '../arena'
+import { RUNTIME_COLLISION_COMPATIBILITY_IDENTITY } from '../collision/contracts'
+import type { ContentHash } from '../core/canonical'
+import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
+import {
+  RUNTIME_PROFILE_IDENTITY,
+  RUNTIME_SCENARIO_IDENTITY,
+  SIMULATION_SNAPSHOT_ERROR_CODES,
+  SimulationSnapshotError,
+  createInitialSimulationSnapshot,
+  parseSimulationSnapshot,
+  serializeSimulationSnapshot,
+  simulationSnapshotHash,
+} from './playableSnapshot'
+
+function initialSnapshot() {
+  return createInitialSimulationSnapshot({
+    rngSeed: 42,
+    arena: {
+      id: DIAGNOSTIC_ARENA.id,
+      seed: DIAGNOSTIC_ARENA.seed,
+      generatorVersion: DIAGNOSTIC_ARENA.generatorVersion,
+      contentHash: DIAGNOSTIC_ARENA.contentHash as ContentHash,
+    },
+  })
+}
+
+describe('playable SimulationSnapshot schema v2', () => {
+  it('creates profile-driven player, weapon, target, and compatibility state', () => {
+    const snapshot = initialSnapshot()
+    const capsule = PROTOTYPE_V1_PROFILE.rules.player.capsule
+
+    expect(snapshot.schemaVersion).toBe(2)
+    expect(snapshot.tick).toBe(0)
+    expect(snapshot.profile).toBe(RUNTIME_PROFILE_IDENTITY)
+    expect(snapshot.collision).toBe(RUNTIME_COLLISION_COMPATIBILITY_IDENTITY)
+    expect(snapshot.scenario).toBe(RUNTIME_SCENARIO_IDENTITY)
+    expect(snapshot.player).toMatchObject({
+      semanticId: 'local-player-1',
+      lifeId: 'local-player-1-life-1',
+      grounded: true,
+      health: PROTOTYPE_V1_PROFILE.rules.player.startingHealth,
+      previousJumpPressed: false,
+    })
+    expect(snapshot.player.position.y).toBe(
+      COMBAT_SLICE_SCENARIO_V1.playerSpawn.position.y + capsule.halfHeight + capsule.radius,
+    )
+    expect(snapshot.player.position.y - capsule.halfHeight - capsule.radius).toBe(0)
+    expect(snapshot.weapon).toEqual({
+      semanticId: 'double-barrel-shotgun',
+      ammo: PROTOTYPE_V1_PROFILE.rules.weapons.doubleBarrelShotgun.startingAmmo,
+      shotSequence: 0,
+      nextAllowedShotTick: 0,
+      previousFirePressed: false,
+    })
+    expect(snapshot.targets.map((target) => target.semanticId)).toEqual([
+      'robot-center',
+      'robot-left',
+      'robot-right',
+    ])
+    expect(snapshot.targets.every((target) => target.active && target.health === 100)).toBe(true)
+    expect(snapshot.events).toEqual([])
+  })
+
+  it('canonically round-trips, hashes, normalizes current-tick events, and deep-freezes', () => {
+    const source = initialSnapshot()
+    const withEvents = {
+      ...source,
+      tick: 3,
+      events: [
+        {
+          eventId: 'event-02-damage',
+          tick: 3,
+          kind: 'target-damaged',
+          targetId: 'robot-center',
+          damage: 30,
+          healthAfter: 70,
+          zones: ['limb', 'head', 'torso'],
+        },
+        {
+          eventId: 'event-01-shot',
+          tick: 3,
+          kind: 'shotgun-shot',
+          shooterId: 'local-player-1',
+          shotSequence: 1,
+          origin: { x: 0, y: 1.5, z: 8 },
+          pelletDirections: [{ x: 0, y: 0, z: -1 }],
+        },
+      ],
+    }
+    const parsed = parseSimulationSnapshot(withEvents)
+    const restored = parseSimulationSnapshot(serializeSimulationSnapshot(parsed))
+
+    expect(restored).toEqual(parsed)
+    expect(restored.events.map((event) => event.eventId)).toEqual([
+      'event-01-shot',
+      'event-02-damage',
+    ])
+    expect(restored.events[1]).toMatchObject({ zones: ['head', 'torso', 'limb'] })
+    expect(simulationSnapshotHash(restored)).toBe(simulationSnapshotHash(parsed))
+    expect(Object.isFrozen(restored)).toBe(true)
+    expect(Object.isFrozen(restored.player.position)).toBe(true)
+    expect(Object.isFrozen(restored.targets)).toBe(true)
+    expect(Object.isFrozen(restored.events)).toBe(true)
+  })
+
+  it.each([
+    ['schema', (snapshot: ReturnType<typeof initialSnapshot>) => ({ ...snapshot, schemaVersion: 1 })],
+    [
+      'profile',
+      (snapshot: ReturnType<typeof initialSnapshot>) => ({
+        ...snapshot,
+        profile: { ...snapshot.profile, revision: snapshot.profile.revision + 1 },
+      }),
+    ],
+    [
+      'collision',
+      (snapshot: ReturnType<typeof initialSnapshot>) => ({
+        ...snapshot,
+        collision: { ...snapshot.collision, backendVersion: '0.21.0' },
+      }),
+    ],
+    [
+      'scenario',
+      (snapshot: ReturnType<typeof initialSnapshot>) => ({
+        ...snapshot,
+        scenario: { ...snapshot.scenario, contentHash: 'fnv1a64-v1:0000000000000000' },
+      }),
+    ],
+  ])('rejects unsupported %s compatibility before simulation', (kind, mutate) => {
+    expect.assertions(2)
+    try {
+      parseSimulationSnapshot(mutate(initialSnapshot()))
+    } catch (error) {
+      expect(error).toBeInstanceOf(SimulationSnapshotError)
+      expect((error as SimulationSnapshotError).code).toBe(
+        kind === 'schema'
+          ? SIMULATION_SNAPSHOT_ERROR_CODES.unsupportedSchema
+          : SIMULATION_SNAPSHOT_ERROR_CODES.unsupportedIdentity,
+      )
+    }
+  })
+
+  it('rejects stale events, unknown targets, and inconsistent active state', () => {
+    const source = initialSnapshot()
+    const malformed = [
+      {
+        ...source,
+        tick: 1,
+        events: [{ eventId: 'dry', tick: 0, kind: 'dry-fire', shooterId: 'local-player-1' }],
+      },
+      {
+        ...source,
+        tick: 1,
+        events: [{ eventId: 'destroy', tick: 1, kind: 'target-destroyed', targetId: 'robot-unknown' }],
+      },
+      {
+        ...source,
+        targets: source.targets.map((target, index) => index === 0 ? { ...target, health: 0, active: true } : target),
+      },
+    ]
+
+    for (const value of malformed) {
+      expect(() => parseSimulationSnapshot(value)).toThrow(
+        expect.objectContaining({ code: SIMULATION_SNAPSHOT_ERROR_CODES.invalidData }),
+      )
+    }
+  })
+})
