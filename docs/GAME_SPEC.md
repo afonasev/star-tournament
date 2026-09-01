@@ -73,6 +73,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 - Управление мышью/клавиатурой и геймпадом проверяется в реальном браузере, включая pointer lock, меню, паузу, подключение и отключение контроллера.
 - Изменения split-screen проверяются в browser playtest с тем количеством игроков и раскладкой viewport, которых касается change.
+- Любое изменение видимого результата в игре проверяется в in-app Browser и сопровождается в handoff актуальными скриншотами из dev-стенда изменённой ветки. Для изменения нескольких состояний, экранов или viewport прикладываются скриншоты каждого изменённого состояния; скриншоты не заменяют сам browser playtest.
 - Автотесты и production build обязательны, но не заменяют ручную игровую проверку.
 - Детерминированный replay при одинаковых seed, профиле и action frames должен давать одинаковый state hash.
 - Reference-browser collision gate для восьми капсул включает два независимых прогона по 10 000 fixed ticks, восстановление нового мира на 5 000-м тике и observer cadence 0/1/2/4; обязательны одинаковые checkpoint/final hashes. Prototype budget: p95 не более 2,5 мс, p99 не более 4,2 мс, max не более 8,3 мс на tick.
@@ -101,6 +102,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 | Дата | Решение |
 | --- | --- |
+| 2026-09-01 | Для любого визуального изменения обязательны проверка в in-app Browser и актуальные скриншоты из dev-стенда изменённой ветки в итоговом handoff; несколько затронутых состояний, экранов или viewport показываются отдельно. |
 | 2026-09-01 | Deterministic Rapier compat 0.20.0 получил provisional `go` как локальный collision/query backend: reference Chromium на текущем macOS host прошёл functional/lifecycle gates, три 10 000-тиковых determinism-прогона и browser budget p95 0,4 мс / p99 0,5 мс / max 1,6 мс. Backend остаётся derived adapter; cross-platform/network hash matrix не проверена и обязательна до online-режима. |
 | 2026-09-01 | Утверждён первый полный baseline `prototype-v1`: уже согласованные игровые числа и provisional безопасные диапазоны/шаги хранятся в immutable конфигурации и едином descriptor registry; последующие механики обязаны потреблять этот профиль без дублирующих констант. |
 | 2026-09-01 | Утверждён фундамент first-person прототипа: базовое Quake-подобное движение без расширенных манёвров, двухствольный hitscan-дробовик, death-only восстановление боезапаса, killcam и безопасный respawn, visual-only тела, браузерный Three.js/React DOM runtime и составная Game Design Lab на основе immutable ревизий. Числовые значения вынесены в будущий профиль `prototype-v1`. |
