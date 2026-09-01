@@ -9,6 +9,9 @@ context: |
   Treat docs/GAME_SPEC.md as the canonical source for approved product, gameplay,
   visual, UI, technical, and accessibility decisions. Do not invent unresolved
   design choices: record them explicitly and obtain confirmation before build work.
+  Small, unambiguous fixes may bypass the full OpenSpec workflow; update
+  GAME_SPEC when they change an approved decision. If the required workflow is
+  uncertain, ask the user before implementation.
   Keep deterministic simulation, renderer, input, cameras, HUD/UI, networking,
   and asset pipeline separate. Persist serializable simulation state only.
   Use a browser playtest as acceptance evidence for interaction changes, including
