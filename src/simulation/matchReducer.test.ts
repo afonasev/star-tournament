@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { DIAGNOSTIC_ARENA } from '../arena'
 import type { ContentHash } from '../core/canonical'
-import { DEFAULT_MATCH_CONFIGURATION, createMatchConfiguration } from '../match'
+import { DEFAULT_MATCH_CONFIGURATION, TEAM_COLORS, createMatchConfiguration } from '../match'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import { createInitialSimulationSnapshot, type SimulationEvent, type SimulationSnapshot } from './playableSnapshot'
@@ -160,15 +160,15 @@ describe('deterministic match reducer', () => {
       scoreTargetPoints: 1_000,
       participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({
         ...participant,
-        team: index % 2 === 0 ? 'red' : 'blue',
-        color: index % 2 === 0 ? '#ef4444' : '#3b82f6',
+        team: index % 2 === 0 ? 'team-a' : 'team-b',
+        color: index % 2 === 0 ? TEAM_COLORS['team-a'] : TEAM_COLORS['team-b'],
       })),
     })
     const source = snapshot(teams)
     const participants = source.participants.map((participant) => participant.semanticId === 'local-player-1' ? { ...participant, statistics: { ...participant.statistics, score: 900 } } : participant)
     const prepared = { ...source, participants, match: { ...source.match, remainingTicks: 1 } } as SimulationSnapshot
     const result = reduceMatchTick(prepared, damage(1, 'local-player-1', 'robot-center', 100, true), PROTOTYPE_V1_PROFILE, teams, COMBAT_SLICE_SCENARIO_V1)
-    expect(result.match).toMatchObject({ phase: 'finished', finishTrigger: 'score-limit', result: { winnerType: 'team', winnerId: 'red' } })
+    expect(result.match).toMatchObject({ phase: 'finished', finishTrigger: 'score-limit', result: { winnerType: 'team', winnerId: 'team-a' } })
   })
 
   it('applies all score events before turning a tied score-limit tick into overtime', () => {

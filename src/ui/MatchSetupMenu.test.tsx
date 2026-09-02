@@ -23,7 +23,7 @@ describe('MatchSetupMenu', () => {
   it('blocks empty teams and out-of-range or off-step values', () => {
     render(<MatchSetupMenu profile={PROTOTYPE_V1_PROFILE} onStart={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: 'Команды' }))
-    for (let index = 1; index <= 4; index += 1) fireEvent.change(screen.getByLabelText(`Команда участника ${index}`), { target: { value: 'red' } })
+    for (let index = 1; index <= 4; index += 1) fireEvent.change(screen.getByLabelText(`Команда участника ${index}`), { target: { value: 'team-a' } })
     expect(screen.getByRole('button', { name: 'Начать матч' })).toBeDisabled()
     fireEvent.click(screen.getByRole('button', { name: 'Каждый за себя' }))
     fireEvent.change(screen.getByLabelText('Длительность матча'), { target: { value: '31' } })

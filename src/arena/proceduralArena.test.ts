@@ -132,7 +132,7 @@ describe('broken-ring-v2 procedural arenas', () => {
     const minimumOpponentSeparationMeters = PROTOTYPE_V1_PROFILE.rules.arenaGenerator.presets.small.minimumSpawnSeparationMeters
     const participants = Array.from({ length: 8 }, (_, index) => ({
       semanticId: `player-${index + 1}`,
-      team: mode === 'teams' ? (index % 2 === 0 ? 'red' as const : 'blue' as const) : null,
+      team: mode === 'teams' ? (index % 2 === 0 ? 'team-a' as const : 'team-b' as const) : null,
     }))
     const allocations = allocateArenaSpawns({
       arena,
@@ -146,8 +146,8 @@ describe('broken-ring-v2 procedural arenas', () => {
     expect(new Set(allocations.map(({ position }) => `${position.x}:${position.z}`)).size).toBe(8)
     if (mode === 'teams') {
       const regionByPlayer = new Map(allocations.map((allocation) => [allocation.participantId, allocation.spawnRegionId]))
-      expect(new Set(participants.filter(({ team }) => team === 'red').map(({ semanticId }) => regionByPlayer.get(semanticId))).size).toBe(1)
-      expect(new Set(participants.filter(({ team }) => team === 'blue').map(({ semanticId }) => regionByPlayer.get(semanticId))).size).toBe(1)
+      expect(new Set(participants.filter(({ team }) => team === 'team-a').map(({ semanticId }) => regionByPlayer.get(semanticId))).size).toBe(1)
+      expect(new Set(participants.filter(({ team }) => team === 'team-b').map(({ semanticId }) => regionByPlayer.get(semanticId))).size).toBe(1)
     }
     const teamById = new Map(participants.map(({ semanticId, team }) => [semanticId, team]))
     allocations.forEach((first, index) => allocations.slice(index + 1).forEach((second) => {

@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 
-import { DIAGNOSTIC_ARENA } from '../arena'
+import { DIAGNOSTIC_ARENA, requireProceduralArena } from '../arena'
 import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
@@ -156,6 +156,47 @@ describe('createFirstPersonRenderer', () => {
     expect(forward.z).toBeCloseTo(0)
     for (const target of COMBAT_SLICE_SCENARIO_V1.targets) {
       expect((scene as THREE.Scene).getObjectByName(`target:${target.semanticId}`)).toBeDefined()
+    }
+    expect((scene as THREE.Scene).getObjectByName('presentation:detail:floor')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:floor-guide:floor:x:1')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:wall-module:wall-north:1')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:wall-buttress:wall-north:1:-0.32')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:frame:wall-north:1:top')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:accent-trim:cover-center')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:landmark:combat-center')).toBeDefined()
+    expect(adapter.arenaHash).toBe(DIAGNOSTIC_ARENA.contentHash)
+    const portalNames: string[] = []
+    ;(scene as THREE.Scene).traverse((object) => { if (object.name.startsWith('presentation:portal:')) portalNames.push(object.name) })
+    expect(portalNames).toEqual([])
+  })
+
+  it('adds rounded portals only around real procedural wall gaps', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const arena = requireProceduralArena({ size: 'small', seed: 1234 })
+    const adapter = createFirstPersonRenderer({
+      container,
+      arena,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => rendererPort,
+    })
+
+    adapter.render(snapshot())
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const portals: THREE.Object3D[] = []
+    scene.traverse((object) => { if (object.name.startsWith('presentation:portal:')) portals.push(object) })
+    expect(portals.length).toBeGreaterThan(0)
+    for (const portal of portals) {
+      expect(portal.children.map(({ name }) => name)).toEqual(expect.arrayContaining([
+        expect.stringMatching(/^presentation:portal-shell:/),
+        expect.stringMatching(/^presentation:portal-inner:/),
+        expect.stringMatching(/^presentation:portal-pillar:.*:left$/),
+        expect.stringMatching(/^presentation:portal-pillar:.*:right$/),
+        expect.stringMatching(/^presentation:portal-cap:.*:left$/),
+        expect.stringMatching(/^presentation:portal-cap:.*:right$/),
+      ]))
     }
   })
 

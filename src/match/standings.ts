@@ -50,7 +50,7 @@ function sortedRows(participants: readonly MatchParticipantState[]): readonly St
 export function projectStandings(mode: MatchMode, participants: readonly MatchParticipantState[]): Readonly<StandingsProjection> {
   const rows = sortedRows(participants)
   if (mode === 'ffa') return deepFreeze({ mode, rows })
-  const teams = (['red', 'blue'] as const).map((team): TeamStandingsGroup => {
+  const teams = (['team-a', 'team-b'] as const).map((team): TeamStandingsGroup => {
     const teamRows = rows.filter((row) => row.team === team).map((row, index) => ({ ...row, rank: index + 1 }))
     return {
       team,

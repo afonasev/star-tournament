@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { DIAGNOSTIC_ARENA } from '../arena'
 import type { ContentHash } from '../core/canonical'
 import { createInitialSimulationSnapshot } from '../simulation/playableSnapshot'
-import { DEFAULT_MATCH_CONFIGURATION, createMatchConfiguration } from './matchConfiguration'
+import { DEFAULT_MATCH_CONFIGURATION, TEAM_COLORS, createMatchConfiguration } from './matchConfiguration'
 import { projectStandings } from './standings'
 
 function participants() {
@@ -49,8 +49,8 @@ describe('standings projector', () => {
       scoreTargetPoints: null,
       participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({
         ...participant,
-        team: index % 2 === 0 ? 'red' : 'blue',
-        color: index % 2 === 0 ? '#ef4444' : '#3b82f6',
+        team: index % 2 === 0 ? 'team-a' : 'team-b',
+        color: index % 2 === 0 ? TEAM_COLORS['team-a'] : TEAM_COLORS['team-b'],
       })),
     })
     const byId = new Map(configuration.participants.map((participant) => [participant.semanticId, participant]))
@@ -58,7 +58,7 @@ describe('standings projector', () => {
     const projection = projectStandings('teams', source)
     expect(projection.mode).toBe('teams')
     if (projection.mode !== 'teams') return
-    expect(projection.teams.map(({ team }) => team)).toEqual(['red', 'blue'])
+    expect(projection.teams.map(({ team }) => team)).toEqual(['team-a', 'team-b'])
     expect(projection.teams.map(({ totalScore }) => totalScore)).toEqual([1_000, 1_200])
     expect(projection.teams[0]?.participants.map(({ semanticId }) => semanticId)).toEqual(['local-player-1', 'robot-left'])
   })

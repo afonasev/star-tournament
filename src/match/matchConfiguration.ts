@@ -2,13 +2,14 @@ import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from
 import { deepFreeze } from '../core/deepFreeze'
 import { ARENA_SIZE_IDS, type ArenaSize } from '../arena'
 import { PROTOTYPE_V1_PROFILE, validateGameDesignProfile, type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
+import { TEAM_COLORS } from './participantPalette'
 
-export const MATCH_CONFIGURATION_SCHEMA_VERSION = 2 as const
+export const MATCH_CONFIGURATION_SCHEMA_VERSION = 3 as const
 export const MATCH_CONFIGURATION_ID = 'local-match-v1' as const
-export const TEAM_COLORS = deepFreeze({ red: '#ef4444', blue: '#3b82f6' } as const)
+export { TEAM_COLORS, VETTED_PARTICIPANT_COLORS } from './participantPalette'
 
 export type MatchMode = 'ffa' | 'teams'
-export type MatchTeam = 'red' | 'blue'
+export type MatchTeam = 'team-a' | 'team-b'
 export type MatchParticipantKind = 'local-seat' | 'stationary-fixture'
 
 export interface MatchParticipantDescriptor {
@@ -80,8 +81,8 @@ function parseParticipant(value: unknown, index: number): MatchParticipantDescri
   if (data.kind !== 'local-seat' && data.kind !== 'stationary-fixture') {
     return fail(`${path}.kind`, 'must be local-seat or stationary-fixture')
   }
-  if (data.team !== null && data.team !== 'red' && data.team !== 'blue') {
-    return fail(`${path}.team`, 'must be red, blue, or null')
+  if (data.team !== null && data.team !== 'team-a' && data.team !== 'team-b') {
+    return fail(`${path}.team`, 'must be team-a, team-b, or null')
   }
   const color = nonEmpty(data.color, `${path}.color`).toLowerCase()
   if (!/^#[0-9a-f]{6}$/.test(color)) return fail(`${path}.color`, 'must be a six-digit hex color')
@@ -158,9 +159,12 @@ export function parseMatchConfiguration(
   }
   if (data.mode === 'ffa') {
     if (participants.some(({ team }) => team !== null)) fail('participants', 'FFA participants must not have teams')
+    if (new Set(participants.map(({ color }) => color)).size !== participants.length) {
+      fail('participants', 'FFA participant colors must be unique')
+    }
   } else {
-    if (!participants.some(({ team }) => team === 'red') || !participants.some(({ team }) => team === 'blue')) {
-      fail('participants', 'teams mode requires non-empty red and blue teams')
+    if (!participants.some(({ team }) => team === 'team-a') || !participants.some(({ team }) => team === 'team-b')) {
+      fail('participants', 'teams mode requires non-empty team-a and team-b')
     }
     for (const [index, participant] of participants.entries()) {
       if (participant.team === null) fail(`participants[${index}].team`, 'teams participant must have a team')
@@ -214,7 +218,7 @@ export const DEFAULT_MATCH_CONFIGURATION = createMatchConfiguration({
   durationMinutes: PROTOTYPE_V1_PROFILE.rules.match.duration.defaultMinutes,
   scoreTargetPoints: null,
   participants: [
-    { semanticId: 'local-player-1', name: 'Pilot', kind: 'local-seat', color: '#f8fafc', team: null },
+    { semanticId: 'local-player-1', name: 'Pilot', kind: 'local-seat', color: '#3b82f6', team: null },
     { semanticId: 'robot-center', name: 'Center', kind: 'stationary-fixture', color: '#f59e0b', team: null },
     { semanticId: 'robot-left', name: 'Left', kind: 'stationary-fixture', color: '#22c55e', team: null },
     { semanticId: 'robot-right', name: 'Right', kind: 'stationary-fixture', color: '#a855f7', team: null },

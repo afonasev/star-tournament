@@ -55,13 +55,13 @@ function StandingsTable({ snapshot }: { readonly snapshot: Readonly<GameplayUiSn
       })}</tbody>
     </table>
   )
-  return <section className="gameplay-hud__scoreboard" aria-label="Таблица результатов"><p>LIVE STANDINGS</p>{snapshot.standings.mode === 'ffa' ? table(snapshot.standings.rows) : snapshot.standings.teams.map((team) => <section key={team.team} className="gameplay-hud__team" data-team={team.team} data-winner={snapshot.result?.winnerType === 'team' && snapshot.result.winnerId === team.team}><h2>{team.team === 'red' ? 'Красные' : 'Синие'} <strong>{team.totalScore}</strong></h2>{table(team.participants)}</section>)}</section>
+  return <section className="gameplay-hud__scoreboard" aria-label="Таблица результатов"><p>LIVE STANDINGS</p>{snapshot.standings.mode === 'ffa' ? table(snapshot.standings.rows) : snapshot.standings.teams.map((team) => <section key={team.team} className="gameplay-hud__team" data-team={team.team} data-winner={snapshot.result?.winnerType === 'team' && snapshot.result.winnerId === team.team}><h2 style={{ color: team.color }}>{team.team === 'team-a' ? 'Team A' : 'Team B'} <strong>{team.totalScore}</strong></h2>{table(team.participants)}</section>)}</section>
 }
 
 function winnerLabel(snapshot: Readonly<GameplayUiSnapshot>): string {
   const result = snapshot.result
   if (result === null) return ''
-  if (result.winnerType === 'team') return result.winnerId === 'red' ? 'Красная команда' : 'Синяя команда'
+  if (result.winnerType === 'team') return result.winnerId === 'team-a' ? 'Team A' : 'Team B'
   const rows = snapshot.standings.mode === 'ffa'
     ? snapshot.standings.rows
     : snapshot.standings.teams.flatMap(({ participants }) => participants)

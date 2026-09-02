@@ -47,7 +47,7 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
   const [scoreTargetPoints, setScoreTargetPoints] = useState(profile.rules.match.scoreTarget.defaultPoints)
   const [names, setNames] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map(({ name }) => name))
   const [colors, setColors] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map(({ color }) => color))
-  const [teams, setTeams] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map((_, index) => index % 2 === 0 ? 'red' as const : 'blue' as const))
+  const [teams, setTeams] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map((_, index) => index % 2 === 0 ? 'team-a' as const : 'team-b' as const))
 
   const candidate = useMemo(() => {
     try {
@@ -102,7 +102,7 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
               {mode === 'ffa' ? (
                 <label>Цвет<input aria-label={`Цвет участника ${index + 1}`} type="color" value={colors[index]} onChange={(event) => setColors((current) => current.map((value, item) => item === index ? event.target.value : value))} /></label>
               ) : (
-                <label>Команда<select aria-label={`Команда участника ${index + 1}`} value={teams[index]} onChange={(event) => setTeams((current) => current.map((value, item) => item === index ? event.target.value as 'red' | 'blue' : value))}><option value="red">Красные</option><option value="blue">Синие</option></select></label>
+                <label>Команда<select aria-label={`Команда участника ${index + 1}`} value={teams[index]} onChange={(event) => setTeams((current) => current.map((value, item) => item === index ? event.target.value as 'team-a' | 'team-b' : value))}><option value="team-a">Team A</option><option value="team-b">Team B</option></select></label>
               )}
             </fieldset>
           ))}

@@ -19,7 +19,7 @@ function configuration(kind: UiPreviewKind) {
     arenaSeed: DEFAULT_MATCH_CONFIGURATION.arenaSeed,
     durationMinutes: 5,
     scoreTargetPoints: 1_000,
-    participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({ ...participant, team: index % 2 === 0 ? 'red' : 'blue', color: index % 2 === 0 ? TEAM_COLORS.red : TEAM_COLORS.blue })),
+    participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({ ...participant, team: index % 2 === 0 ? 'team-a' : 'team-b', color: index % 2 === 0 ? TEAM_COLORS['team-a'] : TEAM_COLORS['team-b'] })),
   })
 }
 
@@ -30,7 +30,7 @@ export function UiPreview({ kind }: { readonly kind: UiPreviewKind }) {
   const participants = initial.participants.map((participant, index) => ({ ...participant, statistics: { ...participant.statistics, kills: index === 0 ? 8 : 4 - index, assists: index, deaths: index + 1, damageDealt: 1240.4 - index * 130.15, damageReceived: 320.2 + index * 90.35, score: index === 0 ? 1_600 : kind === 'overtime' && index === 1 ? 1_600 : 800 - index * 100 } }))
   const finished = kind === 'results-ffa' || kind === 'results-teams'
   const overtime = kind === 'overtime'
-  const winnerId = kind === 'results-teams' ? 'red' : 'local-player-1'
+  const winnerId = kind === 'results-teams' ? 'team-a' : 'local-player-1'
   const result = finished ? { winnerType: kind === 'results-teams' ? 'team' as const : 'participant' as const, winnerId, trigger: 'score-limit' as const, finalTick: 720, finalStandings: participants.map(({ semanticId }) => semanticId) } : null
   const source = { ...initial, tick: 720, participants, match: { ...initial.match, phase: finished ? 'finished' as const : overtime ? 'overtime' as const : 'running' as const, finishTrigger: finished || overtime ? 'score-limit' as const : null, elapsedTicks: 720, remainingTicks: finished || overtime ? 0 : initial.match.remainingTicks - 720, result } } as SimulationSnapshot
   const snapshot = new GameplayUiProjector({ profile: PROTOTYPE_V1_PROFILE }).project(source, finished ? 'results' : 'running', undefined, undefined, kind === 'scoreboard-ffa')

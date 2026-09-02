@@ -34,7 +34,7 @@ export interface SpawnAllocationOptions {
 function regionOrder(arena: ArenaDefinition, mode: MatchMode, participant: SpawnAllocationParticipant): string[] {
   const ids = arena.spawnRegions.map(({ id }) => id)
   if (mode === 'ffa' || participant.team === null || ids.length < 2) return ids
-  const offset = participant.team === 'red' ? arena.seed % ids.length : (arena.seed % ids.length + Math.floor(ids.length / 2)) % ids.length
+  const offset = participant.team === 'team-a' ? arena.seed % ids.length : (arena.seed % ids.length + Math.floor(ids.length / 2)) % ids.length
   return [...ids.slice(offset), ...ids.slice(0, offset)]
 }
 

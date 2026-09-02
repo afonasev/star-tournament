@@ -10,6 +10,7 @@ import {
   parseMatchConfiguration,
   type MatchConfigurationPayload,
 } from './matchConfiguration'
+import { VETTED_PARTICIPANT_COLORS } from './participantPalette'
 
 function payload(overrides: Partial<MatchConfigurationPayload> = {}): MatchConfigurationPayload {
   return {
@@ -30,7 +31,7 @@ function payload(overrides: Partial<MatchConfigurationPayload> = {}): MatchConfi
 
 describe('MatchConfiguration', () => {
   it('defaults to a concrete medium arena seed and includes both in identity', () => {
-    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 2, arenaSize: 'medium', arenaSeed: 0x53544152 })
+    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 3, arenaSize: 'medium', arenaSeed: 0x53544152 })
     const changed = createMatchConfiguration(payload({ arenaSize: 'large', arenaSeed: 7 }))
     expect(changed.contentHash).not.toBe(DEFAULT_MATCH_CONFIGURATION.contentHash)
   })
@@ -48,17 +49,41 @@ describe('MatchConfiguration', () => {
     expect(parseMatchConfiguration(configuration)).toEqual(configuration)
   })
 
+  it('rejects duplicate colors in the simultaneous FFA roster', () => {
+    expect(() => createMatchConfiguration(payload({
+      participants: [
+        { semanticId: 'local', name: 'Local', kind: 'local-seat', color: '#ffffff', team: null },
+        { semanticId: 'fixture', name: 'Fixture', kind: 'stationary-fixture', color: '#ffffff', team: null },
+      ],
+    }))).toThrow(/colors must be unique/)
+  })
+
+  it('accepts eight simultaneous FFA participants with distinct palette colors', () => {
+    const colors = VETTED_PARTICIPANT_COLORS.slice(0, 8)
+    const configuration = createMatchConfiguration(payload({
+      participants: colors.map((color, index) => ({
+        semanticId: `participant-${index}`,
+        name: `Participant ${index}`,
+        kind: index === 0 ? 'local-seat' as const : 'stationary-fixture' as const,
+        color,
+        team: null,
+      })),
+    }))
+    expect(configuration.participants).toHaveLength(8)
+    expect(new Set(configuration.participants.map(({ color }) => color)).size).toBe(8)
+  })
+
   it('accepts two non-empty teams and derives their exact colors', () => {
     const configuration = createMatchConfiguration(payload({
       mode: 'teams',
       scoreTargetPoints: 3_000,
       participants: [
-        { semanticId: 'local', name: 'Local', kind: 'local-seat', color: TEAM_COLORS.red, team: 'red' },
-        { semanticId: 'fixture', name: 'Fixture', kind: 'stationary-fixture', color: TEAM_COLORS.blue, team: 'blue' },
+        { semanticId: 'local', name: 'Local', kind: 'local-seat', color: TEAM_COLORS['team-a'], team: 'team-a' },
+        { semanticId: 'fixture', name: 'Fixture', kind: 'stationary-fixture', color: TEAM_COLORS['team-b'], team: 'team-b' },
       ],
     }))
     expect(configuration.mode).toBe('teams')
-    expect(configuration.participants.map(({ team }) => team)).toEqual(['blue', 'red'])
+    expect(configuration.participants.map(({ team }) => team)).toEqual(['team-b', 'team-a'])
   })
 
   it('rejects invalid roster size, duplicate ids, empty teams and unsupported participant kinds', () => {
@@ -67,10 +92,10 @@ describe('MatchConfiguration', () => {
     expect(() => createMatchConfiguration(payload({
       mode: 'teams',
       participants: [
-        { semanticId: 'local', name: 'Local', kind: 'local-seat', color: TEAM_COLORS.red, team: 'red' },
-        { semanticId: 'fixture', name: 'Fixture', kind: 'stationary-fixture', color: TEAM_COLORS.red, team: 'red' },
+        { semanticId: 'local', name: 'Local', kind: 'local-seat', color: TEAM_COLORS['team-a'], team: 'team-a' },
+        { semanticId: 'fixture', name: 'Fixture', kind: 'stationary-fixture', color: TEAM_COLORS['team-a'], team: 'team-a' },
       ],
-    }))).toThrow(/non-empty red and blue/)
+    }))).toThrow(/non-empty team-a and team-b/)
     const unsupported = payload() as unknown as { participants: Array<Record<string, unknown>> }
     unsupported.participants[1]!.kind = 'bot'
     expect(() => createMatchConfiguration(unsupported as unknown as MatchConfigurationPayload)).toThrow(/local-seat or stationary-fixture/)

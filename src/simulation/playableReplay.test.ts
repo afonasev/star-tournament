@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { DIAGNOSTIC_ARENA } from '../arena'
 import { createActionFrame } from '../input/actionFrame'
-import { DEFAULT_MATCH_CONFIGURATION, createMatchConfiguration } from '../match'
+import { DEFAULT_MATCH_CONFIGURATION, TEAM_COLORS, createMatchConfiguration } from '../match'
 import { createInitialSimulationSnapshot, localParticipant, parseSimulationSnapshot } from './playableSnapshot'
 import {
   PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION,
@@ -91,8 +91,8 @@ describe('playable replay fixtures', () => {
       durationMinutes: 1,
       scoreTargetPoints: 1_000,
       participants: [
-        { semanticId: 'local-player-1', name: 'Pilot', kind: 'local-seat', color: '#ef4444', team: 'red' },
-        { semanticId: 'robot-center', name: 'Center', kind: 'stationary-fixture', color: '#3b82f6', team: 'blue' },
+        { semanticId: 'local-player-1', name: 'Pilot', kind: 'local-seat', color: TEAM_COLORS['team-a'], team: 'team-a' },
+        { semanticId: 'robot-center', name: 'Center', kind: 'stationary-fixture', color: TEAM_COLORS['team-b'], team: 'team-b' },
       ],
     })
     const initial = createInitialSimulationSnapshot({

@@ -182,9 +182,9 @@ interface Contender { readonly id: string; readonly score: number }
 
 function contenders(configuration: MatchConfiguration, participants: readonly MatchParticipantState[]): readonly Contender[] {
   if (configuration.mode === 'ffa') return participants.map(({ semanticId, statistics }) => ({ id: semanticId, score: statistics.score }))
-  const totals: Record<MatchTeam, number> = { red: 0, blue: 0 }
+  const totals: Record<MatchTeam, number> = { 'team-a': 0, 'team-b': 0 }
   for (const participant of participants) if (participant.team !== null) totals[participant.team] += participant.statistics.score
-  return (['red', 'blue'] as const).map((id) => ({ id, score: totals[id] }))
+  return (['team-a', 'team-b'] as const).map((id) => ({ id, score: totals[id] }))
 }
 
 function rankedParticipants(participants: readonly MatchParticipantState[]): readonly string[] {

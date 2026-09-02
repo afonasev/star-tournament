@@ -45,9 +45,9 @@ describe('GameplayHud', () => {
   it('renders live standings while held and groups team totals', () => {
     render(<GameplayHud snapshot={snapshot({
       scoreboardVisible: true,
-      standings: { mode: 'teams', teams: [{ team: 'red', color: '#ef4444', totalScore: 100, participants: [{ rank: 1, semanticId: 'a', name: 'Ace', kind: 'local-seat', color: '#ef4444', team: 'red', kills: 1, assists: 0, deaths: 0, damageDealt: 123.6, damageReceived: 45.2, score: 100 }] }, { team: 'blue', color: '#3b82f6', totalScore: 0, participants: [] }] },
+      standings: { mode: 'teams', teams: [{ team: 'team-a', color: '#ef4444', totalScore: 100, participants: [{ rank: 1, semanticId: 'a', name: 'Ace', kind: 'local-seat', color: '#ef4444', team: 'team-a', kills: 1, assists: 0, deaths: 0, damageDealt: 123.6, damageReceived: 45.2, score: 100 }] }, { team: 'team-b', color: '#3b82f6', totalScore: 0, participants: [] }] },
     })} />)
-    expect(screen.getByLabelText('Таблица результатов')).toHaveTextContent('Красные 100')
+    expect(screen.getByLabelText('Таблица результатов')).toHaveTextContent('Team A 100')
     expect(screen.getAllByRole('columnheader', { name: 'Очки' })).toHaveLength(2)
     expect(screen.getByRole('rowheader', { name: /Ace/ }).closest('tr')).toHaveAttribute('data-human', 'true')
     expect(screen.getByText('ИГРОК')).toBeInTheDocument()
@@ -66,10 +66,10 @@ describe('GameplayHud', () => {
     rerender(<GameplayHud snapshot={snapshot({ status: 'results', matchPhase: 'finished', result })} onMainMenu={onMainMenu} />)
     expect(screen.getByText('Победитель: local-player-1')).toBeInTheDocument()
     expect(screen.queryByText(/ничья/i)).not.toBeInTheDocument()
-    const teamResult = { ...result, winnerType: 'team' as const, winnerId: 'red' }
-    rerender(<GameplayHud snapshot={snapshot({ status: 'results', matchPhase: 'finished', result: teamResult, standings: { mode: 'teams', teams: [{ team: 'red', color: '#ef4444', totalScore: 100, participants: [] }, { team: 'blue', color: '#3b82f6', totalScore: 0, participants: [] }] } })} />)
-    expect(screen.getByText('Победитель: Красная команда')).toBeInTheDocument()
-    expect(screen.getByText('Красные').closest('section')).toHaveAttribute('data-winner', 'true')
+    const teamResult = { ...result, winnerType: 'team' as const, winnerId: 'team-a' }
+    rerender(<GameplayHud snapshot={snapshot({ status: 'results', matchPhase: 'finished', result: teamResult, standings: { mode: 'teams', teams: [{ team: 'team-a', color: '#ef4444', totalScore: 100, participants: [] }, { team: 'team-b', color: '#3b82f6', totalScore: 0, participants: [] }] } })} />)
+    expect(screen.getByText('Победитель: Team A')).toBeInTheDocument()
+    expect(screen.getByText('Team A', { selector: 'h2' }).closest('section')).toHaveAttribute('data-winner', 'true')
   })
 
   it('shows hit and dry-fire feedback from immutable presentation state', () => {

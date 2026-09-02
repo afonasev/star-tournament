@@ -14,6 +14,7 @@ import {
   type ElementResizeObserver,
   type RendererPort,
 } from './diagnosticRenderer'
+import { CLEAN_FUTURE_SPORT_V1, arenaMaterialToken } from './cleanFutureSport'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
 export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
@@ -151,10 +152,52 @@ interface TransientMesh {
   readonly expiresAfterTick: number
 }
 
-const materialColors: Record<ArenaBoxSurface['material'], number> = {
-  floor: 0x243845,
-  wall: 0x33495a,
-  accent: 0x2fa4ba,
+interface ArenaDoorwayGap {
+  readonly id: string
+  readonly horizontalAlongX: boolean
+  readonly planeCoordinate: number
+  readonly spanCenter: number
+  readonly baseY: number
+  readonly height: number
+  readonly width: number
+}
+
+function arenaDoorwayGaps(surfaces: readonly ArenaBoxSurface[]): ArenaDoorwayGap[] {
+  const walls = surfaces.filter((surface) => surface.material === 'wall')
+  const gaps: ArenaDoorwayGap[] = []
+  const epsilon = 0.001
+  for (let firstIndex = 0; firstIndex < walls.length; firstIndex += 1) {
+    const first = walls[firstIndex]!
+    if (Math.abs(first.orientation.x) > epsilon || Math.abs(first.orientation.y) > epsilon || Math.abs(first.orientation.z) > epsilon || Math.abs(first.orientation.w - 1) > epsilon) continue
+    const horizontalAlongX = first.size.x >= first.size.z
+    const firstSpan = horizontalAlongX ? first.size.x : first.size.z
+    const firstStart = (horizontalAlongX ? first.center.x : first.center.z) - firstSpan / 2
+    const firstEnd = firstStart + firstSpan
+    for (const second of walls.slice(firstIndex + 1)) {
+      if (Math.abs(second.orientation.x) > epsilon || Math.abs(second.orientation.y) > epsilon || Math.abs(second.orientation.z) > epsilon || Math.abs(second.orientation.w - 1) > epsilon) continue
+      if ((second.size.x >= second.size.z) !== horizontalAlongX) continue
+      const secondPlane = horizontalAlongX ? second.center.z : second.center.x
+      const firstPlane = horizontalAlongX ? first.center.z : first.center.x
+      if (Math.abs(firstPlane - secondPlane) > epsilon || Math.abs(first.center.y - second.center.y) > epsilon || Math.abs(first.size.y - second.size.y) > epsilon) continue
+      const secondSpan = horizontalAlongX ? second.size.x : second.size.z
+      const secondStart = (horizontalAlongX ? second.center.x : second.center.z) - secondSpan / 2
+      const secondEnd = secondStart + secondSpan
+      const left = firstStart <= secondStart ? { surface: first, end: firstEnd } : { surface: second, end: secondEnd }
+      const right = firstStart <= secondStart ? { surface: second, start: secondStart } : { surface: first, start: firstStart }
+      const width = right.start - left.end
+      if (width < 1 || width > 4.5) continue
+      gaps.push({
+        id: `${left.surface.id}:${right.surface.id}`,
+        horizontalAlongX,
+        planeCoordinate: firstPlane,
+        spanCenter: left.end + width / 2,
+        baseY: first.center.y - first.size.y / 2,
+        height: first.size.y,
+        width,
+      })
+    }
+  }
+  return gaps.sort((left, right) => left.id.localeCompare(right.id, 'en'))
 }
 
 function defaultRendererFactory(): RendererPort {
@@ -179,15 +222,34 @@ function addArena(
   geometries: THREE.BufferGeometry[],
   materials: THREE.Material[],
 ): void {
+  const panelMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.panel)
+  const trimMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.trim)
+  const wallModuleMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.wallModule)
+  const routeGuideMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.routeGuide)
+  const portalShellMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.portalShell)
+  const portalInnerMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.portalInner)
+  const landmarkMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.landmark)
+  materials.push(panelMaterial, trimMaterial, wallModuleMaterial, routeGuideMaterial, portalShellMaterial, portalInnerMaterial, landmarkMaterial)
+
+  const addDetailBox = (
+    group: THREE.Group,
+    name: string,
+    size: THREE.Vector3,
+    position: THREE.Vector3,
+    material: THREE.Material,
+  ) => {
+    const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.name = name
+    mesh.position.copy(position)
+    group.add(mesh)
+    geometries.push(geometry)
+  }
+
   for (const surface of arena.surfaces) {
     const geometry = new THREE.BoxGeometry(surface.size.x, surface.size.y, surface.size.z)
-    const material = new THREE.MeshStandardMaterial({
-      color: materialColors[surface.material],
-      metalness: surface.material === 'accent' ? 0.38 : 0.1,
-      roughness: surface.material === 'floor' ? 0.8 : 0.58,
-      emissive: surface.material === 'accent' ? 0x073d49 : 0x000000,
-      emissiveIntensity: surface.material === 'accent' ? 0.65 : 0,
-    })
+    const token = arenaMaterialToken(surface.material)
+    const material = new THREE.MeshStandardMaterial(token)
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = `arena:${surface.id}`
     mesh.position.set(surface.center.x, surface.center.y, surface.center.z)
@@ -200,6 +262,130 @@ function addArena(
     scene.add(mesh)
     geometries.push(geometry)
     materials.push(material)
+
+    const detail = new THREE.Group()
+    detail.name = `presentation:detail:${surface.id}`
+    detail.position.copy(mesh.position)
+    detail.quaternion.copy(mesh.quaternion)
+    const { x, y, z } = surface.size
+    if (surface.material === 'wall') {
+      const horizontalAlongX = x >= z
+      const span = horizontalAlongX ? x : z
+      const thickness = horizontalAlongX ? z : x
+      const depth = thickness / 2 + 0.025
+      for (const side of [-1, 1]) {
+        const face = side * depth
+        const frameSpan = Math.max(0.2, span - 0.3)
+        const frameHeight = Math.max(0.2, y - 0.42)
+        if (horizontalAlongX) {
+          addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(Math.max(0.7, span * 0.42), Math.max(0.5, y * 0.34), 0.045), new THREE.Vector3(0, 0, face + side * 0.015), wallModuleMaterial)
+          for (const bayOffset of [-0.32, 0.32]) {
+            addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.42, Math.max(0.8, y * 0.76), 0.22), new THREE.Vector3(span * bayOffset, -y * 0.04, face + side * 0.08), portalShellMaterial)
+          }
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:top`, new THREE.Vector3(frameSpan, 0.1, 0.035), new THREE.Vector3(0, y / 2 - 0.2, face), panelMaterial)
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:bottom`, new THREE.Vector3(frameSpan, 0.08, 0.035), new THREE.Vector3(0, -y / 2 + 0.2, face), panelMaterial)
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:left`, new THREE.Vector3(0.09, frameHeight, 0.035), new THREE.Vector3(-span / 2 + 0.22, 0, face), panelMaterial)
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:right`, new THREE.Vector3(0.09, frameHeight, 0.035), new THREE.Vector3(span / 2 - 0.22, 0, face), panelMaterial)
+          addDetailBox(detail, `presentation:seam:${surface.id}:${side}`, new THREE.Vector3(0.035, Math.max(0.2, y - 0.65), 0.025), new THREE.Vector3(0, 0, face + side * 0.01), trimMaterial)
+        } else {
+          addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(0.045, Math.max(0.5, y * 0.34), Math.max(0.7, span * 0.42)), new THREE.Vector3(face + side * 0.015, 0, 0), wallModuleMaterial)
+          for (const bayOffset of [-0.32, 0.32]) {
+            addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.22, Math.max(0.8, y * 0.76), 0.42), new THREE.Vector3(face + side * 0.08, -y * 0.04, span * bayOffset), portalShellMaterial)
+          }
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:top`, new THREE.Vector3(0.035, 0.1, frameSpan), new THREE.Vector3(face, y / 2 - 0.2, 0), panelMaterial)
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:bottom`, new THREE.Vector3(0.035, 0.08, frameSpan), new THREE.Vector3(face, -y / 2 + 0.2, 0), panelMaterial)
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:left`, new THREE.Vector3(0.035, frameHeight, 0.09), new THREE.Vector3(face, 0, -span / 2 + 0.22), panelMaterial)
+          addDetailBox(detail, `presentation:frame:${surface.id}:${side}:right`, new THREE.Vector3(0.035, frameHeight, 0.09), new THREE.Vector3(face, 0, span / 2 - 0.22), panelMaterial)
+          addDetailBox(detail, `presentation:seam:${surface.id}:${side}`, new THREE.Vector3(0.025, Math.max(0.2, y - 0.65), 0.035), new THREE.Vector3(face + side * 0.01, 0, 0), trimMaterial)
+        }
+      }
+    } else if (surface.material === 'floor') {
+      const top = y / 2 + 0.025
+      for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
+        addDetailBox(detail, `presentation:floor-guide:${surface.id}:x:${index}`, new THREE.Vector3(Math.max(0.5, x * 0.17), 0.028, 0.18), new THREE.Vector3(x * offset, top, 0), routeGuideMaterial)
+        addDetailBox(detail, `presentation:floor-guide:${surface.id}:z:${index}`, new THREE.Vector3(0.18, 0.028, Math.max(0.5, z * 0.17)), new THREE.Vector3(0, top, z * offset), routeGuideMaterial)
+      }
+    } else {
+      addDetailBox(detail, `presentation:accent-trim:${surface.id}`, new THREE.Vector3(Math.max(0.2, x + 0.04), 0.045, Math.max(0.2, z + 0.04)), new THREE.Vector3(0, y / 2 + 0.025, 0), trimMaterial)
+    }
+    scene.add(detail)
+  }
+
+  for (const gap of arenaDoorwayGaps(arena.surfaces)) {
+    const portal = new THREE.Group()
+    portal.name = `presentation:portal:${gap.id}`
+    const radius = gap.width / 2
+    const innerRadius = Math.max(0.38, radius - 0.28)
+    const pillarHeight = Math.max(1.1, Math.min(gap.height * 0.46, gap.height - radius - 0.24))
+    const portalCurve = new THREE.CatmullRomCurve3(
+      Array.from({ length: 17 }, (_, index) => {
+        const progress = index / 16
+        return new THREE.Vector3(Math.cos(Math.PI * progress) * radius, Math.sin(Math.PI * progress) * radius, 0)
+      }),
+    )
+    const arc = new THREE.TubeGeometry(portalCurve, 20, 0.36, 10, false)
+    const arch = new THREE.Mesh(arc, portalShellMaterial)
+    arch.name = `presentation:portal-shell:${gap.id}`
+    const innerCurve = new THREE.CatmullRomCurve3(
+      Array.from({ length: 17 }, (_, index) => {
+        const progress = index / 16
+        return new THREE.Vector3(Math.cos(Math.PI * progress) * innerRadius, Math.sin(Math.PI * progress) * innerRadius, 0)
+      }),
+    )
+    const innerArc = new THREE.Mesh(new THREE.TubeGeometry(innerCurve, 20, 0.14, 8, false), portalInnerMaterial)
+    innerArc.name = `presentation:portal-inner:${gap.id}`
+    const pillarGeometry = new THREE.BoxGeometry(0.72, pillarHeight, 0.58)
+    const innerPillarGeometry = new THREE.BoxGeometry(0.23, pillarHeight, 0.22)
+    const capGeometry = new THREE.SphereGeometry(0.38, 10, 8)
+    const leftPillar = new THREE.Mesh(pillarGeometry, portalShellMaterial)
+    const rightPillar = new THREE.Mesh(pillarGeometry, portalShellMaterial)
+    const innerLeftPillar = new THREE.Mesh(innerPillarGeometry, portalInnerMaterial)
+    const innerRightPillar = new THREE.Mesh(innerPillarGeometry, portalInnerMaterial)
+    const leftCap = new THREE.Mesh(capGeometry, portalShellMaterial)
+    const rightCap = new THREE.Mesh(capGeometry, portalShellMaterial)
+    leftPillar.name = `presentation:portal-pillar:${gap.id}:left`
+    rightPillar.name = `presentation:portal-pillar:${gap.id}:right`
+    innerLeftPillar.name = `presentation:portal-inner-pillar:${gap.id}:left`
+    innerRightPillar.name = `presentation:portal-inner-pillar:${gap.id}:right`
+    leftCap.name = `presentation:portal-cap:${gap.id}:left`
+    rightCap.name = `presentation:portal-cap:${gap.id}:right`
+    if (gap.horizontalAlongX) {
+      arch.position.set(gap.spanCenter, gap.baseY + pillarHeight, gap.planeCoordinate)
+      innerArc.position.set(gap.spanCenter, gap.baseY + pillarHeight, gap.planeCoordinate - 0.04)
+      leftPillar.position.set(gap.spanCenter - radius, gap.baseY + pillarHeight / 2, gap.planeCoordinate)
+      rightPillar.position.set(gap.spanCenter + radius, gap.baseY + pillarHeight / 2, gap.planeCoordinate)
+      innerLeftPillar.position.set(gap.spanCenter - innerRadius, gap.baseY + pillarHeight / 2, gap.planeCoordinate - 0.04)
+      innerRightPillar.position.set(gap.spanCenter + innerRadius, gap.baseY + pillarHeight / 2, gap.planeCoordinate - 0.04)
+      leftCap.position.set(gap.spanCenter - radius, gap.baseY + pillarHeight, gap.planeCoordinate)
+      rightCap.position.set(gap.spanCenter + radius, gap.baseY + pillarHeight, gap.planeCoordinate)
+    } else {
+      arch.position.set(gap.planeCoordinate, gap.baseY + pillarHeight, gap.spanCenter)
+      arch.rotation.y = Math.PI / 2
+      innerArc.position.set(gap.planeCoordinate - 0.04, gap.baseY + pillarHeight, gap.spanCenter)
+      innerArc.rotation.y = Math.PI / 2
+      leftPillar.position.set(gap.planeCoordinate, gap.baseY + pillarHeight / 2, gap.spanCenter - radius)
+      rightPillar.position.set(gap.planeCoordinate, gap.baseY + pillarHeight / 2, gap.spanCenter + radius)
+      innerLeftPillar.position.set(gap.planeCoordinate - 0.04, gap.baseY + pillarHeight / 2, gap.spanCenter - innerRadius)
+      innerRightPillar.position.set(gap.planeCoordinate - 0.04, gap.baseY + pillarHeight / 2, gap.spanCenter + innerRadius)
+      leftCap.position.set(gap.planeCoordinate, gap.baseY + pillarHeight, gap.spanCenter - radius)
+      rightCap.position.set(gap.planeCoordinate, gap.baseY + pillarHeight, gap.spanCenter + radius)
+    }
+    portal.add(arch, innerArc, leftPillar, rightPillar, innerLeftPillar, innerRightPillar, leftCap, rightCap)
+    scene.add(portal)
+    geometries.push(arc, innerArc.geometry, pillarGeometry, innerPillarGeometry, capGeometry)
+  }
+
+  const combatCenter = arena.regions.find((region) => region.id === 'combat-center')
+    ?? arena.regions.find((region) => region.role === 'combat')
+  if (combatCenter !== undefined) {
+    const geometry = new THREE.TorusGeometry(1.15, 0.065, 6, 24)
+    const landmark = new THREE.Mesh(geometry, landmarkMaterial)
+    landmark.name = 'presentation:landmark:combat-center'
+    const tallestSurface = Math.max(...arena.surfaces.map((surface) => surface.center.y + surface.size.y / 2))
+    landmark.position.set(combatCenter.center.x, tallestSurface + 0.7, combatCenter.center.z)
+    landmark.rotation.x = Math.PI / 2
+    scene.add(landmark)
+    geometries.push(geometry)
   }
 }
 
@@ -296,8 +482,8 @@ export function createFirstPersonRenderer({
   }
 
   const scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x06101a)
-  scene.fog = new THREE.FogExp2(0x07131e, 0.018)
+  scene.background = new THREE.Color(CLEAN_FUTURE_SPORT_V1.background)
+  scene.fog = new THREE.FogExp2(CLEAN_FUTURE_SPORT_V1.fog.color, CLEAN_FUTURE_SPORT_V1.fog.density)
   const camera = new THREE.PerspectiveCamera(
     profile.rules.camera.fieldOfViewDegrees,
     1,
@@ -311,11 +497,14 @@ export function createFirstPersonRenderer({
   const materials: THREE.Material[] = []
   addArena(scene, arena, geometries, materials)
 
-  const hemisphere = new THREE.HemisphereLight(0xbce8ff, 0x07101b, 1.9)
+  const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
   scene.add(hemisphere)
-  const keyLight = new THREE.DirectionalLight(0xe4f8ff, 2.8)
+  const keyLight = new THREE.DirectionalLight(0xffffff, 2.4)
   keyLight.position.set(-8, 15, 7)
   scene.add(keyLight)
+  const rimLight = new THREE.DirectionalLight(CLEAN_FUTURE_SPORT_V1.participantRim.color, CLEAN_FUTURE_SPORT_V1.participantRim.intensity)
+  rimLight.position.set(9, 8, -10)
+  scene.add(rimLight)
 
   const targetById = new Map<string, TargetPresentation>()
   for (const target of scenario.targets) {
