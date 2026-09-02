@@ -33,7 +33,7 @@ Capability задаёт доступный DOM-flow базового single-seat
 - **THEN** HUD явно показывает overtime и текущий gameplay остаётся активным до единоличного лидера
 
 ### Requirement: Live scoreboard по удержанию
-При активном local seat удерживание `Tab` SHALL показывать поверх playfield live standings, а отпускание SHALL скрывать их. FFA SHALL сортировать игроков по score с детерминированным tie-break и показывать kills, assists, deaths, dealt, received и score; teams SHALL группировать red/blue и показывать team totals и те же player columns. UI SHALL округлять dealt/received до ближайшего целого только при отображении, сохраняя точные значения projection. Все секции SHALL использовать одинаковую выровненную сетку колонок. Лидер SHALL выделяться цветом участника, а local-seat люди SHALL получать ненавязчивую фоновую подсветку и метку, отличающую их от stationary fixtures и будущих bots. Scoreboard MUST отображать simulation projection и не пересчитывать statistics.
+При активном local seat удерживание `Tab` SHALL показывать поверх playfield live standings, а отпускание SHALL скрывать их. FFA SHALL сортировать игроков по score с детерминированным tie-break и показывать kills, assists, deaths, dealt, received и score; teams SHALL группировать Team A/Team B и показывать team totals и те же player columns. UI SHALL округлять dealt/received до ближайшего целого только при отображении, сохраняя точные значения projection. Все секции SHALL использовать одинаковую выровненную сетку колонок. Лидер SHALL выделяться authoritative participant color, а local-seat люди SHALL получать ненавязчивую фоновую подсветку и метку, отличающую их от stationary fixtures и будущих bots. Scoreboard MUST отображать simulation projection и не пересчитывать statistics.
 
 #### Scenario: Удержание и отпускание Tab
 - **WHEN** пользователь удерживает `Tab` во время running, overtime либо killcam
@@ -41,7 +41,7 @@ Capability задаёт доступный DOM-flow базового single-seat
 
 #### Scenario: Командная таблица
 - **WHEN** режим равен teams
-- **THEN** red и blue sections имеют team totals, а участники каждой команды упорядочены стабильно по score и semantic id
+- **THEN** sections Team A и Team B имеют team totals, используют контрастные authoritative team colors, а участники каждой команды упорядочены стабильно по score и semantic id
 
 #### Scenario: Читаемость строк
 - **WHEN** таблица содержит лидера и local-seat участника
@@ -79,7 +79,7 @@ Escape, когда browser передаёт его приложению, либ�
 
 #### Scenario: Победитель команды
 - **WHEN** finished snapshot содержит team winner
-- **THEN** results группируют обе команды, показывают totals, выделяют winning team и называют победителя `Красная команда` либо `Синяя команда` без внутреннего team id
+- **THEN** results группируют обе команды, показывают totals, выделяют winning team её authoritative color и называют победителя `Team A` либо `Team B` без внутреннего team id
 
 #### Scenario: Повтор или меню
 - **WHEN** пользователь выбирает repeat либо main menu
