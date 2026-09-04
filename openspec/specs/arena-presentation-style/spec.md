@@ -7,7 +7,7 @@ Capability задаёт наблюдаемый visual language procedural arena:
 ## Requirements
 
 ### Requirement: Clean Future Sport material kit
-Arena renderer SHALL представлять validated одноуровневую `ArenaDefinition` в стиле `clean-future-sport-v1`: renderer-native architectural kit со светлыми off-white/pale-gray wall bays и buttresses, крупными двухцветными curved portal facades на существующих doorway gaps, тёмным navy-composite floor с широкими segmented route guides и cyan/lime/orange accents для route, doorway и landmark surfaces. Материалы и detail meshes MUST выводиться только из существующих semantic surface slots и MUST NOT менять collision, navigation, spawn или arena content hash.
+Arena renderer SHALL представлять validated одноуровневую `ArenaDefinition` в стиле `clean-future-sport-v1`: renderer-native architectural kit со светлыми off-white/pale-gray wall bays, shell и ceiling-facing architecture, крупными двухцветными curved portal facades на существующих doorway gaps, тёмным navy-composite floor с широкими segmented route guides и cyan/lime/orange accents для route, doorway и landmark surfaces. Все видимые крупные architectural surface classes MUST получать этот material language и MUST NOT оставаться однотонными fallback planes. Материалы и detail meshes MUST выводиться только из существующих semantic surface slots, иметь однозначное presentation depth separation и MUST NOT менять collision, navigation, spawn или arena content hash.
 
 #### Scenario: Одна spatial identity при смене стиля
 - **WHEN** тот же validated ArenaDefinition отображается с style kit либо без renderer
