@@ -163,7 +163,15 @@ describe('createFirstPersonRenderer', () => {
     expect((scene as THREE.Scene).getObjectByName('presentation:wall-buttress:wall-north:1:-0.32')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:frame:wall-north:1:top')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:accent-trim:cover-center')).toBeDefined()
+    const ceiling = (scene as THREE.Scene).getObjectByName('presentation:ceiling') as THREE.Mesh
+    expect((ceiling.material as THREE.MeshStandardMaterial).map).toBeDefined()
+    expect((ceiling.material as THREE.MeshStandardMaterial).side).toBe(THREE.DoubleSide)
     expect((scene as THREE.Scene).getObjectByName('presentation:landmark:combat-center')).toBeDefined()
+    const wallShell = (scene as THREE.Scene).getObjectByName('arena:wall-north') as THREE.Mesh
+    const accentShell = (scene as THREE.Scene).getObjectByName('arena:cover-center') as THREE.Mesh
+    expect((wallShell.material as THREE.MeshStandardMaterial).map).toBeDefined()
+    expect((accentShell.material as THREE.MeshStandardMaterial).map).toBeDefined()
+    expect((wallShell.material as THREE.MeshStandardMaterial).polygonOffset).toBe(false)
     expect(adapter.arenaHash).toBe(DIAGNOSTIC_ARENA.contentHash)
     const portalNames: string[] = []
     ;(scene as THREE.Scene).traverse((object) => { if (object.name.startsWith('presentation:portal:')) portalNames.push(object.name) })
