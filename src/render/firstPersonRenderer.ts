@@ -366,6 +366,14 @@ function addArena(
           if (arenaGlbAssets === undefined) {
             addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(Math.max(0.7, span * 0.42), Math.max(0.5, y * 0.34), 0.045), new THREE.Vector3(0, 0, face + side * 0.015), wallModuleMaterial)
             for (const bayOffset of [-0.32, 0.32]) addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.42, Math.max(0.8, y * 0.76), 0.22), new THREE.Vector3(span * bayOffset, -y * 0.04, face + side * 0.08), portalShellMaterial)
+          } else {
+            for (const bayOffset of [-0.32, 0.32]) {
+              const bay = arenaGlbAssets.createInstance('wall-bay', 0, graphicsQuality.geometryLod)
+              textureGlbInstance(bay, wallMaps.baseColor)
+              bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`
+              bay.position.set(span * bayOffset, -y / 2, face + side * 0.08)
+              detail.add(bay)
+            }
           }
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:top`, new THREE.Vector3(frameSpan, 0.1, 0.035), new THREE.Vector3(0, y / 2 - 0.2, face), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:bottom`, new THREE.Vector3(frameSpan, 0.08, 0.035), new THREE.Vector3(0, -y / 2 + 0.2, face), panelMaterial)
@@ -376,6 +384,15 @@ function addArena(
           if (arenaGlbAssets === undefined) {
             addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(0.045, Math.max(0.5, y * 0.34), Math.max(0.7, span * 0.42)), new THREE.Vector3(face + side * 0.015, 0, 0), wallModuleMaterial)
             for (const bayOffset of [-0.32, 0.32]) addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.22, Math.max(0.8, y * 0.76), 0.42), new THREE.Vector3(face + side * 0.08, -y * 0.04, span * bayOffset), portalShellMaterial)
+          } else {
+            for (const bayOffset of [-0.32, 0.32]) {
+              const bay = arenaGlbAssets.createInstance('wall-bay', 0, graphicsQuality.geometryLod)
+              textureGlbInstance(bay, wallMaps.baseColor)
+              bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`
+              bay.position.set(face + side * 0.08, -y / 2, span * bayOffset)
+              bay.rotation.y = Math.PI / 2
+              detail.add(bay)
+            }
           }
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:top`, new THREE.Vector3(0.035, 0.1, frameSpan), new THREE.Vector3(face, y / 2 - 0.2, 0), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:bottom`, new THREE.Vector3(0.035, 0.08, frameSpan), new THREE.Vector3(face, -y / 2 + 0.2, 0), panelMaterial)
@@ -386,7 +403,19 @@ function addArena(
       }
     } else if (surface.material === 'floor') {
       const top = y / 2 + 0.025
-      if (textureKit.residency.decalsIncluded) for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
+      if (arenaGlbAssets !== undefined) for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
+        const guideX = arenaGlbAssets.createInstance('floor-route-guide', 0, graphicsQuality.geometryLod)
+        textureGlbInstance(guideX, wallMaps.baseColor)
+        guideX.name = `presentation:glb:floor-route-guide:${surface.id}:x:${index}`
+        guideX.position.set(x * offset, top, 0)
+        detail.add(guideX)
+        const guideZ = arenaGlbAssets.createInstance('floor-route-guide', 0, graphicsQuality.geometryLod)
+        textureGlbInstance(guideZ, wallMaps.baseColor)
+        guideZ.name = `presentation:glb:floor-route-guide:${surface.id}:z:${index}`
+        guideZ.position.set(0, top, z * offset)
+        guideZ.rotation.y = Math.PI / 2
+        detail.add(guideZ)
+      } else if (textureKit.residency.decalsIncluded) for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
         addDetailBox(detail, `presentation:floor-guide:${surface.id}:x:${index}`, new THREE.Vector3(Math.max(0.5, x * 0.17), 0.028, 0.18), new THREE.Vector3(x * offset, top, 0), routeGuideMaterial)
         addDetailBox(detail, `presentation:floor-guide:${surface.id}:z:${index}`, new THREE.Vector3(0.18, 0.028, Math.max(0.5, z * 0.17)), new THREE.Vector3(0, top, z * offset), routeGuideMaterial)
       }

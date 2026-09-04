@@ -19,6 +19,7 @@ import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 import type { FirstPersonRenderer } from '../render/firstPersonRenderer'
 import { WebGlUnavailableError } from '../render/diagnosticRenderer'
+import { ArenaGlbAssetError } from '../render/arenaGlbAssets'
 import { PLAYABLE_PLAYER_ID } from '../simulation'
 import {
   bootstrapBrowserRuntime,
@@ -224,6 +225,26 @@ afterEach(() => {
 })
 
 describe('playable browser bootstrap', () => {
+  it('surfaces a required GLB preparation failure without starting a render loop or simulation', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+
+    application = await bootstrapBrowserRuntime(mount, {
+      ...test.dependencies,
+      prepareArenaGlbAssets: async () => {
+        throw new ArenaGlbAssetError('Не удалось подготовить обязательные GLB-модули арены')
+      },
+    })
+
+    expect(application.runtime).toBeUndefined()
+    expect(test.createRenderer).not.toHaveBeenCalled()
+    expect(test.scheduler.pendingCount).toBe(0)
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(
+      'Не удалось подготовить обязательные GLB-модули арены',
+    ))
+  })
+
   it('surfaces a stable collision error without starting partial presentation', async () => {
     const mount = document.createElement('div')
     document.body.append(mount)

@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { access, mkdtemp, rm } from 'node:fs/promises'
+import { access, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -170,6 +170,8 @@ const arenaSeed = Number(process.env.STAR_TOURNAMENT_ARENA_SEED ?? 0x53544152)
 if (!Number.isSafeInteger(arenaSeed) || arenaSeed < 0 || arenaSeed > 0xffffffff) throw new Error('STAR_TOURNAMENT_ARENA_SEED must be uint32')
 const graphicsQuality = process.env.STAR_TOURNAMENT_GRAPHICS_QUALITY ?? 'balanced'
 if (!['low', 'balanced', 'high', 'ultra'].includes(graphicsQuality)) throw new Error('STAR_TOURNAMENT_GRAPHICS_QUALITY must be low, balanced, high, or ultra')
+const screenshotPath = process.env.STAR_TOURNAMENT_SCREENSHOT_PATH
+const capturePointerLockError = process.env.STAR_TOURNAMENT_CAPTURE_POINTER_LOCK_ERROR === '1'
 const viewportWidth = Number(process.env.STAR_TOURNAMENT_VIEWPORT_WIDTH ?? 1280)
 const viewportHeight = Number(process.env.STAR_TOURNAMENT_VIEWPORT_HEIGHT ?? 720)
 if (!Number.isInteger(viewportWidth) || !Number.isInteger(viewportHeight) || viewportWidth < 320 || viewportHeight < 180 || viewportWidth > 7680 || viewportHeight > 4320) throw new Error('STAR_TOURNAMENT viewport must be an integer between 320×180 and 7680×4320')
@@ -221,12 +223,26 @@ try {
   }, sessionId)
   await client.send('Page.navigate', { url: previewUrl }, sessionId)
   await startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality)
-  const report = await readPerformanceReport(client, sessionId)
-  const output = process.env.STAR_TOURNAMENT_PERF_SUMMARY === '1'
-    ? { passed: report.passed, environment: report.environment, phases: report.gates.map(({ phase, passed }) => ({ phase, passed })) }
-    : report
-  process.stdout.write(`${JSON.stringify(output, null, 2)}\n`)
-  if (!report.passed) process.exitCode = 1
+  if (screenshotPath) {
+    await delay(500)
+    if (capturePointerLockError) {
+      await client.send('Runtime.evaluate', {
+        expression: `(() => [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Начать игру')?.click())()`,
+        returnByValue: true,
+      }, sessionId)
+      await delay(250)
+    }
+    const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false }, sessionId)
+    await writeFile(screenshotPath, Buffer.from(screenshot.data, 'base64'))
+    process.stdout.write(`${JSON.stringify({ screenshotPath, arenaSize, arenaSeed, capturePointerLockError })}\n`)
+  } else {
+    const report = await readPerformanceReport(client, sessionId)
+    const output = process.env.STAR_TOURNAMENT_PERF_SUMMARY === '1'
+      ? { passed: report.passed, environment: report.environment, phases: report.gates.map(({ phase, passed }) => ({ phase, passed })) }
+      : report
+    process.stdout.write(`${JSON.stringify(output, null, 2)}\n`)
+    if (!report.passed) process.exitCode = 1
+  }
 } finally {
   client?.close()
   chrome?.kill('SIGTERM')

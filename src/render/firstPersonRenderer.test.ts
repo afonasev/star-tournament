@@ -2,11 +2,23 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 
-import { DIAGNOSTIC_ARENA, requireProceduralArena } from '../arena'
+import {
+  DIAGNOSTIC_ARENA,
+  createArenaCollisionProjection,
+  createArenaNavigationProjection,
+  createArenaSpawnProjection,
+  requireProceduralArena,
+} from '../arena'
 import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
-import type { PlayableSimulationSnapshot } from '../simulation'
+import {
+  createInitialSimulationSnapshot,
+  createPlayableSimulationReplay,
+  serializePlayableSimulationReplay,
+  simulationSnapshotHash,
+  type PlayableSimulationSnapshot,
+} from '../simulation'
 import type { GameplayUiSourceSnapshot } from '../ui/gameplayUiSnapshot'
 import {
   DEFAULT_WEBGL_POWER_PREFERENCE,
@@ -14,6 +26,7 @@ import {
   resolvePixelBudgetDevicePixelRatio,
   type FirstPersonRenderSnapshot,
 } from './firstPersonRenderer'
+import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
 import type { RendererPort } from './diagnosticRenderer'
 
 const PIXEL_BUDGET = PRESENTATION_BALANCED_V1_PROFILE.render.backingBufferPixelBudget
@@ -211,6 +224,78 @@ describe('createFirstPersonRenderer', () => {
         expect.stringMatching(/^presentation:portal-cap:.*:right$/),
       ]))
     }
+  })
+
+  it('uses every required manifest module while keeping portals restricted to real doorway gaps', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const createInstance = vi.fn<ArenaGlbTemplateCache['createInstance']>((key) => {
+      const group = new THREE.Group()
+      group.name = `template:${key}`
+      group.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial()))
+      return group
+    })
+    const arenaGlbAssets: ArenaGlbTemplateCache = { createInstance, dispose: vi.fn() }
+    const adapter = createFirstPersonRenderer({
+      container,
+      arena: requireProceduralArena({ size: 'small', seed: 1234 }),
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => rendererPort,
+      arenaGlbAssets,
+    })
+
+    adapter.render(snapshot())
+
+    expect(createInstance.mock.calls.map(([key]) => key)).toEqual(expect.arrayContaining([
+      'portal-facade', 'wall-bay', 'floor-route-guide', 'central-landmark',
+    ]))
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const portals: THREE.Object3D[] = []
+    scene.traverse((object) => {
+      if (object.name.startsWith('presentation:glb:portal-facade:')) portals.push(object)
+    })
+    expect(portals.length).toBeGreaterThan(0)
+    expect(portals.length).toBeLessThan(requireProceduralArena({ size: 'small', seed: 1234 }).surfaces.length)
+  })
+
+  it('keeps arena, collision, navigation, spawn, snapshot and replay identities unchanged by GLB presentation', () => {
+    const initial = createInitialSimulationSnapshot({
+      rngSeed: 0x53544152,
+      arena: DIAGNOSTIC_ARENA,
+    })
+    const before = {
+      arena: DIAGNOSTIC_ARENA.contentHash,
+      collision: JSON.stringify(createArenaCollisionProjection(DIAGNOSTIC_ARENA)),
+      navigation: JSON.stringify(createArenaNavigationProjection(DIAGNOSTIC_ARENA)),
+      spawns: JSON.stringify(createArenaSpawnProjection(DIAGNOSTIC_ARENA)),
+      snapshot: simulationSnapshotHash(initial),
+      replay: serializePlayableSimulationReplay(createPlayableSimulationReplay(initial, [])),
+    }
+    const rendererPort = makeRenderer()
+    const createInstance = vi.fn<ArenaGlbTemplateCache['createInstance']>((key) => {
+      const instance = new THREE.Group()
+      instance.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial()))
+      instance.name = `template:${key}`
+      return instance
+    })
+    const adapter = createFirstPersonRenderer({
+      container: createContainer(), arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort,
+      arenaGlbAssets: { createInstance, dispose: vi.fn() },
+    })
+    adapter.render(snapshot())
+    const after = {
+      arena: DIAGNOSTIC_ARENA.contentHash,
+      collision: JSON.stringify(createArenaCollisionProjection(DIAGNOSTIC_ARENA)),
+      navigation: JSON.stringify(createArenaNavigationProjection(DIAGNOSTIC_ARENA)),
+      spawns: JSON.stringify(createArenaSpawnProjection(DIAGNOSTIC_ARENA)),
+      snapshot: simulationSnapshotHash(initial),
+      replay: serializePlayableSimulationReplay(createPlayableSimulationReplay(initial, [])),
+    }
+    expect(after).toEqual(before)
+    expect(createInstance).toHaveBeenCalled()
   })
 
   it('updates resize projection without changing profile camera parameters', () => {
