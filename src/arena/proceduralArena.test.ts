@@ -172,7 +172,7 @@ describe('broken-ring-v2 procedural arenas', () => {
     const { contentHash: _hash, ...payload } = arena
     const fragile = createArenaDefinition({ ...payload, links: payload.links.filter(({ id }) => id !== 'link-spawn-east-north' && id !== 'link-spawn-east-south') })
     expect(validateArenaGameplay(fragile, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'SINGLE_LINK_FAILURE' })]) })
-    const blocked = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'spawn-blocker', kind: 'box', center: { ...firstAnchor.position, y: 1 }, size: { x: 2, y: 2, z: 2 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall' }] })
+    const blocked = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'panel-collidable-large-spawn-blocker', kind: 'box', center: { ...firstAnchor.position, y: 1 }, size: { x: 2, y: 2, z: 2 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall' }] })
     expect(validateArenaGameplay(blocked, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'SPAWN_INTERSECTS_STATIC_GEOMETRY' })]) })
     const disconnected = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'wall-architecture-orphan', kind: 'box', center: { x: 0, y: 1, z: 0 }, size: { x: 1, y: 2, z: 1 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall' }] })
     expect(validateArenaGameplay(disconnected, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'ARCHITECTURE_DISCONNECTED' })]) })

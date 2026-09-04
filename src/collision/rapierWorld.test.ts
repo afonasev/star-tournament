@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { DIAGNOSTIC_ARENA } from '../arena/diagnosticArena'
 import { computeArenaContentHash, createArenaDefinition, type ArenaDefinitionPayload } from '../arena/arenaDefinition'
 import { COLLISION_ERROR_CODES, CollisionContractError, collisionCheckpointHash } from './contracts'
 import { COLLISION_FIXTURE_ARENA } from './fixture'
@@ -71,6 +72,20 @@ describe('Rapier collision world', () => {
       expect(slide.position.x).toBeLessThan(8)
       expect(slide.position.z).toBeGreaterThan(landing.position.z)
       expect(JSON.parse(JSON.stringify(slide))).toEqual(slide)
+    } finally {
+      collision.dispose()
+    }
+  })
+
+  it('allows a capsule through the renderer-only central landmark', async () => {
+    const airborne = { ...player, position: { x: -5, y: 5.7, z: 0 } }
+    const collision = await createRapierCollisionWorld(DIAGNOSTIC_ARENA, [airborne])
+    try {
+      // The visual central landmark occupies this route in the renderer, but
+      // it has no ArenaDefinition surface and therefore no collision proxy.
+      const crossed = collision.moveCapsule(airborne.semanticId, { x: 10, y: 0, z: 0 })
+      expect(crossed.position.x).toBeGreaterThan(4.9)
+      expect(crossed.contacts).toEqual([])
     } finally {
       collision.dispose()
     }

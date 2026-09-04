@@ -196,6 +196,30 @@ describe('createFirstPersonRenderer', () => {
     expect(portalNames).toEqual([])
   })
 
+  it('keeps large wall bays flush with the canonical shell while detail remains inset', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({
+      container,
+      arena: DIAGNOSTIC_ARENA,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => rendererPort,
+    })
+
+    adapter.render(snapshot())
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const wall = DIAGNOSTIC_ARENA.surfaces.find(({ id }) => id === 'wall-north')!
+    const bay = scene.getObjectByName('presentation:wall-buttress:wall-north:1:-0.32') as THREE.Mesh
+    const seam = scene.getObjectByName('presentation:seam:wall-north:1') as THREE.Mesh
+    const bayDepth = (bay.geometry as THREE.BoxGeometry).parameters.depth
+    const seamDepth = (seam.geometry as THREE.BoxGeometry).parameters.depth
+
+    expect(wall.size.z / 2 - (Math.abs(bay.position.z) + bayDepth / 2)).toBeLessThanOrEqual(0.011)
+    expect(Math.abs(seam.position.z) + seamDepth / 2).toBeLessThan(wall.size.z / 2)
+  })
+
   it('adds rounded portals only around real procedural wall gaps', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
