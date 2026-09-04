@@ -116,7 +116,7 @@ describe('createFirstPersonRenderer', () => {
     expect(acceptsUiSnapshot({} as PlayableSimulationSnapshot)).toBe(true)
   })
 
-  it('renders one identity-wired arena, primitive robots and profile camera', () => {
+  it('renders one identity-wired arena, sports robots, world weapons and profile camera', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({
@@ -156,7 +156,12 @@ describe('createFirstPersonRenderer', () => {
     expect(forward.z).toBeCloseTo(0)
     for (const target of COMBAT_SLICE_SCENARIO_V1.targets) {
       expect((scene as THREE.Scene).getObjectByName(`target:${target.semanticId}`)).toBeDefined()
+      expect((scene as THREE.Scene).getObjectByName('robot:identity:core')).toBeDefined()
+      expect((scene as THREE.Scene).getObjectByName('robot:weapon:barrel:left')).toBeDefined()
     }
+    expect((scene as THREE.Scene).getObjectByName('presentation:first-person-viewmodel')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('viewmodel:forearm:left')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('viewmodel:weapon:barrel:right')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:detail:floor')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:floor-guide:floor:x:1')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:wall-module:wall-north:1')).toBeDefined()
@@ -259,7 +264,7 @@ describe('createFirstPersonRenderer', () => {
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
     for (const participant of initial.participants.filter((entry) => entry.kind === 'stationary-fixture')) {
       const group = scene.getObjectByName(`target:${participant.semanticId}`) as THREE.Group
-      const material = (group.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial
+      const material = (group.getObjectByName('robot:identity:core') as THREE.Mesh).material as THREE.MeshStandardMaterial
       expect(`#${material.color.getHexString()}`).toBe(participant.color)
     }
 
@@ -267,7 +272,7 @@ describe('createFirstPersonRenderer', () => {
     adapter.render(snapshot({ tick: 2, participants: initial.participants.map((participant) => participant.semanticId === targetId ? { ...participant, health: 0, alive: false } : participant) }))
     adapter.render(snapshot({ tick: 3, participants: initial.participants }))
     const restored = scene.getObjectByName(`target:${targetId}`) as THREE.Group
-    expect(`#${((restored.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).color.getHexString()}`).toBe('#f59e0b')
+    expect(`#${((restored.getObjectByName('robot:identity:core') as THREE.Mesh).material as THREE.MeshStandardMaterial).color.getHexString()}`).toBe('#f59e0b')
   })
 
   it('presents shot, impact and destroyed events until their profile-defined expiry', () => {
@@ -308,6 +313,8 @@ describe('createFirstPersonRenderer', () => {
 
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
     expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', true)
+    expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', true)
+    expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.57)
     expect(scene.getObjectByName('presentation:impact:impact-1')).toBeDefined()
     expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeDefined()
     expect(scene.getObjectByName(`target:${destroyedTargetId}`)?.userData.presentationState)
@@ -315,8 +322,23 @@ describe('createFirstPersonRenderer', () => {
 
     adapter.render(snapshot({ tick: 20 }))
     expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', false)
+    expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', false)
+    expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
     expect(scene.getObjectByName('presentation:impact:impact-1')).toBeUndefined()
     expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
+  })
+
+  it('does not present a successful-shot recoil or flash without a shotgun event', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
+
+    adapter.render(snapshot({ tick: 4, events: [{ eventId: 'dry-1', tick: 4, kind: 'dry-fire' }] }))
+
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', false)
+    expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', false)
+    expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
   })
 
   it('projects authoritative corpse lifetime independently from a respawned fixture', () => {

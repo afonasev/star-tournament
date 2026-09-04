@@ -16,7 +16,7 @@ describe('arena GLB template cache', () => {
   it('loads each immutable LOD template, gives clones ownership of transforms, and disposes resources once', async () => {
     const source = loader()
     const cache = await prepareArenaGlbAssets(CLEAN_FUTURE_SPORT_GLB_V1, source as unknown as Parameters<typeof prepareArenaGlbAssets>[1])
-    expect(source.loadAsync).toHaveBeenCalledTimes(8)
+    expect(source.loadAsync).toHaveBeenCalledTimes(Object.keys(CLEAN_FUTURE_SPORT_GLB_V1).length * 2)
     const near = cache.createInstance('wall-bay', 1)
     const far = cache.createInstance('wall-bay', 99)
     expect(near).not.toBe(far)
@@ -24,7 +24,7 @@ describe('arena GLB template cache', () => {
     expect(far.userData.lod).toBe(1)
     const dispose = vi.spyOn(THREE.BufferGeometry.prototype, 'dispose')
     cache.dispose(); cache.dispose()
-    expect(dispose).toHaveBeenCalledTimes(8)
+    expect(dispose).toHaveBeenCalledTimes(Object.keys(CLEAN_FUTURE_SPORT_GLB_V1).length * 2)
     expect(() => cache.createInstance('wall-bay')).toThrow(ArenaGlbAssetError)
   })
 
