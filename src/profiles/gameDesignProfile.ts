@@ -1147,9 +1147,9 @@ const prototypePayload: GameDesignProfilePayload = {
     death: { killcamSeconds: 3, corpseSeconds: 10 },
     arenaGenerator: {
       presets: {
-        small: { widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.8, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
-        medium: { widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
-        large: { widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.2, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
+        small: { widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
+        medium: { widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
+        large: { widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
       },
     },
   },

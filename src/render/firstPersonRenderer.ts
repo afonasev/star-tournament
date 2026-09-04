@@ -338,7 +338,9 @@ function addArena(
       const horizontalAlongX = x >= z
       const span = horizontalAlongX ? x : z
       const thickness = horizontalAlongX ? z : x
-      const depth = thickness / 2 + 0.025
+      // Large bay geometry is inset by half its authored depth, so its outer
+      // face coincides with the canonical, collidable wall shell.
+      const depth = thickness / 2 - 0.2
       for (const side of [-1, 1]) {
         const face = side * depth
         const frameSpan = Math.max(0.2, span - 0.3)
