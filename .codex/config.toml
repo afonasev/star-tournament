@@ -4,7 +4,7 @@ model_verbosity = "low"
 approvals_reviewer = "user"
 
 [features]
-memories = false
+memories = true
 
 [mcp_servers.avito]
 enabled = false
