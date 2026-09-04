@@ -42,6 +42,8 @@ import {
   type FirstPersonRenderer,
   type FirstPersonRendererOptions,
 } from '../render/firstPersonRenderer'
+import type { GraphicsQualityProfile } from '../presentation'
+import { prepareArenaGlbAssets, type ArenaGlbTemplateCache } from '../render/arenaGlbAssets'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import {
   createInitialPlayableSimulationSnapshot,
@@ -184,6 +186,8 @@ function errorCode(error: unknown): string {
 export interface BrowserBootstrapDependencies {
   readonly profile?: GameDesignProfile | ValidatedGameDesignProfile
   readonly presentationProfile?: PresentationProfile | ValidatedPresentationProfile
+  /** Presentation preference; never participates in match or replay identity. */
+  readonly graphicsQuality?: GraphicsQualityProfile
   readonly createCollisionWorld?: (
     arena: ArenaDefinition,
     capsules: readonly CollisionCapsuleProjection[],
@@ -193,6 +197,7 @@ export interface BrowserBootstrapDependencies {
   readonly createRenderer?: (
     options: FirstPersonRendererOptions,
   ) => FirstPersonRenderer
+  readonly prepareArenaGlbAssets?: () => Promise<ArenaGlbTemplateCache>
   readonly createUi?: (mount: HTMLElement, options: GameplayUiOptions) => GameplayUi
   readonly createInput?: (options: KeyboardMouseAdapterOptions) => RuntimeInputAdapter
   readonly createPointerLockController?: (
@@ -470,26 +475,32 @@ export async function bootstrapBrowserRuntime(
   }
 
   try {
+    // Test and diagnostic renderers own no GLB scene objects; loading shipping
+    // assets for them would make their deterministic lifecycle tests depend on fetch.
+    const arenaGlbAssets = dependencies.prepareArenaGlbAssets === undefined && dependencies.createRenderer !== undefined
+      ? undefined
+      : await (dependencies.prepareArenaGlbAssets ?? prepareArenaGlbAssets)()
+    if (disposed) { arenaGlbAssets?.dispose(); return { requestControl, dispose: cleanup } }
     renderer = createRenderer({
       container: playfield,
       arena,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile,
-      pixelBudget: presentationProfile.render.backingBufferPixelBudget,
+      pixelBudget: presentationProfile.render.backingBufferPixelBudget * Math.pow(dependencies.graphicsQuality?.renderScale ?? 1, 2),
       onWebGlSubmission: (rendererInfo) => {
         if (performanceRecording) {
           performanceProbe?.recordWebGlSubmission(rendererInfo)
         }
       },
       ticksPerSecond: SIMULATION_TICKS_PER_SECOND,
+      arenaGlbAssets,
     })
     playfield.dataset.presentationProfileId = presentationProfile.id
     playfield.dataset.presentationProfileHash = presentationProfile.contentHash
     renderer.render(initialState)
   } catch (error) {
-    const message = error instanceof Error && error.name === 'WebGlUnavailableError'
-      ? error.message
-      : 'Неизвестная ошибка инициализации 3D-сцены'
+    const message = error instanceof Error && (error.name === 'WebGlUnavailableError' || error.name === 'ArenaGlbAssetError')
+      ? error.message : 'Неизвестная ошибка инициализации 3D-сцены'
     ui.update(projectUi(initialState, 'error', message))
     return { requestControl, dispose: cleanup }
   }

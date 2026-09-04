@@ -9,6 +9,7 @@ import {
 } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import type { ArenaSize } from '../arena'
+import { GRAPHICS_QUALITY_STORAGE_KEY, GRAPHICS_QUALITY_V1, resolveGraphicsQuality, type GraphicsQualityPreset } from '../presentation'
 
 export interface ArenaGenerationErrorView {
   readonly seed: number
@@ -21,6 +22,7 @@ export interface MatchSetupMenuProps {
   readonly onStart: (configuration: MatchConfiguration) => void
   readonly generationError?: ArenaGenerationErrorView | null
   readonly onUseFallback?: () => void
+  readonly onGraphicsQualityChange?: (quality: GraphicsQualityPreset) => void
 }
 
 function autoSeed(): number {
@@ -37,7 +39,8 @@ function parseSeedDraft(value: string): number | null {
   return parsed
 }
 
-export function MatchSetupMenu({ profile, onStart, generationError, onUseFallback }: MatchSetupMenuProps) {
+export function MatchSetupMenu({ profile, onStart, generationError, onUseFallback, onGraphicsQualityChange }: MatchSetupMenuProps) {
+  const [graphicsQuality, setGraphicsQuality] = useState<GraphicsQualityPreset>(() => resolveGraphicsQuality(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY)).id)
   const [mode, setMode] = useState<MatchMode>('ffa')
   const [arenaSize, setArenaSize] = useState<ArenaSize>('medium')
   const [seedDraft, setSeedDraft] = useState('')
@@ -84,6 +87,13 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
     }
   }
 
+  const selectGraphicsQuality = (value: string) => {
+    const resolved = resolveGraphicsQuality(value)
+    globalThis.localStorage?.setItem(GRAPHICS_QUALITY_STORAGE_KEY, resolved.id)
+    setGraphicsQuality(resolved.id)
+    onGraphicsQualityChange?.(resolved.id)
+  }
+
   return (
     <main className="match-menu">
       <section className="match-menu__panel" aria-labelledby="match-menu-title">
@@ -115,6 +125,12 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
           <label className="match-menu__check"><input aria-label="Включить цель по очкам" type="checkbox" checked={targetEnabled} onChange={(event) => setTargetEnabled(event.target.checked)} />Цель по очкам</label>
           {targetEnabled && <label>Очки<input aria-label="Цель по очкам" type="number" min={profile.rules.match.scoreTarget.minimumPoints} max={profile.rules.match.scoreTarget.maximumPoints} step={profile.rules.match.scoreTarget.stepPoints} value={scoreTargetPoints} onChange={(event) => setScoreTargetPoints(Number(event.target.value))} /></label>}
         </div>
+        <details className="match-menu__graphics">
+          <summary>Графика · {GRAPHICS_QUALITY_V1[graphicsQuality].label}</summary>
+          <label>Пресет<select aria-label="Пресет графики" value={graphicsQuality} onChange={(event) => selectGraphicsQuality(event.target.value)}>{Object.values(GRAPHICS_QUALITY_V1).map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
+          <p>Рендер: ×{GRAPHICS_QUALITY_V1[graphicsQuality].renderScale} · текстуры: {GRAPHICS_QUALITY_V1[graphicsQuality].textureTier} · до {GRAPHICS_QUALITY_V1[graphicsQuality].textureBudgetMiB} MiB</p>
+          <p>LOD: {GRAPHICS_QUALITY_V1[graphicsQuality].geometryLod} · decals: {GRAPHICS_QUALITY_V1[graphicsQuality].decals ? 'вкл.' : 'выкл.'} · post-processing: {GRAPHICS_QUALITY_V1[graphicsQuality].postProcessing ? 'вкл.' : 'выкл.'}</p>
+        </details>
         {seedError !== null && <p className="match-menu__validation" role="alert">{seedError}</p>}
         {generationError != null && <div className="match-menu__generation-error" role="alert"><strong>Арена не создана</strong><p>{generationError.size} · seed {generationError.seed}: {generationError.reason}</p><div><button type="button" onClick={() => start(false, generationError.seed)}>Повторить seed</button><button type="button" onClick={() => { setSeedDraft(''); start(true) }}>Новый seed</button>{onUseFallback && <button type="button" onClick={onUseFallback}>Запустить запасную арену</button>}</div></div>}
         {candidate === null && <p className="match-menu__validation" role="alert">Проверьте состав команд, имена и диапазоны матча.</p>}

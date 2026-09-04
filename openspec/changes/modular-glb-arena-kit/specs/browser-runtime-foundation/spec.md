@@ -1,0 +1,16 @@
+## MODIFIED Requirements
+
+### Requirement: Presentation style validated arena
+Browser runtime SHALL применять утверждённый arena presentation style и versioned GLB asset manifest к renderer-derived surfaces одной immutable validated `ArenaDefinition`. Asset loading, LOD, lights, fog, transient presentation и materials MUST NOT входить в simulation snapshot, replay, RNG или state hash; failed mandatory asset preparation MUST блокировать только presentation startup со стабильной actionable error.
+
+#### Scenario: Renderer style при неизменной симуляции
+- **WHEN** один и тот же initial snapshot отображается с разной render cadence, после resize либо в debug surface
+- **THEN** GLB style kit не меняет arena identity, participant transforms, simulation hash или количество gameplay ticks
+
+#### Scenario: Presentation performance
+- **WHEN** GLB style kit изменяет материалы, LOD, освещение или visibility treatment arena
+- **THEN** production-browser performance gate сохраняет lifecycle counters и проходит утверждённые portable hard gates
+
+#### Scenario: Ошибка обязательного asset
+- **WHEN** manifest entry или required GLB нельзя подготовить до первого render
+- **THEN** runtime показывает DOM actionable error, не создаёт WebGL loop и не изменяет snapshot либо replay
