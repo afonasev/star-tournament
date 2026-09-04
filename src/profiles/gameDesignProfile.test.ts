@@ -382,7 +382,7 @@ describe('prototype-v1 GameDesignProfile', () => {
 
   it('derives identity from all effective content except contentHash', () => {
     expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
-    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:5131adf450ce869c')
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:654c08c90c05807b')
     expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
       PROTOTYPE_V1_PROFILE.contentHash,
     )
