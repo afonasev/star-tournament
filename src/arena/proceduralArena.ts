@@ -359,7 +359,9 @@ function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, seed: 
   let rng = createSeededRngState((seed ^ (attempt * 0x9e3779b9)) >>> 0)
   const mirrorSample = random01(rng); rng = mirrorSample.state
   const mirror = mirrorSample.value < 0.5 ? -1 : 1
-  const architectureHeight = Math.min(wallHeight, 3.5)
+  // Primary room/corridor walls form the arena's ceiling-aligned shell.
+  // Only separately identified buttresses below are intentional low cover.
+  const architectureHeight = wallHeight
   const corridorBoundaryOffset = corridorWidth / 2 + wallThickness / 2
   const corridorHalfLength = halfWidth - perimeterInset - routeInset
   const roomDepth = routeInset

@@ -113,15 +113,21 @@ describe('broken-ring-v2 procedural arenas', () => {
     expect(report.metrics.corridorClearanceMeters).toBeGreaterThanOrEqual(PROTOTYPE_V1_PROFILE.rules.arenaGenerator.presets[size].corridorWidthMeters)
     expect(report.errors).not.toEqual(expect.arrayContaining([expect.objectContaining({ code: 'ARCHITECTURE_DISCONNECTED' })]))
     expect(visuallyDistinctVerticalCoplanarOverlaps(arena)).toEqual([])
+    const wallHeight = PROTOTYPE_V1_PROFILE.rules.arenaGenerator.presets[size].wallHeightMeters
+    const primaryWalls = arena.surfaces.filter(({ id }) => id.startsWith('wall-architecture-') && !id.includes('-buttress-') && !id.includes('-gap-seal-'))
+    expect(primaryWalls).not.toHaveLength(0)
+    expect(primaryWalls.every((surface) => surface.size.y === wallHeight)).toBe(true)
+    const buttresses = arena.surfaces.filter(({ id }) => id.includes('-buttress-'))
+    expect(buttresses.every((surface) => surface.size.y < wallHeight)).toBe(true)
   })
 
   it('keeps the shipped representative identities stable', () => {
     expect(sizes.map((size) => requireProceduralArena({ size, seed: 0x53544152 }).contentHash)).toEqual([
-      'fnv1a64-v1:b324cd00c41a9b65',
-      'fnv1a64-v1:2d7bc49c91552e89',
-      'fnv1a64-v1:1e58e009056ae2e1',
+      'fnv1a64-v1:d1d8ca4ef53852bc',
+      'fnv1a64-v1:2ca43f4bd786aab7',
+      'fnv1a64-v1:b0fc2d1f7e17a137',
     ])
-    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:b324cd00c41a9b65')
+    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:d1d8ca4ef53852bc')
     expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v2', generatorVersion: 'shipped-fallback-v2', size: 'medium' })
     expect(PROCEDURAL_FALLBACK_ARENA.contentHash).not.toBe(requireProceduralArena({ size: 'medium', seed: 0x53544152 }).contentHash)
     expect(validateArenaGameplay(PROCEDURAL_FALLBACK_ARENA, PROTOTYPE_V1_PROFILE).accepted).toBe(true)
