@@ -142,7 +142,7 @@ function textureGlbInstance(object: THREE.Object3D, resources: PresentationResou
           material.color.set(color)
           material.emissive.set(color)
           identityMaterials.push(material)
-        } else material.color.setHex(0xffffff)
+        }
         material.needsUpdate = true
       }
       resources.materials.push(material)
@@ -172,7 +172,9 @@ export function createFirstPersonGlbPresentation(resources: PresentationResource
   const group = assets.createInstance('first-person-shotgun') as THREE.Group
   group.name = 'presentation:first-person-viewmodel'
   group.position.set(0.36, -0.34, -0.68)
-  group.rotation.set(-0.08, -0.14, -0.02)
+  // Authored viewmodel assets keep the shared +Z-forward GLB contract; the
+  // camera sees along -Z, so presentation turns that semantic front toward it.
+  group.rotation.set(-0.08, Math.PI - 0.14, -0.02)
   textureGlbInstance(group, resources, texture, color)
   const muzzleGeometry = new THREE.SphereGeometry(0.105, 8, 6)
   const muzzleMaterial = new THREE.MeshBasicMaterial({ color: 0xffddb0 })
@@ -181,7 +183,7 @@ export function createFirstPersonGlbPresentation(resources: PresentationResource
   const flashes = [-0.115, 0.115].map((x, index) => {
     const flash = new THREE.Mesh(muzzleGeometry, muzzleMaterial)
     flash.name = index === 0 ? 'presentation:muzzle-flash' : 'presentation:muzzle-flash:right'
-    flash.position.set(x, 0.025, -1.21)
+    flash.position.set(x * 0.42, 0.025 * 0.42, 1.21 * 0.42)
     flash.visible = false
     group.add(flash)
     return flash
