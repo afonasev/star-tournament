@@ -7,7 +7,6 @@ import type {
   CombatSliceScenario,
   RobotTargetDefinition,
   ScenarioVector3,
-  TargetHitVolume,
 } from '../scenario'
 import {
   WebGlUnavailableError,
@@ -16,6 +15,11 @@ import {
 } from './diagnosticRenderer'
 import { CLEAN_FUTURE_SPORT_V1, arenaMaterialToken } from './cleanFutureSport'
 import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
+import {
+  createFirstPersonGlbPresentation,
+  createRobotGlbPresentation,
+  normalizePresentationColor,
+} from './participantWeaponPresentation'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
 export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
@@ -144,7 +148,8 @@ export interface FirstPersonRendererOptions {
 
 interface TargetPresentation {
   readonly group: THREE.Group
-  readonly material: THREE.MeshStandardMaterial
+  readonly identityMaterials: readonly THREE.MeshStandardMaterial[]
+  readonly weaponIndicatorMaterials: readonly THREE.MeshStandardMaterial[]
   baseY: number
   destroyed: boolean
   color: string
@@ -227,7 +232,7 @@ function addArena(
   textures: THREE.Texture[],
   onTextureReady: () => void,
   arenaGlbAssets?: ArenaGlbTemplateCache,
-): void {
+): THREE.Texture {
   const textureLoader = new THREE.TextureLoader()
   const tiledTexture = (url: string, repeat: number) => {
     const texture = textureLoader.load(url, onTextureReady)
@@ -485,7 +490,7 @@ function addArena(
       const tallestSurface = Math.max(...arena.surfaces.map((surface) => surface.center.y + surface.size.y / 2))
       landmark.position.set(combatCenter.center.x, tallestSurface + 0.7, combatCenter.center.z)
       scene.add(landmark)
-      return
+      return wallTexture
     }
     const geometry = new THREE.TorusGeometry(1.15, 0.065, 6, 24)
     const landmark = new THREE.Mesh(geometry, landmarkMaterial)
@@ -496,41 +501,7 @@ function addArena(
     scene.add(landmark)
     geometries.push(geometry)
   }
-}
-
-function volumeMesh(
-  volume: TargetHitVolume,
-  material: THREE.Material,
-  geometries: THREE.BufferGeometry[],
-): THREE.Mesh {
-  if (volume.kind === 'sphere') {
-    const geometry = new THREE.SphereGeometry(volume.radius, 16, 10)
-    geometries.push(geometry)
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.set(volume.centerOffset.x, volume.centerOffset.y, volume.centerOffset.z)
-    return mesh
-  }
-  if (volume.kind === 'box') {
-    const geometry = new THREE.BoxGeometry(
-      volume.halfExtents.x * 2,
-      volume.halfExtents.y * 2,
-      volume.halfExtents.z * 2,
-    )
-    geometries.push(geometry)
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.set(volume.centerOffset.x, volume.centerOffset.y, volume.centerOffset.z)
-    return mesh
-  }
-
-  const start = new THREE.Vector3(volume.startOffset.x, volume.startOffset.y, volume.startOffset.z)
-  const end = new THREE.Vector3(volume.endOffset.x, volume.endOffset.y, volume.endOffset.z)
-  const direction = end.clone().sub(start)
-  const geometry = new THREE.CapsuleGeometry(volume.radius, direction.length(), 6, 10)
-  geometries.push(geometry)
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.position.copy(start.add(end).multiplyScalar(0.5))
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize())
-  return mesh
+  return wallTexture
 }
 
 function addRobotTarget(
@@ -538,6 +509,8 @@ function addRobotTarget(
   target: RobotTargetDefinition,
   geometries: THREE.BufferGeometry[],
   materials: THREE.Material[],
+  arenaGlbAssets: ArenaGlbTemplateCache | undefined,
+  sharedTexture: THREE.Texture,
 ): TargetPresentation {
   const group = new THREE.Group()
   group.name = `target:${target.semanticId}`
@@ -545,21 +518,17 @@ function addRobotTarget(
   group.rotation.y = target.yawRadians
   group.userData.presentationState = 'active'
 
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xb8dce5,
-    metalness: 0.68,
-    roughness: 0.32,
-    emissive: 0x0c5362,
-    emissiveIntensity: 0.5,
-  })
-  materials.push(material)
-  for (const volume of target.hitVolumes) {
-    const mesh = volumeMesh(volume, material, geometries)
-    mesh.name = `target:${target.semanticId}:${volume.semanticId}`
-    group.add(mesh)
-  }
+  const robot = createRobotGlbPresentation({ geometries, materials }, arenaGlbAssets, sharedTexture, '#b8dce5')
+  group.add(robot.group)
   scene.add(group)
-  return { group, material, baseY: target.position.y, destroyed: false, color: '#b8dce5' }
+  return {
+    group,
+    identityMaterials: robot.identityMaterials,
+    weaponIndicatorMaterials: robot.weaponIndicatorMaterials,
+    baseY: target.position.y,
+    destroyed: false,
+    color: '#b8dce5',
+  }
 }
 
 function eventDurationTicks(seconds: number, ticksPerSecond: number): number {
@@ -606,7 +575,7 @@ export function createFirstPersonRenderer({
   const geometries: THREE.BufferGeometry[] = []
   const materials: THREE.Material[] = []
   const textures: THREE.Texture[] = []
-  addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), arenaGlbAssets)
+  const participantTexture = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), arenaGlbAssets)
 
   const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
   scene.add(hemisphere)
@@ -619,18 +588,11 @@ export function createFirstPersonRenderer({
 
   const targetById = new Map<string, TargetPresentation>()
   for (const target of scenario.targets) {
-    targetById.set(target.semanticId, addRobotTarget(scene, target, geometries, materials))
+    targetById.set(target.semanticId, addRobotTarget(scene, target, geometries, materials, arenaGlbAssets, participantTexture))
   }
 
-  const muzzleGeometry = new THREE.SphereGeometry(0.08, 8, 6)
-  const muzzleMaterial = new THREE.MeshBasicMaterial({ color: 0xffddb0 })
-  const muzzleFlash = new THREE.Mesh(muzzleGeometry, muzzleMaterial)
-  muzzleFlash.name = 'presentation:muzzle-flash'
-  muzzleFlash.position.set(0.18, -0.16, -0.72)
-  muzzleFlash.visible = false
-  camera.add(muzzleFlash)
-  geometries.push(muzzleGeometry)
-  materials.push(muzzleMaterial)
+  const viewmodel = createFirstPersonGlbPresentation({ geometries, materials }, arenaGlbAssets, participantTexture, '#b8dce5')
+  camera.add(viewmodel.group)
 
   const impactGeometry = new THREE.SphereGeometry(0.075, 8, 6)
   const impactMaterial = new THREE.MeshBasicMaterial({ color: 0x9ff5ff })
@@ -648,6 +610,7 @@ export function createFirstPersonRenderer({
   const transientByEventId = new Map<string, TransientMesh>()
   const corpseById = new Map<string, THREE.Mesh>()
   let muzzleVisibleThroughTick = -1
+  let recoilVisibleThroughTick = -1
   let lastSubmittedTick: number | undefined
   let lastSnapshot: FirstPersonRenderSnapshot | undefined
   let presentationInvalidated = true
@@ -697,13 +660,12 @@ export function createFirstPersonRenderer({
       if (processedEventIds.has(event.eventId)) continue
       processedEventIds.add(event.eventId)
       if (event.kind === 'shotgun-shot') {
-        muzzleVisibleThroughTick = Math.max(
-          muzzleVisibleThroughTick,
-          event.tick + eventDurationTicks(
-            profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds,
-            ticksPerSecond,
-          ),
+        const expiresAfterTick = event.tick + eventDurationTicks(
+          profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds,
+          ticksPerSecond,
         )
+        muzzleVisibleThroughTick = Math.max(muzzleVisibleThroughTick, expiresAfterTick)
+        recoilVisibleThroughTick = Math.max(recoilVisibleThroughTick, expiresAfterTick)
       } else if (event.kind === 'shotgun-impact') {
         const mesh = new THREE.Mesh(impactGeometry, impactMaterial)
         mesh.name = `presentation:impact:${event.eventId}`
@@ -741,6 +703,7 @@ export function createFirstPersonRenderer({
       transientByEventId.clear()
       processedEventIds.clear()
       muzzleVisibleThroughTick = -1
+      recoilVisibleThroughTick = -1
     }
     const player = snapshot.participants.find((participant) => participant.kind === 'local-seat')
     if (player === undefined) throw new TypeError('FirstPersonRenderSnapshot requires one local-seat participant')
@@ -760,18 +723,22 @@ export function createFirstPersonRenderer({
       target.baseY = targetState.position.y
       target.group.position.set(targetState.position.x, targetState.position.y + (destroyed ? -0.2 : 0), targetState.position.z)
       target.group.rotation.y = targetState.yaw
-      const presentationColor = destroyed ? '#354148' : targetState.color.toLowerCase()
+      const presentationColor = destroyed ? '#354148' : normalizePresentationColor(targetState.color)
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
         target.group.userData.presentationState = destroyed ? 'destroyed' : 'active'
         target.group.rotation.z = destroyed ? 0.18 : 0
-        target.material.emissiveIntensity = destroyed ? 0.12 : 0.5
+        for (const material of [...target.identityMaterials, ...target.weaponIndicatorMaterials]) {
+          material.emissiveIntensity = destroyed ? 0.12 : 0.54
+        }
       }
       if (presentationColor !== target.color) {
         target.color = presentationColor
-        target.material.color.set(presentationColor)
-        if (destroyed) target.material.emissive.setHex(0x210d0a)
-        else target.material.emissive.set(presentationColor).multiplyScalar(0.28)
+        for (const material of [...target.identityMaterials, ...target.weaponIndicatorMaterials]) {
+          material.color.set(presentationColor)
+          if (destroyed) material.emissive.setHex(0x210d0a)
+          else material.emissive.set(presentationColor)
+        }
       }
     }
 
@@ -794,7 +761,11 @@ export function createFirstPersonRenderer({
 
     processEvents(snapshot)
     removeExpiredTransientMeshes(snapshot.tick)
-    muzzleFlash.visible = snapshot.tick <= muzzleVisibleThroughTick
+    const muzzleVisible = snapshot.tick <= muzzleVisibleThroughTick
+    for (const muzzleFlash of viewmodel.muzzleFlashes) muzzleFlash.visible = muzzleVisible
+    const recoiling = snapshot.tick <= recoilVisibleThroughTick
+    viewmodel.group.position.z = -0.68 + (recoiling ? 0.11 : 0)
+    viewmodel.group.rotation.x = -0.08 + (recoiling ? 0.13 : 0)
     renderer.render(scene, camera)
     const info = renderer.info
     onWebGlSubmission?.(info === undefined ? undefined : {
