@@ -86,7 +86,7 @@ Accepted arena SHALL иметь центральный ориентир, вне�
 - **THEN** slot исключается до allocation без mutation simulation state
 
 ### Requirement: Проходимость и режимная честность
-До старта матча validator MUST проверить profile-defined capsule clearance, region connectivity, spawn placement, FFA fairness и team fairness. Геометрическая симметрия MUST NOT быть обязательной; fairness SHALL оцениваться versioned navigation-distance, route-redundancy и enemy-LOS metrics.
+До старта матча validator MUST проверить profile-defined capsule clearance, region connectivity, spawn placement, FFA fairness и team fairness по canonical surfaces, включающим collision thickness крупных architectural panels. Мелкие presentation-only details MUST NOT входить в validation. Геометрическая симметрия MUST NOT быть обязательной; fairness SHALL оцениваться versioned navigation-distance, route-redundancy и enemy-LOS metrics.
 
 #### Scenario: Асимметричная честная arena
 - **WHEN** geometry не зеркальна, но обе team allocations и FFA spawn sets удовлетворяют versioned metrics
@@ -95,6 +95,10 @@ Accepted arena SHALL иметь центральный ориентир, вне�
 #### Scenario: Непроходимая или нечестная arena
 - **WHEN** отсутствует capsule route, безопасный roster placement либо одна сторона систематически получает недопустимое преимущество
 - **THEN** generation завершается стабильным validation report и матч не получает initial snapshot
+
+#### Scenario: Панель закрывает маршрут
+- **WHEN** collidable panel уменьшает route ниже capsule clearance либо исключает required spawn placement
+- **THEN** definition отклоняется до initial snapshot со стабильным validation report
 
 ### Requirement: Явный generation failure и fallback
 Generation SHALL иметь bounded deterministic attempts. После исчерпания attempts runtime MUST показать seed и стабильные причины; shipped fallback arena MAY запускаться только после явного действия пользователя и MUST иметь собственные identity и content hash.

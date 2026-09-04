@@ -7,7 +7,11 @@ Capability задаёт наблюдаемый visual language procedural arena:
 ## Requirements
 
 ### Requirement: Clean Future Sport material kit
-Arena renderer SHALL представлять validated одноуровневую `ArenaDefinition` в стиле `clean-future-sport-v1`: versioned `clean-future-sport-glb-v1` architectural kit со светлыми off-white/pale-gray wall bays и buttresses, крупными двухцветными curved portal facades на существующих doorway gaps, тёмным navy-composite floor с широкими segmented route guides и cyan/lime/orange accents для route, doorway и landmark surfaces. Модули MUST разрешаться только через GLB asset manifest. `clean-future-sport-texture-v1` SHALL использовать бесшовные повторяемые PBR material sets для wall/floor surfaces и atlas-backed decals только для уникальных route markings, sector labels и мелких декоративных знаков. Базовый material contract MUST содержать base color, normal и ORM maps; presentation detail-tier может добавлять detail-normal и decal layers. Материалы, texture variants, decals и detail meshes MUST выводиться только из существующих semantic surface slots и MUST NOT менять collision, navigation, spawn или arena content hash.
+Arena renderer SHALL представлять validated одноуровневую `ArenaDefinition` в стиле `clean-future-sport-v1`: versioned `clean-future-sport-glb-v1` architectural kit со светлыми off-white/pale-gray wall bays и buttresses, крупными двухцветными curved portal facades на существующих doorway gaps, тёмным navy-composite floor с широкими segmented route guides и cyan/lime/orange accents для route, doorway и landmark surfaces. Модули MUST разрешаться только через GLB asset manifest. Крупные wall bays и portal facades MUST совпадать с canonical collision shell wall surfaces; мелкие trims, seams, decals, floor route guides и landmark MUST оставаться presentation-only. `clean-future-sport-texture-v1` SHALL использовать бесшовные повторяемые PBR material sets для wall/floor surfaces и atlas-backed decals только для уникальных route markings, sector labels и мелких декоративных знаков. Базовый material contract MUST содержать base color, normal и ORM maps; presentation detail-tier может добавлять detail-normal и decal layers. Материалы, texture variants, decals и detail meshes MUST выводиться только из существующих semantic surface slots, Renderer MUST NOT создавать независимые blocking volumes и они MUST NOT менять collision, navigation, spawn или arena content hash.
+
+#### Scenario: Совпадение крупной панели и collision
+- **WHEN** крупная panel bay видна на route wall
+- **THEN** её outer boundary совпадает с canonical collision shell, а capsule не может пройти сквозь неё
 
 #### Scenario: Одна spatial identity при смене стиля
 - **WHEN** тот же validated ArenaDefinition отображается с GLB style kit либо без renderer
@@ -18,7 +22,7 @@ Arena renderer SHALL представлять validated одноуровневу
 - **THEN** соответствующий GLB architectural accent читается отдельно от базового пола и shell без назначения ему team или participant color
 
 #### Scenario: Детальный слой не меняет игровое пространство
-- **WHEN** renderer добавляет GLB wall bays, buttresses, route guides, curved portals, верхний central landmark, textures либо decals
+- **WHEN** renderer добавляет GLB wall bays, buttresses, route guides, curved portals, seams, frames, trims, верхний central landmark, textures либо decals
 - **THEN** они остаются presentation-only, не образуют ложных doorways/cover и не участвуют в collision, navigation, spawn или arena hashing
 
 #### Scenario: Округлый портал следует реальному doorway
