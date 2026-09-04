@@ -15,6 +15,7 @@ import {
   type RendererPort,
 } from './diagnosticRenderer'
 import { CLEAN_FUTURE_SPORT_V1, arenaMaterialToken } from './cleanFutureSport'
+import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
 export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
@@ -137,6 +138,8 @@ export interface FirstPersonRendererOptions {
     onResize: () => void,
   ) => ElementResizeObserver | undefined
   readonly ticksPerSecond?: number
+  /** Prepared presentation-only templates. Runtime owns their lifetime. */
+  readonly arenaGlbAssets?: ArenaGlbTemplateCache
 }
 
 interface TargetPresentation {
@@ -221,6 +224,7 @@ function addArena(
   arena: ArenaDefinition,
   geometries: THREE.BufferGeometry[],
   materials: THREE.Material[],
+  arenaGlbAssets?: ArenaGlbTemplateCache,
 ): void {
   const panelMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.panel)
   const trimMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.trim)
@@ -278,20 +282,20 @@ function addArena(
         const frameSpan = Math.max(0.2, span - 0.3)
         const frameHeight = Math.max(0.2, y - 0.42)
         if (horizontalAlongX) {
-          addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(Math.max(0.7, span * 0.42), Math.max(0.5, y * 0.34), 0.045), new THREE.Vector3(0, 0, face + side * 0.015), wallModuleMaterial)
-          for (const bayOffset of [-0.32, 0.32]) {
-            addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.42, Math.max(0.8, y * 0.76), 0.22), new THREE.Vector3(span * bayOffset, -y * 0.04, face + side * 0.08), portalShellMaterial)
-          }
+          if (arenaGlbAssets === undefined) {
+            addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(Math.max(0.7, span * 0.42), Math.max(0.5, y * 0.34), 0.045), new THREE.Vector3(0, 0, face + side * 0.015), wallModuleMaterial)
+            for (const bayOffset of [-0.32, 0.32]) addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.42, Math.max(0.8, y * 0.76), 0.22), new THREE.Vector3(span * bayOffset, -y * 0.04, face + side * 0.08), portalShellMaterial)
+          } else for (const bayOffset of [-0.32, 0.32]) { const bay = arenaGlbAssets.createInstance('wall-bay'); bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`; bay.position.set(span * bayOffset, -y / 2, face + side * 0.08); detail.add(bay) }
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:top`, new THREE.Vector3(frameSpan, 0.1, 0.035), new THREE.Vector3(0, y / 2 - 0.2, face), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:bottom`, new THREE.Vector3(frameSpan, 0.08, 0.035), new THREE.Vector3(0, -y / 2 + 0.2, face), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:left`, new THREE.Vector3(0.09, frameHeight, 0.035), new THREE.Vector3(-span / 2 + 0.22, 0, face), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:right`, new THREE.Vector3(0.09, frameHeight, 0.035), new THREE.Vector3(span / 2 - 0.22, 0, face), panelMaterial)
           addDetailBox(detail, `presentation:seam:${surface.id}:${side}`, new THREE.Vector3(0.035, Math.max(0.2, y - 0.65), 0.025), new THREE.Vector3(0, 0, face + side * 0.01), trimMaterial)
         } else {
-          addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(0.045, Math.max(0.5, y * 0.34), Math.max(0.7, span * 0.42)), new THREE.Vector3(face + side * 0.015, 0, 0), wallModuleMaterial)
-          for (const bayOffset of [-0.32, 0.32]) {
-            addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.22, Math.max(0.8, y * 0.76), 0.42), new THREE.Vector3(face + side * 0.08, -y * 0.04, span * bayOffset), portalShellMaterial)
-          }
+          if (arenaGlbAssets === undefined) {
+            addDetailBox(detail, `presentation:wall-module:${surface.id}:${side}`, new THREE.Vector3(0.045, Math.max(0.5, y * 0.34), Math.max(0.7, span * 0.42)), new THREE.Vector3(face + side * 0.015, 0, 0), wallModuleMaterial)
+            for (const bayOffset of [-0.32, 0.32]) addDetailBox(detail, `presentation:wall-buttress:${surface.id}:${side}:${bayOffset}`, new THREE.Vector3(0.22, Math.max(0.8, y * 0.76), 0.42), new THREE.Vector3(face + side * 0.08, -y * 0.04, span * bayOffset), portalShellMaterial)
+          } else for (const bayOffset of [-0.32, 0.32]) { const bay = arenaGlbAssets.createInstance('wall-bay'); bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`; bay.position.set(face + side * 0.08, -y / 2, span * bayOffset); bay.rotation.y = Math.PI / 2; detail.add(bay) }
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:top`, new THREE.Vector3(0.035, 0.1, frameSpan), new THREE.Vector3(face, y / 2 - 0.2, 0), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:bottom`, new THREE.Vector3(0.035, 0.08, frameSpan), new THREE.Vector3(face, -y / 2 + 0.2, 0), panelMaterial)
           addDetailBox(detail, `presentation:frame:${surface.id}:${side}:left`, new THREE.Vector3(0.035, frameHeight, 0.09), new THREE.Vector3(face, 0, -span / 2 + 0.22), panelMaterial)
@@ -302,8 +306,8 @@ function addArena(
     } else if (surface.material === 'floor') {
       const top = y / 2 + 0.025
       for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
-        addDetailBox(detail, `presentation:floor-guide:${surface.id}:x:${index}`, new THREE.Vector3(Math.max(0.5, x * 0.17), 0.028, 0.18), new THREE.Vector3(x * offset, top, 0), routeGuideMaterial)
-        addDetailBox(detail, `presentation:floor-guide:${surface.id}:z:${index}`, new THREE.Vector3(0.18, 0.028, Math.max(0.5, z * 0.17)), new THREE.Vector3(0, top, z * offset), routeGuideMaterial)
+        if (arenaGlbAssets === undefined) { addDetailBox(detail, `presentation:floor-guide:${surface.id}:x:${index}`, new THREE.Vector3(Math.max(0.5, x * 0.17), 0.028, 0.18), new THREE.Vector3(x * offset, top, 0), routeGuideMaterial); addDetailBox(detail, `presentation:floor-guide:${surface.id}:z:${index}`, new THREE.Vector3(0.18, 0.028, Math.max(0.5, z * 0.17)), new THREE.Vector3(0, top, z * offset), routeGuideMaterial) }
+        else { const guideX = arenaGlbAssets.createInstance('floor-route-guide'); guideX.name = `presentation:glb:floor-route-guide:${surface.id}:x:${index}`; guideX.position.set(x * offset, top, 0); detail.add(guideX); const guideZ = arenaGlbAssets.createInstance('floor-route-guide'); guideZ.name = `presentation:glb:floor-route-guide:${surface.id}:z:${index}`; guideZ.position.set(0, top, z * offset); guideZ.rotation.y = Math.PI / 2; detail.add(guideZ) }
       }
     } else {
       addDetailBox(detail, `presentation:accent-trim:${surface.id}`, new THREE.Vector3(Math.max(0.2, x + 0.04), 0.045, Math.max(0.2, z + 0.04)), new THREE.Vector3(0, y / 2 + 0.025, 0), trimMaterial)
@@ -312,6 +316,14 @@ function addArena(
   }
 
   for (const gap of arenaDoorwayGaps(arena.surfaces)) {
+    if (arenaGlbAssets !== undefined) {
+      const portal = arenaGlbAssets.createInstance('portal-facade')
+      portal.name = `presentation:glb:portal-facade:${gap.id}`
+      if (gap.horizontalAlongX) portal.position.set(gap.spanCenter, gap.baseY, gap.planeCoordinate)
+      else { portal.position.set(gap.planeCoordinate, gap.baseY, gap.spanCenter); portal.rotation.y = Math.PI / 2 }
+      scene.add(portal)
+      continue
+    }
     const portal = new THREE.Group()
     portal.name = `presentation:portal:${gap.id}`
     const radius = gap.width / 2
@@ -378,6 +390,14 @@ function addArena(
   const combatCenter = arena.regions.find((region) => region.id === 'combat-center')
     ?? arena.regions.find((region) => region.role === 'combat')
   if (combatCenter !== undefined) {
+    if (arenaGlbAssets !== undefined) {
+      const landmark = arenaGlbAssets.createInstance('central-landmark')
+      landmark.name = 'presentation:glb:central-landmark:combat-center'
+      const tallestSurface = Math.max(...arena.surfaces.map((surface) => surface.center.y + surface.size.y / 2))
+      landmark.position.set(combatCenter.center.x, tallestSurface + 0.7, combatCenter.center.z)
+      scene.add(landmark)
+      return
+    }
     const geometry = new THREE.TorusGeometry(1.15, 0.065, 6, 24)
     const landmark = new THREE.Mesh(geometry, landmarkMaterial)
     landmark.name = 'presentation:landmark:combat-center'
@@ -468,6 +488,7 @@ export function createFirstPersonRenderer({
   devicePixelRatio = () => window.devicePixelRatio || 1,
   resizeObserverFactory = defaultResizeObserverFactory,
   ticksPerSecond = DEFAULT_PRESENTATION_TICKS_PER_SECOND,
+  arenaGlbAssets,
 }: FirstPersonRendererOptions): FirstPersonRenderer {
   if (!Number.isFinite(ticksPerSecond) || ticksPerSecond <= 0) {
     throw new RangeError('FirstPersonRenderer ticksPerSecond must be greater than zero')
@@ -495,7 +516,7 @@ export function createFirstPersonRenderer({
 
   const geometries: THREE.BufferGeometry[] = []
   const materials: THREE.Material[] = []
-  addArena(scene, arena, geometries, materials)
+  addArena(scene, arena, geometries, materials, arenaGlbAssets)
 
   const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
   scene.add(hemisphere)
@@ -722,6 +743,7 @@ export function createFirstPersonRenderer({
     materials.forEach((material) => material.dispose())
     renderer.dispose()
     renderer.forceContextLoss?.()
+    arenaGlbAssets?.dispose()
     canvas.remove()
     scene.clear()
   }
