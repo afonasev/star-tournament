@@ -8,8 +8,25 @@ export {
   validatePresentationProfile,
 } from './presentationProfile'
 
-export { GRAPHICS_QUALITY_STORAGE_KEY, GRAPHICS_QUALITY_V1, resolveGraphicsQuality } from './graphicsQuality'
-export type { GraphicsQualityPreset, GraphicsQualityProfile } from './graphicsQuality'
+export {
+  defaultGraphicsQualityPreference,
+  GRAPHICS_QUALITY_SCHEMA_ID,
+  GRAPHICS_QUALITY_STORAGE_KEY,
+  GRAPHICS_QUALITY_V1,
+  parseGraphicsQualityPreference,
+  resolveGraphicsQuality,
+  resolveGraphicsQualityPreference,
+  serializeGraphicsQualityPreference,
+  validateGraphicsQualityPreference,
+} from './graphicsQuality'
+export type {
+  GeometryLodPreference,
+  GraphicsQualityPreference,
+  GraphicsQualityPreset,
+  GraphicsQualityProfile,
+  GraphicsQualityResolution,
+  TextureQualityTier,
+} from './graphicsQuality'
 
 export type {
   NumericPresentationProfileDescriptor,

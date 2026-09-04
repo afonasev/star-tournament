@@ -4,9 +4,10 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { GRAPHICS_QUALITY_STORAGE_KEY } from '../presentation'
 import { MatchSetupMenu } from './MatchSetupMenu'
 
-afterEach(cleanup)
+afterEach(() => { cleanup(); localStorage.clear() })
 
 describe('MatchSetupMenu', () => {
   it('creates the exact FFA configuration and nullable score target from profile metadata', () => {
@@ -57,5 +58,21 @@ describe('MatchSetupMenu', () => {
     expect(screen.getByRole('button', { name: 'Новый seed' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Запустить запасную арену' }))
     expect(onUseFallback).toHaveBeenCalledOnce()
+  })
+
+  it('persists accessible graphics controls and reports a safe malformed-preference fallback', () => {
+    const onGraphicsQualityChange = vi.fn()
+    localStorage.setItem(GRAPHICS_QUALITY_STORAGE_KEY, '{malformed')
+    render(<MatchSetupMenu profile={PROTOTYPE_V1_PROFILE} onStart={vi.fn()} onGraphicsQualityChange={onGraphicsQualityChange} />)
+    expect(screen.getByText(/Неверная локальная настройка/)).toHaveTextContent(/Balanced/)
+    const details = document.querySelector('details')!
+    fireEvent.click(details.querySelector('summary')!)
+    fireEvent.change(screen.getByLabelText('Пресет графики'), { target: { value: 'ultra' } })
+    fireEvent.change(screen.getByLabelText('Render scale'), { target: { value: '1.25' } })
+    fireEvent.click(screen.getByLabelText('Decals'))
+    expect(screen.getByLabelText('Effective graphics quality')).toHaveTextContent(/Ultra.*×1.25.*decals off/)
+    expect(onGraphicsQualityChange).toHaveBeenLastCalledWith(expect.objectContaining({ id: 'ultra', renderScale: 1.25, decals: false }))
+    expect(localStorage.getItem(GRAPHICS_QUALITY_STORAGE_KEY)).toContain('graphics-quality-v1')
+    expect(screen.queryByLabelText('Post-processing')).not.toBeDisabled()
   })
 })

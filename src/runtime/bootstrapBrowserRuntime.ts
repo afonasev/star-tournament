@@ -107,6 +107,7 @@ export interface BrowserPerformanceReport {
     readonly backingBufferHeight: number
     readonly presentationProfileId: string
     readonly presentationProfileHash: string
+    readonly graphicsQualityId: string
     readonly arenaSize: string
     readonly arenaSeed: number
     readonly arenaContentHash: string
@@ -487,6 +488,7 @@ export async function bootstrapBrowserRuntime(
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile,
       pixelBudget: presentationProfile.render.backingBufferPixelBudget * Math.pow(dependencies.graphicsQuality?.renderScale ?? 1, 2),
+      graphicsQuality: dependencies.graphicsQuality,
       onWebGlSubmission: (rendererInfo) => {
         if (performanceRecording) {
           performanceProbe?.recordWebGlSubmission(rendererInfo)
@@ -649,7 +651,8 @@ export async function bootstrapBrowserRuntime(
           backingBufferWidth: canvas?.width ?? 0,
           backingBufferHeight: canvas?.height ?? 0,
           presentationProfileId: presentationProfile.id,
-          presentationProfileHash: presentationProfile.contentHash,
+      presentationProfileHash: presentationProfile.contentHash,
+      graphicsQualityId: dependencies.graphicsQuality?.id ?? 'balanced',
           arenaSize: arena.size,
           arenaSeed: arena.seed,
           arenaContentHash: arena.contentHash,

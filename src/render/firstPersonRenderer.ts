@@ -15,6 +15,8 @@ import {
 } from './diagnosticRenderer'
 import { CLEAN_FUTURE_SPORT_V1, arenaMaterialToken } from './cleanFutureSport'
 import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
+import { createArenaTextureKit, type ArenaTextureKit } from './arenaTextureFactory'
+import { GRAPHICS_QUALITY_V1, type GraphicsQualityProfile } from '../presentation'
 import {
   createFirstPersonGlbPresentation,
   createRobotGlbPresentation,
@@ -144,6 +146,8 @@ export interface FirstPersonRendererOptions {
   readonly ticksPerSecond?: number
   /** Prepared presentation-only templates. Runtime owns their lifetime. */
   readonly arenaGlbAssets?: ArenaGlbTemplateCache
+  /** Renderer-only setting. It never reaches ArenaDefinition or simulation. */
+  readonly graphicsQuality?: GraphicsQualityProfile
 }
 
 interface TargetPresentation {
@@ -231,30 +235,33 @@ function addArena(
   materials: THREE.Material[],
   textures: THREE.Texture[],
   onTextureReady: () => void,
+  graphicsQuality: GraphicsQualityProfile,
   arenaGlbAssets?: ArenaGlbTemplateCache,
-): THREE.Texture {
-  const textureLoader = new THREE.TextureLoader()
-  const tiledTexture = (url: string, repeat: number) => {
-    const texture = textureLoader.load(url, onTextureReady)
-    texture.colorSpace = THREE.SRGBColorSpace
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-    texture.repeat.set(repeat, repeat)
-    return texture
-  }
-  const wallTexture = tiledTexture('/assets/textures/arena-wall-panel-v2.png', 2)
-  const floorTexture = tiledTexture('/assets/textures/arena-floor-panel-v1.png', 3)
-  textures.push(wallTexture, floorTexture)
-  const textured = (parameters: THREE.MeshStandardMaterialParameters, map: THREE.Texture) => new THREE.MeshStandardMaterial({ ...parameters, map })
-  const panelMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.panel, wallTexture)
-  const trimMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.trim, wallTexture)
-  const wallModuleMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.wallModule, wallTexture)
-  const routeGuideMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.routeGuide, floorTexture)
-  const portalShellMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.portalShell, wallTexture)
-  const portalInnerMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.portalInner, wallTexture)
-  const landmarkMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.landmark, wallTexture)
+): ArenaTextureKit {
+  const textureKit = createArenaTextureKit(graphicsQuality, onTextureReady)
+  const { wall: wallMaps, floor: floorMaps } = textureKit
+  const allMaps = [wallMaps.baseColor, wallMaps.normal, wallMaps.orm, floorMaps.baseColor, floorMaps.normal, floorMaps.orm, textureKit.decalAtlas]
+  textures.push(...allMaps.filter((texture): texture is THREE.Texture => texture !== undefined))
+  const textured = (parameters: THREE.MeshStandardMaterialParameters, maps: { readonly baseColor: THREE.Texture; readonly normal: THREE.Texture; readonly orm: THREE.Texture }) => new THREE.MeshStandardMaterial({
+    ...parameters,
+    map: maps.baseColor,
+    normalMap: maps.normal,
+    aoMap: maps.orm,
+    roughnessMap: maps.orm,
+    metalnessMap: maps.orm,
+  })
+  const panelMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.panel, wallMaps)
+  const trimMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.trim, wallMaps)
+  const wallModuleMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.wallModule, wallMaps)
+  const routeGuideMaterial = textureKit.decalAtlas === undefined
+    ? new THREE.MeshStandardMaterial({ ...CLEAN_FUTURE_SPORT_V1.details.routeGuide, color: 0x1d5d71 })
+    : new THREE.MeshStandardMaterial({ ...CLEAN_FUTURE_SPORT_V1.details.routeGuide, map: textureKit.decalAtlas, emissiveMap: textureKit.decalAtlas, emissive: 0x367d8d, emissiveIntensity: 0.22 })
+  const portalShellMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.portalShell, wallMaps)
+  const portalInnerMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.portalInner, wallMaps)
+  const landmarkMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.landmark, wallMaps)
   // Accent solids are architectural cover, not team-colour fields. Their pale
   // panel material keeps the arena shell coherent; cyan remains a thin trim.
-  const accentShellMaterial = textured({ ...CLEAN_FUTURE_SPORT_V1.materials.wall, color: 0xdde7ec }, wallTexture)
+  const accentShellMaterial = textured({ ...CLEAN_FUTURE_SPORT_V1.materials.wall, color: 0xdde7ec }, wallMaps)
   materials.push(panelMaterial, trimMaterial, wallModuleMaterial, routeGuideMaterial, portalShellMaterial, portalInnerMaterial, landmarkMaterial, accentShellMaterial)
 
   // GLB templates share authored materials. Clone before attaching a map so every
@@ -321,7 +328,10 @@ function addArena(
       ? accentShellMaterial
       : new THREE.MeshStandardMaterial({
         ...token,
-        map: surface.material === 'floor' ? floorTexture : wallTexture,
+        map: surface.material === 'floor' ? floorMaps.baseColor : wallMaps.baseColor,
+        normalMap: surface.material === 'floor' ? floorMaps.normal : wallMaps.normal,
+        roughnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
+        metalnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
       })
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = `arena:${surface.id}`
@@ -376,7 +386,7 @@ function addArena(
       }
     } else if (surface.material === 'floor') {
       const top = y / 2 + 0.025
-      for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
+      if (textureKit.residency.decalsIncluded) for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
         addDetailBox(detail, `presentation:floor-guide:${surface.id}:x:${index}`, new THREE.Vector3(Math.max(0.5, x * 0.17), 0.028, 0.18), new THREE.Vector3(x * offset, top, 0), routeGuideMaterial)
         addDetailBox(detail, `presentation:floor-guide:${surface.id}:z:${index}`, new THREE.Vector3(0.18, 0.028, Math.max(0.5, z * 0.17)), new THREE.Vector3(0, top, z * offset), routeGuideMaterial)
       }
@@ -397,7 +407,10 @@ function addArena(
   const ceilingGeometry = new THREE.BoxGeometry(maxX - minX + 0.2, 0.12, maxZ - minZ + 0.2)
   const ceilingMaterial = new THREE.MeshStandardMaterial({
     ...CLEAN_FUTURE_SPORT_V1.materials.wall,
-    map: wallTexture,
+    map: wallMaps.baseColor,
+    normalMap: wallMaps.normal,
+    roughnessMap: wallMaps.orm,
+    metalnessMap: wallMaps.orm,
     side: THREE.DoubleSide,
   })
   const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial)
@@ -409,8 +422,8 @@ function addArena(
 
   for (const gap of arenaDoorwayGaps(arena.surfaces)) {
     if (arenaGlbAssets !== undefined) {
-      const portal = arenaGlbAssets.createInstance('portal-facade')
-      textureGlbInstance(portal, wallTexture)
+      const portal = arenaGlbAssets.createInstance('portal-facade', 0, graphicsQuality.geometryLod)
+      textureGlbInstance(portal, wallMaps.baseColor)
       portal.name = `presentation:glb:portal-facade:${gap.id}`
       if (gap.horizontalAlongX) portal.position.set(gap.spanCenter, gap.baseY, gap.planeCoordinate)
       else { portal.position.set(gap.planeCoordinate, gap.baseY, gap.spanCenter); portal.rotation.y = Math.PI / 2 }
@@ -484,13 +497,13 @@ function addArena(
     ?? arena.regions.find((region) => region.role === 'combat')
   if (combatCenter !== undefined) {
     if (arenaGlbAssets !== undefined) {
-      const landmark = arenaGlbAssets.createInstance('central-landmark')
-      textureGlbInstance(landmark, wallTexture)
+      const landmark = arenaGlbAssets.createInstance('central-landmark', 0, graphicsQuality.geometryLod)
+      textureGlbInstance(landmark, wallMaps.baseColor)
       landmark.name = 'presentation:glb:central-landmark:combat-center'
       const tallestSurface = Math.max(...arena.surfaces.map((surface) => surface.center.y + surface.size.y / 2))
       landmark.position.set(combatCenter.center.x, tallestSurface + 0.7, combatCenter.center.z)
       scene.add(landmark)
-      return wallTexture
+      return textureKit
     }
     const geometry = new THREE.TorusGeometry(1.15, 0.065, 6, 24)
     const landmark = new THREE.Mesh(geometry, landmarkMaterial)
@@ -501,7 +514,7 @@ function addArena(
     scene.add(landmark)
     geometries.push(geometry)
   }
-  return wallTexture
+  return textureKit
 }
 
 function addRobotTarget(
@@ -547,6 +560,7 @@ export function createFirstPersonRenderer({
   resizeObserverFactory = defaultResizeObserverFactory,
   ticksPerSecond = DEFAULT_PRESENTATION_TICKS_PER_SECOND,
   arenaGlbAssets,
+  graphicsQuality,
 }: FirstPersonRendererOptions): FirstPersonRenderer {
   if (!Number.isFinite(ticksPerSecond) || ticksPerSecond <= 0) {
     throw new RangeError('FirstPersonRenderer ticksPerSecond must be greater than zero')
@@ -575,7 +589,9 @@ export function createFirstPersonRenderer({
   const geometries: THREE.BufferGeometry[] = []
   const materials: THREE.Material[] = []
   const textures: THREE.Texture[] = []
-  const participantTexture = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), arenaGlbAssets)
+  const activeGraphicsQuality = graphicsQuality ?? GRAPHICS_QUALITY_V1.balanced
+  const textureKit = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets)
+  const participantTexture = textureKit.wall.baseColor
 
   const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
   scene.add(hemisphere)
@@ -622,6 +638,9 @@ export function createFirstPersonRenderer({
   canvas.dataset.scenarioHash = scenario.contentHash
   canvas.dataset.profileId = profile.id
   canvas.dataset.profileHash = profile.contentHash
+  canvas.dataset.graphicsQuality = activeGraphicsQuality.id
+  canvas.dataset.textureResidentMib = String(textureKit.residency.residentMiB)
+  canvas.dataset.textureBudgetMib = String(textureKit.residency.budgetMiB)
   canvas.setAttribute('aria-label', `First-person арена ${arena.id}`)
   container.replaceChildren(canvas)
 

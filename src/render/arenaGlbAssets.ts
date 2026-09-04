@@ -2,13 +2,14 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import { CLEAN_FUTURE_SPORT_GLB_V1, type ArenaGlbAssetEntry, type ArenaGlbAssetKey, validateArenaGlbManifest } from './arenaGlbManifest'
+import type { GeometryLodPreference } from '../presentation'
 
 export class ArenaGlbAssetError extends Error {
   constructor(message: string, readonly cause?: unknown) { super(message); this.name = 'ArenaGlbAssetError' }
 }
 
 export interface ArenaGlbTemplateCache {
-  readonly createInstance: (key: ArenaGlbAssetKey, distanceMeters?: number) => THREE.Object3D
+  readonly createInstance: (key: ArenaGlbAssetKey, distanceMeters?: number, preferredLod?: GeometryLodPreference) => THREE.Object3D
   readonly dispose: () => void
 }
 
@@ -38,12 +39,12 @@ export async function prepareArenaGlbAssets(
     }))
     let disposed = false
     return {
-      createInstance(key, distanceMeters = 0) {
+      createInstance(key, distanceMeters = 0, preferredLod) {
         if (disposed) throw new ArenaGlbAssetError('GLB template cache is disposed')
         const entry = manifest[key]
         const template = templates.get(key)
         if (template === undefined) throw new ArenaGlbAssetError(`Required GLB template is unavailable: ${key}`)
-        const useLod1 = distanceMeters > entry.lod.switchDistanceMeters + entry.lod.hysteresisMeters
+        const useLod1 = preferredLod === 'lod1' || distanceMeters > entry.lod.switchDistanceMeters + entry.lod.hysteresisMeters
         const instance = template[useLod1 ? 1 : 0].clone(true)
         instance.userData.arenaGlbKey = key
         instance.userData.lod = useLod1 ? 1 : 0

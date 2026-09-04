@@ -133,19 +133,22 @@ async function readPerformanceReport(client, sessionId) {
   throw new Error('Browser performance report timed out')
 }
 
-async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed) {
+async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality) {
   const deadline = Date.now() + 10_000
   while (Date.now() < deadline) {
     const evaluation = await client.send('Runtime.evaluate', {
       expression: `(() => {
         const size = document.querySelector('[aria-label="Размер арены"]')
         const seed = document.querySelector('[aria-label="Seed арены"]')
-        if (!(size instanceof HTMLSelectElement) || !(seed instanceof HTMLInputElement)) return false
+        const quality = document.querySelector('[aria-label="Пресет графики"]')
+        if (!(size instanceof HTMLSelectElement) || !(seed instanceof HTMLInputElement) || !(quality instanceof HTMLSelectElement)) return false
         Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(size, ${JSON.stringify(arenaSize)})
         size.dispatchEvent(new Event('change', { bubbles: true }))
         Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(seed, ${JSON.stringify(String(arenaSeed))})
         seed.dispatchEvent(new Event('input', { bubbles: true }))
         seed.dispatchEvent(new Event('change', { bubbles: true }))
+        Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(quality, ${JSON.stringify(graphicsQuality)})
+        quality.dispatchEvent(new Event('change', { bubbles: true }))
         const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Начать матч')
         if (!button) return false
         button.click()
@@ -165,6 +168,11 @@ const arenaSize = process.env.STAR_TOURNAMENT_ARENA_SIZE ?? 'medium'
 if (!['small', 'medium', 'large'].includes(arenaSize)) throw new Error('STAR_TOURNAMENT_ARENA_SIZE must be small, medium, or large')
 const arenaSeed = Number(process.env.STAR_TOURNAMENT_ARENA_SEED ?? 0x53544152)
 if (!Number.isSafeInteger(arenaSeed) || arenaSeed < 0 || arenaSeed > 0xffffffff) throw new Error('STAR_TOURNAMENT_ARENA_SEED must be uint32')
+const graphicsQuality = process.env.STAR_TOURNAMENT_GRAPHICS_QUALITY ?? 'balanced'
+if (!['low', 'balanced', 'high', 'ultra'].includes(graphicsQuality)) throw new Error('STAR_TOURNAMENT_GRAPHICS_QUALITY must be low, balanced, high, or ultra')
+const viewportWidth = Number(process.env.STAR_TOURNAMENT_VIEWPORT_WIDTH ?? 1280)
+const viewportHeight = Number(process.env.STAR_TOURNAMENT_VIEWPORT_HEIGHT ?? 720)
+if (!Number.isInteger(viewportWidth) || !Number.isInteger(viewportHeight) || viewportWidth < 320 || viewportHeight < 180 || viewportWidth > 7680 || viewportHeight > 4320) throw new Error('STAR_TOURNAMENT viewport must be an integer between 320×180 and 7680×4320')
 const chromePath = await availablePath([
   process.env.STAR_TOURNAMENT_CHROME_PATH,
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -206,13 +214,13 @@ try {
   await client.send('Page.enable', {}, sessionId)
   await client.send('Runtime.enable', {}, sessionId)
   await client.send('Emulation.setDeviceMetricsOverride', {
-    width: 1280,
-    height: 720,
+    width: viewportWidth,
+    height: viewportHeight,
     deviceScaleFactor: 2,
     mobile: false,
   }, sessionId)
   await client.send('Page.navigate', { url: previewUrl }, sessionId)
-  await startDefaultMatch(client, sessionId, arenaSize, arenaSeed)
+  await startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality)
   const report = await readPerformanceReport(client, sessionId)
   const output = process.env.STAR_TOURNAMENT_PERF_SUMMARY === '1'
     ? { passed: report.passed, environment: report.environment, phases: report.gates.map(({ phase, passed }) => ({ phase, passed })) }

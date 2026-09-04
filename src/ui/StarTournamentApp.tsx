@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { generateProceduralArena, PROCEDURAL_FALLBACK_ARENA, type ArenaDefinition, type ProceduralArenaGenerationResult } from '../arena'
 import { createMatchConfiguration, type MatchConfiguration } from '../match'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
-import { GRAPHICS_QUALITY_V1, type GraphicsQualityPreset } from '../presentation'
+import { GRAPHICS_QUALITY_STORAGE_KEY, parseGraphicsQualityPreference, type GraphicsQualityProfile } from '../presentation'
 import { bootstrapBrowserRuntime, type BrowserApplication, type BrowserBootstrapDependencies } from '../runtime/bootstrapBrowserRuntime'
 import { MatchSetupMenu } from './MatchSetupMenu'
 import { UiPreview, type UiPreviewKind } from './UiPreview'
@@ -16,11 +16,13 @@ export interface StarTournamentAppProps {
 interface MatchSession {
   readonly configuration: MatchConfiguration
   readonly arena: ArenaDefinition
-  readonly graphicsQuality: GraphicsQualityPreset
+  readonly graphicsQuality: GraphicsQualityProfile
 }
 
 export function StarTournamentApp({ bootstrap = bootstrapBrowserRuntime, generateArena = generateProceduralArena }: StarTournamentAppProps) {
-  const [graphicsQuality, setGraphicsQuality] = useState<GraphicsQualityPreset>('balanced')
+  const [graphicsQuality, setGraphicsQuality] = useState<GraphicsQualityProfile>(() => (
+    parseGraphicsQualityPreference(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY)).profile
+  ))
   const [session, setSession] = useState<MatchSession | null>(null)
   const [failedConfiguration, setFailedConfiguration] = useState<MatchConfiguration | null>(null)
   const [generationError, setGenerationError] = useState<{ seed: number; size: MatchConfiguration['arenaSize']; reason: string } | null>(null)
@@ -36,7 +38,7 @@ export function StarTournamentApp({ bootstrap = bootstrapBrowserRuntime, generat
     void bootstrap(host, {
       configuration: session.configuration,
       arena: session.arena,
-      graphicsQuality: GRAPHICS_QUALITY_V1[session.graphicsQuality],
+      graphicsQuality: session.graphicsQuality,
       onRepeat: () => setSessionNumber((value) => value + 1),
       onMainMenu: () => { setSession(null); setGenerationError(null) },
     }).then((created) => {

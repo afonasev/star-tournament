@@ -9,7 +9,16 @@ import {
 } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import type { ArenaSize } from '../arena'
-import { GRAPHICS_QUALITY_STORAGE_KEY, GRAPHICS_QUALITY_V1, resolveGraphicsQuality, type GraphicsQualityPreset } from '../presentation'
+import {
+  GRAPHICS_QUALITY_STORAGE_KEY,
+  GRAPHICS_QUALITY_V1,
+  parseGraphicsQualityPreference,
+  resolveGraphicsQualityPreference,
+  serializeGraphicsQualityPreference,
+  type GraphicsQualityPreference,
+  type GraphicsQualityProfile,
+  type GraphicsQualityPreset,
+} from '../presentation'
 
 export interface ArenaGenerationErrorView {
   readonly seed: number
@@ -22,7 +31,7 @@ export interface MatchSetupMenuProps {
   readonly onStart: (configuration: MatchConfiguration) => void
   readonly generationError?: ArenaGenerationErrorView | null
   readonly onUseFallback?: () => void
-  readonly onGraphicsQualityChange?: (quality: GraphicsQualityPreset) => void
+  readonly onGraphicsQualityChange?: (quality: GraphicsQualityProfile) => void
 }
 
 function autoSeed(): number {
@@ -40,7 +49,15 @@ function parseSeedDraft(value: string): number | null {
 }
 
 export function MatchSetupMenu({ profile, onStart, generationError, onUseFallback, onGraphicsQualityChange }: MatchSetupMenuProps) {
-  const [graphicsQuality, setGraphicsQuality] = useState<GraphicsQualityPreset>(() => resolveGraphicsQuality(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY)).id)
+  const [graphicsPreference, setGraphicsPreference] = useState<GraphicsQualityPreference>(() => {
+    const resolved = parseGraphicsQualityPreference(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY))
+    return { schemaId: 'graphics-quality-v1', preset: resolved.profile.id }
+  })
+  const [storedGraphicsFallbackReason] = useState(() => (
+    parseGraphicsQualityPreference(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY)).fallbackReason
+  ))
+  const graphicsResolution = resolveGraphicsQualityPreference(graphicsPreference)
+  const graphicsQuality = graphicsResolution.profile
   const [mode, setMode] = useState<MatchMode>('ffa')
   const [arenaSize, setArenaSize] = useState<ArenaSize>('medium')
   const [seedDraft, setSeedDraft] = useState('')
@@ -87,11 +104,23 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
     }
   }
 
+  const saveGraphicsPreference = (next: GraphicsQualityPreference) => {
+    const resolved = resolveGraphicsQualityPreference(next).profile
+    globalThis.localStorage?.setItem(GRAPHICS_QUALITY_STORAGE_KEY, serializeGraphicsQualityPreference(next))
+    setGraphicsPreference(next)
+    onGraphicsQualityChange?.(resolved)
+  }
+
   const selectGraphicsQuality = (value: string) => {
-    const resolved = resolveGraphicsQuality(value)
-    globalThis.localStorage?.setItem(GRAPHICS_QUALITY_STORAGE_KEY, resolved.id)
-    setGraphicsQuality(resolved.id)
-    onGraphicsQualityChange?.(resolved.id)
+    if (!Object.hasOwn(GRAPHICS_QUALITY_V1, value)) return
+    saveGraphicsPreference({ schemaId: 'graphics-quality-v1', preset: value as GraphicsQualityPreset })
+  }
+
+  const overrideGraphics = (overrides: NonNullable<GraphicsQualityPreference['overrides']>) => {
+    saveGraphicsPreference({
+      ...graphicsPreference,
+      overrides: { ...graphicsPreference.overrides, ...overrides },
+    })
   }
 
   return (
@@ -126,10 +155,16 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
           {targetEnabled && <label>Очки<input aria-label="Цель по очкам" type="number" min={profile.rules.match.scoreTarget.minimumPoints} max={profile.rules.match.scoreTarget.maximumPoints} step={profile.rules.match.scoreTarget.stepPoints} value={scoreTargetPoints} onChange={(event) => setScoreTargetPoints(Number(event.target.value))} /></label>}
         </div>
         <details className="match-menu__graphics">
-          <summary>Графика · {GRAPHICS_QUALITY_V1[graphicsQuality].label}</summary>
-          <label>Пресет<select aria-label="Пресет графики" value={graphicsQuality} onChange={(event) => selectGraphicsQuality(event.target.value)}>{Object.values(GRAPHICS_QUALITY_V1).map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
-          <p>Рендер: ×{GRAPHICS_QUALITY_V1[graphicsQuality].renderScale} · текстуры: {GRAPHICS_QUALITY_V1[graphicsQuality].textureTier} · до {GRAPHICS_QUALITY_V1[graphicsQuality].textureBudgetMiB} MiB</p>
-          <p>LOD: {GRAPHICS_QUALITY_V1[graphicsQuality].geometryLod} · decals: {GRAPHICS_QUALITY_V1[graphicsQuality].decals ? 'вкл.' : 'выкл.'} · post-processing: {GRAPHICS_QUALITY_V1[graphicsQuality].postProcessing ? 'вкл.' : 'выкл.'}</p>
+          <summary>Графика · {graphicsQuality.label}</summary>
+          <label>Пресет<select aria-label="Пресет графики" value={graphicsPreference.preset} onChange={(event) => selectGraphicsQuality(event.target.value)}>{Object.values(GRAPHICS_QUALITY_V1).map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
+          <label>Render scale<select aria-label="Render scale" value={graphicsQuality.renderScale} onChange={(event) => overrideGraphics({ renderScale: Number(event.target.value) })}>{[0.7, 1, 1.25, 1.5].map((value) => <option key={value} value={value}>×{value}</option>)}</select></label>
+          <label>Текстуры<select aria-label="Качество текстур" value={graphicsQuality.textureTier} onChange={(event) => overrideGraphics({ textureTier: event.target.value as 'low' | 'high' })}><option value="low">Low</option><option value="high">High</option></select></label>
+          <label>Geometry LOD<select aria-label="Geometry LOD" value={graphicsQuality.geometryLod} onChange={(event) => overrideGraphics({ geometryLod: event.target.value as 'lod0' | 'lod1' })}><option value="lod1">LOD 1</option><option value="lod0">LOD 0</option></select></label>
+          <label className="match-menu__check"><input aria-label="Decals" type="checkbox" checked={graphicsQuality.decals} onChange={(event) => overrideGraphics({ decals: event.target.checked })} />Decals</label>
+          <label className="match-menu__check"><input aria-label="Post-processing" type="checkbox" checked={graphicsQuality.postProcessing} disabled={graphicsPreference.preset !== 'ultra'} aria-describedby="post-processing-reason" onChange={(event) => overrideGraphics({ postProcessing: event.target.checked })} />Post-processing</label>
+          {graphicsPreference.preset !== 'ultra' && <p id="post-processing-reason">Post-processing доступен только в Ultra.</p>}
+          <output aria-label="Effective graphics quality">Effective: {graphicsQuality.label} · ×{graphicsQuality.renderScale} · {graphicsQuality.textureTier} · {graphicsQuality.geometryLod} · decals {graphicsQuality.decals ? 'on' : 'off'} · {graphicsQuality.textureBudgetMiB} MiB</output>
+          {(storedGraphicsFallbackReason ?? graphicsResolution.fallbackReason) && <p role="status">{storedGraphicsFallbackReason ?? graphicsResolution.fallbackReason}</p>}
         </details>
         {seedError !== null && <p className="match-menu__validation" role="alert">{seedError}</p>}
         {generationError != null && <div className="match-menu__generation-error" role="alert"><strong>Арена не создана</strong><p>{generationError.size} · seed {generationError.seed}: {generationError.reason}</p><div><button type="button" onClick={() => start(false, generationError.seed)}>Повторить seed</button><button type="button" onClick={() => { setSeedDraft(''); start(true) }}>Новый seed</button>{onUseFallback && <button type="button" onClick={onUseFallback}>Запустить запасную арену</button>}</div></div>}
