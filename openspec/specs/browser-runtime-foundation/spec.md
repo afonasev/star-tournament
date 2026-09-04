@@ -177,15 +177,19 @@ Playable replay SHALL хранить validated `ArenaDefinition` один раз
 - **THEN** portable cadence/lifecycle gates проходят, а device-sensitive counters публикуются как evidence или явно unavailable
 
 ### Requirement: Presentation style validated arena
-Browser runtime SHALL применять утверждённый arena presentation style и active graphics-quality profile к renderer-derived surfaces одной immutable validated `ArenaDefinition`. Style, textures, decals, quality preferences, lights, fog и transient presentation MUST NOT входить в simulation snapshot, replay, RNG или state hash. Runtime MUST поддерживать display output до 3840×2160; при ограниченном presentation budget он SHALL уменьшать только internal render scale и presentation detail, сохраняя DOM/HUD layout и gameplay camera/simulation.
+Browser runtime SHALL применять утверждённый arena presentation style, active graphics-quality profile и versioned GLB asset manifest к renderer-derived surfaces одной immutable validated `ArenaDefinition`. Style, textures, decals, quality preferences, GLB asset loading, LOD, lights, fog и transient presentation MUST NOT входить в simulation snapshot, replay, RNG или state hash; failed mandatory asset preparation MUST блокировать только presentation startup со стабильной actionable error. Runtime MUST поддерживать display output до 3840×2160; при ограниченном presentation budget он SHALL уменьшать только internal render scale и presentation detail, сохраняя DOM/HUD layout и gameplay camera/simulation.
 
 #### Scenario: Renderer style при неизменной симуляции
 - **WHEN** один и тот же initial snapshot отображается с разной render cadence, после resize, с другим quality profile либо в debug surface
-- **THEN** style kit не меняет arena identity, participant transforms, simulation hash или количество gameplay ticks
+- **THEN** GLB style kit не меняет arena identity, participant transforms, simulation hash или количество gameplay ticks
 
 #### Scenario: Presentation performance
-- **WHEN** style kit изменяет материалы, texture quality, LOD, decals, освещение или visibility treatment arena
+- **WHEN** GLB style kit изменяет материалы, texture quality, LOD, decals, освещение или visibility treatment arena
 - **THEN** production-browser performance gate сохраняет lifecycle counters и проходит утверждённые portable hard gates
+
+#### Scenario: Ошибка обязательного asset
+- **WHEN** manifest entry или required GLB нельзя подготовить до первого render
+- **THEN** runtime показывает DOM actionable error, не создаёт WebGL loop и не изменяет snapshot либо replay
 
 #### Scenario: 4K display output
 - **WHEN** playfield отображается на 3840×2160 display output
