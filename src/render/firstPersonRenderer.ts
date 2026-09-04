@@ -283,6 +283,12 @@ function addArena(
         material.emissiveMap = map
         material.emissive.setHex(0x8ca7b0)
         material.emissiveIntensity = 0.32
+        // GLB bays are intentionally coplanar with their semantic wall slot.
+        // Bias only the presentation depth to prevent texture z-fighting;
+        // geometry and collision projection remain untouched.
+        material.polygonOffset = true
+        material.polygonOffsetFactor = -1
+        material.polygonOffsetUnits = -1
         material.needsUpdate = true
       }
       materials.push(material)
