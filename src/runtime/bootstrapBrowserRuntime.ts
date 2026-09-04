@@ -42,6 +42,7 @@ import {
   type FirstPersonRenderer,
   type FirstPersonRendererOptions,
 } from '../render/firstPersonRenderer'
+import type { GraphicsQualityProfile } from '../presentation'
 import { prepareArenaGlbAssets, type ArenaGlbTemplateCache } from '../render/arenaGlbAssets'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import {
@@ -185,6 +186,8 @@ function errorCode(error: unknown): string {
 export interface BrowserBootstrapDependencies {
   readonly profile?: GameDesignProfile | ValidatedGameDesignProfile
   readonly presentationProfile?: PresentationProfile | ValidatedPresentationProfile
+  /** Presentation preference; never participates in match or replay identity. */
+  readonly graphicsQuality?: GraphicsQualityProfile
   readonly createCollisionWorld?: (
     arena: ArenaDefinition,
     capsules: readonly CollisionCapsuleProjection[],
@@ -483,7 +486,7 @@ export async function bootstrapBrowserRuntime(
       arena,
       scenario: COMBAT_SLICE_SCENARIO_V1,
       profile,
-      pixelBudget: presentationProfile.render.backingBufferPixelBudget,
+      pixelBudget: presentationProfile.render.backingBufferPixelBudget * Math.pow(dependencies.graphicsQuality?.renderScale ?? 1, 2),
       onWebGlSubmission: (rendererInfo) => {
         if (performanceRecording) {
           performanceProbe?.recordWebGlSubmission(rendererInfo)

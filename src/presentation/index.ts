@@ -8,6 +8,9 @@ export {
   validatePresentationProfile,
 } from './presentationProfile'
 
+export { GRAPHICS_QUALITY_STORAGE_KEY, GRAPHICS_QUALITY_V1, resolveGraphicsQuality } from './graphicsQuality'
+export type { GraphicsQualityPreset, GraphicsQualityProfile } from './graphicsQuality'
+
 export type {
   NumericPresentationProfileDescriptor,
   PresentationProfile,

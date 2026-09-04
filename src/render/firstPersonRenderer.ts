@@ -224,8 +224,20 @@ function addArena(
   arena: ArenaDefinition,
   geometries: THREE.BufferGeometry[],
   materials: THREE.Material[],
+  textures: THREE.Texture[],
   arenaGlbAssets?: ArenaGlbTemplateCache,
 ): void {
+  const textureLoader = new THREE.TextureLoader()
+  const tiledTexture = (url: string, repeat: number) => {
+    const texture = textureLoader.load(url)
+    texture.colorSpace = THREE.SRGBColorSpace
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    texture.repeat.set(repeat, repeat)
+    return texture
+  }
+  const wallTexture = tiledTexture('/assets/textures/arena-wall-panel-v1.png', 2)
+  const floorTexture = tiledTexture('/assets/textures/arena-floor-panel-v1.png', 3)
+  textures.push(wallTexture, floorTexture)
   const panelMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.panel)
   const trimMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.trim)
   const wallModuleMaterial = new THREE.MeshStandardMaterial(CLEAN_FUTURE_SPORT_V1.details.wallModule)
@@ -253,7 +265,7 @@ function addArena(
   for (const surface of arena.surfaces) {
     const geometry = new THREE.BoxGeometry(surface.size.x, surface.size.y, surface.size.z)
     const token = arenaMaterialToken(surface.material)
-    const material = new THREE.MeshStandardMaterial(token)
+    const material = new THREE.MeshStandardMaterial({ ...token, map: surface.material === 'floor' ? floorTexture : surface.material === 'wall' ? wallTexture : null })
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = `arena:${surface.id}`
     mesh.position.set(surface.center.x, surface.center.y, surface.center.z)
@@ -516,7 +528,8 @@ export function createFirstPersonRenderer({
 
   const geometries: THREE.BufferGeometry[] = []
   const materials: THREE.Material[] = []
-  addArena(scene, arena, geometries, materials, arenaGlbAssets)
+  const textures: THREE.Texture[] = []
+  addArena(scene, arena, geometries, materials, textures, arenaGlbAssets)
 
   const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
   scene.add(hemisphere)
@@ -741,6 +754,7 @@ export function createFirstPersonRenderer({
     lastSnapshot = undefined
     geometries.forEach((geometry) => geometry.dispose())
     materials.forEach((material) => material.dispose())
+    textures.forEach((texture) => texture.dispose())
     renderer.dispose()
     renderer.forceContextLoss?.()
     arenaGlbAssets?.dispose()
