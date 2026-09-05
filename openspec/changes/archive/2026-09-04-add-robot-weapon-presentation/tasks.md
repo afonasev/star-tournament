@@ -1,6 +1,6 @@
 ## 1. Контракт и handoff
 
-- [x] 1.1 Обновить `docs/GAME_SPEC.md` утверждённым visual contract robots, weapon и first-person hands и добавить `docs/tasks/05-add-robot-weapon-presentation.md`; проверить diff на отсутствие новых gameplay rules или чисел.
+- [x] 1.1 Обновить `docs/GAME_SPEC.md` утверждённым visual contract robots, weapon и first-person hands и добавить `docs/tasks/completed/05-add-robot-weapon-presentation.md`; проверить diff на отсутствие новых gameplay rules или чисел.
 
 ## 2. Renderer presentation
 

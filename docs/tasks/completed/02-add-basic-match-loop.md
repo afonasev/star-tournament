@@ -1,5 +1,7 @@
 # 02 · Add basic match loop
 
+Статус: завершено и интегрировано в main; OpenSpec архивирован в `openspec/changes/archive/2026-09-01-add-basic-match-loop/`. Ниже сохранены результаты исходной проверки; указанные dev URL — исторические, не текущие стенды. Деплой не выполнен.
+
 ## Scope
 
 OpenSpec change `add-basic-match-loop` adds a configurable local FFA/team match around the existing single keyboard/mouse combat slice. Stationary mannequins are participants with damage, death, corpse and respawn lifecycle; they still have no movement, attacks or AI.

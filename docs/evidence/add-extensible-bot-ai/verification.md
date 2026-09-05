@@ -7,7 +7,9 @@ Dev origin: `http://127.0.0.1:4193/`, HTTP 200, worktree
 Status: implemented; result accepted by the user on 2026-09-05 with explicit
 approval to sync, integrate and archive despite the evidence limitations below.
 Feature commit `c9d51e8` fast-forward integrated into `main`.
-Acceptance is not a claim that each physical input scenario passed.
+Subsequently the user explicitly confirmed completing the remaining manual AI
+acceptance: move/look/jump/fire and pause/resume. Physical acceptance is credited
+to the user, not to browser automation.
 Deployment and post-deploy verification remain open: no Git remote or deployment
 configuration is available. The archive commit changes documentation only;
 existing gameplay checks apply to the unchanged implementation.
@@ -25,7 +27,9 @@ existing gameplay checks apply to the unchanged implementation.
 - `git diff --check`: PASS. No runtime, tests, assets or balance values changed
   during closure, so browser/performance and AI evaluation were not rerun.
 - Archive: `openspec/changes/archive/2026-09-05-add-extensible-bot-ai/`;
-  tasks 5.2–5.5 intentionally remain unchecked under the user-approved exception.
+  tasks 5.2–5.5 were initially unchecked under the user-approved exception.
+  After the explicit manual-test confirmation, 5.2 and 5.4 are complete;
+  5.3 (missing PNG) and 5.5 (deployment) remain open.
 
 ## Automated evidence
 
@@ -80,7 +84,8 @@ The browser Repeat of the identical configuration also produced exactly
 Normal start was attempted through semantic and coordinate clicks. Both showed
 the retryable pointer-lock error. The performance harness intentionally uses
 synthetic human input and is not a substitute for physical move/look/jump/fire
-or normal pointer-lock pause/resume. These checks remain explicitly open.
+or normal pointer-lock pause/resume. These automated attempts did not pass; the user subsequently confirmed
+completing the physical checks manually.
 Native fallback through the application was also unavailable: computer-use
 access to the Codex app was refused by the tool's safety boundary. No bypass
 or alternative input injection mechanism was attempted.

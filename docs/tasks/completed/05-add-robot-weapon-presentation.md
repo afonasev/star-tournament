@@ -1,5 +1,7 @@
 # 05 · Add robot and weapon presentation
 
+Статус: завершено и интегрировано в main; OpenSpec архивирован в `openspec/changes/archive/2026-09-04-add-robot-weapon-presentation/`. Ниже сохранены результаты исходной проверки; указанные dev URL — исторические, не текущие стенды. Деплой не выполнен.
+
 ## Scope
 
 OpenSpec change `add-robot-weapon-presentation` adds renderer-only light sports robots, readable participant identity colors, a double-barrel energy shotgun in world view, and a first-person robotic hands/weapon viewmodel.

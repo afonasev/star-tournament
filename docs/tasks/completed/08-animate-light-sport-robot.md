@@ -1,6 +1,6 @@
 # 08 — Полная анимация light-sport-robot
 
-Статус: active.
+Статус: завершено, интегрировано в main и архивировано. Деплой не выполнен. Результаты и dev URL ниже относятся к исходной проверке.
 
 Ветка: `codex/animate-light-sport-robot`, от `62d2a84`.
 
@@ -25,4 +25,4 @@
 - `?animationReview` открывает muted third-person sandbox с явными controls для всех states, LOD0/LOD1 и automatic full review. Сохранены и визуально проверены canvas PNG для idle, walk/run/strafe, jump phases, aim/fire, hit, destruction и LOD1, а также GIF полного LOD0-прогона в `docs/evidence/animate-light-sport-robot/`.
 - In-app Browser подтвердил URL `http://127.0.0.1:5192/?animationReview`, оба LOD и инициализацию игрового renderer после старта локального матча. Browser не выдал pointer-lock, поэтому это не доказательство physical mouse-look; audio был выключен.
 - `npm run typecheck`, focused Vitest (4 files/35 tests), `npm run build`, `openspec validate animate-light-sport-robot --strict` и `git diff --check` прошли. Vite предупреждает о chunks >500 kB.
-- Merge, archive и deploy не выполнялись.
+- После исходной проверки выполнены merge и archive (`openspec/changes/archive/2026-09-05-animate-light-sport-robot/`). Деплой не выполнялся.

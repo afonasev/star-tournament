@@ -31,18 +31,23 @@
 ## 5. Приёмка и handoff
 
 - [x] 5.1 Выполнить typecheck, полный test, build и strict OpenSpec validation; сохранить краткую сводку результатов.
-- [ ] 5.2 Запустить dev из текущего worktree, проверить HTTP и сообщить фактический URL; muted in-app Browser проверяет add/remove, смешанную сложность, FFA/teams, physical move/look/jump/fire, live/results, killcam/respawn, Repeat и pause/resume.
+- [x] 5.2 Запустить dev из текущего worktree, проверить HTTP и сообщить фактический URL; muted in-app Browser проверяет add/remove, смешанную сложность, FFA/teams, physical move/look/jump/fire, live/results, killcam/respawn, Repeat и pause/resume.
 - [ ] 5.3 Сохранить и визуально проверить PNG setup, игрового боя, live и результатов для FFA/teams; приложить absolute-path images с seed/profile/revision к handoff.
-- [ ] 5.4 Выполнить collision/performance gates с AI и восемью участниками; сохранить timings/hashes/zero-work evidence, а physical-input блокировку явно оставить незакрытой до устойчивой browser сессии.
+- [x] 5.4 Выполнить collision/performance gates с AI и восемью участниками; сохранить timings/hashes/zero-work evidence, а physical-input блокировку явно оставить незакрытой до устойчивой browser сессии.
 - [ ] 5.5 Обновить GAME_SPEC о фактической реализации, сводку handoff и завершённую task file; проверить git diff, выполнить отдельный feature commit, затем по delivery workflow последовательную интеграцию, OpenSpec archive и post-deploy проверку актуального main.
 
 ### Приёмочный остаток
 
-- 5.2: normal in-app Browser дважды отказал в pointer lock; physical move/look/jump/fire и normal pause/resume не объявляются пройденными. Synthetic benchmark отдельно подтверждает настоящий AI, combat, death/respawn, results и replay.
+- 5.2: автоматизация не получила pointer lock. Пользователь затем явно подтвердил, что провёл оставшуюся ручную AI-приёмку (move/look/jump/fire и pause/resume); пункт закрыт по его проверке вместе с ранее сохранёнными browser evidence.
 - 5.3: сохранены и показаны PNG setup, team setup/live и FFA/team results; отдельного physical combat/killcam PNG нет. Полного physical playtest эти изображения не заменяют.
-- 5.4: восьмисторонний browser performance reference PASS (simulation p95 до 1.6 ms, около 60 ticks/s), settled phases zero-work; physical часть остаётся открытой.
-- 5.5: feature commit `c9d51e8` интегрирован в main; спецификации синхронизируются и change архивируется отдельным documentation-only коммитом. Деплой и post-deploy проверка не выполнены: remote и deployment configuration отсутствуют.
+- 5.4: восьмисторонний browser performance reference PASS (simulation p95 до 1.6 ms, около 60 ticks/s), settled phases zero-work; physical часть подтверждена ручной проверкой пользователя.
+- 5.5: feature commit `c9d51e8` интегрирован в main; спецификации синхронизированы и change архивирован коммитом `a4bcb64`, включённым в main. Деплой и post-deploy проверка не выполнены: remote и deployment configuration отсутствуют.
 
 ### Согласованное закрытие с предупреждениями — 2026-09-05
 
-Пользователь принял результат («все ок»), затем явно подтвердил («да») синхронизацию спецификаций, интеграцию в main и архивирование с указанными ограничениями browser-проверки и открытым деплоем. Пункты 5.2–5.5 оставлены неполными: согласие на закрытие не является доказательством каждого физического сценария или публикации. Требования будущей browser-приёмки не изменены. Handoff переносится в completed как принятый с исключениями; остаток хранится здесь и в verification.md, без создания новой feature-задачи.
+Пользователь принял результат («все ок»), затем явно подтвердил («да») синхронизацию спецификаций, интеграцию в main и архивирование с указанными ограничениями browser-проверки и открытым деплоем. На момент архивации пункты 5.2–5.5 были оставлены неполными: согласие на закрытие не является доказательством каждого физического сценария или публикации. Требования будущей browser-приёмки не изменены. Handoff переносится в completed как принятый с исключениями; остаток хранится здесь и в verification.md, без создания новой feature-задачи.
+
+
+### Уточнение ручной приёмки
+
+После архивации пользователь сообщил, что провёл оговорённый остаток AI-приёмки. Пункты 5.2 и 5.4 закрыты с явной атрибуцией ручной проверки пользователю. Пункты 5.3 (PNG) и 5.5 (деплой) остаются неполными; новые изображения и публикация не заявляются.

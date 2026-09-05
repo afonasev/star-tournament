@@ -43,4 +43,4 @@
 - [x] 6.3 Принудительно пройти score-limit и time-limit ties, проверить `OVERTIME` и завершение только после единоличного лидера; сохранить DOM/simulation evidence, не заявляя физически непроверенные gamepad/split-screen/bots/online.
 - [x] 6.4 Выполнить production-browser performance gate по trigger matrix и зафиксировать hard counters, provisional warnings и unavailable metrics; при regression устранить причину до handoff.
 - [x] 6.5 Снять актуальные screenshots dev-стенда для pre-match FFA, teams configuration, running HUD, live scoreboard, pause, overtime и FFA/team results; приложить каждое изменённое состояние к handoff.
-- [x] 6.6 Создать/завершить handoff-файл `docs/tasks/02-add-basic-match-loop.md`, сверить scope и чужие изменения, отметить все tasks выполненными и создать один отдельный Git-коммит change.
+- [x] 6.6 Создать/завершить handoff-файл `docs/tasks/completed/02-add-basic-match-loop.md`, сверить scope и чужие изменения, отметить все tasks выполненными и создать один отдельный Git-коммит change.

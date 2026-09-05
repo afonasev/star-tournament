@@ -1,5 +1,7 @@
 # 05 — Modular GLB arena kit
 
+Статус: завершено и интегрировано в main; OpenSpec архивирован в `openspec/changes/archive/2026-09-04-modular-glb-arena-kit/`. Ниже сохранены результаты исходной проверки; указанные dev URL — исторические, не текущие стенды. Деплой не выполнен.
+
 ## Verification
 
 - Dev stand: `http://127.0.0.1:5187/?muted=1` (HTTP 200).
