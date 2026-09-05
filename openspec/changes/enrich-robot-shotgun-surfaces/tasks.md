@@ -22,3 +22,9 @@ Browser QA выполнен через штатный benchmark и инспек�
 - [x] 4.1 Утончить robot geometry и собрать две связные first-person руки с хватом; проверить spatial continuity и обе LOD.
 - [x] 4.2 Выполнить typecheck, tests, build, strict validation и muted Browser QA для idle/recoil и разных viewport; сохранить актуальные PNG.
 - [x] 4.3 Обновить handoff и закоммитить проверенную итерацию без merge/archive/deploy.
+
+## 5. Крупный план рук
+
+- [x] 5.1 Добавить швы, уплотнения, крепёж и направленную металлическую фактуру предплечий в обоих LOD.
+- [x] 5.2 Проверить тесты, сборку, strict validation и muted Browser; сохранить PNG idle/recoil и игровой кадр.
+- [x] 5.3 Обновить handoff и закоммитить итерацию.

@@ -8,14 +8,14 @@ const out = resolve(import.meta.dirname, '../public/assets/participants')
 mkdirSync(out, { recursive: true })
 const materials = [
   ['shell', [0.88, 0.92, 0.95, 1], 0.18, 0.43], ['joint', [0.025, 0.07, 0.12, 1], 0.82, 0.2],
-  ['trim', [0.15, 0.26, 0.34, 1], 0.75, 0.22], ['identity', [0.1, 0.8, 1, 1], 0.35, 0.18], ['muzzle-dark', [0.01, 0.015, 0.02, 1], 0.4, 0.2], ['rubber', [0.035, 0.055, 0.07, 1], 0.02, 0.85], ['hardware', [.48, .55, .60, 1], .85, .28],
+  ['trim', [0.15, 0.26, 0.34, 1], 0.75, 0.22], ['identity', [0.1, 0.8, 1, 1], 0.35, 0.18], ['muzzle-dark', [0.01, 0.015, 0.02, 1], 0.4, 0.2], ['rubber', [0.035, 0.055, 0.07, 1], 0.02, 0.85], ['hand-metal', [.62,.68,.72,1], .85,.42], ['hardware', [.48, .55, .60, 1], .85, .28],
 ]
 const mat = Object.fromEntries(materials.map(([name], index) => [name, index]))
 
 // Fixed authoring texel resolution and bevels are asset construction invariants,
 // not gameplay, camera or balance controls. No runtime random source is used.
-function surfacePng(kind) {
-  const size = 128, raw = Buffer.alloc(size * (size * 4 + 1))
+function surfacePng(kind, closeup = false) {
+  const size = closeup && kind === 1 ? 256 : 128, raw = Buffer.alloc(size * (size * 4 + 1))
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
     const noise = ((x * 73 + y * 151 + x * y * 7) % 17) - 8
     let value = 238 + noise * .35
@@ -27,6 +27,7 @@ function surfacePng(kind) {
       if (x > 98 && x < 113 && y > 19 && y < 47) value = (y % 5 < 2) ? 100 : 225
     } else if (kind === 1) value = 216 + (y % 3) * 9 + noise
     else value = 170 + ((x + y) % 12 < 4 ? -48 : 24) + noise
+    if (closeup && kind === 1) value = 215 + Math.sin(y * 2.1) * 12 + noise * .8 - ((y % 37 === 0 && x > 40 && x < 150) ? 35 : 0)
     const i = y * (size * 4 + 1) + 1 + x * 4
     raw[i] = raw[i + 1] = raw[i + 2] = Math.max(0, Math.min(255, value)); raw[i + 3] = 255
   }
@@ -62,7 +63,7 @@ function writer(name, objects) {
     if (indexArray) primitive.indices = accessor(indexArray, 1, indexArray instanceof Uint32Array ? 5125 : 5123, 34963)
     meshes.push({ name: item.name, primitives: [primitive] }); nodes.push({ name: item.name, mesh: meshes.length - 1 })
   }
-  const images = [0, 1, 2].map((kind) => ({ bufferView: add(surfacePng(kind)), mimeType: 'image/png' }))
+  const images = [0, 1, 2].map((kind) => ({ bufferView: add(surfacePng(kind, name.startsWith('first-person'))), mimeType: 'image/png' }))
   const key = name.replace(/-lod[01]\.glb$/, '')
   const contracts = {
     'light-sport-robot': ['feet-center', [1.2, 2.2, .8]],
@@ -70,7 +71,7 @@ function writer(name, objects) {
     'first-person-shotgun': ['camera-weapon-grip', [1.3, .8, 1.6]],
   }
   const [pivot, attachmentBoundsMeters] = contracts[key]
-  const json = { asset: { version: '2.0', generator: 'star-tournament equipment-surfaces-v3', extras: { units: 'meters', up: '+Y', front: '+Z', pivot, attachmentBoundsMeters } }, scene: 0, scenes: [{ nodes: nodes.map((_, i) => i) }], nodes, meshes, materials: materials.map(([name, colour, metallic, roughness]) => ({ name, pbrMetallicRoughness: { baseColorFactor: colour, metallicFactor: metallic, roughnessFactor: roughness, ...(['identity', 'muzzle-dark'].includes(name) ? {} : { baseColorTexture: { index: name === 'shell' ? 0 : ['trim', 'joint', 'hardware'].includes(name) ? 1 : 2 } }) }, emissiveFactor: name === 'identity' ? colour.slice(0, 3) : [0, 0, 0] })), images, textures: images.map((_, source) => ({ source, sampler: 0 })), samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }], buffers: [{ byteLength: length }], bufferViews: views, accessors }
+  const json = { asset: { version: '2.0', generator: 'star-tournament equipment-surfaces-v4', extras: { units: 'meters', up: '+Y', front: '+Z', pivot, attachmentBoundsMeters } }, scene: 0, scenes: [{ nodes: nodes.map((_, i) => i) }], nodes, meshes, materials: materials.map(([name, colour, metallic, roughness]) => ({ name, pbrMetallicRoughness: { baseColorFactor: colour, metallicFactor: metallic, roughnessFactor: roughness, ...(['identity', 'muzzle-dark'].includes(name) ? {} : { baseColorTexture: { index: name === 'shell' ? 0 : ['trim', 'joint', 'hardware', 'hand-metal'].includes(name) ? 1 : 2 } }) }, emissiveFactor: name === 'identity' ? colour.slice(0, 3) : [0, 0, 0] })), images, textures: images.map((_, source) => ({ source, sampler: 0 })), samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }], buffers: [{ byteLength: length }], bufferViews: views, accessors }
   const encoded = new TextEncoder().encode(JSON.stringify(json)); const jsonLength = (encoded.length + 3) & ~3
   const file = new Uint8Array(12 + 8 + jsonLength + 8 + length); const view = new DataView(file.buffer)
   view.setUint32(0, 0x46546c67, true); view.setUint32(4, 2, true); view.setUint32(8, file.length, true); view.setUint32(12, jsonLength, true); view.setUint32(16, 0x4e4f534a, true); file.set(encoded, 20); file.fill(0x20, 20 + encoded.length, 20 + jsonLength); view.setUint32(20 + jsonLength, length, true); view.setUint32(24 + jsonLength, 0x004e4942, true)
@@ -201,8 +202,26 @@ function addGripHands(k, detail) {
   for(const {side,elbow,wrist,palm} of poses) {
     k.segment(`viewmodel:forearm:${side}`,'shell',elbow,wrist,.155,.105,detail?14:8)
     const axis=new THREE.Vector3(...wrist).sub(new THREE.Vector3(...elbow))
+    // Authoring dimensions: seams follow the tapered shell, independent of gameplay controls.
+    const direction=axis.clone().normalize(), radial=new THREE.Vector3(0,0,1).cross(direction).normalize(), tangent=direction.clone().cross(radial)
+    const point=(t,angle,radius)=>new THREE.Vector3(...elbow).addScaledVector(axis,t).addScaledVector(radial,Math.cos(angle)*radius).addScaledVector(tangent,Math.sin(angle)*radius).toArray()
+    for(const t of (detail?[.36,.56,.76,.89]:[.56,.89])) {
+      const radius=.155-.05*t
+      k.segment(`viewmodel:seam:${side}:${t}`,'joint',point(t-.004,0,0),point(t+.004,0,0),radius+.003,radius+.003,detail?28:16)
+      k.segment(`viewmodel:seam:lip:${side}:${t}`,'hand-metal',point(t+.005,0,0),point(t+.012,0,0),radius+.004,radius+.004,detail?28:16)
+    }
+    for(let a=0;a<(detail?6:4);a++) {
+      const angle=a*Math.PI*2/(detail?6:4)
+      k.segment(`viewmodel:panel:groove:${side}:${a}`,'joint',point(.38,angle,.139),point(.87,angle,.115),.003,.003,6)
+      for(const t of (detail?[.42,.68,.85]:[.68])) {
+        const radius=.155-.05*t
+        k.segment(`viewmodel:fastener:socket:${side}:${a}:${t}`,'joint',point(t,angle,radius-.002),point(t,angle,radius+.005),.012,.012,8)
+        k.segment(`viewmodel:fastener:head:${side}:${a}:${t}`,'hand-metal',point(t,angle,radius+.004),point(t,angle,radius+.007),.007,.007,6)
+      }
+      if(a%2===0)k.segment(`viewmodel:metal:inlay:${side}:${a}`,'hand-metal',point(.59,angle+.12,.133),point(.82,angle+.12,.121),.015,.012,8)
+    }
     const cuffStart=new THREE.Vector3(...wrist).addScaledVector(axis,-.11).toArray()
-    k.segment(`viewmodel:wrist:${side}`,'hardware',cuffStart,wrist,.12,.11,detail?16:8)
+    k.segment(`viewmodel:wrist:${side}`,'hand-metal',cuffStart,wrist,.12,.11,detail?16:8)
     k.segment(`viewmodel:wrist:link:${side}`,'hardware',wrist,palm,.10,.09,detail?12:8)
     k.sphere(`viewmodel:wrist:ball:${side}`,'hardware',wrist,[.112,.112,.112],detail?12:8)
     k.box(`viewmodel:hand:${side}`,'shell',palm,side<0?[.12,.19,.19]:[.27,.10,.22],[0,side<0?-.12:.1,side<0?-.1:0])

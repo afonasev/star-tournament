@@ -59,3 +59,12 @@ Typecheck, 34 renderer/combat tests, build, strict OpenSpec, diff check и finit
 Muted in-app Browser: medium seed1234, prototype-v1@5, Balanced, viewport845×993; benchmark PASS по восьми фазам, повторный матч восстанавливает ammo20/HP100/tick0. Ручной pointer-lock playtest остаётся неподтверждённым. Inspector проверен с тем же FOV90 и transform модели в idle/recoil, обоими LOD, плюс canvas16:9 (845×475); 16:9 — отдельный QA canvas, не полноэкранный игровой viewport. PNG сохранены как настоящие PNG и осмотрены. Артефакты v3 заменяют прежнее ожидание разблокировки Mac.
 
 Evidence: `docs/evidence/enrich-robot-shotgun-surfaces-v3/`: robot-front/rear/lod1.png, hands.png, fps-idle/recoil/lod1/wide.png, recoil-wide.png, match.png, browser-performance.json, inspect.html. Inspector использует отдельный studio lighting; match.png показывает реальную игру. Обновление остаётся в той же ветке; merge/archive/deploy не выполнялись. Визуальное принятие пользователем остаётся открытым.
+
+
+## Продолжение equipment-surfaces-v4
+
+Крупный план first-person рук получил кольцевые стыки с металлическими кромками, продольные швы, утопленные винты, вставки металла и отдельный материал манжет. Направленная металлическая фактура first-person GLB увеличена до 256×256; остальные изображения сохраняют 128×128. Основные стыки и часть крепежа сохранены в LOD1. Поза и камера не изменены.
+
+36 tests, build/typecheck, strict OpenSpec и diff check — PASS. Muted in-app Browser benchmark: 8 фаз PASS, medium seed1234, Balanced, 1280×720; пиковые draw calls всей сцены2057, ошибок console нет. Этот показатель нельзя напрямую сравнивать с portrait-прогоном v3. Физический mouse-look этим сценарным прогоном не подтверждён. JS chunk warning >500kB остаётся. First-person GLB LOD0 вырос с615 до958kB, LOD1 с298 до409kB.
+
+Актуальные PNG в docs/evidence/enrich-robot-shotgun-surfaces-v4/: idle.png, recoil.png, lod1.png, hands.png (studio inspector) и match.png (игровой кадр seed1234), рядом browser-performance.json. Швы и хват проверены визуально в обоих LOD и при отдаче. Визуальное принятие открыто; merge/archive/deploy не выполнялись.
