@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { ARENA_GLB_ASSET_KEYS, CLEAN_FUTURE_SPORT_GLB_V1, validateArenaGlbManifest } from './arenaGlbManifest'
 
-function readGlbAsset(name: string): { readonly asset: { readonly version: string; readonly extras: unknown }; readonly nodes: unknown } {
-  const bytes = readFileSync(new URL(`../../public/assets/arena/${name}`, import.meta.url))
+function readGlbAsset(name: string, directory = 'arena'): { readonly asset: { readonly version: string; readonly extras: unknown }; readonly nodes: readonly { readonly name: string }[]; readonly materials: readonly { readonly name: string }[]; readonly meshes: readonly { primitives: readonly { attributes: Record<string, number> }[] }[]; readonly images: readonly { bufferView: number; mimeType: string }[] } {
+  const bytes = readFileSync(new URL(`../../public/assets/${directory}/${name}`, import.meta.url))
   expect(bytes.readUInt32LE(0)).toBe(0x46546c67)
   expect(bytes.readUInt32LE(4)).toBe(2)
   const jsonLength = bytes.readUInt32LE(12)
@@ -12,7 +12,7 @@ function readGlbAsset(name: string): { readonly asset: { readonly version: strin
 }
 
 describe('clean-future-sport-glb-v1 manifest', () => {
-  it('has four stable complete entries with the authored spatial contract', () => {
+  it('has stable complete entries with the authored spatial contract', () => {
     expect(Object.keys(CLEAN_FUTURE_SPORT_GLB_V1)).toEqual(ARENA_GLB_ASSET_KEYS)
     expect(validateArenaGlbManifest(CLEAN_FUTURE_SPORT_GLB_V1)).toEqual([])
     for (const key of ARENA_GLB_ASSET_KEYS) {
@@ -45,6 +45,32 @@ describe('clean-future-sport-glb-v1 manifest', () => {
       })
       expect(lod1.asset.extras).toEqual(lod0.asset.extras)
       expect(lod1.nodes).toEqual(lod0.nodes)
+    }
+  })
+
+  it('audits high-detail participant GLB pairs without a second asset contract', () => {
+    const requiredFeatures = {
+      'light-sport-robot': ['robot:identity:core', 'robot:identity:visor', 'robot:identity:rear-beacon', 'robot:identity:shoulder:-1', 'robot:identity:shoulder:1', 'robot:joint:shoulder-collar:-1', 'robot:hand:finger:-1:0:0', 'robot:torso:armour-layer:0'],
+      'double-barrel-shotgun': ['weapon:barrel-shroud:-1', 'weapon:barrel-shroud:1', 'weapon:muzzle-opening:-1', 'weapon:muzzle-opening:1', 'weapon:inner-bore:-1', 'weapon:inner-bore:1', 'weapon:energy-chamber', 'weapon:energy:coil:0', 'weapon:barrel:vent:-1:0', 'weapon:barrel-rail:-1', 'weapon:owner-indicator'],
+      'first-person-shotgun': ['viewmodel:forearm:-1', 'viewmodel:forearm:1', 'viewmodel:hand:-1', 'viewmodel:hand:1', 'viewmodel:hand:finger:-1:0:0', 'weapon:muzzle-opening:-1', 'weapon:muzzle-opening:1', 'weapon:inner-bore:-1', 'weapon:energy:coil:0'],
+    } as const
+    for (const key of ['light-sport-robot', 'double-barrel-shotgun', 'first-person-shotgun'] as const) {
+      const entry = CLEAN_FUTURE_SPORT_GLB_V1[key]
+      const lod0 = readGlbAsset(`${entry.key}-lod0.glb`, 'participants')
+      const lod1 = readGlbAsset(`${entry.key}-lod1.glb`, 'participants')
+      const extras = { units: entry.units, up: entry.axes.up, front: entry.axes.front, pivot: entry.pivot, attachmentBoundsMeters: [entry.attachmentBoundsMeters.x, entry.attachmentBoundsMeters.y, entry.attachmentBoundsMeters.z] }
+      expect(lod0.asset).toMatchObject({ version: '2.0', extras })
+      expect(lod1.asset).toMatchObject({ version: '2.0', extras })
+      expect(lod0.materials.map(({ name }) => name)).toContain('identity')
+      expect(lod1.materials.map(({ name }) => name)).toContain('identity')
+      expect(lod0.nodes.map(({ name }) => name)).toEqual(expect.arrayContaining(Array.from(requiredFeatures[key])))
+      expect(lod1.nodes.map(({ name }) => name)).toEqual(expect.arrayContaining(Array.from(requiredFeatures[key])))
+      for (const asset of [lod0, lod1]) {
+        expect(asset.images).toHaveLength(3)
+        for (const image of asset.images) expect(image.mimeType).toBe('image/png')
+        for (const mesh of asset.meshes) for (const primitive of mesh.primitives) expect(primitive.attributes.TEXCOORD_0).toBeTypeOf('number')
+      }
+      expect(lod0.nodes.length).toBeGreaterThanOrEqual(lod1.nodes.length * 1.75)
     }
   })
 })

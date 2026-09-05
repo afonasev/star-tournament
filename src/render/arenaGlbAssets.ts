@@ -15,12 +15,18 @@ export interface ArenaGlbTemplateCache {
 
 type Loader = Pick<GLTFLoader, 'loadAsync'>
 
-function disposeObject(object: THREE.Object3D, seenGeometry: Set<THREE.BufferGeometry>, seenMaterial: Set<THREE.Material>): void {
+function disposeObject(object: THREE.Object3D, seenGeometry: Set<THREE.BufferGeometry>, seenMaterial: Set<THREE.Material>, seenTexture: Set<THREE.Texture>): void {
   object.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return
     if (!seenGeometry.has(child.geometry)) { seenGeometry.add(child.geometry); child.geometry.dispose() }
     for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
-      if (!seenMaterial.has(material)) { seenMaterial.add(material); material.dispose() }
+      if (!seenMaterial.has(material)) {
+        seenMaterial.add(material)
+        for (const value of Object.values(material)) {
+          if (value instanceof THREE.Texture && !seenTexture.has(value)) { seenTexture.add(value); value.dispose() }
+        }
+        material.dispose()
+      }
     }
   })
 }
@@ -55,7 +61,8 @@ export async function prepareArenaGlbAssets(
         disposed = true
         const geometries = new Set<THREE.BufferGeometry>()
         const materials = new Set<THREE.Material>()
-        for (const pair of templates.values()) for (const template of pair) disposeObject(template, geometries, materials)
+        const textures = new Set<THREE.Texture>()
+        for (const pair of templates.values()) for (const template of pair) disposeObject(template, geometries, materials, textures)
         templates.clear()
       },
     }

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
+import { createRobotAnimationController, type RobotAnimationController } from './robotAnimation'
 
 const SHELL_COLOR = 0xe8edf0
 const JOINT_COLOR = 0x10263a
@@ -16,6 +17,7 @@ export interface RobotPresentation {
   readonly group: THREE.Group
   readonly identityMaterials: readonly THREE.MeshStandardMaterial[]
   readonly weaponIndicatorMaterials: readonly THREE.MeshStandardMaterial[]
+  readonly animation?: RobotAnimationController
 }
 
 export interface FirstPersonWeaponPresentation {
@@ -135,14 +137,16 @@ function textureGlbInstance(object: THREE.Object3D, resources: PresentationResou
     const mapped = sourceMaterials.map((source) => {
       const material = source.clone()
       if (material instanceof THREE.MeshStandardMaterial) {
-        material.map = texture
-        material.emissiveMap = texture
+        // Embedded equipment maps belong to the template cache. Legacy untextured
+        // assets can still use the supplied arena map; identity stays unpatterned.
+        if (material.map === null && material.name !== 'identity' && material.name !== 'muzzle-dark') material.map = texture
+        material.emissiveMap = null
         material.emissiveIntensity = material.name === 'identity' ? 0.62 : 0.18
         if (material.name === 'identity') {
           material.color.set(color)
           material.emissive.set(color)
           identityMaterials.push(material)
-        } else material.color.setHex(0xffffff)
+        }
         material.needsUpdate = true
       }
       resources.materials.push(material)
@@ -153,18 +157,21 @@ function textureGlbInstance(object: THREE.Object3D, resources: PresentationResou
   return identityMaterials
 }
 
-export function createRobotGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string): RobotPresentation {
+export function createRobotGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string, preferredLod?: 'lod0' | 'lod1'): RobotPresentation {
   if (assets === undefined || texture === undefined) return createRobotPresentation(resources, color)
-  const group = assets.createInstance('light-sport-robot') as THREE.Group
+  const group = assets.createInstance('light-sport-robot', 0, preferredLod) as THREE.Group
   group.name = 'robot:model:light-sport-glb'
+  const animation = createRobotAnimationController(group)
   const identityMaterials = textureGlbInstance(group, resources, texture, color)
   const weapon = assets.createInstance('double-barrel-shotgun')
   weapon.name = 'robot:weapon:double-barrel-glb'
-  weapon.position.set(0.06, 0.92, -0.42)
+  // GLTF scene roots retain authored weapon-space geometry; this offset aligns
+  // the receiver with the torso-stable combat mount in the visible rest pose.
+  weapon.position.set(0, 0.22, 0)
   weapon.rotation.x = -0.04
-  group.add(weapon)
+  ;(animation?.weaponMount ?? group).add(weapon)
   const weaponIndicatorMaterials = textureGlbInstance(weapon, resources, texture, color)
-  return { group, identityMaterials, weaponIndicatorMaterials }
+  return { group, identityMaterials, weaponIndicatorMaterials, animation }
 }
 
 export function createFirstPersonGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string): FirstPersonWeaponPresentation {
@@ -172,7 +179,9 @@ export function createFirstPersonGlbPresentation(resources: PresentationResource
   const group = assets.createInstance('first-person-shotgun') as THREE.Group
   group.name = 'presentation:first-person-viewmodel'
   group.position.set(0.36, -0.34, -0.68)
-  group.rotation.set(-0.08, -0.14, -0.02)
+  // Authored viewmodel assets keep the shared +Z-forward GLB contract; the
+  // camera sees along -Z, so presentation turns that semantic front toward it.
+  group.rotation.set(-0.08, Math.PI - 0.14, -0.02)
   textureGlbInstance(group, resources, texture, color)
   const muzzleGeometry = new THREE.SphereGeometry(0.105, 8, 6)
   const muzzleMaterial = new THREE.MeshBasicMaterial({ color: 0xffddb0 })
@@ -181,7 +190,7 @@ export function createFirstPersonGlbPresentation(resources: PresentationResource
   const flashes = [-0.115, 0.115].map((x, index) => {
     const flash = new THREE.Mesh(muzzleGeometry, muzzleMaterial)
     flash.name = index === 0 ? 'presentation:muzzle-flash' : 'presentation:muzzle-flash:right'
-    flash.position.set(x, 0.025, -1.21)
+    flash.position.set(x * 0.42, 0.025 * 0.42, 1.21 * 0.42)
     flash.visible = false
     group.add(flash)
     return flash

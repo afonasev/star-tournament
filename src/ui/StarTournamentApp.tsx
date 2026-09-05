@@ -7,6 +7,7 @@ import { GRAPHICS_QUALITY_STORAGE_KEY, parseGraphicsQualityPreference, type Grap
 import { bootstrapBrowserRuntime, type BrowserApplication, type BrowserBootstrapDependencies } from '../runtime/bootstrapBrowserRuntime'
 import { MatchSetupMenu } from './MatchSetupMenu'
 import { UiPreview, type UiPreviewKind } from './UiPreview'
+import { RobotAnimationReview } from './RobotAnimationReview'
 
 export interface StarTournamentAppProps {
   readonly bootstrap?: (mount: HTMLElement, dependencies: BrowserBootstrapDependencies) => Promise<BrowserApplication>
@@ -29,6 +30,7 @@ export function StarTournamentApp({ bootstrap = bootstrapBrowserRuntime, generat
   const [sessionNumber, setSessionNumber] = useState(0)
   const hostRef = useRef<HTMLDivElement>(null)
   const preview = new URLSearchParams(window.location.search).get('uiPreview')
+  const animationReview = new URLSearchParams(window.location.search).has('animationReview')
 
   useEffect(() => {
     const host = hostRef.current
@@ -74,6 +76,7 @@ export function StarTournamentApp({ bootstrap = bootstrapBrowserRuntime, generat
   }
 
   if (preview === 'scoreboard-ffa' || preview === 'overtime' || preview === 'results-ffa' || preview === 'results-teams' || preview === 'generation-error') return <UiPreview kind={preview as UiPreviewKind} />
+  if (animationReview) return <RobotAnimationReview />
   if (session === null) return <MatchSetupMenu profile={PROTOTYPE_V1_PROFILE} onStart={start} generationError={generationError} onUseFallback={useFallback} onGraphicsQualityChange={setGraphicsQuality} />
   return <div key={sessionNumber} ref={hostRef} className="match-session-host" data-configuration-hash={session.configuration.contentHash} data-arena-hash={session.arena.contentHash} />
 }
