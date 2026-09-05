@@ -55,7 +55,8 @@ export function RobotAnimationReview() {
   const runFullReview = (index = 0) => {
     selectState(STATES[index]!)
     if (index + 1 >= STATES.length) return
-    reviewTimer.current = window.setTimeout(() => runFullReview(index + 1), 900)
+    // Leave the target pose on screen long enough for its visible blend to land.
+    reviewTimer.current = window.setTimeout(() => runFullReview(index + 1), 1250)
   }
 
   return <main className="animation-review" data-muted="true">

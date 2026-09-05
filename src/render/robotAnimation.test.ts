@@ -36,10 +36,29 @@ describe('robot animation controller', () => {
     expect([...model.children].some((joint) => joint.rotation.toArray().some((value) => typeof value === 'number' && value !== 0))).toBe(true)
   })
 
-  it('returns to neutral pose before each state', () => {
+  it('returns to the neutral idle target over subsequent presentation ticks', () => {
     const model = rig(); const controller = createRobotAnimationController(model)!
-    controller.apply('destroyed', .1); controller.apply('idle', 0)
-    expect(model.getObjectByName('robot:rig:pelvis')!.rotation.z).toBe(0)
-    expect(model.getObjectByName('robot:rig:spine')!.rotation.z).toBe(0)
+    controller.apply('destroyed', .1)
+    for (let seconds = .1 + 1 / 60; seconds < .8; seconds += 1 / 60) controller.apply('idle', seconds)
+    expect(model.getObjectByName('robot:rig:pelvis')!.rotation.z).toBeCloseTo(0, 3)
+    expect(Math.abs(model.getObjectByName('robot:rig:spine')!.rotation.z)).toBeLessThan(.03)
+  })
+
+  it('blends a state transition instead of teleporting a joint', () => {
+    const model = rig(); const controller = createRobotAnimationController(model)!
+    controller.apply('idle', 0); controller.apply('destroyed', 1 / 60)
+    expect(model.getObjectByName('robot:rig:spine')!.rotation.z).toBeGreaterThan(-.42)
+    expect(model.getObjectByName('robot:rig:spine')!.rotation.z).toBeLessThan(0)
+    expect(model.rotation.toArray()).toEqual([0, 0, 0, 'XYZ'])
+  })
+
+  it('converges similarly with 60 Hz and 120 Hz presentation steps', () => {
+    const atRate = (step: number) => {
+      const model = rig(); const controller = createRobotAnimationController(model)!
+      controller.apply('aim', 0)
+      for (let seconds = step; seconds <= .5; seconds += step) controller.apply('destroyed', seconds)
+      return model.getObjectByName('robot:rig:spine')!.rotation.z
+    }
+    expect(atRate(1 / 60)).toBeCloseTo(atRate(1 / 120), 2)
   })
 })
