@@ -1,6 +1,6 @@
 # 07 — Робот и дробовик: поверхность и конструкция
 
-Статус: реализация и технический QA готовы; визуальное принятие пользователем и физический mouse-look playtest остаются открытыми.
+Статус: завершено. Пользователь принял визуальный результат и поручил закрыть текущие правки. Ограничения ручного mouse-look QA сохранены ниже.
 
 Ветка: `codex/robot-shotgun-surface-detail`, основана на `4ca5d0e` (`codex/upgrade-robot-weapon-detail`). Worktree: `/Users/eaafonasev/.codex/worktrees/5c39/star-tournament`. Использован изолированный worktree, выделенный этой задаче; main не редактировался. OpenSpec: `enrich-robot-shotgun-surfaces` (без архивации).
 
@@ -77,3 +77,12 @@ Evidence: `docs/evidence/enrich-robot-shotgun-surfaces-v3/`: robot-front/rear/lo
 36 tests, build/typecheck, strict OpenSpec, diff check — PASS. Muted Browser: medium seed1234, Balanced,1280×720, benchmark8 фаз PASS, пик всей сцены2265 draw calls, ошибок console нет. Дополнительные детали увеличивают стоимость отображения; слабые GPU/split-screen не проверены. Ручной mouse-look сценарным benchmark не подтверждён. Размер robot LOD0 вырос712→981kB, LOD1429→522kB.
 
 Актуальные PNG (проверены сигнатура и вид): docs/evidence/enrich-robot-shotgun-surfaces-v5/front.png, rear.png, lod1-front.png, lod1-rear.png — studio inspector; match.png — игровой кадр seed1234. Там же browser-performance.json и inspect.html. Dev origin http://127.0.0.1:5188/. Визуальное принятие робота ожидается; руки и оружие приняты пользователем. Merge/archive/deploy не выполнялись.
+
+
+## Закрытие и продолжение в новой сессии
+
+2026-09-05: визуальная работа принята. Реализация закоммичена до6c7b2f5; OpenSpec синхронизирован в participant-weapon-presentation и архивирован в2026-09-05-enrich-robot-shotgun-surfaces. Доставка остаётся в codex/robot-shotgun-surface-detail; main merge и deploy не выполнялись в рамках этой задачи.
+
+Следующая отдельная сессия — обсуждение и реализация анимации робота. Сейчас робот статичен: плоский набор геометрии без skin/skeleton/animation clips; renderer меняет transform целой модели и состояние уничтожения. First-person отдача и muzzle flashes уже работают.
+
+Начать с docs/GAME_SPEC.md, scripts/generate-participant-assets.mjs, src/render/participantWeaponPresentation.ts и src/render/firstPersonRenderer.ts. Согласовать набор движений и способ суставной иерархии, затем создать отдельный OpenSpec change и worktree. Ходьба/бег/прыжок/прицеливание/реакции — кандидаты для обсуждения, не утверждённый scope. Сохранить принятый силуэт, детали робота, оружие и first-person руки. Не считать текущие цельные GLB уже пригодным скелетным rig.

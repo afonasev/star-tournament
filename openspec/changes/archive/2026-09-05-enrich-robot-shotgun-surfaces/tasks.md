@@ -9,7 +9,7 @@
 - [x] 2.2 Провести muted in-app Browser playtest и визуально проверить сохранённые PNG робота, world weapon и first-person weapon.
 - [x] 2.3 Зафиксировать результат, ограничения и evidence в handoff и отдельном коммите без merge/archive/deploy.
 
-Browser QA выполнен через штатный benchmark и инспектор. Ограничение физического pointer lock и ожидающее визуальное принятие записаны в docs/tasks/07-enrich-robot-shotgun-surfaces.md.
+Browser QA выполнен через штатный benchmark и инспектор. Ограничение физического pointer lock и ожидающее визуальное принятие записаны в docs/tasks/completed/07-enrich-robot-shotgun-surfaces.md.
 
 ## 3. Уточнение формы после визуального отзыва
 
