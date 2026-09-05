@@ -1,6 +1,6 @@
 ## 1. Контракт и source audit
 
-- [x] 1.1 Обновить `docs/GAME_SPEC.md` и создать handoff `docs/tasks/06-upgrade-robot-weapon-detail.md`, явно сохранив renderer-only scope; проверить diff на отсутствие gameplay, collision или balance changes.
+- [x] 1.1 Обновить `docs/GAME_SPEC.md` и создать handoff `docs/tasks/completed/06-upgrade-robot-weapon-detail.md`, явно сохранив renderer-only scope; проверить diff на отсутствие gameplay, collision или balance changes.
 - [x] 1.2 Добавить повторяемый participant GLB generator и source audit для LOD/pivot/material semantics; проверить audit на всех шести shipping GLB.
 
 ## 2. High-detail participant assets
@@ -15,3 +15,7 @@
 - [x] 3.1 Выполнить `npm run typecheck`, targeted asset/renderer tests, `npm test`, `npm run build` и `openspec validate upgrade-robot-weapon-detail --strict`; записать результаты в handoff.
 - [x] 3.2 Выполнить `npm run perf:browser`, затем muted in-app Browser playtest из dev-стенда этой ветки, проверить world и first-person states и приложить свежие screenshots в handoff.
 - [x] 3.3 Закоммитить ровно новый change, спецификацию, handoff, generator, assets и tests; проверить чистый `git status`, не архивируя, не вливая и не деплоя.
+
+## Последующее закрытие — 2026-09-05
+
+Ограничение пункта 3.3 относилось к первоначальному handoff. Реализация `4ca5d0e` уже интегрирована; пользователь отдельно разрешил archive и sync. Перед архивацией delta согласована с более новыми neutral pose/joint hierarchy и slender silhouette, обе capabilities синхронизированы без потери прочих требований. `openspec validate --all --strict`: 19/19 PASS; `git diff --check`: PASS. Runtime и assets не изменены, прежние browser/performance evidence сохранены. Деплой не выполнен.

@@ -1,5 +1,9 @@
 # 06 · Upgrade robot and weapon detail
 
+Статус: завершено; реализация `4ca5d0e` уже входит в main. Пользователь 2026-09-05 поручил синхронизировать спецификации и архивировать change. Архив: `openspec/changes/archive/2026-09-05-upgrade-robot-weapon-detail/`.
+
+При закрытии сохранены более новые требования semantic joints, neutral pose, slender silhouette, authored materials и first-person grip. Устаревшая формулировка широких плеч уточнена согласно GAME_SPEC; code/assets не менялись. Все 19 объектов OpenSpec прошли strict validation до архивации. Исходные тесты и browser evidence ниже исторические; повторный visual/performance gate не требуется для documentation-only закрытия. Ограничения автоматического pointer lock не подменяются новой проверкой. Деплой не настроен и не выполнялся.
+
 ## Scope
 
 OpenSpec change `upgrade-robot-weapon-detail` replaces only the six existing participant GLB LOD assets with a second dense hard-surface pass. It retains `light-sport-robot-v1`, `clean-future-sport-glb-v1`, existing manifest keys, renderer-owned cache/texture lifecycle and graphics-quality behavior.
