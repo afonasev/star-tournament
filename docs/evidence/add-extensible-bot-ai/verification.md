@@ -4,8 +4,28 @@ Date: 2026-09-05. Branch: `codex/add-extensible-bot-ai`.
 Dev origin: `http://127.0.0.1:4193/`, HTTP 200, worktree
 `/private/tmp/star-tournament-bot-ai`. All tests muted.
 
-Status: implemented and automated checks passed; physical acceptance pending.
-No claim of main integration, archive, deployment or physical input approval.
+Status: implemented; result accepted by the user on 2026-09-05 with explicit
+approval to sync, integrate and archive despite the evidence limitations below.
+Feature commit `c9d51e8` fast-forward integrated into `main`.
+Acceptance is not a claim that each physical input scenario passed.
+Deployment and post-deploy verification remain open: no Git remote or deployment
+configuration is available. The archive commit changes documentation only;
+existing gameplay checks apply to the unchanged implementation.
+
+## Closure verification — 2026-09-05
+
+- All six deltas were checked against the merged canonical requirements; all
+  unrelated requirements and existing scenario headings were preserved.
+- `openspec validate --specs --strict`: 18/18 PASS. The AI change passed strict
+  validation immediately before being moved to its dated archive.
+- `openspec validate --all --strict`: 18 specs PASS; unrelated active change
+  `upgrade-robot-weapon-detail` fails because its MODIFIED block omits
+  `Нейтральная поза обоих LOD`. The same failure was reproduced in main before
+  the archive commit; that change is outside this closure and remains untouched.
+- `git diff --check`: PASS. No runtime, tests, assets or balance values changed
+  during closure, so browser/performance and AI evaluation were not rerun.
+- Archive: `openspec/changes/archive/2026-09-05-add-extensible-bot-ai/`;
+  tasks 5.2–5.5 intentionally remain unchecked under the user-approved exception.
 
 ## Automated evidence
 

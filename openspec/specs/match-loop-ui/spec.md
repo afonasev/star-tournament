@@ -7,7 +7,7 @@ Capability задаёт доступный DOM-flow базового single-seat
 ## Requirements
 
 ### Requirement: Предматчевая настройка
-Главное меню SHALL позволять собрать поддерживаемую configuration: режим FFA/две команды, roster из local keyboard/mouse участника и stationary mannequins, имена, индивидуальные FFA colors либо red/blue assignment, длительность 1–30 минут и nullable score target. UI MUST получать допустимые numeric range/step/default из descriptor registry и MUST NOT запускать невалидную configuration.
+Главное меню SHALL позволять собрать поддерживаемую configuration: режим FFA/две команды, roster из local keyboard/mouse участника и 1–7 ботов с индивидуальной сложностью, имена, индивидуальные FFA colors либо назначение Team A/Team B, длительность 1–30 минут и nullable score target. UI MUST получать допустимые numeric range/step/default из descriptor registry и MUST NOT запускать невалидную configuration.
 
 #### Scenario: Новый матч по умолчанию
 - **WHEN** пользователь открывает меню без сохранённого draft
@@ -20,6 +20,14 @@ Capability задаёт доступный DOM-flow базового single-seat
 #### Scenario: Командная ошибка
 - **WHEN** одна команда пуста либо участник не назначен ровно одной команде
 - **THEN** старт заблокирован, а DOM показывает локальную понятную причину
+
+#### Scenario: Добавление и удаление
+- **WHEN** пользователь добавляет либо удаляет бота
+- **THEN** редактируется только выбранный roster entry, общий лимит равен восьми; невалидный состав блокирует старт с объяснением
+
+#### Scenario: Индивидуальная сложность
+- **WHEN** пользователь выбирает Салага, Боец либо Ветеран для одного бота
+- **THEN** сложность остальных не меняется, а старт и Repeat сохраняют точные выбранные значения
 
 ### Requirement: Match HUD и overtime
 Во время running single viewport SHALL сохранять текущие health/weapon/ammo surfaces и показывать сверху по центру remaining match time. В overtime timer SHALL показывать явный `OVERTIME`, не продолжая отрицательный countdown.
@@ -110,3 +118,14 @@ Escape, когда browser передаёт его приложению, либ�
 #### Scenario: Fallback подтверждён
 - **WHEN** пользователь явно выбирает fallback
 - **THEN** UI запускает shipped fallback и показывает её фактическую identity
+
+### Requirement: Сложность в имени бота
+Live и итоговая таблицы SHALL отображать bot name как `Имя · Салага`, `Имя · Боец` либо `Имя · Ветеран` на основе сохранённой difficulty. Base nickname SHALL храниться отдельно от отображаемой подписи; повторное открытие таблицы MUST NOT добавлять суффикс повторно.
+
+#### Scenario: Смешанная таблица
+- **WHEN** FFA либо teams содержит человека и ботов разных уровней
+- **THEN** каждая строка бота показывает свою сложность, человек сохраняет метку ИГРОК, а колонки остаются выровненными
+
+#### Scenario: Итог и Repeat
+- **WHEN** матч завершился и затем повторён
+- **THEN** результаты и новый roster сохраняют выбранные сложности без потери или дублирования подписи

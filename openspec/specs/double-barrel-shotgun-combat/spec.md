@@ -7,11 +7,11 @@ Capability задаёт первый полный боевой verb: огран�
 ## Requirements
 
 ### Requirement: Боезапас и cadence двухстволки
-Игрок SHALL начинать slice с profile-defined боезапасом; один новый fire press MUST расходовать одну единицу и создавать не более одного выстрела после profile-defined cooldown. Перезарядка и восстановление боезапаса до будущего respawn отсутствуют.
+Каждый вооружённый участник SHALL начинать slice с profile-defined боезапасом; один новый fire press MUST расходовать одну единицу и создавать не более одного выстрела после profile-defined cooldown. При достижении нуля после выстрела simulation MUST в том же tick восстановить profile-defined emptyRefillAmmo (shipped 20); cooldown, shotSequence и previousFirePressed MUST сохраняться. Валидный живой zero-ammo state SHALL нормализоваться до обработки нового fire transition по тому же правилу. Ручная перезарядка отсутствует.
 
 #### Scenario: Успешный выстрел
 - **WHEN** pointer lock активен, fire переходит из released в pressed, cooldown завершён и ammo больше нуля
-- **THEN** simulation уменьшает ammo на один и создаёт один versioned shotgun shot event
+- **THEN** simulation расходует одну единицу и создаёт один versioned shotgun shot event; если остаток равен нулю, он сразу пополняется
 
 #### Scenario: Удерживание fire
 - **WHEN** fire остаётся pressed несколько ticks
@@ -19,11 +19,15 @@ Capability задаёт первый полный боевой verb: огран�
 
 #### Scenario: Cooldown не завершён
 - **WHEN** новый fire press приходит раньше разрешённого следующего shot tick
-- **THEN** ammo и combat state не меняются, а runtime может показать только non-authoritative feedback недоступности
+- **THEN** выстрел не создаётся и патрон не расходуется; допускается только нормализация нулевого ammo по правилу пополнения, а runtime может показать non-authoritative feedback недоступности
 
 #### Scenario: Боезапас исчерпан
 - **WHEN** fire press приходит при ammo равном нулю
-- **THEN** damage и shot event не создаются, ammo остаётся нулём и HUD показывает dry-fire feedback
+- **THEN** simulation сначала пополняет ammo по профилю, затем применяет обычные cooldown/pressed правила; при допустимом выстреле расходуется одна единица
+
+#### Scenario: Последний патрон
+- **WHEN** живой человек либо бот делает допустимый выстрел с ammo равным одному
+- **THEN** создаётся ровно один shot, итоговый ammo равен 20 в shipped profile, и следующий shot требует cooldown и нового нажатия
 
 ### Requirement: Детерминированный hitscan-набор дробин
 Каждый допустимый выстрел SHALL создавать profile-defined количество ray pellets с range и spread, детерминированно выводимыми из shooter life identity, shot sequence и simulation tick; renderer random и frame timing MUST NOT менять направления или результаты.
@@ -41,7 +45,7 @@ Capability задаёт первый полный боевой verb: огран�
 - **THEN** pellet не создаёт damage event
 
 ### Requirement: Зональный урон robot target
-Combat mannequin SHALL быть stationary match participant с сериализуемыми head, torso и limb hit volumes, общей health, life identity и alive/dead state. Каждый pellet MUST внести долю profile-defined полного zone damage, а mixed hit SHALL суммировать вклад всех pellets одного выстрела детерминированно. Lethal damage MUST создать один participant-death event; respawn создаёт новую life identity после profile-defined delay вместо permanent inactive state.
+Каждый живой local-seat, bot либо stationary fixture SHALL быть match participant с сериализуемыми head, torso и limb hit volumes, общей health, life identity и alive/dead state. Каждый pellet MUST внести долю profile-defined полного zone damage, а mixed hit SHALL суммировать вклад всех pellets одного выстрела детерминированно. Lethal damage MUST создать один participant-death event; respawn создаёт новую life identity после profile-defined delay вместо permanent inactive state.
 
 #### Scenario: Полное попадание в голову
 - **WHEN** все pellets валидного выстрела попадают в head volume живого mannequin-участника
@@ -66,6 +70,10 @@ Combat mannequin SHALL быть stationary match participant с сериализ
 #### Scenario: Новая жизнь
 - **WHEN** mannequin respawn завершён
 - **THEN** новая life identity снова принимает hits, а damage старой жизни не переносится
+
+#### Scenario: Движущийся противник
+- **WHEN** человек либо бот стреляет по другому живому участнику
+- **THEN** hit volumes выводятся из актуального simulation transform цели, а damage и statistics используют общие правила независимо от participant kind
 
 ### Requirement: Combat events для match statistics
 Каждый положительный damage и lethal transition SHALL публиковать versioned simulation events с attacker participant, victim participant/life, tick и exact amount, достаточные для deterministic damage ledger, assists и scoring; presentation feedback MUST NOT быть источником этих данных.

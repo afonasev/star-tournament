@@ -39,6 +39,10 @@
 ### Приёмочный остаток
 
 - 5.2: normal in-app Browser дважды отказал в pointer lock; physical move/look/jump/fire и normal pause/resume не объявляются пройденными. Synthetic benchmark отдельно подтверждает настоящий AI, combat, death/respawn, results и replay.
-- 5.3: PNG setup, боя и результатов сохраняются в handoff; полного physical playtest это не заменяет.
+- 5.3: сохранены и показаны PNG setup, team setup/live и FFA/team results; отдельного physical combat/killcam PNG нет. Полного physical playtest эти изображения не заменяют.
 - 5.4: восьмисторонний browser performance reference PASS (simulation p95 до 1.6 ms, около 60 ticks/s), settled phases zero-work; physical часть остаётся открытой.
-- 5.5: feature commit допустим с явным статусом pending acceptance; main integration, archive и deploy отложены до закрытия приёмки.
+- 5.5: feature commit `c9d51e8` интегрирован в main; спецификации синхронизируются и change архивируется отдельным documentation-only коммитом. Деплой и post-deploy проверка не выполнены: remote и deployment configuration отсутствуют.
+
+### Согласованное закрытие с предупреждениями — 2026-09-05
+
+Пользователь принял результат («все ок»), затем явно подтвердил («да») синхронизацию спецификаций, интеграцию в main и архивирование с указанными ограничениями browser-проверки и открытым деплоем. Пункты 5.2–5.5 оставлены неполными: согласие на закрытие не является доказательством каждого физического сценария или публикации. Требования будущей browser-приёмки не изменены. Handoff переносится в completed как принятый с исключениями; остаток хранится здесь и в verification.md, без создания новой feature-задачи.
