@@ -123,11 +123,11 @@ describe('broken-ring-v2 procedural arenas', () => {
 
   it('keeps the shipped representative identities stable', () => {
     expect(sizes.map((size) => requireProceduralArena({ size, seed: 0x53544152 }).contentHash)).toEqual([
-      'fnv1a64-v1:d1d8ca4ef53852bc',
-      'fnv1a64-v1:2ca43f4bd786aab7',
-      'fnv1a64-v1:b0fc2d1f7e17a137',
+      'fnv1a64-v1:a1dead45415b9b55',
+      'fnv1a64-v1:f5a15c933242075c',
+      'fnv1a64-v1:d0143680450f7fe6',
     ])
-    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:d1d8ca4ef53852bc')
+    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:a1dead45415b9b55')
     expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v2', generatorVersion: 'shipped-fallback-v2', size: 'medium' })
     expect(PROCEDURAL_FALLBACK_ARENA.contentHash).not.toBe(requireProceduralArena({ size: 'medium', seed: 0x53544152 }).contentHash)
     expect(validateArenaGameplay(PROCEDURAL_FALLBACK_ARENA, PROTOTYPE_V1_PROFILE).accepted).toBe(true)

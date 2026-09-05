@@ -25,6 +25,14 @@ function participants() {
 }
 
 describe('standings projector', () => {
+  it('formats each difficulty without changing base names or adding duplicate suffixes on Repeat', () => {
+    const source=participants().slice(1).map((p,i)=>({...p,kind:'bot' as const,difficulty:(['easy','normal','hard'] as const)[i]!,name:'Очень длинное имя пилота'}))
+    const first=projectStandings('ffa',source)
+    expect(projectStandings('ffa',source)).toEqual(first)
+    if(first.mode!=='ffa')throw new Error('expected ffa')
+    expect(first.rows.map(p=>p.name).sort()).toEqual(['Очень длинное имя пилота · Салага','Очень длинное имя пилота · Боец','Очень длинное имя пилота · Ветеран'].sort())
+    expect(source.every(p=>p.name==='Очень длинное имя пилота')).toBe(true)
+  })
   it('copies every authoritative column and uses semantic id as the FFA tie-break without mutation', () => {
     const source = participants()
     const before = structuredClone(source)

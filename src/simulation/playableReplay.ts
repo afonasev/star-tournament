@@ -11,7 +11,7 @@ import {
 } from './playableSnapshot'
 import type { ContentHash } from '../core/canonical'
 
-export const PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION = 4 as const
+export const PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION = 5 as const
 
 export interface PlayableSimulationReplay {
   readonly schemaVersion: typeof PLAYABLE_SIMULATION_REPLAY_SCHEMA_VERSION

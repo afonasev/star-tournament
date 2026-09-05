@@ -74,7 +74,7 @@ describe('playable simulation step', () => {
       { participantId: initialPlayer.semanticId, actionId: 'move-forward', value: 1 },
       { participantId: initialPlayer.semanticId, actionId: 'look-yaw', value: 0.5 },
     ]), collision, PROTOTYPE_V1_PROFILE)
-    expect(collision.projected).toBe(1)
+    expect(collision.projected).toBe(3)
     expect(next.tick).toBe(1)
     expect(localParticipant(next).position.z).toBeLessThan(initialPlayer.position.z)
     expect(localParticipant(next).yaw).toBeGreaterThan(0)

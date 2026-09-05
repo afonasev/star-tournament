@@ -15,7 +15,7 @@ type Pose = Map<JointName, THREE.Euler>
 
 export interface RobotAnimationController {
   readonly weaponMount: THREE.Object3D
-  apply: (state: RobotAnimationState, seconds: number) => void
+  present: (state: RobotAnimationState, seconds: number) => void
 }
 
 function neutralPose(): Pose { return new Map(REQUIRED_JOINTS.map((name) => [name, new THREE.Euler()])) }
@@ -60,7 +60,7 @@ export function createRobotAnimationController(model: THREE.Object3D): RobotAnim
   if ([...joints.values()].some((joint) => joint === undefined)) return undefined
   const joint = (name: JointName) => joints.get(name)!
   let previousSeconds: number | undefined
-  const apply = (state: RobotAnimationState, seconds: number) => {
+  const present = (state: RobotAnimationState, seconds: number) => {
     const target = targetPose(state, seconds)
     const elapsed = previousSeconds === undefined ? 0 : Math.min(.1, Math.max(0, seconds - previousSeconds))
     const alpha = previousSeconds === undefined ? 1 : 1 - Math.exp(-transitionRate(state) * elapsed)
@@ -71,5 +71,5 @@ export function createRobotAnimationController(model: THREE.Object3D): RobotAnim
     )
     previousSeconds = seconds
   }
-  return { weaponMount: joint('robot:rig:weapon-mount'), apply }
+  return { weaponMount: joint('robot:rig:weapon-mount'), present }
 }

@@ -1,3 +1,5 @@
+import { advanceBots } from '../ai/planner'
+import { createActionFrame } from '../input/actionFrame'
 import type {
   CollisionCapsuleMovementResult,
   CollisionCapsuleProjection,
@@ -17,11 +19,9 @@ import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import { buildMovementIntent, applyCollisionMovement } from './movement'
 import { nextRandomUint32 } from './rng'
 import {
-  localParticipant,
   parseSimulationSnapshot,
-  stationaryParticipants,
-  type MatchParticipantState,
   type SimulationSnapshot,
+  type SimulationEvent,
 } from './playableSnapshot'
 import { reduceMatchTick } from './matchReducer'
 import { SIMULATION_FIXED_DELTA_SECONDS, SIMULATION_TICKS_PER_SECOND } from './step'
@@ -102,93 +102,53 @@ export function stepPlayableSimulation(
   }
   if (current.match.phase === 'finished') return current
 
-  const local = localParticipant(current)
-  const participantId = local.semanticId
-  const jumpPressed = actionValue(normalizedFrame, participantId, 'jump') === 1
-  const firePressed = actionValue(normalizedFrame, participantId, 'fire') === 1
+  const localIds = new Set(current.participants.filter(p => p.kind === 'local-seat').map(p => p.semanticId))
+  for (const action of normalizedFrame.actions) if (!localIds.has(action.participantId)) throw new TypeError('External actions must target a local seat')
   collision.projectCapsules(livingParticipantCollisionCapsules(current, profile))
-  const movementIntent = buildMovementIntent(
-    local,
-    {
-      forward: actionValue(normalizedFrame, participantId, 'move-forward'),
-      right: actionValue(normalizedFrame, participantId, 'move-right'),
-      lookYaw: actionValue(normalizedFrame, participantId, 'look-yaw'),
-      lookPitch: actionValue(normalizedFrame, participantId, 'look-pitch'),
+  const hasBots = current.participants.some(p => p.kind === 'bot')
+  if (hasBots && !arena) throw new TypeError('Bots require a full ArenaDefinition')
+  const ai = hasBots ? advanceBots(current, collision, profile, arena!) : { states: new Map(), actions: [] }
+  const actions = createActionFrame(expectedTick, [...normalizedFrame.actions, ...ai.actions])
+  let participants = current.participants.map(p => ai.states.has(p.semanticId) ? { ...p, botState: ai.states.get(p.semanticId)! } : p)
+  for (let i=0;i<participants.length;i++) {
+    const local = participants[i]!
+    if (!local.alive || local.kind === 'stationary-fixture') continue
+    const participantId = local.semanticId
+    const jumpPressed = actionValue(actions, participantId, 'jump') === 1
+    collision.projectCapsules(livingParticipantCollisionCapsules({ ...current, participants }, profile))
+    const intent = buildMovementIntent(local, {
+      forward: actionValue(actions, participantId, 'move-forward'),
+      right: actionValue(actions, participantId, 'move-right'),
+      lookYaw: actionValue(actions, participantId, 'look-yaw'),
+      lookPitch: actionValue(actions, participantId, 'look-pitch'),
       jumpPressed: jumpPressed && !local.previousJumpPressed,
-    },
-    {
-      ...profile.rules.player.movement,
-      horizontalSensitivityDegrees: profile.rules.camera.horizontalSensitivity,
-      verticalSensitivityDegrees: profile.rules.camera.verticalSensitivity,
-      maximumPitchDegrees: profile.rules.camera.maximumPitchDegrees,
-    },
-    SIMULATION_FIXED_DELTA_SECONDS,
-  )
-  // Rapier's autostep becomes numerically unstable when a grounded fixed-tick
-  // gravity displacement sits extremely close to the controller skin. A
-  // profile-derived downward contact probe keeps small arcade steps reliable;
-  // it is applied for one grounded tick only and never overrides a jump.
-  const desiredTranslation = local.grounded && !(jumpPressed && !local.previousJumpPressed)
-    ? {
-        ...movementIntent.desiredTranslation,
-        y: Math.min(
-          movementIntent.desiredTranslation.y,
-          -profile.rules.player.capsule.skinWidth,
-        ),
-      }
-    : movementIntent.desiredTranslation
-  const moved = applyCollisionMovement(
-    local,
-    movementIntent,
-    collision.moveCapsule(local.semanticId, desiredTranslation),
-    SIMULATION_FIXED_DELTA_SECONDS,
-  )
-  const player: MatchParticipantState = {
-    ...local,
-    ...moved,
-    previousJumpPressed: jumpPressed,
+    }, { ...profile.rules.player.movement, horizontalSensitivityDegrees: profile.rules.camera.horizontalSensitivity, verticalSensitivityDegrees: profile.rules.camera.verticalSensitivity, maximumPitchDegrees: profile.rules.camera.maximumPitchDegrees }, SIMULATION_FIXED_DELTA_SECONDS)
+    // A grounded downward probe stabilizes Rapier autostep at controller skin.
+    const desired = local.grounded && !(jumpPressed && !local.previousJumpPressed)
+      ? { ...intent.desiredTranslation, y: Math.min(intent.desiredTranslation.y, -profile.rules.player.capsule.skinWidth) }
+      : intent.desiredTranslation
+    participants[i] = { ...local, ...applyCollisionMovement(local, intent, collision.moveCapsule(participantId, desired), SIMULATION_FIXED_DELTA_SECONDS), previousJumpPressed: jumpPressed }
   }
-  const shotgun = resolveShotgunTrigger(
-    expectedTick,
-    SIMULATION_TICKS_PER_SECOND,
-    firePressed,
-    player,
-    local.weapon,
-    stationaryParticipants(current).map(({ semanticId, lifeId, health, alive }) => ({
-      semanticId,
-      lifeId,
-      health,
-      active: alive,
-    })),
-    COMBAT_SLICE_SCENARIO_V1.targets.map((target) => {
-      const participant = current.participants.find(({ semanticId }) => semanticId === target.semanticId)
-      return participant === undefined ? target : { ...target, position: participant.position, yawRadians: participant.yaw }
-    }),
-    {
-      eyeHeight: profile.rules.player.eyeHeight,
-      ...profile.rules.weapons.doubleBarrelShotgun,
-    },
-    collision,
-  )
-  const preparedParticipants = current.participants.map((participant) => participant.semanticId === participantId
-    ? { ...player, weapon: shotgun.weapon }
-    : participant)
-  const prepared = { ...current, participants: preparedParticipants } as SimulationSnapshot
-  const reduced = reduceMatchTick(
-    prepared,
-    shotgun.events,
-    profile,
-    configuration,
-    COMBAT_SLICE_SCENARIO_V1,
-    arena,
-  )
+  collision.projectCapsules(livingParticipantCollisionCapsules({ ...current, participants }, profile))
+  const combatParticipants = participants
+  const events: SimulationEvent[] = []
+  const offset = profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight
+  const template = COMBAT_SLICE_SCENARIO_V1.targets[0]!
+  participants = participants.map(player => {
+    if (!player.alive || player.kind === 'stationary-fixture') return player
+    const others = combatParticipants.filter(p => p.semanticId !== player.semanticId)
+    const result = resolveShotgunTrigger(expectedTick, SIMULATION_TICKS_PER_SECOND,
+      actionValue(actions, player.semanticId, 'fire') === 1, player, player.weapon,
+      others.map(p => ({ semanticId:p.semanticId, lifeId:p.lifeId, health:p.health, active:p.alive })),
+      others.map(p => ({ ...template, semanticId:p.semanticId, name:p.name,
+        position: { ...p.position, y:p.position.y-(p.kind === 'stationary-fixture' ? 0 : offset) }, yawRadians:p.yaw })),
+      { eyeHeight:profile.rules.player.eyeHeight, ...profile.rules.weapons.doubleBarrelShotgun }, collision)
+    events.push(...result.events)
+    return { ...player, weapon: { ...result.weapon, semanticId: player.weapon.semanticId } }
+  })
+  const reduced = reduceMatchTick({ ...current, participants }, events, profile, configuration, COMBAT_SLICE_SCENARIO_V1, arena)
   return parseSimulationSnapshot({
-    ...current,
-    tick: expectedTick,
-    rng: nextRandomUint32(current.rng).state,
-    participants: reduced.participants,
-    corpses: reduced.corpses,
-    match: reduced.match,
-    events: reduced.events,
+    ...current, tick: expectedTick, rng: nextRandomUint32(current.rng).state,
+    participants: reduced.participants, corpses: reduced.corpses, match: reduced.match, events: reduced.events,
   }, configuration)
 }

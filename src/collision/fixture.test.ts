@@ -8,7 +8,7 @@ describe('collision-fixture-v1', () => {
     expect(validateArenaDefinition(COLLISION_FIXTURE_ARENA).ok).toBe(true)
     expect(Object.isFrozen(COLLISION_FIXTURE_ARENA)).toBe(true)
     expect(COLLISION_FIXTURE_ARENA.id).toBe(COLLISION_FIXTURE_ID)
-    expect(COLLISION_FIXTURE_ARENA.contentHash).toBe('fnv1a64-v1:4938e992cb02b297')
+    expect(COLLISION_FIXTURE_ARENA.contentHash).toBe('fnv1a64-v1:447461383030c95e')
     expect(COLLISION_FIXTURE_ARENA.surfaces.map((surface) => surface.id)).toEqual([
       'ceiling-low',
       'corner-north',

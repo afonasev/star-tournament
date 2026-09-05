@@ -46,6 +46,7 @@ export interface GameplayUiSnapshot {
   readonly scoreboardVisible: boolean
   readonly standings: StandingsProjection
   readonly result: MatchFinalResult | null
+  readonly deathMessage?: string
   readonly errorMessage?: string
   readonly debug?: GameplayDebugSnapshot
 }
@@ -107,13 +108,14 @@ export class GameplayUiProjector {
           this.ticksPerSecond,
       ),
     )
+    const localId = source.participants.find(p => p.kind === 'local-seat')?.semanticId
     for (const event of source.events) {
-      if (event.kind === 'target-damaged' || event.kind === 'target-destroyed') {
+      if ((event.kind === 'target-damaged' && event.attackerId === localId) || (event.kind === 'target-destroyed' && event.killerId === localId)) {
         this.hitFeedbackThroughTick = Math.max(
           this.hitFeedbackThroughTick,
           event.tick + feedbackTicks,
         )
-      } else if (event.kind === 'dry-fire') {
+      } else if (event.kind === 'dry-fire' && event.shooterId === localId) {
         this.dryFireFeedbackThroughTick = Math.max(
           this.dryFireFeedbackThroughTick,
           event.tick + feedbackTicks,
@@ -148,6 +150,7 @@ export class GameplayUiProjector {
       scoreboardVisible: scoreboardVisible && matchPhase !== 'finished',
       standings: projectStandings(source.match.mode, source.participants),
       result: source.match.result,
+      ...(!local.alive ? { deathMessage: local.deathSource ? `Вас убил ${source.participants.find(p => p.semanticId === local.deathSource!.participantId)?.name ?? local.deathSource.participantId}` : 'Вы погибли' } : {}),
       ...(debug === undefined ? {} : { debug }),
       ...(errorMessage === undefined ? {} : { errorMessage }),
     })

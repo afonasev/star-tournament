@@ -37,7 +37,7 @@ describe('playable SimulationSnapshot schema v3', () => {
     const targets = stationaryParticipants(snapshot)
     const capsule = PROTOTYPE_V1_PROFILE.rules.player.capsule
 
-    expect(snapshot.schemaVersion).toBe(3)
+    expect(snapshot.schemaVersion).toBe(4)
     expect(snapshot.tick).toBe(0)
     expect(snapshot.profile).toBe(RUNTIME_PROFILE_IDENTITY)
     expect(snapshot.collision).toBe(RUNTIME_COLLISION_COMPATIBILITY_IDENTITY)

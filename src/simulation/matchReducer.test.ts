@@ -32,6 +32,20 @@ function damage(tick: number, attackerId: string, targetId: string, amount: numb
 }
 
 describe('deterministic match reducer', () => {
+  it('combines nonlethal hits canonically and permits mutual kills, including the human', () => {
+    const source=snapshot()
+    const hits=[...damage(1,'robot-left','local-player-1',60),...damage(1,'robot-right','local-player-1',60),...damage(1,'local-player-1','robot-right',100)]
+    const a=reduceMatchTick(source,hits,PROTOTYPE_V1_PROFILE,DEFAULT_MATCH_CONFIGURATION,COMBAT_SLICE_SCENARIO_V1)
+    const b=reduceMatchTick(source,[...hits].reverse(),PROTOTYPE_V1_PROFILE,DEFAULT_MATCH_CONFIGURATION,COMBAT_SLICE_SCENARIO_V1)
+    expect(a).toEqual(b)
+    const human=a.participants.find(p=>p.kind==='local-seat')!
+    expect(human).toMatchObject({alive:false,health:0,statistics:{kills:1,deaths:1,damageReceived:100},deathSource:{participantId:'robot-right',lifeId:'robot-right:life:1'}})
+    expect(a.events.filter(e=>e.kind==='target-destroyed')).toHaveLength(2)
+    const dead=nextSnapshot(source,a)
+    const due={...dead,tick:human.respawnTick!-1}
+    const respawn=reduceMatchTick(due,[],PROTOTYPE_V1_PROFILE,DEFAULT_MATCH_CONFIGURATION,COMBAT_SLICE_SCENARIO_V1)
+    expect(respawn.participants.find(p=>p.kind==='local-seat')).toMatchObject({alive:true,health:100,deathSource:null,weapon:{ammo:20}})
+  })
   it('keeps exact dealt/received symmetry and records one death per life', () => {
     const source = snapshot()
     const first = reduceMatchTick(source, damage(1, 'local-player-1', 'robot-center', 100, true), PROTOTYPE_V1_PROFILE, DEFAULT_MATCH_CONFIGURATION, COMBAT_SLICE_SCENARIO_V1)
@@ -92,8 +106,8 @@ describe('deterministic match reducer', () => {
       : participant)
     const prior = { ...source, tick: 300, participants, match: { ...source.match, elapsedTicks: 300, remainingTicks: source.match.remainingTicks - 300 } } as SimulationSnapshot
     const repeated = [
-      ...damage(lethalTick, 'robot-left', 'robot-center', 1),
-      ...damage(lethalTick, 'robot-left', 'robot-center', 1).map((event) => ({ ...event, eventId: `${event.eventId}:repeat` })),
+      ...damage(lethalTick, 'robot-left', 'robot-center', 1).map(event => ({ ...event, eventId: `0:${event.eventId}` })),
+      ...damage(lethalTick, 'robot-left', 'robot-center', 1).map((event) => ({ ...event, eventId: `0:${event.eventId}:repeat` })),
       ...damage(lethalTick, 'local-player-1', 'robot-center', 18, true),
     ]
     const result = reduceMatchTick(prior, repeated, PROTOTYPE_V1_PROFILE, DEFAULT_MATCH_CONFIGURATION, COMBAT_SLICE_SCENARIO_V1)

@@ -22,7 +22,8 @@ const targetDefinition: RobotTargetDefinition = {
 const player = { semanticId: 'player', lifeId: 'life-1', position: { x: 0, y: 1.45, z: 3 }, yaw: 0, pitch: 0 }
 const weapon: ShotgunWeaponState = { semanticId: 'shotgun', ammo: 20, shotSequence: 0, nextAllowedShotTick: 0, previousFirePressed: false }
 const targets = [{ semanticId: 'target', lifeId: 'target:life:1', health: 100, active: true }] as const
-const tuning = { eyeHeight: 0.55, pelletCount: 12, spreadDegrees: 0, rangeMeters: 35, cooldownSeconds: 0.7, damage: { head: 100, torso: 70, limb: 30 } } as const
+const tuning = { eyeHeight: 0.55,
+  emptyRefillAmmo: 20, pelletCount: 12, spreadDegrees: 0, rangeMeters: 35, cooldownSeconds: 0.7, damage: { head: 100, torso: 70, limb: 30 } } as const
 const clearCollision = { raycast: () => [] }
 
 describe('double-barrel shotgun state rules', () => {
@@ -59,11 +60,12 @@ describe('double-barrel shotgun state rules', () => {
     expect(tooSoon.events).toEqual([])
   })
 
-  it('emits dry fire without changing shot sequence and ignores inactive targets', () => {
+  it('refills a zero state before firing and ignores inactive targets', () => {
     const empty = { ...weapon, ammo: 0 }
     const dry = resolveShotgunTrigger(1, 60, true, player, empty, [{ ...targets[0], active: false }], [targetDefinition], tuning, clearCollision)
-    expect(dry.weapon.shotSequence).toBe(0)
-    expect(dry.events).toEqual([expect.objectContaining({ kind: 'dry-fire', shooterId: 'player' })])
+    expect(dry.weapon.shotSequence).toBe(1)
+    expect(dry.weapon.ammo).toBe(19)
+    expect(dry.events[0]).toMatchObject({ kind: 'shotgun-shot', shooterId: 'player' })
     expect(dry.targets[0]?.health).toBe(100)
 
     const postDestroy = resolveShotgunTrigger(
@@ -99,7 +101,7 @@ describe('double-barrel shotgun state rules', () => {
     )).toBeCloseTo((100 + 70 + 30) / 3)
   })
 
-  it('fires exactly the configured 20 shots with release edges and no reload', () => {
+  it('automatically refills after the twentieth shot and preserves trigger cadence', () => {
     let currentWeapon = weapon
     let tick = 1
     let fired = 0
@@ -111,8 +113,9 @@ describe('double-barrel shotgun state rules', () => {
       tick = currentWeapon.nextAllowedShotTick
     }
     expect(fired).toBe(20)
-    expect(currentWeapon.ammo).toBe(0)
+    expect(currentWeapon.ammo).toBe(20)
     const dry = resolveShotgunTrigger(tick + 1, 60, true, player, currentWeapon, [], [], tuning, clearCollision)
-    expect(dry.events[0]?.kind).toBe('dry-fire')
+    expect(dry.events[0]?.kind).toBe('shotgun-shot')
+    expect(dry.weapon.ammo).toBe(19)
   })
 })

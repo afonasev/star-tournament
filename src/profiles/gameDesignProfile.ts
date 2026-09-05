@@ -1,8 +1,9 @@
+import { BOT_RULES, BOT_DESCRIPTORS, type BotRules } from './botRules'
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 
 import { deepFreeze, type DeepReadonly } from './deepFreeze'
 
-export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 5 as const
+export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 6 as const
 
 export type GameDesignProfileSource = 'shipped' | 'local'
 
@@ -26,6 +27,7 @@ export interface ArenaGeneratorPresetRules {
 }
 
 export interface GameDesignRules {
+  bots: BotRules
   player: {
     startingHealth: number
     capsule: {
@@ -59,6 +61,7 @@ export interface GameDesignRules {
   weapons: {
     doubleBarrelShotgun: {
       startingAmmo: number
+      emptyRefillAmmo: number
       pelletCount: number
       spreadDegrees: number
       rangeMeters: number
@@ -123,6 +126,7 @@ export type ShippedGameDesignProfile = DeepReadonly<GameDesignProfile>
 export type ValidatedGameDesignProfile = DeepReadonly<GameDesignProfile>
 
 export type ProfileDescriptorGroup =
+  | 'bots'
   | 'player'
   | 'player-capsule'
   | 'player-movement'
@@ -660,6 +664,8 @@ const descriptors: NumericProfileDescriptor[] = [
     step: 0.1,
   },
   ...ARENA_GENERATOR_SIZES.flatMap(arenaGeneratorDescriptors),
+  ...BOT_DESCRIPTORS,
+  { path: 'rules.weapons.doubleBarrelShotgun.emptyRefillAmmo', group: 'shotgun', label: 'Пополнение при нуле', description: 'Автоматическое пополнение без сброса cooldown.', unit: 'ammo', minimum: 1, maximum: 100, step: 1 },
 ]
 
 export const GAME_DESIGN_PROFILE_DESCRIPTORS = deepFreeze(descriptors)
@@ -680,6 +686,7 @@ export type ProfileValidationErrorCode =
   | 'CAMERA_PLANES_ORDER'
   | 'SLOPE_ANGLE_ORDER'
   | 'SHOTGUN_CONTRACT_INVALID'
+  | 'BOT_CONTRACT_INVALID'
   | 'ARENA_GENERATOR_CONTRACT_INVALID'
   | 'CONTENT_HASH_MISMATCH'
 
@@ -749,7 +756,14 @@ export function canonicalProfileJson(profile: GameDesignProfile): string {
   return canonicalSerialize(profile)
 }
 
+// Only cache detached outputs owned and frozen by this validator. Untrusted
+// inputs are always validated again, even when the caller reuses their identity.
+const validatedProfiles = new WeakMap<object, ProfileValidationResult>()
 export function validateGameDesignProfile(value: unknown): ProfileValidationResult {
+  if (value !== null && typeof value === 'object') {
+    const cached = validatedProfiles.get(value)
+    if (cached) return cached
+  }
   const errors: ProfileValidationError[] = []
   if (!isRecord(value)) {
     return {
@@ -998,6 +1012,16 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
   }
 
   const totals = readPath(value, 'rules.scoring.killChain.cumulativeTotals')
+  for (const difficulty of ['easy', 'normal', 'hard']) {
+    const prefix = `rules.bots.${difficulty}`
+    const memory = readPath(value, `${prefix}.memorySeconds`)
+    const decision = readPath(value, `${prefix}.decisionSeconds`)
+    const preferred = readPath(value, `${prefix}.preferredDistanceMeters`)
+    if ((typeof memory === 'number' && typeof decision === 'number' && memory < decision) ||
+        (typeof preferred === 'number' && typeof rangeMeters === 'number' && preferred >= rangeMeters)) {
+      errors.push({ code: 'BOT_CONTRACT_INVALID', paths: [`${prefix}.memorySeconds`, `${prefix}.decisionSeconds`, `${prefix}.preferredDistanceMeters`, 'rules.weapons.doubleBarrelShotgun.rangeMeters'], message: 'Память бота должна охватывать цикл решений, а дистанция боя — оставаться внутри дальности оружия.' })
+    }
+  }
   if (
     Array.isArray(totals) &&
     totals.length === 5 &&
@@ -1083,16 +1107,19 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
   // Validation is the trust boundary: callers receive a detached immutable
   // snapshot, so later mutation of the untrusted input cannot stale its hash.
   const detached = JSON.parse(canonicalSerialize(value)) as GameDesignProfile
-  return { ok: true, profile: deepFreeze(detached) }
+  const result: ProfileValidationResult = { ok: true, profile: deepFreeze(detached) }
+  validatedProfiles.set(result.profile, result)
+  return result
 }
 
 const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 5,
+  revision: 6,
   source: 'shipped',
   rules: {
+    bots: BOT_RULES,
     player: {
       startingHealth: 100,
       capsule: { radius: 0.4, halfHeight: 0.5, skinWidth: 0.01 },
@@ -1122,6 +1149,7 @@ const prototypePayload: GameDesignProfilePayload = {
     weapons: {
       doubleBarrelShotgun: {
         startingAmmo: 20,
+        emptyRefillAmmo: 20,
         pelletCount: 12,
         spreadDegrees: 7,
         rangeMeters: 35,

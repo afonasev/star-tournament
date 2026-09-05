@@ -1,26 +1,29 @@
+import { BOT_DIFFICULTIES, type BotDifficulty } from '../profiles/botRules'
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 import { ARENA_SIZE_IDS, type ArenaSize } from '../arena'
 import { PROTOTYPE_V1_PROFILE, validateGameDesignProfile, type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
 import { TEAM_COLORS } from './participantPalette'
 
-export const MATCH_CONFIGURATION_SCHEMA_VERSION = 3 as const
+export const MATCH_CONFIGURATION_SCHEMA_VERSION = 4 as const
 export const MATCH_CONFIGURATION_ID = 'local-match-v1' as const
 export { TEAM_COLORS, VETTED_PARTICIPANT_COLORS } from './participantPalette'
 
 export type MatchMode = 'ffa' | 'teams'
 export type MatchTeam = 'team-a' | 'team-b'
-export type MatchParticipantKind = 'local-seat' | 'stationary-fixture'
+export type MatchParticipantKind = 'local-seat' | 'stationary-fixture' | 'bot'
 
 export interface MatchParticipantDescriptor {
   readonly semanticId: string
   readonly name: string
   readonly kind: MatchParticipantKind
+  readonly difficulty?: BotDifficulty
   readonly color: string
   readonly team: MatchTeam | null
 }
 
 export interface MatchConfigurationPayload {
+  readonly execution?: 'headless'
   readonly schemaVersion: typeof MATCH_CONFIGURATION_SCHEMA_VERSION
   readonly id: typeof MATCH_CONFIGURATION_ID
   readonly mode: MatchMode
@@ -77,19 +80,21 @@ function integer(value: unknown, path: string): number {
 function parseParticipant(value: unknown, index: number): MatchParticipantDescriptor {
   const path = `participants[${index}]`
   const data = record(value, path)
-  exactKeys(data, ['semanticId', 'name', 'kind', 'color', 'team'], path)
-  if (data.kind !== 'local-seat' && data.kind !== 'stationary-fixture') {
-    return fail(`${path}.kind`, 'must be local-seat or stationary-fixture')
+  exactKeys(data, [ 'semanticId', 'name', 'kind', 'color', 'team', ...(data.kind === 'bot' ? ['difficulty'] : []) ], path)
+  if (data.kind !== 'local-seat' && data.kind !== 'stationary-fixture' && data.kind !== 'bot') {
+    return fail(`${path}.kind`, 'must be local-seat or stationary-fixture or bot')
   }
   if (data.team !== null && data.team !== 'team-a' && data.team !== 'team-b') {
     return fail(`${path}.team`, 'must be team-a, team-b, or null')
   }
+  if (data.kind === 'bot' && !BOT_DIFFICULTIES.includes(data.difficulty as BotDifficulty)) fail(`${path}.difficulty`, 'must be easy, normal, or hard')
   const color = nonEmpty(data.color, `${path}.color`).toLowerCase()
   if (!/^#[0-9a-f]{6}$/.test(color)) return fail(`${path}.color`, 'must be a six-digit hex color')
   return {
     semanticId: nonEmpty(data.semanticId, `${path}.semanticId`),
     name: nonEmpty(data.name, `${path}.name`),
     kind: data.kind,
+    ...(data.kind === 'bot' ? { difficulty: data.difficulty as BotDifficulty } : {}),
     color,
     team: data.team,
   }
@@ -125,7 +130,8 @@ export function parseMatchConfiguration(
   if (!profileValidation.ok) return fail('profile', 'must be a valid GameDesignProfile')
   const profile = profileValidation.profile
   const data = record(input, '$')
-  exactKeys(data, ['schemaVersion', 'id', 'mode', 'arenaSize', 'arenaSeed', 'durationMinutes', 'scoreTargetPoints', 'participants', 'contentHash'], '$')
+  exactKeys(data, ['schemaVersion', 'id', 'mode', 'arenaSize', 'arenaSeed', 'durationMinutes', 'scoreTargetPoints', 'participants', 'contentHash', ...(data.execution === undefined ? [] : ['execution'])], '$')
+  if (data.execution !== undefined && data.execution !== 'headless') fail('execution', 'must be headless when specified')
   if (data.schemaVersion !== MATCH_CONFIGURATION_SCHEMA_VERSION) fail('schemaVersion', `must equal ${MATCH_CONFIGURATION_SCHEMA_VERSION}`)
   if (data.id !== MATCH_CONFIGURATION_ID) fail('id', `must equal ${MATCH_CONFIGURATION_ID}`)
   if (data.mode !== 'ffa' && data.mode !== 'teams') fail('mode', 'must be ffa or teams')
@@ -154,9 +160,10 @@ export function parseMatchConfiguration(
     .sort((first, second) => first.semanticId.localeCompare(second.semanticId, 'en'))
   const ids = new Set(participants.map(({ semanticId }) => semanticId))
   if (ids.size !== participants.length) fail('participants', 'must have unique semanticId values')
-  if (participants.filter(({ kind }) => kind === 'local-seat').length !== 1) {
+  if (participants.filter(({ kind }) => kind === 'local-seat').length !== (data.execution === 'headless' ? 0 : 1)) {
     fail('participants', 'must contain exactly one local-seat participant')
   }
+  if (data.execution === 'headless' && participants.some(({ kind }) => kind !== 'bot')) fail('participants', 'headless requires bots')
   if (data.mode === 'ffa') {
     if (participants.some(({ team }) => team !== null)) fail('participants', 'FFA participants must not have teams')
     if (new Set(participants.map(({ color }) => color)).size !== participants.length) {
@@ -175,6 +182,7 @@ export function parseMatchConfiguration(
   }
   if (typeof data.contentHash !== 'string' || !isContentHash(data.contentHash)) fail('contentHash', 'must be a content hash')
   const parsed = {
+    ...(data.execution === 'headless' ? { execution: 'headless' as const } : {}),
     schemaVersion: MATCH_CONFIGURATION_SCHEMA_VERSION,
     id: MATCH_CONFIGURATION_ID,
     mode: data.mode,

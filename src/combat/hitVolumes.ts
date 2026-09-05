@@ -1,3 +1,4 @@
+import { simulationMath } from '../core/simulationMath'
 import type { CollisionVector3 } from '../collision/contracts'
 import { deepFreeze } from '../core/deepFreeze'
 import type { RobotTargetDefinition, TargetHitVolume } from '../scenario'
@@ -38,7 +39,7 @@ function dot(first: CollisionVector3, second: CollisionVector3): number {
 }
 
 function length(vector: CollisionVector3): number {
-  return Math.hypot(vector.x, vector.y, vector.z)
+  return simulationMath.hypot(vector.x, vector.y, vector.z)
 }
 
 function normalize(vector: CollisionVector3): CollisionVector3 {
@@ -48,8 +49,8 @@ function normalize(vector: CollisionVector3): CollisionVector3 {
 }
 
 function rotateYaw(vector: CollisionVector3, yaw: number): CollisionVector3 {
-  const cosine = Math.cos(yaw)
-  const sine = Math.sin(yaw)
+  const cosine = simulationMath.cos(yaw)
+  const sine = simulationMath.sin(yaw)
   return {
     x: cosine * vector.x + sine * vector.z,
     y: vector.y,

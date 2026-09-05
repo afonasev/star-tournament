@@ -1,3 +1,4 @@
+import { createBotState } from '../ai/state'
 import { deepFreeze } from '../core/deepFreeze'
 import { allocateArenaSpawns, type ArenaDefinition } from '../arena'
 import type { MatchConfiguration, MatchTeam } from '../match'
@@ -117,6 +118,7 @@ function applyDeath(
     alive: false,
     health: 0,
     deathTick: event.tick,
+    deathSource: { participantId: event.killerId, lifeId: participants.find(p => p.semanticId === event.killerId)!.lifeId },
     respawnTick: event.tick + Math.ceil(profile.rules.death.killcamSeconds * 60),
     corpseExpiresTick: event.tick + Math.ceil(profile.rules.death.corpseSeconds * 60),
     statistics: { ...current.statistics, deaths: current.statistics.deaths + 1 },
@@ -134,7 +136,7 @@ function respawnDueParticipants(
   arena?: ArenaDefinition,
 ): void {
   const fixtureById = new Map(scenario.targets.map((fixture) => [fixture.semanticId, fixture]))
-  const due = [...participants].filter((participant) => participant.kind === 'stationary-fixture' && !participant.alive && participant.respawnTick !== null && participant.respawnTick <= tick).sort(compareId)
+  const due = [...participants].filter((participant) => !participant.alive && participant.respawnTick !== null && participant.respawnTick <= tick).sort(compareId)
   const allocations = arena === undefined ? undefined : new Map(allocateArenaSpawns({
     arena,
     mode: participants.some(({ team }) => team !== null) ? 'teams' : 'ffa',
@@ -144,8 +146,8 @@ function respawnDueParticipants(
     minimumOpponentSeparationMeters: profile.rules.arenaGenerator.presets[arena.size].minimumSpawnSeparationMeters,
   }).map((allocation) => [allocation.participantId, allocation]))
   for (const participant of due) {
-    if (participant.kind !== 'stationary-fixture' || participant.alive || participant.respawnTick === null || participant.respawnTick > tick) continue
-    const fixture = fixtureById.get(participant.semanticId)
+    if (participant.alive || participant.respawnTick === null || participant.respawnTick > tick) continue
+    const fixture = fixtureById.get(participant.semanticId) ?? (participant.kind !== 'stationary-fixture' ? scenario.playerSpawn : undefined)
     if (fixture === undefined) throw new TypeError(`Missing fixture anchor ${participant.semanticId}`)
     const allocation = allocations?.get(participant.semanticId)
     const lifeSequence = participant.lifeSequence + 1
@@ -154,7 +156,8 @@ function respawnDueParticipants(
       ...current,
       lifeSequence,
       lifeId,
-      position: allocation?.position ?? fixture.position,
+      position: participant.kind === 'stationary-fixture' ? allocation?.position ?? fixture.position : { ...(allocation?.position ?? fixture.position), y: (allocation?.position ?? fixture.position).y + profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight },
+      ...(participant.kind === 'bot' ? { botState: createBotState(tick, lifeId, allocation?.position ?? fixture.position) } : {}),
       velocity: { x: 0, y: 0, z: 0 },
       grounded: true,
       yaw: allocation?.yawRadians ?? fixture.yawRadians,
@@ -162,6 +165,7 @@ function respawnDueParticipants(
       health: profile.rules.player.startingHealth,
       alive: true,
       deathTick: null,
+      deathSource: null,
       respawnTick: null,
       corpseExpiresTick: null,
       previousJumpPressed: false,
@@ -239,9 +243,20 @@ export function reduceMatchTick(
     damageLedger: participant.damageLedger.map((entry) => ({ ...entry })),
   }))
   const corpses = snapshot.corpses.filter(({ expiresTick }) => expiresTick > tick).map((corpse) => ({ ...corpse }))
-  const events = [...eventsInput].sort((first, second) => first.eventId.localeCompare(second.eventId, 'en'))
-  for (const event of events) if (event.kind === 'target-damaged') applyDamage(participants, event)
-  for (const event of events) if (event.kind === 'target-destroyed') applyDeath(participants, corpses, event, profile)
+  const events: SimulationEvent[] = eventsInput.filter(e => e.kind !== 'target-damaged' && e.kind !== 'target-destroyed')
+  const deaths: TargetDestroyedEvent[] = []
+  for (const event of [...eventsInput].sort((a,b) => a.eventId.localeCompare(b.eventId,'en'))) {
+    if (event.kind !== 'target-damaged') continue
+    const victim = participants.find(p => p.semanticId === event.targetId)
+    if (!victim?.alive || victim.lifeId !== event.targetLifeId) continue
+    const damage = Math.min(event.damage, victim.health)
+    if (damage <= 0) continue
+    const normalized = { ...event, damage, healthAfter: Math.max(0, victim.health - damage) }
+    applyDamage(participants, normalized)
+    events.push(normalized)
+    if (normalized.healthAfter === 0) deaths.push({ kind:'target-destroyed', eventId:`tick-${tick}:destroyed:${event.targetId}`, tick, killerId:event.attackerId, targetId:event.targetId, targetLifeId:event.targetLifeId })
+  }
+  for (const event of deaths) { applyDeath(participants, corpses, event, profile); events.push(event) }
   respawnDueParticipants(participants, tick, profile, scenario, events, arena)
   participants.sort(compareId)
   corpses.sort((first, second) => first.corpseId.localeCompare(second.corpseId, 'en'))

@@ -29,6 +29,7 @@ export interface ShotgunTargetState {
 }
 
 export interface ShotgunTuning {
+  readonly emptyRefillAmmo: number
   readonly eyeHeight: number
   readonly pelletCount: number
   readonly spreadDegrees: number
@@ -126,6 +127,7 @@ export function resolveShotgunTrigger(
   if (!Number.isSafeInteger(ticksPerSecond) || ticksPerSecond < 1) {
     throw new RangeError('ticksPerSecond must be positive')
   }
+  weapon = { ...weapon, ammo: weapon.ammo === 0 ? tuning.emptyRefillAmmo : weapon.ammo }
   const sortedTargets = [...targets].sort((first, second) => first.semanticId.localeCompare(second.semanticId))
   const risingEdge = firePressed && !weapon.previousFirePressed
   const withPressedState: ShotgunWeaponState = { ...weapon, previousFirePressed: firePressed }
@@ -180,7 +182,7 @@ export function resolveShotgunTrigger(
   for (const impact of impacts) {
     events.push({
       kind: 'shotgun-impact',
-      eventId: eventId(tick, `impact:${impact.pelletIndex}`),
+      eventId: eventId(tick, `impact:${player.semanticId}:${impact.pelletIndex}`),
       tick,
       pelletIndex: impact.pelletIndex,
       position: impact.position,
@@ -214,7 +216,7 @@ export function resolveShotgunTrigger(
     const zones = [...accumulated.zones].sort((first, second) => ZONE_ORDER[first] - ZONE_ORDER[second])
     events.push({
       kind: 'target-damaged',
-      eventId: eventId(tick, `damaged:${target.semanticId}`),
+      eventId: eventId(tick, `damaged:${player.semanticId}:${target.semanticId}`),
       tick,
       attackerId: player.semanticId,
       targetId: target.semanticId,
@@ -226,7 +228,7 @@ export function resolveShotgunTrigger(
     if (!active) {
       events.push({
         kind: 'target-destroyed',
-        eventId: eventId(tick, `destroyed:${target.semanticId}`),
+        eventId: eventId(tick, `destroyed:${player.semanticId}:${target.semanticId}`),
         tick,
         killerId: player.semanticId,
         targetId: target.semanticId,
@@ -239,7 +241,7 @@ export function resolveShotgunTrigger(
   return deepFreeze({
     weapon: {
       ...withPressedState,
-      ammo: weapon.ammo - 1,
+      ammo: weapon.ammo === 1 ? tuning.emptyRefillAmmo : weapon.ammo - 1,
       shotSequence,
       nextAllowedShotTick: tick + cooldownTicks,
     },

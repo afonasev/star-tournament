@@ -65,6 +65,7 @@ import {
   type GameplayUiStatus,
 } from '../ui/gameplayUiSnapshot'
 import { BrowserRuntime, type AnimationScheduler } from './browserRuntime'
+import { createPlayableSimulationReplay } from '../simulation/playableReplay'
 import type { CollisionUiState } from './uiSnapshot'
 
 export interface RuntimeCollisionWorld extends PlayableCollisionPort {
@@ -257,6 +258,8 @@ export async function bootstrapBrowserRuntime(
   const createCollision = dependencies.createCollisionWorld ?? createRapierCollisionWorld
   const createRenderer = dependencies.createRenderer ?? createFirstPersonRenderer
   let activePerformancePhase: ActivePerformancePhase
+  const benchmarkFrames: ReturnType<typeof createActionFrame>[] = []
+  const benchmarkCheckpoints: PlayableSimulationSnapshot[] = []
   const createInput = dependencies.createInput ?? ((options) => (
     performanceBenchmarkEnabled
       ? createBenchmarkInputAdapter(() => activePerformancePhase)
@@ -520,8 +523,10 @@ export async function bootstrapBrowserRuntime(
     now,
     step: (state) => {
       const frame = input!.drainActionFrame(state.tick + 1)
+      if (performanceBenchmarkEnabled) benchmarkFrames.push(frame)
       const uiActions = input!.drainUiActionSnapshot?.()
       const next = stepPlayableSimulation(state, frame, collisionWorld!, profile, configuration, arena)
+      if (performanceBenchmarkEnabled && [1, 2, 10, 60, 600].includes(next.tick)) benchmarkCheckpoints.push(next)
       if (uiActions !== undefined && uiActions.scoreboardHeld !== scoreboardVisible) {
         scoreboardVisible = uiActions.scoreboardHeld
         ui.update(projectUi(next))
@@ -667,6 +672,10 @@ export async function bootstrapBrowserRuntime(
       reportWindow.__STAR_TOURNAMENT_PERFORMANCE_REPORT__ = report
       playfield.dataset.performanceBenchmarkStatus = report.passed ? 'passed' : 'failed'
       playfield.dataset.performanceBenchmarkReport = serializedReport
+      playfield.dataset.aiReplay = JSON.stringify(createPlayableSimulationReplay(initialState, benchmarkFrames, configuration, arena))
+      playfield.dataset.aiFinalHash = playableSimulationSnapshotHash(runtime!.getState(), configuration)
+      playfield.dataset.aiFinalSnapshot = JSON.stringify(runtime!.getState())
+      playfield.dataset.aiCheckpoints = JSON.stringify(benchmarkCheckpoints)
       badge.textContent = report.passed ? 'PERFORMANCE · PASS' : 'PERFORMANCE · FAIL'
       badge.dataset.status = report.passed ? 'passed' : 'failed'
       pointerState = Object.freeze({ status: 'paused' })

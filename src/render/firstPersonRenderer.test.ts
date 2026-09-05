@@ -374,7 +374,7 @@ describe('createFirstPersonRenderer', () => {
     for (const participant of initial.participants.filter((entry) => entry.kind === 'stationary-fixture')) {
       const group = scene.getObjectByName(`target:${participant.semanticId}`) as THREE.Group
       const material = (group.getObjectByName('robot:identity:core') as THREE.Mesh).material as THREE.MeshStandardMaterial
-      expect(`#${material.color.getHexString()}`).toBe(participant.color)
+      expect(`#${material.color.getHexString()}`).toBe((participant as import('./firstPersonRenderer').FirstPersonRenderTarget).color)
     }
 
     const targetId = COMBAT_SLICE_SCENARIO_V1.targets[0]!.semanticId

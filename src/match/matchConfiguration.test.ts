@@ -31,7 +31,7 @@ function payload(overrides: Partial<MatchConfigurationPayload> = {}): MatchConfi
 
 describe('MatchConfiguration', () => {
   it('defaults to a concrete medium arena seed and includes both in identity', () => {
-    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 3, arenaSize: 'medium', arenaSeed: 0x53544152 })
+    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 4, arenaSize: 'medium', arenaSeed: 0x53544152 })
     const changed = createMatchConfiguration(payload({ arenaSize: 'large', arenaSeed: 7 }))
     expect(changed.contentHash).not.toBe(DEFAULT_MATCH_CONFIGURATION.contentHash)
   })
@@ -97,7 +97,7 @@ describe('MatchConfiguration', () => {
       ],
     }))).toThrow(/non-empty team-a and team-b/)
     const unsupported = payload() as unknown as { participants: Array<Record<string, unknown>> }
-    unsupported.participants[1]!.kind = 'bot'
+    unsupported.participants[1]!.kind = 'online'
     expect(() => createMatchConfiguration(unsupported as unknown as MatchConfigurationPayload)).toThrow(/local-seat or stationary-fixture/)
   })
 

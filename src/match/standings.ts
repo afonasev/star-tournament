@@ -1,3 +1,4 @@
+import { BOT_LABELS } from '../profiles/botRules'
 import { deepFreeze } from '../core/deepFreeze'
 import type { MatchParticipantState } from '../simulation/playableSnapshot'
 import { TEAM_COLORS, type MatchMode, type MatchParticipantKind, type MatchTeam } from './matchConfiguration'
@@ -34,7 +35,7 @@ function sortedRows(participants: readonly MatchParticipantState[]): readonly St
     .map((participant, index) => ({
       rank: index + 1,
       semanticId: participant.semanticId,
-      name: participant.name,
+      name: participant.kind === 'bot' ? `${participant.name} · ${BOT_LABELS[participant.difficulty!]}` : participant.name,
       kind: participant.kind,
       color: participant.color,
       team: participant.team,

@@ -276,6 +276,9 @@ describe('граница simulation package', () => {
 
   it('не допускает backend, browser, input-device, presentation и wall-clock dependencies', () => {
     expect(productionViolations([join(sourceRoot, 'simulation')], findSimulationBoundaryViolations)).toEqual([])
+    for (const file of ['planner.ts', 'navigation.ts', 'state.ts']) {
+      expect(findSimulationBoundaryViolations(readFileSync(join(sourceRoot, 'ai', file), 'utf8')), file).toEqual([])
+    }
   })
 })
 

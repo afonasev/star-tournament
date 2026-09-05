@@ -1,3 +1,4 @@
+import { simulationMath } from '../core/simulationMath'
 import type { CollisionVector3 } from '../collision/contracts'
 import { contentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
@@ -23,7 +24,7 @@ export interface PelletDirection {
 }
 
 function normalize(vector: CollisionVector3): CollisionVector3 {
-  const length = Math.hypot(vector.x, vector.y, vector.z)
+  const length = simulationMath.hypot(vector.x, vector.y, vector.z)
   if (!Number.isFinite(length) || length === 0) throw new RangeError('Direction must be non-zero')
   const component = (value: number): number => {
     const normalized = value / length
@@ -34,17 +35,17 @@ function normalize(vector: CollisionVector3): CollisionVector3 {
 
 export function firstPersonBasisFromYawPitch(yaw: number, pitch: number): FirstPersonBasis {
   if (!Number.isFinite(yaw) || !Number.isFinite(pitch)) throw new TypeError('Yaw and pitch must be finite')
-  const cosPitch = Math.cos(pitch)
+  const cosPitch = simulationMath.cos(pitch)
   const forward = normalize({
-    x: Math.sin(yaw) * cosPitch,
-    y: Math.sin(pitch),
-    z: -Math.cos(yaw) * cosPitch,
+    x: simulationMath.sin(yaw) * cosPitch,
+    y: simulationMath.sin(pitch),
+    z: -simulationMath.cos(yaw) * cosPitch,
   })
-  const right = normalize({ x: Math.cos(yaw), y: 0, z: Math.sin(yaw) })
+  const right = normalize({ x: simulationMath.cos(yaw), y: 0, z: simulationMath.sin(yaw) })
   const up = normalize({
-    x: -Math.sin(yaw) * Math.sin(pitch),
-    y: Math.cos(pitch),
-    z: Math.cos(yaw) * Math.sin(pitch),
+    x: -simulationMath.sin(yaw) * simulationMath.sin(pitch),
+    y: simulationMath.cos(pitch),
+    z: simulationMath.cos(yaw) * simulationMath.sin(pitch),
   })
   return deepFreeze({ forward, right, up })
 }
@@ -68,11 +69,11 @@ function concentricDisk(first: number, second: number): readonly [number, number
   if (Math.abs(x) > Math.abs(y)) {
     const radius = x
     const theta = Math.PI / 4 * (y / x)
-    return [radius * Math.cos(theta), radius * Math.sin(theta)]
+    return [radius * simulationMath.cos(theta), radius * simulationMath.sin(theta)]
   }
   const radius = y
   const theta = Math.PI / 2 - Math.PI / 4 * (x / y)
-  return [radius * Math.cos(theta), radius * Math.sin(theta)]
+  return [radius * simulationMath.cos(theta), radius * simulationMath.sin(theta)]
 }
 
 export function generateShotgunPelletDirections(
@@ -92,7 +93,7 @@ export function generateShotgunPelletDirections(
     right: normalize(basis.right),
     up: normalize(basis.up),
   }
-  const spreadScale = Math.tan(spreadDegrees * Math.PI / 180)
+  const spreadScale = simulationMath.tan(spreadDegrees * Math.PI / 180)
   let rng = createSeededRngState(seedFromIdentity(identity))
   const directions: PelletDirection[] = []
   for (let pelletIndex = 0; pelletIndex < pelletCount; pelletIndex += 1) {

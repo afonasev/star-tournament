@@ -30,14 +30,14 @@ export function RobotAnimationReview() {
     let cancelled = false; let frame = 0; let cache: Awaited<ReturnType<typeof prepareArenaGlbAssets>> | undefined
     let presentation: ReturnType<typeof createRobotGlbPresentation> | undefined
     const resize = () => { const { width, height } = mount.getBoundingClientRect(); renderer.setSize(Math.max(1, width), Math.max(1, height), false); camera.aspect = Math.max(1, width) / Math.max(1, height); camera.updateProjectionMatrix() }
-    const render = (milliseconds: number) => { presentation?.animation?.apply(stateRef.current, milliseconds / 1000); renderer.render(scene, camera); frame = requestAnimationFrame(render) }
+    const render = (milliseconds: number) => { presentation?.animation?.present(stateRef.current, milliseconds / 1000); renderer.render(scene, camera); frame = requestAnimationFrame(render) }
     resize(); const observer = new ResizeObserver(resize); observer.observe(mount)
     void prepareArenaGlbAssets().then((loaded) => {
       if (cancelled) { loaded.dispose(); return }
       cache = loaded
       presentation = createRobotGlbPresentation({ geometries: [], materials: [] }, cache, new THREE.Texture(), '#42d9ff', lod)
       animation.current = presentation.animation
-      animation.current?.apply(stateRef.current, performance.now() / 1000)
+      animation.current?.present(stateRef.current, performance.now() / 1000)
       scene.add(presentation.group)
       frame = requestAnimationFrame(render)
     }).catch(() => { mount.dataset.animationReviewError = 'asset-load-failed' })
@@ -50,7 +50,7 @@ export function RobotAnimationReview() {
     setState(next)
     // Background in-app Browser tabs can throttle RAF; the review controls must
     // still show the selected pose before the tester captures a frame.
-    animation.current?.apply(next, performance.now() / 1000)
+    animation.current?.present(next, performance.now() / 1000)
   }
   const runFullReview = (index = 0) => {
     selectState(STATES[index]!)

@@ -1,3 +1,5 @@
+import { createBotState, parseBotState, type BotState } from '../ai/state'
+import type { BotDifficulty } from '../profiles/botRules'
 import { RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, parseCollisionCompatibilityIdentity, type CollisionCompatibilityIdentity, type CollisionVector3 } from '../collision/contracts'
 import { allocateArenaSpawns, type ArenaDefinition } from '../arena'
 import { canonicalSerialize, contentHash, isContentHash, parseCanonicalJson, type ContentHash } from '../core/canonical'
@@ -7,7 +9,7 @@ import { PROTOTYPE_V1_PROFILE, validateGameDesignProfile, type GameDesignProfile
 import { COMBAT_SLICE_SCENARIO_V1, combatSliceScenarioIdentity, parseCombatSliceScenario, type CombatSliceScenario, type CombatSliceScenarioIdentity } from '../scenario'
 import { createSeededRngState, parseSeededRngState, type SeededRngState } from './rng'
 
-export const SIMULATION_SNAPSHOT_SCHEMA_VERSION = 3 as const
+export const SIMULATION_SNAPSHOT_SCHEMA_VERSION = 4 as const
 export const PLAYABLE_PLAYER_ID = 'local-player-1' as const
 export const PLAYABLE_PLAYER_LIFE_ID = 'local-player-1:life:1' as const
 export const DOUBLE_BARREL_SHOTGUN_ID = 'double-barrel-shotgun' as const
@@ -28,9 +30,10 @@ export interface ParticipantKillChain { readonly length: number; readonly lastKi
 export interface DamageLedgerEntry { readonly attackerId: string; readonly lastDamageTick: number }
 export interface ParticipantCorpseState { readonly corpseId: string; readonly participantId: string; readonly lifeId: string; readonly position: CollisionVector3; readonly yaw: number; readonly createdTick: number; readonly expiresTick: number }
 export interface MatchParticipantState {
+  readonly difficulty?: BotDifficulty; readonly botState?: BotState
   readonly semanticId: string; readonly name: string; readonly kind: MatchParticipantKind; readonly color: string; readonly team: MatchTeam | null
   readonly lifeId: string; readonly lifeSequence: number; readonly position: CollisionVector3; readonly velocity: CollisionVector3; readonly grounded: boolean
-  readonly yaw: number; readonly pitch: number; readonly health: number; readonly alive: boolean; readonly deathTick: number | null; readonly respawnTick: number | null
+  readonly yaw: number; readonly pitch: number; readonly health: number; readonly alive: boolean; readonly deathSource: { readonly participantId: string; readonly lifeId: string } | null; readonly deathTick: number | null; readonly respawnTick: number | null
   readonly corpseExpiresTick: number | null; readonly previousJumpPressed: boolean; readonly weapon: DoubleBarrelShotgunState; readonly statistics: ParticipantStatistics
   readonly killChain: ParticipantKillChain; readonly damageLedger: readonly DamageLedgerEntry[]
 }
@@ -83,11 +86,11 @@ function ledger(value: unknown, path: string): readonly DamageLedgerEntry[] { if
 
 function participant(value: unknown, index: number, configuration: MatchConfiguration): MatchParticipantState {
   const path = `participants[${index}]`; const data = record(value, path)
-  exact(data, ['semanticId', 'name', 'kind', 'color', 'team', 'lifeId', 'lifeSequence', 'position', 'velocity', 'grounded', 'yaw', 'pitch', 'health', 'alive', 'deathTick', 'respawnTick', 'corpseExpiresTick', 'previousJumpPressed', 'weapon', 'statistics', 'killChain', 'damageLedger'], path)
+  exact(data, ['semanticId', 'name', 'kind', 'color', 'team', 'lifeId', 'lifeSequence', 'position', 'velocity', 'grounded', 'yaw', 'pitch', 'health', 'alive', 'deathSource', 'deathTick', 'respawnTick', 'corpseExpiresTick', 'previousJumpPressed', 'weapon', 'statistics', 'killChain', 'damageLedger', ...(data.kind === 'bot' ? ['difficulty', 'botState'] : [])], path)
   const semanticId = text(data.semanticId, `${path}.semanticId`); const descriptor = configuration.participants.find((candidate) => candidate.semanticId === semanticId); if (descriptor === undefined) return unsupported('participant', semanticId)
-  if (data.name !== descriptor.name || data.kind !== descriptor.kind || data.color !== descriptor.color || data.team !== descriptor.team) return unsupported('participant descriptor', data)
+  if (data.name !== descriptor.name || data.kind !== descriptor.kind || data.color !== descriptor.color || data.team !== descriptor.team || data.difficulty !== descriptor.difficulty) return unsupported('participant descriptor', data)
   const alive = bool(data.alive, `${path}.alive`); const health = finite(data.health, `${path}.health`, 0); if (alive !== (health > 0)) fail(path, 'alive must equal health > 0')
-  return { semanticId, name: descriptor.name, kind: descriptor.kind, color: descriptor.color, team: descriptor.team, lifeId: text(data.lifeId, `${path}.lifeId`), lifeSequence: integer(data.lifeSequence, `${path}.lifeSequence`, 1), position: vector(data.position, `${path}.position`), velocity: vector(data.velocity, `${path}.velocity`), grounded: bool(data.grounded, `${path}.grounded`), yaw: finite(data.yaw, `${path}.yaw`), pitch: finite(data.pitch, `${path}.pitch`), health, alive, deathTick: nullableInteger(data.deathTick, `${path}.deathTick`), respawnTick: nullableInteger(data.respawnTick, `${path}.respawnTick`), corpseExpiresTick: nullableInteger(data.corpseExpiresTick, `${path}.corpseExpiresTick`), previousJumpPressed: bool(data.previousJumpPressed, `${path}.previousJumpPressed`), weapon: weapon(data.weapon, `${path}.weapon`), statistics: statistics(data.statistics, `${path}.statistics`), killChain: killChain(data.killChain, `${path}.killChain`), damageLedger: ledger(data.damageLedger, `${path}.damageLedger`) }
+  return { ...(descriptor.kind === 'bot' ? { difficulty: descriptor.difficulty!, botState: parseBotState(data.botState, `${path}.botState`) } : {}), semanticId, name: descriptor.name, kind: descriptor.kind, color: descriptor.color, team: descriptor.team, lifeId: text(data.lifeId, `${path}.lifeId`), lifeSequence: integer(data.lifeSequence, `${path}.lifeSequence`, 1), position: vector(data.position, `${path}.position`), velocity: vector(data.velocity, `${path}.velocity`), grounded: bool(data.grounded, `${path}.grounded`), yaw: finite(data.yaw, `${path}.yaw`), pitch: finite(data.pitch, `${path}.pitch`), health, alive, deathSource: data.deathSource === null ? null : deathSource(data.deathSource, `${path}.deathSource`), deathTick: nullableInteger(data.deathTick, `${path}.deathTick`), respawnTick: nullableInteger(data.respawnTick, `${path}.respawnTick`), corpseExpiresTick: nullableInteger(data.corpseExpiresTick, `${path}.corpseExpiresTick`), previousJumpPressed: bool(data.previousJumpPressed, `${path}.previousJumpPressed`), weapon: weapon(data.weapon, `${path}.weapon`), statistics: statistics(data.statistics, `${path}.statistics`), killChain: killChain(data.killChain, `${path}.killChain`), damageLedger: ledger(data.damageLedger, `${path}.damageLedger`) }
 }
 
 function corpses(value: unknown, tick: number, participantIds: ReadonlySet<string>): readonly ParticipantCorpseState[] {
@@ -145,21 +148,39 @@ export function createInitialSimulationSnapshot(options: InitialSimulationOption
   const profile = profileValidation.profile; const scenario = parseCombatSliceScenario(options.scenario ?? COMBAT_SLICE_SCENARIO_V1); const configuration = parseMatchConfiguration(options.configuration ?? DEFAULT_MATCH_CONFIGURATION, profile); const fixtureById = new Map(scenario.targets.map((target) => [target.semanticId, target]))
   const fullArena = 'surfaces' in options.arena ? options.arena : undefined
   const allocationById = fullArena === undefined ? undefined : new Map(allocateArenaSpawns({ arena: fullArena, mode: configuration.mode, participants: configuration.participants, capsuleDiameterMeters: (profile.rules.player.capsule.radius + profile.rules.player.capsule.skinWidth) * 2, minimumOpponentSeparationMeters: profile.rules.arenaGenerator.presets[fullArena.size].minimumSpawnSeparationMeters }).map((allocation) => [allocation.participantId, allocation]))
-  const participants = configuration.participants.map((descriptor): MatchParticipantState => { const fixture = descriptor.kind === 'local-seat' ? scenario.playerSpawn : fixtureById.get(descriptor.semanticId); if (fixture === undefined) return unsupported('configuration fixture', descriptor.semanticId); const allocation = allocationById?.get(descriptor.semanticId); const sourcePosition = allocation?.position ?? fixture.position; const position = descriptor.kind === 'local-seat' ? { x: sourcePosition.x, y: sourcePosition.y + profile.rules.player.capsule.halfHeight + profile.rules.player.capsule.radius, z: sourcePosition.z } : sourcePosition; return { ...descriptor, lifeId: `${descriptor.semanticId}:life:1`, lifeSequence: 1, position, velocity: { x: 0, y: 0, z: 0 }, grounded: true, yaw: allocation?.yawRadians ?? fixture.yawRadians, pitch: 0, health: profile.rules.player.startingHealth, alive: true, deathTick: null, respawnTick: null, corpseExpiresTick: null, previousJumpPressed: false, weapon: { semanticId: DOUBLE_BARREL_SHOTGUN_ID, ammo: profile.rules.weapons.doubleBarrelShotgun.startingAmmo, shotSequence: 0, nextAllowedShotTick: 0, previousFirePressed: false }, statistics: { kills: 0, assists: 0, deaths: 0, damageDealt: 0, damageReceived: 0, score: 0 }, killChain: { length: 0, lastKillTick: null, awardedInChain: 0 }, damageLedger: [] } })
+  const participants = configuration.participants.map((descriptor): MatchParticipantState => { const fixture = descriptor.kind === 'local-seat' ? scenario.playerSpawn : fixtureById.get(descriptor.semanticId) ?? (descriptor.kind === 'bot' && fullArena ? scenario.playerSpawn : undefined); if (fixture === undefined) return unsupported('configuration fixture', descriptor.semanticId); const allocation = allocationById?.get(descriptor.semanticId); const sourcePosition = allocation?.position ?? fixture.position; const position = descriptor.kind !== 'stationary-fixture' ? { x: sourcePosition.x, y: sourcePosition.y + profile.rules.player.capsule.halfHeight + profile.rules.player.capsule.radius, z: sourcePosition.z } : sourcePosition; return { ...descriptor, ...(descriptor.kind === 'bot' ? { botState: createBotState(options.rngSeed, descriptor.semanticId, position) } : {}), lifeId: `${descriptor.semanticId}:life:1`, lifeSequence: 1, position, velocity: { x: 0, y: 0, z: 0 }, grounded: true, yaw: allocation?.yawRadians ?? fixture.yawRadians, pitch: 0, health: profile.rules.player.startingHealth, alive: true, deathSource: null, deathTick: null, respawnTick: null, corpseExpiresTick: null, previousJumpPressed: false, weapon: { semanticId: DOUBLE_BARREL_SHOTGUN_ID, ammo: profile.rules.weapons.doubleBarrelShotgun.startingAmmo, shotSequence: 0, nextAllowedShotTick: 0, previousFirePressed: false }, statistics: { kills: 0, assists: 0, deaths: 0, damageDealt: 0, damageReceived: 0, score: 0 }, killChain: { length: 0, lastKillTick: null, awardedInChain: 0 }, damageLedger: [] } })
   const totalTicks = configuration.durationMinutes * 60 * 60
   const arena = { id: options.arena.id, seed: options.arena.seed, generatorVersion: options.arena.generatorVersion, contentHash: options.arena.contentHash }
   return parseSimulationSnapshot({ schemaVersion: SIMULATION_SNAPSHOT_SCHEMA_VERSION, tick: 0, rng: createSeededRngState(options.rngSeed), profile: { id: profile.id, revision: profile.revision, contentHash: profile.contentHash }, arena, collision: options.collision ?? RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, scenario: combatSliceScenarioIdentity(scenario), match: { configuration: { schemaVersion: MATCH_CONFIGURATION_SCHEMA_VERSION, id: configuration.id, contentHash: configuration.contentHash }, mode: configuration.mode, phase: 'running', finishTrigger: null, elapsedTicks: 0, remainingTicks: totalTicks, result: null }, participants, corpses: [], events: [] }, configuration)
 }
 
+const parsedSnapshots = new WeakMap<object, { configurationHash: string; snapshot: SimulationSnapshot }>()
 export function parseSimulationSnapshot(input: string | unknown, configurationInput: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION): SimulationSnapshot {
+  if (input !== null && typeof input === 'object') {
+    const cached = parsedSnapshots.get(input)
+    if (cached && cached.configurationHash === parseMatchConfiguration(configurationInput).contentHash) return cached.snapshot
+  }
   let value: unknown; try { value = typeof input === 'string' ? parseCanonicalJson(input) : input; canonicalSerialize(value !== null && typeof value === 'object' && !Array.isArray(value) ? { ...(value as Record<string, unknown>) } : value) } catch (error) { if (error instanceof SimulationSnapshotError) throw error; return fail('$', error instanceof Error ? error.message : 'invalid canonical data') }
   const configuration = parseMatchConfiguration(configurationInput); const data = record(value, '$'); exact(data, ['schemaVersion', 'tick', 'rng', 'profile', 'arena', 'collision', 'scenario', 'match', 'participants', 'corpses', 'events'], '$'); if (data.schemaVersion !== SIMULATION_SNAPSHOT_SCHEMA_VERSION) throw new SimulationSnapshotError(SIMULATION_SNAPSHOT_ERROR_CODES.unsupportedSchema, `Unsupported SimulationSnapshot.schemaVersion: ${String(data.schemaVersion)}`)
   const tick = integer(data.tick, 'tick'); if (!Array.isArray(data.participants)) fail('participants', 'must be array'); const participants = data.participants.map((entry, index) => participant(entry, index, configuration)).sort((a, b) => a.semanticId.localeCompare(b.semanticId, 'en')); if (participants.length !== configuration.participants.length || participants.some((entry, index) => entry.semanticId !== configuration.participants[index]?.semanticId)) return unsupported('participant set', participants.map(({ semanticId }) => semanticId))
   let collision: CollisionCompatibilityIdentity
   try { collision = parseCollisionCompatibilityIdentity(data.collision) } catch { return unsupported('collision', data.collision) }
   const participantIds = new Set(participants.map(({ semanticId }) => semanticId))
-  return deepFreeze({ schemaVersion: SIMULATION_SNAPSHOT_SCHEMA_VERSION, tick, rng: parseSeededRngState(data.rng), profile: profileIdentity(data.profile), arena: arenaIdentity(data.arena), collision, scenario: scenarioIdentity(data.scenario), match: matchState(data.match, configuration, tick), participants, corpses: corpses(data.corpses, tick, participantIds), events: events(data.events, tick, participantIds) })
+  for (const p of participants) {
+    if (p.deathSource && (!participantIds.has(p.deathSource.participantId) || !p.deathSource.lifeId.startsWith(`${p.deathSource.participantId}:life:`))) fail('deathSource', 'unknown killer life')
+    for (const m of p.botState?.memory ?? []) if (!participantIds.has(m.id) || !m.lifeId.startsWith(`${m.id}:life:`) || m.tick > tick) fail('botState.memory', 'unknown or future sighting')
+  }
+  const result = deepFreeze({ schemaVersion: SIMULATION_SNAPSHOT_SCHEMA_VERSION, tick, rng: parseSeededRngState(data.rng), profile: profileIdentity(data.profile), arena: arenaIdentity(data.arena), collision, scenario: scenarioIdentity(data.scenario), match: matchState(data.match, configuration, tick), participants, corpses: corpses(data.corpses, tick, participantIds), events: events(data.events, tick, participantIds) })
+  parsedSnapshots.set(result, { configurationHash: configuration.contentHash, snapshot: result })
+  return result
 }
 
 export function serializeSimulationSnapshot(snapshot: SimulationSnapshot, configuration: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION): string { return canonicalSerialize({ ...parseSimulationSnapshot(snapshot, configuration) }) }
 export function simulationSnapshotHash(snapshot: SimulationSnapshot, configuration: MatchConfiguration = DEFAULT_MATCH_CONFIGURATION): ContentHash { return contentHash({ ...parseSimulationSnapshot(snapshot, configuration) }) }
+
+function deathSource(value: unknown, path: string): { participantId: string; lifeId: string } {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError(path)
+  const data=value as Record<string,unknown>
+  exact(data,['participantId','lifeId'],path)
+  return {participantId:text(data.participantId,path),lifeId:text(data.lifeId,path)}
+}

@@ -54,14 +54,19 @@ export function resolvePixelBudgetDevicePixelRatio({
 }
 
 export interface FirstPersonRenderPlayer {
+  readonly alive?: boolean
+  readonly deathSource?: { readonly participantId: string; readonly lifeId: string } | null
   readonly position: ScenarioVector3
   readonly yaw: number
   readonly pitch: number
 }
 
 export interface FirstPersonRenderTarget {
+  readonly lifeId?: string
+  readonly velocity?: ScenarioVector3
+  readonly grounded?: boolean
   readonly semanticId: string
-  readonly kind: 'stationary-fixture'
+  readonly kind: 'stationary-fixture' | 'bot'
   readonly color: string
   readonly health: number
   readonly alive: boolean
@@ -87,6 +92,7 @@ interface FirstPersonRenderEventBase {
 
 export interface FirstPersonShotRenderEvent extends FirstPersonRenderEventBase {
   readonly kind: 'shotgun-shot'
+  readonly shooterId?: string
 }
 
 export interface FirstPersonImpactRenderEvent extends FirstPersonRenderEventBase {
@@ -707,10 +713,11 @@ export function createFirstPersonRenderer({
   }
 
   function processEvents(snapshot: FirstPersonRenderSnapshot): void {
+    const localId=snapshot.participants.find(p=>p.kind==='local-seat')?.semanticId
     for (const event of snapshot.events) {
       if (processedEventIds.has(event.eventId)) continue
       processedEventIds.add(event.eventId)
-      if (event.kind === 'shotgun-shot') {
+      if (event.kind === 'shotgun-shot' && (event.shooterId === undefined || event.shooterId === localId)) {
         const expiresAfterTick = event.tick + eventDurationTicks(
           profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds,
           ticksPerSecond,
@@ -766,14 +773,24 @@ export function createFirstPersonRenderer({
     // Three.js positive Y rotation turns the -Z camera axis left, while the
     // simulation convention defines positive yaw as turning right.
     camera.rotation.set(player.pitch, -player.yaw, 0, 'YXZ')
+    if (player.alive === false && player.deathSource) {
+      const killer=snapshot.participants.find(p => p.semanticId === player.deathSource!.participantId && p.kind !== 'local-seat' && p.lifeId === player.deathSource!.lifeId)
+      if (killer) camera.lookAt(killer.position.x, killer.position.y + profile.rules.player.eyeHeight, killer.position.z)
+    }
+    viewmodel.group.visible = player.alive !== false
 
-    for (const targetState of snapshot.participants.filter((participant): participant is FirstPersonRenderTarget => participant.kind === 'stationary-fixture')) {
-      const target = targetById.get(targetState.semanticId)
-      if (target === undefined) continue
+    for (const [id, target] of targetById) target.group.visible = snapshot.participants.some(p => p.semanticId === id)
+    for (const targetState of snapshot.participants.filter((participant): participant is FirstPersonRenderTarget => participant.kind !== 'local-seat')) {
+      let target = targetById.get(targetState.semanticId)
+      if (target === undefined) {
+        const definition = { ...scenario.targets[0]!, semanticId:targetState.semanticId, position:targetState.position, yawRadians:targetState.yaw }
+        target=addRobotTarget(scene,definition,geometries,materials,arenaGlbAssets,participantTexture)
+        targetById.set(targetState.semanticId,target)
+      }
       const destroyed = !targetState.alive || targetState.health <= 0
-      target.baseY = targetState.position.y
-      target.group.position.set(targetState.position.x, targetState.position.y + (destroyed ? -0.2 : 0), targetState.position.z)
-      target.group.rotation.y = targetState.yaw
+      target.baseY = targetState.position.y - (targetState.kind === 'bot' ? profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight : 0)
+      target.group.position.set(targetState.position.x, target.baseY + (destroyed ? -0.2 : 0), targetState.position.z)
+      target.group.rotation.y = targetState.kind === 'bot' ? Math.PI - targetState.yaw : targetState.yaw
       const presentationColor = destroyed ? '#354148' : normalizePresentationColor(targetState.color)
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
@@ -791,7 +808,11 @@ export function createFirstPersonRenderer({
           else material.emissive.set(presentationColor)
         }
       }
-      target.animation?.apply(destroyed ? 'destroyed' : 'idle', snapshot.tick / ticksPerSecond)
+      const firing=snapshot.events.some(e=>e.kind==='shotgun-shot' && e.shooterId===targetState.semanticId)
+      const velocity=targetState.velocity
+      const moving=velocity!==undefined && Math.hypot(velocity.x,velocity.z)>profile.rules.player.capsule.skinWidth*ticksPerSecond
+      const side=velocity===undefined?0:velocity.x*Math.cos(targetState.yaw)+velocity.z*Math.sin(targetState.yaw)
+      target.animation?.present(destroyed?'destroyed':targetState.grounded===false?'jump-airborne':firing?'fire':moving?(Math.abs(side)>Math.hypot(velocity!.x,velocity!.z)/2?(side<0?'strafe-left':'strafe-right'):'run'):'idle',snapshot.tick/ticksPerSecond)
     }
 
     const visibleCorpseIds = new Set(snapshot.corpses.map(({ corpseId }) => corpseId))

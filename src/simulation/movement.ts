@@ -1,3 +1,4 @@
+import { simulationMath } from '../core/simulationMath'
 import type { CollisionCapsuleMovementResult, CollisionVector3 } from '../collision/contracts'
 import { deepFreeze } from '../core/deepFreeze'
 
@@ -68,13 +69,13 @@ export function horizontalWishDirection(
   assertFinite(right, 'right')
   const clampedForward = clamp(forward, -1, 1)
   const clampedRight = clamp(right, -1, 1)
-  const localLength = Math.hypot(clampedForward, clampedRight)
+  const localLength = simulationMath.hypot(clampedForward, clampedRight)
   if (localLength === 0) return deepFreeze({ x: 0, y: 0, z: 0 })
   const scale = localLength > 1 ? 1 / localLength : 1
-  const forwardX = Math.sin(yaw)
-  const forwardZ = -Math.cos(yaw)
-  const rightX = Math.cos(yaw)
-  const rightZ = Math.sin(yaw)
+  const forwardX = simulationMath.sin(yaw)
+  const forwardZ = -simulationMath.cos(yaw)
+  const rightX = simulationMath.cos(yaw)
+  const rightZ = simulationMath.sin(yaw)
   return deepFreeze({
     x: (forwardX * clampedForward + rightX * clampedRight) * scale,
     y: 0,
@@ -116,19 +117,19 @@ export function buildMovementIntent(
     const maximumDelta = acceleration * fixedDeltaSeconds
     const deltaX = targetX - horizontalX
     const deltaZ = targetZ - horizontalZ
-    const deltaLength = Math.hypot(deltaX, deltaZ)
+    const deltaLength = simulationMath.hypot(deltaX, deltaZ)
     const scale = deltaLength > maximumDelta && deltaLength > 0 ? maximumDelta / deltaLength : 1
     horizontalX += deltaX * scale
     horizontalZ += deltaZ * scale
   } else if (state.grounded) {
-    const speed = Math.hypot(horizontalX, horizontalZ)
+    const speed = simulationMath.hypot(horizontalX, horizontalZ)
     const nextSpeed = moveTowards(speed, 0, tuning.groundDeceleration * fixedDeltaSeconds)
     const scale = speed === 0 ? 0 : nextSpeed / speed
     horizontalX *= scale
     horizontalZ *= scale
   }
 
-  const horizontalSpeed = Math.hypot(horizontalX, horizontalZ)
+  const horizontalSpeed = simulationMath.hypot(horizontalX, horizontalZ)
   if (horizontalSpeed > tuning.maximumGroundSpeed && horizontalSpeed > 0) {
     const scale = tuning.maximumGroundSpeed / horizontalSpeed
     horizontalX *= scale

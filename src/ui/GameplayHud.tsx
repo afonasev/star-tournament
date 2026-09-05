@@ -85,7 +85,7 @@ export function GameplayHud({ snapshot, onRequestControl, onRepeat, onMainMenu, 
         <>
           <section className="gameplay-hud__health" aria-label="Здоровье игрока">
             <span className="gameplay-hud__label">HP</span>
-            <strong>{snapshot.health}</strong>
+            <strong>{Math.ceil(snapshot.health)}</strong>
             <meter min="0" max={snapshot.maximumHealth} value={snapshot.health}>
               {healthPercent}%
             </meter>
@@ -128,6 +128,7 @@ export function GameplayHud({ snapshot, onRequestControl, onRepeat, onMainMenu, 
       )}
 
       {snapshot.scoreboardVisible && <StandingsTable snapshot={snapshot} />}
+      {snapshot.status === 'running' && snapshot.deathMessage && <p className="gameplay-hud__death" role="status">{snapshot.deathMessage}<small>Возрождение…</small></p>}
 
       {snapshot.status === 'paused' && (
         <section className="gameplay-hud__overlay gameplay-hud__pause" aria-label="Меню паузы">

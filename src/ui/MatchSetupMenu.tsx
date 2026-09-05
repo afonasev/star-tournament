@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react'
+import { BOT_DIFFICULTIES, BOT_LABELS, type BotDifficulty } from '../profiles/botRules'
+import { VETTED_PARTICIPANT_COLORS } from '../match/participantPalette'
+import { useMemo, useRef, useState } from 'react'
 
 import {
   DEFAULT_MATCH_CONFIGURATION,
@@ -6,6 +8,7 @@ import {
   createMatchConfiguration,
   type MatchConfiguration,
   type MatchMode,
+  type MatchParticipantDescriptor,
 } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import type { ArenaSize } from '../arena'
@@ -65,31 +68,26 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
   const [durationMinutes, setDurationMinutes] = useState(profile.rules.match.duration.defaultMinutes)
   const [targetEnabled, setTargetEnabled] = useState(false)
   const [scoreTargetPoints, setScoreTargetPoints] = useState(profile.rules.match.scoreTarget.defaultPoints)
-  const [names, setNames] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map(({ name }) => name))
-  const [colors, setColors] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map(({ color }) => color))
-  const [teams, setTeams] = useState(() => DEFAULT_MATCH_CONFIGURATION.participants.map((_, index) => index % 2 === 0 ? 'team-a' as const : 'team-b' as const))
-
+  const nextBotId = useRef(4)
+  const [roster, setRoster] = useState<MatchParticipantDescriptor[]>(() => DEFAULT_MATCH_CONFIGURATION.participants.map((p,index) => index===0 ? p : { ...p, kind:'bot', difficulty:'normal' }))
+  const [teams, setTeams] = useState<Record<string,'team-a'|'team-b'>>(() => Object.fromEntries(DEFAULT_MATCH_CONFIGURATION.participants.map((p,i) => [p.semanticId,i%2===0?'team-a':'team-b'])))
+  const update = (id:string, change:Partial<MatchParticipantDescriptor>) => setRoster(current => current.map(p=>p.semanticId===id?{...p,...change}:p))
+  const addBot = () => {
+    if(roster.length>=8) return
+    const id = 'bot-'+nextBotId.current++
+    const color = VETTED_PARTICIPANT_COLORS.find(c=>!roster.some(p=>p.color===c))!
+    setRoster(current=>[...current,{semanticId:id,name:'Бот '+id.slice(4),kind:'bot',difficulty:'normal',color,team:null}])
+    setTeams(current=>({...current,[id]:roster.length%2===0?'team-a':'team-b'}))
+  }
   const candidate = useMemo(() => {
     try {
       return createMatchConfiguration({
-        schemaVersion: DEFAULT_MATCH_CONFIGURATION.schemaVersion,
-        id: DEFAULT_MATCH_CONFIGURATION.id,
-        mode,
-        arenaSize,
-        arenaSeed: 0,
-        durationMinutes,
-        scoreTargetPoints: targetEnabled ? scoreTargetPoints : null,
-        participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => ({
-          ...participant,
-          name: names[index] ?? '',
-          color: mode === 'teams' ? TEAM_COLORS[teams[index]!] : colors[index]!,
-          team: mode === 'teams' ? teams[index]! : null,
-        })),
-      }, profile)
-    } catch {
-      return null
-    }
-  }, [arenaSize, colors, durationMinutes, mode, names, profile, scoreTargetPoints, targetEnabled, teams])
+        schemaVersion:DEFAULT_MATCH_CONFIGURATION.schemaVersion,id:DEFAULT_MATCH_CONFIGURATION.id,
+        mode,arenaSize,arenaSeed:0,durationMinutes,scoreTargetPoints:targetEnabled?scoreTargetPoints:null,
+        participants:roster.map(p=>({...p,color:mode==='teams'?TEAM_COLORS[teams[p.semanticId]!]:p.color,team:mode==='teams'?teams[p.semanticId]!:null})),
+      },profile)
+    } catch { return null }
+  },[roster,teams,mode,arenaSize,durationMinutes,targetEnabled,scoreTargetPoints,profile])
 
   const start = (forceNewSeed = false, resolvedSeed?: number) => {
     if (candidate === null) return
@@ -134,18 +132,17 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
         </div>
 
         <div className="match-menu__roster">
-          {DEFAULT_MATCH_CONFIGURATION.participants.map((participant, index) => (
+          {roster.map((participant,index) => (
             <fieldset key={participant.semanticId}>
-              <legend>{index === 0 ? 'Вы' : `Манекен ${index}`}</legend>
-              <label>Имя<input aria-label={`Имя участника ${index + 1}`} value={names[index]} onChange={(event) => setNames((current) => current.map((value, item) => item === index ? event.target.value : value))} /></label>
-              {mode === 'ffa' ? (
-                <label>Цвет<input aria-label={`Цвет участника ${index + 1}`} type="color" value={colors[index]} onChange={(event) => setColors((current) => current.map((value, item) => item === index ? event.target.value : value))} /></label>
-              ) : (
-                <label>Команда<select aria-label={`Команда участника ${index + 1}`} value={teams[index]} onChange={(event) => setTeams((current) => current.map((value, item) => item === index ? event.target.value as 'team-a' | 'team-b' : value))}><option value="team-a">Team A</option><option value="team-b">Team B</option></select></label>
-              )}
+              <legend>{participant.kind==='local-seat'?'Вы':participant.name}</legend>
+              <label>Имя<input aria-label={`Имя участника ${index+1}`} value={participant.name} onChange={event=>update(participant.semanticId,{name:event.target.value})}/></label>
+              {participant.kind==='bot' && <label>Сложность<select aria-label={`Сложность бота ${index}`} value={participant.difficulty} onChange={event=>update(participant.semanticId,{difficulty:event.target.value as BotDifficulty})}>{BOT_DIFFICULTIES.map(id=><option key={id} value={id}>{BOT_LABELS[id]}</option>)}</select></label>}
+              {mode==='ffa'?<label>Цвет<input aria-label={`Цвет участника ${index+1}`} type="color" value={participant.color} onChange={event=>update(participant.semanticId,{color:event.target.value})}/></label>:<label>Команда<select aria-label={`Команда участника ${index+1}`} value={teams[participant.semanticId]} onChange={event=>setTeams(current=>({...current,[participant.semanticId]:event.target.value as 'team-a'|'team-b'}))}><option value="team-a">Team A</option><option value="team-b">Team B</option></select></label>}
+              {participant.kind==='bot' && <button type="button" aria-label={`Удалить бота ${index}`} onClick={()=>setRoster(current=>current.filter(p=>p.semanticId!==participant.semanticId))}>Удалить</button>}
             </fieldset>
           ))}
         </div>
+        <button type="button" disabled={roster.length>=8} onClick={addBot}>Добавить бота</button>
 
         <div className="match-menu__rules">
           <label>Размер арены<select aria-label="Размер арены" value={arenaSize} onChange={(event) => setArenaSize(event.target.value as ArenaSize)}><option value="small">Маленькая</option><option value="medium">Средняя</option><option value="large">Большая</option></select></label>
