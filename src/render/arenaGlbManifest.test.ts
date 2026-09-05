@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { ARENA_GLB_ASSET_KEYS, CLEAN_FUTURE_SPORT_GLB_V1, validateArenaGlbManifest } from './arenaGlbManifest'
 
-function readGlbAsset(name: string, directory = 'arena'): { readonly asset: { readonly version: string; readonly extras: unknown }; readonly nodes: readonly { readonly name: string }[]; readonly materials: readonly { readonly name: string }[] } {
+function readGlbAsset(name: string, directory = 'arena'): { readonly asset: { readonly version: string; readonly extras: unknown }; readonly nodes: readonly { readonly name: string }[]; readonly materials: readonly { readonly name: string }[]; readonly meshes: readonly { primitives: readonly { attributes: Record<string, number> }[] }[]; readonly images: readonly { bufferView: number; mimeType: string }[] } {
   const bytes = readFileSync(new URL(`../../public/assets/${directory}/${name}`, import.meta.url))
   expect(bytes.readUInt32LE(0)).toBe(0x46546c67)
   expect(bytes.readUInt32LE(4)).toBe(2)
@@ -65,6 +65,11 @@ describe('clean-future-sport-glb-v1 manifest', () => {
       expect(lod1.materials.map(({ name }) => name)).toContain('identity')
       expect(lod0.nodes.map(({ name }) => name)).toEqual(expect.arrayContaining(Array.from(requiredFeatures[key])))
       expect(lod1.nodes.map(({ name }) => name)).toEqual(expect.arrayContaining(Array.from(requiredFeatures[key])))
+      for (const asset of [lod0, lod1]) {
+        expect(asset.images).toHaveLength(3)
+        for (const image of asset.images) expect(image.mimeType).toBe('image/png')
+        for (const mesh of asset.meshes) for (const primitive of mesh.primitives) expect(primitive.attributes.TEXCOORD_0).toBeTypeOf('number')
+      }
       expect(lod0.nodes.length).toBeGreaterThanOrEqual(lod1.nodes.length * 1.75)
     }
   })

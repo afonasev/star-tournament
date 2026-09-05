@@ -135,8 +135,10 @@ function textureGlbInstance(object: THREE.Object3D, resources: PresentationResou
     const mapped = sourceMaterials.map((source) => {
       const material = source.clone()
       if (material instanceof THREE.MeshStandardMaterial) {
-        material.map = texture
-        material.emissiveMap = texture
+        // Embedded equipment maps belong to the template cache. Legacy untextured
+        // assets can still use the supplied arena map; identity stays unpatterned.
+        if (material.map === null && material.name !== 'identity' && material.name !== 'muzzle-dark') material.map = texture
+        material.emissiveMap = null
         material.emissiveIntensity = material.name === 'identity' ? 0.62 : 0.18
         if (material.name === 'identity') {
           material.color.set(color)
@@ -160,7 +162,8 @@ export function createRobotGlbPresentation(resources: PresentationResources, ass
   const identityMaterials = textureGlbInstance(group, resources, texture, color)
   const weapon = assets.createInstance('double-barrel-shotgun')
   weapon.name = 'robot:weapon:double-barrel-glb'
-  weapon.position.set(0.06, 0.92, -0.42)
+  // Fixed GLB attachment transform: authored +Z grip aligns with the robot hands.
+  weapon.position.set(0.06, 0.92, 0.15)
   weapon.rotation.x = -0.04
   group.add(weapon)
   const weaponIndicatorMaterials = textureGlbInstance(weapon, resources, texture, color)

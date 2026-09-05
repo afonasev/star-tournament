@@ -6,6 +6,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 2. Утверждённые решения
 
+- Surface-detail pass `equipment-surfaces-v1` усиливает робота и оба вида дробовика фасками, конструктивными панелями, крепежом, механическими узлами и локальной UV-фактурой покрытия/металла/резины внутри GLB. Participant materials сохраняют authored maps вместо текстуры стены; identity-зоны остаются чистыми. Общий manifest/cache владеет ресурсами, LOD1 сокращает вторичные детали; simulation, camera и collision не меняются.
+
 - Поддерживаемые устройства ввода: клавиатура/мышь и геймпады.
 - Основной локальный сценарий: split-screen до четырёх игроков за одним экраном; матч поддерживает до восьми участников суммарно.
 - Жанр: аркадный arena shooter с высокой мобильностью и немедленной обратной связью от оружия и попаданий.
@@ -124,6 +126,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 | Дата | Решение |
 | --- | --- |
+| 2026-09-05 | По запросу пользователя утверждён `equipment-surfaces-v1`: существенно более богатые формы робота и дробовика, корректные UV и локальные фактуры оборудования; wall texture больше не подменяет authored participant maps. |
 | 2026-09-05 | Подтверждён dense-detail pass `light-sport-robot-v1`: второй authoring pass повышает геометрическую плотность participant assets на порядок — layered shell/armour, joint collars, hands/fingers, vents/cables/energy details, multi-part shrouds, recessed bores, coil chambers и rails. LOD1 сокращает лишь вторичные формы. Общие `clean-future-sport-glb-v1` manifest/cache/quality/texture contracts, deterministic simulation boundary и arena panel scope остаются неизменными. |
 | 2026-09-04 | Detail upgrade participant assets сохраняет утверждённые `light-sport-robot-v1` и `clean-future-sport-glb-v1`, заменяя только шесть local participant GLB на high-detail LOD0/LOD1 form. Robot читает shell/joints/core/visor/shoulders/beacon, world/viewmodel weapon — muzzle openings, barrel shrouds, chamber, receiver/grip и owner identity; LOD1 сохраняет semantic features. Новый source audit проверяет GLB spatial/material semantics. Это renderer-only: loader, texture residency, collision, combat, snapshot/replay/hash и arena panels не меняются. |
 | 2026-09-04 | Detail pass participant assets использует общий `clean-future-sport-glb-v1`: local LOD0/LOD1 robot, world double-barrel и first-person forearms имеют fixed meter/+Y-up/+Z-front/pivot contract и получают уже загруженные arena panel textures через тот же renderer-owned lifecycle и quality tiers. Это не вводит новый loader, отдельные texture budgets, collision proxy в simulation или gameplay state. |
