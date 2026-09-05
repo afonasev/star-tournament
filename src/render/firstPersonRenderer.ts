@@ -22,6 +22,7 @@ import {
   createRobotGlbPresentation,
   normalizePresentationColor,
 } from './participantWeaponPresentation'
+import type { RobotAnimationController } from './robotAnimation'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
 export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
@@ -154,6 +155,7 @@ interface TargetPresentation {
   readonly group: THREE.Group
   readonly identityMaterials: readonly THREE.MeshStandardMaterial[]
   readonly weaponIndicatorMaterials: readonly THREE.MeshStandardMaterial[]
+  readonly animation?: RobotAnimationController
   baseY: number
   destroyed: boolean
   color: string
@@ -567,6 +569,7 @@ function addRobotTarget(
     group,
     identityMaterials: robot.identityMaterials,
     weaponIndicatorMaterials: robot.weaponIndicatorMaterials,
+    animation: robot.animation,
     baseY: target.position.y,
     destroyed: false,
     color: '#b8dce5',
@@ -788,6 +791,7 @@ export function createFirstPersonRenderer({
           else material.emissive.set(presentationColor)
         }
       }
+      target.animation?.apply(destroyed ? 'destroyed' : 'idle', snapshot.tick / ticksPerSecond)
     }
 
     const visibleCorpseIds = new Set(snapshot.corpses.map(({ corpseId }) => corpseId))

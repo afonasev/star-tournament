@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
+import { createRobotAnimationController, type RobotAnimationController } from './robotAnimation'
 
 const SHELL_COLOR = 0xe8edf0
 const JOINT_COLOR = 0x10263a
@@ -16,6 +17,7 @@ export interface RobotPresentation {
   readonly group: THREE.Group
   readonly identityMaterials: readonly THREE.MeshStandardMaterial[]
   readonly weaponIndicatorMaterials: readonly THREE.MeshStandardMaterial[]
+  readonly animation?: RobotAnimationController
 }
 
 export interface FirstPersonWeaponPresentation {
@@ -155,19 +157,21 @@ function textureGlbInstance(object: THREE.Object3D, resources: PresentationResou
   return identityMaterials
 }
 
-export function createRobotGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string): RobotPresentation {
+export function createRobotGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string, preferredLod?: 'lod0' | 'lod1'): RobotPresentation {
   if (assets === undefined || texture === undefined) return createRobotPresentation(resources, color)
-  const group = assets.createInstance('light-sport-robot') as THREE.Group
+  const group = assets.createInstance('light-sport-robot', 0, preferredLod) as THREE.Group
   group.name = 'robot:model:light-sport-glb'
+  const animation = createRobotAnimationController(group)
   const identityMaterials = textureGlbInstance(group, resources, texture, color)
   const weapon = assets.createInstance('double-barrel-shotgun')
   weapon.name = 'robot:weapon:double-barrel-glb'
-  // Fixed GLB attachment transform: authored +Z grip aligns with the robot hands.
-  weapon.position.set(0.06, 0.92, 0.15)
+  // GLTF scene roots retain authored weapon-space geometry; this offset aligns
+  // the receiver with the torso-stable combat mount in the visible rest pose.
+  weapon.position.set(0, 0.22, 0)
   weapon.rotation.x = -0.04
-  group.add(weapon)
+  ;(animation?.weaponMount ?? group).add(weapon)
   const weaponIndicatorMaterials = textureGlbInstance(weapon, resources, texture, color)
-  return { group, identityMaterials, weaponIndicatorMaterials }
+  return { group, identityMaterials, weaponIndicatorMaterials, animation }
 }
 
 export function createFirstPersonGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string): FirstPersonWeaponPresentation {

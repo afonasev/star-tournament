@@ -37,7 +37,7 @@ function surfacePng(kind, closeup = false) {
   return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]), chunk('IHDR', header), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))])
 }
 
-function writer(name, objects) {
+function writer(name, objects, rig = undefined) {
   const bin = [], views = [], accessors = [], meshes = [], nodes = []
   let length = 0
   const add = (array, target) => {
@@ -53,15 +53,34 @@ function writer(name, objects) {
     if (minMax) { result.min = Array.from({ length: itemSize }, (_, i) => Math.min(...Array.from({ length: count }, (_, n) => array[n * itemSize + i]))); result.max = Array.from({ length: itemSize }, (_, i) => Math.max(...Array.from({ length: count }, (_, n) => array[n * itemSize + i]))) }
     accessors.push(result); return accessors.length - 1
   }
+  const nodeIndexByRigName = new Map()
+  if (rig !== undefined) {
+    for (const joint of rig.joints) {
+      const parentIndex = joint.parent === undefined ? undefined : nodeIndexByRigName.get(joint.parent)
+      const node = { name: joint.name, ...(joint.local.every((value) => value === 0) ? {} : { translation: joint.local }) }
+      nodes.push(node)
+      const index = nodes.length - 1
+      nodeIndexByRigName.set(joint.name, index)
+      if (parentIndex !== undefined) (nodes[parentIndex].children ??= []).push(index)
+    }
+  }
   for (const item of objects) {
-    const position = item.geometry.getAttribute('position').array
-    const normal = item.geometry.getAttribute('normal').array
-    const index = item.geometry.getIndex()
+    const joint = rig === undefined ? undefined : rig.jointFor(item.name)
+    const pivot = joint === undefined ? [0, 0, 0] : rig.worldByJoint.get(joint)
+    if (pivot === undefined) throw new Error(`Missing rig pivot for ${item.name}`)
+    const geometry = pivot[0] === 0 && pivot[1] === 0 && pivot[2] === 0
+      ? item.geometry
+      : item.geometry.clone().translate(-pivot[0], -pivot[1], -pivot[2])
+    const position = geometry.getAttribute('position').array
+    const normal = geometry.getAttribute('normal').array
+    const index = geometry.getIndex()
     const indexArray = index ? (position.length / 3 > 65535 ? new Uint32Array(index.array) : new Uint16Array(index.array)) : null
     const primitive = { attributes: { POSITION: accessor(position, 3, 5126, 34962, true), NORMAL: accessor(normal, 3, 5126, 34962) }, material: mat[item.material] }
-    primitive.attributes.TEXCOORD_0 = accessor(item.geometry.getAttribute('uv').array, 2, 5126, 34962)
+    primitive.attributes.TEXCOORD_0 = accessor(geometry.getAttribute('uv').array, 2, 5126, 34962)
     if (indexArray) primitive.indices = accessor(indexArray, 1, indexArray instanceof Uint32Array ? 5125 : 5123, 34963)
-    meshes.push({ name: item.name, primitives: [primitive] }); nodes.push({ name: item.name, mesh: meshes.length - 1 })
+    meshes.push({ name: item.name, primitives: [primitive] })
+    nodes.push({ name: item.name, mesh: meshes.length - 1 })
+    if (joint !== undefined) (nodes[nodeIndexByRigName.get(joint)].children ??= []).push(nodes.length - 1)
   }
   const images = [0, 1, 2].map((kind) => ({ bufferView: add(surfacePng(kind, name.startsWith('first-person') || name.startsWith('light-sport-robot'))), mimeType: 'image/png' }))
   const key = name.replace(/-lod[01]\.glb$/, '')
@@ -71,7 +90,9 @@ function writer(name, objects) {
     'first-person-shotgun': ['camera-weapon-grip', [1.3, .8, 1.6]],
   }
   const [pivot, attachmentBoundsMeters] = contracts[key]
-  const json = { asset: { version: '2.0', generator: 'star-tournament equipment-surfaces-v4', extras: { units: 'meters', up: '+Y', front: '+Z', pivot, attachmentBoundsMeters } }, scene: 0, scenes: [{ nodes: nodes.map((_, i) => i) }], nodes, meshes, materials: materials.map(([name, colour, metallic, roughness]) => ({ name, pbrMetallicRoughness: { baseColorFactor: colour, metallicFactor: metallic, roughnessFactor: roughness, ...(['identity', 'muzzle-dark'].includes(name) ? {} : { baseColorTexture: { index: name === 'shell' ? 0 : ['trim', 'joint', 'hardware', 'hand-metal'].includes(name) ? 1 : 2 } }) }, emissiveFactor: name === 'identity' ? colour.slice(0, 3) : [0, 0, 0] })), images, textures: images.map((_, source) => ({ source, sampler: 0 })), samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }], buffers: [{ byteLength: length }], bufferViews: views, accessors }
+  const rootNodes = rig === undefined ? nodes.map((_, i) => i) : [nodeIndexByRigName.get(rig.root)]
+  const generator = rig === undefined ? 'star-tournament equipment-surfaces-v4' : 'star-tournament light-sport-robot-animation-v1'
+  const json = { asset: { version: '2.0', generator, extras: { units: 'meters', up: '+Y', front: '+Z', pivot, attachmentBoundsMeters } }, scene: 0, scenes: [{ nodes: rootNodes }], nodes, meshes, materials: materials.map(([name, colour, metallic, roughness]) => ({ name, pbrMetallicRoughness: { baseColorFactor: colour, metallicFactor: metallic, roughnessFactor: roughness, ...(['identity', 'muzzle-dark'].includes(name) ? {} : { baseColorTexture: { index: name === 'shell' ? 0 : ['trim', 'joint', 'hardware', 'hand-metal'].includes(name) ? 1 : 2 } }) }, emissiveFactor: name === 'identity' ? colour.slice(0, 3) : [0, 0, 0] })), images, textures: images.map((_, source) => ({ source, sampler: 0 })), samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }], buffers: [{ byteLength: length }], bufferViews: views, accessors }
   const encoded = new TextEncoder().encode(JSON.stringify(json)); const jsonLength = (encoded.length + 3) & ~3
   const file = new Uint8Array(12 + 8 + jsonLength + 8 + length); const view = new DataView(file.buffer)
   view.setUint32(0, 0x46546c67, true); view.setUint32(4, 2, true); view.setUint32(8, file.length, true); view.setUint32(12, jsonLength, true); view.setUint32(16, 0x4e4f534a, true); file.set(encoded, 20); file.fill(0x20, 20 + encoded.length, 20 + jsonLength); view.setUint32(20 + jsonLength, length, true); view.setUint32(24 + jsonLength, 0x004e4942, true)
@@ -117,6 +138,45 @@ function kit() {
     g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize()))
     return add(n,m,g,from.add(to).multiplyScalar(.5).toArray())
   }, hose: (n, m, points, radius) => add(n, m, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))), 10, radius, 6, false)), box: (n, m, p, s, r = [0, 0, 0]) => add(n, m, equipmentBox(n,m,s), p, r), cylinder: (n, m, p, radius, depth, r = [0, 0, 0], seg = 12) => add(n, m, new THREE.CylinderGeometry(radius, radius, depth, seg), p, r), sphere: (n, m, p, s, seg = 14) => { const g = new THREE.SphereGeometry(s[0], seg, Math.max(8, seg >> 1)); g.scale(1, s[1] / s[0], s[2] / s[0]); return add(n, m, g, p) }, torus: (n, m, p, major, minor, r = [0, 0, 0], seg = 14) => add(n, m, new THREE.TorusGeometry(major, minor, 6, seg), p, r) }
+}
+
+// The robot remains a set of rigid hard-surface meshes. These authored pivots
+// provide a stable animation contract while keeping the accepted rest pose.
+function lightSportRobotRig() {
+  const joints = [
+    { name: 'robot:rig:root', parent: undefined, local: [0, 0, 0], world: [0, 0, 0] },
+    { name: 'robot:rig:pelvis', parent: 'robot:rig:root', local: [0, .83, 0], world: [0, .83, 0] },
+    { name: 'robot:rig:spine', parent: 'robot:rig:pelvis', local: [0, .36, 0], world: [0, 1.19, 0] },
+    { name: 'robot:rig:head', parent: 'robot:rig:spine', local: [0, .66, 0], world: [0, 1.85, 0] },
+  ]
+  for (const side of [-1, 1]) {
+    const marker = side < 0 ? 'left' : 'right'
+    joints.push(
+      { name: `robot:rig:shoulder:${marker}`, parent: 'robot:rig:spine', local: [side * .48, .40, 0], world: [side * .48, 1.59, 0] },
+      { name: `robot:rig:elbow:${marker}`, parent: `robot:rig:shoulder:${marker}`, local: [0, -.44, .02], world: [side * .48, 1.15, .02] },
+      { name: `robot:rig:wrist:${marker}`, parent: `robot:rig:elbow:${marker}`, local: [side * -.12, -.31, .11], world: [side * .36, .84, .13] },
+      { name: `robot:rig:hip:${marker}`, parent: 'robot:rig:pelvis', local: [side * .23, -.11, 0], world: [side * .23, .72, 0] },
+      { name: `robot:rig:knee:${marker}`, parent: `robot:rig:hip:${marker}`, local: [0, -.47, .04], world: [side * .23, .25, .04] },
+      { name: `robot:rig:ankle:${marker}`, parent: `robot:rig:knee:${marker}`, local: [0, -.25, -.04], world: [side * .23, 0, 0] },
+    )
+  }
+  // The weapon pivot is torso-stable: locomotion swings the arms but never
+  // throws the double barrel out of its readable forward combat axis.
+  joints.push({ name: 'robot:rig:weapon-mount', parent: 'robot:rig:spine', local: [.06, -.27, .15], world: [.06, .92, .15] })
+  const worldByJoint = new Map(joints.map(({ name, world }) => [name, world]))
+  const sideJoint = (name, segment) => `robot:rig:${segment}:${name.includes(':-1') ? 'left' : 'right'}`
+  const jointFor = (name) => {
+    if (name.includes('robot:head') || name.includes('helmet') || name.includes('cheek') || name.includes('ear') || name.includes('neck')) return 'robot:rig:head'
+    if (name.includes('identity:shoulder') || name.includes('shoulder') || name.includes('arm:upper') || name.includes('arm:panel') || name.includes('forearm:piston') || name.includes('elbow:axle')) return sideJoint(name, 'shoulder')
+    if (name.includes('elbow') || name.includes('cable')) return sideJoint(name, 'elbow')
+    if (name.includes('arm:forearm') || name.includes('wrist') || name.includes('robot:hand') || name.includes('knuckle') || name.includes('forearm:') || name.includes('seal:forearm')) return sideJoint(name, 'wrist')
+    if (name.includes('leg:hip') || name.includes('leg:thigh') || name.includes('thigh:') || name.includes('leg:panel') || name.includes('leg:hydraulic')) return sideJoint(name, 'hip')
+    if (name.includes('leg:knee') || name.includes('knee:')) return sideJoint(name, 'knee')
+    if (name.includes('leg:shin') || name.includes('robot:foot') || name.includes('toe:') || name.includes('shin:') || name.includes('seal:shin')) return sideJoint(name, 'ankle')
+    if (name.includes('pelvis')) return 'robot:rig:pelvis'
+    return 'robot:rig:spine'
+  }
+  return { root: 'robot:rig:root', joints, worldByJoint, jointFor }
 }
 
 function robot(lod) {
@@ -220,7 +280,7 @@ function robot(lod) {
     }
     object.geometry.computeVertexNormals()
   }
-  writer(`light-sport-robot-lod${lod}.glb`, k.objects)
+  writer(`light-sport-robot-lod${lod}.glb`, k.objects, lightSportRobotRig())
 }
 
 function addGripHands(k, detail) {
