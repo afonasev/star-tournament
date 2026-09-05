@@ -68,3 +68,12 @@ Evidence: `docs/evidence/enrich-robot-shotgun-surfaces-v3/`: robot-front/rear/lo
 36 tests, build/typecheck, strict OpenSpec и diff check — PASS. Muted in-app Browser benchmark: 8 фаз PASS, medium seed1234, Balanced, 1280×720; пиковые draw calls всей сцены2057, ошибок console нет. Этот показатель нельзя напрямую сравнивать с portrait-прогоном v3. Физический mouse-look этим сценарным прогоном не подтверждён. JS chunk warning >500kB остаётся. First-person GLB LOD0 вырос с615 до958kB, LOD1 с298 до409kB.
 
 Актуальные PNG в docs/evidence/enrich-robot-shotgun-surfaces-v4/: idle.png, recoil.png, lod1.png, hands.png (studio inspector) и match.png (игровой кадр seed1234), рядом browser-performance.json. Швы и хват проверены визуально в обоих LOD и при отдаче. Визуальное принятие открыто; merge/archive/deploy не выполнялись.
+
+
+## Продолжение equipment-surfaces-v5
+
+Детализирован только робот: швы грудных, бедренных и коленных панелей, утопленные винты, металлические кромки, обоймы предплечий/голеней, вставки на голенях, швы шлема, уплотнения шеи и сервисные разъёмы спины. Металлическая текстура робота256×256. Основные швы сохранены в LOD1; стройный силуэт и simulation не меняются. Все четыре GLB оружия/first-person побайтно совпадают с41875c7.
+
+36 tests, build/typecheck, strict OpenSpec, diff check — PASS. Muted Browser: medium seed1234, Balanced,1280×720, benchmark8 фаз PASS, пик всей сцены2265 draw calls, ошибок console нет. Дополнительные детали увеличивают стоимость отображения; слабые GPU/split-screen не проверены. Ручной mouse-look сценарным benchmark не подтверждён. Размер robot LOD0 вырос712→981kB, LOD1429→522kB.
+
+Актуальные PNG (проверены сигнатура и вид): docs/evidence/enrich-robot-shotgun-surfaces-v5/front.png, rear.png, lod1-front.png, lod1-rear.png — studio inspector; match.png — игровой кадр seed1234. Там же browser-performance.json и inspect.html. Dev origin http://127.0.0.1:5188/. Визуальное принятие робота ожидается; руки и оружие приняты пользователем. Merge/archive/deploy не выполнялись.

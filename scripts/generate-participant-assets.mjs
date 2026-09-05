@@ -63,7 +63,7 @@ function writer(name, objects) {
     if (indexArray) primitive.indices = accessor(indexArray, 1, indexArray instanceof Uint32Array ? 5125 : 5123, 34963)
     meshes.push({ name: item.name, primitives: [primitive] }); nodes.push({ name: item.name, mesh: meshes.length - 1 })
   }
-  const images = [0, 1, 2].map((kind) => ({ bufferView: add(surfacePng(kind, name.startsWith('first-person'))), mimeType: 'image/png' }))
+  const images = [0, 1, 2].map((kind) => ({ bufferView: add(surfacePng(kind, name.startsWith('first-person') || name.startsWith('light-sport-robot'))), mimeType: 'image/png' }))
   const key = name.replace(/-lod[01]\.glb$/, '')
   const contracts = {
     'light-sport-robot': ['feet-center', [1.2, 2.2, .8]],
@@ -178,6 +178,37 @@ function robot(lod) {
     if(detail) {
       for(let i=0;i<6;i++){const a=i*Math.PI/3;k.cylinder(`robot:ear:screw:${side}:${i}`,'joint',[side*.333,2.07+Math.cos(a)*.054,Math.sin(a)*.054],.009,.015,[0,0,Math.PI/2],6)}
       for(let i=0;i<4;i++)k.cylinder(`robot:knuckle:${side}:${i}`,'hardware',[side*(.31+i*.035),.80,.27],.019,.025,[Math.PI/2,0,0],8)
+    }
+  }
+  // Surface-only detailing: dimensions are authoring invariants, never hit-volume changes.
+  for(const side of pair) {
+    for(const [part,x,y,z,w,h] of [
+      ['chest',side*.205,1.61,.333,.20,.15],
+      ['thigh',side*.25,.53,.201,.12,.17],
+      ['knee',side*.23,.25,.239,.15,.09],
+    ]) {
+      for(const edge of [-1,1]) {
+        k.box(`robot:seam:${part}:${side}:${edge}`,'joint',[x+edge*w/2,y,z],[.005,h,.005])
+        k.box(`robot:seam:edge:${part}:${side}:${edge}`,'hardware',[x+edge*(w/2-.008),y,z+.001],[.003,h*.85,.004])
+      }
+      if(detail)for(const dx of [-1,1])for(const dy of [-1,1]) {
+        const p=[x+dx*w*.32,y+dy*h*.35,z+.006]
+        k.cylinder(`robot:socket:${part}:${side}:${dx}:${dy}`,'joint',p,.012,.007,[Math.PI/2,0,0],8)
+        k.cylinder(`robot:screw:${part}:${side}:${dx}:${dy}`,'hardware',[p[0],p[1],p[2]+.004],.007,.005,[Math.PI/2,0,0],6)
+      }
+    }
+    for(const [part,x,y,z,r] of [['forearm',side*.48,.90,.06,.112],['shin',side*.23,.04,0,.115]]) {
+      k.torus(`robot:seal:${part}:${side}`,'joint',[x,y,z],r,.007,[Math.PI/2,0,0],detail?20:12)
+      k.torus(`robot:seal:lip:${part}:${side}`,'hardware',[x,y+.012,z],r,.004,[Math.PI/2,0,0],detail?20:12)
+    }
+    k.box(`robot:shin:metal-inlay:${side}`,'hardware',[side*.23,.045,.139],[.045,.15,.008])
+    k.box(`robot:helmet:temple-seam:${side}`,'joint',[side*.14,2.12,.20],[.005,.10,.008])
+    k.box(`robot:helmet:temple-edge:${side}`,'hardware',[side*.15,2.12,.20],[.004,.085,.009])
+    if(detail) {
+      for(let i=0;i<3;i++)k.box(`robot:neck:seal:${side}:${i}`,'joint',[side*.09,1.79+i*.025,.085],[.055,.006,.028])
+      for(let i=0;i<4;i++)k.box(`robot:back:service-slot:${side}:${i}`,'joint',[side*.07,1.56+i*.018,-.300],[.034,.006,.012])
+      k.cylinder(`robot:back:connector:${side}`,'hardware',[side*.15,1.08,-.28],.031,.035,[Math.PI/2,0,0],12)
+      k.cylinder(`robot:back:connector-core:${side}`,'joint',[side*.15,1.08,-.301],.019,.01,[Math.PI/2,0,0],8)
     }
   }
   // Authored slender silhouette; the feet origin, height and simulation capsule stay unchanged.

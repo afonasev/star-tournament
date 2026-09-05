@@ -1,0 +1,23 @@
+<!doctype html><html lang="ru"><meta charset="UTF-8"><title>Equipment surface QA</title>
+<style>body{margin:0;background:#152334;color:#e9f3fa;font:16px system-ui}header{position:absolute;top:24px;left:32px}h1{margin:0 0 8px}p{color:#aabfce;margin:6px 0}nav{position:absolute;bottom:24px;left:32px;display:flex;gap:12px}button{padding:12px 20px;background:#243e52;color:white;border:1px solid #7095aa;border-radius:8px;cursor:pointer}#status{position:absolute;bottom:24px;right:24px}canvas{display:block}</style>
+<header><h1 id="title">Робот · LOD0</h1><p>equipment-surfaces-v5 · authored GLB · без звука</p><p>QA крупный план — не игровой viewport</p></header>
+<nav><button id="robot">Робот</button><button id="weapon">Дробовик</button><button id="hands">Оружие с руками</button><button id="fps">Первое лицо</button><button id="recoil">Отдача</button><button id="rear">Обратная сторона</button><button id="wide">16:9</button><button id="lod">LOD0 / LOD1</button></nav><output id="status">Загрузка…</output>
+<script type="module">
+import * as THREE from 'three';
+import { prepareArenaGlbAssets } from '/src/render/arenaGlbAssets.ts';
+import { createRobotGlbPresentation, createFirstPersonGlbPresentation } from '/src/render/participantWeaponPresentation.ts';
+const renderer = new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setClearColor(0x152334);document.body.append(renderer.domElement);
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(36,innerWidth/innerHeight,.01,100);
+scene.add(new THREE.HemisphereLight(0xe5f6ff,0x456077,2.4));
+for(const [pos,intensity] of [[[3,5,5],3], [[-4,3,-2],3]]) {const light=new THREE.DirectionalLight(0xffffff,intensity);light.position.set(...pos);scene.add(light)}
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:0x203447,roughness:.85}));floor.rotation.x=-Math.PI/2;floor.position.y=-.23;scene.add(floor);
+const cache=await prepareArenaGlbAssets();let kind='robot',lod='lod0',rear=false,recoil=false,wide=false,model,resources;
+const fallback=new THREE.Texture();
+function draw(){const height=wide?innerWidth*9/16:innerHeight;renderer.setSize(innerWidth,height);camera.aspect=innerWidth/height;camera.fov=36;camera.updateProjectionMatrix();if(model){scene.remove(model);for(const m of resources.materials)m.dispose();for(const g of resources.geometries)g.dispose()};resources={materials:[],geometries:[]};const adapter={...cache,createInstance:(key)=>cache.createInstance(key,0,lod)};
+if(kind==='robot'){model=createRobotGlbPresentation(resources,adapter,fallback,'#15cbe4').group;camera.position.set(rear?-3:3,2.6,rear?-5:5);camera.lookAt(0,1.05,0)}
+else if(kind==='weapon'){model=adapter.createInstance('double-barrel-shotgun');camera.position.set(rear?-1.4:1.4,1.0,rear?-1.8:2.1);camera.lookAt(0,.05,.5)}
+else if(kind==='fps'){model=createFirstPersonGlbPresentation(resources,adapter,fallback,'#15cbe4').group;if(recoil)model.rotation.x=-.08+.13;camera.fov=90;camera.position.set(0,0,0);camera.lookAt(0,0,-1);camera.updateProjectionMatrix()}
+else{model=createFirstPersonGlbPresentation(resources,adapter,fallback,'#15cbe4').group;model.position.set(0,0,0);model.rotation.set(0,0,0);camera.position.set(rear?-.8:.8,.5,rear?-1.1:1.3);camera.lookAt(0,0,.2)}
+floor.visible=kind!=='fps';scene.add(model);renderer.render(scene,camera);document.querySelector('#title').textContent=({robot:'Робот',weapon:'Дробовик',hands:'Дробовик и руки',fps:'Первое лицо / FOV 90'})[kind]+' · '+lod.toUpperCase()+(rear?' · сзади':'');document.querySelector('#status').textContent=renderer.info.render.triangles.toLocaleString()+' треугольников · '+renderer.info.render.calls+' draw calls';}
+document.getElementById('wide').onclick=()=>{wide=!wide;draw()};for(const k of ['robot','weapon','hands','fps'])document.getElementById(k).onclick=()=>{kind=k;rear=false;draw()};document.getElementById('recoil').onclick=()=>{kind='fps';recoil=!recoil;draw()};document.getElementById('rear').onclick=()=>{rear=!rear;draw()};document.getElementById('lod').onclick=()=>{lod=lod==='lod0'?'lod1':'lod0';draw()};addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();draw()});draw();
+</script></html>
