@@ -10,3 +10,9 @@
 - [x] 2.3 Зафиксировать результат, ограничения и evidence в handoff и отдельном коммите без merge/archive/deploy.
 
 Browser QA выполнен через штатный benchmark и инспектор. Ограничение физического pointer lock и ожидающее визуальное принятие записаны в docs/tasks/07-enrich-robot-shotgun-surfaces.md.
+
+## 3. Уточнение формы после визуального отзыва
+
+- [ ] 3.1 Заменить крупные квадратные формы и добавить механические детали; проверить обе LOD всех GLB.
+- [ ] 3.2 Выполнить typecheck, renderer/combat tests, build, strict validation и muted browser QA; сохранить и осмотреть новые PNG.
+- [ ] 3.3 Обновить handoff и зафиксировать продолжение в коммите без merge/archive/deploy.

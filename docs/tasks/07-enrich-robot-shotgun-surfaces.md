@@ -37,3 +37,14 @@
 `docs/evidence/enrich-robot-shotgun-surfaces/`: robot-front-lod0.png, robot-rear-lod0.png, robot-lod1.png, shotgun-lod0.png, shotgun-lod1.png, viewmodel-lod0.png, viewmodel-lod1.png, match-seed-1234.png.
 
 Локальный интерактивный осмотр: `http://127.0.0.1:5188/docs/evidence/enrich-robot-shotgun-surfaces/inspect.html`. Галерея исходных PNG: `gallery.html` рядом с инспектором.
+
+
+## Продолжение equipment-surfaces-v2
+
+Пользователь оценил первый pass как «сильно лучше» и запросил «ещё больше деталей, меньше крупных квадратов».
+
+Реализованы polygon shells со срезанными углами и сужением, округлые плечи, многогранная броня конечностей, позвоночные сегменты, гибкие шланги, оси суставов и детали шлема/кистей. У оружия добавлены задний breech, секционные кожухи, feed lines и шарниры; задний узел виден в прежнем first-person ракурсе. Контрастная текстурная рамка вокруг каждой панели заменена мелкой сервисной разметкой.
+
+Сравнение LOD0 с 0865ca3: robot 169 → 232 nodes, 14156 → 10516 triangles, 1.18 → 0.71 MB; world shotgun 102 → 129 nodes, 8276 → 7204 triangles; viewmodel 140 → 179 nodes, 9564 → 10172 triangles. Новые polygon shells экономнее прежних RoundedBoxGeometry. Draw calls ещё не измерены.
+
+Typecheck, 34 renderer/combat tests, build, strict OpenSpec, diff check и finite POSITION/NORMAL/UV audit всех шести GLB — PASS. Новый browser QA и screenshots пока ожидают разблокировки Mac; старые PNG не доказывают результат v2. Следующий шаг: открыть `/docs/evidence/enrich-robot-shotgun-surfaces-v2/inspect.html` на подтверждённом HTTP 200 dev origin `http://127.0.0.1:5188/`, осмотреть оба LOD и игровой кадр, затем коммит.
