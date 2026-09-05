@@ -48,3 +48,14 @@
 Сравнение LOD0 с 0865ca3: robot 169 → 232 nodes, 14156 → 10516 triangles, 1.18 → 0.71 MB; world shotgun 102 → 129 nodes, 8276 → 7204 triangles; viewmodel 140 → 179 nodes, 9564 → 10172 triangles. Новые polygon shells экономнее прежних RoundedBoxGeometry. Draw calls ещё не измерены.
 
 Typecheck, 34 renderer/combat tests, build, strict OpenSpec, diff check и finite POSITION/NORMAL/UV audit всех шести GLB — PASS. Новый browser QA и screenshots пока ожидают разблокировки Mac; старые PNG не доказывают результат v2. Следующий шаг: открыть `/docs/evidence/enrich-robot-shotgun-surfaces-v2/inspect.html` на подтверждённом HTTP 200 dev origin `http://127.0.0.1:5188/`, осмотреть оба LOD и игровой кадр, затем коммит.
+
+
+## Продолжение equipment-surfaces-v3
+
+Утончены ширина корпуса, талия, плечи и конечности при прежней высоте. Таз получил срезанные углы; внутренние плечевые шарниры уменьшены, чтобы не прорезать броню. First-person руки пересобраны: правый хват рукояти, левый хват цевья, по четыре трёхсегментных пальца и большой палец в обоих LOD, металлические запястья и предплечья, выходящие за нижнюю границу камеры. Камера, FOV, recoil и simulation остаются прежними.
+
+Финальные проверки: 36 tests (7 files), build/typecheck, strict OpenSpec — PASS. Новый spatial regression проверяет пересечение границ предплечья, запястья, ладони и цепочек пальцев в обоих LOD; это консервативная проверка разрывов, не доказательство точного поверхностного контакта.
+
+Muted in-app Browser: medium seed1234, prototype-v1@5, Balanced, viewport845×993; benchmark PASS по восьми фазам, повторный матч восстанавливает ammo20/HP100/tick0. Ручной pointer-lock playtest остаётся неподтверждённым. Inspector проверен с тем же FOV90 и transform модели в idle/recoil, обоими LOD, плюс canvas16:9 (845×475); 16:9 — отдельный QA canvas, не полноэкранный игровой viewport. PNG сохранены как настоящие PNG и осмотрены. Артефакты v3 заменяют прежнее ожидание разблокировки Mac.
+
+Evidence: `docs/evidence/enrich-robot-shotgun-surfaces-v3/`: robot-front/rear/lod1.png, hands.png, fps-idle/recoil/lod1/wide.png, recoil-wide.png, match.png, browser-performance.json, inspect.html. Inspector использует отдельный studio lighting; match.png показывает реальную игру. Обновление остаётся в той же ветке; merge/archive/deploy не выполнялись. Визуальное принятие пользователем остаётся открытым.

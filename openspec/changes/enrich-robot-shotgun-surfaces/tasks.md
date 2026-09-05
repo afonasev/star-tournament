@@ -13,6 +13,12 @@ Browser QA выполнен через штатный benchmark и инспек�
 
 ## 3. Уточнение формы после визуального отзыва
 
-- [ ] 3.1 Заменить крупные квадратные формы и добавить механические детали; проверить обе LOD всех GLB.
-- [ ] 3.2 Выполнить typecheck, renderer/combat tests, build, strict validation и muted browser QA; сохранить и осмотреть новые PNG.
-- [ ] 3.3 Обновить handoff и зафиксировать продолжение в коммите без merge/archive/deploy.
+- [x] 3.1 Заменить крупные квадратные формы и добавить механические детали; проверить обе LOD всех GLB.
+- [x] 3.2 Выполнить typecheck, renderer/combat tests, build, strict validation и muted browser QA; сохранить и осмотреть новые PNG.
+- [x] 3.3 Обновить handoff и зафиксировать продолжение в коммите без merge/archive/deploy.
+
+## 4. Утончённый силуэт и связный хват
+
+- [x] 4.1 Утончить robot geometry и собрать две связные first-person руки с хватом; проверить spatial continuity и обе LOD.
+- [x] 4.2 Выполнить typecheck, tests, build, strict validation и muted Browser QA для idle/recoil и разных viewport; сохранить актуальные PNG.
+- [x] 4.3 Обновить handoff и закоммитить проверенную итерацию без merge/archive/deploy.

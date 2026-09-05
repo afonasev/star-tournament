@@ -70,7 +70,7 @@ function writer(name, objects) {
     'first-person-shotgun': ['camera-weapon-grip', [1.3, .8, 1.6]],
   }
   const [pivot, attachmentBoundsMeters] = contracts[key]
-  const json = { asset: { version: '2.0', generator: 'star-tournament equipment-surfaces-v2', extras: { units: 'meters', up: '+Y', front: '+Z', pivot, attachmentBoundsMeters } }, scene: 0, scenes: [{ nodes: nodes.map((_, i) => i) }], nodes, meshes, materials: materials.map(([name, colour, metallic, roughness]) => ({ name, pbrMetallicRoughness: { baseColorFactor: colour, metallicFactor: metallic, roughnessFactor: roughness, ...(['identity', 'muzzle-dark'].includes(name) ? {} : { baseColorTexture: { index: name === 'shell' ? 0 : ['trim', 'joint', 'hardware'].includes(name) ? 1 : 2 } }) }, emissiveFactor: name === 'identity' ? colour.slice(0, 3) : [0, 0, 0] })), images, textures: images.map((_, source) => ({ source, sampler: 0 })), samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }], buffers: [{ byteLength: length }], bufferViews: views, accessors }
+  const json = { asset: { version: '2.0', generator: 'star-tournament equipment-surfaces-v3', extras: { units: 'meters', up: '+Y', front: '+Z', pivot, attachmentBoundsMeters } }, scene: 0, scenes: [{ nodes: nodes.map((_, i) => i) }], nodes, meshes, materials: materials.map(([name, colour, metallic, roughness]) => ({ name, pbrMetallicRoughness: { baseColorFactor: colour, metallicFactor: metallic, roughnessFactor: roughness, ...(['identity', 'muzzle-dark'].includes(name) ? {} : { baseColorTexture: { index: name === 'shell' ? 0 : ['trim', 'joint', 'hardware'].includes(name) ? 1 : 2 } }) }, emissiveFactor: name === 'identity' ? colour.slice(0, 3) : [0, 0, 0] })), images, textures: images.map((_, source) => ({ source, sampler: 0 })), samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }], buffers: [{ byteLength: length }], bufferViews: views, accessors }
   const encoded = new TextEncoder().encode(JSON.stringify(json)); const jsonLength = (encoded.length + 3) & ~3
   const file = new Uint8Array(12 + 8 + jsonLength + 8 + length); const view = new DataView(file.buffer)
   view.setUint32(0, 0x46546c67, true); view.setUint32(4, 2, true); view.setUint32(8, file.length, true); view.setUint32(12, jsonLength, true); view.setUint32(16, 0x4e4f534a, true); file.set(encoded, 20); file.fill(0x20, 20 + encoded.length, 20 + jsonLength); view.setUint32(20 + jsonLength, length, true); view.setUint32(24 + jsonLength, 0x004e4942, true)
@@ -99,7 +99,7 @@ function equipmentBox(name, material, size) {
   if(/robot:(arm:(upper-shell|forearm)|leg:(thigh|shin))/.test(name)) {
     const g=new THREE.CylinderGeometry(.40,.5,y,8,1);g.rotateY(Math.PI/8);g.scale(x,1,z);return g
   }
-  if(material==='shell' || name==='weapon:grip' || name.startsWith('robot:foot:')) {
+  if(material==='shell' || name==='robot:pelvis' || name==='weapon:grip' || name.startsWith('robot:foot:')) {
     if(x<y*.5 && x<z*.5){const g=polygonShell([z,y,x]);g.rotateY(Math.PI/2);return g}
     if(y<x*.5 && y<z*.5){const g=polygonShell([x,z,y]);g.rotateX(Math.PI/2);return g}
     return polygonShell(size,name.includes('torso:core-shell')?.62:.8)
@@ -110,7 +110,12 @@ function equipmentBox(name, material, size) {
 function kit() {
   const objects = []
   const add = (name, material, geometry, position = [0, 0, 0], rotation = [0, 0, 0]) => { geometry.rotateX(rotation[0]); geometry.rotateY(rotation[1]); geometry.rotateZ(rotation[2]); geometry.translate(...position); objects.push({ name, material, geometry }); return objects }
-  return { objects, hose: (n, m, points, radius) => add(n, m, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))), 10, radius, 6, false)), box: (n, m, p, s, r = [0, 0, 0]) => add(n, m, equipmentBox(n,m,s), p, r), cylinder: (n, m, p, radius, depth, r = [0, 0, 0], seg = 12) => add(n, m, new THREE.CylinderGeometry(radius, radius, depth, seg), p, r), sphere: (n, m, p, s, seg = 14) => { const g = new THREE.SphereGeometry(s[0], seg, Math.max(8, seg >> 1)); g.scale(1, s[1] / s[0], s[2] / s[0]); return add(n, m, g, p) }, torus: (n, m, p, major, minor, r = [0, 0, 0], seg = 14) => add(n, m, new THREE.TorusGeometry(major, minor, 6, seg), p, r) }
+  return { objects, segment: (n,m,a,b,ra,rb,segments=12) => {
+    const from=new THREE.Vector3(...a),to=new THREE.Vector3(...b),direction=to.clone().sub(from)
+    const g=new THREE.CylinderGeometry(rb,ra,direction.length(),segments)
+    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize()))
+    return add(n,m,g,from.add(to).multiplyScalar(.5).toArray())
+  }, hose: (n, m, points, radius) => add(n, m, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))), 10, radius, 6, false)), box: (n, m, p, s, r = [0, 0, 0]) => add(n, m, equipmentBox(n,m,s), p, r), cylinder: (n, m, p, radius, depth, r = [0, 0, 0], seg = 12) => add(n, m, new THREE.CylinderGeometry(radius, radius, depth, seg), p, r), sphere: (n, m, p, s, seg = 14) => { const g = new THREE.SphereGeometry(s[0], seg, Math.max(8, seg >> 1)); g.scale(1, s[1] / s[0], s[2] / s[0]); return add(n, m, g, p) }, torus: (n, m, p, major, minor, r = [0, 0, 0], seg = 14) => add(n, m, new THREE.TorusGeometry(major, minor, 6, seg), p, r) }
 }
 
 function robot(lod) {
@@ -120,7 +125,7 @@ function robot(lod) {
   for (const side of pair) {
     const x = side * .48
     k.box(`robot:identity:shoulder:${side}`, 'identity', [x, 1.72, 0], [.32, .23, .38]); k.torus(`robot:joint:shoulder-collar:${side}`, 'joint', [x, 1.59, 0], .115, .028, [0, 0, 0], detail ? 18 : 10)
-    k.cylinder(`robot:arm:upper-joint:${side}`, 'joint', [x, 1.53, 0], .1, .28); k.box(`robot:arm:upper-shell:${side}`, 'shell', [x, 1.41, 0], [.21, .28, .24]); k.sphere(`robot:arm:elbow:${side}`, 'joint', [x, 1.15, .02], [.115, .1, .11]); k.torus(`robot:joint:elbow-collar:${side}`, 'joint', [x, 1.15, .02], .11, .018, [Math.PI / 2, 0, 0], detail ? 16 : 10)
+    k.cylinder(`robot:arm:upper-joint:${side}`, 'joint', [x, 1.53, 0], .072, .28); k.box(`robot:arm:upper-shell:${side}`, 'shell', [x, 1.41, 0], [.21, .28, .24]); k.sphere(`robot:arm:elbow:${side}`, 'joint', [x, 1.15, .02], [.115, .1, .11]); k.torus(`robot:joint:elbow-collar:${side}`, 'joint', [x, 1.15, .02], .11, .018, [Math.PI / 2, 0, 0], detail ? 16 : 10)
     k.box(`robot:arm:forearm:${side}`, 'shell', [x, .96, .06], [.24, .29, .26]); k.torus(`robot:joint:wrist-collar:${side}`, 'joint', [side * .36, .84, .13], .085, .018, [0, Math.PI / 2, 0], detail ? 16 : 10); k.sphere(`robot:hand:${side}`, 'joint', [side * .33, .82, .15], [.13, .1, .13])
     const fingerCount = detail ? 4 : 2; const segments = detail ? 3 : 1
     for (let finger = 0; finger < fingerCount; finger++) for (let segment = 0; segment < segments; segment++) k.box(`robot:hand:finger:${side}:${finger}:${segment}`, 'joint', [side * (.31 + finger * .035), .76 - segment * .045, .23], [.026, .055, .035], [0, 0, side * .12])
@@ -174,7 +179,46 @@ function robot(lod) {
       for(let i=0;i<4;i++)k.cylinder(`robot:knuckle:${side}:${i}`,'hardware',[side*(.31+i*.035),.80,.27],.019,.025,[Math.PI/2,0,0],8)
     }
   }
+  // Authored slender silhouette; the feet origin, height and simulation capsule stay unchanged.
+  for(const object of k.objects) {
+    const position=object.geometry.getAttribute('position')
+    for(let i=0;i<position.count;i++) {
+      const y=position.getY(i), waist=1-.10*Math.max(0,1-Math.abs(y-1.05)/.35)
+      position.setXYZ(i,position.getX(i)*.76*waist,y,position.getZ(i)*.78)
+    }
+    object.geometry.computeVertexNormals()
+  }
   writer(`light-sport-robot-lod${lod}.glb`, k.objects)
+}
+
+function addGripHands(k, detail) {
+  // These are authored attachment landmarks in the same +Z-forward weapon space.
+  // Elbows extend toward the player and below the camera frustum, never floating in view.
+  const poses = [
+    {side:-1, elbow:[-.85,-1.30,-.65], wrist:[-.19,-.24,-.09], palm:[-.105,-.20,-.025]},
+    {side:1, elbow:[1.10,-1.30,-.60], wrist:[.27,-.17,.64], palm:[.10,-.095,.76]},
+  ]
+  for(const {side,elbow,wrist,palm} of poses) {
+    k.segment(`viewmodel:forearm:${side}`,'shell',elbow,wrist,.155,.105,detail?14:8)
+    const axis=new THREE.Vector3(...wrist).sub(new THREE.Vector3(...elbow))
+    const cuffStart=new THREE.Vector3(...wrist).addScaledVector(axis,-.11).toArray()
+    k.segment(`viewmodel:wrist:${side}`,'hardware',cuffStart,wrist,.12,.11,detail?16:8)
+    k.segment(`viewmodel:wrist:link:${side}`,'hardware',wrist,palm,.10,.09,detail?12:8)
+    k.sphere(`viewmodel:wrist:ball:${side}`,'hardware',wrist,[.112,.112,.112],detail?12:8)
+    k.box(`viewmodel:hand:${side}`,'shell',palm,side<0?[.12,.19,.19]:[.27,.10,.22],[0,side<0?-.12:.1,side<0?-.1:0])
+    const middle=new THREE.Vector3(...elbow).lerp(new THREE.Vector3(...wrist),.70)
+    k.segment(`viewmodel:forearm:brace:${side}`,'trim',middle.clone().add(new THREE.Vector3(side*.10,0,0)).toArray(),[wrist[0]+side*.10,wrist[1]-.025,wrist[2]],.028,.018,8)
+    for(let finger=0;finger<4;finger++) {
+      const points=side<0
+        ? [[-.15,-.135-finger*.047,.055],[-.035,-.135-finger*.047,.108],[.073,-.14-finger*.047,.069],[.083,-.14-finger*.047,-.002]]
+        : [[.205,-.10,.665+finger*.061],[.248,-.016,.665+finger*.061],[.19,.024,.665+finger*.061],[.13,.02,.665+finger*.061]]
+      for(let segment=0;segment<3;segment++)k.segment(`viewmodel:hand:finger:${side}:${finger}:${segment}`,segment===1?'shell':'hardware',points[segment],points[segment+1],.023,.021,detail?8:6)
+      if(detail)k.sphere(`viewmodel:knuckle:${side}:${finger}`,'shell',points[1],[.029,.029,.03],10)
+    }
+    const thumb=side<0?[[-.11,-.11,-.085],[-.03,-.075,-.115],[.054,-.10,-.06]]:[[.015,-.095,.87],[-.11,-.028,.87],[-.13,.022,.83]]
+    for(let i=0;i<2;i++)k.segment(`viewmodel:thumb:${side}:${i}`,'shell',thumb[i],thumb[i+1],.034,.028,detail?10:6)
+    if(detail)k.hose(`viewmodel:forearm:cable:${side}`,'trim',[elbow,[middle.x+side*.12,middle.y,middle.z],wrist],.015)
+  }
 }
 
 function shotgun(lod, viewmodel = false) {
@@ -188,7 +232,8 @@ function shotgun(lod, viewmodel = false) {
   }
   k.box('weapon:bridge', 'shell', [0, v(.12), v(.88)], [v(.16), v(.09), v(.78)]); const coilCount = detail ? 9 : 3; for (let coil = 0; coil < coilCount; coil++) { const z = v(.02 + coil * .055); k.torus(`weapon:energy:coil:${coil}`, 'identity', [0, v(.17), z], v(.11), v(.009), [0, 0, 0], detail ? 16 : 10) }
   if (detail) for (let rail = 0; rail < 4; rail++) k.box(`weapon:receiver:rail:${rail}`, 'trim', [v((rail % 2 ? .18 : -.18)), v(.31), v(.22 + Math.floor(rail / 2) * .26)], [v(.035), v(.035), v(.22)])
-  if (viewmodel) for (const side of [-1, 1]) { const x = side * .33; k.cylinder(`viewmodel:forearm:${side}`, 'shell', [x, -.4, .5], .12, .65, [.9, 0, side * .14], detail ? 16 : 10); k.torus(`viewmodel:wrist:${side}`, 'joint', [side * .19, -.15, .7], .105, .024, [.9, 0, 0], detail ? 16 : 10); k.sphere(`viewmodel:hand:${side}`, 'joint', [side * .14, -.06, .76], [.14, .11, .14]); const fingerCount = detail ? 4 : 2; const segments = detail ? 3 : 1; for (let finger = 0; finger < fingerCount; finger++) for (let segment = 0; segment < segments; segment++) k.box(`viewmodel:hand:finger:${side}:${finger}:${segment}`, 'joint', [side * (.12 + finger * .035), -.07 - segment * .04, .86], [.024, .05, .03], [0, 0, side * .1]); const panelCount = detail ? 4 : 1; for (let panel = 0; panel < panelCount; panel++) k.box(`viewmodel:forearm:panel:${side}:${panel}`, 'trim', [x, -.42 + panel * .08, .58], [.14, .08, .03]) }
+  if (viewmodel) addGripHands(k, detail)
+
   for (const side of [-1, 1]) {
     k.box(`weapon:side-plate:${side}`, 'shell', [v(side * .25), v(.16), v(.33)], [v(.045), v(.18), v(.40)], [0, 0, side * -.08])
     k.box(`weapon:service-port:${side}`, 'joint', [v(side * .286), v(.17), v(.34)], [v(.018), v(.12), v(.25)])
@@ -217,10 +262,7 @@ function shotgun(lod, viewmodel = false) {
       if(detail)k.cylinder(`weapon:shroud:pin:${side}:${i}`,'hardware',[v(side*.289),v(.12),z],v(.014),v(.015),[0,0,Math.PI/2],6)
     }
     k.cylinder(`weapon:receiver:hinge:${side}`,'hardware',[v(side*.245),v(.15),v(.16)],v(.052),v(.022),[0,0,Math.PI/2],detail?16:8)
-    if(viewmodel) {
-      for(let i=0;i<(detail?5:3);i++)k.torus(`viewmodel:forearm:seal:${side}:${i}`,'hardware',[side*.33,-.55+i*.075,.38+i*.04],.122,.009,[Math.PI/2-.9,0,side*.14],12)
-      k.hose(`viewmodel:forearm:cable:${side}`,'trim',[[side*.41,-.64,.31],[side*.44,-.42,.56],[side*.32,-.2,.71]],.014)
-    }
+
   }
   // The camera-attached model is authored at a compact presentation scale; its
   // manifest bounds remain a maximum attachment envelope, not collision data.

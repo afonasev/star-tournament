@@ -16,6 +16,8 @@
 
 - Второй проход использует chamfered polygon shells, tapered limb armour, rounded shoulder caps, service hatches, spine vertebrae, hoses и barrel bands. Рамки текстуры не должны возвращать каждой детали вид коробки. Метрики и PNG сравниваются с `0865ca3`; LOD1 сохраняет новые основные формы.
 
+- Третий проход: authored ширина/толщина робота уменьшаются относительно его вертикальной оси; оружие сохраняет прежний масштаб. First-person кисти имеют разные grip/support anchors; tapered bones соединяют wrist с elbow за пределами кадра. Геометрия рук наследует общий viewmodel transform и recoil; FOV и camera transform не меняются. LOD1 сохраняет оба хвата и непрерывность.
+
 ## Risks / Trade-offs
 
 - Больше draw calls → проверить браузер, документировать ограничения hardware/split-screen.
