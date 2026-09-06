@@ -177,6 +177,28 @@ interface TransientMesh {
   readonly expiresAfterTick: number
 }
 
+interface LocalLightCandidate {
+  readonly attachmentId: string
+  readonly light: THREE.PointLight
+}
+
+interface ArenaPresentation extends ArenaTextureKit {
+  readonly localLights: readonly LocalLightCandidate[]
+}
+
+export function resolveLocalLightShadowBudget(
+  graphicsQuality: GraphicsQualityProfile,
+  presentationProfile: ValidatedPresentationProfile = PRESENTATION_BALANCED_V1_PROFILE,
+): number {
+  const maximum = presentationProfile.render.localLightShadowCount
+  switch (graphicsQuality.id) {
+    case 'low': return 0
+    case 'balanced': return Math.min(1, maximum)
+    case 'high': return Math.min(2, maximum)
+    case 'ultra': return maximum
+  }
+}
+
 
 function defaultRendererFactory(): RendererPort {
   try {
@@ -204,11 +226,12 @@ function addArena(
   graphicsQuality: GraphicsQualityProfile,
   arenaGlbAssets?: ArenaGlbTemplateCache,
   presentationProfile: ValidatedPresentationProfile = PRESENTATION_BALANCED_V1_PROFILE,
-): ArenaTextureKit {
+): ArenaPresentation {
   const recipeStyle = presentationProfile.render
   // Texture rhythm is relative to the authored 3.2 m wall module.
   const textureDensity = recipeStyle.materialRepeatScale / 3.2
   let localLights = 0
+  const localLightCandidates: LocalLightCandidate[] = []
   const lightBudget = graphicsQuality.id === 'low' ? 0 : graphicsQuality.id === 'balanced' ? recipeStyle.localLightCount / 2 : recipeStyle.localLightCount
   const textureKit = createArenaTextureKit(graphicsQuality, onTextureReady)
   const { wall: wallMaps, floor: floorMaps } = textureKit
@@ -437,8 +460,11 @@ function addArena(
         frame.add(lamp)
         if (localLights < lightBudget) {
           const light = new THREE.PointLight(surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,recipeStyle.localLightIntensity,recipeStyle.localLightDistance)
+          light.name = `presentation:lamp-light:${attachment.id}`
           light.position.z = recipeStyle.reliefDepth
-          frame.add(light);localLights++
+          frame.add(light)
+          localLightCandidates.push({ attachmentId: attachment.id, light })
+          localLights++
         }
       } else if (attachment.kind === 'relief-niche') {
         // Shallow frame over the continuous wall. There is no floor, opening or navigable recess.
@@ -563,7 +589,7 @@ function addArena(
       const tallestSurface = Math.max(...arena.surfaces.map((surface) => surface.center.y + surface.size.y / 2))
       landmark.position.set(combatCenter.center.x, tallestSurface + 0.7, combatCenter.center.z)
       scene.add(landmark)
-      return textureKit
+      return { ...textureKit, localLights: localLightCandidates }
     }
     const geometry = new THREE.TorusGeometry(1.15, 0.065, 6, 24)
     const landmark = new THREE.Mesh(geometry, landmarkMaterial)
@@ -574,7 +600,7 @@ function addArena(
     scene.add(landmark)
     geometries.push(geometry)
   }
-  return textureKit
+  return { ...textureKit, localLights: localLightCandidates }
 }
 
 function addRobotTarget(
@@ -652,8 +678,45 @@ export function createFirstPersonRenderer({
   const materials: THREE.Material[] = []
   const textures: THREE.Texture[] = []
   const activeGraphicsQuality = graphicsQuality ?? GRAPHICS_QUALITY_V1.balanced
-  const textureKit = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets, presentationProfile)
+  const activePresentationProfile = presentationProfile ?? PRESENTATION_BALANCED_V1_PROFILE
+  if (renderer.shadowMap !== undefined) {
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+  }
+  const arenaPresentation = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets, activePresentationProfile)
+  const textureKit = arenaPresentation
   const participantTexture = textureKit.wall.baseColor
+
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return
+    let presentationMesh = object.name.startsWith('arena:') || object.name.startsWith('presentation:')
+    object.traverseAncestors((ancestor) => { presentationMesh ||= ancestor.name.startsWith('presentation:') })
+    object.receiveShadow = presentationMesh
+    // Participants remain readable from fill/rim light; local lamp shadows are architectural detail.
+    object.castShadow = presentationMesh
+  })
+
+  const localLightShadowBudget = resolveLocalLightShadowBudget(activeGraphicsQuality, activePresentationProfile)
+  const updateLocalLightShadows = () => {
+    const cameraPosition = camera.getWorldPosition(new THREE.Vector3())
+    const selected = new Set(
+      [...arenaPresentation.localLights]
+        .sort((left, right) => {
+          const distance = left.light.getWorldPosition(new THREE.Vector3()).distanceToSquared(cameraPosition) - right.light.getWorldPosition(new THREE.Vector3()).distanceToSquared(cameraPosition)
+          return distance === 0 ? left.attachmentId.localeCompare(right.attachmentId) : distance
+        })
+        .slice(0, localLightShadowBudget)
+        .map(({ attachmentId }) => attachmentId),
+    )
+    for (const candidate of arenaPresentation.localLights) {
+      const active = selected.has(candidate.attachmentId)
+      candidate.light.castShadow = active
+      candidate.light.shadow.mapSize.set(activePresentationProfile.render.localLightShadowMapSize, activePresentationProfile.render.localLightShadowMapSize)
+      candidate.light.shadow.radius = activePresentationProfile.render.localLightShadowRadius
+      // A small fixed bias is a renderer technical invariant, not a balance control.
+      candidate.light.shadow.bias = -0.0005
+    }
+  }
 
   const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
   scene.add(hemisphere)
@@ -802,6 +865,7 @@ export function createFirstPersonRenderer({
       if (killer) camera.lookAt(killer.position.x, killer.position.y + profile.rules.player.eyeHeight, killer.position.z)
     }
     viewmodel.group.visible = player.alive !== false
+    updateLocalLightShadows()
 
     for (const [id, target] of targetById) target.group.visible = snapshot.participants.some(p => p.semanticId === id)
     for (const targetState of snapshot.participants.filter((participant): participant is FirstPersonRenderTarget => participant.kind !== 'local-seat')) {

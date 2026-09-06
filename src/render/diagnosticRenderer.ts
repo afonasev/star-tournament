@@ -19,6 +19,10 @@ export interface RendererPort {
     readonly memory: { readonly geometries: number; readonly textures: number }
     readonly programs?: readonly unknown[] | null
   }
+  readonly shadowMap?: {
+    enabled: boolean
+    type: THREE.ShadowMapType
+  }
   setPixelRatio(pixelRatio: number): void
   setSize(width: number, height: number, updateStyle?: boolean): void
   setViewport(x: number, y: number, width: number, height: number): void

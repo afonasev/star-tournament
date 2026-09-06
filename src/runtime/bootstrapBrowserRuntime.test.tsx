@@ -514,6 +514,7 @@ describe('playable browser bootstrap', () => {
       playfield.getAttribute('data-performance-benchmark-report') ?? 'null',
     ) as BrowserPerformanceReport
     expect(report.referenceId).toBe('performance-reference-v1')
+    expect(report.environment.localLightShadowBudget).toBe(1)
     expect(report.mode).toBe('reference')
     expect(report.measurements.map(({ phase }) => phase)).toEqual([
       'menu',

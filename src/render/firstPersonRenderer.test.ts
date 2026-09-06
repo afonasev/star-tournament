@@ -9,7 +9,7 @@ import {
   createArenaSpawnProjection,
   requireProceduralArena,
 } from '../arena'
-import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
+import { GRAPHICS_QUALITY_V1, PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import {
@@ -24,6 +24,7 @@ import {
   DEFAULT_WEBGL_POWER_PREFERENCE,
   createFirstPersonRenderer,
   resolvePixelBudgetDevicePixelRatio,
+  resolveLocalLightShadowBudget,
   type FirstPersonRenderSnapshot,
 } from './firstPersonRenderer'
 import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
@@ -42,6 +43,18 @@ function makeRenderer(): RendererPort {
     render: vi.fn(),
     dispose: vi.fn(),
     forceContextLoss: vi.fn(),
+  }
+}
+
+function makeArenaGlbAssets(): ArenaGlbTemplateCache {
+  return {
+    createInstance: vi.fn((key) => {
+      const group = new THREE.Group()
+      group.name = `template:${key}`
+      group.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial()))
+      return group
+    }),
+    dispose: vi.fn(),
   }
 }
 
@@ -194,6 +207,38 @@ describe('createFirstPersonRenderer', () => {
     const portalNames: string[] = []
     ;(scene as THREE.Scene).traverse((object) => { if (object.name.startsWith('presentation:portal:')) portalNames.push(object.name) })
     expect(portalNames).toEqual([])
+  })
+
+  it('uses the quality-limited nearest lamp lights as soft architectural shadow casters', () => {
+    expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.low)).toBe(0)
+    expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.balanced)).toBe(1)
+    expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.high)).toBe(2)
+    expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.ultra)).toBe(4)
+
+    const shadowMap = { enabled: false, type: THREE.BasicShadowMap }
+    const rendererPort: RendererPort = { ...makeRenderer(), shadowMap }
+    const adapter = createFirstPersonRenderer({
+      container: createContainer(),
+      arena: requireProceduralArena({ size: 'small', seed: 1234 }),
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => rendererPort,
+      graphicsQuality: GRAPHICS_QUALITY_V1.high,
+      arenaGlbAssets: makeArenaGlbAssets(),
+    })
+
+    adapter.render(snapshot())
+    expect(shadowMap).toEqual({ enabled: true, type: THREE.PCFSoftShadowMap })
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const lamps: THREE.PointLight[] = []
+    scene.traverse((object) => { if (object.name.startsWith('presentation:lamp-light:')) lamps.push(object as THREE.PointLight) })
+    expect(lamps.length).toBeGreaterThan(2)
+    expect(lamps.filter((lamp) => lamp.castShadow)).toHaveLength(2)
+    expect(lamps.filter((lamp) => lamp.castShadow).every((lamp) => lamp.shadow.mapSize.x === 512 && lamp.shadow.radius === 2)).toBe(true)
+    const architecturalMeshes: THREE.Mesh[] = []
+    scene.traverse((object) => { if (object instanceof THREE.Mesh && object.name.startsWith('arena:')) architecturalMeshes.push(object) })
+    expect(architecturalMeshes.some((mesh) => mesh.receiveShadow && mesh.castShadow)).toBe(true)
   })
 
   it('keeps large wall bays flush with the canonical shell while detail remains inset', () => {

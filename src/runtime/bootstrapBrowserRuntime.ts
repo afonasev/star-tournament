@@ -40,10 +40,11 @@ import {
 } from '../performance'
 import {
   createFirstPersonRenderer,
+  resolveLocalLightShadowBudget,
   type FirstPersonRenderer,
   type FirstPersonRendererOptions,
 } from '../render/firstPersonRenderer'
-import type { GraphicsQualityProfile } from '../presentation'
+import { GRAPHICS_QUALITY_V1, type GraphicsQualityProfile } from '../presentation'
 import { prepareArenaGlbAssets, type ArenaGlbTemplateCache } from '../render/arenaGlbAssets'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import {
@@ -110,6 +111,7 @@ export interface BrowserPerformanceReport {
     readonly presentationProfileId: string
     readonly presentationProfileHash: string
     readonly graphicsQualityId: string
+    readonly localLightShadowBudget: number
     readonly arenaSize: string
     readonly arenaSeed: number
     readonly arenaContentHash: string
@@ -646,6 +648,7 @@ export async function bootstrapBrowserRuntime(
       }
       const gates = measurements.map((measurement) => evaluateHardPerformanceGate(measurement))
       const canvas = playfield.querySelector('canvas')
+      const effectiveGraphicsQuality = dependencies.graphicsQuality ?? GRAPHICS_QUALITY_V1.balanced
       const report: BrowserPerformanceReport = Object.freeze({
         schemaVersion: 1,
         referenceId: PERFORMANCE_REFERENCE_ID,
@@ -659,8 +662,9 @@ export async function bootstrapBrowserRuntime(
           backingBufferWidth: canvas?.width ?? 0,
           backingBufferHeight: canvas?.height ?? 0,
           presentationProfileId: presentationProfile.id,
-      presentationProfileHash: presentationProfile.contentHash,
-      graphicsQualityId: dependencies.graphicsQuality?.id ?? 'balanced',
+          presentationProfileHash: presentationProfile.contentHash,
+          graphicsQualityId: effectiveGraphicsQuality.id,
+          localLightShadowBudget: resolveLocalLightShadowBudget(effectiveGraphicsQuality, presentationProfile),
           arenaSize: arena.size,
           arenaSeed: arena.seed,
           arenaContentHash: arena.contentHash,
