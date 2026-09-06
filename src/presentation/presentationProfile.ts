@@ -34,6 +34,9 @@ export interface PresentationProfilePayload {
   ui: {
     maximumPublicationsPerSecond: number
   }
+  death: {
+    corpseSlideDistanceMeters: number
+  }
 }
 
 export interface PresentationProfile extends PresentationProfilePayload {
@@ -43,7 +46,7 @@ export interface PresentationProfile extends PresentationProfilePayload {
 export type ShippedPresentationProfile = Readonly<PresentationProfile>
 export type ValidatedPresentationProfile = Readonly<PresentationProfile>
 
-export type PresentationProfileDescriptorGroup = 'render' | 'ui'
+export type PresentationProfileDescriptorGroup = 'render' | 'ui' | 'death'
 export type PresentationProfileDescriptorUnit = 'pixels' | 'publications-per-second' | 'ratio' | 'meters' | 'count' | 'intensity'
 
 export interface NumericPresentationProfileDescriptor {
@@ -58,6 +61,7 @@ export interface NumericPresentationProfileDescriptor {
 }
 
 const descriptors: NumericPresentationProfileDescriptor[] = [
+  { path:'death.corpseSlideDistanceMeters',group:'death',label:'Сдвиг тела после смерти',description:'Горизонтальная renderer-only дистанция, на которую тело смещается от смертельного выстрела.',unit:'meters',minimum:0,maximum:1.5,step:0.05 },
   {path:'render.materialRepeatScale',group:'render',label:'Ритм панелей',description:'Частота повторения фактуры по semantic sector.',unit:'ratio',minimum:0.5,maximum:4,step:0.5},
   { path:'render.windowOpacity',group:'render',label:'Прозрачность окна',description:'Доля непрозрачности непростреливаемого стекла.',unit:'ratio',minimum:0.1,maximum:0.8,step:0.05 },
   { path:'render.barrierOpacity',group:'render',label:'Прозрачность барьера',description:'Видимость movement-only энергетической сетки.',unit:'ratio',minimum:0.1,maximum:0.8,step:0.05 },
@@ -210,6 +214,7 @@ export function validatePresentationProfile(value: unknown): PresentationProfile
     'source',
     'render',
     'ui',
+    'death',
     'contentHash',
   ])
   for (const key of Object.keys(value).sort()) {
@@ -223,7 +228,7 @@ export function validatePresentationProfile(value: unknown): PresentationProfile
   }
 
   const descriptorPathSet = new Set(PRESENTATION_PROFILE_DESCRIPTORS.map(({ path }) => path))
-  for (const root of ['render', 'ui'] as const) {
+  for (const root of ['render', 'ui', 'death'] as const) {
     for (const path of collectLeafPaths(value[root], root, new Set<object>()).sort()) {
       if (!descriptorPathSet.has(path)) {
         errors.push({
@@ -322,10 +327,11 @@ const balancedPayload: PresentationProfilePayload = {
   schemaVersion: PRESENTATION_PROFILE_SCHEMA_VERSION,
   id: 'presentation-balanced-v1',
   name: 'Presentation Balanced v1',
-  revision: 5,
+  revision: 6,
   source: 'shipped',
   render: { backingBufferPixelBudget: 2_073_600, windowOpacity:0.25, barrierOpacity:0.2,localLightIntensity:8,localLightDistance:8,localLightCount:16,studioFillIntensity:0.4,studioKeyIntensity:0.5,localLightShadowCount:4,localLightShadowMapSize:512,localLightShadowRadius:0.5,reliefDepth:0.08,materialRepeatScale:1.5 },
   ui: { maximumPublicationsPerSecond: 10 },
+  death: { corpseSlideDistanceMeters: 0.65 },
 }
 
 const balancedWithHash: PresentationProfile = {

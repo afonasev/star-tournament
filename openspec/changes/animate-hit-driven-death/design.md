@@ -6,13 +6,13 @@
 
 **Goals:**
 
-- Сохранить направление последнего смертельного выстрела в presentation history и разыгрывать одну time-based последовательность падения.
+- Сохранить направление последнего смертельного выстрела в presentation history и разыгрывать одну time-based последовательность падения со сдвигом тела.
 - Создать GLB-corpse с той же identity/weapon presentation и правильно спроецировать floor contact для capsule-based participants.
 - Дать изолированной review surface управляемую проверку фаз для LOD0/LOD1.
 
 **Non-Goals:**
 
-- Ragdoll, физика трупов, gameplay knockback, изменение hit volumes/collision, schema snapshot/replay, killcam и balance profile.
+- Ragdoll, физика трупов, gameplay knockback, изменение hit volumes/collision, schema snapshot/replay и killcam.
 - Новые asset, loader, texture budget, audio, split-screen или сетевой контракт.
 
 ## Decisions
@@ -23,9 +23,15 @@
 
 Альтернатива — добавить impulse в corpse/snapshot — отклонена: presentation angle не является gameplay authority и потребовала бы schema/replay migration.
 
+### Profiled visual-only slide
+
+`presentation-balanced-v1.death.corpseSlideDistanceMeters` имеет shipped значение 0,65 м, минимум 0 м, максимум 1,5 м и шаг 0,05 м. Renderer применяет smoothstep progress от 0 до этого расстояния в `death-fall` к dynamic model и готовому corpse rest transform. Параметр живёт в presentation profile с полным descriptor metadata: UI лаборатории сможет использовать его после появления presentation-profile editing, но profile не входит в match identity.
+
+Один чистый helper возвращает абсолютный transform из death contact, elapsed time, yaw и distance; dynamic target, corpse и muted review используют его совместно. `target-destroyed.killerId` выбирает matching `shotgun-shot.shooterId`, а отсутствие такого события остаётся stable yaw fallback. Для nonlocal life dynamic target видим только до final fall frame, затем corpse занимает тот же final transform; для local-seat corpse сам проходит фазы, потому что separate dynamic target отсутствует.
+
 ### One rigid staged collapse, not ragdoll
 
-Animation controller получит phases `death-hit`, `death-fall`, `death-rest`, parameterized elapsed presentation time. Root/model transform даст перенос вниз и горизонтальный roll; semantic joints добавят спортивную потерю опоры, защитную реакцию рук и сохранение weapon mount. Absolute time from `deathTick` делает результат независимым от browser frame rate; corpse rest pose не дрейфует.
+Animation controller получит phases `death-hit`, `death-fall`, `death-rest`, parameterized elapsed presentation time. Root/model transform даст перенос вниз, горизонтальный roll и renderer-only горизонтальный сдвиг до `presentation-balanced-v1.death.corpseSlideDistanceMeters`; semantic joints добавят спортивную потерю опоры, защитную реакцию рук и сохранение weapon mount. Absolute time from `deathTick` делает результат независимым от browser frame rate; corpse rest pose не дрейфует.
 
 Альтернатива — realtime physics ragdoll — отклонена: она противоречит предсказуемой renderer-only presentation, усложняет floor contact и даёт непроверяемые различия между устройствами.
 
@@ -46,6 +52,6 @@ Animation-review получает death sequence control с зафиксиров
 
 ## Migration Plan
 
-1. Добавить renderer/test coverage и обновить canonical GAME_SPEC.
+1. Добавить renderer/profile/test coverage и обновить canonical GAME_SPEC.
 2. Выполнить strict OpenSpec validation, typecheck, tests, build и performance gate.
 3. Провести muted in-app Browser review и gameplay kill visual acceptance; при регрессии откатить один change commit, так как simulation data и migration отсутствуют.

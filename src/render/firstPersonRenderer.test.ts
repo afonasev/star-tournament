@@ -556,6 +556,43 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeUndefined()
   })
 
+  it('slides only away from the lethal shooter and hands the final transform from target to corpse', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
+    const victimId = COMBAT_SLICE_SCENARIO_V1.targets[0]!.semanticId
+    const victim = snapshot().participants.find((participant) => participant.semanticId === victimId)!
+    const deadParticipants = snapshot().participants.map((participant) => participant.semanticId === victimId
+      ? { ...participant, lifeId: `${victimId}:life:1`, deathTick: 1, alive: false, health: 0 }
+      : participant)
+
+    adapter.render(snapshot({
+      tick: 1,
+      participants: deadParticipants,
+      events: [
+        { eventId: 'other-shot', tick: 1, kind: 'shotgun-shot', shooterId: 'other', origin: { x: 10, y: 0, z: 0 } },
+        { eventId: 'lethal-shot', tick: 1, kind: 'shotgun-shot', shooterId: 'local-player-1', origin: { x: -10, y: 0, z: 0 } },
+        { eventId: 'destroyed', tick: 1, kind: 'target-destroyed', killerId: 'local-player-1', targetId: victimId, targetLifeId: `${victimId}:life:1` },
+      ],
+    }))
+    adapter.render(snapshot({
+      tick: 29,
+      participants: deadParticipants,
+      corpses: [{ corpseId: `${victimId}:life:1:corpse`, participantId: victimId, lifeId: `${victimId}:life:1`, createdTick: 1, position: victim.position, yaw: victim.yaw }],
+    }))
+
+    const scene = vi.mocked(rendererPort.render).mock.calls.at(-1)![0] as THREE.Scene
+    const target = scene.getObjectByName(`target:${victimId}`)!
+    const corpse = scene.getObjectByName(`corpse:${victimId}:life:1:corpse`)!
+    expect(target.visible).toBe(false)
+    expect(corpse.visible).toBe(true)
+    const offsetX = corpse.position.x - victim.position.x
+    const offsetZ = corpse.position.z - victim.position.z
+    expect(Math.hypot(offsetX, offsetZ)).toBeCloseTo(.65)
+    expect(offsetX).toBeGreaterThan(0)
+    expect(target.position.toArray()).toEqual(corpse.position.toArray())
+  })
+
   it('fully disposes listeners, canvas, geometries, materials and WebGL resources', () => {
     const removeListener = vi.spyOn(window, 'removeEventListener')
     const disposeGeometry = vi.spyOn(THREE.BufferGeometry.prototype, 'dispose')

@@ -27,6 +27,7 @@ import {
   normalizePresentationColor,
 } from './participantWeaponPresentation'
 import type { RobotAnimationController } from './robotAnimation'
+import { DEATH_REST_SECONDS, resolveDeathSlideOffset } from './deathPresentation'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
 export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
@@ -111,6 +112,7 @@ export interface FirstPersonImpactRenderEvent extends FirstPersonRenderEventBase
 
 export interface FirstPersonTargetDestroyedRenderEvent extends FirstPersonRenderEventBase {
   readonly kind: 'target-destroyed'
+  readonly killerId?: string
   readonly targetId: string
   readonly targetLifeId?: string
 }
@@ -929,7 +931,7 @@ export function createFirstPersonRenderer({
       if (event.kind !== 'target-destroyed') continue
       const victim = snapshot.participants.find((participant) => participant.semanticId === event.targetId)
       if (victim === undefined) continue
-      const shot = snapshot.events.find((candidate): candidate is FirstPersonShotRenderEvent => candidate.kind === 'shotgun-shot' && candidate.tick === event.tick)
+      const shot = snapshot.events.find((candidate): candidate is FirstPersonShotRenderEvent => candidate.kind === 'shotgun-shot' && candidate.tick === event.tick && candidate.shooterId === event.killerId)
       const lifeId = event.targetLifeId ?? ('lifeId' in victim ? victim.lifeId : undefined)
       if (lifeId !== undefined) fallYawByLifeId.set(lifeId, resolveDeathFallYaw(shot?.origin, victim.position, victim.yaw))
     }
@@ -945,10 +947,12 @@ export function createFirstPersonRenderer({
       const destroyed = !targetState.alive || targetState.health <= 0
       const deathElapsedSeconds = targetState.deathTick === undefined || targetState.deathTick === null ? Number.POSITIVE_INFINITY : Math.max(0, (snapshot.tick - targetState.deathTick) / ticksPerSecond)
       const fallYaw = targetState.lifeId === undefined ? targetState.yaw : fallYawByLifeId.get(targetState.lifeId) ?? targetState.yaw
-      const fallProgress = destroyed ? Math.min(1, Math.max(0, (deathElapsedSeconds - .1) / .35)) : 0
+      const fall = resolveDeathSlideOffset(deathElapsedSeconds, fallYaw, activePresentationProfile.death.corpseSlideDistanceMeters)
+      const fallProgress = destroyed ? fall.progress : 0
       target.baseY = targetState.position.y - (targetState.kind === 'bot' ? profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight : 0)
-      target.group.position.set(targetState.position.x, target.baseY - fallProgress * .08, targetState.position.z)
+      target.group.position.set(targetState.position.x + fall.x, target.baseY - fallProgress * .08, targetState.position.z + fall.z)
       target.group.rotation.set(0, targetState.kind === 'bot' ? Math.PI - fallYaw : fallYaw, destroyed ? fallProgress * Math.PI / 2 : 0, 'YXZ')
+      target.group.visible = !destroyed || deathElapsedSeconds < DEATH_REST_SECONDS
       const presentationColor = destroyed ? '#354148' : normalizePresentationColor(targetState.color)
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
@@ -969,7 +973,7 @@ export function createFirstPersonRenderer({
       const velocity=targetState.velocity
       const moving=velocity!==undefined && Math.hypot(velocity.x,velocity.z)>profile.rules.player.capsule.skinWidth*ticksPerSecond
       const side=velocity===undefined?0:velocity.x*Math.cos(targetState.yaw)+velocity.z*Math.sin(targetState.yaw)
-      const deathState = deathElapsedSeconds < .1 ? 'death-hit' : deathElapsedSeconds < .45 ? 'death-fall' : 'death-rest'
+      const deathState = deathElapsedSeconds < .1 ? 'death-hit' : deathElapsedSeconds < DEATH_REST_SECONDS ? 'death-fall' : 'death-rest'
       target.animation?.present(destroyed ? deathState : targetState.grounded===false?'jump-airborne':firing?'fire':moving?(Math.abs(side)>Math.hypot(velocity!.x,velocity!.z)/2?(side<0?'strafe-left':'strafe-right'):'run'):'idle',snapshot.tick/ticksPerSecond)
     }
 
@@ -987,6 +991,11 @@ export function createFirstPersonRenderer({
       const floorY = corpseState.position.y - (kind !== undefined && kind !== 'stationary-fixture' ? profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight : 0)
       const lifeId = corpseState.lifeId
       const fallYaw = lifeId === undefined ? corpseState.yaw : fallYawByLifeId.get(lifeId) ?? corpseState.yaw
+      const corresponding = participant !== undefined && participant.kind !== 'local-seat' && participant.lifeId === lifeId && participant.alive === false ? participant : undefined
+      const elapsed = corresponding?.deathTick === undefined || corresponding?.deathTick === null
+        ? corpseState.createdTick === undefined ? Number.POSITIVE_INFINITY : Math.max(0, (snapshot.tick - corpseState.createdTick) / ticksPerSecond)
+        : Math.max(0, (snapshot.tick - corresponding.deathTick) / ticksPerSecond)
+      const fall = resolveDeathSlideOffset(elapsed, fallYaw, activePresentationProfile.death.corpseSlideDistanceMeters)
       if (corpse === undefined) {
         const robot = createRobotGlbPresentation({ geometries, materials }, arenaGlbAssets, participantTexture, participant?.kind === 'local-seat' ? '#b8dce5' : normalizePresentationColor((participant as FirstPersonRenderTarget | undefined)?.color ?? '#354148'))
         robot.group.name = `corpse:${corpseState.corpseId}`
@@ -994,12 +1003,10 @@ export function createFirstPersonRenderer({
         corpse = { group: robot.group, animation: robot.animation }
         scene.add(corpse.group); corpseById.set(corpseState.corpseId, corpse)
       }
-      corpse.group.position.set(corpseState.position.x, floorY - .08, corpseState.position.z)
-      corpse.group.rotation.set(0, kind === 'bot' ? Math.PI - fallYaw : fallYaw, Math.PI / 2, 'YXZ')
-      corpse.animation?.present('death-rest', snapshot.tick / ticksPerSecond)
-      const corresponding = participant !== undefined && participant.kind !== 'local-seat' && participant.lifeId === lifeId && participant.alive === false ? participant : undefined
-      const elapsed = corresponding?.deathTick === undefined || corresponding?.deathTick === null ? Number.POSITIVE_INFINITY : (snapshot.tick - corresponding.deathTick) / ticksPerSecond
-      corpse.group.visible = elapsed >= .45
+      corpse.group.position.set(corpseState.position.x + fall.x, floorY - fall.progress * .08, corpseState.position.z + fall.z)
+      corpse.group.rotation.set(0, kind === 'bot' ? Math.PI - fallYaw : fallYaw, fall.progress * Math.PI / 2, 'YXZ')
+      corpse.animation?.present(elapsed < .1 ? 'death-hit' : elapsed < DEATH_REST_SECONDS ? 'death-fall' : 'death-rest', snapshot.tick / ticksPerSecond)
+      corpse.group.visible = corresponding === undefined || elapsed >= DEATH_REST_SECONDS
     }
 
     processEvents(snapshot)

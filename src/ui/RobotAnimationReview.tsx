@@ -4,6 +4,8 @@ import * as THREE from 'three'
 import { prepareArenaGlbAssets } from '../render/arenaGlbAssets'
 import { createRobotGlbPresentation } from '../render/participantWeaponPresentation'
 import { type RobotAnimationController, type RobotAnimationState } from '../render/robotAnimation'
+import { resolveDeathSlideOffset } from '../render/deathPresentation'
+import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 
 const STATES: readonly RobotAnimationState[] = ['idle', 'walk', 'run', 'strafe-left', 'strafe-right', 'jump-takeoff', 'jump-airborne', 'jump-landing', 'aim', 'fire', 'hit', 'death-hit', 'death-fall', 'death-rest']
 
@@ -31,10 +33,11 @@ export function RobotAnimationReview() {
     let presentation: ReturnType<typeof createRobotGlbPresentation> | undefined
     const resize = () => { const { width, height } = mount.getBoundingClientRect(); renderer.setSize(Math.max(1, width), Math.max(1, height), false); camera.aspect = Math.max(1, width) / Math.max(1, height); camera.updateProjectionMatrix() }
     const render = (milliseconds: number) => {
-      const deathProgress = stateRef.current === 'death-hit' ? 0 : stateRef.current === 'death-fall' ? .56 : stateRef.current === 'death-rest' ? 1 : 0
+      const elapsed = stateRef.current === 'death-hit' ? 0 : stateRef.current === 'death-fall' ? .275 : Number.POSITIVE_INFINITY
+      const fall = resolveDeathSlideOffset(elapsed, Math.PI / 2, PRESENTATION_BALANCED_V1_PROFILE.death.corpseSlideDistanceMeters)
       if (presentation) {
-        presentation.group.position.y = -deathProgress * .08
-        presentation.group.rotation.set(0, 0, deathProgress * Math.PI / 2, 'YXZ')
+        presentation.group.position.set(fall.x, -fall.progress * .08, fall.z)
+        presentation.group.rotation.set(0, Math.PI / 2, fall.progress * Math.PI / 2, 'YXZ')
         presentation.animation?.present(stateRef.current, milliseconds / 1000)
       }
       renderer.render(scene, camera); frame = requestAnimationFrame(render)
