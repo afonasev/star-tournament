@@ -35,11 +35,11 @@ deploy:
 	@case "$(BUMP)" in major|minor|patch) ;; *) echo 'BUMP must be major, minor, or patch.' >&2; exit 1;; esac
 	npm version "$(BUMP)" --no-git-tag-version
 	git add package.json package-lock.json
-	git commit -m "chore(release): v$$(node -p 'require(\"./package.json\").version')"
+	git commit -m "chore(release): v$$(node -p 'require("./package.json").version')"
 	$(MAKE) build
 	ssh "$(DEPLOY_HOST)" 'install -d -m 755 "$(DEPLOY_ROOT)" /etc/caddy/sites'
 	rsync -a --delete dist/ "$(DEPLOY_HOST):$(DEPLOY_ROOT)/"
 	scp deploy/robowar.caddy "$(DEPLOY_HOST):$(DEPLOY_SITE)"
 	ssh "$(DEPLOY_HOST)" 'caddy validate --config /etc/caddy/Caddyfile && systemctl reload caddy'
 	curl --fail --silent --show-error --max-time 20 --retry 3 "$(DEPLOY_URL)" >/dev/null
-	@printf '%s\n' "Published v$$(node -p 'require(\"./package.json\").version') to $(DEPLOY_URL)"
+	@printf '%s\n' "Published v$$(node -p 'require("./package.json").version') to $(DEPLOY_URL)"
