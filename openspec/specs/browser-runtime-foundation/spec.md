@@ -147,6 +147,13 @@ Browser shell SHALL управлять взаимоисключающими surf
 - **WHEN** shell выходит в menu или повторяет матч
 - **THEN** старые listeners, runtime, collision world, renderer resources и React state освобождаются ровно один раз до владения новой сессией
 
+### Requirement: Validated profile startup compatibility
+Browser runtime SHALL использовать один exact validated profile для match configuration, arena generation, initial simulation snapshot и последующего snapshot parsing. Внутренний parser MUST NOT отклонять initial snapshot, созданный из этого же profile.
+
+#### Scenario: Start current release match
+- **WHEN** пользователь запускает матч с current valid release profile
+- **THEN** browser создаёт ready match surface без `SimulationSnapshotError` до pointer lock и первого gameplay tick
+
 ### Requirement: Browser session из validated ArenaDefinition
 Browser shell SHALL завершить profile validation, generation и arena validation до создания initial snapshot, collision world и renderer. Все runtime consumers MUST получать один immutable `ArenaDefinition`; fixture arena не может оставаться скрытым production default.
 

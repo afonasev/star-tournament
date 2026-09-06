@@ -87,6 +87,17 @@ Profile subsystem SHALL выдавать только exact complete snapshot п
 - **WHEN** выбранная local либо repository release revision отсутствует, не проходит validation либо не совпадает с ожидаемым hash
 - **THEN** новый матч не стартует, UI получает actionable validation error, а shipped profile не подставляется молча
 
+### Requirement: Snapshot compatibility exact selected profile
+Playable simulation snapshot SHALL принимать exact validated `GameDesignProfile`, выбранный для текущего match startup, если его id, revision и content hash совпадают с identity snapshot. Parser MUST отклонять snapshot с другой identity до gameplay action или simulation tick.
+
+#### Scenario: Release revision creates its initial snapshot
+- **WHEN** browser startup использует valid repository release revision
+- **THEN** initial snapshot успешно сериализуется и разбирается с той же profile identity до первого gameplay tick
+
+#### Scenario: Different profile identity
+- **WHEN** snapshot разбирается в контексте profile с отличающимся id, revision либо content hash
+- **THEN** parser возвращает стабильную unsupported-identity ошибку до применения action frame
+
 ### Requirement: Технические инварианты вне профиля
 Значения, признанные техническими инвариантами runtime, MUST быть явно перечислены с обоснованием и MUST NOT появляться как редактируемые descriptors.
 

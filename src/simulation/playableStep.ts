@@ -78,7 +78,7 @@ export function stepPlayableSimulation(
   arena?: ArenaDefinition,
 ): SimulationSnapshot {
   const configuration = parseMatchConfiguration(configurationInput, profileInput)
-  const current = parseSimulationSnapshot(snapshot, configuration)
+  const current = parseSimulationSnapshot(snapshot, configuration, profileInput)
   const normalizedFrame = parseActionFrame(frame)
   const expectedTick = current.tick + 1
   if (normalizedFrame.tick !== expectedTick) {
@@ -150,5 +150,5 @@ export function stepPlayableSimulation(
   return parseSimulationSnapshot({
     ...current, tick: expectedTick, rng: nextRandomUint32(current.rng).state,
     participants: reduced.participants, corpses: reduced.corpses, match: reduced.match, events: reduced.events,
-  }, configuration)
+  }, configuration, profile)
 }
