@@ -458,6 +458,21 @@ function addArena(
         const lamp = arenaGlbAssets.createInstance('wall-lamp',0,graphicsQuality.geometryLod)
         textureGlbInstance(lamp,wallMaps.baseColor)
         frame.add(lamp)
+        const lensGeometry = new THREE.BoxGeometry(0.56, 0.09, 0.028)
+        const lensMaterial = new THREE.MeshStandardMaterial({
+          color: surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,
+          emissive: surface.semantics?.sector === 'north' ? 0x4c9dff : 0xff8a38,
+          emissiveIntensity: recipeStyle.localLightIntensity,
+          toneMapped: false,
+          roughness: 0.22,
+          metalness: 0.08,
+        })
+        const lens = new THREE.Mesh(lensGeometry, lensMaterial)
+        lens.name = `presentation:lamp-lens:${attachment.id}`
+        lens.position.set(0, 0.15, 0.1)
+        frame.add(lens)
+        geometries.push(lensGeometry)
+        materials.push(lensMaterial)
         if (localLights < lightBudget) {
           const light = new THREE.PointLight(surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,recipeStyle.localLightIntensity,recipeStyle.localLightDistance)
           light.name = `presentation:lamp-light:${attachment.id}`
@@ -692,8 +707,10 @@ export function createFirstPersonRenderer({
     let presentationMesh = object.name.startsWith('arena:') || object.name.startsWith('presentation:')
     object.traverseAncestors((ancestor) => { presentationMesh ||= ancestor.name.startsWith('presentation:') })
     object.receiveShadow = presentationMesh
-    // Participants remain readable from fill/rim light; local lamp shadows are architectural detail.
-    object.castShadow = presentationMesh
+    // The canonical shell receives depth but does not shadow itself. That avoids
+    // point-light acne/flicker on large panels while inset presentation detail
+    // and lamp housings still provide readable local shadow depth.
+    object.castShadow = presentationMesh && !object.name.startsWith('arena:')
   })
 
   const localLightShadowBudget = resolveLocalLightShadowBudget(activeGraphicsQuality, activePresentationProfile)

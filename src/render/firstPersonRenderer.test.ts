@@ -238,7 +238,11 @@ describe('createFirstPersonRenderer', () => {
     expect(lamps.filter((lamp) => lamp.castShadow).every((lamp) => lamp.shadow.mapSize.x === 512 && lamp.shadow.radius === 2)).toBe(true)
     const architecturalMeshes: THREE.Mesh[] = []
     scene.traverse((object) => { if (object instanceof THREE.Mesh && object.name.startsWith('arena:')) architecturalMeshes.push(object) })
-    expect(architecturalMeshes.some((mesh) => mesh.receiveShadow && mesh.castShadow)).toBe(true)
+    expect(architecturalMeshes.every((mesh) => mesh.receiveShadow && !mesh.castShadow)).toBe(true)
+    const lenses: THREE.Mesh[] = []
+    scene.traverse((object) => { if (object instanceof THREE.Mesh && object.name.startsWith('presentation:lamp-lens:')) lenses.push(object) })
+    expect(lenses.length).toBeGreaterThan(2)
+    expect(lenses.every((lens) => (lens.material as THREE.MeshStandardMaterial).emissiveIntensity === PRESENTATION_BALANCED_V1_PROFILE.render.localLightIntensity)).toBe(true)
   })
 
   it('keeps large wall bays flush with the canonical shell while detail remains inset', () => {
