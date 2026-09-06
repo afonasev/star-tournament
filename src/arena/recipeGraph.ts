@@ -15,7 +15,13 @@ export interface ArenaRecipeGraph {
 
 /** Recipe composition ratios are topology invariants, not free per-surface noise. */
 export function resolveArenaRecipe(size: ArenaSize, seed: number, rules: ArenaGeneratorPresetRules): ArenaRecipeGraph {
-  const id = ARENA_RECIPE_IDS[seed % rules.recipeCount]!
+  // Schema v6 release snapshots predate recipeCount.  They remain immutable
+  // and use the original single topology, while v7 profiles opt into the
+  // versioned recipe matrix explicitly.
+  const recipeCount = Number.isSafeInteger(rules.recipeCount) && rules.recipeCount > 0
+    ? Math.min(rules.recipeCount, ARENA_RECIPE_IDS.length)
+    : 1
+  const id = ARENA_RECIPE_IDS[seed % recipeCount]!
   const halfLength = rules.widthMeters / 2 - rules.perimeterInsetMeters - rules.routeInsetMeters
   const mirror = seed & 4 ? -1 : 1
   const courtyard = id === 'flanked-courtyard'

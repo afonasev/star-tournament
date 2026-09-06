@@ -382,6 +382,12 @@ function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, _seed:
   // Buttresses are attached to room back walls. They create cover without
   // reverting to unrelated cubes scattered through the playable footprint.
   const backs = surfaces.filter((surface) => surface.id.startsWith('wall-architecture-room-') && surface.id.includes('-back-'))
+  // v6 release snapshots had one fixed buttress height.  Keep that legacy
+  // geometry when the later v7 tuning fields are absent; never mutate the
+  // stored revision just to make it runnable in a newer client.
+  const legacyButtressHeight = wallHeight * 0.68
+  const barrierLow = Number.isFinite(rules.barrierLowMeters) ? rules.barrierLowMeters : legacyButtressHeight
+  const barrierHigh = Number.isFinite(rules.barrierHighMeters) ? rules.barrierHighMeters : legacyButtressHeight
   for (let index = 0; index < Math.min(rules.coverCount, backs.length); index += 1) {
     const source = backs[index]!
     const horizontal = source.size.x > source.size.z
@@ -393,10 +399,10 @@ function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, _seed:
     surfaces.push(box(
       `wall-architecture-buttress-${String(index + 1).padStart(2, '0')}`,
       source.center.x + (horizontal ? 0 : inwardX * offset),
-      (index % 2 === 0 ? rules.barrierLowMeters : rules.barrierHighMeters) / 2,
+      (index % 2 === 0 ? barrierLow : barrierHigh) / 2,
       source.center.z + (horizontal ? inwardZ * offset : 0),
       horizontal ? Math.min(coverSize, source.size.x) : coverSize,
-      index % 2 === 0 ? rules.barrierLowMeters : rules.barrierHighMeters,
+      index % 2 === 0 ? barrierLow : barrierHigh,
       horizontal ? coverSize : Math.min(coverSize, source.size.z),
       index % 2 === 0 ? 'accent' : 'wall',
     ))
