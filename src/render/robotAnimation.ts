@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-export type RobotAnimationState = 'idle' | 'walk' | 'run' | 'strafe-left' | 'strafe-right' | 'jump-takeoff' | 'jump-airborne' | 'jump-landing' | 'aim' | 'fire' | 'hit' | 'destroyed'
+export type RobotAnimationState = 'idle' | 'walk' | 'run' | 'strafe-left' | 'strafe-right' | 'jump-takeoff' | 'jump-airborne' | 'jump-landing' | 'aim' | 'fire' | 'hit' | 'death-hit' | 'death-fall' | 'death-rest' | 'destroyed'
 
 const REQUIRED_JOINTS = [
   'robot:rig:pelvis', 'robot:rig:spine', 'robot:rig:head', 'robot:rig:weapon-mount',
@@ -42,14 +42,19 @@ function targetPose(state: RobotAnimationState, seconds: number): Pose {
     joint('robot:rig:weapon-mount').x = state === 'fire' ? .26 : -.12
   }
   if (state === 'hit') joint('robot:rig:spine').z = Math.sin(seconds * 20) * .15
-  if (state === 'destroyed') {
-    joint('robot:rig:pelvis').z = .25; joint('robot:rig:spine').z = -.42
-    leftShoulder.x = .35; rightShoulder.x = -.35; leftLeg.x = .32; rightLeg.x = -.24
+  if (state === 'death-hit') {
+    joint('robot:rig:pelvis').z = .12; joint('robot:rig:spine').z = -.22
+    leftShoulder.x = .18; rightShoulder.x = -.12; joint('robot:rig:head').x = -.14
+  }
+  if (state === 'death-fall' || state === 'death-rest' || state === 'destroyed') {
+    joint('robot:rig:pelvis').z = .25; joint('robot:rig:spine').z = -.42; joint('robot:rig:head').x = -.24
+    leftShoulder.x = .52; rightShoulder.x = -.38; joint('robot:rig:elbow:left').x = -.3; joint('robot:rig:elbow:right').x = -.22
+    leftLeg.x = .32; rightLeg.x = -.24; joint('robot:rig:knee:left').x = .18; joint('robot:rig:knee:right').x = -.12
   }
   return pose
 }
 
-function transitionRate(state: RobotAnimationState): number { return state === 'fire' || state === 'hit' ? 22 : state === 'destroyed' ? 9 : 12 }
+function transitionRate(state: RobotAnimationState): number { return state === 'fire' || state === 'hit' || state === 'death-hit' ? 22 : state === 'death-fall' || state === 'death-rest' || state === 'destroyed' ? 12 : 12 }
 
 export function createRobotAnimationController(model: THREE.Object3D): RobotAnimationController | undefined {
   const semanticJoint = (name: string) => {

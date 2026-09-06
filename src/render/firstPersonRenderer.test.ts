@@ -23,6 +23,7 @@ import type { GameplayUiSourceSnapshot } from '../ui/gameplayUiSnapshot'
 import {
   DEFAULT_WEBGL_POWER_PREFERENCE,
   createFirstPersonRenderer,
+  resolveDeathFallYaw,
   resolveLocalLightBudget,
   resolvePixelBudgetDevicePixelRatio,
   resolveLocalLightShadowBudget,
@@ -108,6 +109,11 @@ afterEach(() => {
 })
 
 describe('createFirstPersonRenderer', () => {
+  it('resolves a fall away from the lethal shotgun origin with a stable yaw fallback', () => {
+    expect(resolveDeathFallYaw({ x: 2, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, 1)).toBeCloseTo(-Math.PI / 2)
+    expect(resolveDeathFallYaw({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, 1)).toBe(1)
+    expect(resolveDeathFallYaw(undefined, { x: 0, y: 0, z: 0 }, 1)).toBe(1)
+  })
   it('uses the standard WebGL power preference and resolves Retina/4K DPR from a pixel budget', () => {
     expect(DEFAULT_WEBGL_POWER_PREFERENCE).toBe('default')
     expect(resolvePixelBudgetDevicePixelRatio({
@@ -471,7 +477,7 @@ describe('createFirstPersonRenderer', () => {
     expect(`#${((restored.getObjectByName('robot:identity:core') as THREE.Mesh).material as THREE.MeshStandardMaterial).color.getHexString()}`).toBe('#f59e0b')
   })
 
-  it('presents shot, impact and destroyed events until their profile-defined expiry', () => {
+  it('presents shot and impact events without the legacy destroyed sphere', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({
@@ -512,7 +518,7 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', true)
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.57)
     expect(scene.getObjectByName('presentation:impact:impact-1')).toBeDefined()
-    expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeDefined()
+    expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
     expect(scene.getObjectByName(`target:${destroyedTargetId}`)?.userData.presentationState)
       .toBe('destroyed')
 
@@ -521,7 +527,6 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', false)
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
     expect(scene.getObjectByName('presentation:impact:impact-1')).toBeUndefined()
-    expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
   })
 
   it('does not present a successful-shot recoil or flash without a shotgun event', () => {
@@ -537,13 +542,16 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
   })
 
-  it('projects authoritative corpse lifetime independently from a respawned fixture', () => {
+  it('projects an identity-preserving corpse on floor contact independently from a respawned fixture', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
-    adapter.render(snapshot({ tick: 180, corpses: [{ corpseId: 'robot-center:life:1:corpse', position: { x: 0, y: 0, z: -2 }, yaw: 0 }] }))
+    adapter.render(snapshot({ tick: 180, corpses: [{ corpseId: 'robot-center:life:1:corpse', participantId: 'robot-center', lifeId: 'robot-center:life:1', position: { x: 0, y: 0, z: -2 }, yaw: 0 }] }))
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
-    expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeDefined()
+    const corpse = scene.getObjectByName('corpse:robot-center:life:1:corpse')!
+    expect(corpse).toBeDefined()
+    expect(corpse.getObjectByName('robot:weapon:barrel:left')).toBeDefined()
+    expect(corpse.position.y).toBeCloseTo(-.08)
     adapter.render(snapshot({ tick: 601, corpses: [] }))
     expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeUndefined()
   })

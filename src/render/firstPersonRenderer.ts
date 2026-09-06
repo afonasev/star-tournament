@@ -67,6 +67,7 @@ export interface FirstPersonRenderPlayer {
 
 export interface FirstPersonRenderTarget {
   readonly lifeId?: string
+  readonly deathTick?: number | null
   readonly velocity?: ScenarioVector3
   readonly grounded?: boolean
   readonly semanticId: string
@@ -85,6 +86,9 @@ export interface FirstPersonRenderWeapon {
 
 export interface FirstPersonRenderCorpse {
   readonly corpseId: string
+  readonly participantId?: string
+  readonly lifeId?: string
+  readonly createdTick?: number
   readonly position: ScenarioVector3
   readonly yaw: number
 }
@@ -97,6 +101,7 @@ interface FirstPersonRenderEventBase {
 export interface FirstPersonShotRenderEvent extends FirstPersonRenderEventBase {
   readonly kind: 'shotgun-shot'
   readonly shooterId?: string
+  readonly origin?: ScenarioVector3
 }
 
 export interface FirstPersonImpactRenderEvent extends FirstPersonRenderEventBase {
@@ -107,6 +112,7 @@ export interface FirstPersonImpactRenderEvent extends FirstPersonRenderEventBase
 export interface FirstPersonTargetDestroyedRenderEvent extends FirstPersonRenderEventBase {
   readonly kind: 'target-destroyed'
   readonly targetId: string
+  readonly targetLifeId?: string
 }
 
 export interface FirstPersonIgnoredRenderEvent extends FirstPersonRenderEventBase {
@@ -175,6 +181,17 @@ interface TargetPresentation {
 interface TransientMesh {
   readonly mesh: THREE.Mesh
   readonly expiresAfterTick: number
+}
+
+interface CorpsePresentation {
+  readonly group: THREE.Group
+  readonly animation?: RobotAnimationController
+}
+
+export function resolveDeathFallYaw(origin: ScenarioVector3 | undefined, victim: ScenarioVector3, fallbackYaw: number): number {
+  if (origin === undefined) return fallbackYaw
+  const x = victim.x - origin.x; const z = victim.z - origin.z
+  return Math.hypot(x, z) < 0.001 ? fallbackYaw : Math.atan2(x, z)
 }
 
 interface LocalLightCandidate {
@@ -798,19 +815,13 @@ export function createFirstPersonRenderer({
 
   const impactGeometry = new THREE.SphereGeometry(0.075, 8, 6)
   const impactMaterial = new THREE.MeshBasicMaterial({ color: 0x9ff5ff })
-  const destroyedGeometry = new THREE.SphereGeometry(1.05, 12, 8)
-  const destroyedMaterial = new THREE.MeshBasicMaterial({
-    color: 0xff895e,
-    transparent: true,
-    opacity: 0.48,
-    wireframe: true,
-  })
-  geometries.push(impactGeometry, destroyedGeometry)
-  materials.push(impactMaterial, destroyedMaterial)
+  geometries.push(impactGeometry)
+  materials.push(impactMaterial)
 
   const processedEventIds = new Set<string>()
   const transientByEventId = new Map<string, TransientMesh>()
-  const corpseById = new Map<string, THREE.Mesh>()
+  const corpseById = new Map<string, CorpsePresentation>()
+  const fallYawByLifeId = new Map<string, number>()
   let muzzleVisibleThroughTick = -1
   let recoilVisibleThroughTick = -1
   let lastSubmittedTick: number | undefined
@@ -884,21 +895,6 @@ export function createFirstPersonRenderer({
             ticksPerSecond,
           ),
         })
-      } else if (event.kind === 'target-destroyed') {
-        const target = targetById.get(event.targetId)
-        if (target !== undefined) {
-          const mesh = new THREE.Mesh(destroyedGeometry, destroyedMaterial)
-          mesh.name = `presentation:destroyed:${event.eventId}`
-          mesh.position.copy(target.group.position).add(new THREE.Vector3(0, 1, 0))
-          scene.add(mesh)
-          transientByEventId.set(event.eventId, {
-            mesh,
-            expiresAfterTick: event.tick + eventDurationTicks(
-              profile.rules.weapons.doubleBarrelShotgun.impactFeedbackSeconds,
-              ticksPerSecond,
-            ),
-          })
-        }
       }
     }
   }
@@ -908,6 +904,7 @@ export function createFirstPersonRenderer({
       for (const transient of transientByEventId.values()) scene.remove(transient.mesh)
       transientByEventId.clear()
       processedEventIds.clear()
+      fallYawByLifeId.clear()
       muzzleVisibleThroughTick = -1
       recoilVisibleThroughTick = -1
     }
@@ -928,6 +925,15 @@ export function createFirstPersonRenderer({
     viewmodel.group.visible = player.alive !== false
     updateLocalLightShadows()
 
+    for (const event of snapshot.events) {
+      if (event.kind !== 'target-destroyed') continue
+      const victim = snapshot.participants.find((participant) => participant.semanticId === event.targetId)
+      if (victim === undefined) continue
+      const shot = snapshot.events.find((candidate): candidate is FirstPersonShotRenderEvent => candidate.kind === 'shotgun-shot' && candidate.tick === event.tick)
+      const lifeId = event.targetLifeId ?? ('lifeId' in victim ? victim.lifeId : undefined)
+      if (lifeId !== undefined) fallYawByLifeId.set(lifeId, resolveDeathFallYaw(shot?.origin, victim.position, victim.yaw))
+    }
+
     for (const [id, target] of targetById) target.group.visible = snapshot.participants.some(p => p.semanticId === id)
     for (const targetState of snapshot.participants.filter((participant): participant is FirstPersonRenderTarget => participant.kind !== 'local-seat')) {
       let target = targetById.get(targetState.semanticId)
@@ -937,14 +943,16 @@ export function createFirstPersonRenderer({
         targetById.set(targetState.semanticId,target)
       }
       const destroyed = !targetState.alive || targetState.health <= 0
+      const deathElapsedSeconds = targetState.deathTick === undefined || targetState.deathTick === null ? Number.POSITIVE_INFINITY : Math.max(0, (snapshot.tick - targetState.deathTick) / ticksPerSecond)
+      const fallYaw = targetState.lifeId === undefined ? targetState.yaw : fallYawByLifeId.get(targetState.lifeId) ?? targetState.yaw
+      const fallProgress = destroyed ? Math.min(1, Math.max(0, (deathElapsedSeconds - .1) / .35)) : 0
       target.baseY = targetState.position.y - (targetState.kind === 'bot' ? profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight : 0)
-      target.group.position.set(targetState.position.x, target.baseY + (destroyed ? -0.2 : 0), targetState.position.z)
-      target.group.rotation.y = targetState.kind === 'bot' ? Math.PI - targetState.yaw : targetState.yaw
+      target.group.position.set(targetState.position.x, target.baseY - fallProgress * .08, targetState.position.z)
+      target.group.rotation.set(0, targetState.kind === 'bot' ? Math.PI - fallYaw : fallYaw, destroyed ? fallProgress * Math.PI / 2 : 0, 'YXZ')
       const presentationColor = destroyed ? '#354148' : normalizePresentationColor(targetState.color)
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
         target.group.userData.presentationState = destroyed ? 'destroyed' : 'active'
-        target.group.rotation.z = destroyed ? 0.18 : 0
         for (const material of [...target.identityMaterials, ...target.weaponIndicatorMaterials]) {
           material.emissiveIntensity = destroyed ? 0.12 : 0.54
         }
@@ -961,24 +969,37 @@ export function createFirstPersonRenderer({
       const velocity=targetState.velocity
       const moving=velocity!==undefined && Math.hypot(velocity.x,velocity.z)>profile.rules.player.capsule.skinWidth*ticksPerSecond
       const side=velocity===undefined?0:velocity.x*Math.cos(targetState.yaw)+velocity.z*Math.sin(targetState.yaw)
-      target.animation?.present(destroyed?'destroyed':targetState.grounded===false?'jump-airborne':firing?'fire':moving?(Math.abs(side)>Math.hypot(velocity!.x,velocity!.z)/2?(side<0?'strafe-left':'strafe-right'):'run'):'idle',snapshot.tick/ticksPerSecond)
+      const deathState = deathElapsedSeconds < .1 ? 'death-hit' : deathElapsedSeconds < .45 ? 'death-fall' : 'death-rest'
+      target.animation?.present(destroyed ? deathState : targetState.grounded===false?'jump-airborne':firing?'fire':moving?(Math.abs(side)>Math.hypot(velocity!.x,velocity!.z)/2?(side<0?'strafe-left':'strafe-right'):'run'):'idle',snapshot.tick/ticksPerSecond)
     }
 
     const visibleCorpseIds = new Set(snapshot.corpses.map(({ corpseId }) => corpseId))
     for (const [corpseId, corpse] of corpseById) {
       if (!visibleCorpseIds.has(corpseId)) {
-        scene.remove(corpse)
+        scene.remove(corpse.group)
         corpseById.delete(corpseId)
       }
     }
     for (const corpseState of snapshot.corpses) {
-      if (corpseById.has(corpseState.corpseId)) continue
-      const corpse = new THREE.Mesh(destroyedGeometry, destroyedMaterial)
-      corpse.name = `corpse:${corpseState.corpseId}`
-      corpse.position.set(corpseState.position.x, corpseState.position.y + 0.25, corpseState.position.z)
-      corpse.rotation.set(0, corpseState.yaw, 0.18)
-      scene.add(corpse)
-      corpseById.set(corpseState.corpseId, corpse)
+      let corpse = corpseById.get(corpseState.corpseId)
+      const participant = corpseState.participantId === undefined ? undefined : snapshot.participants.find(({ semanticId }) => semanticId === corpseState.participantId)
+      const kind = participant?.kind
+      const floorY = corpseState.position.y - (kind !== undefined && kind !== 'stationary-fixture' ? profile.rules.player.capsule.radius + profile.rules.player.capsule.halfHeight : 0)
+      const lifeId = corpseState.lifeId
+      const fallYaw = lifeId === undefined ? corpseState.yaw : fallYawByLifeId.get(lifeId) ?? corpseState.yaw
+      if (corpse === undefined) {
+        const robot = createRobotGlbPresentation({ geometries, materials }, arenaGlbAssets, participantTexture, participant?.kind === 'local-seat' ? '#b8dce5' : normalizePresentationColor((participant as FirstPersonRenderTarget | undefined)?.color ?? '#354148'))
+        robot.group.name = `corpse:${corpseState.corpseId}`
+        for (const material of [...robot.identityMaterials, ...robot.weaponIndicatorMaterials]) material.emissiveIntensity = .12
+        corpse = { group: robot.group, animation: robot.animation }
+        scene.add(corpse.group); corpseById.set(corpseState.corpseId, corpse)
+      }
+      corpse.group.position.set(corpseState.position.x, floorY - .08, corpseState.position.z)
+      corpse.group.rotation.set(0, kind === 'bot' ? Math.PI - fallYaw : fallYaw, Math.PI / 2, 'YXZ')
+      corpse.animation?.present('death-rest', snapshot.tick / ticksPerSecond)
+      const corresponding = participant !== undefined && participant.kind !== 'local-seat' && participant.lifeId === lifeId && participant.alive === false ? participant : undefined
+      const elapsed = corresponding?.deathTick === undefined || corresponding?.deathTick === null ? Number.POSITIVE_INFINITY : (snapshot.tick - corresponding.deathTick) / ticksPerSecond
+      corpse.group.visible = elapsed >= .45
     }
 
     processEvents(snapshot)
