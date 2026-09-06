@@ -520,6 +520,7 @@ describe('createFirstPersonRenderer', () => {
     const trail = scene.getObjectByName('presentation:pellet-trails:tick-5:shot:local-player-1:1') as THREE.InstancedMesh
     expect(trail).toBeInstanceOf(THREE.InstancedMesh)
     expect(trail.count).toBe(1)
+    expect(trail.frustumCulled).toBe(false)
     const matrix = new THREE.Matrix4()
     trail.getMatrixAt(0, matrix)
     expect(new THREE.Vector3().setFromMatrixPosition(matrix)).not.toEqual(new THREE.Vector3(0, 1, 0))

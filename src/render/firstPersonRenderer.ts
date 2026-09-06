@@ -881,6 +881,10 @@ export function createFirstPersonRenderer({
       if (localShot) camera.updateMatrixWorld(true)
       const trails = new THREE.InstancedMesh(tracerGeometry, tracerMaterial, event.pelletDirections.length)
       trails.name = `presentation:pellet-trails:${event.eventId}`
+      // Instance transforms span a full hitscan ray but do not expand the
+      // default shared-geometry bounds. Culling that stale bound makes later
+      // shots disappear once the player has moved away from world origin.
+      trails.frustumCulled = false
       const matrix = new THREE.Matrix4()
       const directionVector = new THREE.Vector3()
       const midpoint = new THREE.Vector3()
