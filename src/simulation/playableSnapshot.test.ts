@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { DIAGNOSTIC_ARENA } from '../arena'
 import { RUNTIME_COLLISION_COMPATIBILITY_IDENTITY } from '../collision/contracts'
 import type { ContentHash } from '../core/canonical'
-import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { PROTOTYPE_V1_PROFILE, computeProfileContentHash, validateGameDesignProfile, type GameDesignProfile } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import {
   RUNTIME_PROFILE_IDENTITY,
@@ -177,5 +177,24 @@ describe('playable SimulationSnapshot schema v3', () => {
         expect.objectContaining({ code: SIMULATION_SNAPSHOT_ERROR_CODES.invalidData }),
       )
     }
+  })
+
+  it('uses the exact validated startup profile as the snapshot compatibility context', () => {
+    const draft = JSON.parse(JSON.stringify(PROTOTYPE_V1_PROFILE)) as GameDesignProfile
+    draft.revision += 1
+    draft.source = 'local'
+    draft.contentHash = computeProfileContentHash(draft)
+    const validation = validateGameDesignProfile(draft)
+    if (!validation.ok) throw new Error('Expected valid local profile')
+
+    const snapshot = createInitialSimulationSnapshot({ rngSeed: 42, arena: DIAGNOSTIC_ARENA, profile: validation.profile })
+    expect(parseSimulationSnapshot(snapshot, undefined, validation.profile).profile).toEqual({
+      id: validation.profile.id,
+      revision: validation.profile.revision,
+      contentHash: validation.profile.contentHash,
+    })
+    expect(() => parseSimulationSnapshot(snapshot)).toThrow(
+      expect.objectContaining({ code: SIMULATION_SNAPSHOT_ERROR_CODES.unsupportedIdentity }),
+    )
   })
 })
