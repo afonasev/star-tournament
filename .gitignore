@@ -8,5 +8,6 @@ dist/
 !.env.example
 coverage/
 .ai-cache/
+.local/
 playwright-report/
 test-results/

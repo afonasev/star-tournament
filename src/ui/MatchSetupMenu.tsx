@@ -32,6 +32,7 @@ export interface ArenaGenerationErrorView {
 export interface MatchSetupMenuProps {
   readonly profile: ValidatedGameDesignProfile
   readonly onStart: (configuration: MatchConfiguration) => void
+  readonly onOpenGameDesignLab?: () => void
   readonly generationError?: ArenaGenerationErrorView | null
   readonly onUseFallback?: () => void
   readonly onGraphicsQualityChange?: (quality: GraphicsQualityProfile) => void
@@ -51,7 +52,7 @@ function parseSeedDraft(value: string): number | null {
   return parsed
 }
 
-export function MatchSetupMenu({ profile, onStart, generationError, onUseFallback, onGraphicsQualityChange }: MatchSetupMenuProps) {
+export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generationError, onUseFallback, onGraphicsQualityChange }: MatchSetupMenuProps) {
   const [graphicsPreference, setGraphicsPreference] = useState<GraphicsQualityPreference>(() => {
     const resolved = parseGraphicsQualityPreference(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY))
     return { schemaId: 'graphics-quality-v1', preset: resolved.profile.id }
@@ -126,6 +127,7 @@ export function MatchSetupMenu({ profile, onStart, generationError, onUseFallbac
       <section className="match-menu__panel" aria-labelledby="match-menu-title">
         <p className="match-menu__eyebrow">STAR TOURNAMENT · LOCAL MATCH</p>
         <h1 id="match-menu-title">Настройка матча</h1>
+        <div className="match-menu__profile"><span>Профиль следующего матча</span><output aria-label="Профиль следующего матча">{profile.id} · v{profile.revision} · {profile.contentHash}</output>{onOpenGameDesignLab && <button type="button" onClick={onOpenGameDesignLab}>Лаборатория геймдизайна</button>}</div>
         <div className="match-menu__mode" aria-label="Режим матча">
           <button type="button" data-active={mode === 'ffa'} onClick={() => setMode('ffa')}>Каждый за себя</button>
           <button type="button" data-active={mode === 'teams'} onClick={() => setMode('teams')}>Команды</button>

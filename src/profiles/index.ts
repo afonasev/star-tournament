@@ -8,6 +8,24 @@ export {
   validateGameDesignProfile,
 } from './gameDesignProfile'
 
+export {
+  GAME_DESIGN_LAB_STORAGE_KEY,
+  allProfileRevisions,
+  createLocalProfile,
+  loadLocalProfileCatalog,
+  loadReleaseManifest,
+  persistLocalProfileCatalog,
+  profileRevisionRef,
+  RELEASE_MANIFEST,
+  resolveSelectedProfile,
+  sameProfileRevision,
+  saveLocalRevision,
+  selectLocalRevision,
+  validateLocalProfileCatalog,
+} from './localRevisions'
+
+export type { LocalProfileCatalog, ProfileRevisionRef, ReleaseManifest } from './localRevisions'
+
 export type {
   ArenaGeneratorPresetRules,
   ArenaGeneratorSize,
