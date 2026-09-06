@@ -213,8 +213,10 @@ describe('createFirstPersonRenderer', () => {
     const wall = DIAGNOSTIC_ARENA.surfaces.find(({ id }) => id === 'wall-north')!
     const bay = scene.getObjectByName('presentation:wall-buttress:wall-north:1:-0.32') as THREE.Mesh
     const seam = scene.getObjectByName('presentation:seam:wall-north:1') as THREE.Mesh
-    const bayDepth = (bay.geometry as THREE.BoxGeometry).parameters.depth
-    const seamDepth = (seam.geometry as THREE.BoxGeometry).parameters.depth
+    bay.geometry.computeBoundingBox()
+    seam.geometry.computeBoundingBox()
+    const bayDepth = bay.geometry.boundingBox!.getSize(new THREE.Vector3()).z
+    const seamDepth = seam.geometry.boundingBox!.getSize(new THREE.Vector3()).z
 
     expect(wall.size.z / 2 - (Math.abs(bay.position.z) + bayDepth / 2)).toBeLessThanOrEqual(0.011)
     expect(Math.abs(seam.position.z) + seamDepth / 2).toBeLessThan(wall.size.z / 2)
@@ -235,19 +237,16 @@ describe('createFirstPersonRenderer', () => {
 
     adapter.render(snapshot())
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
-    const portals: THREE.Object3D[] = []
-    scene.traverse((object) => { if (object.name.startsWith('presentation:portal:')) portals.push(object) })
-    expect(portals.length).toBeGreaterThan(0)
-    for (const portal of portals) {
-      expect(portal.children.map(({ name }) => name)).toEqual(expect.arrayContaining([
-        expect.stringMatching(/^presentation:portal-shell:/),
-        expect.stringMatching(/^presentation:portal-inner:/),
-        expect.stringMatching(/^presentation:portal-pillar:.*:left$/),
-        expect.stringMatching(/^presentation:portal-pillar:.*:right$/),
-        expect.stringMatching(/^presentation:portal-cap:.*:left$/),
-        expect.stringMatching(/^presentation:portal-cap:.*:right$/),
-      ]))
+    const solids=arena.surfaces.filter(s=>s.id.startsWith('portal-solid:'))
+    expect(solids.length).toBeGreaterThan(0)
+    for(const solid of solids) {
+      const mesh=scene.getObjectByName(`arena:${solid.id}`) as THREE.Mesh
+      expect(mesh).toBeDefined()
+      expect(mesh.position.toArray()).toEqual([solid.center.x,solid.center.y,solid.center.z])
+      expect(mesh.quaternion.toArray()).toEqual([solid.orientation.x,solid.orientation.y,solid.orientation.z,solid.orientation.w])
     }
+    adapter.dispose()
+
   })
 
   it('uses every required manifest module while keeping portals restricted to real doorway gaps', () => {
@@ -557,4 +556,20 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:impact:impact-before-rewind')).toBeUndefined()
     expect(rendererPort.render).toHaveBeenCalledTimes(2)
   })
+})
+
+it('renders semantic panes and barriers without changing canonical collision data', () => {
+  const arena=requireProceduralArena({size:'medium',seed:1})
+  const before=JSON.stringify(arena)
+  const port=makeRenderer()
+  const adapter=createFirstPersonRenderer({container:createContainer(),arena,scenario:COMBAT_SLICE_SCENARIO_V1,profile:PROTOTYPE_V1_PROFILE,pixelBudget:PIXEL_BUDGET,rendererFactory:()=>port})
+  adapter.render(snapshot())
+  const scene=vi.mocked(port.render).mock.calls[0]![0] as THREE.Scene
+  for(const surface of arena.surfaces.filter(s=>['window','movement-barrier'].includes(s.semantics?.classification??''))) {
+    const mesh=scene.getObjectByName(`arena:${surface.id}`) as THREE.Mesh
+    expect((mesh.material as THREE.MeshStandardMaterial).transparent).toBe(true)
+    expect((mesh.material as THREE.MeshStandardMaterial).depthWrite).toBe(false)
+  }
+  expect(JSON.stringify(arena)).toBe(before)
+  adapter.dispose()
 })

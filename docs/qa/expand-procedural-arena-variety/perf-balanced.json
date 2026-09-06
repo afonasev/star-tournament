@@ -1,0 +1,770 @@
+{
+  "schemaVersion": 1,
+  "referenceId": "performance-reference-v1",
+  "mode": "reference",
+  "passed": true,
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+    "viewportCssWidth": 1280,
+    "viewportCssHeight": 720,
+    "devicePixelRatio": 2,
+    "backingBufferWidth": 1920,
+    "backingBufferHeight": 1080,
+    "presentationProfileId": "presentation-balanced-v1",
+    "presentationProfileHash": "fnv1a64-v1:30cb0b96ac4a99ff",
+    "graphicsQualityId": "balanced",
+    "arenaSize": "medium",
+    "arenaSeed": 1,
+    "arenaContentHash": "fnv1a64-v1:d3c91098e9320f77"
+  },
+  "measurements": [
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "menu",
+      "durationMilliseconds": 1001.8000000007451,
+      "counters": {
+        "animationCallbacks": 0,
+        "simulationSteps": 0,
+        "webGlSubmissions": 0,
+        "hudPublications": 0
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 0,
+        "simulationStepsPerSecond": 0,
+        "webGlSubmissionsPerSecond": 0,
+        "hudPublicationsPerSecond": 0
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "rendererInfo": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 54757377,
+            "lastBytes": 54762105,
+            "minimumBytes": 54757377,
+            "maximumBytes": 54762105,
+            "deltaBytes": 4728
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "paused",
+      "durationMilliseconds": 1001.4000000003725,
+      "counters": {
+        "animationCallbacks": 0,
+        "simulationSteps": 0,
+        "webGlSubmissions": 0,
+        "hudPublications": 0
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 0,
+        "simulationStepsPerSecond": 0,
+        "webGlSubmissionsPerSecond": 0,
+        "hudPublicationsPerSecond": 0
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "rendererInfo": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 54777049,
+            "lastBytes": 54780253,
+            "minimumBytes": 54777049,
+            "maximumBytes": 54780253,
+            "deltaBytes": 3204
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "running-idle",
+      "durationMilliseconds": 2000.2999999998137,
+      "counters": {
+        "animationCallbacks": 120,
+        "simulationSteps": 120,
+        "webGlSubmissions": 98,
+        "hudPublications": 21
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 59.99100134980312,
+        "simulationStepsPerSecond": 59.99100134980312,
+        "webGlSubmissionsPerSecond": 48.99265110233922,
+        "hudPublicationsPerSecond": 10.498425236215546
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0,
+            "medianMilliseconds": 9.899999999441206,
+            "p95Milliseconds": 11.899999999441206,
+            "p99Milliseconds": 13.799999999813735,
+            "maximumMilliseconds": 14.599999999627471,
+            "meanMilliseconds": 8.379999999958091
+          }
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0.2999999998137355,
+            "medianMilliseconds": 0.599999999627471,
+            "p95Milliseconds": 1.099999999627471,
+            "p99Milliseconds": 1.599999999627471,
+            "maximumMilliseconds": 1.7999999998137355,
+            "meanMilliseconds": 0.6299999999813736
+          }
+        },
+        "rendererInfo": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 98,
+            "maximumDrawCalls": 2709,
+            "maximumTriangles": 92132,
+            "maximumGeometries": 1738,
+            "maximumTextures": 16,
+            "maximumShaderPrograms": 10
+          }
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 70265309,
+            "lastBytes": 65836633,
+            "minimumBytes": 65836633,
+            "maximumBytes": 70265309,
+            "deltaBytes": -4428676
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "live-scoreboard",
+      "durationMilliseconds": 2001.0999999996275,
+      "counters": {
+        "animationCallbacks": 120,
+        "simulationSteps": 119,
+        "webGlSubmissions": 91,
+        "hudPublications": 21
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 59.96701814003415,
+        "simulationStepsPerSecond": 59.4672929888672,
+        "webGlSubmissionsPerSecond": 45.474988756192566,
+        "hudPublicationsPerSecond": 10.494228174505976
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0,
+            "medianMilliseconds": 10.299999999813735,
+            "p95Milliseconds": 11.200000000186265,
+            "p99Milliseconds": 11.899999999441206,
+            "maximumMilliseconds": 14.299999999813735,
+            "meanMilliseconds": 7.994166666641831
+          }
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 119,
+            "minimumMilliseconds": 0.19999999925494194,
+            "medianMilliseconds": 0.5,
+            "p95Milliseconds": 0.6000000005587935,
+            "p99Milliseconds": 1.400000000372529,
+            "maximumMilliseconds": 1.400000000372529,
+            "meanMilliseconds": 0.46890756302364484
+          }
+        },
+        "rendererInfo": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 91,
+            "maximumDrawCalls": 2715,
+            "maximumTriangles": 92612,
+            "maximumGeometries": 1739,
+            "maximumTextures": 16,
+            "maximumShaderPrograms": 11
+          }
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 69817326,
+            "lastBytes": 87199641,
+            "minimumBytes": 69817326,
+            "maximumBytes": 87199641,
+            "deltaBytes": 17382315
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "movement-jump",
+      "durationMilliseconds": 2001.5,
+      "counters": {
+        "animationCallbacks": 120,
+        "simulationSteps": 120,
+        "webGlSubmissions": 117,
+        "hudPublications": 21
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 59.95503372470647,
+        "simulationStepsPerSecond": 59.95503372470647,
+        "webGlSubmissionsPerSecond": 58.45615788158881,
+        "hudPublicationsPerSecond": 10.492130901823632
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0,
+            "medianMilliseconds": 7.400000000372529,
+            "p95Milliseconds": 10.200000000186265,
+            "p99Milliseconds": 10.599999999627471,
+            "maximumMilliseconds": 10.700000000186265,
+            "meanMilliseconds": 7.857499999979821
+          }
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0.20000000018626451,
+            "medianMilliseconds": 0.5,
+            "p95Milliseconds": 0.7000000001862645,
+            "p99Milliseconds": 1.599999999627471,
+            "maximumMilliseconds": 2,
+            "meanMilliseconds": 0.5516666666449358
+          }
+        },
+        "rendererInfo": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 117,
+            "maximumDrawCalls": 2553,
+            "maximumTriangles": 89296,
+            "maximumGeometries": 1739,
+            "maximumTextures": 16,
+            "maximumShaderPrograms": 11
+          }
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 82883941,
+            "lastBytes": 96037314,
+            "minimumBytes": 82883941,
+            "maximumBytes": 96037314,
+            "deltaBytes": 13153373
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "combat-burst",
+      "durationMilliseconds": 2002.5,
+      "counters": {
+        "animationCallbacks": 120,
+        "simulationSteps": 120,
+        "webGlSubmissions": 120,
+        "hudPublications": 21
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 59.925093632958806,
+        "simulationStepsPerSecond": 59.925093632958806,
+        "webGlSubmissionsPerSecond": 59.925093632958806,
+        "hudPublicationsPerSecond": 10.486891385767791
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 5,
+            "medianMilliseconds": 5.7999999998137355,
+            "p95Milliseconds": 9.700000000186265,
+            "p99Milliseconds": 10.099999999627471,
+            "maximumMilliseconds": 11.200000000186265,
+            "meanMilliseconds": 6.6666666667054715
+          }
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0.40000000037252903,
+            "medianMilliseconds": 0.599999999627471,
+            "p95Milliseconds": 0.8000000007450581,
+            "p99Milliseconds": 1,
+            "maximumMilliseconds": 1.699999999254942,
+            "meanMilliseconds": 0.6333333333410943
+          }
+        },
+        "rendererInfo": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "maximumDrawCalls": 2240,
+            "maximumTriangles": 76008,
+            "maximumGeometries": 1751,
+            "maximumTextures": 16,
+            "maximumShaderPrograms": 11
+          }
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 90457722,
+            "lastBytes": 76857794,
+            "minimumBytes": 76857794,
+            "maximumBytes": 90457722,
+            "deltaBytes": -13599928
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "overtime",
+      "durationMilliseconds": 2001.5,
+      "counters": {
+        "animationCallbacks": 120,
+        "simulationSteps": 120,
+        "webGlSubmissions": 120,
+        "hudPublications": 21
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 59.95503372470647,
+        "simulationStepsPerSecond": 59.95503372470647,
+        "webGlSubmissionsPerSecond": 59.95503372470647,
+        "hudPublicationsPerSecond": 10.492130901823632
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 3.099999999627471,
+            "medianMilliseconds": 3.400000000372529,
+            "p95Milliseconds": 3.7000000001862645,
+            "p99Milliseconds": 11.700000000186265,
+            "maximumMilliseconds": 14.5,
+            "meanMilliseconds": 3.6391666666682188
+          }
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "minimumMilliseconds": 0.39999999944120646,
+            "medianMilliseconds": 0.599999999627471,
+            "p95Milliseconds": 0.7000000001862645,
+            "p99Milliseconds": 0.900000000372529,
+            "maximumMilliseconds": 1,
+            "meanMilliseconds": 0.5774999999674038
+          }
+        },
+        "rendererInfo": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 120,
+            "maximumDrawCalls": 2863,
+            "maximumTriangles": 94600,
+            "maximumGeometries": 1907,
+            "maximumTextures": 16,
+            "maximumShaderPrograms": 11
+          }
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 92445702,
+            "lastBytes": 99431946,
+            "minimumBytes": 92445702,
+            "maximumBytes": 99431946,
+            "deltaBytes": 6986244
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "referenceId": "performance-reference-v1",
+      "phase": "results",
+      "durationMilliseconds": 1001.6999999992549,
+      "counters": {
+        "animationCallbacks": 0,
+        "simulationSteps": 0,
+        "webGlSubmissions": 0,
+        "hudPublications": 0
+      },
+      "rates": {
+        "animationCallbacksPerSecond": 0,
+        "simulationStepsPerSecond": 0,
+        "webGlSubmissionsPerSecond": 0,
+        "hudPublicationsPerSecond": 0
+      },
+      "provisional": {
+        "animationFrameDurationMilliseconds": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "simulationStepDurationMilliseconds": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "rendererInfo": {
+          "availability": "unavailable",
+          "reason": "not-observed"
+        },
+        "longTasks": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        },
+        "heap": {
+          "availability": "available",
+          "value": {
+            "sampleCount": 2,
+            "firstBytes": 99488146,
+            "lastBytes": 99491350,
+            "minimumBytes": 99488146,
+            "maximumBytes": 99491350,
+            "deltaBytes": 3204
+          }
+        },
+        "thermal": {
+          "availability": "unavailable",
+          "reason": "unsupported"
+        }
+      }
+    }
+  ],
+  "gates": [
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "menu",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "animation-callbacks",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "simulation-steps",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "paused",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "animation-callbacks",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "simulation-steps",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "running-idle",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "simulation-steps-per-second",
+          "actual": 59.99100134980312,
+          "minimum": 59,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions-per-second",
+          "actual": 48.99265110233922,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications-per-second",
+          "actual": 10.498425236215546,
+          "maximum": 11,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "live-scoreboard",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "simulation-steps-per-second",
+          "actual": 59.4672929888672,
+          "minimum": 59,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions-per-second",
+          "actual": 45.474988756192566,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications-per-second",
+          "actual": 10.494228174505976,
+          "maximum": 11,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "movement-jump",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "simulation-steps-per-second",
+          "actual": 59.95503372470647,
+          "minimum": 59,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions-per-second",
+          "actual": 58.45615788158881,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications-per-second",
+          "actual": 10.492130901823632,
+          "maximum": 11,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "combat-burst",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "simulation-steps-per-second",
+          "actual": 59.925093632958806,
+          "minimum": 59,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions-per-second",
+          "actual": 59.925093632958806,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications-per-second",
+          "actual": 10.486891385767791,
+          "maximum": 11,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "overtime",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "simulation-steps-per-second",
+          "actual": 59.95503372470647,
+          "minimum": 59,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions-per-second",
+          "actual": 59.95503372470647,
+          "maximum": 61,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications-per-second",
+          "actual": 10.492130901823632,
+          "maximum": 11,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "referenceId": "performance-reference-v1",
+      "phase": "results",
+      "passed": true,
+      "checks": [
+        {
+          "metric": "animation-callbacks",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "simulation-steps",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "webgl-submissions",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        },
+        {
+          "metric": "hud-publications",
+          "actual": 0,
+          "maximum": 0,
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

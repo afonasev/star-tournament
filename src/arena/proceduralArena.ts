@@ -1,6 +1,8 @@
+import { portalCollisionSurfaces } from './portalGeometry'
+import { rampBox, supportedPoint } from './elevation'
+import { resolveArenaRecipe, type ArenaRecipeGraph } from './recipeGraph'
 import { type ContentHash } from '../core/canonical'
 import { PROTOTYPE_V1_PROFILE, type ArenaGeneratorPresetRules, type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
-import { createSeededRngState, nextRandomUint32, type SeededRngState } from '../simulation/rng'
 
 import {
   ARENA_DEFINITION_SCHEMA_VERSION,
@@ -17,7 +19,7 @@ import {
 } from './arenaDefinition'
 import { validateArenaGameplay, type ArenaGameplayValidationReport } from './arenaGameplayValidation'
 
-export const PROCEDURAL_ARENA_GENERATOR_VERSION = 'broken-ring-v2' as const
+export const PROCEDURAL_ARENA_GENERATOR_VERSION = 'arena-recipes-v4' as const
 export const PROCEDURAL_ARENA_GENERATION_ATTEMPTS = 4
 
 export interface ProceduralArenaGenerationOptions {
@@ -34,11 +36,6 @@ const IDENTITY: ArenaQuaternion = Object.freeze({ x: 0, y: 0, z: 0, w: 1 })
 
 function box(id: string, x: number, y: number, z: number, sx: number, sy: number, sz: number, material: ArenaBoxSurface['material']): ArenaBoxSurface {
   return { id, kind: 'box', center: { x, y, z }, size: { x: sx, y: sy, z: sz }, orientation: IDENTITY, material }
-}
-
-function random01(state: SeededRngState): { state: SeededRngState; value: number } {
-  const sample = nextRandomUint32(state)
-  return { state: sample.state, value: sample.value / 0x1_0000_0000 }
 }
 
 interface PlanarPoint { readonly x: number; readonly z: number }
@@ -315,18 +312,19 @@ function appendSubCapsuleGapSeals(surfaces: ArenaBoxSurface[], minimumClearance:
   }))
 }
 
-function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, seed: number, attempt: number, minimumClearance: number): ArenaBoxSurface[] {
+function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, _seed: number, _attempt: number, minimumClearance: number, recipe: ArenaRecipeGraph): ArenaBoxSurface[] {
   const {
     widthMeters: width,
     depthMeters: depth,
     wallHeightMeters: wallHeight,
     wallThicknessMeters: wallThickness,
-    corridorWidthMeters: corridorWidth,
+    corridorWidthMeters: _corridorWidth,
     doorwayWidthMeters: doorwayWidth,
     perimeterInsetMeters: perimeterInset,
     routeInsetMeters: routeInset,
     coverSizeMeters: coverSize,
   } = rules
+  const corridorWidth = recipe.corridorWidth
   const surfaces: ArenaBoxSurface[] = [box('floor', 0, -0.5, 0, width, 1, depth, 'floor')]
 
   // A closed stepped outline keeps the arena bounded without reducing the
@@ -356,26 +354,22 @@ function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, seed: 
     wallThickness,
   ))
 
-  let rng = createSeededRngState((seed ^ (attempt * 0x9e3779b9)) >>> 0)
-  const mirrorSample = random01(rng); rng = mirrorSample.state
-  const mirror = mirrorSample.value < 0.5 ? -1 : 1
   // Primary room/corridor walls form the arena's ceiling-aligned shell.
   // Only separately identified buttresses below are intentional low cover.
   const architectureHeight = wallHeight
   const corridorBoundaryOffset = corridorWidth / 2 + wallThickness / 2
   const corridorHalfLength = halfWidth - perimeterInset - routeInset
-  const roomDepth = routeInset
-  const roomHalfWidth = doorwayWidth / 2 + corridorWidth * 0.55
-  const northDoorX = mirror * -corridorHalfLength * 0.24
-  const southDoorX = mirror * corridorHalfLength * 0.24
+  const roomDepth = recipe.roomDepth
+  const roomHalfWidth = doorwayWidth / 2 + rules.corridorWidthMeters * 0.55
 
-  appendHorizontalRunWithDoors(surfaces, 'wall-architecture-corridor-north', -corridorHalfLength, corridorHalfLength, -corridorBoundaryOffset, [northDoorX], doorwayWidth, architectureHeight, wallThickness)
-  appendHorizontalRunWithDoors(surfaces, 'wall-architecture-corridor-south', -corridorHalfLength, corridorHalfLength, corridorBoundaryOffset, [southDoorX], doorwayWidth, architectureHeight, wallThickness)
-  appendNorthSouthRoom(surfaces, 'wall-architecture-room-north', 'north', northDoorX, -corridorBoundaryOffset, roomDepth, roomHalfWidth, doorwayWidth, architectureHeight, wallThickness)
-  appendNorthSouthRoom(surfaces, 'wall-architecture-room-south', 'south', southDoorX, corridorBoundaryOffset, roomDepth, roomHalfWidth, doorwayWidth, architectureHeight, wallThickness)
+
+  appendHorizontalRunWithDoors(surfaces, 'wall-architecture-corridor-north', -corridorHalfLength, corridorHalfLength, -corridorBoundaryOffset, recipe.northDoors, doorwayWidth, architectureHeight, wallThickness)
+  appendHorizontalRunWithDoors(surfaces, 'wall-architecture-corridor-south', -corridorHalfLength, corridorHalfLength, corridorBoundaryOffset, recipe.southDoors, doorwayWidth, architectureHeight, wallThickness)
+  for (const [index, northDoorX] of recipe.northDoors.entries()) appendNorthSouthRoom(surfaces, `wall-architecture-room-north-${index}`, 'north', northDoorX, -corridorBoundaryOffset, roomDepth, roomHalfWidth, doorwayWidth, architectureHeight, wallThickness)
+  for (const [index, southDoorX] of recipe.southDoors.entries()) appendNorthSouthRoom(surfaces, `wall-architecture-room-south-${index}`, 'south', southDoorX, corridorBoundaryOffset, roomDepth, roomHalfWidth, doorwayWidth, architectureHeight, wallThickness)
 
   if (size === 'small') {
-    appendAxisAlignedWall(surfaces, 'wall-architecture-corridor-east-cap', { x: corridorHalfLength, z: -corridorBoundaryOffset }, { x: corridorHalfLength, z: corridorBoundaryOffset }, architectureHeight, wallThickness, 'accent')
+    appendVerticalRunWithDoors(surfaces, 'wall-architecture-corridor-east-cap', -corridorBoundaryOffset, corridorBoundaryOffset, corridorHalfLength, [0], doorwayWidth, architectureHeight, wallThickness)
   } else {
     appendVerticalRunWithDoors(surfaces, 'wall-architecture-corridor-east-cap', -corridorBoundaryOffset, corridorBoundaryOffset, corridorHalfLength, [0], doorwayWidth, architectureHeight, wallThickness)
     appendEastWestRoom(surfaces, 'wall-architecture-room-east', 'east', 0, corridorHalfLength, roomDepth, roomHalfWidth, doorwayWidth, architectureHeight, wallThickness)
@@ -399,15 +393,16 @@ function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, seed: 
     surfaces.push(box(
       `wall-architecture-buttress-${String(index + 1).padStart(2, '0')}`,
       source.center.x + (horizontal ? 0 : inwardX * offset),
-      architectureHeight * 0.34,
+      (index % 2 === 0 ? rules.barrierLowMeters : rules.barrierHighMeters) / 2,
       source.center.z + (horizontal ? inwardZ * offset : 0),
       horizontal ? Math.min(coverSize, source.size.x) : coverSize,
-      architectureHeight * 0.68,
+      index % 2 === 0 ? rules.barrierLowMeters : rules.barrierHighMeters,
       horizontal ? coverSize : Math.min(coverSize, source.size.z),
       index % 2 === 0 ? 'accent' : 'wall',
     ))
   }
   appendSubCapsuleGapSeals(surfaces, minimumClearance)
+  for (const surface of surfaces.filter(s=>s.id.includes('-gap-seal-'))) { surface.size.y=wallHeight;surface.center.y=wallHeight/2 }
   return surfaces
 }
 
@@ -420,7 +415,15 @@ interface ResolvedGenerationOptions {
 function buildDefinition(options: ResolvedGenerationOptions, attempt: number): ArenaDefinition {
   const rules = options.profile.rules.arenaGenerator.presets[options.size]
   const minimumClearance = (options.profile.rules.player.capsule.radius + options.profile.rules.player.capsule.skinWidth) * 2
+  const recipe = resolveArenaRecipe(options.size, options.seed, rules)
   const semantic = buildRegions(options.size, rules.widthMeters, rules.depthMeters)
+  for (const [side,doors] of [['north',recipe.northDoors],['south',recipe.southDoors]] as const) {
+    for(const [index,x] of doors.entries()) {
+      const id=`recipe-room-${side}-${index}`
+      semantic.regions.push({id,role:'route',center:{x,y:0,z:(side === 'north' ? -1 : 1)*(recipe.corridorWidth/2+rules.wallThicknessMeters/2+recipe.roomDepth*0.66)},size:{x:rules.doorwayWidthMeters+rules.corridorWidthMeters*1.1,y:1,z:recipe.roomDepth*0.68}})
+      semantic.links.push({id:`link-${id}-inner`,fromRegionId:'combat-center',toRegionId:id,exposure:'open'},{id:`link-${id}-outer`,fromRegionId:id,toRegionId:`route-${side}`,exposure:'covered'})
+    }
+  }
   const spawns = buildSpawns(options.size, rules)
   const payload: ArenaDefinitionPayload = {
     schemaVersion: ARENA_DEFINITION_SCHEMA_VERSION,
@@ -433,12 +436,37 @@ function buildDefinition(options: ResolvedGenerationOptions, attempt: number): A
       revision: options.profile.revision,
       contentHash: options.profile.contentHash as ContentHash,
     },
+    recipeId: recipe.id,
     regions: semantic.regions,
     links: semantic.links,
-    surfaces: buildSurfaces(options.size, rules, options.seed, attempt, minimumClearance),
+    surfaces: buildSurfaces(options.size, rules, options.seed, attempt, minimumClearance, recipe).map(surface => ({ ...surface, semantics: { classification: surface.material === 'floor' ? 'floor' : surface.id.includes('-buttress-') ? 'movement-barrier' : 'wall', movement: true, projectile: !surface.id.includes('-buttress-'), sector: surface.center.z < 0 ? 'north' : 'south' } })),
     spawnRegions: spawns.spawnRegions,
     spawnAnchors: spawns.spawnAnchors,
   }
+  for (const side of ['north', 'south']) {
+    const window = payload.surfaces.find(s => s.id.startsWith(`wall-architecture-corridor-${side}-segment-`))
+    if (window) window.semantics = { ...window.semantics!, classification:'window' }
+  }
+  payload.attachments = payload.surfaces.filter(s => s.id.includes('-back-')).map(s => ({ id:`relief-${s.id}`, surfaceId:s.id, kind:'relief-niche' }))
+  payload.attachments.push(...payload.surfaces.filter(s => s.id.includes('-shoulder-')).map(s => ({ id:`lamp-${s.id}`, surfaceId:s.id, kind:'lamp' as const })))
+  if (recipe.raised) {
+    const half = rules.rampWidthMeters / 2
+    const run = rules.rampLengthMeters
+    const height = rules.elevationDeltaMeters
+    // Adjacent ramp lanes tessellate a continuous cross-arena elevation belt.
+    // Every doorway sees the same support height on both sides: no cliff access.
+    const laneCount = Math.ceil(rules.depthMeters / rules.rampWidthMeters)
+    const laneWidth = rules.depthMeters / laneCount
+    for (let lane = 0; lane < laneCount; lane++) {
+      const z = -rules.depthMeters / 2 + laneWidth * (lane + 0.5)
+      payload.surfaces.push(rampBox(`ramp-west-${lane}`, -half-run, -half, 0, height, z, laneWidth, rules.wallThicknessMeters))
+      payload.surfaces.push(rampBox(`ramp-east-${lane}`, half, half+run, height, 0, z, laneWidth, rules.wallThicknessMeters))
+    }
+    payload.surfaces.push({ ...box('floor-raised-atrium', 0, height/2, 0, half*2, height, rules.depthMeters, 'floor'), semantics: { classification:'floor',movement:true,projectile:true,sector:'atrium' } })
+    payload.regions = payload.regions.map(region => ({ ...region, center:supportedPoint(payload,region.center) }))
+    payload.spawnAnchors = payload.spawnAnchors.map(anchor => ({ ...anchor, position:supportedPoint(payload,anchor.position) }))
+  }
+  payload.surfaces.push(...portalCollisionSurfaces(payload.surfaces))
   return createArenaDefinition(payload)
 }
 
@@ -467,6 +495,6 @@ const fallbackSource = requireProceduralArena({ size: 'medium', seed: 0x53544152
 const { contentHash: _fallbackSourceHash, ...fallbackPayload } = fallbackSource
 export const PROCEDURAL_FALLBACK_ARENA = createArenaDefinition({
   ...fallbackPayload,
-  id: 'shipped-fallback-arena-v2',
-  generatorVersion: 'shipped-fallback-v2',
+  id: 'shipped-fallback-arena-v4',
+  generatorVersion: 'shipped-fallback-v4',
 })

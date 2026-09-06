@@ -1,0 +1,30 @@
+import type { ArenaGeneratorPresetRules } from '../profiles'
+import type { ArenaSize } from './arenaDefinition'
+
+export const ARENA_RECIPE_IDS = ['grand-hall', 'split-atrium', 'service-loop', 'flanked-courtyard'] as const
+export type ArenaRecipeId = typeof ARENA_RECIPE_IDS[number]
+export interface ArenaRecipeGraph {
+  id: ArenaRecipeId
+  size: ArenaSize
+  corridorWidth: number
+  roomDepth: number
+  northDoors: number[]
+  southDoors: number[]
+  raised: boolean
+}
+
+/** Recipe composition ratios are topology invariants, not free per-surface noise. */
+export function resolveArenaRecipe(size: ArenaSize, seed: number, rules: ArenaGeneratorPresetRules): ArenaRecipeGraph {
+  const id = ARENA_RECIPE_IDS[seed % rules.recipeCount]!
+  const halfLength = rules.widthMeters / 2 - rules.perimeterInsetMeters - rules.routeInsetMeters
+  const mirror = seed & 4 ? -1 : 1
+  const courtyard = id === 'flanked-courtyard'
+  return {
+    id, size,
+    corridorWidth: id === 'grand-hall' ? rules.corridorWidthMeters * 1.5 : rules.corridorWidthMeters,
+    roomDepth: rules.routeInsetMeters,
+    northDoors: courtyard ? [-halfLength / 2, halfLength / 2] : [id === 'service-loop' ? -halfLength / 2 : -mirror * halfLength * 0.24],
+    southDoors: courtyard ? [-halfLength / 2, halfLength / 2] : [id === 'service-loop' ? -halfLength / 2 : mirror * halfLength * 0.24],
+    raised: id === 'split-atrium',
+  }
+}

@@ -1,7 +1,7 @@
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const ARENA_DEFINITION_SCHEMA_VERSION = 3 as const
+export const ARENA_DEFINITION_SCHEMA_VERSION = 4 as const
 export const ARENA_QUATERNION_NORMALIZATION_EPSILON = 1e-6
 export const ARENA_SIZE_IDS = ['small', 'medium', 'large'] as const
 
@@ -20,7 +20,20 @@ export type ArenaSurfaceMaterial = 'floor' | 'wall' | 'accent'
 export type ArenaRegionRole = 'combat' | 'route' | 'spawn'
 export type ArenaLinkExposure = 'open' | 'covered'
 
+export type ArenaSurfaceClass = 'wall' | 'window' | 'movement-barrier' | 'floor' | 'ramp'
+export interface ArenaSurfaceSemantics {
+  classification: ArenaSurfaceClass
+  movement: boolean
+  projectile: boolean
+  sector: string
+}
+export interface ArenaAttachment {
+  id: string
+  surfaceId: string
+  kind: 'relief-niche' | 'lamp' | 'arch'
+}
 export interface ArenaBoxSurface {
+  semantics?: ArenaSurfaceSemantics
   id: string
   kind: 'box'
   center: ArenaVector3
@@ -59,12 +72,14 @@ export interface ArenaSpawnAnchor {
 }
 
 export interface ArenaDefinitionPayload {
-  schemaVersion: typeof ARENA_DEFINITION_SCHEMA_VERSION
+  schemaVersion: 3 | typeof ARENA_DEFINITION_SCHEMA_VERSION
   id: string
   seed: number
   size: ArenaSize
   generatorVersion: string
   generatorProfile: ArenaGeneratorProfileIdentity
+  recipeId?: string
+  attachments?: ArenaAttachment[]
   regions: ArenaRegion[]
   links: ArenaLink[]
   surfaces: ArenaPrimitiveSurface[]
@@ -80,6 +95,7 @@ export type ArenaValidationErrorCode =
   | 'UNSUPPORTED_SCHEMA_VERSION'
   | 'INVALID_NUMBER'
   | 'INVALID_SURFACE_KIND'
+  | 'INVALID_SURFACE_MASK'
   | 'INVALID_SURFACE_MATERIAL'
   | 'INVALID_SURFACE_SIZE'
   | 'INVALID_ORIENTATION'
@@ -190,6 +206,7 @@ export function normalizeArenaPayload(payload: ArenaDefinitionPayload): ArenaDef
   return {
     ...payload,
     generatorProfile: { ...payload.generatorProfile },
+    ...(payload.attachments ? { attachments: normalizeById(payload.attachments).map(entry => ({ ...entry })) } : {}),
     regions: normalizeById(payload.regions).map((entry) => ({ ...entry, center: { ...entry.center }, size: { ...entry.size } })),
     links: normalizeById(payload.links).map((entry) => ({ ...entry })),
     surfaces: normalizeById(payload.surfaces).map((entry) => ({ ...entry, center: { ...entry.center }, size: { ...entry.size }, orientation: { ...entry.orientation } })),
@@ -222,11 +239,11 @@ export function createArenaDefinition(payload: ArenaDefinitionPayload): ArenaDef
 export function validateArenaDefinition(value: unknown): ArenaValidationResult {
   const errors: ArenaValidationError[] = []
   if (!isRecord(value)) return { ok: false, errors: [{ code: 'INVALID_TYPE', paths: ['$'], message: 'ArenaDefinition должен быть объектом.' }] }
-  allowed(value, ['schemaVersion', 'id', 'seed', 'size', 'generatorVersion', 'generatorProfile', 'regions', 'links', 'surfaces', 'spawnRegions', 'spawnAnchors', 'contentHash'], '$', errors)
+  allowed(value, ['schemaVersion', 'id', 'seed', 'size', 'generatorVersion', 'generatorProfile', 'regions', 'links', 'surfaces', 'spawnRegions', 'spawnAnchors', 'contentHash', 'recipeId', 'attachments'], '$', errors)
   requiredString(value, 'id', 'id', errors)
   requiredString(value, 'generatorVersion', 'generatorVersion', errors)
   requiredString(value, 'contentHash', 'contentHash', errors)
-  if (value.schemaVersion !== ARENA_DEFINITION_SCHEMA_VERSION) errors.push({ code: value.schemaVersion === undefined ? 'MISSING_FIELD' : 'UNSUPPORTED_SCHEMA_VERSION', paths: ['schemaVersion'], message: `Поддерживается schemaVersion ${ARENA_DEFINITION_SCHEMA_VERSION}.` })
+  if (value.schemaVersion !== 3 && value.schemaVersion !== ARENA_DEFINITION_SCHEMA_VERSION) errors.push({ code: value.schemaVersion === undefined ? 'MISSING_FIELD' : 'UNSUPPORTED_SCHEMA_VERSION', paths: ['schemaVersion'], message: `Поддерживается schemaVersion ${ARENA_DEFINITION_SCHEMA_VERSION}.` })
   if (!Number.isSafeInteger(value.seed) || (value.seed as number) < 0 || (value.seed as number) > 0xffffffff) errors.push({ code: 'INVALID_NUMBER', paths: ['seed'], message: 'seed должен быть unsigned 32-bit integer.' })
   if (!ARENA_SIZE_IDS.includes(value.size as ArenaSize)) errors.push({ code: 'INVALID_TYPE', paths: ['size'], message: 'size должен быть small, medium либо large.' })
 
@@ -263,10 +280,18 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
   if (Array.isArray(value.surfaces)) value.surfaces.forEach((entry, index) => {
     const path = `surfaces.${index}`
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
-    allowed(entry, ['id', 'kind', 'center', 'size', 'orientation', 'material'], path, errors); requiredString(entry, 'id', `${path}.id`, errors)
+    allowed(entry, ['id', 'kind', 'center', 'size', 'orientation', 'material', 'semantics'], path, errors); requiredString(entry, 'id', `${path}.id`, errors)
     if (entry.kind !== 'box') errors.push({ code: 'INVALID_SURFACE_KIND', paths: [`${path}.kind`], message: 'Поддерживается только box.' })
     if (entry.material !== 'floor' && entry.material !== 'wall' && entry.material !== 'accent') errors.push({ code: 'INVALID_SURFACE_MATERIAL', paths: [`${path}.material`], message: 'Недопустимый material.' })
     vector(entry.center, `${path}.center`, errors); vector(entry.size, `${path}.size`, errors, true); quaternion(entry.orientation, `${path}.orientation`, errors)
+    if (entry.semantics !== undefined) {
+      const m = entry.semantics
+      const classes = ['wall', 'window', 'movement-barrier', 'floor', 'ramp']
+      if (!isRecord(m) || !classes.includes(m.classification as string) || m.movement !== true || m.projectile !== (m.classification !== 'movement-barrier') || typeof m.sector !== 'string' || !m.sector) {
+        errors.push({ code: 'INVALID_SURFACE_MASK', paths: [`${path}.semantics`], message: 'Недопустимая classification/query mask.' })
+      } else allowed(m, ['classification', 'movement', 'projectile', 'sector'], `${path}.semantics`, errors)
+    }
+    if (value.recipeId !== undefined && entry.semantics === undefined) errors.push({ code: 'INVALID_SURFACE_MASK', paths: [path], message: 'Recipe surface требует explicit semantics.' })
   })
   if (Array.isArray(value.spawnRegions)) value.spawnRegions.forEach((entry, index) => {
     const path = `spawnRegions.${index}`
@@ -284,6 +309,22 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
     allowed(entry, ['id', 'spawnRegionId', 'position', 'yawRadians'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'spawnRegionId', `${path}.spawnRegionId`, errors); vector(entry.position, `${path}.position`, errors); finite(entry.yawRadians, `${path}.yawRadians`, errors)
   })
+
+  if (value.recipeId !== undefined && (typeof value.recipeId !== 'string' || !value.recipeId || value.schemaVersion !== 4)) errors.push({ code: 'INVALID_TYPE', paths: ['recipeId'], message: 'Recipe требует schema v4.' })
+  if (value.attachments !== undefined) {
+    if (!Array.isArray(value.attachments)) errors.push({ code: 'INVALID_TYPE', paths: ['attachments'], message: 'Attachments должны быть массивом.' })
+    else {
+      uniqueIds(value.attachments, 'attachments', errors); canonicalIds(value.attachments, 'attachments', errors)
+      value.attachments.forEach((entry, index) => {
+        const path = `attachments.${index}`
+        if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: 'Invalid attachment.' }); return }
+        allowed(entry, ['id', 'surfaceId', 'kind'], path, errors)
+        requiredString(entry, 'id', `${path}.id`, errors)
+        const surface = Array.isArray(value.surfaces) ? value.surfaces.find(s => isRecord(s) && s.id === entry.surfaceId) : undefined
+        if (!surface || !['relief-niche', 'lamp', 'arch'].includes(entry.kind as string) || (entry.kind === 'relief-niche' && surface.semantics?.classification !== 'wall')) errors.push({ code: 'INVALID_REFERENCE', paths: [path], message: 'Attachment требует подходящую canonical surface.' })
+      })
+    }
+  }
 
   if (errors.length === 0) {
     const regions = new Set((value.regions as unknown as ArenaRegion[]).map(({ id }) => id))
@@ -309,3 +350,8 @@ export function parseArenaDefinition(serialized: string): ArenaValidationResult 
   try { return validateArenaDefinition(JSON.parse(serialized) as unknown) }
   catch { return { ok: false, errors: [{ code: 'INVALID_JSON', paths: ['$'], message: 'ArenaDefinition содержит некорректный JSON.' }] } }
 }
+
+/** Historical v3 boxes retain their original all-query behavior without rewriting bytes. */
+export function blocksProjectiles(surface: ArenaBoxSurface): boolean { return surface.semantics?.projectile ?? true }
+export function blocksMovement(surface: ArenaBoxSurface): boolean { return surface.semantics?.movement ?? true }
+export function supportsNavigation(surface: ArenaBoxSurface): boolean { return surface.semantics ? surface.semantics.classification === 'floor' || surface.semantics.classification === 'ramp' : surface.material === 'floor' }

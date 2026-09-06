@@ -1,3 +1,4 @@
+import { validateArenaPhysicalRoutes } from '../arena/physicalValidation'
 import { requireProceduralArena, type ArenaDefinition, type ArenaSize } from '../arena'
 import { createRapierCollisionWorld } from '../collision/rapierWorld'
 import { createActionFrame, type ActionFrame } from '../input/actionFrame'
@@ -23,6 +24,7 @@ export function botConfiguration(seed: number, difficulties: readonly BotDifficu
 }
 export async function createAiRunner(configuration:MatchConfiguration, arena: ArenaDefinition = requireProceduralArena({seed:configuration.arenaSeed,size:configuration.arenaSize,profile}), restored?:SimulationSnapshot) {
   let snapshot=restored?parseSimulationSnapshot(restored,configuration):createInitialSimulationSnapshot({rngSeed:configuration.arenaSeed,arena,configuration})
+  await validateArenaPhysicalRoutes(arena,profile)
   const initialSnapshot=snapshot
   const m=profile.rules.player.movement
   const world=await createRapierCollisionWorld(arena,livingParticipantCollisionCapsules(snapshot,profile),{skinWidth:profile.rules.player.capsule.skinWidth,autostepMaxHeight:m.autostepMaxHeight,autostepMinWidth:m.autostepMinWidth,snapToGroundDistance:m.snapToGroundDistance,maxSlopeClimbDegrees:m.maxSlopeClimbDegrees,minSlopeSlideDegrees:m.minSlopeSlideDegrees})

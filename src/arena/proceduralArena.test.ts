@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { canonicalArenaJson, createArenaDefinition } from './arenaDefinition'
+import { canonicalArenaJson, createArenaDefinition, supportsNavigation } from './arenaDefinition'
 import { validateArenaGameplay } from './arenaGameplayValidation'
 import { allocateArenaSpawns } from './spawnAllocation'
 import { generateProceduralArena, PROCEDURAL_FALLBACK_ARENA, requireProceduralArena } from './proceduralArena'
@@ -34,7 +34,9 @@ function visuallyDistinctVerticalCoplanarOverlaps(arena: ReturnType<typeof requi
 }
 
 function subCapsuleGaps(arena: ReturnType<typeof requireProceduralArena>, minimumClearance: number): string[] {
-  const solids = arena.surfaces.filter(({ id }) => id !== 'floor')
+  // Rotated portal parts are verified by physical capsule tests; this planar gap
+  // audit applies to the axis-aligned architectural wall shell.
+  const solids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
   const gaps: string[] = []
   const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => solids.some((candidate) => (
     candidate.id !== firstId
@@ -75,7 +77,7 @@ function subCapsuleGaps(arena: ReturnType<typeof requireProceduralArena>, minimu
   return gaps.sort()
 }
 
-describe('broken-ring-v2 procedural arenas', () => {
+describe('arena-recipes-v4 procedural arenas', () => {
   it.each(sizes)('reproduces the versioned seed corpus for %s', (size) => {
     for (const seed of seeds) {
       const first = generateProceduralArena({ size, seed })
@@ -97,8 +99,8 @@ describe('broken-ring-v2 procedural arenas', () => {
 
   it('uses distinct topology budgets rather than uniform coordinate scaling', () => {
     const arenas = sizes.map((size) => requireProceduralArena({ size, seed: 123 }))
-    expect(arenas.map(({ regions }) => regions.length)).toEqual([9, 11, 13])
-    expect(arenas.map(({ surfaces }) => surfaces.filter(({ id }) => id.startsWith('wall-architecture-room-')).length)).toEqual([16, 24, 32])
+    expect(arenas.map(({ regions }) => regions.length)).toEqual([13, 15, 17])
+    expect(arenas.map(({ surfaces }) => surfaces.filter(({ id }) => id.startsWith('wall-architecture-room-')).length)).toEqual([32, 40, 48])
     expect(new Set(arenas.map(({ contentHash }) => contentHash)).size).toBe(3)
   })
 
@@ -123,12 +125,12 @@ describe('broken-ring-v2 procedural arenas', () => {
 
   it('keeps the shipped representative identities stable', () => {
     expect(sizes.map((size) => requireProceduralArena({ size, seed: 0x53544152 }).contentHash)).toEqual([
-      'fnv1a64-v1:a1dead45415b9b55',
-      'fnv1a64-v1:f5a15c933242075c',
-      'fnv1a64-v1:d0143680450f7fe6',
+      'fnv1a64-v1:fb91186b4d17c378',
+      'fnv1a64-v1:aa615058df979579',
+      'fnv1a64-v1:8a7e93116e996351',
     ])
-    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:a1dead45415b9b55')
-    expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v2', generatorVersion: 'shipped-fallback-v2', size: 'medium' })
+    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:fb91186b4d17c378')
+    expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v4', generatorVersion: 'shipped-fallback-v4', size: 'medium' })
     expect(PROCEDURAL_FALLBACK_ARENA.contentHash).not.toBe(requireProceduralArena({ size: 'medium', seed: 0x53544152 }).contentHash)
     expect(validateArenaGameplay(PROCEDURAL_FALLBACK_ARENA, PROTOTYPE_V1_PROFILE).accepted).toBe(true)
   })
@@ -172,9 +174,9 @@ describe('broken-ring-v2 procedural arenas', () => {
     const { contentHash: _hash, ...payload } = arena
     const fragile = createArenaDefinition({ ...payload, links: payload.links.filter(({ id }) => id !== 'link-spawn-east-north' && id !== 'link-spawn-east-south') })
     expect(validateArenaGameplay(fragile, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'SINGLE_LINK_FAILURE' })]) })
-    const blocked = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'panel-collidable-large-spawn-blocker', kind: 'box', center: { ...firstAnchor.position, y: 1 }, size: { x: 2, y: 2, z: 2 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall' }] })
+    const blocked = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'panel-collidable-large-spawn-blocker', kind: 'box', center: { ...firstAnchor.position, y: 1 }, size: { x: 2, y: 2, z: 2 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall',semantics:{classification:'wall',movement:true,projectile:true,sector:'fixture'} }] })
     expect(validateArenaGameplay(blocked, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'SPAWN_INTERSECTS_STATIC_GEOMETRY' })]) })
-    const disconnected = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'wall-architecture-orphan', kind: 'box', center: { x: 0, y: 1, z: 0 }, size: { x: 1, y: 2, z: 1 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall' }] })
+    const disconnected = createArenaDefinition({ ...payload, surfaces: [...payload.surfaces, { id: 'wall-architecture-orphan', kind: 'box', center: { x: 0, y: 1, z: 0 }, size: { x: 1, y: 2, z: 1 }, orientation: { x: 0, y: 0, z: 0, w: 1 }, material: 'wall',semantics:{classification:'wall',movement:true,projectile:true,sector:'fixture'} }] })
     expect(validateArenaGameplay(disconnected, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'ARCHITECTURE_DISCONNECTED' })]) })
     const unsealed = createArenaDefinition({ ...payload, surfaces: payload.surfaces.filter(({ id }) => !id.startsWith('wall-architecture-gap-seal-')) })
     expect(validateArenaGameplay(unsealed, PROTOTYPE_V1_PROFILE)).toMatchObject({ accepted: false, errors: expect.arrayContaining([expect.objectContaining({ code: 'SUB_CAPSULE_GAP' })]) })

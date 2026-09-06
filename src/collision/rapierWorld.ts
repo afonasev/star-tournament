@@ -1,6 +1,6 @@
 import type * as Rapier from '@dimforge/rapier3d-deterministic-compat'
 
-import { validateArenaDefinition, type ArenaDefinition } from '../arena/arenaDefinition'
+import { blocksProjectiles, blocksMovement, validateArenaDefinition, type ArenaDefinition } from '../arena/arenaDefinition'
 import { contentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 import { initializeCollisionBackend } from './backendInitialization'
@@ -153,6 +153,8 @@ export class RapierCollisionWorld {
   readonly controllerConfigurationHash: ContentHash
 
   private disposed = false
+  private readonly projectileHandles = new Set<number>()
+  private readonly movementHandles = new Set<number>()
   private readonly staticSemanticIdByHandle = new Map<number, string>()
   private readonly participantSemanticIdByHandle = new Map<number, string>()
   private readonly participantBySemanticId = new Map<string, ParticipantRuntime>()
@@ -178,6 +180,8 @@ export class RapierCollisionWorld {
         .setRotation(surface.orientation)
       const collider = world.createCollider(descriptor)
       this.staticSemanticIdByHandle.set(collider.handle, surface.id)
+      if (blocksProjectiles(surface)) this.projectileHandles.add(collider.handle)
+      if (blocksMovement(surface)) this.movementHandles.add(collider.handle)
     }
 
     for (const projection of assertUniqueCapsules(capsules)) this.createParticipantRuntime(projection)
@@ -294,7 +298,7 @@ export class RapierCollisionWorld {
       undefined,
       undefined,
       (collider) => {
-        if (this.staticSemanticIdByHandle.has(collider.handle)) return true
+        if (this.staticSemanticIdByHandle.has(collider.handle)) return this.movementHandles.has(collider.handle)
         const otherId = this.participantSemanticIdByHandle.get(collider.handle)
         return otherId !== undefined && otherId !== semanticId &&
           this.participantBySemanticId.get(otherId)?.active === true
@@ -371,7 +375,7 @@ export class RapierCollisionWorld {
       undefined,
       (collider) => {
         const semanticId = this.semanticIdForHandle(collider.handle)
-        return semanticId !== undefined && !excluded.has(semanticId)
+        return semanticId !== undefined && !excluded.has(semanticId) && (!this.staticSemanticIdByHandle.has(collider.handle) || this.projectileHandles.has(collider.handle))
       },
     )
     return parseCollisionHits(hits)
@@ -407,7 +411,7 @@ export class RapierCollisionWorld {
       undefined,
       (collider) => {
         const semanticId = this.semanticIdForHandle(collider.handle)
-        return semanticId !== undefined && !excluded.has(semanticId)
+        return semanticId !== undefined && !excluded.has(semanticId) && (!this.staticSemanticIdByHandle.has(collider.handle) || this.movementHandles.has(collider.handle))
       },
     )
     return parseCollisionHits(hits)
@@ -440,6 +444,8 @@ export class RapierCollisionWorld {
   dispose(): void {
     if (this.disposed) return
     this.disposed = true
+    this.projectileHandles.clear()
+    this.movementHandles.clear()
     this.staticSemanticIdByHandle.clear()
     this.participantSemanticIdByHandle.clear()
     this.participantBySemanticId.clear()

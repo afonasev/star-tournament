@@ -1,6 +1,10 @@
+import { architecturalUv, fitWallModule } from './architecturalUv'
+import { arenaDoorwayGaps } from '../arena/doorwayGaps'
+import { portalScale } from '../arena/portalGeometry'
+import { PRESENTATION_BALANCED_V1_PROFILE, type ValidatedPresentationProfile } from '../presentation/presentationProfile'
 import * as THREE from 'three'
 
-import type { ArenaBoxSurface, ArenaDefinition } from '../arena/arenaDefinition'
+import type { ArenaDefinition } from '../arena/arenaDefinition'
 import type { RendererInfoSample } from '../performance'
 import type { ValidatedGameDesignProfile } from '../profiles/gameDesignProfile'
 import type {
@@ -154,6 +158,7 @@ export interface FirstPersonRendererOptions {
   /** Prepared presentation-only templates. Runtime owns their lifetime. */
   readonly arenaGlbAssets?: ArenaGlbTemplateCache
   /** Renderer-only setting. It never reaches ArenaDefinition or simulation. */
+  readonly presentationProfile?: ValidatedPresentationProfile
   readonly graphicsQuality?: GraphicsQualityProfile
 }
 
@@ -172,53 +177,6 @@ interface TransientMesh {
   readonly expiresAfterTick: number
 }
 
-interface ArenaDoorwayGap {
-  readonly id: string
-  readonly horizontalAlongX: boolean
-  readonly planeCoordinate: number
-  readonly spanCenter: number
-  readonly baseY: number
-  readonly height: number
-  readonly width: number
-}
-
-function arenaDoorwayGaps(surfaces: readonly ArenaBoxSurface[]): ArenaDoorwayGap[] {
-  const walls = surfaces.filter((surface) => surface.material === 'wall')
-  const gaps: ArenaDoorwayGap[] = []
-  const epsilon = 0.001
-  for (let firstIndex = 0; firstIndex < walls.length; firstIndex += 1) {
-    const first = walls[firstIndex]!
-    if (Math.abs(first.orientation.x) > epsilon || Math.abs(first.orientation.y) > epsilon || Math.abs(first.orientation.z) > epsilon || Math.abs(first.orientation.w - 1) > epsilon) continue
-    const horizontalAlongX = first.size.x >= first.size.z
-    const firstSpan = horizontalAlongX ? first.size.x : first.size.z
-    const firstStart = (horizontalAlongX ? first.center.x : first.center.z) - firstSpan / 2
-    const firstEnd = firstStart + firstSpan
-    for (const second of walls.slice(firstIndex + 1)) {
-      if (Math.abs(second.orientation.x) > epsilon || Math.abs(second.orientation.y) > epsilon || Math.abs(second.orientation.z) > epsilon || Math.abs(second.orientation.w - 1) > epsilon) continue
-      if ((second.size.x >= second.size.z) !== horizontalAlongX) continue
-      const secondPlane = horizontalAlongX ? second.center.z : second.center.x
-      const firstPlane = horizontalAlongX ? first.center.z : first.center.x
-      if (Math.abs(firstPlane - secondPlane) > epsilon || Math.abs(first.center.y - second.center.y) > epsilon || Math.abs(first.size.y - second.size.y) > epsilon) continue
-      const secondSpan = horizontalAlongX ? second.size.x : second.size.z
-      const secondStart = (horizontalAlongX ? second.center.x : second.center.z) - secondSpan / 2
-      const secondEnd = secondStart + secondSpan
-      const left = firstStart <= secondStart ? { surface: first, end: firstEnd } : { surface: second, end: secondEnd }
-      const right = firstStart <= secondStart ? { surface: second, start: secondStart } : { surface: first, start: firstStart }
-      const width = right.start - left.end
-      if (width < 1 || width > 4.5) continue
-      gaps.push({
-        id: `${left.surface.id}:${right.surface.id}`,
-        horizontalAlongX,
-        planeCoordinate: firstPlane,
-        spanCenter: left.end + width / 2,
-        baseY: first.center.y - first.size.y / 2,
-        height: first.size.y,
-        width,
-      })
-    }
-  }
-  return gaps.sort((left, right) => left.id.localeCompare(right.id, 'en'))
-}
 
 function defaultRendererFactory(): RendererPort {
   try {
@@ -245,13 +203,20 @@ function addArena(
   onTextureReady: () => void,
   graphicsQuality: GraphicsQualityProfile,
   arenaGlbAssets?: ArenaGlbTemplateCache,
+  presentationProfile: ValidatedPresentationProfile = PRESENTATION_BALANCED_V1_PROFILE,
 ): ArenaTextureKit {
+  const recipeStyle = presentationProfile.render
+  // Texture rhythm is relative to the authored 3.2 m wall module.
+  const textureDensity = recipeStyle.materialRepeatScale / 3.2
+  let localLights = 0
+  const lightBudget = graphicsQuality.id === 'low' ? 0 : graphicsQuality.id === 'balanced' ? recipeStyle.localLightCount / 2 : recipeStyle.localLightCount
   const textureKit = createArenaTextureKit(graphicsQuality, onTextureReady)
   const { wall: wallMaps, floor: floorMaps } = textureKit
   const allMaps = [wallMaps.baseColor, wallMaps.normal, wallMaps.orm, floorMaps.baseColor, floorMaps.normal, floorMaps.orm, textureKit.decalAtlas]
   textures.push(...allMaps.filter((texture): texture is THREE.Texture => texture !== undefined))
   const textured = (parameters: THREE.MeshStandardMaterialParameters, maps: { readonly baseColor: THREE.Texture; readonly normal: THREE.Texture; readonly orm: THREE.Texture }) => new THREE.MeshStandardMaterial({
     ...parameters,
+    roughness: 1, metalness: 1, // ORM maps carry the actual material values.
     map: maps.baseColor,
     normalMap: maps.normal,
     aoMap: maps.orm,
@@ -264,6 +229,8 @@ function addArena(
   const routeGuideMaterial = textureKit.decalAtlas === undefined
     ? new THREE.MeshStandardMaterial({ ...CLEAN_FUTURE_SPORT_V1.details.routeGuide, color: 0x1d5d71 })
     : new THREE.MeshStandardMaterial({ ...CLEAN_FUTURE_SPORT_V1.details.routeGuide, map: textureKit.decalAtlas, emissiveMap: textureKit.decalAtlas, emissive: 0x367d8d, emissiveIntensity: 0.22 })
+  const recipeRouteMaterial = textured({ ...CLEAN_FUTURE_SPORT_V1.details.routeGuide },wallMaps)
+  materials.push(recipeRouteMaterial)
   const portalShellMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.portalShell, wallMaps)
   const portalInnerMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.portalInner, wallMaps)
   const landmarkMaterial = textured(CLEAN_FUTURE_SPORT_V1.details.landmark, wallMaps)
@@ -276,36 +243,22 @@ function addArena(
   // renderer instance remains presentation-owned and the template cache stays immutable.
   const textureGlbInstance = (object: THREE.Object3D, map: THREE.Texture) => object.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return
-    // Authored kit geometry can omit UVs because it previously used flat colour.
-    // Give this presentation clone stable planar UVs rather than touching the cached GLB template.
-    if (child.geometry.getAttribute('uv') === undefined) {
-      const geometry = child.geometry.clone()
-      geometry.computeBoundingBox()
-      const bounds = geometry.boundingBox!
-      const position = geometry.getAttribute('position')
-      const width = Math.max(0.001, bounds.max.x - bounds.min.x)
-      const height = Math.max(0.001, bounds.max.y - bounds.min.y)
-      const uv = new Float32Array(position.count * 2)
-      for (let index = 0; index < position.count; index += 1) {
-        uv[index * 2] = (position.getX(index) - bounds.min.x) / width
-        uv[index * 2 + 1] = (position.getY(index) - bounds.min.y) / height
-      }
-      geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2))
-      child.geometry = geometry
-      geometries.push(geometry)
-    }
+    object.updateMatrixWorld(true)
+    const geometry = architecturalUv(child.geometry, child.getWorldScale(new THREE.Vector3()), textureDensity)
+    child.geometry = geometry
+    geometries.push(geometry)
     const sourceMaterials = Array.isArray(child.material) ? child.material : [child.material]
     const mapped = sourceMaterials.map((source) => {
       const material = source.clone()
       if (material instanceof THREE.MeshStandardMaterial) {
         material.map = map
         material.color.setHex(0xffffff)
-        // Some kit faces deliberately point away from the studio key light.
-        // Reuse the detail map as a restrained emissive layer so panels remain
-        // legible at gameplay distance instead of collapsing into flat black.
-        material.emissiveMap = map
-        material.emissive.setHex(0x8ca7b0)
-        material.emissiveIntensity = 0.32
+        material.normalMap = wallMaps.normal
+        material.roughnessMap = wallMaps.orm
+        material.metalnessMap = wallMaps.orm
+        material.roughness = 1
+        material.metalness = 1
+        material.emissive.setHex(0x000000)
         material.needsUpdate = true
       }
       materials.push(material)
@@ -321,7 +274,9 @@ function addArena(
     position: THREE.Vector3,
     material: THREE.Material,
   ) => {
-    const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
+    const source = new THREE.BoxGeometry(size.x, size.y, size.z)
+    const geometry = architecturalUv(source,new THREE.Vector3(1,1,1),textureDensity)
+    source.dispose()
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = name
     mesh.position.copy(position)
@@ -330,17 +285,26 @@ function addArena(
   }
 
   for (const surface of arena.surfaces) {
-    const geometry = new THREE.BoxGeometry(surface.size.x, surface.size.y, surface.size.z)
+    // The GLB portal below renders these exact authored boxes once.
+    if (arenaGlbAssets && surface.id.startsWith('portal-solid:')) continue
+    const sourceGeometry = new THREE.BoxGeometry(surface.size.x, surface.size.y, surface.size.z)
+    const geometry = architecturalUv(sourceGeometry, new THREE.Vector3(1,1,1), textureDensity)
+    sourceGeometry.dispose()
     const token = arenaMaterialToken(surface.material)
-    const material = surface.material === 'accent'
+    const special = surface.semantics?.classification === 'window' || surface.semantics?.classification === 'movement-barrier'
+    const material = special ? new THREE.MeshStandardMaterial({ color:surface.semantics?.classification === 'window' ? 0xbce8ee : 0x91f8cf, transparent:true,opacity:surface.semantics?.classification === 'window' ? recipeStyle.windowOpacity : recipeStyle.barrierOpacity,depthWrite:false,roughness:0.3,metalness:0.1 }) : surface.material === 'accent'
       ? accentShellMaterial
       : new THREE.MeshStandardMaterial({
         ...token,
+        roughness: 1, metalness: 1,
         map: surface.material === 'floor' ? floorMaps.baseColor : wallMaps.baseColor,
         normalMap: surface.material === 'floor' ? floorMaps.normal : wallMaps.normal,
         roughnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
         metalnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
       })
+    if (arena.recipeId && !special && material !== accentShellMaterial) {
+      material.color.setHex(surface.material === 'floor' ? (surface.semantics?.sector === 'atrium' ? 0xdcebf3 : 0xaec4d5) : (surface.semantics?.sector === 'north' ? 0xe4edf2 : 0xf1ebe1))
+    }
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = `arena:${surface.id}`
     mesh.position.set(surface.center.x, surface.center.y, surface.center.z)
@@ -353,13 +317,27 @@ function addArena(
     scene.add(mesh)
     geometries.push(geometry)
     materials.push(material)
+    if (surface.id.startsWith('portal-solid:')) continue
 
     const detail = new THREE.Group()
     detail.name = `presentation:detail:${surface.id}`
     detail.position.copy(mesh.position)
     detail.quaternion.copy(mesh.quaternion)
     const { x, y, z } = surface.size
-    if (surface.material === 'wall') {
+    if (special) {
+      const edgeGeometry = new THREE.EdgesGeometry(geometry)
+      const edgeMaterial = new THREE.LineBasicMaterial({color:surface.semantics?.classification === 'window' ? 0xd4eff5 : 0x80f0a4})
+      detail.add(new THREE.LineSegments(edgeGeometry,edgeMaterial))
+      geometries.push(edgeGeometry);materials.push(edgeMaterial)
+      const rim=recipeStyle.reliefDepth*2
+      const alongX=x>=z
+      const span=alongX?x:z
+      const frameMaterial=surface.semantics?.classification === 'window'?panelMaterial:trimMaterial
+      for(const side of [-1,1]) {
+        addDetailBox(detail,`presentation:pane-upright:${surface.id}:${side}`,new THREE.Vector3(alongX?rim:x,y,alongX?z:rim),new THREE.Vector3(alongX?side*(span-rim)/2:0,0,alongX?0:side*(span-rim)/2),frameMaterial)
+        addDetailBox(detail,`presentation:pane-rail:${surface.id}:${side}`,new THREE.Vector3(x,rim,z),new THREE.Vector3(0,side*(y-rim)/2,0),frameMaterial)
+      }
+    } else if (surface.material === 'wall') {
       const horizontalAlongX = x >= z
       const span = horizontalAlongX ? x : z
       const thickness = horizontalAlongX ? z : x
@@ -377,9 +355,10 @@ function addArena(
           } else {
             for (const bayOffset of [-0.32, 0.32]) {
               const bay = arenaGlbAssets.createInstance('wall-bay', 0, graphicsQuality.geometryLod)
-              textureGlbInstance(bay, wallMaps.baseColor)
+              fitWallModule(bay, span/2, y, thickness/2)
               bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`
-              bay.position.set(span * bayOffset, -y / 2, face + side * 0.08)
+              bay.position.add(new THREE.Vector3(span * (bayOffset < 0 ? -0.25 : 0.25), -y / 2, side * thickness/4))
+              textureGlbInstance(bay, wallMaps.baseColor)
               detail.add(bay)
             }
           }
@@ -395,10 +374,12 @@ function addArena(
           } else {
             for (const bayOffset of [-0.32, 0.32]) {
               const bay = arenaGlbAssets.createInstance('wall-bay', 0, graphicsQuality.geometryLod)
-              textureGlbInstance(bay, wallMaps.baseColor)
+              fitWallModule(bay, span/2, y, thickness/2)
               bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`
-              bay.position.set(face + side * 0.08, -y / 2, span * bayOffset)
+              bay.position.set(bay.position.z,bay.position.y,-bay.position.x)
+              bay.position.add(new THREE.Vector3(side*thickness/4, -y/2, span*(bayOffset<0?-0.25:0.25)))
               bay.rotation.y = Math.PI / 2
+              textureGlbInstance(bay, wallMaps.baseColor)
               detail.add(bay)
             }
           }
@@ -411,7 +392,20 @@ function addArena(
       }
     } else if (surface.material === 'floor') {
       const top = y / 2 + 0.025
-      if (arenaGlbAssets !== undefined) for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
+      if (arena.recipeId) {
+        if (surface.id !== 'floor' || !arena.surfaces.some(s=>s.semantics?.classification === 'ramp')) {
+          if (arenaGlbAssets) {
+            const guide=arenaGlbAssets.createInstance('floor-route-guide',0,graphicsQuality.geometryLod)
+            guide.name=`presentation:recipe-route:${surface.id}`
+            // Normalize the existing module to the canonical lane and the profile's relief width.
+            guide.scale.set((x-recipeStyle.reliefDepth*2)/3.2,recipeStyle.reliefDepth/0.08,recipeStyle.reliefDepth*2/0.52)
+            guide.position.y=y/2+recipeStyle.reliefDepth/4
+            detail.add(guide)
+          } else {
+          addDetailBox(detail,`presentation:recipe-route:${surface.id}`,new THREE.Vector3(Math.max(recipeStyle.reliefDepth,x-recipeStyle.reliefDepth*2),recipeStyle.reliefDepth/4,recipeStyle.reliefDepth*2),new THREE.Vector3(0,y/2+recipeStyle.reliefDepth/4,0),recipeRouteMaterial)
+          }
+        }
+      } else if (arenaGlbAssets !== undefined) for (const [index, offset] of [-0.24, 0, 0.24].entries()) {
         const guideX = arenaGlbAssets.createInstance('floor-route-guide', 0, graphicsQuality.geometryLod)
         textureGlbInstance(guideX, wallMaps.baseColor)
         guideX.name = `presentation:glb:floor-route-guide:${surface.id}:x:${index}`
@@ -430,6 +424,30 @@ function addArena(
     } else {
       addDetailBox(detail, `presentation:accent-trim:${surface.id}`, new THREE.Vector3(Math.max(0.2, x + 0.04), 0.045, Math.max(0.2, z + 0.04)), new THREE.Vector3(0, y / 2 + 0.025, 0), trimMaterial)
     }
+    for (const attachment of arena.attachments?.filter(a => a.surfaceId === surface.id) ?? []) {
+      const horizontal = x >= z
+      const faceSign = horizontal ? -Math.sign(surface.center.z || 1) : -Math.sign(surface.center.x || 1)
+      const frame = new THREE.Group()
+      frame.name = `presentation:${attachment.kind}:${attachment.id}`
+      frame.rotation.y = horizontal ? (faceSign > 0 ? 0 : Math.PI) : (faceSign > 0 ? Math.PI/2 : -Math.PI/2)
+      frame.position.set(horizontal ? 0 : faceSign*(x/2+recipeStyle.reliefDepth),attachment.kind === 'lamp' ? y/4 : 0,horizontal ? faceSign*(z/2+recipeStyle.reliefDepth) : 0)
+      if (attachment.kind === 'lamp' && arenaGlbAssets) {
+        const lamp = arenaGlbAssets.createInstance('wall-lamp',0,graphicsQuality.geometryLod)
+        textureGlbInstance(lamp,wallMaps.baseColor)
+        frame.add(lamp)
+        if (localLights < lightBudget) {
+          const light = new THREE.PointLight(surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,recipeStyle.localLightIntensity,recipeStyle.localLightDistance)
+          light.position.z = recipeStyle.reliefDepth
+          frame.add(light);localLights++
+        }
+      } else if (attachment.kind === 'relief-niche') {
+        // Shallow frame over the continuous wall. There is no floor, opening or navigable recess.
+        const span = Math.min(x >= z ? x : z,y)/2
+        for(const side of [-1,1]) addDetailBox(frame as THREE.Group,`presentation:niche-jamb:${attachment.id}:${side}`,new THREE.Vector3(recipeStyle.reliefDepth,span,recipeStyle.reliefDepth),new THREE.Vector3(side*span/2,0,0),panelMaterial)
+        addDetailBox(frame,`presentation:niche-lintel:${attachment.id}`,new THREE.Vector3(span,recipeStyle.reliefDepth,recipeStyle.reliefDepth),new THREE.Vector3(0,span/2,0),panelMaterial)
+      }
+      detail.add(frame)
+    }
     scene.add(detail)
   }
 
@@ -441,9 +459,12 @@ function addArena(
   const minZ = Math.min(...arena.surfaces.map((surface) => surface.center.z - surface.size.z / 2))
   const maxZ = Math.max(...arena.surfaces.map((surface) => surface.center.z + surface.size.z / 2))
   const tallestSurface = Math.max(...arena.surfaces.map((surface) => surface.center.y + surface.size.y / 2))
-  const ceilingGeometry = new THREE.BoxGeometry(maxX - minX + 0.2, 0.12, maxZ - minZ + 0.2)
+  const ceilingSource = new THREE.BoxGeometry(maxX - minX + 0.2, 0.12, maxZ - minZ + 0.2)
+  const ceilingGeometry = architecturalUv(ceilingSource,new THREE.Vector3(1,1,1),textureDensity)
+  ceilingSource.dispose()
   const ceilingMaterial = new THREE.MeshStandardMaterial({
     ...CLEAN_FUTURE_SPORT_V1.materials.wall,
+    roughness: 1, metalness: 1,
     map: wallMaps.baseColor,
     normalMap: wallMaps.normal,
     roughnessMap: wallMaps.orm,
@@ -458,12 +479,14 @@ function addArena(
   materials.push(ceilingMaterial)
 
   for (const gap of arenaDoorwayGaps(arena.surfaces)) {
+    if(!arenaGlbAssets && arena.surfaces.some(s=>s.id.startsWith('portal-solid:'))) continue
     if (arenaGlbAssets !== undefined) {
       const portal = arenaGlbAssets.createInstance('portal-facade', 0, graphicsQuality.geometryLod)
-      textureGlbInstance(portal, wallMaps.baseColor)
       portal.name = `presentation:glb:portal-facade:${gap.id}`
+      if(arena.surfaces.some(s=>s.id.startsWith('portal-solid:'))) portal.scale.setScalar(portalScale(gap.width))
       if (gap.horizontalAlongX) portal.position.set(gap.spanCenter, gap.baseY, gap.planeCoordinate)
       else { portal.position.set(gap.planeCoordinate, gap.baseY, gap.spanCenter); portal.rotation.y = Math.PI / 2 }
+      textureGlbInstance(portal, wallMaps.baseColor)
       scene.add(portal)
       continue
     }
@@ -599,6 +622,7 @@ export function createFirstPersonRenderer({
   ticksPerSecond = DEFAULT_PRESENTATION_TICKS_PER_SECOND,
   arenaGlbAssets,
   graphicsQuality,
+  presentationProfile,
 }: FirstPersonRendererOptions): FirstPersonRenderer {
   if (!Number.isFinite(ticksPerSecond) || ticksPerSecond <= 0) {
     throw new RangeError('FirstPersonRenderer ticksPerSecond must be greater than zero')
@@ -628,7 +652,7 @@ export function createFirstPersonRenderer({
   const materials: THREE.Material[] = []
   const textures: THREE.Texture[] = []
   const activeGraphicsQuality = graphicsQuality ?? GRAPHICS_QUALITY_V1.balanced
-  const textureKit = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets)
+  const textureKit = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets, presentationProfile)
   const participantTexture = textureKit.wall.baseColor
 
   const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)

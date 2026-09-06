@@ -1,8 +1,7 @@
 import { type ContentHash } from '../core/canonical'
-import { PROTOTYPE_V1_PROFILE } from '../profiles/gameDesignProfile'
+import { PROTOTYPE_V1_PROFILE } from '../profiles/legacyGameDesignProfileV6'
 
 import {
-  ARENA_DEFINITION_SCHEMA_VERSION,
   createArenaDefinition,
   type ArenaBoxSurface,
   type ArenaDefinition,
@@ -34,7 +33,7 @@ const spawnAnchors: ArenaSpawnAnchor[] = [
 ]
 
 const payload: ArenaDefinitionPayload = {
-  schemaVersion: ARENA_DEFINITION_SCHEMA_VERSION,
+  schemaVersion: 3,
   id: 'diagnostic-arena',
   seed: 0x53544152,
   size: 'small',

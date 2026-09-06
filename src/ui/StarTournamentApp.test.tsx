@@ -46,7 +46,7 @@ describe('StarTournamentApp session owner', () => {
     expect(await screen.findByText(/Арена не создана/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Запустить запасную арену' }))
     await waitFor(() => expect(bootstrap).toHaveBeenCalledOnce())
-    expect(calls[0]?.arena?.id).toBe('shipped-fallback-arena-v2')
+    expect(calls[0]?.arena?.id).toBe('shipped-fallback-arena-v4')
     expect(calls[0]?.configuration?.arenaSeed).toBe(calls[0]?.arena?.seed)
   })
 })

@@ -163,7 +163,7 @@ async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphi
 }
 
 const previewPort = await reservePort()
-const previewUrl = `http://127.0.0.1:${previewPort}/?performanceBenchmark=1`
+const previewUrl = `http://127.0.0.1:${previewPort}/?performanceBenchmark=1&muted=1`
 const arenaSize = process.env.STAR_TOURNAMENT_ARENA_SIZE ?? 'medium'
 if (!['small', 'medium', 'large'].includes(arenaSize)) throw new Error('STAR_TOURNAMENT_ARENA_SIZE must be small, medium, or large')
 const arenaSeed = Number(process.env.STAR_TOURNAMENT_ARENA_SEED ?? 0x53544152)
@@ -197,6 +197,7 @@ try {
   await waitForHttp(previewUrl, preview)
   chrome = spawn(chromePath, [
     '--headless=new',
+    '--mute-audio',
     '--remote-debugging-port=0',
     `--user-data-dir=${browserProfile}`,
     '--no-first-run',
@@ -247,5 +248,6 @@ try {
   client?.close()
   chrome?.kill('SIGTERM')
   preview.kill('SIGTERM')
-  await rm(browserProfile, { recursive: true, force: true })
+  // Chromium can finish profile writes after SIGTERM; tolerate that cleanup race.
+  await rm(browserProfile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })
 }

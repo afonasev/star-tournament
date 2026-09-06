@@ -1,6 +1,6 @@
 import { deepFreeze } from '../core/deepFreeze'
 
-export const ARENA_GLB_ASSET_KEYS = ['portal-facade', 'wall-bay', 'floor-route-guide', 'central-landmark', 'light-sport-robot', 'double-barrel-shotgun', 'first-person-shotgun'] as const
+export const ARENA_GLB_ASSET_KEYS = ['wall-lamp', 'portal-facade', 'wall-bay', 'floor-route-guide', 'central-landmark', 'light-sport-robot', 'double-barrel-shotgun', 'first-person-shotgun'] as const
 export type ArenaGlbAssetKey = (typeof ARENA_GLB_ASSET_KEYS)[number]
 
 export interface ArenaGlbAssetEntry {
@@ -21,6 +21,7 @@ const arenaAssetUri = (name: string) => new URL(`../../public/assets/arena/${nam
 const participantAssetUri = (name: string) => new URL(`../../public/assets/participants/${name}`, import.meta.url).href
 
 export const CLEAN_FUTURE_SPORT_GLB_V1: ArenaGlbManifest = deepFreeze({
+  'wall-lamp': { key:'wall-lamp',lod:{lod0Uri:arenaAssetUri('wall-lamp-lod0.glb'),lod1Uri:arenaAssetUri('wall-lamp-lod1.glb'),switchDistanceMeters:16,hysteresisMeters:2},attachment:'wall-surface',units:'meters',axes:{up:'+Y',front:'+Z'},pivot:'wall-base-center',attachmentBoundsMeters:{x:0.8,y:0.3,z:0.16},collisionProxyAudit:{id:'wall-lamp-audit-proxy',boundsMeters:[0.8,0.3,0.16]} },
   'portal-facade': { key: 'portal-facade', lod: { lod0Uri: arenaAssetUri('portal-facade-lod0.glb'), lod1Uri: arenaAssetUri('portal-facade-lod1.glb'), switchDistanceMeters: 18, hysteresisMeters: 2 }, attachment: 'doorway-gap', units: 'meters', axes: { up: '+Y', front: '+Z' }, pivot: 'doorway-plane-center', attachmentBoundsMeters: { x: 4, y: 4, z: 0.8 }, collisionProxyAudit: { id: 'portal-facade-audit-proxy', boundsMeters: [4, 4, 0.8] } },
   'wall-bay': { key: 'wall-bay', lod: { lod0Uri: arenaAssetUri('wall-bay-lod0.glb'), lod1Uri: arenaAssetUri('wall-bay-lod1.glb'), switchDistanceMeters: 16, hysteresisMeters: 2 }, attachment: 'wall-surface', units: 'meters', axes: { up: '+Y', front: '+Z' }, pivot: 'wall-base-center', attachmentBoundsMeters: { x: 3.2, y: 3.4, z: 0.4 }, collisionProxyAudit: { id: 'wall-bay-audit-proxy', boundsMeters: [3.2, 3.4, 0.4] } },
   'floor-route-guide': { key: 'floor-route-guide', lod: { lod0Uri: arenaAssetUri('floor-route-guide-lod0.glb'), lod1Uri: arenaAssetUri('floor-route-guide-lod1.glb'), switchDistanceMeters: 14, hysteresisMeters: 2 }, attachment: 'floor-surface', units: 'meters', axes: { up: '+Y', front: '+Z' }, pivot: 'floor-contact-center', attachmentBoundsMeters: { x: 3.2, y: 0.08, z: 0.35 }, collisionProxyAudit: { id: 'floor-route-guide-audit-proxy', boundsMeters: [3.2, 0.08, 0.35] } },

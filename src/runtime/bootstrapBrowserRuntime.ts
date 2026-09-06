@@ -1,3 +1,4 @@
+import { validateArenaPhysicalRoutes } from '../arena/physicalValidation'
 import { collisionCheckpointHash, COLLISION_ERROR_CODES, RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, type CollisionCapsuleProjection, type CollisionCheckpointPayload } from '../collision/contracts'
 import { initializeCollisionBackend } from '../collision/backendInitialization'
 import { requireProceduralArena, type ArenaDefinition } from '../arena'
@@ -448,6 +449,7 @@ export async function bootstrapBrowserRuntime(
     const warmStart = now()
     await initializeBackend()
     const warm = now() - warmStart
+    await validateArenaPhysicalRoutes(arena,profile)
     collisionWorld = await createCollision(
       arena,
       livingParticipantCollisionCapsules(initialState, profile),
@@ -492,6 +494,7 @@ export async function bootstrapBrowserRuntime(
       profile,
       pixelBudget: presentationProfile.render.backingBufferPixelBudget * Math.pow(dependencies.graphicsQuality?.renderScale ?? 1, 2),
       graphicsQuality: dependencies.graphicsQuality,
+      presentationProfile,
       onWebGlSubmission: (rendererInfo) => {
         if (performanceRecording) {
           performanceProbe?.recordWebGlSubmission(rendererInfo)

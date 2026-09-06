@@ -43,7 +43,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
     expect(PRESENTATION_BALANCED_V1_PROFILE).toMatchObject({
       schemaVersion: 1,
       id: 'presentation-balanced-v1',
-      revision: 1,
+      revision: 2,
       source: 'shipped',
       render: { backingBufferPixelBudget: 2_073_600 },
       ui: { maximumPublicationsPerSecond: 10 },
@@ -52,29 +52,9 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
   })
 
   it('has exactly one complete descriptor for each numeric presentation value', () => {
-    expect(PRESENTATION_PROFILE_DESCRIPTORS).toEqual([
-      {
-        path: 'render.backingBufferPixelBudget',
-        group: 'render',
-        label: expect.any(String),
-        description: expect.any(String),
-        unit: 'pixels',
-        minimum: 230_400,
-        maximum: 8_294_400,
-        step: 57_600,
-      },
-      {
-        path: 'ui.maximumPublicationsPerSecond',
-        group: 'ui',
-        label: expect.any(String),
-        description: expect.any(String),
-        unit: 'publications-per-second',
-        minimum: 1,
-        maximum: 60,
-        step: 1,
-      },
-    ])
-    expect(new Set(PRESENTATION_PROFILE_DESCRIPTORS.map(({ path }) => path)).size).toBe(2)
+    const paths = [...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.render).map(key=>`render.${key}`),...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.ui).map(key=>`ui.${key}`)]
+    expect(PRESENTATION_PROFILE_DESCRIPTORS.map(d=>d.path).sort()).toEqual(paths.sort())
+    expect(new Set(PRESENTATION_PROFILE_DESCRIPTORS.map(d=>d.path)).size).toBe(paths.length)
     for (const descriptor of PRESENTATION_PROFILE_DESCRIPTORS) {
       expect(descriptor.label).not.toHaveLength(0)
       expect(descriptor.description).not.toHaveLength(0)
@@ -172,7 +152,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
   it('derives a stable canonical identity from all effective presentation content', () => {
     expect(PRESENTATION_BALANCED_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
     expect(PRESENTATION_BALANCED_V1_PROFILE.contentHash).toBe(
-      'fnv1a64-v1:55cc3328dc79dab6',
+      'fnv1a64-v1:30cb0b96ac4a99ff',
     )
     expect(computePresentationProfileContentHash(cloneProfile())).toBe(
       PRESENTATION_BALANCED_V1_PROFILE.contentHash,

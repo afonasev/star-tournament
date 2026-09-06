@@ -1,9 +1,10 @@
+import { validateGameDesignProfile as validateLegacyProfile } from './legacyGameDesignProfileV6'
 import { BOT_RULES, BOT_DESCRIPTORS, type BotRules } from './botRules'
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 
 import { deepFreeze, type DeepReadonly } from './deepFreeze'
 
-export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 6 as const
+export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 7 as const
 
 export type GameDesignProfileSource = 'shipped' | 'local'
 
@@ -18,6 +19,12 @@ export interface ArenaGeneratorPresetRules {
   doorwayWidthMeters: number
   perimeterInsetMeters: number
   routeInsetMeters: number
+  recipeCount: number
+  elevationDeltaMeters: number
+  rampWidthMeters: number
+  rampLengthMeters: number
+  barrierLowMeters: number
+  barrierHighMeters: number
   coverCount: number
   coverSizeMeters: number
   spawnSlotCount: number
@@ -181,6 +188,12 @@ function arenaGeneratorDescriptors(size: ArenaGeneratorSize): NumericProfileDesc
     { path: `${prefix}.doorwayWidthMeters`, group, label: `Ширина дверей ${sizeLabel} арены`, description: 'Свободная ширина читаемого разрыва в стеновой цепочке.', unit: 'meters', minimum: 1.5, maximum: 8, step: 0.5 },
     { path: `${prefix}.perimeterInsetMeters`, group, label: `Глубина уступов ${sizeLabel} арены`, description: 'Глубина размерно-зависимых ниш замкнутого внешнего контура.', unit: 'meters', minimum: 1, maximum: 10, step: 0.5 },
     { path: `${prefix}.routeInsetMeters`, group, label: `Отступ маршрута ${sizeLabel} арены`, description: 'Отступ внешнего кольцевого маршрута от границы арены.', unit: 'meters', minimum: 3, maximum: 16, step: 0.5 },
+    { path: `${prefix}.recipeCount`, group, label: `Количество рецептов ${sizeLabel}`, description: 'Число доступных именованных композиций.', unit: 'count', minimum: 4, maximum: 4, step: 1 },
+    { path: `${prefix}.elevationDeltaMeters`, group, label: `Перепад уровня ${sizeLabel}`, description: 'Высота поднятой зоны над базовым полом.', unit: 'meters', minimum: 0.5, maximum: 1.5, step: 0.25 },
+    { path: `${prefix}.rampWidthMeters`, group, label: `Ширина рампы ${sizeLabel}`, description: 'Поперечный размер двунаправленного перехода.', unit: 'meters', minimum: 3, maximum: 8, step: 0.5 },
+    { path: `${prefix}.rampLengthMeters`, group, label: `Длина рампы ${sizeLabel}`, description: 'Горизонтальный пробег перехода между уровнями.', unit: 'meters', minimum: 3, maximum: 8, step: 0.5 },
+    { path: `${prefix}.barrierLowMeters`, group, label: `Низкий барьер ${sizeLabel}`, description: 'Высота movement-only барьера.', unit: 'meters', minimum: 0.5, maximum: 1.5, step: 0.25 },
+    { path: `${prefix}.barrierHighMeters`, group, label: `Высокий барьер ${sizeLabel}`, description: 'Высота высокого movement-only барьера.', unit: 'meters', minimum: 1, maximum: 2.5, step: 0.25 },
     { path: `${prefix}.coverCount`, group, label: `Количество укрытий ${sizeLabel} арены`, description: 'Число примыкающих к архитектуре buttress/pilaster cover primitives.', unit: 'count', minimum: 4, maximum: 32, step: 1 },
     { path: `${prefix}.coverSizeMeters`, group, label: `Размер укрытий ${sizeLabel} арены`, description: 'Базовый footprint примыкающего к стене укрытия.', unit: 'meters', minimum: 1, maximum: 6, step: 0.5 },
     { path: `${prefix}.spawnSlotCount`, group, label: `Spawn slots ${sizeLabel} арены`, description: 'Общее число distinct spawn slots во всех regions.', unit: 'count', minimum: 12, maximum: 32, step: 4 },
@@ -760,6 +773,8 @@ export function canonicalProfileJson(profile: GameDesignProfile): string {
 // inputs are always validated again, even when the caller reuses their identity.
 const validatedProfiles = new WeakMap<object, ProfileValidationResult>()
 export function validateGameDesignProfile(value: unknown): ProfileValidationResult {
+  // Frozen v6 reader retains old rule bytes; new generation requires the v7 recipe fields.
+  if (typeof value === 'object' && value !== null && 'schemaVersion' in value && value.schemaVersion === 6) return validateLegacyProfile(value) as unknown as ProfileValidationResult
   if (value !== null && typeof value === 'object') {
     const cached = validatedProfiles.get(value)
     if (cached) return cached
@@ -1055,6 +1070,18 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
     const coverSize = readPath(value, `${prefix}.coverSizeMeters`)
     const slotCount = readPath(value, `${prefix}.spawnSlotCount`)
     const separation = readPath(value, `${prefix}.minimumSpawnSeparationMeters`)
+    const elevation = readPath(value, `${prefix}.elevationDeltaMeters`) as number
+    const rampWidth = readPath(value, `${prefix}.rampWidthMeters`) as number
+    const rampLength = readPath(value, `${prefix}.rampLengthMeters`) as number
+    const low = readPath(value, `${prefix}.barrierLowMeters`) as number
+    const high = readPath(value, `${prefix}.barrierHighMeters`) as number
+    const ceiling = readPath(value, `${prefix}.wallHeightMeters`) as number
+    const capsuleHeight = 2 * ((readPath(value, 'rules.player.capsule.halfHeight') as number) + (capsuleRadius as number))
+    const maxSlope = readPath(value, 'rules.player.movement.maxSlopeClimbDegrees') as number
+    if (rampWidth < (doorwayWidth as number) || rampWidth > (corridorWidth as number) || Math.atan2(elevation, rampLength) * 180 / Math.PI > maxSlope || elevation + capsuleHeight >= ceiling || low > high || high >= ceiling || rampLength * 2 >= (width as number) - 2 * ((perimeterInset as number) + (routeInset as number))) {
+      arenaContractInvalid = true
+      arenaPaths.push(...['elevationDeltaMeters', 'rampWidthMeters', 'rampLengthMeters', 'barrierLowMeters', 'barrierHighMeters'].map(field => `${prefix}.${field}`))
+    }
     const numeric = [width, depth, wallThickness, corridorWidth, doorwayWidth, perimeterInset, routeInset, coverSize, slotCount, separation]
     if (!numeric.every((entry) => typeof entry === 'number' && Number.isFinite(entry))) continue
     if (
@@ -1116,7 +1143,7 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 6,
+  revision: 7,
   source: 'shipped',
   rules: {
     bots: BOT_RULES,
@@ -1175,9 +1202,9 @@ const prototypePayload: GameDesignProfilePayload = {
     death: { killcamSeconds: 3, corpseSeconds: 10 },
     arenaGenerator: {
       presets: {
-        small: { widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
-        medium: { widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
-        large: { widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
+        small: { recipeCount: 4, elevationDeltaMeters: 0.75, rampWidthMeters: 4, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
+        medium: { recipeCount: 4, elevationDeltaMeters: 0.75, rampWidthMeters: 5, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
+        large: { recipeCount: 4, elevationDeltaMeters: 0.75, rampWidthMeters: 6, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
       },
     },
   },

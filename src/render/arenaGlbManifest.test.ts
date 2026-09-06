@@ -74,3 +74,11 @@ describe('clean-future-sport-glb-v1 manifest', () => {
     }
   })
 })
+
+it('audits the local lamp pair and reduced LOD without changing the template lifecycle', () => {
+  const lod0=readGlbAsset('wall-lamp-lod0.glb')
+  const lod1=readGlbAsset('wall-lamp-lod1.glb')
+  expect(lod0.asset.extras).toEqual({units:'meters',up:'+Y',front:'+Z',pivot:'wall-base-center',attachmentBoundsMeters:[0.8,0.3,0.16]})
+  expect(lod1.asset.extras).toEqual(lod0.asset.extras)
+  expect(lod1.nodes.length).toBeLessThan(lod0.nodes.length)
+})

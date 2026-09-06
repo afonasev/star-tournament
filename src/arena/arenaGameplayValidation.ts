@@ -1,9 +1,11 @@
+import { arenaNavigation } from '../ai/navigation'
+import { arenaFloorHeight } from './elevation'
 import { deepFreeze } from '../core/deepFreeze'
 import { type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
 
-import { type ArenaDefinition, type ArenaSpawnAnchor } from './arenaDefinition'
+import { blocksProjectiles, supportsNavigation, type ArenaDefinition, type ArenaSpawnAnchor } from './arenaDefinition'
 
-export const ARENA_GAMEPLAY_VALIDATION_VERSION = 'arena-gameplay-v2' as const
+export const ARENA_GAMEPLAY_VALIDATION_VERSION = 'arena-gameplay-v3' as const
 
 export type ArenaGameplayValidationErrorCode =
   | 'PROFILE_IDENTITY_MISMATCH'
@@ -19,9 +21,13 @@ export type ArenaGameplayValidationErrorCode =
   | 'DOORWAY_CLEARANCE_FAILED'
   | 'SUB_CAPSULE_GAP'
   | 'MODE_FAIRNESS_FAILED'
+  | 'INVALID_ELEVATION_ROUTE'
 
 export interface ArenaGameplayValidationError { readonly code: ArenaGameplayValidationErrorCode; readonly semanticIds: readonly string[]; readonly message: string }
 export interface ArenaGameplayValidationMetrics {
+  readonly recipeId: string
+  readonly rampCount: number
+  readonly maximumRouteDistanceMeters: number
   readonly regionCount: number
   readonly linkCount: number
   readonly freeSpawnSlotCount: number
@@ -46,7 +52,7 @@ export interface ArenaGameplayValidationReport {
 
 function overlapsSolid(anchor: ArenaSpawnAnchor, arena: ArenaDefinition, radius: number): boolean {
   return arena.surfaces.some((surface) => {
-    if (surface.id === 'floor') return false
+    if (supportsNavigation(surface)) return false
     const dx = Math.abs(anchor.position.x - surface.center.x)
     const dz = Math.abs(anchor.position.z - surface.center.z)
     return dx < surface.size.x / 2 + radius && dz < surface.size.z / 2 + radius && surface.center.y + surface.size.y / 2 > 0
@@ -110,7 +116,7 @@ function segmentIntersectsBox(first: { x: number; z: number }, second: { x: numb
 }
 
 function hasLineOfSight(first: ArenaSpawnAnchor, second: ArenaSpawnAnchor, arena: ArenaDefinition): boolean {
-  return !arena.surfaces.some((surface) => surface.id !== 'floor' && !surface.id.startsWith('wall-perimeter-') && surface.size.y >= 1.5 && segmentIntersectsBox(first.position, second.position, surface.center, surface.size.x / 2, surface.size.z / 2))
+  return !arena.surfaces.some((surface) => !supportsNavigation(surface) && blocksProjectiles(surface) && !surface.id.startsWith('wall-perimeter-') && surface.size.y >= 1.5 && segmentIntersectsBox(first.position, second.position, surface.center, surface.size.x / 2, surface.size.z / 2))
 }
 
 function surfacesTouch(first: ArenaDefinition['surfaces'][number], second: ArenaDefinition['surfaces'][number], tolerance = 0.02): boolean {
@@ -119,7 +125,9 @@ function surfacesTouch(first: ArenaDefinition['surfaces'][number], second: Arena
 }
 
 function subCapsuleGapSurfaceIds(arena: ArenaDefinition, minimumClearance: number): string[] {
-  const solids = arena.surfaces.filter(({ id }) => id !== 'floor')
+  // Rotated portal parts are verified by physical capsule tests; this planar gap
+  // audit applies to the axis-aligned architectural wall shell.
+  const solids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
   const affected = new Set<string>()
   const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => solids.some((candidate) => (
     candidate.id !== firstId
@@ -199,11 +207,20 @@ function architectureMetrics(arena: ArenaDefinition, rules: GameDesignProfile['r
   return { perimeter, architecture, disconnected, irregularPerimeter: perimeterClosed && hasInsetHorizontal && hasInsetVertical, doorwayCount: roomPrefixes.length, invalidDoorways, corridorClearanceMeters }
 }
 
-function fairnessMetrics(arena: ArenaDefinition): { maximumTeamDistanceRatio: number; initialEnemyLosRatio: number } {
+function fairnessMetrics(arena: ArenaDefinition, profile: GameDesignProfile | ValidatedGameDesignProfile): { maximumTeamDistanceRatio: number; initialEnemyLosRatio: number } {
   const combat = arena.regions.filter(({ role }) => role === 'combat')
+  const nav = arena.recipeId ? arenaNavigation(arena,profile as ValidatedGameDesignProfile) : undefined
+  const routeLength = (a:typeof combat[number]['center'],b:typeof a) => {
+    if (!nav) return planarDistance(a,b)
+    const route=nav.route(a,b)
+    if (!route.length) return Infinity
+    let previous=a,total=0
+    for(const point of route) { total+=Math.hypot(point.x-previous.x,point.y-previous.y,point.z-previous.z);previous=point }
+    return total
+  }
   const distances = new Map(arena.spawnRegions.map((spawn) => {
     const region = arena.regions.find(({ id }) => id === spawn.regionId)!
-    return [spawn.id, Math.min(...combat.map((target) => planarDistance(region.center, target.center)))] as const
+    return [spawn.id, Math.min(...combat.map((target) => routeLength(region.center, target.center)))] as const
   }))
   const opposingPairs = [['spawn-region-east', 'spawn-region-west'], ['spawn-region-north', 'spawn-region-south']] as const
   const distanceRatios = opposingPairs.map(([first, second]) => {
@@ -251,7 +268,21 @@ export function validateArenaGameplay(arena: ArenaDefinition, profile: GameDesig
   if (architecture.doorwayCount < 2 || architecture.invalidDoorways.length > 0) errors.push({ code: 'DOORWAY_CLEARANCE_FAILED', semanticIds: architecture.invalidDoorways, message: 'Room doorway не сохраняет profile-defined capsule clearance.' })
   const narrowGapSurfaces = subCapsuleGapSurfaceIds(arena, radius * 2)
   if (narrowGapSurfaces.length > 0) errors.push({ code: 'SUB_CAPSULE_GAP', semanticIds: narrowGapSurfaces, message: 'Визуально открытый промежуток уже полного clearance participant capsule.' })
-  const fairness = fairnessMetrics(arena)
+  let maximumRouteDistanceMeters = 0
+  if (arena.recipeId) {
+    const nav = arenaNavigation(arena, profile as ValidatedGameDesignProfile)
+    const failed: string[] = []
+    for (const spawn of arena.spawnAnchors) {
+      const center = arena.regions.find(r => r.id === 'combat-center')!.center
+      const route = nav.route(spawn.position,center)
+      if (!route.length || arenaFloorHeight(arena,spawn.position.x,spawn.position.z) === undefined) failed.push(spawn.id)
+      let previous = spawn.position, total = 0
+      for(const point of route) { total += Math.hypot(point.x-previous.x,point.y-previous.y,point.z-previous.z); previous=point }
+      maximumRouteDistanceMeters = Math.max(maximumRouteDistanceMeters,total)
+    }
+    if(failed.length) errors.push({code:'INVALID_ELEVATION_ROUTE',semanticIds:failed,message:'Spawn не имеет непрерывного поддерживаемого маршрута к combat center.'})
+  }
+  const fairness = fairnessMetrics(arena,profile)
   if (fairness.maximumTeamDistanceRatio > rules.maximumTeamDistanceRatio || fairness.initialEnemyLosRatio > rules.maximumInitialEnemyLosRatio) errors.push({ code: 'MODE_FAIRNESS_FAILED', semanticIds: arena.spawnRegions.map(({ id }) => id), message: 'Navigation-distance либо enemy-LOS metric вышла за предел profile.' })
   return deepFreeze({
     version: ARENA_GAMEPLAY_VALIDATION_VERSION,
@@ -260,6 +291,9 @@ export function validateArenaGameplay(arena: ArenaDefinition, profile: GameDesig
     supportedModes: ['ffa', 'teams'] as const,
     accepted: errors.length === 0,
     metrics: {
+      recipeId: arena.recipeId ?? arena.generatorVersion,
+      rampCount:arena.surfaces.filter(s=>s.semantics?.classification === 'ramp').length,
+      maximumRouteDistanceMeters,
       regionCount: arena.regions.length,
       linkCount: arena.links.length,
       freeSpawnSlotCount: free.length,

@@ -18,6 +18,13 @@ export interface PresentationProfilePayload {
   source: PresentationProfileSource
   render: {
     backingBufferPixelBudget: number
+    windowOpacity: number
+    barrierOpacity: number
+    localLightIntensity: number
+    localLightDistance: number
+    localLightCount: number
+    reliefDepth: number
+    materialRepeatScale: number
   }
   ui: {
     maximumPublicationsPerSecond: number
@@ -32,7 +39,7 @@ export type ShippedPresentationProfile = Readonly<PresentationProfile>
 export type ValidatedPresentationProfile = Readonly<PresentationProfile>
 
 export type PresentationProfileDescriptorGroup = 'render' | 'ui'
-export type PresentationProfileDescriptorUnit = 'pixels' | 'publications-per-second'
+export type PresentationProfileDescriptorUnit = 'pixels' | 'publications-per-second' | 'ratio' | 'meters' | 'count' | 'intensity'
 
 export interface NumericPresentationProfileDescriptor {
   path: string
@@ -46,6 +53,14 @@ export interface NumericPresentationProfileDescriptor {
 }
 
 const descriptors: NumericPresentationProfileDescriptor[] = [
+  {path:'render.materialRepeatScale',group:'render',label:'Ритм панелей',description:'Частота повторения фактуры по semantic sector.',unit:'ratio',minimum:0.5,maximum:4,step:0.5},
+  { path:'render.windowOpacity',group:'render',label:'Прозрачность окна',description:'Доля непрозрачности непростреливаемого стекла.',unit:'ratio',minimum:0.1,maximum:0.8,step:0.05 },
+  { path:'render.barrierOpacity',group:'render',label:'Прозрачность барьера',description:'Видимость movement-only энергетической сетки.',unit:'ratio',minimum:0.1,maximum:0.8,step:0.05 },
+  { path:'render.localLightIntensity',group:'render',label:'Сила локального света',description:'Световой акцент у маршрутной лампы.',unit:'intensity',minimum:0,maximum:20,step:0.5 },
+  { path:'render.localLightDistance',group:'render',label:'Дальность лампы',description:'Расстояние затухания локального света.',unit:'meters',minimum:2,maximum:20,step:1 },
+  { path:'render.localLightCount',group:'render',label:'Бюджет ламп',description:'Верхний предел локальных источников на High/Ultra; Balanced использует половину, Low ноль.',unit:'count',minimum:0,maximum:8,step:2 },
+  { path:'render.reliefDepth',group:'render',label:'Глубина рельефа',description:'Толщина декоративной рамки неглубокой ниши.',unit:'meters',minimum:0.02,maximum:0.2,step:0.02 },
+
   {
     path: 'render.backingBufferPixelBudget',
     group: 'render',
@@ -297,9 +312,9 @@ const balancedPayload: PresentationProfilePayload = {
   schemaVersion: PRESENTATION_PROFILE_SCHEMA_VERSION,
   id: 'presentation-balanced-v1',
   name: 'Presentation Balanced v1',
-  revision: 1,
+  revision: 2,
   source: 'shipped',
-  render: { backingBufferPixelBudget: 2_073_600 },
+  render: { backingBufferPixelBudget: 2_073_600, windowOpacity:0.25, barrierOpacity:0.2,localLightIntensity:4,localLightDistance:8,localLightCount:4,reliefDepth:0.08,materialRepeatScale:1.5 },
   ui: { maximumPublicationsPerSecond: 10 },
 }
 

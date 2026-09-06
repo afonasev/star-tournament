@@ -1,5 +1,4 @@
 import {
-  ARENA_DEFINITION_SCHEMA_VERSION,
   createArenaDefinition,
   computeArenaContentHash,
   type ArenaDefinitionPayload,
@@ -7,7 +6,7 @@ import {
   type ArenaQuaternion,
 } from '../arena/arenaDefinition'
 import { type ContentHash } from '../core/canonical'
-import { PROTOTYPE_V1_PROFILE } from '../profiles/gameDesignProfile'
+import { PROTOTYPE_V1_PROFILE } from '../profiles/legacyGameDesignProfileV6'
 
 export const COLLISION_FIXTURE_ID = 'collision-fixture-v1' as const
 
@@ -33,7 +32,7 @@ const surfaces: ArenaPrimitiveSurface[] = [
 ]
 
 const payload: ArenaDefinitionPayload = {
-  schemaVersion: ARENA_DEFINITION_SCHEMA_VERSION,
+  schemaVersion: 3,
   id: COLLISION_FIXTURE_ID,
   seed: 0x434f4c4c,
   size: 'small',
