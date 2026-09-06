@@ -529,7 +529,7 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName(`target:${destroyedTargetId}`)?.userData.presentationState)
       .toBe('destroyed')
 
-    adapter.render(snapshot({ tick: 20 }))
+    adapter.render(snapshot({ tick: 25 }))
     expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', false)
     expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', false)
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)

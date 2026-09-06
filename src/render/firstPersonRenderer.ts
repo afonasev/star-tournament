@@ -914,7 +914,13 @@ export function createFirstPersonRenderer({
       scene.add(trails)
       transientByEventId.set(`trails:${event.eventId}`, {
         mesh: trails,
-        expiresAfterTick: event.tick + eventDurationTicks(profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds, ticksPerSecond),
+        // A trail has to outlive the sub-frame muzzle burst to be perceived on
+        // every shot. Both durations are existing profile-owned feedback windows.
+        expiresAfterTick: event.tick + eventDurationTicks(
+          profile.rules.weapons.doubleBarrelShotgun.impactFeedbackSeconds
+            + profile.rules.weapons.doubleBarrelShotgun.hitmarkerSeconds,
+          ticksPerSecond,
+        ),
       })
     }
     const createImpact = (event: FirstPersonImpactRenderEvent) => {
