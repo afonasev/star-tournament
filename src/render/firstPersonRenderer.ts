@@ -807,7 +807,10 @@ export function createFirstPersonRenderer({
   const impactSparkGeometry = new THREE.ConeGeometry(0.022, 0.18, 4)
   const surfaceImpactMaterial = new THREE.MeshBasicMaterial({ color: 0xffc46d, transparent: true, opacity: 0.9 })
   const robotImpactMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0d0, transparent: true, opacity: 0.9 })
-  const trailMaterial = new THREE.LineBasicMaterial({ color: 0xffd08a, transparent: true, opacity: 0.78 })
+  // WebGL line width is implementation-limited to one physical pixel. A tiny
+  // emissive cylinder remains legible on 4K displays without extra draw calls.
+  const tracerGeometry = new THREE.CylinderGeometry(0.026, 0.044, 1, 6, 1, true)
+  const tracerMaterial = new THREE.MeshBasicMaterial({ color: 0xffcf82, transparent: true, opacity: 0.88 })
   const destroyedGeometry = new THREE.SphereGeometry(1.05, 12, 8)
   const destroyedMaterial = new THREE.MeshBasicMaterial({
     color: 0xff895e,
@@ -815,8 +818,8 @@ export function createFirstPersonRenderer({
     opacity: 0.48,
     wireframe: true,
   })
-  geometries.push(impactChipGeometry, impactSparkGeometry, destroyedGeometry)
-  materials.push(surfaceImpactMaterial, robotImpactMaterial, trailMaterial, destroyedMaterial)
+  geometries.push(impactChipGeometry, impactSparkGeometry, tracerGeometry, destroyedGeometry)
+  materials.push(surfaceImpactMaterial, robotImpactMaterial, tracerMaterial, destroyedMaterial)
 
   const processedEventIds = new Set<string>()
   const transientByEventId = new Map<string, TransientMesh>()
@@ -874,9 +877,14 @@ export function createFirstPersonRenderer({
     const localId=snapshot.participants.find(p=>p.kind==='local-seat')?.semanticId
     const impactsById = new Map(snapshot.events.filter((event): event is FirstPersonImpactRenderEvent => event.kind === 'shotgun-impact').map((event) => [event.eventId, event]))
     const createTrail = (event: FirstPersonShotRenderEvent) => {
-      const positions: number[] = []
       const localShot = event.shooterId === localId
       if (localShot) camera.updateMatrixWorld(true)
+      const trails = new THREE.InstancedMesh(tracerGeometry, tracerMaterial, event.pelletDirections.length)
+      trails.name = `presentation:pellet-trails:${event.eventId}`
+      const matrix = new THREE.Matrix4()
+      const directionVector = new THREE.Vector3()
+      const midpoint = new THREE.Vector3()
+      const rotation = new THREE.Quaternion()
       for (const [pelletIndex, direction] of event.pelletDirections.entries()) {
         const impact = impactsById.get(`tick-${event.tick}:impact:${event.shooterId}:${pelletIndex}`)
         // Combat originates from the canonical eye ray. Presentation starts at
@@ -890,14 +898,15 @@ export function createFirstPersonRenderer({
           y: event.origin.y + direction.y * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
           z: event.origin.z + direction.z * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
         }
-        positions.push(muzzle.x, muzzle.y, muzzle.z, endpoint.x, endpoint.y, endpoint.z)
+        directionVector.set(endpoint.x - muzzle.x, endpoint.y - muzzle.y, endpoint.z - muzzle.z)
+        const length = directionVector.length()
+        if (length <= 0) continue
+        midpoint.copy(muzzle).addScaledVector(directionVector, 0.5)
+        rotation.setFromUnitVectors(new THREE.Vector3(0, 1, 0), directionVector.normalize())
+        matrix.compose(midpoint, rotation, new THREE.Vector3(1, length, 1))
+        trails.setMatrixAt(pelletIndex, matrix)
       }
-      if (positions.length === 0) return
-      const geometry = new THREE.BufferGeometry()
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-      geometries.push(geometry)
-      const trails = new THREE.LineSegments(geometry, trailMaterial)
-      trails.name = `presentation:pellet-trails:${event.eventId}`
+      trails.instanceMatrix.needsUpdate = true
       scene.add(trails)
       transientByEventId.set(`trails:${event.eventId}`, {
         mesh: trails,
