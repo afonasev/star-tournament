@@ -809,7 +809,7 @@ export function createFirstPersonRenderer({
   const robotImpactMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0d0, transparent: true, opacity: 0.9 })
   // WebGL line width is implementation-limited to one physical pixel. A tiny
   // emissive cylinder remains legible on 4K displays without extra draw calls.
-  const tracerGeometry = new THREE.CylinderGeometry(0.026, 0.044, 1, 6, 1, true)
+  const tracerGeometry = new THREE.CylinderGeometry(0.01, 0.018, 1, 6, 1, true)
   const tracerMaterial = new THREE.MeshBasicMaterial({ color: 0xffcf82, transparent: true, opacity: 0.88 })
   const destroyedGeometry = new THREE.SphereGeometry(1.05, 12, 8)
   const destroyedMaterial = new THREE.MeshBasicMaterial({
