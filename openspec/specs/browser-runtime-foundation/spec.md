@@ -194,3 +194,11 @@ Browser runtime SHALL применять утверждённый arena presenta
 #### Scenario: 4K display output
 - **WHEN** playfield отображается на 3840×2160 display output
 - **THEN** browser runtime сохраняет читаемый DOM/HUD layout и применяет active graphics-quality profile без повышения simulation cadence либо нарушения pause/hidden zero-work contract
+
+### Requirement: Performance evidence локальных теней
+
+Production-browser performance gate SHALL фиксировать effective graphics preset и local-light shadow budget для renderer change, затрагивающего локальные тени. Gate MUST сохранять existing lifecycle counters и MUST NOT включать shadow telemetry в simulation, replay или state hash.
+
+#### Scenario: Проверка quality tiers
+- **WHEN** browser performance gate запускает renderer с каждым поддерживаемым graphics preset
+- **THEN** report показывает active preset и effective shadow budget, а portable lifecycle hard gates сохраняют passed result
