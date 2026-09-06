@@ -19,3 +19,9 @@
 - [x] 4.1 Добавить profile-owned global fill и расширенный budget fixtures; проверить descriptor validation и неизменность simulation identity.
 - [x] 4.2 Выводить emissive lamp fixtures из wall rhythm corridors, rooms и combat zones; убрать shell shadow casting и проверить стабильность renderer scene.
 - [x] 4.3 Провести muted browser visual QA затемнённой арены с видимыми лампами и production performance gate; приложить PNG.
+
+## 5. Чёткие тени без wall flicker
+
+- [x] 5.1 Уточнить presentation contract: чёткие локальные тени видны на полу, wall shell и wall detail не получают их.
+- [x] 5.2 Уменьшить profile-owned soft radius и ограничить receive-shadow stable floor geometry; покрыть renderer unit test.
+- [x] 5.3 Провести muted browser visual QA и production performance gate, сохранить PNG.

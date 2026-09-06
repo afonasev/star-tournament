@@ -1,6 +1,6 @@
 ## Purpose
 
-Capability задаёт ограниченные мягкие локальные тени от маршрутных светильников, чтобы архитектура читалась объёмно без изменения игрового пространства и правил матча.
+Capability задаёт ограниченные чёткие локальные тени от маршрутных светильников на stable floor geometry без изменения игрового пространства и правил матча.
 
 ## ADDED Requirements
 
@@ -10,7 +10,7 @@ Arena renderer SHALL детерминированно размещать ярк�
 
 #### Scenario: Ближайшая маршрутная лампа
 - **WHEN** active camera показывает corridor, room либо combat zone
-- **THEN** renderer показывает регулярный rhythm ярких lamp fixtures, даёт мягкую тень от ближайших fixtures в пределах active quality budget, а остальные fixtures сохраняют emissive световой акцент
+- **THEN** renderer показывает регулярный rhythm ярких lamp fixtures, даёт чёткую тень от ближайших fixtures на floor geometry в пределах active quality budget, а остальные fixtures сохраняют emissive световой акцент; wall shell и wall detail не получают local shadows
 
 #### Scenario: Неизменная arena identity
 - **WHEN** одна и та же validated arena запускается с разными shadow budgets
@@ -18,7 +18,7 @@ Arena renderer SHALL детерминированно размещать ярк�
 
 ### Requirement: Качество и безопасная читаемость теней
 
-Renderer SHALL применять soft local shadows только в количестве, разрешённом effective graphics profile: `Low` — 0, `Balanced` — 1, `High` — 2, `Ultra` — 4. Profile-owned medium-dark global fill и participant rim light MUST сохранять видимый silhouette живого participant на gameplay distance; presentation MUST NOT превращать локальную область в глубокую нечитаемую тень.
+Renderer SHALL применять small-radius PCF local shadows только в количестве, разрешённом effective graphics profile: `Low` — 0, `Balanced` — 1, `High` — 2, `Ultra` — 4. Profile-owned medium-dark global fill и participant rim light MUST сохранять видимый silhouette живого participant на gameplay distance; presentation MUST NOT превращать локальную область в глубокую нечитаемую тень.
 
 #### Scenario: Low quality
 - **WHEN** active graphics preset равен `Low`

@@ -238,10 +238,11 @@ describe('createFirstPersonRenderer', () => {
     scene.traverse((object) => { if (object.name.startsWith('presentation:lamp-light:')) lamps.push(object as THREE.PointLight) })
     expect(lamps.length).toBeGreaterThan(2)
     expect(lamps.filter((lamp) => lamp.castShadow)).toHaveLength(2)
-    expect(lamps.filter((lamp) => lamp.castShadow).every((lamp) => lamp.shadow.mapSize.x === 512 && lamp.shadow.radius === 2)).toBe(true)
+    expect(lamps.filter((lamp) => lamp.castShadow).every((lamp) => lamp.shadow.mapSize.x === 512 && lamp.shadow.radius === 0.5)).toBe(true)
     const architecturalMeshes: THREE.Mesh[] = []
     scene.traverse((object) => { if (object instanceof THREE.Mesh && object.name.startsWith('arena:')) architecturalMeshes.push(object) })
-    expect(architecturalMeshes.every((mesh) => mesh.receiveShadow && !mesh.castShadow)).toBe(true)
+    expect(architecturalMeshes.filter((mesh) => !mesh.name.startsWith('arena:floor')).every((mesh) => !mesh.receiveShadow && !mesh.castShadow)).toBe(true)
+    expect(architecturalMeshes.filter((mesh) => mesh.name.startsWith('arena:floor')).every((mesh) => mesh.receiveShadow && !mesh.castShadow)).toBe(true)
     const lenses: THREE.Mesh[] = []
     scene.traverse((object) => { if (object instanceof THREE.Mesh && object.name.startsWith('presentation:lamp-lens:')) lenses.push(object) })
     expect(lenses.length).toBeGreaterThan(2)

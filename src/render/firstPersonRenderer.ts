@@ -734,16 +734,14 @@ export function createFirstPersonRenderer({
 
   scene.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return
-    let presentationMesh = object.name.startsWith('arena:') || object.name.startsWith('presentation:')
     let stableLocalShadowCaster = object.name.startsWith('presentation:lamp-lens:') || object.name.startsWith('presentation:wall-buttress:')
     object.traverseAncestors((ancestor) => {
-      presentationMesh ||= ancestor.name.startsWith('presentation:')
       stableLocalShadowCaster ||= ancestor.name.startsWith('presentation:lamp:') || ancestor.name.startsWith('presentation:glb:wall-bay:')
     })
-    object.receiveShadow = presentationMesh
-    // The canonical shell receives depth but does not shadow itself. That avoids
-    // point-light acne/flicker on large panels while only separated lamps and
-    // inset wall details contribute stable local shadow depth.
+    // Point-light cube maps are stable on the floor, but temporal flicker on
+    // broad wall panels is much more visible than their depth contribution.
+    // Keep every wall out of the receiver set and retain local contrast below.
+    object.receiveShadow = object.name.startsWith('arena:floor') || object.name.startsWith('presentation:floor')
     object.castShadow = stableLocalShadowCaster
   })
 

@@ -68,7 +68,7 @@ const descriptors: NumericPresentationProfileDescriptor[] = [
   { path:'render.studioKeyIntensity',group:'render',label:'Направленный свет арены',description:'Яркость мягкого направленного света architectural shell.',unit:'intensity',minimum:0.2,maximum:2.4,step:0.1 },
   { path:'render.localLightShadowCount',group:'render',label:'Бюджет теней ламп',description:'Верхний предел мягких теней от локальных ламп на Ultra.',unit:'count',minimum:0,maximum:4,step:1 },
   { path:'render.localLightShadowMapSize',group:'render',label:'Разрешение тени лампы',description:'Размер одной стороны cube shadow map локальной лампы.',unit:'pixels',minimum:256,maximum:1024,step:256 },
-  { path:'render.localLightShadowRadius',group:'render',label:'Мягкость тени лампы',description:'Радиус PCF-смягчения локальной тени.',unit:'ratio',minimum:1,maximum:8,step:0.5 },
+  { path:'render.localLightShadowRadius',group:'render',label:'Мягкость тени лампы',description:'Радиус PCF-смягчения локальной тени: меньший радиус даёт более чёткий контакт.',unit:'ratio',minimum:0.5,maximum:8,step:0.5 },
   { path:'render.reliefDepth',group:'render',label:'Глубина рельефа',description:'Толщина декоративной рамки неглубокой ниши.',unit:'meters',minimum:0.02,maximum:0.2,step:0.02 },
 
   {
@@ -322,9 +322,9 @@ const balancedPayload: PresentationProfilePayload = {
   schemaVersion: PRESENTATION_PROFILE_SCHEMA_VERSION,
   id: 'presentation-balanced-v1',
   name: 'Presentation Balanced v1',
-  revision: 4,
+  revision: 5,
   source: 'shipped',
-  render: { backingBufferPixelBudget: 2_073_600, windowOpacity:0.25, barrierOpacity:0.2,localLightIntensity:8,localLightDistance:8,localLightCount:16,studioFillIntensity:0.4,studioKeyIntensity:0.5,localLightShadowCount:4,localLightShadowMapSize:512,localLightShadowRadius:2,reliefDepth:0.08,materialRepeatScale:1.5 },
+  render: { backingBufferPixelBudget: 2_073_600, windowOpacity:0.25, barrierOpacity:0.2,localLightIntensity:8,localLightDistance:8,localLightCount:16,studioFillIntensity:0.4,studioKeyIntensity:0.5,localLightShadowCount:4,localLightShadowMapSize:512,localLightShadowRadius:0.5,reliefDepth:0.08,materialRepeatScale:1.5 },
   ui: { maximumPublicationsPerSecond: 10 },
 }
 

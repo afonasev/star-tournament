@@ -35,7 +35,7 @@ Renderer создаёт все разрешённые локальные lamp li
 
 ### Мягкость, но без затемнения матча
 
-Renderer включает `PCFSoftShadowMap`; local light сохраняет небольшой radius, а ambient hemisphere/key/rim lights не становятся shadow casters. Такое сочетание создаёт мягкий contact-depth на стенах и полу, но не оставляет opponent в полной темноте. Альтернатива — жёсткие PCF/высококонтрастные тени: они конфликтуют с `clean-future-sport-v1` и заметнее алиасятся в split-screen.
+Renderer включает `PCFSoftShadowMap`; local light использует малый radius для чёткого contact-depth на полу, а ambient hemisphere/key/rim lights не становятся shadow casters. Wall shell и wall presentation не получают point-light shadows: их широкие panel surfaces не являются надёжным temporal receiver. Альтернатива — получать тени на стенах: она даёт мерцание при смене camera-relative caster и потому исключена.
 
 ### Presentation-only profile contract
 

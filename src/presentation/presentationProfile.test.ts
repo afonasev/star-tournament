@@ -43,7 +43,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
     expect(PRESENTATION_BALANCED_V1_PROFILE).toMatchObject({
       schemaVersion: 1,
       id: 'presentation-balanced-v1',
-      revision: 4,
+      revision: 5,
       source: 'shipped',
       render: { backingBufferPixelBudget: 2_073_600 },
       ui: { maximumPublicationsPerSecond: 10 },
@@ -69,7 +69,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
 
     const input = cloneProfile()
     input.source = 'local'
-    input.revision = 4
+    input.revision = 5
     input.contentHash = computePresentationProfileContentHash(input)
     const result = validatePresentationProfile(input)
     expect(result.ok).toBe(true)
@@ -152,7 +152,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
   it('derives a stable canonical identity from all effective presentation content', () => {
     expect(PRESENTATION_BALANCED_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
     expect(PRESENTATION_BALANCED_V1_PROFILE.contentHash).toBe(
-      'fnv1a64-v1:84d291c6531272dc',
+      'fnv1a64-v1:c43d9ef37641a50a',
     )
     expect(computePresentationProfileContentHash(cloneProfile())).toBe(
       PRESENTATION_BALANCED_V1_PROFILE.contentHash,
@@ -199,7 +199,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
 
     const localPresentation = cloneProfile()
     localPresentation.source = 'local'
-    localPresentation.revision = 4
+    localPresentation.revision = 5
     localPresentation.render.backingBufferPixelBudget = 921_600
     localPresentation.contentHash = computePresentationProfileContentHash(localPresentation)
     expect(validatePresentationProfile(localPresentation)).toMatchObject({ ok: true })
