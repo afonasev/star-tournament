@@ -128,6 +128,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Каждое изменение разрабатывается и проверяется в отдельном Git worktree на отдельной ветке; основной checkout `main` служит только для интеграции.
 - Проверка конкретной ветки выполняется на dev-стенде, запущенном из её worktree. Пользователю сообщается фактический URL с портом после HTTP-проверки доступности.
 - Завершённые проверенные ветки последовательно вливаются в `main`. После интеграции архивируются завершённые OpenSpec changes, архивные изменения также вливаются в `main`, и только затем выполняется деплой актуального `main` с post-deploy проверкой.
+- `make dev` запускает стенд с явной маркировкой `DEV` и именем Git-ветки в шапке. `make deploy` разрешён только из чистого `main`, по умолчанию повышает patch-версию SemVer, коммитит версию, собирает production artifact, публикует его на `robowar.afonasev.tech` и проверяет HTTPS-ответ. В production-шапке отображаются версия и UTC-дата выкладки.
 
 ## 10. Открытые решения
 
@@ -145,6 +146,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 | 2026-09-06 | По результату повторного visual playtest `wall-bay` вынесен из объёма opaque wall shell в тонкий внешний presentation-only фасад с положительным зазором. Это исключает depth competition между GLB и shell, не меняя collision или arena identity. |
 | 2026-09-06 | Утверждён hit-driven death presentation: смертельный дробовой выстрел даёт короткую renderer-only реакцию и падение робота от origin выстрела; затем GLB-тело с оружием в руках лежит на floor contact до существующего corpse expiry. Ragdoll, физика тел, collision, simulation/replay schema и killcam не меняются. |
 | 2026-09-06 | Уточнён hit-driven death presentation: во время renderer-only падения тело сдвигается от origin смертельного выстрела на shipped 0,65 м. Значение имеет presentation descriptor с диапазоном 0–1,5 м и шагом 0,05 м; physics, collision, gameplay knockback, snapshot/replay и state hash не меняются. |
+| 2026-09-06 | Утверждён versioned deployment contract: `make dev` маркирует стенд как `DEV` с исходной Git-веткой, а `make deploy` из чистого `main` повышает SemVer (по умолчанию patch), коммитит release version и публикует static build на `robowar.afonasev.tech`. Production-шапка показывает версию и UTC-дату выкладки. |
 
 2026-09-05: `add-extensible-bot-ai` интегрирован (`c9d51e8`), спецификации синхронизированы и change архивирован (`a4bcb64`). После согласованного закрытия пользователь отдельно подтвердил выполнение оставшейся ручной AI-приёмки: move/look/jump/fire и pause/resume. Автоматизация эти сценарии не доказала; отдельный physical combat/killcam PNG отсутствует. Деплой и post-deploy проверка остаются открытыми: Git remote и deployment configuration не настроены.
 

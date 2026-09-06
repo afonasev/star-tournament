@@ -12,6 +12,7 @@ import {
 } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import type { ArenaSize } from '../arena'
+import { ReleaseHeader } from './ReleaseHeader'
 import {
   GRAPHICS_QUALITY_STORAGE_KEY,
   GRAPHICS_QUALITY_V1,
@@ -125,7 +126,10 @@ export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generati
   return (
     <main className="match-menu">
       <section className="match-menu__panel" aria-labelledby="match-menu-title">
-        <p className="match-menu__eyebrow">STAR TOURNAMENT · LOCAL MATCH</p>
+        <div className="match-menu__heading">
+          <p className="match-menu__eyebrow">STAR TOURNAMENT · LOCAL MATCH</p>
+          <ReleaseHeader />
+        </div>
         <h1 id="match-menu-title">Настройка матча</h1>
         <div className="match-menu__profile"><span>Профиль следующего матча</span><output aria-label="Профиль следующего матча">{profile.id} · v{profile.revision} · {profile.contentHash}</output>{onOpenGameDesignLab && <button type="button" onClick={onOpenGameDesignLab}>Лаборатория геймдизайна</button>}</div>
         <div className="match-menu__mode" aria-label="Режим матча">

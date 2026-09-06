@@ -26,7 +26,9 @@ body {
 
 .match-menu { display: grid; min-height: 100%; place-items: center; padding: clamp(1rem, 4vw, 3rem); overflow: auto; background: radial-gradient(circle at 18% 14%, rgb(18 99 130 / 34%), transparent 34%), radial-gradient(circle at 84% 78%, rgb(72 43 119 / 26%), transparent 38%), #050811; }
 .match-menu__panel { width: min(74rem, 100%); padding: clamp(1.2rem, 4vw, 2.6rem); border: 1px solid rgb(105 224 255 / 28%); border-radius: 0.75rem; background: rgb(5 15 27 / 88%); box-shadow: 0 2rem 8rem rgb(0 0 0 / 55%); }
+.match-menu__heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; }
 .match-menu__eyebrow { margin: 0; color: #72e6ff; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.22em; }
+.release-header { color: #94b9c7; font: 700 0.62rem ui-monospace, monospace; letter-spacing: 0.08em; white-space: nowrap; }
 .match-menu h1 { margin: 0.5rem 0 1.4rem; font-size: clamp(2rem, 6vw, 4.5rem); }
 .match-menu__mode { display: flex; gap: 0.6rem; margin-bottom: 1.2rem; }
 .match-menu__profile { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin: 0 0 1.1rem; padding: .75rem; border: 1px solid rgb(114 230 255 / 25%); border-radius: .45rem; background: rgb(10 30 44 / 55%); color: #9bc8d8; font-size: .76rem; }
@@ -69,6 +71,7 @@ body {
 .game-design-lab__header { position: sticky; top: 0; z-index: 3; background: rgb(5 15 27 / 88%); backdrop-filter: blur(6px); }
 .game-design-lab__header { display: flex; justify-content: space-between; gap: 1rem; align-items: start; max-width: 100rem; margin: 0 auto 1rem; }
 .game-design-lab__header p { margin: 0; color: #72e6ff; font-size: .68rem; font-weight: 900; letter-spacing: .2em; }
+.game-design-lab__header .release-header { margin-left: .55rem; letter-spacing: .08em; }
 .game-design-lab__header h1 { margin: .35rem 0; font-size: clamp(2rem, 5vw, 4rem); }
 .game-design-lab__header output { color: #8bb7c8; font: .68rem ui-monospace, monospace; }
 .game-design-lab button, .game-design-lab input, .game-design-lab select { font: inherit; }

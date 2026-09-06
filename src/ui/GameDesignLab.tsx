@@ -19,6 +19,7 @@ import {
   type ValidatedGameDesignProfile,
 } from '../profiles'
 import { persistProfileHistory, profileFilesystemAvailable, publishProfileRevision } from './profileRepository'
+import { ReleaseHeader } from './ReleaseHeader'
 
 const GROUP_LABELS: Record<ProfileDescriptorGroup, string> = {
   bots: 'Боты', player: 'Игрок', 'player-capsule': 'Капсула игрока', 'player-movement': 'Движение', camera: 'Камера', shotgun: 'Дробовик', match: 'Матч', 'scoring-assist': 'Участия', 'scoring-kill-chain': 'Серии', death: 'Смерть и respawn', 'arena-generator-small': 'Генератор · маленькая', 'arena-generator-medium': 'Генератор · средняя', 'arena-generator-large': 'Генератор · большая',
@@ -141,7 +142,7 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
   return <main className="game-design-lab" aria-labelledby="game-design-lab-title">
     <header className="game-design-lab__header">
       <div>
-        <p>STAR TOURNAMENT · GAME DESIGN LAB</p>
+        <p>STAR TOURNAMENT · GAME DESIGN LAB <ReleaseHeader /></p>
         <h1 id="game-design-lab-title">Лаборатория геймдизайна</h1>
         <output aria-label="Выбранная ревизия">{base.id} · v{base.revision} · {base.contentHash}{isRelease ? ' · РЕЛИЗНАЯ' : ''}</output>
       </div>
