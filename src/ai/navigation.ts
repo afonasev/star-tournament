@@ -1,4 +1,4 @@
-import { arenaFloorHeight, supportedPoint } from '../arena/elevation'
+import { arenaFloorHeight, supportedPoint, supportedPointOn } from '../arena/elevation'
 import { simulationMath } from '../core/simulationMath'
 import type { ArenaDefinition } from '../arena'
 import type { CollisionVector3 as Vec } from '../collision/contracts'
@@ -57,7 +57,15 @@ export function arenaNavigation(arena: ArenaDefinition, profile: ValidatedGameDe
   const floor = arena.surfaces.find(s => s.material === 'floor')!
   const inside = (p: Vec) => Math.abs(p.x - floor.center.x) < floor.size.x / 2 - radius && Math.abs(p.z - floor.center.z) < floor.size.z / 2 - radius
   const clear = (a: Vec, b: Vec) => inside(b) && !boxes.some(box => intersects(a, b, box))
-  const project = (point: Vec) => arena.recipeId ? supportedPoint(arena, point) : point
+  const declaredSupport = new Map<string, string>()
+  const pointKey = (point: Pick<Vec, 'x' | 'z'>) => `${point.x}:${point.z}`
+  for (const region of arena.regions) if (region.supportSurfaceId) declaredSupport.set(pointKey(region.center), region.supportSurfaceId)
+  for (const anchor of arena.spawnAnchors) if (anchor.supportSurfaceId) declaredSupport.set(pointKey(anchor.position), anchor.supportSurfaceId)
+  const project = (point: Vec) => {
+    if (!arena.recipeId) return point
+    const support = declaredSupport.get(pointKey(point))
+    return support ? supportedPointOn(arena, support, point) ?? supportedPoint(arena, point) : supportedPoint(arena, point)
+  }
   const breaks = arena.surfaces.filter(s => s.semantics?.classification === 'ramp').flatMap(s => {
     const q=s.orientation
     const topX=s.center.x-q.z*q.w*s.size.y

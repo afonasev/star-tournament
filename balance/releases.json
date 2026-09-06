@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "releaseRef": {
     "id": "prototype-v1",
-    "revision": 7,
-    "contentHash": "fnv1a64-v1:369a772fc3ab5a9f"
+    "revision": 8,
+    "contentHash": "fnv1a64-v1:7d0c1b1628fb098d"
   },
   "revisions": [
     {
@@ -435,57 +435,84 @@
       "source": "local"
     },
     {
-      "contentHash": "fnv1a64-v1:369a772fc3ab5a9f",
+      "contentHash": "fnv1a64-v1:7d0c1b1628fb098d",
       "id": "prototype-v1",
       "name": "Prototype v1",
-      "revision": 7,
+      "revision": 8,
       "rules": {
         "arenaGenerator": {
           "presets": {
             "large": {
+              "barrierHighMeters": 1.5,
+              "barrierLowMeters": 0.75,
+              "basementDepthMultiplier": 1.75,
               "corridorWidthMeters": 6,
               "coverCount": 8,
               "coverSizeMeters": 3,
               "depthMeters": 44,
               "doorwayWidthMeters": 4,
+              "elevationDeltaMeters": 0.75,
               "maximumInitialEnemyLosRatio": 0.25,
               "maximumTeamDistanceRatio": 1.1,
               "minimumSpawnSeparationMeters": 6,
               "perimeterInsetMeters": 5,
               "routeInsetMeters": 6.5,
+              "rampLengthMeters": 4,
+              "rampWidthMeters": 6,
+              "recipeCount": 5,
               "spawnSlotCount": 20,
+              "upperDeckFootprintRatio": 0.5,
+              "upperDeckHeightMultiplier": 2,
               "wallHeightMeters": 5,
               "wallThicknessMeters": 1.8,
               "widthMeters": 60
             },
             "medium": {
+              "barrierHighMeters": 1.5,
+              "barrierLowMeters": 0.75,
+              "basementDepthMultiplier": 1.5,
               "corridorWidthMeters": 5,
               "coverCount": 6,
               "coverSizeMeters": 2.5,
               "depthMeters": 34,
               "doorwayWidthMeters": 3.5,
+              "elevationDeltaMeters": 0.75,
               "maximumInitialEnemyLosRatio": 0.3,
               "maximumTeamDistanceRatio": 1.15,
               "minimumSpawnSeparationMeters": 5,
               "perimeterInsetMeters": 4,
               "routeInsetMeters": 5.5,
+              "rampLengthMeters": 4,
+              "rampWidthMeters": 5,
+              "recipeCount": 5,
               "spawnSlotCount": 16,
+              "upperDeckFootprintRatio": 0.45,
+              "upperDeckHeightMultiplier": 1.75,
               "wallHeightMeters": 4.5,
               "wallThicknessMeters": 1.4,
               "widthMeters": 46
             },
             "small": {
+              "barrierHighMeters": 1.5,
+              "barrierLowMeters": 0.75,
+              "basementDepthMultiplier": 1.25,
               "corridorWidthMeters": 4,
               "coverCount": 4,
               "coverSizeMeters": 2,
               "depthMeters": 26,
               "doorwayWidthMeters": 3,
+              "elevationDeltaMeters": 0.75,
               "maximumInitialEnemyLosRatio": 0.35,
               "maximumTeamDistanceRatio": 1.2,
               "minimumSpawnSeparationMeters": 4,
               "perimeterInsetMeters": 3,
               "routeInsetMeters": 4.5,
+              "rampLengthMeters": 4,
+              "rampWidthMeters": 4,
+              "recipeCount": 5,
               "spawnSlotCount": 16,
+              "upperDeckFootprintRatio": 0.4,
+              "upperDeckHeightMultiplier": 1.5,
               "wallHeightMeters": 4,
               "wallThicknessMeters": 0.9,
               "widthMeters": 34
@@ -607,7 +634,7 @@
             "minSlopeSlideDegrees": 60,
             "snapToGroundDistance": 0.2
           },
-          "startingHealth": 101
+          "startingHealth": 100
         },
         "scoring": {
           "assist": {
@@ -645,8 +672,8 @@
           }
         }
       },
-      "schemaVersion": 6,
-      "source": "local"
+      "schemaVersion": 7,
+      "source": "shipped"
     }
   ]
 }

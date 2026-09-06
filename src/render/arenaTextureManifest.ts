@@ -1,7 +1,7 @@
 import { deepFreeze } from '../core/deepFreeze'
 import type { TextureQualityTier } from '../presentation'
 
-export type ArenaTextureSurface = 'wall' | 'floor'
+export type ArenaTextureSurface = 'wall' | 'floor' | 'basementFloor' | 'galleryWall'
 export type ArenaTextureMapKind = 'baseColor' | 'normal' | 'orm'
 
 export interface ArenaTextureVariant {
@@ -51,6 +51,28 @@ export const CLEAN_FUTURE_SPORT_TEXTURE_V1 = deepFreeze({
         high: { id: 'floor-tiling-1254', maxDimension: 1254, estimatedResidentMiB: 12 },
       },
       repeat: 3,
+    },
+    basementFloor: {
+      surface: 'basementFloor',
+      baseColorUri: '/assets/textures/arena-source/basement-floor-base-color-source-v1.png',
+      normal: { kind: 'generated-normal', strength: 0.28 },
+      orm: { kind: 'generated-orm', roughness: 0.66, metalness: 0.08, ambientOcclusion: 1 },
+      variants: {
+        low: { id: 'basement-floor-tiling-512', maxDimension: 512, estimatedResidentMiB: 3 },
+        high: { id: 'basement-floor-tiling-1254', maxDimension: 1254, estimatedResidentMiB: 12 },
+      },
+      repeat: 3,
+    },
+    galleryWall: {
+      surface: 'galleryWall',
+      baseColorUri: '/assets/textures/arena-source/gallery-wall-base-color-source-v1.png',
+      normal: { kind: 'generated-normal', strength: 0.2 },
+      orm: { kind: 'generated-orm', roughness: 0.62, metalness: 0.05, ambientOcclusion: 1 },
+      variants: {
+        low: { id: 'gallery-wall-tiling-512', maxDimension: 512, estimatedResidentMiB: 3 },
+        high: { id: 'gallery-wall-tiling-1254', maxDimension: 1254, estimatedResidentMiB: 12 },
+      },
+      repeat: 2,
     },
   } satisfies Record<ArenaTextureSurface, ArenaTextureSetManifestEntry>,
   decalAtlas: {

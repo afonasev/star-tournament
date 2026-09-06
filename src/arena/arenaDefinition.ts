@@ -1,7 +1,7 @@
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const ARENA_DEFINITION_SCHEMA_VERSION = 4 as const
+export const ARENA_DEFINITION_SCHEMA_VERSION = 5 as const
 export const ARENA_QUATERNION_NORMALIZATION_EPSILON = 1e-6
 export const ARENA_SIZE_IDS = ['small', 'medium', 'large'] as const
 
@@ -20,7 +20,7 @@ export type ArenaSurfaceMaterial = 'floor' | 'wall' | 'accent'
 export type ArenaRegionRole = 'combat' | 'route' | 'spawn'
 export type ArenaLinkExposure = 'open' | 'covered'
 
-export type ArenaSurfaceClass = 'wall' | 'window' | 'movement-barrier' | 'floor' | 'ramp'
+export type ArenaSurfaceClass = 'wall' | 'window' | 'movement-barrier' | 'floor' | 'ramp' | 'slab'
 export interface ArenaSurfaceSemantics {
   classification: ArenaSurfaceClass
   movement: boolean
@@ -49,6 +49,7 @@ export interface ArenaRegion {
   role: ArenaRegionRole
   center: ArenaVector3
   size: ArenaVector3
+  supportSurfaceId?: string
 }
 
 export interface ArenaLink {
@@ -56,6 +57,7 @@ export interface ArenaLink {
   fromRegionId: string
   toRegionId: string
   exposure: ArenaLinkExposure
+  transitionSurfaceId?: string
 }
 
 export interface ArenaSpawnRegion {
@@ -69,10 +71,11 @@ export interface ArenaSpawnAnchor {
   spawnRegionId: string
   position: ArenaVector3
   yawRadians: number
+  supportSurfaceId?: string
 }
 
 export interface ArenaDefinitionPayload {
-  schemaVersion: 3 | typeof ARENA_DEFINITION_SCHEMA_VERSION
+  schemaVersion: 3 | 4 | typeof ARENA_DEFINITION_SCHEMA_VERSION
   id: string
   seed: number
   size: ArenaSize
@@ -243,7 +246,7 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
   requiredString(value, 'id', 'id', errors)
   requiredString(value, 'generatorVersion', 'generatorVersion', errors)
   requiredString(value, 'contentHash', 'contentHash', errors)
-  if (value.schemaVersion !== 3 && value.schemaVersion !== ARENA_DEFINITION_SCHEMA_VERSION) errors.push({ code: value.schemaVersion === undefined ? 'MISSING_FIELD' : 'UNSUPPORTED_SCHEMA_VERSION', paths: ['schemaVersion'], message: `Поддерживается schemaVersion ${ARENA_DEFINITION_SCHEMA_VERSION}.` })
+  if (value.schemaVersion !== 3 && value.schemaVersion !== 4 && value.schemaVersion !== ARENA_DEFINITION_SCHEMA_VERSION) errors.push({ code: value.schemaVersion === undefined ? 'MISSING_FIELD' : 'UNSUPPORTED_SCHEMA_VERSION', paths: ['schemaVersion'], message: `Поддерживается schemaVersion ${ARENA_DEFINITION_SCHEMA_VERSION}.` })
   if (!Number.isSafeInteger(value.seed) || (value.seed as number) < 0 || (value.seed as number) > 0xffffffff) errors.push({ code: 'INVALID_NUMBER', paths: ['seed'], message: 'seed должен быть unsigned 32-bit integer.' })
   if (!ARENA_SIZE_IDS.includes(value.size as ArenaSize)) errors.push({ code: 'INVALID_TYPE', paths: ['size'], message: 'size должен быть small, medium либо large.' })
 
@@ -267,14 +270,15 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
   if (Array.isArray(value.regions)) value.regions.forEach((entry, index) => {
     const path = `regions.${index}`
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
-    allowed(entry, ['id', 'role', 'center', 'size'], path, errors); requiredString(entry, 'id', `${path}.id`, errors)
+    allowed(entry, ['id', 'role', 'center', 'size', 'supportSurfaceId'], path, errors); requiredString(entry, 'id', `${path}.id`, errors)
     if (entry.role !== 'combat' && entry.role !== 'route' && entry.role !== 'spawn') errors.push({ code: 'INVALID_REGION_ROLE', paths: [`${path}.role`], message: 'Недопустимая role.' })
     vector(entry.center, `${path}.center`, errors); vector(entry.size, `${path}.size`, errors, true)
+    if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION) requiredString(entry, 'supportSurfaceId', `${path}.supportSurfaceId`, errors)
   })
   if (Array.isArray(value.links)) value.links.forEach((entry, index) => {
     const path = `links.${index}`
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
-    allowed(entry, ['id', 'fromRegionId', 'toRegionId', 'exposure'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'fromRegionId', `${path}.fromRegionId`, errors); requiredString(entry, 'toRegionId', `${path}.toRegionId`, errors)
+    allowed(entry, ['id', 'fromRegionId', 'toRegionId', 'exposure', 'transitionSurfaceId'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'fromRegionId', `${path}.fromRegionId`, errors); requiredString(entry, 'toRegionId', `${path}.toRegionId`, errors)
     if (entry.exposure !== 'open' && entry.exposure !== 'covered') errors.push({ code: 'INVALID_LINK_EXPOSURE', paths: [`${path}.exposure`], message: 'Недопустимая exposure.' })
   })
   if (Array.isArray(value.surfaces)) value.surfaces.forEach((entry, index) => {
@@ -286,7 +290,7 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
     vector(entry.center, `${path}.center`, errors); vector(entry.size, `${path}.size`, errors, true); quaternion(entry.orientation, `${path}.orientation`, errors)
     if (entry.semantics !== undefined) {
       const m = entry.semantics
-      const classes = ['wall', 'window', 'movement-barrier', 'floor', 'ramp']
+      const classes = ['wall', 'window', 'movement-barrier', 'floor', 'ramp', 'slab']
       if (!isRecord(m) || !classes.includes(m.classification as string) || m.movement !== true || m.projectile !== (m.classification !== 'movement-barrier') || typeof m.sector !== 'string' || !m.sector) {
         errors.push({ code: 'INVALID_SURFACE_MASK', paths: [`${path}.semantics`], message: 'Недопустимая classification/query mask.' })
       } else allowed(m, ['classification', 'movement', 'projectile', 'sector'], `${path}.semantics`, errors)
@@ -307,10 +311,11 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
   if (Array.isArray(value.spawnAnchors)) value.spawnAnchors.forEach((entry, index) => {
     const path = `spawnAnchors.${index}`
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
-    allowed(entry, ['id', 'spawnRegionId', 'position', 'yawRadians'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'spawnRegionId', `${path}.spawnRegionId`, errors); vector(entry.position, `${path}.position`, errors); finite(entry.yawRadians, `${path}.yawRadians`, errors)
+    allowed(entry, ['id', 'spawnRegionId', 'position', 'yawRadians', 'supportSurfaceId'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'spawnRegionId', `${path}.spawnRegionId`, errors); vector(entry.position, `${path}.position`, errors); finite(entry.yawRadians, `${path}.yawRadians`, errors)
+    if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION) requiredString(entry, 'supportSurfaceId', `${path}.supportSurfaceId`, errors)
   })
 
-  if (value.recipeId !== undefined && (typeof value.recipeId !== 'string' || !value.recipeId || value.schemaVersion !== 4)) errors.push({ code: 'INVALID_TYPE', paths: ['recipeId'], message: 'Recipe требует schema v4.' })
+  if (value.recipeId !== undefined && (typeof value.recipeId !== 'string' || !value.recipeId || (value.schemaVersion !== 4 && value.schemaVersion !== 5))) errors.push({ code: 'INVALID_TYPE', paths: ['recipeId'], message: 'Recipe требует schema v4 или v5.' })
   if (value.attachments !== undefined) {
     if (!Array.isArray(value.attachments)) errors.push({ code: 'INVALID_TYPE', paths: ['attachments'], message: 'Attachments должны быть массивом.' })
     else {
@@ -328,16 +333,24 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
 
   if (errors.length === 0) {
     const regions = new Set((value.regions as unknown as ArenaRegion[]).map(({ id }) => id))
+    const supports = new Set((value.surfaces as unknown as ArenaBoxSurface[]).filter(supportsNavigation).map(({ id }) => id))
     const anchors = new Map((value.spawnAnchors as unknown as ArenaSpawnAnchor[]).map((entry) => [entry.id, entry]))
     const spawnRegions = new Map((value.spawnRegions as unknown as ArenaSpawnRegion[]).map((entry) => [entry.id, entry]))
     ;(value.links as unknown as ArenaLink[]).forEach((link, index) => {
       if (!regions.has(link.fromRegionId) || !regions.has(link.toRegionId) || link.fromRegionId === link.toRegionId) errors.push({ code: 'INVALID_REFERENCE', paths: [`links.${index}`], message: 'Link references invalid regions.' })
+      const from = (value.regions as unknown as ArenaRegion[]).find(region => region.id === link.fromRegionId)
+      const to = (value.regions as unknown as ArenaRegion[]).find(region => region.id === link.toRegionId)
+      if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION && from && to && from.supportSurfaceId !== to.supportSurfaceId && (!link.transitionSurfaceId || !supports.has(link.transitionSurfaceId))) errors.push({ code: 'INVALID_REFERENCE', paths: [`links.${index}.transitionSurfaceId`], message: 'Межслойная link требует navigation transition.' })
     })
     ;(value.spawnRegions as unknown as ArenaSpawnRegion[]).forEach((region, index) => {
       if (!regions.has(region.regionId) || region.anchorIds.some((id) => anchors.get(id)?.spawnRegionId !== region.id)) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnRegions.${index}`], message: 'Spawn region references invalid region/anchors.' })
     })
     ;(value.spawnAnchors as unknown as ArenaSpawnAnchor[]).forEach((anchor, index) => {
       if (!spawnRegions.has(anchor.spawnRegionId)) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnAnchors.${index}.spawnRegionId`], message: 'Unknown spawn region.' })
+      if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION && !supports.has(anchor.supportSurfaceId ?? '')) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnAnchors.${index}.supportSurfaceId`], message: 'Anchor требует navigation support.' })
+    })
+    if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION) (value.regions as unknown as ArenaRegion[]).forEach((region, index) => {
+      if (!supports.has(region.supportSurfaceId ?? '')) errors.push({ code: 'INVALID_REFERENCE', paths: [`regions.${index}.supportSurfaceId`], message: 'Region требует navigation support.' })
     })
   }
 

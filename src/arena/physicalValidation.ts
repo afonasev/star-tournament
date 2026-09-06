@@ -1,12 +1,29 @@
 import { arenaNavigation } from '../ai/navigation'
 import { createRapierCollisionWorld } from '../collision/rapierWorld'
 import type { ValidatedGameDesignProfile } from '../profiles'
-import type { ArenaDefinition, ArenaVector3 } from './arenaDefinition'
+import { arenaSupportHeight } from './elevation'
+import { supportsNavigation, type ArenaDefinition, type ArenaVector3 } from './arenaDefinition'
 
 const completed = new Set<string>()
 /** Physical acceptance uses disposable derived worlds and never advances match RNG/state. */
 export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:ValidatedGameDesignProfile):Promise<void> {
   if (!arena.recipeId || completed.has(arena.contentHash)) return
+  const verifyDeclaredSupport = (id: string, point: ArenaVector3, supportSurfaceId: string | undefined): void => {
+    if (!supportSurfaceId) return
+    const height = arenaSupportHeight(arena, supportSurfaceId, point.x, point.z)
+    if (height === undefined || Math.abs(height - point.y) > 1e-6) {
+      throw new Error(`Declared support mismatch: ${id}/${supportSurfaceId}/${JSON.stringify(point)}`)
+    }
+  }
+  for (const region of arena.regions) verifyDeclaredSupport(region.id, region.center, region.supportSurfaceId)
+  for (const anchor of arena.spawnAnchors) verifyDeclaredSupport(anchor.id, anchor.position, anchor.supportSurfaceId)
+  for (const link of arena.links) {
+    if (!link.transitionSurfaceId) continue
+    const transition = arena.surfaces.find(surface => surface.id === link.transitionSurfaceId)
+    if (!transition || !supportsNavigation(transition) || transition.semantics?.classification !== 'ramp') {
+      throw new Error(`Invalid physical transition: ${link.id}/${link.transitionSurfaceId}`)
+    }
+  }
   const c=profile.rules.player.capsule,m=profile.rules.player.movement
   const world=await createRapierCollisionWorld(arena,[],{skinWidth:c.skinWidth,autostepMaxHeight:m.autostepMaxHeight,autostepMinWidth:m.autostepMinWidth,snapToGroundDistance:m.snapToGroundDistance,maxSlopeClimbDegrees:m.maxSlopeClimbDegrees,minSlopeSlideDegrees:m.minSlopeSlideDegrees})
   const nav=arenaNavigation(arena,profile)

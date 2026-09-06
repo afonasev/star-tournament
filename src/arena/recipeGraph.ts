@@ -1,7 +1,7 @@
 import type { ArenaGeneratorPresetRules } from '../profiles'
 import type { ArenaSize } from './arenaDefinition'
 
-export const ARENA_RECIPE_IDS = ['grand-hall', 'split-atrium', 'service-loop', 'flanked-courtyard'] as const
+export const ARENA_RECIPE_IDS = ['wide-bypass-hall', 'bypass-gallery', 'fire-balconies', 'dual-combat-decks', 'basement-service-loop'] as const
 export type ArenaRecipeId = typeof ARENA_RECIPE_IDS[number]
 export interface ArenaRecipeGraph {
   id: ArenaRecipeId
@@ -10,7 +10,7 @@ export interface ArenaRecipeGraph {
   roomDepth: number
   northDoors: number[]
   southDoors: number[]
-  raised: boolean
+  verticalRole: 'wide' | 'gallery' | 'balcony' | 'dual-deck' | 'basement'
 }
 
 /** Recipe composition ratios are topology invariants, not free per-surface noise. */
@@ -24,13 +24,13 @@ export function resolveArenaRecipe(size: ArenaSize, seed: number, rules: ArenaGe
   const id = ARENA_RECIPE_IDS[seed % recipeCount]!
   const halfLength = rules.widthMeters / 2 - rules.perimeterInsetMeters - rules.routeInsetMeters
   const mirror = seed & 4 ? -1 : 1
-  const courtyard = id === 'flanked-courtyard'
+  const courtyard = id === 'fire-balconies'
   return {
     id, size,
-    corridorWidth: id === 'grand-hall' ? rules.corridorWidthMeters * 1.5 : rules.corridorWidthMeters,
+    corridorWidth: id === 'wide-bypass-hall' ? rules.corridorWidthMeters * 1.5 : rules.corridorWidthMeters,
     roomDepth: rules.routeInsetMeters,
-    northDoors: courtyard ? [-halfLength / 2, halfLength / 2] : [id === 'service-loop' ? -halfLength / 2 : -mirror * halfLength * 0.24],
-    southDoors: courtyard ? [-halfLength / 2, halfLength / 2] : [id === 'service-loop' ? -halfLength / 2 : mirror * halfLength * 0.24],
-    raised: id === 'split-atrium',
+    northDoors: courtyard ? [-halfLength / 2, halfLength / 2] : [id === 'basement-service-loop' ? -halfLength / 2 : -mirror * halfLength * 0.24],
+    southDoors: courtyard ? [-halfLength / 2, halfLength / 2] : [id === 'basement-service-loop' ? -halfLength / 2 : mirror * halfLength * 0.24],
+    verticalRole: id === 'wide-bypass-hall' ? 'wide' : id === 'bypass-gallery' ? 'gallery' : id === 'fire-balconies' ? 'balcony' : id === 'dual-combat-decks' ? 'dual-deck' : 'basement',
   }
 }

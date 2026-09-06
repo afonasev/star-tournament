@@ -1,11 +1,10 @@
 import { portalCollisionSurfaces } from './portalGeometry'
-import { rampBox, supportedPoint } from './elevation'
+import { arenaSupportHeight, rampBox, supportedPoint } from './elevation'
 import { resolveArenaRecipe, type ArenaRecipeGraph } from './recipeGraph'
 import { type ContentHash } from '../core/canonical'
 import { PROTOTYPE_V1_PROFILE, type ArenaGeneratorPresetRules, type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
 
 import {
-  ARENA_DEFINITION_SCHEMA_VERSION,
   createArenaDefinition,
   type ArenaBoxSurface,
   type ArenaDefinition,
@@ -19,7 +18,7 @@ import {
 } from './arenaDefinition'
 import { validateArenaGameplay, type ArenaGameplayValidationReport } from './arenaGameplayValidation'
 
-export const PROCEDURAL_ARENA_GENERATOR_VERSION = 'arena-recipes-v4' as const
+export const PROCEDURAL_ARENA_GENERATOR_VERSION = 'arena-layers-v1' as const
 export const PROCEDURAL_ARENA_GENERATION_ATTEMPTS = 4
 
 export interface ProceduralArenaGenerationOptions {
@@ -430,9 +429,25 @@ function buildDefinition(options: ResolvedGenerationOptions, attempt: number): A
       semantic.links.push({id:`link-${id}-inner`,fromRegionId:'combat-center',toRegionId:id,exposure:'open'},{id:`link-${id}-outer`,fromRegionId:id,toRegionId:`route-${side}`,exposure:'covered'})
     }
   }
+  if (recipe.verticalRole === 'basement') {
+    // The lower bowl is a full combat arena, not a dead-end shortcut: four
+    // perimeter-facing combat pockets give every spawn side an equivalent
+    // first engagement choice before players drop into the central basin.
+    const pockets: Array<readonly [string, number, number]> = [
+      ['east', rules.widthMeters * 0.38 - rules.corridorWidthMeters / 2, 0],
+      ['west', -rules.widthMeters * 0.38 + rules.corridorWidthMeters / 2, 0],
+      ['north', 0, -rules.depthMeters * 0.38 + rules.corridorWidthMeters / 2],
+      ['south', 0, rules.depthMeters * 0.38 - rules.corridorWidthMeters / 2],
+    ]
+    for (const [side, x, z] of pockets) {
+      const id = `combat-basement-${side}`
+      semantic.regions.push({ id, role: 'combat', center: { x, y: 0, z }, size: { x: rules.corridorWidthMeters, y: 1, z: rules.corridorWidthMeters } })
+      semantic.links.push({ id: `link-${id}-center`, fromRegionId: id, toRegionId: 'combat-center', exposure: 'covered' })
+    }
+  }
   const spawns = buildSpawns(options.size, rules)
   const payload: ArenaDefinitionPayload = {
-    schemaVersion: ARENA_DEFINITION_SCHEMA_VERSION,
+    schemaVersion: 5,
     id: `procedural-${options.size}-${options.seed.toString(16).padStart(8, '0')}`,
     seed: options.seed,
     size: options.size,
@@ -443,11 +458,11 @@ function buildDefinition(options: ResolvedGenerationOptions, attempt: number): A
       contentHash: options.profile.contentHash as ContentHash,
     },
     recipeId: recipe.id,
-    regions: semantic.regions,
+    regions: semantic.regions.map(region => ({ ...region, supportSurfaceId: 'floor' })),
     links: semantic.links,
     surfaces: buildSurfaces(options.size, rules, options.seed, attempt, minimumClearance, recipe).map(surface => ({ ...surface, semantics: { classification: surface.material === 'floor' ? 'floor' : surface.id.includes('-buttress-') ? 'movement-barrier' : 'wall', movement: true, projectile: !surface.id.includes('-buttress-'), sector: surface.center.z < 0 ? 'north' : 'south' } })),
     spawnRegions: spawns.spawnRegions,
-    spawnAnchors: spawns.spawnAnchors,
+    spawnAnchors: spawns.spawnAnchors.map(anchor => ({ ...anchor, supportSurfaceId: 'floor' })),
   }
   for (const side of ['north', 'south']) {
     const window = payload.surfaces.find(s => s.id.startsWith(`wall-architecture-corridor-${side}-segment-`))
@@ -455,22 +470,123 @@ function buildDefinition(options: ResolvedGenerationOptions, attempt: number): A
   }
   payload.attachments = payload.surfaces.filter(s => s.id.includes('-back-')).map(s => ({ id:`relief-${s.id}`, surfaceId:s.id, kind:'relief-niche' }))
   payload.attachments.push(...payload.surfaces.filter(s => s.id.includes('-shoulder-')).map(s => ({ id:`lamp-${s.id}`, surfaceId:s.id, kind:'lamp' as const })))
-  if (recipe.raised) {
-    const half = rules.rampWidthMeters / 2
+  if (recipe.verticalRole === 'gallery' || recipe.verticalRole === 'balcony' || recipe.verticalRole === 'dual-deck') {
+    const half = recipe.verticalRole === 'dual-deck' ? rules.rampWidthMeters : rules.rampWidthMeters / 2
     const run = rules.rampLengthMeters
-    const height = rules.elevationDeltaMeters
+    const height = recipe.verticalRole === 'dual-deck' ? rules.elevationDeltaMeters * rules.upperDeckHeightMultiplier : rules.elevationDeltaMeters
+    const sector = recipe.verticalRole === 'gallery' ? 'gallery' : recipe.verticalRole === 'balcony' ? 'balcony' : 'upper-combat'
+    // Adjacent ramp lanes tessellate a continuous cross-arena elevation belt.
+    // Every doorway sees the same support height on both sides: no cliff access.
     // Adjacent ramp lanes tessellate a continuous cross-arena elevation belt.
     // Every doorway sees the same support height on both sides: no cliff access.
     const laneCount = Math.ceil(rules.depthMeters / rules.rampWidthMeters)
     const laneWidth = rules.depthMeters / laneCount
     for (let lane = 0; lane < laneCount; lane++) {
       const z = -rules.depthMeters / 2 + laneWidth * (lane + 0.5)
-      payload.surfaces.push(rampBox(`ramp-west-${lane}`, -half-run, -half, 0, height, z, laneWidth, rules.wallThicknessMeters))
-      payload.surfaces.push(rampBox(`ramp-east-${lane}`, half, half+run, height, 0, z, laneWidth, rules.wallThicknessMeters))
+      const west = rampBox(`ramp-west-${lane}`, -half-run, -half, 0, height, z, laneWidth, rules.wallThicknessMeters)
+      const east = rampBox(`ramp-east-${lane}`, half, half+run, height, 0, z, laneWidth, rules.wallThicknessMeters)
+      west.semantics = { ...west.semantics!, sector }
+      east.semantics = { ...east.semantics!, sector }
+      payload.surfaces.push(west, east)
     }
-    payload.surfaces.push({ ...box('floor-raised-atrium', 0, height/2, 0, half*2, height, rules.depthMeters, 'floor'), semantics: { classification:'floor',movement:true,projectile:true,sector:'atrium' } })
-    payload.regions = payload.regions.map(region => ({ ...region, center:supportedPoint(payload,region.center) }))
-    payload.spawnAnchors = payload.spawnAnchors.map(anchor => ({ ...anchor, position:supportedPoint(payload,anchor.position) }))
+    const supportSurfaceId = `floor-upper-${recipe.verticalRole}`
+    payload.surfaces.push({ ...box(supportSurfaceId, 0, height / 2, 0, half * 2, height, rules.depthMeters, 'floor'), semantics: { classification:'floor',movement:true,projectile:true,sector } })
+    if (recipe.verticalRole === 'balcony' || recipe.verticalRole === 'dual-deck') {
+      const guardHeight = rules.barrierHighMeters
+      const guardThickness = rules.wallThicknessMeters / 2
+      const prefix = recipe.verticalRole === 'balcony' ? 'slab-balcony' : 'slab-dual-deck'
+      payload.surfaces.push(
+        { ...box(`${prefix}-north`, 0, height + guardHeight / 2, -rules.depthMeters / 2 + guardThickness / 2, half * 2, guardHeight, guardThickness, 'accent'), semantics: { classification: 'slab', movement: true, projectile: true, sector: 'gallery' } },
+        { ...box(`${prefix}-south`, 0, height + guardHeight / 2, rules.depthMeters / 2 - guardThickness / 2, half * 2, guardHeight, guardThickness, 'accent'), semantics: { classification: 'slab', movement: true, projectile: true, sector: 'gallery' } },
+      )
+    }
+
+    // A semantic layer is not inferred from the highest overlapping floor.
+    // Regions in the deck footprint explicitly belong to it; all other
+    // regions keep the main floor and links crossing the boundary name a ramp.
+    const supportAt = (point: { x: number; z: number }): string => payload.surfaces
+      .filter(surface => surface.semantics?.classification === 'floor' || surface.semantics?.classification === 'ramp')
+      .map(surface => ({ id: surface.id, height: arenaSupportHeight(payload, surface.id, point.x, point.z) }))
+      .filter((entry): entry is { id: string; height: number } => entry.height !== undefined)
+      .sort((first, second) => second.height - first.height || first.id.localeCompare(second.id, 'en'))[0]?.id ?? 'floor'
+    payload.regions = payload.regions.map(region => ({
+      ...region,
+      supportSurfaceId: supportAt(region.center),
+    }))
+    const regionById = new Map(payload.regions.map(region => [region.id, region]))
+    const transitionSurfaceId = 'ramp-west-0'
+    payload.links = payload.links.map(link => {
+      const from = regionById.get(link.fromRegionId)
+      const to = regionById.get(link.toRegionId)
+      return from?.supportSurfaceId !== to?.supportSurfaceId ? { ...link, transitionSurfaceId } : link
+    })
+    payload.regions = payload.regions.map(region => ({
+      ...region,
+      // Keep legacy spawn/region placement on the visible walkable top while
+      // retaining an explicit canonical support id for layer-aware consumers.
+      center: supportedPoint(payload, region.center),
+    }))
+    payload.spawnAnchors = payload.spawnAnchors.map(anchor => ({
+      ...anchor,
+      supportSurfaceId: supportAt(anchor.position),
+      position: supportedPoint(payload, anchor.position),
+    }))
+  } else if (recipe.verticalRole === 'basement') {
+    const lowerHalf = rules.rampWidthMeters / 2
+    const run = rules.rampLengthMeters
+    const height = rules.elevationDeltaMeters * rules.basementDepthMultiplier
+    const laneCount = Math.ceil(rules.depthMeters / rules.rampWidthMeters)
+    const laneWidth = rules.depthMeters / laneCount
+    const westDeckStart = -rules.widthMeters / 2 + rules.wallThicknessMeters
+    const westDeckEnd = -lowerHalf - run
+    const eastDeckStart = lowerHalf + run
+    const eastDeckEnd = rules.widthMeters / 2 - rules.wallThicknessMeters
+    const westSupportId = 'floor-main-west'
+    const eastSupportId = 'floor-main-east'
+    const northSupportId = 'floor-main-north'
+    const southSupportId = 'floor-main-south'
+
+    // The floor in the centre is deliberately retained at its original Y:
+    // this is the accessible basement bowl.  The two side decks are a higher
+    // main circulation layer, so descent never requires punching a hole into
+    // a solid floor volume.
+    const baseFloor = payload.surfaces.find(surface => surface.id === 'floor')!
+    baseFloor.semantics = { ...baseFloor.semantics!, sector: 'basement' }
+    payload.surfaces.push(
+      { ...box(westSupportId, (westDeckStart + westDeckEnd) / 2, height / 2, 0, westDeckEnd - westDeckStart, height, rules.depthMeters - 2 * rules.wallThicknessMeters, 'floor'), semantics: { classification: 'floor', movement: true, projectile: true, sector: 'gallery' } },
+      { ...box(eastSupportId, (eastDeckStart + eastDeckEnd) / 2, height / 2, 0, eastDeckEnd - eastDeckStart, height, rules.depthMeters - 2 * rules.wallThicknessMeters, 'floor'), semantics: { classification: 'floor', movement: true, projectile: true, sector: 'gallery' } },
+      { ...box(northSupportId, 0, height / 2, (-rules.depthMeters / 2 + rules.wallThicknessMeters + -lowerHalf - run) / 2, eastDeckStart - westDeckEnd, height, rules.depthMeters / 2 - lowerHalf - run - rules.wallThicknessMeters, 'floor'), semantics: { classification: 'floor', movement: true, projectile: true, sector: 'gallery' } },
+      { ...box(southSupportId, 0, height / 2, (rules.depthMeters / 2 - rules.wallThicknessMeters + lowerHalf + run) / 2, eastDeckStart - westDeckEnd, height, rules.depthMeters / 2 - lowerHalf - run - rules.wallThicknessMeters, 'floor'), semantics: { classification: 'floor', movement: true, projectile: true, sector: 'gallery' } },
+    )
+    for (let lane = 0; lane < laneCount; lane += 1) {
+      const z = -rules.depthMeters / 2 + laneWidth * (lane + 0.5)
+      const west = rampBox(`ramp-basement-west-${lane}`, westDeckEnd, -lowerHalf, height, 0, z, laneWidth, rules.wallThicknessMeters)
+      const east = rampBox(`ramp-basement-east-${lane}`, lowerHalf, eastDeckStart, 0, height, z, laneWidth, rules.wallThicknessMeters)
+      west.semantics = { ...west.semantics!, sector: 'basement' }
+      east.semantics = { ...east.semantics!, sector: 'basement' }
+      payload.surfaces.push(west, east)
+    }
+    const regionSupport = (x: number, z: number): string => payload.surfaces
+      .filter(surface => surface.semantics?.classification === 'floor' || surface.semantics?.classification === 'ramp')
+      .map(surface => ({ id: surface.id, height: arenaSupportHeight(payload, surface.id, x, z) }))
+      .filter((entry): entry is { id: string; height: number } => entry.height !== undefined)
+      .sort((first, second) => second.height - first.height || first.id.localeCompare(second.id, 'en'))[0]?.id ?? 'floor'
+    payload.regions = payload.regions.map(region => ({
+      ...region,
+      // Spawn symmetry is preserved on the lower bowl; the raised side decks
+      // are optional bypasses rather than a team-owned starting advantage.
+      supportSurfaceId: regionSupport(region.center.x, region.center.z),
+      center: supportedPoint(payload, region.center),
+    }))
+    payload.spawnAnchors = payload.spawnAnchors.map(anchor => ({ ...anchor, supportSurfaceId: regionSupport(anchor.position.x, anchor.position.z), position: supportedPoint(payload, anchor.position) }))
+    const regionById = new Map(payload.regions.map(region => [region.id, region]))
+    payload.links = payload.links.map(link => {
+      const from = regionById.get(link.fromRegionId)
+      const to = regionById.get(link.toRegionId)
+      if (from?.supportSurfaceId === to?.supportSurfaceId) return link
+      const transitionSurfaceId = from?.supportSurfaceId === westSupportId || to?.supportSurfaceId === westSupportId ? 'ramp-basement-west-0' : 'ramp-basement-east-0'
+      return { ...link, transitionSurfaceId }
+    })
   }
   payload.surfaces.push(...portalCollisionSurfaces(payload.surfaces))
   return createArenaDefinition(payload)

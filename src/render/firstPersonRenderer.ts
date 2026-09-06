@@ -273,8 +273,8 @@ function addArena(
       .map((surface) => surface.id),
   )
   const textureKit = createArenaTextureKit(graphicsQuality, onTextureReady)
-  const { wall: wallMaps, floor: floorMaps } = textureKit
-  const allMaps = [wallMaps.baseColor, wallMaps.normal, wallMaps.orm, floorMaps.baseColor, floorMaps.normal, floorMaps.orm, textureKit.decalAtlas]
+  const { wall: wallMaps, floor: floorMaps, basementFloor: basementFloorMaps, galleryWall: galleryWallMaps } = textureKit
+  const allMaps = [wallMaps.baseColor, wallMaps.normal, wallMaps.orm, floorMaps.baseColor, floorMaps.normal, floorMaps.orm, basementFloorMaps.baseColor, basementFloorMaps.normal, basementFloorMaps.orm, galleryWallMaps.baseColor, galleryWallMaps.normal, galleryWallMaps.orm, textureKit.decalAtlas]
   textures.push(...allMaps.filter((texture): texture is THREE.Texture => texture !== undefined))
   const textured = (parameters: THREE.MeshStandardMaterialParameters, maps: { readonly baseColor: THREE.Texture; readonly normal: THREE.Texture; readonly orm: THREE.Texture }) => new THREE.MeshStandardMaterial({
     ...parameters,
@@ -363,10 +363,10 @@ function addArena(
       : new THREE.MeshStandardMaterial({
         ...token,
         roughness: 1, metalness: 1,
-        map: surface.material === 'floor' ? floorMaps.baseColor : wallMaps.baseColor,
-        normalMap: surface.material === 'floor' ? floorMaps.normal : wallMaps.normal,
-        roughnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
-        metalnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
+        map: surface.material === 'floor' ? (surface.semantics?.sector === 'basement' ? basementFloorMaps.baseColor : floorMaps.baseColor) : (surface.semantics?.sector === 'gallery' ? galleryWallMaps.baseColor : wallMaps.baseColor),
+        normalMap: surface.material === 'floor' ? (surface.semantics?.sector === 'basement' ? basementFloorMaps.normal : floorMaps.normal) : (surface.semantics?.sector === 'gallery' ? galleryWallMaps.normal : wallMaps.normal),
+        roughnessMap: surface.material === 'floor' ? (surface.semantics?.sector === 'basement' ? basementFloorMaps.orm : floorMaps.orm) : (surface.semantics?.sector === 'gallery' ? galleryWallMaps.orm : wallMaps.orm),
+        metalnessMap: surface.material === 'floor' ? (surface.semantics?.sector === 'basement' ? basementFloorMaps.orm : floorMaps.orm) : (surface.semantics?.sector === 'gallery' ? galleryWallMaps.orm : wallMaps.orm),
       })
     if (arena.recipeId && !special && material !== accentShellMaterial) {
       material.color.setHex(surface.material === 'floor' ? (surface.semantics?.sector === 'atrium' ? 0x697987 : 0x4d6170) : (surface.semantics?.sector === 'north' ? 0x5a7080 : 0x625f5b))

@@ -349,10 +349,12 @@ describe('playable browser bootstrap', () => {
       radius: PROTOTYPE_V1_PROFILE.rules.player.capsule.radius,
       halfHeight: PROTOTYPE_V1_PROFILE.rules.player.capsule.halfHeight,
     })))
-    expect(capsules.filter(({ semanticId }) => semanticId !== PLAYABLE_PLAYER_ID))
-      .toEqual(capsules.filter(({ semanticId }) => semanticId !== PLAYABLE_PLAYER_ID).map(() =>
-        expect.objectContaining({ position: expect.objectContaining({ y: 0.9 }) })
-      ))
+    // Spawn projection is support-aware: a bot may begin on a declared upper
+    // deck, but bootstrap must still only create capsule data (no simulation
+    // tick or movement) before pointer lock is explicitly acquired.
+    for (const capsule of capsules.filter(({ semanticId }) => semanticId !== PLAYABLE_PLAYER_ID)) {
+      expect(capsule.position.y).toBeGreaterThanOrEqual(0.9)
+    }
     expect(configuration).toEqual({
       skinWidth: 0.01,
       autostepMaxHeight: 0.45,

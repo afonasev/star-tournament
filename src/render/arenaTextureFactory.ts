@@ -21,6 +21,8 @@ export interface ArenaTextureSet {
 export interface ArenaTextureKit {
   readonly wall: ArenaTextureSet
   readonly floor: ArenaTextureSet
+  readonly basementFloor: ArenaTextureSet
+  readonly galleryWall: ArenaTextureSet
   readonly decalAtlas?: THREE.Texture
   readonly residency: ArenaTextureResidency
   readonly dispose: () => void
@@ -65,6 +67,8 @@ function resolveResidency(quality: GraphicsQualityProfile): ArenaTextureResidenc
   const estimate = (selectedTier: TextureQualityTier, decals: boolean) => (
     CLEAN_FUTURE_SPORT_TEXTURE_V1.textureSets.wall.variants[selectedTier].estimatedResidentMiB +
     CLEAN_FUTURE_SPORT_TEXTURE_V1.textureSets.floor.variants[selectedTier].estimatedResidentMiB +
+    CLEAN_FUTURE_SPORT_TEXTURE_V1.textureSets.basementFloor.variants[selectedTier].estimatedResidentMiB +
+    CLEAN_FUTURE_SPORT_TEXTURE_V1.textureSets.galleryWall.variants[selectedTier].estimatedResidentMiB +
     (decals ? CLEAN_FUTURE_SPORT_TEXTURE_V1.decalAtlas.estimatedResidentMiB : 0)
   )
   let residentMiB = estimate(tier, includeDecals)
@@ -95,6 +99,8 @@ export function createArenaTextureKit(quality: GraphicsQualityProfile, onReady: 
   const residency = resolveResidency(quality)
   const wall = makeSet('wall', residency.effectiveTier, onReady)
   const floor = makeSet('floor', residency.effectiveTier, onReady)
+  const basementFloor = makeSet('basementFloor', residency.effectiveTier, onReady)
+  const galleryWall = makeSet('galleryWall', residency.effectiveTier, onReady)
   const decalAtlas = residency.decalsIncluded
     ? new THREE.TextureLoader().load(CLEAN_FUTURE_SPORT_TEXTURE_V1.decalAtlas.uri, onReady)
     : undefined
@@ -103,12 +109,14 @@ export function createArenaTextureKit(quality: GraphicsQualityProfile, onReady: 
     decalAtlas.generateMipmaps = residency.effectiveTier === 'high'
     decalAtlas.minFilter = residency.effectiveTier === 'high' ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter
   }
-  const textures = [wall.baseColor, wall.normal, wall.orm, floor.baseColor, floor.normal, floor.orm, decalAtlas]
+  const textures = [wall.baseColor, wall.normal, wall.orm, floor.baseColor, floor.normal, floor.orm, basementFloor.baseColor, basementFloor.normal, basementFloor.orm, galleryWall.baseColor, galleryWall.normal, galleryWall.orm, decalAtlas]
     .filter((texture): texture is THREE.Texture => texture !== undefined)
   let disposed = false
   return Object.freeze({
     wall,
     floor,
+    basementFloor,
+    galleryWall,
     decalAtlas,
     residency,
     dispose: () => {

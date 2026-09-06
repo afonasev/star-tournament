@@ -77,7 +77,7 @@ function subCapsuleGaps(arena: ReturnType<typeof requireProceduralArena>, minimu
   return gaps.sort()
 }
 
-describe('arena-recipes-v4 procedural arenas', () => {
+describe('arena-layers-v1 procedural arenas', () => {
   it.each(sizes)('reproduces the versioned seed corpus for %s', (size) => {
     for (const seed of seeds) {
       const first = generateProceduralArena({ size, seed })
@@ -99,8 +99,8 @@ describe('arena-recipes-v4 procedural arenas', () => {
 
   it('uses distinct topology budgets rather than uniform coordinate scaling', () => {
     const arenas = sizes.map((size) => requireProceduralArena({ size, seed: 123 }))
-    expect(arenas.map(({ regions }) => regions.length)).toEqual([13, 15, 17])
-    expect(arenas.map(({ surfaces }) => surfaces.filter(({ id }) => id.startsWith('wall-architecture-room-')).length)).toEqual([32, 40, 48])
+    expect(arenas.map(({ regions }) => regions.length)).toEqual([11, 13, 15])
+    expect(arenas.map(({ surfaces }) => surfaces.filter(({ id }) => id.startsWith('wall-architecture-room-')).length)).toEqual([16, 24, 32])
     expect(new Set(arenas.map(({ contentHash }) => contentHash)).size).toBe(3)
   })
 
@@ -125,11 +125,11 @@ describe('arena-recipes-v4 procedural arenas', () => {
 
   it('keeps the shipped representative identities stable', () => {
     expect(sizes.map((size) => requireProceduralArena({ size, seed: 0x53544152 }).contentHash)).toEqual([
-      'fnv1a64-v1:fb91186b4d17c378',
-      'fnv1a64-v1:aa615058df979579',
-      'fnv1a64-v1:8a7e93116e996351',
+      'fnv1a64-v1:281465765865ec29',
+      'fnv1a64-v1:65d27578e1af3aae',
+      'fnv1a64-v1:eb86b5d4224355ce',
     ])
-    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:fb91186b4d17c378')
+    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:281465765865ec29')
     expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v4', generatorVersion: 'shipped-fallback-v4', size: 'medium' })
     expect(PROCEDURAL_FALLBACK_ARENA.contentHash).not.toBe(requireProceduralArena({ size: 'medium', seed: 0x53544152 }).contentHash)
     expect(validateArenaGameplay(PROCEDURAL_FALLBACK_ARENA, PROTOTYPE_V1_PROFILE).accepted).toBe(true)

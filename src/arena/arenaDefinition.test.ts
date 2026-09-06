@@ -62,6 +62,24 @@ describe('diagnostic ArenaDefinition', () => {
     expect(Object.isFrozen(parsed.arena.surfaces)).toBe(true)
   })
 
+  it('requires explicit canonical supports for schema v5 layers', () => {
+    const layered = cloneArena()
+    layered.schemaVersion = 5
+    for (const region of layered.regions) region.supportSurfaceId = 'floor'
+    for (const anchor of layered.spawnAnchors) anchor.supportSurfaceId = 'floor'
+    layered.contentHash = computeArenaContentHash(layered)
+    expect(validateArenaDefinition(layered)).toMatchObject({ ok: true })
+
+    delete layered.regions[0]!.supportSurfaceId
+    layered.contentHash = computeArenaContentHash(layered)
+    expect(validateArenaDefinition(layered)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'MISSING_FIELD', paths: ['regions.0.supportSurfaceId'] }),
+      ]),
+    })
+  })
+
   it('detaches a validated arena from mutable input', () => {
     const input = cloneArena()
     const result = validateArenaDefinition(input)

@@ -21,6 +21,9 @@ export interface ArenaGeneratorPresetRules {
   routeInsetMeters: number
   recipeCount: number
   elevationDeltaMeters: number
+  upperDeckHeightMultiplier: number
+  upperDeckFootprintRatio: number
+  basementDepthMultiplier: number
   rampWidthMeters: number
   rampLengthMeters: number
   barrierLowMeters: number
@@ -184,13 +187,16 @@ function arenaGeneratorDescriptors(size: ArenaGeneratorSize): NumericProfileDesc
     { path: `${prefix}.depthMeters`, group, label: `Глубина ${sizeLabel} арены`, description: 'Полная глубина playable footprint.', unit: 'meters', minimum: 16, maximum: 64, step: 1 },
     { path: `${prefix}.wallHeightMeters`, group, label: `Высота стен ${sizeLabel} арены`, description: 'Высота внешних и route-разделяющих стен.', unit: 'meters', minimum: 2, maximum: 10, step: 0.5 },
     { path: `${prefix}.wallThicknessMeters`, group, label: `Толщина стен ${sizeLabel} арены`, description: 'Толщина связанных perimeter, room и corridor wall runs.', unit: 'meters', minimum: 0.4, maximum: 2, step: 0.1 },
-    { path: `${prefix}.corridorWidthMeters`, group, label: `Ширина коридоров ${sizeLabel} арены`, description: 'Свободная ширина между парными стенами основного коридора.', unit: 'meters', minimum: 2, maximum: 10, step: 0.5 },
-    { path: `${prefix}.doorwayWidthMeters`, group, label: `Ширина дверей ${sizeLabel} арены`, description: 'Свободная ширина читаемого разрыва в стеновой цепочке.', unit: 'meters', minimum: 1.5, maximum: 8, step: 0.5 },
+    { path: `${prefix}.corridorWidthMeters`, group, label: `Ширина коридоров ${sizeLabel} арены`, description: 'Чистая боевая ширина между стенами: минимум три effective capsule диаметра для стрейфа.', unit: 'meters', minimum: 2.5, maximum: 10, step: 0.5 },
+    { path: `${prefix}.doorwayWidthMeters`, group, label: `Ширина дверей ${sizeLabel} арены`, description: 'Чистый читаемый разрыв: минимум три effective capsule диаметра.', unit: 'meters', minimum: 2.5, maximum: 8, step: 0.5 },
     { path: `${prefix}.perimeterInsetMeters`, group, label: `Глубина уступов ${sizeLabel} арены`, description: 'Глубина размерно-зависимых ниш замкнутого внешнего контура.', unit: 'meters', minimum: 1, maximum: 10, step: 0.5 },
     { path: `${prefix}.routeInsetMeters`, group, label: `Отступ маршрута ${sizeLabel} арены`, description: 'Отступ внешнего кольцевого маршрута от границы арены.', unit: 'meters', minimum: 3, maximum: 16, step: 0.5 },
-    { path: `${prefix}.recipeCount`, group, label: `Количество рецептов ${sizeLabel}`, description: 'Число доступных именованных композиций.', unit: 'count', minimum: 4, maximum: 4, step: 1 },
+    { path: `${prefix}.recipeCount`, group, label: `Количество рецептов ${sizeLabel}`, description: 'Число доступных именованных композиций.', unit: 'count', minimum: 5, maximum: 5, step: 1 },
     { path: `${prefix}.elevationDeltaMeters`, group, label: `Перепад уровня ${sizeLabel}`, description: 'Высота поднятой зоны над базовым полом.', unit: 'meters', minimum: 0.5, maximum: 1.5, step: 0.25 },
-    { path: `${prefix}.rampWidthMeters`, group, label: `Ширина рампы ${sizeLabel}`, description: 'Поперечный размер двунаправленного перехода.', unit: 'meters', minimum: 3, maximum: 8, step: 0.5 },
+    { path: `${prefix}.upperDeckHeightMultiplier`, group, label: `Высота второго этажа ${sizeLabel}`, description: 'Множитель перепада для самостоятельной верхней боевой палубы.', unit: 'ratio', minimum: 1, maximum: 3, step: 0.25 },
+    { path: `${prefix}.upperDeckFootprintRatio`, group, label: `Площадь второго этажа ${sizeLabel}`, description: 'Доля центрального footprint, занимаемая галереей, балконом или второй боевой палубой.', unit: 'ratio', minimum: 0.2, maximum: 0.75, step: 0.05 },
+    { path: `${prefix}.basementDepthMultiplier`, group, label: `Глубина подвала ${sizeLabel}`, description: 'Множитель перепада для нижнего обходного маршрута.', unit: 'ratio', minimum: 1, maximum: 3, step: 0.25 },
+    { path: `${prefix}.rampWidthMeters`, group, label: `Ширина рампы ${sizeLabel}`, description: 'Чистая ширина двунаправленного перехода: минимум три effective capsule диаметра.', unit: 'meters', minimum: 2.5, maximum: 8, step: 0.5 },
     { path: `${prefix}.rampLengthMeters`, group, label: `Длина рампы ${sizeLabel}`, description: 'Горизонтальный пробег перехода между уровнями.', unit: 'meters', minimum: 3, maximum: 8, step: 0.5 },
     { path: `${prefix}.barrierLowMeters`, group, label: `Низкий барьер ${sizeLabel}`, description: 'Высота movement-only барьера.', unit: 'meters', minimum: 0.5, maximum: 1.5, step: 0.25 },
     { path: `${prefix}.barrierHighMeters`, group, label: `Высокий барьер ${sizeLabel}`, description: 'Высота высокого movement-only барьера.', unit: 'meters', minimum: 1, maximum: 2.5, step: 0.25 },
@@ -1071,16 +1077,21 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
     const slotCount = readPath(value, `${prefix}.spawnSlotCount`)
     const separation = readPath(value, `${prefix}.minimumSpawnSeparationMeters`)
     const elevation = readPath(value, `${prefix}.elevationDeltaMeters`) as number
+    const upperDeckHeightMultiplier = readPath(value, `${prefix}.upperDeckHeightMultiplier`) as number
+    const upperDeckFootprintRatio = readPath(value, `${prefix}.upperDeckFootprintRatio`) as number
+    const basementDepthMultiplier = readPath(value, `${prefix}.basementDepthMultiplier`) as number
     const rampWidth = readPath(value, `${prefix}.rampWidthMeters`) as number
     const rampLength = readPath(value, `${prefix}.rampLengthMeters`) as number
     const low = readPath(value, `${prefix}.barrierLowMeters`) as number
     const high = readPath(value, `${prefix}.barrierHighMeters`) as number
     const ceiling = readPath(value, `${prefix}.wallHeightMeters`) as number
     const capsuleHeight = 2 * ((readPath(value, 'rules.player.capsule.halfHeight') as number) + (capsuleRadius as number))
+    const tripleCapsuleWidth = 3 * 2 * ((capsuleRadius as number) + (capsuleSkinWidth as number))
     const maxSlope = readPath(value, 'rules.player.movement.maxSlopeClimbDegrees') as number
-    if (rampWidth < (doorwayWidth as number) || rampWidth > (corridorWidth as number) || Math.atan2(elevation, rampLength) * 180 / Math.PI > maxSlope || elevation + capsuleHeight >= ceiling || low > high || high >= ceiling || rampLength * 2 >= (width as number) - 2 * ((perimeterInset as number) + (routeInset as number))) {
+    const upperHeight = elevation * upperDeckHeightMultiplier
+    if (rampWidth < tripleCapsuleWidth || rampWidth < (doorwayWidth as number) || rampWidth > (corridorWidth as number) || Math.atan2(upperHeight, rampLength) * 180 / Math.PI > maxSlope || upperHeight + capsuleHeight >= ceiling || upperDeckFootprintRatio * (width as number) < rampWidth || basementDepthMultiplier < 1 || low > high || high >= ceiling || rampLength * 2 >= (width as number) - 2 * ((perimeterInset as number) + (routeInset as number))) {
       arenaContractInvalid = true
-      arenaPaths.push(...['elevationDeltaMeters', 'rampWidthMeters', 'rampLengthMeters', 'barrierLowMeters', 'barrierHighMeters'].map(field => `${prefix}.${field}`))
+      arenaPaths.push(...['elevationDeltaMeters', 'upperDeckHeightMultiplier', 'upperDeckFootprintRatio', 'basementDepthMultiplier', 'rampWidthMeters', 'rampLengthMeters', 'barrierLowMeters', 'barrierHighMeters'].map(field => `${prefix}.${field}`))
     }
     const numeric = [width, depth, wallThickness, corridorWidth, doorwayWidth, perimeterInset, routeInset, coverSize, slotCount, separation]
     if (!numeric.every((entry) => typeof entry === 'number' && Number.isFinite(entry))) continue
@@ -1088,7 +1099,8 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
       (routeInset as number) * 2 + (coverSize as number) >= Math.min(width as number, depth as number) ||
       (perimeterInset as number) * 2 + (corridorWidth as number) >= Math.min(width as number, depth as number) ||
       (doorwayWidth as number) > (corridorWidth as number) ||
-      (doorwayWidth as number) <= 2 * ((capsuleRadius as number) + (capsuleSkinWidth as number)) ||
+      (doorwayWidth as number) < tripleCapsuleWidth ||
+      (corridorWidth as number) < tripleCapsuleWidth ||
       (corridorWidth as number) <= (doorwayWidth as number) + (wallThickness as number) ||
       (slotCount as number) < 12 ||
       (separation as number) <= 2 * ((capsuleRadius as number) + (capsuleSkinWidth as number))
@@ -1143,7 +1155,7 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 7,
+  revision: 8,
   source: 'shipped',
   rules: {
     bots: BOT_RULES,
@@ -1202,9 +1214,9 @@ const prototypePayload: GameDesignProfilePayload = {
     death: { killcamSeconds: 3, corpseSeconds: 10 },
     arenaGenerator: {
       presets: {
-        small: { recipeCount: 4, elevationDeltaMeters: 0.75, rampWidthMeters: 4, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
-        medium: { recipeCount: 4, elevationDeltaMeters: 0.75, rampWidthMeters: 5, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
-        large: { recipeCount: 4, elevationDeltaMeters: 0.75, rampWidthMeters: 6, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
+        small: { recipeCount: 5, elevationDeltaMeters: 0.75, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.4, basementDepthMultiplier: 1.25, rampWidthMeters: 4, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 4, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
+        medium: { recipeCount: 5, elevationDeltaMeters: 0.75, upperDeckHeightMultiplier: 1.75, upperDeckFootprintRatio: 0.45, basementDepthMultiplier: 1.5, rampWidthMeters: 5, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 46, depthMeters: 34, wallHeightMeters: 4.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
+        large: { recipeCount: 5, elevationDeltaMeters: 0.75, upperDeckHeightMultiplier: 2, upperDeckFootprintRatio: 0.5, basementDepthMultiplier: 1.75, rampWidthMeters: 6, rampLengthMeters: 4, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 60, depthMeters: 44, wallHeightMeters: 5, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
       },
     },
   },
