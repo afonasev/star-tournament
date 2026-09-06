@@ -17,6 +17,14 @@
 
 ## Decisions
 
+### Равномерный renderer-only rhythm ламп
+
+Renderer выводит lamp fixture placement из existing canonical wall surface slots: corridors, rooms и combat zones получают повторяемый, но не blocking rhythm без новой geometry в `ArenaDefinition`. Fixture включает GLB housing, emissive lens и local point light; Low может убрать light contribution, но не сам читаемый lens. Альтернатива — хранить больше attachments в generator payload: она меняет arena identity ради presentation detail.
+
+### Контрастный global fill
+
+Profile-owned studio fill управляет hemisphere/key contribution отдельно от lamp intensity. Default снижает background и fill до medium-dark уровня, но rim light роботов сохраняется. Альтернатива — затемнять authored albedo: она смешивает lighting policy с texture contract и хуже масштабируется по quality tier.
+
 ### Отбор shadow caster по близости к камере
 
 Renderer создаёт все разрешённые локальные lamp lights как раньше, но после complete scene setup выбирает shadow casters из них по расстоянию до active first-person camera. Это делает наиболее заметные тени при ограниченном GPU budget и не привязывает результат к порядку generation. При равной дистанции используется stable lamp id. Альтернатива — тени у первых attachment в arena order; она даёт неочевидный результат и может оставить видимую зону без теней.
@@ -41,7 +49,7 @@ Shadow selection выполняется только при setup/resizing camer
 
 - Несколько point-light cube maps могут снизить FPS на слабом GPU → Low отключает shadows, Balanced ограничен одним caster, а High/Ultra используют жёсткий ceiling 2/4.
 - Светильник за камерой может сохранить shadow map до следующей presentation invalidation → camera-relative selection вызывается перед render при изменённой camera transform, но не делает дополнительный WebGL submission при idle snapshot.
-- Мягкие contact shadows могут быть незаметны в светлой сцене → проверка включает fixture с portal/wall relief и зону пола рядом с lamp, не снижая global fill.
+- Мягкие contact shadows могут быть незаметны среди ярких fixtures → проверка включает fixture с portal/wall relief и зону пола рядом с lamp, не повышая shadow caster budget.
 
 ## Migration Plan
 

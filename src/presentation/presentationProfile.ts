@@ -23,6 +23,8 @@ export interface PresentationProfilePayload {
     localLightIntensity: number
     localLightDistance: number
     localLightCount: number
+    studioFillIntensity: number
+    studioKeyIntensity: number
     localLightShadowCount: number
     localLightShadowMapSize: number
     localLightShadowRadius: number
@@ -61,7 +63,9 @@ const descriptors: NumericPresentationProfileDescriptor[] = [
   { path:'render.barrierOpacity',group:'render',label:'Прозрачность барьера',description:'Видимость movement-only энергетической сетки.',unit:'ratio',minimum:0.1,maximum:0.8,step:0.05 },
   { path:'render.localLightIntensity',group:'render',label:'Сила локального света',description:'Световой акцент у маршрутной лампы.',unit:'intensity',minimum:0,maximum:20,step:0.5 },
   { path:'render.localLightDistance',group:'render',label:'Дальность лампы',description:'Расстояние затухания локального света.',unit:'meters',minimum:2,maximum:20,step:1 },
-  { path:'render.localLightCount',group:'render',label:'Бюджет ламп',description:'Верхний предел локальных источников на High/Ultra; Balanced использует половину, Low ноль.',unit:'count',minimum:0,maximum:8,step:2 },
+  { path:'render.localLightCount',group:'render',label:'Бюджет ламп',description:'Верхний предел локальных источников на High/Ultra; Balanced использует половину, Low ноль.',unit:'count',minimum:0,maximum:24,step:2 },
+  { path:'render.studioFillIntensity',group:'render',label:'Заполняющий свет арены',description:'Яркость общего света до локальных ламп.',unit:'intensity',minimum:0.2,maximum:2.4,step:0.1 },
+  { path:'render.studioKeyIntensity',group:'render',label:'Направленный свет арены',description:'Яркость мягкого направленного света architectural shell.',unit:'intensity',minimum:0.2,maximum:2.4,step:0.1 },
   { path:'render.localLightShadowCount',group:'render',label:'Бюджет теней ламп',description:'Верхний предел мягких теней от локальных ламп на Ultra.',unit:'count',minimum:0,maximum:4,step:1 },
   { path:'render.localLightShadowMapSize',group:'render',label:'Разрешение тени лампы',description:'Размер одной стороны cube shadow map локальной лампы.',unit:'pixels',minimum:256,maximum:1024,step:256 },
   { path:'render.localLightShadowRadius',group:'render',label:'Мягкость тени лампы',description:'Радиус PCF-смягчения локальной тени.',unit:'ratio',minimum:1,maximum:8,step:0.5 },
@@ -318,9 +322,9 @@ const balancedPayload: PresentationProfilePayload = {
   schemaVersion: PRESENTATION_PROFILE_SCHEMA_VERSION,
   id: 'presentation-balanced-v1',
   name: 'Presentation Balanced v1',
-  revision: 3,
+  revision: 4,
   source: 'shipped',
-  render: { backingBufferPixelBudget: 2_073_600, windowOpacity:0.25, barrierOpacity:0.2,localLightIntensity:4,localLightDistance:8,localLightCount:4,localLightShadowCount:4,localLightShadowMapSize:512,localLightShadowRadius:2,reliefDepth:0.08,materialRepeatScale:1.5 },
+  render: { backingBufferPixelBudget: 2_073_600, windowOpacity:0.25, barrierOpacity:0.2,localLightIntensity:8,localLightDistance:8,localLightCount:16,studioFillIntensity:0.4,studioKeyIntensity:0.5,localLightShadowCount:4,localLightShadowMapSize:512,localLightShadowRadius:2,reliefDepth:0.08,materialRepeatScale:1.5 },
   ui: { maximumPublicationsPerSecond: 10 },
 }
 

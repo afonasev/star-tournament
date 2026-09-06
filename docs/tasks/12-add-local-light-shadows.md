@@ -3,9 +3,9 @@
 - Change: `add-local-light-shadows`.
 - Worktree: `/Users/eaafonasev/.codex/worktrees/3863/star-tournament`.
 - Branch: `codex/add-local-light-shadows`; base `a6444c5`.
-- Scope: renderer-only local lamp shadows with `Low`/`Balanced`/`High`/`Ultra` budgets 0/1/2/4, validated presentation-profile controls and performance report evidence.
-- Checks: `npm test` (346), `npm run build`, strict OpenSpec validation; production browser performance gate passed for all four quality presets and again on Ultra after the visual repair.
-- Repair: canonical arena shell now only receives local shadows, preventing self-shadow flicker; each lamp fixture has an untonemapped emissive lens driven by the profile's local-light intensity.
-- Visual evidence: [Ultra PNG](../../../visualizations/2026/09/06/01a07568-c1d3-7eb2-963c-d98d9a36e93e/local-lights-repaired-ultra.png). The in-app Browser opens the scene, but rejects pointer lock; it does not prove physical keyboard/mouse movement.
+- Scope: renderer-only local lamp shadows with `Low`/`Balanced`/`High`/`Ultra` budgets 0/1/2/4, a darkened profile-owned arena fill and a regular visible lamp rhythm across renderer wall surfaces.
+- Checks: `npm test` (346), `npm run build`, strict OpenSpec validation; production browser performance gate passed for all four quality presets after the current rebuild.
+- Repair: canonical arena shell now only receives local shadows, preventing self-shadow flicker. Every renderer wall gets a lamp housing, emissive lens and ceiling strip; at most 16 local lights and 0/1/2/4 shadow casters are active by quality tier.
+- Visual evidence: [Ultra PNG](../../../visualizations/2026/09/06/01a07568-c1d3-7eb2-963c-d98d9a36e93e/local-light-rhythm-ultra.png). The in-app Browser opens the scene, but rejects pointer lock; it does not prove physical keyboard/mouse movement.
 - Stand: `http://127.0.0.1:5182/?muted=1` (HTTP 200 checked 2026-09-06).
 - Open: visual/physical acceptance of free camera movement around lamp fixtures. Do not merge main, archive or deploy in this task.

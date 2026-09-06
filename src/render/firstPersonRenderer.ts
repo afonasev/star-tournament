@@ -233,6 +233,11 @@ function addArena(
   let localLights = 0
   const localLightCandidates: LocalLightCandidate[] = []
   const lightBudget = graphicsQuality.id === 'low' ? 0 : graphicsQuality.id === 'balanced' ? recipeStyle.localLightCount / 2 : recipeStyle.localLightCount
+  const rhythmLampSurfaceIds = new Set(
+    arena.surfaces
+      .filter((surface) => surface.material === 'wall' && !surface.id.startsWith('portal-solid:'))
+      .map((surface) => surface.id),
+  )
   const textureKit = createArenaTextureKit(graphicsQuality, onTextureReady)
   const { wall: wallMaps, floor: floorMaps } = textureKit
   const allMaps = [wallMaps.baseColor, wallMaps.normal, wallMaps.orm, floorMaps.baseColor, floorMaps.normal, floorMaps.orm, textureKit.decalAtlas]
@@ -326,7 +331,7 @@ function addArena(
         metalnessMap: surface.material === 'floor' ? floorMaps.orm : wallMaps.orm,
       })
     if (arena.recipeId && !special && material !== accentShellMaterial) {
-      material.color.setHex(surface.material === 'floor' ? (surface.semantics?.sector === 'atrium' ? 0xdcebf3 : 0xaec4d5) : (surface.semantics?.sector === 'north' ? 0xe4edf2 : 0xf1ebe1))
+      material.color.setHex(surface.material === 'floor' ? (surface.semantics?.sector === 'atrium' ? 0x697987 : 0x4d6170) : (surface.semantics?.sector === 'north' ? 0x5a7080 : 0x625f5b))
     }
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = `arena:${surface.id}`
@@ -447,32 +452,57 @@ function addArena(
     } else {
       addDetailBox(detail, `presentation:accent-trim:${surface.id}`, new THREE.Vector3(Math.max(0.2, x + 0.04), 0.045, Math.max(0.2, z + 0.04)), new THREE.Vector3(0, y / 2 + 0.025, 0), trimMaterial)
     }
-    for (const attachment of arena.attachments?.filter(a => a.surfaceId === surface.id) ?? []) {
+    const attachments = [...(arena.attachments?.filter(a => a.surfaceId === surface.id) ?? [])]
+    if (rhythmLampSurfaceIds.has(surface.id) && !attachments.some((attachment) => attachment.kind === 'lamp')) {
+      attachments.push({ id: `lamp-rhythm:${surface.id}`, surfaceId: surface.id, kind: 'lamp' })
+    }
+    for (const attachment of attachments) {
       const horizontal = x >= z
       const faceSign = horizontal ? -Math.sign(surface.center.z || 1) : -Math.sign(surface.center.x || 1)
       const frame = new THREE.Group()
       frame.name = `presentation:${attachment.kind}:${attachment.id}`
       frame.rotation.y = horizontal ? (faceSign > 0 ? 0 : Math.PI) : (faceSign > 0 ? Math.PI/2 : -Math.PI/2)
       frame.position.set(horizontal ? 0 : faceSign*(x/2+recipeStyle.reliefDepth),attachment.kind === 'lamp' ? y/4 : 0,horizontal ? faceSign*(z/2+recipeStyle.reliefDepth) : 0)
-      if (attachment.kind === 'lamp' && arenaGlbAssets) {
-        const lamp = arenaGlbAssets.createInstance('wall-lamp',0,graphicsQuality.geometryLod)
-        textureGlbInstance(lamp,wallMaps.baseColor)
-        frame.add(lamp)
-        const lensGeometry = new THREE.BoxGeometry(0.56, 0.09, 0.028)
+      if (attachment.kind === 'lamp') {
+        if (arenaGlbAssets) {
+          const lamp = arenaGlbAssets.createInstance('wall-lamp',0,graphicsQuality.geometryLod)
+          textureGlbInstance(lamp,wallMaps.baseColor)
+          frame.add(lamp)
+        } else {
+          const housingGeometry = new THREE.BoxGeometry(0.78, 0.32, 0.16)
+          const housingMaterial = new THREE.MeshStandardMaterial({ color: 0x162636, roughness: 0.5, metalness: 0.62 })
+          const housing = new THREE.Mesh(housingGeometry, housingMaterial)
+          housing.name = `presentation:lamp-housing:${attachment.id}`
+          housing.position.set(0, 0.15, 0)
+          frame.add(housing)
+          geometries.push(housingGeometry)
+          materials.push(housingMaterial)
+        }
+        const lensGeometry = new THREE.BoxGeometry(1.2, 0.22, 0.06)
         const lensMaterial = new THREE.MeshStandardMaterial({
           color: surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,
           emissive: surface.semantics?.sector === 'north' ? 0x4c9dff : 0xff8a38,
-          emissiveIntensity: recipeStyle.localLightIntensity,
+          emissiveIntensity: recipeStyle.localLightIntensity * 1.5,
           toneMapped: false,
           roughness: 0.22,
           metalness: 0.08,
         })
         const lens = new THREE.Mesh(lensGeometry, lensMaterial)
         lens.name = `presentation:lamp-lens:${attachment.id}`
-        lens.position.set(0, 0.15, 0.1)
+        lens.position.set(0, 0.15, 0.2)
         frame.add(lens)
         geometries.push(lensGeometry)
         materials.push(lensMaterial)
+        // A second, shallow strip sits under the ceiling line. It keeps the
+        // lamp rhythm legible down long corridors even before its point light
+        // enters the active local-light budget.
+        addDetailBox(
+          frame,
+          `presentation:ceiling-lamp:${attachment.id}`,
+          new THREE.Vector3(1.5, 0.1, 0.16),
+          new THREE.Vector3(0, y / 4 - 0.28, 0.2),
+          lensMaterial,
+        )
         if (localLights < lightBudget) {
           const light = new THREE.PointLight(surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,recipeStyle.localLightIntensity,recipeStyle.localLightDistance)
           light.name = `presentation:lamp-light:${attachment.id}`
@@ -678,8 +708,8 @@ export function createFirstPersonRenderer({
   }
 
   const scene = new THREE.Scene()
-  scene.background = new THREE.Color(CLEAN_FUTURE_SPORT_V1.background)
-  scene.fog = new THREE.FogExp2(CLEAN_FUTURE_SPORT_V1.fog.color, CLEAN_FUTURE_SPORT_V1.fog.density)
+  scene.background = new THREE.Color(0x0b121b)
+  scene.fog = new THREE.FogExp2(0x0e1720, 0.028)
   const camera = new THREE.PerspectiveCamera(
     profile.rules.camera.fieldOfViewDegrees,
     1,
@@ -705,12 +735,16 @@ export function createFirstPersonRenderer({
   scene.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return
     let presentationMesh = object.name.startsWith('arena:') || object.name.startsWith('presentation:')
-    object.traverseAncestors((ancestor) => { presentationMesh ||= ancestor.name.startsWith('presentation:') })
+    let stableLocalShadowCaster = object.name.startsWith('presentation:lamp-lens:') || object.name.startsWith('presentation:wall-buttress:')
+    object.traverseAncestors((ancestor) => {
+      presentationMesh ||= ancestor.name.startsWith('presentation:')
+      stableLocalShadowCaster ||= ancestor.name.startsWith('presentation:lamp:') || ancestor.name.startsWith('presentation:glb:wall-bay:')
+    })
     object.receiveShadow = presentationMesh
     // The canonical shell receives depth but does not shadow itself. That avoids
-    // point-light acne/flicker on large panels while inset presentation detail
-    // and lamp housings still provide readable local shadow depth.
-    object.castShadow = presentationMesh && !object.name.startsWith('arena:')
+    // point-light acne/flicker on large panels while only separated lamps and
+    // inset wall details contribute stable local shadow depth.
+    object.castShadow = stableLocalShadowCaster
   })
 
   const localLightShadowBudget = resolveLocalLightShadowBudget(activeGraphicsQuality, activePresentationProfile)
@@ -735,9 +769,9 @@ export function createFirstPersonRenderer({
     }
   }
 
-  const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, 2.4)
+  const hemisphere = new THREE.HemisphereLight(0xffffff, 0x9fb8d0, activePresentationProfile.render.studioFillIntensity)
   scene.add(hemisphere)
-  const keyLight = new THREE.DirectionalLight(0xffffff, 2.4)
+  const keyLight = new THREE.DirectionalLight(0xffffff, activePresentationProfile.render.studioKeyIntensity)
   keyLight.position.set(-8, 15, 7)
   scene.add(keyLight)
   const rimLight = new THREE.DirectionalLight(CLEAN_FUTURE_SPORT_V1.participantRim.color, CLEAN_FUTURE_SPORT_V1.participantRim.intensity)

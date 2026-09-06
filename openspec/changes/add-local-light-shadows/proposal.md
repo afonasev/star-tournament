@@ -4,8 +4,8 @@
 
 ## What Changes
 
-- Добавляется renderer-only light rig `local-light-shadows-v1`: существующие семантические маршрутные лампы получают мягкий локальный свет, а ограниченное число ближайших к камере ламп отбрасывает тени.
-- В `Low` тени локальных ламп выключены; `Balanced` использует один shadow caster, `High` — два, `Ultra` — четыре. Все tier сохраняют мягкое базовое освещение и контровой свет роботов.
+- Добавляется renderer-only light rig `local-light-shadows-v1`: яркие лампы регулярно размещаются по eligible wall rhythm corridors, rooms и combat zones, а ограниченное число ближайших к камере ламп отбрасывает тени.
+- Арена использует регулируемый medium-dark global fill; lamp fixtures становятся основными пространственными ориентирами, а participant rim light сохраняет силуэт роботов. В `Low` тени локальных ламп выключены; `Balanced` использует один shadow caster, `High` — два, `Ultra` — четыре.
 - Добавляются настраиваемые metadata presentation profile для бюджета shadow casters, разрешения shadow map и мягкого радиуса тени; значения влияют только на renderer.
 - Renderer включает PCF soft shadows, создаёт и освобождает shadow resources вместе с presentation lifecycle, и не допускает, чтобы декоративный свет менял collision, navigation, ArenaDefinition, snapshot, replay, RNG или state hash.
 - Performance gate и browser visual QA дополняются проверкой quality tiers и читаемости silhouette в мягких тенях.

@@ -193,6 +193,9 @@ describe('createFirstPersonRenderer', () => {
     expect((scene as THREE.Scene).getObjectByName('presentation:wall-module:wall-north:1')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:wall-buttress:wall-north:1:-0.32')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:frame:wall-north:1:top')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:lamp-housing:lamp-rhythm:wall-north')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:lamp-lens:lamp-rhythm:wall-north')).toBeDefined()
+    expect((scene as THREE.Scene).getObjectByName('presentation:ceiling-lamp:lamp-rhythm:wall-north')).toBeDefined()
     expect((scene as THREE.Scene).getObjectByName('presentation:accent-trim:cover-center')).toBeDefined()
     const ceiling = (scene as THREE.Scene).getObjectByName('presentation:ceiling') as THREE.Mesh
     expect((ceiling.material as THREE.MeshStandardMaterial).map).toBeDefined()
@@ -242,7 +245,7 @@ describe('createFirstPersonRenderer', () => {
     const lenses: THREE.Mesh[] = []
     scene.traverse((object) => { if (object instanceof THREE.Mesh && object.name.startsWith('presentation:lamp-lens:')) lenses.push(object) })
     expect(lenses.length).toBeGreaterThan(2)
-    expect(lenses.every((lens) => (lens.material as THREE.MeshStandardMaterial).emissiveIntensity === PRESENTATION_BALANCED_V1_PROFILE.render.localLightIntensity)).toBe(true)
+    expect(lenses.every((lens) => (lens.material as THREE.MeshStandardMaterial).emissiveIntensity === PRESENTATION_BALANCED_V1_PROFILE.render.localLightIntensity * 1.5)).toBe(true)
   })
 
   it('keeps large wall bays flush with the canonical shell while detail remains inset', () => {

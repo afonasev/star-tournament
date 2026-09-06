@@ -6,11 +6,11 @@ Capability задаёт ограниченные мягкие локальные
 
 ### Requirement: Renderer-only локальные тени маршрутных ламп
 
-Arena renderer SHALL создавать локальный свет только для approved semantic lamp fixtures и MUST выбирать shadow casters детерминированно по расстоянию до active gameplay camera с stable attachment id как tie-break. Локальные lights, shadow map, soft filtering и selection MUST NOT изменять collision, navigation, spawn, `ArenaDefinition`, snapshot, replay, RNG или state hash.
+Arena renderer SHALL детерминированно размещать яркие renderer-only lamp fixtures по eligible wall rhythm corridors, rooms и combat zones и MUST выбирать shadow casters по расстоянию до active gameplay camera с stable fixture id как tie-break. Локальные lights, emissive lens, shadow map, soft filtering и selection MUST NOT изменять collision, navigation, spawn, `ArenaDefinition`, snapshot, replay, RNG или state hash.
 
 #### Scenario: Ближайшая маршрутная лампа
-- **WHEN** active camera показывает несколько lamp fixtures в arena
-- **THEN** renderer даёт мягкую тень от ближайших fixtures в пределах active quality budget, а остальные lamp fixtures сохраняют только световой акцент
+- **WHEN** active camera показывает corridor, room либо combat zone
+- **THEN** renderer показывает регулярный rhythm ярких lamp fixtures, даёт мягкую тень от ближайших fixtures в пределах active quality budget, а остальные fixtures сохраняют emissive световой акцент
 
 #### Scenario: Неизменная arena identity
 - **WHEN** одна и та же validated arena запускается с разными shadow budgets
@@ -18,7 +18,7 @@ Arena renderer SHALL создавать локальный свет только
 
 ### Requirement: Качество и безопасная читаемость теней
 
-Renderer SHALL применять soft local shadows только в количестве, разрешённом effective graphics profile: `Low` — 0, `Balanced` — 1, `High` — 2, `Ultra` — 4. Базовый fill и participant rim light MUST сохранять видимый silhouette живого participant на gameplay distance; presentation MUST NOT превращать локальную область в глубокую нечитаемую тень.
+Renderer SHALL применять soft local shadows только в количестве, разрешённом effective graphics profile: `Low` — 0, `Balanced` — 1, `High` — 2, `Ultra` — 4. Profile-owned medium-dark global fill и participant rim light MUST сохранять видимый silhouette живого participant на gameplay distance; presentation MUST NOT превращать локальную область в глубокую нечитаемую тень.
 
 #### Scenario: Low quality
 - **WHEN** active graphics preset равен `Low`

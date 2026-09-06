@@ -1,7 +1,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Светлая спортивная читаемость
-Arena renderer SHALL использовать яркое мягкое заполняющее освещение, контролируемый контровой свет для participants, минимальный haze и ограниченные мягкие тени от semantic local lamp fixtures. Presentation MUST избегать глубоких нечитаемых теней, хоррорного тона, милитаристских маркировок и графического насилия.
+Arena renderer SHALL использовать medium-dark profile-owned global fill, контролируемый контровой свет для participants, регулярные яркие lamp fixtures по wall rhythm и ограниченные мягкие тени от ближайших local fixtures. Presentation MUST избегать глубоких нечитаемых теней, хоррорного тона, милитаристских маркировок и графического насилия.
 
 #### Scenario: Дальний opponent
 - **WHEN** живой participant находится на representative gameplay distance в коридоре или combat region

@@ -13,3 +13,9 @@
 - [x] 3.1 Запустить typecheck, релевантные unit tests и полный `npm test`; исправить все регрессии.
 - [x] 3.2 Запустить production browser performance gate для всех quality presets и сохранить результат с effective shadow budget.
 - [x] 3.3 Провести muted in-app Browser visual playtest нового dev-стенда, сохранить и проверить PNG с мягкими тенями от ламп.
+
+## 4. Контрастный light rhythm после visual feedback
+
+- [x] 4.1 Добавить profile-owned global fill и расширенный budget fixtures; проверить descriptor validation и неизменность simulation identity.
+- [x] 4.2 Выводить emissive lamp fixtures из wall rhythm corridors, rooms и combat zones; убрать shell shadow casting и проверить стабильность renderer scene.
+- [x] 4.3 Провести muted browser visual QA затемнённой арены с видимыми лампами и production performance gate; приложить PNG.
