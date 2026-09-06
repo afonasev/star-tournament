@@ -96,12 +96,19 @@ interface FirstPersonRenderEventBase {
 
 export interface FirstPersonShotRenderEvent extends FirstPersonRenderEventBase {
   readonly kind: 'shotgun-shot'
-  readonly shooterId?: string
+  readonly shooterId: string
+  readonly origin: ScenarioVector3
+  readonly pelletDirections: readonly ScenarioVector3[]
 }
 
 export interface FirstPersonImpactRenderEvent extends FirstPersonRenderEventBase {
   readonly kind: 'shotgun-impact'
+  readonly pelletIndex: number
   readonly position: ScenarioVector3
+  readonly normal: ScenarioVector3
+  readonly targetId: string | null
+  readonly surfaceId: string | null
+  readonly zone: 'head' | 'torso' | 'limb' | null
 }
 
 export interface FirstPersonTargetDestroyedRenderEvent extends FirstPersonRenderEventBase {
@@ -173,7 +180,7 @@ interface TargetPresentation {
 }
 
 interface TransientMesh {
-  readonly mesh: THREE.Mesh
+  readonly mesh: THREE.Object3D
   readonly expiresAfterTick: number
 }
 
@@ -796,8 +803,11 @@ export function createFirstPersonRenderer({
   const viewmodel = createFirstPersonGlbPresentation({ geometries, materials }, arenaGlbAssets, participantTexture, '#b8dce5')
   camera.add(viewmodel.group)
 
-  const impactGeometry = new THREE.SphereGeometry(0.075, 8, 6)
-  const impactMaterial = new THREE.MeshBasicMaterial({ color: 0x9ff5ff })
+  const impactChipGeometry = new THREE.OctahedronGeometry(0.055, 0)
+  const impactSparkGeometry = new THREE.ConeGeometry(0.022, 0.18, 4)
+  const surfaceImpactMaterial = new THREE.MeshBasicMaterial({ color: 0xffc46d, transparent: true, opacity: 0.9 })
+  const robotImpactMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0d0, transparent: true, opacity: 0.9 })
+  const trailMaterial = new THREE.LineBasicMaterial({ color: 0xffd08a, transparent: true, opacity: 0.78 })
   const destroyedGeometry = new THREE.SphereGeometry(1.05, 12, 8)
   const destroyedMaterial = new THREE.MeshBasicMaterial({
     color: 0xff895e,
@@ -805,8 +815,8 @@ export function createFirstPersonRenderer({
     opacity: 0.48,
     wireframe: true,
   })
-  geometries.push(impactGeometry, destroyedGeometry)
-  materials.push(impactMaterial, destroyedMaterial)
+  geometries.push(impactChipGeometry, impactSparkGeometry, destroyedGeometry)
+  materials.push(surfaceImpactMaterial, robotImpactMaterial, trailMaterial, destroyedMaterial)
 
   const processedEventIds = new Set<string>()
   const transientByEventId = new Map<string, TransientMesh>()
@@ -862,28 +872,67 @@ export function createFirstPersonRenderer({
 
   function processEvents(snapshot: FirstPersonRenderSnapshot): void {
     const localId=snapshot.participants.find(p=>p.kind==='local-seat')?.semanticId
+    const impactsById = new Map(snapshot.events.filter((event): event is FirstPersonImpactRenderEvent => event.kind === 'shotgun-impact').map((event) => [event.eventId, event]))
+    const createTrail = (event: FirstPersonShotRenderEvent) => {
+      const positions: number[] = []
+      for (const [pelletIndex, direction] of event.pelletDirections.entries()) {
+        const impact = impactsById.get(`tick-${event.tick}:impact:${event.shooterId}:${pelletIndex}`)
+        const endpoint = impact?.position ?? {
+          x: event.origin.x + direction.x * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
+          y: event.origin.y + direction.y * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
+          z: event.origin.z + direction.z * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
+        }
+        positions.push(event.origin.x, event.origin.y, event.origin.z, endpoint.x, endpoint.y, endpoint.z)
+      }
+      if (positions.length === 0) return
+      const geometry = new THREE.BufferGeometry()
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+      geometries.push(geometry)
+      const trails = new THREE.LineSegments(geometry, trailMaterial)
+      trails.name = `presentation:pellet-trails:${event.eventId}`
+      scene.add(trails)
+      transientByEventId.set(`trails:${event.eventId}`, {
+        mesh: trails,
+        expiresAfterTick: event.tick + eventDurationTicks(profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds, ticksPerSecond),
+      })
+    }
+    const createImpact = (event: FirstPersonImpactRenderEvent) => {
+      const robotImpact = event.targetId !== null
+      const group = new THREE.Group()
+      group.name = `presentation:impact:${event.eventId}`
+      group.position.set(event.position.x, event.position.y, event.position.z)
+      const normal = new THREE.Vector3(event.normal.x, event.normal.y, event.normal.z).normalize()
+      const chip = new THREE.Mesh(impactChipGeometry, robotImpact ? robotImpactMaterial : surfaceImpactMaterial)
+      chip.name = robotImpact ? 'presentation:impact:robot-shell' : 'presentation:impact:surface-chip'
+      chip.position.copy(normal).multiplyScalar(0.025)
+      group.add(chip)
+      for (const angle of [-0.38, 0.38]) {
+        const spark = new THREE.Mesh(impactSparkGeometry, robotImpact ? robotImpactMaterial : surfaceImpactMaterial)
+        spark.name = robotImpact ? 'presentation:impact:robot-spark' : 'presentation:impact:surface-spark'
+        spark.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal.clone().add(new THREE.Vector3(angle, 0.25, -angle)).normalize())
+        spark.position.copy(normal).multiplyScalar(0.07)
+        group.add(spark)
+      }
+      scene.add(group)
+      transientByEventId.set(event.eventId, {
+        mesh: group,
+        expiresAfterTick: event.tick + eventDurationTicks(profile.rules.weapons.doubleBarrelShotgun.impactFeedbackSeconds, ticksPerSecond),
+      })
+    }
+    for (const event of snapshot.events) {
+      if (event.kind !== 'shotgun-shot' || processedEventIds.has(event.eventId)) continue
+      processedEventIds.add(event.eventId)
+      createTrail(event)
+      if (event.shooterId !== localId) continue
+      const expiresAfterTick = event.tick + eventDurationTicks(profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds, ticksPerSecond)
+      muzzleVisibleThroughTick = Math.max(muzzleVisibleThroughTick, expiresAfterTick)
+      recoilVisibleThroughTick = Math.max(recoilVisibleThroughTick, expiresAfterTick)
+    }
     for (const event of snapshot.events) {
       if (processedEventIds.has(event.eventId)) continue
       processedEventIds.add(event.eventId)
-      if (event.kind === 'shotgun-shot' && (event.shooterId === undefined || event.shooterId === localId)) {
-        const expiresAfterTick = event.tick + eventDurationTicks(
-          profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds,
-          ticksPerSecond,
-        )
-        muzzleVisibleThroughTick = Math.max(muzzleVisibleThroughTick, expiresAfterTick)
-        recoilVisibleThroughTick = Math.max(recoilVisibleThroughTick, expiresAfterTick)
-      } else if (event.kind === 'shotgun-impact') {
-        const mesh = new THREE.Mesh(impactGeometry, impactMaterial)
-        mesh.name = `presentation:impact:${event.eventId}`
-        mesh.position.set(event.position.x, event.position.y, event.position.z)
-        scene.add(mesh)
-        transientByEventId.set(event.eventId, {
-          mesh,
-          expiresAfterTick: event.tick + eventDurationTicks(
-            profile.rules.weapons.doubleBarrelShotgun.impactFeedbackSeconds,
-            ticksPerSecond,
-          ),
-        })
+      if (event.kind === 'shotgun-impact') {
+        createImpact(event)
       } else if (event.kind === 'target-destroyed') {
         const target = targetById.get(event.targetId)
         if (target !== undefined) {

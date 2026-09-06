@@ -22,7 +22,31 @@ export interface RobotPresentation {
 
 export interface FirstPersonWeaponPresentation {
   readonly group: THREE.Group
-  readonly muzzleFlashes: readonly THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>[]
+  readonly muzzleFlashes: readonly THREE.Group[]
+}
+
+function addKineticMuzzleBursts(group: THREE.Group, resources: PresentationResources, positions: readonly THREE.Vector3Tuple[]): readonly THREE.Group[] {
+  const coreGeometry = new THREE.SphereGeometry(0.072, 8, 6)
+  const flareGeometry = new THREE.ConeGeometry(0.092, 0.3, 6)
+  const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0cf, transparent: true, opacity: 0.96 })
+  const flareMaterial = new THREE.MeshBasicMaterial({ color: 0xff9d43, transparent: true, opacity: 0.72 })
+  resources.geometries.push(coreGeometry, flareGeometry)
+  resources.materials.push(coreMaterial, flareMaterial)
+  return positions.map((position, index) => {
+    const burst = new THREE.Group()
+    burst.name = index === 0 ? 'presentation:muzzle-flash' : 'presentation:muzzle-flash:right'
+    burst.position.set(...position)
+    const core = new THREE.Mesh(coreGeometry, coreMaterial)
+    core.name = 'presentation:muzzle-flash:core'
+    const flare = new THREE.Mesh(flareGeometry, flareMaterial)
+    flare.name = 'presentation:muzzle-flash:flare'
+    flare.rotation.x = -Math.PI / 2
+    flare.position.z = -0.14
+    burst.add(core, flare)
+    burst.visible = false
+    group.add(burst)
+    return burst
+  })
 }
 
 function standardMaterial(resources: PresentationResources, color: THREE.ColorRepresentation, options: Partial<THREE.MeshStandardMaterialParameters> = {}): THREE.MeshStandardMaterial {
@@ -109,19 +133,7 @@ export function createFirstPersonWeaponPresentation(resources: PresentationResou
     addMesh(group, new THREE.SphereGeometry(0.11, 8, 6), joints, resources, `viewmodel:hand:${side}`, [x * 0.7, -0.05, -0.13])
   }
   addShotgun(group, resources, color, 'viewmodel:weapon', 0.82)
-  const flashes: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>[] = []
-  for (const [side, x] of [['left', -0.115], ['right', 0.115]] as const) {
-    const geometry = new THREE.SphereGeometry(0.105, 8, 6)
-    const material = new THREE.MeshBasicMaterial({ color: 0xffddb0 })
-    resources.geometries.push(geometry)
-    resources.materials.push(material)
-    const flash = new THREE.Mesh(geometry, material)
-    flash.name = side === 'left' ? 'presentation:muzzle-flash' : 'presentation:muzzle-flash:right'
-    flash.position.set(x, 0.025, -1.21)
-    flash.visible = false
-    group.add(flash)
-    flashes.push(flash)
-  }
+  const flashes = addKineticMuzzleBursts(group, resources, [[-0.115, 0.025, -1.21], [0.115, 0.025, -1.21]])
   return { group, muzzleFlashes: flashes }
 }
 
@@ -183,17 +195,6 @@ export function createFirstPersonGlbPresentation(resources: PresentationResource
   // camera sees along -Z, so presentation turns that semantic front toward it.
   group.rotation.set(-0.08, Math.PI - 0.14, -0.02)
   textureGlbInstance(group, resources, texture, color)
-  const muzzleGeometry = new THREE.SphereGeometry(0.105, 8, 6)
-  const muzzleMaterial = new THREE.MeshBasicMaterial({ color: 0xffddb0 })
-  resources.geometries.push(muzzleGeometry)
-  resources.materials.push(muzzleMaterial)
-  const flashes = [-0.115, 0.115].map((x, index) => {
-    const flash = new THREE.Mesh(muzzleGeometry, muzzleMaterial)
-    flash.name = index === 0 ? 'presentation:muzzle-flash' : 'presentation:muzzle-flash:right'
-    flash.position.set(x * 0.42, 0.025 * 0.42, 1.21 * 0.42)
-    flash.visible = false
-    group.add(flash)
-    return flash
-  })
+  const flashes = addKineticMuzzleBursts(group, resources, [[-0.115 * 0.42, 0.025 * 0.42, 1.21 * 0.42], [0.115 * 0.42, 0.025 * 0.42, 1.21 * 0.42]])
   return { group, muzzleFlashes: flashes }
 }

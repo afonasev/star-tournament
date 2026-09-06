@@ -491,13 +491,18 @@ describe('createFirstPersonRenderer', () => {
           : participant,
       ),
       events: [
-        { eventId: 'shot-1', tick: 5, kind: 'shotgun-shot' },
         {
-          eventId: 'impact-1',
+          eventId: 'tick-5:impact:local-player-1:0',
           tick: 5,
           kind: 'shotgun-impact',
+          pelletIndex: 0,
           position: { x: 0, y: 1, z: 0 },
+          normal: { x: 0, y: 1, z: 0 },
+          targetId: null,
+          surfaceId: 'wall',
+          zone: null,
         },
+        { eventId: 'tick-5:shot:local-player-1:1', tick: 5, kind: 'shotgun-shot', shooterId: 'local-player-1', origin: { x: 0, y: 1, z: 0 }, pelletDirections: [{ x: 0, y: 0, z: -1 }] },
         {
           eventId: 'destroyed-1',
           tick: 5,
@@ -511,7 +516,8 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', true)
     expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', true)
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.57)
-    expect(scene.getObjectByName('presentation:impact:impact-1')).toBeDefined()
+    expect(scene.getObjectByName('presentation:pellet-trails:tick-5:shot:local-player-1:1')).toBeDefined()
+    expect(scene.getObjectByName('presentation:impact:tick-5:impact:local-player-1:0')?.getObjectByName('presentation:impact:surface-chip')).toBeDefined()
     expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeDefined()
     expect(scene.getObjectByName(`target:${destroyedTargetId}`)?.userData.presentationState)
       .toBe('destroyed')
@@ -520,7 +526,8 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:muzzle-flash')).toHaveProperty('visible', false)
     expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', false)
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
-    expect(scene.getObjectByName('presentation:impact:impact-1')).toBeUndefined()
+    expect(scene.getObjectByName('presentation:pellet-trails:tick-5:shot:local-player-1:1')).toBeUndefined()
+    expect(scene.getObjectByName('presentation:impact:tick-5:impact:local-player-1:0')).toBeUndefined()
     expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
   })
 
@@ -633,7 +640,12 @@ describe('createFirstPersonRenderer', () => {
         eventId: 'impact-before-rewind',
         tick: 8,
         kind: 'shotgun-impact',
+        pelletIndex: 0,
         position: { x: 0, y: 1, z: 0 },
+        normal: { x: 0, y: 1, z: 0 },
+        targetId: null,
+        surfaceId: 'wall',
+        zone: null,
       }],
     }))
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
