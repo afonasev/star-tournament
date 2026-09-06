@@ -54,3 +54,7 @@ Capability предоставляет дизайнеру изолированн�
 #### Scenario: Выбранная revision уже релизная
 - **WHEN** selected revision совпадает с repository `releaseRef`
 - **THEN** действие promotion disabled и UI явно помечает revision как релизную
+
+#### Scenario: Очистка нерелизной ветки
+- **WHEN** selected local profile не содержит current release revision
+- **THEN** UI предлагает удалить только профиль целиком; отдельные revisions не имеют delete controls

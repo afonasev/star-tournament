@@ -114,6 +114,15 @@ export function createLocalProfile(base: ValidatedGameDesignProfile, name: strin
   const catalog: LocalProfileCatalog = { schemaVersion: 2, profiles: { ...current.catalog.profiles, [id]: [clone(profile) as GameDesignProfile] }, selected: profileRevisionRef(profile) }
   writeCatalog(catalog, storage); return { ok: true, catalog, profile }
 }
+export function deleteLocalProfile(id: string, releaseRef: ProfileRevisionRef = RELEASE_MANIFEST.releaseRef, storage: Storage | undefined = globalThis.localStorage): LocalProfileCatalogResult {
+  const current = loadLocalProfileCatalog(storage); if (!current.ok) return current
+  if (id === releaseRef.id) return { ok: false, message: 'Релизный профиль удалить нельзя.' }
+  if (!current.catalog.profiles[id]) return { ok: false, message: 'Локальный профиль не найден.' }
+  const { [id]: _deleted, ...profiles } = current.catalog.profiles
+  const selected = current.catalog.selected?.id === id ? null : current.catalog.selected
+  const catalog: LocalProfileCatalog = { schemaVersion: 2, profiles, selected }
+  writeCatalog(catalog, storage); return { ok: true, catalog }
+}
 export function selectLocalRevision(ref: ProfileRevisionRef | null, storage: Storage | undefined = globalThis.localStorage): LocalProfileCatalogResult {
   const current = loadLocalProfileCatalog(storage); if (!current.ok) return current
   const profile = resolveSelectedProfile({ ...current.catalog, selected: ref }); if (!profile.ok) return profile

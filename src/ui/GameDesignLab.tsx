@@ -4,6 +4,7 @@ import {
   GAME_DESIGN_PROFILE_DESCRIPTORS,
   allProfileRevisions,
   createLocalProfile,
+  deleteLocalProfile,
   loadLocalProfileCatalog,
   RELEASE_MANIFEST,
   profileRevisionRef,
@@ -63,6 +64,7 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
   const [confirmClose, setConfirmClose] = useState(false)
   const [newProfileName, setNewProfileName] = useState('')
   const [publishing, setPublishing] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [releaseRef, setReleaseRef] = useState<ProfileRevisionRef>(RELEASE_MANIFEST.releaseRef)
   const catalogResult = loadLocalProfileCatalog()
   const revisions = catalogResult.ok ? allProfileRevisions(catalogResult.catalog) : [selected]
@@ -70,6 +72,7 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
   const selectedProfileId = profileIds.includes(base.id) ? base.id : profileIds[0]!
   const visibleRevisions = revisions.filter((profile) => profile.id === selectedProfileId)
   const isRelease = sameProfileRevision(profileRevisionRef(base), releaseRef)
+  const canDeleteProfile = catalogResult.ok && Boolean(catalogResult.catalog.profiles[selectedProfileId]) && selectedProfileId !== releaseRef.id
   const dirty = !equal(base, draft)
   const changes = GAME_DESIGN_PROFILE_DESCRIPTORS.filter((descriptor) => getPath(base, descriptor.path) !== getPath(draft, descriptor.path))
   const [selectedSection, setSelectedSection] = useState<ProfileDescriptorGroup>(NAV_GROUPS[0])
@@ -121,6 +124,16 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
     } catch (cause) { setMessage(cause instanceof Error ? cause.message : String(cause)) }
     finally { setPublishing(false) }
   }
+  const deleteProfile = () => {
+    const result = deleteLocalProfile(selectedProfileId, releaseRef)
+    if (!result.ok) { setMessage(result.message); return }
+    void persistProfileHistory(result.catalog).catch((cause) => setMessage(cause instanceof Error ? cause.message : String(cause)))
+    const fallback = revisions.find((profile) => sameProfileRevision(profileRevisionRef(profile as ValidatedGameDesignProfile), releaseRef))
+    if (!fallback) { setMessage('Не найдена релизная ревизия после удаления профиля.'); return }
+    const validation = validateGameDesignProfile(fallback)
+    if (!validation.ok) { setMessage(validation.errors[0]?.message ?? 'Невалидная релизная ревизия.'); return }
+    setConfirmDelete(false); setBase(validation.profile); setDraft(clone(validation.profile) as GameDesignProfile); onSelected(validation.profile); setMessage('Нерелизный профиль удалён целиком.')
+  }
   const requestClose = () => { if (dirty) setConfirmClose(true); else onClose() }
   const pickSection = (group: ProfileDescriptorGroup) => {
     setSelectedSection(group)
@@ -160,6 +173,7 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
         <input aria-label="Имя нового профиля" value={newProfileName} onChange={(event) => setNewProfileName(event.target.value)} />
       </label>
       <button type="button" onClick={createProfile}>Создать профиль</button>
+      <button type="button" disabled={!canDeleteProfile} title={canDeleteProfile ? 'Удалить весь нерелизный профиль и все его ревизии' : 'Релизный или поставляемый профиль удалить нельзя'} onClick={() => setConfirmDelete(true)}>Удалить профиль</button>
       <button type="button" disabled={!profileFilesystemAvailable || publishing || isRelease} title={!profileFilesystemAvailable ? 'Публикация доступна на dev-стенде' : isRelease ? 'Эта версия уже опубликована в репозитории' : 'Сохранить точный snapshot в репозитории'} onClick={() => void publish()}>
         {publishing ? 'Запись релиза…' : isRelease ? 'Релизная версия' : 'Сделать релизной версией'}
       </button>
@@ -209,6 +223,7 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
       </aside>
     </div>
     {confirmClose && <div className="game-design-lab__confirm" role="dialog" aria-modal="true" aria-label="Несохранённые изменения"><div><h2>Отбросить несохранённые изменения?</h2><p>Черновик не станет конфигурацией матча без сохранения.</p><button type="button" onClick={() => setConfirmClose(false)}>Продолжить редактирование</button><button type="button" onClick={onClose}>Отбросить</button></div></div>}
+    {confirmDelete && <div className="game-design-lab__confirm" role="dialog" aria-modal="true" aria-label="Удаление профиля"><div><h2>Удалить профиль целиком?</h2><p>Будут удалены все локальные ревизии этого профиля. Отдельные ревизии удалить нельзя.</p><button type="button" onClick={() => setConfirmDelete(false)}>Отмена</button><button type="button" onClick={deleteProfile}>Удалить профиль</button></div></div>}
   </main>
 }
 

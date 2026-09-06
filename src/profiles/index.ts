@@ -12,6 +12,7 @@ export {
   GAME_DESIGN_LAB_STORAGE_KEY,
   allProfileRevisions,
   createLocalProfile,
+  deleteLocalProfile,
   loadLocalProfileCatalog,
   loadReleaseManifest,
   persistLocalProfileCatalog,

@@ -11,6 +11,10 @@ Profile subsystem SHALL хранить локально созданные по�
 - **WHEN** дизайнер сохраняет valid draft, созданный от поставляемой revision `prototype-v1 v6`
 - **THEN** исходный snapshot остаётся неизменным, а новая local revision получает тот же profile id `prototype-v1` и следующий номер `v7`
 
+#### Scenario: Удаление нерелизного профиля
+- **WHEN** дизайнер удаляет local profile, не содержащий current release revision
+- **THEN** удаляется вся local history этого profile id, отдельные revisions не получают самостоятельного delete action, а selected profile возвращается к current release при необходимости
+
 #### Scenario: Публикация release revision
 - **WHEN** дизайнер на dev-стенде помечает valid saved revision как релизную
 - **THEN** endpoint атомарно сохраняет exact immutable snapshot в `balance/releases.json` и переключает единственный `releaseRef` на эту identity
