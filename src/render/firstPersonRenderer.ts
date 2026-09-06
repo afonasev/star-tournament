@@ -951,7 +951,16 @@ export function createFirstPersonRenderer({
       processedEventIds.add(event.eventId)
       createTrail(event)
       if (event.shooterId !== localId) continue
-      const expiresAfterTick = event.tick + eventDurationTicks(profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds, ticksPerSecond)
+      // The authored 80 ms muzzle burst is too brief to guarantee a visible
+      // frame on variable-rate browsers. Keep its presentation pose through
+      // the existing hitmarker feedback window without changing shot cadence.
+      const expiresAfterTick = event.tick + eventDurationTicks(
+        Math.max(
+          profile.rules.weapons.doubleBarrelShotgun.muzzleFeedbackSeconds,
+          profile.rules.weapons.doubleBarrelShotgun.hitmarkerSeconds,
+        ),
+        ticksPerSecond,
+      )
       muzzleVisibleThroughTick = Math.max(muzzleVisibleThroughTick, expiresAfterTick)
       recoilVisibleThroughTick = Math.max(recoilVisibleThroughTick, expiresAfterTick)
     }
