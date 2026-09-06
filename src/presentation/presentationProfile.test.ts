@@ -43,16 +43,17 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
     expect(PRESENTATION_BALANCED_V1_PROFILE).toMatchObject({
       schemaVersion: 1,
       id: 'presentation-balanced-v1',
-      revision: 5,
+      revision: 6,
       source: 'shipped',
       render: { backingBufferPixelBudget: 2_073_600 },
       ui: { maximumPublicationsPerSecond: 10 },
+      death: { corpseSlideDistanceMeters: .65 },
     })
     expect(validatePresentationProfile(PRESENTATION_BALANCED_V1_PROFILE)).toMatchObject({ ok: true })
   })
 
   it('has exactly one complete descriptor for each numeric presentation value', () => {
-    const paths = [...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.render).map(key=>`render.${key}`),...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.ui).map(key=>`ui.${key}`)]
+    const paths = [...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.render).map(key=>`render.${key}`),...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.ui).map(key=>`ui.${key}`),...Object.keys(PRESENTATION_BALANCED_V1_PROFILE.death).map(key=>`death.${key}`)]
     expect(PRESENTATION_PROFILE_DESCRIPTORS.map(d=>d.path).sort()).toEqual(paths.sort())
     expect(new Set(PRESENTATION_PROFILE_DESCRIPTORS.map(d=>d.path)).size).toBe(paths.length)
     for (const descriptor of PRESENTATION_PROFILE_DESCRIPTORS) {
@@ -69,7 +70,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
 
     const input = cloneProfile()
     input.source = 'local'
-    input.revision = 5
+    input.revision = 6
     input.contentHash = computePresentationProfileContentHash(input)
     const result = validatePresentationProfile(input)
     expect(result.ok).toBe(true)
@@ -130,6 +131,13 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
         }),
       ]),
     })
+
+    const invalidDeathStep = cloneProfile()
+    invalidDeathStep.death.corpseSlideDistanceMeters = .63
+    expect(validatePresentationProfile(invalidDeathStep)).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([expect.objectContaining({ code: 'INVALID_STEP', paths: ['death.corpseSlideDistanceMeters'] })]),
+    })
   })
 
   it('rejects fields outside the presentation schema and descriptor registry', () => {
@@ -152,7 +160,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
   it('derives a stable canonical identity from all effective presentation content', () => {
     expect(PRESENTATION_BALANCED_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
     expect(PRESENTATION_BALANCED_V1_PROFILE.contentHash).toBe(
-      'fnv1a64-v1:c43d9ef37641a50a',
+      'fnv1a64-v1:5cb80d9e9f07ed74',
     )
     expect(computePresentationProfileContentHash(cloneProfile())).toBe(
       PRESENTATION_BALANCED_V1_PROFILE.contentHash,
@@ -167,7 +175,7 @@ describe('presentation-balanced-v1 PresentationProfile', () => {
     )
 
     const changed = cloneProfile()
-    changed.ui.maximumPublicationsPerSecond = 20
+    changed.death.corpseSlideDistanceMeters = .7
     expect(computePresentationProfileContentHash(changed)).not.toBe(
       PRESENTATION_BALANCED_V1_PROFILE.contentHash,
     )

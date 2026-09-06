@@ -28,7 +28,7 @@ describe('robot animation controller', () => {
     expect(createRobotAnimationController(model)).toBeDefined()
   })
 
-  it.each(['idle', 'walk', 'run', 'strafe-left', 'strafe-right', 'jump-takeoff', 'jump-airborne', 'jump-landing', 'aim', 'fire', 'hit', 'destroyed'] as const)('applies %s only to semantic joints', (state: RobotAnimationState) => {
+  it.each(['idle', 'walk', 'run', 'strafe-left', 'strafe-right', 'jump-takeoff', 'jump-airborne', 'jump-landing', 'aim', 'fire', 'hit', 'death-hit', 'death-fall', 'death-rest', 'destroyed'] as const)('applies %s only to semantic joints', (state: RobotAnimationState) => {
     const model = rig(); const controller = createRobotAnimationController(model)!
     controller.present(state, .25)
     expect(model.getObjectByName('robot:rig:weapon-mount')).toBe(controller.weaponMount)
@@ -60,5 +60,13 @@ describe('robot animation controller', () => {
       return model.getObjectByName('robot:rig:spine')!.rotation.z
     }
     expect(atRate(1 / 60)).toBeCloseTo(atRate(1 / 120), 2)
+  })
+
+  it('keeps the death-rest pose after the fall has landed', () => {
+    const model = rig(); const controller = createRobotAnimationController(model)!
+    controller.present('death-fall', .2)
+    for (let seconds = .2 + 1 / 60; seconds < 1; seconds += 1 / 60) controller.present('death-rest', seconds)
+    expect(model.getObjectByName('robot:rig:spine')!.rotation.z).toBeCloseTo(-.42, 2)
+    expect(model.getObjectByName('robot:rig:shoulder:left')!.rotation.x).toBeCloseTo(.52, 2)
   })
 })
