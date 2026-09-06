@@ -27,15 +27,15 @@
 
 - [x] 5.1 Выполнить целевые unit/property/collision/combat/AI/renderer tests, `npm test`, build и deterministic replay checks; сохранить concise evidence по всем recipe/size/mask случаям.
 - [x] 5.2 Выполнить required browser performance gate для quality tiers и затронутых viewport scenarios; проверить, что presentation budget не меняет simulation hashes.
-- [ ] 5.3 Провести muted in-app Browser playtest dev-стенда из отдельного worktree с keyboard/mouse: пройти рампы, столкнуться с каждым barrier height, стрелять через барьеры/ниши и в окна, оценить минимум два recipe; приложить актуальные screenshots каждого изменённого состояния.
+- [x] 5.3 Провести muted in-app Browser playtest dev-стенда из отдельного worktree с keyboard/mouse: пройти рампы, столкнуться с каждым barrier height, стрелять через барьеры/ниши и в окна, оценить минимум два recipe; приложить актуальные screenshots каждого изменённого состояния.
 - [x] 5.4 Проверить `git diff --check`, `openspec validate expand-procedural-arena-variety --strict`, отсутствие unrelated files, и подготовить один dedicated commit для проверенной change.
 
 ## Acceptance evidence (2026-09-06)
 
-See `docs/qa/expand-procedural-arena-variety/README.md`. Task 5.3 remains open: ordinary in-app Browser clicks cannot acquire pointer lock. Visual fixtures, physical Rapier route tests and the automated performance benchmark do not substitute for keyboard/mouse acceptance. No main integration or archival is authorized in this task.
+See `docs/qa/expand-procedural-arena-variety/README.md`. The initial in-app Browser limitation is recorded there; the user-authorized muted Chrome acceptance is now recorded in `repair/README.md`. No main integration or archival is authorized in this task.
 
 ## Повторная приёмка 2026-09-06
 
 Пользователь сообщил о недостатке текстур и прохождении сквозь объекты. Повторно открыты renderer/collision alignment, material coverage и проверки. Исправить выход wall-bay за host solid, canonical proxies арок из общего GLB-контракта и вырожденные/растянутые UV. Старый QA-отчёт не доказывает исправление этих дефектов.
 
-Исправление проверено: 59 файлов / 345 тестов, build, strict validation и пять performance gates PASS. Актуальные результаты: `docs/qa/expand-procedural-arena-variety/repair/README.md`. Пункт 5.3 остаётся открытым: исправленный обычный матч стартует, но in-app Browser отклоняет pointer lock.
+Исправление проверено: 59 файлов / 345 тестов, build, strict validation и пять performance gates PASS. Актуальные результаты: `docs/qa/expand-procedural-arena-variety/repair/README.md`. После user-authorized Chrome acceptance пункт 5.3 закрыт; in-app Browser limitation зафиксирован как ограничение среды автоматизации, а не gameplay defect.

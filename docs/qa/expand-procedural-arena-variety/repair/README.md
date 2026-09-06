@@ -41,6 +41,12 @@ PNG-каталог: `/Users/eaafonasev/.codex/visualizations/2026/09/05/01a071b7
 - `repair-courtyard.png` (large/seed 3).
 - `repair-input-blocker.png` (обычный матч medium/seed 1, hash suffix `aeb3500d`).
 
-Новый обычный матч успешно инициализирован. Кнопка «Начать игру» через in-app Browser по-прежнему сообщает об отказе захвата мыши; таймер остаётся 05:00. Ручной walk/look/fire playtest и пользовательская приёмка исправления остаются открыты. Прошлое пользовательское сообщение о прохождении сквозь объекты не считается подтверждением исправления.
+Новый обычный матч успешно инициализирован. Кнопка «Начать игру» через in-app Browser по-прежнему сообщает об отказе захвата мыши; таймер остаётся 05:00. Это ограничение embedded automation, а не gameplay defect.
+
+## Physical Chrome acceptance (2026-09-06)
+
+По явному решению пользователя проверка продолжена в muted Google Chrome на dev-стенде этого worktree: `http://127.0.0.1:5187/?muted=1` (HTTP 200). Chrome успешно получил pointer lock и показал native banner о `Esc`; mouse-look подтвердил смену camera view. Просмотрены два отдельных recipe: `medium`/seed `1` (`split-atrium`, hash suffix `aeb3500d`) и `large`/seed `3` (`flanked-courtyard`, hash suffix `d89504e0`).
+
+Пользователь выполнил и подтвердил physical keyboard/mouse acceptance в Chrome: проход рамп, столкновение с обоими profile-defined barrier heights, выстрелы через barriers и wall-relief niches, а также блокировку shots окнами на обоих recipe. Одиночные UI-automation click events не являются доказательством shots, поскольку завершаются между browser fixed ticks; это не было использовано как gameplay verdict. Текущие Chrome frames просмотрены в сессии для обоих recipes; screenshots остаются частью live browser evidence, а не подменяются synthetic fixture.
 
 Main, архивирование и деплой не затрагивались.
