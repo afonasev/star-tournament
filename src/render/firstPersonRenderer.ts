@@ -905,9 +905,13 @@ export function createFirstPersonRenderer({
         directionVector.set(endpoint.x - muzzle.x, endpoint.y - muzzle.y, endpoint.z - muzzle.z)
         const length = directionVector.length()
         if (length <= 0) continue
-        midpoint.copy(muzzle).addScaledVector(directionVector, 0.5)
-        rotation.setFromUnitVectors(new THREE.Vector3(0, 1, 0), directionVector.normalize())
-        matrix.compose(midpoint, rotation, new THREE.Vector3(1, length, 1))
+        // Keep the streak kinetic rather than a full-arena laser: it occupies
+        // a short, still-authoritative first segment of the pellet path.
+        const visibleLength = Math.min(length, profile.rules.weapons.doubleBarrelShotgun.rangeMeters * 0.8)
+        directionVector.normalize()
+        midpoint.copy(muzzle).addScaledVector(directionVector, visibleLength * 0.5)
+        rotation.setFromUnitVectors(new THREE.Vector3(0, 1, 0), directionVector)
+        matrix.compose(midpoint, rotation, new THREE.Vector3(1, visibleLength, 1))
         trails.setMatrixAt(pelletIndex, matrix)
       }
       trails.instanceMatrix.needsUpdate = true

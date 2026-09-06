@@ -5,7 +5,7 @@
 ## ADDED Requirements
 
 ### Requirement: Кинетический след дробового выстрела
-После versioned `shotgun-shot` event renderer SHALL представить выстрел как кинетический: краткий тёплый двойной muzzle burst из обоих стволов, быстро рассеивающийся дым и короткие видимые трассы отдельных дробин. Для local first-person shot каждая трасса MUST начинаться из соответствующего видимого muzzle mount и заканчиваться на already-authoritative impact/range endpoint; frame timing и renderer RNG MUST NOT менять combat result. Эффекты MUST быть presentation-only и MUST NOT показываться без успешного shot event.
+После versioned `shotgun-shot` event renderer SHALL представить выстрел как кинетический: краткий тёплый двойной muzzle burst из обоих стволов, быстро рассеивающийся дым и короткие видимые трассы отдельных дробин. Для local first-person shot каждая трасса MUST начинаться из соответствующего видимого muzzle mount и следовать коротким presentation segment в направлении already-authoritative impact/range endpoint; frame timing и renderer RNG MUST NOT менять combat result. Эффекты MUST быть presentation-only и MUST NOT показываться без успешного shot event.
 
 #### Scenario: Успешный выстрел
 - **WHEN** local participant получает versioned `shotgun-shot` event
