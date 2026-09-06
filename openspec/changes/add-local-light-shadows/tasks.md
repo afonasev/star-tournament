@@ -25,3 +25,9 @@
 - [x] 5.1 Уточнить presentation contract: чёткие локальные тени видны на полу, wall shell и wall detail не получают их.
 - [x] 5.2 Уменьшить profile-owned soft radius и ограничить receive-shadow stable floor geometry; покрыть renderer unit test.
 - [x] 5.3 Провести muted browser visual QA и production performance gate, сохранить PNG.
+
+## 6. Устранить z-fighting architectural bays
+
+- [x] 6.1 Зафиксировать positive clearance между GLB wall-bay и canonical wall shell.
+- [x] 6.2 Вписать GLB wall-bay внутрь shell с clearance и покрыть renderer unit test.
+- [x] 6.3 Провести muted browser visual QA и production performance gate, сохранить PNG.

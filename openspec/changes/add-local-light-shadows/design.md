@@ -45,6 +45,10 @@ Renderer включает `PCFSoftShadowMap`; local light использует �
 
 Shadow selection выполняется только при setup/resizing camera invalidation и освобождается общей disposal веткой renderer. Renderer unit tests используют `RendererPort`; источник должен проверять включение shadow map через inspection scene graph. Browser gate запускается на all quality presets, а visual QA фиксирует updated scene PNG с `?muted=1`.
 
+### Geometry stability
+
+`wall-bay` — renderer-only module внутри canonical wall shell. Его scaled bounds заканчиваются до shell boundary с положительным clearance; совпадающие faces запрещены, потому что они дают z-fighting независимо от light/shadow settings. Этот gap не меняет collision proxy, navigation или identity.
+
 ## Risks / Trade-offs
 
 - Несколько point-light cube maps могут снизить FPS на слабом GPU → Low отключает shadows, Balanced ограничен одним caster, а High/Ultra используют жёсткий ceiling 2/4.

@@ -249,7 +249,34 @@ describe('createFirstPersonRenderer', () => {
     expect(lenses.every((lens) => (lens.material as THREE.MeshStandardMaterial).emissiveIntensity === PRESENTATION_BALANCED_V1_PROFILE.render.localLightIntensity * 1.5)).toBe(true)
   })
 
-  it('keeps large wall bays flush with the canonical shell while detail remains inset', () => {
+  it('keeps GLB wall bays inside the canonical shell with a positive clearance', () => {
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({
+      container: createContainer(),
+      arena: DIAGNOSTIC_ARENA,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => rendererPort,
+      arenaGlbAssets: makeArenaGlbAssets(),
+    })
+
+    adapter.render(snapshot())
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const shell = scene.getObjectByName('arena:wall-north')!
+    const shellBounds = new THREE.Box3().setFromObject(shell)
+    const bays: THREE.Object3D[] = []
+    scene.traverse((object) => { if (object.name.startsWith('presentation:glb:wall-bay:wall-north')) bays.push(object) })
+
+    expect(bays).toHaveLength(4)
+    for (const bay of bays) {
+      const bounds = new THREE.Box3().setFromObject(bay)
+      expect(bounds.min.z).toBeGreaterThan(shellBounds.min.z)
+      expect(bounds.max.z).toBeLessThan(shellBounds.max.z)
+    }
+  })
+
+  it('keeps fallback wall detail inside the canonical shell with clearance', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({
@@ -271,7 +298,7 @@ describe('createFirstPersonRenderer', () => {
     const bayDepth = bay.geometry.boundingBox!.getSize(new THREE.Vector3()).z
     const seamDepth = seam.geometry.boundingBox!.getSize(new THREE.Vector3()).z
 
-    expect(wall.size.z / 2 - (Math.abs(bay.position.z) + bayDepth / 2)).toBeLessThanOrEqual(0.011)
+    expect(wall.size.z / 2 - (Math.abs(bay.position.z) + bayDepth / 2)).toBeGreaterThan(0.005)
     expect(Math.abs(seam.position.z) + seamDepth / 2).toBeLessThan(wall.size.z / 2)
   })
 

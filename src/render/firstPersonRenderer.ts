@@ -369,9 +369,13 @@ function addArena(
       const horizontalAlongX = x >= z
       const span = horizontalAlongX ? x : z
       const thickness = horizontalAlongX ? z : x
-      // Large bay geometry is inset by half its authored depth, so its outer
-      // face coincides with the canonical, collidable wall shell.
+      // Decorative bays stay completely inside the canonical wall shell.
+      // A real clearance, rather than coincident faces, prevents z-fighting
+      // while collision continues to use the untouched authored shell.
       const depth = thickness / 2 - 0.2
+      const wallBayClearance = 0.04
+      const wallBayDepth = Math.max(0.04, thickness / 2 - wallBayClearance * 2)
+      const wallBayOffset = Math.max(0, thickness / 4 - wallBayClearance)
       for (const side of [-1, 1]) {
         const face = side * depth
         const frameSpan = Math.max(0.2, span - 0.3)
@@ -383,9 +387,9 @@ function addArena(
           } else {
             for (const bayOffset of [-0.32, 0.32]) {
               const bay = arenaGlbAssets.createInstance('wall-bay', 0, graphicsQuality.geometryLod)
-              fitWallModule(bay, span/2, y, thickness/2)
+              fitWallModule(bay, span/2, y, wallBayDepth)
               bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`
-              bay.position.add(new THREE.Vector3(span * (bayOffset < 0 ? -0.25 : 0.25), -y / 2, side * thickness/4))
+              bay.position.add(new THREE.Vector3(span * (bayOffset < 0 ? -0.25 : 0.25), -y / 2, side * wallBayOffset))
               textureGlbInstance(bay, wallMaps.baseColor)
               detail.add(bay)
             }
@@ -402,10 +406,10 @@ function addArena(
           } else {
             for (const bayOffset of [-0.32, 0.32]) {
               const bay = arenaGlbAssets.createInstance('wall-bay', 0, graphicsQuality.geometryLod)
-              fitWallModule(bay, span/2, y, thickness/2)
+              fitWallModule(bay, span/2, y, wallBayDepth)
               bay.name = `presentation:glb:wall-bay:${surface.id}:${side}:${bayOffset}`
               bay.position.set(bay.position.z,bay.position.y,-bay.position.x)
-              bay.position.add(new THREE.Vector3(side*thickness/4, -y/2, span*(bayOffset<0?-0.25:0.25)))
+              bay.position.add(new THREE.Vector3(side*wallBayOffset, -y/2, span*(bayOffset<0?-0.25:0.25)))
               bay.rotation.y = Math.PI / 2
               textureGlbInstance(bay, wallMaps.baseColor)
               detail.add(bay)
