@@ -14,6 +14,7 @@ import {
   type GameDesignProfile,
   type NumericProfileDescriptor,
   type ProfileDescriptorGroup,
+  type ProfileRevisionRef,
   type ValidatedGameDesignProfile,
 } from '../profiles'
 import { persistProfileHistory, profileFilesystemAvailable, publishProfileRevision } from './profileRepository'
@@ -62,12 +63,13 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
   const [confirmClose, setConfirmClose] = useState(false)
   const [newProfileName, setNewProfileName] = useState('')
   const [publishing, setPublishing] = useState(false)
+  const [releaseRef, setReleaseRef] = useState<ProfileRevisionRef>(RELEASE_MANIFEST.releaseRef)
   const catalogResult = loadLocalProfileCatalog()
   const revisions = catalogResult.ok ? allProfileRevisions(catalogResult.catalog) : [selected]
   const profileIds = [...new Set(revisions.map((profile) => profile.id))]
   const selectedProfileId = profileIds.includes(base.id) ? base.id : profileIds[0]!
   const visibleRevisions = revisions.filter((profile) => profile.id === selectedProfileId)
-  const isRelease = sameProfileRevision(profileRevisionRef(base), RELEASE_MANIFEST.releaseRef)
+  const isRelease = sameProfileRevision(profileRevisionRef(base), releaseRef)
   const dirty = !equal(base, draft)
   const changes = GAME_DESIGN_PROFILE_DESCRIPTORS.filter((descriptor) => getPath(base, descriptor.path) !== getPath(draft, descriptor.path))
   const [selectedSection, setSelectedSection] = useState<ProfileDescriptorGroup>(NAV_GROUPS[0])
@@ -113,7 +115,8 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
   const publish = async () => {
     setPublishing(true); setMessage(null)
     try {
-      await publishProfileRevision(base)
+      const manifest = await publishProfileRevision(base)
+      setReleaseRef(manifest.releaseRef)
       setMessage(`Релизная версия сохранена в balance/releases.json: ${base.id} v${base.revision}.`)
     } catch (cause) { setMessage(cause instanceof Error ? cause.message : String(cause)) }
     finally { setPublishing(false) }
@@ -127,21 +130,25 @@ export function GameDesignLab({ selected, onSelected, onClose }: GameDesignLabPr
       <div>
         <p>STAR TOURNAMENT · GAME DESIGN LAB</p>
         <h1 id="game-design-lab-title">Лаборатория геймдизайна</h1>
-        <output aria-label="Выбранная ревизия">{base.id} · v{base.revision} · {base.contentHash}</output>
+        <output aria-label="Выбранная ревизия">{base.id} · v{base.revision} · {base.contentHash}{isRelease ? ' · РЕЛИЗНАЯ' : ''}</output>
       </div>
       <button type="button" onClick={requestClose}>В главное меню</button>
     </header>
     <section className="game-design-lab__toolbar" aria-label="Профили и ревизии">
       <label>Профиль
         <select aria-label="Профиль" value={selectedProfileId} onChange={chooseProfile}>
-          {profileIds.map((id) => <option key={id} value={id}>{revisions.find((profile) => profile.id === id)?.name ?? id}</option>)}
+          {profileIds.map((id) => {
+            const profile = revisions.find((entry) => entry.id === id)
+            const containsRelease = revisions.some((entry) => entry.id === id && sameProfileRevision(profileRevisionRef(entry as ValidatedGameDesignProfile), releaseRef))
+            return <option key={id} value={id}>{profile?.name ?? id}{containsRelease ? ' · РЕЛИЗ' : ''}</option>
+          })}
         </select>
       </label>
       <label>Ревизия
         <select aria-label="Ревизия профиля" value={`${base.id}@${base.revision}`} onChange={choose}>
           {visibleRevisions.map((profile) => (
             <option key={`${profile.id}@${profile.revision}`} value={`${profile.id}@${profile.revision}`}>
-              {profile.name} · v{profile.revision}{profile.source === 'shipped' ? ' · baseline' : ''}
+              {profile.name} · v{profile.revision}{sameProfileRevision(profileRevisionRef(profile as ValidatedGameDesignProfile), releaseRef) ? ' · РЕЛИЗНАЯ' : profile.source === 'shipped' ? ' · baseline' : ''}
             </option>
           ))}
         </select>

@@ -49,7 +49,7 @@ Capability предоставляет дизайнеру изолированн�
 - **THEN** этот матч продолжает использовать исходные profile identity/hash и не предлагает открыть лабораторию из pause menu
 
 ### Requirement: Явная promotion релизной revision
-Лаборатория SHALL показывать, является ли точная выбранная revision текущей repository release revision. Только на dev-стенде valid saved revision MAY быть помечена действием «Сделать релизной версией». При успешной promotion UI MUST показать новую release identity; исторические snapshots MUST остаться неизменными.
+Лаборатория SHALL явно помечать release profile и точную release revision в отдельных selectors, а также в identity выбранного snapshot. Только на dev-стенде valid saved revision MAY быть помечена действием «Сделать релизной версией». При успешной promotion UI MUST сразу показать новую release identity; исторические snapshots MUST остаться неизменными.
 
 #### Scenario: Выбранная revision уже релизная
 - **WHEN** selected revision совпадает с repository `releaseRef`

@@ -71,7 +71,12 @@ export function loadLocalProfileCatalog(storage: Storage | undefined = globalThi
   try { return validateLocalProfileCatalog(JSON.parse(raw) as unknown) } catch { return { ok: false, message: 'Не удалось прочитать локальную историю профилей.' } }
 }
 export function allProfileRevisions(catalog: LocalProfileCatalog, manifest: ReleaseManifest = RELEASE_MANIFEST): readonly GameDesignProfile[] {
-  return [...manifest.revisions, ...Object.values(catalog.profiles).flat()]
+  const revisions = new Map(manifest.revisions.map((profile) => [`${profile.id}@${profile.revision}`, profile]))
+  for (const profile of Object.values(catalog.profiles).flat()) {
+    const key = `${profile.id}@${profile.revision}`
+    if (!revisions.has(key)) revisions.set(key, profile)
+  }
+  return [...revisions.values()]
 }
 export function resolveSelectedProfile(catalog: LocalProfileCatalog, manifest: ReleaseManifest = RELEASE_MANIFEST): { ok: true; profile: ValidatedGameDesignProfile } | { ok: false; message: string } {
   const selected = catalog.selected ?? manifest.releaseRef
@@ -85,9 +90,9 @@ function writeCatalog(catalog: LocalProfileCatalog, storage: Storage | undefined
 export function persistLocalProfileCatalog(catalog: LocalProfileCatalog, storage: Storage | undefined = globalThis.localStorage) { writeCatalog(catalog, storage) }
 export function saveLocalRevision(base: ValidatedGameDesignProfile, draft: GameDesignProfile, storage: Storage | undefined = globalThis.localStorage): { ok: true; catalog: LocalProfileCatalog; profile: ValidatedGameDesignProfile } | { ok: false; message: string } {
   const current = loadLocalProfileCatalog(storage); if (!current.ok) return current
-  const id = base.source === 'local' ? base.id : `local:${base.id}`
-  const prior = current.catalog.profiles[id] ?? []; const nextRevision = Math.max(0, ...prior.map(({ revision }) => revision)) + 1
-  const local: GameDesignProfile = { ...clone(draft), id, name: base.source === 'local' ? base.name : `${base.name} · локальная`, revision: nextRevision, source: 'local', contentHash: '' }
+  const id = base.id
+  const prior = current.catalog.profiles[id] ?? []; const nextRevision = Math.max(base.revision, ...prior.map(({ revision }) => revision)) + 1
+  const local: GameDesignProfile = { ...clone(draft), id, name: base.name, revision: nextRevision, source: 'local', contentHash: '' }
   local.contentHash = computeProfileContentHash(local)
   const validation = validateGameDesignProfile(local)
   if (!validation.ok) return { ok: false, message: validation.errors.map(({ message }) => message).join(' ') }

@@ -7,6 +7,10 @@ Profile subsystem SHALL хранить локально созданные по�
 - **WHEN** дизайнер создаёт revision для профиля A после сохранения профиля B
 - **THEN** следующая revision получает номер относительно истории A, а history B и её revision numbers не меняются
 
+#### Scenario: Продолжение поставляемого профиля
+- **WHEN** дизайнер сохраняет valid draft, созданный от поставляемой revision `prototype-v1 v6`
+- **THEN** исходный snapshot остаётся неизменным, а новая local revision получает тот же profile id `prototype-v1` и следующий номер `v7`
+
 #### Scenario: Публикация release revision
 - **WHEN** дизайнер на dev-стенде помечает valid saved revision как релизную
 - **THEN** endpoint атомарно сохраняет exact immutable snapshot в `balance/releases.json` и переключает единственный `releaseRef` на эту identity
