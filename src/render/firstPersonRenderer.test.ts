@@ -517,6 +517,10 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:muzzle-flash:right')).toHaveProperty('visible', true)
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.57)
     expect(scene.getObjectByName('presentation:pellet-trails:tick-5:shot:local-player-1:1')).toBeDefined()
+    const trail = scene.getObjectByName('presentation:pellet-trails:tick-5:shot:local-player-1:1') as THREE.LineSegments
+    const trailPositions = trail.geometry.getAttribute('position') as THREE.BufferAttribute
+    expect([trailPositions.getX(0), trailPositions.getY(0), trailPositions.getZ(0)]).not.toEqual([0, 1, 0])
+    expect([trailPositions.getX(1), trailPositions.getY(1), trailPositions.getZ(1)]).toEqual([0, 1, 0])
     expect(scene.getObjectByName('presentation:impact:tick-5:impact:local-player-1:0')?.getObjectByName('presentation:impact:surface-chip')).toBeDefined()
     expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeDefined()
     expect(scene.getObjectByName(`target:${destroyedTargetId}`)?.userData.presentationState)

@@ -875,14 +875,22 @@ export function createFirstPersonRenderer({
     const impactsById = new Map(snapshot.events.filter((event): event is FirstPersonImpactRenderEvent => event.kind === 'shotgun-impact').map((event) => [event.eventId, event]))
     const createTrail = (event: FirstPersonShotRenderEvent) => {
       const positions: number[] = []
+      const localShot = event.shooterId === localId
+      if (localShot) camera.updateMatrixWorld(true)
       for (const [pelletIndex, direction] of event.pelletDirections.entries()) {
         const impact = impactsById.get(`tick-${event.tick}:impact:${event.shooterId}:${pelletIndex}`)
+        // Combat originates from the canonical eye ray. Presentation starts at
+        // the visible barrel so a strafing local player never sees pellets
+        // emerge from the centre of the camera or from beside the weapon.
+        const muzzle = localShot
+          ? viewmodel.muzzleFlashes[pelletIndex % viewmodel.muzzleFlashes.length]!.getWorldPosition(new THREE.Vector3())
+          : new THREE.Vector3(event.origin.x, event.origin.y, event.origin.z)
         const endpoint = impact?.position ?? {
           x: event.origin.x + direction.x * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
           y: event.origin.y + direction.y * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
           z: event.origin.z + direction.z * profile.rules.weapons.doubleBarrelShotgun.rangeMeters,
         }
-        positions.push(event.origin.x, event.origin.y, event.origin.z, endpoint.x, endpoint.y, endpoint.z)
+        positions.push(muzzle.x, muzzle.y, muzzle.z, endpoint.x, endpoint.y, endpoint.z)
       }
       if (positions.length === 0) return
       const geometry = new THREE.BufferGeometry()
