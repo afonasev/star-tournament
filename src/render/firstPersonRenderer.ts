@@ -199,6 +199,16 @@ export function resolveLocalLightShadowBudget(
   }
 }
 
+export function resolveLocalLightBudget(
+  graphicsQuality: GraphicsQualityProfile,
+  presentationProfile: ValidatedPresentationProfile = PRESENTATION_BALANCED_V1_PROFILE,
+): number {
+  if (graphicsQuality.id === 'low') return 0
+  return graphicsQuality.id === 'balanced'
+    ? presentationProfile.render.localLightCount / 2
+    : presentationProfile.render.localLightCount
+}
+
 
 function defaultRendererFactory(): RendererPort {
   try {
@@ -230,9 +240,7 @@ function addArena(
   const recipeStyle = presentationProfile.render
   // Texture rhythm is relative to the authored 3.2 m wall module.
   const textureDensity = recipeStyle.materialRepeatScale / 3.2
-  let localLights = 0
   const localLightCandidates: LocalLightCandidate[] = []
-  const lightBudget = graphicsQuality.id === 'low' ? 0 : graphicsQuality.id === 'balanced' ? recipeStyle.localLightCount / 2 : recipeStyle.localLightCount
   const rhythmLampSurfaceIds = new Set(
     arena.surfaces
       .filter((surface) => surface.material === 'wall' && !surface.id.startsWith('portal-solid:'))
@@ -511,14 +519,12 @@ function addArena(
           new THREE.Vector3(0, y / 4 - 0.28, 0.2),
           lensMaterial,
         )
-        if (localLights < lightBudget) {
-          const light = new THREE.PointLight(surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,recipeStyle.localLightIntensity,recipeStyle.localLightDistance)
-          light.name = `presentation:lamp-light:${attachment.id}`
-          light.position.z = recipeStyle.reliefDepth
-          frame.add(light)
-          localLightCandidates.push({ attachmentId: attachment.id, light })
-          localLights++
-        }
+        const light = new THREE.PointLight(surface.semantics?.sector === 'north' ? 0x9bddff : 0xffddab,recipeStyle.localLightIntensity,recipeStyle.localLightDistance)
+        light.name = `presentation:lamp-light:${attachment.id}`
+        light.position.z = recipeStyle.reliefDepth
+        light.visible = false
+        frame.add(light)
+        localLightCandidates.push({ attachmentId: attachment.id, light })
       } else if (attachment.kind === 'relief-niche') {
         // Shallow frame over the continuous wall. There is no floor, opening or navigable recess.
         const span = Math.min(x >= z ? x : z,y)/2
@@ -754,20 +760,18 @@ export function createFirstPersonRenderer({
   })
 
   const localLightShadowBudget = resolveLocalLightShadowBudget(activeGraphicsQuality, activePresentationProfile)
+  const localLightBudget = resolveLocalLightBudget(activeGraphicsQuality, activePresentationProfile)
   const updateLocalLightShadows = () => {
     const cameraPosition = camera.getWorldPosition(new THREE.Vector3())
-    const selected = new Set(
-      [...arenaPresentation.localLights]
-        .sort((left, right) => {
-          const distance = left.light.getWorldPosition(new THREE.Vector3()).distanceToSquared(cameraPosition) - right.light.getWorldPosition(new THREE.Vector3()).distanceToSquared(cameraPosition)
-          return distance === 0 ? left.attachmentId.localeCompare(right.attachmentId) : distance
-        })
-        .slice(0, localLightShadowBudget)
-        .map(({ attachmentId }) => attachmentId),
-    )
+    const nearest = [...arenaPresentation.localLights].sort((left, right) => {
+      const distance = left.light.getWorldPosition(new THREE.Vector3()).distanceToSquared(cameraPosition) - right.light.getWorldPosition(new THREE.Vector3()).distanceToSquared(cameraPosition)
+      return distance === 0 ? left.attachmentId.localeCompare(right.attachmentId) : distance
+    })
+    const lit = new Set(nearest.slice(0, localLightBudget).map(({ attachmentId }) => attachmentId))
+    const shadowed = new Set(nearest.slice(0, localLightShadowBudget).map(({ attachmentId }) => attachmentId))
     for (const candidate of arenaPresentation.localLights) {
-      const active = selected.has(candidate.attachmentId)
-      candidate.light.castShadow = active
+      candidate.light.visible = lit.has(candidate.attachmentId)
+      candidate.light.castShadow = shadowed.has(candidate.attachmentId)
       candidate.light.shadow.mapSize.set(activePresentationProfile.render.localLightShadowMapSize, activePresentationProfile.render.localLightShadowMapSize)
       candidate.light.shadow.radius = activePresentationProfile.render.localLightShadowRadius
       // A small fixed bias is a renderer technical invariant, not a balance control.

@@ -43,3 +43,9 @@
 - [x] 8.1 Отделить renderer facade от overlapping collision proxy частей арки.
 - [x] 8.2 Сгенерировать разнесённые structural portal GLB segments и проверить asset contract.
 - [x] 8.3 Провести muted browser visual QA и production performance gate, сохранить PNG.
+
+## 9. Переназначать локальный свет по близости камеры
+
+- [x] 9.1 Убрать зависимость lit fixtures от порядка обхода арены.
+- [x] 9.2 Выбирать ближайшие local lights и их shadow subset вместе; покрыть renderer unit test.
+- [x] 9.3 Провести muted browser visual QA и production performance gate, сохранить PNG.

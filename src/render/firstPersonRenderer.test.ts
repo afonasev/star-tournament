@@ -23,6 +23,7 @@ import type { GameplayUiSourceSnapshot } from '../ui/gameplayUiSnapshot'
 import {
   DEFAULT_WEBGL_POWER_PREFERENCE,
   createFirstPersonRenderer,
+  resolveLocalLightBudget,
   resolvePixelBudgetDevicePixelRatio,
   resolveLocalLightShadowBudget,
   type FirstPersonRenderSnapshot,
@@ -213,6 +214,10 @@ describe('createFirstPersonRenderer', () => {
   })
 
   it('uses the quality-limited nearest lamp lights as soft architectural shadow casters', () => {
+    expect(resolveLocalLightBudget(GRAPHICS_QUALITY_V1.low)).toBe(0)
+    expect(resolveLocalLightBudget(GRAPHICS_QUALITY_V1.balanced)).toBe(8)
+    expect(resolveLocalLightBudget(GRAPHICS_QUALITY_V1.high)).toBe(16)
+    expect(resolveLocalLightBudget(GRAPHICS_QUALITY_V1.ultra)).toBe(16)
     expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.low)).toBe(0)
     expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.balanced)).toBe(1)
     expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.high)).toBe(2)
@@ -237,6 +242,7 @@ describe('createFirstPersonRenderer', () => {
     const lamps: THREE.PointLight[] = []
     scene.traverse((object) => { if (object.name.startsWith('presentation:lamp-light:')) lamps.push(object as THREE.PointLight) })
     expect(lamps.length).toBeGreaterThan(2)
+    expect(lamps.filter((lamp) => lamp.visible)).toHaveLength(Math.min(16, lamps.length))
     expect(lamps.filter((lamp) => lamp.castShadow)).toHaveLength(2)
     expect(lamps.filter((lamp) => lamp.castShadow).every((lamp) => lamp.shadow.mapSize.x === 512 && lamp.shadow.radius === 0.5)).toBe(true)
     const architecturalMeshes: THREE.Mesh[] = []
