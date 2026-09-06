@@ -8,6 +8,16 @@ import type { Plugin } from 'vite'
 const API = '/__star-tournament/profiles'
 const versionOf = (text: string) => createHash('sha256').update(text).digest('hex')
 const send = (response: ServerResponse, status: number, value: unknown) => { response.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); response.end(JSON.stringify(value)) }
+const loopbackNames = new Set(['127.0.0.1', 'localhost', '[::1]', '::1'])
+function allowedOrigin(origin: string | undefined, host: string | undefined) {
+  if (!origin || !host) return true
+  if (origin === `http://${host}` || origin === `https://${host}`) return true
+  try {
+    const requestHost = new URL(`http://${host}`)
+    const originUrl = new URL(origin)
+    return loopbackNames.has(requestHost.hostname) && loopbackNames.has(originUrl.hostname) && requestHost.port === originUrl.port
+  } catch { return false }
+}
 
 async function atomicWrite(path: string, value: unknown, expectedVersion: string, current: string) {
   if (expectedVersion !== 'missing' && versionOf(current) !== expectedVersion) throw new Error('Файл профилей изменён на диске. Перезагрузите страницу.')
@@ -28,7 +38,7 @@ export function profileRepositoryPlugin(root: string): Plugin {
       server.middlewares.use(async (request: IncomingMessage, response: ServerResponse, next: () => void) => {
         if (request.url?.split('?')[0] !== API) return next()
         try {
-          if (request.headers.origin && request.headers.origin !== `http://${request.headers.host}`) return send(response, 403, { error: 'Чужой origin' })
+          if (!allowedOrigin(request.headers.origin, request.headers.host)) return send(response, 403, { error: 'Чужой origin' })
           const validators = await server.ssrLoadModule('/src/profiles/localRevisions.ts') as typeof import('../profiles/localRevisions')
           const profiles = await server.ssrLoadModule('/src/profiles/gameDesignProfile.ts') as typeof import('../profiles/gameDesignProfile')
           const text = await readFile(releasePath, 'utf8')
