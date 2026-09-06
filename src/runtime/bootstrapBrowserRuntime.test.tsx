@@ -385,6 +385,26 @@ describe('playable browser bootstrap', () => {
     await waitFor(() => expect(screen.getByLabelText('Здоровье игрока')).toHaveTextContent('100'))
   })
 
+  it('preserves a shot event across a multi-tick frame until the renderer consumes it', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+    vi.mocked(test.input.drainActionFrame).mockImplementation((tick) => createActionFrame(tick, [{
+      participantId: PLAYABLE_PLAYER_ID,
+      actionId: 'fire',
+      value: tick === 1 ? 1 : 0,
+    }]))
+    application = await bootstrapBrowserRuntime(mount, test.dependencies)
+
+    await application.requestControl()
+    test.scheduler.frame(0)
+    test.scheduler.frame(35)
+
+    const rendered = vi.mocked(test.renderer.render).mock.calls.at(-1)?.[0]
+    expect(application.runtime?.getState().events).toEqual([])
+    expect(rendered?.events.some((event) => event.kind === 'shotgun-shot')).toBe(true)
+  })
+
   it('publishes held scoreboard immediately and hides it on release', async () => {
     const mount = document.createElement('div')
     document.body.append(mount)

@@ -325,6 +325,10 @@ export async function bootstrapBrowserRuntime(
   let pointerController: RuntimePointerLockController | undefined
   let runtime: BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot> | undefined
   let scoreboardVisible = false
+  // BrowserRuntime may advance several deterministic ticks before one WebGL
+  // submission. Snapshot events last one tick, so retain them until the
+  // renderer has consumed the completed animation-frame batch.
+  let pendingPresentationEvents: PlayableSimulationSnapshot['events'] = []
 
   function uiStatus(): GameplayUiStatus {
     if (pointerState.status === 'locked') return 'running'
@@ -531,6 +535,7 @@ export async function bootstrapBrowserRuntime(
       if (performanceBenchmarkEnabled) benchmarkFrames.push(frame)
       const uiActions = input!.drainUiActionSnapshot?.()
       const next = stepPlayableSimulation(state, frame, collisionWorld!, profile, configuration, arena)
+      pendingPresentationEvents = [...pendingPresentationEvents, ...next.events]
       if (performanceBenchmarkEnabled && [1, 2, 10, 60, 600].includes(next.tick)) benchmarkCheckpoints.push(next)
       if (uiActions !== undefined && uiActions.scoreboardHeld !== scoreboardVisible) {
         scoreboardVisible = uiActions.scoreboardHeld
@@ -549,7 +554,13 @@ export async function bootstrapBrowserRuntime(
       }
       return next
     },
-    render: (state) => renderer?.render(state),
+    render: (state) => {
+      const presentationState = pendingPresentationEvents.length === 0
+        ? state
+        : { ...state, events: pendingPresentationEvents }
+      pendingPresentationEvents = []
+      renderer?.render(presentationState)
+    },
     snapshotForUi: (state) => projectUi(state),
     publishUiSnapshot: ui.update,
     disposePresentation: cleanup,
