@@ -381,13 +381,13 @@ function addArena(
       const horizontalAlongX = x >= z
       const span = horizontalAlongX ? x : z
       const thickness = horizontalAlongX ? z : x
-      // Decorative bays stay completely inside the canonical wall shell.
-      // A real clearance, rather than coincident faces, prevents z-fighting
-      // while collision continues to use the untouched authored shell.
+      // Decorative bays are a thin layer in front of the canonical wall shell.
+      // A real clearance prevents z-fighting while collision keeps using the
+      // untouched authored wall volume behind the visual panel.
       const depth = thickness / 2 - 0.2
       const wallBayClearance = 0.04
-      const wallBayDepth = Math.max(0.04, thickness / 2 - wallBayClearance * 2)
-      const wallBayOffset = Math.max(0, thickness / 4 - wallBayClearance)
+      const wallBayDepth = 0.08
+      const wallBayOffset = thickness / 2 + wallBayClearance + wallBayDepth / 2
       for (const side of [-1, 1]) {
         const face = side * depth
         const frameSpan = Math.max(0.2, span - 0.3)

@@ -49,3 +49,9 @@
 - [x] 9.1 Убрать зависимость lit fixtures от порядка обхода арены.
 - [x] 9.2 Выбирать ближайшие local lights и их shadow subset вместе; покрыть renderer unit test.
 - [x] 9.3 Провести muted browser visual QA и production performance gate, сохранить PNG.
+
+## 10. Устранить depth competition wall-bay с shell
+
+- [x] 10.1 Зафиксировать внешний тонкий фасад `wall-bay` с положительным зазором до opaque wall shell.
+- [x] 10.2 Вынести GLB wall-bay перед shell и проверить bounds renderer unit test.
+- [x] 10.3 Провести muted browser visual QA и production performance gate, сохранить PNG.

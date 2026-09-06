@@ -47,7 +47,7 @@ Shadow selection выполняется только при setup/resizing camer
 
 ### Geometry stability
 
-`wall-bay` — renderer-only module внутри canonical wall shell. Его scaled bounds заканчиваются до shell boundary с положительным clearance; совпадающие faces запрещены, потому что они дают z-fighting независимо от light/shadow settings. Этот gap не меняет collision proxy, navigation или identity.
+`wall-bay` — тонкий renderer-only фасад перед canonical wall shell. Его scaled bounds целиком лежат снаружи shell и отделены от него положительным clearance; пересекающиеся и совпадающие faces запрещены, потому что они дают depth competition независимо от light/shadow settings. Этот gap не меняет collision proxy, navigation или identity.
 
 `wall-architecture-gap-seal-*` является обратным случаем: это canonical collision-only overlay, который намеренно перекрывает adjacent solids для capsule safety. Renderer не создаёт ему mesh и сохраняет shell geometry соседних primary walls.
 

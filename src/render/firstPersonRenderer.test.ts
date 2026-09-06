@@ -255,7 +255,7 @@ describe('createFirstPersonRenderer', () => {
     expect(lenses.every((lens) => (lens.material as THREE.MeshStandardMaterial).emissiveIntensity === PRESENTATION_BALANCED_V1_PROFILE.render.localLightIntensity * 1.5)).toBe(true)
   })
 
-  it('keeps GLB wall bays inside the canonical shell with a positive clearance', () => {
+  it('keeps GLB wall bays in front of the canonical shell with a positive clearance', () => {
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({
       container: createContainer(),
@@ -277,8 +277,7 @@ describe('createFirstPersonRenderer', () => {
     expect(bays).toHaveLength(4)
     for (const bay of bays) {
       const bounds = new THREE.Box3().setFromObject(bay)
-      expect(bounds.min.z).toBeGreaterThan(shellBounds.min.z)
-      expect(bounds.max.z).toBeLessThan(shellBounds.max.z)
+      expect(bounds.max.z < shellBounds.min.z || bounds.min.z > shellBounds.max.z).toBe(true)
     }
   })
 
