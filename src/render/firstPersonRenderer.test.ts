@@ -318,7 +318,10 @@ describe('createFirstPersonRenderer', () => {
     adapter.render(snapshot())
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
     const solids=arena.surfaces.filter(s=>s.id.startsWith('portal-solid:'))
+    const gapSeals=arena.surfaces.filter(s=>s.id.startsWith('wall-architecture-gap-seal-'))
     expect(solids.length).toBeGreaterThan(0)
+    expect(gapSeals.length).toBeGreaterThan(0)
+    expect(gapSeals.every((seal) => scene.getObjectByName(`arena:${seal.id}`) === undefined)).toBe(true)
     for(const solid of solids) {
       const mesh=scene.getObjectByName(`arena:${solid.id}`) as THREE.Mesh
       expect(mesh).toBeDefined()

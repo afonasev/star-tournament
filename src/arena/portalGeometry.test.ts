@@ -7,14 +7,17 @@ import { DIAGNOSTIC_ARENA } from './diagnosticArena'
 import { createRapierCollisionWorld } from '../collision/rapierWorld'
 import { PROTOTYPE_V1_PROFILE as profile } from '../profiles'
 
-it.each([0,1])('shares every authored GLB LOD%s box with the canonical portal contract', lod => {
+it.each([0,1])('uses non-overlapping structural portal facade pieces while collision keeps the full canonical contract', lod => {
   const bytes=readFileSync(new URL(`../../public/assets/arena/portal-facade-lod${lod}.glb`,import.meta.url))
   const asset=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString())
-  expect(asset.nodes).toHaveLength(kit.parts.length)
+  const structural=kit.parts.filter(([material])=>material==='cyan')
+  expect(asset.nodes).toHaveLength(structural.length)
   asset.nodes.forEach((node: {translation: number[];scale: number[];rotation?: number[]},i:number)=>{
-    expect(node.translation).toEqual(kit.parts[i]![1])
-    expect(node.scale).toEqual(kit.parts[i]![2])
-    expect(node.rotation).toEqual(kit.parts[i]![3])
+    const part=structural[i]!
+    expect(node.translation).toEqual(part[1])
+    const size=part[2] as number[]
+    expect(node.scale).toEqual([size[0]!*.94,size[1]!*.94,size[2]!*.92])
+    expect(node.rotation).toEqual(part[3])
   })
 })
 

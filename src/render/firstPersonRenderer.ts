@@ -313,6 +313,10 @@ function addArena(
   }
 
   for (const surface of arena.surfaces) {
+    // Gap seals close sub-capsule collision holes created by adjacent canonical
+    // solids. They deliberately overlap those solids, so rendering them would
+    // produce z-fighting at wall joints.
+    if (surface.id.startsWith('wall-architecture-gap-seal-')) continue
     // The GLB portal below renders these exact authored boxes once.
     if (arenaGlbAssets && surface.id.startsWith('portal-solid:')) continue
     const sourceGeometry = new THREE.BoxGeometry(surface.size.x, surface.size.y, surface.size.z)

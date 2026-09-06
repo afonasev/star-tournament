@@ -31,3 +31,15 @@
 - [x] 6.1 Зафиксировать positive clearance между GLB wall-bay и canonical wall shell.
 - [x] 6.2 Вписать GLB wall-bay внутрь shell с clearance и покрыть renderer unit test.
 - [x] 6.3 Провести muted browser visual QA и production performance gate, сохранить PNG.
+
+## 7. Исключить collision-only gap seals из renderer
+
+- [x] 7.1 Зафиксировать collision-only статус overlapping gap seals в renderer contract.
+- [x] 7.2 Не создавать WebGL mesh для gap seal и покрыть сцену unit test.
+- [x] 7.3 Провести muted browser visual QA и production performance gate, сохранить PNG.
+
+## 8. Устранить пересечения сегментов portal facade
+
+- [x] 8.1 Отделить renderer facade от overlapping collision proxy частей арки.
+- [x] 8.2 Сгенерировать разнесённые structural portal GLB segments и проверить asset contract.
+- [x] 8.3 Провести muted browser visual QA и production performance gate, сохранить PNG.
