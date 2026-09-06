@@ -10,9 +10,13 @@ import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
 const STATES: readonly RobotAnimationState[] = ['idle', 'walk', 'run', 'strafe-left', 'strafe-right', 'jump-takeoff', 'jump-airborne', 'jump-landing', 'aim', 'fire', 'hit', 'death-hit', 'death-fall', 'death-rest']
 
 export function RobotAnimationReview() {
+  const requestedState = new URLSearchParams(window.location.search).get('animationState')
+  const initialState: RobotAnimationState = STATES.includes(requestedState as RobotAnimationState)
+    ? requestedState as RobotAnimationState
+    : 'idle'
   const host = useRef<HTMLDivElement>(null)
-  const stateRef = useRef<RobotAnimationState>('idle')
-  const [state, setState] = useState<RobotAnimationState>('idle')
+  const stateRef = useRef<RobotAnimationState>(initialState)
+  const [state, setState] = useState<RobotAnimationState>(initialState)
   const [lod, setLod] = useState<'lod0' | 'lod1'>('lod0')
   const reviewTimer = useRef<number | undefined>(undefined)
   const animation = useRef<RobotAnimationController | undefined>(undefined)

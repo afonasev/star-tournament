@@ -471,7 +471,7 @@ describe('createFirstPersonRenderer', () => {
     expect(`#${((restored.getObjectByName('robot:identity:core') as THREE.Mesh).material as THREE.MeshStandardMaterial).color.getHexString()}`).toBe('#f59e0b')
   })
 
-  it('presents shot, impact and destroyed events until their profile-defined expiry', () => {
+  it('presents shot and impact feedback without replacing a destroyed robot with a placeholder', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({
@@ -525,7 +525,7 @@ describe('createFirstPersonRenderer', () => {
     trail.getMatrixAt(0, matrix)
     expect(new THREE.Vector3().setFromMatrixPosition(matrix)).not.toEqual(new THREE.Vector3(0, 1, 0))
     expect(scene.getObjectByName('presentation:impact:tick-5:impact:local-player-1:0')?.getObjectByName('presentation:impact:surface-chip')).toBeDefined()
-    expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeDefined()
+    expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
     expect(scene.getObjectByName(`target:${destroyedTargetId}`)?.userData.presentationState)
       .toBe('destroyed')
 
@@ -535,7 +535,6 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
     expect(scene.getObjectByName('presentation:pellet-trails:tick-5:shot:local-player-1:1')).toBeUndefined()
     expect(scene.getObjectByName('presentation:impact:tick-5:impact:local-player-1:0')).toBeUndefined()
-    expect(scene.getObjectByName('presentation:destroyed:destroyed-1')).toBeUndefined()
   })
 
   it('does not present a successful-shot recoil or flash without a shotgun event', () => {
@@ -551,15 +550,54 @@ describe('createFirstPersonRenderer', () => {
     expect(scene.getObjectByName('presentation:first-person-viewmodel')?.position.z).toBeCloseTo(-0.68)
   })
 
-  it('projects authoritative corpse lifetime independently from a respawned fixture', () => {
+  it('projects an identity-preserving GLB corpse at floor contact independently from a respawned fixture', () => {
     const container = createContainer()
     const rendererPort = makeRenderer()
     const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
-    adapter.render(snapshot({ tick: 180, corpses: [{ corpseId: 'robot-center:life:1:corpse', position: { x: 0, y: 0, z: -2 }, yaw: 0 }] }))
+    adapter.render(snapshot({ tick: 180, corpses: [{ corpseId: 'robot-center:life:1:corpse', participantId: 'robot-center', lifeId: 'robot-center:life:1', position: { x: 0, y: 0, z: -2 }, yaw: 0 }] }))
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
-    expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeDefined()
+    const corpse = scene.getObjectByName('corpse:robot-center:life:1:corpse')!
+    expect(corpse).toBeDefined()
+    expect(corpse.getObjectByName('robot:weapon:barrel:left')).toBeDefined()
+    expect(corpse.position.y).toBeCloseTo(-.08)
     adapter.render(snapshot({ tick: 601, corpses: [] }))
     expect(scene.getObjectByName('corpse:robot-center:life:1:corpse')).toBeUndefined()
+  })
+
+  it('falls away from the lethal shot, then hands the final transform from target to corpse', () => {
+    const container = createContainer()
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({ container, arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
+    const victimId = COMBAT_SLICE_SCENARIO_V1.targets[0]!.semanticId
+    const victim = snapshot().participants.find((participant) => participant.semanticId === victimId)!
+    const deadParticipants = snapshot().participants.map((participant) => participant.semanticId === victimId
+      ? { ...participant, lifeId: `${victimId}:life:1`, deathTick: 1, alive: false, health: 0 }
+      : participant)
+
+    adapter.render(snapshot({
+      tick: 1,
+      participants: deadParticipants,
+      events: [
+        { eventId: 'lethal-shot', tick: 1, kind: 'shotgun-shot', shooterId: 'local-player-1', origin: { x: -10, y: 0, z: 0 }, pelletDirections: [{ x: 1, y: 0, z: 0 }] },
+        { eventId: 'destroyed', tick: 1, kind: 'target-destroyed', killerId: 'local-player-1', targetId: victimId, targetLifeId: `${victimId}:life:1` },
+      ],
+    }))
+    adapter.render(snapshot({
+      tick: 29,
+      participants: deadParticipants,
+      corpses: [{ corpseId: `${victimId}:life:1:corpse`, participantId: victimId, lifeId: `${victimId}:life:1`, createdTick: 1, position: victim.position, yaw: victim.yaw }],
+    }))
+
+    const scene = vi.mocked(rendererPort.render).mock.calls.at(-1)![0] as THREE.Scene
+    const target = scene.getObjectByName(`target:${victimId}`)!
+    const corpse = scene.getObjectByName(`corpse:${victimId}:life:1:corpse`)!
+    expect(target.visible).toBe(false)
+    expect(corpse.visible).toBe(true)
+    const offsetX = corpse.position.x - victim.position.x
+    const offsetZ = corpse.position.z - victim.position.z
+    expect(Math.hypot(offsetX, offsetZ)).toBeCloseTo(.65)
+    expect(offsetX).toBeGreaterThan(0)
+    expect(target.position.toArray()).toEqual(corpse.position.toArray())
   })
 
   it('fully disposes listeners, canvas, geometries, materials and WebGL resources', () => {
