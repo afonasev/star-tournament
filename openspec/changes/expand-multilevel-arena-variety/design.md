@@ -24,6 +24,8 @@ Navigation creates candidates within a support layer and crosses layers only thr
 
 ### 3. Physical validation owns proof of transitions
 
+Уточнение 2026-09-08: узел содержит `supportSurfaceId` и XYZ; одинаковые XZ не дедуплицируются между опорами. Footprint рампы блокирует обычный нижний маршрут. Входы и waypoint перехода выводятся только из указанной `transitionSurfaceId`; глобальные X-breakpoints запрещены. AI проверяет достижение по опоре и высоте, сохраняя горизонтальную дистанцию прицеливания. На наклоне physical validator учитывает геометрический контакт вертикальной capsule с плоскостью; на плоской площадке требуется фактическая высота стоп и declared support.
+
 Derived Rapier worlds validate every declared transition, three lateral lanes and corner sweep in both directions, checking feet Y, grounded contact and final support identity. Existing XZ-only success is insufficient.
 
 ### 4. Profile-owned combat clearance
@@ -39,6 +41,16 @@ Floors, slabs, guards and ramps remain canonical when they affect collision or s
 Schema/generator/profile identities advance only for new multi-level definitions. Legacy definitions retain their historical elevation/navigation compatibility path. A recipe promotion requires deterministic corpus, physical route, bot, fairness/LOS, renderer/performance and muted browser evidence for every family.
 
 ## Risks / Trade-offs
+
+### Physical-navigation implementation slice, 2026-09-08
+
+New generation uses `arena-layers-v2`, profile schema 8 / revision 9. Revision 8 retains its immutable release and legacy generator/validation behavior. Ordinary navigation edges retain support identity; declared continuous ramps provide explicit landing/ramp/landing waypoints. AI navigation converts capsule centers to feet without changing aim coordinates and preserves transitions until the landing is reached. Ramp-interior targets also attach through declared transition entries.
+
+The basement has one continuous main slab and a lower floor extended to contain two external descents. Canonical portal lintels follow the relevant support elevation. Physical acceptance walks all spawn/combat routes and each ramp in both directions, including three lateral capsule lanes and corner sweeps; grounded support and headroom come from the derived Rapier world.
+
+Rapier 0.20 can occasionally return snap movement through an already contacted flat floor. Only the new layered generators retry that exact original pose and translation with snap temporarily disabled when the candidate crosses that floor. Collision filtering remains active, configured snap is restored immediately, and a retry still crossing support fails explicitly. No feet clamping or physical-validator exemption is used.
+
+Guided AI goals verify reachability across every family/size with zero recovery; this does not claim autonomous combat exploration covers every layer. Presentation, performance promotion, and keyboard/mouse browser acceptance remain separate gates.
 
 - [Layer graph may increase nav nodes/edges] → use local support candidates and declared sparse portals; record node/edge and generation-time metrics.
 - [Upper fire may bias spawn fairness] → assess actual FFA/team allocations and LOS/routes to every combat region; do not relax existing budgets.

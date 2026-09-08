@@ -58,6 +58,10 @@ const wrap=(a:number)=>simulationMath.atan2(simulationMath.sin(a),simulationMath
 const clamp=(a:number,n=1)=>Math.max(-n,Math.min(n,a))
 export function planBot(observation: BotObservation, previous: BotState, nav: NavigationCapabilities, profile: ValidatedGameDesignProfile, extensions: BotExtensions = {}): { state: BotState; actions: NormalizedAction[] } {
   const {self,tick}=observation;const tuning=profile.rules.bots[self.difficulty!];const common=profile.rules.bots
+  // Participants store capsule centres; navigation waypoints store feet.
+  const feet=(position:Vec):Vec=>nav.reached?{x:position.x,y:position.y-profile.rules.player.capsule.halfHeight-profile.rules.player.capsule.radius,z:position.z}:position
+  const selfFeet=feet(self.position)
+  const arrived=(target:Vec)=>nav.reached?.(selfFeet,target,common.navigation.waypointRadius)??distance(self.position,target)<common.navigation.waypointRadius
   const state:BotState={...previous,route:[...previous.route],memory:previous.memory.filter(m=>tick-m.tick<=tuning.memorySeconds*HZ)}
   const random=()=>{const r=nextRandomUint32(state.rng);state.rng=r.state;return r.value/0x100000000}
   const personality=1+(state.personality*2-1)*common.cooperation.personalitySpread
@@ -77,26 +81,31 @@ export function planBot(observation: BotObservation, previous: BotState, nav: Na
   if(tick>=state.decisionTick) {
     state.decisionTick=tick+Math.ceil(tuning.decisionSeconds*HZ)
     let goal:BotGoal|undefined
-    if(target) goal={id:'attack',position:target.position,utility:1}
+    if(target) goal={id:'attack',position:feet(target.position),utility:1}
     else {
       const remembered=state.memory.find(m=>m.id===state.targetId)??state.memory[0]
-      if(remembered) goal={id:'pursue',position:remembered.position,utility:1}
-      else if(state.intent==='pursue' && distance(self.position,state.goal)>common.navigation.waypointRadius && state.route.length) goal={id:'pursue',position:state.goal,utility:1}
+      if(remembered) goal={id:'pursue',position:feet(remembered.position),utility:1}
+      else if(state.intent==='pursue' && !arrived(state.goal) && state.route.length) goal={id:'pursue',position:state.goal,utility:1}
     }
     if(!target && tick>=state.supportTick && observation.allies.length && random()<tuning.supportChance) {
       const ally=observation.allies.find(a=>distance(self.position,a.position)>common.cooperation.separationMeters && distance(self.position,a.position)<common.cooperation.supportDistanceMeters)
-      if(ally) {goal={id:'support',position:ally.position,utility:1};state.supportTick=tick+Math.ceil(common.cooperation.supportSeconds*HZ)}
+      if(ally) {goal={id:'support',position:feet(ally.position),utility:1};state.supportTick=tick+Math.ceil(common.cooperation.supportSeconds*HZ)}
     } else if(!goal && state.intent==='support' && tick<state.supportTick) goal={id:'support',position:state.goal,utility:1}
     for(const evaluate of extensions.goals??[]) for(const candidate of evaluate(observation,state,tuning)) if(!goal||candidate.utility>goal.utility) goal=candidate
     if(!goal) {
-      if(state.intent!=='search'||distance(self.position,state.goal)<common.navigation.waypointRadius||!state.route.length) {
+      if(state.intent!=='search'||arrived(state.goal)||!state.route.length) {
         const choices=nav.destinations.filter(p=>distance(self.position,p)>tuning.preferredDistanceMeters)
         state.goal=choices[Math.floor(random()*choices.length)]??nav.destinations[0]??self.position
       }
       goal={id:'search',position:state.goal,utility:0}
     }
+    const nextWaypoint=state.route[0] as (Vec&{supportSurfaceId?:string})|undefined
+    const followingTransition=nextWaypoint&&nav.transitions?.some(t=>t.surfaceId===nextWaypoint.supportSurfaceId||t.points.some(p=>p.supportSurfaceId===nextWaypoint.supportSurfaceId&&p.x===nextWaypoint.x&&p.z===nextWaypoint.z))
     state.intent=goal.id;state.goal=goal.position
-    state.route=nav.route(self.position,state.goal)
+    // Finish the selected ramp before replanning. Near its lip the capsule
+    // can still contact the source floor even after reaching the entry XZ;
+    // restarting Dijkstra there would repeatedly send it back to the landing.
+    if(!followingTransition)state.route=nav.route(selfFeet,state.goal)
   }
   if(tick-state.progressTick>=common.navigation.stuckSeconds*HZ) {
     if(distance(self.position,state.progressPosition)<common.navigation.progressMeters) {
@@ -106,9 +115,9 @@ export function planBot(observation: BotObservation, previous: BotState, nav: Na
     }
     state.progressPosition=self.position;state.progressTick=tick
   }
-  while(state.route.length && distance(self.position,state.route[0]!)<common.navigation.waypointRadius) state.route.shift()
+  while(state.route.length && arrived(state.route[0]!)) state.route.shift()
   // Pull the route taut only over collision-clear segments.
-  while(state.route.length>1 && nav.clear(self.position,state.route[1]!)) state.route.shift()
+  while(state.route.length>1 && nav.clear(selfFeet,state.route[1]!)) state.route.shift()
   const destination=state.route[0]??self.position
   let dx=destination.x-self.position.x;let dz=destination.z-self.position.z
   let len=simulationMath.hypot(dx,dz);if(len>0){dx/=len;dz/=len}
@@ -120,10 +129,10 @@ export function planBot(observation: BotObservation, previous: BotState, nav: Na
       // Ballistic landing estimate uses the same movement profile.
       const flight=2*profile.rules.player.movement.jumpSpeed/profile.rules.player.movement.gravity
       const landing={x:self.position.x+self.velocity.x*flight,y:self.position.y,z:self.position.z+self.velocity.z*flight}
-      if(nav.clear(self.position,landing)) {jump=true;state.jumpTick=tick+Math.ceil(tuning.jumpCooldownSeconds*personality*HZ)}
+      if(nav.clear(selfFeet,feet(landing))) {jump=true;state.jumpTick=tick+Math.ceil(tuning.jumpCooldownSeconds*personality*HZ)}
     }
   }
-  if(target && nav.clear(self.position,target.position)) {
+  if(target && nav.clear(selfFeet,feet(target.position))) {
     const d=distance(self.position,target.position);const x=(target.position.x-self.position.x)/(d||1);const z=(target.position.z-self.position.z)/(d||1)
     let approach=clamp((d-tuning.preferredDistanceMeters*personality)/tuning.preferredDistanceMeters)
     if(self.health/profile.rules.player.startingHealth<tuning.retreatHealthRatio && state.retreatTick===0) state.retreatTick=tick+Math.ceil(tuning.retreatSeconds*HZ)
@@ -137,9 +146,10 @@ export function planBot(observation: BotObservation, previous: BotState, nav: Na
   if(tick<state.recoveryTick) {dx=simulationMath.cos(self.yaw)*state.strafeSign-simulationMath.sin(self.yaw);dz=simulationMath.sin(self.yaw)*state.strafeSign+simulationMath.cos(self.yaw)}
   len=simulationMath.hypot(dx,dz);if(len>1){dx/=len;dz/=len}
   const probe=profile.rules.player.capsule.radius+common.navigation.clearance
-  if(!nav.clear(self.position,{x:self.position.x+dx*probe,y:self.position.y,z:self.position.z+dz*probe})) {
-    if(nav.clear(self.position,{x:self.position.x+dx*probe,y:self.position.y,z:self.position.z})) dz=0
-    else if(nav.clear(self.position,{x:self.position.x,y:self.position.y,z:self.position.z+dz*probe})) dx=0
+  const canStep=(next:Vec)=>nav.canStep?.(selfFeet,feet(next),destination)??nav.clear(selfFeet,feet(next))
+  if(!canStep({x:self.position.x+dx*probe,y:self.position.y,z:self.position.z+dz*probe})) {
+    if(canStep({x:self.position.x+dx*probe,y:self.position.y,z:self.position.z})) dz=0
+    else if(canStep({x:self.position.x,y:self.position.y,z:self.position.z+dz*probe})) dx=0
     else {dx=-dx;dz=-dz}
   }
   const policy=extensions.weapons?.find(w=>w.id===self.weapon.semanticId)??SHOTGUN_POLICY

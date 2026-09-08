@@ -186,7 +186,8 @@ function architectureMetrics(arena: ArenaDefinition, rules: GameDesignProfile['r
   const disconnected = architecture.filter((surface) => !architecture.some((candidate) => candidate.id !== surface.id && surfacesTouch(surface, candidate))).map(({ id }) => id)
   const perimeterClosed = perimeter.length >= 8 && perimeter.every((surface) => perimeter.filter((candidate) => candidate.id !== surface.id && surfacesTouch(surface, candidate)).length >= 2)
   const hasInsetHorizontal = perimeter.some((surface) => surface.size.x > surface.size.z && Math.abs(surface.center.z) < rules.depthMeters / 2 - rules.wallThicknessMeters / 4)
-  const hasInsetVertical = perimeter.some((surface) => surface.size.z > surface.size.x && Math.abs(surface.center.x) < rules.widthMeters / 2 - rules.wallThicknessMeters / 4)
+  const outerX = Math.max(...perimeter.map(surface => Math.abs(surface.center.x)))
+  const hasInsetVertical = perimeter.some((surface) => surface.size.z > surface.size.x && Math.abs(surface.center.x) < outerX - rules.wallThicknessMeters / 4)
   const roomPrefixes = [...new Set(architecture.filter(({ id }) => id.includes('-jamb-')).map(({ id }) => id.slice(0, id.indexOf('-jamb-'))))]
   const invalidDoorways: string[] = []
   for (const prefix of roomPrefixes) {
@@ -280,10 +281,15 @@ export function validateArenaGameplay(arena: ArenaDefinition, profile: GameDesig
       for(const point of route) { total += Math.hypot(point.x-previous.x,point.y-previous.y,point.z-previous.z); previous=point }
       maximumRouteDistanceMeters = Math.max(maximumRouteDistanceMeters,total)
     }
+    const center=arena.regions.find(r=>r.id==='combat-center')!
+    for(const region of arena.regions.filter(r=>r.role==='combat')) {
+      if(!nav.route({...center.center,supportSurfaceId:center.supportSurfaceId} as typeof center.center,{...region.center,supportSurfaceId:region.supportSurfaceId} as typeof region.center).length)failed.push(region.id)
+    }
+    for(const link of arena.links.filter(link=>link.transitionSurfaceId))if(!nav.transitions?.some(t=>t.id===link.id))failed.push(link.id)
     if(failed.length) errors.push({code:'INVALID_ELEVATION_ROUTE',semanticIds:failed,message:'Spawn не имеет непрерывного поддерживаемого маршрута к combat center.'})
   }
   const fairness = fairnessMetrics(arena,profile)
-  if (fairness.maximumTeamDistanceRatio > rules.maximumTeamDistanceRatio || fairness.initialEnemyLosRatio > rules.maximumInitialEnemyLosRatio) errors.push({ code: 'MODE_FAIRNESS_FAILED', semanticIds: arena.spawnRegions.map(({ id }) => id), message: 'Navigation-distance либо enemy-LOS metric вышла за предел profile.' })
+  if (!Number.isFinite(fairness.maximumTeamDistanceRatio) || fairness.maximumTeamDistanceRatio > rules.maximumTeamDistanceRatio || fairness.initialEnemyLosRatio > rules.maximumInitialEnemyLosRatio) errors.push({ code: 'MODE_FAIRNESS_FAILED', semanticIds: arena.spawnRegions.map(({ id }) => id), message: 'Navigation-distance либо enemy-LOS metric вышла за предел profile.' })
   return deepFreeze({
     version: ARENA_GAMEPLAY_VALIDATION_VERSION,
     arenaContentHash: arena.contentHash,

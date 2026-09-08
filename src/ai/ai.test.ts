@@ -3,13 +3,39 @@ import { requireProceduralArena } from '../arena'
 import { createActionFrame } from '../input/actionFrame'
 import { createMatchConfiguration, DEFAULT_MATCH_CONFIGURATION } from '../match'
 import { PROTOTYPE_V1_PROFILE as profile, validateGameDesignProfile } from '../profiles'
-import { parseSimulationSnapshot, simulationSnapshotHash } from '../simulation/playableSnapshot'
+import { createInitialSimulationSnapshot, parseSimulationSnapshot, simulationSnapshotHash } from '../simulation/playableSnapshot'
 import { botConfiguration, createAiRunner, runAiMatch } from './headless'
 import { arenaNavigation, distance } from './navigation'
 import { observeBot, planBot } from './planner'
 import { createBotState, parseBotState } from './state'
 
 describe('bot AI contracts',()=>{
+  it.each((['small','medium','large'] as const).flatMap(size=>[0,1,2,3,4].map(seed=>({seed,size}))))('pursues a declared combat layer through normal simulation on $size/$seed',async ({seed,size})=>{
+    const configuration=botConfiguration(seed,['normal','normal'],'ffa',size)
+    const arena=requireProceduralArena({seed,size})
+    const nav=arenaNavigation(arena,profile)
+    const goalRegion=arena.regions.find(r=>r.id==='combat-upper'||r.id==='basement-bypass')??arena.regions.find(r=>r.id==='combat-center')!
+    const initial=createInitialSimulationSnapshot({rngSeed:seed,arena,configuration})
+    const self=initial.participants[0]!
+    const feet={x:self.position.x,y:self.position.y-profile.rules.player.capsule.radius-profile.rules.player.capsule.halfHeight,z:self.position.z}
+    const goal={...goalRegion.center,supportSurfaceId:goalRegion.supportSurfaceId}
+    const restored=parseSimulationSnapshot({...initial,participants:initial.participants.map((p,i)=>i===0?{...p,botState:{...p.botState!,intent:'pursue',goal,route:nav.route(feet,goal)}}:{...p,alive:false,health:0,deathTick:0,respawnTick:3600})},configuration)
+    const runner=await createAiRunner(configuration,arena,restored)
+    let arrived=false,recoveries=0,previousRecovery=0
+    const progress:unknown[]=[]
+    try{
+      for(let tick=0;tick<1800;tick++){
+        const bot=runner.step().participants[0]!
+        if(tick%60===0&&progress.length<16)progress.push({tick,position:bot.position,goal:bot.botState!.goal,route:bot.botState!.route.slice(0,2)})
+        if(bot.botState!.recoveryTick>previousRecovery)recoveries++
+        previousRecovery=bot.botState!.recoveryTick
+        const feet={x:bot.position.x,y:bot.position.y-profile.rules.player.capsule.radius-profile.rules.player.capsule.halfHeight,z:bot.position.z}
+        if(bot.grounded&&nav.reached!(feet,goal,profile.rules.bots.navigation.waypointRadius)){arrived=true;break}
+      }
+      expect(arrived,JSON.stringify({progress,position:runner.snapshot.participants[0]!.position,state:runner.snapshot.participants[0]!.botState,recoveries})).toBe(true)
+      expect(recoveries).toBe(0)
+    }finally{runner.dispose()}
+  },15000)
   it.each([10036,10060])('regression %i: neither bot loses combat after wall contact or rear damage',async(seed)=>{
     const result=await runAiMatch(botConfiguration(seed,['easy','normal'],'ffa','large'))
     expect(result.summary.outcome).toBe('finished')

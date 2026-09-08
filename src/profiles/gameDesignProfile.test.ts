@@ -45,9 +45,9 @@ function expectDeepFrozen(value: unknown): void {
 describe('prototype-v1 GameDesignProfile', () => {
   it('contains every approved numeric prototype rule', () => {
     expect(PROTOTYPE_V1_PROFILE).toMatchObject({
-      schemaVersion: 7,
+      schemaVersion: 8,
       id: 'prototype-v1',
-      revision: 8,
+      revision: 9,
       source: 'shipped',
       rules: {
         player: {
@@ -382,7 +382,7 @@ describe('prototype-v1 GameDesignProfile', () => {
 
   it('derives identity from all effective content except contentHash', () => {
     expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
-    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:7d0c1b1628fb098d')
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:70d8cf43303bb009')
     expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
       PROTOTYPE_V1_PROFILE.contentHash,
     )

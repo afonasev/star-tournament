@@ -15,12 +15,21 @@ const arena=requireProceduralArena({size,seed})
 const assets=await prepareArenaGlbAssets()
 const renderer=createFirstPersonRenderer({container:document.querySelector('#scene')!,arena,scenario,profile,pixelBudget:2073600,arenaGlbAssets:assets,graphicsQuality:GRAPHICS_QUALITY_V1.high})
 const selector=document.querySelector<HTMLSelectElement>('#view')!
+for(const [value,label] of [['upper','Верхняя опора'],['lower','Нижняя опора']])selector.add(new Option(label,value))
+if(params.has('view'))selector.value=params.get('view')!
 let tick=0
 function render() {
   const view=selector.value
   const subject = view==='window' ? arena.surfaces.find(s=>s.semantics?.classification==='window') : view==='low'||view==='high' ? arena.surfaces.filter(s=>s.semantics?.classification==='movement-barrier').sort((a,b)=>a.size.y-b.size.y)[view==='low'?0:arena.surfaces.filter(s=>s.semantics?.classification==='movement-barrier').length-1] : view==='niche' ? arena.surfaces.find(s=>s.id===arena.attachments?.find(a=>a.kind==='relief-niche')?.surfaceId) : undefined
   let x=-profile.rules.arenaGenerator.presets[size].rampWidthMeters/2-profile.rules.arenaGenerator.presets[size].rampLengthMeters-1,z=0
   let target={x:0,y:1,z:0}
+  let supportY:number|undefined
+  if(view==='upper'||view==='lower') {
+    const floor=arena.surfaces.find(s=>s.id==='floor')!
+    const upper=arena.surfaces.find(s=>s.id.startsWith('floor-upper-')||s.id==='floor-main')
+    x=0;z=0;supportY=view==='upper'&&upper?upper.center.y+upper.size.y/2:floor.center.y+floor.size.y/2
+    target={x:floor.size.x/2,y:supportY,z:0}
+  }
   if(view==='ramp') { z=3;target={x:-profile.rules.arenaGenerator.presets[size].rampWidthMeters/2,y:profile.rules.arenaGenerator.presets[size].elevationDeltaMeters,z:0} }
   if(subject) {
     // A square barrier inherits its facing from the adjacent room back wall.
@@ -45,7 +54,7 @@ function render() {
     z=gap.horizontalAlongX?gap.planeCoordinate-Math.sign(gap.planeCoordinate)*3:gap.spanCenter
     target={x:gap.horizontalAlongX?gap.spanCenter:gap.planeCoordinate,y:profile.rules.player.capsule.halfHeight+profile.rules.player.capsule.radius+profile.rules.player.eyeHeight,z:gap.horizontalAlongX?gap.planeCoordinate:gap.spanCenter}
   }
-  const y=(arenaFloorHeight(arena,x,z)??0)+profile.rules.player.capsule.halfHeight+profile.rules.player.capsule.radius
+  const y=(supportY??arenaFloorHeight(arena,x,z)??0)+profile.rules.player.capsule.halfHeight+profile.rules.player.capsule.radius
   const yaw=Math.atan2(target.x-x,-(target.z-z))
   const pitch=Math.atan2(target.y-y-profile.rules.player.eyeHeight,Math.hypot(target.x-x,target.z-z))
   renderer.render({tick:++tick,participants:[{semanticId:'local-player-1',kind:'local-seat',position:{x,y,z},yaw,pitch,weapon:{semanticId:'double-barrel-shotgun',ammo:20}}],events:[],corpses:[]})

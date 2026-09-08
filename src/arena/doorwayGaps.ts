@@ -1,4 +1,5 @@
 import type { ArenaBoxSurface } from './arenaDefinition'
+import { arenaFloorHeight } from './elevation'
 
 export interface ArenaDoorwayGap {
   readonly id: string
@@ -11,6 +12,7 @@ export interface ArenaDoorwayGap {
 }
 
 export function arenaDoorwayGaps(surfaces: readonly ArenaBoxSurface[]): ArenaDoorwayGap[] {
+  const layered=surfaces.some(s=>s.id==='floor-main'||s.id.startsWith('floor-upper-')&&s.size.y<s.center.y)
   const walls = surfaces.filter((surface) => surface.material === 'wall' && !surface.id.startsWith('portal-solid:') && (!surface.semantics || surface.semantics.classification === 'wall' && /-segment-\d+$/.test(surface.id)))
   const gaps: ArenaDoorwayGap[] = []
   const epsilon = 0.001
@@ -40,7 +42,9 @@ export function arenaDoorwayGaps(surfaces: readonly ArenaBoxSurface[]): ArenaDoo
         horizontalAlongX,
         planeCoordinate: firstPlane,
         spanCenter: left.end + width / 2,
-        baseY: first.center.y - first.size.y / 2,
+        // A portal framing an elevated doorway follows canonical support in
+        // both collision and presentation. It must not hang across the ramp.
+        baseY: layered?Math.max(first.center.y-first.size.y/2,arenaFloorHeight({surfaces:[...surfaces]},horizontalAlongX?left.end+width/2:firstPlane,horizontalAlongX?firstPlane:left.end+width/2)??-Infinity):first.center.y-first.size.y/2,
         height: first.size.y,
         width,
       })

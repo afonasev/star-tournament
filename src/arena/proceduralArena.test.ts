@@ -5,6 +5,7 @@ import { validateArenaGameplay } from './arenaGameplayValidation'
 import { allocateArenaSpawns } from './spawnAllocation'
 import { generateProceduralArena, PROCEDURAL_FALLBACK_ARENA, requireProceduralArena } from './proceduralArena'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { PROTOTYPE_V1_PROFILE as historicalProfile } from '../profiles/legacyGameDesignProfileV7'
 
 const seeds = [0, 1, 0x53544152, 0xffffffff]
 const sizes = ['small', 'medium', 'large'] as const
@@ -77,7 +78,12 @@ function subCapsuleGaps(arena: ReturnType<typeof requireProceduralArena>, minimu
   return gaps.sort()
 }
 
-describe('arena-layers-v1 procedural arenas', () => {
+describe('arena-layers-v2 procedural arenas', () => {
+  it('preserves revision-8 generation and canonical arena identities',()=>{
+    expect(sizes.map(size=>requireProceduralArena({size,seed:0x53544152,profile:historicalProfile as unknown as typeof PROTOTYPE_V1_PROFILE}).contentHash)).toEqual([
+      'fnv1a64-v1:281465765865ec29','fnv1a64-v1:65d27578e1af3aae','fnv1a64-v1:eb86b5d4224355ce',
+    ])
+  })
   it.each(sizes)('reproduces the versioned seed corpus for %s', (size) => {
     for (const seed of seeds) {
       const first = generateProceduralArena({ size, seed })
@@ -99,7 +105,7 @@ describe('arena-layers-v1 procedural arenas', () => {
 
   it('uses distinct topology budgets rather than uniform coordinate scaling', () => {
     const arenas = sizes.map((size) => requireProceduralArena({ size, seed: 123 }))
-    expect(arenas.map(({ regions }) => regions.length)).toEqual([11, 13, 15])
+    expect(arenas.map(({ regions }) => regions.length)).toEqual([12, 14, 16])
     expect(arenas.map(({ surfaces }) => surfaces.filter(({ id }) => id.startsWith('wall-architecture-room-')).length)).toEqual([16, 24, 32])
     expect(new Set(arenas.map(({ contentHash }) => contentHash)).size).toBe(3)
   })
@@ -125,12 +131,12 @@ describe('arena-layers-v1 procedural arenas', () => {
 
   it('keeps the shipped representative identities stable', () => {
     expect(sizes.map((size) => requireProceduralArena({ size, seed: 0x53544152 }).contentHash)).toEqual([
-      'fnv1a64-v1:281465765865ec29',
-      'fnv1a64-v1:65d27578e1af3aae',
-      'fnv1a64-v1:eb86b5d4224355ce',
+      'fnv1a64-v1:30151f9a4f3ddd18',
+      'fnv1a64-v1:af5775194494db0a',
+      'fnv1a64-v1:716d887a108ea5cf',
     ])
-    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:281465765865ec29')
-    expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v4', generatorVersion: 'shipped-fallback-v4', size: 'medium' })
+    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:30151f9a4f3ddd18')
+    expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v4', generatorVersion: 'shipped-fallback-layers-v2', size: 'medium' })
     expect(PROCEDURAL_FALLBACK_ARENA.contentHash).not.toBe(requireProceduralArena({ size: 'medium', seed: 0x53544152 }).contentHash)
     expect(validateArenaGameplay(PROCEDURAL_FALLBACK_ARENA, PROTOTYPE_V1_PROFILE).accepted).toBe(true)
   })

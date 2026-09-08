@@ -292,19 +292,46 @@ export class RapierCollisionWorld {
       )
     }
     runtime.collider.setTranslation(vector(runtime.projection.position))
+    const acceptsCollider = (collider: Rapier.Collider) => {
+      if (this.staticSemanticIdByHandle.has(collider.handle)) return this.movementHandles.has(collider.handle)
+      const otherId = this.participantSemanticIdByHandle.get(collider.handle)
+      return otherId !== undefined && otherId !== semanticId &&
+        this.participantBySemanticId.get(otherId)?.active === true
+    }
     runtime.controller.computeColliderMovement(
       runtime.collider,
       vector(desiredTranslation),
       undefined,
       undefined,
-      (collider) => {
-        if (this.staticSemanticIdByHandle.has(collider.handle)) return this.movementHandles.has(collider.handle)
-        const otherId = this.participantSemanticIdByHandle.get(collider.handle)
-        return otherId !== undefined && otherId !== semanticId &&
-          this.participantBySemanticId.get(otherId)?.active === true
-      },
+      acceptsCollider,
     )
-    const movement = runtime.controller.computedMovement()
+    let movement = runtime.controller.computedMovement()
+    // arena-layers-v2: Rapier 0.20 snap can overshoot a contacted flat floor.
+    // Requery the identical pose/displacement without that optional snap only
+    // when the candidate crosses the current support. Never clamp feet or
+    // suppress collisions; restore the configured snap for the next movement.
+    const skin=this.controllerConfiguration.skinWidth
+    const feet=runtime.projection.position.y-runtime.projection.halfHeight-runtime.projection.radius
+    const crossesSupport=(candidate:CollisionVector3)=>this.arena.surfaces.some(s=>{
+      if(s.semantics?.classification!=='floor'||!blocksMovement(s)||s.orientation.x!==0||s.orientation.y!==0||s.orientation.z!==0)return false
+      const top=s.center.y+s.size.y/2
+      return feet>=top-skin&&feet<=top+this.controllerConfiguration.snapToGroundDistance
+        &&feet+candidate.y<top-skin
+        &&Math.abs(runtime.projection.position.x-s.center.x)<s.size.x/2-runtime.projection.radius
+        &&Math.abs(runtime.projection.position.z-s.center.z)<s.size.z/2-runtime.projection.radius
+        &&Math.abs(runtime.projection.position.x+candidate.x-s.center.x)<s.size.x/2-runtime.projection.radius
+        &&Math.abs(runtime.projection.position.z+candidate.z-s.center.z)<s.size.z/2-runtime.projection.radius
+    })
+    const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2'].includes(this.arena.generatorVersion)
+    const penetratesSupport=layeredGenerator&&this.controllerConfiguration.snapToGroundDistance>0&&movement.y<desiredTranslation.y-skin&&crossesSupport(movement)
+    if(penetratesSupport){
+      runtime.controller.disableSnapToGround()
+      try {
+        runtime.controller.computeColliderMovement(runtime.collider,vector(desiredTranslation),undefined,undefined,acceptsCollider)
+        movement=runtime.controller.computedMovement()
+        if(crossesSupport(movement))throw new CollisionContractError(COLLISION_ERROR_CODES.invalidData,'KCC movement crosses its existing support after snap retry')
+      } finally {runtime.controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)}
+    }
     const position = {
       x: runtime.projection.position.x + movement.x,
       y: runtime.projection.position.y + movement.y,
