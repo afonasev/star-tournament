@@ -1,7 +1,10 @@
+// Historical arena-layers-v2 regression corpus; new room geometry has its own corpus in roomArena.test.ts.
 import { expect,it } from 'vitest'
-import { requireProceduralArena } from '../arena/proceduralArena'
+import { requireProceduralArena } from '../arena/legacyProceduralArenaV2'
 import { arenaNavigation } from '../ai/navigation'
-import { PROTOTYPE_V1_PROFILE as profile } from '../profiles'
+import { PROTOTYPE_V1_PROFILE as legacyV8Profile } from '../profiles/legacyGameDesignProfileV8'
+import type { ValidatedGameDesignProfile } from '../profiles'
+const profile=legacyV8Profile as unknown as ValidatedGameDesignProfile
 import { createRapierCollisionWorld } from './rapierWorld'
 
 it('never snaps through the existing floor on medium/1 east-03 and repeats identical contacts',async()=>{

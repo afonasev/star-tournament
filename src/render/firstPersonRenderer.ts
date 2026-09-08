@@ -565,6 +565,7 @@ function addArena(
   // The procedural definition is a collision floor-and-wall shell. A light
   // ceiling is presentation-only: it completes the indoor sport-arena read
   // without adding a gameplay solid or changing the canonical arena data.
+  if(arena.generatorVersion!=='arena-rooms-v1') {
   const minX = Math.min(...arena.surfaces.map((surface) => surface.center.x - surface.size.x / 2))
   const maxX = Math.max(...arena.surfaces.map((surface) => surface.center.x + surface.size.x / 2))
   const minZ = Math.min(...arena.surfaces.map((surface) => surface.center.z - surface.size.z / 2))
@@ -588,6 +589,7 @@ function addArena(
   scene.add(ceiling)
   geometries.push(ceilingGeometry)
   materials.push(ceilingMaterial)
+  }
 
   for (const gap of arenaDoorwayGaps(arena.surfaces)) {
     if(!arenaGlbAssets && arena.surfaces.some(s=>s.id.startsWith('portal-solid:'))) continue

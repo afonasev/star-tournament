@@ -243,7 +243,9 @@ describe('playable browser bootstrap', () => {
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(
       'Не удалось подготовить обязательные GLB-модули арены',
     ))
-  })
+  // Bootstrap first runs the complete physical acceptance corpus for the
+  // larger room map; preserve those checks when testing the subsequent failure.
+  },30000)
 
   it('surfaces a stable collision error without starting partial presentation', async () => {
     const mount = document.createElement('div')

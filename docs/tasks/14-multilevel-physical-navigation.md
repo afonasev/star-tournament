@@ -3,6 +3,40 @@
 Date: 2026-09-08. Branch: `codex/multilevel-physical-navigation`. Base: `ad6cfbf`.
 OpenSpec: `expand-multilevel-arena-variety`. Status: physical/navigation slice verified; overall change remains active pending acceptance below. Main integration, archival and deployment are not authorized in this task.
 
+## Current room-layout slice — 2026-09-08
+
+This section supersedes the earlier geometry/evidence below. The overall OpenSpec remains active; main integration, archival and deployment remain outside this handoff.
+
+- `arena-rooms-v1`, profile `prototype-v1` schema 9 / revision 10, hash `fnv1a64-v1:36d3f8d5accd2a24`. Previous full release snapshots are untouched; schema 8 uses the frozen `legacyProceduralArenaV2` and `legacyGameDesignProfileV8` path. Historical regression tests retain their existing expected hashes.
+- Closed layouts occupy six of eight weighted seed slots. Each family/size has three graph and ramp-placement variants. Upper rooms occupy the full core footprint with their own walls and local physical ceilings; basement rooms are below the main spawn floor. Two enclosed side ramps connect the floors.
+- Room, hall and tunnel ceiling heights vary locally and with seed. Descriptor metadata controls heights, variation, family weights, useful upper-floor ratio and structural corpus threshold.
+- Validation checks actual ceiling footprint and height, continuous wall intervals with only declared door/balcony exceptions, 3D spawn clearance and projectile LOS. Negative fixtures reject missing/displaced ceilings and a missing enclosing wall. Real Rapier checks ceiling shots/jumps, every spawn/combat route, all doors across three lanes, and both ramps across three lanes with landing turns. Door-lane checks alone do not prove every possible strafing turn.
+- Support lookups and vertically relevant obstacles are indexed without changing route selection or acceptance tolerances. KCC upward contacts supplement the narrow support probe while the independent feet-height and penetration bounds remain enforced.
+
+Verified final implementation:
+
+- `npm test`: **65 files / 393 tests passed**, 144.51 s. Includes 72 maps (3 sizes × seeds 0–23), both FFA/teams allocations, three graph/transition variants per family/size, legacy hashes, replay, collision, profile and renderer regressions.
+- Guided AI: five families × three sizes (seeds 0, 2, 3, 4, 6); normal simulation reaches the other floor with zero recovery. Each runner first passes full physical route acceptance. This does not establish universal autonomous combat layer coverage.
+- `npm run build`, typecheck, `git diff --check`, strict OpenSpec validation: pass. Existing Vite config/chunk warnings remain.
+- Muted in-app Browser: all five families inspected with the shipping renderer. Large seed 4, Balanced, 1280×720 CSS / 1920×1080 buffer: **performance gate PASS**. Report: `artifacts/multilevel-navigation/rooms-performance-balanced.json`, arena hash `fnv1a64-v1:c84fe6de23cb5305`. This is one quality/viewport, not full split-screen or all-tier acceptance.
+- Manual Start game still reports denied pointer lock. Physical keyboard/mouse traversal and aiming remain unverified. No input bypass was added.
+
+Current dev origin: http://127.0.0.1:4196/. All current PNGs below use revision 10 and muted output:
+
+| State | Size / seed | File in `artifacts/multilevel-navigation/` |
+| --- | --- | --- |
+| Closed lower tunnel | small / 0 | `rooms-tunnel.png` |
+| Enclosed upper room | small / 0 | `rooms-upper.png` |
+| Enclosed ramp | small / 0 | `rooms-ramp.png` |
+| Gallery opening | small / 2 | `rooms-gallery.png` |
+| Balcony opening | small / 3 | `rooms-balcony.png` |
+| Full upper floor plan | large / 4 | `rooms-dual-plan.png` |
+| Basement below main floor | medium / 6 | `rooms-basement.png` |
+
+Remaining overall-change gates: autonomous combat layer coverage, material/lighting acceptance across all sectors, all-tier/split-screen performance, and manual keyboard/mouse playtest. The current spatial revision is ready for review on the dev stand.
+
+## Earlier physical-navigation slice (`a82a048`)
+
 ## Result
 
 - `arena-layers-v2` compiles five recipe families with explicit supports, continuous ramps, thin slabs and headroom. Basement uses one main slab above a lower bypass and two external descents.

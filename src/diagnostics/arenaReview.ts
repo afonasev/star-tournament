@@ -16,21 +16,45 @@ const assets=await prepareArenaGlbAssets()
 const renderer=createFirstPersonRenderer({container:document.querySelector('#scene')!,arena,scenario,profile,pixelBudget:2073600,arenaGlbAssets:assets,graphicsQuality:GRAPHICS_QUALITY_V1.high})
 const selector=document.querySelector<HTMLSelectElement>('#view')!
 for(const [value,label] of [['upper','Верхняя опора'],['lower','Нижняя опора']])selector.add(new Option(label,value))
+const rooms=arena.regions.filter(r=>r.id.startsWith('room-')||r.id==='combat-center'||r.id==='combat-upper')
+const plan=document.createElement('div');plan.style.cssText='position:fixed;inset:100px 20px 20px;background:#101b2c;display:none';document.body.append(plan)
+if(arena.generatorVersion==='arena-rooms-v1'){
+ for(const [value,label] of [['plan-lower','План нижнего этажа'],['plan-upper','План верхнего этажа']])selector.add(new Option(label,value))
+ for(const r of rooms)selector.add(new Option(`${r.supportSurfaceId==='floor'?'Низ':'Верх'} · ${r.role==='route'?'Тоннель':'Комната'} · ${r.id} · потолок ${r.size.y.toFixed(2)} м`,`room:${r.id}`))
+}
 if(params.has('view'))selector.value=params.get('view')!
 let tick=0
 function render() {
   const view=selector.value
+  plan.style.display=view.startsWith('plan-')?'block':'none'
+  if(view.startsWith('plan-')){
+    const upper=view==='plan-upper',floor=arena.surfaces.find(s=>s.id===(upper?'floor-upper-rooms':'floor'))!,height=floor.center.y+floor.size.y/2
+    const base=arena.surfaces.find(s=>s.id==='floor')!,w=base.size.x,d=base.size.z
+    const rect=(x:number,z:number,sx:number,sz:number,fill:string)=>`<rect x="${x-sx/2}" y="${z-sz/2}" width="${sx}" height="${sz}" fill="${fill}"/>`
+    const local=rooms.filter(r=>r.supportSurfaceId===floor.id)
+    plan.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="${-w/2-1} ${-d/2-1} ${w+2} ${d+2}">${rect(0,0,floor.size.x,floor.size.z,'#213044')}${local.map(r=>rect(r.center.x,r.center.z,r.size.x,r.size.z,r.role==='route'?'#27695f':'#285b76')).join('')}${arena.surfaces.filter(s=>s.semantics?.classification==='wall'&&s.center.y-s.size.y/2<=height+.01&&s.center.y+s.size.y/2>height+.1).map(s=>rect(s.center.x,s.center.z,s.size.x,s.size.z,'#c4d3e3')).join('')}${arena.surfaces.filter(s=>s.semantics?.classification==='ramp').map(s=>rect(s.center.x,s.center.z,s.size.x*(1-2*s.orientation.z*s.orientation.z),s.size.z,'#e0a36e')).join('')}${local.map(r=>`<text x="${r.center.x}" y="${r.center.z}" fill="white" text-anchor="middle" font-size=".7">${r.role==='route'?'Тоннель':'Комната'} ${r.size.y.toFixed(2)} м</text>`).join('')}</svg>`
+  }
   const subject = view==='window' ? arena.surfaces.find(s=>s.semantics?.classification==='window') : view==='low'||view==='high' ? arena.surfaces.filter(s=>s.semantics?.classification==='movement-barrier').sort((a,b)=>a.size.y-b.size.y)[view==='low'?0:arena.surfaces.filter(s=>s.semantics?.classification==='movement-barrier').length-1] : view==='niche' ? arena.surfaces.find(s=>s.id===arena.attachments?.find(a=>a.kind==='relief-niche')?.surfaceId) : undefined
   let x=-profile.rules.arenaGenerator.presets[size].rampWidthMeters/2-profile.rules.arenaGenerator.presets[size].rampLengthMeters-1,z=0
   let target={x:0,y:1,z:0}
   let supportY:number|undefined
+  if(view.startsWith('room:')){
+    const room=rooms.find(r=>r.id===view.slice(5))!
+    x=room.center.x;z=room.center.z;supportY=room.center.y
+    target={x:x+room.size.x,y:supportY+profile.rules.player.capsule.radius+profile.rules.player.capsule.halfHeight+profile.rules.player.eyeHeight,z}
+  }
   if(view==='upper'||view==='lower') {
     const floor=arena.surfaces.find(s=>s.id==='floor')!
     const upper=arena.surfaces.find(s=>s.id.startsWith('floor-upper-')||s.id==='floor-main')
     x=0;z=0;supportY=view==='upper'&&upper?upper.center.y+upper.size.y/2:floor.center.y+floor.size.y/2
     target={x:floor.size.x/2,y:supportY,z:0}
   }
-  if(view==='ramp') { z=3;target={x:-profile.rules.arenaGenerator.presets[size].rampWidthMeters/2,y:profile.rules.arenaGenerator.presets[size].elevationDeltaMeters,z:0} }
+  if(view==='ramp') {
+    const ramp=arena.surfaces.find(s=>s.id==='ramp-west-0')??arena.surfaces.find(s=>s.semantics?.classification==='ramp')!
+    const floor=arena.surfaces.find(s=>s.id==='floor')!
+    x=ramp.center.x-profile.rules.arenaGenerator.presets[size].rampLengthMeters/2-profile.rules.arenaGenerator.presets[size].corridorWidthMeters/2;z=ramp.center.z;supportY=floor.center.y+floor.size.y/2
+    target={x:ramp.center.x,y:ramp.center.y+profile.rules.player.eyeHeight,z:ramp.center.z}
+  }
   if(subject) {
     // A square barrier inherits its facing from the adjacent room back wall.
     const host = subject.semantics?.classification === 'movement-barrier'
@@ -49,10 +73,12 @@ function render() {
     target={...subject.center,y:Math.min(subject.center.y,profile.rules.player.capsule.halfHeight+profile.rules.player.capsule.radius+profile.rules.player.eyeHeight)}
   }
   if(view==='portal') {
-    const gap=arenaDoorwayGaps(arena.surfaces)[0]!
+    const gap=arenaDoorwayGaps(arena.surfaces)[0]
+    if(gap){
     x=gap.horizontalAlongX?gap.spanCenter:gap.planeCoordinate-Math.sign(gap.planeCoordinate)*3
     z=gap.horizontalAlongX?gap.planeCoordinate-Math.sign(gap.planeCoordinate)*3:gap.spanCenter
     target={x:gap.horizontalAlongX?gap.spanCenter:gap.planeCoordinate,y:profile.rules.player.capsule.halfHeight+profile.rules.player.capsule.radius+profile.rules.player.eyeHeight,z:gap.horizontalAlongX?gap.planeCoordinate:gap.spanCenter}
+    }
   }
   const y=(supportY??arenaFloorHeight(arena,x,z)??0)+profile.rules.player.capsule.halfHeight+profile.rules.player.capsule.radius
   const yaw=Math.atan2(target.x-x,-(target.z-z))

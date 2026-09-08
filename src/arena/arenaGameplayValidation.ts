@@ -1,5 +1,6 @@
 import { arenaNavigation } from '../ai/navigation'
 import { arenaFloorHeight } from './elevation'
+import { roomRegions, ROOM_GENERATOR_VERSION } from './roomArena'
 import { deepFreeze } from '../core/deepFreeze'
 import { type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
 
@@ -50,12 +51,13 @@ export interface ArenaGameplayValidationReport {
   readonly errors: readonly ArenaGameplayValidationError[]
 }
 
-function overlapsSolid(anchor: ArenaSpawnAnchor, arena: ArenaDefinition, radius: number): boolean {
+function overlapsSolid(anchor: ArenaSpawnAnchor, arena: ArenaDefinition, radius: number, height:number): boolean {
   return arena.surfaces.some((surface) => {
     if (supportsNavigation(surface)) return false
+    if(arena.generatorVersion===ROOM_GENERATOR_VERSION&&(surface.semantics?.movement===false||surface.center.y+surface.size.y/2<=anchor.position.y||surface.center.y-surface.size.y/2>=anchor.position.y+height))return false
     const dx = Math.abs(anchor.position.x - surface.center.x)
     const dz = Math.abs(anchor.position.z - surface.center.z)
-    return dx < surface.size.x / 2 + radius && dz < surface.size.z / 2 + radius && surface.center.y + surface.size.y / 2 > 0
+    return dx < surface.size.x / 2 + radius && dz < surface.size.z / 2 + radius && (arena.generatorVersion===ROOM_GENERATOR_VERSION||surface.center.y + surface.size.y / 2 > 0)
   })
 }
 
@@ -115,7 +117,18 @@ function segmentIntersectsBox(first: { x: number; z: number }, second: { x: numb
   return high > 0.02 && low < 0.98
 }
 
-function hasLineOfSight(first: ArenaSpawnAnchor, second: ArenaSpawnAnchor, arena: ArenaDefinition): boolean {
+function hasLineOfSight(first: ArenaSpawnAnchor, second: ArenaSpawnAnchor, arena: ArenaDefinition,eye:number): boolean {
+  if(arena.generatorVersion===ROOM_GENERATOR_VERSION)return !arena.surfaces.some(surface=>{
+    if(!blocksProjectiles(surface))return false
+    const q=surface.orientation
+    const local=(p:typeof first.position)=>{
+      const x=p.x-surface.center.x,y=p.y+eye-surface.center.y,z=p.z-surface.center.z
+      return {x:(1-2*(q.y*q.y+q.z*q.z))*x+2*(q.x*q.y+q.z*q.w)*y+2*(q.x*q.z-q.y*q.w)*z,y:2*(q.x*q.y-q.z*q.w)*x+(1-2*(q.x*q.x+q.z*q.z))*y+2*(q.y*q.z+q.x*q.w)*z,z:2*(q.x*q.z+q.y*q.w)*x+2*(q.y*q.z-q.x*q.w)*y+(1-2*(q.x*q.x+q.y*q.y))*z}
+    }
+    const a=local(first.position),b=local(second.position);let low=0,high=1
+    for(const axis of ['x','y','z'] as const){const delta=b[axis]-a[axis],half=surface.size[axis]/2;if(Math.abs(delta)<1e-9){if(Math.abs(a[axis])>half)return false;continue}const p=(-half-a[axis])/delta,n=(half-a[axis])/delta;low=Math.max(low,Math.min(p,n));high=Math.min(high,Math.max(p,n));if(low>high)return false}
+    return high>0&&low<1
+  })
   return !arena.surfaces.some((surface) => !supportsNavigation(surface) && blocksProjectiles(surface) && !surface.id.startsWith('wall-perimeter-') && surface.size.y >= 1.5 && segmentIntersectsBox(first.position, second.position, surface.center, surface.size.x / 2, surface.size.z / 2))
 }
 
@@ -154,6 +167,7 @@ function subCapsuleGapSurfaceIds(arena: ArenaDefinition, minimumClearance: numbe
     const zOverlapMaximum = Math.min(firstZMaximum, secondZMaximum)
     const yMinimum = Math.max(first.center.y - first.size.y / 2, second.center.y - second.size.y / 2)
     const yMaximum = Math.min(first.center.y + first.size.y / 2, second.center.y + second.size.y / 2)
+    if(arena.generatorVersion===ROOM_GENERATOR_VERSION&&yMaximum-yMinimum<=1e-6)return
 
     const xGapMinimum = Math.min(firstXMaximum, secondXMaximum)
     const xGapMaximum = Math.max(firstXMinimum, secondXMinimum)
@@ -183,6 +197,17 @@ function architectureMetrics(arena: ArenaDefinition, rules: GameDesignProfile['r
 } {
   const perimeter = arena.surfaces.filter(({ id }) => id.startsWith('wall-perimeter-'))
   const architecture = arena.surfaces.filter(({ id }) => id.startsWith('wall-architecture-'))
+  if(arena.generatorVersion===ROOM_GENERATOR_VERSION){
+    const walls=arena.surfaces.filter(s=>s.id.startsWith('room-wall:')||s.id.startsWith('room-shell:'))
+    const disconnected=walls.filter(a=>!arena.surfaces.some(b=>b.id!==a.id&&surfacesTouch(a,b)&&Math.abs(a.center.y-b.center.y)<=(a.size.y+b.size.y)/2+.02)).map(s=>s.id)
+    const doors=arena.links.filter(l=>l.id.startsWith('door:')),invalidDoorways:string[]=[]
+    for(const door of doors){const prefix=`room-wall:${door.fromRegionId}:${door.toRegionId}`,a=walls.find(s=>s.id===`${prefix}:left`),b=walls.find(s=>s.id===`${prefix}:right`);if(!a||!b){invalidDoorways.push(door.id);continue}const axis=a.size.x>a.size.z?'x':'z';if(b.center[axis]-b.size[axis]/2-a.center[axis]-a.size[axis]/2+1e-6<rules.doorwayWidthMeters)invalidDoorways.push(door.id)}
+    const corridors=roomRegions(arena).filter(r=>r.role==='route')
+    const closed=perimeter.length>=8&&perimeter.every(a=>perimeter.filter(b=>a.id!==b.id&&surfacesTouch(a,b)).length>=2)
+    const outerX=Math.max(...perimeter.map(s=>Math.abs(s.center.x)))
+    const irregular=closed&&perimeter.some(s=>s.size.x>s.size.z&&Math.abs(s.center.z)<rules.depthMeters/2-rules.wallThicknessMeters/4)&&perimeter.some(s=>s.size.z>s.size.x&&Math.abs(s.center.x)<outerX-rules.wallThicknessMeters/4)
+    return {perimeter,architecture:walls,disconnected,irregularPerimeter:irregular,doorwayCount:doors.length,invalidDoorways,corridorClearanceMeters:Math.min(...corridors.map(r=>Math.min(r.size.x,r.size.z)))}
+  }
   const disconnected = architecture.filter((surface) => !architecture.some((candidate) => candidate.id !== surface.id && surfacesTouch(surface, candidate))).map(({ id }) => id)
   const perimeterClosed = perimeter.length >= 8 && perimeter.every((surface) => perimeter.filter((candidate) => candidate.id !== surface.id && surfacesTouch(surface, candidate)).length >= 2)
   const hasInsetHorizontal = perimeter.some((surface) => surface.size.x > surface.size.z && Math.abs(surface.center.z) < rules.depthMeters / 2 - rules.wallThicknessMeters / 4)
@@ -235,14 +260,47 @@ function fairnessMetrics(arena: ArenaDefinition, profile: GameDesignProfile | Va
   for (const [firstId, secondId] of opposingPairs) {
     const first = (arena.spawnRegions.find(({ id }) => id === firstId)?.anchorIds ?? []).map((id) => arena.spawnAnchors.find((anchor) => anchor.id === id)!).filter(Boolean)
     const second = (arena.spawnRegions.find(({ id }) => id === secondId)?.anchorIds ?? []).map((id) => arena.spawnAnchors.find((anchor) => anchor.id === id)!).filter(Boolean)
-    for (const a of first) for (const b of second) { pairs += 1; if (hasLineOfSight(a, b, arena)) visible += 1 }
+    for (const a of first) for (const b of second) { pairs += 1; if (hasLineOfSight(a, b, arena,profile.rules.player.capsule.radius+profile.rules.player.capsule.halfHeight+profile.rules.player.eyeHeight)) visible += 1 }
   }
   return { maximumTeamDistanceRatio, initialEnemyLosRatio: pairs === 0 ? 1 : visible / pairs }
+}
+
+function roomBoundariesCovered(arena:ArenaDefinition,room:ArenaDefinition['regions'][number],rules:GameDesignProfile['rules']['arenaGenerator']['presets']['small']):boolean {
+  const tolerance=1e-6 // Shared-face numerical tolerance.
+  for(const axis of ['x','z'] as const)for(const sign of [-1,1]){
+    const along=axis==='x'?'z':'x',plane=room.center[axis]+sign*(room.size[axis]+rules.wallThicknessMeters)/2
+    const start=room.center[along]-(room.size[along]+rules.wallThicknessMeters)/2,end=room.center[along]+(room.size[along]+rules.wallThicknessMeters)/2
+    const balcony=room.role!=='route'&&room.supportSurfaceId==='floor-upper-rooms'&&axis==='x'&&Math.abs(Math.abs(plane)-rules.widthMeters/2)<tolerance&&(arena.recipeId==='fire-balconies'||(arena.recipeId==='bypass-gallery'&&sign===1))
+    const height=balcony?rules.barrierHighMeters:room.size.y
+    const intervals=arena.surfaces.filter(s=>s.semantics?.classification==='wall'&&s.semantics.movement!==false&&blocksProjectiles(s)&&s.center.y-s.size.y/2<=room.center.y+tolerance&&s.center.y+s.size.y/2>=room.center.y+height-tolerance&&Math.abs(s.center[axis]-plane)<=s.size[axis]/2+tolerance).map(s=>[s.center[along]-s.size[along]/2,s.center[along]+s.size[along]/2])
+    // Only explicit graph doors/transitions exempt an aperture from full wall coverage.
+    if(!balcony)for(const link of arena.links.filter(l=>l.id.startsWith('door:')||l.id.startsWith('side:')||l.transitionSurfaceId)){
+      const otherId=link.fromRegionId===room.id?link.toRegionId:link.toRegionId===room.id?link.fromRegionId:undefined
+      const other=arena.regions.find(r=>r.id===otherId)
+      if(other&&sign*(other.center[axis]-plane)>tolerance&&Math.abs(other.center[axis]-room.center[axis])>Math.abs(other.center[along]-room.center[along]))intervals.push([room.center[along]-rules.doorwayWidthMeters/2,room.center[along]+rules.doorwayWidthMeters/2])
+    }
+    let covered=start
+    for(const [a,b] of intervals.sort((a,b)=>a[0]!-b[0]!)){
+      if(a!>covered+tolerance)break
+      covered=Math.max(covered,b!)
+    }
+    if(covered<end-tolerance)return false
+  }
+  return true
 }
 
 export function validateArenaGameplay(arena: ArenaDefinition, profile: GameDesignProfile | ValidatedGameDesignProfile): ArenaGameplayValidationReport {
   const errors: ArenaGameplayValidationError[] = []
   const rules = profile.rules.arenaGenerator.presets[arena.size]
+  if(arena.generatorVersion===ROOM_GENERATOR_VERSION){
+    const invalid=roomRegions(arena).filter(room=>{
+      const ceiling=arena.surfaces.find(s=>s.id===`ceiling:${room.id}`)
+      return !ceiling||ceiling.semantics?.classification!=='slab'||!blocksProjectiles(ceiling)||ceiling.semantics.movement===false||Math.abs(ceiling.center.y-ceiling.size.y/2-room.center.y-room.size.y)>1e-6||Math.abs(ceiling.center.x-room.center.x)+room.size.x/2>ceiling.size.x/2+1e-6||Math.abs(ceiling.center.z-room.center.z)+room.size.z/2>ceiling.size.z/2+1e-6||!roomBoundariesCovered(arena,room,rules)||arena.links.filter(l=>l.fromRegionId===room.id||l.toRegionId===room.id).length<2
+    }).map(r=>r.id)
+    const upper=arena.surfaces.find(s=>s.id==='floor-upper-rooms')
+    if(!upper||upper.size.x*upper.size.z<rules.widthMeters*rules.depthMeters*rules.minimumUpperAreaRatio)invalid.push('floor-upper-rooms')
+    if(invalid.length)errors.push({code:'INVALID_ELEVATION_ROUTE',semanticIds:invalid,message:'Помещение не имеет собственного физического потолка, достаточной площади или двух выходов.'})
+  }
   if (arena.generatorProfile.id !== profile.id || arena.generatorProfile.revision !== profile.revision || arena.generatorProfile.contentHash !== profile.contentHash) {
     errors.push({ code: 'PROFILE_IDENTITY_MISMATCH', semanticIds: [arena.id], message: 'Arena generator profile identity не совпадает с active profile.' })
   }
@@ -250,7 +308,7 @@ export function validateArenaGameplay(arena: ArenaDefinition, profile: GameDesig
     errors.push({ code: 'INSUFFICIENT_SPAWN_SLOTS', semanticIds: arena.spawnAnchors.map(({ id }) => id), message: 'Недостаточно spawn slots для roster из восьми участников.' })
   }
   const radius = profile.rules.player.capsule.radius + profile.rules.player.capsule.skinWidth
-  const free = arena.spawnAnchors.filter((anchor) => !overlapsSolid(anchor, arena, radius))
+  const free = arena.spawnAnchors.filter((anchor) => !overlapsSolid(anchor, arena, radius,2*(profile.rules.player.capsule.radius+profile.rules.player.capsule.halfHeight)+profile.rules.player.capsule.skinWidth))
   const blocked = arena.spawnAnchors.filter((anchor) => !free.includes(anchor))
   if (blocked.length > 0) errors.push({ code: 'SPAWN_INTERSECTS_STATIC_GEOMETRY', semanticIds: blocked.map(({ id }) => id), message: 'Spawn slots пересекают static geometry.' })
   if (!canPlaceEight(free, rules.minimumSpawnSeparationMeters)) errors.push({ code: 'INSUFFICIENT_DISTINCT_PLACEMENT', semanticIds: free.map(({ id }) => id), message: 'Нельзя разместить восемь capsule с требуемым separation.' })

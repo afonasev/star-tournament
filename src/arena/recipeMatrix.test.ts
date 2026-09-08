@@ -1,7 +1,10 @@
+// Historical arena-layers-v2 regression corpus; new room geometry has its own corpus in roomArena.test.ts.
 import { expect, it } from 'vitest'
-import { generateProceduralArena } from './proceduralArena'
+import { generateProceduralArena } from './legacyProceduralArenaV2'
 import { allocateArenaSpawns } from './spawnAllocation'
-import { PROTOTYPE_V1_PROFILE as profile } from '../profiles'
+import { PROTOTYPE_V1_PROFILE as legacyV8Profile } from '../profiles/legacyGameDesignProfileV8'
+import type { ValidatedGameDesignProfile } from '../profiles'
+const profile=legacyV8Profile as unknown as ValidatedGameDesignProfile
 it('accepts all named recipes across a deterministic seed matrix', () => {
   const recipes=new Set<string>()
   for (const size of ['small', 'medium', 'large'] as const) for (let seed=0;seed<32;seed++) {

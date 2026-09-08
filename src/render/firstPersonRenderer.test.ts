@@ -1,3 +1,4 @@
+// Historical arena-layers-v2 regression corpus; new room geometry has its own corpus in roomArena.test.ts.
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
@@ -7,10 +8,12 @@ import {
   createArenaCollisionProjection,
   createArenaNavigationProjection,
   createArenaSpawnProjection,
-  requireProceduralArena,
 } from '../arena'
+import { requireProceduralArena } from '../arena/legacyProceduralArenaV2'
 import { GRAPHICS_QUALITY_V1, PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
-import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { PROTOTYPE_V1_PROFILE as legacyV8Profile } from '../profiles/legacyGameDesignProfileV8'
+import type { ValidatedGameDesignProfile } from '../profiles'
+const PROTOTYPE_V1_PROFILE=legacyV8Profile as unknown as ValidatedGameDesignProfile
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import {
   createInitialSimulationSnapshot,

@@ -1,11 +1,14 @@
+// Historical arena-layers-v2 regression corpus; new room geometry has its own corpus in roomArena.test.ts.
 import { expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import kit from './portalKit.json'
-import { requireProceduralArena } from './proceduralArena'
+import { requireProceduralArena } from './legacyProceduralArenaV2'
 import { createArenaDefinition, arenaContentPayload } from './arenaDefinition'
 import { DIAGNOSTIC_ARENA } from './diagnosticArena'
 import { createRapierCollisionWorld } from '../collision/rapierWorld'
-import { PROTOTYPE_V1_PROFILE as profile } from '../profiles'
+import { PROTOTYPE_V1_PROFILE as legacyV8Profile } from '../profiles/legacyGameDesignProfileV8'
+import type { ValidatedGameDesignProfile } from '../profiles'
+const profile=legacyV8Profile as unknown as ValidatedGameDesignProfile
 
 it.each([0,1])('uses non-overlapping structural portal facade pieces while collision keeps the full canonical contract', lod => {
   const bytes=readFileSync(new URL(`../../public/assets/arena/portal-facade-lod${lod}.glb`,import.meta.url))

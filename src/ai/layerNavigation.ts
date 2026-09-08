@@ -39,8 +39,16 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
   const margin=radius+c.skinWidth+profile.rules.bots.navigation.clearance+profile.rules.bots.navigation.waypointRadius
   const supports=arena.surfaces.filter(supportsNavigation).sort((a,b)=>a.id.localeCompare(b.id,'en'))
   const solids=arena.surfaces.filter(s=>s.semantics?.movement!==false).map(bounds)
+  const supportById=new Map(supports.map(s=>[s.id,s]))
+  const supportGeometry=new Map(supports.map(s=>[s.id,{surfaces:[s]}]))
+  const blockersBySupport=new Map(supports.map(s=>{
+    const b=bounds(s),flat=s.orientation.x===0&&s.orientation.z===0
+    const low=flat?b.y+b.hy:b.y-b.hy,high=b.y+b.hy
+    return [s.id,solids.filter(box=>box.id!==s.id&&box.y+box.hy>=low&&box.y-box.hy<=high+height)]
+  }))
   const on=(id: string,p: Vec): SupportWaypoint|undefined => {
-    const y=arenaSupportHeight(arena,id,p.x,p.z)
+    const geometry=supportGeometry.get(id)
+    const y=geometry&&arenaSupportHeight(geometry,id,p.x,p.z)
     return y===undefined?undefined:{x:p.x,y,z:p.z,supportSurfaceId:id}
   }
   const resolve=(p: Vec): SupportWaypoint|undefined => {
@@ -52,11 +60,11 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
   }
   const clearOn=(a: SupportWaypoint,b: SupportWaypoint,ignore: readonly string[]=[]): boolean => {
     if(a.supportSurfaceId!==b.supportSurfaceId||!on(a.supportSurfaceId,a)||!on(a.supportSurfaceId,b))return false
-    const s=supports.find(s=>s.id===a.supportSurfaceId)!
+    const s=supportById.get(a.supportSurfaceId)!
     // Convex supports need only endpoints; inset prevents a capsule following an open edge.
     for(const p of [a,b]) for(const [dx,dz] of [[radius,0],[-radius,0],[0,radius],[0,-radius]])
-      if(arenaSupportHeight(arena,s.id,p.x+dx!,p.z+dz!)===undefined)return false
-    return !solids.some(box=>box.id!==s.id&&!ignore.includes(box.id)&&intersects(a,b,box,radius,height))
+      if(arenaSupportHeight(supportGeometry.get(s.id)!,s.id,p.x+dx!,p.z+dz!)===undefined)return false
+    return !blockersBySupport.get(s.id)!.some(box=>!ignore.includes(box.id)&&intersects(a,b,box,radius,height))
   }
   const clear=(a: Vec,b: Vec) => {const first=resolve(a),last=resolve(b);return !!first&&!!last&&clearOn(first,last)}
   const nodes:SupportWaypoint[]=[];const keys=new Map<string,number>()
@@ -150,7 +158,7 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
         for(let j=0;j<nodes.length;j++)if(!visited.has(j)&&costs[j]!<cost){i=j;cost=costs[j]!}
         if(i<0||cost>=bestCost)break
         visited.add(i)
-        if(clearOn(nodes[i]!,goal)&&cost+length(nodes[i]!,goal)<bestCost){best=[...paths[i]!,goal];bestCost=cost+length(nodes[i]!,goal)}
+        if(cost+length(nodes[i]!,goal)<bestCost&&clearOn(nodes[i]!,goal)){best=[...paths[i]!,goal];bestCost=cost+length(nodes[i]!,goal)}
         // A moving target may stand inside a declared ramp, rather than at its exit.
         for(const t of transitions)if(goal.supportSurfaceId===t.surfaceId)for(const sequence of [t.points,[...t.points].reverse()]) {
           const landing=sequence[0]!,entry=sequence[1]!

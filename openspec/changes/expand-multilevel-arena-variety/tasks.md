@@ -6,10 +6,10 @@
 
 ## 2. Генерация, navigation и физика
 
-- [ ] 2.5 Реализовать ограниченный каталог графов rooms/halls/tunnels с разной структурой внутри family/size; закрытые самостоятельные этажи преобладают в profile-owned распределении.
-- [ ] 2.6 Добавить canonical локальные ceilings и проёмы, замкнутые тоннели и самостоятельную сеть комнат верхнего этажа; сохранять два разнесённых перехода и проверять jump/headroom на стыках.
-- [ ] 2.7 Добавить descriptors высот по типам помещений, весов композиций, полезной площади этажей и structural corpus thresholds; версионировать без изменения historical releases.
-- [ ] 2.8 Проверить разнообразие графов, размещения переходов и высот внутри family/size; повторить physical/AI/fairness/replay corpus для новых ceilings и topology.
+- [x] 2.5 Реализовать ограниченный каталог графов rooms/halls/tunnels с разной структурой внутри family/size; закрытые самостоятельные этажи преобладают в profile-owned распределении.
+- [x] 2.6 Добавить canonical локальные ceilings и проёмы, замкнутые тоннели и самостоятельную сеть комнат верхнего этажа; сохранять два разнесённых перехода и проверять jump/headroom на стыках.
+- [x] 2.7 Добавить descriptors высот по типам помещений, весов композиций, полезной площади этажей и structural corpus thresholds; версионировать без изменения historical releases.
+- [x] 2.8 Проверить разнообразие графов, размещения переходов и высот внутри family/size; повторить physical/AI/fairness/replay corpus для новых ceilings и topology.
 
 - [x] 2.1 Реализовать пять seed-selected recipe graphs и compiler canonical floors, slabs, halls, galleries, balconies, basements и transitions; проверить deterministic recipe matrix для каждого size.
 - [x] 2.2 Реализовать support-aware floor selection и sparse layer navigation; проверить overlapping-XZ negative fixtures, byte-identical routes и разделение aim/arrival distance.
@@ -18,8 +18,8 @@
 
 ## 3. AI и presentation
 
-- [ ] 3.4 Согласовать concept plans обоих этажей и разрезы трёх структурных вариантов из `artifacts/multilevel-navigation/room-layout-concepts.png`; затем проверить соответствующие игровые PNG.
-- [ ] 3.5 Заменить общий presentation ceiling новых карт отображением canonical локальных потолков; проверить нижние поверхности, локальное освещение и закрытые ramp corridors.
+- [x] 3.4 Согласовать concept plans обоих этажей и разрезы трёх структурных вариантов из `artifacts/multilevel-navigation/room-layout-concepts.png`; затем проверить соответствующие игровые PNG.
+- [x] 3.5 Заменить общий presentation ceiling новых карт отображением canonical локальных потолков; проверить нижние поверхности, локальное освещение и закрытые ramp corridors.
 
 - [ ] 3.1 Обновить planner/headless telemetry для declared layers, basement bypass и transition recovery; проверить deterministic bot coverage без repeated stuck recovery.
 - [ ] 3.2 Добавить semantic renderer treatment и local manifest-compatible material variants для hall/gallery/balcony/basement; проверить material coverage, texture residency, dispose, UV/z-fighting и participant contrast.
@@ -27,7 +27,7 @@
 
 ## 4. Интеграционная приёмка
 
-- [ ] 4.1 Повторить targeted/unit/property/collision/AI/renderer tests, полный `npm test`, typecheck, build, deterministic replay и `git diff --check` после переработки помещений; сохранить concise evidence для пяти families × size × mode. Предыдущие 386 tests относятся только к срезу `a82a048`.
+- [x] 4.1 Повторить targeted/unit/property/collision/AI/renderer tests, полный `npm test`, typecheck, build, deterministic replay и `git diff --check` после переработки помещений; сохранить concise evidence для пяти families × size × mode. Предыдущие 386 tests относятся только к срезу `a82a048`.
 - [ ] 4.2 Выполнить browser performance gate на наиболее насыщенной large arena и подтвердить отсутствие изменения simulation hashes от quality tiers.
 - [ ] 4.3 Провести muted in-app Browser playtest с keyboard/mouse: каждый family, оба направления рамп, балконный прострел, slab blocking и стрейф в минимальном тоннеле; сохранить и визуально проверить актуальные PNG каждого изменённого состояния.
 - [ ] 4.4 Проверить `openspec validate expand-multilevel-arena-variety --strict`, подготовить dedicated commit, fast-forward интеграцию в актуальный `main`, архивировать change отдельным commit и выполнить deploy/post-deploy проверку при наличии локально настроенной publish target.

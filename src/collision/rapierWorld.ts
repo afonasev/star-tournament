@@ -322,7 +322,7 @@ export class RapierCollisionWorld {
         &&Math.abs(runtime.projection.position.x+candidate.x-s.center.x)<s.size.x/2-runtime.projection.radius
         &&Math.abs(runtime.projection.position.z+candidate.z-s.center.z)<s.size.z/2-runtime.projection.radius
     })
-    const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2'].includes(this.arena.generatorVersion)
+    const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2','arena-rooms-v1'].includes(this.arena.generatorVersion)
     const penetratesSupport=layeredGenerator&&this.controllerConfiguration.snapToGroundDistance>0&&movement.y<desiredTranslation.y-skin&&crossesSupport(movement)
     if(penetratesSupport){
       runtime.controller.disableSnapToGround()

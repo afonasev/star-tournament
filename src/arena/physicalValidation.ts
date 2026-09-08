@@ -49,6 +49,13 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
       // tolerance; support height/contact is checked independently below.
       const supports=world.overlapCapsule({semanticId:'support-probe',position:{...position,y:position.y-tangent-c.skinWidth*2},radius:c.radius,halfHeight:c.halfHeight},[capsuleId])
         .filter(hit=>{const y=arenaSupportHeight(arena,hit.semanticId,target.x,target.z);return y!==undefined&&Math.abs(y-target.y)<=c.skinWidth*2}).map(hit=>hit.semanticId)
+      // KCC may retain more than two skins of separation after sliding. Its
+      // upward collision contacts are direct support evidence as well as the
+      // narrow shape probe; the independent feet-height bound above still applies.
+      for(const contact of movement.contacts){
+        const y=arenaSupportHeight(arena,contact.semanticId,target.x,target.z)
+        if(contact.normal.y>0&&y!==undefined&&Math.abs(y-target.y)<=c.skinWidth*2)supports.push(contact.semanticId)
+      }
       const overlaps=world.overlapCapsule({semanticId:capsuleId,position,radius:c.radius,halfHeight:c.halfHeight},[capsuleId,...supports])
       if(overlaps.length)
         throw new Error(`Capsule/headroom penetration: ${id}/${support}/${JSON.stringify(position)}/${overlaps.map(hit=>hit.semanticId)}`)
@@ -60,7 +67,7 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
           const expected=arenaSupportHeight(arena,support,target.x,target.z)
           return actual!==undefined&&expected!==undefined&&Math.abs(actual-expected)<=c.skinWidth*2
         })
-        if(!identity)throw new Error(`Physical support mismatch: ${id}/${support}/${supports}`)
+        if(!identity)throw new Error(`Physical support mismatch: ${id}/${support}/${supports}/target=${JSON.stringify(target)}/position=${JSON.stringify(position)}/contacts=${movement.contacts.map(c=>c.semanticId)}`)
       }
     }
   }
@@ -69,6 +76,16 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
       const a={...anchor.position,supportSurfaceId:anchor.supportSurfaceId},b={...region.center,supportSurfaceId:region.supportSurfaceId}
       const start=reverse?b:a,goal=reverse?a:b
       walk(`${anchor.id}/${region.id}/${reverse}`,start,nav.route(start,goal))
+    }
+    if(arena.generatorVersion==='arena-rooms-v1')for(const link of arena.links.filter(l=>l.id.startsWith('door:'))){
+      const a=arena.regions.find(r=>r.id===link.fromRegionId)!,b=arena.regions.find(r=>r.id===link.toRegionId)!
+      const dx=b.center.x-a.center.x,dz=b.center.z-a.center.z,d=Math.hypot(dx,dz)
+      for(const lane of [-1,0,1])for(const reverse of [false,true]){
+        const lateral=lane*2*(c.radius+c.skinWidth)
+        const points=[a,b].map(r=>({...r.center,x:r.center.x-dz/d*lateral,z:r.center.z+dx/d*lateral,supportSurfaceId:r.supportSurfaceId}))
+        if(reverse)points.reverse()
+        walk(`${link.id}/lane=${lane}/reverse=${reverse}`,points[0]!,[points[1]!])
+      }
     }
     for(const link of arena.links.filter(l=>l.transitionSurfaceId)){
       const transition=nav.transitions?.find(t=>t.id===link.id)

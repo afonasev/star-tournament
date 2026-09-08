@@ -1,11 +1,12 @@
 import { validateGameDesignProfile as validateLegacyProfile } from './legacyGameDesignProfileV6'
+import { validateGameDesignProfile as validateV8Profile } from './legacyGameDesignProfileV8'
 import { validateGameDesignProfile as validateV7Profile } from './legacyGameDesignProfileV7'
 import { BOT_RULES, BOT_DESCRIPTORS, type BotRules } from './botRules'
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 
 import { deepFreeze, type DeepReadonly } from './deepFreeze'
 
-export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 8 as const
+export const GAME_DESIGN_PROFILE_SCHEMA_VERSION = 9 as const
 
 export type GameDesignProfileSource = 'shipped' | 'local'
 
@@ -20,6 +21,14 @@ export interface ArenaGeneratorPresetRules {
   doorwayWidthMeters: number
   perimeterInsetMeters: number
   routeInsetMeters: number
+  tunnelCeilingMeters: number
+  roomCeilingMeters: number
+  hallCeilingMeters: number
+  ceilingVariationMeters: number
+  closedLayoutWeight: number
+  openLayoutWeight: number
+  minimumUpperAreaRatio: number
+  minimumStructuralVariants: number
   recipeCount: number
   elevationDeltaMeters: number
   upperDeckHeightMultiplier: number
@@ -186,6 +195,14 @@ function arenaGeneratorDescriptors(size: ArenaGeneratorSize): NumericProfileDesc
   const prefix = `rules.arenaGenerator.presets.${size}`
   const sizeLabel = size === 'small' ? 'маленькой' : size === 'medium' ? 'средней' : 'большой'
   return [
+    { path: `${prefix}.tunnelCeilingMeters`, group, label: 'Высота тоннеля', description: 'Высота закрытого обхода над полом.', unit: 'meters', minimum: 2.5, maximum: 5, step: 0.25 },
+    { path: `${prefix}.roomCeilingMeters`, group, label: 'Высота комнаты', description: 'Базовая высота обычного помещения.', unit: 'meters', minimum: 3, maximum: 7, step: 0.25 },
+    { path: `${prefix}.hallCeilingMeters`, group, label: 'Высота зала', description: 'Базовая высота высокого боевого помещения.', unit: 'meters', minimum: 3.5, maximum: 8, step: 0.25 },
+    { path: `${prefix}.ceilingVariationMeters`, group, label: 'Вариация потолков', description: 'Seed-зависимый диапазон прибавки к локальной высоте.', unit: 'meters', minimum: 0.25, maximum: 1, step: 0.25 },
+    { path: `${prefix}.closedLayoutWeight`, group, label: 'Вес закрытых этажей', description: 'Вес каждого семейства с самостоятельным закрытым этажом.', unit: 'count', minimum: 2, maximum: 6, step: 1 },
+    { path: `${prefix}.openLayoutWeight`, group, label: 'Вес открытых этажей', description: 'Вес каждого открытого семейства.', unit: 'count', minimum: 1, maximum: 2, step: 1 },
+    { path: `${prefix}.minimumUpperAreaRatio`, group, label: 'Минимальная площадь верхнего этажа', description: 'Доля основной площади под самостоятельным верхним этажом.', unit: 'ratio', minimum: 0.6, maximum: 1, step: 0.05 },
+    { path: `${prefix}.minimumStructuralVariants`, group, label: 'Минимум структурных вариантов', description: 'Число различных графов на family/size corpus.', unit: 'count', minimum: 2, maximum: 3, step: 1 },
     { path: `${prefix}.widthMeters`, group, label: `Ширина ${sizeLabel} арены`, description: 'Полная ширина playable footprint.', unit: 'meters', minimum: 20, maximum: 80, step: 1 },
     { path: `${prefix}.depthMeters`, group, label: `Глубина ${sizeLabel} арены`, description: 'Полная глубина playable footprint.', unit: 'meters', minimum: 16, maximum: 64, step: 1 },
     { path: `${prefix}.wallHeightMeters`, group, label: `Высота стен ${sizeLabel} арены`, description: 'Высота внешних и route-разделяющих стен.', unit: 'meters', minimum: 2, maximum: 10, step: 0.5 },
@@ -786,6 +803,7 @@ const validatedProfiles = new WeakMap<object, ProfileValidationResult>()
 export function validateGameDesignProfile(value: unknown): ProfileValidationResult {
   // Frozen v6 reader retains old rule bytes; new generation requires the v7 recipe fields.
   if (typeof value === 'object' && value !== null && 'schemaVersion' in value && value.schemaVersion === 6) return validateLegacyProfile(value) as unknown as ProfileValidationResult
+  if (typeof value === 'object' && value !== null && 'schemaVersion' in value && value.schemaVersion === 8) return validateV8Profile(value) as unknown as ProfileValidationResult
   if (typeof value === 'object' && value !== null && 'schemaVersion' in value && value.schemaVersion === 7) return validateV7Profile(value) as unknown as ProfileValidationResult
   if (value !== null && typeof value === 'object') {
     const cached = validatedProfiles.get(value)
@@ -1105,6 +1123,16 @@ export function validateGameDesignProfile(value: unknown): ProfileValidationResu
       arenaContractInvalid = true
       arenaPaths.push(...['elevationDeltaMeters', 'upperDeckHeightMultiplier', 'upperDeckFootprintRatio', 'basementDepthMultiplier', 'rampWidthMeters', 'rampLengthMeters', 'barrierLowMeters', 'barrierHighMeters'].map(field => `${prefix}.${field}`))
     }
+    const tunnel=readPath(value,`${prefix}.tunnelCeilingMeters`) as number
+    const room=readPath(value,`${prefix}.roomCeilingMeters`) as number
+    const hall=readPath(value,`${prefix}.hallCeilingMeters`) as number
+    const variance=readPath(value,`${prefix}.ceilingVariationMeters`) as number
+    const closed=readPath(value,`${prefix}.closedLayoutWeight`) as number
+    const open=readPath(value,`${prefix}.openLayoutWeight`) as number
+    if(tunnel<headroom||room<tunnel||hall<room||3*closed<=2*open||Math.atan2(hall+variance+2*slab,rampLength)*180/Math.PI>maxSlope){
+      arenaContractInvalid=true
+      arenaPaths.push(...['tunnelCeilingMeters','roomCeilingMeters','hallCeilingMeters','ceilingVariationMeters','closedLayoutWeight','openLayoutWeight','rampLengthMeters'].map(field=>`${prefix}.${field}`))
+    }
     const numeric = [width, depth, wallThickness, corridorWidth, doorwayWidth, perimeterInset, routeInset, coverSize, slotCount, separation]
     if (!numeric.every((entry) => typeof entry === 'number' && Number.isFinite(entry))) continue
     if (
@@ -1167,7 +1195,7 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 9,
+  revision: 10,
   source: 'shipped',
   rules: {
     bots: BOT_RULES,
@@ -1226,9 +1254,9 @@ const prototypePayload: GameDesignProfilePayload = {
     death: { killcamSeconds: 3, corpseSeconds: 10 },
     arenaGenerator: {
       presets: {
-        small: { recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.4, basementDepthMultiplier: 1.5, rampWidthMeters: 4, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 6, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
-        medium: { recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.45, basementDepthMultiplier: 1.5, rampWidthMeters: 5, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 46, depthMeters: 34, wallHeightMeters: 6.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
-        large: { recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.5, basementDepthMultiplier: 1.5, rampWidthMeters: 6, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 60, depthMeters: 44, wallHeightMeters: 7, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
+        small: { tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.4, basementDepthMultiplier: 1.5, rampWidthMeters: 4, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 6, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
+        medium: { tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.45, basementDepthMultiplier: 1.5, rampWidthMeters: 5, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 46, depthMeters: 34, wallHeightMeters: 6.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
+        large: { tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.5, basementDepthMultiplier: 1.5, rampWidthMeters: 6, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 60, depthMeters: 44, wallHeightMeters: 7, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
       },
     },
   },
