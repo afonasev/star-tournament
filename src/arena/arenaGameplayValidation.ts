@@ -127,9 +127,13 @@ function surfacesTouch(first: ArenaDefinition['surfaces'][number], second: Arena
 function subCapsuleGapSurfaceIds(arena: ArenaDefinition, minimumClearance: number): string[] {
   // Rotated portal parts are verified by physical capsule tests; this planar gap
   // audit applies to the axis-aligned architectural wall shell.
-  const solids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
+  const allSolids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
+  // Gap seals are canonical geometry that closes an opening; they must take
+  // part in coverage, but are not themselves architectural boundaries whose
+  // tiny join tolerances define a player-visible passage.
+  const solids = allSolids.filter((surface) => !surface.id.startsWith('wall-architecture-gap-seal-'))
   const affected = new Set<string>()
-  const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => solids.some((candidate) => (
+  const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => allSolids.some((candidate) => (
     candidate.id !== firstId
       && candidate.id !== secondId
       && candidate.center.x - candidate.size.x / 2 <= xMinimum + 1e-9

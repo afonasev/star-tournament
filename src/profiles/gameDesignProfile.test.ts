@@ -47,12 +47,12 @@ describe('prototype-v1 GameDesignProfile', () => {
     expect(PROTOTYPE_V1_PROFILE).toMatchObject({
       schemaVersion: 7,
       id: 'prototype-v1',
-      revision: 8,
+      revision: 9,
       source: 'shipped',
       rules: {
         player: {
           startingHealth: 100,
-          capsule: { radius: 0.4, halfHeight: 0.5, skinWidth: 0.01 },
+          capsule: { radius: 0.55, halfHeight: 0.35, skinWidth: 0.01 },
           eyeHeight: 0.55,
           movement: {
             maximumGroundSpeed: 9,
@@ -109,7 +109,7 @@ describe('prototype-v1 GameDesignProfile', () => {
         death: { killcamSeconds: 3, corpseSeconds: 10 },
         arenaGenerator: {
           presets: {
-            small: { widthMeters: 34, depthMeters: 26, corridorWidthMeters: 4, doorwayWidthMeters: 3, minimumSpawnSeparationMeters: 4, spawnSlotCount: 16 },
+            small: { widthMeters: 34, depthMeters: 26, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, minimumSpawnSeparationMeters: 4, spawnSlotCount: 16 },
             medium: { widthMeters: 46, depthMeters: 34, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, minimumSpawnSeparationMeters: 5, spawnSlotCount: 16 },
             large: { widthMeters: 60, depthMeters: 44, corridorWidthMeters: 6, doorwayWidthMeters: 4, minimumSpawnSeparationMeters: 6, spawnSlotCount: 20 },
           },
@@ -364,7 +364,7 @@ describe('prototype-v1 GameDesignProfile', () => {
     })
 
     const invalidDoorway = cloneProfile()
-    invalidDoorway.rules.arenaGenerator.presets.small.doorwayWidthMeters = 4
+    invalidDoorway.rules.arenaGenerator.presets.small.doorwayWidthMeters = 5
     expect(validateGameDesignProfile(invalidDoorway)).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -382,7 +382,7 @@ describe('prototype-v1 GameDesignProfile', () => {
 
   it('derives identity from all effective content except contentHash', () => {
     expect(PROTOTYPE_V1_PROFILE.contentHash).toMatch(/^fnv1a64-v1:[0-9a-f]{16}$/)
-    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:7d0c1b1628fb098d')
+    expect(PROTOTYPE_V1_PROFILE.contentHash).toBe('fnv1a64-v1:249d0a5b23a7cf6a')
     expect(computeProfileContentHash(PROTOTYPE_V1_PROFILE as GameDesignProfile)).toBe(
       PROTOTYPE_V1_PROFILE.contentHash,
     )

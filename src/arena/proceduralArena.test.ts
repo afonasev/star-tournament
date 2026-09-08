@@ -36,9 +36,10 @@ function visuallyDistinctVerticalCoplanarOverlaps(arena: ReturnType<typeof requi
 function subCapsuleGaps(arena: ReturnType<typeof requireProceduralArena>, minimumClearance: number): string[] {
   // Rotated portal parts are verified by physical capsule tests; this planar gap
   // audit applies to the axis-aligned architectural wall shell.
-  const solids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
+  const allSolids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
+  const solids = allSolids.filter(surface => !surface.id.startsWith('wall-architecture-gap-seal-'))
   const gaps: string[] = []
-  const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => solids.some((candidate) => (
+  const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => allSolids.some((candidate) => (
     candidate.id !== firstId
       && candidate.id !== secondId
       && candidate.center.x - candidate.size.x / 2 <= xMinimum + 1e-9
@@ -125,11 +126,11 @@ describe('arena-layers-v1 procedural arenas', () => {
 
   it('keeps the shipped representative identities stable', () => {
     expect(sizes.map((size) => requireProceduralArena({ size, seed: 0x53544152 }).contentHash)).toEqual([
-      'fnv1a64-v1:281465765865ec29',
-      'fnv1a64-v1:65d27578e1af3aae',
-      'fnv1a64-v1:eb86b5d4224355ce',
+      'fnv1a64-v1:0350e04b4e34bfe8',
+      'fnv1a64-v1:4a4eb589174076c0',
+      'fnv1a64-v1:fcbaff7f579cc794',
     ])
-    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:281465765865ec29')
+    expect(requireProceduralArena({ size: 'small', seed: 0x53544152, profile: PROTOTYPE_V1_PROFILE }).contentHash).toBe('fnv1a64-v1:0350e04b4e34bfe8')
     expect(PROCEDURAL_FALLBACK_ARENA).toMatchObject({ id: 'shipped-fallback-arena-v4', generatorVersion: 'shipped-fallback-v4', size: 'medium' })
     expect(PROCEDURAL_FALLBACK_ARENA.contentHash).not.toBe(requireProceduralArena({ size: 'medium', seed: 0x53544152 }).contentHash)
     expect(validateArenaGameplay(PROCEDURAL_FALLBACK_ARENA, PROTOTYPE_V1_PROFILE).accepted).toBe(true)

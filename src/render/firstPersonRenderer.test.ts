@@ -27,6 +27,8 @@ import {
   resolvePixelBudgetDevicePixelRatio,
   resolveLocalLightShadowBudget,
   type FirstPersonRenderSnapshot,
+  type FirstPersonRenderPlayer,
+  type FirstPersonRenderWeapon,
 } from './firstPersonRenderer'
 import type { ArenaGlbTemplateCache } from './arenaGlbAssets'
 import type { RendererPort } from './diagnosticRenderer'
@@ -213,6 +215,61 @@ describe('createFirstPersonRenderer', () => {
     expect(portalNames).toEqual([])
   })
 
+  it('retracts the camera presentation at a canonical wall without mutating the render snapshot', () => {
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({
+      container: createContainer(), arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort,
+      arenaGlbAssets: makeArenaGlbAssets(),
+    })
+    const baseline = snapshot()
+    const local = baseline.participants[0] as FirstPersonRenderPlayer & { semanticId: string; kind: 'local-seat'; weapon: FirstPersonRenderWeapon }
+    const source = snapshot({ participants: [{ ...local, position: { x: 0, y: 2, z: -9 }, yaw: 0, pitch: 0 }, ...baseline.participants.slice(1)] })
+    const before = JSON.stringify(source)
+    adapter.render(source)
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const viewmodel = scene.getObjectByName('presentation:first-person-viewmodel')!
+    expect(viewmodel.position.z).toBeGreaterThan(-0.68)
+    expect(viewmodel.position.z).toBeLessThanOrEqual(-0.4)
+    expect(viewmodel.position.y).toBeLessThan(-0.34)
+    expect(viewmodel.rotation.y).not.toBeCloseTo(Math.PI - 0.14)
+    expect(viewmodel.visible).toBe(true)
+    expect(JSON.stringify(source)).toBe(before)
+  })
+
+  it('keeps the GLB viewmodel ready when a canonical wall is only beside the aim direction', () => {
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({
+      container: createContainer(), arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort,
+      arenaGlbAssets: makeArenaGlbAssets(),
+    })
+    const baseline = snapshot()
+    const local = baseline.participants[0] as FirstPersonRenderPlayer & { semanticId: string; kind: 'local-seat'; weapon: FirstPersonRenderWeapon }
+    const source = snapshot({ participants: [{ ...local, position: { x: 0, y: 2, z: -9 }, yaw: Math.PI / 2, pitch: 0 }, ...baseline.participants.slice(1)] })
+    adapter.render(source)
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const viewmodel = scene.getObjectByName('presentation:first-person-viewmodel')!
+    expect(viewmodel.position.z).toBeCloseTo(-0.68)
+    expect(viewmodel.position.y).toBeCloseTo(-0.34)
+    expect(viewmodel.visible).toBe(true)
+  })
+
+  it('retracts a third-person weapon at a canonical wall without changing target data', () => {
+    const rendererPort = makeRenderer()
+    const adapter = createFirstPersonRenderer({ container: createContainer(), arena: DIAGNOSTIC_ARENA, scenario: COMBAT_SLICE_SCENARIO_V1, profile: PROTOTYPE_V1_PROFILE, pixelBudget: PIXEL_BUDGET, rendererFactory: () => rendererPort })
+    const source = snapshot({ participants: snapshot().participants.map((participant) => participant.kind === 'stationary-fixture' ? { ...participant, position: { x: 0, y: 2, z: -9 }, yaw: 0 } : participant) })
+    const before = JSON.stringify(source)
+    adapter.render(source)
+    const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
+    const weapon = scene.getObjectByName('robot:weapon-mount')!
+    expect(weapon.position.z).toBeGreaterThan(-0.42)
+    expect(weapon.position.z).toBeLessThanOrEqual(-0.08)
+    expect(weapon.rotation.y).not.toBeCloseTo(0)
+    expect(weapon.visible).toBe(true)
+    expect(JSON.stringify(source)).toBe(before)
+  })
+
   it('uses the quality-limited nearest lamp lights as soft architectural shadow casters', () => {
     expect(resolveLocalLightBudget(GRAPHICS_QUALITY_V1.low)).toBe(0)
     expect(resolveLocalLightBudget(GRAPHICS_QUALITY_V1.balanced)).toBe(8)
@@ -237,7 +294,7 @@ describe('createFirstPersonRenderer', () => {
     })
 
     adapter.render(snapshot())
-    expect(shadowMap).toEqual({ enabled: true, type: THREE.PCFSoftShadowMap })
+    expect(shadowMap).toEqual({ enabled: true, type: THREE.PCFShadowMap })
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
     const lamps: THREE.PointLight[] = []
     scene.traverse((object) => { if (object.name.startsWith('presentation:lamp-light:')) lamps.push(object as THREE.PointLight) })

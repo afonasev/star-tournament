@@ -6,6 +6,7 @@ import { PROTOTYPE_V1_PROFILE, type ArenaGeneratorPresetRules, type GameDesignPr
 
 import {
   createArenaDefinition,
+  supportsNavigation,
   type ArenaBoxSurface,
   type ArenaDefinition,
   type ArenaDefinitionPayload,
@@ -233,10 +234,11 @@ function buildSpawns(size: ArenaSize, rules: ArenaGeneratorPresetRules): { spawn
         ? -0.4 + index * 0.12
         : 0.22 + (index - Math.ceil(perSide / 2)) * 0.14
       const id = `spawn-${side}-${String(index + 1).padStart(2, '0')}`
+      const lateralSpawnFactor = size === 'large' ? 0.34 : 0.38
       const position = side === 'east'
-        ? { x: width * 0.38, y: 0, z: (size === 'small' ? t * 0.58 : sideBand) * depth }
+        ? { x: width * lateralSpawnFactor, y: 0, z: (size === 'small' ? t * 0.58 : sideBand) * depth }
         : side === 'west'
-          ? { x: -width * 0.38, y: 0, z: (size === 'small' ? -t * 0.58 : -sideBand) * depth }
+          ? { x: -width * lateralSpawnFactor, y: 0, z: (size === 'small' ? -t * 0.58 : -sideBand) * depth }
           : side === 'north'
             ? { x: -t * width * 0.58, y: 0, z: -depth * 0.4 }
             : { x: t * width * 0.58, y: 0, z: depth * 0.4 }
@@ -255,9 +257,12 @@ function buildSpawns(size: ArenaSize, rules: ArenaGeneratorPresetRules): { spawn
 }
 
 function appendSubCapsuleGapSeals(surfaces: ArenaBoxSurface[], minimumClearance: number): void {
-  const solids = surfaces.filter(({ id }) => id !== 'floor')
+  // Inspect the final canonical static shell. Basement supports and ramps are
+  // appended after the base architecture; navigation supports stay exempt so a
+  // gap seal cannot turn a valid elevation transition into a wall.
+  const solids = surfaces.filter((surface) => !supportsNavigation(surface))
   const seen = new Set<string>()
-  let sealIndex = 1
+  let sealIndex = surfaces.filter(({ id }) => id.startsWith('wall-architecture-gap-seal-')).length + 1
   const appendSeal = (xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): void => {
     if (xMaximum - xMinimum <= 1e-6 || zMaximum - zMinimum <= 1e-6 || yMaximum - yMinimum <= 1e-6) return
     const key = [xMinimum, xMaximum, zMinimum, zMaximum, yMinimum, yMaximum].map((value) => value.toFixed(9)).join(':')
@@ -407,7 +412,10 @@ function buildSurfaces(size: ArenaSize, rules: ArenaGeneratorPresetRules, _seed:
     ))
   }
   appendSubCapsuleGapSeals(surfaces, minimumClearance)
-  for (const surface of surfaces.filter(s=>s.id.includes('-gap-seal-'))) { surface.size.y=wallHeight;surface.center.y=wallHeight/2 }
+  for (const surface of surfaces.filter((surface) => surface.id.includes('-gap-seal-'))) {
+    surface.size.y = wallHeight
+    surface.center.y = wallHeight / 2
+  }
   return surfaces
 }
 
@@ -538,8 +546,11 @@ function buildDefinition(options: ResolvedGenerationOptions, attempt: number): A
     const laneCount = Math.ceil(rules.depthMeters / rules.rampWidthMeters)
     const laneWidth = rules.depthMeters / laneCount
     const westDeckStart = -rules.widthMeters / 2 + rules.wallThicknessMeters
-    const westDeckEnd = -lowerHalf - run
-    const eastDeckStart = lowerHalf + run
+    // Keep the elevated support's end face off the interior wall plane. This
+    // microscopic extension belongs to the ramp, so it preserves a continuous
+    // collision surface while avoiding a floor/wall renderer z-fight.
+    const westDeckEnd = -lowerHalf - run - 0.001
+    const eastDeckStart = lowerHalf + run + 0.001
     const eastDeckEnd = rules.widthMeters / 2 - rules.wallThicknessMeters
     const westSupportId = 'floor-main-west'
     const eastSupportId = 'floor-main-east'
@@ -566,6 +577,21 @@ function buildDefinition(options: ResolvedGenerationOptions, attempt: number): A
       east.semantics = { ...east.semantics!, sector: 'basement' }
       payload.surfaces.push(west, east)
     }
+    // The north/south upper support slabs need their own traversable entries.
+    // Without these ramps a navigation route can point at a vertical slab face,
+    // which the wider approved capsule correctly rejects as a collision.
+    const crossDeckWidth = eastDeckStart - westDeckEnd
+    const northRamp = rampBox('ramp-basement-north', westDeckEnd, -lowerHalf, height, 0, 0, crossDeckWidth, rules.wallThicknessMeters)
+    northRamp.center = { x: 0, y: northRamp.center.y, z: northRamp.center.x }
+    const northHalfAngle = Math.atan2(northRamp.orientation.z, northRamp.orientation.w)
+    northRamp.orientation = { x: -Math.SQRT1_2 * Math.sin(northHalfAngle), y: -Math.SQRT1_2 * Math.cos(northHalfAngle), z: Math.SQRT1_2 * Math.sin(northHalfAngle), w: Math.SQRT1_2 * Math.cos(northHalfAngle) }
+    northRamp.semantics = { ...northRamp.semantics!, sector: 'basement' }
+    const southRamp = rampBox('ramp-basement-south', lowerHalf, eastDeckStart, 0, height, 0, crossDeckWidth, rules.wallThicknessMeters)
+    southRamp.center = { x: 0, y: southRamp.center.y, z: southRamp.center.x }
+    const southHalfAngle = Math.atan2(southRamp.orientation.z, southRamp.orientation.w)
+    southRamp.orientation = { x: -Math.SQRT1_2 * Math.sin(southHalfAngle), y: -Math.SQRT1_2 * Math.cos(southHalfAngle), z: Math.SQRT1_2 * Math.sin(southHalfAngle), w: Math.SQRT1_2 * Math.cos(southHalfAngle) }
+    southRamp.semantics = { ...southRamp.semantics!, sector: 'basement' }
+    payload.surfaces.push(northRamp, southRamp)
     const regionSupport = (x: number, z: number): string => payload.surfaces
       .filter(surface => surface.semantics?.classification === 'floor' || surface.semantics?.classification === 'ramp')
       .map(surface => ({ id: surface.id, height: arenaSupportHeight(payload, surface.id, x, z) }))

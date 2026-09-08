@@ -15,6 +15,8 @@ export interface PresentationResources {
 
 export interface RobotPresentation {
   readonly group: THREE.Group
+  /** Renderer-owned mount; its local Z offset is never simulation state. */
+  readonly weaponPresentation: THREE.Object3D
   readonly identityMaterials: readonly THREE.MeshStandardMaterial[]
   readonly weaponIndicatorMaterials: readonly THREE.MeshStandardMaterial[]
   readonly animation?: RobotAnimationController
@@ -118,7 +120,7 @@ export function createRobotPresentation(resources: PresentationResources, color:
   weaponMount.rotation.set(-0.04, 0, 0)
   group.add(weaponMount)
   const weaponIndicatorMaterials = addShotgun(weaponMount, resources, color, 'robot:weapon', 0.74)
-  return { group, identityMaterials: [identity], weaponIndicatorMaterials }
+  return { group, weaponPresentation: weaponMount, identityMaterials: [identity], weaponIndicatorMaterials }
 }
 
 export function createFirstPersonWeaponPresentation(resources: PresentationResources, color: string): FirstPersonWeaponPresentation {
@@ -183,7 +185,7 @@ export function createRobotGlbPresentation(resources: PresentationResources, ass
   weapon.rotation.x = -0.04
   ;(animation?.weaponMount ?? group).add(weapon)
   const weaponIndicatorMaterials = textureGlbInstance(weapon, resources, texture, color)
-  return { group, identityMaterials, weaponIndicatorMaterials, animation }
+  return { group, weaponPresentation: weapon, identityMaterials, weaponIndicatorMaterials, animation }
 }
 
 export function createFirstPersonGlbPresentation(resources: PresentationResources, assets: ArenaGlbTemplateCache | undefined, texture: THREE.Texture | undefined, color: string): FirstPersonWeaponPresentation {

@@ -61,7 +61,7 @@ describe('collision compatibility identity', () => {
   })
 
   it.each([
-    ['contract version', { ...RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, contractVersion: 'v2' }],
+    ['previous contract version', { ...RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, contractVersion: 'collision-contract-v1' }],
     ['backend package', { ...RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, backendPackage: 'other' }],
     ['backend version', { ...RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, backendVersion: '0.21.0' }],
   ])('rejects an unsupported %s with the stable error code', (_name, identity) => {

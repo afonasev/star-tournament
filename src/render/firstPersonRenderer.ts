@@ -4,7 +4,7 @@ import { portalScale } from '../arena/portalGeometry'
 import { PRESENTATION_BALANCED_V1_PROFILE, type ValidatedPresentationProfile } from '../presentation/presentationProfile'
 import * as THREE from 'three'
 
-import type { ArenaDefinition } from '../arena/arenaDefinition'
+import { supportsNavigation, type ArenaDefinition } from '../arena/arenaDefinition'
 import type { RendererInfoSample } from '../performance'
 import type { ValidatedGameDesignProfile } from '../profiles/gameDesignProfile'
 import type {
@@ -178,12 +178,72 @@ export interface FirstPersonRendererOptions {
 
 interface TargetPresentation {
   readonly group: THREE.Group
+  readonly weaponPresentation: THREE.Object3D
   readonly identityMaterials: readonly THREE.MeshStandardMaterial[]
   readonly weaponIndicatorMaterials: readonly THREE.MeshStandardMaterial[]
   readonly animation?: RobotAnimationController
   baseY: number
   destroyed: boolean
   color: string
+}
+
+function canonicalStaticBounds(arena: ArenaDefinition): readonly THREE.Box3[] {
+  return arena.surfaces.filter((surface) => !supportsNavigation(surface)).map((surface) => {
+    const proxy = new THREE.Mesh(new THREE.BoxGeometry(surface.size.x, surface.size.y, surface.size.z))
+    proxy.position.set(surface.center.x, surface.center.y, surface.center.z)
+    proxy.quaternion.set(surface.orientation.x, surface.orientation.y, surface.orientation.z, surface.orientation.w)
+    const bounds = new THREE.Box3().setFromObject(proxy)
+    proxy.geometry.dispose()
+    return bounds
+  })
+}
+
+const PRESENTATION_OCCLUDER_PREFIXES = [
+  'presentation:wall-buttress:',
+  'presentation:frame:',
+  'presentation:lamp-housing:',
+  'presentation:lamp-lens:',
+  'presentation:portal:',
+  'presentation:glb:wall-bay:',
+] as const
+const VIEWMODEL_MAX_RETRACT_METERS = 0.28
+const WORLD_WEAPON_MAX_RETRACT_METERS = 0.34
+// This renderer-internal probe covers the complete weapon envelope, but only
+// along camera forward. Side walls never activate it, so parallel movement
+// keeps the ready pose and its normal shot presentation.
+const VIEWMODEL_PREEMPTIVE_REACH_METERS = 1.35
+// These are renderer-only safety poses, not player-facing balance controls.
+// At full retraction the barrels run nearly parallel to the obstructing wall,
+// so a capped camera-space offset cannot leave their muzzle through geometry.
+const VIEWMODEL_FOLD_YAW_RADIANS = Math.PI / 2 - 0.08
+const WORLD_WEAPON_FOLD_YAW_RADIANS = Math.PI / 2 - 0.12
+
+function presentationOccluderBounds(scene: THREE.Scene): readonly THREE.Box3[] {
+  const bounds: THREE.Box3[] = []
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || !PRESENTATION_OCCLUDER_PREFIXES.some((prefix) => object.name.startsWith(prefix))) return
+    // A small visual-only margin protects against seams and texture relief
+    // without making the attachment a simulation or navigation obstacle.
+    bounds.push(new THREE.Box3().setFromObject(object).expandByScalar(0.025))
+  })
+  return bounds
+}
+
+function retractDistance(bounds: readonly THREE.Box3[], queryOrigin: THREE.Vector3, queryDirection: THREE.Vector3, reachMeters = 1.35): number {
+  const origin = queryOrigin
+  const ray = new THREE.Ray(origin, queryDirection.normalize())
+  let nearest = reachMeters
+  for (const box of bounds) {
+    const hit = ray.intersectBox(box, new THREE.Vector3())
+    if (hit !== null) nearest = Math.min(nearest, hit.distanceTo(origin))
+  }
+  return Math.max(0, reachMeters - nearest)
+}
+
+function presentationIntersectionCount(object: THREE.Object3D, bounds: readonly THREE.Box3[]): number {
+  object.updateMatrixWorld(true)
+  const presentationBounds = new THREE.Box3().setFromObject(object)
+  return bounds.reduce((count, candidate) => count + (candidate.intersectsBox(presentationBounds) ? 1 : 0), 0)
 }
 
 interface TransientMesh {
@@ -707,6 +767,7 @@ function addRobotTarget(
   scene.add(group)
   return {
     group,
+    weaponPresentation: robot.weaponPresentation,
     identityMaterials: robot.identityMaterials,
     weaponIndicatorMaterials: robot.weaponIndicatorMaterials,
     animation: robot.animation,
@@ -766,11 +827,12 @@ export function createFirstPersonRenderer({
   const activePresentationProfile = presentationProfile ?? PRESENTATION_BALANCED_V1_PROFILE
   if (renderer.shadowMap !== undefined) {
     renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.shadowMap.type = THREE.PCFShadowMap
   }
   const arenaPresentation = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets, activePresentationProfile)
   const textureKit = arenaPresentation
   const participantTexture = textureKit.wall.baseColor
+  const staticBounds = canonicalStaticBounds(arena)
 
   scene.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return
@@ -784,6 +846,7 @@ export function createFirstPersonRenderer({
     object.receiveShadow = object.name.startsWith('arena:floor') || object.name.startsWith('presentation:floor')
     object.castShadow = stableLocalShadowCaster
   })
+  const weaponOccluderBounds = [...staticBounds, ...presentationOccluderBounds(scene)]
 
   const localLightShadowBudget = resolveLocalLightShadowBudget(activeGraphicsQuality, activePresentationProfile)
   const localLightBudget = resolveLocalLightBudget(activeGraphicsQuality, activePresentationProfile)
@@ -1044,6 +1107,23 @@ export function createFirstPersonRenderer({
       target.group.position.set(targetState.position.x + fall.x, target.baseY - fallProgress * .08, targetState.position.z + fall.z)
       target.group.rotation.set(0, targetState.kind === 'bot' ? Math.PI - fallYaw : fallYaw, destroyed ? fallProgress * Math.PI / 2 : 0, 'YXZ')
       target.group.visible = !destroyed || deathElapsedSeconds < DEATH_REST_SECONDS
+      target.group.updateMatrixWorld(true)
+      target.weaponPresentation.userData.retractBaseZ ??= target.weaponPresentation.position.z
+      target.weaponPresentation.userData.retractBaseRotationY ??= target.weaponPresentation.rotation.y
+      target.weaponPresentation.position.z = target.weaponPresentation.userData.retractBaseZ as number
+      target.weaponPresentation.rotation.y = target.weaponPresentation.userData.retractBaseRotationY as number
+      target.weaponPresentation.updateMatrixWorld(true)
+      const weaponRetract = Math.min(
+        WORLD_WEAPON_MAX_RETRACT_METERS,
+        retractDistance(
+          weaponOccluderBounds,
+          target.weaponPresentation.getWorldPosition(new THREE.Vector3()),
+          target.weaponPresentation.getWorldDirection(new THREE.Vector3()).negate(),
+        ),
+      )
+      const weaponFold = weaponRetract / WORLD_WEAPON_MAX_RETRACT_METERS
+      target.weaponPresentation.position.z = (target.weaponPresentation.userData.retractBaseZ as number) + weaponRetract
+      target.weaponPresentation.rotation.y = (target.weaponPresentation.userData.retractBaseRotationY as number) - weaponFold * WORLD_WEAPON_FOLD_YAW_RADIANS
       const presentationColor = destroyed ? '#354148' : normalizePresentationColor(targetState.color)
       if (destroyed !== target.destroyed) {
         target.destroyed = destroyed
@@ -1106,8 +1186,43 @@ export function createFirstPersonRenderer({
     const muzzleVisible = snapshot.tick <= muzzleVisibleThroughTick
     for (const muzzleFlash of viewmodel.muzzleFlashes) muzzleFlash.visible = muzzleVisible
     const recoiling = snapshot.tick <= recoilVisibleThroughTick
-    viewmodel.group.position.z = -0.68 + (recoiling ? 0.11 : 0)
-    viewmodel.group.rotation.x = -0.08 + (recoiling ? 0.13 : 0)
+    const viewmodelBaseZ = -0.68 + (recoiling ? 0.11 : 0)
+    const viewmodelBaseRotationY = viewmodel.group.userData.retractBaseRotationY ?? viewmodel.group.rotation.y
+    viewmodel.group.userData.retractBaseRotationY = viewmodelBaseRotationY
+    viewmodel.group.position.set(0.36, -0.34, viewmodelBaseZ)
+    viewmodel.group.rotation.set(-0.08 + (recoiling ? 0.13 : 0), viewmodelBaseRotationY as number, -0.02)
+    viewmodel.group.updateMatrixWorld(true)
+    const viewmodelRetract = Math.min(
+      VIEWMODEL_MAX_RETRACT_METERS,
+      retractDistance(
+        weaponOccluderBounds,
+        camera.getWorldPosition(new THREE.Vector3()),
+        // Viewmodel source orientation differs between the fallback mesh and
+        // the +Z-forward shipping GLB. Camera forward is the one stable
+        // presentation direction and always points toward the obstacle.
+        camera.getWorldDirection(new THREE.Vector3()),
+        VIEWMODEL_PREEMPTIVE_REACH_METERS,
+      ),
+    )
+    let viewmodelFold = viewmodelRetract / VIEWMODEL_MAX_RETRACT_METERS
+    const setViewmodelFoldTransform = (fold: number, yawSign: 1 | -1) => {
+      // The side shift follows the turn so either folded pose remains wholly
+      // in front of the camera instead of sending one GLB orientation through
+      // the near plane.
+      viewmodel.group.position.x = 0.36 + yawSign * fold * 0.16
+      viewmodel.group.position.z = viewmodelBaseZ + fold * VIEWMODEL_MAX_RETRACT_METERS
+      viewmodel.group.position.y = -0.34 - fold * 0.16
+      viewmodel.group.rotation.x = -0.08 + (recoiling ? 0.13 : 0) + fold * 0.32
+      viewmodel.group.rotation.y = (viewmodelBaseRotationY as number) + yawSign * fold * VIEWMODEL_FOLD_YAW_RADIANS
+    }
+    const chooseViewmodelFoldSide = (fold: number): 1 | -1 => {
+      setViewmodelFoldTransform(fold, -1)
+      const negativeFoldIntersections = presentationIntersectionCount(viewmodel.group, weaponOccluderBounds)
+      setViewmodelFoldTransform(fold, 1)
+      const positiveFoldIntersections = presentationIntersectionCount(viewmodel.group, weaponOccluderBounds)
+      return positiveFoldIntersections < negativeFoldIntersections ? 1 : -1
+    }
+    setViewmodelFoldTransform(viewmodelFold, viewmodelFold === 0 ? -1 : chooseViewmodelFoldSide(viewmodelFold))
     renderer.render(scene, camera)
     const info = renderer.info
     onWebGlSubmission?.(info === undefined ? undefined : {

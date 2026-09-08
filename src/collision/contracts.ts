@@ -7,7 +7,7 @@ import {
 } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const COLLISION_CONTRACT_VERSION = 'collision-contract-v1' as const
+export const COLLISION_CONTRACT_VERSION = 'collision-contract-v2' as const
 export const COLLISION_BACKEND_PACKAGE =
   '@dimforge/rapier3d-deterministic-compat' as const
 export const COLLISION_BACKEND_VERSION = '0.20.0' as const
@@ -15,7 +15,7 @@ export const COLLISION_CHECKPOINT_SCHEMA_VERSION = 1 as const
 
 /**
  * Diagnostic query distances are normalized before ordering and hashing. This is
- * a versioned technical invariant of collision-contract-v1, not a balance value.
+ * a versioned technical invariant of collision-contract-v2, not a balance value.
  */
 export const COLLISION_DISTANCE_QUANTIZATION = 0.000001 as const
 
