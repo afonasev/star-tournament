@@ -9,8 +9,8 @@
 
 - Добавить пять seed-selected семейств procedural recipes: широкий зал с длинным обходом, обходная верхняя галерея, балконы большого зала, две самостоятельные боевые арены по ярусам и основной этаж с подземным обходом.
 - **BREAKING**: в новых arena definitions ввести explicit support/layer identity для regions, spawn anchors и links; обычные links не соединяют пространства лишь потому, что они пересекаются в XZ. Исторические definitions и profile snapshots остаются runnable через compatibility path.
-- Добавить canonical slabs, floors, потолки подвала и двусторонние ramp transitions; каждый multi-level route получает не менее двух независимых переходов без jump-only, cliff и false route.
-- Сделать чистую ширину combat tunnel, doorway и ramp profile-owned: не менее трёх effective participant capsule diameters во всех сечениях, углах и у стойкек; validator проверяет три боковых lanes, а не одну центральную линию.
+- Добавить canonical slabs, floors, потолки подвала и двусторонние ramp/stairs transitions; каждый multi-level route получает не менее двух независимых переходов без jump-only, cliff и false route.
+- Сделать чистую ширину combat tunnel, doorway и ramp/stairs profile-owned: не менее трёх effective participant capsule diameters во всех сечениях, углах и у стойкек; validator проверяет три боковых lanes, а не одну центральную линию.
 - Расширить layer-aware navigation, physical validation, spawn/LOS/fairness и bot telemetry, чтобы они различали одинаковые XZ на разных ярусах и проверяли каждый значимый combat region.
 - Добавить renderer-only material variants для hall, gallery, balcony и basement sectors, включая новые compatible wall/floor textures и decals в рамках существующего manifest/cache/quality budget.
 - Сделать главные рампы выше и заметнее через profile-owned height/length/width и semantic presentation treatment.
@@ -35,3 +35,7 @@
 - Затронуты canonical arena schema/compiler/validators, collision projections, navigation/planner, spawn allocation, AI evaluation, profile catalog, renderer material manifest and texture lifecycle.
 - Изменятся generator/profile/arena schema identities и content hashes только для новых generated arenas; старые replay/definitions сохраняют полную historical identity и прежний compatibility path.
 - В scope входят muted in-app Browser playtest с keyboard/mouse и screenshots всех пяти семейств; также затрагивается split-screen performance budget, но не его UI/layout, input mapping, оружие, сетевой transport или ручной map editor.
+
+## Утверждённое уточнение переходов
+
+Устранить накопительное замедление grounded-персонажа при подъёме. Примерно половина переходов выбирается как лестница независимо для каждого seed/transition ID; доступны пары ramp/ramp, ramp/stairs и stairs/stairs. Настоящие canonical ступени проходимы бегом без прыжка. Камера сглаживает вертикальные толчки ступеней без изменения authoritative collision и попаданий.

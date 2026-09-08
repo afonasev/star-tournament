@@ -13,3 +13,10 @@ Immutable generator profile SHALL содержать descriptor-backed bounds д
 #### Scenario: Изменён capsule
 - **WHEN** effective capsule diameter меняется и minimum tunnel clearance становится меньше трёх диаметров
 - **THEN** profile validation отклоняет configuration до generation
+
+### Requirement: Параметры лестниц
+Версионированный профиль SHALL содержать descriptor metadata вероятности stairs, размеров ступеней и сглаживания камеры. Cross-field validation MUST проверять autostep height/width, capsule clearance и headroom.
+
+#### Scenario: Слишком высокая ступень
+- **WHEN** ступень превышает допустимый autostep либо недостаточна её проступь
+- **THEN** конфигурация отклоняется до запуска матча

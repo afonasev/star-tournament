@@ -13,3 +13,10 @@ Renderer SHALL выводить hall, gallery, balcony и basement presentation 
 #### Scenario: Обзор с балкона
 - **WHEN** camera видит balcony над большим залом
 - **THEN** surface, guard и ramp read остаются визуально различимыми, а collision и projectile behavior совпадают с canonical semantics
+
+### Requirement: Плавная камера на ступенях
+Камера SHALL смягчать вертикальные толчки лестницы без дополнительной раскачки. Сглаживание MUST оставаться presentation-only, не проникать в потолок и сохранять соответствие прицела authoritative направлению выстрела.
+
+#### Scenario: Бег по ступеням под потолком
+- **WHEN** игрок поднимается или спускается по лестнице
+- **THEN** камера движется плавно, не пересекает геометрию и прицел остаётся достоверным

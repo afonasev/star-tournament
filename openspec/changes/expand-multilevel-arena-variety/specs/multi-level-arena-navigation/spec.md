@@ -9,7 +9,7 @@ Capability задаёт воспроизводимую layer-aware navigation mo
 
 #### Scenario: Подвал под верхней галереей
 - **WHEN** нижняя и верхняя gameplay regions имеют одинаковый XZ участок
-- **THEN** route не соединяет их напрямую и выбирает только declared двустороннюю рампу
+- **THEN** route не соединяет их напрямую и выбирает только declared двусторонний переход ramp либо stairs
 
 ### Requirement: Physical support-aware acceptance
 Physical route validation SHALL проверять feet Y, grounded state и support identity каждого waypoint, включая переходы в обоих направлениях.
@@ -17,3 +17,10 @@ Physical route validation SHALL проверять feet Y, grounded state и sup
 #### Scenario: Ложный путь на другом ярусе
 - **WHEN** capsule приходит к целевому XZ, но остаётся на другой опоре
 - **THEN** validation отклоняет route как недостижимый
+
+### Requirement: Темп подъёма и непрерывность лестницы
+Grounded движение SHALL сохранять обычный темп XZ на проходимом подъёме без накопительного торможения; всё перемещение MUST проходить collision resolution. Router MUST сохранять declared последовательность ступеней при входе, выходе и replan внутри лестницы.
+
+#### Scenario: Продолжение подъёма
+- **WHEN** персонаж движется вверх или бот перестраивает маршрут на ступени
+- **THEN** нет накопительного гашения скорости, а маршрут продолжается по тому же declared переходу без ложного соединения этажей

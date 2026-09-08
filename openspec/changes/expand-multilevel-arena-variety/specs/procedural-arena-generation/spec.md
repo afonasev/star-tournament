@@ -40,7 +40,7 @@ Generator SHALL поддерживать `small`, `medium` и `large` как р�
 - **THEN** каждое из пяти spatial families встречается хотя бы раз и не объединяется в одну обязательную трёхъярусную карту
 
 ### Requirement: Интересная маршрутная структура
-Accepted arena SHALL иметь центральный ориентир, внешний обход, более быстрый открытый маршрут и более длинный защищённый маршрут. Внутренние primary walls MUST образовывать связные архитектурные цепочки, ограничивать комнаты и коридоры и иметь profile-defined полную высоту до потолка; только explicitly semantic barriers MAY быть ниже. Multi-level recipe MUST иметь минимум два пространственно различных двусторонних перехода между связанными ярусами; никакая визуально достижимая зона не может зависеть от jump-only, cliff или false upper route. Любой combat tunnel, doorway и ramp MUST сохранять чистую ширину не менее трёх effective participant capsule diameters во всех сечениях и поворотах. Каждая gameplay region и spawn region MUST иметь не менее двух выходов, а navigation graph MUST сохранять связь spawn regions при удалении одной link.
+Accepted arena SHALL иметь центральный ориентир, внешний обход, более быстрый открытый маршрут и более длинный защищённый маршрут. Внутренние primary walls MUST образовывать связные архитектурные цепочки, ограничивать комнаты и коридоры и иметь profile-defined полную высоту до потолка; только explicitly semantic barriers MAY быть ниже. Multi-level recipe MUST иметь минимум два пространственно различных двусторонних перехода между связанными ярусами; никакая визуально достижимая зона не может зависеть от jump-only, cliff или false upper route. Любой combat tunnel, doorway, ramp и stairs MUST сохранять чистую ширину не менее трёх effective participant capsule diameters во всех сечениях и поворотах. Каждая gameplay region и spawn region MUST иметь не менее двух выходов, а navigation graph MUST сохранять связь spawn regions при удалении одной link.
 
 #### Scenario: Тоннель для стрейфа
 - **WHEN** validator проверяет тоннель, doorway или рампу
@@ -73,3 +73,10 @@ Accepted arena SHALL иметь центральный ориентир, вне�
 #### Scenario: Неровный внешний контур
 - **WHEN** сравниваются perimeter surfaces и bounding rectangle arena
 - **THEN** периметр остаётся замкнутым, но содержит size-specific уступы или ниши и не совпадает с четырьмя сторонами bounding rectangle
+
+### Requirement: Смешанные лестницы и рампы
+Каждый переход SHALL детерминированно выбирать ramp либо stairs по seed и stable transition ID. Профильная вероятность stairs MUST по умолчанию давать примерно половину переходов; все три сочетания двух переходов MUST встречаться в corpus.
+
+#### Scenario: Повторная генерация
+- **WHEN** одинаковые seed, size и profile генерируются повторно
+- **THEN** типы переходов и геометрия ступеней совпадают, а RNG матча не используется

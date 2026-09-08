@@ -35,3 +35,14 @@
 ## Evidence: isolated physical-navigation slice (2026-09-08)
 
 Branch `codex/multilevel-physical-navigation`; no main integration, archive or deployment. See `docs/tasks/14-multilevel-physical-navigation.md` for the corpus and remaining acceptance gates. Previous 4.2 evidence predates the new physical geometry and must be refreshed. Task 3.1 has guided-goal traversal and telemetry coverage, but autonomous combat layer coverage is not yet accepted. Browser visual fixtures are captured muted; keyboard/mouse acceptance is blocked by denied pointer lock. Presentation and performance tasks remain open.
+
+## 5. Подтверждённые лестницы и скорость подъёма
+
+- [ ] 5.1 Устранить накопительное торможение на склоне; сравнить flat/uphill/downhill speed, диагональ, стены, потолки и прыжок.
+- [ ] 5.2 Добавить versioned stair transitions, canonical ступени и profile descriptors; сохранить historical replay/profile paths.
+- [ ] 5.3 Генерировать примерно 50% лестниц по seed/transition ID; проверить распределение и geometry/clearance corpus.
+- [ ] 5.4 Расширить support-aware navigation, autostep acceptance и AI для обеих сторон лестницы, трёх lanes, поворотов и replan на ступени.
+- [ ] 5.5 Сгладить камеру на ступенях, проверить headroom и соответствие прицела выстрелу.
+- [ ] 5.6 Повторить полный test/build/replay, browser performance и muted playtest, сохранить PNG и dedicated implementation commit.
+
+Evidence предыдущего среза 4ec5132 (393 tests) не закрывает задачи 5.1–5.6.

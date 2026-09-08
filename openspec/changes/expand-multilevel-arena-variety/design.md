@@ -32,13 +32,13 @@ Renderer отображает canonical surfaces; общий декоратив�
 
 ### 4. Сохранение физической навигации
 
-Обычные рёбра сохраняют support identity; между опорами используются только declared ramps. AI различает capsule feet для navigation и body для aim. Сохраняются переход до выхода, маршруты к целям внутри рампы, deterministic semantic ordering и профильный cache key.
+Обычные рёбра сохраняют support identity; между опорами используются только declared ramps либо stairs. AI различает capsule feet для navigation и body для aim. Сохраняются переход до выхода, маршруты к целям внутри перехода, deterministic semantic ordering и профильный cache key.
 
 Derived Rapier worlds проверяют все spawn/combat routes, обе стороны рампы, три боковых lanes, corner sweeps, feet Y, grounded contact и headroom. Добавляются потолочные jump/LOS fixtures. Fairness budgets не ослабляются.
 
 ### 5. Совместимость
 
-Сохранённый срез использует `arena-layers-v2` и profile revision 9. Следующая реализация получает новую identity, не переписывая revision 8/9 и сохранённые definitions. Узкий retry snap overshoot из `a82a048` сохраняется с отдельной проверкой для новой identity: исходная поза и displacement, collision filter активен, snap временно выключен только на повторный query и восстановлен, повторное проникновение отклоняется. Y не ограничивается искусственно.
+Сохранённый срез использует `arena-layers-v2` и profile revision 9. Следующая реализация получает новую identity, не переписывая revision 8/9/10 и сохранённые definitions. Узкий retry snap overshoot из `a82a048` сохраняется с отдельной проверкой для новой identity: исходная поза и displacement, collision filter активен, snap временно выключен только на повторный query и восстановлен, повторное проникновение отклоняется. Y не ограничивается искусственно.
 
 ### 6. Доказательство разнообразия
 
@@ -59,3 +59,15 @@ Corpus сравнивает граф помещений, положение пе
 3. Реализовать каталог, canonical ceilings и renderer mapping.
 4. Повторить topology/physical/AI/fairness/replay corpus и performance/browser gates.
 5. Интеграция, архив и deploy остаются отдельным неавторизованным этапом.
+
+### 7. Быстрый подъём и лестницы
+
+Подтверждено пользователем: обычный темп движения вверх, около половины переходов с настоящими ступенями и мягкая камера. Измерение shipping movement на small seed 0: при заданных 9 м/с склон 34,51° даёт 0,71–0,72 м/с. Grounded downward probe заменяет положительное Y, затем сокращённый XZ после KCC становится базой следующего кадра.
+
+Grounded displacement на подтверждённой проходимой наклонной опоре сохраняет желаемый XZ и получает касательный Y. Весь displacement проходит KCC; downward probe не заменяет подъём. Стены, потолки, steep slopes, прыжок и движение в воздухе сохраняют физическую проверку.
+
+Новая versioned transition описывает ramp либо упорядоченные canonical tread supports лестницы, вход и выход. Каждый tread имеет отдельную опору; ступени не становятся независимыми этажами общего visibility graph. Replan внутри перехода сохраняет его последовательность. Старые definitions и profiles остаются на historical path.
+
+Seed и stable transition ID выбирают stairs по профильной вероятности 0.5, без RNG матча. Rise/depth ступени совместимы с autostep и capsule; несовместимый профиль отклоняется. Renderer и collision используют одни box-ступени, скрытой гладкой collision-рампы нет.
+
+Камера сглаживает вертикальные толчки только на ступенях с profile-owned параметрами; потолок ограничивает допустимую позицию, видимый прицел сохраняет соответствие authoritative shot ray. Приёмка включает скорость относительно flat baseline, реальные ступени, остановку, спуск, диагональ, три lanes, повороты, headroom, AI и replay.
