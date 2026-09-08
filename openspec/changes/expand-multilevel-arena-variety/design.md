@@ -1,66 +1,61 @@
 ## Context
 
-See proposal.md. Current arena elevation resolves the highest floor at XZ, navigation projects obstacles to XZ, and physical validation accepts waypoint arrival by XZ. Those paths cannot represent a basement under a gallery or an independent upper combat floor.
+Срез `a82a048` реализует support-aware navigation и строгую Rapier-проверку. Визуальная приёмка выявила несоответствие: семейства повторяют общую планировку с верхней плитой; renderer создаёт один общий потолок, а подвал не имеет тоннельных стен. Пользователь подтвердил преобладание закрытых самостоятельных этажей и вариацию потолков между помещениями и seeds.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Compile five user-approved spatial families into a deterministic canonical arena with real layer identity, support surfaces, slabs and declared transitions.
-- Preserve a single simulation-owned spatial truth while making renderer material variation derived and quality-bounded.
-- Keep historical arena/profile identities runnable without rewriting replay data.
+- Создавать различимые графы комнат, залов и тоннелей с собственными потолками.
+- Сохранить физическую корректность, determinism, fairness и historical replay compatibility.
+- До реализации согласовать схемы этажей и разрезы; приёмку провести также от первого лица.
 
 **Non-Goals:**
-- A manual editor, arbitrary 3D navmesh, stairs, jump routes, new weapons, input mapping, split-screen layout or online authority are out of scope.
+- Универсальный CSG, новый navmesh, редактор, новые input mappings, оружие, сетевой transport или изменение split-screen layout.
 
 ## Decisions
 
-### 1. Support-layer graph precedes geometry
+### 1. Граф помещений до геометрии
 
-Recipe planning resolves rooms, halls, bypasses, supports and portal-linked transitions before canonical surfaces are compiled. Regions and anchors name their support; a link is either intra-support or an explicit transition. This is selected over increasing the old raised strip because overlapping XZ floors otherwise collapse into one highest floor.
+Ограниченный каталог структурных вариантов описывает rooms/halls/tunnels, footprint, support, floor/ceiling elevations и portals. Seed выбирает композицию и допустимые профильные параметры; зеркало или поворот не считается самостоятельным структурным вариантом. Комнаты одного этажа могут разделять одну опору. Закрытые этажи преобладают; открытые варианты сохраняются.
 
-### 2. Layer-aware sparse navigation
+Выбран каталог графов вместо добавления стен поверх прежней плиты: последнее сохраняет однообразие. Произвольная генерация объёмов отклонена как избыточная для текущего scope.
 
-Navigation creates candidates within a support layer and crosses layers only through declared portal/ramp links. Stable semantic ordering and arena/profile keyed caching retain determinism. Horizontal aim distance remains separate from support-aware route and arrival distance; replacing every distance calculation with 3D would corrupt aiming behaviour.
+### 2. Canonical замкнутые объёмы
 
-### 3. Physical validation owns proof of transitions
+Compiler создаёт floors, walls, ceiling slabs и проёмы. Закрытый верхний этаж содержит собственную сеть комнат и коридоров, достаточную профильную полезную площадь и два разнесённых перехода. Тоннель ограничен стенами и непрерывной крышей между разными входами. Все перекрытия блокируют movement и shots.
 
-Уточнение 2026-09-08: узел содержит `supportSurfaceId` и XYZ; одинаковые XZ не дедуплицируются между опорами. Footprint рампы блокирует обычный нижний маршрут. Входы и waypoint перехода выводятся только из указанной `transitionSurfaceId`; глобальные X-breakpoints запрещены. AI проверяет достижение по опоре и высоте, сохраняя горизонтальную дистанцию прицеливания. На наклоне physical validator учитывает геометрический контакт вертикальной capsule с плоскостью; на плоской площадке требуется фактическая высота стоп и declared support.
+Renderer отображает canonical surfaces; общий декоративный потолок остаётся только у historical definitions. Материалы, лампы и quality tiers остаются presentation-only. HUD, input focus, pointer-lock, reconnect, per-seat cameras и split-screen layout сохраняют действующие контракты.
 
-Derived Rapier worlds validate every declared transition, three lateral lanes and corner sweep in both directions, checking feet Y, grounded contact and final support identity. Existing XZ-only success is insufficient.
+### 3. Локальные высоты и профиль
 
-### 4. Profile-owned combat clearance
+Высоты низких широких тоннелей, комнат и высоких залов выбираются из descriptors и меняются внутри карты и между seeds. Стены доходят до собственного потолка. Уклон и потолок ramp corridor обеспечивают headroom также у входов. Веса композиций, полезная площадь и corpus thresholds принадлежат версионированному профилю, а не narrative-константам.
 
-The generator computes required width as `3 * 2 * (radius + skinWidth)`, currently 2.46 m, and rounds release presets to at least 2.5 m. Hall/tunnel/ramp dimensions, headroom and slab thickness are descriptors with strict cross-field validation. This is selected over a static metre literal so a future capsule change cannot silently invalidate the player promise.
+### 4. Сохранение физической навигации
 
-### 5. Canonical gameplay versus presentation texture variants
+Обычные рёбра сохраняют support identity; между опорами используются только declared ramps. AI различает capsule feet для navigation и body для aim. Сохраняются переход до выхода, маршруты к целям внутри рампы, deterministic semantic ordering и профильный cache key.
 
-Floors, slabs, guards and ramps remain canonical when they affect collision or shots. Sector textures/decals, light arrangement and quality residency remain renderer-owned and select only from semantic slots. Existing manifest/cache lifecycle is retained; a second loader is rejected.
+Derived Rapier worlds проверяют все spawn/combat routes, обе стороны рампы, три боковых lanes, corner sweeps, feet Y, grounded contact и headroom. Добавляются потолочные jump/LOS fixtures. Fairness budgets не ослабляются.
 
-### 6. Compatibility and promotion
+### 5. Совместимость
 
-Schema/generator/profile identities advance only for new multi-level definitions. Legacy definitions retain their historical elevation/navigation compatibility path. A recipe promotion requires deterministic corpus, physical route, bot, fairness/LOS, renderer/performance and muted browser evidence for every family.
+Сохранённый срез использует `arena-layers-v2` и profile revision 9. Следующая реализация получает новую identity, не переписывая revision 8/9 и сохранённые definitions. Узкий retry snap overshoot из `a82a048` сохраняется с отдельной проверкой для новой identity: исходная поза и displacement, collision filter активен, snap временно выключен только на повторный query и восстановлен, повторное проникновение отклоняется. Y не ограничивается искусственно.
+
+### 6. Доказательство разнообразия
+
+Corpus сравнивает граф помещений, положение переходов, полезную и закрытую площадь и распределение высот внутри family/size. Нужны планы обоих этажей, разрезы и muted first-person PNG нескольких seeds. Guided AI goals доказывают достижимость, но не самостоятельный выбор всех слоёв в бою.
 
 ## Risks / Trade-offs
 
-### Physical-navigation implementation slice, 2026-09-08
-
-New generation uses `arena-layers-v2`, profile schema 8 / revision 9. Revision 8 retains its immutable release and legacy generator/validation behavior. Ordinary navigation edges retain support identity; declared continuous ramps provide explicit landing/ramp/landing waypoints. AI navigation converts capsule centers to feet without changing aim coordinates and preserves transitions until the landing is reached. Ramp-interior targets also attach through declared transition entries.
-
-The basement has one continuous main slab and a lower floor extended to contain two external descents. Canonical portal lintels follow the relevant support elevation. Physical acceptance walks all spawn/combat routes and each ramp in both directions, including three lateral capsule lanes and corner sweeps; grounded support and headroom come from the derived Rapier world.
-
-Rapier 0.20 can occasionally return snap movement through an already contacted flat floor. Only the new layered generators retry that exact original pose and translation with snap temporarily disabled when the candidate crosses that floor. Collision filtering remains active, configured snap is restored immediately, and a retry still crossing support fails explicitly. No feet clamping or physical-validator exemption is used.
-
-Guided AI goals verify reachability across every family/size with zero recovery; this does not claim autonomous combat exploration covers every layer. Presentation, performance promotion, and keyboard/mouse browser acceptance remain separate gates.
-
-- [Layer graph may increase nav nodes/edges] → use local support candidates and declared sparse portals; record node/edge and generation-time metrics.
-- [Upper fire may bias spawn fairness] → assess actual FFA/team allocations and LOS/routes to every combat region; do not relax existing budgets.
-- [Slabs and sector textures may exceed split-screen budget] → preserve quality tiers and run the most dense large recipe through existing performance gates.
-- [Historic replay regression] → retain versioned parser and legacy route/elevation behavior under historical identities.
+- Дополнительные стены увеличивают nav candidates и generation time → измерять cold generation и route latency на size corpus.
+- Потолки создают headroom и jump regressions → реальные collision fixtures на стыках, рамках и перекрытиях.
+- Закрытые объёмы увеличивают число lights/draw calls → повторить dense-large performance gate и split-screen QA.
+- Новая topology меняет fairness → сохранить бюджеты, отклонять неудачные candidates.
+- Планы не доказывают визуальное качество → отдельная browser-приёмка после реализации.
 
 ## Migration Plan
 
-1. Add schema/profile compatibility readers and support-aware validators behind a new generator identity.
-2. Compile and validate the five recipe families, then connect AI/collision/spawn projections.
-3. Add presentation variants and assets without changing canonical hashes.
-4. Run automated corpus and physical gates, then muted browser playtests and screenshots.
-5. Roll back by selecting the previous generator/profile identity; do not rewrite stored definitions.
+1. Утвердить схемы различных планировок и разрезов.
+2. Обновить versioned room/compiler/profile contracts и compatibility tests.
+3. Реализовать каталог, canonical ceilings и renderer mapping.
+4. Повторить topology/physical/AI/fairness/replay corpus и performance/browser gates.
+5. Интеграция, архив и deploy остаются отдельным неавторизованным этапом.
