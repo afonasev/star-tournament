@@ -18,7 +18,7 @@ Simulation SHALL хранить versioned сериализуемое состо�
 - **THEN** movement и camera orientation simulation state не меняются
 
 ### Requirement: Аркадное движение и collision
-Игрок SHALL двигаться с ground acceleration и strafe, испытывать profile-defined gravity, выполнять edge-triggered jump только из допустимого grounded state и сохранять ограниченный air control; итоговая position MUST приниматься симуляцией только после backend-neutral capsule collision query.
+Игрок SHALL двигаться с ground acceleration и strafe, испытывать profile-defined gravity, выполнять edge-triggered jump только из допустимого grounded state и сохранять ограниченный air control; итоговая position MUST приниматься симуляцией только после backend-neutral profile-defined body capsule collision query.
 
 #### Scenario: Разгон и остановка на земле
 - **WHEN** игрок удерживает направление на земле, а затем отпускает его
@@ -37,8 +37,8 @@ Simulation SHALL хранить versioned сериализуемое состо�
 - **THEN** horizontal trajectory изменяется слабее, чем при ground acceleration, без скрытого изменения maximum speed
 
 #### Scenario: Столкновение с ареной
-- **WHEN** capsule движется в стену, угол, потолок, ступень, склон или край
-- **THEN** simulation использует ordered collision result, не проникает в static geometry и сохраняет только допустимое tangential movement
+- **WHEN** body capsule движется в стену, угол, потолок, ступень, склон или край
+- **THEN** simulation использует ordered collision result, body model не проникает в static geometry и сохраняет только допустимое tangential movement
 
 ### Requirement: First-person orientation и камера
 Normalized look actions SHALL обновлять сериализуемые yaw и pitch; yaw MUST поддерживать непрерывный поворот, pitch MUST быть ограничен profile-defined диапазоном, а renderer SHALL выводить camera transform и FOV из snapshot и активного profile.
