@@ -4,7 +4,8 @@ import { portalScale } from '../arena/portalGeometry'
 import { PRESENTATION_BALANCED_V1_PROFILE, type ValidatedPresentationProfile } from '../presentation/presentationProfile'
 import * as THREE from 'three'
 
-import type { ArenaDefinition } from '../arena/arenaDefinition'
+import { arenaTransition, type ArenaDefinition } from '../arena/arenaDefinition'
+import { StairCameraSmoothing } from './stairCamera'
 import type { RendererInfoSample } from '../performance'
 import type { ValidatedGameDesignProfile } from '../profiles/gameDesignProfile'
 import type {
@@ -59,6 +60,8 @@ export function resolvePixelBudgetDevicePixelRatio({
 }
 
 export interface FirstPersonRenderPlayer {
+  readonly grounded?: boolean
+  readonly lifeId?: string
   readonly alive?: boolean
   readonly deathSource?: { readonly participantId: string; readonly lifeId: string } | null
   readonly position: ScenarioVector3
@@ -157,6 +160,8 @@ export interface FirstPersonRenderer {
 }
 
 export interface FirstPersonRendererOptions {
+  readonly aimQuery?: (snapshot:FirstPersonRenderSnapshot)=>{point:ScenarioVector3;isVisibleFrom:(position:ScenarioVector3)=>boolean}
+  readonly onAimProjection?: (point:{x:number;y:number})=>void
   readonly container: HTMLElement
   readonly arena: ArenaDefinition
   readonly scenario: CombatSliceScenario
@@ -565,7 +570,7 @@ function addArena(
   // The procedural definition is a collision floor-and-wall shell. A light
   // ceiling is presentation-only: it completes the indoor sport-arena read
   // without adding a gameplay solid or changing the canonical arena data.
-  if(arena.generatorVersion!=='arena-rooms-v1') {
+  if(!arena.generatorVersion.startsWith('arena-rooms-v')) {
   const minX = Math.min(...arena.surfaces.map((surface) => surface.center.x - surface.size.x / 2))
   const maxX = Math.max(...arena.surfaces.map((surface) => surface.center.x + surface.size.x / 2))
   const minZ = Math.min(...arena.surfaces.map((surface) => surface.center.z - surface.size.z / 2))
@@ -723,6 +728,8 @@ function eventDurationTicks(seconds: number, ticksPerSecond: number): number {
 }
 
 export function createFirstPersonRenderer({
+  aimQuery,
+  onAimProjection,
   container,
   arena,
   scenario,
@@ -992,6 +999,9 @@ export function createFirstPersonRenderer({
     }
   }
 
+  const stairCamera=new StairCameraSmoothing()
+  const stairIds=new Set(arena.links.flatMap(l=>arenaTransition(l)?.kind==='stairs'?arenaTransition(l)!.surfaceIds:[]))
+  const stairSurfaces=arena.surfaces.filter(s=>stairIds.has(s.id))
   function submit(snapshot: FirstPersonRenderSnapshot): void {
     if (snapshot.tick < (lastSubmittedTick ?? -1)) {
       for (const transient of transientByEventId.values()) scene.remove(transient.mesh)
@@ -1011,6 +1021,20 @@ export function createFirstPersonRenderer({
     // Three.js positive Y rotation turns the -Z camera axis left, while the
     // simulation convention defines positive yaw as turning right.
     camera.rotation.set(player.pitch, -player.yaw, 0, 'YXZ')
+    if(Number(profile.schemaVersion)>=10&&aimQuery){
+      const onStairs=stairSurfaces.some(s=>Math.abs(player.position.x-s.center.x)<=s.size.x/2+profile.rules.player.capsule.radius&&Math.abs(player.position.z-s.center.z)<=s.size.z/2&&player.position.y-profile.rules.player.capsule.halfHeight-profile.rules.player.capsule.radius<=s.center.y+s.size.y/2+profile.rules.player.capsule.radius)
+      let offset=stairCamera.update({...player,tick:snapshot.tick,onStairs,aspect:camera.aspect},profile,ticksPerSecond)
+      if(offset!==0){
+        const aim=aimQuery(snapshot),base=camera.position.y,skin=profile.rules.player.capsule.skinWidth
+        camera.position.y=base+offset
+        while(Math.abs(offset)>skin&&!aim.isVisibleFrom(camera.position)){offset/=2;camera.position.y=base+offset}
+        if(!aim.isVisibleFrom(camera.position)){offset=0;camera.position.y=base}
+        camera.updateMatrixWorld()
+        const projected=new THREE.Vector3(aim.point.x,aim.point.y,aim.point.z).project(camera)
+        if(projected.z>=-1&&projected.z<=1&&Math.abs(projected.x)<=1&&Math.abs(projected.y)<=1)onAimProjection?.({x:(projected.x+1)/2,y:(1-projected.y)/2})
+        else {camera.position.y=base;onAimProjection?.({x:.5,y:.5})}
+      }else onAimProjection?.({x:.5,y:.5})
+    }
     if (player.alive === false && player.deathSource) {
       const killer=snapshot.participants.find(p => p.semanticId === player.deathSource!.participantId && p.kind !== 'local-seat' && p.lifeId === player.deathSource!.lifeId)
       if (killer) camera.lookAt(killer.position.x, killer.position.y + profile.rules.player.eyeHeight, killer.position.z)

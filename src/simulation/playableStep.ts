@@ -17,6 +17,7 @@ import {
 } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 } from '../scenario'
 import { buildMovementIntent, applyCollisionMovement } from './movement'
+import { groundedTranslation } from './groundedMotion'
 import { nextRandomUint32 } from './rng'
 import {
   parseSimulationSnapshot,
@@ -125,9 +126,14 @@ export function stepPlayableSimulation(
     }, { ...profile.rules.player.movement, horizontalSensitivityDegrees: profile.rules.camera.horizontalSensitivity, verticalSensitivityDegrees: profile.rules.camera.verticalSensitivity, maximumPitchDegrees: profile.rules.camera.maximumPitchDegrees }, SIMULATION_FIXED_DELTA_SECONDS)
     // A grounded downward probe stabilizes Rapier autostep at controller skin.
     const desired = local.grounded && !(jumpPressed && !local.previousJumpPressed)
-      ? { ...intent.desiredTranslation, y: Math.min(intent.desiredTranslation.y, -profile.rules.player.capsule.skinWidth) }
+      ? Number(profile.schemaVersion)>=10&&arena
+        ? groundedTranslation(arena,profile,local.position,intent.desiredTranslation)
+        : { ...intent.desiredTranslation, y: Math.min(intent.desiredTranslation.y, -profile.rules.player.capsule.skinWidth) }
       : intent.desiredTranslation
-    participants[i] = { ...local, ...applyCollisionMovement(local, intent, collision.moveCapsule(participantId, desired), SIMULATION_FIXED_DELTA_SECONDS), previousJumpPressed: jumpPressed }
+    const moved=applyCollisionMovement(local, intent, collision.moveCapsule(participantId, desired), SIMULATION_FIXED_DELTA_SECONDS)
+    // Climbing a support is locomotion, not a jump impulse carried off its crest.
+    const velocity=Number(profile.schemaVersion)>=10&&(moved.grounded||(local.grounded&&!jumpPressed&&moved.velocity.y>0))?{...moved.velocity,y:0}:moved.velocity
+    participants[i] = { ...local, ...moved, velocity, previousJumpPressed: jumpPressed }
   }
   collision.projectCapsules(livingParticipantCollisionCapsules({ ...current, participants }, profile))
   const combatParticipants = participants

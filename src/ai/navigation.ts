@@ -33,7 +33,7 @@ export function arenaNavigation(arena: ArenaDefinition, profile: ValidatedGameDe
   if (!variants) { variants = new Map(); cache.set(arena, variants) }
   const cached = variants.get(profile.contentHash)
   if (cached) return cached
-  if(arena.schemaVersion===5&&arena.generatorVersion!=='arena-layers-v1') {const nav=layerNavigation(arena,profile);variants.set(profile.contentHash,nav);return nav}
+  if(arena.schemaVersion>=5&&arena.generatorVersion!=='arena-layers-v1') {const nav=layerNavigation(arena,profile);variants.set(profile.contentHash,nav);return nav}
   // Skin is the controller's soft contact offset, not solid geometry. Expanding
   // obstacles by it strands a capsule after float32 contact correction at a wall.
   const radius = profile.rules.player.capsule.radius

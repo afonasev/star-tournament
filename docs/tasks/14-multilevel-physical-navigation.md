@@ -73,3 +73,21 @@ Saved PNGs were inspected locally; all use revision 9 and the shipping renderer.
 | basement-service-loop | medium / 4 | `basement-main.png`, `basement-lower.png` |
 
 Next acceptance: autonomous combat layer coverage, material/underside readability, refreshed performance gate, and muted manual keyboard/mouse browser playtest. Keep the OpenSpec change open and do not merge/archive/deploy before those gates and separate authorization.
+
+## Physical stairs and climbing tempo (2026-09-09)
+
+`arena-rooms-v2` / ArenaDefinition schema 6 uses explicit ramp or ordered stair transitions. The local release is `prototype-v1` schema 10 / revision 11, `fnv1a64-v1:175b900d6f85f32c`; revisions 8–10 remain unchanged. Each transition independently chooses stairs with profile probability 0.5. Stairs are real floor boxes shared by rendering, collision and navigation, without a hidden ramp. Tread/riser constraints and camera smoothing have validated Balance Lab descriptors.
+
+Climb intent follows the contacted ramp plane. A grounded stair approach may use capsule sweeps up, across the exact requested XZ and down; all movement blockers remain active. Descending stairs retain ordinary KCC XZ and sweep down only onto the same or previous declared tread. Both fallbacks require real source contact and remain inside the stair corridor. Wall sliding, jumping and historical movement paths are preserved. Camera smoothing stays inside capsule headroom; the HUD projects the same central hit resolved by combat, without changing aim or simulation.
+
+Verification covers measured flat versus uphill/downhill tempo at full and low analog input, diagonal motion, stop/jump, every-tick stair grounding, ceiling/wall/participant/side-entry blockers, ordered replanning from every tread, historical generator hash, 128-seed transition distribution and the existing three-size structural/physical/AI/replay corpus. The old profile still compiles small/0 as `fnv1a64-v1:6a6e4bea2c7dd9d3`.
+
+Muted browser simulation walkthrough on small/0: ascent reaches the upper landing at tick 79 (feet 5.510 m), descent reaches the lower landing at tick 73 (feet 0.010 m). Mid-ascent and mid-descent use the shipping simulation, collision, renderer and aim query; these are deterministic diagnostic actions, not physical keyboard/mouse evidence. Inspected PNGs: `stairs-up.png`, `stairs-down.png`, `stairs-moving-up.png`, `stairs-moving-down.png`. The moving frames show the projected reticle while camera smoothing is active.
+
+Normal Start was tried again in the in-app Browser. It reports “Не удалось получить управление мышью”; evidence is `stairs-pointer-lock.txt`. Manual keyboard/mouse acceptance remains open. Large/5 Balanced performance evidence is saved in `stairs-large-performance.json`; this is the existing cadence/lifecycle reference gate, not a claim of 60 rendered FPS or all-tier/split-screen acceptance.
+
+Dev URL verified HTTP 200: http://127.0.0.1:4196/?muted=1. No main integration, archive or deploy.
+
+The full-suite regression on basement seed 103 also passes after retaining KCC contact when no extra downward snap is needed. The AI visibility/extension test now allows 30 seconds for its complete physical initialization (previous generic five-second timeout); its behavioral assertions and all gameplay/performance bounds are unchanged.
+
+Final verification: `npm test` passed all 414 tests across 70 files (177.60 seconds). After the legacy navigation guard, the compatibility/parser/stair/replay subset passed all 18 tests. `npm run build`, strict OpenSpec validation and `git diff --check` passed.

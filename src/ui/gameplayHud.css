@@ -80,8 +80,8 @@
 
 .gameplay-hud__crosshair {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: var(--aim-y, 50%);
+  left: var(--aim-x, 50%);
   width: 1.7rem;
   height: 1.7rem;
   translate: -50% -50%;

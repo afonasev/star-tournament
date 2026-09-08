@@ -90,7 +90,8 @@ describe('bot AI contracts',()=>{
       const noFire=planBot({...a,enemies:[{id:'target',lifeId:'target:1',position:nav.destinations[1]!,tick:0}]},self.botState!,nav,profile,{weapons:[{id:self.weapon.semanticId,aimPoint:t=>t.position,ready:()=>false}]})
       expect(noFire.actions.find(a=>a.actionId==='fire')?.value).toBe(0)
     }finally{runner.dispose()}
-  })
+  // Runner initialization physically validates the complete room/stair route corpus.
+  },30000)
   it('replays identical actions after a checkpoint in a newly constructed world',async()=>{
     const configuration=botConfiguration(101,['easy','normal','hard'])
     const original=await createAiRunner(configuration)

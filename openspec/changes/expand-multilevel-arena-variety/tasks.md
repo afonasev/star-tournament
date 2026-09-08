@@ -38,11 +38,15 @@ Branch `codex/multilevel-physical-navigation`; no main integration, archive or d
 
 ## 5. Подтверждённые лестницы и скорость подъёма
 
-- [ ] 5.1 Устранить накопительное торможение на склоне; сравнить flat/uphill/downhill speed, диагональ, стены, потолки и прыжок.
-- [ ] 5.2 Добавить versioned stair transitions, canonical ступени и profile descriptors; сохранить historical replay/profile paths.
-- [ ] 5.3 Генерировать примерно 50% лестниц по seed/transition ID; проверить распределение и geometry/clearance corpus.
-- [ ] 5.4 Расширить support-aware navigation, autostep acceptance и AI для обеих сторон лестницы, трёх lanes, поворотов и replan на ступени.
-- [ ] 5.5 Сгладить камеру на ступенях, проверить headroom и соответствие прицела выстрелу.
+- [x] 5.1 Устранить накопительное торможение на склоне; сравнить flat/uphill/downhill speed, диагональ, стены, потолки и прыжок.
+- [x] 5.2 Добавить versioned stair transitions, canonical ступени и profile descriptors; сохранить historical replay/profile paths.
+- [x] 5.3 Генерировать примерно 50% лестниц по seed/transition ID; проверить распределение и geometry/clearance corpus.
+- [x] 5.4 Расширить support-aware navigation, autostep acceptance и AI для обеих сторон лестницы, трёх lanes, поворотов и replan на ступени.
+- [x] 5.5 Сгладить камеру на ступенях, проверить headroom и соответствие прицела выстрелу.
 - [ ] 5.6 Повторить полный test/build/replay, browser performance и muted playtest, сохранить PNG и dedicated implementation commit.
 
 Evidence предыдущего среза 4ec5132 (393 tests) не закрывает задачи 5.1–5.6.
+
+## Evidence: stairs implementation (2026-09-09)
+
+Tasks 5.1–5.5 implemented and verified. Full suite: 70 files / 414 tests passed, including physical routes, guided bot traversal, replay and legacy profiles. The final compatibility subset also passed (18 tests). Build, strict OpenSpec validation and diff check pass. Muted browser walkthrough uses shipping simulation/collision/renderer and captures both directions; large/5 Balanced cadence/lifecycle gate passes. See `docs/tasks/14-multilevel-physical-navigation.md` and `artifacts/multilevel-navigation/stairs-*`. Task 5.6 remains open for manual input acceptance: normal Start explicitly reports denied pointer lock. Dedicated implementation commit does not authorize main integration, archive or deploy; older acceptance gates remain open.

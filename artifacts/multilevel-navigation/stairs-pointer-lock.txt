@@ -1,0 +1,20 @@
+- generic "Игровое поле":
+  - generic "First-person арена procedural-small-00000000"
+- main:
+  - region "Здоровье игрока":
+    - generic: HP
+    - strong: "100"
+    - meter: 100%
+  - time: 05:00
+  - img "Прицел"
+  - status
+  - region "Оружие и боезапас":
+    - generic: ◫
+    - generic: Двухстволка
+    - strong: "20"
+  - region "Войти на арену":
+    - paragraph: STAR TOURNAMENT
+    - heading "Войти на арену" [level=1]
+    - generic: Не удалось получить управление мышью. Кликните, чтобы попробовать снова.
+    - button "Начать игру" [active]
+- status "Текущая арена": SMALL · SEED 0 · 6178ccbf

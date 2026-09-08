@@ -2,6 +2,7 @@ import { validateArenaPhysicalRoutes } from '../arena/physicalValidation'
 import { collisionCheckpointHash, COLLISION_ERROR_CODES, RUNTIME_COLLISION_COMPATIBILITY_IDENTITY, type CollisionCapsuleProjection, type CollisionCheckpointPayload } from '../collision/contracts'
 import { initializeCollisionBackend } from '../collision/backendInitialization'
 import { requireProceduralArena, type ArenaDefinition } from '../arena'
+import { createAimProjectionQuery } from './aimProjection'
 import {
   createRapierCollisionWorld,
   type CollisionControllerConfiguration,
@@ -493,7 +494,14 @@ export async function bootstrapBrowserRuntime(
       ? undefined
       : await (dependencies.prepareArenaGlbAssets ?? prepareArenaGlbAssets)()
     if (disposed) { arenaGlbAssets?.dispose(); return { requestControl, dispose: cleanup } }
+    let lastAim=''
     renderer = createRenderer({
+      aimQuery:createAimProjectionQuery(profile,collisionWorld!),
+      onAimProjection:({x,y})=>{
+        const key=`${x.toFixed(6)},${y.toFixed(6)}`
+        if(key===lastAim)return
+        lastAim=key;uiLayer.style.setProperty('--aim-x',`${x*100}%`);uiLayer.style.setProperty('--aim-y',`${y*100}%`)
+      },
       container: playfield,
       arena,
       scenario: COMBAT_SLICE_SCENARIO_V1,

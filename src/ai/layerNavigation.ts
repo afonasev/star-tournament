@@ -1,12 +1,12 @@
 import { arenaSupportHeight } from '../arena/elevation'
-import { supportsNavigation, type ArenaBoxSurface, type ArenaDefinition } from '../arena/arenaDefinition'
+import { arenaTransition, supportsNavigation, type ArenaBoxSurface, type ArenaDefinition } from '../arena/arenaDefinition'
 import type { CollisionVector3 as Vec } from '../collision/contracts'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import { simulationMath } from '../core/simulationMath'
 import type { NavigationCapabilities } from './navigation'
 
 export interface SupportWaypoint extends Vec { readonly supportSurfaceId: string }
-export interface NavigationTransition { id: string; surfaceId: string; points: readonly SupportWaypoint[] }
+export interface NavigationTransition { id: string; surfaceId: string; surfaceIds: readonly string[]; kind:'ramp'|'stairs'; width:number; points: readonly SupportWaypoint[] }
 interface Bounds { id: string; x: number; y: number; z: number; hx: number; hy: number; hz: number }
 const length = (a: Vec, b: Vec) => simulationMath.hypot(a.x-b.x, a.y-b.y, a.z-b.z)
 // Geometry epsilon only absorbs double precision shared-face roundoff.
@@ -38,6 +38,7 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
   const radius=c.radius, height=2*(c.radius+c.halfHeight)+c.skinWidth
   const margin=radius+c.skinWidth+profile.rules.bots.navigation.clearance+profile.rules.bots.navigation.waypointRadius
   const supports=arena.surfaces.filter(supportsNavigation).sort((a,b)=>a.id.localeCompare(b.id,'en'))
+  const stairIds=new Set(arena.links.flatMap(l=>arenaTransition(l)?.kind==='stairs'?arenaTransition(l)!.surfaceIds:[]))
   const solids=arena.surfaces.filter(s=>s.semantics?.movement!==false).map(bounds)
   const supportById=new Map(supports.map(s=>[s.id,s]))
   const supportGeometry=new Map(supports.map(s=>[s.id,{surfaces:[s]}]))
@@ -76,7 +77,7 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
   for(const r of arena.regions){const p=r.supportSurfaceId&&on(r.supportSurfaceId,r.center);if(p&&clearOn(p,p))add(p)}
   for(const a of arena.spawnAnchors){const p=a.supportSurfaceId&&on(a.supportSurfaceId,a.position);if(p&&clearOn(p,p))add(p)}
   for(const s of supports) {
-    if(s.semantics?.classification==='ramp')continue
+    if(s.semantics?.classification==='ramp'||stairIds.has(s.id))continue
     const base=on(s.id,s.center);if(!base)continue
     const relevant=solids.filter(box=>box.id!==s.id&&box.y+box.hy>base.y+EPS&&box.y-box.hy<base.y+height)
     for(const box of [bounds(s),...relevant]) for(const sx of [-1,1])for(const sz of [-1,1]) {
@@ -88,10 +89,36 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
   const transitions:NavigationTransition[]=[]
   const transitionEdges:Array<{a:number;b:number;points:SupportWaypoint[]}> = []
   for(const link of [...arena.links].sort((a,b)=>a.id.localeCompare(b.id,'en'))) {
-    if(!link.transitionSurfaceId)continue
-    const ramp=supports.find(s=>s.id===link.transitionSurfaceId&&s.semantics?.classification==='ramp')
+    const descriptor=arenaTransition(link)
+    if(!descriptor)continue
     const from=arena.regions.find(r=>r.id===link.fromRegionId)?.supportSurfaceId
     const to=arena.regions.find(r=>r.id===link.toRegionId)?.supportSurfaceId
+    if(descriptor.kind==='stairs'){
+      if(!from||!to||from===to)continue
+      const steps=descriptor.surfaceIds.map(id=>supportById.get(id))
+      if(steps.some(s=>!s))continue
+      const first=steps[0]!,last=steps.at(-1)!,dx=last.center.x-first.center.x,dz=last.center.z-first.center.z,d=simulationMath.hypot(dx,dz)
+      if(d<EPS||Math.abs(dz)>EPS)continue // Current compiler emits straight X-axis stairs.
+      const direction=dx/d
+      const a=on(from,{x:first.center.x-direction*(first.size.x/2+margin),y:0,z:first.center.z})
+      const b=on(to,{x:last.center.x+direction*(last.size.x/2+margin),y:0,z:last.center.z})
+      if(!a||!b||!clearOn(a,a)||!clearOn(b,b))continue
+      let previousY=a.y,previousEdge=first.center.x-direction*first.size.x/2,valid=true
+      const points:SupportWaypoint[]=[a]
+      for(const s of steps){
+        const p=on(s!.id,s!.center)!,rise=p.y-previousY
+        if(rise<=0||rise>profile.rules.player.movement.autostepMaxHeight-2*c.skinWidth||s!.size.x<profile.rules.player.movement.autostepMinWidth||Math.abs(s!.center.x-direction*s!.size.x/2-previousEdge)>EPS||Math.abs(s!.center.z-first.center.z)>EPS)valid=false
+        previousY=p.y;previousEdge=s!.center.x+direction*s!.size.x/2;points.push(p)
+      }
+      points.push(b)
+      if(Math.abs(previousY-b.y)>EPS)valid=false
+      const ignored=[from,to,...descriptor.surfaceIds]
+      if(!valid||points.slice(1).some((p,i)=>solids.some(box=>!ignored.includes(box.id)&&intersects(points[i]!,p,box,radius,height))))continue
+      const width=Math.min(...steps.map(s=>s!.size.z))
+      transitions.push({id:link.id,surfaceId:link.id,surfaceIds:descriptor.surfaceIds,kind:'stairs',width,points})
+      transitionEdges.push({a:add(a),b:add(b),points});continue
+    }
+    const ramp=supports.find(s=>s.id===descriptor.surfaceIds[0]&&s.semantics?.classification==='ramp')
     if(!ramp||!from||!to||from===to)continue
     const q=ramp.orientation
     const along={x:1-2*(q.y*q.y+q.z*q.z),y:2*(q.x*q.y+q.z*q.w),z:2*(q.x*q.z-q.y*q.w)}
@@ -109,7 +136,7 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
     const points:SupportWaypoint[]=[a,...ends.map(p=>({...p,supportSurfaceId:ramp.id})),b]
     // An explicit transition still must be clear of every OTHER solid.
     if(points.slice(1).some((p,i)=>solids.some(box=>![ramp.id,from,to].includes(box.id)&&intersects(points[i]!,p,box,radius,height))))continue
-    transitions.push({id:link.id,surfaceId:ramp.id,points})
+    transitions.push({id:link.id,surfaceId:ramp.id,surfaceIds:[ramp.id],kind:'ramp',width:ramp.size.z,points})
     transitionEdges.push({a:add(a),b:add(b),points})
   }
   const edges=nodes.map(()=>[] as Array<{to:number;cost:number;points:SupportWaypoint[]}>)
@@ -132,13 +159,12 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
       if(clear(a,b))return true
       const start=resolve(a),goal=resolve(target)
       if(!start||!goal)return false
-      const transition=transitions.find(t=>t.surfaceId===start.supportSurfaceId||t.surfaceId===goal.supportSurfaceId||t.points.some(p=>p.supportSurfaceId===goal.supportSurfaceId&&length(p,goal)<EPS))
+      const transition=transitions.find(t=>t.surfaceIds.includes(start.supportSurfaceId)||t.surfaceIds.includes(goal.supportSurfaceId)||t.points.some(p=>p.supportSurfaceId===goal.supportSurfaceId&&length(p,goal)<EPS))
       if(!transition)return false
       const first=transition.points[0]!,last=transition.points.at(-1)!,dx=last.x-first.x,dz=last.z-first.z,d=simulationMath.hypot(dx,dz)
-      const ramp=supports.find(s=>s.id===transition.surfaceId)!
       const progress=((b.x-first.x)*dx+(b.z-first.z)*dz)/(d*d)
       const lateral=Math.abs((b.x-first.x)*dz-(b.z-first.z)*dx)/d
-      if(progress<0||progress>1||lateral>ramp.size.z/2-radius-c.skinWidth)return false
+      if(progress<0||progress>1||lateral>transition.width/2-radius-c.skinWidth)return false
       const ignored=transition.points.map(p=>p.supportSurfaceId)
       return !solids.some(box=>!ignored.includes(box.id)&&intersects(a,b,box,radius,height))
     },
@@ -148,23 +174,26 @@ export function layerNavigation(arena: ArenaDefinition,profile: ValidatedGameDes
       const costs=nodes.map(p=>clearOn(start,p)?length(start,p):Infinity)
       const paths=nodes.map(p=>[p]);const visited=new Set<number>();let best:SupportWaypoint[]=[];let bestCost=Infinity
       // Resume on a selected ramp after replanning, without inventing a cross-layer edge.
-      for(const t of transitions)if(start.supportSurfaceId===t.surfaceId)for(const sequence of [t.points,[...t.points].reverse()]) {
+      for(const t of transitions)if(t.surfaceIds.includes(start.supportSurfaceId))for(const sequence of [t.points,[...t.points].reverse()]) {
         const landing=sequence.at(-1)!,index=keys.get(`${landing.supportSurfaceId}:${landing.x}:${landing.y}:${landing.z}`)!
-        const exit=sequence[sequence.length-2]!
-        costs[index]=length(start,exit)+length(exit,landing);paths[index]=[exit,landing]
+        const currentIndex=sequence.findIndex(p=>p.supportSurfaceId===start.supportSurfaceId)
+        const remaining=sequence.slice(currentIndex+1)
+        costs[index]=remaining.reduce((sum,p,i)=>sum+length(i?remaining[i-1]!:start,p),0);paths[index]=remaining
       }
       for(let step=0;step<nodes.length;step++) {
         let i=-1,cost=Infinity
         for(let j=0;j<nodes.length;j++)if(!visited.has(j)&&costs[j]!<cost){i=j;cost=costs[j]!}
         if(i<0||cost>=bestCost)break
         visited.add(i)
-        if(cost+length(nodes[i]!,goal)<bestCost&&clearOn(nodes[i]!,goal)){best=[...paths[i]!,goal];bestCost=cost+length(nodes[i]!,goal)}
+        if(cost+length(nodes[i]!,goal)<bestCost&&clearOn(nodes[i]!,goal)){best=arena.schemaVersion>=6&&length(nodes[i]!,goal)<EPS?[...paths[i]!]:[...paths[i]!,goal];bestCost=cost+length(nodes[i]!,goal)}
         // A moving target may stand inside a declared ramp, rather than at its exit.
-        for(const t of transitions)if(goal.supportSurfaceId===t.surfaceId)for(const sequence of [t.points,[...t.points].reverse()]) {
+        for(const t of transitions)if(t.surfaceIds.includes(goal.supportSurfaceId))for(const sequence of [t.points,[...t.points].reverse()]) {
           const landing=sequence[0]!,entry=sequence[1]!
           if(length(nodes[i]!,landing)>EPS)continue
-          const total=cost+length(landing,entry)+length(entry,goal)
-          if(total<bestCost){best=[...paths[i]!,entry,goal];bestCost=total}
+          const targetIndex=sequence.findIndex(p=>p.supportSurfaceId===goal.supportSurfaceId)
+          const remaining=t.kind==='stairs'?[...sequence.slice(1,targetIndex),goal]:[entry,goal]
+          const total=cost+remaining.reduce((sum,p,i)=>sum+length(i?remaining[i-1]!:landing,p),0)
+          if(total<bestCost){best=[...paths[i]!,...remaining];bestCost=total}
         }
         for(const e of edges[i]!)if(cost+e.cost<costs[e.to]!){costs[e.to]=cost+e.cost;paths[e.to]=[...paths[i]!,...e.points]}
       }

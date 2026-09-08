@@ -3,7 +3,8 @@ import { rampBox } from './elevation'
 import type { GameDesignProfile, ValidatedGameDesignProfile } from '../profiles'
 import type { ContentHash } from '../core/canonical'
 
-export const ROOM_GENERATOR_VERSION='arena-rooms-v1'
+export const ROOM_GENERATOR_VERSION='arena-rooms-v2'
+export const isRoomArena=(arena:{generatorVersion:string})=>['arena-rooms-v1',ROOM_GENERATOR_VERSION].includes(arena.generatorVersion)
 const recipes=['wide-bypass-hall','bypass-gallery','fire-balconies','dual-combat-decks','basement-service-loop'] as const
 export interface RoomPlan {id:string; layer:number; x:number; z:number; width:number; depth:number; floor:number; height:number; kind:'room'|'hall'|'tunnel'}
 const EPS=1e-6 // Shared-face numerical tolerance, not a layout tuning value.
@@ -13,6 +14,7 @@ function box(id:string,x:number,y:number,z:number,w:number,h:number,d:number,kin
 
 /** A bounded graph catalogue, compiled before collision and presentation consume it. */
 export function compileRoomArena(size:ArenaSize,seed:number,profile:GameDesignProfile|ValidatedGameDesignProfile){
+ const stairsEnabled=Number(profile.schemaVersion)>=10
  const r=profile.rules.arenaGenerator.presets[size],t=r.wallThicknessMeters,slab=r.slabThicknessMeters
  const pool=recipes.flatMap((id,index)=>Array.from({length:index===1||index===2?r.openLayoutWeight:r.closedLayoutWeight},()=>id))
  const recipe=pool[seed%pool.length]!,variant=(Math.floor(seed/pool.length)+seed%2+recipes.indexOf(recipe))%r.minimumStructuralVariants
@@ -23,7 +25,7 @@ export function compileRoomArena(size:ArenaSize,seed:number,profile:GameDesignPr
  const rows=[(d-mid)/2+corridorZ,mid,(d-mid)/2-corridorZ],zs=[-d/2+rows[0]!/2,corridorZ,d/2-rows[2]!/2]
  const rise=r.hallCeilingMeters+r.ceilingVariationMeters+2*slab
  const apron=r.rampLengthMeters+r.corridorWidthMeters+2*t,outer=w/2+apron
- const payload:ArenaDefinitionPayload={schemaVersion:5,id:`procedural-${size}-${seed.toString(16).padStart(8,'0')}`,seed,size,generatorVersion:ROOM_GENERATOR_VERSION,generatorProfile:{id:profile.id,revision:profile.revision,contentHash:profile.contentHash as ContentHash},recipeId:recipe,regions:[],links:[],surfaces:[],spawnRegions:[],spawnAnchors:[],attachments:[]}
+ const payload:ArenaDefinitionPayload={schemaVersion:stairsEnabled?6:5,id:`procedural-${size}-${seed.toString(16).padStart(8,'0')}`,seed,size,generatorVersion:stairsEnabled?ROOM_GENERATOR_VERSION:'arena-rooms-v1',generatorProfile:{id:profile.id,revision:profile.revision,contentHash:profile.contentHash as ContentHash},recipeId:recipe,regions:[],links:[],surfaces:[],spawnRegions:[],spawnAnchors:[],attachments:[]}
  const surfaces=payload.surfaces,plans:RoomPlan[]=[],roomAt=new Map<string,RoomPlan>()
  for(let layer=0;layer<2;layer++)for(let row=0;row<3;row++)for(let col=0;col<columns;col++){
   const middle=col===(columns-1)/2&&row===1
@@ -88,9 +90,22 @@ export function compileRoomArena(size:ArenaSize,seed:number,profile:GameDesignPr
   const lowerX=sign*(w/2+r.rampLengthMeters+r.corridorWidthMeters/2)
   payload.regions.push({id:lowerId,role:'route',center:{x:lowerX,y:0,z:corridorZ},size:{x:r.corridorWidthMeters,y:sideHeight,z:r.corridorWidthMeters},supportSurfaceId:'floor'})
   const ramp=sign<0?rampBox(`ramp-${side}-0`,-w/2-r.rampLengthMeters,-w/2,0,rise,corridorZ,r.rampWidthMeters,slab):rampBox(`ramp-${side}-0`,w/2,w/2+r.rampLengthMeters,rise,0,corridorZ,r.rampWidthMeters,slab)
-  surfaces.push(ramp)
+  const linkId=`link-upper-${side}`
+  let hash=2166136261 // FNV-1a uint32: stable selection, independent of match RNG.
+  for(const ch of `${seed}/${linkId}`)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0
+  const stairs=stairsEnabled&&hash/0x100000000<r.stairsProbability
+  const stepIds:string[]=[]
+  if(stairs){
+    const count=Math.ceil(rise/r.stairMaximumRiseMeters),tread=r.rampLengthMeters/count
+    if(tread<r.stairMinimumTreadMeters)throw new RangeError('Stair tread violates profile clearance')
+    for(let i=0;i<count;i++){
+      const height=(i+1)*rise/count,id=`stair-${side}-${String(i).padStart(3,'0')}`
+      const x=sign*(w/2+r.rampLengthMeters-(i+.5)*tread)
+      surfaces.push(box(id,x,height/2,corridorZ,tread,height,r.rampWidthMeters,'floor','stairs'));stepIds.push(id)
+    }
+  }else surfaces.push(ramp)
   for(const edge of [-1,1])wall(`room-ramp-wall:${side}:${edge}`,'x',corridorZ+edge*(r.rampWidthMeters+t)/2,Math.min(sign*w/2,sign*(w/2+r.rampLengthMeters)),Math.max(sign*w/2,sign*(w/2+r.rampLengthMeters)),0,sideHeight,'tunnel')
-  payload.links.push({id:`link-upper-${side}`,fromRegionId:lowerId,toRegionId:upper.id,exposure:'covered',transitionSurfaceId:ramp.id})
+  payload.links.push({id:linkId,fromRegionId:lowerId,toRegionId:upper.id,exposure:'covered',...(stairsEnabled?{transition:{kind:stairs?'stairs' as const:'ramp' as const,surfaceIds:stairs?stepIds:[ramp.id]}}:{transitionSurfaceId:ramp.id})})
   for(const row of [0,2]){
    const a=roomAt.get(`0/${row}/${sign<0?0:columns-1}`)!
    payload.links.push({id:`side:${side}:${row}`,fromRegionId:a.id,toRegionId:lowerId,exposure:'covered'})

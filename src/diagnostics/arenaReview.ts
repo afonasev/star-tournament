@@ -2,23 +2,35 @@ import { arenaDoorwayGaps } from '../arena/doorwayGaps'
 // Dev-only visual fixture. Uses the shipping renderer; never claims physical input acceptance.
 import { requireProceduralArena } from '../arena'
 import { arenaFloorHeight } from '../arena/elevation'
+import { arenaNavigation } from '../ai/navigation'
 import { PROTOTYPE_V1_PROFILE as profile } from '../profiles'
 import { COMBAT_SLICE_SCENARIO_V1 as scenario } from '../scenario'
 import { prepareArenaGlbAssets } from '../render/arenaGlbAssets'
 import { createFirstPersonRenderer } from '../render/firstPersonRenderer'
 import { GRAPHICS_QUALITY_V1 } from '../presentation'
+import {createRapierCollisionWorld} from '../collision/rapierWorld'
+import {createAimProjectionQuery} from '../runtime/aimProjection'
+import {createInitialSimulationSnapshot,parseSimulationSnapshot,localParticipant,type SimulationSnapshot} from '../simulation/playableSnapshot'
+import {stepPlayableSimulation,livingParticipantCollisionCapsules} from '../simulation/playableStep'
+import {createActionFrame} from '../input/actionFrame'
+import {createMatchConfiguration,DEFAULT_MATCH_CONFIGURATION} from '../match'
 
 const params=new URLSearchParams(location.search)
 const seed=Number(params.get('seed')??1)
 const size=params.get('size')==='large'?'large':params.get('size')==='small'?'small':'medium'
 const arena=requireProceduralArena({size,seed})
 const assets=await prepareArenaGlbAssets()
-const renderer=createFirstPersonRenderer({container:document.querySelector('#scene')!,arena,scenario,profile,pixelBudget:2073600,arenaGlbAssets:assets,graphicsQuality:GRAPHICS_QUALITY_V1.high})
+const c=profile.rules.player.capsule,m=profile.rules.player.movement
+const world=await createRapierCollisionWorld(arena,[],{skinWidth:c.skinWidth,autostepMaxHeight:m.autostepMaxHeight,autostepMinWidth:m.autostepMinWidth,snapToGroundDistance:m.snapToGroundDistance,maxSlopeClimbDegrees:m.maxSlopeClimbDegrees,minSlopeSlideDegrees:m.minSlopeSlideDegrees})
+const reticle=document.createElement('div');reticle.textContent='+';reticle.setAttribute('aria-label','Диагностический прицел');reticle.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);color:white;font:24px monospace;pointer-events:none';document.body.append(reticle)
+const renderer=createFirstPersonRenderer({container:document.querySelector('#scene')!,arena,scenario,profile,pixelBudget:2073600,arenaGlbAssets:assets,graphicsQuality:GRAPHICS_QUALITY_V1.high,aimQuery:createAimProjectionQuery(profile,world),onAimProjection:p=>{reticle.style.left=`${p.x*100}%`;reticle.style.top=`${p.y*100}%`}})
 const selector=document.querySelector<HTMLSelectElement>('#view')!
+const transitions=arenaNavigation(arena,profile).transitions??[]
+for(const t of transitions)for(const direction of ['up','down'])selector.add(new Option(`${t.kind==='stairs'?'Лестница':'Пандус'} ${t.id} · ${direction}`,`transition:${t.id}:${direction}`))
 for(const [value,label] of [['upper','Верхняя опора'],['lower','Нижняя опора']])selector.add(new Option(label,value))
 const rooms=arena.regions.filter(r=>r.id.startsWith('room-')||r.id==='combat-center'||r.id==='combat-upper')
 const plan=document.createElement('div');plan.style.cssText='position:fixed;inset:100px 20px 20px;background:#101b2c;display:none';document.body.append(plan)
-if(arena.generatorVersion==='arena-rooms-v1'){
+if(arena.generatorVersion.startsWith('arena-rooms-v')){
  for(const [value,label] of [['plan-lower','План нижнего этажа'],['plan-upper','План верхнего этажа']])selector.add(new Option(label,value))
  for(const r of rooms)selector.add(new Option(`${r.supportSurfaceId==='floor'?'Низ':'Верх'} · ${r.role==='route'?'Тоннель':'Комната'} · ${r.id} · потолок ${r.size.y.toFixed(2)} м`,`room:${r.id}`))
 }
@@ -50,10 +62,18 @@ function render() {
     target={x:floor.size.x/2,y:supportY,z:0}
   }
   if(view==='ramp') {
-    const ramp=arena.surfaces.find(s=>s.id==='ramp-west-0')??arena.surfaces.find(s=>s.semantics?.classification==='ramp')!
+    const ramp=arena.surfaces.find(s=>s.id==='ramp-west-0')??arena.surfaces.find(s=>s.semantics?.classification==='ramp')
     const floor=arena.surfaces.find(s=>s.id==='floor')!
+    if(ramp){
     x=ramp.center.x-profile.rules.arenaGenerator.presets[size].rampLengthMeters/2-profile.rules.arenaGenerator.presets[size].corridorWidthMeters/2;z=ramp.center.z;supportY=floor.center.y+floor.size.y/2
     target={x:ramp.center.x,y:ramp.center.y+profile.rules.player.eyeHeight,z:ramp.center.z}
+    }
+  }
+  if(view.startsWith('transition:')){
+    const t=transitions.find(t=>view===`transition:${t.id}:up`||view===`transition:${t.id}:down`)!
+    const reverse=view.endsWith(':down'),a=reverse?t.points.at(-1)!:t.points[0]!,b=reverse?t.points[1]!:t.points.at(-2)!
+    x=a.x;z=a.z;supportY=a.y
+    target={x:b.x,y:b.y+profile.rules.player.eyeHeight,z:b.z}
   }
   if(subject) {
     // A square barrier inherits its facing from the adjacent room back wall.
@@ -87,5 +107,34 @@ function render() {
   document.querySelector('#status')!.textContent=`VISUAL FIXTURE · ${arena.recipeId} · ${size} · seed ${seed} · ${arena.contentHash} · ${view} · muted`
 }
 selector.addEventListener('change',render)
+let walking:SimulationSnapshot|undefined,animation=0
+const {contentHash:_hash,...base}=DEFAULT_MATCH_CONFIGURATION
+const configuration=createMatchConfiguration({...base,arenaSeed:seed,arenaSize:size})
+for(const [label,finish] of [['Пройти до середины',false],['Завершить проход',true]] as const){
+ const button=document.createElement('button');button.textContent=label;selector.parentElement!.append(button)
+ button.addEventListener('click',()=>{
+  cancelAnimationFrame(animation)
+  const t=transitions.find(t=>selector.value===`transition:${t.id}:up`||selector.value===`transition:${t.id}:down`)
+  if(!t)return
+  const reverse=selector.value.endsWith(':down'),a=reverse?t.points.at(-1)!:t.points[0]!,b=reverse?t.points[0]!:t.points.at(-1)!,sign=Math.sign(b.x-a.x)
+  if(!finish||!walking){
+   const initial=createInitialSimulationSnapshot({rngSeed:seed,arena,configuration})
+   walking=parseSimulationSnapshot({...initial,participants:initial.participants.map(p=>p.kind==='local-seat'?{...p,position:{x:a.x,y:a.y+c.radius+c.halfHeight+c.skinWidth,z:a.z},grounded:true,yaw:sign*Math.PI/2,velocity:{x:0,y:0,z:0}}:{...p,alive:false,health:0,deathTick:0,respawnTick:null})},configuration)
+  }
+  const goalX=finish?b.x:(a.x+b.x)/2
+  function advance(){
+   const before=localParticipant(walking!)
+   world.projectCapsules(livingParticipantCollisionCapsules(walking!,profile))
+   walking=stepPlayableSimulation(walking!,createActionFrame(walking!.tick+1,[{participantId:before.semanticId,actionId:'move-forward',value:1}]),world,profile,configuration,arena)
+   renderer.render(walking)
+   const p=localParticipant(walking),arrived=sign*(p.position.x-goalX)>=0
+   document.querySelector('#status')!.textContent=`SIMULATION WALK · ${size} · seed ${seed} · ${t!.kind} · ${reverse?'down':'up'} · tick ${walking.tick} · feet ${(p.position.y-c.radius-c.halfHeight).toFixed(3)} · ${arrived?'ARRIVED':'RUNNING'} · muted`
+   if(!arrived&&walking.tick<600)animation=requestAnimationFrame(advance)
+  }
+  animation=requestAnimationFrame(advance)
+ })
+}
+selector.addEventListener('change',()=>{cancelAnimationFrame(animation);walking=undefined})
+window.addEventListener('pagehide',()=>{cancelAnimationFrame(animation);world.dispose()},{once:true})
 render()
 window.addEventListener('beforeunload',()=>{renderer.dispose();assets.dispose()})

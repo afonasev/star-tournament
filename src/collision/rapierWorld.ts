@@ -1,6 +1,6 @@
 import type * as Rapier from '@dimforge/rapier3d-deterministic-compat'
 
-import { blocksProjectiles, blocksMovement, validateArenaDefinition, type ArenaDefinition } from '../arena/arenaDefinition'
+import { arenaTransition, blocksProjectiles, blocksMovement, validateArenaDefinition, type ArenaDefinition } from '../arena/arenaDefinition'
 import { contentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 import { initializeCollisionBackend } from './backendInitialization'
@@ -158,6 +158,7 @@ export class RapierCollisionWorld {
   private readonly staticSemanticIdByHandle = new Map<number, string>()
   private readonly participantSemanticIdByHandle = new Map<number, string>()
   private readonly participantBySemanticId = new Map<string, ParticipantRuntime>()
+  private readonly stairBounds: Array<{minimumX:number;maximumX:number;z:number;halfWidth:number}>=[]
 
   constructor(
     private readonly rapier: RapierModule,
@@ -167,6 +168,12 @@ export class RapierCollisionWorld {
     readonly controllerConfiguration: Readonly<CollisionControllerConfiguration>,
   ) {
     const sortedSurfaces = [...arena.surfaces].sort((left, right) => left.id.localeCompare(right.id))
+    for(const link of arena.links){
+      const t=arenaTransition(link)
+      if(t?.kind!=='stairs')continue
+      const steps=t.surfaceIds.map(id=>sortedSurfaces.find(s=>s.id===id)!)
+      this.stairBounds.push({minimumX:Math.min(...steps.map(s=>s.center.x-s.size.x/2)),maximumX:Math.max(...steps.map(s=>s.center.x+s.size.x/2)),z:steps[0]!.center.z,halfWidth:Math.min(...steps.map(s=>s.size.z/2))})
+    }
     this.staticGeometryHash = contentHash(sortedSurfaces)
     this.controllerConfigurationHash = contentHash(controllerConfiguration)
 
@@ -322,7 +329,7 @@ export class RapierCollisionWorld {
         &&Math.abs(runtime.projection.position.x+candidate.x-s.center.x)<s.size.x/2-runtime.projection.radius
         &&Math.abs(runtime.projection.position.z+candidate.z-s.center.z)<s.size.z/2-runtime.projection.radius
     })
-    const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2','arena-rooms-v1'].includes(this.arena.generatorVersion)
+    const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2','arena-rooms-v1','arena-rooms-v2'].includes(this.arena.generatorVersion)
     const penetratesSupport=layeredGenerator&&this.controllerConfiguration.snapToGroundDistance>0&&movement.y<desiredTranslation.y-skin&&crossesSupport(movement)
     if(penetratesSupport){
       runtime.controller.disableSnapToGround()
@@ -332,12 +339,8 @@ export class RapierCollisionWorld {
         if(crossesSupport(movement))throw new CollisionContractError(COLLISION_ERROR_CODES.invalidData,'KCC movement crosses its existing support after snap retry')
       } finally {runtime.controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)}
     }
-    const position = {
-      x: runtime.projection.position.x + movement.x,
-      y: runtime.projection.position.y + movement.y,
-      z: runtime.projection.position.z + movement.z,
-    }
-    const contacts = Array.from({ length: runtime.controller.numComputedCollisions() }, (_, index) => {
+    let grounded=runtime.controller.computedGrounded()
+    let contacts = Array.from({ length: runtime.controller.numComputedCollisions() }, (_, index) => {
       const collision = runtime.controller.computedCollision(index)
       const hitId = collision?.collider === null || collision === null
         ? undefined
@@ -351,9 +354,72 @@ export class RapierCollisionWorld {
       }
     }).filter((contact): contact is NonNullable<typeof contact> => contact !== undefined)
 
+    // Rapier's autostep can stall on a real riser at small analog displacement.
+    // Retry a fully swept step, never increasing requested XZ or moving through a blocker.
+    const horizontal=Math.hypot(desiredTranslation.x,desiredTranslation.z)
+    const padding=runtime.projection.radius+skin,pose=runtime.projection.position
+    const nearStairs=this.stairBounds.some(b=>pose.x>=b.minimumX-padding&&pose.x<=b.maximumX+padding&&Math.abs(pose.z-b.z)<=b.halfWidth-padding)
+    if(this.arena.schemaVersion>=6&&desiredTranslation.y<=0&&horizontal>0&&nearStairs){
+      const p=runtime.projection.position,q={x:0,y:0,z:0,w:1}
+      const cast=(at:CollisionVector3,delta:CollisionVector3)=>this.world.castShape(at,q,delta,runtime.collider.shape,skin,1,false,undefined,undefined,runtime.collider,undefined,acceptsCollider)
+      const support=cast(p,{x:0,y:-skin*2,z:0})
+      const supportId=support?this.semanticIdForHandle(support.collider.handle):undefined
+      const link=this.arena.links.find(l=>{
+        const t=arenaTransition(l)
+        if(t?.kind!=='stairs')return false
+        const ids=[this.arena.regions.find(r=>r.id===l.fromRegionId)?.supportSurfaceId,...t.surfaceIds,this.arena.regions.find(r=>r.id===l.toRegionId)?.supportSurfaceId]
+        const index=ids.indexOf(supportId)
+        const first=this.arena.surfaces.find(s=>s.id===t.surfaceIds[0])!,last=this.arena.surfaces.find(s=>s.id===t.surfaceIds.at(-1))!
+        const descending=desiredTranslation.x*(last.center.x-first.center.x)<0
+        return index>=0&&((descending&&index>0)||contacts.some(hit=>t.surfaceIds.includes(hit.semanticId)&&Math.abs(ids.indexOf(hit.semanticId)-index)<=1))
+      })
+      // Numerical normal tolerance rejects grazing side contacts, not a slope rule.
+      if(link&&support&&support.normal1.y>1e-3){
+        const t=arenaTransition(link)!,first=this.arena.surfaces.find(s=>s.id===t.surfaceIds[0])!,last=this.arena.surfaces.find(s=>s.id===t.surfaceIds.at(-1))!
+        const radius=runtime.projection.radius,laneWidth=Math.min(first.size.z,last.size.z)/2-radius-skin
+        // Current compiler's stairs run along X. Side entry must use ordinary collision.
+        const minimumX=Math.min(first.center.x-first.size.x/2,last.center.x-last.size.x/2)-radius-skin
+        const maximumX=Math.max(first.center.x+first.size.x/2,last.center.x+last.size.x/2)+radius+skin
+        const inLane=p.x>=minimumX&&p.x<=maximumX&&Math.abs(p.z-first.center.z)<=laneWidth&&Math.abs(p.z+desiredTranslation.z-first.center.z)<=laneWidth
+        if(inLane){
+          const maxUp=this.controllerConfiguration.autostepMaxHeight
+          const ids=[this.arena.regions.find(r=>r.id===link.fromRegionId)?.supportSurfaceId,...t.surfaceIds,this.arena.regions.find(r=>r.id===link.toRegionId)?.supportSurfaceId]
+          const descending=desiredTranslation.x*(last.center.x-first.center.x)<0
+          if(descending){
+            // Only the neighbouring declared tread may retain contact on descent.
+            // XZ is the ordinary KCC result, so walls and capsules keep their response.
+            const end={x:p.x+movement.x,y:p.y+movement.y,z:p.z+movement.z}
+            const landing=cast(end,{x:0,y:-maxUp,z:0}),id=landing?this.semanticIdForHandle(landing.collider.handle):undefined
+            const index=ids.indexOf(id),previous=ids.indexOf(supportId)
+            if(landing&&id&&index>=0&&(index===previous||index===previous-1)&&landing.normal1.y>0){
+              const dy=movement.y-maxUp*landing.time_of_impact
+              // Keep KCC's numerically stable contact when no extra snap is needed.
+              if(dy>=-maxUp&&dy<movement.y-skin){movement={x:movement.x,y:dy,z:movement.z};grounded=true;contacts=[{semanticId:id,distance:landing.time_of_impact,point:landing.witness1,normal:landing.normal1}]}
+            }
+          }else if(movement.x*desiredTranslation.x+movement.z*desiredTranslation.z<horizontal*horizontal-Number.EPSILON){
+          const ceiling=cast(p,{x:0,y:maxUp,z:0}),up=maxUp*(ceiling?.time_of_impact??1)
+          const raised={x:p.x,y:p.y+up,z:p.z},across={x:desiredTranslation.x,y:0,z:desiredTranslation.z}
+          if(up>skin&&!cast(raised,across)){
+            const end={x:p.x+across.x,y:raised.y,z:p.z+across.z},down=up+skin*2
+            const landing=cast(end,{x:0,y:-down,z:0}),landingId=landing?this.semanticIdForHandle(landing.collider.handle):undefined
+            const ids=[this.arena.regions.find(r=>r.id===link.fromRegionId)?.supportSurfaceId,...t.surfaceIds,this.arena.regions.find(r=>r.id===link.toRegionId)?.supportSurfaceId]
+            if(landing&&landingId&&ids.includes(landingId)&&Math.abs(ids.indexOf(landingId)-ids.indexOf(supportId))<=1){
+              const dy=up-down*landing.time_of_impact
+              if(dy>=-skin*2&&dy<=maxUp&&landing.normal1.y>0){
+                movement={x:across.x,y:dy,z:across.z};grounded=true
+                contacts=[{semanticId:landingId,distance:landing.time_of_impact,point:landing.witness1,normal:landing.normal1}]
+              }
+            }
+          }
+          }
+        }
+      }
+    }
+    const position={x:runtime.projection.position.x+movement.x,y:runtime.projection.position.y+movement.y,z:runtime.projection.position.z+movement.z}
+
     const result = parseCollisionCapsuleMovementResult({
       position,
-      grounded: runtime.controller.computedGrounded(),
+      grounded,
       contacts,
     })
     runtime.collider.setTranslation(vector(result.position))

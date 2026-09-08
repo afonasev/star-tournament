@@ -11,6 +11,7 @@ import { livingParticipantCollisionCapsules, stepPlayableSimulation } from '../s
 import { createPlayableSimulationReplay } from '../simulation/playableReplay'
 import { distance } from './navigation'
 import { arenaSupportHeight } from '../arena/elevation'
+import { arenaTransition } from '../arena/arenaDefinition'
 import { BOT_AI_VERSION } from './state'
 import { AI_EVALUATION_V1 } from './evaluation'
 export { AI_EVALUATION_V1, wilsonInterval } from './evaluation'
@@ -51,7 +52,11 @@ export async function runAiMatch(configuration:MatchConfiguration,tickBudget:num
             .sort((a,b)=>Math.abs(a.y-feet)-Math.abs(b.y-feet)||a.id.localeCompare(b.id,'en'))[0]?.id
           if(support){
             if(!metric.visitedSupportIds.includes(support)){metric.visitedSupportIds.push(support);metric.visitedSupportIds.sort()}
-            if(lastSupport.get(metric.id)!==support&&runner.arena.links.some(l=>l.transitionSurfaceId===support))metric.transitionVisits[support]=(metric.transitionVisits[support]??0)+1
+            const transition=runner.arena.links.find(l=>arenaTransition(l)?.surfaceIds.includes(support))
+            if(transition&&!arenaTransition(transition)!.surfaceIds.includes(lastSupport.get(metric.id)??'')){
+              const key=transition.transition?.kind==='stairs'?transition.id:support
+              metric.transitionVisits[key]=(metric.transitionVisits[key]??0)+1
+            }
             lastSupport.set(metric.id,support)
           }
         }

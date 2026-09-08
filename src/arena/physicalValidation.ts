@@ -4,7 +4,7 @@ import type { SupportWaypoint } from '../ai/layerNavigation'
 import { createRapierCollisionWorld } from '../collision/rapierWorld'
 import type { ValidatedGameDesignProfile } from '../profiles'
 import { arenaSupportHeight } from './elevation'
-import type { ArenaDefinition, ArenaVector3 } from './arenaDefinition'
+import { arenaTransition, type ArenaDefinition, type ArenaVector3 } from './arenaDefinition'
 
 const completed = new Set<string>()
 /** Disposable derived worlds never advance match RNG/state. */
@@ -14,8 +14,10 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
   if (!arena.recipeId || completed.has(key)) return
   const c=profile.rules.player.capsule,m=profile.rules.player.movement
   const nav=arenaNavigation(arena,profile)
+  const stairSupports=new Map<string,string[]>()
+  for(const t of nav.transitions??[])if(t.kind==='stairs')for(const id of t.surfaceIds)stairSupports.set(id,[...new Set(t.points.map(p=>p.supportSurfaceId))])
   const verifySupport=(id:string,point:ArenaVector3,support:string|undefined)=>{
-    if(arena.schemaVersion===5&&!support)throw new Error(`Missing support: ${id}`)
+    if(arena.schemaVersion>=5&&!support)throw new Error(`Missing support: ${id}`)
     if(support){const y=arenaSupportHeight(arena,support,point.x,point.z)
       if(y===undefined||Math.abs(y-point.y)>1e-6)throw new Error(`Declared support mismatch: ${id}/${support}`)}
   }
@@ -40,21 +42,33 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
       }
       position={...movement.position}
       const support=(target as Partial<SupportWaypoint>).supportSurfaceId
+      verifySupport(id,target,support)
       const surface=arena.surfaces.find(s=>s.id===support)
       const ny=surface?1-2*(surface.orientation.x**2+surface.orientation.z**2):1
       const tangent=c.radius*(1/ny-1)
-      if(Math.hypot(target.x-position.x,target.z-position.z)>stride*2||!movement.grounded||Math.abs(position.y-offset-target.y)>tangent+c.skinWidth*4)
+      const stair=stairSupports.get(support??'')
+      // At a step edge the lower hemisphere can contact the NEXT tread before
+      // its centre enters that tread. Check its exact sphere/box support envelope.
+      const envelope=stair?.map(id=>{
+        const s=arena.surfaces.find(s=>s.id===id)!
+        const dx=Math.max(0,Math.abs(position.x-s.center.x)-s.size.x/2),dz=Math.max(0,Math.abs(position.z-s.center.z)-s.size.z/2)
+        const square=(c.radius+c.skinWidth)**2-dx*dx-dz*dz
+        return {id,y:square>=0?s.center.y+s.size.y/2-c.radius+Math.sqrt(square):-Infinity}
+      }).sort((a,b)=>b.y-a.y||a.id.localeCompare(b.id))[0]
+      const expectedY=envelope?.y??target.y
+      if(Math.hypot(target.x-position.x,target.z-position.z)>stride*2||!movement.grounded||Math.abs(position.y-offset-expectedY)>tangent+c.skinWidth*4)
         throw new Error(`Capsule route blocked: ${arena.size}/${arena.seed}/${id}/target=${JSON.stringify(target)}/at=${JSON.stringify(position)}/grounded=${movement.grounded}/contacts=${movement.contacts.map(c=>c.semanticId)}`)
       // Rapier shape intersection includes touching support within its contact
       // tolerance; support height/contact is checked independently below.
       const supports=world.overlapCapsule({semanticId:'support-probe',position:{...position,y:position.y-tangent-c.skinWidth*2},radius:c.radius,halfHeight:c.halfHeight},[capsuleId])
-        .filter(hit=>{const y=arenaSupportHeight(arena,hit.semanticId,target.x,target.z);return y!==undefined&&Math.abs(y-target.y)<=c.skinWidth*2}).map(hit=>hit.semanticId)
+        .filter(hit=>{const y=arenaSupportHeight(arena,hit.semanticId,target.x,target.z);return (y!==undefined&&Math.abs(y-target.y)<=c.skinWidth*2)||(stair?.includes(hit.semanticId)&&Math.abs(position.y-offset-expectedY)<=c.skinWidth*4)}).map(hit=>hit.semanticId)
       // KCC may retain more than two skins of separation after sliding. Its
       // upward collision contacts are direct support evidence as well as the
       // narrow shape probe; the independent feet-height bound above still applies.
       for(const contact of movement.contacts){
         const y=arenaSupportHeight(arena,contact.semanticId,target.x,target.z)
         if(contact.normal.y>0&&y!==undefined&&Math.abs(y-target.y)<=c.skinWidth*2)supports.push(contact.semanticId)
+        if(stair?.includes(contact.semanticId)&&contact.normal.y>0&&Math.abs(position.y-offset-expectedY)<=c.skinWidth*4)supports.push(contact.semanticId)
       }
       const overlaps=world.overlapCapsule({semanticId:capsuleId,position,radius:c.radius,halfHeight:c.halfHeight},[capsuleId,...supports])
       if(overlaps.length)
@@ -62,6 +76,7 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
       if(support) {
         const identity=supports.some(id=>{
           if(id===support)return true
+          if(stair?.includes(id)&&Math.abs(position.y-offset-expectedY)<=c.skinWidth*4)return true
           // Shared ramp endpoint may be supported by either coincident face.
           const actual=arenaSupportHeight(arena,id,target.x,target.z)
           const expected=arenaSupportHeight(arena,support,target.x,target.z)
@@ -77,7 +92,7 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
       const start=reverse?b:a,goal=reverse?a:b
       walk(`${anchor.id}/${region.id}/${reverse}`,start,nav.route(start,goal))
     }
-    if(arena.generatorVersion==='arena-rooms-v1')for(const link of arena.links.filter(l=>l.id.startsWith('door:'))){
+    if(arena.generatorVersion.startsWith('arena-rooms-v'))for(const link of arena.links.filter(l=>l.id.startsWith('door:'))){
       const a=arena.regions.find(r=>r.id===link.fromRegionId)!,b=arena.regions.find(r=>r.id===link.toRegionId)!
       const dx=b.center.x-a.center.x,dz=b.center.z-a.center.z,d=Math.hypot(dx,dz)
       for(const lane of [-1,0,1])for(const reverse of [false,true]){
@@ -87,13 +102,12 @@ export async function validateArenaPhysicalRoutes(arena:ArenaDefinition,profile:
         walk(`${link.id}/lane=${lane}/reverse=${reverse}`,points[0]!,[points[1]!])
       }
     }
-    for(const link of arena.links.filter(l=>l.transitionSurfaceId)){
+    for(const link of arena.links.filter(l=>arenaTransition(l))){
       const transition=nav.transitions?.find(t=>t.id===link.id)
       if(!transition)throw new Error(`Invalid physical transition endpoints: ${link.id}/${link.transitionSurfaceId}`)
       const first=transition.points[0]!,last=transition.points.at(-1)!
       const dx=last.x-first.x,dz=last.z-first.z,d=Math.hypot(dx,dz)
-      const ramp=arena.surfaces.find(s=>s.id===transition.surfaceId)!
-      if(ramp.size.z+1e-6<6*(c.radius+c.skinWidth))throw new Error(`Transition narrower than three capsules: ${link.id}`)
+      if(transition.width+1e-6<6*(c.radius+c.skinWidth))throw new Error(`Transition narrower than three capsules: ${link.id}`)
       for(const lane of [-1,0,1])for(const reverse of [false,true]){
         const lateral=lane*2*(c.radius+c.skinWidth)
         const points=transition.points.map(p=>({...p,x:p.x-dz/d*lateral,z:p.z+dx/d*lateral}))

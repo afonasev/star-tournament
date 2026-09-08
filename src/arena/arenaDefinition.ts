@@ -1,7 +1,7 @@
 import { canonicalSerialize, contentHash, isContentHash, type ContentHash } from '../core/canonical'
 import { deepFreeze } from '../core/deepFreeze'
 
-export const ARENA_DEFINITION_SCHEMA_VERSION = 5 as const
+export const ARENA_DEFINITION_SCHEMA_VERSION = 6 as const
 export const ARENA_QUATERNION_NORMALIZATION_EPSILON = 1e-6
 export const ARENA_SIZE_IDS = ['small', 'medium', 'large'] as const
 
@@ -58,6 +58,11 @@ export interface ArenaLink {
   toRegionId: string
   exposure: ArenaLinkExposure
   transitionSurfaceId?: string
+  transition?: { kind: 'ramp' | 'stairs'; surfaceIds: string[] }
+}
+
+export function arenaTransition(link:ArenaLink):ArenaLink['transition'] {
+  return link.transition??(link.transitionSurfaceId?{kind:'ramp',surfaceIds:[link.transitionSurfaceId]}:undefined)
 }
 
 export interface ArenaSpawnRegion {
@@ -75,7 +80,7 @@ export interface ArenaSpawnAnchor {
 }
 
 export interface ArenaDefinitionPayload {
-  schemaVersion: 3 | 4 | typeof ARENA_DEFINITION_SCHEMA_VERSION
+  schemaVersion: 3 | 4 | 5 | typeof ARENA_DEFINITION_SCHEMA_VERSION
   id: string
   seed: number
   size: ArenaSize
@@ -211,7 +216,7 @@ export function normalizeArenaPayload(payload: ArenaDefinitionPayload): ArenaDef
     generatorProfile: { ...payload.generatorProfile },
     ...(payload.attachments ? { attachments: normalizeById(payload.attachments).map(entry => ({ ...entry })) } : {}),
     regions: normalizeById(payload.regions).map((entry) => ({ ...entry, center: { ...entry.center }, size: { ...entry.size } })),
-    links: normalizeById(payload.links).map((entry) => ({ ...entry })),
+    links: normalizeById(payload.links).map((entry) => ({ ...entry, ...(entry.transition?{transition:{...entry.transition,surfaceIds:[...entry.transition.surfaceIds]}}:{}) })),
     surfaces: normalizeById(payload.surfaces).map((entry) => ({ ...entry, center: { ...entry.center }, size: { ...entry.size }, orientation: { ...entry.orientation } })),
     spawnRegions: normalizeById(payload.spawnRegions).map((entry) => ({ ...entry, anchorIds: [...entry.anchorIds].sort((a, b) => a.localeCompare(b, 'en')) })),
     spawnAnchors: normalizeById(payload.spawnAnchors).map((entry) => ({ ...entry, position: { ...entry.position } })),
@@ -246,7 +251,7 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
   requiredString(value, 'id', 'id', errors)
   requiredString(value, 'generatorVersion', 'generatorVersion', errors)
   requiredString(value, 'contentHash', 'contentHash', errors)
-  if (value.schemaVersion !== 3 && value.schemaVersion !== 4 && value.schemaVersion !== ARENA_DEFINITION_SCHEMA_VERSION) errors.push({ code: value.schemaVersion === undefined ? 'MISSING_FIELD' : 'UNSUPPORTED_SCHEMA_VERSION', paths: ['schemaVersion'], message: `Поддерживается schemaVersion ${ARENA_DEFINITION_SCHEMA_VERSION}.` })
+  if (value.schemaVersion !== 3 && value.schemaVersion !== 4 && value.schemaVersion !== 5 && value.schemaVersion !== ARENA_DEFINITION_SCHEMA_VERSION) errors.push({ code: value.schemaVersion === undefined ? 'MISSING_FIELD' : 'UNSUPPORTED_SCHEMA_VERSION', paths: ['schemaVersion'], message: `Поддерживается schemaVersion ${ARENA_DEFINITION_SCHEMA_VERSION}.` })
   if (!Number.isSafeInteger(value.seed) || (value.seed as number) < 0 || (value.seed as number) > 0xffffffff) errors.push({ code: 'INVALID_NUMBER', paths: ['seed'], message: 'seed должен быть unsigned 32-bit integer.' })
   if (!ARENA_SIZE_IDS.includes(value.size as ArenaSize)) errors.push({ code: 'INVALID_TYPE', paths: ['size'], message: 'size должен быть small, medium либо large.' })
 
@@ -273,13 +278,21 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
     allowed(entry, ['id', 'role', 'center', 'size', 'supportSurfaceId'], path, errors); requiredString(entry, 'id', `${path}.id`, errors)
     if (entry.role !== 'combat' && entry.role !== 'route' && entry.role !== 'spawn') errors.push({ code: 'INVALID_REGION_ROLE', paths: [`${path}.role`], message: 'Недопустимая role.' })
     vector(entry.center, `${path}.center`, errors); vector(entry.size, `${path}.size`, errors, true)
-    if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION) requiredString(entry, 'supportSurfaceId', `${path}.supportSurfaceId`, errors)
+    if (Number(value.schemaVersion) >= 5) requiredString(entry, 'supportSurfaceId', `${path}.supportSurfaceId`, errors)
   })
   if (Array.isArray(value.links)) value.links.forEach((entry, index) => {
     const path = `links.${index}`
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
-    allowed(entry, ['id', 'fromRegionId', 'toRegionId', 'exposure', 'transitionSurfaceId'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'fromRegionId', `${path}.fromRegionId`, errors); requiredString(entry, 'toRegionId', `${path}.toRegionId`, errors)
+    allowed(entry, ['id', 'fromRegionId', 'toRegionId', 'exposure', 'transitionSurfaceId', 'transition'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'fromRegionId', `${path}.fromRegionId`, errors); requiredString(entry, 'toRegionId', `${path}.toRegionId`, errors)
     if (entry.exposure !== 'open' && entry.exposure !== 'covered') errors.push({ code: 'INVALID_LINK_EXPOSURE', paths: [`${path}.exposure`], message: 'Недопустимая exposure.' })
+    if(entry.transition!==undefined){
+      const t=entry.transition
+      if(value.schemaVersion!==6||entry.transitionSurfaceId!==undefined||!isRecord(t))errors.push({code:'INVALID_REFERENCE',paths:[`${path}.transition`],message:'Explicit transition требует schema 6 и единственный descriptor.'})
+      else {
+        allowed(t,['kind','surfaceIds'],`${path}.transition`,errors)
+        if(!['ramp','stairs'].includes(t.kind as string)||!Array.isArray(t.surfaceIds)||t.surfaceIds.some(id=>typeof id!=='string'||!id)||new Set(t.surfaceIds).size!==t.surfaceIds.length||(t.kind==='ramp'?t.surfaceIds.length!==1:t.surfaceIds.length<2))errors.push({code:'INVALID_REFERENCE',paths:[`${path}.transition`],message:'Invalid transition kind or ordered surface IDs.'})
+      }
+    }
   })
   if (Array.isArray(value.surfaces)) value.surfaces.forEach((entry, index) => {
     const path = `surfaces.${index}`
@@ -312,10 +325,10 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
     const path = `spawnAnchors.${index}`
     if (!isRecord(entry)) { errors.push({ code: 'INVALID_TYPE', paths: [path], message: `${path} должен быть object.` }); return }
     allowed(entry, ['id', 'spawnRegionId', 'position', 'yawRadians', 'supportSurfaceId'], path, errors); requiredString(entry, 'id', `${path}.id`, errors); requiredString(entry, 'spawnRegionId', `${path}.spawnRegionId`, errors); vector(entry.position, `${path}.position`, errors); finite(entry.yawRadians, `${path}.yawRadians`, errors)
-    if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION) requiredString(entry, 'supportSurfaceId', `${path}.supportSurfaceId`, errors)
+    if (Number(value.schemaVersion) >= 5) requiredString(entry, 'supportSurfaceId', `${path}.supportSurfaceId`, errors)
   })
 
-  if (value.recipeId !== undefined && (typeof value.recipeId !== 'string' || !value.recipeId || (value.schemaVersion !== 4 && value.schemaVersion !== 5))) errors.push({ code: 'INVALID_TYPE', paths: ['recipeId'], message: 'Recipe требует schema v4 или v5.' })
+  if (value.recipeId !== undefined && (typeof value.recipeId !== 'string' || !value.recipeId || (value.schemaVersion !== 4 && value.schemaVersion !== 5 && value.schemaVersion !== 6))) errors.push({ code: 'INVALID_TYPE', paths: ['recipeId'], message: 'Recipe требует schema v4 или v5.' })
   if (value.attachments !== undefined) {
     if (!Array.isArray(value.attachments)) errors.push({ code: 'INVALID_TYPE', paths: ['attachments'], message: 'Attachments должны быть массивом.' })
     else {
@@ -340,16 +353,21 @@ export function validateArenaDefinition(value: unknown): ArenaValidationResult {
       if (!regions.has(link.fromRegionId) || !regions.has(link.toRegionId) || link.fromRegionId === link.toRegionId) errors.push({ code: 'INVALID_REFERENCE', paths: [`links.${index}`], message: 'Link references invalid regions.' })
       const from = (value.regions as unknown as ArenaRegion[]).find(region => region.id === link.fromRegionId)
       const to = (value.regions as unknown as ArenaRegion[]).find(region => region.id === link.toRegionId)
-      if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION && from && to && from.supportSurfaceId !== to.supportSurfaceId && (!link.transitionSurfaceId || !supports.has(link.transitionSurfaceId))) errors.push({ code: 'INVALID_REFERENCE', paths: [`links.${index}.transitionSurfaceId`], message: 'Межслойная link требует navigation transition.' })
+      const transition=arenaTransition(link)
+      if(value.schemaVersion===6&&transition&&transition.surfaceIds.some(id=>{
+        const s=(value.surfaces as unknown as ArenaBoxSurface[]).find(s=>s.id===id)
+        return !s||!supports.has(id)||s.semantics?.movement===false||(transition.kind==='ramp'?s.semantics?.classification!=='ramp':s.semantics?.classification!=='floor'||s.orientation.x!==0||s.orientation.y!==0||s.orientation.z!==0)
+      }))errors.push({code:'INVALID_REFERENCE',paths:[`links.${index}.transition`],message:'Transition references invalid support geometry.'})
+      if (Number(value.schemaVersion) >= 5 && from && to && from.supportSurfaceId !== to.supportSurfaceId && (!arenaTransition(link)?.surfaceIds.length || arenaTransition(link)!.surfaceIds.some(id=>!supports.has(id)))) errors.push({ code: 'INVALID_REFERENCE', paths: [`links.${index}.transitionSurfaceId`], message: 'Межслойная link требует navigation transition.' })
     })
     ;(value.spawnRegions as unknown as ArenaSpawnRegion[]).forEach((region, index) => {
       if (!regions.has(region.regionId) || region.anchorIds.some((id) => anchors.get(id)?.spawnRegionId !== region.id)) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnRegions.${index}`], message: 'Spawn region references invalid region/anchors.' })
     })
     ;(value.spawnAnchors as unknown as ArenaSpawnAnchor[]).forEach((anchor, index) => {
       if (!spawnRegions.has(anchor.spawnRegionId)) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnAnchors.${index}.spawnRegionId`], message: 'Unknown spawn region.' })
-      if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION && !supports.has(anchor.supportSurfaceId ?? '')) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnAnchors.${index}.supportSurfaceId`], message: 'Anchor требует navigation support.' })
+      if (Number(value.schemaVersion) >= 5 && !supports.has(anchor.supportSurfaceId ?? '')) errors.push({ code: 'INVALID_REFERENCE', paths: [`spawnAnchors.${index}.supportSurfaceId`], message: 'Anchor требует navigation support.' })
     })
-    if (value.schemaVersion === ARENA_DEFINITION_SCHEMA_VERSION) (value.regions as unknown as ArenaRegion[]).forEach((region, index) => {
+    if (Number(value.schemaVersion) >= 5) (value.regions as unknown as ArenaRegion[]).forEach((region, index) => {
       if (!supports.has(region.supportSurfaceId ?? '')) errors.push({ code: 'INVALID_REFERENCE', paths: [`regions.${index}.supportSurfaceId`], message: 'Region требует navigation support.' })
     })
   }
