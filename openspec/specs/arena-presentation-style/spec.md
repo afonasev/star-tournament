@@ -7,7 +7,7 @@ Capability задаёт наблюдаемый visual language procedural arena:
 ## Requirements
 
 ### Requirement: Clean Future Sport material kit
-Arena renderer SHALL представлять validated одноуровневую `ArenaDefinition` в стиле `clean-future-sport-v1`: versioned `clean-future-sport-glb-v1` architectural kit со светлыми off-white/pale-gray wall bays и buttresses, крупными двухцветными curved portal facades на существующих doorway gaps, тёмным navy-composite floor с широкими segmented route guides и cyan/lime/orange accents для route, doorway и landmark surfaces. Модули MUST разрешаться только через GLB asset manifest. Крупные wall bays и portal facades MUST совпадать с canonical collision shell wall surfaces; мелкие trims, seams, decals, floor route guides и landmark MUST оставаться presentation-only. `clean-future-sport-texture-v1` SHALL использовать бесшовные повторяемые PBR material sets для wall/floor surfaces и atlas-backed decals только для уникальных route markings, sector labels и мелких декоративных знаков. Базовый material contract MUST содержать base color, normal и ORM maps; presentation detail-tier может добавлять detail-normal и decal layers. Материалы, texture variants, decals и detail meshes MUST выводиться только из существующих semantic surface slots, Renderer MUST NOT создавать независимые blocking volumes и они MUST NOT менять collision, navigation, spawn или arena content hash.
+Arena renderer SHALL представлять validated `ArenaDefinition` в стиле `clean-future-sport-v1`: versioned `clean-future-sport-glb-v1` architectural kit со светлыми off-white/pale-gray wall bays и buttresses, крупными двухцветными curved portal facades на существующих doorway gaps, тёмным navy-composite floor с широкими segmented route guides и cyan/lime/orange accents для route, doorway и landmark surfaces. Модули MUST разрешаться только через GLB asset manifest. Крупные wall bays и portal facades MUST совпадать с canonical collision shell wall surfaces; мелкие trims, seams, decals, floor route guides и landmark MUST оставаться presentation-only. `clean-future-sport-texture-v1` SHALL использовать бесшовные повторяемые PBR material sets для wall/floor surfaces и atlas-backed decals только для уникальных route markings, sector labels и мелких декоративных знаков. Базовый material contract MUST содержать base color, normal и ORM maps; presentation detail-tier может добавлять detail-normal и decal layers. Материалы, texture variants, decals и detail meshes MUST выводиться только из существующих semantic surface slots, Renderer MUST NOT создавать независимые blocking volumes и они MUST NOT менять collision, navigation, spawn или arena content hash.
 
 #### Scenario: Совпадение крупной панели и collision
 - **WHEN** крупная panel bay видна на route wall
@@ -84,3 +84,24 @@ Renderer SHALL выводить presentation из semantic layout recipe и surf
 #### Scenario: Совпадение видимого портала с физикой
 - **WHEN** игрок направлен в стойку или дугу видимого портала
 - **THEN** capsule и projectile queries встречают соответствующий canonical solid, а рендер использует тот же authored part contract и transform
+
+### Requirement: Представление локальных потолков
+Renderer SHALL отображать canonical потолки и их нижние поверхности с читаемыми материалами и локальным освещением. Новые карты MUST NOT накрываться единой декоративной коробкой вместо геометрии помещений; прежний общий потолок MAY сохраняться для historical definitions.
+
+#### Scenario: Вид из закрытого верхнего помещения
+- **WHEN** camera находится в закрытой комнате верхнего этажа
+- **THEN** видны собственные стены и потолок этой комнаты, а нижний зал не виден вне объявленных проёмов
+
+### Requirement: Semantic presentation multi-level sectors
+Renderer SHALL выводить hall, gallery, balcony и basement presentation только из canonical semantic sector/support slots. Балконные guards MAY быть movement-only canonical barriers; renderer MUST NOT создавать false routes, collision или projectile occlusion.
+
+#### Scenario: Обзор с балкона
+- **WHEN** camera видит balcony над большим залом
+- **THEN** surface, guard и ramp read остаются визуально различимыми, а collision и projectile behavior совпадают с canonical semantics
+
+### Requirement: Плавная камера на ступенях
+Камера SHALL смягчать вертикальные толчки лестницы без дополнительной раскачки. Сглаживание MUST оставаться presentation-only, не проникать в потолок и сохранять соответствие прицела authoritative направлению выстрела.
+
+#### Scenario: Бег по ступеням под потолком
+- **WHEN** игрок поднимается или спускается по лестнице
+- **THEN** камера движется плавно, не пересекает геометрию и прицел остаётся достоверным

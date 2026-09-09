@@ -305,6 +305,22 @@ export class RapierCollisionWorld {
       return otherId !== undefined && otherId !== semanticId &&
         this.participantBySemanticId.get(otherId)?.active === true
     }
+    // A fully contained flat-floor movement cannot descend to another support.
+    // Disable optional snap before querying: its shallow undershoot can leave
+    // a wider capsule embedded and stuck on the following tick.
+    // Preserve historical generator/profile collision paths.
+    const improvedFlatContact=this.arena.generatorVersion==='arena-rooms-v2'&&this.arena.generatorProfile.contentHash!=='fnv1a64-v1:175b900d6f85f32c'
+    const flatFeet=runtime.projection.position.y-runtime.projection.halfHeight-runtime.projection.radius
+    const flatSkin=this.controllerConfiguration.skinWidth
+    const flatSupported=improvedFlatContact&&desiredTranslation.y<=0&&this.arena.surfaces.some(s=>{
+      if(s.semantics?.classification!=='floor'||!blocksMovement(s)||s.orientation.x!==0||s.orientation.y!==0||s.orientation.z!==0)return false
+      const top=s.center.y+s.size.y/2,p=runtime.projection.position,r=runtime.projection.radius+flatSkin
+      return flatFeet>=top-flatSkin&&flatFeet<=top+flatSkin*2
+        &&Math.abs(p.x-s.center.x)<s.size.x/2-r&&Math.abs(p.z-s.center.z)<s.size.z/2-r
+        &&Math.abs(p.x+desiredTranslation.x-s.center.x)<s.size.x/2-r&&Math.abs(p.z+desiredTranslation.z-s.center.z)<s.size.z/2-r
+    })
+    if(flatSupported)runtime.controller.disableSnapToGround()
+    try {
     runtime.controller.computeColliderMovement(
       runtime.collider,
       vector(desiredTranslation),
@@ -312,6 +328,9 @@ export class RapierCollisionWorld {
       undefined,
       acceptsCollider,
     )
+    } finally {
+      if(flatSupported&&this.controllerConfiguration.snapToGroundDistance>0)runtime.controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)
+    }
     let movement = runtime.controller.computedMovement()
     // arena-layers-v2: Rapier 0.20 snap can overshoot a contacted flat floor.
     // Requery the identical pose/displacement without that optional snap only
@@ -323,23 +342,31 @@ export class RapierCollisionWorld {
       if(s.semantics?.classification!=='floor'||!blocksMovement(s)||s.orientation.x!==0||s.orientation.y!==0||s.orientation.z!==0)return false
       const top=s.center.y+s.size.y/2
       return feet>=top-skin&&feet<=top+this.controllerConfiguration.snapToGroundDistance
-        &&feet+candidate.y<top-skin
+        &&feet+candidate.y<top-(improvedFlatContact?1e-4:skin) // Rapier f32 contact tolerance (0.1 mm); skin is not penetration allowance.
         &&Math.abs(runtime.projection.position.x-s.center.x)<s.size.x/2-runtime.projection.radius
         &&Math.abs(runtime.projection.position.z-s.center.z)<s.size.z/2-runtime.projection.radius
         &&Math.abs(runtime.projection.position.x+candidate.x-s.center.x)<s.size.x/2-runtime.projection.radius
         &&Math.abs(runtime.projection.position.z+candidate.z-s.center.z)<s.size.z/2-runtime.projection.radius
     })
     const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2','arena-rooms-v1','arena-rooms-v2'].includes(this.arena.generatorVersion)
-    const penetratesSupport=layeredGenerator&&this.controllerConfiguration.snapToGroundDistance>0&&movement.y<desiredTranslation.y-skin&&crossesSupport(movement)
+    const penetratesSupport=layeredGenerator&&this.controllerConfiguration.snapToGroundDistance>0&&(improvedFlatContact||movement.y<desiredTranslation.y-skin)&&crossesSupport(movement)
+    let retainedFlatSupport=false
     if(penetratesSupport){
       runtime.controller.disableSnapToGround()
       try {
         runtime.controller.computeColliderMovement(runtime.collider,vector(desiredTranslation),undefined,undefined,acceptsCollider)
         movement=runtime.controller.computedMovement()
-        if(crossesSupport(movement))throw new CollisionContractError(COLLISION_ERROR_CODES.invalidData,'KCC movement crosses its existing support after snap retry')
+        if(crossesSupport(movement)&&flatSupported){
+          // Reject gravity into the confirmed floor; requery horizontal motion
+          // with every blocker still active, never clamp or teleport the pose.
+          runtime.controller.computeColliderMovement(runtime.collider,vector({x:desiredTranslation.x,y:0,z:desiredTranslation.z}),undefined,undefined,acceptsCollider)
+          movement=runtime.controller.computedMovement()
+          retainedFlatSupport=true
+        }
+        if(crossesSupport(movement))throw new CollisionContractError(COLLISION_ERROR_CODES.invalidData,`KCC movement crosses its existing support after snap retry: ${JSON.stringify({position:runtime.projection.position,desiredTranslation,movement,flatSupported})}`)
       } finally {runtime.controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)}
     }
-    let grounded=runtime.controller.computedGrounded()
+    let grounded=runtime.controller.computedGrounded()||retainedFlatSupport
     let contacts = Array.from({ length: runtime.controller.numComputedCollisions() }, (_, index) => {
       const collision = runtime.controller.computedCollision(index)
       const hitId = collision?.collider === null || collision === null

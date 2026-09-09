@@ -1219,13 +1219,15 @@ const prototypePayload: GameDesignProfilePayload = {
   schemaVersion: GAME_DESIGN_PROFILE_SCHEMA_VERSION,
   id: 'prototype-v1',
   name: 'Prototype v1',
-  revision: 11,
+  revision: 12,
   source: 'shipped',
   rules: {
     bots: BOT_RULES,
     player: {
       startingHealth: 100,
-      capsule: { radius: 0.4, halfHeight: 0.5, skinWidth: 0.01 },
+      // 0.55 + 0.35 retains the shipped 1.80m height while enclosing the
+      // approved light-sport robot silhouette at canonical wall boundaries.
+      capsule: { radius: 0.55, halfHeight: 0.35, skinWidth: 0.01 },
       eyeHeight: 0.55,
       movement: {
         maximumGroundSpeed: 9,
@@ -1280,7 +1282,7 @@ const prototypePayload: GameDesignProfilePayload = {
     death: { killcamSeconds: 3, corpseSeconds: 10 },
     arenaGenerator: {
       presets: {
-        small: { stairsProbability: 0.5, stairMaximumRiseMeters: 0.35, stairMinimumTreadMeters: 0.4, tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.4, basementDepthMultiplier: 1.5, rampWidthMeters: 4, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 6, wallThicknessMeters: 0.9, corridorWidthMeters: 4, doorwayWidthMeters: 3, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
+        small: { stairsProbability: 0.5, stairMaximumRiseMeters: 0.35, stairMinimumTreadMeters: 0.4, tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.4, basementDepthMultiplier: 1.5, rampWidthMeters: 5, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 34, depthMeters: 26, wallHeightMeters: 6, wallThicknessMeters: 0.9, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 3, routeInsetMeters: 4.5, coverCount: 4, coverSizeMeters: 2, spawnSlotCount: 16, minimumSpawnSeparationMeters: 4, maximumInitialEnemyLosRatio: 0.35, maximumTeamDistanceRatio: 1.2 },
         medium: { stairsProbability: 0.5, stairMaximumRiseMeters: 0.35, stairMinimumTreadMeters: 0.4, tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.45, basementDepthMultiplier: 1.5, rampWidthMeters: 5, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 46, depthMeters: 34, wallHeightMeters: 6.5, wallThicknessMeters: 1.4, corridorWidthMeters: 5, doorwayWidthMeters: 3.5, perimeterInsetMeters: 4, routeInsetMeters: 5.5, coverCount: 6, coverSizeMeters: 2.5, spawnSlotCount: 16, minimumSpawnSeparationMeters: 5, maximumInitialEnemyLosRatio: 0.3, maximumTeamDistanceRatio: 1.15 },
         large: { stairsProbability: 0.5, stairMaximumRiseMeters: 0.35, stairMinimumTreadMeters: 0.4, tunnelCeilingMeters: 2.75, roomCeilingMeters: 3.5, hallCeilingMeters: 4.5, ceilingVariationMeters: 0.5, closedLayoutWeight: 2, openLayoutWeight: 1, minimumUpperAreaRatio: 0.8, minimumStructuralVariants: 3, recipeCount: 5, slabThicknessMeters: 0.25, minimumHeadroomMeters: 2, elevationDeltaMeters: 1.5, upperDeckHeightMultiplier: 1.5, upperDeckFootprintRatio: 0.5, basementDepthMultiplier: 1.5, rampWidthMeters: 6, rampLengthMeters: 8, barrierLowMeters: 0.75, barrierHighMeters: 1.5, widthMeters: 60, depthMeters: 44, wallHeightMeters: 7, wallThicknessMeters: 1.8, corridorWidthMeters: 6, doorwayWidthMeters: 4, perimeterInsetMeters: 5, routeInsetMeters: 6.5, coverCount: 8, coverSizeMeters: 3, spawnSlotCount: 20, minimumSpawnSeparationMeters: 6, maximumInitialEnemyLosRatio: 0.25, maximumTeamDistanceRatio: 1.1 },
       },

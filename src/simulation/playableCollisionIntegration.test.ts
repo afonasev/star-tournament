@@ -264,7 +264,9 @@ describe('stepPlayableSimulation with RapierCollisionWorld', () => {
     const slopeCollision = await createWorld(slopeInitial)
     try {
       const climbed = run(slopeInitial, slopeCollision, 26, [{ actionId: 'move-right', value: -1 }])
-      expect(localParticipant(climbed).position.x).toBeLessThan(4)
+      // The wider approved body capsule contacts the slope earlier; this
+      // fixture asserts the accepted climb, not the former 0.40m footprint.
+      expect(localParticipant(climbed).position.x).toBeLessThan(5)
       expect(localParticipant(climbed).position.y).toBeGreaterThan(1)
     } finally {
       slopeCollision.dispose()

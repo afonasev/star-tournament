@@ -42,3 +42,10 @@ Renderer SHALL выбирать совместимые wall, floor и sector mat
 #### Scenario: Все стороны архитектурного модуля
 - **WHEN** видны боковая, верхняя и лицевая грани wall-bay или портала
 - **THEN** каждая грань имеет невырожденную UV-площадь и фактуру с согласованной плотностью по метрам; панель не выходит за host collision solid
+
+### Requirement: Variants для vertical spatial roles
+Presentation material kit SHALL выбирать compatible textured wall/floor/decal variants для hall, gallery, balcony и basement sectors. Texture residency и quality degradation MUST оставаться presentation-only и MUST NOT изменять arena identity, collision, navigation или participant colors.
+
+#### Scenario: Контраст ярусов
+- **WHEN** camera одновременно видит lower floor, ramp и upper gallery
+- **THEN** текстурный treatment отчётливо различает направление и роль каждого сектора без flat fallback или z-fighting

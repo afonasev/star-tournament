@@ -74,6 +74,8 @@ Accepted arena SHALL иметь центральный ориентир, вне�
 - **WHEN** сравниваются perimeter surfaces и bounding rectangle arena
 - **THEN** периметр остаётся замкнутым, но содержит size-specific уступы или ниши и не совпадает с четырьмя сторонами bounding rectangle
 
+## ADDED Requirements
+
 ### Requirement: Смешанные лестницы и рампы
 Каждый переход SHALL детерминированно выбирать ramp либо stairs по seed и stable transition ID. Профильная вероятность stairs MUST по умолчанию давать примерно половину переходов; все три сочетания двух переходов MUST встречаться в corpus.
 

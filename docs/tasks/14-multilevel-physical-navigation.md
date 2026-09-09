@@ -1,7 +1,7 @@
 # 14 — Physical multi-level navigation
 
 Date: 2026-09-08. Branch: `codex/multilevel-physical-navigation`. Base: `ad6cfbf`.
-OpenSpec: `expand-multilevel-arena-variety`. Status: physical/navigation slice verified; overall change remains active pending acceptance below. Main integration, archival and deployment are not authorized in this task.
+OpenSpec: `expand-multilevel-arena-variety`. Status: user requested archive, commit and merge on 2026-09-09; integration checks are recorded below. Deployment is outside this request. Seven broader acceptance items remain open.
 
 ## Current room-layout slice — 2026-09-08
 
@@ -91,3 +91,12 @@ Dev URL verified HTTP 200: http://127.0.0.1:4196/?muted=1. No main integration, 
 The full-suite regression on basement seed 103 also passes after retaining KCC contact when no extra downward snap is needed. The AI visibility/extension test now allows 30 seconds for its complete physical initialization (previous generic five-second timeout); its behavioral assertions and all gameplay/performance bounds are unchanged.
 
 Final verification: `npm test` passed all 414 tests across 70 files (177.60 seconds). After the legacy navigation guard, the compatibility/parser/stair/replay subset passed all 18 tests. `npm run build`, strict OpenSpec validation and `git diff --check` passed.
+
+## Merge reconciliation — 2026-09-09
+
+- Release `prototype-v1@12`, schema 10, hash `fnv1a64-v1:5edb6318d1ffaa45`: stairs/rooms plus main wall-clearance capsule and passage widths. Every previously published main snapshot is unchanged. Conflicting branch @9 is preserved in `balance/history` without renumbering; published main @9 uses a frozen compiler/validator. Eighteen map hashes match main f8d4daa. Collision-contract-v2 follows main; no v1 replay migration is claimed.
+- Physical routes on large seeds 2, 5 and 6 pass after rejecting shallow floor undershoot. Current rooms use the guarded repeat query; historical geometry keeps its previous path. No physical acceptance thresholds were relaxed.
+- Muted browser: small/0 stair ascent finishes at tick 75, feet 5.510; both directions photographed with the current renderer. Large/5 Balanced reference cadence/lifecycle gate passes (`merge-performance.json`). Manual pointer-lock acceptance remains open.
+- Seven delta capabilities synchronized while retaining wall-clearance requirements. Strict validation: 25 items passed.
+
+- Final full suite exercised 418 tests: 415 passed; two timeout failures and one historical floor-path regression were then resolved. Sequential matrix/traversal recheck plus the final seven historical tests passed, including all 18 published map hashes. Build and strict OpenSpec checks passed. This is combined full-suite plus targeted verification, not a single all-green full-run log.

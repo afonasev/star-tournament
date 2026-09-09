@@ -1,3 +1,4 @@
+import { generateProceduralArena as generateWallClearanceArena } from './legacyWallClearanceArenaV1'
 import { compileRoomArena, ROOM_GENERATOR_VERSION } from './roomArena'
 import { generateProceduralArena as generateLegacyArena } from './legacyProceduralArenaV1'
 import { generateProceduralArena as generateV2Arena } from './legacyProceduralArenaV2'
@@ -21,6 +22,7 @@ export type ProceduralArenaGenerationResult =
   | { readonly ok: false; readonly seed: number; readonly size: ArenaSize; readonly attempts: number; readonly reports: readonly ArenaGameplayValidationReport[] }
 
 export function generateProceduralArena(input: ProceduralArenaGenerationOptions): ProceduralArenaGenerationResult {
+  if(input.profile?.id === 'prototype-v1' && input.profile.revision === 9 && 'contentHash' in input.profile && input.profile.contentHash === 'fnv1a64-v1:249d0a5b23a7cf6a') return generateWallClearanceArena(input)
   if(input.profile&&Number(input.profile.schemaVersion)<8)return generateLegacyArena(input)
   if(input.profile&&Number(input.profile.schemaVersion)===8)return generateV2Arena(input)
   if (!Number.isSafeInteger(input.seed) || input.seed < 0 || input.seed > 0xffffffff) throw new RangeError('Procedural arena seed must be an unsigned 32-bit integer')

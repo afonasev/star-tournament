@@ -106,7 +106,7 @@ Playable simulation snapshot SHALL принимать exact validated `GameDesig
 - **THEN** ни один технический инвариант не доступен как поле Game Design Lab, а каждый имеет краткое обоснование рядом с определением
 
 ### Requirement: Полный профиль первого playable combat slice
-`prototype-v1` SHALL содержать обязательные числовые параметры capsule, ground/air movement, jump/gravity, first-person camera и double-barrel shotgun pellets/spread/range/cadence; runtime MUST потреблять эти значения из валидированного profile snapshot без дублирующих gameplay constants.
+`prototype-v1` SHALL содержать обязательные числовые параметры body capsule, ground/air movement, jump/gravity, first-person camera и double-barrel shotgun pellets/spread/range/cadence; runtime MUST потреблять эти значения из валидированного profile snapshot без дублирующих gameplay constants.
 
 #### Scenario: Полное descriptor coverage
 - **WHEN** schema `prototype-v1` расширена параметрами playable slice
@@ -114,10 +114,10 @@ Playable simulation snapshot SHALL принимать exact validated `GameDesig
 
 #### Scenario: Shipped defaults
 - **WHEN** runtime запускает первый playable slice
-- **THEN** movement, camera, capsule и shotgun используют значения одной immutable shipped revision и её content hash
+- **THEN** movement, camera, body capsule и shotgun используют значения одной immutable shipped revision и её content hash
 
 #### Scenario: Повреждённый profile
-- **WHEN** отсутствует новое обязательное поле, значение вне range либо нарушено cross-field отношение capsule/camera/weapon
+- **WHEN** отсутствует новое обязательное поле, значение вне range либо нарушено cross-field отношение body capsule/camera/weapon
 - **THEN** validation останавливает gameplay startup со стабильным code и paths до первого gameplay tick
 
 #### Scenario: Replay compatibility
@@ -187,3 +187,24 @@ GameDesignProfile SHALL включать полные `rules.bots.easy`, `rules.
 #### Scenario: Изменение поведения
 - **WHEN** меняется AI numeric parameter
 - **THEN** изменяется profile identity/hash и старый несовместимый replay отклоняется явно
+
+### Requirement: Профиль структурного разнообразия
+Profile SHALL содержать descriptors для весов закрытых и открытых композиций, диапазонов высот тоннелей, комнат и залов, полезной площади закрытого этажа и структурного разнообразия seed corpus. Все параметры MUST иметь stable path, группу, подпись, описание, единицу, min/max и шаг; те же metadata MUST управлять UI и валидацией. Release weights MUST обеспечивать преобладание закрытых самостоятельных этажей без исключения открытых вариантов.
+
+#### Scenario: Несовместимые локальные высоты
+- **WHEN** выбранные высоты нарушают capsule clearance, перекрытие соседнего этажа или headroom рампы
+- **THEN** profile либо generated candidate отклоняется без уменьшения capsule и ослабления physical validation
+
+### Requirement: Профильные budgets multi-level arena
+Immutable generator profile SHALL содержать descriptor-backed bounds для hall dimensions, layer height, slab thickness, headroom, tunnel clearance, ramp width/length и bypass length. Cross-field validation MUST отклонять profile, нарушающий controller slope, capsule headroom либо три effective capsule diameters.
+
+#### Scenario: Изменён capsule
+- **WHEN** effective capsule diameter меняется и minimum tunnel clearance становится меньше трёх диаметров
+- **THEN** profile validation отклоняет configuration до generation
+
+### Requirement: Параметры лестниц
+Версионированный профиль SHALL содержать descriptor metadata вероятности stairs, размеров ступеней и сглаживания камеры. Cross-field validation MUST проверять autostep height/width, capsule clearance и headroom.
+
+#### Scenario: Слишком высокая ступень
+- **WHEN** ступень превышает допустимый autostep либо недостаточна её проступь
+- **THEN** конфигурация отклоняется до запуска матча

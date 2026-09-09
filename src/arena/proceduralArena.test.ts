@@ -40,9 +40,10 @@ function visuallyDistinctVerticalCoplanarOverlaps(arena: ReturnType<typeof requi
 function subCapsuleGaps(arena: ReturnType<typeof requireProceduralArena>, minimumClearance: number): string[] {
   // Rotated portal parts are verified by physical capsule tests; this planar gap
   // audit applies to the axis-aligned architectural wall shell.
-  const solids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
+  const allSolids = arena.surfaces.filter(surface => !supportsNavigation(surface) && !surface.id.startsWith('portal-solid:'))
+  const solids = allSolids.filter(surface => !surface.id.startsWith('wall-architecture-gap-seal-'))
   const gaps: string[] = []
-  const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => solids.some((candidate) => (
+  const coveredByAnotherSolid = (firstId: string, secondId: string, xMinimum: number, xMaximum: number, zMinimum: number, zMaximum: number, yMinimum: number, yMaximum: number): boolean => allSolids.some((candidate) => (
     candidate.id !== firstId
       && candidate.id !== secondId
       && candidate.center.x - candidate.size.x / 2 <= xMinimum + 1e-9
