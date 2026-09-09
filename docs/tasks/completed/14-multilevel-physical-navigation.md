@@ -1,7 +1,7 @@
 # 14 — Physical multi-level navigation
 
 Date: 2026-09-08. Branch: `codex/multilevel-physical-navigation`. Base: `ad6cfbf`.
-OpenSpec: `expand-multilevel-arena-variety`. Status: user requested archive, commit and merge on 2026-09-09; integration checks are recorded below. Deployment is outside this request. Seven broader acceptance items remain open.
+OpenSpec: `expand-multilevel-arena-variety`. Status: user requested archive, commit and merge on 2026-09-09; implementation integrated into main at 9701127 and archived with warnings; checks are recorded below. Deployment is outside this request. Seven broader acceptance items remain open.
 
 ## Current room-layout slice — 2026-09-08
 
@@ -100,3 +100,5 @@ Final verification: `npm test` passed all 414 tests across 70 files (177.60 seco
 - Seven delta capabilities synchronized while retaining wall-clearance requirements. Strict validation: 25 items passed.
 
 - Final full suite exercised 418 tests: 415 passed; two timeout failures and one historical floor-path regression were then resolved. Sequential matrix/traversal recheck plus the final seven historical tests passed, including all 18 published map hashes. Build and strict OpenSpec checks passed. This is combined full-suite plus targeted verification, not a single all-green full-run log.
+
+Archive: `openspec/changes/archive/2026-09-09-expand-multilevel-arena-variety/`. This completed implementation handoff preserves seven unaccepted broader tasks in the archived checklist. Final collision/transition subset: 17 passed; zero-snap regression suite: 10 passed. No deployment.

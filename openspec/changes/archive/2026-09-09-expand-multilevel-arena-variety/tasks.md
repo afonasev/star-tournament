@@ -34,7 +34,7 @@
 
 ## Evidence: isolated physical-navigation slice (2026-09-08)
 
-Branch `codex/multilevel-physical-navigation`; no main integration, archive or deployment. See `docs/tasks/14-multilevel-physical-navigation.md` for the corpus and remaining acceptance gates. Previous 4.2 evidence predates the new physical geometry and must be refreshed. Task 3.1 has guided-goal traversal and telemetry coverage, but autonomous combat layer coverage is not yet accepted. Browser visual fixtures are captured muted; keyboard/mouse acceptance is blocked by denied pointer lock. Presentation and performance tasks remain open.
+Branch `codex/multilevel-physical-navigation`; no main integration, archive or deployment. See `docs/tasks/completed/14-multilevel-physical-navigation.md` for the corpus and remaining acceptance gates. Previous 4.2 evidence predates the new physical geometry and must be refreshed. Task 3.1 has guided-goal traversal and telemetry coverage, but autonomous combat layer coverage is not yet accepted. Browser visual fixtures are captured muted; keyboard/mouse acceptance is blocked by denied pointer lock. Presentation and performance tasks remain open.
 
 ## 5. Подтверждённые лестницы и скорость подъёма
 
@@ -49,4 +49,8 @@ Evidence предыдущего среза 4ec5132 (393 tests) не закрыв
 
 ## Evidence: stairs implementation (2026-09-09)
 
-Tasks 5.1–5.5 implemented and verified. Full suite: 70 files / 414 tests passed, including physical routes, guided bot traversal, replay and legacy profiles. The final compatibility subset also passed (18 tests). Build, strict OpenSpec validation and diff check pass. Muted browser walkthrough uses shipping simulation/collision/renderer and captures both directions; large/5 Balanced cadence/lifecycle gate passes. See `docs/tasks/14-multilevel-physical-navigation.md` and `artifacts/multilevel-navigation/stairs-*`. Task 5.6 remains open for manual input acceptance: normal Start explicitly reports denied pointer lock. Dedicated implementation commit does not authorize main integration, archive or deploy; older acceptance gates remain open.
+Tasks 5.1–5.5 implemented and verified. Full suite: 70 files / 414 tests passed, including physical routes, guided bot traversal, replay and legacy profiles. The final compatibility subset also passed (18 tests). Build, strict OpenSpec validation and diff check pass. Muted browser walkthrough uses shipping simulation/collision/renderer and captures both directions; large/5 Balanced cadence/lifecycle gate passes. See `docs/tasks/completed/14-multilevel-physical-navigation.md` and `artifacts/multilevel-navigation/stairs-*`. Task 5.6 remains open for manual input acceptance: normal Start explicitly reports denied pointer lock. Dedicated implementation commit does not authorize main integration, archive or deploy; older acceptance gates remain open.
+
+## Archive authorization — 2026-09-09
+
+Archived at the user's explicit request “архив коммит мерж” after they were informed of 19/26 completed tasks. Seven unchecked items above remain outstanding; archival does not certify manual pointer-lock input, autonomous combat coverage, all material/quality/split-screen gates or deployment. Code integrated into main at 9701127; all seven delta specifications synchronized and verified. Build and OpenSpec strict validation pass. Full 418-test run plus targeted reruns resolves its three failures; final collision/transition subset passed 17 tests and disabled-snap regression suite passed 10 tests. Browser large/5 Balanced reference gate passes. Detailed evidence: `docs/tasks/completed/14-multilevel-physical-navigation.md`. Deployment was not requested and was not performed.
