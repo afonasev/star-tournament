@@ -224,3 +224,18 @@ describe('Rapier collision world', () => {
     }
   })
 })
+
+it('keeps the wide capsule above a flat room floor with snap disabled', async () => {
+  const { requireProceduralArena } = await import('../arena/proceduralArena')
+  const { PROTOTYPE_V1_PROFILE: profile } = await import('../profiles')
+  const arena = requireProceduralArena({size:'large',seed:2})
+  const capsule = profile.rules.player.capsule
+  const world = await createRapierCollisionWorld(arena, [{semanticId:'walker',position:{x:17.63416609461735,y:0.9000732834285009,z:-12.8000799292996},radius:capsule.radius,halfHeight:capsule.halfHeight}], {skinWidth:capsule.skinWidth,snapToGroundDistance:0,autostepMaxHeight:profile.rules.player.movement.autostepMaxHeight,autostepMinWidth:profile.rules.player.movement.autostepMinWidth,maxSlopeClimbDegrees:profile.rules.player.movement.maxSlopeClimbDegrees,minSlopeSlideDegrees:profile.rules.player.movement.minSlopeSlideDegrees})
+  try {
+    for (let tick=0;tick<20;tick++) {
+      const result=world.moveCapsule('walker',{x:-0.12734126802034623,y:-0.01,z:0.05186956197010295})
+      expect(result.position.y-capsule.radius-capsule.halfHeight).toBeGreaterThanOrEqual(-1e-4)
+      expect(result.position.x).toBeLessThan(17.63416609461735-(tick+1)*0.12)
+    }
+  } finally { world.dispose() }
+})

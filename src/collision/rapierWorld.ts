@@ -341,7 +341,7 @@ export class RapierCollisionWorld {
     const crossesSupport=(candidate:CollisionVector3)=>this.arena.surfaces.some(s=>{
       if(s.semantics?.classification!=='floor'||!blocksMovement(s)||s.orientation.x!==0||s.orientation.y!==0||s.orientation.z!==0)return false
       const top=s.center.y+s.size.y/2
-      return feet>=top-skin&&feet<=top+this.controllerConfiguration.snapToGroundDistance
+      return feet>=top-skin&&feet<=top+(improvedFlatContact?Math.max(this.controllerConfiguration.snapToGroundDistance,skin*2):this.controllerConfiguration.snapToGroundDistance)
         &&feet+candidate.y<top-(improvedFlatContact?1e-4:skin) // Rapier f32 contact tolerance (0.1 mm); skin is not penetration allowance.
         &&Math.abs(runtime.projection.position.x-s.center.x)<s.size.x/2-runtime.projection.radius
         &&Math.abs(runtime.projection.position.z-s.center.z)<s.size.z/2-runtime.projection.radius
@@ -349,7 +349,7 @@ export class RapierCollisionWorld {
         &&Math.abs(runtime.projection.position.z+candidate.z-s.center.z)<s.size.z/2-runtime.projection.radius
     })
     const layeredGenerator=['arena-layers-v2','shipped-fallback-layers-v2','arena-rooms-v1','arena-rooms-v2'].includes(this.arena.generatorVersion)
-    const penetratesSupport=layeredGenerator&&this.controllerConfiguration.snapToGroundDistance>0&&(improvedFlatContact||movement.y<desiredTranslation.y-skin)&&crossesSupport(movement)
+    const penetratesSupport=layeredGenerator&&(improvedFlatContact||this.controllerConfiguration.snapToGroundDistance>0)&&(improvedFlatContact||movement.y<desiredTranslation.y-skin)&&crossesSupport(movement)
     let retainedFlatSupport=false
     if(penetratesSupport){
       runtime.controller.disableSnapToGround()
@@ -364,7 +364,7 @@ export class RapierCollisionWorld {
           retainedFlatSupport=true
         }
         if(crossesSupport(movement))throw new CollisionContractError(COLLISION_ERROR_CODES.invalidData,`KCC movement crosses its existing support after snap retry: ${JSON.stringify({position:runtime.projection.position,desiredTranslation,movement,flatSupported})}`)
-      } finally {runtime.controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)}
+      } finally {if(this.controllerConfiguration.snapToGroundDistance>0)runtime.controller.enableSnapToGround(this.controllerConfiguration.snapToGroundDistance)}
     }
     let grounded=runtime.controller.computedGrounded()||retainedFlatSupport
     let contacts = Array.from({ length: runtime.controller.numComputedCollisions() }, (_, index) => {
