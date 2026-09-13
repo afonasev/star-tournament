@@ -24,7 +24,7 @@ body {
   background: radial-gradient(circle at 50% 38%, rgb(24 54 83 / 55%) 0%, transparent 42%), #050811;
 }
 
-.match-menu { display: grid; min-height: 100%; place-items: center; padding: clamp(1rem, 4vw, 3rem); overflow: auto; background: radial-gradient(circle at 18% 14%, rgb(18 99 130 / 34%), transparent 34%), radial-gradient(circle at 84% 78%, rgb(72 43 119 / 26%), transparent 38%), #050811; }
+.match-menu { display: grid; height: 100%; place-items: start center; padding: clamp(1rem, 4vw, 3rem); overflow: auto; background: radial-gradient(circle at 18% 14%, rgb(18 99 130 / 34%), transparent 34%), radial-gradient(circle at 84% 78%, rgb(72 43 119 / 26%), transparent 38%), #050811; }
 .match-menu__panel { width: min(74rem, 100%); padding: clamp(1.2rem, 4vw, 2.6rem); border: 1px solid rgb(105 224 255 / 28%); border-radius: 0.75rem; background: rgb(5 15 27 / 88%); box-shadow: 0 2rem 8rem rgb(0 0 0 / 55%); }
 .match-menu__heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; }
 .match-menu__eyebrow { margin: 0; color: #72e6ff; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.22em; }
