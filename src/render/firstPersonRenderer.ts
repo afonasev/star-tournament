@@ -29,6 +29,7 @@ import {
 } from './participantWeaponPresentation'
 import type { RobotAnimationController } from './robotAnimation'
 import { DEATH_REST_SECONDS, resolveDeathSlideOffset } from './deathPresentation'
+import { localViewportLayout } from './localViewportLayout'
 
 export const DEFAULT_PRESENTATION_TICKS_PER_SECOND = 60 as const
 export const DEFAULT_WEBGL_POWER_PREFERENCE: WebGLPowerPreference = 'default'
@@ -828,6 +829,18 @@ export function createFirstPersonRenderer({
   )
   camera.name = 'first-person-camera'
   scene.add(camera)
+  const camerasBySeatId = new Map<string, THREE.PerspectiveCamera>()
+  const cameraForSeat = (semanticId: string): THREE.PerspectiveCamera => {
+    const existing = camerasBySeatId.get(semanticId)
+    if (existing !== undefined) return existing
+    const created = camerasBySeatId.size === 0 ? camera : new THREE.PerspectiveCamera(
+      profile.rules.camera.fieldOfViewDegrees, 1, profile.rules.camera.nearPlane, profile.rules.camera.farPlane,
+    )
+    created.name = `first-person-camera:${semanticId}`
+    if (created !== camera) scene.add(created)
+    camerasBySeatId.set(semanticId, created)
+    return created
+  }
 
   const geometries: THREE.BufferGeometry[] = []
   const materials: THREE.Material[] = []
@@ -929,11 +942,15 @@ export function createFirstPersonRenderer({
   container.replaceChildren(canvas)
 
   let disposed = false
+  let renderWidth = 1
+  let renderHeight = 1
   const resize = () => {
     if (disposed) return
     const bounds = container.getBoundingClientRect()
     const width = Math.max(1, Math.round(bounds.width || container.clientWidth || 1))
     const height = Math.max(1, Math.round(bounds.height || container.clientHeight || 1))
+    renderWidth = width
+    renderHeight = height
     renderer.setPixelRatio(resolvePixelBudgetDevicePixelRatio({
       cssWidth: width,
       cssHeight: height,
@@ -1249,7 +1266,24 @@ export function createFirstPersonRenderer({
       return positiveFoldIntersections < negativeFoldIntersections ? 1 : -1
     }
     setViewmodelFoldTransform(viewmodelFold, viewmodelFold === 0 ? -1 : chooseViewmodelFoldSide(viewmodelFold))
-    renderer.render(scene, camera)
+    const localSeats = snapshot.participants
+      .filter((participant): participant is Extract<FirstPersonRenderSnapshot['participants'][number], { readonly kind: 'local-seat' }> => participant.kind === 'local-seat')
+      .sort((left, right) => left.semanticId.localeCompare(right.semanticId, 'en'))
+    const layout = localViewportLayout(localSeats.length, renderWidth, renderHeight)
+    for (const viewport of layout.viewports) {
+      const seat = localSeats[viewport.seatIndex]!
+      const seatCamera = cameraForSeat(seat.semanticId)
+      seatCamera.position.set(seat.position.x, seat.position.y + profile.rules.player.eyeHeight, seat.position.z)
+      seatCamera.rotation.set(seat.pitch, -seat.yaw, 0, 'YXZ')
+      seatCamera.aspect = viewport.width / viewport.height
+      seatCamera.updateProjectionMatrix()
+      // A single authored viewmodel is reused for the common first-person pose;
+      // camera/viewport ownership remains per-seat and renderer-only.
+      viewmodel.group.visible = seat.alive !== false
+      renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height)
+      renderer.setScissor(viewport.x, viewport.y, viewport.width, viewport.height)
+      renderer.render(scene, seatCamera)
+    }
     const info = renderer.info
     onWebGlSubmission?.(info === undefined ? undefined : {
       drawCalls: info.render.calls,

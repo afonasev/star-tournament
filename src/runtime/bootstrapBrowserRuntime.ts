@@ -12,6 +12,8 @@ import {
   KeyboardMouseAdapter,
   type KeyboardMouseAdapterOptions,
 } from '../input/keyboardMouseAdapter'
+import { GamepadAdapter } from '../input/gamepadAdapter'
+import { InputCoordinator } from '../input/inputCoordinator'
 import { createActionFrame, type NormalizedAction } from '../input/actionFrame'
 import { DEFAULT_MATCH_CONFIGURATION, parseMatchConfiguration, type MatchConfiguration } from '../match'
 import {
@@ -81,6 +83,7 @@ export interface RuntimeInputAdapter {
   drainUiActionSnapshot?: KeyboardMouseAdapter['drainUiActionSnapshot']
   clearInputState(): void
   dispose(): void
+  unavailableParticipantId?: () => string | undefined
 }
 
 export interface RuntimePointerLockController {
@@ -326,6 +329,7 @@ export async function bootstrapBrowserRuntime(
   let pointerController: RuntimePointerLockController | undefined
   let runtime: BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot> | undefined
   let scoreboardVisible = false
+  let scoreboardSeatIds: readonly string[] = []
   // BrowserRuntime may advance several deterministic ticks before one WebGL
   // submission. Snapshot events last one tick, so retain them until the
   // renderer has consumed the completed animation-frame batch.
@@ -381,7 +385,7 @@ export async function bootstrapBrowserRuntime(
     status = uiStatus(),
     message?: string,
   ): Readonly<GameplayUiSnapshot> {
-    return projector.project(state, status, debugSnapshot(state), message, scoreboardVisible)
+    return projector.project(state, status, debugSnapshot(state), message, scoreboardVisible, scoreboardSeatIds)
   }
 
   async function requestControl(): Promise<boolean> {
@@ -527,10 +531,18 @@ export async function bootstrapBrowserRuntime(
     return { requestControl, dispose: cleanup }
   }
 
-  input = createInput({
-    pointerLockElement: playfield,
-    participantId: PLAYABLE_PLAYER_ID,
-  })
+  const localSeats = configuration.participants.filter((participant) => participant.kind === 'local-seat')
+  input = localSeats.length === 1
+    ? createInput({ pointerLockElement: playfield, participantId: localSeats[0]!.semanticId })
+    : new InputCoordinator(localSeats.map((seat) => {
+      if (seat.deviceBinding?.kind === 'keyboard-mouse') {
+        return new KeyboardMouseAdapter({ pointerLockElement: playfield, participantId: seat.semanticId })
+      }
+      if (seat.deviceBinding?.kind === 'gamepad') {
+        return new GamepadAdapter({ participantId: seat.semanticId, binding: seat.deviceBinding })
+      }
+      throw new TypeError(`Missing device binding for ${seat.semanticId}`)
+    }))
 
   runtime = new BrowserRuntime<PlayableSimulationSnapshot, GameplayUiSnapshot>({
     initialState,
@@ -539,14 +551,27 @@ export async function bootstrapBrowserRuntime(
     performanceRecorder: runtimePerformanceRecorder,
     now,
     step: (state) => {
+      const unavailableParticipantId = input!.unavailableParticipantId?.()
+      if (unavailableParticipantId !== undefined) {
+        input!.clearInputState()
+        pointerController?.pause()
+        ui.update(projectUi(state, 'paused', `Контроллер игрока ${unavailableParticipantId} отключён. Подключите исходное устройство или переназначьте его в настройке.`))
+        return state
+      }
       const frame = input!.drainActionFrame(state.tick + 1)
       if (performanceBenchmarkEnabled) benchmarkFrames.push(frame)
       const uiActions = input!.drainUiActionSnapshot?.()
       const next = stepPlayableSimulation(state, frame, collisionWorld!, profile, configuration, arena)
       pendingPresentationEvents = [...pendingPresentationEvents, ...next.events]
       if (performanceBenchmarkEnabled && [1, 2, 10, 60, 600].includes(next.tick)) benchmarkCheckpoints.push(next)
-      if (uiActions !== undefined && uiActions.scoreboardHeld !== scoreboardVisible) {
+      const nextScoreboardSeatIds = uiActions?.scoreboardHeldSeatIds ?? (uiActions?.scoreboardHeld ? [localSeats[0]!.semanticId] : [])
+      if (uiActions !== undefined && (
+        uiActions.scoreboardHeld !== scoreboardVisible
+        || nextScoreboardSeatIds.length !== scoreboardSeatIds.length
+        || nextScoreboardSeatIds.some((seatId, index) => seatId !== scoreboardSeatIds[index])
+      )) {
         scoreboardVisible = uiActions.scoreboardHeld
+        scoreboardSeatIds = nextScoreboardSeatIds
         ui.update(projectUi(next))
       }
       if (uiActions?.pauseRequested) pointerController?.pause()

@@ -8,6 +8,7 @@ import {
   createMatchConfiguration,
   type MatchConfiguration,
   type MatchMode,
+  type DeviceBindingDescriptor,
   type MatchParticipantDescriptor,
 } from '../match'
 import type { ValidatedGameDesignProfile } from '../profiles'
@@ -54,6 +55,12 @@ function parseSeedDraft(value: string): number | null {
   return parsed
 }
 
+function availableGamepads(): readonly Extract<DeviceBindingDescriptor, { readonly kind: 'gamepad' }>[] {
+  return Array.from(navigator.getGamepads?.() ?? []).flatMap((gamepad) => gamepad?.connected
+    ? [{ kind: 'gamepad' as const, gamepadId: gamepad.id, connectionSlot: gamepad.index }]
+    : [])
+}
+
 export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generationError, onUseFallback, onGraphicsQualityChange, onToggleFullscreen }: MatchSetupMenuProps) {
   const [graphicsPreference, setGraphicsPreference] = useState<GraphicsQualityPreference>(() => {
     const resolved = parseGraphicsQualityPreference(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY))
@@ -72,6 +79,8 @@ export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generati
   const [targetEnabled, setTargetEnabled] = useState(false)
   const [scoreTargetPoints, setScoreTargetPoints] = useState(profile.rules.match.scoreTarget.defaultPoints)
   const nextBotId = useRef(4)
+  const nextLocalId = useRef(2)
+  const [gamepads, setGamepads] = useState(availableGamepads)
   const [roster, setRoster] = useState<MatchParticipantDescriptor[]>(() => DEFAULT_MATCH_CONFIGURATION.participants.map((p,index) => index===0 ? p : { ...p, kind:'bot', difficulty:'normal' }))
   const [teams, setTeams] = useState<Record<string,'team-a'|'team-b'>>(() => Object.fromEntries(DEFAULT_MATCH_CONFIGURATION.participants.map((p,i) => [p.semanticId,i%2===0?'team-a':'team-b'])))
   const update = (id:string, change:Partial<MatchParticipantDescriptor>) => setRoster(current => current.map(p=>p.semanticId===id?{...p,...change}:p))
@@ -81,6 +90,14 @@ export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generati
     const color = VETTED_PARTICIPANT_COLORS.find(c=>!roster.some(p=>p.color===c))!
     setRoster(current=>[...current,{semanticId:id,name:'Бот '+id.slice(4),kind:'bot',difficulty:'normal',color,team:null}])
     setTeams(current=>({...current,[id]:roster.length%2===0?'team-a':'team-b'}))
+  }
+  const addLocalSeat = () => {
+    if (roster.length >= 8 || roster.filter(({ kind }) => kind === 'local-seat').length >= 4) return
+    const binding = gamepads.find((candidate) => !roster.some((participant) => participant.deviceBinding?.kind === 'gamepad' && participant.deviceBinding.gamepadId === candidate.gamepadId && participant.deviceBinding.connectionSlot === candidate.connectionSlot))
+    if (binding === undefined) return
+    const id = `local-${nextLocalId.current++}`
+    const color = VETTED_PARTICIPANT_COLORS.find((candidate) => !roster.some((participant) => participant.color === candidate))!
+    setRoster((current) => [...current, { semanticId: id, name: `Игрок ${id.slice(6)}`, kind: 'local-seat', color, team: null, deviceBinding: binding }])
   }
   const candidate = useMemo(() => {
     try {
@@ -143,12 +160,14 @@ export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generati
             <fieldset key={participant.semanticId}>
               <legend>{participant.kind==='local-seat'?'Вы':participant.name}</legend>
               <label>Имя<input aria-label={`Имя участника ${index+1}`} value={participant.name} onChange={event=>update(participant.semanticId,{name:event.target.value})}/></label>
+              {participant.kind==='local-seat' && <label>Устройство<select aria-label={`Устройство игрока ${index+1}`} value={participant.deviceBinding?.kind === 'keyboard-mouse' ? 'keyboard-mouse' : `${participant.deviceBinding?.gamepadId}:${participant.deviceBinding?.connectionSlot}`} onChange={(event) => { const selected = event.target.value; update(participant.semanticId, { deviceBinding: selected === 'keyboard-mouse' ? { kind: 'keyboard-mouse' } : gamepads.find((gamepad) => `${gamepad.gamepadId}:${gamepad.connectionSlot}` === selected) }) }}><option value="keyboard-mouse">Клавиатура и мышь</option>{gamepads.map((gamepad) => <option key={`${gamepad.gamepadId}:${gamepad.connectionSlot}`} value={`${gamepad.gamepadId}:${gamepad.connectionSlot}`}>{gamepad.gamepadId} · слот {gamepad.connectionSlot}</option>)}</select></label>}
               {participant.kind==='bot' && <label>Сложность<select aria-label={`Сложность бота ${index}`} value={participant.difficulty} onChange={event=>update(participant.semanticId,{difficulty:event.target.value as BotDifficulty})}>{BOT_DIFFICULTIES.map(id=><option key={id} value={id}>{BOT_LABELS[id]}</option>)}</select></label>}
               {mode==='ffa'?<label>Цвет<input aria-label={`Цвет участника ${index+1}`} type="color" value={participant.color} onChange={event=>update(participant.semanticId,{color:event.target.value})}/></label>:<label>Команда<select aria-label={`Команда участника ${index+1}`} value={teams[participant.semanticId]} onChange={event=>setTeams(current=>({...current,[participant.semanticId]:event.target.value as 'team-a'|'team-b'}))}><option value="team-a">Team A</option><option value="team-b">Team B</option></select></label>}
               {participant.kind==='bot' && <button type="button" aria-label={`Удалить бота ${index}`} onClick={()=>setRoster(current=>current.filter(p=>p.semanticId!==participant.semanticId))}>Удалить</button>}
             </fieldset>
           ))}
         </div>
+        <div><button type="button" disabled={roster.filter(({kind})=>kind==='local-seat').length>=4 || roster.length>=8 || gamepads.length===0} onClick={addLocalSeat}>Быстро добавить игрока</button><button type="button" onClick={()=>setGamepads(availableGamepads())}>Обновить контроллеры</button></div>
         <button type="button" disabled={roster.length>=8} onClick={addBot}>Добавить бота</button>
 
         <div className="match-menu__rules">

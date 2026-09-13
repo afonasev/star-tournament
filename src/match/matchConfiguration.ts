@@ -5,13 +5,19 @@ import { ARENA_SIZE_IDS, type ArenaSize } from '../arena'
 import { PROTOTYPE_V1_PROFILE, validateGameDesignProfile, type GameDesignProfile, type ValidatedGameDesignProfile } from '../profiles'
 import { TEAM_COLORS } from './participantPalette'
 
-export const MATCH_CONFIGURATION_SCHEMA_VERSION = 4 as const
+export const MATCH_CONFIGURATION_SCHEMA_VERSION = 5 as const
+export const LEGACY_MATCH_CONFIGURATION_SCHEMA_VERSION = 4 as const
 export const MATCH_CONFIGURATION_ID = 'local-match-v1' as const
 export { TEAM_COLORS, VETTED_PARTICIPANT_COLORS } from './participantPalette'
 
 export type MatchMode = 'ffa' | 'teams'
 export type MatchTeam = 'team-a' | 'team-b'
 export type MatchParticipantKind = 'local-seat' | 'stationary-fixture' | 'bot'
+
+/** Browser-owned identity only; never a Gamepad object or mutable API index. */
+export type DeviceBindingDescriptor =
+  | { readonly kind: 'keyboard-mouse' }
+  | { readonly kind: 'gamepad'; readonly gamepadId: string; readonly connectionSlot: number }
 
 export interface MatchParticipantDescriptor {
   readonly semanticId: string
@@ -20,6 +26,7 @@ export interface MatchParticipantDescriptor {
   readonly difficulty?: BotDifficulty
   readonly color: string
   readonly team: MatchTeam | null
+  readonly deviceBinding?: DeviceBindingDescriptor
 }
 
 export interface MatchConfigurationPayload {
@@ -77,10 +84,26 @@ function integer(value: unknown, path: string): number {
   return value as number
 }
 
+function parseDeviceBinding(value: unknown, path: string): DeviceBindingDescriptor {
+  const data = record(value, path)
+  if (data.kind === 'keyboard-mouse') {
+    exactKeys(data, ['kind'], path)
+    return { kind: 'keyboard-mouse' }
+  }
+  if (data.kind === 'gamepad') {
+    exactKeys(data, ['kind', 'gamepadId', 'connectionSlot'], path)
+    const gamepadId = nonEmpty(data.gamepadId, `${path}.gamepadId`)
+    const connectionSlot = integer(data.connectionSlot, `${path}.connectionSlot`)
+    if (connectionSlot < 0) fail(`${path}.connectionSlot`, 'must be non-negative')
+    return { kind: 'gamepad', gamepadId, connectionSlot }
+  }
+  return fail(`${path}.kind`, 'must be keyboard-mouse or gamepad')
+}
+
 function parseParticipant(value: unknown, index: number): MatchParticipantDescriptor {
   const path = `participants[${index}]`
   const data = record(value, path)
-  exactKeys(data, [ 'semanticId', 'name', 'kind', 'color', 'team', ...(data.kind === 'bot' ? ['difficulty'] : []) ], path)
+  exactKeys(data, [ 'semanticId', 'name', 'kind', 'color', 'team', ...(data.kind === 'bot' ? ['difficulty'] : []), ...(data.kind === 'local-seat' ? ['deviceBinding'] : []) ], path)
   if (data.kind !== 'local-seat' && data.kind !== 'stationary-fixture' && data.kind !== 'bot') {
     return fail(`${path}.kind`, 'must be local-seat or stationary-fixture or bot')
   }
@@ -95,9 +118,38 @@ function parseParticipant(value: unknown, index: number): MatchParticipantDescri
     name: nonEmpty(data.name, `${path}.name`),
     kind: data.kind,
     ...(data.kind === 'bot' ? { difficulty: data.difficulty as BotDifficulty } : {}),
+    ...(data.kind === 'local-seat' ? { deviceBinding: parseDeviceBinding(data.deviceBinding, `${path}.deviceBinding`) } : {}),
     color,
     team: data.team,
   }
+}
+
+function bindingIdentity(binding: DeviceBindingDescriptor): string {
+  return binding.kind === 'keyboard-mouse'
+    ? binding.kind
+    : `${binding.kind}:${binding.gamepadId}:${binding.connectionSlot}`
+}
+
+function migrateLegacySingleSeatPayload(data: Record<string, unknown>): Record<string, unknown> {
+  const payload = { ...data }
+  if (payload.schemaVersion !== LEGACY_MATCH_CONFIGURATION_SCHEMA_VERSION) return payload
+  exactKeys(payload, ['schemaVersion', 'id', 'mode', 'arenaSize', 'arenaSeed', 'durationMinutes', 'scoreTargetPoints', 'participants', 'contentHash', ...(payload.execution === undefined ? [] : ['execution'])], '$')
+  if (!Array.isArray(payload.participants)) return payload
+  const legacyPayload = { ...payload }
+  delete (legacyPayload as { contentHash?: unknown }).contentHash
+  if (contentHash(legacyPayload) !== payload.contentHash) fail('contentHash', 'does not match legacy content')
+  const locals = payload.participants.filter((participant) => record(participant, 'participants').kind === 'local-seat')
+  if (locals.length !== 1) fail('participants', 'legacy configuration must contain exactly one local-seat')
+  payload.participants = payload.participants.map((participant) => {
+    const descriptor = record(participant, 'participants')
+    return descriptor.kind === 'local-seat'
+      ? { ...descriptor, deviceBinding: { kind: 'keyboard-mouse' } }
+      : descriptor
+  })
+  payload.schemaVersion = MATCH_CONFIGURATION_SCHEMA_VERSION
+  delete (payload as { contentHash?: unknown }).contentHash
+  payload.contentHash = contentHash(payload)
+  return payload
 }
 
 function compatibleStep(value: number, minimum: number, step: number): boolean {
@@ -129,7 +181,7 @@ export function parseMatchConfiguration(
   const profileValidation = validateGameDesignProfile(profileInput)
   if (!profileValidation.ok) return fail('profile', 'must be a valid GameDesignProfile')
   const profile = profileValidation.profile
-  const data = record(input, '$')
+  const data = migrateLegacySingleSeatPayload(record(input, '$'))
   exactKeys(data, ['schemaVersion', 'id', 'mode', 'arenaSize', 'arenaSeed', 'durationMinutes', 'scoreTargetPoints', 'participants', 'contentHash', ...(data.execution === undefined ? [] : ['execution'])], '$')
   if (data.execution !== undefined && data.execution !== 'headless') fail('execution', 'must be headless when specified')
   if (data.schemaVersion !== MATCH_CONFIGURATION_SCHEMA_VERSION) fail('schemaVersion', `must equal ${MATCH_CONFIGURATION_SCHEMA_VERSION}`)
@@ -160,10 +212,13 @@ export function parseMatchConfiguration(
     .sort((first, second) => first.semanticId.localeCompare(second.semanticId, 'en'))
   const ids = new Set(participants.map(({ semanticId }) => semanticId))
   if (ids.size !== participants.length) fail('participants', 'must have unique semanticId values')
-  if (participants.filter(({ kind }) => kind === 'local-seat').length !== (data.execution === 'headless' ? 0 : 1)) {
-    fail('participants', 'must contain exactly one local-seat participant')
+  const localSeats = participants.filter(({ kind }) => kind === 'local-seat')
+  if (localSeats.length < (data.execution === 'headless' ? 0 : 1) || localSeats.length > 4) {
+    fail('participants', data.execution === 'headless' ? 'must not contain local-seat participants' : 'must contain 1-4 local-seat participants')
   }
   if (data.execution === 'headless' && participants.some(({ kind }) => kind !== 'bot')) fail('participants', 'headless requires bots')
+  const bindingIds = localSeats.map(({ deviceBinding }) => bindingIdentity(deviceBinding!))
+  if (new Set(bindingIds).size !== bindingIds.length) fail('participants', 'local-seat device bindings must be unique')
   if (data.mode === 'ffa') {
     if (participants.some(({ team }) => team !== null)) fail('participants', 'FFA participants must not have teams')
     if (new Set(participants.map(({ color }) => color)).size !== participants.length) {
@@ -204,10 +259,14 @@ export function createMatchConfiguration(
   payload: MatchConfigurationPayload,
   profile: GameDesignProfile | ValidatedGameDesignProfile = PROTOTYPE_V1_PROFILE,
 ): MatchConfiguration {
+  const localSeats = payload.participants.filter(({ kind }) => kind === 'local-seat')
   const normalizedPayload: MatchConfigurationPayload = {
     ...payload,
     participants: payload.participants.map((participant) => ({
       ...participant,
+      ...(participant.kind === 'local-seat' && participant.deviceBinding === undefined && localSeats.length === 1
+        ? { deviceBinding: { kind: 'keyboard-mouse' as const } }
+        : {}),
       semanticId: participant.semanticId.trim(),
       name: participant.name.trim(),
       color: participant.color.toLowerCase(),
@@ -226,7 +285,7 @@ export const DEFAULT_MATCH_CONFIGURATION = createMatchConfiguration({
   durationMinutes: PROTOTYPE_V1_PROFILE.rules.match.duration.defaultMinutes,
   scoreTargetPoints: null,
   participants: [
-    { semanticId: 'local-player-1', name: 'Pilot', kind: 'local-seat', color: '#3b82f6', team: null },
+    { semanticId: 'local-player-1', name: 'Pilot', kind: 'local-seat', color: '#3b82f6', team: null, deviceBinding: { kind: 'keyboard-mouse' } },
     { semanticId: 'robot-center', name: 'Center', kind: 'stationary-fixture', color: '#f59e0b', team: null },
     { semanticId: 'robot-left', name: 'Left', kind: 'stationary-fixture', color: '#22c55e', team: null },
     { semanticId: 'robot-right', name: 'Right', kind: 'stationary-fixture', color: '#a855f7', team: null },

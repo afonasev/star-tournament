@@ -23,6 +23,15 @@
   backdrop-filter: blur(8px);
 }
 
+.gameplay-hud__seats { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); pointer-events: none; }
+.gameplay-hud__seats[data-count="2"] { grid-template-columns: repeat(2, 1fr); grid-template-rows: 1fr; }
+.gameplay-hud__seat { align-self: end; justify-self: start; display: grid; gap: .18rem; margin: .75rem; padding: .45rem .6rem; border: 1px solid rgb(110 225 255 / 25%); border-radius: .3rem; background: rgb(4 12 22 / 72%); font: 700 .72rem/1 Inter, sans-serif; }
+.gameplay-hud__seat small { color: #86bdca; text-transform: uppercase; }
+.gameplay-hud__standings-cell { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; box-sizing: border-box; overflow: auto; padding: .75rem; border: 1px solid rgb(105 224 255 / 30%); background: rgb(3 10 19 / 88%); pointer-events: auto; }
+.gameplay-hud__standings-cell > p { margin: 0 0 .5rem; color: #72e6ff; font-size: .58rem; font-weight: 900; letter-spacing: .14em; }
+.gameplay-hud__standings-cell table { min-width: 0; font-size: .55rem; }
+.gameplay-hud__standings-cell th, .gameplay-hud__standings-cell td { padding: .22rem; }
+
 .gameplay-hud__timer {
   position: absolute;
   top: clamp(1rem, 3vw, 2rem);

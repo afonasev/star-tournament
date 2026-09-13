@@ -1,14 +1,14 @@
 ## 1. Конфигурация и детерминированный ввод
 
-- [ ] 1.1 Расширить versioned match configuration до 1–4 local seats и unique device-binding descriptors, сохранив compatibility path для historical single-seat payload; проверить unit-тестами valid/invalid rosters, duplicate bindings и content hash.
-- [ ] 1.2 Реализовать per-seat gamepad adapter и общий input coordinator с standard action map (`LS`/`RS`, `RT`, `A`, held `View`, `Menu/Start`); проверить normalised action frames, edge/held semantics и отсутствие `LB` action.
-- [ ] 1.3 Расширить pause/focus/pointer-lock lifecycle на все local adapters; проверить очистку held input и отсутствие новых simulation ticks при blur, lock loss и gamepad disconnect.
+- [x] 1.1 Расширить versioned match configuration до 1–4 local seats и unique device-binding descriptors, сохранив compatibility path для historical single-seat payload; проверить unit-тестами valid/invalid rosters, duplicate bindings и content hash.
+- [x] 1.2 Реализовать per-seat gamepad adapter и общий input coordinator с standard action map (`LS`/`RS`, `RT`, `A`, held `View`, `Menu/Start`); проверить normalised action frames, edge/held semantics и отсутствие `LB` action.
+- [x] 1.3 Расширить pause/focus/pointer-lock lifecycle на все local adapters; проверить очистку held input и отсутствие новых simulation ticks при blur, lock loss и gamepad disconnect.
 
 ## 2. Локальные seats и presentation
 
-- [ ] 2.1 Реализовать setup roster 1–4 людей, выбор конкретного доступного устройства, fast join и понятную validation UI для conflict/unavailable binding; проверить React component tests и сохранение выбранной configuration.
-- [ ] 2.2 Расширить renderer до stable per-seat cameras и viewport/scissor layouts: 1 full, 2 left/right, 3 equal 2×2 cameras плюс persistent standings cell, 4 equal 2×2; проверить renderer/layout tests без изменения simulation state.
-- [ ] 2.3 Привязать DOM HUD, held scoreboard и pause/reconnect surface к local viewport; для трёх seats отрисовать постоянный live-score в свободной ячейке; проверить UI projection и accessibility labels.
+- [x] 2.1 Реализовать setup roster 1–4 людей, выбор конкретного доступного устройства, fast join и понятную validation UI для conflict/unavailable binding; проверить React component tests и сохранение выбранной configuration.
+- [x] 2.2 Расширить renderer до stable per-seat cameras и viewport/scissor layouts: 1 full, 2 left/right, 3 equal 2×2 cameras плюс persistent standings cell, 4 equal 2×2; проверить renderer/layout tests без изменения simulation state.
+- [x] 2.3 Привязать DOM HUD, held scoreboard и pause/reconnect surface к local viewport; для трёх seats отрисовать постоянный live-score в свободной ячейке; проверить UI projection и accessibility labels.
 
 ## 3. Интеграция и приёмка
 
