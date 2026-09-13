@@ -17,6 +17,7 @@ import { createActionFrame } from '../input/actionFrame'
 import type { PointerLockControllerOptions, PointerLockLifecycleSnapshot } from '../input/pointerLockController'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
 import { PRESENTATION_BALANCED_V1_PROFILE } from '../presentation'
+import { createMatchConfiguration, DEFAULT_MATCH_CONFIGURATION } from '../match'
 import type { FirstPersonRenderer } from '../render/firstPersonRenderer'
 import { WebGlUnavailableError } from '../render/diagnosticRenderer'
 import { ArenaGlbAssetError } from '../render/arenaGlbAssets'
@@ -366,6 +367,23 @@ describe('playable browser bootstrap', () => {
       minSlopeSlideDegrees: 60,
     })
     await waitFor(() => expect(screen.getByRole('button', { name: 'Начать игру' })).toBeInTheDocument())
+  })
+
+  it('uses the assigned gamepad adapter for a solo gamepad seat instead of keyboard input', async () => {
+    const mount = document.createElement('div')
+    document.body.append(mount)
+    const test = harness()
+    const { contentHash: _ignoredContentHash, ...configurationPayload } = DEFAULT_MATCH_CONFIGURATION
+    const configuration = createMatchConfiguration({
+      ...configurationPayload,
+      participants: DEFAULT_MATCH_CONFIGURATION.participants.map((participant) => participant.kind === 'local-seat'
+        ? { ...participant, deviceBinding: { kind: 'gamepad' as const, gamepadId: 'Pad A', connectionSlot: 0 } }
+        : participant),
+    })
+
+    application = await bootstrapBrowserRuntime(mount, { ...test.dependencies, configuration })
+
+    expect(test.createInput).not.toHaveBeenCalled()
   })
 
   it('starts from the HUD, drains one canonical frame per fixed tick and renders state', async () => {

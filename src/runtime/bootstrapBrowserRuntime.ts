@@ -532,7 +532,7 @@ export async function bootstrapBrowserRuntime(
   }
 
   const localSeats = configuration.participants.filter((participant) => participant.kind === 'local-seat')
-  input = localSeats.length === 1
+  input = localSeats.length === 1 && localSeats[0]!.deviceBinding?.kind === 'keyboard-mouse'
     ? createInput({ pointerLockElement: playfield, participantId: localSeats[0]!.semanticId })
     : new InputCoordinator(localSeats.map((seat) => {
       if (seat.deviceBinding?.kind === 'keyboard-mouse') {

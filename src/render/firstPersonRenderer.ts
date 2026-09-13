@@ -1277,8 +1277,10 @@ export function createFirstPersonRenderer({
       seatCamera.rotation.set(seat.pitch, -seat.yaw, 0, 'YXZ')
       seatCamera.aspect = viewport.width / viewport.height
       seatCamera.updateProjectionMatrix()
-      // A single authored viewmodel is reused for the common first-person pose;
-      // camera/viewport ownership remains per-seat and renderer-only.
+      // The authored viewmodel is moved to the active camera before each
+      // scissored submission. This keeps one presentation asset while giving
+      // every local viewport its own first-person weapon.
+      if (viewmodel.group.parent !== seatCamera) seatCamera.add(viewmodel.group)
       viewmodel.group.visible = seat.alive !== false
       renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height)
       renderer.setScissor(viewport.x, viewport.y, viewport.width, viewport.height)
