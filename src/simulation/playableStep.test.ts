@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { contentHash } from '../core/canonical'
 import { createActionFrame } from '../input/actionFrame'
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { DEFAULT_MATCH_CONFIGURATION, createMatchConfiguration } from '../match'
 import { createInitialSimulationSnapshot, localParticipant, parseSimulationSnapshot } from './playableSnapshot'
 import {
   livingParticipantCollisionCapsules,
@@ -41,6 +42,27 @@ function createCollision(): PlayableCollisionPort & { projected: number } {
 }
 
 describe('playable simulation step', () => {
+  it('applies one ordered frame to two local seats without crossing their actions', () => {
+    const { contentHash: _contentHash, ...baseConfiguration } = DEFAULT_MATCH_CONFIGURATION
+    const configuration = createMatchConfiguration({
+      ...baseConfiguration,
+      participants: [
+        { semanticId: 'local-a', name: 'A', kind: 'local-seat', color: '#3b82f6', team: null, deviceBinding: { kind: 'keyboard-mouse' } },
+        { semanticId: 'local-b', name: 'B', kind: 'local-seat', color: '#f59e0b', team: null, deviceBinding: { kind: 'gamepad', gamepadId: 'Pad', connectionSlot: 0 } },
+        { semanticId: 'robot-center', name: 'Fixture', kind: 'stationary-fixture', color: '#22c55e', team: null },
+        { semanticId: 'robot-left', name: 'Fixture B', kind: 'stationary-fixture', color: '#a855f7', team: null },
+      ],
+    })
+    const initial = createInitialSimulationSnapshot({ rngSeed: 1, arena, configuration })
+    const collision = createCollision()
+    const next = stepPlayableSimulation(initial, createActionFrame(1, [
+      { participantId: 'local-a', actionId: 'move-forward', value: 1 },
+      { participantId: 'local-b', actionId: 'move-right', value: 1 },
+    ]), collision, PROTOTYPE_V1_PROFILE, configuration)
+    expect(next.tick).toBe(1)
+    expect(next.participants.find(({ semanticId }) => semanticId === 'local-a')?.position.z).toBeLessThan(6)
+    expect(next.participants.find(({ semanticId }) => semanticId === 'local-b')?.position.x).toBeGreaterThan(0)
+  })
   it('projects only living roster capsules and converts fixture feet anchors to capsule centers', () => {
     const initial = createInitialSimulationSnapshot({ rngSeed: 1, arena })
     const deadFixture = initial.participants.find(({ kind }) => kind === 'stationary-fixture')

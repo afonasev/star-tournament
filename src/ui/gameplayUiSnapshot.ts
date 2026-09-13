@@ -44,6 +44,7 @@ export interface GameplayUiSnapshot {
   readonly remainingTicks: number
   readonly timerText: string
   readonly scoreboardVisible: boolean
+  readonly localSeats?: readonly { readonly semanticId: string; readonly name: string; readonly health: number; readonly ammo: number; readonly scoreboardHeld: boolean }[]
   readonly standings: StandingsProjection
   readonly result: MatchFinalResult | null
   readonly deathMessage?: string
@@ -94,6 +95,7 @@ export class GameplayUiProjector {
     debug?: GameplayDebugSnapshot,
     errorMessage?: string,
     scoreboardVisible = false,
+    scoreboardSeatIds: readonly string[] = [],
   ): Readonly<GameplayUiSnapshot> {
     if (source.tick < this.lastTick) {
       this.hitFeedbackThroughTick = -1
@@ -148,6 +150,7 @@ export class GameplayUiProjector {
       remainingTicks: source.match.remainingTicks,
       timerText: matchPhase === 'overtime' ? 'OVERTIME' : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
       scoreboardVisible: scoreboardVisible && matchPhase !== 'finished',
+      localSeats: source.participants.filter(({ kind }) => kind === 'local-seat').map(({ semanticId, name, health, weapon }) => ({ semanticId, name, health, ammo: weapon.ammo, scoreboardHeld: scoreboardSeatIds.includes(semanticId) })),
       standings: projectStandings(source.match.mode, source.participants),
       result: source.match.result,
       ...(!local.alive ? { deathMessage: local.deathSource ? `Вас убил ${source.participants.find(p => p.semanticId === local.deathSource!.participantId)?.name ?? local.deathSource.participantId}` : 'Вы погибли' } : {}),

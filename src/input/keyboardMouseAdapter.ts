@@ -26,6 +26,7 @@ export interface KeyboardMouseAdapterOptions {
 export interface UiActionSnapshot {
   readonly scoreboardHeld: boolean
   readonly pauseRequested: boolean
+  readonly scoreboardHeldSeatIds?: readonly string[]
 }
 
 type HeldKey = 'KeyW' | 'KeyA' | 'KeyS' | 'KeyD' | 'Space'
@@ -45,7 +46,7 @@ function normalizedAxis(value: number): number {
  * It never reads or mutates simulation state and emits only serializable frames.
  */
 export class KeyboardMouseAdapter {
-  private readonly participantId: string
+  private readonly seatId: string
   private readonly document: Document
   private readonly window: Window
   private readonly heldKeys = new Set<HeldKey>()
@@ -57,8 +58,8 @@ export class KeyboardMouseAdapter {
   private disposed = false
 
   constructor(private readonly options: KeyboardMouseAdapterOptions) {
-    this.participantId = options.participantId ?? LOCAL_KEYBOARD_MOUSE_PARTICIPANT_ID
-    if (this.participantId.length === 0) {
+    this.seatId = options.participantId ?? LOCAL_KEYBOARD_MOUSE_PARTICIPANT_ID
+    if (this.seatId.length === 0) {
       throw new TypeError('KeyboardMouseAdapter participantId must be non-empty')
     }
     this.document = options.document ?? document
@@ -73,6 +74,7 @@ export class KeyboardMouseAdapter {
     this.document.addEventListener('visibilitychange', this.onVisibilityChange)
     this.document.addEventListener('pointerlockchange', this.onPointerLockChange)
   }
+  get participantId(): string { return this.seatId }
 
   isPointerLocked(): boolean {
     return !this.disposed && this.document.pointerLockElement === this.options.pointerLockElement
@@ -102,12 +104,12 @@ export class KeyboardMouseAdapter {
     this.accumulatedMouseY = 0
 
     const actions: NormalizedAction[] = [
-      { participantId: this.participantId, actionId: KEYBOARD_MOUSE_ACTION_IDS.moveForward, value: moveForward },
-      { participantId: this.participantId, actionId: KEYBOARD_MOUSE_ACTION_IDS.moveRight, value: moveRight },
-      { participantId: this.participantId, actionId: KEYBOARD_MOUSE_ACTION_IDS.lookYaw, value: lookYaw },
-      { participantId: this.participantId, actionId: KEYBOARD_MOUSE_ACTION_IDS.lookPitch, value: lookPitch },
-      { participantId: this.participantId, actionId: KEYBOARD_MOUSE_ACTION_IDS.jump, value: jump },
-      { participantId: this.participantId, actionId: KEYBOARD_MOUSE_ACTION_IDS.fire, value: fire },
+      { participantId: this.seatId, actionId: KEYBOARD_MOUSE_ACTION_IDS.moveForward, value: moveForward },
+      { participantId: this.seatId, actionId: KEYBOARD_MOUSE_ACTION_IDS.moveRight, value: moveRight },
+      { participantId: this.seatId, actionId: KEYBOARD_MOUSE_ACTION_IDS.lookYaw, value: lookYaw },
+      { participantId: this.seatId, actionId: KEYBOARD_MOUSE_ACTION_IDS.lookPitch, value: lookPitch },
+      { participantId: this.seatId, actionId: KEYBOARD_MOUSE_ACTION_IDS.jump, value: jump },
+      { participantId: this.seatId, actionId: KEYBOARD_MOUSE_ACTION_IDS.fire, value: fire },
     ]
     return createActionFrame(tick, actions)
   }

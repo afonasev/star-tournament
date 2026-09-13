@@ -9,6 +9,7 @@
     "ai:evaluate": "node scripts/ai-evaluate.mjs",
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc -b",
+    "check": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "tsc -b && vite build",

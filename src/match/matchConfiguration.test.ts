@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { PROTOTYPE_V1_PROFILE } from '../profiles'
+import { contentHash } from '../core/canonical'
 import {
   DEFAULT_MATCH_CONFIGURATION,
   MATCH_CONFIGURATION_ID,
@@ -31,7 +32,7 @@ function payload(overrides: Partial<MatchConfigurationPayload> = {}): MatchConfi
 
 describe('MatchConfiguration', () => {
   it('defaults to a concrete medium arena seed and includes both in identity', () => {
-    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 4, arenaSize: 'medium', arenaSeed: 0x53544152 })
+    expect(DEFAULT_MATCH_CONFIGURATION).toMatchObject({ schemaVersion: 5, arenaSize: 'medium', arenaSeed: 0x53544152 })
     const changed = createMatchConfiguration(payload({ arenaSize: 'large', arenaSeed: 7 }))
     expect(changed.contentHash).not.toBe(DEFAULT_MATCH_CONFIGURATION.contentHash)
   })
@@ -88,7 +89,10 @@ describe('MatchConfiguration', () => {
 
   it('rejects invalid roster size, duplicate ids, empty teams and unsupported participant kinds', () => {
     expect(() => createMatchConfiguration(payload({ participants: [payload().participants[0]!] }))).toThrow(/2-8/)
-    expect(() => createMatchConfiguration(payload({ participants: [payload().participants[0]!, payload().participants[0]!] }))).toThrow(/unique/)
+    expect(() => createMatchConfiguration(payload({ participants: [
+      { ...payload().participants[0]!, deviceBinding: { kind: 'keyboard-mouse' } },
+      { ...payload().participants[0]!, deviceBinding: { kind: 'gamepad', gamepadId: 'Pad', connectionSlot: 0 } },
+    ] }))).toThrow(/unique/)
     expect(() => createMatchConfiguration(payload({
       mode: 'teams',
       participants: [
@@ -107,5 +111,34 @@ describe('MatchConfiguration', () => {
     expect(() => createMatchConfiguration(payload({ scoreTargetPoints: 1_050 }))).toThrow(/steps of 100/)
     expect(createMatchConfiguration(payload({ scoreTargetPoints: 20_000 })).scoreTargetPoints).toBe(20_000)
     expect(DEFAULT_MATCH_CONFIGURATION.durationMinutes).toBe(PROTOTYPE_V1_PROFILE.rules.match.duration.defaultMinutes)
+  })
+
+  it('keeps unique browser-owned bindings in the canonical content identity', () => {
+    const configuration = createMatchConfiguration(payload({
+      participants: [
+        { semanticId: 'local-a', name: 'Local A', kind: 'local-seat', color: '#ffffff', team: null, deviceBinding: { kind: 'keyboard-mouse' } },
+        { semanticId: 'local-b', name: 'Local B', kind: 'local-seat', color: '#ffcc00', team: null, deviceBinding: { kind: 'gamepad', gamepadId: 'Pad', connectionSlot: 1 } },
+      ],
+    }))
+    expect(configuration.participants.filter((participant) => participant.kind === 'local-seat')).toHaveLength(2)
+    expect(configuration.contentHash).not.toBe(createMatchConfiguration(payload()).contentHash)
+    expect(() => createMatchConfiguration(payload({
+      participants: [
+        { semanticId: 'local-a', name: 'Local A', kind: 'local-seat', color: '#ffffff', team: null, deviceBinding: { kind: 'keyboard-mouse' } },
+        { semanticId: 'local-b', name: 'Local B', kind: 'local-seat', color: '#ffcc00', team: null, deviceBinding: { kind: 'keyboard-mouse' } },
+      ],
+    }))).toThrow(/bindings must be unique/)
+  })
+
+  it('migrates a verified schema 4 single-seat payload to its explicit keyboard binding', () => {
+    const { contentHash: _contentHash, ...current } = DEFAULT_MATCH_CONFIGURATION
+    const legacyPayload = {
+      ...current,
+      schemaVersion: 4,
+      participants: current.participants.map(({ deviceBinding: _binding, ...participant }) => participant),
+    }
+    const legacy = { ...legacyPayload, contentHash: contentHash(legacyPayload) }
+    expect(parseMatchConfiguration(legacy)).toMatchObject({ schemaVersion: 5 })
+    expect(parseMatchConfiguration(legacy).participants.find(({ kind }) => kind === 'local-seat')?.deviceBinding).toEqual({ kind: 'keyboard-mouse' })
   })
 })

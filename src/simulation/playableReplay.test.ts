@@ -48,6 +48,21 @@ const fixtureStepper: PlayableSimulationStep = (snapshot, frame) => parseSimulat
 })
 
 describe('playable replay fixtures', () => {
+  it('round-trips a multi-local configuration without serializing browser devices into snapshots', () => {
+    const { contentHash: _contentHash, ...base } = DEFAULT_MATCH_CONFIGURATION
+    const configuration = createMatchConfiguration({
+      ...base,
+      participants: [
+        { semanticId: 'local-a', name: 'A', kind: 'local-seat', color: '#3b82f6', team: null, deviceBinding: { kind: 'keyboard-mouse' } },
+        { semanticId: 'local-b', name: 'B', kind: 'local-seat', color: '#f59e0b', team: null, deviceBinding: { kind: 'gamepad', gamepadId: 'Pad', connectionSlot: 0 } },
+        { semanticId: 'robot-center', name: 'Center', kind: 'stationary-fixture', color: '#22c55e', team: null },
+      ],
+    })
+    const snapshot = createInitialSimulationSnapshot({ rngSeed: 42, arena: { id: DIAGNOSTIC_ARENA.id, seed: DIAGNOSTIC_ARENA.seed, generatorVersion: DIAGNOSTIC_ARENA.generatorVersion, contentHash: DIAGNOSTIC_ARENA.contentHash as `fnv1a64-v1:${string}` }, configuration })
+    const replay = parsePlayableSimulationReplay(serializePlayableSimulationReplay(createPlayableSimulationReplay(snapshot, [createActionFrame(1, [{ participantId: 'local-a', actionId: 'move-forward', value: 1 }, { participantId: 'local-b', actionId: 'move-right', value: 1 }])], configuration)))
+    expect(replay.configuration.participants.filter(({ kind }) => kind === 'local-seat')).toHaveLength(2)
+    expect(replay.initialSnapshot.participants.every((participant) => !('deviceBinding' in participant))).toBe(true)
+  })
   it('canonically round-trips schema v4 with configuration, arena definition and initial snapshot', () => {
     const replay = createPlayableSimulationReplay(initialSnapshot(), frames)
     const restored = parsePlayableSimulationReplay(serializePlayableSimulationReplay(replay))

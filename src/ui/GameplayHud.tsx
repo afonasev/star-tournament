@@ -44,7 +44,7 @@ function formatDamage(value: number): string {
   return String(Math.round(value))
 }
 
-function StandingsTable({ snapshot }: { readonly snapshot: Readonly<GameplayUiSnapshot> }) {
+function StandingsTable({ snapshot, className = 'gameplay-hud__scoreboard' }: { readonly snapshot: Readonly<GameplayUiSnapshot>; readonly className?: string }) {
   const table = (rows: readonly StandingsParticipantRow[]) => (
     <table>
       <colgroup><col className="gameplay-hud__column-rank" /><col className="gameplay-hud__column-participant" /><col span={3} className="gameplay-hud__column-stat" /><col span={2} className="gameplay-hud__column-damage" /><col className="gameplay-hud__column-score" /></colgroup>
@@ -55,7 +55,7 @@ function StandingsTable({ snapshot }: { readonly snapshot: Readonly<GameplayUiSn
       })}</tbody>
     </table>
   )
-  return <section className="gameplay-hud__scoreboard" aria-label="Таблица результатов"><p>LIVE STANDINGS</p>{snapshot.standings.mode === 'ffa' ? table(snapshot.standings.rows) : snapshot.standings.teams.map((team) => <section key={team.team} className="gameplay-hud__team" data-team={team.team} data-winner={snapshot.result?.winnerType === 'team' && snapshot.result.winnerId === team.team}><h2 style={{ color: team.color }}>{team.team === 'team-a' ? 'Team A' : 'Team B'} <strong>{team.totalScore}</strong></h2>{table(team.participants)}</section>)}</section>
+  return <section className={className} aria-label="Таблица результатов"><p>LIVE STANDINGS</p>{snapshot.standings.mode === 'ffa' ? table(snapshot.standings.rows) : snapshot.standings.teams.map((team) => <section key={team.team} className="gameplay-hud__team" data-team={team.team} data-winner={snapshot.result?.winnerType === 'team' && snapshot.result.winnerId === team.team}><h2 style={{ color: team.color }}>{team.team === 'team-a' ? 'Team A' : 'Team B'} <strong>{team.totalScore}</strong></h2>{table(team.participants)}</section>)}</section>
 }
 
 function winnerLabel(snapshot: Readonly<GameplayUiSnapshot>): string {
@@ -83,6 +83,8 @@ export function GameplayHud({ snapshot, onRequestControl, onRepeat, onMainMenu, 
     <main className="gameplay-hud" data-status={snapshot.status}>
       {snapshot.status !== 'error' && (
         <>
+          {(snapshot.localSeats?.length ?? 1) > 1 && <section className="gameplay-hud__seats" aria-label="HUD локальных игроков" data-count={snapshot.localSeats!.length}>{snapshot.localSeats!.map((seat) => <section className="gameplay-hud__seat" key={seat.semanticId} aria-label={`HUD ${seat.name}`}><small>{seat.name}</small><strong>HP {Math.ceil(seat.health)}</strong><span>◫ {seat.ammo}</span>{seat.scoreboardHeld && <em>ТАБЛИЦА</em>}</section>)}</section>}
+          {snapshot.localSeats?.length === 3 && <StandingsTable snapshot={snapshot} className="gameplay-hud__standings-cell" />}
           <section className="gameplay-hud__health" aria-label="Здоровье игрока">
             <span className="gameplay-hud__label">HP</span>
             <strong>{Math.ceil(snapshot.health)}</strong>

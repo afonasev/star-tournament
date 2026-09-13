@@ -90,4 +90,14 @@ describe('MatchSetupMenu', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Во весь экран' }))
     expect(onToggleFullscreen).toHaveBeenCalledOnce()
   })
+
+  it('fast-joins a specific available gamepad and keeps its binding in the started configuration', () => {
+    Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => [{ id: 'Living room pad', index: 0, connected: true }] })
+    const onStart = vi.fn()
+    render(<MatchSetupMenu profile={PROTOTYPE_V1_PROFILE} onStart={onStart} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Быстро добавить игрока' }))
+    expect(screen.getByLabelText('Устройство игрока 5')).toHaveValue('Living room pad:0')
+    fireEvent.click(screen.getByRole('button', { name: 'Начать матч' }))
+    expect(onStart.mock.calls[0]?.[0].participants.find((participant: { semanticId: string }) => participant.semanticId === 'local-2')).toMatchObject({ deviceBinding: { kind: 'gamepad', gamepadId: 'Living room pad', connectionSlot: 0 } })
+  })
 })
