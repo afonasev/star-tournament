@@ -278,6 +278,48 @@ interface ArenaPresentation extends ArenaTextureKit {
   readonly localLights: readonly LocalLightCandidate[]
 }
 
+/**
+ * Shipping wall bays are immutable presentation-only GLB attachments. Keeping
+ * every authored child as an individual mesh turns each split-screen camera
+ * into hundreds of identical WebGL submissions. BatchedMesh preserves each
+ * child's authored geometry and world transform while submitting one draw per
+ * shared material. It intentionally excludes animated participants and lights;
+ * canonical shells remain as non-rendering named audit nodes while their
+ * immutable renderer geometry is batched.
+ */
+function batchStaticArenaMeshes(scene: THREE.Scene, geometries: THREE.BufferGeometry[]): void {
+  const candidates = new Map<string, { material: THREE.Material; castShadow: boolean; receiveShadow: boolean; meshes: THREE.Mesh[] }>()
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || Array.isArray(object.material)) return
+    let isWallBay = false
+    object.traverseAncestors((ancestor) => { isWallBay ||= ancestor.name.startsWith('presentation:glb:wall-bay:') })
+    if (!isWallBay && !object.name.startsWith('arena:')) return
+    const key = `${object.material.uuid}:${object.castShadow}:${object.receiveShadow}`
+    const candidate = candidates.get(key) ?? { material: object.material, castShadow: object.castShadow, receiveShadow: object.receiveShadow, meshes: [] as THREE.Mesh[] }
+    candidate.meshes.push(object)
+    candidates.set(key, candidate)
+  })
+  for (const { material, castShadow, receiveShadow, meshes } of candidates.values()) {
+    const vertexCount = meshes.reduce((total, mesh) => total + mesh.geometry.getAttribute('position').count, 0)
+    const indexCount = meshes.reduce((total, mesh) => total + (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position').count), 0)
+    const batch = new THREE.BatchedMesh(meshes.length, vertexCount, indexCount, material)
+    batch.name = `presentation:batched-static:${material.uuid}`
+    batch.castShadow = castShadow
+    batch.receiveShadow = receiveShadow
+    batch.perObjectFrustumCulled = true
+    for (const mesh of meshes) {
+      mesh.updateWorldMatrix(true, false)
+      const geometryId = batch.addGeometry(mesh.geometry)
+      const instanceId = batch.addInstance(geometryId)
+      batch.setMatrixAt(instanceId, mesh.matrixWorld)
+      // Retain the named source node as a non-rendering audit boundary.
+      mesh.visible = false
+    }
+    geometries.push(batch.geometry)
+    scene.add(batch)
+  }
+}
+
 export function resolveLocalLightShadowBudget(
   graphicsQuality: GraphicsQualityProfile,
   presentationProfile: ValidatedPresentationProfile = PRESENTATION_BALANCED_V1_PROFILE,
@@ -366,6 +408,8 @@ function addArena(
   // panel material keeps the arena shell coherent; cyan remains a thin trim.
   const accentShellMaterial = textured({ ...CLEAN_FUTURE_SPORT_V1.materials.wall, color: 0xdde7ec }, wallMaps)
   materials.push(panelMaterial, trimMaterial, wallModuleMaterial, routeGuideMaterial, portalShellMaterial, portalInnerMaterial, landmarkMaterial, accentShellMaterial)
+  const glbMaterialCache = new Map<THREE.Material, THREE.Material>()
+  const staticMaterialCache = new Map<string, THREE.Material>()
 
   // GLB templates share authored materials. Clone before attaching a map so every
   // renderer instance remains presentation-owned and the template cache stays immutable.
@@ -377,6 +421,8 @@ function addArena(
     geometries.push(geometry)
     const sourceMaterials = Array.isArray(child.material) ? child.material : [child.material]
     const mapped = sourceMaterials.map((source) => {
+      const cached = glbMaterialCache.get(source)
+      if (cached !== undefined) return cached
       const material = source.clone()
       if (material instanceof THREE.MeshStandardMaterial) {
         material.map = map
@@ -390,6 +436,7 @@ function addArena(
         material.needsUpdate = true
       }
       materials.push(material)
+      glbMaterialCache.set(source, material)
       return material
     })
     child.material = Array.isArray(child.material) ? mapped : mapped[0]!
@@ -424,7 +471,7 @@ function addArena(
     sourceGeometry.dispose()
     const token = arenaMaterialToken(surface.material)
     const special = surface.semantics?.classification === 'window' || surface.semantics?.classification === 'movement-barrier'
-    const material = special ? new THREE.MeshStandardMaterial({ color:surface.semantics?.classification === 'window' ? 0xbce8ee : 0x91f8cf, transparent:true,opacity:surface.semantics?.classification === 'window' ? recipeStyle.windowOpacity : recipeStyle.barrierOpacity,depthWrite:false,roughness:0.3,metalness:0.1 }) : surface.material === 'accent'
+    let material = special ? new THREE.MeshStandardMaterial({ color:surface.semantics?.classification === 'window' ? 0xbce8ee : 0x91f8cf, transparent:true,opacity:surface.semantics?.classification === 'window' ? recipeStyle.windowOpacity : recipeStyle.barrierOpacity,depthWrite:false,roughness:0.3,metalness:0.1 }) : surface.material === 'accent'
       ? accentShellMaterial
       : new THREE.MeshStandardMaterial({
         ...token,
@@ -437,6 +484,23 @@ function addArena(
     if (arena.recipeId && !special && material !== accentShellMaterial) {
       material.color.setHex(surface.material === 'floor' ? (surface.semantics?.sector === 'atrium' ? 0x697987 : 0x4d6170) : (surface.semantics?.sector === 'north' ? 0x5a7080 : 0x625f5b))
     }
+    const materialKey = [
+      material.map?.uuid,
+      material.normalMap?.uuid,
+      material.roughnessMap?.uuid,
+      material.color.getHex(),
+      material.transparent,
+      material.opacity,
+      material.depthWrite,
+    ].join('|')
+    const sharedMaterial = staticMaterialCache.get(materialKey)
+    if (sharedMaterial !== undefined) {
+      if (material !== accentShellMaterial) material.dispose()
+      material = sharedMaterial as THREE.MeshStandardMaterial
+    } else {
+      staticMaterialCache.set(materialKey, material)
+      if (!materials.includes(material)) materials.push(material)
+    }
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = `arena:${surface.id}`
     mesh.position.set(surface.center.x, surface.center.y, surface.center.z)
@@ -448,7 +512,6 @@ function addArena(
     )
     scene.add(mesh)
     geometries.push(geometry)
-    materials.push(material)
     if (surface.id.startsWith('portal-solid:')) continue
 
     const detail = new THREE.Group()
@@ -850,6 +913,11 @@ export function createFirstPersonRenderer({
   if (renderer.shadowMap !== undefined) {
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFShadowMap
+    // Lamp casters and their receivers are static presentation geometry. Three
+    // otherwise rebuilds every point-light cube map for every scissored local
+    // viewport, multiplying an unchanged pass up to four times per visual tick.
+    renderer.shadowMap.autoUpdate = false
+    renderer.shadowMap.needsUpdate = true
   }
   const arenaPresentation = addArena(scene, arena, geometries, materials, textures, () => renderer.render(scene, camera), activeGraphicsQuality, arenaGlbAssets, activePresentationProfile)
   const textureKit = arenaPresentation
@@ -868,10 +936,12 @@ export function createFirstPersonRenderer({
     object.receiveShadow = object.name.startsWith('arena:floor') || object.name.startsWith('presentation:floor')
     object.castShadow = stableLocalShadowCaster
   })
+  batchStaticArenaMeshes(scene, geometries)
   const weaponOccluderBounds = [...staticBounds, ...presentationOccluderBounds(scene)]
 
   const localLightShadowBudget = resolveLocalLightShadowBudget(activeGraphicsQuality, activePresentationProfile)
   const localLightBudget = resolveLocalLightBudget(activeGraphicsQuality, activePresentationProfile)
+  let localLightShadowSelection = ''
   const updateLocalLightShadows = () => {
     const cameraPosition = camera.getWorldPosition(new THREE.Vector3())
     const nearest = [...arenaPresentation.localLights].sort((left, right) => {
@@ -880,6 +950,13 @@ export function createFirstPersonRenderer({
     })
     const lit = new Set(nearest.slice(0, localLightBudget).map(({ attachmentId }) => attachmentId))
     const shadowed = new Set(nearest.slice(0, localLightShadowBudget).map(({ attachmentId }) => attachmentId))
+    const nextShadowSelection = [...shadowed].sort((left, right) => left.localeCompare(right)).join('|')
+    if (nextShadowSelection !== localLightShadowSelection) {
+      localLightShadowSelection = nextShadowSelection
+      // This is a renderer technical invariant, not a quality setting: the
+      // already-approved shadow subset is refreshed only when it changes.
+      if (renderer.shadowMap !== undefined) renderer.shadowMap.needsUpdate = true
+    }
     for (const candidate of arenaPresentation.localLights) {
       candidate.light.visible = lit.has(candidate.attachmentId)
       candidate.light.castShadow = shadowed.has(candidate.attachmentId)

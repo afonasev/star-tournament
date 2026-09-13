@@ -22,6 +22,9 @@ export interface RendererPort {
   readonly shadowMap?: {
     enabled: boolean
     type: THREE.ShadowMapType
+    /** Static arena shadows are regenerated only after their caster set changes. */
+    autoUpdate?: boolean
+    needsUpdate?: boolean
   }
   setPixelRatio(pixelRatio: number): void
   setSize(width: number, height: number, updateStyle?: boolean): void

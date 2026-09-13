@@ -310,7 +310,7 @@ describe('createFirstPersonRenderer', () => {
     expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.high)).toBe(2)
     expect(resolveLocalLightShadowBudget(GRAPHICS_QUALITY_V1.ultra)).toBe(4)
 
-    const shadowMap = { enabled: false, type: THREE.BasicShadowMap }
+    const shadowMap = { enabled: false, type: THREE.BasicShadowMap, autoUpdate: true, needsUpdate: false }
     const rendererPort: RendererPort = { ...makeRenderer(), shadowMap }
     const adapter = createFirstPersonRenderer({
       container: createContainer(),
@@ -324,7 +324,7 @@ describe('createFirstPersonRenderer', () => {
     })
 
     adapter.render(snapshot())
-    expect(shadowMap).toEqual({ enabled: true, type: THREE.PCFShadowMap })
+    expect(shadowMap).toEqual({ enabled: true, type: THREE.PCFShadowMap, autoUpdate: false, needsUpdate: true })
     const scene = vi.mocked(rendererPort.render).mock.calls[0]![0] as THREE.Scene
     const lamps: THREE.PointLight[] = []
     scene.traverse((object) => { if (object.name.startsWith('presentation:lamp-light:')) lamps.push(object as THREE.PointLight) })

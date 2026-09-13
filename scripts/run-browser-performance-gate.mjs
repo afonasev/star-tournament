@@ -133,7 +133,7 @@ async function readPerformanceReport(client, sessionId) {
   throw new Error('Browser performance report timed out')
 }
 
-async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality) {
+async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality, localSeatCount) {
   const deadline = Date.now() + 10_000
   while (Date.now() < deadline) {
     const evaluation = await client.send('Runtime.evaluate', {
@@ -149,17 +149,37 @@ async function startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphi
         seed.dispatchEvent(new Event('change', { bubbles: true }))
         Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(quality, ${JSON.stringify(graphicsQuality)})
         quality.dispatchEvent(new Event('change', { bubbles: true }))
-        const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Начать матч')
-        if (!button) return false
-        button.click()
         return true
       })()`,
       returnByValue: true,
     }, sessionId)
-    if (evaluation.result?.value === true) return
+    if (evaluation.result?.value === true) break
     await delay(100)
   }
-  throw new Error('Pre-match menu did not become ready')
+  if (Date.now() >= deadline) throw new Error('Pre-match menu did not become ready')
+  for (let index = 1; index < localSeatCount; index += 1) {
+    const evaluation = await client.send('Runtime.evaluate', {
+      expression: `(() => {
+        const addLocalSeat = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Быстро добавить игрока')
+        if (!(addLocalSeat instanceof HTMLButtonElement) || addLocalSeat.disabled) return false
+        addLocalSeat.click()
+        return true
+      })()`,
+      returnByValue: true,
+    }, sessionId)
+    if (evaluation.result?.value !== true) throw new Error(`Unable to add local seat ${index + 1}`)
+    await delay(100)
+  }
+  const started = await client.send('Runtime.evaluate', {
+    expression: `(() => {
+      const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Начать матч')
+      if (!(button instanceof HTMLButtonElement) || button.disabled) return false
+      button.click()
+      return true
+    })()`,
+    returnByValue: true,
+  }, sessionId)
+  if (started.result?.value !== true) throw new Error('Pre-match menu could not start the configured match')
 }
 
 const previewPort = await reservePort()
@@ -170,6 +190,8 @@ const arenaSeed = Number(process.env.STAR_TOURNAMENT_ARENA_SEED ?? 0x53544152)
 if (!Number.isSafeInteger(arenaSeed) || arenaSeed < 0 || arenaSeed > 0xffffffff) throw new Error('STAR_TOURNAMENT_ARENA_SEED must be uint32')
 const graphicsQuality = process.env.STAR_TOURNAMENT_GRAPHICS_QUALITY ?? 'balanced'
 if (!['low', 'balanced', 'high', 'ultra'].includes(graphicsQuality)) throw new Error('STAR_TOURNAMENT_GRAPHICS_QUALITY must be low, balanced, high, or ultra')
+const localSeatCount = Number(process.env.STAR_TOURNAMENT_LOCAL_SEAT_COUNT ?? 1)
+if (!Number.isInteger(localSeatCount) || localSeatCount < 1 || localSeatCount > 4) throw new Error('STAR_TOURNAMENT_LOCAL_SEAT_COUNT must be an integer from 1 to 4')
 const screenshotPath = process.env.STAR_TOURNAMENT_SCREENSHOT_PATH
 const capturePointerLockError = process.env.STAR_TOURNAMENT_CAPTURE_POINTER_LOCK_ERROR === '1'
 const viewportWidth = Number(process.env.STAR_TOURNAMENT_VIEWPORT_WIDTH ?? 1280)
@@ -216,6 +238,9 @@ try {
   const { sessionId } = await client.send('Target.attachToTarget', { targetId, flatten: true })
   await client.send('Page.enable', {}, sessionId)
   await client.send('Runtime.enable', {}, sessionId)
+  await client.send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => Array.from({ length: ${localSeatCount - 1} }, (_, index) => ({ connected: true, id: 'Performance Pad ' + index, index })) })`,
+  }, sessionId)
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: viewportWidth,
     height: viewportHeight,
@@ -223,7 +248,7 @@ try {
     mobile: false,
   }, sessionId)
   await client.send('Page.navigate', { url: previewUrl }, sessionId)
-  await startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality)
+  await startDefaultMatch(client, sessionId, arenaSize, arenaSeed, graphicsQuality, localSeatCount)
   if (screenshotPath) {
     await delay(500)
     if (capturePointerLockError) {
