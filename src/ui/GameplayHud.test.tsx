@@ -42,6 +42,22 @@ describe('GameplayHud', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
+  it('places one crosshair and compact HUD in every local viewport', () => {
+    render(<GameplayHud snapshot={snapshot({
+      localSeats: [
+        { semanticId: 'local-player-1', name: 'Pilot', health: 70, ammo: 12, scoreboardHeld: false },
+        { semanticId: 'local-player-2', name: 'Pilot 2', health: 55, ammo: 8, scoreboardHeld: false },
+      ],
+    })} />)
+
+    expect(screen.getByLabelText('HUD Pilot')).toHaveTextContent('HP 70')
+    expect(screen.getByLabelText('HUD Pilot 2')).toHaveTextContent('HP 55')
+    expect(screen.getByLabelText('Прицел Pilot')).toBeInTheDocument()
+    expect(screen.getByLabelText('Прицел Pilot 2')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Здоровье игрока')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Прицел')).not.toBeInTheDocument()
+  })
+
   it('renders live standings while held and groups team totals', () => {
     render(<GameplayHud snapshot={snapshot({
       scoreboardVisible: true,

@@ -113,6 +113,33 @@ afterEach(() => {
 })
 
 describe('createFirstPersonRenderer', () => {
+  it('submits one independent camera and scissor rectangle per local seat', () => {
+    const renderer = makeRenderer()
+    const adapter = createFirstPersonRenderer({
+      container: createContainer(),
+      arena: DIAGNOSTIC_ARENA,
+      scenario: COMBAT_SLICE_SCENARIO_V1,
+      profile: PROTOTYPE_V1_PROFILE,
+      pixelBudget: PIXEL_BUDGET,
+      rendererFactory: () => renderer,
+      arenaGlbAssets: makeArenaGlbAssets(),
+    })
+    const first = snapshot().participants[0] as FirstPersonRenderPlayer & { semanticId: string; kind: 'local-seat'; weapon: FirstPersonRenderWeapon }
+    adapter.render(snapshot({ participants: [
+      first,
+      { ...first, semanticId: 'local-player-2', position: { x: -2, y: 2, z: 3 }, yaw: 0, pitch: 0 },
+      ...snapshot().participants.slice(1),
+    ] }))
+
+    expect(renderer.render).toHaveBeenCalledTimes(2)
+    expect(vi.mocked(renderer.render).mock.calls.map(([, camera]) => (camera as THREE.PerspectiveCamera).name)).toEqual([
+      'first-person-camera:local-player-1',
+      'first-person-camera:local-player-2',
+    ])
+    expect(renderer.setViewport).toHaveBeenLastCalledWith(480, 0, 480, 540)
+    expect(renderer.setScissor).toHaveBeenLastCalledWith(480, 0, 480, 540)
+  })
+
   it('uses the standard WebGL power preference and resolves Retina/4K DPR from a pixel budget', () => {
     expect(DEFAULT_WEBGL_POWER_PREFERENCE).toBe('default')
     expect(resolvePixelBudgetDevicePixelRatio({

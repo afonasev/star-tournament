@@ -83,19 +83,19 @@ export function GameplayHud({ snapshot, onRequestControl, onRepeat, onMainMenu, 
     <main className="gameplay-hud" data-status={snapshot.status}>
       {snapshot.status !== 'error' && (
         <>
-          {(snapshot.localSeats?.length ?? 1) > 1 && <section className="gameplay-hud__seats" aria-label="HUD локальных игроков" data-count={snapshot.localSeats!.length}>{snapshot.localSeats!.map((seat) => <section className="gameplay-hud__seat" key={seat.semanticId} aria-label={`HUD ${seat.name}`}><small>{seat.name}</small><strong>HP {Math.ceil(seat.health)}</strong><span>◫ {seat.ammo}</span>{seat.scoreboardHeld && <em>ТАБЛИЦА</em>}</section>)}</section>}
+          {(snapshot.localSeats?.length ?? 1) > 1 && <section className="gameplay-hud__seats" aria-label="HUD локальных игроков" data-count={snapshot.localSeats!.length}>{snapshot.localSeats!.map((seat) => <section className="gameplay-hud__seat" key={seat.semanticId} aria-label={`HUD ${seat.name}`}><time className="gameplay-hud__seat-timer" data-overtime={snapshot.matchPhase === 'overtime'}>{snapshot.timerText}</time><small>{seat.name}</small><strong>HP {Math.ceil(seat.health)}</strong><span>◫ {seat.ammo}</span>{seat.scoreboardHeld && <em>ТАБЛИЦА</em>}<div className="gameplay-hud__crosshair gameplay-hud__crosshair--idle" role="img" aria-label={`Прицел ${seat.name}`}><span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" /></div></section>)}</section>}
           {snapshot.localSeats?.length === 3 && <StandingsTable snapshot={snapshot} className="gameplay-hud__standings-cell" />}
-          <section className="gameplay-hud__health" aria-label="Здоровье игрока">
+          {(snapshot.localSeats?.length ?? 1) <= 1 && <section className="gameplay-hud__health" aria-label="Здоровье игрока">
             <span className="gameplay-hud__label">HP</span>
             <strong>{Math.ceil(snapshot.health)}</strong>
             <meter min="0" max={snapshot.maximumHealth} value={snapshot.health}>
               {healthPercent}%
             </meter>
-          </section>
+          </section>}
 
-          <time className="gameplay-hud__timer" aria-label="Время матча" data-overtime={snapshot.matchPhase === 'overtime'}>{snapshot.timerText}</time>
+          {(snapshot.localSeats?.length ?? 1) <= 1 && <time className="gameplay-hud__timer" aria-label="Время матча" data-overtime={snapshot.matchPhase === 'overtime'}>{snapshot.timerText}</time>}
 
-          <div
+          {(snapshot.localSeats?.length ?? 1) <= 1 && <div
             className={`gameplay-hud__crosshair gameplay-hud__crosshair--${snapshot.crosshairFeedback}`}
             role="img"
             aria-label={feedbackLabel || 'Прицел'}
@@ -104,11 +104,11 @@ export function GameplayHud({ snapshot, onRequestControl, onRepeat, onMainMenu, 
             <span aria-hidden="true" />
             <span aria-hidden="true" />
             <span aria-hidden="true" />
-          </div>
+          </div>}
 
-          <p className="gameplay-hud__feedback" role="status" aria-live="polite">
+          {(snapshot.localSeats?.length ?? 1) <= 1 && <p className="gameplay-hud__feedback" role="status" aria-live="polite">
             {feedbackLabel}
-          </p>
+          </p>}
 
           <section className="gameplay-hud__weapon" aria-label="Оружие и боезапас">
             <span className="gameplay-hud__weapon-icon" aria-hidden="true">◫</span>
