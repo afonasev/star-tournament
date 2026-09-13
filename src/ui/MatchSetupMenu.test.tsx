@@ -81,4 +81,13 @@ describe('MatchSetupMenu', () => {
     expect(screen.getByLabelText('Decals')).toHaveAttribute('aria-describedby', 'decals-hint')
     expect(screen.getByLabelText('Post-processing')).toHaveAttribute('aria-describedby', 'post-processing-hint')
   })
+
+  it('offers fullscreen entry alongside graphics settings', () => {
+    const onToggleFullscreen = vi.fn()
+    render(<MatchSetupMenu profile={PROTOTYPE_V1_PROFILE} onStart={vi.fn()} onToggleFullscreen={onToggleFullscreen} />)
+    const details = document.querySelector('details')!
+    fireEvent.click(details.querySelector('summary')!)
+    fireEvent.click(screen.getByRole('button', { name: 'Во весь экран' }))
+    expect(onToggleFullscreen).toHaveBeenCalledOnce()
+  })
 })

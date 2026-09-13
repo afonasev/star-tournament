@@ -37,6 +37,7 @@ export interface MatchSetupMenuProps {
   readonly generationError?: ArenaGenerationErrorView | null
   readonly onUseFallback?: () => void
   readonly onGraphicsQualityChange?: (quality: GraphicsQualityProfile) => void
+  readonly onToggleFullscreen?: () => void
 }
 
 function autoSeed(): number {
@@ -53,7 +54,7 @@ function parseSeedDraft(value: string): number | null {
   return parsed
 }
 
-export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generationError, onUseFallback, onGraphicsQualityChange }: MatchSetupMenuProps) {
+export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generationError, onUseFallback, onGraphicsQualityChange, onToggleFullscreen }: MatchSetupMenuProps) {
   const [graphicsPreference, setGraphicsPreference] = useState<GraphicsQualityPreference>(() => {
     const resolved = parseGraphicsQualityPreference(globalThis.localStorage?.getItem(GRAPHICS_QUALITY_STORAGE_KEY))
     return { schemaId: 'graphics-quality-v1', preset: resolved.profile.id }
@@ -165,6 +166,7 @@ export function MatchSetupMenu({ profile, onStart, onOpenGameDesignLab, generati
           <label>Geometry LOD<select aria-label="Geometry LOD" aria-describedby="geometry-lod-hint" value={graphicsQuality.geometryLod} onChange={(event) => overrideGraphics({ geometryLod: event.target.value as 'lod0' | 'lod1' })}><option value="lod1">LOD 1</option><option value="lod0">LOD 0</option></select></label>
           <label className="match-menu__check"><input aria-label="Decals" type="checkbox" aria-describedby="decals-hint" checked={graphicsQuality.decals} onChange={(event) => overrideGraphics({ decals: event.target.checked })} />Decals</label>
           <label className="match-menu__check"><input aria-label="Post-processing" type="checkbox" checked={graphicsQuality.postProcessing} disabled={graphicsPreference.preset !== 'ultra'} aria-describedby={graphicsPreference.preset !== 'ultra' ? 'post-processing-hint post-processing-reason' : 'post-processing-hint'} onChange={(event) => overrideGraphics({ postProcessing: event.target.checked })} />Post-processing</label>
+          {onToggleFullscreen && <div className="match-menu__fullscreen"><span>Экран</span><button type="button" onClick={onToggleFullscreen}>Во весь экран</button></div>}
           {graphicsPreference.preset !== 'ultra' && <p id="post-processing-reason">Post-processing доступен только в Ultra.</p>}
           <aside className="match-menu__graphics-hints" aria-label="Подсказки по качеству графики">
             <p id="geometry-lod-hint"><strong>Geometry LOD.</strong> LOD 0 использует более детальные модели: лучше силуэты и графика, но выше нагрузка. LOD 1 упрощает модели и обычно даёт больше производительности.</p>

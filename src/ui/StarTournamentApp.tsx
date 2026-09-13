@@ -36,6 +36,7 @@ export function StarTournamentApp({ bootstrap = bootstrapBrowserRuntime, generat
     const catalog = loadLocalProfileCatalog(); return catalog.ok && resolveSelectedProfile(catalog.catalog).ok ? (resolveSelectedProfile(catalog.catalog) as { ok: true; profile: ValidatedGameDesignProfile }).profile : PROTOTYPE_V1_PROFILE
   })
   const hostRef = useRef<HTMLDivElement>(null)
+  const appRef = useRef<HTMLDivElement>(null)
   const preview = new URLSearchParams(window.location.search).get('uiPreview')
   const animationReview = new URLSearchParams(window.location.search).has('animationReview')
 
@@ -92,9 +93,18 @@ export function StarTournamentApp({ bootstrap = bootstrapBrowserRuntime, generat
     setSession({ configuration, arena: PROCEDURAL_FALLBACK_ARENA, graphicsQuality, profile: selectedProfile })
   }
 
-  if (preview === 'scoreboard-ffa' || preview === 'overtime' || preview === 'results-ffa' || preview === 'results-teams' || preview === 'generation-error') return <UiPreview kind={preview as UiPreviewKind} />
-  if (animationReview) return <RobotAnimationReview />
-  if (session === null && labOpen) return <GameDesignLab selected={selectedProfile} onSelected={setSelectedProfile} onClose={() => setLabOpen(false)} />
-  if (session === null) return <MatchSetupMenu profile={selectedProfile} onStart={start} onOpenGameDesignLab={() => setLabOpen(true)} generationError={generationError} onUseFallback={useFallback} onGraphicsQualityChange={setGraphicsQuality} />
-  return <div key={sessionNumber} ref={hostRef} className="match-session-host" data-configuration-hash={session.configuration.contentHash} data-arena-hash={session.arena.contentHash} />
+  const toggleFullscreen = () => {
+    const target = appRef.current
+    if (target === null) return
+    if (document.fullscreenElement === null) void target.requestFullscreen?.()
+    else void document.exitFullscreen?.()
+  }
+
+  let content
+  if (preview === 'scoreboard-ffa' || preview === 'overtime' || preview === 'results-ffa' || preview === 'results-teams' || preview === 'generation-error') content = <UiPreview kind={preview as UiPreviewKind} />
+  else if (animationReview) content = <RobotAnimationReview />
+  else if (session === null && labOpen) content = <GameDesignLab selected={selectedProfile} onSelected={setSelectedProfile} onClose={() => setLabOpen(false)} />
+  else if (session === null) content = <MatchSetupMenu profile={selectedProfile} onStart={start} onOpenGameDesignLab={() => setLabOpen(true)} generationError={generationError} onUseFallback={useFallback} onGraphicsQualityChange={setGraphicsQuality} onToggleFullscreen={toggleFullscreen} />
+  else content = <div key={sessionNumber} ref={hostRef} className="match-session-host" data-configuration-hash={session.configuration.contentHash} data-arena-hash={session.arena.contentHash} />
+  return <div ref={appRef} className="star-tournament-app">{content}</div>
 }
