@@ -163,6 +163,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 | 2026-09-19 | Утверждён search-first asset pipeline: `.asset-library/` хранит локальные исходные свободные ассеты и provenance, исключён из Git и production-поставки. При новых или изменяемых моделях/текстурах сначала ищем там, затем — в интернете; authoring с нуля требует явного согласия пользователя. Shipping допускается только после самостоятельного технического, лицензионного и визуального аудита. |
 
+| 2026-09-19 | Бесплатные Quaternius Standard `Enemy_QuadShell`, `Enemy_Trilobite`, `Enemy_EyeDrone`, `Alien_Scolitex`, `Alien_Cyclop` и `Alien_Oculichrysalis` отклонены как кандидаты игроков: они не соответствуют `light-sport-robot-v1` и не подходят для player/first-person контракта. |
+
 | 2026-09-13 | Утверждено действие standard gamepad для live-таблицы: удерживание `View`; `Menu/Start` остаётся паузой, а `LB` зарезервирован. Решение войдёт в отдельный change локального split-screen и геймпадов. |
 | 2026-09-13 | Для трёх local seats утверждена сетка 2×2 с тремя одинаковыми игровыми viewport и постоянным live-счётом в свободной ячейке. |
 | 2026-09-13 | Утверждён `add-local-split-screen-controls`: browser-матч получает 1–4 local seats с одной keyboard/mouse парой и уникальными конкретными gamepad, общий pause при потере устройства/focus, один canvas с 1/2/3/4-экранными раскладками, отдельные камеры и DOM HUD. Детерминированная simulation/replay не содержит browser device state. Физическая приёмка на отдельном устройстве остаётся открытой. |
