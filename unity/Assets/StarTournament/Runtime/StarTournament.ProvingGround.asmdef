@@ -1,0 +1,8 @@
+{
+  "name": "StarTournament.ProvingGround",
+  "references": [
+    "Unity.InputSystem",
+    "Unity.AI.Navigation",
+    "Unity.ugui"
+  ]
+}

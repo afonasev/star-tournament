@@ -1,0 +1,32 @@
+{
+  "sourceCommit": "8844e40",
+  "entries": [
+    {
+      "key": "robot",
+      "path": "Assets/StarTournament/Art/light-sport-robot-lod0.glb",
+      "sha256": "c2a09579c6f844271b87c8adb0da9d1a452e08506e94ba61464bf22076f0f46c",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center"
+    },
+    {
+      "key": "world-weapon",
+      "path": "Assets/StarTournament/Art/double-barrel-shotgun-lod0.glb",
+      "sha256": "7e0c178ee759dd0267dcce712f4c9587dc203294e29a7a1a2c417a9b24394834",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "weapon-grip"
+    },
+    {
+      "key": "view-weapon",
+      "path": "Assets/StarTournament/Art/first-person-shotgun-lod0.glb",
+      "sha256": "ea3ebcfebbe31d0a40c23cc6d3468e76f712bdaedaf63b404e0e3acb0f97e2ca",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "camera-weapon-grip"
+    }
+  ]
+}

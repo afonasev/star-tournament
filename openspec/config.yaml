@@ -12,10 +12,12 @@ context: |
   Small, unambiguous fixes may bypass the full OpenSpec workflow; update
   GAME_SPEC when they change an approved decision. If the required workflow is
   uncertain, ask the user before implementation.
-  Keep deterministic simulation, renderer, input, cameras, HUD/UI, networking,
-  and asset pipeline separate. Persist serializable simulation state only.
-  Use a browser playtest as acceptance evidence for interaction changes, including
-  the affected controller, pointer-lock, and split-screen scenarios.
+  Keep gameplay, renderer, input, cameras, HUD/UI, networking, and assets separate.
+  Persist serializable gameplay state. Unity uses native physics and state-recorded
+  replay without strict determinism; browser contracts are historical baseline.
+  Use native Player playtests for Unity interaction and physical devices/TV;
+  browser playtests apply only to browser changes. Neither synthetic input nor
+  build success closes the physical or target-hardware acceptance gates.
 
 rules:
   proposal:
@@ -29,7 +31,7 @@ rules:
     - Write testable requirements and scenarios; distinguish single-player, local multiplayer, bots, and online behavior.
     - State how gamepad reconnect/disconnect, unavailable controller slots, mouse focus, and viewport joining/leaving behave when relevant.
   tasks:
-    - Keep implementation, automated checks, and a real browser playtest as explicit tasks.
+    - Keep implementation, automated checks, and a real native Player playtest (Unity) or browser playtest (browser) as explicit tasks.
     - Keep one coherent feature or handoff per change; do not mix unrelated UI, audio, balance, networking, or bug work.
 
 operations:
@@ -37,8 +39,8 @@ operations:
     guidance:
       - Read the active change artifacts and the relevant GAME_SPEC section before editing.
       - Preserve unrelated working-tree changes and report concise test evidence.
-      - Verify controller, keyboard/mouse, pointer-lock, and split-screen behavior in the in-app Browser whenever affected.
+      - Verify controller, keyboard/mouse, cursor capture and split-screen in native Player for Unity, or in-app Browser for browser changes.
   archive:
     guidance:
-      - Archive only after strict validation, the required automated checks, browser evidence, and the dedicated commit are complete.
+      - Archive only after strict validation, required automated checks, native Player evidence (Unity) or browser evidence, physical acceptance, and the dedicated commit are complete.
       - Sync approved spec deltas into the canonical specs before completing the change.
