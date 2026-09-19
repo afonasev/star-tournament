@@ -28,3 +28,5 @@ unity/tools.sh build
 Два игрока получают равные left/right viewport; три — три равных четверти и постоянный счёт в нижней правой; четыре — 2×2. Tab/View включает дополнительную таблицу только своего viewport, включая killcam. При уменьшении состава освобождаются удалённые устройства. Repeat сохраняет состав; setup может выбрать новый.
 
 Development Player CLI: `-layoutReview -layoutEvidence /absolute/output` с обычными `-screen-width 1920 -screen-height 1080 -screen-fullscreen 0` (повторить 3840×2160). Review проходит 4→2→3→4, используя synthetic gamepads через настоящий adapter, shot resolver, pause/Repeat и ускоренные пустые ticks до результата. Начальные poses — fixture; это не физический playtest и не benchmark. Окну нужен focus; весь QA muted.
+
+Data-only `NativeMatchRoster`/`NativeMatchState` поддерживают FFA и Team A/Team B для 2–8 participant slots; это не local-seat/device count. Native setup ещё создаёт FFA 2–4. Team totals и `WinnerTeam` доступны в независимом JSON inspection DTO, не restore/replay API. Handoff: `docs/tasks/completed/22-unity-team-match-state.md`.

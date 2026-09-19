@@ -7,8 +7,15 @@ namespace StarTournament.ProvingGround
     [Serializable]
     public struct NativeStanding
     {
+        // Legacy field name: stable participant slot, not a device/viewport binding.
         public int Seat, Kills, Assists, Deaths, Score;
         public double DamageDealt, DamageReceived;
+    }
+    [Serializable]
+    public struct NativeTeamStanding
+    {
+        public NativeTeam Team;
+        public int Score;
     }
     [Serializable]
     public sealed class NativeMatchSnapshot
@@ -17,7 +24,10 @@ namespace StarTournament.ProvingGround
         public NativeMatchPhase Phase;
         public string Trigger;
         public int Winner;
+        public NativeTeam WinnerTeam;
+        public NativeRosterSnapshot Roster;
         public NativeStanding[] Standings;
+        public NativeTeamStanding[] Teams;
     }
     /// <summary>Data-only tick reducer. Damage is already capped and life-validated by CombatLife.</summary>
     public sealed class NativeMatchState
@@ -34,14 +44,21 @@ namespace StarTournament.ProvingGround
         string trigger;
         bool enteredOvertime;
         int winner = -1;
+        NativeTeam winnerTeam;
         NativeStanding[] finalRows;
         public NativeMatchPhase Phase { get; private set; }
         public NativeMatchConfiguration Configuration { get; }
+        public NativeMatchRoster Roster { get; }
         long RemainingTicks => enteredOvertime ? 0 : Math.Max(0,durationTicks-tick);
         public double RemainingSeconds => RemainingTicks/tickHz;
         public NativeMatchState(int seats, NativeMatchConfiguration config, ProvingProfile profile, float hz)
+            : this(NativeMatchRoster.Ffa(seats), config, profile, hz) { }
+
+        public NativeMatchState(NativeMatchRoster roster, NativeMatchConfiguration config, ProvingProfile profile, float hz)
         {
-            if (seats < 2 || hz <= 0 || float.IsNaN(hz) || float.IsInfinity(hz) || profile.Id != "unity-native-match-v1" || profile.Version != 1 || profile.Validate().Count != 0)
+            Roster = roster ?? throw new ArgumentNullException(nameof(roster));
+            int seats = roster.Count;
+            if (hz <= 0 || float.IsNaN(hz) || float.IsInfinity(hz) || profile == null || profile.Id != "unity-native-match-v1" || profile.Version != 1 || profile.Validate().Count != 0)
                 throw new ArgumentException("Invalid match profile");
             foreach (var d in profile.Descriptors) NativeMatchConfiguration.ValidateValue(profile, d.Path, profile.Get(d.Path));
             config.Validate(profile); Configuration=config; tickHz=hz;
@@ -87,15 +104,31 @@ namespace StarTournament.ProvingGround
             // Reset after every death award, including mutual kills: no dead participant keeps a chain.
             for(int i=0;i<rows.Length;i++) if(diedThisTick[i])
             { chains[i]=chainAwards[i]=0; lastKill[i]=-1; diedThisTick[i]=false; }
-            int maximum=rows.Max(r=>r.Score);
+            var teamRows = TeamTotals();
+            int maximum = Roster.Mode == NativeMatchMode.Teams ? teamRows.Max(r=>r.Score) : rows.Max(r=>r.Score);
             if(trigger==null) trigger=target>0 && maximum>=target ? "score-limit" : tick>=durationTicks ? "time-limit" : null;
             if(trigger==null) return;
-            var leaders=rows.Where(r=>r.Score==maximum).ToArray();
-            if(leaders.Length!=1) { enteredOvertime=true; Phase=NativeMatchPhase.Overtime; return; }
-            Phase=NativeMatchPhase.Finished; winner=leaders[0].Seat; finalRows=Ordered();
+            int leaderCount = Roster.Mode == NativeMatchMode.Teams
+                ? teamRows.Count(r=>r.Score==maximum) : rows.Count(r=>r.Score==maximum);
+            if(leaderCount!=1) { enteredOvertime=true; Phase=NativeMatchPhase.Overtime; return; }
+            Phase=NativeMatchPhase.Finished;
+            if (Roster.Mode == NativeMatchMode.Teams) winnerTeam=teamRows.Single(r=>r.Score==maximum).Team;
+            else winner=rows.Single(r=>r.Score==maximum).Seat;
+            finalRows=Ordered();
+        }
+        NativeTeamStanding[] TeamTotals()
+        {
+            if (Roster.Mode != NativeMatchMode.Teams) return Array.Empty<NativeTeamStanding>();
+            int a=0,b=0;
+            foreach (var row in rows)
+                if (Roster.TeamOf(row.Seat)==NativeTeam.TeamA) a+=row.Score; else b+=row.Score;
+            var teamA=new NativeTeamStanding { Team=NativeTeam.TeamA, Score=a };
+            var teamB=new NativeTeamStanding { Team=NativeTeam.TeamB, Score=b };
+            return a>=b ? new[]{teamA,teamB} : new[]{teamB,teamA};
         }
         NativeStanding[] Ordered() => rows.OrderByDescending(r=>r.Score).ThenBy(r=>r.Seat).ToArray();
         public NativeMatchSnapshot Read() => new NativeMatchSnapshot { Tick=tick, RemainingTicks=RemainingTicks,
-            Phase=Phase, Trigger=trigger, Winner=winner, Standings=finalRows==null ? Ordered() : (NativeStanding[])finalRows.Clone() };
+            Phase=Phase, Trigger=trigger, Winner=winner, WinnerTeam=winnerTeam, Roster=Roster.Read(), Teams=TeamTotals(),
+            Standings=finalRows==null ? Ordered() : (NativeStanding[])finalRows.Clone() };
     }
 }
