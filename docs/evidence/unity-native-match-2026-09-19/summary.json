@@ -1,0 +1,107 @@
+{
+  "baseCommit": "e735de7",
+  "branch": "codex/unity-native-match-loop",
+  "profiles": [
+    "unity-proving-ground-v1@1",
+    "unity-combat-state-v1@1",
+    "unity-native-combat-v1@1",
+    "unity-native-match-v1@1"
+  ],
+  "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+  "tests": {
+    "editmode": {
+      "total": "25",
+      "passed": "25",
+      "failed": "0",
+      "result": "Passed"
+    },
+    "playmode": {
+      "total": "21",
+      "passed": "21",
+      "failed": "0",
+      "result": "Passed"
+    }
+  },
+  "player": {
+    "fhd": {
+      "output": [
+        1920,
+        1080
+      ],
+      "states": [
+        "setup",
+        "live",
+        "overtime",
+        "time-results",
+        "paused-clock",
+        "menu",
+        "new-match",
+        "repeat",
+        "target-results",
+        "pause",
+        "killcam-standings"
+      ],
+      "assertions": "PASS",
+      "logSha256": "ec90f91c29390382515befe643570489c398ff4630ac192a9ca7ad6f54767394"
+    },
+    "4k": {
+      "output": [
+        3840,
+        2160
+      ],
+      "states": [
+        "setup",
+        "live",
+        "overtime",
+        "time-results",
+        "paused-clock",
+        "menu",
+        "new-match",
+        "repeat",
+        "target-results",
+        "pause",
+        "killcam-standings"
+      ],
+      "assertions": "PASS",
+      "logSha256": "1b7ab04be19429658da9fa49129c74e84da76ca3eec8b3122f495f3a569b8dcb"
+    }
+  },
+  "build": {
+    "result": "PASS",
+    "reportedBytes": 324800984,
+    "executableSha256": "05ce55fb00c862b828c43f0ff46c60f1ec3fed41ac82d62764119f7952b7bc7c"
+  },
+  "sourceSha256": {
+    "unity/Assets/StarTournament/Editor/ProvingGroundBuild.cs": "8e93404e850427efeb07280502257ee668fd2d9dc7698421f1f19ee35a8adb4f",
+    "unity/Assets/StarTournament/Runtime/Arena/ProvingArena.cs": "ac041fda184c1a6c25ec060ac97bb2f2e923ff9d56e45ec7512d9c362f1eb311",
+    "unity/Assets/StarTournament/Runtime/CombatPresentation.cs": "763e24f2847eb29eb3849da2c9891497a47e52c00253bbf0d14e871f376204f3",
+    "unity/Assets/StarTournament/Runtime/Core/CombatLife.cs": "15ba08eaa843f8fe8d4bf35957d2b99e2c70b7432fbdfd77877a657f533a6c86",
+    "unity/Assets/StarTournament/Runtime/Core/LocalAction.cs": "a3a26f19debca41c2a540cfc29d847fbb062eb53cab9bd3e1716204c50f8f25b",
+    "unity/Assets/StarTournament/Runtime/Core/NativeCombatProfile.cs": "694cc9206811d8a3fae20326663958b22da3f2fd2932226f6f21762d357bfbff",
+    "unity/Assets/StarTournament/Runtime/Core/NativeMatchProfile.cs": "fc2e566a355392dccd82a651f9f5141956eefbc3bbcdb024cc959819357b47d4",
+    "unity/Assets/StarTournament/Runtime/Core/NativeMatchState.cs": "ccf98611f3e64d4b990ee0d9b201d1b684b8eae477e5a05d08945fee289abb22",
+    "unity/Assets/StarTournament/Runtime/Core/ParticipantState.cs": "29d93c3c6eb530e7ddfa679bf459d75f712984e88da313e6355d061b6a2ca1af",
+    "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs": "43f3d3eb61559fce7c1990042f6e2e584654e6ef75ed7e80e740bbedefc1e5f1",
+    "unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs": "ce2129817f4a7e0b799ddaa728b59d288ef69c401fdbccc094346d57085c070e",
+    "unity/Assets/StarTournament/Runtime/FpsDisplay.cs": "7cfc7d198da87909f417480b856c06262b1f9a0847415de7e3aac0a0c1770585",
+    "unity/Assets/StarTournament/Runtime/Input/SeatInputCoordinator.cs": "2d21257eb2ce4b053d59d10fa63ec2605883aa035a3ff6d7684891bf7f29862f",
+    "unity/Assets/StarTournament/Runtime/Motor/CharacterMotor.cs": "2948d245bf21aa63b1aebfaa491658de665e0b90e46f33a462516799de489f73",
+    "unity/Assets/StarTournament/Runtime/NativeCombatReview.cs": "b5d8d01d554379ba2d593bc1eb5dc1435ef34cdcccce59c75fab438314d690a7",
+    "unity/Assets/StarTournament/Runtime/NativeCombatSession.cs": "8f691df5507f245df209f9af5dc9309826f326de98aa3780dad9323ad580ceca",
+    "unity/Assets/StarTournament/Runtime/NativeMatchReview.cs": "c92f9afdc4b665e7d61b58bc33586b4e1e7b050816334383e91775a1419f1029",
+    "unity/Assets/StarTournament/Runtime/NativeStandingsView.cs": "23764f4cffda72217b836be7927e313d20b4cd11564f303d4e2d9c50000d1576",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "9259746420cc14a34cdf526729017fc182f4be1991eb18b873dffd575e1e3825",
+    "unity/Assets/StarTournament/Runtime/ProvingTelemetry.cs": "47ffda2f17c092ebfbe10d5cca4bb11f4e1d316dc391d1b0ece363244791842a",
+    "unity/Assets/StarTournament/Runtime/SafeSpawnSelector.cs": "eec9ab08ab11423d06d587d12edccfa70614a26e84d60b32d3c167b5d8f71110",
+    "unity/Assets/StarTournament/Tests/EditMode/CombatLifeTests.cs": "d2a78c62d052eef35f93b7d1650a07c02d6acfec7de6da4f68fe6fee99f96d9d",
+    "unity/Assets/StarTournament/Tests/EditMode/FpsAverageTests.cs": "bab8fbbcc35dc642c6f8b5c26092be11bc8e6cd86f271dcacc70bab757df04b4",
+    "unity/Assets/StarTournament/Tests/EditMode/MotorProfileTests.cs": "e569ee5775c01007135689664a959f9f65b5463ee45e0363af77cd7daeab656e",
+    "unity/Assets/StarTournament/Tests/EditMode/NativeMatchTests.cs": "825e97c3fef1c457a724bec7347f2b556e21fe2fec232c195a184d75ea2f973d",
+    "unity/Assets/StarTournament/Tests/EditMode/SeatInputTests.cs": "90d1d9a0205120cfb2a7d7306b6d7ffb05251306c62d74101b3d17deb4a7eac3",
+    "unity/Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs": "bed76e5c449fe471d1bb3de1e114f919cb2d15437d77089551dc2046b12da0fa",
+    "unity/Assets/StarTournament/Tests/PlayMode/FourPlayerMenuTests.cs": "824b2155d10788ddda475a3143bdc4f339a392984ab4dd34a9eb9b090eef3807",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeCombatTests.cs": "70e3c6ef26d9616496f1ae87acbaaad2565c33ba4d6ec6ac1e2278f3eddd9690",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeMatchIntegrationTests.cs": "95c84315c1612003d22906acd10c35c75d7e1a591d93b2984c94a55a84a6bbe5",
+    "unity/Assets/StarTournament/Tests/PlayMode/ProvingGroundTests.cs": "fe77f6bc424eb1e2f3ce0af4a6a50ddf45aa0112d312937593b5c4d751dc56f9"
+  }
+}

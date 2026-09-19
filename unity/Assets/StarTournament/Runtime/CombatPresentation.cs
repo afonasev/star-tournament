@@ -4,7 +4,7 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Reads combat state; never changes movement, hit zones, damage or spawn choice.</summary>
-    public sealed class CombatPresentation
+    public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public GameObject Root; public double Expires; }
         readonly NativeCombatSession session;
@@ -25,7 +25,15 @@ namespace StarTournament.ProvingGround
             deathEye=new Vector3[cameras.Length]; deathFeet=new Vector3[cameras.Length]; killerPoint=new Vector3[cameras.Length];
             deathTime=new double[cameras.Length]; tracking=new bool[cameras.Length];
             session.Died += OnDeath;
-            session.Respawned += seat => { bodies[seat].SetActive(true); views[seat].SetActive(true); };
+            session.Respawned += OnRespawn;
+        }
+        void OnRespawn(int seat) { bodies[seat].SetActive(true); views[seat].SetActive(true); }
+        public void Dispose()
+        {
+            session.Died-=OnDeath; session.Respawned-=OnRespawn;
+            foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
+            corpses.Clear();
+            for(int i=0;i<bodies.Length;i++) { bodies[i].SetActive(true); views[i].SetActive(true); }
         }
         void OnDeath(DeathNotice notice)
         {

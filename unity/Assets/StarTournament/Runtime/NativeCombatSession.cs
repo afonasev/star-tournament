@@ -21,6 +21,9 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile movement;
         readonly bool[] releaseRequired;
         uint shotSequence;
+        bool stopped;
+        public NativeMatchState Match { get; }
+        public void Stop() { stopped=true; ClearInput(); }
         public SafeSpawnSelector Spawns { get; }
         public double Time { get; private set; }
         public int ShotCount { get; private set; }
@@ -28,9 +31,9 @@ namespace StarTournament.ProvingGround
         public event Action<int> Respawned;
         public event Action<int, float> Fired;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
-            ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat)
+            ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null)
         {
-            this.motors = motors; this.physics = physics;
+            this.motors = motors; this.physics = physics; Match=match;
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
             resolver = new ShotgunResolver(tuning, movement.Get("player.capsule.height"));
@@ -53,6 +56,8 @@ namespace StarTournament.ProvingGround
         public void Tick(LocalAction[] actions, float seconds)
         {
             if (actions.Length != motors.Length || seconds <= 0 || (float.IsNaN(seconds) || float.IsInfinity(seconds))) throw new ArgumentException("Invalid tick");
+            if(stopped || Match?.Phase==NativeMatchPhase.Finished) return;
+            Match?.BeginTick();
             Time += seconds;
             for (int i = 0; i < lives.Length; i++)
             {
@@ -60,6 +65,8 @@ namespace StarTournament.ProvingGround
                 if (!Life(i).Dead) motors[i].Tick(actions[i], seconds);
             }
             Physics.SyncTransforms();
+            var targets=LiveTargets();
+            var shots=new List<(int shooter, int life, float[] damage)>();
             for (int i = 0; i < lives.Length; i++)
             {
                 bool held = actions[i].FireHeld || actions[i].Fire;
@@ -70,8 +77,17 @@ namespace StarTournament.ProvingGround
                 }
                 // A newly captured physical edge also records an intervening release between ticks.
                 if (actions[i].Fire) lives[i].ClearHeldInput();
-                if (lives[i].Fire(held)) Shoot(i);
+                if (lives[i].Fire(held)) shots.Add((i, Life(i).Life, ResolveShot(i, targets)));
             }
+            foreach(var shot in shots)
+            {
+                float applied=0;
+                for(int t=0;t<targets.Length;t++) if(shot.damage[t]>0)
+                    applied+=ApplyDamage(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.PelletCount, shot.shooter, shot.life).Applied;
+                Fired?.Invoke(shot.shooter,applied);
+            }
+            Match?.EndTick();
+            if(Match?.Phase==NativeMatchPhase.Finished) return;
             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
             {
                 if (!Spawns.TryChoose(LiveTargets(), out var spawn))
@@ -85,10 +101,10 @@ namespace StarTournament.ProvingGround
                 }
             }
         }
-        void Shoot(int shooter)
+        float[] ResolveShot(int shooter, CombatTarget[] targets)
         {
             ShotCount++; shotSequence++;
-            var targets = LiveTargets(); var damage = new float[targets.Length];
+            var damage = new float[targets.Length];
             var pose = Pose(shooter); var aim = Quaternion.Euler(pose.Pitch, pose.Yaw, 0);
             var origin = pose.Position + Vector3.up*movement.Get("camera.eyeHeight");
             for (int pellet = 0; pellet < resolver.PelletCount; pellet++)
@@ -99,14 +115,14 @@ namespace StarTournament.ProvingGround
                 var hit = resolver.Resolve(origin, direction, targets, shooter, limit);
                 if (hit.TargetIndex >= 0) damage[hit.TargetIndex] += resolver.FullDamage(hit.Zone);
             }
-            float applied = 0;
-            for (int t = 0; t < targets.Length; t++) if (damage[t] > 0)
-                applied += ApplyDamage(targets[t].Seat, targets[t].Life, damage[t] / resolver.PelletCount, shooter, Life(shooter).Life).Applied;
-            Fired?.Invoke(shooter, applied);
+            return damage;
         }
+
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
         {
+            if(stopped || Match?.Phase==NativeMatchPhase.Finished) return default;
             var result = lives[seat].Damage(life, damage, killer < 0 ? null : Life(killer).ParticipantId, killerLife);
+            Match?.RecordDamage(seat,killer,result);
             if (result.Killed)
             {
                 motors[seat].SetAlive(false);

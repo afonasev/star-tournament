@@ -22,11 +22,19 @@ namespace StarTournament.ProvingGround
         readonly GameObject[] bodies = new GameObject[SeatInputCoordinator.SeatCount], views = new GameObject[SeatInputCoordinator.SeatCount];
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         readonly LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
+        public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
+        public NativeMatchConfiguration Configuration { get; private set; }
+        ProvingProfile frozenMovement, frozenLife, frozenCombat, frozenMatch;
+        NativeMatchConfiguration frozenConfiguration;
+        readonly Text[] timers = new Text[SeatInputCoordinator.SeatCount];
+        readonly NativeStandingsView[] standings = new NativeStandingsView[SeatInputCoordinator.SeatCount];
+        NativeStandingsView results;
+        Button repeat, menu, diagnosticButton, durationButton, targetButton, targetMinus, targetPlus;
         public NativeCombatSession Session { get; private set; }
         CombatPresentation presentation;
         float previousFixedDelta;
         readonly string[] hit = new string[SeatInputCoordinator.SeatCount];
-        enum Phase { Setup, Running, Paused }
+        enum Phase { Setup, Running, Paused, Results }
         Phase phase;
         bool diagnostic;
         bool combatReview;
@@ -42,6 +50,7 @@ namespace StarTournament.ProvingGround
         void Start()
         {
             if (Profile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
+            Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             AudioListener.volume = 0; // QA is muted, including all Player diagnostics.
@@ -64,6 +73,7 @@ namespace StarTournament.ProvingGround
             bool requestedDiagnostic = Environment.GetCommandLineArgs().Contains("-diagnostic");
             if (requestedDiagnostic) Begin(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();
             if (args.Contains("-combatReview")) gameObject.AddComponent<NativeCombatReview>();
 #endif
         }
@@ -103,6 +113,7 @@ namespace StarTournament.ProvingGround
             var mount = body.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "robot:rig:weapon-mount");
             if (!mount) throw new InvalidOperationException("Robot semantic weapon mount missing");
             var weapon=Instantiate(WorldWeaponPrefab, mount); weapon.transform.localPosition=Vector3.up*Profile.Get("presentation.worldWeaponMountY");
+            ApplyIdentity(body,index);
             SetLayer(body, 11+index); bodies[index] = body;
             foreach(var collider in body.GetComponentsInChildren<Collider>()) { collider.enabled=false; Destroy(collider); }
             var cameraObject = Owned("seat-camera-" + (index+1));
@@ -113,8 +124,24 @@ namespace StarTournament.ProvingGround
             cameras[index].cullingMask = ~((1 << (11+index)) | (15 << 15)) | (1 << (15+index));
             cameras[index].backgroundColor = new Color32(15, 22, 35, 255);
             var view = Instantiate(ViewWeaponPrefab, cameraObject.transform); SetLayer(view, 15+index); views[index] = view;
+            ApplyIdentity(view,index);
             view.transform.localPosition=new Vector3(Profile.Get("presentation.viewWeaponX"),Profile.Get("presentation.viewWeaponY"),Profile.Get("presentation.viewWeaponZ"));
             if (index == 0) cameraObject.AddComponent<AudioListener>();
+        }
+        static void ApplyIdentity(GameObject root,int seat)
+        {
+            foreach(var renderer in root.GetComponentsInChildren<Renderer>(true))
+            {
+                var materials=renderer.sharedMaterials;
+                for(int i=0;i<materials.Length;i++) if(materials[i] && materials[i].name.StartsWith("identity",StringComparison.OrdinalIgnoreCase))
+                {
+                    var block=new MaterialPropertyBlock(); renderer.GetPropertyBlock(block,i);
+                    // glTFast and URP material property aliases; preserve authored textures and shared ownership.
+                    foreach(string property in new[]{"_BaseColor","baseColorFactor","_EmissionColor","emissiveFactor"})
+                        if(materials[i].HasProperty(property)) block.SetColor(property,NativeStandingsView.Palette[seat]);
+                    renderer.SetPropertyBlock(block,i);
+                }
+            }
         }
         static void SetLayer(GameObject root, int layer) { foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer; }
         void Update()
@@ -128,44 +155,93 @@ namespace StarTournament.ProvingGround
             {
                 if (!input.Ready) Pause("Назначенное устройство отключено");
                 else if(input.HasKeyboard && Cursor.lockState!=CursorLockMode.Locked) Pause("Захват курсора потерян");
-                else { input.Capture(Profile, Time.deltaTime); if (input.ConsumePause()) Pause("Пауза"); }
+                else { input.Capture(frozenMovement ?? Profile, Time.deltaTime); if (input.ConsumePause()) Pause("Пауза"); }
             }
-            if (diagnostic && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
+            if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
         }
         void FixedUpdate()
         {
             if (phase != Phase.Running) return;
             for(int i=0;i<actions.Length;i++) actions[i] = diagnostic ? default : input.Consume(i);
-            try { Session.Tick(actions, Time.fixedDeltaTime); }
+            try
+            {
+                Session.Tick(actions, Time.fixedDeltaTime);
+                if(Session.Match?.Phase==NativeMatchPhase.Finished)
+                {
+                    phase=Phase.Results; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length);
+                    SetCursor(false); RefreshInterface(); Select(repeat.interactable?repeat:menu);
+                }
+            }
             catch(InvalidOperationException error) { Pause(error.Message); Debug.LogError(error); }
         }
         void LateUpdate()
         {
             if(Session == null) return;
-            presentation.Render();
+            if(phase!=Phase.Setup) presentation.Render();
             for(int i=0;i<hud.Length;i++) if(hud[i])
             {
                 var life=Session.Life(i);
                 health[i].text="ЗДОРОВЬЕ  "+Mathf.CeilToInt(life.Health);
                 ammo[i].text="ДВУСТВОЛКА  ·  "+life.Ammo;
                 crosshair[i].text=life.Dead ? presentation.DeathMessage(i) : "+";
+                var match=Session.Match;
+                timers[i].text=match==null ? "" : match.Phase==NativeMatchPhase.Overtime ? "ОВЕРТАЙМ" : TimeLabel(match.RemainingSeconds);
+                standings[i].Show(phase==Phase.Running && actions[i].ShowRoster,match?.Read(),diagnostic||combatReview);
                 hud[i].text="ИГРОК "+(i+1)+(diagnostic || combatReview ? " · DIAGNOSTIC" : "")+"\n"+(hit[i] ?? "");
-                if(actions[i].ShowRoster) hud[i].text+="\n"+string.Join("\n",Enumerable.Range(0,4).Select(n=>"Игрок "+(n+1)+" · "+(Session.Life(n).Dead ? "погиб" : "здоровье "+Mathf.CeilToInt(Session.Life(n).Health))));
             }
         }
         void OnApplicationFocus(bool focus) { if (!focus && phase == Phase.Running && !diagnostic) Pause("Окно потеряло фокус"); }
         void Begin(bool diagnostics)
         {
             if (!diagnostics && !input.Ready) return;
-            diagnostic = diagnostics; input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostics && input.HasKeyboard);
+            diagnostic = diagnostics; CreateMatch(false); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostics && input.HasKeyboard);
         }
-        void Pause(string reason) { phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(diagnostic||input.Ready ? resume : rebind); }
+        static ProvingProfile Copy(ProvingProfile p) => JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(p));
+        static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
+        void CreateMatch(bool repeating)
+        {
+            Session?.Stop(); presentation?.Dispose();
+            if(!repeating)
+            {
+                Configuration.Validate(MatchProfile);
+                frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile);
+                frozenConfiguration=Configuration;
+            }
+            for(int i=0;i<motors.Length;i++) { motors[i].SetAlive(false); bodies[i].SetActive(true); views[i].SetActive(true); }
+            for(int i=0;i<motors.Length;i++) motors[i].Initialize(frozenMovement,arena.Spawns[i]);
+            Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
+            var match=new NativeMatchState(motors.Length,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
+            Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match);
+            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras,bodies,views);
+            Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
+            input.Clear(); Session.ClearInput();
+        }
+        void Repeat()
+        {
+            if(!diagnostic && !input.Ready) return;
+            CreateMatch(true); phase=Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); RefreshInterface();
+        }
+        void Menu()
+        {
+            phase=Phase.Setup; diagnostic=false; combatReview=false; Session.Stop(); presentation.Dispose();
+            input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(input.Ready?start:rebind);
+        }
+        void StepConfiguration(string path,int direction)
+        {
+            if(phase!=Phase.Setup) return;
+            var d=MatchProfile.Descriptors.First(x=>x.Path==path); var config=Configuration;
+            int value=path=="match.durationMinutes"?config.DurationMinutes:config.TargetPoints;
+            value=(int)Mathf.Clamp(value+direction*d.Step,d.Minimum,d.Maximum);
+            if(path=="match.durationMinutes") config.DurationMinutes=value; else config.TargetPoints=value;
+            config.Validate(MatchProfile); Configuration=config; RefreshInterface();
+        }
+        void Pause(string reason) { phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(diagnostic||input.Ready ? resume : menu); }
         void Resume() { if (diagnostic || input.Ready) { input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
-        void ResetSetup() { phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
+        void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         void CreateInterface()
         {
             var eventSystem = Owned("input-events"); eventSystem.AddComponent<EventSystem>(); eventSystem.AddComponent<InputSystemUIInputModule>();
@@ -189,9 +265,19 @@ namespace StarTournament.ProvingGround
                     Layout(label.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));
                     label.rectTransform.offsetMin=Vector2.one*padding; label.rectTransform.offsetMax=-Vector2.one*padding;
                 }
+                timers[i]=TextElement(canvasObject.transform,"timer-"+i,"",(int)Profile.Get("ui.fontSize"));
+                Layout(timers[i].rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));
+                timers[i].rectTransform.offsetMax=-Vector2.one*padding; timers[i].alignment=TextAnchor.UpperCenter;
                 health[i].alignment=TextAnchor.LowerLeft; ammo[i].alignment=TextAnchor.LowerRight;
                 var cross = TextElement(canvasObject.transform,"crosshair-"+i,"+",(int)Profile.Get("ui.headingFontSize"));
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
+            }
+            for(int i=0;i<standings.Length;i++)
+            {
+                var r=cameras[i].rect;
+                standings[i]=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"standings-"+i,
+                    new Vector2(r.xMin,r.yMin+r.height*.25f),new Vector2(r.xMax,r.yMin+r.height*.75f));
+                standings[i].Root.SetActive(false);
             }
             overlay = new GameObject("setup-pause",typeof(RectTransform),typeof(Image)); overlay.transform.SetParent(canvasObject.transform,false);
             Layout((RectTransform)overlay.transform,Vector2.zero,Vector2.one); overlay.GetComponent<Image>().color=new Color32(10,18,30,245);
@@ -201,8 +287,19 @@ namespace StarTournament.ProvingGround
             status=TextElement(column.transform,"status","",(int)Profile.Get("ui.headingFontSize")); status.alignment=TextAnchor.MiddleCenter;
             start=ButtonElement(column.transform,"Начать — четыре игрока",()=>Begin(false));
             resume=ButtonElement(column.transform,"Продолжить",Resume);
+            repeat=ButtonElement(column.transform,"Повторить матч",Repeat);
+            menu=ButtonElement(column.transform,"В главное меню",Menu);
             rebind=ButtonElement(column.transform,"Назначить устройства заново",ResetSetup);
-            ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
+            diagnosticButton=ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
+            durationButton=ButtonElement(column.transform,"Длительность",()=>StepConfiguration("match.durationMinutes",1));
+            durationButton.gameObject.name="duration-plus";
+            var durationMinus=ButtonElement(column.transform,"Длительность −",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
+            targetButton=ButtonElement(column.transform,"Цель",()=>{ if(phase!=Phase.Setup)return; var c=Configuration;c.TargetEnabled=!c.TargetEnabled;Configuration=c;RefreshInterface(); });
+            targetButton.gameObject.name="target-toggle";
+            targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
+            targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
+            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.headingFontSize"),"results-table",new Vector2(.06f,.45f),new Vector2(.94f,.77f));
+            results.Root.SetActive(false);
             var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
             settings.gameObject.name = "fps-setting";
             fps = canvasObject.AddComponent<FpsDisplay>();
@@ -229,8 +326,27 @@ namespace StarTournament.ProvingGround
             overlay.SetActive(phase!=Phase.Running);
             start.gameObject.SetActive(phase==Phase.Setup); start.interactable=input.Ready;
             resume.gameObject.SetActive(phase==Phase.Paused); resume.interactable=diagnostic||input.Ready;
+            repeat.gameObject.SetActive(phase==Phase.Paused||phase==Phase.Results); repeat.interactable=diagnostic||input.Ready;
+            menu.gameObject.SetActive(phase==Phase.Paused||phase==Phase.Results);
+            rebind.gameObject.SetActive(phase==Phase.Setup);
+            diagnosticButton.gameObject.SetActive(phase==Phase.Setup);
+            durationButton.gameObject.SetActive(phase==Phase.Setup);
+            durationButton.transform.parent.Find("duration-minus").gameObject.SetActive(phase==Phase.Setup);
+            targetButton.gameObject.SetActive(phase==Phase.Setup);
+            targetMinus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
+            targetPlus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
+            durationButton.GetComponentInChildren<Text>().text="Длительность: "+Configuration.DurationMinutes+" мин   +";
+            targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
+            results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview);
+            var menuRect=(RectTransform)status.transform.parent;
+            Layout(menuRect,new Vector2(.15f,phase==Phase.Results?.06f:.08f),new Vector2(.85f,phase==Phase.Results?.40f:.92f));
             status.text="STAR TOURNAMENT · UNITY ПОЛИГОН\n"+(phase==Phase.Paused ? pauseReason : "Space — клавиатура/мышь · Start — присоединить геймпад")+"\n"+
-                string.Join("\n",Enumerable.Range(0,4).Select(i=>"Игрок "+(i+1)+": "+input.Label(i)+(input.IsConnected(i)?"":" · нет устройства")));
+                string.Join("  |  ",Enumerable.Range(0,4).Select(i=>"P"+(i+1)+": "+(input.IsConnected(i)?"готов":"ожидает")));
+            if(phase==Phase.Results)
+            {
+                var result=Session.Match.Read();
+                status.text="ПОБЕДИЛ ИГРОК "+(result.Winner+1)+" · "+(result.Trigger=="score-limit"?"ЦЕЛЬ ПО ОЧКАМ":"ВРЕМЯ")+(input.Ready||diagnostic?"":"\nПодключите устройства для повтора или вернитесь в меню");
+            }
         }
     }
 }

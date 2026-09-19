@@ -99,7 +99,7 @@ Browser baseline использует deterministic Rapier 0.20.0 и collision-c
 
 ### Этап 2. Полный локальный матч
 
-Первый внутренний срез `add-unity-combat-state`: отдельный сериализуемый lifecycle здоровья/боезапаса/cooldown/death/respawn readiness и профиль `unity-combat-state-v1`. Проверенный срез `add-unity-native-combat` подключает его к native Player: pellet queries/hit zones, damage, capsule death/respawn, killcam/HUD и выбор безопасного spawn на фиксированной арене; handoff `docs/tasks/completed/18-unity-native-combat.md` содержит актуальный статус проверки. После него — scoring/match completion/results/repeat, teams/bots и полный menu-to-results путь отдельными проверяемыми срезами. Это порядок реализации уже утверждённых требований, не снятие функций с этапа.
+Первый внутренний срез `add-unity-combat-state`: отдельный сериализуемый lifecycle здоровья/боезапаса/cooldown/death/respawn readiness и профиль `unity-combat-state-v1`. Проверенный срез `add-unity-native-combat` подключает его к native Player: pellet queries/hit zones, damage, capsule death/respawn, killcam/HUD и выбор безопасного spawn на фиксированной арене; handoff `docs/tasks/completed/18-unity-native-combat.md` содержит актуальный статус проверки. Следующий срез `add-unity-native-match-loop` подключает scoring, atomic match completion/overtime, native standings/results и clean Repeat/setup; актуальные проверки — в `docs/tasks/completed/19-unity-native-match-loop.md`. Teams/bots, восемь участников и остальные 1–4 layouts остаются отдельными проверяемыми срезами; весь этап 2 этим не закрыт. Это порядок реализации уже утверждённых требований, не снятие функций с этапа.
 
 
 - C# gameplay: damage, death, respawn, FFA/teams, восемь участников, bots, results и Repeat.
