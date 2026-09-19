@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround
@@ -6,26 +7,32 @@ namespace StarTournament.ProvingGround
     /// <summary>Reads combat state; never changes movement, hit zones, damage or spawn choice.</summary>
     public sealed class CombatPresentation : System.IDisposable
     {
-        sealed class Corpse { public GameObject Root; public double Expires; public TrooperVisual Visual; }
+        sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
         readonly NativeCombatSession session;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
         readonly PhysicsScene physics;
         readonly Camera[] cameras;
         readonly GameObject[] bodies, views;
+        readonly NativeMatchComposition composition;
+        readonly int[] local;
+        int ViewOf(int participant)=>composition!=null?composition.SeatOf(participant):participant;
         readonly Vector3[] deathEye, deathFeet, killerPoint;
         readonly double[] deathTime;
         readonly bool[] tracking;
+        bool disposed;
         readonly List<Corpse> corpses = new List<Corpse>();
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
-            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views)
+            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null)
         {
-            if(cameras.Length!=session.ParticipantCount || bodies.Length!=session.ParticipantCount || views.Length!=session.ParticipantCount)
-                throw new System.ArgumentException("Presentation requires one view per local participant in this human-only slice");
+            if(bodies.Length!=session.ParticipantCount || views.Length!=cameras.Length ||
+                (composition==null?cameras.Length!=session.ParticipantCount:composition.ParticipantCount!=session.ParticipantCount || composition.LocalCount!=cameras.Length))
+                throw new System.ArgumentException("Presentation ownership mismatch");
+            this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
-            deathEye=new Vector3[cameras.Length]; deathFeet=new Vector3[cameras.Length]; killerPoint=new Vector3[cameras.Length];
-            deathTime=new double[cameras.Length]; tracking=new bool[cameras.Length];
+            deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length];
+            deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
             session.Died += OnDeath;
             session.Respawned += OnRespawn;
             session.Fired += OnFire;
@@ -33,20 +40,24 @@ namespace StarTournament.ProvingGround
         void OnFire(int seat,float damage)
         {
             bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
-            views[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
+            int view=ViewOf(seat);if(view>=0)views[view].GetComponent<TrooperVisual>()?.Fire(session.Time);
         }
         void OnRespawn(int seat)
         {
-            bodies[seat].SetActive(true); views[seat].SetActive(true);
+            foreach(var corpse in corpses)if(corpse.Participant==seat&&corpse.Root)
+                foreach(var t in corpse.Root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=0;
+            bodies[seat].SetActive(true);int view=ViewOf(seat);if(view>=0)views[view].SetActive(true);
             bodies[seat].GetComponent<TrooperVisual>()?.ResetPose(session.Time);
-            views[seat].GetComponent<TrooperVisual>()?.ResetPose(session.Time);
+            if(view>=0)views[view].GetComponent<TrooperVisual>()?.ResetPose(session.Time);
         }
         public void Dispose()
         {
+            if(disposed)return;disposed=true;
             session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();
-            for(int i=0;i<bodies.Length;i++) { bodies[i].SetActive(true); views[i].SetActive(true); }
+            foreach(var body in bodies)if(body)body.SetActive(true);
+            foreach(var view in views)if(view)view.SetActive(true);
         }
         void OnDeath(DeathNotice notice)
         {
@@ -67,7 +78,11 @@ namespace StarTournament.ProvingGround
                 }
             corpse.name=$"corpse-{seat+1}-life-{notice.Life.Life}";
             corpse.SetActive(true);
-            foreach(var t in corpse.GetComponentsInChildren<Transform>(true)) t.gameObject.layer=0;
+            // The fixed death-eye camera is inside its own corpse. Hide that corpse only from
+            // the owner during killer tracking; no-killer orbit and other views still see it.
+            // Owner body layers 11–14 are a renderer routing invariant shared with ProvingGround.
+            int corpseLayer=notice.Life.KillerId!=null&&ViewOf(seat)>=0?11+ViewOf(seat):0;
+            foreach(var t in corpse.GetComponentsInChildren<Transform>(true)) t.gameObject.layer=corpseLayer;
             foreach(var collider in corpse.GetComponentsInChildren<Collider>(true)) { collider.enabled=false; Object.Destroy(collider); }
             var source=bodies[seat].GetComponent<TrooperVisual>();
             var visual=corpse.GetComponent<TrooperVisual>();
@@ -93,15 +108,15 @@ namespace StarTournament.ProvingGround
                 }
                 deathFeet[seat]=support.point;
             }
-            corpses.Add(new Corpse { Root=corpse, Visual=visual, Expires=session.Time+tuning.Get("death.corpseSeconds") });
-            bodies[seat].SetActive(false); views[seat].SetActive(false);
+            corpses.Add(new Corpse { Participant=seat, Root=corpse, Visual=visual, Expires=session.Time+tuning.Get("death.corpseSeconds") });
+            bodies[seat].SetActive(false);int view=ViewOf(seat);if(view>=0)views[view].SetActive(false);
             UpdateKiller(seat); // Capture killer life immediately, even if it dies later in this tick.
         }
         void UpdateKiller(int seat)
         {
             if (!tracking[seat]) return;
             var dead=session.Life(seat);
-            for(int i=0;i<cameras.Length;i++)
+            for(int i=0;i<session.ParticipantCount;i++)
             {
                 var killer=session.Life(i);
                 if(killer.ParticipantId!=dead.KillerId) continue;
@@ -115,7 +130,10 @@ namespace StarTournament.ProvingGround
         {
             var life=session.Life(seat);
             if(!life.Dead) return "";
-            string killer=life.KillerId==null ? "Вы погибли" : "Вас убил Игрок "+life.KillerId.Replace("player-","");
+            string killer="Вы погибли";
+            if(life.KillerId!=null)
+                for(int p=0;p<session.ParticipantCount;p++)if(session.Life(p).ParticipantId==life.KillerId)
+                    { killer="Вас убил "+(composition?.Participant(p).Name ?? ("Игрок "+(p+1)));break; }
             return killer+"\nВозрождение через "+Mathf.CeilToInt((float)life.RespawnRemaining);
         }
         public void Render()
@@ -125,14 +143,15 @@ namespace StarTournament.ProvingGround
                 if(session.Time>=corpses[c].Expires) { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }
                 else corpses[c].Visual?.Render(session.Time,Vector3.zero,0,0);
             }
-            for(int i=0;i<cameras.Length;i++)
+            for(int p=0;p<session.ParticipantCount;p++)if(!session.Life(p).Dead)
+                bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,session.Life(p).Health,session.Life(p).Life);
+            for(int v=0;v<cameras.Length;v++)
             {
-                var life=session.Life(i); var pose=session.Pose(i);
+                int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
                 if(!life.Dead)
                 {
-                    bodies[i].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
-                    views[i].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
-                    cameras[i].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
+                    views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+                    cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;
                 }
                 Vector3 position=deathEye[i], target;
@@ -148,7 +167,7 @@ namespace StarTournament.ProvingGround
                         position=target+offset.normalized*Mathf.Max(radius,wall.distance-radius);
                 }
                 Vector3 direction=target-position;
-                if(direction.sqrMagnitude>0) cameras[i].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
+                if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
         }
     }

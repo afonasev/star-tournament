@@ -38,10 +38,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(count));
             for(int i=0;i<4;i++)
             {
-                var cam=ground.transform.Find("seat-camera-"+(i+1)).GetComponent<Camera>();
+                var cameraTransform=ground.transform.Find("seat-camera-"+(i+1));
+                var cam=cameraTransform?cameraTransform.GetComponent<Camera>():null;
                 var root=ground.transform.Find("native-ui/seat-viewport-"+i).GetComponent<RectTransform>();
                 Assert.That(root.gameObject.activeSelf,Is.EqualTo(i<count));
-                if(i>=count)continue;
+                if(i>=count){Assert.That(cam,Is.Null,"Unused local cameras are disposed");continue;}
                 var expected=LocalSeatLayout.Viewport(count,i);Assert.That(cam.rect,Is.EqualTo(expected));
                 Assert.That(root.anchorMin,Is.EqualTo(new Vector2(expected.xMin,expected.yMin)));
                 Assert.That(root.anchorMax,Is.EqualTo(new Vector2(expected.xMax,expected.yMax)));
@@ -102,7 +103,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 field.SetValue(ground,pair[0]);
                 Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
-                Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(pair[0]));
+                Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(System.Math.Min(pair[0],ground.LocalSeatCount)));
                 Button("В главное меню").onClick.Invoke();yield return null;
                 while(ground.LocalSeatCount>pair[1])Button("seats-minus").onClick.Invoke();
                 while(ground.LocalSeatCount<pair[1])Button("seats-plus").onClick.Invoke();

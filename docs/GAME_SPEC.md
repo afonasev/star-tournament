@@ -65,7 +65,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 ## 4. Смерть, killcam и возрождение
 
 - После смерти локальный viewport погибшего переходит в killcam, а участник остаётся в roster и текущей таблице результатов.
-- Если есть убийца, камера остаётся у точки смерти и следит за конкретной жизнью убийцы; в центре показано сообщение `Вас убил {nickname}`.
+- Если есть убийца, камера остаётся у точки смерти и следит за конкретной жизнью убийцы; в центре показано сообщение `Вас убил {nickname}`. В native Player собственное тело не перекрывает этот локальный death-eye view: оно скрыто только от камеры владельца до respawn, сохраняя видимость для остальных. No-killer orbit видит тело.
 - Если убийцы нет, камера медленно облетает тело погибшего под небольшим углом, сохраняя в кадре тело и происходящее рядом.
 - Во время killcam игрок может удерживать `Tab` и видеть текущую таблицу результатов.
 - После killcam игрок возрождается с полным здоровьем и полным стартовым боезапасом.
@@ -76,9 +76,11 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 5. Матч и интерфейс
 
-- Native Unity teams-срез подключает Team A/B к human-only составу 2–4 local seats на фиксированной арене: выбор режима и команды каждого места в setup, две непустые команды, существующая контрастная blue/magenta пара с переключением ориентации, сгруппированные live/results и team winner. Repeat сохраняет frozen roster, цвета, устройства и профили; draft редактируется только в setup. Initial team spawn проверяет свободные slots и профильное opponent separation, respawn оценивает опасность только от противников при общей occupancy. Параметр initial separation принадлежит `unity-native-team-v1@1`; боты, solo и восемь scene participants остаются отдельными срезами.
+- Внутренний Unity-срез `add-unity-participant-roster` отделяет 2–8 participant identities от 1–4 local-seat mappings. Solo здесь означает один local viewport при валидном составе минимум из двух участников; playable solo с ботами подключается после planner. Камеры/HUD/устройства принадлежат local seats, motor/combat/life/corpse — всем участникам. Development fixtures для проверки восьми тел явно помечаются и не выдаются за готовый AI. Обычный human setup 2–4 сохраняется до shipping bot setup.
 
-- Внутренний Unity-срез `add-unity-team-match-state` переносит утверждённые FFA/Team A/Team B и командное завершение в data-only reducer для 2–8 participant slots. Состав не равен local seats; snapshot отдельно хранит личного либо командного победителя. Этот внутренний срез не включал native UI/бой; их подключает `add-unity-native-teams`, описанный выше. Боты, solo и восемь тел остаются отдельными срезами.
+- Native Unity teams-срез подключает Team A/B к human-only составу 2–4 local seats на фиксированной арене: выбор режима и команды каждого места в setup, две непустые команды, существующая контрастная blue/magenta пара с переключением ориентации, сгруппированные live/results и team winner. Repeat сохраняет frozen roster, цвета, устройства и профили; draft редактируется только в setup. Initial team spawn проверяет свободные slots и профильное opponent separation, respawn оценивает опасность только от противников при общей occupancy. Параметр initial separation принадлежит `unity-native-team-v1@1`; playable боты и solo остаются следующими срезами; восемь scene participants проверены в participant-roster.
+
+- Внутренний Unity-срез `add-unity-team-match-state` переносит утверждённые FFA/Team A/Team B и командное завершение в data-only reducer для 2–8 participant slots. Состав не равен local seats; snapshot отдельно хранит личного либо командного победителя. Этот внутренний срез не включал native UI/бой; их подключает `add-unity-native-teams`, описанный выше. Восемь тел и отдельные local views проверяются внутренним participant-roster срезом; playable bots/solo остаются следующим срезом.
 
 - Native FFA срез для 2–4 local seats переносит утверждённое scoring правило из `openspec/specs/match-session-lifecycle/spec.md`: фактически применённый урон без округления, один assist каждому подходящему не-убийце из damage ledger текущей жизни, kill-chain по cumulative totals, продолжение внутри включительной границы gap и сброс серии при смерти. Числа и диапазоны принадлежат `unity-native-match-v1@1`; исходный tuning взят из `prototype-v1`. В FFA-срезе фиксированная арена и 2–4 local seats; команды подключаются отдельным native teams-срезом. Боты, восемь участников и одиночный запуск остаются отдельными пунктами roadmap. Native setup меняет число мест только до запуска: два равных left/right viewport, три равных игровых четверти с постоянной read-only таблицей в четвёртой, четыре равных четверти. Только выбранные места требуют устройств и входят в combat roster; скрытые участники не добавляются. Уменьшение состава освобождает назначения удалённых мест. Repeat сохраняет конфигурацию, профили и назначения устройств, но создаёт новый чистый gameplay/presentation/input lifecycle. Выход в setup останавливает и освобождает прежний матч.
 - Unity показывает один общий счётчик FPS в правом верхнем углу окна, отдельно от per-seat HUD и прицелов. В native настройках setup и pause доступен переключатель «Показывать FPS»; по умолчанию включён, выбор сохраняется между запусками. Счётчик усредняет реальные unscaled кадры и обновляет текст с ограниченной частотой, работает в паузе, не пишет покадровые логи и не является доказательством performance acceptance.
@@ -175,6 +177,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Бюджет и лицензии платных motor/navigation/generator расширений за пределами бесплатного первого среза.
 
 ## 11. Журнал изменений
+
+- 2026-09-20: после проверенной навигации выделен participant/local-seat prerequisite для полного переноса: 1–4 локальных вида и 2–8 участников, без изменения минимального total roster и без фиктивных устройств для нелокальных тел.
 
 - 2026-09-20: по поручению полного переноса создана requirement/evidence-матрица; начат ограниченный native navigation change после read-only Astra memo. Полная цель остаётся активной, physical/artistic/performance и открытые продуктовые решения не закрыты этим срезом.
 

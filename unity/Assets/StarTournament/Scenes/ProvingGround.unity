@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &599938068
+--- !u!1 &1921012336
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 599938070}
-  - component: {fileID: 599938069}
+  - component: {fileID: 1921012338}
+  - component: {fileID: 1921012337}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &599938069
+--- !u!114 &1921012337
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 599938068}
+  m_GameObject: {fileID: 1921012336}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -1429,6 +1429,43 @@ MonoBehaviour:
       Value: 0.3
     - Path: bots.navigation.slowDistance
       Value: 1
+  RosterProfile:
+    id: unity-native-roster-v1
+    version: 1
+    descriptors:
+    - Path: spawn.initialSearchBudgetNodes
+      Group: spawn
+      Label: "\u0411\u044E\u0434\u0436\u0435\u0442 \u0441\u0442\u0430\u0440\u0442\u043E\u0432\u043E\u0439
+        \u0440\u0430\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0438"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u044B\u0445
+        \u0443\u0437\u043B\u043E\u0432 \u043F\u043E\u0438\u0441\u043A\u0430; \u0438\u0441\u0447\u0435\u0440\u043F\u0430\u043D\u0438\u0435
+        \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u044F\u0432\u043D\u0443\u044E
+        \u043E\u0448\u0438\u0431\u043A\u0443, \u0430 \u043D\u0435 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u0443\u044E
+        \u0440\u0430\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0443."
+      Unit: nodes
+      Minimum: 100
+      Maximum: 1000000
+      Step: 100
+      DefaultValue: 100000
+    - Path: spawn.initialCandidateBudget
+      Group: spawn
+      Label: "\u0411\u044E\u0434\u0436\u0435\u0442 \u0441\u0442\u0430\u0440\u0442\u043E\u0432\u044B\u0445
+        \u043A\u0430\u043D\u0434\u0438\u0434\u0430\u0442\u043E\u0432"
+      Description: "\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0432\u0430\u0435\u0442
+        generation/physics queries \u0438 \u0440\u0430\u0437\u043C\u0435\u0440 pair
+        tables; \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0435 \u0434\u0430\u0451\u0442
+        \u044F\u0432\u043D\u0443\u044E \u043E\u0448\u0438\u0431\u043A\u0443 \u0434\u043E
+        \u043F\u043E\u0438\u0441\u043A\u0430."
+      Unit: candidates
+      Minimum: 32
+      Maximum: 4096
+      Step: 32
+      DefaultValue: 1024
+    values:
+    - Path: spawn.initialSearchBudgetNodes
+      Value: 100000
+    - Path: spawn.initialCandidateBudget
+      Value: 1024
   TeamProfile:
     id: unity-native-team-v1
     version: 1
@@ -1598,13 +1635,13 @@ MonoBehaviour:
       Value: 1200
     - Path: score.chainIncrement
       Value: 400
---- !u!4 &599938070
+--- !u!4 &1921012338
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 599938068}
+  m_GameObject: {fileID: 1921012336}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1617,4 +1654,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 599938070}
+  - {fileID: 1921012338}

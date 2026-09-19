@@ -1,0 +1,162 @@
+{
+    "state": "return-human-setup",
+    "status": "PARTICIPANT_COMPOSITION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "width": 1920,
+    "height": 1080,
+    "cameras": 3,
+    "controllers": 3,
+    "shots": 0,
+    "focused": true,
+    "muted": true,
+    "running": false,
+    "sessionTime": 0.0,
+    "composition": {
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0
+            ]
+        },
+        "Participants": [
+            {
+                "Kind": 0,
+                "Name": "Игрок 1",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 2",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 3",
+                "Color": {
+                    "r": 0.9843137264251709,
+                    "g": 0.4431372582912445,
+                    "b": 0.5215686559677124,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            }
+        ],
+        "LocalParticipants": [
+            0,
+            1,
+            2
+        ]
+    },
+    "poses": [
+        {
+            "Position": {
+                "x": -6.0,
+                "y": 0.0,
+                "z": -14.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        },
+        {
+            "Position": {
+                "x": -2.0,
+                "y": 0.0,
+                "z": -10.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        },
+        {
+            "Position": {
+                "x": 2.0,
+                "y": 0.0,
+                "z": -14.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        }
+    ],
+    "lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "match": {
+        "Tick": 0,
+        "RemainingTicks": 0,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": 0,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": []
+        },
+        "Standings": [],
+        "Teams": []
+    }
+}

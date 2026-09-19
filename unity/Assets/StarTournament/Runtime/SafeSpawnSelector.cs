@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -44,34 +45,69 @@ namespace StarTournament.ProvingGround
             return physics.OverlapCapsule(position + Vector3.up*radius, position + Vector3.up*(height-radius), radius,
                 overlap, movementMask, QueryTriggerInteraction.Ignore) == 0;
         }
-        // Bounded human-only allocation before any capsule is activated. No partial placement on failure.
-        public bool TryInitial(NativeMatchRoster roster,float separation,out Vector3[] selected)
+        public int InitialSearchNodes { get; private set; }
+        public string InitialFailure { get; private set; }
+        // Complete placement is committed by the caller only after this bounded search succeeds.
+        public bool TryInitial(NativeMatchRoster roster,float separation,out Vector3[] selected,int searchBudget=0,int candidateBudget=0)
         {
-            if(roster.Count > SeatInputCoordinator.SeatCount) throw new System.ArgumentException("Initial native allocation supports up to four humans");
+            if(roster==null || float.IsNaN(separation) || float.IsInfinity(separation) || separation<0)
+                throw new System.ArgumentException("Invalid initial allocation");
+            if(searchBudget==0)searchBudget=(int)ProvingProfile.CreateRosterDefault().Get("spawn.initialSearchBudgetNodes");
+            if(searchBudget<1)throw new System.ArgumentOutOfRangeException(nameof(searchBudget));
+            if(candidateBudget==0)candidateBudget=(int)ProvingProfile.CreateRosterDefault().Get("spawn.initialCandidateBudget");
+            if(candidateBudget<1)throw new System.ArgumentOutOfRangeException(nameof(candidateBudget));
+            InitialSearchNodes=0;InitialFailure=null;selected=System.Array.Empty<Vector3>();
             var candidates=new List<Vector3>();
-            foreach(var slot in slots) if(Valid(slot,out var candidate)) candidates.Add(candidate);
-            var reserved=new Vector3[roster.Count];
+            // Initial-only coverage of the fixed fixture, using existing profile geometry/inset/spacing.
+            // Corner regions alone cannot satisfy eight-way FFA separation; never reduce that separation.
+            var initialSlots=new List<Vector3>(slots);
+            float inset=combat.Get("spawn.inset"),step=Mathf.Max(combat.Get("spawn.spacing"),separation);
+            float halfWidth=motor.Get("fixture.width")/2-inset,halfDepth=motor.Get("fixture.depth")/2-inset;
+            for(int floor=0;floor<2;floor++)
+                for(float x=-halfWidth;x<=halfWidth;x+=step)
+                    for(float z=-halfDepth;z<=halfDepth;z+=step)
+                    {
+                        if(initialSlots.Count>=candidateBudget){InitialFailure="CandidateBudgetExceeded";return false;}
+                        initialSlots.Add(new Vector3(x,motor.Get(floor==0?"fixture.floorHeight":"fixture.upperFloorHeight"),z));
+                    }
+            foreach(var slot in initialSlots)if(Valid(slot,out var candidate)&&!candidates.Contains(candidate))candidates.Add(candidate);
+            int n=candidates.Count;var overlapPair=new bool[n,n];var closePair=new bool[n,n];
+            float radius=motor.Get("player.capsule.radius")+motor.Get("player.capsule.skinWidth");
+            for(int a=0;a<n;a++)for(int b=0;b<n;b++)
+            {
+                var delta=candidates[a]-candidates[b];
+                float gap=Mathf.Max(0,Mathf.Abs(delta.y)-(motor.Get("player.capsule.height")-2*motor.Get("player.capsule.radius")));
+                overlapPair[a,b]=delta.x*delta.x+delta.z*delta.z+gap*gap<4*radius*radius;
+                closePair[a,b]=delta.magnitude<separation;
+            }
+            var reserved=new int[roster.Count];bool exhausted=false;
+            bool Compatible(int participant,int candidate,int prefix)
+            {
+                for(int j=0;j<prefix;j++)if(overlapPair[candidate,reserved[j]] ||
+                    (!roster.AreAllies(participant,j)&&closePair[candidate,reserved[j]]))return false;
+                return true;
+            }
             bool Place(int participant)
             {
-                if(participant==reserved.Length) return true;
-                foreach(var candidate in candidates)
+                if(participant==reserved.Length)return true;
+                for(int c=0;c<n;c++)
                 {
-                    bool safe=true;
-                    for(int j=0;j<participant;j++)
+                    if(InitialSearchNodes>=searchBudget){exhausted=true;return false;}
+                    InitialSearchNodes++;
+                    if(!Compatible(participant,c,participant))continue;
+                    reserved[participant]=c;bool viable=true;
+                    for(int future=participant+1;future<reserved.Length&&viable;future++)
                     {
-                        var delta=candidate-reserved[j];
-                        float radius=motor.Get("player.capsule.radius")+motor.Get("player.capsule.skinWidth");
-                        float axisGap=Mathf.Max(0,Mathf.Abs(delta.y)-(motor.Get("player.capsule.height")-2*motor.Get("player.capsule.radius")));
-                        bool overlaps=delta.x*delta.x+delta.z*delta.z+axisGap*axisGap < 4*radius*radius;
-                        if(overlaps || (!roster.AreAllies(participant,j) && delta.magnitude<separation)) { safe=false;break; }
+                        bool any=false;for(int k=0;k<n;k++)if(Compatible(future,k,participant+1)){any=true;break;}
+                        viable=any;
                     }
-                    if(!safe) continue;
-                    reserved[participant]=candidate;
-                    if(Place(participant+1)) return true;
+                    if(viable&&Place(participant+1))return true;
+                    if(exhausted)return false;
                 }
                 return false;
             }
-            bool found=Place(0); selected=found?reserved:System.Array.Empty<Vector3>();return found;
+            if(Place(0)){selected=reserved.Select(i=>candidates[i]).ToArray();return true;}
+            InitialFailure=exhausted?"SearchBudgetExceeded":"NoValidPlacement";return false;
         }
         public bool TryChoose(CombatTarget[] live, out Vector3 selected)
         {

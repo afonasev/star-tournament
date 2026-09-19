@@ -1,0 +1,448 @@
+{
+    "state": "respawn-eight",
+    "status": "PARTICIPANT_COMPOSITION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "width": 1920,
+    "height": 1080,
+    "cameras": 3,
+    "controllers": 8,
+    "shots": 0,
+    "focused": true,
+    "muted": true,
+    "running": true,
+    "sessionTime": 3.659998554736376,
+    "composition": {
+        "Roster": {
+            "Mode": 1,
+            "Teams": [
+                1,
+                2,
+                1,
+                2,
+                1,
+                2,
+                1,
+                2
+            ]
+        },
+        "Participants": [
+            {
+                "Kind": 2,
+                "Name": "Fixture 1",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 2,
+                "Name": "Fixture 2",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 2,
+                "Name": "Fixture 3",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 2,
+                "Name": "Fixture 4",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 2,
+                "Name": "Fixture 5",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 3",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 2",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 1",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            }
+        ],
+        "LocalParticipants": [
+            7,
+            6,
+            5
+        ]
+    },
+    "poses": [
+        {
+            "Position": {
+                "x": -9.0,
+                "y": 0.009999999776482582,
+                "z": -12.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": 9.0,
+                "y": 0.009999999776482582,
+                "z": -12.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": -9.0,
+                "y": 0.009999999776482582,
+                "z": -9.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": 9.0,
+                "y": 0.009999999776482582,
+                "z": -9.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": -12.0,
+                "y": 4.009999752044678,
+                "z": 12.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": 12.0,
+                "y": 4.009999752044678,
+                "z": 12.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": -12.0,
+                "y": 4.009999752044678,
+                "z": 9.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": 6.0,
+                "y": 0.009999999776482582,
+                "z": -10.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        }
+    ],
+    "lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 0.0,
+            "Ammo": 20,
+            "Dead": true,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.2600010819733143,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-5",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-6",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-7",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-8",
+            "Life": 2,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "match": {
+        "Tick": 183,
+        "RemainingTicks": 14817,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 1,
+            "Teams": [
+                1,
+                2,
+                1,
+                2,
+                1,
+                2,
+                1,
+                2
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 1,
+                "Assists": 0,
+                "Deaths": 1,
+                "Score": 100,
+                "DamageDealt": 100.0,
+                "DamageReceived": 100.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 3,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 4,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 5,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 6,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 7,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 1,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 100.0
+            }
+        ],
+        "Teams": [
+            {
+                "Team": 1,
+                "Score": 100
+            },
+            {
+                "Team": 2,
+                "Score": 0
+            }
+        ]
+    }
+}

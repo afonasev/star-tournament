@@ -3,7 +3,7 @@
 Дата: 2026-09-19. Исходный browser commit: `8844e40` (`v0.0.9`).
 Статус: направление перехода и начало работы разрешены пользователем; технические рекомендации ниже не равнозначны утверждению всех открытых продуктовых решений.
 
-2026-09-20 пользователь поручил полный перенос до проверенного результата. Актуальный requirement/evidence backlog — `docs/UNITY_MIGRATION_MATRIX.md`. Навигационный срез `add-unity-bot-navigation` продолжает базу `6f8ed15`; его handoff — `docs/tasks/completed/25-unity-bot-navigation.md`. Внутренние foundations не завершают этап 2 или полную цель. Следующие sidebar-задачи автоматически не создаются; разрешены встроенные subagents и отдельные changes/worktrees/commits.
+2026-09-20 пользователь поручил полный перенос до проверенного результата. Актуальный requirement/evidence backlog — `docs/UNITY_MIGRATION_MATRIX.md`. Навигационный срез `add-unity-bot-navigation` продолжает базу `6f8ed15`; его handoff — `docs/tasks/completed/25-unity-bot-navigation.md`. Внутренние foundations не завершают этап 2 или полную цель. Следующие sidebar-задачи автоматически не создаются; разрешены встроенные subagents и отдельные changes/worktrees/commits. Навигация зафиксирована `45e7f27`; проверенный срез `add-unity-participant-roster` подтверждает отдельные participant/local-view identities и восемь native тел, сохраняя planner/setup/evaluation открытыми.
 
 ## 1. Цель и приоритеты
 
@@ -187,3 +187,5 @@ Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B
 - [Dungeon Architect Unity](https://dungeonarchitect.dev/unity/)
 - [Odin Inspector](https://odininspector.com/tutorials/serialize-anything/features-and-limitations)
 - [PhysX determinism limitations](https://nvidia-omniverse.github.io/PhysX/physx/5.8.0/docs/API.html)
+
+Participant/local-view separation проверено в `docs/tasks/completed/26-unity-participant-roster.md`: восемь физических участников,1–4 local views, mapped actions/presentation и bounded initial allocator;66/66 EditMode,49/49 PlayMode, Mac build, FHD/4K. Это внутренний prerequisite для playable planner/setup; прежние упоминания восьми тел как будущей работы выше описывают хронологию. Полная миграция остаётся активной.

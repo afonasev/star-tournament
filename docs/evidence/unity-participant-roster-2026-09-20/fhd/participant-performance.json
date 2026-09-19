@@ -1,0 +1,16 @@
+{
+    "status": "DIAGNOSTIC_NOT_TARGET_60FPS_ACCEPTANCE",
+    "device": "Mac14,10",
+    "graphics": "Apple M2 Pro",
+    "unity": "6000.3.23f1",
+    "width": 1920,
+    "height": 1080,
+    "samples": 643,
+    "p50ms": 8.345750000000152,
+    "p95ms": 9.4902500000007,
+    "p99ms": 71.42654199999932,
+    "worstms": 75.31550000000031,
+    "gpuTimingAvailable": false,
+    "allocationCounterAvailable": false,
+    "workload": "Eight native actors, 1/2/3/4 local views, screenshot/UI/lifecycle work included; short foreground intervals only"
+}

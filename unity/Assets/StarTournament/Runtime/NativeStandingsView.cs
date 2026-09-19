@@ -10,10 +10,10 @@ namespace StarTournament.ProvingGround
     public sealed class NativeStandingsView
     {
         public GameObject Root { get; }
-        readonly Text[,] cells = new Text[7,7];
-        readonly Image[] backgrounds = new Image[6];
+        readonly Text[,] cells = new Text[11,7];
+        readonly Image[] backgrounds = new Image[10];
         // Participant identities use the vetted palette. Grid ratios are layout structure, not gameplay tuning.
-        public static readonly Color[] Palette = { new Color32(59,130,246,255), new Color32(217,70,239,255), new Color32(251,113,133,255), new Color32(139,92,246,255) };
+        public static Color[] Palette => NativeParticipantColors.Read();
         public bool SwapTeamColors { get; set; }
         public static string TeamName(NativeTeam team) => team==NativeTeam.TeamA?"Team A":team==NativeTeam.TeamB?"Team B":"";
         public static Color TeamColor(NativeTeam team,bool swap) => Palette[(team==NativeTeam.TeamA ? 0 : 1) ^ (swap?1:0)];
@@ -25,8 +25,8 @@ namespace StarTournament.ProvingGround
             Rect((RectTransform)Root.transform,min,max); Root.GetComponent<Image>().color=new Color32(10,18,30,255); Root.GetComponent<Image>().raycastTarget=false;
             string[] headers={"УЧАСТНИК","УБ","ПМ","СМ","УРОН +","УРОН −","ОЧКИ"};
             float[] columns={0,.28f,.38f,.48f,.58f,.73f,.88f,1};
-            // Header + four human rows + two team totals; structural UI capacity.
-            for(int r=0;r<7;r++)
+            // Header + eight participant rows + two team totals; structural UI capacity.
+            for(int r=0;r<11;r++)
             {
                 var row=new GameObject("row-"+r,typeof(RectTransform),typeof(Image)); row.transform.SetParent(Root.transform,false);
                 Rect((RectTransform)row.transform,new Vector2(0,1-(r+1)/5f),new Vector2(1,1-r/5f));
@@ -44,7 +44,7 @@ namespace StarTournament.ProvingGround
                 }
             }
         }
-        public void Show(bool visible, NativeMatchSnapshot state, bool diagnostic)
+        public void Show(bool visible, NativeMatchSnapshot state, bool diagnostic, NativeMatchComposition composition=null)
         {
             Root.SetActive(visible); if(!visible || state==null) return;
             bool teams=state.Roster?.Mode==NativeMatchMode.Teams;
@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             else foreach(var row in state.Standings) entries.Add((row,NativeTeam.None,0));
-            int rowCount=teams?entries.Count+1:5;
+            int rowCount=Math.Max(5,entries.Count+1);
             Rect((RectTransform)cells[0,0].transform.parent,new Vector2(0,1-1f/rowCount),Vector2.one);
             int maximum=state.Standings.Length>0?state.Standings[0].Score:0;
             for(int r=0;r<backgrounds.Length;r++)
@@ -71,14 +71,16 @@ namespace StarTournament.ProvingGround
                 if(!entry.player.HasValue)
                 {
                     cells[r+1,0].text=TeamName(entry.team);cells[r+1,6].text=entry.total.ToString();
-                    for(int c=0;c<7;c++) cells[r+1,c].color=TeamColor(entry.team,SwapTeamColors);
+                    Color teamColor=composition==null?TeamColor(entry.team,SwapTeamColors):composition.Participant(Enumerable.Range(0,composition.ParticipantCount).First(p=>composition.Roster.TeamOf(p)==entry.team)).Color;
+                    for(int c=0;c<7;c++) cells[r+1,c].color=teamColor;
                     backgrounds[r].color=new Color32(32,55,72,255);continue;
                 }
-                var s=entry.player.Value;var color=Identity(state,s.Seat,SwapTeamColors);
-                string[] values={"Игрок "+(s.Seat+1)+(diagnostic?" · D":" · Ч"),s.Kills.ToString(),s.Assists.ToString(),s.Deaths.ToString(),
+                var s=entry.player.Value;var color=composition?.Participant(s.Seat).Color ?? Identity(state,s.Seat,SwapTeamColors);
+                bool local=composition!=null?composition.SeatOf(s.Seat)>=0:!diagnostic;
+                string[] values={composition?.Participant(s.Seat).Label ?? ("Игрок "+(s.Seat+1)+(diagnostic?" · D":" · Ч")),s.Kills.ToString(),s.Assists.ToString(),s.Deaths.ToString(),
                     Math.Round(s.DamageDealt,MidpointRounding.AwayFromZero).ToString(),Math.Round(s.DamageReceived,MidpointRounding.AwayFromZero).ToString(),s.Score.ToString()};
                 for(int c=0;c<7;c++) { cells[r+1,c].text=values[c];cells[r+1,c].color=teams || s.Score==maximum?color:Color.white; }
-                backgrounds[r].color=diagnostic?new Color32(23,39,52,255):Color.Lerp(new Color32(23,39,52,255),color,.15f);
+                backgrounds[r].color=!local?new Color32(23,39,52,255):Color.Lerp(new Color32(23,39,52,255),color,.15f);
             }
         }
 
