@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround.Editor
             PlayerSettings.fullScreenMode=FullScreenMode.Windowed;
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var root=new GameObject("Star Tournament Proving Ground").AddComponent<ProvingGround>();
-            root.RobotPrefab=Required("robot"); root.WorldWeaponPrefab=Required("world-weapon"); root.ViewWeaponPrefab=Required("view-weapon");
+            TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
             EditorSceneManager.SaveScene(scene,Scene);
             EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(Scene,true)};
             AssetDatabase.SaveAssets();
@@ -73,7 +73,7 @@ namespace StarTournament.ProvingGround.Editor
             EditorGUILayout.LabelField(ground.Profile.Id+" / v"+ground.Profile.Version,EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("Профиль полигона. Диапазоны и validation используют один registry. Перезапустите Play после изменения.",MessageType.Info);
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
-            foreach(var profile in new[]{ground.Profile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile})
+            foreach(var profile in new[]{ground.Profile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TrooperProfile})
             {
             EditorGUILayout.LabelField(profile.Id+" / v"+profile.Version,EditorStyles.boldLabel);
             foreach(var descriptor in profile.Descriptors)

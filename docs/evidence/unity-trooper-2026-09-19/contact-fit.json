@@ -1,0 +1,108 @@
+{
+  "Left": {
+    "offset": [
+      0.003,
+      -0.024,
+      -0.012
+    ],
+    "rotationDegrees": [
+      -18,
+      0,
+      -18
+    ],
+    "angles": {
+      "Thumb": [
+        0,
+        0,
+        0
+      ],
+      "Index": [
+        0,
+        0,
+        0
+      ],
+      "Middle": [
+        0,
+        0,
+        0
+      ],
+      "Ring": [
+        -10,
+        0,
+        20
+      ],
+      "Little": [
+        0,
+        0,
+        0
+      ]
+    },
+    "opposition": 0,
+    "diagnostic": {
+      "minimumSignedVertexDistanceDiagnostic": 0.00036524265306070447,
+      "fingerMinimumAbsoluteDistances": {
+        "Thumb": 0.024533558636903763,
+        "Index": 0.001878029783256352,
+        "Middle": 0.0023589092306792736,
+        "Ring": 0.0036965005565434694,
+        "Little": 0.00036524265306070447
+      },
+      "triangleOverlapPairs": 0,
+      "maxFullHandEdgeStretch": 1.2468829780294812,
+      "cost": 0.0
+    }
+  },
+  "Right": {
+    "offset": [
+      -0.024,
+      0.0,
+      -0.025
+    ],
+    "rotationDegrees": [
+      0,
+      0,
+      0
+    ],
+    "angles": {
+      "Thumb": [
+        0,
+        0,
+        20
+      ],
+      "Index": [
+        8,
+        12,
+        8
+      ],
+      "Middle": [
+        -10,
+        35.0,
+        45.0
+      ],
+      "Ring": [
+        7,
+        35.0,
+        44.0
+      ],
+      "Little": [
+        -10,
+        28.75,
+        37.0
+      ]
+    },
+    "opposition": 30,
+    "diagnostic": {
+      "minimumSignedVertexDistanceDiagnostic": 0.000448080274509266,
+      "fingerMinimumAbsoluteDistances": {
+        "Thumb": 0.0014103471767157316,
+        "Index": 0.006747568026185036,
+        "Middle": 0.0050167515873909,
+        "Ring": 0.0029889100696891546,
+        "Little": 0.012004731222987175
+      },
+      "triangleOverlapPairs": 0,
+      "maxFullHandEdgeStretch": 1.8706420942917503,
+      "cost": 0.06461148690386964
+    }
+  }
+}

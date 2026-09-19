@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Reads combat state; never changes movement, hit zones, damage or spawn choice.</summary>
     public sealed class CombatPresentation : System.IDisposable
     {
-        sealed class Corpse { public GameObject Root; public double Expires; }
+        sealed class Corpse { public GameObject Root; public double Expires; public TrooperVisual Visual; }
         readonly NativeCombatSession session;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
@@ -28,11 +28,22 @@ namespace StarTournament.ProvingGround
             deathTime=new double[cameras.Length]; tracking=new bool[cameras.Length];
             session.Died += OnDeath;
             session.Respawned += OnRespawn;
+            session.Fired += OnFire;
         }
-        void OnRespawn(int seat) { bodies[seat].SetActive(true); views[seat].SetActive(true); }
+        void OnFire(int seat,float damage)
+        {
+            bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
+            views[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
+        }
+        void OnRespawn(int seat)
+        {
+            bodies[seat].SetActive(true); views[seat].SetActive(true);
+            bodies[seat].GetComponent<TrooperVisual>()?.ResetPose(session.Time);
+            views[seat].GetComponent<TrooperVisual>()?.ResetPose(session.Time);
+        }
         public void Dispose()
         {
-            session.Died-=OnDeath; session.Respawned-=OnRespawn;
+            session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();
             for(int i=0;i<bodies.Length;i++) { bodies[i].SetActive(true); views[i].SetActive(true); }
@@ -49,7 +60,14 @@ namespace StarTournament.ProvingGround
             corpse.SetActive(true);
             foreach(var t in corpse.GetComponentsInChildren<Transform>(true)) t.gameObject.layer=0;
             foreach(var collider in corpse.GetComponentsInChildren<Collider>(true)) { collider.enabled=false; Object.Destroy(collider); }
-            corpse.transform.SetPositionAndRotation(notice.Pose.Position+Vector3.up*tuning.Get("death.bodyHeight"),Quaternion.Euler(90,notice.Pose.Yaw,0));
+            var source=bodies[seat].GetComponent<TrooperVisual>();
+            var visual=corpse.GetComponent<TrooperVisual>();
+            if(visual)
+            {
+                visual.Initialize(source.Clips,source.Tuning); visual.BeginDeath(session.Time);
+                corpse.transform.SetPositionAndRotation(notice.Pose.Position,Quaternion.Euler(0,notice.Pose.Yaw,0));
+            }
+            else corpse.transform.SetPositionAndRotation(notice.Pose.Position+Vector3.up*tuning.Get("death.bodyHeight"),Quaternion.Euler(90,notice.Pose.Yaw,0));
             // Presentation-only support projection also handles airborne deaths; it never moves the motor.
             Vector3 supportOrigin=notice.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
             float supportRange=Mathf.Max(movement.Get("player.capsule.height"),supportOrigin.y-movement.Get("fixture.floorHeight")+movement.Get("player.capsule.height"));
@@ -57,7 +75,8 @@ namespace StarTournament.ProvingGround
                 (1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore))
             {
                 var renderers=corpse.GetComponentsInChildren<Renderer>();
-                if(renderers.Length>0)
+                if(visual) corpse.transform.position=support.point;
+                else if(renderers.Length>0)
                 {
                     var bounds=renderers[0].bounds;
                     foreach(var renderer in renderers) bounds.Encapsulate(renderer.bounds);
@@ -65,7 +84,7 @@ namespace StarTournament.ProvingGround
                 }
                 deathFeet[seat]=support.point;
             }
-            corpses.Add(new Corpse { Root=corpse, Expires=session.Time+tuning.Get("death.corpseSeconds") });
+            corpses.Add(new Corpse { Root=corpse, Visual=visual, Expires=session.Time+tuning.Get("death.corpseSeconds") });
             bodies[seat].SetActive(false); views[seat].SetActive(false);
             UpdateKiller(seat); // Capture killer life immediately, even if it dies later in this tick.
         }
@@ -92,13 +111,18 @@ namespace StarTournament.ProvingGround
         }
         public void Render()
         {
-            for(int c=corpses.Count-1;c>=0;c--) if(session.Time>=corpses[c].Expires)
-            { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }
+            for(int c=corpses.Count-1;c>=0;c--)
+            {
+                if(session.Time>=corpses[c].Expires) { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }
+                else corpses[c].Visual?.Render(session.Time,Vector3.zero,0,0);
+            }
             for(int i=0;i<cameras.Length;i++)
             {
                 var life=session.Life(i); var pose=session.Pose(i);
                 if(!life.Dead)
                 {
+                    bodies[i].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+                    views[i].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
                     cameras[i].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;
                 }

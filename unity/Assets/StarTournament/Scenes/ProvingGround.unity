@@ -148,9 +148,117 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
   m_Name:
   m_EditorClassIdentifier: StarTournament.ProvingGround::StarTournament.ProvingGround.ProvingGround
-  RobotPrefab: {fileID: 8096201874892650849, guid: b9735778d36484bdda35bf8c5fdb4ffa, type: 3}
-  WorldWeaponPrefab: {fileID: 2107409826236812522, guid: ef685829d5a83450f9bdf6811e30fc14, type: 3}
-  ViewWeaponPrefab: {fileID: 2107409826236812522, guid: 0282f0d53c0f1428e88a06e7663127f1, type: 3}
+  RobotPrefab: {fileID: 0}
+  WorldWeaponPrefab: {fileID: 0}
+  ViewWeaponPrefab: {fileID: 0}
+  TrooperBodyPrefab: {fileID: 3136562236329590072, guid: 345aa6c8664344616ae0a3980a9f6ac6, type: 3}
+  TrooperArmsPrefab: {fileID: 206464274784029693, guid: 54b95b770862640cc94dc11340d68177, type: 3}
+  TrooperClips:
+  - {fileID: 7400000, guid: fc6e3cae87e53499e8f2ae83f8fc3127, type: 2}
+  - {fileID: 7400000, guid: 5cb3b159d01f84925ae4d3431763eb27, type: 2}
+  - {fileID: 7400000, guid: cc65308ec4ceb4f3eb1fe83010418cd9, type: 2}
+  - {fileID: 7400000, guid: 7333d29abd5284ee891a770c1caa52ae, type: 2}
+  - {fileID: 7400000, guid: 38e3446d9feb74199b6bb2d583161bf6, type: 2}
+  - {fileID: 7400000, guid: 4f19644510c5f43a79228c1ecd7f096a, type: 2}
+  - {fileID: 7400000, guid: 9f27516f7c4934364811b75d489893b2, type: 2}
+  TrooperProfile:
+    id: unity-trooper-presentation-v1
+    version: 1
+    descriptors:
+    - Path: animation.walkThreshold
+      Group: trooper-animation
+      Label: "\u041F\u043E\u0440\u043E\u0433 \u0448\u0430\u0433\u0430"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0444\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0430\u044F \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0434\u043B\u044F walk."
+      Unit: meters-per-second
+      Minimum: 0.01
+      Maximum: 3
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: animation.runThreshold
+      Group: trooper-animation
+      Label: "\u041F\u043E\u0440\u043E\u0433 \u0431\u0435\u0433\u0430"
+      Description: "\u0424\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0430\u044F
+        \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F
+        walk \u043D\u0430 run."
+      Unit: meters-per-second
+      Minimum: 3
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 6
+    - Path: animation.blendSeconds
+      Group: trooper-animation
+      Label: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u043F\u043E\u0437\u044B"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0441\u0433\u043B\u0430\u0436\u0438\u0432\u0430\u043D\u0438\u044F
+        \u0432\u0435\u0441\u043E\u0432 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u044B\u0445
+        \u043A\u043B\u0438\u043F\u043E\u0432."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: animation.aimHoldSeconds
+      Group: trooper-animation
+      Label: "\u0411\u043E\u0435\u0432\u0430\u044F \u0441\u0442\u043E\u0439\u043A\u0430"
+      Description: "\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0443\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0442\u044C
+        aim \u043F\u043E\u0441\u043B\u0435 \u043F\u0440\u0438\u043D\u044F\u0442\u043E\u0433\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.4
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.6
+    - Path: view.x
+      Group: trooper-view
+      Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u0438"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u0432\u0441\u0435\u0439
+        \u043C\u043E\u0434\u0435\u043B\u0438 \u0440\u0443\u043A \u0438 \u043E\u0440\u0443\u0436\u0438\u044F
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u0430\u043C\u0435\u0440\u044B."
+      Unit: meters
+      Minimum: -0.5
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: view.y
+      Group: trooper-view
+      Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0432\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u0438"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 feet-origin
+        \u043C\u043E\u0434\u0435\u043B\u0438 \u0440\u0443\u043A \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u0430\u043C\u0435\u0440\u044B."
+      Unit: meters
+      Minimum: -2
+      Maximum: -0.5
+      Step: 0.01
+      DefaultValue: -1.52
+    - Path: view.z
+      Group: trooper-view
+      Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0433\u043B\u0443\u0431\u0438\u043D\u0435"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0438
+        \u0440\u0443\u043A \u0432\u043F\u0435\u0440\u0451\u0434 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u0430\u043C\u0435\u0440\u044B."
+      Unit: meters
+      Minimum: -0.5
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.15
+    values:
+    - Path: animation.walkThreshold
+      Value: 0.1
+    - Path: animation.runThreshold
+      Value: 6
+    - Path: animation.blendSeconds
+      Value: 0.12
+    - Path: animation.aimHoldSeconds
+      Value: 1.6
+    - Path: view.x
+      Value: 0.12
+    - Path: view.y
+      Value: -1.52
+    - Path: view.z
+      Value: 0.15
   Profile:
     id: unity-proving-ground-v1
     version: 1

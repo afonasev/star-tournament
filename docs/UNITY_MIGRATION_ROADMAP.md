@@ -60,7 +60,7 @@
 
 - Перенести игровые правила и профильные данные: дробовик, аналитические зоны попаданий, respawn, режимы, scoring, AI difficulty, descriptor metadata.
 - Использовать GLB роботов, оружия, архитектуры, текстуры, LOD и semantic mount points. glTFast позволяет импортировать GLB в native Unity prefabs. Проверить handedness/orientation, метры, pivot, normal/ORM mapping, материалы и shader stripping в Player build.
-- Роботы сейчас состоят из жёстких суставных частей. Сначала проверить эту иерархию в Animator/Rigging; не предполагать прямой humanoid retargeting чужих клипов.
+- Native integration использует утверждённый 2026-09-19 trooper v2: существующий skinned rig, same-rig baked clips и производные first-person руки. Generic Animator/manual Playables сохраняет gameplay authority; Humanoid Avatar и чужой retargeting не требуются этим срезом и отдельно не заявляются проверенными. Прежний rigid robot остаётся historical baseline.
 - Сохранить тестовые сценарии, проблемные seeds, требования к spawn и физической проходимости. Vitest-код не переносится непосредственно; сценарии становятся Unity/C# проверками.
 - Сохранить semantic IDs, конфигурацию, события и отделение presentation от gameplay.
 - Three.js renderer, React DOM, browser input, pointer-lock lifecycle и browser asset loader заменить native-реализациями. Не встраивать браузер ради их сохранения.

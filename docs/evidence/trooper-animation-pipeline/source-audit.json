@@ -1,0 +1,193 @@
+{
+  "sourceSha256": "53add01552d98244b75039c33319293c53e2eecc046b11890d6fa247fd13ef53",
+  "sourceBytes": 88211748,
+  "blender": "5.2.1 LTS",
+  "sourceFloorZ": -1.0372307300567627,
+  "scaleFactor": 0.924756782353531,
+  "targetHeightMeters": 1.8,
+  "meshes": [
+    {
+      "name": "Object_2",
+      "material": "TECI_helmet",
+      "sourceVertices": 2800,
+      "weldedVertices": 2358,
+      "triangles": 4035,
+      "components": 42,
+      "boundaryEdges": 599,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Object_3",
+      "material": "material",
+      "sourceVertices": 7686,
+      "weldedVertices": 6626,
+      "triangles": 12744,
+      "components": 45,
+      "boundaryEdges": 400,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Object_4",
+      "material": "gear",
+      "sourceVertices": 3955,
+      "weldedVertices": 3174,
+      "triangles": 5610,
+      "components": 65,
+      "boundaryEdges": 622,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Object_5",
+      "material": "jumpjet",
+      "sourceVertices": 1038,
+      "weldedVertices": 789,
+      "triangles": 1308,
+      "components": 27,
+      "boundaryEdges": 220,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Object_6",
+      "material": "pants",
+      "sourceVertices": 2826,
+      "weldedVertices": 2256,
+      "triangles": 4298,
+      "components": 25,
+      "boundaryEdges": 134,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Object_7",
+      "material": "torso",
+      "sourceVertices": 1792,
+      "weldedVertices": 1488,
+      "triangles": 2762,
+      "components": 16,
+      "boundaryEdges": 192,
+      "nonManifoldEdges": 0
+    }
+  ],
+  "images": [
+    {
+      "name": "Image_0",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_1",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_10",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_11",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_12",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "name": "Image_13",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_14",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_15",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "name": "Image_16",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_17",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_18",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_19",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_2",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_20",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_21",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_22",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_23",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_3",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_4",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_5",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_6",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_7",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_8",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "name": "Image_9",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "maxInfluences": 4
+}

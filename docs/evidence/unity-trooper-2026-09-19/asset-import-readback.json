@@ -1,0 +1,40 @@
+{
+  "body": {
+    "status": "PASS_TECHNICAL",
+    "sha256": "91f8e00e54a9c781ce826a1f5b66c8a6329de6f338d833f0568cb3b814c1ecc7",
+    "bones": 57,
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "meshCount": 8,
+    "handVertices": {
+      "Left": 2876,
+      "Right": 2876
+    }
+  },
+  "arms": {
+    "status": "PASS_TECHNICAL",
+    "sha256": "e7d03b157bd5164f5197cc78bba88fe18ee9846a0e4d4a570d98327e1d381a16",
+    "bones": 57,
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "meshCount": 3,
+    "handVertices": {
+      "Left": 2876,
+      "Right": 2876
+    }
+  }
+}

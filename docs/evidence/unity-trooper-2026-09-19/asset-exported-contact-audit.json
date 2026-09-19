@@ -1,0 +1,1153 @@
+{
+  "status": "PASS_SAMPLED_SURFACE_INTERSECTION_CHECK",
+  "sampleCount": 44,
+  "fullHandSurfaceIntersections": 0,
+  "artisticAcceptance": false,
+  "method": "Exported weighted hand vertices AND triangle centroids vs BVH of the actual embedded shotgun. Triangle BVH overlap included for the full hand surface. Signed nearest-surface values are diagnostic only because joined source gun has overlapping/mixed-winding components. No wrist-anchor or proxy-cylinder substitution.",
+  "samples": [
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "idle",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036560048465617,
+      "minimumSignedCentroidDistance": 0.0003612231812439859,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024533141404390335,
+        "Index": 0.0018783508567139506,
+        "Middle": 0.0023583932779729366,
+        "Ring": 0.0036963431630283594,
+        "Little": 0.00036560048465617
+      },
+      "nearestAbsoluteContact": 0.00036560048465617,
+      "fingerMinDistances": {
+        "Thumb": 0.024533141404390335,
+        "Index": 0.0018783508567139506,
+        "Middle": 0.0023583932779729366,
+        "Ring": 0.0036963431630283594,
+        "Little": 0.00036560048465617
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "idle",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03582614287734032,
+      "minimumSignedCentroidDistance": -0.09558573365211487,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105441514402628,
+        "Index": 0.006747327744960785,
+        "Middle": 0.005016813054680824,
+        "Ring": 0.00298907863907516,
+        "Little": 0.012004395946860313
+      },
+      "nearestAbsoluteContact": 0.00044789406820200384,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105441514402628,
+        "Index": 0.006747327744960785,
+        "Middle": -0.03582614287734032,
+        "Ring": -0.03167738392949104,
+        "Little": 0.012004395946860313
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "walk",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003663803800009191,
+      "minimumSignedCentroidDistance": 0.0003620006318669766,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453390695154667,
+        "Index": 0.0018794599454849958,
+        "Middle": 0.0023584726732224226,
+        "Ring": 0.0036966928746551275,
+        "Little": 0.0003663803800009191
+      },
+      "nearestAbsoluteContact": 0.0003663803800009191,
+      "fingerMinDistances": {
+        "Thumb": 0.02453390695154667,
+        "Index": 0.0018794599454849958,
+        "Middle": 0.0023584726732224226,
+        "Ring": 0.0036966928746551275,
+        "Little": 0.0003663803800009191
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "walk",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.0316774807870388,
+      "minimumSignedCentroidDistance": -0.04211680218577385,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014102738350629807,
+        "Index": 0.006747434847056866,
+        "Middle": 0.005016779527068138,
+        "Ring": 0.002988995984196663,
+        "Little": 0.012004353106021881
+      },
+      "nearestAbsoluteContact": 0.00044787852675653994,
+      "fingerMinDistances": {
+        "Thumb": 0.0014102738350629807,
+        "Index": 0.006747434847056866,
+        "Middle": 0.005016779527068138,
+        "Ring": -0.0316774807870388,
+        "Little": 0.012004353106021881
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "walk",
+      "phase": 0.75,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036595159326680005,
+      "minimumSignedCentroidDistance": 0.00036166413337923586,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453380823135376,
+        "Index": 0.0018789723981171846,
+        "Middle": 0.002358761616051197,
+        "Ring": 0.003696630708873272,
+        "Little": 0.00036595159326680005
+      },
+      "nearestAbsoluteContact": 0.00036595159326680005,
+      "fingerMinDistances": {
+        "Thumb": 0.02453380823135376,
+        "Index": 0.0018789723981171846,
+        "Middle": 0.002358761616051197,
+        "Ring": 0.003696630708873272,
+        "Little": 0.00036595159326680005
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "walk",
+      "phase": 0.75,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.01685522310435772,
+      "minimumSignedCentroidDistance": -0.030261170119047165,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014103028224781156,
+        "Index": 0.006747646257281303,
+        "Middle": 0.005016753450036049,
+        "Ring": 0.0029890749137848616,
+        "Little": 0.012004397809505463
+      },
+      "nearestAbsoluteContact": 0.000447822327259928,
+      "fingerMinDistances": {
+        "Thumb": 0.0014103028224781156,
+        "Index": 0.006747646257281303,
+        "Middle": 0.005016753450036049,
+        "Ring": -0.01685522310435772,
+        "Little": 0.012004397809505463
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "run",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003652143641375005,
+      "minimumSignedCentroidDistance": 0.00036111558438278735,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024532746523618698,
+        "Index": 0.0018782803090289235,
+        "Middle": 0.0023578093387186527,
+        "Ring": 0.003696242580190301,
+        "Little": 0.0003652143641375005
+      },
+      "nearestAbsoluteContact": 0.0003652143641375005,
+      "fingerMinDistances": {
+        "Thumb": 0.024532746523618698,
+        "Index": 0.0018782803090289235,
+        "Middle": 0.0023578093387186527,
+        "Ring": 0.003696242580190301,
+        "Little": 0.0003652143641375005
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "run",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03495405241847038,
+      "minimumSignedCentroidDistance": -0.027040870860219002,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014104165602475405,
+        "Index": 0.006747608073055744,
+        "Middle": 0.005016734823584557,
+        "Ring": 0.0029889633879065514,
+        "Little": 0.012004670687019825
+      },
+      "nearestAbsoluteContact": 0.00044789680396206677,
+      "fingerMinDistances": {
+        "Thumb": 0.0014104165602475405,
+        "Index": 0.006747608073055744,
+        "Middle": 0.005016734823584557,
+        "Ring": -0.03191051632165909,
+        "Little": -0.03495405241847038
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "run",
+      "phase": 0.75,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036508412449620664,
+      "minimumSignedCentroidDistance": 0.0003612250438891351,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024532511830329895,
+        "Index": 0.001878003473393619,
+        "Middle": 0.0023577336687594652,
+        "Ring": 0.0036961021833121777,
+        "Little": 0.00036508412449620664
+      },
+      "nearestAbsoluteContact": 0.00036508412449620664,
+      "fingerMinDistances": {
+        "Thumb": 0.024532511830329895,
+        "Index": 0.001878003473393619,
+        "Middle": 0.0023577336687594652,
+        "Ring": 0.0036961021833121777,
+        "Little": 0.00036508412449620664
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "run",
+      "phase": 0.75,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03495369106531143,
+      "minimumSignedCentroidDistance": -0.030935151502490044,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014103191206231713,
+        "Index": 0.0067472499795258045,
+        "Middle": 0.005016867537051439,
+        "Ring": 0.00298904231749475,
+        "Little": 0.012004507705569267
+      },
+      "nearestAbsoluteContact": 0.00044783466728404164,
+      "fingerMinDistances": {
+        "Thumb": 0.0014103191206231713,
+        "Index": 0.0067472499795258045,
+        "Middle": 0.005016867537051439,
+        "Ring": 0.00298904231749475,
+        "Little": -0.03495369106531143
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "aim",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003656770568341017,
+      "minimumSignedCentroidDistance": 0.000361641839845106,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "nearestAbsoluteContact": 0.0003656770568341017,
+      "fingerMinDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "aim",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": 0.00044790341053158045,
+      "minimumSignedCentroidDistance": -0.09558573365211487,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "nearestAbsoluteContact": 0.00044790341053158045,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 0,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003661882656160742,
+      "minimumSignedCentroidDistance": 0.00036240805638954043,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024533595889806747,
+        "Index": 0.0018793795024976134,
+        "Middle": 0.0023587194737046957,
+        "Ring": 0.003697224659845233,
+        "Little": 0.0003661882656160742
+      },
+      "nearestAbsoluteContact": 0.0003661882656160742,
+      "fingerMinDistances": {
+        "Thumb": 0.024533595889806747,
+        "Index": 0.0018793795024976134,
+        "Middle": 0.0023587194737046957,
+        "Ring": 0.003697224659845233,
+        "Little": 0.0003661882656160742
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 0,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03582611307501793,
+      "minimumSignedCentroidDistance": -0.13444916903972626,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105095760896802,
+        "Index": 0.006747199222445488,
+        "Middle": 0.005016786977648735,
+        "Ring": 0.0029890495352447033,
+        "Little": 0.012004516087472439
+      },
+      "nearestAbsoluteContact": 0.0004479316412471235,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105095760896802,
+        "Index": 0.006747199222445488,
+        "Middle": -0.03582611307501793,
+        "Ring": 0.0029890495352447033,
+        "Little": 0.012004516087472439
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 0.22,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003550482215359807,
+      "minimumSignedCentroidDistance": 0.0003711637982632965,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024517139419913292,
+        "Index": 0.0018812211928889155,
+        "Middle": 0.002343026688322425,
+        "Ring": 0.003701085690408945,
+        "Little": 0.0003550482215359807
+      },
+      "nearestAbsoluteContact": 0.0003550482215359807,
+      "fingerMinDistances": {
+        "Thumb": 0.024517139419913292,
+        "Index": 0.0018812211928889155,
+        "Middle": 0.002343026688322425,
+        "Ring": 0.003701085690408945,
+        "Little": 0.0003550482215359807
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 0.22,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03167729452252388,
+      "minimumSignedCentroidDistance": -0.04211694002151489,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014104965375736356,
+        "Index": 0.006747363600879908,
+        "Middle": 0.005016913637518883,
+        "Ring": 0.002989103551954031,
+        "Little": 0.012004727497696877
+      },
+      "nearestAbsoluteContact": 0.0004479300696402788,
+      "fingerMinDistances": {
+        "Thumb": 0.0014104965375736356,
+        "Index": 0.006747363600879908,
+        "Middle": 0.005016913637518883,
+        "Ring": -0.03167729452252388,
+        "Little": 0.012004727497696877
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 0.5,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036568052018992603,
+      "minimumSignedCentroidDistance": 0.000361778074875474,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453392930328846,
+        "Index": 0.0018785797292366624,
+        "Middle": 0.002359101315960288,
+        "Ring": 0.003697162726894021,
+        "Little": 0.00036568052018992603
+      },
+      "nearestAbsoluteContact": 0.00036568052018992603,
+      "fingerMinDistances": {
+        "Thumb": 0.02453392930328846,
+        "Index": 0.0018785797292366624,
+        "Middle": 0.002359101315960288,
+        "Ring": 0.003697162726894021,
+        "Little": 0.00036568052018992603
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 0.5,
+      "side": "Right",
+      "minimumSignedVertexDistance": 0.00044790151878260076,
+      "minimumSignedCentroidDistance": 0.0013155234046280384,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014104190049692988,
+        "Index": 0.006747565232217312,
+        "Middle": 0.005016883835196495,
+        "Ring": 0.0029888853896409273,
+        "Little": 0.012004498392343521
+      },
+      "nearestAbsoluteContact": 0.00044790151878260076,
+      "fingerMinDistances": {
+        "Thumb": 0.0014104190049692988,
+        "Index": 0.006747565232217312,
+        "Middle": 0.005016883835196495,
+        "Ring": 0.0029888853896409273,
+        "Little": 0.012004498392343521
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 1,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003656770568341017,
+      "minimumSignedCentroidDistance": 0.000361641839845106,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "nearestAbsoluteContact": 0.0003656770568341017,
+      "fingerMinDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "fire",
+      "phase": 1,
+      "side": "Right",
+      "minimumSignedVertexDistance": 0.00044790341053158045,
+      "minimumSignedCentroidDistance": -0.09558573365211487,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "nearestAbsoluteContact": 0.00044790341053158045,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "hit",
+      "phase": 0.5,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003654245228972286,
+      "minimumSignedCentroidDistance": 0.000361405749572441,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024532610550522804,
+        "Index": 0.0018783697159960866,
+        "Middle": 0.002357780933380127,
+        "Ring": 0.0036962388549000025,
+        "Little": 0.0003654245228972286
+      },
+      "nearestAbsoluteContact": 0.0003654245228972286,
+      "fingerMinDistances": {
+        "Thumb": 0.024532610550522804,
+        "Index": 0.0018783697159960866,
+        "Middle": 0.002357780933380127,
+        "Ring": 0.0036962388549000025,
+        "Little": 0.0003654245228972286
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "body",
+      "clip": "hit",
+      "phase": 0.5,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03167729452252388,
+      "minimumSignedCentroidDistance": -0.13453468680381775,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.001410541939549148,
+        "Index": 0.0067475358955562115,
+        "Middle": 0.005016811192035675,
+        "Ring": 0.002989064669236541,
+        "Little": 0.012004363350570202
+      },
+      "nearestAbsoluteContact": 0.00044785020872950554,
+      "fingerMinDistances": {
+        "Thumb": 0.001410541939549148,
+        "Index": 0.0067475358955562115,
+        "Middle": 0.005016811192035675,
+        "Ring": -0.03167729452252388,
+        "Little": 0.012004363350570202
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "idle",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036560048465617,
+      "minimumSignedCentroidDistance": 0.0003612231812439859,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024533141404390335,
+        "Index": 0.0018783508567139506,
+        "Middle": 0.0023583932779729366,
+        "Ring": 0.0036963431630283594,
+        "Little": 0.00036560048465617
+      },
+      "nearestAbsoluteContact": 0.00036560048465617,
+      "fingerMinDistances": {
+        "Thumb": 0.024533141404390335,
+        "Index": 0.0018783508567139506,
+        "Middle": 0.0023583932779729366,
+        "Ring": 0.0036963431630283594,
+        "Little": 0.00036560048465617
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "idle",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03582614287734032,
+      "minimumSignedCentroidDistance": -0.09558573365211487,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105441514402628,
+        "Index": 0.006747327744960785,
+        "Middle": 0.005016813054680824,
+        "Ring": 0.00298907863907516,
+        "Little": 0.012004395946860313
+      },
+      "nearestAbsoluteContact": 0.00044789406820200384,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105441514402628,
+        "Index": 0.006747327744960785,
+        "Middle": -0.03582614287734032,
+        "Ring": -0.03167738392949104,
+        "Little": 0.012004395946860313
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "walk",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003663803800009191,
+      "minimumSignedCentroidDistance": 0.0003620006318669766,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453390695154667,
+        "Index": 0.0018794599454849958,
+        "Middle": 0.0023584726732224226,
+        "Ring": 0.0036966928746551275,
+        "Little": 0.0003663803800009191
+      },
+      "nearestAbsoluteContact": 0.0003663803800009191,
+      "fingerMinDistances": {
+        "Thumb": 0.02453390695154667,
+        "Index": 0.0018794599454849958,
+        "Middle": 0.0023584726732224226,
+        "Ring": 0.0036966928746551275,
+        "Little": 0.0003663803800009191
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "walk",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.0316774807870388,
+      "minimumSignedCentroidDistance": -0.04211680218577385,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014102738350629807,
+        "Index": 0.006747434847056866,
+        "Middle": 0.005016779527068138,
+        "Ring": 0.002988995984196663,
+        "Little": 0.012004353106021881
+      },
+      "nearestAbsoluteContact": 0.00044787852675653994,
+      "fingerMinDistances": {
+        "Thumb": 0.0014102738350629807,
+        "Index": 0.006747434847056866,
+        "Middle": 0.005016779527068138,
+        "Ring": -0.0316774807870388,
+        "Little": 0.012004353106021881
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "walk",
+      "phase": 0.75,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036595159326680005,
+      "minimumSignedCentroidDistance": 0.00036166413337923586,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453380823135376,
+        "Index": 0.0018789723981171846,
+        "Middle": 0.002358761616051197,
+        "Ring": 0.003696630708873272,
+        "Little": 0.00036595159326680005
+      },
+      "nearestAbsoluteContact": 0.00036595159326680005,
+      "fingerMinDistances": {
+        "Thumb": 0.02453380823135376,
+        "Index": 0.0018789723981171846,
+        "Middle": 0.002358761616051197,
+        "Ring": 0.003696630708873272,
+        "Little": 0.00036595159326680005
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "walk",
+      "phase": 0.75,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.01685522310435772,
+      "minimumSignedCentroidDistance": -0.030261170119047165,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014103028224781156,
+        "Index": 0.006747646257281303,
+        "Middle": 0.005016753450036049,
+        "Ring": 0.0029890749137848616,
+        "Little": 0.012004397809505463
+      },
+      "nearestAbsoluteContact": 0.000447822327259928,
+      "fingerMinDistances": {
+        "Thumb": 0.0014103028224781156,
+        "Index": 0.006747646257281303,
+        "Middle": 0.005016753450036049,
+        "Ring": -0.01685522310435772,
+        "Little": 0.012004397809505463
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "run",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003652143641375005,
+      "minimumSignedCentroidDistance": 0.00036111558438278735,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024532746523618698,
+        "Index": 0.0018782803090289235,
+        "Middle": 0.0023578093387186527,
+        "Ring": 0.003696242580190301,
+        "Little": 0.0003652143641375005
+      },
+      "nearestAbsoluteContact": 0.0003652143641375005,
+      "fingerMinDistances": {
+        "Thumb": 0.024532746523618698,
+        "Index": 0.0018782803090289235,
+        "Middle": 0.0023578093387186527,
+        "Ring": 0.003696242580190301,
+        "Little": 0.0003652143641375005
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "run",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03495405241847038,
+      "minimumSignedCentroidDistance": -0.027040870860219002,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014104165602475405,
+        "Index": 0.006747608073055744,
+        "Middle": 0.005016734823584557,
+        "Ring": 0.0029889633879065514,
+        "Little": 0.012004670687019825
+      },
+      "nearestAbsoluteContact": 0.00044789680396206677,
+      "fingerMinDistances": {
+        "Thumb": 0.0014104165602475405,
+        "Index": 0.006747608073055744,
+        "Middle": 0.005016734823584557,
+        "Ring": -0.03191051632165909,
+        "Little": -0.03495405241847038
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "run",
+      "phase": 0.75,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036508412449620664,
+      "minimumSignedCentroidDistance": 0.0003612250438891351,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024532511830329895,
+        "Index": 0.001878003473393619,
+        "Middle": 0.0023577336687594652,
+        "Ring": 0.0036961021833121777,
+        "Little": 0.00036508412449620664
+      },
+      "nearestAbsoluteContact": 0.00036508412449620664,
+      "fingerMinDistances": {
+        "Thumb": 0.024532511830329895,
+        "Index": 0.001878003473393619,
+        "Middle": 0.0023577336687594652,
+        "Ring": 0.0036961021833121777,
+        "Little": 0.00036508412449620664
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "run",
+      "phase": 0.75,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03495369106531143,
+      "minimumSignedCentroidDistance": -0.030935151502490044,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014103191206231713,
+        "Index": 0.0067472499795258045,
+        "Middle": 0.005016867537051439,
+        "Ring": 0.00298904231749475,
+        "Little": 0.012004507705569267
+      },
+      "nearestAbsoluteContact": 0.00044783466728404164,
+      "fingerMinDistances": {
+        "Thumb": 0.0014103191206231713,
+        "Index": 0.0067472499795258045,
+        "Middle": 0.005016867537051439,
+        "Ring": 0.00298904231749475,
+        "Little": -0.03495369106531143
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "aim",
+      "phase": 0.25,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003656770568341017,
+      "minimumSignedCentroidDistance": 0.000361641839845106,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "nearestAbsoluteContact": 0.0003656770568341017,
+      "fingerMinDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "aim",
+      "phase": 0.25,
+      "side": "Right",
+      "minimumSignedVertexDistance": 0.00044790341053158045,
+      "minimumSignedCentroidDistance": -0.09558573365211487,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "nearestAbsoluteContact": 0.00044790341053158045,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 0,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003661882656160742,
+      "minimumSignedCentroidDistance": 0.00036240805638954043,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024533595889806747,
+        "Index": 0.0018793795024976134,
+        "Middle": 0.0023587194737046957,
+        "Ring": 0.003697224659845233,
+        "Little": 0.0003661882656160742
+      },
+      "nearestAbsoluteContact": 0.0003661882656160742,
+      "fingerMinDistances": {
+        "Thumb": 0.024533595889806747,
+        "Index": 0.0018793795024976134,
+        "Middle": 0.0023587194737046957,
+        "Ring": 0.003697224659845233,
+        "Little": 0.0003661882656160742
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 0,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03582611307501793,
+      "minimumSignedCentroidDistance": -0.13444916903972626,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105095760896802,
+        "Index": 0.006747199222445488,
+        "Middle": 0.005016786977648735,
+        "Ring": 0.0029890495352447033,
+        "Little": 0.012004516087472439
+      },
+      "nearestAbsoluteContact": 0.0004479316412471235,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105095760896802,
+        "Index": 0.006747199222445488,
+        "Middle": -0.03582611307501793,
+        "Ring": 0.0029890495352447033,
+        "Little": 0.012004516087472439
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 0.22,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003550482215359807,
+      "minimumSignedCentroidDistance": 0.0003711637982632965,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024517139419913292,
+        "Index": 0.0018812211928889155,
+        "Middle": 0.002343026688322425,
+        "Ring": 0.003701085690408945,
+        "Little": 0.0003550482215359807
+      },
+      "nearestAbsoluteContact": 0.0003550482215359807,
+      "fingerMinDistances": {
+        "Thumb": 0.024517139419913292,
+        "Index": 0.0018812211928889155,
+        "Middle": 0.002343026688322425,
+        "Ring": 0.003701085690408945,
+        "Little": 0.0003550482215359807
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 0.22,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03167729452252388,
+      "minimumSignedCentroidDistance": -0.04211694002151489,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014104965375736356,
+        "Index": 0.006747363600879908,
+        "Middle": 0.005016913637518883,
+        "Ring": 0.002989103551954031,
+        "Little": 0.012004727497696877
+      },
+      "nearestAbsoluteContact": 0.0004479300696402788,
+      "fingerMinDistances": {
+        "Thumb": 0.0014104965375736356,
+        "Index": 0.006747363600879908,
+        "Middle": 0.005016913637518883,
+        "Ring": -0.03167729452252388,
+        "Little": 0.012004727497696877
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 0.5,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.00036568052018992603,
+      "minimumSignedCentroidDistance": 0.000361778074875474,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453392930328846,
+        "Index": 0.0018785797292366624,
+        "Middle": 0.002359101315960288,
+        "Ring": 0.003697162726894021,
+        "Little": 0.00036568052018992603
+      },
+      "nearestAbsoluteContact": 0.00036568052018992603,
+      "fingerMinDistances": {
+        "Thumb": 0.02453392930328846,
+        "Index": 0.0018785797292366624,
+        "Middle": 0.002359101315960288,
+        "Ring": 0.003697162726894021,
+        "Little": 0.00036568052018992603
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 0.5,
+      "side": "Right",
+      "minimumSignedVertexDistance": 0.00044790151878260076,
+      "minimumSignedCentroidDistance": 0.0013155234046280384,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014104190049692988,
+        "Index": 0.006747565232217312,
+        "Middle": 0.005016883835196495,
+        "Ring": 0.0029888853896409273,
+        "Little": 0.012004498392343521
+      },
+      "nearestAbsoluteContact": 0.00044790151878260076,
+      "fingerMinDistances": {
+        "Thumb": 0.0014104190049692988,
+        "Index": 0.006747565232217312,
+        "Middle": 0.005016883835196495,
+        "Ring": 0.0029888853896409273,
+        "Little": 0.012004498392343521
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 1,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003656770568341017,
+      "minimumSignedCentroidDistance": 0.000361641839845106,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "nearestAbsoluteContact": 0.0003656770568341017,
+      "fingerMinDistances": {
+        "Thumb": 0.02453359216451645,
+        "Index": 0.0018785696011036634,
+        "Middle": 0.002359035424888134,
+        "Ring": 0.0036965617910027504,
+        "Little": 0.0003656770568341017
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "fire",
+      "phase": 1,
+      "side": "Right",
+      "minimumSignedVertexDistance": 0.00044790341053158045,
+      "minimumSignedCentroidDistance": -0.09558573365211487,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "nearestAbsoluteContact": 0.00044790341053158045,
+      "fingerMinDistances": {
+        "Thumb": 0.0014105122536420822,
+        "Index": 0.006747428327798843,
+        "Middle": 0.00501680001616478,
+        "Ring": 0.002989092143252492,
+        "Little": 0.012004648335278034
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "hit",
+      "phase": 0.5,
+      "side": "Left",
+      "minimumSignedVertexDistance": 0.0003654245228972286,
+      "minimumSignedCentroidDistance": 0.000361405749572441,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.024532610550522804,
+        "Index": 0.0018783697159960866,
+        "Middle": 0.002357780933380127,
+        "Ring": 0.0036962388549000025,
+        "Little": 0.0003654245228972286
+      },
+      "nearestAbsoluteContact": 0.0003654245228972286,
+      "fingerMinDistances": {
+        "Thumb": 0.024532610550522804,
+        "Index": 0.0018783697159960866,
+        "Middle": 0.002357780933380127,
+        "Ring": 0.0036962388549000025,
+        "Little": 0.0003654245228972286
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    },
+    {
+      "triangleOverlapPairs": 0,
+      "asset": "arms",
+      "clip": "hit",
+      "phase": 0.5,
+      "side": "Right",
+      "minimumSignedVertexDistance": -0.03167729452252388,
+      "minimumSignedCentroidDistance": -0.13453468680381775,
+      "fingerAbsoluteDistances": {
+        "Thumb": 0.001410541939549148,
+        "Index": 0.0067475358955562115,
+        "Middle": 0.005016811192035675,
+        "Ring": 0.002989064669236541,
+        "Little": 0.012004363350570202
+      },
+      "nearestAbsoluteContact": 0.00044785020872950554,
+      "fingerMinDistances": {
+        "Thumb": 0.001410541939549148,
+        "Index": 0.0067475358955562115,
+        "Middle": 0.005016811192035675,
+        "Ring": -0.03167729452252388,
+        "Little": 0.012004363350570202
+      },
+      "vertices": 2876,
+      "triangles": 5016
+    }
+  ]
+}

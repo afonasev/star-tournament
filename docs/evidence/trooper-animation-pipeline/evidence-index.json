@@ -1,0 +1,17 @@
+{
+  "candidate": "trooper-humanoid-v2",
+  "glbSha256": "3e9a46a77904871aad7779ce8da9603dfa37df9d93788d832108c49dc6c0b91e",
+  "qualityAccepted": false,
+  "sha256": {
+    "clip-overview.png": "d5c57b18fd71d84d4e472fb55fb9f2dcd30de8caf9e877119ab5e6a8591d9f08",
+    "motion-phases.png": "689b388fe734e15e0a47f52c330579a2c298aadf36a94c769f0d56b1d9317dd1",
+    "source-and-combat.png": "533c0e490e116897bcec19951355ca1fd341e23a06b25fe0bf6e253259c0543e",
+    "rig-skeleton.png": "fcd7351de201920000996c8e4e0b201f6c1697059803b2f3af18bbe4a6efed2d",
+    "export-readback-run.png": "b827f5db21e5cf81a02539b7f1ebfbe11195b7c924dce3545a0a0c54647262dd",
+    "source-audit.json": "c6c3cc1826f91e2fc8a38d10ce9d2a53135a023d814f52c8ae6969636e78e01b",
+    "export-audit.json": "2ff3c8212222bb696b04952b117516c1aa8588cc4f1716feae0f4862ea924884",
+    "hands-and-grip.png": "c573add84518f1537f27be897a68d41eb73e9c5387fbb1e7a7d224e008296a02",
+    "grip-audit.json": "89d612ae7aa7e2b3fcf89085f1b63227d7da5c8e55d46b6fe25f037b7f73a7d1",
+    "grip-recipe.json": "686f655cceae893e987213debd661384a93037bb4b72c11c83b5c8fc6d20f9e5"
+  }
+}

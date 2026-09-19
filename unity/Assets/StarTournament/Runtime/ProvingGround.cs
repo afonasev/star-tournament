@@ -12,6 +12,9 @@ namespace StarTournament.ProvingGround
     public sealed class ProvingGround : MonoBehaviour
     {
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab;
+        public GameObject TrooperBodyPrefab, TrooperArmsPrefab;
+        public AnimationClip[] TrooperClips;
+        public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
         public ProvingProfile Profile = ProvingProfile.CreateDefault();
         readonly SeatInputCoordinator input = new SeatInputCoordinator();
         readonly CharacterMotor[] motors = new CharacterMotor[SeatInputCoordinator.SeatCount];
@@ -24,7 +27,7 @@ namespace StarTournament.ProvingGround
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
         public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
         public NativeMatchConfiguration Configuration { get; private set; }
-        ProvingProfile frozenMovement, frozenLife, frozenCombat, frozenMatch;
+        ProvingProfile frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper;
         NativeMatchConfiguration frozenConfiguration;
         readonly Text[] timers = new Text[SeatInputCoordinator.SeatCount];
         readonly NativeStandingsView[] standings = new NativeStandingsView[SeatInputCoordinator.SeatCount];
@@ -54,7 +57,7 @@ namespace StarTournament.ProvingGround
         public bool Running => phase == Phase.Running;
         void Start()
         {
-            if (Profile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
+            if (Profile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
@@ -78,6 +81,7 @@ namespace StarTournament.ProvingGround
             bool requestedDiagnostic = Environment.GetCommandLineArgs().Contains("-diagnostic");
             if (requestedDiagnostic) Begin(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
             if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();
             if (args.Contains("-combatReview")) gameObject.AddComponent<NativeCombatReview>();
@@ -92,10 +96,10 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
             combatReview=true; Begin(false);
         }
-        public void PlaceCombatReviewSeat(int seat, Vector3 feet, float pitch)
+        public void PlaceCombatReviewSeat(int seat, Vector3 feet, float pitch,float yaw=0)
         {
             motors[seat].Initialize(Profile,feet);
-            motors[seat].Tick(new LocalAction{LookDegrees=new Vector2(0,-pitch)},Time.fixedDeltaTime);
+            motors[seat].Tick(new LocalAction{LookDegrees=new Vector2(yaw,-pitch)},Time.fixedDeltaTime);
         }
 #endif
         GameObject Owned(string name, params Type[] components)
@@ -109,21 +113,12 @@ namespace StarTournament.ProvingGround
         {
             var player = Owned("player-" + (index+1)); player.layer = ProvingArena.ParticipantLayer;
             motors[index] = player.AddComponent<CharacterMotor>(); motors[index].Initialize(Profile, arena.Spawns[index]);
-            if (!RobotPrefab || !WorldWeaponPrefab || !ViewWeaponPrefab) throw new InvalidOperationException("Required GLB prefab missing; run Prepare in Editor.");
-            var body = Instantiate(RobotPrefab, player.transform); body.name = "robot-presentation";
-            // Normalize the authored bounds to the profile capsule height, keeping a feet anchor.
-            // Scaling is derived from content, not another independent balance parameter.
-            var renderers=body.GetComponentsInChildren<Renderer>();
-            var bounds=renderers[0].bounds; foreach(var renderer in renderers) bounds.Encapsulate(renderer.bounds);
-            float scale=Profile.Get("player.capsule.height")/bounds.size.y;
-            body.transform.localScale=Vector3.one*scale;
-            body.transform.localPosition=Vector3.up*((player.transform.position.y-bounds.min.y)*scale);
-            var mount = body.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "robot:rig:weapon-mount");
-            if (!mount) throw new InvalidOperationException("Robot semantic weapon mount missing");
-            var weapon=Instantiate(WorldWeaponPrefab, mount); weapon.transform.localPosition=Vector3.up*Profile.Get("presentation.worldWeaponMountY");
-            ApplyIdentity(body,index);
-            SetLayer(body, 11+index); bodies[index] = body;
-            foreach(var collider in body.GetComponentsInChildren<Collider>()) { collider.enabled=false; Destroy(collider); }
+            if (!TrooperBodyPrefab || !TrooperArmsPrefab) throw new InvalidOperationException("Trooper assets missing; run Prepare in Editor.");
+            var body = Instantiate(TrooperBodyPrefab, player.transform); body.name = "trooper-presentation";
+            // Shipping recipe has a measured 1.8m rest height and feet origin; never normalize animated bounds.
+            body.transform.localScale=Vector3.one*(Profile.Get("player.capsule.height")/1.8f);
+            body.AddComponent<TrooperVisual>().Initialize(TrooperClips,TrooperProfile);
+            ApplyIdentity(body,index); SetLayer(body,11+index); bodies[index]=body;
             var cameraObject = Owned("seat-camera-" + (index+1));
             cameras[index] = cameraObject.AddComponent<Camera>();
             cameras[index].rect = LocalSeatLayout.Viewport(SeatInputCoordinator.SeatCount,index);
@@ -131,9 +126,11 @@ namespace StarTournament.ProvingGround
             cameras[index].nearClipPlane = Profile.Get("camera.nearClipPlane"); cameras[index].farClipPlane = Profile.Get("camera.farClipPlane");
             cameras[index].cullingMask = ~((1 << (11+index)) | (15 << 15)) | (1 << (15+index));
             cameras[index].backgroundColor = new Color32(15, 22, 35, 255);
-            var view = Instantiate(ViewWeaponPrefab, cameraObject.transform); SetLayer(view, 15+index); views[index] = view;
+            var view = Instantiate(TrooperArmsPrefab,cameraObject.transform); view.name="trooper-view";
+            SetLayer(view,15+index); views[index]=view;
+            view.AddComponent<TrooperVisual>().Initialize(TrooperClips,TrooperProfile,true);
             ApplyIdentity(view,index);
-            view.transform.localPosition=new Vector3(Profile.Get("presentation.viewWeaponX"),Profile.Get("presentation.viewWeaponY"),Profile.Get("presentation.viewWeaponZ"));
+            view.transform.localPosition=new Vector3(TrooperProfile.Get("view.x"),TrooperProfile.Get("view.y"),TrooperProfile.Get("view.z"));
             if (index == 0) cameraObject.AddComponent<AudioListener>();
         }
         static void ApplyIdentity(GameObject root,int seat)
@@ -215,7 +212,7 @@ namespace StarTournament.ProvingGround
             if(!repeating)
             {
                 Configuration.Validate(MatchProfile);
-                frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile);
+                frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile);
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             for(int i=0;i<motors.Length;i++)
@@ -223,7 +220,13 @@ namespace StarTournament.ProvingGround
                 motors[i].SetAlive(false); motors[i].gameObject.SetActive(i<frozenSeatCount);
                 bodies[i].SetActive(i<frozenSeatCount); views[i].SetActive(i<frozenSeatCount);
             }
-            for(int i=0;i<frozenSeatCount;i++) motors[i].Initialize(frozenMovement,arena.Spawns[i]);
+            for(int i=0;i<frozenSeatCount;i++)
+            {
+                motors[i].Initialize(frozenMovement,arena.Spawns[i]);
+                bodies[i].GetComponent<TrooperVisual>().Initialize(TrooperClips,frozenTrooper);
+                views[i].GetComponent<TrooperVisual>().Initialize(TrooperClips,frozenTrooper,true);
+                views[i].transform.localPosition=new Vector3(frozenTrooper.Get("view.x"),frozenTrooper.Get("view.y"),frozenTrooper.Get("view.z"));
+            }
             actions=new LocalAction[frozenSeatCount];
             ApplyLayout(frozenSeatCount);
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);

@@ -1,0 +1,29 @@
+{
+  "sourceFile": "../trooper-2k.glb",
+  "sourceSha256": "53add01552d98244b75039c33319293c53e2eecc046b11890d6fa247fd13ef53",
+  "embeddedAssetMetadata": {
+    "extras": {
+      "author": "ART_LOLL (https://sketchfab.com/evgenytvidov)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/sci-fi-soldier-futuristic-combat-trooper-de876bfdce1c47a4aa67670faee7208e",
+      "title": "Sci-Fi Soldier / Futuristic Combat Trooper"
+    },
+    "generator": "Sketchfab-16.64.0",
+    "version": "2.0"
+  },
+  "sourceRecord": "# Sci-Fi Soldier / Futuristic Combat Trooper\n\n- Author: ART_LOLL (`evgenytvidov` on Sketchfab)\n- Source: https://sketchfab.com/3d-models/sci-fi-soldier-futuristic-combat-trooper-de876bfdce1c47a4aa67670faee7208e\n- Downloaded: 2026-09-19\n- License: Creative Commons Attribution 4.0 International (CC BY 4.0)\n- Attribution required on release: “Sci-Fi Soldier / Futuristic Combat Trooper” by ART_LOLL, licensed under CC BY 4.0.\n- Asset: GLB, 2K textures, 84 MB.\n- `trooper-compatible-rig.glb`: local adaptation with the project's `robot:rig:*` semantic hierarchy; no skinning and no embedded clips. It is driven by the existing renderer-only procedural animation controller.\n- Status: local reference candidate only; not included in the game distribution or current player manifest.\n",
+  "verificationDate": "2026-09-19",
+  "webVerification": {
+    "sketchfabModelPage": "403 Forbidden",
+    "sketchfabApi": "unavailable through web tool",
+    "creativeCommonsDeed": "https://creativecommons.org/licenses/by/4.0/ read successfully"
+  },
+  "changes": [
+    "Baked imported transforms; normalized to 1.8m total height, feet origin",
+    "Welded coincident vertices preserving UV face corners and materials",
+    "Added humanoid armature, linear skinning, authored in-place and one-shot actions",
+    "v2: 30 digit bones, 4 forearm twist bones, topology-aware glove/pelvis weights, fixed-grip fitting"
+  ],
+  "externalAnimationSources": [],
+  "status": "offline candidate; no runtime or manifest adoption"
+}

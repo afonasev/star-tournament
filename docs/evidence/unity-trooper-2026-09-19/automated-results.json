@@ -1,0 +1,57 @@
+{
+  "status": "PASS_AUTOMATED",
+  "unity": "6000.3.23f1",
+  "tests": {
+    "editmode": {
+      "result": "Passed",
+      "total": "31",
+      "passed": "31",
+      "failed": "0",
+      "start-time": "2026-09-19 18:56:54Z",
+      "end-time": "2026-09-19 18:56:54Z",
+      "xmlSha256": "49846315eead970e01bf72310018c312bec8cc200a86b684892492e8a90f9ecf"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "28",
+      "passed": "28",
+      "failed": "0",
+      "start-time": "2026-09-19 18:57:13Z",
+      "end-time": "2026-09-19 18:57:48Z",
+      "xmlSha256": "b8dc2e1eeb25792f62973c484314d450b6c623d8533263e7837e5976ef366c64"
+    }
+  },
+  "sourceSha256": "53add01552d98244b75039c33319293c53e2eecc046b11890d6fa247fd13ef53",
+  "shipping": [
+    {
+      "key": "player-body",
+      "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
+      "sha256": "91f8e00e54a9c781ce826a1f5b66c8a6329de6f338d833f0568cb3b814c1ecc7",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center",
+      "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+    },
+    {
+      "key": "player-hands",
+      "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
+      "sha256": "e7d03b157bd5164f5197cc78bba88fe18ee9846a0e4d4a570d98327e1d381a16",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center",
+      "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+    }
+  ],
+  "macDevelopmentBuild": {
+    "status": "Success",
+    "fileBytes": 459131781,
+    "executableSha256": "b894844bfd5072837f1bf88263448ee0022bdf64d6a8ee3a69ab5b03cfcd8b81",
+    "buildLogSha256": "59e77a6333a168bce70263c4e49581fd1b12a78f9e60a220b6a814978c2cb8a5",
+    "finalChangeAfterTests": "Diagnostic-only foreground warmup guard; rebuilt and verified by foreground FHD/4K probes. Gameplay and shipping assets unchanged.",
+    "runtimeAssemblySha256": {
+      "Contents/Resources/Data/Managed/StarTournament.ProvingGround.dll": "62da94e202692bfc3d2a80684bba5e23483d04d4c8016e5093779957065991f4"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround
@@ -12,12 +13,15 @@ namespace StarTournament.ProvingGround
         {
             public string status="DIAGNOSTIC_NOT_ACCEPTANCE", unity, profile, profileSha256, device, graphics, operatingSystem;
             public string workload="four stationary participants, no physical input", state;
-            public string focusPolicy="background execution enabled for diagnostics";
+            public string focusPolicy="foreground warmup required; focus recorded throughout measurement";
             public bool focusedForEntireMeasurement=true;
             public int width,height,cameras,samples;
             public float warmupSeconds=3, measurementSeconds=10, frameP50Ms,frameP95Ms,frameP99Ms,worstFrameMs,cpuP50Ms,cpuP95Ms,cpuP99Ms,cpuWorstMs,gpuP50Ms,gpuP95Ms,gpuP99Ms,gpuWorstMs;
             public bool cpuTimingAvailable,gpuTimingAvailable;
             public long allocatedMemoryBytes;
+            public string presentationProfile;
+            public int skinInstances,uniqueSkinnedMeshes,uniqueMaterials,uniqueTextures;
+            public long textureRuntimeBytes;
         }
         readonly List<float> frames=new List<float>(),cpu=new List<float>(),gpu=new List<float>();
         readonly FrameTiming[] timings=new FrameTiming[1];
@@ -38,6 +42,8 @@ namespace StarTournament.ProvingGround
         {
             if(finished)return;
             FrameTimingManager.CaptureFrameTimings();
+            // Window activation must precede warmup; automation launch latency is not foreground evidence.
+            if(!measuring && !Application.isFocused) { elapsed=0; return; }
             elapsed+=Time.unscaledDeltaTime;
             if(!measuring)
             {
@@ -65,6 +71,14 @@ namespace StarTournament.ProvingGround
                 gpuP50Ms=Percentile(gpu,.5f),gpuP95Ms=Percentile(gpu,.95f),gpuP99Ms=Percentile(gpu,.99f),gpuWorstMs=Percentile(gpu,1),
                 cpuTimingAvailable=cpu.Count>0,gpuTimingAvailable=gpu.Count>0,allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong()};
             report.focusedForEntireMeasurement=focusedThroughout;
+            report.presentationProfile=ground.TrooperProfile.Id+"@"+ground.TrooperProfile.Version;
+            report.workload="four stationary animated troopers, session-clock idle and first-person aim, no physical input";
+            var skins=ground.GetComponentsInChildren<SkinnedMeshRenderer>();
+            var materials=ground.GetComponentsInChildren<Renderer>().SelectMany(r=>r.sharedMaterials).Where(m=>m).Distinct().ToArray();
+            var textures=materials.SelectMany(m=>m.GetTexturePropertyNames().Select(n=>m.GetTexture(n))).Where(t=>t).Distinct().ToArray();
+            report.skinInstances=skins.Length;report.uniqueSkinnedMeshes=skins.Select(s=>s.sharedMesh).Distinct().Count();
+            report.uniqueMaterials=materials.Length;report.uniqueTextures=textures.Length;
+            report.textureRuntimeBytes=textures.Sum(t=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t));
             File.WriteAllText(Path.Combine(directory,"report.json"),JsonUtility.ToJson(report,true));
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,"player.png"));
             Invoke(nameof(Quit),1); // Allow the asynchronous screenshot to finish before exiting the diagnostic Player.
