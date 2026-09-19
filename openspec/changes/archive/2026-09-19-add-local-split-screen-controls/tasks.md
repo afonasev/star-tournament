@@ -1,3 +1,5 @@
+> Статус: CLOSED / CANCELLED — 2026-09-19. По решению пользователя оставшаяся browser-реализация и приёмка сняты из-за перехода на Unity. Исторические checkbox сохранены (6/9); 3.1–3.3 не пройдены. Delta specs не синхронизируются в основные specs.
+
 ## 1. Конфигурация и детерминированный ввод
 
 - [x] 1.1 Расширить versioned match configuration до 1–4 local seats и unique device-binding descriptors, сохранив compatibility path для historical single-seat payload; проверить unit-тестами valid/invalid rosters, duplicate bindings и content hash.
