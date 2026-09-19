@@ -84,6 +84,7 @@ namespace StarTournament.ProvingGround
         }
         void OnDestroy()
         {
+            if (Surface) { Surface.RemoveData(); if (Surface.navMeshData) Destroy(Surface.navMeshData); }
             if (floor) Destroy(floor); if (wall) Destroy(wall); if (accent) Destroy(accent);
         }
     }

@@ -55,7 +55,7 @@ namespace StarTournament.ProvingGround
     /// input, cameras, fixtures, and motors can share its ranges without sharing runtime objects.
     /// </summary>
     [Serializable]
-    public sealed class ProvingProfile
+    public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
         public const int DefaultVersion = 1;
@@ -120,8 +120,8 @@ namespace StarTournament.ProvingGround
                 var descriptor = FindDescriptor(value.Path);
                 if (descriptor == null)
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Value has no descriptor." });
-                else if (descriptor.Unit == "ammo" && value.Value != Mathf.Round(value.Value))
-                    issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Ammo must be integral." });
+                else if ((descriptor.Unit == "ammo" || descriptor.Unit == "count") && value.Value != Mathf.Round(value.Value))
+                    issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Count must be integral." });
                 else if (!descriptor.Contains(value.Value))
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = $"Value {value.Value} is outside [{descriptor.Minimum}, {descriptor.Maximum}]." });
             }
@@ -134,7 +134,7 @@ namespace StarTournament.ProvingGround
             return issues;
         }
 
-        /// <summary>Domain-only combat tuning; not applied to the diagnostic scene.</summary>
+        /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
             var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 1 };

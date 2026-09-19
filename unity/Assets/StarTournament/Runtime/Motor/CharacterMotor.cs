@@ -40,11 +40,18 @@ namespace StarTournament.ProvingGround
             initialized = true;
         }
 
+        public void SetAlive(bool alive)
+        {
+            controller.enabled = alive;
+            if (!alive) state.Velocity = Vector3.zero;
+        }
+
         public void Tick(LocalAction action, float dt)
         {
             if (!initialized) throw new System.InvalidOperationException("Initialize must be called before Tick.");
             if (dt <= 0f) throw new System.ArgumentOutOfRangeException(nameof(dt));
 
+            if (!controller.enabled) return;
             state.Yaw = Mathf.Repeat(state.Yaw + action.LookDegrees.x, 360f);
             var maximumPitch = profile.Get("camera.maximumPitchDegrees");
             state.Pitch = Mathf.Clamp(state.Pitch - action.LookDegrees.y, -maximumPitch, maximumPitch);

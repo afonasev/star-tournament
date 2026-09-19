@@ -10,7 +10,8 @@ namespace StarTournament.ProvingGround
         public Vector2 Move;
         public Vector2 LookDegrees;
         public bool Jump;
-        public bool Fire;
+        public bool Fire; // Latched short tap between fixed ticks.
+        public bool FireHeld; // Physical level persists across fixed ticks.
         public bool ShowRoster;
     }
 }

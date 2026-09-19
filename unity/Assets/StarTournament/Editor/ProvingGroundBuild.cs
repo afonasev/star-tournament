@@ -73,12 +73,16 @@ namespace StarTournament.ProvingGround.Editor
             EditorGUILayout.LabelField(ground.Profile.Id+" / v"+ground.Profile.Version,EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("Профиль полигона. Диапазоны и validation используют один registry. Перезапустите Play после изменения.",MessageType.Info);
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
-            foreach(var descriptor in ground.Profile.Descriptors)
+            foreach(var profile in new[]{ground.Profile,ground.LifeProfile,ground.CombatProfile})
             {
-                float value=ground.Profile.Get(descriptor.Path);
+            EditorGUILayout.LabelField(profile.Id+" / v"+profile.Version,EditorStyles.boldLabel);
+            foreach(var descriptor in profile.Descriptors)
+            {
+                float value=profile.Get(descriptor.Path);
                 float next=EditorGUILayout.Slider(new GUIContent(descriptor.Label+" ("+descriptor.Unit+")",descriptor.Description+"\n"+descriptor.Path),value,descriptor.Minimum,descriptor.Maximum);
                 next=descriptor.Minimum+Mathf.Round((next-descriptor.Minimum)/descriptor.Step)*descriptor.Step;
-                if (!Mathf.Approximately(value,next)) { Undo.RecordObject(ground,"Change proving profile");ground.Profile.Set(descriptor.Path,Mathf.Clamp(next,descriptor.Minimum,descriptor.Maximum));EditorUtility.SetDirty(ground); }
+                if (!Mathf.Approximately(value,next)) { Undo.RecordObject(ground,"Change proving profile");profile.Set(descriptor.Path,Mathf.Clamp(next,descriptor.Minimum,descriptor.Maximum));EditorUtility.SetDirty(ground); }
+            }
             }
             EditorGUI.EndDisabledGroup();
         }
