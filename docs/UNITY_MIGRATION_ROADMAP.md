@@ -1,0 +1,176 @@
+# Star Tournament — roadmap перехода на Unity
+
+Дата: 2026-09-19. Исходный browser commit: `8844e40` (`v0.0.9`).
+Статус: направление перехода и начало работы разрешены пользователем; технические рекомендации ниже не равнозначны утверждению всех открытых продуктовых решений.
+
+## 1. Цель и приоритеты
+
+Перевести игру на Unity, используя готовые системы движка и расширения там, где они лучше нашего решения. Сохранять игровые требования, контент и проверенные правила; существующий код не получает приоритета только потому, что уже написан. Не начинать с механического перевода TypeScript в C#.
+
+Главный сценарий: скоростной стилизованный first-person arena shooter для игры на телевизоре, до четырёх local seats и до восьми участников суммарно. Сохранить FFA/teams, дробовик, многоэтажные процедурные арены, ботов, Balance Lab и путь к онлайн-игре.
+
+Переход обоснован возможностями развития графики, анимации, авторинга и инструментов. Достижение предела browser-графики пока не доказано измерениями. Производительность Unity также не считается доказанной до измерения Player build на целевом железе.
+
+`docs/GAME_SPEC.md` остаётся канонической спецификацией. Новые решения сначала согласовать и внести туда и в журнал, затем реализовывать через отдельные OpenSpec changes. Сохранение этого roadmap не отменяет текущих требований.
+
+## 2. Предварительная техническая основа
+
+- Unity 6.3 LTS; точный patch и совместимые версии пакетов зафиксировать после проверки окружения.
+- URP как рекомендуемый pipeline для стилизованной графики и четырёх viewport. HDRP рассматривать только при конкретной визуальной необходимости и подтверждённом бюджете.
+- Windows/macOS и компьютер, подключённый к телевизору, — рабочая гипотеза, пока не утверждённая матрица платформ. Browser build не является целью этого переноса по умолчанию.
+- GameObjects/Prefabs, C# и небольшие явные адаптеры. Не вводить ECS/DOTS без измеренной необходимости.
+- Gameplay state и правила отделены от renderer, UI, устройств и камер. `LocalSeat` связывает человека, устройства и viewport; не равен network client или participant entity.
+- Все новые параметры баланса, движения, камер и читаемости входят в именованные профили с единым descriptor registry: путь, группа, подпись, описание, единица, min/max/step.
+
+## 3. Решения по подсистемам
+
+| Подсистема | Предпочтительное направление | Что сохраняем |
+| --- | --- | --- |
+| Рендеринг | Полная замена Three.js на URP, Materials, Shader Graph, штатный свет, тени и decals | Clean-future-sport, читаемость силуэта и команд, quality profiles |
+| Ввод | Input System, PlayerInput/PlayerInputManager | Action contract, LocalSeat, назначение устройств, join/reconnect |
+| Split-screen | Unity cameras и per-seat viewport | 1/2/3/4 layouts, при трёх игроках постоянный счёт в четвёртой ячейке, отдельные HUD |
+| Движение | Сравнить CharacterController и готовый kinematic motor | Темп, strafe, ускорение, air control, прыжок |
+| Коллизии | Оценить Unity-native queries/motor вместо Rapier после решения о детерминизме | Различие movement/projectile queries, твёрдые живые участники, лестницы и headroom |
+| Навигация | Сначала AI Navigation/NavMesh, A* как альтернативный кандидат | Физически допустимые маршруты и явные связи этажей |
+| Боты | Портировать решения высокого уровня; заменить геометрическую навигацию при преимуществе готовой | Восприятие, память, выбор целей, сложность без бонусов к характеристикам |
+| Анимация | Animator, Animation Rigging, применимые готовые клипы | Состояния робота и связь с событиями; animation не управляет уроном |
+| Камеры | Прямая FPS camera; Cinemachine для killcam и переходов | Прицеливание без задержки, per-seat ownership, правила смерти |
+| Эффекты | Particle System/Shader Graph; VFX Graph при обоснованной необходимости | Стиль выстрела, читаемость попаданий и бюджеты |
+| UI | Переписать; uGUI — первый кандидат для per-seat HUD и controller UI | Сценарии setup, pause, scoreboard, results, Repeat |
+| Balance Lab | Unity UI/editor над переносимой схемой; ScriptableObject может быть оболочкой авторинга | Immutable revisions, releaseRef, metadata, импорт/экспорт и content identity |
+| Аудио | AudioSource/AudioMixer как основа | Отдельно определить общий микс для split-screen, а не умножать звук на число камер |
+| Матч | C# gameplay layer | FFA/teams, scoring, damage, ammo, death/respawn |
+
+## 4. Готовые расширения: сравнить до переписывания
+
+| Кандидат | Потенциальная замена | Проверка применимости |
+| --- | --- | --- |
+| Easy Character Movement 2 | Собственная обработка склонов, ступеней, контактов | Strafe, air control, stairs, низкий потолок, живые капсулы, управление из simulation tick |
+| Opsive Ultimate Character Controller | Более полный FPS stack с camera/animation/split-screen | Стоимость интеграции против небольшого motor, отключаемые правила, ownership состояния |
+| Unity AI Navigation | Собственный геометрический pathfinding | Runtime bake, несколько этажей, ramps/stairs, отсутствие ложных XZ-связей |
+| A* Pathfinding Project | Альтернатива NavMesh при выявленном ограничении | Контроль графа и переходов, runtime updates, стоимость CPU и сопровождения |
+| Dungeon Architect | Собственный procedural geometry generator | Циклы, независимые переходы, многоэтажность, ширина проходов, экспорт результата в проверяемые данные |
+| Odin Inspector | Часть editor tooling | Реальное сокращение работы; не заменяет runtime Balance Lab и её schema |
+
+Особенно проверить модульные авторские комнаты и переходы вместо дальнейшего усложнения procedural geometry. Dungeon Architect поддерживает модульную сборку и графы нескольких этажей, но arena fairness, spawn safety и проверки прострелов остаются нашими.
+
+Покупки отдельно согласовывать. До выбора проверить точные версии, лицензию, поддержку платформ, source access, возможность автоматических/headless проверок и цену интеграции. Документация подтверждает наличие возможностей, но не совместимость с нашей игрой. Если готовый пакет проходит наши сценарии лучше, заменить собственный механизм.
+
+## 5. Повторное использование текущих наработок
+
+- Перенести игровые правила и профильные данные: дробовик, аналитические зоны попаданий, respawn, режимы, scoring, AI difficulty, descriptor metadata.
+- Использовать GLB роботов, оружия, архитектуры, текстуры, LOD и semantic mount points. glTFast позволяет импортировать GLB в native Unity prefabs. Проверить handedness/orientation, метры, pivot, normal/ORM mapping, материалы и shader stripping в Player build.
+- Роботы сейчас состоят из жёстких суставных частей. Сначала проверить эту иерархию в Animator/Rigging; не предполагать прямой humanoid retargeting чужих клипов.
+- Сохранить тестовые сценарии, проблемные seeds, требования к spawn и физической проходимости. Vitest-код не переносится непосредственно; сценарии становятся Unity/C# проверками.
+- Сохранить semantic IDs, конфигурацию, события и отделение presentation от gameplay.
+- Three.js renderer, React DOM, browser input, pointer-lock lifecycle и browser asset loader заменить native-реализациями. Не встраивать браузер ради их сохранения.
+- Старые форматы replay/snapshot не обещать совместимыми с новым runtime без отдельного доказательства.
+
+## 6. Развилка: детерминизм и replay
+
+Текущее требование GAME_SPEC — детерминированная сериализуемая симуляция. Код использует deterministic Rapier 0.20.0 и collision-contract-v2. В narrative ещё встречается v1; согласовать актуальные контракты перед переносом.
+
+PhysX не гарантирует одинаковый результат между платформами/сборками. Fixed timestep не даёт такой гарантии. Перевод JS number/RNG/сортировок/канонической сериализации в C# тоже требует проверки.
+
+Варианты:
+
+1. Сохранить строгий детерминизм: более узкий выбор motor/navigation, отдельная работа над математикой и collision backend, строгие тесты replay по командам.
+2. Unity-native движение/физика: больше готовых решений, но новый контракт replay со снимками состояния и отсутствие обещания cross-platform bitwise replay.
+
+Рекомендация для обсуждения — вариант 2, если приоритетом являются ощущение игры и скорость развития. Пользователь отдельно этот отказ от строгого детерминизма ещё не подтвердил. Не менять требование молча. Сетевая модель также не выбрана: пока не подключать transport/сервисы и не объявлять lockstep или server-authoritative утверждёнными.
+
+## 7. Этапы и критерии завершения
+
+### Этап 0. Требования и эталон
+
+- Уточнить целевые ОС/машины/TV, resolution и FPS для 1/2/4 viewport, допустимый бюджет готовых расширений.
+- Закрыть развилку детерминизма, replay и historical compatibility.
+- Снять точный source commit/profile/seed/scenario baseline; сохранить browser-версию как эталон.
+- Согласовать устаревшие пункты GAME_SPEC, затем обновить утверждённые решения и оформить первый ограниченный OpenSpec change.
+- Прочитать актуальное окружение Unity; ничего не предполагать по историческим версиям соседнего unity-rts.
+
+Выход: согласованный первый срез, критерии оценки, список открытых решений без неявных defaults.
+
+### Этап 1. Проверочный игровой фрагмент
+
+- Одна многоэтажная арена, существующие robot/shotgun assets, два local players и четыре камеры для нагрузки.
+- Сравнить CharacterController/готовый motor; проверить NavMesh на ramps/stairs/headroom и нескольких этажах.
+- Измерить CPU/GPU/frame times в Player build; сравнить картинку, input latency и поведение движения.
+- Исследование и подготовка независимых материалов разрешены до ответов пользователя; зависимую от открытых решений реализацию не начинать.
+
+Выход: выбранные версии Unity/URP и пакетов, доказательства пригодности controller/navigation, решение о продолжении.
+
+### Этап 2. Полный локальный матч
+
+- C# gameplay: damage, death, respawn, FFA/teams, восемь участников, bots, results и Repeat.
+- 1–4 local devices, layouts, HUD, scoreboard, pause/focus/reconnect.
+- Контроль сериализуемого gameplay state и clear ownership Unity adapters.
+
+Выход: законченный матч от меню до результатов с реальными устройствами.
+
+### Этап 3. Производство арен
+
+- Сравнить перенос текущего генератора с Dungeon Architect/модульным авторингом.
+- Подключить общую проверяемую модель collision/navigation/spawn и fairness validators.
+- Не допустить второго независимого источника геометрии между Unity scene и gameplay definition.
+
+Выход: разнообразные арены с подтверждённой физической проходимостью и честностью.
+
+### Этап 4. Визуальное развитие
+
+- URP materials/light, Animator/Rigging, camera transitions, weapon/impact effects, подходящие готовые ассеты.
+- Отдельно выбрать освещение runtime-generated layouts: baked lighting не считать автоматически применимым к произвольной сборке комнат.
+- Ограничивать lights/shadows/particles по общему бюджету четырёх камер; проверить 1/2/3/4 seats.
+
+Выход: визуально принятый результат и подтверждённое время кадра на целевой машине.
+
+### Этап 5. Инструменты и баланс
+
+- Runtime Balance Lab, profile revisions, release catalog, импорт/экспорт и editor diagnostics.
+- Ускоренный прогон ботов на том же gameplay runtime; сохранение проблемных состояний/записей по новому replay contract.
+- Один descriptor registry управляет UI и диапазонной валидацией.
+
+Выход: изменение баланса без правки кода и воспроизводимые проверки в рамках выбранного контракта.
+
+### Этап 6. Поставка и переключение основной версии
+
+- Сборки Windows/macOS согласно согласованной матрице, выпуск и обновления, smoke установленного приложения.
+- Реальные gamepads/TV, reconnect, focus, readable HUD, длинный матч, audio-specific проверка отдельно от muted QA.
+- Обновить browser-specific workflow на native Player acceptance перед применением к Unity; не объявлять browser smoke доказательством native input.
+- Сохранить browser baseline до завершения Unity acceptance; не вести две полноценные реализации новых фич без необходимости.
+
+Выход: Unity становится основной версией после подтверждённой приёмки, а не только успешной сборки.
+
+## 8. Известные незакрытые проверки исходной версии
+
+`openspec/changes/add-local-split-screen-controls/tasks.md` при исследовании: 6/9, задачи 3.1–3.3 не закрыты (integration/replay, browser playtest, физические геймпады и performance для 1/2/3/4). Перепроверить живое состояние. Миграция не превращает эти требования в автоматически выполненные.
+
+Оценку сроков делать после этапа 1: ключевые неопределённости — motor/physics contract, tooling генератора и native split-screen. Не обещать процент повторного использования по количеству строк.
+
+## 9. Организация следующей сессии
+
+- Основная новая задача: Astra (`gpt-6-astra`), medium — явный выбор пользователя.
+- Пользователь разрешил сабсессии с другими моделями для экономии контекста/токенов. Использовать встроенных subagents для ограниченных независимых подзадач; не создавать дополнительные sidebar tasks без отдельного запроса.
+- Terra/medium — ограниченные исследования и реализация с понятным контрактом; Luna/low — механическая инвентаризация; Spark только в рамках `.agents/references/model-routing.md`.
+- Архитектурные развилки: read-only astra_architect согласно routing; передавать узкий вопрос и пути, возвращать компактный decision memo, не копировать всю историю.
+- Для model overrides передавать `fork_turns=none` либо небольшое число, с явными требованиями и исходными файлами. Работникам назначать непересекающееся владение файлами, сообщать о параллельной работе и запрете отката чужих изменений.
+- Основной агент проверяет результаты, управляет решениями и последовательно выполняет интеграцию. Не делегировать ради делегирования.
+- Начать с этапа 0 и независимой подготовки этапа 1. Задавать небольшие группы существенных вопросов; не повторять уже утверждённый выбор Unity и приоритет готовых систем.
+- Каждая отдельная implementation change — отдельная ветка/worktree, проверки и коммит. Не реализовывать весь roadmap одним монолитным change.
+
+## 10. Источники исследования
+
+Документация проверена 2026-09-19; точные пакеты ещё не устанавливались и не испытывались. Страницы latest/новых Unity используются как подтверждение возможностей, не как выбор версии пакета для 6.3.
+
+- [Unity 6 support](https://unity.com/releases/unity-6/support)
+- [Unity 6.3 render pipeline comparison](https://docs.unity3d.com/6000.3/Documentation/Manual/render-pipelines-feature-comparison.html)
+- [Input System PlayerInputManager](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/PlayerInputManager.html)
+- [Animation Rigging](https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html)
+- [glTFast editor import](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/blob/main/Packages/com.unity.cloud.gltfast/Documentation~/ImportEditor.md)
+- [Easy Character Movement 2](https://oscar-gracian.gitbook.io/easy-character-movement-2/user-manual/general/components)
+- [Opsive Ultimate Character Controller](https://opsive.com/assets/ultimate-character-controller/)
+- [AI Navigation](https://docs.unity.com/en-us/engine/6000.7/manual/packages-list/packages-all/pack-safe/com-unity-ai-navigation)
+- [A* RecastGraph](https://arongranberg.com/astar/documentation/stable/recastgraph.html)
+- [Dungeon Architect Unity](https://dungeonarchitect.dev/unity/)
+- [Odin Inspector](https://odininspector.com/tutorials/serialize-anything/features-and-limitations)
+- [PhysX determinism limitations](https://nvidia-omniverse.github.io/PhysX/physx/5.8.0/docs/API.html)
