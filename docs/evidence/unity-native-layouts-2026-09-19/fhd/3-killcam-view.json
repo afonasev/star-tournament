@@ -1,0 +1,79 @@
+{
+    "scenario": "native-seat-layouts-v1",
+    "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "3-killcam-view",
+    "width": 1920,
+    "height": 1080,
+    "seats": 3,
+    "participants": 3,
+    "cameras": 3,
+    "capsules": 2,
+    "eventSystems": 1,
+    "listeners": 1,
+    "arenas": 1,
+    "shots": 2,
+    "running": true,
+    "focused": true,
+    "muted": true,
+    "persistentStandings": true,
+    "combatClock": 2.2399991154670717,
+    "viewports": [
+        {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.5,
+            "width": 0.5,
+            "height": 0.5
+        },
+        {
+            "serializedVersion": "2",
+            "x": 0.5,
+            "y": 0.5,
+            "width": 0.5,
+            "height": 0.5
+        },
+        {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.5,
+            "height": 0.5
+        }
+    ],
+    "match": {
+        "Tick": 112,
+        "RemainingTicks": 14888,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 1,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 100,
+                "DamageDealt": 100.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 1,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 100.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            }
+        ]
+    }
+}

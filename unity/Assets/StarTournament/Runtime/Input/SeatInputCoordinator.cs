@@ -13,15 +13,24 @@ namespace StarTournament.ProvingGround
         readonly bool[] fireReleaseRequired = new bool[SeatCount];
         Mouse pairedMouse;
         bool pauseRequested;
-        public bool HasKeyboard => Array.Exists(devices, d => d is Keyboard);
-        public bool Ready { get { for (int i = 0; i < SeatCount; i++) if (!IsConnected(i)) return false; return true; } }
-        public bool IsConnected(int slot) => devices[slot] != null && devices[slot].added &&
+        public int ActiveSeatCount { get; private set; } = SeatCount;
+        public bool HasKeyboard { get { for(int i=0;i<ActiveSeatCount;i++) if(devices[i] is Keyboard) return true; return false; } }
+        public void SetActiveSeatCount(int count)
+        {
+            if(count < 1 || count > SeatCount) throw new ArgumentOutOfRangeException(nameof(count));
+            for(int i=count;i<SeatCount;i++) devices[i]=null;
+            ActiveSeatCount=count;
+            if(!HasKeyboard) pairedMouse=null;
+            Clear();
+        }
+        public bool Ready { get { for (int i = 0; i < ActiveSeatCount; i++) if (!IsConnected(i)) return false; return true; } }
+        public bool IsConnected(int slot) => slot >= 0 && slot < ActiveSeatCount && devices[slot] != null && devices[slot].added &&
             (!(devices[slot] is Keyboard) || (pairedMouse != null && pairedMouse.added));
         public string Label(int slot) => devices[slot] == null ? "Ожидает устройство" :
             devices[slot] is Keyboard ? "Клавиатура + мышь" : devices[slot].displayName + " #" + devices[slot].deviceId;
         public bool Assign(int slot, InputDevice device)
         {
-            if (slot < 0 || slot >= SeatCount || device == null || !device.added || !(device is Keyboard || device is Gamepad)) return false;
+            if (slot < 0 || slot >= ActiveSeatCount || device == null || !device.added || !(device is Keyboard || device is Gamepad)) return false;
             for (int i = 0; i < SeatCount; i++) if (devices[i] == device) return false;
             if (device is Keyboard)
             {
@@ -34,7 +43,7 @@ namespace StarTournament.ProvingGround
         }
         void Join(InputDevice device)
         {
-            for (int i = 0; i < SeatCount; i++) if (devices[i] == null) { Assign(i, device); return; }
+            for (int i = 0; i < ActiveSeatCount; i++) if (devices[i] == null) { Assign(i, device); return; }
         }
         public void PollSetup()
         {
@@ -47,7 +56,7 @@ namespace StarTournament.ProvingGround
         // Capture once per rendered frame; consume edges/delta once per simulation tick.
         public void Capture(ProvingProfile profile, float deltaTime)
         {
-            for (int i = 0; i < SeatCount; i++)
+            for (int i = 0; i < ActiveSeatCount; i++)
             {
                 if (!IsConnected(i)) continue;
                 var a = queued[i];

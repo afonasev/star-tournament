@@ -23,6 +23,7 @@ namespace StarTournament.ProvingGround
         uint shotSequence;
         bool stopped;
         public NativeMatchState Match { get; }
+        public int ParticipantCount => lives.Length;
         public void Stop() { stopped=true; ClearInput(); }
         public SafeSpawnSelector Spawns { get; }
         public double Time { get; private set; }

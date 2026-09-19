@@ -15,13 +15,14 @@ namespace StarTournament.ProvingGround
         public NativeStandingsView(Transform parent, Font font, int size, string name, Vector2 min, Vector2 max)
         {
             Root=new GameObject(name,typeof(RectTransform),typeof(Image)); Root.transform.SetParent(parent,false);
-            Rect((RectTransform)Root.transform,min,max); Root.GetComponent<Image>().color=new Color32(10,18,30,245);
+            Rect((RectTransform)Root.transform,min,max); Root.GetComponent<Image>().color=new Color32(10,18,30,255); Root.GetComponent<Image>().raycastTarget=false;
             string[] headers={"УЧАСТНИК","УБ","ПМ","СМ","УРОН +","УРОН −","ОЧКИ"};
             float[] columns={0,.28f,.38f,.48f,.58f,.73f,.88f,1};
             for(int r=0;r<5;r++)
             {
                 var row=new GameObject("row-"+r,typeof(RectTransform),typeof(Image)); row.transform.SetParent(Root.transform,false);
                 Rect((RectTransform)row.transform,new Vector2(0,1-(r+1)/5f),new Vector2(1,1-r/5f));
+                row.GetComponent<Image>().raycastTarget=false;
                 row.GetComponent<Image>().color=r==0 ? new Color32(32,55,72,255) : new Color32(23,39,52,255);
                 if(r>0) backgrounds[r-1]=row.GetComponent<Image>();
                 for(int c=0;c<7;c++)
@@ -38,6 +39,12 @@ namespace StarTournament.ProvingGround
         public void Show(bool visible, NativeMatchSnapshot state, bool diagnostic)
         {
             Root.SetActive(visible); if(!visible || state==null) return;
+            for(int r=0;r<backgrounds.Length;r++)
+            {
+                backgrounds[r].gameObject.SetActive(r<state.Standings.Length);
+                if(r>=state.Standings.Length) for(int c=0;c<7;c++) cells[r+1,c].text="";
+            }
+            if(state.Standings.Length==0) return;
             int maximum=state.Standings[0].Score;
             for(int r=0;r<state.Standings.Length;r++)
             {

@@ -20,6 +20,8 @@ namespace StarTournament.ProvingGround
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views)
         {
+            if(cameras.Length!=session.ParticipantCount || bodies.Length!=session.ParticipantCount || views.Length!=session.ParticipantCount)
+                throw new System.ArgumentException("Presentation requires one view per local participant in this human-only slice");
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
             deathEye=new Vector3[cameras.Length]; deathFeet=new Vector3[cameras.Length]; killerPoint=new Vector3[cameras.Length];
