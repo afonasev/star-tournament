@@ -179,7 +179,7 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.viewWeaponY", "presentation", "View weapon Y", "First-person weapon mount vertical translation from camera origin.", "meters", -2f, 2f, .01f, -.34f);
             profile.Add("presentation.viewWeaponZ", "presentation", "View weapon Z", "First-person weapon mount forward translation from camera origin.", "meters", -2f, 2f, .01f, .68f);
             profile.Add("presentation.worldWeaponMountY", "presentation", "World weapon mount Y", "World weapon mount translation above the robot semantic hand mount.", "meters", -1f, 1f, .01f, .22f);
-            profile.Add("navigation.sampleDistance", "navigation", "Navigation sample distance", "AI Navigation sampling spacing for the proving-ground bake.", "meters", .1f, 10f, .1f, 2f);
+            profile.Add("navigation.sampleDistance", "navigation", "Navigation sample distance", "Maximum endpoint projection distance for fixture navigation queries; not bake spacing.", "meters", .1f, 10f, .1f, 2f);
             profile.Add("fixture.width", "fixture", "Fixture width", "Overall fixed proving-ground arena width.", "meters", 12f, 80f, 1f, 32f);
             profile.Add("fixture.depth", "fixture", "Fixture depth", "Overall fixed proving-ground arena depth.", "meters", 12f, 80f, 1f, 32f);
             profile.Add("fixture.wallThickness", "fixture", "Wall thickness", "Physical fixture wall thickness.", "meters", .1f, 2f, .05f, .3f);

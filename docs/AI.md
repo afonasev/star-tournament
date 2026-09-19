@@ -1,9 +1,23 @@
+# Unity bot navigation — проверенный внутренний срез
+
+`add-unity-bot-navigation` добавляет исполнение статической либо честно наблюдаемой/запомненной цели через `NativeBotNavigation → LocalAction → CharacterMotor`. `NativeNavigationProvider` использует NavMesh как источник кандидата и независимо проверяет принадлежность физической геометрии/опор текущей арене, headroom и declared transitions. Global query не означает эксклюзивного выбора одного NavMeshData; ограничения необходимо пересмотреть для разных generated scenes.
+
+Follower требует actual support/grounded и высоту, хранит выбранный выход stairs/ramp при смене цели и restore. Промежуточные ступени не являются остановками; торможение применяется к конечной точке. Застревание и recovery budget не сбрасываются непрерывным обновлением видимой цели. Выход — обычное боковое/обратное движение с коллизиями и ограничением попыток, затем явный Blocked.
+
+Профиль `unity-bot-navigation-v1@1` имеет общие descriptor metadata UI/validation. Snapshot содержит намерение, маршрут/курсор, active transition/exit, progress/deadlines и attempts; restore валидирует и перепроверяет native route, не обещая полного Unity replay.
+
+Development review `-botNavigationReview -navigationEvidence <absolute-directory>` подключает **реальный session tick**: Observe → Sample → action → один Session.Tick. Пауза не вызывает цепочку; смерть очищает цель, Repeat создаёт новый driver с frozen profiles, menu освобождает его. Journey проверяет stairs/ramp, hidden memory/expiry и lifecycle. Это не shipping setup ботов и не полный combat planner.
+
+Полная цель и оставшиеся разрывы: `UNITY_MIGRATION_MATRIX.md`; handoff: `tasks/completed/25-unity-bot-navigation.md`. Playable planner/weapon/support, три полных difficulty, participant separation, solo/8 и evaluation остаются обязательными следующими changes.
+
+---
+
 # Unity bot perception foundation
 
 `add-unity-bot-perception` is an internal prerequisite for playable native bots, based on native human teams `4521a7d`. It does not add bots to setup or drive participants.
 
 - `NativeBotObservationProvider` is the sole raw-world adapter. It samples the existing `NativeCombatSession` and its PhysicsScene, with horizontal FOV and a ray from movement eye height to the combat torso anchor. Static WorldLayer occludes; movement-only barriers and participant bodies do not occlude perception. This does not change projectile blocking by allies. One torso sample is an explicit initial sensor model, not a promise to detect every exposed limb.
-- `NativeBotPerception` consumes filtered direct sightings and each observer's own life/alive status. The future planner receives a copied per-observer `NativeBotKnowledge`, not a session or the aggregate diagnostic snapshot. Invisible current position, death and respawn never refresh old knowledge. No planning, navigation, aim or fire decisions are implemented yet.
+- `NativeBotPerception` consumes filtered direct sightings and each observer's own life/alive status. The future planner receives a copied per-observer `NativeBotKnowledge`, not a session or the aggregate diagnostic snapshot. Invisible current position, death and respawn never refresh old knowledge. This perception component does not plan navigation, aim or fire; the navigation adapter described above consumes its copied knowledge.
 - Team reports contain the original direct sighting, observation time and recipient life. Delivery is delayed; it cannot refresh the timestamp, overwrite newer knowledge or rebroadcast. One pending report per receiver/source/target bounds the queue without postponing delivery under continuous sight.
 - `unity-bot-perception-v1@1` includes only the three difficulties' FOV/memory and shared communication delay, with the existing Inspector/validation descriptor registry. Defaults come from `src/profiles/botRules.ts`; combat stats are untouched.
 - Snapshot v1 copies perception state and pending reports, validates the exact roster/difficulty/profile configuration, and resumes the same observation stream. It is not a full match save, Unity replay schema, or cross-platform deterministic replay.
@@ -11,7 +25,7 @@
 
 Development Player review: `-botPerceptionReview -botEvidence <absolute-directory>` produces muted FHD/4K PNG/JSON for direct/hidden/remembered/expired/reacquired states, delayed team sharing, pause, Repeat and FFA isolation. It uses scripted placements and an explicit diagnostic observation clock; screenshots show human bodies, not playable bots. The overhead microbenchmark uses actual scene queries but is not a full AI match or a 60 FPS acceptance test.
 
-The remaining bot slice must still implement approved active navigation, strafe/jumps, recovery, weapon policy, temporary support, three difficulty behaviors, setup/roster, evaluation and native human-versus-bot journeys. Solo, eight scene participants, real gamepads/TV and long target-hardware performance remain separate gates.
+The remaining bot slices must connect the verified navigation/recovery capability to shipping planner behavior, strafe/jumps, weapon policy, temporary support, three difficulty behaviors, setup/roster, evaluation and native human-versus-bot journeys. Solo, eight scene participants, real gamepads/TV and long target-hardware performance remain separate gates.
 
 ---
 

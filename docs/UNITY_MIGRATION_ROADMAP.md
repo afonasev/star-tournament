@@ -3,6 +3,8 @@
 Дата: 2026-09-19. Исходный browser commit: `8844e40` (`v0.0.9`).
 Статус: направление перехода и начало работы разрешены пользователем; технические рекомендации ниже не равнозначны утверждению всех открытых продуктовых решений.
 
+2026-09-20 пользователь поручил полный перенос до проверенного результата. Актуальный requirement/evidence backlog — `docs/UNITY_MIGRATION_MATRIX.md`. Навигационный срез `add-unity-bot-navigation` продолжает базу `6f8ed15`; его handoff — `docs/tasks/completed/25-unity-bot-navigation.md`. Внутренние foundations не завершают этап 2 или полную цель. Следующие sidebar-задачи автоматически не создаются; разрешены встроенные subagents и отдельные changes/worktrees/commits.
+
 ## 1. Цель и приоритеты
 
 Перевести игру на Unity, используя готовые системы движка и расширения там, где они лучше нашего решения. Сохранять игровые требования, контент и проверенные правила; существующий код не получает приоритета только потому, что уже написан. Не начинать с механического перевода TypeScript в C#.
@@ -107,7 +109,7 @@ Browser baseline использует deterministic Rapier 0.20.0 и collision-c
 
 Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B для 2–4 human seats: setup/цвета, allied pellet blocking без damage, initial/respawn, grouped standings/results и frozen Repeat. Проверки и ограничения: `docs/tasks/completed/23-unity-native-teams.md`. Bots, playable solo и восемь scene participants остаются следующими отдельными срезами; physical/TV и long 60 FPS gates не закрыты.
 
-Внутренний prerequisite `add-unity-bot-perception` переносит ограниченные FOV/LOS-наблюдения, память и delayed allied reports с actual PhysicsScene adapter. Он не добавляет игровых ботов: planner/navigation/support/actions и participant/local-seat separation остаются следующими работами, затем playable solo и восемь тел. Проверки — в `docs/tasks/completed/24-unity-bot-perception.md`; этап 2 и physical/performance gates остаются открытыми.
+Внутренний prerequisite `add-unity-bot-perception` переносит ограниченные FOV/LOS-наблюдения, память и delayed allied reports с actual PhysicsScene adapter. Он не добавляет игровых ботов: navigation/actions проверены следующим внутренним срезом 25; shipping planner/support и participant/local-seat separation остаются следующими работами, затем playable solo и восемь тел. Проверки — в `docs/tasks/completed/24-unity-bot-perception.md`; этап 2 и physical/performance gates остаются открытыми.
 
 - C# gameplay: damage, death, respawn, FFA/teams, восемь участников, bots, results и Repeat.
 - 1–4 local devices, layouts, HUD, scoreboard, pause/focus/reconnect.

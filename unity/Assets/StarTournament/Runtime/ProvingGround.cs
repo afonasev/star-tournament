@@ -26,6 +26,10 @@ namespace StarTournament.ProvingGround
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
         public ProvingProfile BotPerceptionProfile = ProvingProfile.CreateBotPerceptionDefault();
+        public ProvingProfile BotNavigationProfile = ProvingProfile.CreateNavigationDefault();
+        public NativeNavigationDriver NavigationReviewDriver { get; private set; }
+        bool navigationReviewEnabled;
+        ProvingProfile frozenNavigation, frozenPerception;
         public ProvingProfile TeamProfile = ProvingProfile.CreateTeamDefault();
         public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
         public NativeMatchConfiguration Configuration { get; private set; }
@@ -111,6 +115,7 @@ namespace StarTournament.ProvingGround
             if (requestedDiagnostic) Begin(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
+            if (args.Contains("-botNavigationReview")) gameObject.AddComponent<NativeBotNavigationReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
@@ -131,6 +136,13 @@ namespace StarTournament.ProvingGround
         {
             motors[seat].Initialize(Profile,feet);
             motors[seat].Tick(new LocalAction{LookDegrees=new Vector2(yaw,-pitch)},Time.fixedDeltaTime);
+        }
+        public void EnableNavigationReview()
+        {
+            navigationReviewEnabled = true;
+            frozenNavigation = Copy(BotNavigationProfile); frozenPerception = Copy(BotPerceptionProfile);
+            NavigationReviewDriver = new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
+                frozenMovement??Profile,frozenCombat??CombatProfile,frozenPerception,frozenNavigation,0);
         }
 #endif
         GameObject Owned(string name, params Type[] components)
@@ -203,6 +215,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<actions.Length;i++) actions[i] = diagnostic ? default : input.Consume(i);
             try
             {
+                NavigationReviewDriver?.ProduceActions(actions);
                 Session.Tick(actions, Time.fixedDeltaTime);
                 if(Session.Match?.Phase==NativeMatchPhase.Finished)
                 {
@@ -280,6 +293,8 @@ namespace StarTournament.ProvingGround
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
             Session=new NativeCombatSession(motors.Take(frozenSeatCount).ToArray(),arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match);
+            NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
+                frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies.Take(frozenSeatCount).ToArray(),views.Take(frozenSeatCount).ToArray());
             Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
@@ -293,6 +308,7 @@ namespace StarTournament.ProvingGround
         }
         void Menu()
         {
+            NavigationReviewDriver = null; navigationReviewEnabled = false;
             phase=Phase.Setup; diagnostic=false; combatReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
             input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(input.Ready?start:rebind);
         }

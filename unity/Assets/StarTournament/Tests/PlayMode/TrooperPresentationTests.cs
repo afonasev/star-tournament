@@ -72,8 +72,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<200;i++)ground.Session.Tick(new LocalAction[3],.02f);
             yield return null;
             Assert.That(view.gameObject.activeSelf,Is.True);Assert.That(view.GetComponent<TrooperVisual>().State,Is.EqualTo("aim"));
-            ground.SendMessage("Pause","test");double time=view.GetComponent<TrooperVisual>().SampleTime;
+            ground.SendMessage("Pause","test");double sessionTime=ground.Session.Time;
+            // Allow LateUpdate to present the final already-completed simulation tick before sampling.
+            // Capturing before that boundary compared a stale rendered pose with the correct frozen pose.
+            yield return null;double time=view.GetComponent<TrooperVisual>().SampleTime;
             yield return new WaitForSecondsRealtime(.1f);Assert.That(view.GetComponent<TrooperVisual>().SampleTime,Is.EqualTo(time));
+            Assert.That(ground.Session.Time,Is.EqualTo(sessionTime));
             Button("Повторить матч").onClick.Invoke();yield return null;
             Assert.That(ground.GetComponentsInChildren<TrooperVisual>().Count(v=>v.name.StartsWith("corpse-")),Is.Zero);
             Assert.That(ground.Session.Life(0).Life,Is.EqualTo(1));

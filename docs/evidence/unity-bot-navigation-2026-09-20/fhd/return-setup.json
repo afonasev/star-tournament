@@ -1,0 +1,58 @@
+{
+    "state": "return-setup",
+    "status": "NAVIGATION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "profile": "unity-bot-navigation-v1@1",
+    "width": 1920,
+    "height": 1080,
+    "focused": true,
+    "muted": true,
+    "running": false,
+    "sessionTime": 0.0599999763071537,
+    "pose": {
+        "Position": {
+            "x": -6.0,
+            "y": 0.009999990463256836,
+            "z": -14.0
+        },
+        "Velocity": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "Yaw": 0.0,
+        "Pitch": 0.0,
+        "Grounded": true
+    },
+    "navigation": {
+        "Version": 1,
+        "OwnLife": 0,
+        "Enemy": -1,
+        "EnemyLife": 0,
+        "Cursor": 0,
+        "Recoveries": 0,
+        "Replans": 0,
+        "Configuration": "",
+        "Failure": "",
+        "ActiveTransition": "",
+        "ExitSupport": "",
+        "HasGoal": false,
+        "Goal": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "TransitionExit": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "ObservedAt": -1.0,
+        "Time": -1.0,
+        "NextRepath": 0.0,
+        "ProgressAt": 0.0,
+        "RecoveryUntil": 0.0,
+        "BestRemaining": 0.0,
+        "Status": 0,
+        "Route": []
+    }
+}

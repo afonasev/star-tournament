@@ -5,6 +5,11 @@ using System.Collections.Generic;
 
 namespace StarTournament.ProvingGround
 {
+    [System.Serializable] public sealed class NativeNavigationTransition
+    {
+        public string Id, LowerSupport, UpperSupport;
+        public Vector3[] OrderedFeet;
+    }
     public sealed class ProvingArena : MonoBehaviour
     {
         // Layer numbers are a technical query protocol, not tunable balance.
@@ -14,6 +19,26 @@ namespace StarTournament.ProvingGround
         public Vector3 LowerRoutePoint { get; private set; }
         public Vector3 UpperRoutePoint { get; private set; }
         public NavMeshSurface Surface { get; private set; }
+        NativeNavigationTransition[] navigationTransitions;
+        public NativeNavigationTransition[] ReadNavigationTransitions()
+        {
+            var copy=new NativeNavigationTransition[navigationTransitions.Length];
+            for(int i=0;i<copy.Length;i++)
+            {
+                var t=navigationTransitions[i];copy[i]=new NativeNavigationTransition{Id=t.Id,LowerSupport=t.LowerSupport,UpperSupport=t.UpperSupport,OrderedFeet=(Vector3[])t.OrderedFeet.Clone()};
+            }
+            return copy;
+        }
+        // Stable support identities for the fixed fixture. Generated arenas will supply their own definition.
+        public string NavigationSupport(Collider collider)
+        {
+            if (!collider || !collider.transform.IsChildOf(transform)) return null;
+            if (collider.name == "floor-lower") return "floor:lower";
+            if (collider.name == "floor-upper") return "floor:upper";
+            if (collider.name == "ramp") return "transition:ramp";
+            if (collider.name.StartsWith("stair-", System.StringComparison.Ordinal)) return "transition:stairs";
+            return null;
+        }
         Material floor, wall, accent;
         public void Build(ProvingProfile profile)
         {
@@ -43,6 +68,13 @@ namespace StarTournament.ProvingGround
                 Box("stair-" + i, new Vector3(-w / 2 + rw / 2 + wt, (top + ground) / 2, -(steps-i)*tread+tread/2),
                     new Vector3(rw, top-ground, tread), accent);
             }
+            var stairFeet=new Vector3[steps+2];float stairX=-w/2+rw/2+wt;
+            stairFeet[0]=new Vector3(stairX,ground,-steps*tread);stairFeet[steps+1]=new Vector3(stairX,h,0);
+            for(int i=0;i<steps;i++)stairFeet[i+1]=new Vector3(stairX,ground+(i+1)*rise,-(steps-i)*tread+tread/2);
+            navigationTransitions=new[]{
+                new NativeNavigationTransition{Id="transition:stairs",LowerSupport="floor:lower",UpperSupport="floor:upper",OrderedFeet=stairFeet},
+                new NativeNavigationTransition{Id="transition:ramp",LowerSupport="floor:lower",UpperSupport="floor:upper",
+                    OrderedFeet=new[]{new Vector3(w/2-rw/2-wt,ground,-run),new Vector3(w/2-rw/2-wt,h,0)}}};
             Box("headroom-probe", new Vector3(0, ground + profile.Get("fixture.headroomHeight") + ft / 2, -d / 4), new Vector3(rw, ft, rw), wall);
             Box("movement-only-barrier", new Vector3(-rw, ground + wh / 4, -d / 4), new Vector3(wt, wh / 2, rw), accent, MovementOnlyLayer);
             Box("solid-window-probe", new Vector3(rw, ground + wh / 2, -d / 4), new Vector3(wt, wh, rw), wall);
