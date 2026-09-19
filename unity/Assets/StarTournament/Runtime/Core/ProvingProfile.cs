@@ -120,6 +120,8 @@ namespace StarTournament.ProvingGround
                 var descriptor = FindDescriptor(value.Path);
                 if (descriptor == null)
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Value has no descriptor." });
+                else if (descriptor.Unit == "ammo" && value.Value != Mathf.Round(value.Value))
+                    issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Ammo must be integral." });
                 else if (!descriptor.Contains(value.Value))
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = $"Value {value.Value} is outside [{descriptor.Minimum}, {descriptor.Maximum}]." });
             }
@@ -130,6 +132,18 @@ namespace StarTournament.ProvingGround
                     issues.Add(new ProfileValidationIssue { Path = descriptor.Path, Message = "Descriptor has no profile value." });
             }
             return issues;
+        }
+
+        /// <summary>Domain-only combat tuning; not applied to the diagnostic scene.</summary>
+        public static ProvingProfile CreateCombatDefault()
+        {
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 1 };
+            profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
+            profile.Add("combat.startingAmmo", "shotgun", "Стартовый боезапас", "Количество выстрелов в начале жизни.", "ammo", 1, 200, 1, 20);
+            profile.Add("combat.emptyRefillAmmo", "shotgun", "Пополнение при нуле", "Немедленный запас после последнего выстрела без сброса cooldown.", "ammo", 1, 100, 1, 20);
+            profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела.", "seconds", .05f, 5, .05f, .7f);
+            profile.Add("combat.killcamSeconds", "death", "Ожидание возрождения", "Simulation время смерти до готовности к выбору spawn.", "seconds", 0, 15, .1f, 3);
+            return profile;
         }
 
         public static ProvingProfile CreateDefault()

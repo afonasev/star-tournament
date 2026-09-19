@@ -99,6 +99,9 @@ Browser baseline использует deterministic Rapier 0.20.0 и collision-c
 
 ### Этап 2. Полный локальный матч
 
+Первый внутренний срез `add-unity-combat-state`: отдельный сериализуемый lifecycle здоровья/боезапаса/cooldown/death/respawn readiness и профиль `unity-combat-state-v1`. Он ещё не подключён к diagnostic выстрелам полигона. Следующий ограниченный change — native combat adapter (pellet queries/hit zones, применение damage, capsule death/respawn, killcam/HUD и выбор безопасного spawn на фиксированной арене). После него — scoring/match completion, teams/bots и полный menu-to-results путь отдельными проверяемыми срезами. Это порядок реализации уже утверждённых требований, не снятие функций с этапа.
+
+
 - C# gameplay: damage, death, respawn, FFA/teams, восемь участников, bots, results и Repeat.
 - 1–4 local devices, layouts, HUD, scoreboard, pause/focus/reconnect.
 - Контроль сериализуемого gameplay state и clear ownership Unity adapters.

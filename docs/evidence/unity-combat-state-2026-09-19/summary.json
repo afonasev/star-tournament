@@ -1,0 +1,29 @@
+{
+  "editmode": {
+    "result": "Passed",
+    "total": "15",
+    "passed": "15",
+    "failed": "0",
+    "sha256": "2427751867aa900a6353b201b2257f15cf8139ebf72c40b86a9098906e671ec3"
+  },
+  "playmode": {
+    "result": "Passed",
+    "total": "9",
+    "passed": "9",
+    "failed": "0",
+    "sha256": "20e889db11eeb157be500edaa37accf21b48984fb977dec0e1484da15b35b5de"
+  },
+  "build": [
+    "STAR_PROVING_BUILD_PASS 324725747"
+  ],
+  "runtimeErrorLines": [],
+  "source": "f283e99 + add-unity-combat-state; new core not connected to diagnostic scene",
+  "combatProfile": "unity-combat-state-v1 / version 1",
+  "sceneProfile": "unity-proving-ground-v1 / version 1",
+  "native": "Muted setup, keyboard/mouse join, diagnostic four-camera live, pause/resume, FPS retained. Not physical or performance acceptance.",
+  "screenshots": {
+    "pause.png": "2eb11ac84f03aeb3ae15e216904180243063979c0ef46a61053e907c3e51ea87",
+    "setup.png": "d5939a2a47650c7ddba785693584ffd87a3cd039f0ce6ce4569ce35e4064e46e",
+    "live.png": "29b29e87a79ba375ea13bb2075e195a769fc55bb862d1febda1b5be653fe1687"
+  }
+}
