@@ -44,6 +44,35 @@ namespace StarTournament.ProvingGround
             return physics.OverlapCapsule(position + Vector3.up*radius, position + Vector3.up*(height-radius), radius,
                 overlap, movementMask, QueryTriggerInteraction.Ignore) == 0;
         }
+        // Bounded human-only allocation before any capsule is activated. No partial placement on failure.
+        public bool TryInitial(NativeMatchRoster roster,float separation,out Vector3[] selected)
+        {
+            if(roster.Count > SeatInputCoordinator.SeatCount) throw new System.ArgumentException("Initial native allocation supports up to four humans");
+            var candidates=new List<Vector3>();
+            foreach(var slot in slots) if(Valid(slot,out var candidate)) candidates.Add(candidate);
+            var reserved=new Vector3[roster.Count];
+            bool Place(int participant)
+            {
+                if(participant==reserved.Length) return true;
+                foreach(var candidate in candidates)
+                {
+                    bool safe=true;
+                    for(int j=0;j<participant;j++)
+                    {
+                        var delta=candidate-reserved[j];
+                        float radius=motor.Get("player.capsule.radius")+motor.Get("player.capsule.skinWidth");
+                        float axisGap=Mathf.Max(0,Mathf.Abs(delta.y)-(motor.Get("player.capsule.height")-2*motor.Get("player.capsule.radius")));
+                        bool overlaps=delta.x*delta.x+delta.z*delta.z+axisGap*axisGap < 4*radius*radius;
+                        if(overlaps || (!roster.AreAllies(participant,j) && delta.magnitude<separation)) { safe=false;break; }
+                    }
+                    if(!safe) continue;
+                    reserved[participant]=candidate;
+                    if(Place(participant+1)) return true;
+                }
+                return false;
+            }
+            bool found=Place(0); selected=found?reserved:System.Array.Empty<Vector3>();return found;
+        }
         public bool TryChoose(CombatTarget[] live, out Vector3 selected)
         {
             selected = default; bool found = false, bestHidden = false; float bestDistance = -1;

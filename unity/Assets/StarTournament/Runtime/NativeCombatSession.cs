@@ -34,6 +34,7 @@ namespace StarTournament.ProvingGround
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null)
         {
+            if(match != null && match.Roster.Count != motors.Length) throw new ArgumentException("Roster/motor count mismatch");
             this.motors = motors; this.physics = physics; Match=match;
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
@@ -91,7 +92,7 @@ namespace StarTournament.ProvingGround
             if(Match?.Phase==NativeMatchPhase.Finished) return;
             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
             {
-                if (!Spawns.TryChoose(LiveTargets(), out var spawn))
+                if (!Spawns.TryChoose(EnemiesOf(i), out var spawn))
                     throw new InvalidOperationException("Fixed arena has no physically safe respawn slot");
                 if (lives[i].Respawn(Life(i).Life))
                 {
@@ -114,14 +115,22 @@ namespace StarTournament.ProvingGround
                 float limit = physics.Raycast(origin, direction, out var wall, resolver.Range, 1 << ProvingArena.WorldLayer,
                     QueryTriggerInteraction.Ignore) ? wall.distance : resolver.Range;
                 var hit = resolver.Resolve(origin, direction, targets, shooter, limit);
-                if (hit.TargetIndex >= 0) damage[hit.TargetIndex] += resolver.FullDamage(hit.Zone);
+                if (hit.TargetIndex >= 0 && !Allied(shooter,targets[hit.TargetIndex].Seat)) damage[hit.TargetIndex] += resolver.FullDamage(hit.Zone);
             }
             return damage;
         }
 
+        bool Allied(int a,int b) => Match != null && Match.Roster.AreAllies(a,b);
+        CombatTarget[] EnemiesOf(int participant)
+        {
+            var enemies=new List<CombatTarget>();
+            foreach(var target in LiveTargets()) if(!Allied(participant,target.Seat)) enemies.Add(target);
+            return enemies.ToArray();
+        }
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
         {
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return default;
+            if(killer >= 0 && Allied(killer,seat)) return default;
             var result = lives[seat].Damage(life, damage, killer < 0 ? null : Life(killer).ParticipantId, killerLife);
             Match?.RecordDamage(seat,killer,result);
             if (result.Killed)

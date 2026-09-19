@@ -51,6 +51,7 @@ namespace StarTournament.ProvingGround
             return new NativeMatchRoster(NativeMatchMode.Ffa, new NativeTeam[participants]);
         }
 
+        public bool AreAllies(int a, int b) => a != b && Mode == NativeMatchMode.Teams && teams[a] == teams[b];
         public NativeTeam TeamOf(int participant) => teams[participant];
         public NativeRosterSnapshot Read() => new NativeRosterSnapshot
         { Mode = Mode, Teams = (NativeTeam[])teams.Clone() };

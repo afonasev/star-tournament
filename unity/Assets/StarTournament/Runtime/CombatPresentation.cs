@@ -56,6 +56,15 @@ namespace StarTournament.ProvingGround
             deathTime[seat]=session.Time; tracking[seat]=true;
             killerPoint[seat]=deathEye[seat]+Quaternion.Euler(notice.Pose.Pitch,notice.Pose.Yaw,0)*Vector3.forward;
             var corpse=Object.Instantiate(bodies[seat],owner);
+            // Unity object cloning is not a contract for copying renderer property blocks.
+            var sourceRenderers=bodies[seat].GetComponentsInChildren<Renderer>(true);
+            var corpseRenderers=corpse.GetComponentsInChildren<Renderer>(true);
+            for(int r=0;r<sourceRenderers.Length;r++)
+                for(int m=0;m<sourceRenderers[r].sharedMaterials.Length;m++)
+                {
+                    var block=new MaterialPropertyBlock();sourceRenderers[r].GetPropertyBlock(block,m);
+                    corpseRenderers[r].SetPropertyBlock(block,m);
+                }
             corpse.name=$"corpse-{seat+1}-life-{notice.Life.Life}";
             corpse.SetActive(true);
             foreach(var t in corpse.GetComponentsInChildren<Transform>(true)) t.gameObject.layer=0;

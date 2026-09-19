@@ -1,6 +1,6 @@
 # Star Tournament — Unity proving ground
 
-Отдельный проверочный срез: 2–4 local seats, фиксированная двухэтажная арена, native CharacterController/NavMesh, существующие robot/shotgun GLB. Native FFA включает бой, scoring, результаты и Repeat; teams/bots, восемь участников и solo ещё не подключены. Browser baseline `8844e40` сохранён отдельно; старые replay/seed hashes здесь не воспроизводятся.
+Отдельный проверочный срез: 2–4 local seats, фиксированная двухэтажная арена, native CharacterController/NavMesh, существующие robot/shotgun GLB. Native FFA и Team A/B включают бой, scoring, результаты и Repeat; bots, восемь участников и solo ещё не подключены. Browser baseline `8844e40` сохранён отдельно; старые replay/seed hashes здесь не воспроизводятся.
 
 Откройте эту директорию через Unity Hub редактором **6000.3.23f1**. Точные пакеты закреплены в `Packages/manifest.json` и `packages-lock.json`. После изменения импорта используйте меню **Star Tournament → Prepare proving ground**, затем сцену `Assets/StarTournament/Scenes/ProvingGround.unity`.
 
@@ -29,4 +29,6 @@ unity/tools.sh build
 
 Development Player CLI: `-layoutReview -layoutEvidence /absolute/output` с обычными `-screen-width 1920 -screen-height 1080 -screen-fullscreen 0` (повторить 3840×2160). Review проходит 4→2→3→4, используя synthetic gamepads через настоящий adapter, shot resolver, pause/Repeat и ускоренные пустые ticks до результата. Начальные poses — fixture; это не физический playtest и не benchmark. Окну нужен focus; весь QA muted.
 
-Data-only `NativeMatchRoster`/`NativeMatchState` поддерживают FFA и Team A/Team B для 2–8 participant slots; это не local-seat/device count. Native setup ещё создаёт FFA 2–4. Team totals и `WinnerTeam` доступны в независимом JSON inspection DTO, не restore/replay API. Handoff: `docs/tasks/completed/22-unity-team-match-state.md`.
+Data-only `NativeMatchRoster`/`NativeMatchState` поддерживают FFA и Team A/Team B для 2–8 participant slots; это не local-seat/device count. Native setup поддерживает FFA и Team A/B для 2–4 людей. Team totals и `WinnerTeam` доступны в независимом JSON inspection DTO, не restore/replay API. Handoff: `docs/tasks/completed/22-unity-team-match-state.md`.
+
+Команды: кнопка режима в setup, назначение P1–P4 и смена цветов. Старт требует обе непустые команды. Союзник блокирует дробь без урона; Repeat сохраняет состав/цвета. `unity-native-team-v1@1` задаёт metadata initial opponent separation. Diagnostic CLI: `-teamReview -teamEvidence /absolute/path`; отдельный stationary probe: `-diagnostic -teamsDiagnostic -probeEvidence /absolute/path`. Подробнее: handoff23 и `docs/evidence/unity-native-teams-2026-09-20/README.md`.
