@@ -37,6 +37,45 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
         [UnityTest]
+        public IEnumerator FpsSettingPersistsAndKeepsSamplingWhilePaused()
+        {
+            bool hadPreference=PlayerPrefs.HasKey(FpsDisplay.PreferenceKey);
+            int original=PlayerPrefs.GetInt(FpsDisplay.PreferenceKey);
+            GameObject root=null;
+            try
+            {
+                PlayerPrefs.DeleteKey(FpsDisplay.PreferenceKey);
+                root=new GameObject("fps-test",typeof(RectTransform));
+                var label=root.AddComponent<UnityEngine.UI.Text>();
+                var display=root.AddComponent<FpsDisplay>();
+                display.Initialize(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),24,label);
+                Assert.That(display.Visible,Is.True);
+                display.Toggle();
+                Assert.That(display.Visible,Is.False);
+                Assert.That(root.transform.Find("fps-overlay").gameObject.activeSelf,Is.False);
+                Object.Destroy(root); yield return null;
+                root=new GameObject("fps-test-reloaded",typeof(RectTransform));
+                label=root.AddComponent<UnityEngine.UI.Text>();
+                display=root.AddComponent<FpsDisplay>();
+                display.Initialize(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),24,label);
+                Assert.That(display.Visible,Is.False);
+                display.Toggle();
+                Time.timeScale=0;
+                yield return new WaitForSecondsRealtime(0.7f);
+                var counter=root.transform.Find("fps-overlay/fps-value").GetComponent<UnityEngine.UI.Text>();
+                Assert.That(counter.text,Does.StartWith("FPS "));
+                Assert.That(counter.text,Does.Not.Contain("—"));
+            }
+            finally
+            {
+                Time.timeScale=1;
+                if(root)Object.Destroy(root);
+                if(hadPreference)PlayerPrefs.SetInt(FpsDisplay.PreferenceKey,original);
+                else PlayerPrefs.DeleteKey(FpsDisplay.PreferenceKey);
+                PlayerPrefs.Save();
+            }
+        }
+        [UnityTest]
         public IEnumerator FourGamepadsCanJoinStartPauseAndResumeWithoutMouse()
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);

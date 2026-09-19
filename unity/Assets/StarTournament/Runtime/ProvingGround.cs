@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
         Text status;
         Button start, resume, rebind;
         Font font;
+        FpsDisplay fps;
         string pauseReason = "";
         float gameplayTime;
         public bool Running => phase == Phase.Running;
@@ -165,6 +166,10 @@ namespace StarTournament.ProvingGround
             resume=ButtonElement(column.transform,"Продолжить",Resume);
             rebind=ButtonElement(column.transform,"Назначить устройства заново",ResetSetup);
             ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
+            var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
+            settings.gameObject.name = "fps-setting";
+            fps = canvasObject.AddComponent<FpsDisplay>();
+            fps.Initialize(font, (int)Profile.Get("ui.fontSize"), settings.GetComponentInChildren<Text>());
             ButtonElement(column.transform,"Выйти",()=>Application.Quit());
             RefreshInterface(); Select(rebind);
         }
