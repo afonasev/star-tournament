@@ -1,0 +1,21 @@
+{
+    "status": "DIAGNOSTIC_NOT_60FPS_ACCEPTANCE",
+    "workload": "three observers; actual PhysicsScene FOV/LOS plus memory/report; stationary human bodies",
+    "unity": "6000.3.23f1",
+    "device": "Mac14,10",
+    "graphics": "Apple M2 Pro",
+    "operatingSystem": "Mac OS X 14.6.1",
+    "profile": "unity-bot-perception-v1@1",
+    "samples": 10000,
+    "width": 1920,
+    "height": 1080,
+    "p50ms": 0.0043,
+    "p95ms": 0.0058000000000000009,
+    "p99ms": 0.0091,
+    "worstms": 1.2064000000000002,
+    "totalMs": 58.02730000000058,
+    "focused": true,
+    "muted": true,
+    "gpuTimingAvailable": false,
+    "allocatedMemoryBytes": 69404899
+}

@@ -1,4 +1,24 @@
-# Bot AI v1
+# Unity bot perception foundation
+
+`add-unity-bot-perception` is an internal prerequisite for playable native bots, based on native human teams `4521a7d`. It does not add bots to setup or drive participants.
+
+- `NativeBotObservationProvider` is the sole raw-world adapter. It samples the existing `NativeCombatSession` and its PhysicsScene, with horizontal FOV and a ray from movement eye height to the combat torso anchor. Static WorldLayer occludes; movement-only barriers and participant bodies do not occlude perception. This does not change projectile blocking by allies. One torso sample is an explicit initial sensor model, not a promise to detect every exposed limb.
+- `NativeBotPerception` consumes filtered direct sightings and each observer's own life/alive status. The future planner receives a copied per-observer `NativeBotKnowledge`, not a session or the aggregate diagnostic snapshot. Invisible current position, death and respawn never refresh old knowledge. No planning, navigation, aim or fire decisions are implemented yet.
+- Team reports contain the original direct sighting, observation time and recipient life. Delivery is delayed; it cannot refresh the timestamp, overwrite newer knowledge or rebroadcast. One pending report per receiver/source/target bounds the queue without postponing delivery under continuous sight.
+- `unity-bot-perception-v1@1` includes only the three difficulties' FOV/memory and shared communication delay, with the existing Inspector/validation descriptor registry. Defaults come from `src/profiles/botRules.ts`; combat stats are untouched.
+- Snapshot v1 copies perception state and pending reports, validates the exact roster/difficulty/profile configuration, and resumes the same observation stream. It is not a full match save, Unity replay schema, or cross-platform deterministic replay.
+- Call sampling once per advancing simulation observation time. No sample during pause means no memory aging or delivery. Own death/new life clears old knowledge and incoming reports. A new match gets a new perception instance. The ordinary Player does not instantiate or tick this foundation yet.
+
+Development Player review: `-botPerceptionReview -botEvidence <absolute-directory>` produces muted FHD/4K PNG/JSON for direct/hidden/remembered/expired/reacquired states, delayed team sharing, pause, Repeat and FFA isolation. It uses scripted placements and an explicit diagnostic observation clock; screenshots show human bodies, not playable bots. The overhead microbenchmark uses actual scene queries but is not a full AI match or a 60 FPS acceptance test.
+
+The remaining bot slice must still implement approved active navigation, strafe/jumps, recovery, weapon policy, temporary support, three difficulty behaviors, setup/roster, evaluation and native human-versus-bot journeys. Solo, eight scene participants, real gamepads/TV and long target-hardware performance remain separate gates.
+
+---
+
+# Historical browser Bot AI v1
+
+The remainder describes the retained browser reference; it is not evidence of native bot delivery.
+
 
 AI produces ordinary action frames. `stepPlayableSimulation` moves every living
 participant and resolves all shooters against the same pre-damage combat state;

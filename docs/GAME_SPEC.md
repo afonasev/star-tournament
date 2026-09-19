@@ -114,6 +114,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 7. Архитектурные принципы
 
+- Внутренний Unity-срез `add-unity-bot-perception` переносит честные FOV/LOS-наблюдения, память и отложенные direct-only сообщения союзников из bot contract. Профиль `unity-bot-perception-v1@1` содержит metadata трёх сложностей; скрытые позиции, смерть и смена жизни противника не обновляют последнее наблюдение. Сериализуемые знания и pending reports отделены от Unity physics handles и будущего planner. Это предпосылка playable bots, без AI-действий, изменения human-only setup, solo или восьми тел; полный Unity replay остаётся открытым.
+
 - Переход на Unity выполняется по `docs/UNITY_MIGRATION_ROADMAP.md`. Требования ниже к Rapier, browser runner и exact replay описывают существующий browser runtime, а не обязательный backend новой Unity-версии. В Unity физическое движение может принадлежать gameplay motor; renderer и анимация не получают права менять игровые правила. Fixed timestep сам по себе не считается доказательством детерминизма. Replay записывает состояния; его точная схема, совместимость старых записей и сетевая модель требуют отдельных решений. DOM/WebGL-ограничения относятся к browser baseline; Unity использует native cameras и UI.
 
 - Игровые правила, состояние матча и боевые события принадлежат симуляции; renderer не меняет правила игры.
@@ -171,6 +173,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Бюджет и лицензии платных motor/navigation/generator расширений за пределами бесплатного первого среза.
 
 ## 11. Журнал изменений
+
+- 2026-09-20: выделен внутренний перенос bot perception/memory после native teams; утверждённые требования AI сохраняются, playable bots остаются следующим срезом.
 
 | 2026-09-20 | Для native teams утверждено: союзники блокируют дробь без урона и scoring; попадание не проходит к противнику за союзником. |
 

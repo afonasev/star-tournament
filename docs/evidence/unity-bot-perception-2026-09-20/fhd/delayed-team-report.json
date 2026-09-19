@@ -1,0 +1,110 @@
+{
+    "state": "delayed-team-report",
+    "acceptance": "PERCEPTION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "profile": "unity-bot-perception-v1@1",
+    "clock": "explicit diagnostic observation stream; not match/replay time",
+    "width": 1920,
+    "height": 1080,
+    "focused": true,
+    "muted": true,
+    "actualPoses": [
+        {
+            "Position": {
+                "x": 1.0,
+                "y": 0.009999990463256836,
+                "z": -8.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 90.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": 1.0,
+                "y": 0.009999990463256836,
+                "z": -11.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 180.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        },
+        {
+            "Position": {
+                "x": 6.0,
+                "y": 0.00999993085861206,
+                "z": -8.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 90.0,
+            "Pitch": 0.0,
+            "Grounded": true
+        }
+    ],
+    "knowledge": {
+        "Version": 1,
+        "Configuration": "{\"Mode\":1,\"Teams\":[1,1,2]}|0,1,2|{\"id\":\"unity-bot-perception-v1\",\"version\":1,\"descriptors\":[{\"Path\":\"bots.easy.fieldOfViewDegrees\",\"Group\":\"bots\",\"Label\":\"Салага · Поле зрения\",\"Description\":\"Горизонтальный угол обнаружения врага при открытом LOS.\",\"Unit\":\"degrees\",\"Minimum\":60.0,\"Maximum\":180.0,\"Step\":1.0,\"DefaultValue\":110.0},{\"Path\":\"bots.easy.memorySeconds\",\"Group\":\"bots\",\"Label\":\"Салага · Память\",\"Description\":\"Срок знания от исходного наблюдения, включая задержку сообщения.\",\"Unit\":\"seconds\",\"Minimum\":0.5,\"Maximum\":15.0,\"Step\":0.10000000149011612,\"DefaultValue\":2.0},{\"Path\":\"bots.normal.fieldOfViewDegrees\",\"Group\":\"bots\",\"Label\":\"Боец · Поле зрения\",\"Description\":\"Горизонтальный угол обнаружения врага при открытом LOS.\",\"Unit\":\"degrees\",\"Minimum\":60.0,\"Maximum\":180.0,\"Step\":1.0,\"DefaultValue\":130.0},{\"Path\":\"bots.normal.memorySeconds\",\"Group\":\"bots\",\"Label\":\"Боец · Память\",\"Description\":\"Срок знания от исходного наблюдения, включая задержку сообщения.\",\"Unit\":\"seconds\",\"Minimum\":0.5,\"Maximum\":15.0,\"Step\":0.10000000149011612,\"DefaultValue\":4.0},{\"Path\":\"bots.hard.fieldOfViewDegrees\",\"Group\":\"bots\",\"Label\":\"Ветеран · Поле зрения\",\"Description\":\"Горизонтальный угол обнаружения врага при открытом LOS.\",\"Unit\":\"degrees\",\"Minimum\":60.0,\"Maximum\":180.0,\"Step\":1.0,\"DefaultValue\":150.0},{\"Path\":\"bots.hard.memorySeconds\",\"Group\":\"bots\",\"Label\":\"Ветеран · Память\",\"Description\":\"Срок знания от исходного наблюдения, включая задержку сообщения.\",\"Unit\":\"seconds\",\"Minimum\":0.5,\"Maximum\":15.0,\"Step\":0.10000000149011612,\"DefaultValue\":6.0},{\"Path\":\"bots.cooperation.communicationSeconds\",\"Group\":\"bots\",\"Label\":\"Сообщения команды\",\"Description\":\"Задержка передачи замеченной позиции врага.\",\"Unit\":\"seconds\",\"Minimum\":0.10000000149011612,\"Maximum\":2.0,\"Step\":0.10000000149011612,\"DefaultValue\":0.30000001192092898}],\"values\":[{\"Path\":\"bots.easy.fieldOfViewDegrees\",\"Value\":110.0},{\"Path\":\"bots.easy.memorySeconds\",\"Value\":2.0},{\"Path\":\"bots.normal.fieldOfViewDegrees\",\"Value\":130.0},{\"Path\":\"bots.normal.memorySeconds\",\"Value\":4.0},{\"Path\":\"bots.hard.fieldOfViewDegrees\",\"Value\":150.0},{\"Path\":\"bots.hard.memorySeconds\",\"Value\":6.0},{\"Path\":\"bots.cooperation.communicationSeconds\",\"Value\":0.30000001192092898}]}",
+        "Time": 0.31,
+        "Observers": [
+            {
+                "OwnLife": 1,
+                "Alive": true,
+                "Enemies": [
+                    {
+                        "Sighting": {
+                            "Participant": 2,
+                            "Life": 1,
+                            "Position": {
+                                "x": 3.0,
+                                "y": 0.009999990463256836,
+                                "z": -8.0
+                            }
+                        },
+                        "ObservedAt": 0.0,
+                        "Source": 0,
+                        "Visible": false
+                    }
+                ]
+            },
+            {
+                "OwnLife": 1,
+                "Alive": true,
+                "Enemies": [
+                    {
+                        "Sighting": {
+                            "Participant": 2,
+                            "Life": 1,
+                            "Position": {
+                                "x": 3.0,
+                                "y": 0.009999990463256836,
+                                "z": -8.0
+                            }
+                        },
+                        "ObservedAt": 0.0,
+                        "Source": 0,
+                        "Visible": false
+                    }
+                ]
+            },
+            {
+                "OwnLife": 1,
+                "Alive": true,
+                "Enemies": []
+            }
+        ],
+        "Pending": []
+    }
+}

@@ -107,6 +107,8 @@ Browser baseline использует deterministic Rapier 0.20.0 и collision-c
 
 Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B для 2–4 human seats: setup/цвета, allied pellet blocking без damage, initial/respawn, grouped standings/results и frozen Repeat. Проверки и ограничения: `docs/tasks/completed/23-unity-native-teams.md`. Bots, playable solo и восемь scene participants остаются следующими отдельными срезами; physical/TV и long 60 FPS gates не закрыты.
 
+Внутренний prerequisite `add-unity-bot-perception` переносит ограниченные FOV/LOS-наблюдения, память и delayed allied reports с actual PhysicsScene adapter. Он не добавляет игровых ботов: planner/navigation/support/actions и participant/local-seat separation остаются следующими работами, затем playable solo и восемь тел. Проверки — в `docs/tasks/completed/24-unity-bot-perception.md`; этап 2 и physical/performance gates остаются открытыми.
+
 - C# gameplay: damage, death, respawn, FFA/teams, восемь участников, bots, results и Repeat.
 - 1–4 local devices, layouts, HUD, scoreboard, pause/focus/reconnect.
 - Контроль сериализуемого gameplay state и clear ownership Unity adapters.

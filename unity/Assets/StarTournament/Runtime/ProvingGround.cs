@@ -25,6 +25,7 @@ namespace StarTournament.ProvingGround
         readonly GameObject[] bodies = new GameObject[SeatInputCoordinator.SeatCount], views = new GameObject[SeatInputCoordinator.SeatCount];
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
+        public ProvingProfile BotPerceptionProfile = ProvingProfile.CreateBotPerceptionDefault();
         public ProvingProfile TeamProfile = ProvingProfile.CreateTeamDefault();
         public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
         public NativeMatchConfiguration Configuration { get; private set; }
@@ -109,6 +110,7 @@ namespace StarTournament.ProvingGround
             bool requestedDiagnostic = Environment.GetCommandLineArgs().Contains("-diagnostic");
             if (requestedDiagnostic) Begin(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();

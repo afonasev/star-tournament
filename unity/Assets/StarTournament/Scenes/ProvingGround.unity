@@ -1198,6 +1198,110 @@ MonoBehaviour:
       Value: 12
     - Path: killcam.clipRadius
       Value: 0.15
+  BotPerceptionProfile:
+    id: unity-bot-perception-v1
+    version: 1
+    descriptors:
+    - Path: bots.easy.fieldOfViewDegrees
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043E\u043B\u0435
+        \u0437\u0440\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0433\u043E\u043B \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F
+        \u0432\u0440\u0430\u0433\u0430 \u043F\u0440\u0438 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C
+        LOS."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 180
+      Step: 1
+      DefaultValue: 110
+    - Path: bots.easy.memorySeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
+      Description: "\u0421\u0440\u043E\u043A \u0437\u043D\u0430\u043D\u0438\u044F
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u044F,
+        \u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0443
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 2
+    - Path: bots.normal.fieldOfViewDegrees
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043E\u043B\u0435 \u0437\u0440\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0433\u043E\u043B \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F
+        \u0432\u0440\u0430\u0433\u0430 \u043F\u0440\u0438 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C
+        LOS."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 180
+      Step: 1
+      DefaultValue: 130
+    - Path: bots.normal.memorySeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
+      Description: "\u0421\u0440\u043E\u043A \u0437\u043D\u0430\u043D\u0438\u044F
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u044F,
+        \u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0443
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.hard.fieldOfViewDegrees
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043E\u043B\u0435
+        \u0437\u0440\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0433\u043E\u043B \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F
+        \u0432\u0440\u0430\u0433\u0430 \u043F\u0440\u0438 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C
+        LOS."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 180
+      Step: 1
+      DefaultValue: 150
+    - Path: bots.hard.memorySeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
+      Description: "\u0421\u0440\u043E\u043A \u0437\u043D\u0430\u043D\u0438\u044F
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u044F,
+        \u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0443
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 6
+    - Path: bots.cooperation.communicationSeconds
+      Group: bots
+      Label: "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u043A\u043E\u043C\u0430\u043D\u0434\u044B"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434\u0430\u0447\u0438
+        \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439 \u043F\u043E\u0437\u0438\u0446\u0438\u0438
+        \u0432\u0440\u0430\u0433\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 0.3
+    values:
+    - Path: bots.easy.fieldOfViewDegrees
+      Value: 110
+    - Path: bots.easy.memorySeconds
+      Value: 2
+    - Path: bots.normal.fieldOfViewDegrees
+      Value: 130
+    - Path: bots.normal.memorySeconds
+      Value: 4
+    - Path: bots.hard.fieldOfViewDegrees
+      Value: 150
+    - Path: bots.hard.memorySeconds
+      Value: 6
+    - Path: bots.cooperation.communicationSeconds
+      Value: 0.3
   TeamProfile:
     id: unity-native-team-v1
     version: 1
