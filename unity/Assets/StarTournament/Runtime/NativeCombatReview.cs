@@ -30,6 +30,7 @@ namespace StarTournament.ProvingGround
             var args=Environment.GetCommandLineArgs(); int flag=Array.IndexOf(args,"-combatEvidence");
             directory=flag>=0 && flag+1<args.Length ? args[flag+1] : Path.Combine(Application.persistentDataPath,"combat-review");
             Directory.CreateDirectory(directory);
+            Application.runInBackground=true; // QA harness must finish its bounded synthetic sequence after window focus changes.
             bool shotFeedback=Array.IndexOf(args,"-shotFeedbackReview")>=0;
             bool oneViewport=Array.IndexOf(args,"-oneViewportReview")>=0;
             // Review timings/positions below are scenario fixtures, not shipping gameplay tuning.
@@ -51,16 +52,21 @@ namespace StarTournament.ProvingGround
                 for(int i=1;i<reviewCameras.Length;i++)reviewCameras[i].enabled=false;
                 if(reviewCameras.Length>0)reviewCameras[0].rect=new Rect(0,0,1,1);
             }
-            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),20);
-            ground.PlaceCombatReviewSeat(1,new Vector3(-8,0,3.5f),0);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);
+            // Eight metres of separation exposes the existing pellet spread in a first-person capture
+            // while keeping this QA-only target on the shooter's current aim ray.
+            ground.PlaceCombatReviewSeat(1,new Vector3(-8,0,10),0);
             ground.PlaceCombatReviewSeat(2,new Vector3(0,0,3),0);
             ground.PlaceCombatReviewSeat(3,new Vector3(8,0,3),0);
             yield return new WaitForSeconds(.3f);
             yield return Capture("live");
+            Debug.Log("NATIVE_COMBAT_REVIEW_SHOT_DISPATCH "+directory);
             InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});
             yield return new WaitForSeconds(shotFeedback?.12f:.2f);
             yield return Capture(shotFeedback?"pellets-flight":"damage");
-            yield return new WaitForSeconds(shotFeedback?.14f:0);
+            // The prior flight snapshot is intentionally before the bounded flight lifetime; this one
+            // must be after it so the contact-only impact is what the evidence records.
+            yield return new WaitForSeconds(shotFeedback?.2f:0);
             if(shotFeedback)yield return Capture("pellets-impact");
             InputSystem.QueueStateEvent(pads[0],new GamepadState());
             yield return new WaitForSeconds(.8f);

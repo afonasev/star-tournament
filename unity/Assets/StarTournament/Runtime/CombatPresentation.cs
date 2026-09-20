@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround
     public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
-        sealed class PelletEffect { public GameObject Root; public LineRenderer Trace; public Vector3 Start, End, Normal; public double Begins; public bool Contact; }
+        sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, End, Normal; public double Begins; public bool Contact; }
         readonly NativeCombatSession session;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround
         bool disposed;
         readonly List<Corpse> corpses = new List<Corpse>();
         readonly List<PelletEffect> pellets = new List<PelletEffect>();
-        Material shotMaterial;
+        Material shotMaterial, traceMaterial;
         public int ActiveShotEffectCount => pellets.Count;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null)
@@ -54,29 +54,50 @@ namespace StarTournament.ProvingGround
             {
                 if(pellets.Count>=capacity) break;
                 var root=new GameObject("shot-pellet-"+notice.Sequence+"-"+pellets.Count);root.transform.SetParent(owner,false);
-                var line=root.AddComponent<LineRenderer>();line.useWorldSpace=true;line.positionCount=2;
-                line.startWidth=line.endWidth=movement.Get("presentation.shotTracerWidth");line.material=ShotMaterial();
-                line.startColor=new Color(1f,.95f,.42f,1f);line.endColor=new Color(1f,.32f,.04f,.9f);
-                var start=Muzzle(notice.Shooter,pellets.Count);line.SetPosition(0,start);line.SetPosition(1,start);
+                var trace=GameObject.CreatePrimitive(PrimitiveType.Capsule);trace.name="pellet-streak";trace.transform.SetParent(root.transform,false);
+                var collider=trace.GetComponent<Collider>();if(collider)Object.Destroy(collider);
+                trace.GetComponent<Renderer>().material=TraceMaterial();
+                var muzzle=Muzzle(notice.Shooter,pellets.Count);
+                var clearance=Mathf.Min(movement.Get("presentation.shotMuzzleClearance"),Vector3.Distance(muzzle,pellet.Endpoint)*.5f);
+                var start=muzzle+pellet.Direction*clearance;
+                trace.transform.position=start;
                 bool contact=pellet.Contact!=PelletContact.Miss;
                 // Multiple hitscan pellets commonly share one small hit volume: render one readable contact flash,
                 // not a stack of identical spheres. The individual flight paths remain visible.
                 if(contact)
                     foreach(var existing in pellets)
                         if(existing.Contact && Vector3.Distance(existing.End,pellet.Endpoint)<movement.Get("presentation.shotImpactSize")*2f) { contact=false;break; }
-                pellets.Add(new PelletEffect{Root=root,Trace=line,Start=start,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact});
+                pellets.Add(new PelletEffect{Root=root,Trace=trace,Start=start,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact});
             }
         }
         Material ShotMaterial()
         {
             if(shotMaterial)return shotMaterial;
-            var shader=Shader.Find("Sprites/Default") ?? Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color");
-            shotMaterial=new Material(shader){color=new Color(1f,.55f,.12f,1f)};return shotMaterial;
+            var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
+            shotMaterial=new Material(shader){color=new Color(1f,.72f,.08f,1f)};
+            if(shotMaterial.HasProperty("_BaseColor"))shotMaterial.SetColor("_BaseColor",new Color(1f,.72f,.08f,1f));
+            if(shotMaterial.HasProperty("_EmissionColor")){shotMaterial.EnableKeyword("_EMISSION");shotMaterial.SetColor("_EmissionColor",new Color(1f,.45f,.02f,1f));}
+            return shotMaterial;
+        }
+        Material TraceMaterial()
+        {
+            if(traceMaterial)return traceMaterial;
+            var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
+            traceMaterial=new Material(shader){color=new Color(.12f,.9f,1f,1f)};
+            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",new Color(.12f,.9f,1f,1f));
+            if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(.04f,.75f,1f,1f));}
+            return traceMaterial;
         }
         Vector3 Muzzle(int participant,int pellet)
         {
             int view=ViewOf(participant);
-            if(view>=0 && views[view]) return views[view].transform.TransformPoint(new Vector3(pellet%2==0?.07f:-.07f,-.05f,.72f));
+            // The arms root is animation-owned. Derive the visible weapon mount from the stable camera
+            // and its authored mount profile, so the presentation tube remains on the same aim axis as
+            // the authoritative endpoint instead of inheriting a sampled arm-pose transform.
+            if(view>=0 && cameras[view]) return cameras[view].transform.TransformPoint(new Vector3(
+                movement.Get("presentation.viewWeaponX")+(pellet%2==0?.07f:-.07f),
+                movement.Get("presentation.viewWeaponY")-.05f,
+                movement.Get("presentation.viewWeaponZ")+.72f));
             return bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
         }
         void RenderPellets()
@@ -89,7 +110,8 @@ namespace StarTournament.ProvingGround
                 {
                     float progress=Mathf.Clamp01(elapsed/flight);var head=Vector3.Lerp(effect.Start,effect.End,progress);
                     var tail=Vector3.Lerp(effect.Start,effect.End,Mathf.Max(0,progress-.18f));
-                    effect.Trace.SetPosition(0,tail);effect.Trace.SetPosition(1,head);continue;
+                    Vector3 delta=head-tail;effect.Trace.transform.SetPositionAndRotation((head+tail)*.5f,Quaternion.FromToRotation(Vector3.up,delta.normalized));
+                    float width=movement.Get("presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);continue;
                 }
                 if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Contact)CreateImpact(effect);}
                 if(elapsed>=flight+impact){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
@@ -117,7 +139,7 @@ namespace StarTournament.ProvingGround
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();
             foreach(var pellet in pellets)if(pellet.Root)Object.Destroy(pellet.Root);
-            pellets.Clear();if(shotMaterial)Object.Destroy(shotMaterial);
+            pellets.Clear();if(shotMaterial)Object.Destroy(shotMaterial);if(traceMaterial)Object.Destroy(traceMaterial);
             foreach(var body in bodies)if(body)body.SetActive(true);
             foreach(var view in views)if(view)view.SetActive(true);
         }
