@@ -16,6 +16,7 @@ specs; it links to that home rather than duplicating delivery lifecycle state.
 Historical browser changes are not resumed by this adoption. The closure in
 `docs/BROWSER_BACKLOG_CLOSURE.md` still governs them.
 
-Deployment is not authorized by this profile. `make deploy` is recorded as
-the discovered command, but it must not be run until the owner explicitly
-authorizes the target environment and a release-identity check is recorded.
+Deployment is not authorized by this profile. The former browser `make deploy`
+command was removed with the legacy runtime on 2026-09-21. Native Unity
+distribution, target environment, release identity and smoke command remain
+unconfigured pending an explicit owner decision.

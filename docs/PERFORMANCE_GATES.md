@@ -1,5 +1,10 @@
 # Performance gates
 
+> Historical browser gate (2026-09-21): этот документ описывает удалённый
+> Vite/Three.js runtime и сохранён только вместе с его evidence. `npm run
+> perf:browser` больше не существует в текущем дереве; Unity performance gates
+> перечислены в `docs/UNITY_MIGRATION_MATRIX.md` и требуют native Player QA.
+
 Этот документ задаёт постоянную проверку производительности Star Tournament. Она дополняет, но не заменяет functional tests, screenshots и физический browser playtest.
 
 ## Версии baseline

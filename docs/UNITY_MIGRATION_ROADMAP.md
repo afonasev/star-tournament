@@ -77,7 +77,7 @@
 
 Сериализуемое gameplay state, профили и отделение правил от presentation сохраняются. Fixed timestep полезен для организации runtime, но не гарантирует детерминизма. PhysX не гарантирует одинаковый результат между платформами/сборками.
 
-Browser baseline использует deterministic Rapier 0.20.0 и collision-contract-v2. Его historical replay и hashes остаются эталоном исходной версии, а не обязательством нового runtime. Stage 0 сверил GAME_SPEC с кодом: collision v2, match configuration v5 с legacy v4; snapshot v4 и replay v5.
+Browser baseline использовал deterministic Rapier 0.20.0 и collision-contract-v2. Его historical replay и hashes остаются эталоном исходной версии, а не обязательством нового runtime. Legacy browser implementation удалена из текущего дерева 2026-09-21; exact code доступен только через Git history и сохранённые evidence. Stage 0 сверил GAME_SPEC с тогдашним кодом: collision v2, match configuration v5 с legacy v4; snapshot v4 и replay v5.
 
 Пользователь выбрал Unity replay по записанным состояниям, но 2026-09-20 отложил его реализацию. Его детальная схема, частота записи, события/seek/restore и необходимость historical compatibility ещё открыты. Отказ от детерминизма не утверждает автоматически server-authoritative, lockstep либо иной сетевой контракт. Пока не подключать transport/сервисы без отдельного выбора модели.
 
@@ -87,7 +87,7 @@ Browser baseline использует deterministic Rapier 0.20.0 и collision-c
 
 - Утверждены Full HD–4K output и минимум 60 FPS при четырёх игроках; уточнить reference PC/TV, quality/internal scale и frame-time методику. Первый срез без покупок; бюджет расширений позднее.
 - Replay отложен решением 2026-09-20; его детализация не блокирует текущие срезы.
-- Снять точный source commit/profile/seed/scenario baseline; сохранить browser-версию как эталон.
+- Снять точный source commit/profile/seed/scenario baseline; сохранить Git history и historical evidence browser-версии как эталон.
 - Согласовать устаревшие пункты GAME_SPEC, затем обновить утверждённые решения и оформить первый ограниченный OpenSpec change.
 - Прочитать актуальное окружение Unity; ничего не предполагать по историческим версиям соседнего unity-rts.
 
@@ -151,7 +151,7 @@ Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B
 - Сборки Windows/macOS согласно согласованной матрице, выпуск и обновления, smoke установленного приложения.
 - Реальные gamepads/TV, reconnect, focus, readable HUD, длинный матч, audio-specific проверка отдельно от muted QA.
 - Обновить browser-specific workflow на native Player acceptance перед применением к Unity; не объявлять browser smoke доказательством native input.
-- Сохранить browser baseline до завершения Unity acceptance; не вести две полноценные реализации новых фич без необходимости.
+- Не восстанавливать browser runtime ради Unity acceptance; сохранять его Git history и historical evidence, не ведя две полноценные реализации новых фич.
 
 Выход: Unity становится основной версией после подтверждённой приёмки, а не только успешной сборки.
 
@@ -161,7 +161,7 @@ Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B
 
 `add-local-split-screen-controls` архивируется без spec sync: исторические 6/9 остаются 6/9, проверки 3.1–3.3 не объявляются выполненными. Четыре оставшихся handoff переносятся из активного списка с явным статусом отмены остатка работ. Неинтегрированная ветка robot shadows не является кандидатом на дальнейший merge/deploy.
 
-Старые код и тесты можно читать как справочный материал; обязательства буквально переносить реализацию или закрывать старую browser-приёмку нет. Продуктовые требования и пригодные ассеты сохраняют ценность. Native input, графика, physics и performance получают новые Unity-проверки.
+Старые код и тесты доступны через Git history как справочный материал; обязательства буквально переносить реализацию или закрывать старую browser-приёмку нет. Продуктовые требования и пригодные ассеты сохраняют ценность. Native input, графика, physics и performance получают новые Unity-проверки.
 
 Оценку сроков делать после этапа 1: ключевые неопределённости — motor/physics contract, tooling генератора и native split-screen. Не обещать процент повторного использования по количеству строк.
 

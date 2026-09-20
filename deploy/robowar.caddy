@@ -1,6 +1,0 @@
-robowar.afonasev.tech {
-	root * /opt/robowar
-	encode zstd gzip
-	try_files {path} /index.html
-	file_server
-}
