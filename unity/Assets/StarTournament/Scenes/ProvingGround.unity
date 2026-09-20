@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1921012336
+--- !u!1 &1746725631
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1921012338}
-  - component: {fileID: 1921012337}
+  - component: {fileID: 1746725633}
+  - component: {fileID: 1746725632}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1921012337
+--- !u!114 &1746725632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1921012336}
+  m_GameObject: {fileID: 1746725631}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -1429,6 +1429,682 @@ MonoBehaviour:
       Value: 0.3
     - Path: bots.navigation.slowDistance
       Value: 1
+  BotBehaviorProfile:
+    id: unity-bot-behavior-v1
+    version: 1
+    descriptors:
+    - Path: bots.easy.reactionSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0420\u0435\u0430\u043A\u0446\u0438\u044F"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u0430\u0442\u0430\u043A\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.6
+    - Path: bots.easy.decisionSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430
+        \u0446\u0435\u043B\u0438 \u0438 \u043F\u0443\u0442\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.35
+    - Path: bots.easy.aimDegreesPerSecond
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 240
+      Step: 1
+      DefaultValue: 90
+    - Path: bots.easy.aimErrorDegrees
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041E\u0448\u0438\u0431\u043A\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0438\u0432\u0430\u043D\u0438\u044F."
+      Unit: degrees
+      Minimum: 0.5
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 12
+    - Path: bots.easy.aimPeriodSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0420\u0438\u0442\u043C
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u041F\u0435\u0440\u0438\u043E\u0434 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.4
+    - Path: bots.easy.fireToleranceDegrees
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041E\u043A\u043D\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 18
+    - Path: bots.easy.preferredDistanceMeters
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F"
+      Description: "\u0416\u0435\u043B\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 6
+    - Path: bots.easy.strafeSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0420\u0438\u0442\u043C
+        \u0441\u0442\u0440\u0435\u0439\u0444\u0430"
+      Description: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0430\u043D\u0451\u0432\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.8
+    - Path: bots.easy.strafeWeight
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0421\u0442\u0440\u0435\u0439\u0444"
+      Description: "\u0412\u0435\u0441 \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: bots.easy.jumpCooldownSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u0430\u0443\u0437\u0430
+        \u043F\u0440\u044B\u0436\u043A\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043F\u0440\u044B\u0436\u043A\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 6
+    - Path: bots.easy.jumpChance
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0411\u043E\u0435\u0432\u043E\u0439
+        \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u0412\u0435\u0440\u043E\u044F\u0442\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0440\u044B\u0436\u043A\u0430 \u043F\u0440\u0438 \u0441\u043C\u0435\u043D\u0435
+        \u0431\u043E\u0435\u0432\u043E\u0433\u043E \u043C\u0430\u043D\u0451\u0432\u0440\u0430
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u043C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: bots.easy.retreatSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439
+        \u043E\u0442\u0445\u043E\u0434"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043E\u0442\u0445\u043E\u0434\u0430 \u043F\u043E\u0441\u043B\u0435
+        \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0443\u0433\u0440\u043E\u0437\u044B
+        \u043F\u0440\u0438 \u043D\u0438\u0437\u043A\u043E\u043C \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.easy.retreatHealthRatio
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043E\u0440\u043E\u0433
+        \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043E\u043B\u044F \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+        \u0434\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: bots.easy.supportChance
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u0421\u043A\u043B\u043E\u043D\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043C\u043E\u0447\u044C \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u043C\u0443
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: bots.normal.reactionSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0420\u0435\u0430\u043A\u0446\u0438\u044F"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u0430\u0442\u0430\u043A\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.28
+    - Path: bots.normal.decisionSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430
+        \u0446\u0435\u043B\u0438 \u0438 \u043F\u0443\u0442\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.2
+    - Path: bots.normal.aimDegreesPerSecond
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 240
+      Step: 1
+      DefaultValue: 160
+    - Path: bots.normal.aimErrorDegrees
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041E\u0448\u0438\u0431\u043A\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0438\u0432\u0430\u043D\u0438\u044F."
+      Unit: degrees
+      Minimum: 0.5
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 5
+    - Path: bots.normal.aimPeriodSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0420\u0438\u0442\u043C \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u041F\u0435\u0440\u0438\u043E\u0434 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1
+    - Path: bots.normal.fireToleranceDegrees
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041E\u043A\u043D\u043E \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 12
+    - Path: bots.normal.preferredDistanceMeters
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F"
+      Description: "\u0416\u0435\u043B\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 5
+    - Path: bots.normal.strafeSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0420\u0438\u0442\u043C \u0441\u0442\u0440\u0435\u0439\u0444\u0430"
+      Description: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0430\u043D\u0451\u0432\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.1
+    - Path: bots.normal.strafeWeight
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0421\u0442\u0440\u0435\u0439\u0444"
+      Description: "\u0412\u0435\u0441 \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: bots.normal.jumpCooldownSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u0430\u0443\u0437\u0430 \u043F\u0440\u044B\u0436\u043A\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043F\u0440\u044B\u0436\u043A\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.normal.jumpChance
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0411\u043E\u0435\u0432\u043E\u0439
+        \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u0412\u0435\u0440\u043E\u044F\u0442\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0440\u044B\u0436\u043A\u0430 \u043F\u0440\u0438 \u0441\u043C\u0435\u043D\u0435
+        \u0431\u043E\u0435\u0432\u043E\u0433\u043E \u043C\u0430\u043D\u0451\u0432\u0440\u0430
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u043C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.18
+    - Path: bots.normal.retreatSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439
+        \u043E\u0442\u0445\u043E\u0434"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043E\u0442\u0445\u043E\u0434\u0430 \u043F\u043E\u0441\u043B\u0435
+        \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0443\u0433\u0440\u043E\u0437\u044B
+        \u043F\u0440\u0438 \u043D\u0438\u0437\u043A\u043E\u043C \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
+    - Path: bots.normal.retreatHealthRatio
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043E\u0440\u043E\u0433 \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043E\u043B\u044F \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+        \u0434\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.05
+      DefaultValue: 0.3
+    - Path: bots.normal.supportChance
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u0421\u043A\u043B\u043E\u043D\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043C\u043E\u0447\u044C \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u043C\u0443
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.45
+    - Path: bots.hard.reactionSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0420\u0435\u0430\u043A\u0446\u0438\u044F"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u0430\u0442\u0430\u043A\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: bots.hard.decisionSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430
+        \u0446\u0435\u043B\u0438 \u0438 \u043F\u0443\u0442\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: bots.hard.aimDegreesPerSecond
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 240
+      Step: 1
+      DefaultValue: 230
+    - Path: bots.hard.aimErrorDegrees
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041E\u0448\u0438\u0431\u043A\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0438\u0432\u0430\u043D\u0438\u044F."
+      Unit: degrees
+      Minimum: 0.5
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 1.5
+    - Path: bots.hard.aimPeriodSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0420\u0438\u0442\u043C
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u041F\u0435\u0440\u0438\u043E\u0434 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.hard.fireToleranceDegrees
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041E\u043A\u043D\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 8
+    - Path: bots.hard.preferredDistanceMeters
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F"
+      Description: "\u0416\u0435\u043B\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.hard.strafeSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0420\u0438\u0442\u043C
+        \u0441\u0442\u0440\u0435\u0439\u0444\u0430"
+      Description: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0430\u043D\u0451\u0432\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.hard.strafeWeight
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0421\u0442\u0440\u0435\u0439\u0444"
+      Description: "\u0412\u0435\u0441 \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.85
+    - Path: bots.hard.jumpCooldownSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u0430\u0443\u0437\u0430
+        \u043F\u0440\u044B\u0436\u043A\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043F\u0440\u044B\u0436\u043A\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 3
+    - Path: bots.hard.jumpChance
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0411\u043E\u0435\u0432\u043E\u0439
+        \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u0412\u0435\u0440\u043E\u044F\u0442\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0440\u044B\u0436\u043A\u0430 \u043F\u0440\u0438 \u0441\u043C\u0435\u043D\u0435
+        \u0431\u043E\u0435\u0432\u043E\u0433\u043E \u043C\u0430\u043D\u0451\u0432\u0440\u0430
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u043C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.22
+    - Path: bots.hard.retreatSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439
+        \u043E\u0442\u0445\u043E\u0434"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043E\u0442\u0445\u043E\u0434\u0430 \u043F\u043E\u0441\u043B\u0435
+        \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0443\u0433\u0440\u043E\u0437\u044B
+        \u043F\u0440\u0438 \u043D\u0438\u0437\u043A\u043E\u043C \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1.2
+    - Path: bots.hard.retreatHealthRatio
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043E\u0440\u043E\u0433
+        \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043E\u043B\u044F \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+        \u0434\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: bots.hard.supportChance
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u0421\u043A\u043B\u043E\u043D\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043C\u043E\u0447\u044C \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u043C\u0443
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: bots.cooperation.separationMeters
+      Group: bots
+      Label: "\u041B\u0438\u0447\u043D\u043E\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0440\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u0438\u044F
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u043E\u0432."
+      Unit: meters
+      Minimum: 1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 2.5
+    - Path: bots.cooperation.supportSeconds
+      Group: bots
+      Label: "\u0412\u0440\u0435\u043C\u044F \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u043E\u0431\u0449\u0435\u0433\u043E
+        \u043D\u0430\u043C\u0435\u0440\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3
+    - Path: bots.cooperation.supportDistanceMeters
+      Group: bots
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u043E \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043C\u043E\u0449\u0438."
+      Unit: meters
+      Minimum: 3
+      Maximum: 40
+      Step: 1
+      DefaultValue: 18
+    - Path: bots.cooperation.personalitySpread
+      Group: bots
+      Label: "\u0420\u0430\u0437\u043D\u043E\u043E\u0431\u0440\u0430\u0437\u0438\u0435"
+      Description: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0438\u043D\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043B\u044C\u043D\u043E\u0439
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u0438 \u0438 \u0440\u0438\u0442\u043C\u0430
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043F\u0440\u043E\u0444\u0438\u043B\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.4
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: bots.tactics.retreatCooldownSeconds
+      Group: bots
+      Label: "\u041F\u0430\u0443\u0437\u0430 \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u0442\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u043C\u0438
+        \u043E\u0442\u0445\u043E\u0434\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.tactics.supportCooldownSeconds
+      Group: bots
+      Label: "\u041F\u0430\u0443\u0437\u0430 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u0442\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u043C\u0438
+        \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F\u043C\u0438 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 5
+    - Path: bots.tactics.probeDistance
+      Group: bots
+      Label: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0440\u043E\u0431\u044B"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0442\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0439
+        \u043F\u0440\u043E\u0431\u044B \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430
+        \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0433\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
+    - Path: bots.tactics.jumpSamples
+      Group: bots
+      Label: "\u041F\u0440\u043E\u0431\u044B \u043F\u0440\u044B\u0436\u043A\u0430"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C fixed-step \u043F\u0440\u043E\u0431
+        \u0442\u0440\u0430\u0435\u043A\u0442\u043E\u0440\u0438\u0438 motor; \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u044F\u0435\u0442 \u043F\u0440\u044B\u0436\u043E\u043A."
+      Unit: count
+      Minimum: 4
+      Maximum: 512
+      Step: 1
+      DefaultValue: 128
+    - Path: bots.tactics.coverDistance
+      Group: bots
+      Label: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0443\u043A\u0440\u044B\u0442\u0438\u044F"
+      Description: "\u0426\u0435\u043B\u0435\u0432\u0430\u044F \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F
+        \u0434\u043E \u0442\u043E\u0447\u043A\u0438 \u043A\u0440\u0430\u0442\u043A\u043E\u0433\u043E
+        \u0443\u043A\u0440\u044B\u0442\u0438\u044F."
+      Unit: meters
+      Minimum: 1
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3
+    values:
+    - Path: bots.easy.reactionSeconds
+      Value: 0.6
+    - Path: bots.easy.decisionSeconds
+      Value: 0.35
+    - Path: bots.easy.aimDegreesPerSecond
+      Value: 90
+    - Path: bots.easy.aimErrorDegrees
+      Value: 12
+    - Path: bots.easy.aimPeriodSeconds
+      Value: 1.4
+    - Path: bots.easy.fireToleranceDegrees
+      Value: 18
+    - Path: bots.easy.preferredDistanceMeters
+      Value: 6
+    - Path: bots.easy.strafeSeconds
+      Value: 1.8
+    - Path: bots.easy.strafeWeight
+      Value: 0.35
+    - Path: bots.easy.jumpCooldownSeconds
+      Value: 6
+    - Path: bots.easy.jumpChance
+      Value: 0.12
+    - Path: bots.easy.retreatSeconds
+      Value: 0.7
+    - Path: bots.easy.retreatHealthRatio
+      Value: 0.2
+    - Path: bots.easy.supportChance
+      Value: 0.2
+    - Path: bots.normal.reactionSeconds
+      Value: 0.28
+    - Path: bots.normal.decisionSeconds
+      Value: 0.2
+    - Path: bots.normal.aimDegreesPerSecond
+      Value: 160
+    - Path: bots.normal.aimErrorDegrees
+      Value: 5
+    - Path: bots.normal.aimPeriodSeconds
+      Value: 1
+    - Path: bots.normal.fireToleranceDegrees
+      Value: 12
+    - Path: bots.normal.preferredDistanceMeters
+      Value: 5
+    - Path: bots.normal.strafeSeconds
+      Value: 1.1
+    - Path: bots.normal.strafeWeight
+      Value: 0.65
+    - Path: bots.normal.jumpCooldownSeconds
+      Value: 4
+    - Path: bots.normal.jumpChance
+      Value: 0.18
+    - Path: bots.normal.retreatSeconds
+      Value: 1
+    - Path: bots.normal.retreatHealthRatio
+      Value: 0.3
+    - Path: bots.normal.supportChance
+      Value: 0.45
+    - Path: bots.hard.reactionSeconds
+      Value: 0.12
+    - Path: bots.hard.decisionSeconds
+      Value: 0.1
+    - Path: bots.hard.aimDegreesPerSecond
+      Value: 230
+    - Path: bots.hard.aimErrorDegrees
+      Value: 1.5
+    - Path: bots.hard.aimPeriodSeconds
+      Value: 0.7
+    - Path: bots.hard.fireToleranceDegrees
+      Value: 8
+    - Path: bots.hard.preferredDistanceMeters
+      Value: 4
+    - Path: bots.hard.strafeSeconds
+      Value: 0.7
+    - Path: bots.hard.strafeWeight
+      Value: 0.85
+    - Path: bots.hard.jumpCooldownSeconds
+      Value: 3
+    - Path: bots.hard.jumpChance
+      Value: 0.22
+    - Path: bots.hard.retreatSeconds
+      Value: 1.2
+    - Path: bots.hard.retreatHealthRatio
+      Value: 0.35
+    - Path: bots.hard.supportChance
+      Value: 0.65
+    - Path: bots.cooperation.separationMeters
+      Value: 2.5
+    - Path: bots.cooperation.supportSeconds
+      Value: 3
+    - Path: bots.cooperation.supportDistanceMeters
+      Value: 18
+    - Path: bots.cooperation.personalitySpread
+      Value: 0.2
+    - Path: bots.tactics.retreatCooldownSeconds
+      Value: 4
+    - Path: bots.tactics.supportCooldownSeconds
+      Value: 5
+    - Path: bots.tactics.probeDistance
+      Value: 1
+    - Path: bots.tactics.jumpSamples
+      Value: 128
+    - Path: bots.tactics.coverDistance
+      Value: 3
   RosterProfile:
     id: unity-native-roster-v1
     version: 1
@@ -1635,13 +2311,13 @@ MonoBehaviour:
       Value: 1200
     - Path: score.chainIncrement
       Value: 400
---- !u!4 &1921012338
+--- !u!4 &1746725633
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1921012336}
+  m_GameObject: {fileID: 1746725631}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1654,4 +2330,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1921012338}
+  - {fileID: 1746725633}

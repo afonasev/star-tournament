@@ -36,10 +36,10 @@
 | --- | --- | --- | --- |
 | AI-1 GS §2,7; bot-ai honest observation | NativeBotPerception/ObservationProvider, FOV/LOS/time memory, delayed direct-only reports | Shipping sensor lifecycle | Hidden movement/death/respawn, expiry, no relay, pause/Repeat |
 | AI-2 bot-ai active navigation; multi-level-arena-navigation | Verified native routes/support/ordinary actions/bounded recovery (handoff 25) | Shipping planner integration и generated-scene routing | Stairs/ramp both directions × 3 lanes, overlap-XZ, blocker, replan |
-| AI-3 GS §2; bot-ai active behavior | Нет planner | Search, combat approach/strafe, bounded retreat, situational jumps | Real mixed-difficulty matches, contact/idle/stuck/jump cadence |
-| AI-4 bot-ai three difficulties | Только FOV/memory различия | Reaction/aim/decisions/personality без stat/hidden-info bonuses | Equal stats contract + independent paired difficulty evaluation |
-| AI-5 bot-ai temporary support | Только reports | Temporary human/bot support, alternate angles, personal space | Team support/disband/close-group metrics, FFA isolation |
-| AI-6 bot-ai extensibility/state | Perception + validated navigation/goal/transition snapshots | Full planner/weapon policy, RNG/intention state | Extension fixture, independent snapshots/validated restore |
+| AI-3 GS §2; bot-ai active behavior | Planner verified in automated checks and focused FHD/4K Player pilot (handoff27) | Shipping exposure и generated-arena validation | Real mixed-difficulty matches, contact/idle/stuck/jump cadence |
+| AI-4 bot-ai three difficulties | Behavior profile + reaction/aim/decision/personality без stat bonuses; internal Player pilot verified (handoff27) | Independent statistical acceptance | Equal stats contract + independent paired difficulty evaluation |
+| AI-5 bot-ai temporary support | Bounded support/retreat, allowlisted human/bot allies; internal Player pilot verified (handoff27) | Native pilot и final-map team metrics | Team support/disband/close-group metrics, FFA isolation |
+| AI-6 bot-ai extensibility/state | Planner/policy + validated RNG/timers/intent/native-route DTO (handoff27) | Full recorded match replay remains separate | Extension fixture, independent snapshots/validated restore |
 | AI-7 ai-headless-evaluation | Native runner отсутствует | Same-runtime accelerated bot-only suite, artifacts/telemetry | Paired sides, all sizes/FFA/teams/2–8, confidence intervals, holdout |
 | AI-8 GS §5; match-loop-ui | Human-only setup | Add/remove/difficulty labels/frozen roster | Ordinary Player human-versus-bot, death/respawn/results/Repeat |
 

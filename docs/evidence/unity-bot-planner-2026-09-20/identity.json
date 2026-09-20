@@ -1,0 +1,60 @@
+{
+  "base": "9f207d2facb071c94df5ae32007673bd7cbe4b9b",
+  "branch": "codex/unity-bot-planner",
+  "unity": "6000.3.23f1",
+  "status": "INTERNAL_SLICE_VERIFIED_PLAYER_PILOT_NOT_FINAL_ACCEPTANCE",
+  "executable": "/private/tmp/star-tournament-unity-bot-planner/unity/Builds/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+  "executableSHA256": "2c79ed975c331346e388d47ee96ff7297e071bdad0f01819d0c7fa23f2810e3c",
+  "sources": {
+    "unity/Assets/StarTournament/Editor/ProvingGroundBuild.cs": "1776710ddd60fb97348b91f5424bdd4d878bb8eac2f07a16297730e9b81cd4dc",
+    "unity/Assets/StarTournament/Runtime/Core/NativeBotBehaviorProfile.cs": "a22d95b07a2f9562298de241c8264935f536cc09fe4e83921e1b7a240fe1ce5d",
+    "unity/Assets/StarTournament/Runtime/Core/NativeBotBehaviorProfile.cs.meta": "36bf587170f6cc3a13af782c6895917b7fbeded81e01dd9f554414cd296587a7",
+    "unity/Assets/StarTournament/Runtime/Core/NativeBotNavigation.cs": "71131765fe115201d67d3eefcb87b6c5609a05bf99a3de29a2fc9ba7cd06726e",
+    "unity/Assets/StarTournament/Runtime/Core/NativeBotPlanner.cs": "d4278e294d8036d2a89f428c6c00de0faab5129da1ced8ea30148ceb8ed86b2a",
+    "unity/Assets/StarTournament/Runtime/Core/NativeBotPlanner.cs.meta": "5a2096a6561c914faf67afa802a3db5f438cae6b42d3f6759e19023115a28cc4",
+    "unity/Assets/StarTournament/Runtime/NativeBotBehaviorReview.cs": "7062a4e5a46a3ab042511bfee1410768c979824afbfcb5048aa60c4bf3bf3eaf",
+    "unity/Assets/StarTournament/Runtime/NativeBotBehaviorReview.cs.meta": "b35e0c2d70bc5085aa1190d79c93a54ee48765ba0e447df136483b84649f6c19",
+    "unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs": "3dd72ea4116939cc20e622dbfb49947d292bfbf7661afff9429a645f80252351",
+    "unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs.meta": "fd25cfb7e647126e77d617c34f45d637395c87dae0b753de94a75e3f2bf1ceb4",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "8b2113ad45bcc3c3f5d9e3de4a6bfb4e6b9349c023ff8dba8ef075a2a850ba1b",
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity": "3bf340148301892aca37039397b20c35a13fcc54fae614f48715445113f47b98",
+    "unity/Assets/StarTournament/Tests/EditMode/NativeBotPlannerTests.cs": "dcef7b1ac66fc183a3f0fe57dab6bd75a23605ea7a4649e3c4f7a6f8233e9d04",
+    "unity/Assets/StarTournament/Tests/EditMode/NativeBotPlannerTests.cs.meta": "1226d26604ee01e43ee5087e8439793b7751f35da4b4192edf69e76ea726e759",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeBotBehaviorTests.cs": "557ff5693fe618305fa267da4e3e0054a6a8f1edf67c2bf6e1611eb8ea266367",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeBotBehaviorTests.cs.meta": "1aa8a7c5c3001931b8bb20df1ab6954ea11515646771906cd795e7e8f8ba0a86"
+  },
+  "tests": {
+    "editmode": {
+      "id": "2",
+      "testcasecount": "74",
+      "result": "Passed",
+      "total": "74",
+      "passed": "74",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-09-20 05:43:52Z",
+      "end-time": "2026-09-20 05:43:52Z",
+      "duration": "0.3187333"
+    },
+    "playmode": {
+      "id": "2",
+      "testcasecount": "60",
+      "result": "Passed",
+      "total": "60",
+      "passed": "60",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-09-20 05:44:09Z",
+      "end-time": "2026-09-20 05:44:53Z",
+      "duration": "44.5227539"
+    }
+  }
+}

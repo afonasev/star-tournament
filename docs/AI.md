@@ -1,3 +1,15 @@
+# Unity bot behavior — текущий проверяемый срез
+
+`add-unity-bot-planner` соединяет frozen participant roster и difficulty с `NativeBotMatchDriver`. Один observation pass до всех действий; human direct reports исключены. Planner получает собственные pose/life, copied knowledge и ally identity/position, без session/скрытых enemy states. Все выстрелы/движение исполняет общий `NativeCombatSession`.
+
+`unity-bot-behavior-v1@1` переносит behavioral tuning трёх сложностей. Search использует semantic anchors обоих этажей; engage ограничивает реакцию/прицел и выдаёт отдельные press/release ticks. Retreat/support конечны и имеют cooldown. Local strafe требует общей опоры и безопасной прямой области; active transition сохраняет exit при потере цели и bounded retry. Прыжок прогнозирует текущую velocity и frozen fixed-step motor integration; airborne world direction удерживается до landing. Native physics остаётся authority, не обещается bitwise replay.
+
+Planner snapshot включает timers/RNG/target life/intent и navigation DTO; restore проверяет deadline bounds, вложенный clock и weapon identity. Pause/results не вызывают driver, Repeat создаёт driver заново с frozen seed/profiles/composition. Start/Repeat применяют frozen simulation cadence.
+
+Development `-botBehaviorReview -botBehaviorEvidence <dir>` исполняет самостоятельный AI (seed20260920), `-botControls` подключает настоящий keyboard/mouse viewport против семи ботов. Все world и first-person тела используют сохранённые seven-clips trooper v2 через `TrooperVisual`; AI не получает отдельной animation path. FHD/4K focused muted Player pilot и keyboard/mouse smoke завершены; это не shipping add/remove/difficulty setup и не доказывает статистическое превосходство уровней либо target60FPS.
+
+---
+
 # Unity participant composition — проверенный внутренний срез
 
 `add-unity-participant-roster` отделяет immutable metadata/mapping от combat roster: 2–8 participants и 1–4 local views. Human actions адресуются через seat→participant; fixtures не получают devices/cameras, unsupported bot source блокирует запуск. `NativeMatchComposition` хранит kind/name/resolved vetted color/difficulty и независимый snapshot; он не определяет полный replay.

@@ -40,6 +40,8 @@ namespace StarTournament.ProvingGround
         bool routeDirty;
         float P(string suffix) => profile.Get("bots.navigation." + suffix);
         public NativeNavigationStatus Status => state.Status;
+        public bool InTransition => !string.IsNullOrEmpty(state.ActiveTransition);
+        public int FollowedEnemy => state.Enemy;
         public NativeNavigationState Capture() => Copy(state);
         static NativeNavigationState Copy(NativeNavigationState value) => JsonUtility.FromJson<NativeNavigationState>(JsonUtility.ToJson(value));
 
@@ -63,7 +65,7 @@ namespace StarTournament.ProvingGround
             {
                 state.Recoveries = 0; state.Status = NativeNavigationStatus.Moving;
                 state.Route = Array.Empty<NativeNavigationPoint>(); state.Cursor = 0;
-                state.ProgressAt = state.Time; state.ActiveTransition = null; state.ExitSupport = null;
+                state.ProgressAt = state.Time;
                 routeDirty = true;
             }
             SetGoal(goal, -1, 0, -1);
@@ -71,6 +73,7 @@ namespace StarTournament.ProvingGround
         public void FollowEnemy(int participant)
         {
             if (participant < 0) throw new ArgumentOutOfRangeException(nameof(participant));
+            if (InTransition) { state.Enemy=participant; return; }
             Clear(); state.Enemy = participant;
         }
         void SetGoal(Vector3 goal, int enemy, int life, double observed)
@@ -87,6 +90,19 @@ namespace StarTournament.ProvingGround
                 routeDirty = true;
                 if (state.Status == NativeNavigationStatus.Idle || state.Status == NativeNavigationStatus.Arrived) state.Status = NativeNavigationStatus.Moving;
             }
+        }
+        public void RetryBlockedRoute()
+        {
+            if(state.Status!=NativeNavigationStatus.Blocked||!state.HasGoal)return;
+            state.Status=NativeNavigationStatus.Moving;state.Recoveries=0;state.ProgressAt=state.Time;
+            state.Route=Array.Empty<NativeNavigationPoint>();state.Cursor=0;state.NextRepath=0;routeDirty=true;
+            // Active transition/exit survives retries; a new path still targets that exit first.
+        }
+        public void ForgetEnemy()
+        {
+            if(!InTransition){Clear();return;}
+            state.Enemy=-1;state.EnemyLife=0;state.ObservedAt=-1;
+            state.HasGoal=true;state.Goal=state.TransitionExit;routeDirty=true;
         }
         public void Clear()
         {
@@ -116,7 +132,7 @@ namespace StarTournament.ProvingGround
             // Native routes are revalidated, not restored as authoritative physics handles.
             state.NextRepath = 0;
         }
-        public LocalAction Tick(double time, ParticipantState pose, NativeBotKnowledge knowledge, float? aimYaw = null)
+        public LocalAction Tick(double time, ParticipantState pose, NativeBotKnowledge knowledge, float? aimYaw = null, bool tacticalControl = false)
         {
             if (!Finite(time) || time < 0 || time <= state.Time || !Finite(pose.Position) || !Finite(pose.Yaw) ||
                 knowledge == null || knowledge.OwnLife < 1 || knowledge.Enemies == null || (aimYaw.HasValue && !Finite(aimYaw.Value)))
@@ -136,6 +152,8 @@ namespace StarTournament.ProvingGround
                 if (!found) { Clear(); return default; }
             }
             if (!state.HasGoal || state.Status == NativeNavigationStatus.Blocked) return default;
+            // Airborne tactical input follows a prevalidated motor trajectory; do not replan from mid-air feet.
+            if(tacticalControl && !pose.Grounded && !InTransition){state.ProgressAt=time;return default;}
             bool located = navigation.TryLocate(pose.Position, out var location);
             if (!string.IsNullOrEmpty(state.ActiveTransition) && located && location.Support == state.ExitSupport && pose.Grounded)
             { state.ActiveTransition = null; state.ExitSupport = null; routeDirty = true; }
@@ -177,6 +195,8 @@ namespace StarTournament.ProvingGround
             if (state.Cursor == state.Route.Length)
             { state.Status = routeDirty ? NativeNavigationStatus.Moving : NativeNavigationStatus.Arrived; return default; }
             var remaining = Remaining(pose.Position);
+            // A deliberate combat manoeuvre owns motion; it is not a failed route attempt.
+            if (tacticalControl && !InTransition) { state.ProgressAt = time; state.BestRemaining = remaining; }
             if (remaining <= state.BestRemaining - P("progressMeters"))
             { state.BestRemaining = remaining; state.ProgressAt = time; }
             if (time - state.ProgressAt >= P("stuckSeconds"))

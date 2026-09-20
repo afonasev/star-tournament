@@ -116,6 +116,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 7. Архитектурные принципы
 
+- Следующий native AI-срез `add-unity-bot-planner` соединяет честные perception/navigation с data-only planner и обычными действиями motor/shotgun. Профиль `unity-bot-behavior-v1@1` задаёт реакцию, прицеливание, решения, временные манёвры и поддержку. Один pre-tick observation для всех ботов; humans не служат неявными сенсорами с придуманной difficulty. Поддержка людей опирается на собственное знание бота и явно доступные союзные позиции. Межэтажный переход/recovery имеет приоритет над combat steering. Development journey содержит настоящих Bot-kind противников; shipping bot setup следует отдельным change. Seed/timers/RNG/planner snapshots не обещают полного recorded replay.
+
 - Полный Unity-перенос отслеживается в `docs/UNITY_MIGRATION_MATRIX.md`. Текущий navigation change переносит физическое следование допустимой цели через NavMesh и обычные действия CharacterMotor, с проверкой опор/переходов и ограниченным recovery. Это отдельный проверяемый компонент, а не завершение playable bots; planner, weapon/support, roster/solo/восемь участников и остальные разрывы остаются в матрице. Новый tuning принадлежит `unity-bot-navigation-v1@1`. Не возобновлять отменённый browser backlog и не требовать от Unity побитового browser replay.
 
 - Внутренний Unity-срез `add-unity-bot-perception` переносит честные FOV/LOS-наблюдения, память и отложенные direct-only сообщения союзников из bot contract. Профиль `unity-bot-perception-v1@1` содержит metadata трёх сложностей; скрытые позиции, смерть и смена жизни противника не обновляют последнее наблюдение. Сериализуемые знания и pending reports отделены от Unity physics handles и будущего planner. Это предпосылка playable bots, без AI-действий, изменения human-only setup, solo или восьми тел; полный Unity replay остаётся открытым.
@@ -177,6 +179,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Бюджет и лицензии платных motor/navigation/generator расширений за пределами бесплатного первого среза.
 
 ## 11. Журнал изменений
+
+- 2026-09-20: после participant composition выделен native planner/combat slice; Astra memo подтвердил общие action/weapon правила, временную поддержку и отдельный следующий shipping setup.
 
 - 2026-09-20: после проверенной навигации выделен participant/local-seat prerequisite для полного переноса: 1–4 локальных вида и 2–8 участников, без изменения минимального total roster и без фиктивных устройств для нелокальных тел.
 

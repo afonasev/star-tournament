@@ -29,6 +29,9 @@ namespace StarTournament.ProvingGround
         LocalAction[] localActions = new LocalAction[SeatInputCoordinator.SeatCount];
         public ProvingProfile BotPerceptionProfile = ProvingProfile.CreateBotPerceptionDefault();
         public ProvingProfile BotNavigationProfile = ProvingProfile.CreateNavigationDefault();
+        public ProvingProfile BotBehaviorProfile = ProvingProfile.CreateBotBehaviorDefault();
+        public NativeBotMatchDriver BotDriver {get;private set;}
+        bool botReviewEnabled; uint botSeed; ProvingProfile frozenBehavior;
         public NativeNavigationDriver NavigationReviewDriver { get; private set; }
         bool navigationReviewEnabled;
         ProvingProfile frozenNavigation, frozenPerception;
@@ -125,6 +128,7 @@ namespace StarTournament.ProvingGround
             if (requestedDiagnostic) Begin(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
+            if (args.Contains("-botBehaviorReview")) gameObject.AddComponent<NativeBotBehaviorReview>();
             if (args.Contains("-participantReview")) gameObject.AddComponent<NativeParticipantReview>();
             if (args.Contains("-botNavigationReview")) gameObject.AddComponent<NativeBotNavigationReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
@@ -135,6 +139,16 @@ namespace StarTournament.ProvingGround
 #endif
         }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public void StartBotReview(NativeMatchComposition composition,uint seed,InputDevice[] devices=null)
+        {
+            if(phase!=Phase.Setup)Menu();
+            composition.RequireSupportedSources(true,false);if(seed==0)throw new ArgumentException("Seed required");
+            if(devices!=null&&devices.Length!=composition.LocalCount)throw new ArgumentException("Local device count mismatch");
+            botReviewEnabled=true;botSeed=seed;reviewComposition=NativeMatchComposition.Restore(composition.Read());
+            input.Reset();input.SetActiveSeatCount(composition.LocalCount);
+            if(devices!=null)for(int i=0;i<devices.Length;i++)if(!input.Assign(i,devices[i]))throw new ArgumentException("Invalid device");
+            Begin(devices==null);
+        }
         public void SetParticipantReviewStandings(bool show) { reviewShowStandings=show; }
         public void StartParticipantReview(NativeMatchComposition composition,InputDevice[] devices=null)
         {
@@ -259,6 +273,7 @@ namespace StarTournament.ProvingGround
             try
             {
                 NavigationReviewDriver?.ProduceActions(actions);
+                BotDriver?.ProduceActions(actions,Time.fixedDeltaTime);
                 Session.Tick(actions, Time.fixedDeltaTime);
                 if(Session.Match?.Phase==NativeMatchPhase.Finished)
                 {
@@ -312,14 +327,16 @@ namespace StarTournament.ProvingGround
                 if(TeamProfile.Id!="unity-native-team-v1" || TeamProfile.Version!=1 || TeamProfile.Validate().Count!=0) throw new InvalidOperationException("Invalid team profile");
                 foreach(var descriptor in TeamProfile.Descriptors) NativeMatchConfiguration.ValidateValue(TeamProfile,descriptor.Path,TeamProfile.Get(descriptor.Path));
                 Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):HumanComposition(SetupRoster(),swappedTeamColors);
-                Composition.RequireSupportedSources(false,reviewComposition!=null);
+                Composition.RequireSupportedSources(botReviewEnabled,reviewComposition!=null&&!botReviewEnabled);
                 frozenRoster=Composition.Roster;frozenSwappedColors=swappedTeamColors;frozenTeam=Copy(TeamProfile);
                 if(RosterProfile.Id!="unity-native-roster-v1" || RosterProfile.Version!=1 || RosterProfile.Validate().Count!=0)throw new InvalidOperationException("Invalid roster profile");
                 foreach(var descriptor in RosterProfile.Descriptors)NativeMatchConfiguration.ValidateValue(RosterProfile,descriptor.Path,RosterProfile.Get(descriptor.Path));
                 frozenRosterProfile=Copy(RosterProfile);
+                if(botReviewEnabled){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
                 frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile);
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
+            Time.fixedDeltaTime=1/frozenMovement.Get("simulation.fixedTickHz");
             RebuildActors(Composition,frozenMovement,frozenTrooper,false);
             foreach(var motor in motors)motor.SetAlive(false);
             Physics.SyncTransforms();
@@ -348,6 +365,7 @@ namespace StarTournament.ProvingGround
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match);
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
+            BotDriver=botReviewEnabled?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition);
             Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
@@ -361,7 +379,7 @@ namespace StarTournament.ProvingGround
         }
         void Menu()
         {
-            NavigationReviewDriver = null; navigationReviewEnabled = false;
+            NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
             phase=Phase.Setup; diagnostic=false; combatReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
             reviewComposition=null;reviewShowStandings=false;if(LocalSeatCount<2)input.SetActiveSeatCount(2);
             Composition=HumanComposition(NativeMatchRoster.Ffa(LocalSeatCount),false);
@@ -409,8 +427,8 @@ namespace StarTournament.ProvingGround
             if(path=="match.durationMinutes") config.DurationMinutes=value; else config.TargetPoints=value;
             config.Validate(MatchProfile); Configuration=config; RefreshInterface();
         }
-        void Pause(string reason) { phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(diagnostic||input.Ready ? resume : menu); }
-        void Resume() { if (diagnostic || input.Ready) { input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
+        void Pause(string reason) { BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(diagnostic||input.Ready ? resume : menu); }
+        void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }

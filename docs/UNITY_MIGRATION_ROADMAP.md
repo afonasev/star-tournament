@@ -189,3 +189,5 @@ Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B
 - [PhysX determinism limitations](https://nvidia-omniverse.github.io/PhysX/physx/5.8.0/docs/API.html)
 
 Participant/local-view separation проверено в `docs/tasks/completed/26-unity-participant-roster.md`: восемь физических участников,1–4 local views, mapped actions/presentation и bounded initial allocator;66/66 EditMode,49/49 PlayMode, Mac build, FHD/4K. Это внутренний prerequisite для playable planner/setup; прежние упоминания восьми тел как будущей работы выше описывают хронологию. Полная миграция остаётся активной.
+
+`add-unity-bot-planner` (handoff27) подключает настоящие AI actions/combat и frozen lifecycle; automated и focused muted FHD/4K Player evidence verified. Shipping setup следует отдельным change; никакого снятия evaluation/generated arena/physical/performance требований.
