@@ -4,6 +4,6 @@
 
 Проверено: strict OpenSpec, EditMode 87/87, PlayMode 66/66 и Mac Player build. Evidence: `docs/evidence/unity-shot-feedback-mouse-sensitivity-2026-09-20/report.json`.
 
-Muted native Player diagnostics сохранены в `docs/evidence/unity-shot-feedback-mouse-sensitivity-2026-09-20/player-4-v2/` и `player-1/`: PNG/JSON для default/min/max sensitivity и actual shot; 1-view JSON фиксирует ровно одну active camera. После presentation-only aggregation contact burst не засоряет 4-view кадр. PNG осмотрены: flight trace пока недостаточно заметен в обоих layout, поэтому visual requirement не закрыт.
+Muted native Player diagnostics сохранены в `docs/evidence/unity-shot-feedback-mouse-sensitivity-2026-09-20/camera-mount-player-1/` и `camera-mount-player-4/`: PNG/JSON для default/min/max sensitivity и actual shot; 1-view JSON фиксирует ровно одну active camera, 4-view — четыре. PNG осмотрены: camera-space muzzle mount даёт отдельные cyan capsule streaks от оружия к фактической цели, а contact marker остаётся компактным. Суперседированные capture-наборы удалены из репозитория.
 
-Открыто до handoff completion: сделать flight trace заметным без clutter и повторить Player QA; physical mouse/focus, artistic и reference-hardware performance acceptance. Не архивировать, не интегрировать и не деплоить.
+Открыто после handoff: physical mouse/focus acceptance, artistic review, reference-hardware performance и явная пользовательская приёмка. Не архивировать, не интегрировать и не деплоить.

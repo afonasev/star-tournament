@@ -1,0 +1,66 @@
+{
+    "scenario": "native-combat-review-v1",
+    "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_ACCEPTANCE",
+    "state": "paused-timers",
+    "movementProfile": "unity-proving-ground-v1@1",
+    "combatProfile": "unity-native-combat-v1@1",
+    "lifeProfile": "unity-combat-state-v1@1",
+    "width": 1920,
+    "height": 1080,
+    "cameras": 1,
+    "shots": 4,
+    "mouseDegreesPerPixel": 0.11999999731779099,
+    "sessionTime": 1.7199993208050728,
+    "focused": true,
+    "running": false,
+    "lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 75.83332824707031,
+            "Ammo": 18,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.44000009074807169,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 70.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ]
+}

@@ -11,4 +11,4 @@
 ## 3. Verification and handoff
 
 - [x] 3.1 Запустить targeted и полный Unity EditMode/PlayMode, strict OpenSpec validation и Mac Player build; сохранить команды/результаты и profile identity в evidence JSON.
-- [ ] 3.2 Провести muted native Player diagnostic, осмотреть PNG/JSON для дроби в полёте/contact impact и default/minimum/maximum sensitivity в одном и четырёх viewport; оформить handoff, явно оставив physical, artistic и performance acceptance открытыми.
+- [x] 3.2 Провести muted native Player diagnostic, осмотреть PNG/JSON для дроби в полёте/contact impact и default/minimum/maximum sensitivity в одном и четырёх viewport; оформить handoff, явно оставив physical, artistic и performance acceptance открытыми.
