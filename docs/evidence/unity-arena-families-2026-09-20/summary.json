@@ -1,0 +1,15 @@
+{
+  "status": "DIAGNOSTIC_NOT_ACCEPTANCE",
+  "profile": "unity-arena-families-v1@1",
+  "build": "STAR_PROVING_BUILD_PASS 459366953",
+  "editMode": { "passed": 86, "failed": 0 },
+  "playMode": { "passed": 65, "failed": 0 },
+  "openSpecStrict": true,
+  "representativeFamilies": [
+    { "id": "wide-hall-circuit-v1", "focused": true, "width": 1920, "height": 1080, "cameras": 4, "frameP95Ms": 16.80316734313965 },
+    { "id": "split-balconies-v1", "focused": true, "width": 1920, "height": 1080, "cameras": 4, "frameP95Ms": 11.71804141998291 },
+    { "id": "lower-basement-v1", "focused": true, "width": 1920, "height": 1080, "cameras": 4, "frameP95Ms": 9.319585800170899 }
+  ],
+  "muted": true,
+  "openGates": ["user acceptance", "physical devices and TV", "artistic acceptance", "reference-hardware performance"]
+}

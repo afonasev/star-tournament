@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround
     {
         [Serializable] public sealed class Report
         {
-            public string status="DIAGNOSTIC_NOT_ACCEPTANCE", unity, profile, profileSha256, arenaIdentity, device, graphics, operatingSystem;
+            public string status="DIAGNOSTIC_NOT_ACCEPTANCE", unity, profile, profileSha256, arenaProfile, arenaFamily, arenaIdentity, device, graphics, operatingSystem;
             public string workload="four stationary participants, no physical input", state;
             public string focusPolicy="foreground warmup required; focus recorded throughout measurement";
             public bool focusedForEntireMeasurement=true;
@@ -62,8 +62,9 @@ namespace StarTournament.ProvingGround
             if(elapsed<10)return;
             finished=true;
             var ground=GetComponent<ProvingGround>();
-            var report=new Report {unity=Application.unityVersion,profile=ground.Profile.Id+"@"+ground.Profile.Version,
-                profileSha256=Hash(JsonUtility.ToJson(ground.Profile)),arenaIdentity=ground.GetComponentInChildren<ProvingArena>()?.Definition?.Identity,
+            var builtArena=ground.GetComponentInChildren<ProvingArena>();
+            var report=new Report {unity=Application.unityVersion,profile=ground.Profile.Id+"@"+ground.Profile.Version,arenaProfile=ground.ArenaProfile.Id+"@"+ground.ArenaProfile.Version,
+                profileSha256=Hash(JsonUtility.ToJson(ground.Profile)),arenaFamily=builtArena?.Definition?.FamilyId,arenaIdentity=builtArena?.Definition?.Identity,
                 device=SystemInfo.deviceModel,graphics=SystemInfo.graphicsDeviceName,operatingSystem=SystemInfo.operatingSystem,
                 width=Screen.width,height=Screen.height,cameras=Camera.allCamerasCount,samples=frames.Count,
                 state=ground.Running?"running-diagnostic":"setup-or-pause",frameP50Ms=Percentile(frames,.5f),frameP95Ms=Percentile(frames,.95f),

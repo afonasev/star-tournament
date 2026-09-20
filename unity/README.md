@@ -21,6 +21,8 @@ unity/tools.sh build
 
 Профиль `unity-proving-ground-v1` редактируется в Inspector корневого `ProvingGround` через единый descriptor registry; после правок перезапустите Play. `Prepare` создаёт исходную сцену заново с default профилем. Runtime Balance Lab, immutable user revisions и replay находятся вне этого change.
 
+ARENA-2 использует отдельный canonical profile `unity-arena-families-v1@1`: `arena.family` явно выбирает 0 `wide-hall-circuit-v1`, 1 `perimeter-gallery-v1`, 2 `split-balconies-v1`, 3 `stacked-combat-v1` или 4 `lower-basement-v1`. Development diagnostic принимает тот же explicit selector через `-arenaFamily 0..4`; фактические `arenaProfile`, `arenaFamily` и `arenaIdentity` записываются в `report.json`. Seed не выбирает family.
+
 Обязательная приёмка остаётся отдельной: реальные четыре устройства, gamepad-only start/pause/resume, отключение/повторное подключение, TV и целевое железо. Минимум 60 FPS при четырёх игроках и Full HD–4K — цель; короткий diagnostic на M2 Pro с неподвижными игроками не доказывает её выполнение в бою. QA muted по умолчанию.
 
 ## Native layouts review

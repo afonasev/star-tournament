@@ -139,14 +139,16 @@ namespace StarTournament.ProvingGround
             var light = Owned("arena-light").AddComponent<Light>();
             light.type = LightType.Directional; light.intensity = Profile.Get("presentation.lightIntensity");
             light.transform.rotation = Quaternion.Euler(50, -30, 0); // Authored fixture light orientation.
-            arena = Owned("unity-two-level-fixture-v1").AddComponent<ProvingArena>();
-            arena.Build(ArenaGenerator.Generate(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FoundationVersion, Profile=ArenaProfile }), Profile);
+            var args=Environment.GetCommandLineArgs();int familyFlag=Array.IndexOf(args,"-arenaFamily");
+            if(familyFlag>=0&&familyFlag+1<args.Length&&int.TryParse(args[familyFlag+1],out int family))ArenaProfile.Set("arena.family",family);
+            arena = Owned("unity-arena-families-v1").AddComponent<ProvingArena>();
+            arena.Build(ArenaGenerator.Generate(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile }), Profile);
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile);
             presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views);
             Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
-            var args=Environment.GetCommandLineArgs(); int countFlag=Array.IndexOf(args,"-probeCameras");
+            int countFlag=Array.IndexOf(args,"-probeCameras");
             if(args.Contains("-diagnostic") && countFlag>=0 && countFlag+1<args.Length && int.TryParse(args[countFlag+1],out int count) && (count==1||count==2||count==4))
             {
                 probeCameraCount=count;
