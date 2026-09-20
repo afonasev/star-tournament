@@ -7,7 +7,7 @@ Capability определяет воспроизводимую одноуров�
 ## Requirements
 
 ### Requirement: Каноническая детерминированная ArenaDefinition
-Генератор SHALL из конкретных `seed`, `generatorVersion`, size preset и identity валидированного generator profile создавать одну immutable `ArenaDefinition` с canonical semantic-ID order и content hash. Arena RNG MUST быть отделён от match simulation RNG и завершаться до initial tick.
+Генератор SHALL из конкретных `seed`, `generatorVersion`, size preset и identity валидированного generator profile создавать одну immutable `ArenaDefinition` с canonical semantic-ID order и content hash. Arena RNG MUST быть отделён от match simulation RNG и завершаться до initial tick. Для native registered arena family explicit selected family, canonical profile identity и accepted definition SHALL образовывать frozen hand-off snapshot: повторная generation с теми же входами MUST возвращать ту же arena identity, а derived validator/projection/navigation consumers MUST получать именно этот immutable snapshot без повторного выбора family или подмены profile.
 
 #### Scenario: Одинаковые входы
 - **WHEN** два независимых запуска используют одинаковые seed, generator version, size и profile identity
@@ -16,6 +16,10 @@ Capability определяет воспроизводимую одноуров�
 #### Scenario: Изменён generation input
 - **WHEN** меняется seed, size, generator version либо generator profile content hash
 - **THEN** generation identity и effective arena content hash отражают новый результат
+
+#### Scenario: Native family freeze
+- **WHEN** два native запуска используют одинаковые seed, generator version, canonical profile identity и явно выбранный registered family
+- **THEN** они создают definitions с одной arena identity, а projection и navigation получают тот же accepted frozen snapshot
 
 ### Requirement: Три содержательных size preset
 Generator SHALL поддерживать `small`, `medium` и `large` как разные topology budgets набора именованных layout recipes, а не как равномерное масштабирование координат либо вариации одного «Разорванного кольца». Каждый preset MUST выбирать воспроизводимый recipe из seed, поддерживать FFA, teams и до восьми участников; `medium` SHALL быть default. Accepted recipe MUST включать читаемые большие rooms, corridors, route loops либо courtyards в соответствии со своим composition contract и MUST выбирать ровно одну выраженную spatial role: широкий зал с длинным обходом, верхняя обходная галерея, открытые балконы, две самостоятельные боевые арены по ярусам либо основной этаж с подвальным обходом.
@@ -165,14 +169,12 @@ Generator SHALL сначала выбирать граф помещений и �
 - **WHEN** игрок поднимается на закрытый верхний этаж
 - **THEN** он может перемещаться между несколькими помещениями и выходами под собственным потолком, не попадая в общий объём нижнего зала вне объявленных проёмов
 
-
 ### Requirement: Настоящий тоннельный обход
 Тоннель SHALL соединять различные входы и иметь боковые стены и непрерывный canonical ceiling по всей длине. Пространство под открытой плитой без этих границ MUST NOT учитываться как тоннель.
 
 #### Scenario: Закрытый обход
 - **WHEN** проверяется declared tunnel route
 - **THEN** его стены и потолок непрерывны, входы различны, и три боковых capsule lanes проходят все сечения и повороты
-
 
 ### Requirement: Смешанные лестницы и рампы
 Каждый переход SHALL детерминированно выбирать ramp либо stairs по seed и stable transition ID. Профильная вероятность stairs MUST по умолчанию давать примерно половину переходов; все три сочетания двух переходов MUST встречаться в corpus.
