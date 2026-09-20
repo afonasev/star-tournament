@@ -1,0 +1,292 @@
+{
+  "fhd": [
+    {
+      "state": "01-two-views-mixed-live",
+      "views": 2,
+      "participants": 2,
+      "shots": 5,
+      "seed": 1996601311,
+      "clock": 4.019998412579298,
+      "frameSamples": 473,
+      "frameMeanMilliseconds": 8.468070030212402,
+      "frameP95Milliseconds": 9.21662425994873
+    },
+    {
+      "state": "02-two-views-all-ai-live",
+      "views": 2,
+      "participants": 2,
+      "shots": 1,
+      "seed": 1542251916,
+      "clock": 1.9999992102384567,
+      "frameSamples": 239,
+      "frameMeanMilliseconds": 8.368212699890137,
+      "frameP95Milliseconds": 9.303669929504395
+    },
+    {
+      "state": "03-three-views-sparse-human-live",
+      "views": 3,
+      "participants": 3,
+      "shots": 10,
+      "seed": 1683175907,
+      "clock": 4.999998025596142,
+      "frameSamples": 600,
+      "frameMeanMilliseconds": 8.347580909729004,
+      "frameP95Milliseconds": 9.30695915222168
+    },
+    {
+      "state": "04-three-views-all-ai-live",
+      "views": 3,
+      "participants": 3,
+      "shots": 6,
+      "seed": 131718615,
+      "clock": 1.9999992102384567,
+      "frameSamples": 239,
+      "frameMeanMilliseconds": 8.364453315734863,
+      "frameP95Milliseconds": 9.349964141845703
+    },
+    {
+      "state": "05-four-views-mixed-live",
+      "views": 4,
+      "participants": 4,
+      "shots": 9,
+      "seed": 2098996661,
+      "clock": 2.999998815357685,
+      "frameSamples": 360,
+      "frameMeanMilliseconds": 8.354269027709961,
+      "frameP95Milliseconds": 9.175751686096191
+    },
+    {
+      "state": "06-four-views-all-ai-teams-live",
+      "views": 4,
+      "participants": 8,
+      "shots": 39,
+      "seed": 1105221410,
+      "clock": 7.019997227936983,
+      "frameSamples": 837,
+      "frameMeanMilliseconds": 8.373189926147461,
+      "frameP95Milliseconds": 9.301665306091309
+    },
+    {
+      "state": "07-four-views-viewed-bot-natural-death",
+      "views": 4,
+      "participants": 8,
+      "shots": 81,
+      "seed": 1105221410,
+      "clock": 16.059993658214808,
+      "frameSamples": 1913,
+      "frameMeanMilliseconds": 8.390002250671387,
+      "frameP95Milliseconds": 9.265667915344238
+    },
+    {
+      "state": "07-four-views-viewed-bot-natural-killcam",
+      "views": 4,
+      "participants": 8,
+      "shots": 81,
+      "seed": 1105221410,
+      "clock": 16.579993452876806,
+      "frameSamples": 1967,
+      "frameMeanMilliseconds": 8.422324180603027,
+      "frameP95Milliseconds": 9.272541046142578
+    },
+    {
+      "state": "07-four-views-viewed-bot-natural-respawn",
+      "views": 4,
+      "participants": 8,
+      "shots": 81,
+      "seed": 1105221410,
+      "clock": 19.079992465674877,
+      "frameSamples": 2258,
+      "frameMeanMilliseconds": 8.443734169006348,
+      "frameP95Milliseconds": 9.297292709350586
+    },
+    {
+      "state": "08-all-ai-operator-paused",
+      "views": 4,
+      "participants": 8,
+      "shots": 81,
+      "seed": 1105221410,
+      "clock": 19.1799924261868,
+      "frameSamples": 2259,
+      "frameMeanMilliseconds": 8.476835250854492,
+      "frameP95Milliseconds": 9.298624992370605
+    },
+    {
+      "state": "09-all-ai-resumed",
+      "views": 4,
+      "participants": 8,
+      "shots": 81,
+      "seed": 1105221410,
+      "clock": 20.119992054998875,
+      "frameSamples": 2372,
+      "frameMeanMilliseconds": 8.47037124633789,
+      "frameP95Milliseconds": 9.296833038330078
+    },
+    {
+      "state": "10-all-ai-repeat",
+      "views": 4,
+      "participants": 8,
+      "shots": 0,
+      "seed": 1105221410,
+      "clock": 0.039999984204769135,
+      "frameSamples": 2374,
+      "frameMeanMilliseconds": 8.50913143157959,
+      "frameP95Milliseconds": 9.298624992370605
+    },
+    {
+      "state": "11-return-setup",
+      "views": 4,
+      "participants": 8,
+      "shots": 0,
+      "seed": 0,
+      "clock": 0.0,
+      "frameSamples": 2375,
+      "frameMeanMilliseconds": 8.537129402160645,
+      "frameP95Milliseconds": 9.298837661743164
+    }
+  ],
+  "4k": [
+    {
+      "state": "01-two-views-mixed-live",
+      "views": 2,
+      "participants": 2,
+      "shots": 5,
+      "seed": 1955534824,
+      "clock": 3.9999984204769135,
+      "frameSamples": 468,
+      "frameMeanMilliseconds": 8.548198699951172,
+      "frameP95Milliseconds": 9.377374649047852
+    },
+    {
+      "state": "02-two-views-all-ai-live",
+      "views": 2,
+      "participants": 2,
+      "shots": 1,
+      "seed": 1679118630,
+      "clock": 1.9999992102384567,
+      "frameSamples": 239,
+      "frameMeanMilliseconds": 8.400432586669922,
+      "frameP95Milliseconds": 9.216829299926758
+    },
+    {
+      "state": "03-three-views-sparse-human-live",
+      "views": 3,
+      "participants": 3,
+      "shots": 7,
+      "seed": 550984266,
+      "clock": 4.999998025596142,
+      "frameSamples": 598,
+      "frameMeanMilliseconds": 8.361344337463379,
+      "frameP95Milliseconds": 9.269457817077637
+    },
+    {
+      "state": "04-three-views-all-ai-live",
+      "views": 3,
+      "participants": 3,
+      "shots": 6,
+      "seed": 1730585829,
+      "clock": 1.9999992102384567,
+      "frameSamples": 237,
+      "frameMeanMilliseconds": 8.442519187927246,
+      "frameP95Milliseconds": 9.266162872314453
+    },
+    {
+      "state": "05-four-views-mixed-live",
+      "views": 4,
+      "participants": 4,
+      "shots": 10,
+      "seed": 1805301725,
+      "clock": 2.999998815357685,
+      "frameSamples": 358,
+      "frameMeanMilliseconds": 8.379469871520996,
+      "frameP95Milliseconds": 9.277204513549805
+    },
+    {
+      "state": "06-four-views-all-ai-teams-live",
+      "views": 4,
+      "participants": 8,
+      "shots": 31,
+      "seed": 633888758,
+      "clock": 6.979997243732214,
+      "frameSamples": 834,
+      "frameMeanMilliseconds": 8.372188568115234,
+      "frameP95Milliseconds": 9.073795318603516
+    },
+    {
+      "state": "07-four-views-viewed-bot-natural-death",
+      "views": 4,
+      "participants": 8,
+      "shots": 69,
+      "seed": 633888758,
+      "clock": 14.779994163662195,
+      "frameSamples": 1742,
+      "frameMeanMilliseconds": 8.476913452148438,
+      "frameP95Milliseconds": 9.2731294631958
+    },
+    {
+      "state": "07-four-views-viewed-bot-natural-killcam",
+      "views": 4,
+      "participants": 8,
+      "shots": 71,
+      "seed": 633888758,
+      "clock": 15.27999396622181,
+      "frameSamples": 1778,
+      "frameMeanMilliseconds": 8.59581184387207,
+      "frameP95Milliseconds": 9.273710250854492
+    },
+    {
+      "state": "07-four-views-viewed-bot-natural-respawn",
+      "views": 4,
+      "participants": 8,
+      "shots": 78,
+      "seed": 633888758,
+      "clock": 17.799992971122265,
+      "frameSamples": 2052,
+      "frameMeanMilliseconds": 8.670421600341797,
+      "frameP95Milliseconds": 9.245670318603516
+    },
+    {
+      "state": "08-all-ai-operator-paused",
+      "views": 4,
+      "participants": 8,
+      "shots": 79,
+      "seed": 633888758,
+      "clock": 18.03999287635088,
+      "frameSamples": 2053,
+      "frameMeanMilliseconds": 8.670252799987793,
+      "frameP95Milliseconds": 9.245670318603516
+    },
+    {
+      "state": "09-all-ai-resumed",
+      "views": 4,
+      "participants": 8,
+      "shots": 84,
+      "seed": 633888758,
+      "clock": 19.039992481470108,
+      "frameSamples": 2152,
+      "frameMeanMilliseconds": 8.736079216003418,
+      "frameP95Milliseconds": 9.236004829406738
+    },
+    {
+      "state": "10-all-ai-repeat",
+      "views": 4,
+      "participants": 8,
+      "shots": 0,
+      "seed": 633888758,
+      "clock": 0.0,
+      "frameSamples": 2154,
+      "frameMeanMilliseconds": 8.735685348510742,
+      "frameP95Milliseconds": 9.236004829406738
+    },
+    {
+      "state": "11-return-setup",
+      "views": 4,
+      "participants": 8,
+      "shots": 0,
+      "seed": 0,
+      "clock": 0.0,
+      "frameSamples": 2155,
+      "frameMeanMilliseconds": 8.843781471252441,
+      "frameP95Milliseconds": 9.238463401794434
+    }
+  ]
+}

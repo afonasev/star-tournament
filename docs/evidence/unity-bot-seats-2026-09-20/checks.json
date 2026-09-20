@@ -1,0 +1,22 @@
+{
+  "unity": "6000.3.23f1",
+  "build": "Mac Development PASS",
+  "buildBytes": 459347917,
+  "acceptance": "AUTOMATED_NATIVE_QA_NOT_PHYSICAL_ART_OR_TARGET_PERFORMANCE_ACCEPTANCE",
+  "tests": {
+    "editmode": {
+      "result": "Passed",
+      "total": "81",
+      "passed": "81",
+      "failed": "0",
+      "duration": "0.330414"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "63",
+      "passed": "63",
+      "failed": "0",
+      "duration": "45.6101005"
+    }
+  }
+}

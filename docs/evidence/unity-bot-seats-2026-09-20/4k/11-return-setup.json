@@ -1,0 +1,791 @@
+{
+    "state": "11-return-setup",
+    "acceptance": "ORDINARY_SETUP_SYNTHETIC_INPUT_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "focused": true,
+    "muted": true,
+    "running": false,
+    "width": 3840,
+    "height": 2160,
+    "views": 4,
+    "participants": 8,
+    "shots": 0,
+    "botTicks": 0,
+    "frameSamples": 2155,
+    "frameMeanMilliseconds": 8.843781471252442,
+    "frameP95Milliseconds": 9.238463401794434,
+    "seed": 0,
+    "clock": 0.0,
+    "movementProfile": "unity-proving-ground-v1@1",
+    "lifeProfile": "unity-combat-state-v1@1",
+    "combatProfile": "unity-native-combat-v1@1",
+    "behaviorProfile": "unity-bot-behavior-v1@1",
+    "composition": {
+        "Roster": {
+            "Mode": 1,
+            "Teams": [
+                1,
+                2,
+                1,
+                2,
+                1,
+                2,
+                1,
+                2
+            ]
+        },
+        "Participants": [
+            {
+                "Kind": 1,
+                "Name": "Бот 1",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            },
+            {
+                "Kind": 1,
+                "Name": "Бот 2",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Бот 3",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 2
+            },
+            {
+                "Kind": 1,
+                "Name": "Бот 4",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            },
+            {
+                "Kind": 1,
+                "Name": "Vega",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Orion",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Nova",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Atlas",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            }
+        ],
+        "LocalParticipants": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "match": {
+        "Tick": 0,
+        "RemainingTicks": 0,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": 0,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": []
+        },
+        "Standings": [],
+        "Teams": []
+    },
+    "lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-5",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-6",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-7",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-8",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "planners": [
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        },
+        {
+            "Version": 1,
+            "OwnLife": 0,
+            "Target": -1,
+            "TargetLife": 0,
+            "Anchor": -1,
+            "StrafeSign": 1,
+            "Configuration": "",
+            "Random": 0,
+            "Intent": 0,
+            "Time": -1.0,
+            "NextDecision": 0.0,
+            "Noticed": 0.0,
+            "NextStrafe": 0.0,
+            "NextJump": 0.0,
+            "RetreatUntil": 0.0,
+            "RetreatReady": 0.0,
+            "SupportUntil": 0.0,
+            "SupportReady": 0.0,
+            "RouteRetryAt": 0.0,
+            "Goal": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "JumpDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "HasGoal": false,
+            "Pressed": false,
+            "JumpActive": false,
+            "Personality": 0.0,
+            "AimPhase": 0.0,
+            "Navigation": {
+                "Version": 1,
+                "OwnLife": 0,
+                "Enemy": -1,
+                "EnemyLife": 0,
+                "Cursor": 0,
+                "Recoveries": 0,
+                "Replans": 0,
+                "Configuration": "",
+                "Failure": "",
+                "ActiveTransition": "",
+                "ExitSupport": "",
+                "HasGoal": false,
+                "Goal": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "TransitionExit": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ObservedAt": -1.0,
+                "Time": -1.0,
+                "NextRepath": 0.0,
+                "ProgressAt": 0.0,
+                "RecoveryUntil": 0.0,
+                "BestRemaining": 0.0,
+                "Status": 0,
+                "Route": []
+            }
+        }
+    ]
+}

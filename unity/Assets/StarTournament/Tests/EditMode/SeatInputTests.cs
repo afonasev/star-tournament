@@ -46,5 +46,27 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally { foreach(var pad in pads) if(pad!=null && pad.added) InputSystem.RemoveDevice(pad); }
         }
+        [Test]
+        public void AiSeatsNeedNoDeviceAndChangingKindReleasesTheirInput()
+        {
+            var first=InputSystem.AddDevice<Gamepad>();var second=InputSystem.AddDevice<Gamepad>();
+            try
+            {
+                var seats=new SeatInputCoordinator();
+                seats.SetActiveSeatCount(3);
+                Assert.That(seats.Assign(0,first),Is.True);Assert.That(seats.Assign(2,second),Is.True);
+                seats.SetHumanSeat(1,false);seats.SetHumanSeat(2,false);
+                Assert.That(seats.IsHumanSeat(0),Is.True);Assert.That(seats.IsHumanSeat(1),Is.False);
+                Assert.That(seats.Ready,Is.True);Assert.That(seats.Assign(1,second),Is.False);
+                seats.SetHumanSeat(2,true);
+                Assert.That(seats.IsConnected(2),Is.False,"Changing ownership releases its device");
+                Assert.That(seats.Ready,Is.False);
+                Assert.That(seats.Assign(2,second),Is.True);Assert.That(seats.Ready,Is.True);
+                seats.SetActiveSeatCount(2);seats.SetActiveSeatCount(3);
+                Assert.That(seats.IsHumanSeat(2),Is.True,"A newly visible slot defaults to human");
+                Assert.That(seats.Ready,Is.False);
+            }
+            finally {foreach(var d in new InputDevice[]{first,second})if(d.added)InputSystem.RemoveDevice(d);}
+        }
     }
 }

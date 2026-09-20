@@ -64,7 +64,8 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<localParticipants.Length;seat++)
             {
                 int p=localParticipants[seat];
-                if(p<0 || p>=participants.Length || participantSeats[p]!=-1 || participants[p].Kind!=NativeParticipantKind.LocalHuman)
+                if(p<0 || p>=participants.Length || participantSeats[p]!=-1 ||
+                    (participants[p].Kind!=NativeParticipantKind.LocalHuman && participants[p].Kind!=NativeParticipantKind.Bot))
                     throw new ArgumentException("Invalid local participant mapping");
                 participantSeats[p]=seat;
             }
@@ -88,7 +89,9 @@ namespace StarTournament.ProvingGround
             if(local==null || target==null || local.Length!=LocalCount || target.Length!=ParticipantCount || ReferenceEquals(local,target))
                 throw new ArgumentException("Distinct local and participant action buffers required");
             Array.Clear(target,0,target.Length);
-            for(int s=0;s<LocalCount;s++)target[ParticipantAt(s)]=local[s];
+            for(int s=0;s<LocalCount;s++)
+                if(Participant(ParticipantAt(s)).Kind==NativeParticipantKind.LocalHuman)
+                    target[ParticipantAt(s)]=local[s];
         }
         public void RequireSupportedSources(bool botsAvailable,bool diagnosticsAllowed)
         {

@@ -11,6 +11,7 @@ namespace StarTournament.ProvingGround
         readonly InputDevice[] devices = new InputDevice[SeatCount];
         readonly LocalAction[] queued = new LocalAction[SeatCount];
         readonly bool[] fireReleaseRequired = new bool[SeatCount];
+        readonly bool[] humanSeats = { true, true, true, true };
         Mouse pairedMouse;
         bool pauseRequested;
         public int ActiveSeatCount { get; private set; } = SeatCount;
@@ -18,19 +19,30 @@ namespace StarTournament.ProvingGround
         public void SetActiveSeatCount(int count)
         {
             if(count < 1 || count > SeatCount) throw new ArgumentOutOfRangeException(nameof(count));
-            for(int i=count;i<SeatCount;i++) devices[i]=null;
+            int previous=ActiveSeatCount;
+            for(int i=count;i<SeatCount;i++) ReleaseSeat(i);
+            if(count>previous) for(int i=previous;i<count;i++) humanSeats[i]=true;
             ActiveSeatCount=count;
             if(!HasKeyboard) pairedMouse=null;
             Clear();
         }
-        public bool Ready { get { for (int i = 0; i < ActiveSeatCount; i++) if (!IsConnected(i)) return false; return true; } }
+        public bool IsHumanSeat(int slot) => slot>=0 && slot<ActiveSeatCount && humanSeats[slot];
+        public void SetHumanSeat(int slot,bool human)
+        {
+            if(slot<0||slot>=ActiveSeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
+            if(humanSeats[slot]==human)return;
+            humanSeats[slot]=human;
+            ReleaseSeat(slot);
+            if(!HasKeyboard) pairedMouse=null;
+        }
+        public bool Ready { get { for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && !IsConnected(i)) return false; return true; } }
         public bool IsConnected(int slot) => slot >= 0 && slot < ActiveSeatCount && devices[slot] != null && devices[slot].added &&
             (!(devices[slot] is Keyboard) || (pairedMouse != null && pairedMouse.added));
         public string Label(int slot) => devices[slot] == null ? "Ожидает устройство" :
             devices[slot] is Keyboard ? "Клавиатура + мышь" : devices[slot].displayName + " #" + devices[slot].deviceId;
         public bool Assign(int slot, InputDevice device)
         {
-            if (slot < 0 || slot >= ActiveSeatCount || device == null || !device.added || !(device is Keyboard || device is Gamepad)) return false;
+            if (slot < 0 || slot >= ActiveSeatCount || !humanSeats[slot] || device == null || !device.added || !(device is Keyboard || device is Gamepad)) return false;
             for (int i = 0; i < SeatCount; i++) if (devices[i] == device) return false;
             if (device is Keyboard)
             {
@@ -43,7 +55,7 @@ namespace StarTournament.ProvingGround
         }
         void Join(InputDevice device)
         {
-            for (int i = 0; i < ActiveSeatCount; i++) if (devices[i] == null) { Assign(i, device); return; }
+            for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && devices[i] == null) { Assign(i, device); return; }
         }
         public void PollSetup()
         {
@@ -56,9 +68,15 @@ namespace StarTournament.ProvingGround
         // Capture once per rendered frame; consume edges/delta once per simulation tick.
         public void Capture(ProvingProfile profile, float deltaTime)
         {
+            // The operator can always pause, including all-AI matches with no gameplay ownership.
+            foreach(var device in InputSystem.devices)
+                if(device is Keyboard operatorKeyboard)pauseRequested |= operatorKeyboard.escapeKey.wasPressedThisFrame;
+            bool anyHuman=false;
+            for(int seat=0;seat<ActiveSeatCount;seat++)anyHuman |= humanSeats[seat];
+            if(!anyHuman)foreach(var pad in Gamepad.all)pauseRequested |= pad.startButton.wasPressedThisFrame;
             for (int i = 0; i < ActiveSeatCount; i++)
             {
-                if (!IsConnected(i)) continue;
+                if (!humanSeats[i] || !IsConnected(i)) continue;
                 var a = queued[i];
                 if (devices[i] is Keyboard keyboard)
                 {
@@ -68,7 +86,6 @@ namespace StarTournament.ProvingGround
                     a.Jump |= keyboard.spaceKey.wasPressedThisFrame;
                     CaptureFire(i, ref a, pairedMouse.leftButton.isPressed, pairedMouse.leftButton.wasPressedThisFrame);
                     a.ShowRoster = keyboard.tabKey.isPressed;
-                    pauseRequested |= keyboard.escapeKey.wasPressedThisFrame;
                 }
                 else if (devices[i] is Gamepad pad)
                 {
@@ -81,6 +98,12 @@ namespace StarTournament.ProvingGround
                 }
                 queued[i] = a;
             }
+        }
+        void ReleaseSeat(int slot)
+        {
+            devices[slot]=null;
+            queued[slot]=default;
+            fireReleaseRequired[slot]=true;
         }
         void CaptureFire(int slot, ref LocalAction action, bool held, bool edge)
         {

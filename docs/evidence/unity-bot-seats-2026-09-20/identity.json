@@ -1,0 +1,56 @@
+{
+  "base": "f29c4493271e8e761728c16cb64aa19d200ce575",
+  "branch": "codex/unity-bot-controlled-seats",
+  "shared_pipeline": [
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperVisual.cs",
+      "sha256": "f866386f5c32795f7d499fa85919f3875b89b18159875a26bd6dc9a9b82f3cae",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/CombatPresentation.cs",
+      "sha256": "7a1692bd84adcfd0a42b26bcf67d5cd438b0c02a895e97498c105df57c0e88e6",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs",
+      "sha256": "3dd72ea4116939cc20e622dbfb49947d292bfbf7661afff9429a645f80252351",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/aim.anim",
+      "sha256": "3bf05d766d8a33bcfbf4522c51307bc1c7d04f74d8525cbefc1af9b552617e79",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/run.anim",
+      "sha256": "50d19f2eead8dfda1aa5ca25ad5cfb0456934f6564e301428cd175b61212e012",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/fire.anim",
+      "sha256": "37b572c67c670eda6f6a2c3fde7c42cfa5cbf58ce9b62e587b5e03eedb328c75",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/walk.anim",
+      "sha256": "cb5744ac6ee3cce237d553adb28057a4d80b6b4e2311549e09b9a57df5b1c495",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/death.anim",
+      "sha256": "69992d351599ea558f5dfd967230027e41387acae809e5791968c415743ff337",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/hit.anim",
+      "sha256": "0feb521e4325b34fb7feeb0f5b7cac1a51256f197c1fba5a56268ba1f74461fe",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Trooper/idle.anim",
+      "sha256": "440b4522369c077c14b8220de8a0e6000ca54da5a64a6117587b39de147d12f8",
+      "unchanged_from_base": true
+    }
+  ]
+}

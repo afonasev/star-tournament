@@ -1,5 +1,8 @@
 # Star Tournament — roadmap перехода на Unity
 
+Уточнение пользователя 2026-09-20: проверенный отдельный срез — `add-unity-bot-controlled-seats` (handoff 29: 81/81 EditMode, 63/63 PlayMode, Mac build, focused/muted mixed/all-AI 2/3/4 FHD/4K), ordinary human/AI на 1–4 views, включая all-AI и один human + 1/2/3 AI, максимум восемь участников. Replay пока отложен; поставка обсуждается отдельно. Финальную пользовательскую приёмку пользователь проведёт после реализации; каждый срез сохраняет tests/build и muted native Player QA. Physical/art/reference-performance acceptance этим не закрываются.
+
+
 Дата: 2026-09-19. Исходный browser commit: `8844e40` (`v0.0.9`).
 Статус: направление перехода и начало работы разрешены пользователем; технические рекомендации ниже не равнозначны утверждению всех открытых продуктовых решений.
 
@@ -76,14 +79,14 @@
 
 Browser baseline использует deterministic Rapier 0.20.0 и collision-contract-v2. Его historical replay и hashes остаются эталоном исходной версии, а не обязательством нового runtime. Stage 0 сверил GAME_SPEC с кодом: collision v2, match configuration v5 с legacy v4; snapshot v4 и replay v5.
 
-Пользователь выбрал Unity replay по записанным состояниям. Его детальная схема, частота записи, события/seek/restore и необходимость historical compatibility ещё открыты. Отказ от детерминизма не утверждает автоматически server-authoritative, lockstep либо иной сетевой контракт. Пока не подключать transport/сервисы без отдельного выбора модели.
+Пользователь выбрал Unity replay по записанным состояниям, но 2026-09-20 отложил его реализацию. Его детальная схема, частота записи, события/seek/restore и необходимость historical compatibility ещё открыты. Отказ от детерминизма не утверждает автоматически server-authoritative, lockstep либо иной сетевой контракт. Пока не подключать transport/сервисы без отдельного выбора модели.
 
 ## 7. Этапы и критерии завершения
 
 ### Этап 0. Требования и эталон
 
 - Утверждены Full HD–4K output и минимум 60 FPS при четырёх игроках; уточнить reference PC/TV, quality/internal scale и frame-time методику. Первый срез без покупок; бюджет расширений позднее.
-- Определить replay и historical compatibility с учётом уже утверждённого отказа от строгого детерминизма.
+- Replay отложен решением 2026-09-20; его детализация не блокирует текущие срезы.
 - Снять точный source commit/profile/seed/scenario baseline; сохранить browser-версию как эталон.
 - Согласовать устаревшие пункты GAME_SPEC, затем обновить утверждённые решения и оформить первый ограниченный OpenSpec change.
 - Прочитать актуальное окружение Unity; ничего не предполагать по историческим версиям соседнего unity-rts.
@@ -143,6 +146,8 @@ Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B
 
 ### Этап 6. Поставка и переключение основной версии
 
+Поставка обсуждается отдельно после нового решения; этот раздел не разрешает публикацию. Финальная пользовательская приёмка проводится пользователем после завершения реализации; автоматические проверки каждого среза продолжаются.
+
 - Сборки Windows/macOS согласно согласованной матрице, выпуск и обновления, smoke установленного приложения.
 - Реальные gamepads/TV, reconnect, focus, readable HUD, длинный матч, audio-specific проверка отдельно от muted QA.
 - Обновить browser-specific workflow на native Player acceptance перед применением к Unity; не объявлять browser smoke доказательством native input.
@@ -191,3 +196,5 @@ Native teams-срез `add-unity-native-teams` подключает FFA/Team A/B
 Participant/local-view separation проверено в `docs/tasks/completed/26-unity-participant-roster.md`: восемь физических участников,1–4 local views, mapped actions/presentation и bounded initial allocator;66/66 EditMode,49/49 PlayMode, Mac build, FHD/4K. Это внутренний prerequisite для playable planner/setup; прежние упоминания восьми тел как будущей работы выше описывают хронологию. Полная миграция остаётся активной.
 
 `add-unity-bot-planner` (handoff27) подключает настоящие AI actions/combat и frozen lifecycle; automated и focused muted FHD/4K Player evidence verified. Shipping setup следует отдельным change; никакого снятия evaluation/generated arena/physical/performance требований.
+
+`add-unity-bot-controlled-seats` завершает только выбор human/AI на отображаемых местах и operator lifecycle. Evidence: `docs/evidence/unity-bot-seats-2026-09-20/README.md`; handoff `docs/tasks/completed/29-unity-bot-controlled-seats.md`. Общий TrooperVisual/семь v2 clips и bot driver сохранены. Изменение остаётся неархивированным и неинтегрированным; другие этапы не начаты.

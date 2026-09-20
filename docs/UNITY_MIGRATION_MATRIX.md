@@ -1,5 +1,8 @@
 # Матрица полного переноса Star Tournament на Unity
 
+Уточнение пользователя 2026-09-20: проверенный отдельный срез — `add-unity-bot-controlled-seats` (handoff 29; 81 EditMode / 63 PlayMode, Mac build, 26 focused/muted PNG+JSON FHD/4K), ordinary human/AI на 1–4 views, включая all-AI и один human + 1/2/3 AI, максимум восемь участников. Replay пока отложен; поставка обсуждается отдельно. Финальную пользовательскую приёмку пользователь проведёт после реализации; каждый срез сохраняет tests/build и muted native Player QA. Physical/art/reference-performance acceptance этим не закрываются.
+
+
 Аудит 2026-09-20, база `6f8ed159d3c09c3a189e2ed365d42b79b1bcf2b7`. Полная цель активна. Статусы ниже — requirement-by-requirement backlog, не процент завершения. `Реализовано` означает найденный native код и committed evidence, но не закрывает перечисленные физические/художественные gates. Исходные handoffs 15–24 прочитаны; результаты 50 EditMode / 36 PlayMode и build из handoff 24 — исторические до нового запуска.
 
 Источники: `docs/GAME_SPEC.md` (GS), `docs/UNITY_MIGRATION_ROADMAP.md` (RM), `docs/AI.md`, `openspec/specs/<имя>/spec.md` (OS). Новое пользовательское поручение полного переноса имеет приоритет над формулировками границ прежних срезов. Browser backlog отменён, а не успешно принят; его реализацию не возобновляем.
@@ -8,8 +11,8 @@
 
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
-| INPUT-1 GS §2,7; first-person-player-control | SeatInputCoordinator: keyboard/mouse, unique gamepads, actions | Mapping1–4 после отделения participants проверен; physical devices ниже | Реальные K+3 pads / 4 pads, focus, cursor, reconnect/clear held |
-| VIEW-1 GS §2,5; RM этап 2 | Composition mapping + native 1/2/3/4 views; три viewport + постоянный счёт (handoff26, 66/49 tests + FHD/4K) | Обычный solo с ботами подключён handoff28; физическая приёмка открыта | Player 1/2/3/4, FHD/4K, readable HUD, отдельный ввод |
+| INPUT-1 GS §2,7; first-person-player-control | Human-only input mask, sparse ownership, operator Escape/all-AI Start; automated disconnect/reconnect (handoff29) | Mapping1–4 после отделения participants проверен; physical devices ниже | Реальные K+3 pads / 4 pads, focus, cursor, reconnect/clear held |
+| VIEW-1 GS §2,5; RM этап 2 | Human/AI 1–4 views, mixed/all-AI 2/3/4 FHD/4K verified; обычные камеры/руки/HUD и persistent standings (handoff29) | Обычный solo с ботами подключён handoff28; физическая приёмка открыта | Player 1/2/3/4, FHD/4K, readable HUD, отдельный ввод |
 | MOVE-1 GS §3; first-person-player-control | CharacterMotor: acceleration, strafe, jump, air control | Контроль темпа/ступеней на generated maps | Physical feel, run/strafe/stairs/headroom без скрытого бонуса |
 | MOVE-2 GS §2; multi-level-arena-navigation | Физические stairs/ramp fixture, тесты | Плавное вертикальное camera smoothing с headroom/aim parity | PNG/video + authoritative shot alignment, обе стороны |
 | COLL-1 GS §3; collision-query-foundation | Live capsules solid, dead disabled; World/MovementOnly layers | Проверка всей generated geometry | Живой blocker, death/respawn, no capsule overlap |
@@ -21,14 +24,14 @@
 
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
-| LIFE-1 GS §4; match-session-lifecycle | Death/killer life, killcam/no-killer orbit, respawn | Проверить все состояния solo/bots/8 | Player death, killer respawn, no-killer, Tab during killcam |
+| LIFE-1 GS §4; match-session-lifecycle | Общий death/killcam/respawn; natural viewed AI lifecycle FHD/4K verified (handoff29) | Проверить все состояния solo/bots/8 | Player death, killer respawn, no-killer, Tab during killcam |
 | LIFE-2 GS §4; hit-driven-death-presentation | Noncolliding trooper corpse, session-clock animation | Полное corpse lifetime/event evidence и directional response audit | Corpse не меняет shots/LOS/spawn; expiry/pause/Repeat |
 | SPAWN-1 GS §4; procedural-arena-generation | SafeSpawnSelector fixed candidates, occupancy/team threat | Regions/multiple slots/nav distance/LOS priority/fairness | Batch ID order, occupied region fallback, immediate best slot |
 | MATCH-1 GS §5; match-session-lifecycle | NativeMatchState scoring, assists/chains/time/target/overtime | Сохранить при полном составе | Atomic tick/tie/target precedence, precise damage/rounded UI |
-| MATCH-2 GS §2,5; handoffs 22–23 | Reducer/scene 2–8; independent1–4 local views, diagnostic mixed roster (handoff26, 66/49 tests + FHD/4K) | Обычный bots/solo/8 setup подключён handoff28; final-arena acceptance открыта | Native solo/human-bot/team/8 end-to-end matches |
-| MATCH-3 GS §5; match-loop-ui | Teams/цвета/duration/target setup; frozen Repeat | Bot difficulty/add-remove подключены handoff28; arena size/seed/profile selection открыты | Invalid setup recovery, exact frozen roster/config/arena Repeat |
-| UI-1 GS §5; match-loop-ui | HUD/live/results/pause/settings/menu; восемь строк и mapped human highlight (handoff26, 66/49 tests + FHD/4K) | Имена/сложности подключены handoff28; final presentation acceptance открыта | FHD/4K each layout, grouped totals/winner, View/Tab hold |
-| LIFE-3 GS §5,7; match-session-lifecycle | Pause/focus/disconnect + clean Repeat/menu | Подключить AI/generation/Lab/presentation lifecycle | No advancing gameplay during pause/results; fresh Repeat/reset |
+| MATCH-2 GS §2,5; handoffs 22–23 | Ordinary 2–8 participants, 1–4 human/AI views; all-AI 8-participant teams verified (handoff29) | Обычный bots/solo/8 setup подключён handoff28; final-arena acceptance открыта | Native solo/human-bot/team/8 end-to-end matches |
+| MATCH-3 GS §5; match-loop-ui | Human/AI, per-view difficulty/team и extra bots; frozen composition/seed/profiles Repeat verified (handoff29) | Bot difficulty/add-remove подключены handoff28; arena size/seed/profile selection открыты | Invalid setup recovery, exact frozen roster/config/arena Repeat |
+| UI-1 GS §5; match-loop-ui | Ordinary human/AI setup, HUD/live/pause/resume/Repeat/exit; 26 inspected PNG FHD/4K (handoff29) | Имена/сложности подключены handoff28; final presentation acceptance открыта | FHD/4K each layout, grouped totals/winner, View/Tab hold |
+| LIFE-3 GS §5,7; match-session-lifecycle | Human-only disconnect checks и operator pause all-AI; frozen clocks/clean Repeat/menu verified (handoff29) | Подключить будущие generation/Lab lifecycle; сохранить проверенные AI/presentation границы | No advancing gameplay during pause/results; fresh Repeat/reset |
 
 ## AI — навигация не равна playable bots
 
@@ -39,9 +42,9 @@
 | AI-3 GS §2; bot-ai active behavior | Planner verified in automated checks and focused FHD/4K Player pilot (handoff27) | Обычный setup подключён handoff28; generated-arena validation открыта | Real mixed-difficulty matches, contact/idle/stuck/jump cadence |
 | AI-4 bot-ai three difficulties | Behavior profile + reaction/aim/decision/personality без stat bonuses; internal Player pilot verified (handoff27) | Independent statistical acceptance | Equal stats contract + independent paired difficulty evaluation |
 | AI-5 bot-ai temporary support | Bounded support/retreat, allowlisted human/bot allies; internal Player pilot verified (handoff27) | Native pilot и final-map team metrics | Team support/disband/close-group metrics, FFA isolation |
-| AI-6 bot-ai extensibility/state | Planner/policy + validated RNG/timers/intent/native-route DTO (handoff27) | Full recorded match replay remains separate | Extension fixture, independent snapshots/validated restore |
+| AI-6 bot-ai extensibility/state | Planner/policy + validated RNG/timers/intent/native-route DTO (handoff27) | Replay отложен пользователем | Extension fixture, independent snapshots/validated restore |
 | AI-7 ai-headless-evaluation | Native runner отсутствует | Same-runtime accelerated bot-only suite, artifacts/telemetry | Paired sides, all sizes/FFA/teams/2–8, confidence intervals, holdout |
-| AI-8 GS §5; match-loop-ui | Обычный 1–4 humans / 2–8 participants setup, add/remove/difficulty/team, frozen Repeat (handoff28) | Physical controls/TV acceptance | Ordinary Player human-versus-bot, death/respawn/results/Repeat |
+| AI-8 GS §5; match-loop-ui | Ordinary human/AI view setup и extra bots, 2–8 participants; per-AI difficulty/team; genuine planners, frozen Repeat (handoff29) | Physical controls/TV acceptance | Ordinary Player human-versus-bot, death/respawn/results/Repeat |
 
 ## Арены
 
@@ -76,7 +79,7 @@
 | LAB-2 GS §6; game-design-lab | Нет native runtime Lab | Draft/save/new revision/search/groups/compare/changelog/import/export | Menu-only edit, explicit discard, no paused mutation |
 | LAB-3 GS §6 | Нет native catalog workflow | releaseRef/exact published snapshots/protected delete/local history | Atomic save/release, immutable revision, reset selection after delete |
 | STATE-1 GS §7 | Partial copied gameplay/perception DTO | Complete serializable gameplay/AI/config state | Round-trip/aliasing/invalid input, ownership audit |
-| REPLAY-1 GS §2,7,10 | Не реализован; детальный контракт открыт | State-recorded replay после выбора cadence/events/seek/restore | Recorded-state playback evidence; browser bitwise hash не требуется |
+| REPLAY-1 GS §2,7,10 | Не реализован; детальный контракт открыт | Отложен пользователем; будущий state-recorded replay после отдельного решения | Recorded-state playback evidence; browser bitwise hash не требуется |
 | NET-1 GS §10 | Correctly absent | Выбор модели остаётся открытым | Не добавлять transport/service автоматически |
 | QA-1 GS §8; game-qa | Historical EditMode/PlayMode/build/PNG evidence 15–24 | Every new change verified on own build | Native muted Player + screenshots, full automated regressions |
 | QA-2 GS §2,8,10 | Short Mac diagnostics only | Reference hardware/quality/internal scale/method + long active 60 FPS | FHD–4K 4-player sustained frame/CPU/GPU/memory, rare frames |
@@ -86,4 +89,4 @@
 
 ## Порядок продолжения
 
-Navigation → planner/combat/support и participant separation → shipping bot setup/solo/8 → arenas/validators → presentation/settings → complete Balance Lab → evaluation/recorded replay после необходимых решений → full audit/physical/performance/distribution gates. Порядок может уточняться по зависимостям; ни один пункт не снимается автоматически. Каждый implementation change получает отдельную ветку/worktree, tests/build/Player evidence и commit. Следующие пользовательские sidebar-задачи не создаются без явного запроса.
+Navigation → planner/combat/support и participant separation → shipping bot setup/solo/8 → bot-controlled split-screen seats → arenas/validators → presentation/settings → complete Balance Lab → evaluation → full audit/physical/performance gates. Replay отложен, distribution обсуждается отдельно. Порядок может уточняться по зависимостям; ни один пункт не снимается автоматически. Каждый implementation change получает отдельную ветку/worktree, tests/build/Player evidence и commit. Следующие пользовательские sidebar-задачи не создаются без явного запроса.

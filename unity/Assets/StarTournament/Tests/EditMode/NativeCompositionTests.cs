@@ -28,6 +28,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(output[7].Move,Is.EqualTo(Vector2.right));Assert.That(output[2].Jump,Is.True);
             Assert.That(output.All(a=>!a.Fire),Is.True);Assert.That(c.SeatOf(7),Is.Zero);Assert.That(c.SeatOf(0),Is.EqualTo(-1));
         }
+        [Test] public void BotViewsHaveSeatsButNeverReceiveHumanActions()
+        {
+            var info=new[]{
+                new NativeParticipantInfo(NativeParticipantKind.Bot,"Бот 1",NativeParticipantColors.For(0),1),
+                new NativeParticipantInfo(NativeParticipantKind.LocalHuman,"P1",NativeParticipantColors.For(1))};
+            var c=new NativeMatchComposition(NativeMatchRoster.Ffa(2),info,new[]{0,1});
+            var output=new LocalAction[2];
+            c.AssembleLocalActions(new[]{new LocalAction{Fire=true,Jump=true},new LocalAction{Move=Vector2.left}},output);
+            Assert.That(output[0].Fire,Is.False);Assert.That(output[0].Jump,Is.False);
+            Assert.That(output[1].Move,Is.EqualTo(Vector2.left));
+            info[0].Kind=NativeParticipantKind.DiagnosticFixture;
+            Assert.Throws<ArgumentException>(()=>new NativeMatchComposition(NativeMatchRoster.Ffa(2),info,new[]{0,1}));
+        }
         [Test] public void RejectsInvalidMappingsKindsAndDifficulty()
         {
             var r=NativeMatchRoster.Ffa(2);
