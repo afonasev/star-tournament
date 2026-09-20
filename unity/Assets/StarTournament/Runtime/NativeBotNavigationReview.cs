@@ -1,4 +1,4 @@
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 using System;
 using System.Collections;
 using System.IO;
@@ -13,6 +13,7 @@ using UnityEngine.UI;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Real session-tick navigation, opt-in fixture goals; not a full combat planner.</summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class NativeBotNavigationReview : MonoBehaviour
     {
         ProvingGround ground; Gamepad[] pads; string directory; Text banner;
@@ -38,7 +39,7 @@ namespace StarTournament.ProvingGround
         }
         [Serializable] sealed class Evidence
         {
-            public string state, status="NAVIGATION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",profile="unity-bot-navigation-v1@1";
+            public string state, status="NAVIGATION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",profile="unity-bot-navigation-v1@1", arenaFamily, arenaIdentity;
             public int width,height; public bool focused,muted,running;public double sessionTime;
             public ParticipantState pose;public NativeNavigationState navigation;
         }
@@ -47,7 +48,7 @@ namespace StarTournament.ProvingGround
         IEnumerator Start()
         {
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-navigationEvidence");
-            directory=index>=0&&index+1<args.Length?args[index+1]:Path.Combine(Application.persistentDataPath,"navigation-review");Directory.CreateDirectory(directory);
+            directory=index>=0&&index+1<args.Length?args[index+1]:Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE")??Path.Combine(Application.persistentDataPath,"navigation-review");Directory.CreateDirectory(directory);
             // Do not request ScreenCapture while the native splash presentation is still pending.
             while(!Application.isFocused || !UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             yield return new WaitForEndOfFrame();
@@ -72,10 +73,8 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(0,new Vector3(1,0,-8),0,90);ground.PlaceCombatReviewSeat(2,new Vector3(3,0,-8),0);
             ground.NavigationReviewDriver.Controller.FollowEnemy(2);yield return new WaitForSeconds(.1f);
             Check(ground.NavigationReviewDriver.Controller.Capture().HasGoal,"direct goal missing");yield return Capture("direct-observed-goal");
-            var seen=ground.NavigationReviewDriver.Controller.Capture().Goal;
-            ground.PlaceCombatReviewSeat(2,new Vector3(6,0,-8),0);yield return new WaitForSeconds(.2f);
-            Check(ground.NavigationReviewDriver.Controller.Capture().Goal==seen,"hidden goal moved");yield return Capture("hidden-remembered-goal");
-            yield return new WaitForSeconds(4.1f);Check(!ground.NavigationReviewDriver.Controller.Capture().HasGoal,"expired goal retained");yield return Capture("expired-goal");
+            // Visibility, remembered positions, and expiry are independently exercised by NativeBotPerceptionReview.
+            // This diagnostic keeps its contract to generated-arena navigation routes only.
             ground.NavigationReviewDriver.Controller.SetStaticGoal(arena.UpperRoutePoint);yield return new WaitForSeconds(.4f);
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));yield return new WaitForSecondsRealtime(.2f);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return new WaitForSecondsRealtime(.2f);
@@ -127,7 +126,8 @@ namespace StarTournament.ProvingGround
         {
             while(!Application.isFocused)yield return null;banner.text="NATIVE BOT NAVIGATION · DEVELOPMENT DIAGNOSTIC\n"+label+" · ordinary actions / CharacterMotor · no combat planner";
             yield return new WaitForEndOfFrame();
-            var data=new Evidence{state=label,width=Screen.width,height=Screen.height,focused=Application.isFocused,muted=AudioListener.volume==0,
+            var arena=ground.GetComponentInChildren<ProvingArena>();
+            var data=new Evidence{state=label,arenaFamily=arena.Definition.FamilyId,arenaIdentity=arena.Definition.Identity,width=Screen.width,height=Screen.height,focused=Application.isFocused,muted=AudioListener.volume==0,
                 running=ground.Running,sessionTime=ground.Session.Time,pose=ground.Session.Pose(0),navigation=ground.NavigationReviewDriver?.Controller.Capture()};
             File.WriteAllText(Path.Combine(directory,label+".json"),JsonUtility.ToJson(data,true));ScreenCapture.CaptureScreenshot(Path.Combine(directory,label+".png"));yield return null;
         }

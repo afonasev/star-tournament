@@ -142,6 +142,10 @@ namespace StarTournament.ProvingGround
             light.transform.rotation = Quaternion.Euler(50, -30, 0); // Authored fixture light orientation.
             var args=Environment.GetCommandLineArgs();int familyFlag=Array.IndexOf(args,"-arenaFamily");
             if(familyFlag>=0&&familyFlag+1<args.Length&&int.TryParse(args[familyFlag+1],out int family))ArenaProfile.Set("arena.family",family);
+            bool environmentReview=DevelopmentNavigationReviewHandoff.TryParse(
+                Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"),
+                Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_ARENA_FAMILY"), out int environmentFamily);
+            if(environmentReview) ArenaProfile.Set("arena.family",environmentFamily);
             arena = Owned("unity-arena-families-v1").AddComponent<ProvingArena>();
             arena.Build(ArenaGenerator.Generate(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile }), Profile);
             Composition=HumanComposition(SetupRoster(),false);
@@ -159,19 +163,31 @@ namespace StarTournament.ProvingGround
             if(args.Contains("-teamsDiagnostic")) SetMatchMode(NativeMatchMode.Teams);
             bool requestedDiagnostic = Environment.GetCommandLineArgs().Contains("-diagnostic");
             if (requestedDiagnostic) Begin(true);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-botSeatsReview")) gameObject.AddComponent<NativeBotSeatsReview>();
             if (args.Contains("-botSetupReview")) gameObject.AddComponent<NativeBotSetupReview>();
             if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
             if (args.Contains("-botBehaviorReview")) gameObject.AddComponent<NativeBotBehaviorReview>();
             if (args.Contains("-participantReview")) gameObject.AddComponent<NativeParticipantReview>();
-            if (args.Contains("-botNavigationReview")) gameObject.AddComponent<NativeBotNavigationReview>();
+            // macOS replaces the launcher process and drops its argv/environment. This symbol is supplied only by
+            // ProvingGroundBuild.BuildMac's Development QA artifact, never by a shipping Player.
+#if STAR_TOURNAMENT_DEVELOPMENT_QA
+            const bool packagedNavigationReview = true;
+#else
+            const bool packagedNavigationReview = false;
+#endif
+            if (args.Contains("-botNavigationReview")||environmentReview||packagedNavigationReview)
+            {
+                // The review class is compiled only into the Development QA Player. Reflection keeps this ordinary bootstrap
+                // independent from that conditional assembly while making the documented CLI activation observable.
+                var reviewType=Type.GetType("StarTournament.ProvingGround.NativeBotNavigationReview, StarTournament.ProvingGround");
+                if(reviewType==null) throw new InvalidOperationException("Development navigation review is not packaged");
+                gameObject.AddComponent(reviewType); Debug.Log("NATIVE_BOT_NAVIGATION_REVIEW_BOOTSTRAPPED");
+            }
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
             if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();
             if (args.Contains("-combatReview") || args.Contains("-shotFeedbackReview")) gameObject.AddComponent<NativeCombatReview>();
-#endif
         }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         public void StartBotReview(NativeMatchComposition composition,uint seed,InputDevice[] devices=null)

@@ -15,7 +15,8 @@ namespace StarTournament.ProvingGround.Editor
         const string Root = "Assets/StarTournament/";
         const string Scene = Root + "Scenes/ProvingGround.unity";
         [MenuItem("Star Tournament/Prepare proving ground")]
-        public static void Prepare()
+        public static void Prepare() => PrepareFamily(0,1920,1080);
+        static void PrepareFamily(int arenaFamily,int width,int height)
         {
             Directory.CreateDirectory(Root+"Settings"); Directory.CreateDirectory(Root+"Scenes"); Directory.CreateDirectory(Root+"Resources");
             AssetDatabase.Refresh();
@@ -34,11 +35,12 @@ namespace StarTournament.ProvingGround.Editor
             settings.FindProperty("activeInputHandler").intValue=1; settings.ApplyModifiedPropertiesWithoutUndo();
             PlayerSettings.companyName="Afonasev"; PlayerSettings.productName="Star Tournament Unity Proving Ground";
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone,ScriptingImplementation.Mono2x);
-            PlayerSettings.runInBackground=false; PlayerSettings.defaultScreenWidth=1920; PlayerSettings.defaultScreenHeight=1080;
+            PlayerSettings.runInBackground=false; PlayerSettings.defaultScreenWidth=width; PlayerSettings.defaultScreenHeight=height;
             PlayerSettings.enableFrameTimingStats=true;
             PlayerSettings.fullScreenMode=FullScreenMode.Windowed;
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var root=new GameObject("Star Tournament Proving Ground").AddComponent<ProvingGround>();
+            root.ArenaProfile.Set("arena.family",arenaFamily);
             TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
             EditorSceneManager.SaveScene(scene,Scene);
             EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(Scene,true)};
@@ -57,10 +59,25 @@ namespace StarTournament.ProvingGround.Editor
         [MenuItem("Star Tournament/Build macOS proving ground")]
         public static void BuildMac()
         {
+            var familyText=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_ARENA_FAMILY");
+            int family=0;
+            if(!string.IsNullOrEmpty(familyText)&&(!int.TryParse(familyText,out family)||family<0||family>=ArenaFamilyCatalog.Ids.Count))
+                throw new BuildFailedException("Invalid STAR_TOURNAMENT_QA_ARENA_FAMILY");
+            int width=ReadQaDimension("STAR_TOURNAMENT_QA_WIDTH",1920),height=ReadQaDimension("STAR_TOURNAMENT_QA_HEIGHT",1080);
+            PrepareFamily(family,width,height);
+            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes=new[]{Scene}, locationPathName="Builds/StarTournamentProvingGround.app", target=BuildTarget.StandaloneOSX, options=BuildOptions.Development,
+                extraScriptingDefines=new[]{"STAR_TOURNAMENT_DEVELOPMENT_QA"} });
+            // Keep the editable canonical scene at its default family after a one-off QA artifact build.
             Prepare();
-            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes=new[]{Scene}, locationPathName="Builds/StarTournamentProvingGround.app", target=BuildTarget.StandaloneOSX, options=BuildOptions.Development });
             if (report.summary.result!=BuildResult.Succeeded) throw new BuildFailedException(report.summary.result.ToString());
             Debug.Log("STAR_PROVING_BUILD_PASS " + report.summary.totalSize);
+        }
+        static int ReadQaDimension(string variable,int fallback)
+        {
+            var value=System.Environment.GetEnvironmentVariable(variable);
+            if(string.IsNullOrEmpty(value))return fallback;
+            if(!int.TryParse(value,out int dimension)||dimension<320||dimension>7680)throw new BuildFailedException("Invalid "+variable);
+            return dimension;
         }
     }
 
