@@ -1,0 +1,1 @@
+PASS: ordinary UI, synthetic device joins/actions, actual AI, pause, repeat, teams, natural results, cleanup. Physical/TV/performance acceptance open.

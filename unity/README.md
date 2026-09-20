@@ -1,6 +1,6 @@
 # Star Tournament — Unity proving ground
 
-Отдельный проверочный срез: 2–4 local seats, фиксированная двухэтажная арена, native CharacterController/NavMesh, существующие robot/shotgun GLB. Native FFA и Team A/B включают бой, scoring, результаты и Repeat; bots, восемь участников и solo ещё не подключены. Browser baseline `8844e40` сохранён отдельно; старые replay/seed hashes здесь не воспроизводятся.
+Отдельный проверочный срез: 2–4 local seats, фиксированная двухэтажная арена, native CharacterController/NavMesh, существующие robot/shotgun GLB. Native FFA и Team A/B включают бой, scoring, результаты и Repeat; обычный setup поддерживает 1–4 людей и до восьми участников с ботами. Browser baseline `8844e40` сохранён отдельно; старые replay/seed hashes здесь не воспроизводятся.
 
 Откройте эту директорию через Unity Hub редактором **6000.3.23f1**. Точные пакеты закреплены в `Packages/manifest.json` и `packages-lock.json`. После изменения импорта используйте меню **Star Tournament → Prepare proving ground**, затем сцену `Assets/StarTournament/Scenes/ProvingGround.unity`.
 
@@ -15,7 +15,7 @@ unity/tools.sh build
 
 Не запускайте два Unity-процесса для одного проекта одновременно. `UNITY_EDITOR` переопределяет путь редактора. Логи/XML сохраняются в `.local/unity-evidence/`; Mac Player — `unity/Builds/StarTournamentProvingGround.app`. Сборка Development, не production installer и не notarized release.
 
-Для обычного запуска выберите 2–4 места кнопками «Игроки −/+» и назначьте каждому устройство: `Space` присоединяет единственную keyboard/mouse пару, `Start` — конкретный gamepad. Поддержаны уникальные gamepads либо одна keyboard/mouse пара с остальными gamepads. После заполнения slots кнопка старта получает UI focus. WASD/LS — движение, мышь/RS — взгляд, Space/A — прыжок, mouse button/RT — выстрел, Tab/View — список, Esc/Start — общая пауза. LB свободен. Disconnect/focus loss останавливает gameplay; reconnect не запускает игру автоматически. Поменять назначение можно через setup.
+Для обычного запуска выберите 1–4 места кнопками «Игроки −/+» и назначьте каждому устройство: `Space` присоединяет единственную keyboard/mouse пару, `Start` — конкретный gamepad. Поддержаны уникальные gamepads либо одна keyboard/mouse пара с остальными gamepads. После заполнения slots кнопка старта получает UI focus. WASD/LS — движение, мышь/RS — взгляд, Space/A — прыжок, mouse button/RT — выстрел, Tab/View — список, Esc/Start — общая пауза. LB свободен. Disconnect/focus loss останавливает gameplay; reconnect не запускает игру автоматически. Поменять назначение можно через setup.
 
 Пункт «Диагностика: N камеры» не требует устройств и явно помечен: он показывает неподвижных участников и не подтверждает physical acceptance. Для ограниченного автоматического измерения запустите бинарный файл Player с `-diagnostic -probeEvidence <absolute-output-directory>`. Только этот диагностический запуск разрешает выполнение в фоне; отчёт отдельно фиксирует сохранение focus. После 3 секунд прогрева (кадр пересечения границы исключён целиком) и 10 секунд записи он сохранит `report.json`, `player.png` и завершится. `-probeCameras 1|2|4` меняет только число камер при той же нагрузке четырёх неподвижных капсул. После выхода в меню CLI override камер сбрасывается; новый diagnostic соответствует выбранному составу. Без `-diagnostic` сохраняется setup screenshot. Для разрешения используйте стандартные Player аргументы `-screen-width`/`-screen-height`, проверяя фактический output в отчёте.
 
@@ -32,3 +32,9 @@ Development Player CLI: `-layoutReview -layoutEvidence /absolute/output` с об
 Data-only `NativeMatchRoster`/`NativeMatchState` поддерживают FFA и Team A/Team B для 2–8 participant slots; это не local-seat/device count. Native setup поддерживает FFA и Team A/B для 2–4 людей. Team totals и `WinnerTeam` доступны в независимом JSON inspection DTO, не restore/replay API. Handoff: `docs/tasks/completed/22-unity-team-match-state.md`.
 
 Команды: кнопка режима в setup, назначение P1–P4 и смена цветов. Старт требует обе непустые команды. Союзник блокирует дробь без урона; Repeat сохраняет состав/цвета. `unity-native-team-v1@1` задаёт metadata initial opponent separation. Diagnostic CLI: `-teamReview -teamEvidence /absolute/path`; отдельный stationary probe: `-diagnostic -teamsDiagnostic -probeEvidence /absolute/path`. Подробнее: handoff23 и `docs/evidence/unity-native-teams-2026-09-20/README.md`.
+
+## Обычный setup с ботами
+
+Правая колонка setup добавляет ботов до общего лимита восьми участников. Кнопка с именем переключает Салага → Боец → Ветеран; удалить можно любую строку. В Team A/B каждый бот получает собственную кнопку команды. Обе команды должны быть непустыми; solo требует хотя бы одного бота. Устройства назначаются только людям. Repeat сохраняет состав, сложности, цвета и frozen profiles; возврат в setup сохраняет редактируемый состав. Все тела используют существующий TrooperVisual и семь v2 clips, без root motion.
+
+Development review обычного UI: `-botSetupReview -botSetupEvidence /absolute/output` с `-screen-width 1920 -screen-height 1080 -screen-fullscreen 0` (повторить 3840×2160). Native Player должен иметь focus. Review использует настоящие setup Buttons, synthetic gamepad joins/actions и actual AI; synthetic devices не заменяют физическую приёмку. QA muted.

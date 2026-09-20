@@ -9,7 +9,7 @@
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
 | INPUT-1 GS §2,7; first-person-player-control | SeatInputCoordinator: keyboard/mouse, unique gamepads, actions | Mapping1–4 после отделения participants проверен; physical devices ниже | Реальные K+3 pads / 4 pads, focus, cursor, reconnect/clear held |
-| VIEW-1 GS §2,5; RM этап 2 | Composition mapping + native 1/2/3/4 views; три viewport + постоянный счёт (handoff26, 66/49 tests + FHD/4K) | Shipping solo versus bots | Player 1/2/3/4, FHD/4K, readable HUD, отдельный ввод |
+| VIEW-1 GS §2,5; RM этап 2 | Composition mapping + native 1/2/3/4 views; три viewport + постоянный счёт (handoff26, 66/49 tests + FHD/4K) | Обычный solo с ботами подключён handoff28; физическая приёмка открыта | Player 1/2/3/4, FHD/4K, readable HUD, отдельный ввод |
 | MOVE-1 GS §3; first-person-player-control | CharacterMotor: acceleration, strafe, jump, air control | Контроль темпа/ступеней на generated maps | Physical feel, run/strafe/stairs/headroom без скрытого бонуса |
 | MOVE-2 GS §2; multi-level-arena-navigation | Физические stairs/ramp fixture, тесты | Плавное вертикальное camera smoothing с headroom/aim parity | PNG/video + authoritative shot alignment, обе стороны |
 | COLL-1 GS §3; collision-query-foundation | Live capsules solid, dead disabled; World/MovementOnly layers | Проверка всей generated geometry | Живой blocker, death/respawn, no capsule overlap |
@@ -25,23 +25,23 @@
 | LIFE-2 GS §4; hit-driven-death-presentation | Noncolliding trooper corpse, session-clock animation | Полное corpse lifetime/event evidence и directional response audit | Corpse не меняет shots/LOS/spawn; expiry/pause/Repeat |
 | SPAWN-1 GS §4; procedural-arena-generation | SafeSpawnSelector fixed candidates, occupancy/team threat | Regions/multiple slots/nav distance/LOS priority/fairness | Batch ID order, occupied region fallback, immediate best slot |
 | MATCH-1 GS §5; match-session-lifecycle | NativeMatchState scoring, assists/chains/time/target/overtime | Сохранить при полном составе | Atomic tick/tie/target precedence, precise damage/rounded UI |
-| MATCH-2 GS §2,5; handoffs 22–23 | Reducer/scene 2–8; independent1–4 local views, diagnostic mixed roster (handoff26, 66/49 tests + FHD/4K) | Playable bots/solo/8 shipping setup | Native solo/human-bot/team/8 end-to-end matches |
-| MATCH-3 GS §5; match-loop-ui | Teams/цвета/duration/target setup; frozen Repeat | Bot difficulty/add-remove, arena size/seed/profile selection | Invalid setup recovery, exact frozen roster/config/arena Repeat |
-| UI-1 GS §5; match-loop-ui | HUD/live/results/pause/settings/menu; восемь строк и mapped human highlight (handoff26, 66/49 tests + FHD/4K) | Shipping bot difficulty labels | FHD/4K each layout, grouped totals/winner, View/Tab hold |
+| MATCH-2 GS §2,5; handoffs 22–23 | Reducer/scene 2–8; independent1–4 local views, diagnostic mixed roster (handoff26, 66/49 tests + FHD/4K) | Обычный bots/solo/8 setup подключён handoff28; final-arena acceptance открыта | Native solo/human-bot/team/8 end-to-end matches |
+| MATCH-3 GS §5; match-loop-ui | Teams/цвета/duration/target setup; frozen Repeat | Bot difficulty/add-remove подключены handoff28; arena size/seed/profile selection открыты | Invalid setup recovery, exact frozen roster/config/arena Repeat |
+| UI-1 GS §5; match-loop-ui | HUD/live/results/pause/settings/menu; восемь строк и mapped human highlight (handoff26, 66/49 tests + FHD/4K) | Имена/сложности подключены handoff28; final presentation acceptance открыта | FHD/4K each layout, grouped totals/winner, View/Tab hold |
 | LIFE-3 GS §5,7; match-session-lifecycle | Pause/focus/disconnect + clean Repeat/menu | Подключить AI/generation/Lab/presentation lifecycle | No advancing gameplay during pause/results; fresh Repeat/reset |
 
 ## AI — навигация не равна playable bots
 
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
-| AI-1 GS §2,7; bot-ai honest observation | NativeBotPerception/ObservationProvider, FOV/LOS/time memory, delayed direct-only reports | Shipping sensor lifecycle | Hidden movement/death/respawn, expiry, no relay, pause/Repeat |
-| AI-2 bot-ai active navigation; multi-level-arena-navigation | Verified native routes/support/ordinary actions/bounded recovery (handoff 25) | Shipping planner integration и generated-scene routing | Stairs/ramp both directions × 3 lanes, overlap-XZ, blocker, replan |
-| AI-3 GS §2; bot-ai active behavior | Planner verified in automated checks and focused FHD/4K Player pilot (handoff27) | Shipping exposure и generated-arena validation | Real mixed-difficulty matches, contact/idle/stuck/jump cadence |
+| AI-1 GS §2,7; bot-ai honest observation | NativeBotPerception/ObservationProvider, FOV/LOS/time memory, delayed direct-only reports | Обычный lifecycle подключён handoff28; final-scene validation открыта | Hidden movement/death/respawn, expiry, no relay, pause/Repeat |
+| AI-2 bot-ai active navigation; multi-level-arena-navigation | Verified native routes/support/ordinary actions/bounded recovery (handoff 25) | Обычный planner integration подключён handoff28; generated-scene routing открыта | Stairs/ramp both directions × 3 lanes, overlap-XZ, blocker, replan |
+| AI-3 GS §2; bot-ai active behavior | Planner verified in automated checks and focused FHD/4K Player pilot (handoff27) | Обычный setup подключён handoff28; generated-arena validation открыта | Real mixed-difficulty matches, contact/idle/stuck/jump cadence |
 | AI-4 bot-ai three difficulties | Behavior profile + reaction/aim/decision/personality без stat bonuses; internal Player pilot verified (handoff27) | Independent statistical acceptance | Equal stats contract + independent paired difficulty evaluation |
 | AI-5 bot-ai temporary support | Bounded support/retreat, allowlisted human/bot allies; internal Player pilot verified (handoff27) | Native pilot и final-map team metrics | Team support/disband/close-group metrics, FFA isolation |
 | AI-6 bot-ai extensibility/state | Planner/policy + validated RNG/timers/intent/native-route DTO (handoff27) | Full recorded match replay remains separate | Extension fixture, independent snapshots/validated restore |
 | AI-7 ai-headless-evaluation | Native runner отсутствует | Same-runtime accelerated bot-only suite, artifacts/telemetry | Paired sides, all sizes/FFA/teams/2–8, confidence intervals, holdout |
-| AI-8 GS §5; match-loop-ui | Human-only setup | Add/remove/difficulty labels/frozen roster | Ordinary Player human-versus-bot, death/respawn/results/Repeat |
+| AI-8 GS §5; match-loop-ui | Обычный 1–4 humans / 2–8 participants setup, add/remove/difficulty/team, frozen Repeat (handoff28) | Physical controls/TV acceptance | Ordinary Player human-versus-bot, death/respawn/results/Repeat |
 
 ## Арены
 

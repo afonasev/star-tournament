@@ -55,6 +55,17 @@ namespace StarTournament.ProvingGround
         GameObject teamRow;
         readonly Button[] teamButtons=new Button[SeatInputCoordinator.SeatCount];
         string setupError;
+        readonly NativeBotSetup botSetup=new NativeBotSetup();
+        GameObject botPanel;
+        Button addBot;
+        readonly GameObject[] botRows=new GameObject[NativeMatchRoster.MaximumParticipants-1];
+        readonly Button[] botDifficulty=new Button[NativeMatchRoster.MaximumParticipants-1], botTeams=new Button[NativeMatchRoster.MaximumParticipants-1];
+        public int SetupBotCount=>botSetup.Count;
+        public NativeMatchComposition SetupComposition()=>botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
+        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);setupError=null;RefreshInterface();}
+        public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();Select(botSetup.Count>0?botDifficulty[Math.Min(index,botSetup.Count-1)]:addBot);}
+        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);RefreshInterface();}
+        public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
         public void SetMatchMode(NativeMatchMode mode)
         {
             if(phase!=Phase.Setup) return;
@@ -67,7 +78,7 @@ namespace StarTournament.ProvingGround
             if(seat<0 || seat>=LocalSeatCount || (team!=NativeTeam.TeamA && team!=NativeTeam.TeamB)) throw new ArgumentException("Invalid assignment");
             teamAssignments[seat]=team;setupError=null;RefreshInterface();
         }
-        public NativeMatchRoster SetupRoster() => SetupMode==NativeMatchMode.Ffa ? NativeMatchRoster.Ffa(LocalSeatCount) : new NativeMatchRoster(SetupMode,teamAssignments.Take(LocalSeatCount).ToArray());
+        public NativeMatchRoster SetupRoster() => SetupComposition().Roster;
         bool ValidSetup()
         {
             try { if(reviewComposition==null)SetupRoster();return true; } catch(ArgumentException) { return false; }
@@ -127,6 +138,7 @@ namespace StarTournament.ProvingGround
             bool requestedDiagnostic = Environment.GetCommandLineArgs().Contains("-diagnostic");
             if (requestedDiagnostic) Begin(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-botSetupReview")) gameObject.AddComponent<NativeBotSetupReview>();
             if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
             if (args.Contains("-botBehaviorReview")) gameObject.AddComponent<NativeBotBehaviorReview>();
             if (args.Contains("-participantReview")) gameObject.AddComponent<NativeParticipantReview>();
@@ -326,13 +338,15 @@ namespace StarTournament.ProvingGround
                 Configuration.Validate(MatchProfile);
                 if(TeamProfile.Id!="unity-native-team-v1" || TeamProfile.Version!=1 || TeamProfile.Validate().Count!=0) throw new InvalidOperationException("Invalid team profile");
                 foreach(var descriptor in TeamProfile.Descriptors) NativeMatchConfiguration.ValidateValue(TeamProfile,descriptor.Path,TeamProfile.Get(descriptor.Path));
-                Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):HumanComposition(SetupRoster(),swappedTeamColors);
-                Composition.RequireSupportedSources(botReviewEnabled,reviewComposition!=null&&!botReviewEnabled);
+                Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):SetupComposition();
+                bool hasBots=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot);
+                if(hasBots&&!botReviewEnabled)botSeed=(uint)UnityEngine.Random.Range(1,int.MaxValue);
+                Composition.RequireSupportedSources(true,reviewComposition!=null&&!botReviewEnabled);
                 frozenRoster=Composition.Roster;frozenSwappedColors=swappedTeamColors;frozenTeam=Copy(TeamProfile);
                 if(RosterProfile.Id!="unity-native-roster-v1" || RosterProfile.Version!=1 || RosterProfile.Validate().Count!=0)throw new InvalidOperationException("Invalid roster profile");
                 foreach(var descriptor in RosterProfile.Descriptors)NativeMatchConfiguration.ValidateValue(RosterProfile,descriptor.Path,RosterProfile.Get(descriptor.Path));
                 frozenRosterProfile=Copy(RosterProfile);
-                if(botReviewEnabled){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
+                if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
                 frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile);
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
@@ -365,7 +379,7 @@ namespace StarTournament.ProvingGround
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match);
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
-            BotDriver=botReviewEnabled?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
+            BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition);
             Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
@@ -381,8 +395,15 @@ namespace StarTournament.ProvingGround
         {
             NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
             phase=Phase.Setup; diagnostic=false; combatReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
-            reviewComposition=null;reviewShowStandings=false;if(LocalSeatCount<2)input.SetActiveSeatCount(2);
-            Composition=HumanComposition(NativeMatchRoster.Ffa(LocalSeatCount),false);
+            bool wasReview=reviewComposition!=null;
+            reviewComposition=null;reviewShowStandings=false;if(wasReview&&LocalSeatCount<2)input.SetActiveSeatCount(2);
+            // Setup preview is not a playable roster; preserve invalid drafts for editing.
+            if(LocalSeatCount+botSetup.Count>=NativeMatchRoster.MinimumParticipants)
+                Composition=botSetup.Build(LocalSeatCount,NativeMatchMode.Ffa,teamAssignments,false);
+            else
+                Composition=new NativeMatchComposition(NativeMatchRoster.Ffa(2),new[]{
+                    new NativeParticipantInfo(NativeParticipantKind.LocalHuman,"Игрок 1",NativeStandingsView.Palette[0]),
+                    new NativeParticipantInfo(NativeParticipantKind.DiagnosticFixture,"Preview",NativeStandingsView.Palette[1])},new[]{0});
             var safeMovement=frozenMovement??previewMovement;var safeLife=frozenLife??previewLife;var safeCombat=frozenCombat??previewCombat;
             RebuildActors(Composition,safeMovement,frozenTrooper??previewTrooper);
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat);
@@ -392,8 +413,8 @@ namespace StarTournament.ProvingGround
         }
         void SetSeatCount(int count)
         {
-            // This bounded human-only slice supports 2–4. Solo policy is a separate product decision.
-            if(phase!=Phase.Setup || count<2 || count>SeatInputCoordinator.SeatCount) return;
+            // Structural product limits; never silently discard configured bots.
+            if(phase!=Phase.Setup || count<1 || count>SeatInputCoordinator.SeatCount || count+botSetup.Count>NativeMatchRoster.MaximumParticipants) return;
             input.SetActiveSeatCount(count);setupError=null; ApplyLayout(count); RefreshInterface();
         }
         void ApplyLayout(int count)
@@ -507,7 +528,26 @@ namespace StarTournament.ProvingGround
             fps = canvasObject.AddComponent<FpsDisplay>();
             fps.Initialize(font, (int)Profile.Get("ui.fontSize"), settings.GetComponentInChildren<Text>());
             ButtonElement(column.transform,"Выйти",()=>Application.Quit());
+            CreateBotSetupInterface();
             ApplyLayout(LocalSeatCount); RefreshInterface(); Select(rebind);
+        }
+        void CreateBotSetupInterface()
+        {
+            botPanel=new GameObject("bot-setup",typeof(RectTransform),typeof(VerticalLayoutGroup));botPanel.transform.SetParent(overlay.transform,false);
+            Layout((RectTransform)botPanel.transform,new Vector2(.55f,.08f),new Vector2(.96f,.88f));
+            var layout=botPanel.GetComponent<VerticalLayoutGroup>();layout.childControlHeight=true;layout.childForceExpandHeight=true;
+            var title=TextElement(botPanel.transform,"bot-title","БОТЫ · общий лимит 8 участников",(int)Profile.Get("ui.headingFontSize"));title.alignment=TextAnchor.MiddleCenter;
+            addBot=ButtonElement(botPanel.transform,"Добавить бота",AddBot);addBot.name="bot-add";
+            for(int i=0;i<botRows.Length;i++)
+            {
+                int index=i;var row=new GameObject("bot-row-"+i,typeof(RectTransform),typeof(VerticalLayoutGroup));row.transform.SetParent(botPanel.transform,false);botRows[i]=row;
+                var vertical=row.GetComponent<VerticalLayoutGroup>();vertical.childControlHeight=vertical.childForceExpandHeight=true;
+                botDifficulty[i]=ButtonElement(row.transform,"Сложность",()=>SetBotDifficulty(index,(botSetup.At(index).Difficulty+1)%3));botDifficulty[i].name="bot-difficulty-"+i;
+                var controls=new GameObject("controls",typeof(RectTransform),typeof(HorizontalLayoutGroup));controls.transform.SetParent(row.transform,false);
+                var horizontal=controls.GetComponent<HorizontalLayoutGroup>();horizontal.childControlHeight=horizontal.childControlWidth=horizontal.childForceExpandHeight=horizontal.childForceExpandWidth=true;
+                botTeams[i]=ButtonElement(controls.transform,"Команда",()=>SetBotTeam(index,botSetup.At(index).Team==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));botTeams[i].name="bot-team-"+i;
+                ButtonElement(controls.transform,"Удалить",()=>RemoveBot(index)).name="bot-remove-"+i;
+            }
         }
         Text TextElement(Transform parent,string name,string value,int size)
         {
@@ -527,9 +567,9 @@ namespace StarTournament.ProvingGround
             if (!overlay) return;
             overlay.SetActive(phase!=Phase.Running);
             start.gameObject.SetActive(phase==Phase.Setup); start.interactable=input.Ready && ValidSetup();
-            start.GetComponentInChildren<Text>().text="Начать — игроков: "+LocalSeatCount;
-            seatsMinus.gameObject.SetActive(phase==Phase.Setup); seatsMinus.interactable=LocalSeatCount>2;
-            seatsPlus.gameObject.SetActive(phase==Phase.Setup); seatsPlus.interactable=LocalSeatCount<SeatInputCoordinator.SeatCount;
+            start.GetComponentInChildren<Text>().text="Начать · людей: "+LocalSeatCount+" · ботов: "+botSetup.Count;
+            seatsMinus.gameObject.SetActive(phase==Phase.Setup); seatsMinus.interactable=LocalSeatCount>1;
+            seatsPlus.gameObject.SetActive(phase==Phase.Setup); seatsPlus.interactable=LocalSeatCount<SeatInputCoordinator.SeatCount && LocalSeatCount+botSetup.Count<NativeMatchRoster.MaximumParticipants;
             seatsMinus.GetComponentInChildren<Text>().text="Игроков: "+LocalSeatCount+"   −";
             diagnosticButton.GetComponentInChildren<Text>().text="Диагностика: "+LocalSeatCount+" камеры · без управления";
             resume.gameObject.SetActive(phase==Phase.Paused); resume.interactable=diagnostic||input.Ready;
@@ -556,10 +596,22 @@ namespace StarTournament.ProvingGround
             targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
             results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition);
             var menuRect=(RectTransform)status.transform.parent;
-            Layout(menuRect,new Vector2(.15f,phase==Phase.Results?.06f:.08f),new Vector2(.85f,phase==Phase.Results?.40f:.92f));
+            Layout(menuRect,new Vector2(phase==Phase.Setup?.04f:.15f,phase==Phase.Results?.06f:.08f),new Vector2(phase==Phase.Setup?.51f:.85f,phase==Phase.Results?.40f:.92f));
+            if(botPanel)
+            {
+                botPanel.SetActive(phase==Phase.Setup);addBot.interactable=botSetup.CanAdd(LocalSeatCount);
+                for(int i=0;i<botRows.Length;i++)
+                {
+                    botRows[i].SetActive(i<botSetup.Count);if(i>=botSetup.Count)continue;
+                    var bot=botSetup.At(i);botDifficulty[i].GetComponentInChildren<Text>().text=bot.Name+" · "+new[]{"Салага","Боец","Ветеран"}[bot.Difficulty]+"  ›";
+                    botTeams[i].gameObject.SetActive(SetupMode==NativeMatchMode.Teams);
+                    botTeams[i].GetComponentInChildren<Text>().text=NativeStandingsView.TeamName(bot.Team);
+                    botTeams[i].GetComponent<Image>().color=NativeStandingsView.TeamColor(bot.Team,swappedTeamColors);
+                }
+            }
             status.text="STAR TOURNAMENT · UNITY ПОЛИГОН\n"+(phase==Phase.Paused ? pauseReason : "Space — клавиатура/мышь · Start — присоединить геймпад")+"\n"+
                 string.Join("  |  ",Enumerable.Range(0,LocalSeatCount).Select(i=>"P"+(i+1)+": "+(input.IsConnected(i)?"готов":"ожидает")));
-            if(phase==Phase.Setup && !ValidSetup()) status.text+="\nНужны обе команды: Team A и Team B";
+            if(phase==Phase.Setup && !ValidSetup()) status.text+=LocalSeatCount+botSetup.Count<2?"\nДобавьте бота или второго игрока":"\nНужны обе команды: Team A и Team B";
             if(phase==Phase.Setup && setupError!=null) status.text+="\n"+setupError;
             if(phase==Phase.Results)
             {

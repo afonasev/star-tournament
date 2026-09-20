@@ -1,0 +1,216 @@
+{
+    "state": "04-solo-standings",
+    "status": "ORDINARY_SETUP_SYNTHETIC_DEVICES_NOT_PHYSICAL_ACCEPTANCE",
+    "focused": true,
+    "muted": true,
+    "running": true,
+    "width": 3840,
+    "height": 2160,
+    "shots": 94,
+    "seed": 2075917601,
+    "time": 16.619993437081577,
+    "composition": {
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "Participants": [
+            {
+                "Kind": 0,
+                "Name": "Игрок 1",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 1,
+                "Name": "Vega",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            },
+            {
+                "Kind": 1,
+                "Name": "Orion",
+                "Color": {
+                    "r": 0.9843137264251709,
+                    "g": 0.4431372582912445,
+                    "b": 0.5215686559677124,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Nova",
+                "Color": {
+                    "r": 0.545098066329956,
+                    "g": 0.3607843220233917,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 2
+            },
+            {
+                "Kind": 1,
+                "Name": "Atlas",
+                "Color": {
+                    "r": 0.062745101749897,
+                    "g": 0.7254902124404907,
+                    "b": 0.5058823823928833,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            },
+            {
+                "Kind": 1,
+                "Name": "Lyra",
+                "Color": {
+                    "r": 0.9607843160629273,
+                    "g": 0.6196078658103943,
+                    "b": 0.04313725605607033,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Sirius",
+                "Color": {
+                    "r": 0.8823529481887817,
+                    "g": 0.11372549086809159,
+                    "b": 0.2823529541492462,
+                    "a": 1.0
+                },
+                "Difficulty": 2
+            },
+            {
+                "Kind": 1,
+                "Name": "Rigel",
+                "Color": {
+                    "r": 0.054901961237192157,
+                    "g": 0.6470588445663452,
+                    "b": 0.9137254953384399,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            }
+        ],
+        "LocalParticipants": [
+            0
+        ]
+    },
+    "match": {
+        "Tick": 831,
+        "RemainingTicks": 14169,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 6,
+                "Kills": 5,
+                "Assists": 2,
+                "Deaths": 2,
+                "Score": 900,
+                "DamageDealt": 475.83333015441897,
+                "DamageReceived": 200.00000476837159
+            },
+            {
+                "Seat": 5,
+                "Kills": 2,
+                "Assists": 4,
+                "Deaths": 2,
+                "Score": 500,
+                "DamageDealt": 238.33334350585938,
+                "DamageReceived": 200.00000381469727
+            },
+            {
+                "Seat": 2,
+                "Kills": 2,
+                "Assists": 4,
+                "Deaths": 1,
+                "Score": 400,
+                "DamageDealt": 224.1666717529297,
+                "DamageReceived": 143.3333339691162
+            },
+            {
+                "Seat": 3,
+                "Kills": 2,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 200,
+                "DamageDealt": 164.9999942779541,
+                "DamageReceived": 25.833333015441896
+            },
+            {
+                "Seat": 4,
+                "Kills": 0,
+                "Assists": 2,
+                "Deaths": 1,
+                "Score": 100,
+                "DamageDealt": 68.33333396911621,
+                "DamageReceived": 129.16666221618653
+            },
+            {
+                "Seat": 7,
+                "Kills": 0,
+                "Assists": 2,
+                "Deaths": 2,
+                "Score": 100,
+                "DamageDealt": 67.49999809265137,
+                "DamageReceived": 200.00000095367433
+            },
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 1,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 145.83333778381349
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 2,
+                "Score": 0,
+                "DamageDealt": 5.0,
+                "DamageReceived": 199.99999523162843
+            }
+        ],
+        "Teams": []
+    }
+}
