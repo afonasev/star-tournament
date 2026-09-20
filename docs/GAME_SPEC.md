@@ -6,6 +6,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 2. Утверждённые решения
 
+- Native Unity ARENA-1 (2026-09-20): до выбора пространственного семейства матч получает неизменяемое `ArenaDefinition` из отдельного arena RNG по явным `seed`, `generatorVersion` и identity именованного профиля `unity-arena-foundation-v1@1`. Канонический definition описывает только текущий проверочный двухуровневый layout и его stable semantic identity; native collision, navigation, spawn и presentation строятся из этой единственной definition, а не читают разрозненные spatial constants. Генератор не потребляет match RNG, завершается до создания сессии и даёт один и тот же результат для одинаковых входов. В ARENA-1 не выбираются size presets, пространственные семейства, fallback, replay schema или complete fairness/route validators: будущие ARENA-2+ добавят их через зарегистрированные семейства и независимые validators, не меняя identity contract.
+
 - Native Unity bot-controlled split-screen seats (2026-09-20): обычный setup выбирает human/AI независимо для каждого из 1–4 отображаемых мест; суммарно 2–8 участников. Поддерживаются один human + 1/2/3 AI views и все отображаемые места AI для solo visual testing. AI сохраняет честный bot driver, индивидуальную сложность, команду и обычные first-person камеру/руки/HUD, live/death/killcam/respawn; viewport не превращает AI в LocalHuman. Устройства требуются только human-местам. Один оператор сохраняет меню/pause/resume/Repeat/exit при AI-only views. Добавление/удаление остальных ботов, команды и frozen Repeat сохраняются. Все участники используют общий TrooperVisual и сохранённые v2 idle/walk/run/aim/fire/hit/death с выключенным root motion; второй presentation path запрещён.
 
 - Unity использует существующий ART_LOLL trooper v2 из `prepare-trooper-animation-pipeline`: skinned персонаж, его артикулированные кисти/руки и семь авторских анимаций. Новое поручение 2026-09-19 разрешает заменить прежний robot в native Player и получить first-person viewmodel из этих же рук с хватом существующего дробовика. Это разрешение интеграции, а не художественная, физическая или performance-приёмка. Старые ограничения candidate-docs на замену отменены для этого среза. Gameplay остаётся единственным владельцем движения, урона и life state; анимация и root motion действуют только внутри presentation. Shipping derivative сохраняет provenance/CC BY attribution, проходит проверку импорта, материалов, реального двуручного хвата и shared resources при 2/3/4 seats. Числа presentation принадлежат именованному профилю с общими metadata. Teams/bots/восемь участников/solo и browser deploy в этот срез не входят.
@@ -181,6 +183,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Бюджет и лицензии платных motor/navigation/generator расширений за пределами бесплатного первого среза.
 
 ## 11. Журнал изменений
+
+- 2026-09-20: утверждён ограниченный native Unity ARENA-1: отдельная каноническая identity `seed`/`generatorVersion`/profile для current two-level proving-ground layout и independent generation до матча. Пространственные семейства, полная валидация, replay и fallback намеренно оставлены следующими срезами.
 
 - 2026-09-20: утверждены human/AI для отображаемых split-screen мест, включая AI-only наблюдение с доступным операторским меню; это заменяет ограничение views только людьми в bot setup. Replay отложен, поставка обсуждается отдельно, финальная пользовательская приёмка после реализации; tests/build и muted native Player QA каждого среза сохраняются.
 

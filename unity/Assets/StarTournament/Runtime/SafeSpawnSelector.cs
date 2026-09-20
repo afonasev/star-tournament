@@ -17,16 +17,13 @@ namespace StarTournament.ProvingGround
         public SafeSpawnSelector(PhysicsScene physics, ProvingArena arena, ProvingProfile motor, ProvingProfile combat)
         {
             this.physics = physics; this.arena = arena; this.motor = motor; this.combat = combat;
-            float w = motor.Get("fixture.width"), d = motor.Get("fixture.depth");
             float inset = combat.Get("spawn.inset"), spacing = combat.Get("spawn.spacing");
-            // Four authored corner regions, each with a 2x2 slot grid, are fixture topology.
-            for (int floor = 0; floor < 2; floor++)
+            foreach(var region in arena.Definition.SpawnRegions)
                 for (int side = -1; side <= 1; side += 2)
                     for (int x = 0; x < 2; x++)
                         for (int z = 0; z < 2; z++)
-                            slots.Add(new Vector3(side * (w/2 - inset - x*spacing),
-                                motor.Get(floor == 0 ? "fixture.floorHeight" : "fixture.upperFloorHeight"),
-                                floor == 0 ? -d/2 + inset + z*spacing : d/2 - inset - z*spacing));
+                            slots.Add(new Vector3(region.Center.x+side*(region.Size.x/2-inset-x*spacing),region.Center.y,
+                                region.Center.z+(region.Id=="spawn:lower"?-region.Size.z/2+inset+z*spacing:region.Size.z/2-inset-z*spacing)));
             slots.AddRange(arena.Spawns);
         }
         public bool Valid(Vector3 authored, out Vector3 position)
@@ -62,14 +59,16 @@ namespace StarTournament.ProvingGround
             // Corner regions alone cannot satisfy eight-way FFA separation; never reduce that separation.
             var initialSlots=new List<Vector3>(slots);
             float inset=combat.Get("spawn.inset"),step=Mathf.Max(combat.Get("spawn.spacing"),separation);
-            float halfWidth=motor.Get("fixture.width")/2-inset,halfDepth=motor.Get("fixture.depth")/2-inset;
-            for(int floor=0;floor<2;floor++)
+            foreach(var region in arena.Definition.SpawnRegions)
+            {
+                float halfWidth=region.Size.x/2-inset,halfDepth=region.Size.z/2-inset;
                 for(float x=-halfWidth;x<=halfWidth;x+=step)
                     for(float z=-halfDepth;z<=halfDepth;z+=step)
                     {
                         if(initialSlots.Count>=candidateBudget){InitialFailure="CandidateBudgetExceeded";return false;}
-                        initialSlots.Add(new Vector3(x,motor.Get(floor==0?"fixture.floorHeight":"fixture.upperFloorHeight"),z));
+                        initialSlots.Add(new Vector3(region.Center.x+x,region.Center.y,region.Center.z+z));
                     }
+            }
             foreach(var slot in initialSlots)if(Valid(slot,out var candidate)&&!candidates.Contains(candidate))candidates.Add(candidate);
             int n=candidates.Count;var overlapPair=new bool[n,n];var closePair=new bool[n,n];
             float radius=motor.Get("player.capsule.radius")+motor.Get("player.capsule.skinWidth");

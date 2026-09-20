@@ -16,6 +16,7 @@ namespace StarTournament.ProvingGround
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
         public ProvingProfile Profile = ProvingProfile.CreateDefault();
+        public ProvingProfile ArenaProfile = ProvingProfile.CreateArenaFoundationDefault();
         readonly SeatInputCoordinator input = new SeatInputCoordinator();
         CharacterMotor[] motors = Array.Empty<CharacterMotor>();
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
@@ -138,7 +139,8 @@ namespace StarTournament.ProvingGround
             var light = Owned("arena-light").AddComponent<Light>();
             light.type = LightType.Directional; light.intensity = Profile.Get("presentation.lightIntensity");
             light.transform.rotation = Quaternion.Euler(50, -30, 0); // Authored fixture light orientation.
-            arena = Owned("unity-two-level-fixture-v1").AddComponent<ProvingArena>(); arena.Build(Profile);
+            arena = Owned("unity-two-level-fixture-v1").AddComponent<ProvingArena>();
+            arena.Build(ArenaGenerator.Generate(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FoundationVersion, Profile=ArenaProfile }), Profile);
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile);

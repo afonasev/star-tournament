@@ -50,7 +50,7 @@
 
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
-| ARENA-1 GS §2,7; procedural-arena-generation | Одна fixed proving arena | Seed/size/version/profile canonical definition + independent generation | Same identity→same definition, bounded failure and explicit fallback |
+| ARENA-1 GS §2,7; unity-procedural-arena-foundation | Canonical `unity-two-level-fixture-v1` definition из independent seed/version/frozen profile fingerprint; collision/navigation/spawn/presentation derived от неё | ARENA-2 size/families, ARENA-4 fairness validators, ARENA-5 retry/fallback/replay lifecycle | EditMode identity/validation, PlayMode physical projection/allocator, muted 4K Player diagnostic; physical/art/performance acceptance остаются открыты |
 | ARENA-2 GS §2; architectural-height-semantics | Два уровня fixture | Five spatial families, closed floors predominance, basement/rooms/tunnels | Floor plans/sections/structural seed matrix/first-person views |
 | ARENA-3 GS §2; multi-level-arena-navigation | Verified fixture declared supports/transitions, two links and 3 lanes | Generated-map links/width/connectivity | Both directions/lanes, real headroom/feet support, no XZ shortcut |
 | ARENA-4 GS §2,4; procedural-arena-generation | Fixed spawn safety | Complete topology/spawn/LOS/mode fairness validators, all sizes | Seed corpus/property tests + Player readability/playability |
