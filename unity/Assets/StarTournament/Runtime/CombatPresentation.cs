@@ -56,7 +56,7 @@ namespace StarTournament.ProvingGround
                 var root=new GameObject("shot-pellet-"+notice.Sequence+"-"+pellets.Count);root.transform.SetParent(owner,false);
                 var line=root.AddComponent<LineRenderer>();line.useWorldSpace=true;line.positionCount=2;
                 line.startWidth=line.endWidth=movement.Get("presentation.shotTracerWidth");line.material=ShotMaterial();
-                line.startColor=new Color(1f,.7f,.22f,.95f);line.endColor=new Color(1f,.35f,.08f,.15f);
+                line.startColor=new Color(1f,.95f,.42f,1f);line.endColor=new Color(1f,.32f,.04f,.9f);
                 var start=Muzzle(notice.Shooter,pellets.Count);line.SetPosition(0,start);line.SetPosition(1,start);
                 bool contact=pellet.Contact!=PelletContact.Miss;
                 // Multiple hitscan pellets commonly share one small hit volume: render one readable contact flash,

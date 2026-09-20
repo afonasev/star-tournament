@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
             yield return new WaitForSeconds(.3f);
             yield return Capture("live");
             InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});
-            yield return new WaitForSeconds(shotFeedback?.05f:.2f);
+            yield return new WaitForSeconds(shotFeedback?.12f:.2f);
             yield return Capture(shotFeedback?"pellets-flight":"damage");
             yield return new WaitForSeconds(shotFeedback?.14f:0);
             if(shotFeedback)yield return Capture("pellets-impact");

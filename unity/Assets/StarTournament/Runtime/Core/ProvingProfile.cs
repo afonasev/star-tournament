@@ -191,8 +191,8 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.viewWeaponY", "presentation", "View weapon Y", "First-person weapon mount vertical translation from camera origin.", "meters", -2f, 2f, .01f, -.34f);
             profile.Add("presentation.viewWeaponZ", "presentation", "View weapon Z", "First-person weapon mount forward translation from camera origin.", "meters", -2f, 2f, .01f, .68f);
             profile.Add("presentation.worldWeaponMountY", "presentation", "World weapon mount Y", "World weapon mount translation above the robot semantic hand mount.", "meters", -1f, 1f, .01f, .22f);
-            profile.Add("presentation.shotFlightSeconds", "shot-feedback", "Длительность дроби", "Время видимого полёта дробины до authoritative конечной точки.", "seconds", .02f, 1f, .01f, .16f);
-            profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .025f);
+            profile.Add("presentation.shotFlightSeconds", "shot-feedback", "Длительность дроби", "Время видимого полёта дробины до authoritative конечной точки.", "seconds", .02f, 1f, .01f, .28f);
+            profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .055f);
             profile.Add("presentation.shotImpactSeconds", "shot-feedback", "Длительность impact", "Время видимого contact impact без persistent decal.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("presentation.shotImpactSize", "shot-feedback", "Размер impact", "Размер краткого material-aware contact impact.", "meters", .01f, 2f, .01f, .16f);
             profile.Add("presentation.shotMaxEffects", "shot-feedback", "Лимит дроби", "Максимум одновременно живых visual дробин одного presentation owner.", "count", 8f, 256f, 1f, 96f);
