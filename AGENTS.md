@@ -1,5 +1,17 @@
 # Правила работы над Star Tournament
 
+<!-- BEGIN MANAGED OPEN SPEC FLOW -->
+## Shared OpenSpec flow
+
+- Канонические OpenSpec specs, changes, schemas и delivery records живут в shared planning home: `/Users/eaafonasev/Projects/star-tournament-planning` (store ID `star-tournament-planning`). Перед работой читай `workflow/project.json` в этом home; все поддерживаемые вызовы OpenSpec выполняй с `--store star-tournament-planning`.
+- `openspec/` в code worktree — исторический snapshot, перенесённый в planning home. Не обновляй его и не создавай в нём новые changes; он сохраняется для воспроизводимых ссылок к старым коммитам. Новые требования, changes и lifecycle records создавай только в planning home.
+- Для discovery используй `.agents/skills/flow-explore/SKILL.md`; для реализации и небольших inline fixes — `flow-apply`; для вопросов, human acceptance и finalization debt — `flow-inbox`. Не редактируй generated upstream skills.
+- Перед реализацией выбери и claim change. Если пользователь не выбрал change, покажи готовые варианты и спроси, какой брать. Не возобновляй historical/cancelled browser work автоматически.
+- Прочитай `.agents/references/flow/lifecycle.md` перед lifecycle-переходами; `delivery.md` — перед sync, merge, deploy и cleanup; `initiative.md` — для многоэтапной работы; `efficiency.md` — перед выбором модели или делегированием.
+- Human acceptance требуется для каждого результата. `make deploy` допускается лишь при отдельной явной авторизации, записанной в project profile; установка флоу её не даёт.
+- Вопросы, feedback, evidence, usage и lifecycle храни в соответствующем change. У разных worktree нет отдельной базы статуса. Не объявляй acceptance или delivery по checked task boxes, времени или отсутствию ошибок.
+<!-- END MANAGED OPEN SPEC FLOW -->
+
 ## Поиск по кодовой базе
 
 - Перед чтением файлов сузь область через `rg --files`, затем используй `rg -n` для точного текстового поиска.
@@ -9,7 +21,7 @@
 
 ## Источники решений
 
-- `docs/GAME_SPEC.md` — канонический источник утверждённых продуктовых, игровых, визуальных, интерфейсных и архитектурных решений. Код, тесты и документация должны ему соответствовать.
+- `docs/GAME_SPEC.md` — утверждённый обзор продуктовых, игровых, визуальных, интерфейсных и архитектурных решений; точные актуальные OpenSpec requirements живут в shared planning home из managed flow section. Код, тесты и документация должны соответствовать обоим источникам; при расхождении сначала фиксируй согласованное решение в planning home и обновляй обзор.
 - Явное новое решение пользователя имеет приоритет. После подтверждения понимания сначала обнови актуальный раздел спецификации и журнал изменений, затем реализуй.
 - В основной части спецификации храни только актуальные решения. Нерешённое фиксируй в `Открытых решениях`; значимые заменённые решения кратко отмечай в журнале.
 - Баланс описывай назначением правила и именованным `profile`/`version`; конкретные числа держи в конфигурации симуляции, не в narrative-спецификации.
