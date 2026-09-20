@@ -32,16 +32,13 @@ namespace StarTournament.ProvingGround
             definition.Seed=request.Seed;definition.GeneratorVersion=request.GeneratorVersion;definition.FamilyId=family;
             definition.ProfileFingerprint=Fingerprint(request.Profile);
             definition.Identity=$"{FamiliesVersion}|family:{family}|seed:{request.Seed}|profile:{definition.ProfileFingerprint}";
-            definition.Solids=definition.Solids.OrderBy(s=>s.Id,StringComparer.Ordinal).ToArray();Validate(definition);return definition;
+            definition.Solids=definition.Solids.OrderBy(s=>s.Id,StringComparer.Ordinal).ToArray();Validate(definition,request.Profile);return definition;
         }
-        public static void Validate(ArenaDefinition d)
+        public static void Validate(ArenaDefinition d, ProvingProfile profile=null)
         {
-            if(d==null||string.IsNullOrWhiteSpace(d.Identity)||!ArenaFamilyCatalog.Contains(d.FamilyId)||d.Solids==null||d.Spawns==null||d.RouteAnchors==null||d.Transitions==null||d.SpawnRegions==null)throw new ArgumentException("Incomplete arena definition");
-            var ids=new HashSet<string>();foreach(var s in d.Solids)if(s==null||string.IsNullOrWhiteSpace(s.Id)||!ids.Add(s.Id)||s.Size.x<=0||s.Size.y<=0||s.Size.z<=0||!Finite(s.Position)||!Finite(s.Size))throw new ArgumentException("Invalid arena solid");
-            if(d.Transitions.Length<2)throw new ArgumentException("Arena family requires two transitions");
-            ids.Clear();foreach(var t in d.Transitions)if(t==null||string.IsNullOrWhiteSpace(t.Id)||!ids.Add(t.Id)||string.IsNullOrWhiteSpace(t.LowerSupport)||string.IsNullOrWhiteSpace(t.UpperSupport)||t.OrderedFeet==null||t.OrderedFeet.Length<2)throw new ArgumentException("Invalid arena transition");
+            var result=ArenaDefinitionValidator.Validate(d,profile??ProvingProfile.CreateArenaFamiliesDefault());
+            if(!result.IsValid) throw new ArgumentException(result.ToString());
         }
         public static string Fingerprint(ProvingProfile p) => string.Join(";",p.Descriptors.OrderBy(d=>d.Path,StringComparer.Ordinal).Select(d=>d.Path+"="+p.Get(d.Path).ToString("R",CultureInfo.InvariantCulture)));
-        static bool Finite(Vector3 v)=>!float.IsNaN(v.x)&&!float.IsNaN(v.y)&&!float.IsNaN(v.z)&&!float.IsInfinity(v.x)&&!float.IsInfinity(v.y)&&!float.IsInfinity(v.z);
     }
 }

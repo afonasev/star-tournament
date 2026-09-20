@@ -32,5 +32,35 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             Assert.Throws<System.ArgumentException>(()=>ArenaGenerator.Generate(new ArenaGenerationRequest{Seed=1,GeneratorVersion="unknown",Profile=ProvingProfile.CreateArenaFamiliesDefault()}));
         }
+        [Test] public void ArenaFourValidator_AcceptsEveryRegisteredCanonicalFamily()
+        {
+            for(int family=0;family<ArenaFamilyCatalog.Ids.Count;family++)
+            {
+                var definition=Generate(81,family);var result=ArenaDefinitionValidator.Validate(definition,ProvingProfile.CreateArenaFamiliesDefault(family));
+                Assert.That(result.IsValid,Is.True,result.ToString());
+            }
+        }
+        [TestCase("solid")] [TestCase("layer")] [TestCase("spawn")] [TestCase("region")] [TestCase("transition")]
+        public void ArenaFourValidator_RejectsMutatedCanonicalDataWithElementDiagnostic(string mutation)
+        {
+            var definition=Generate().Copy(); string expected;
+            switch(mutation)
+            {
+                case "solid": definition.Solids[0].Size.x=0; expected="ARENA_INVALID_SOLID_GEOMETRY"; break;
+                case "layer": definition.Solids[0].Layer=0; expected="ARENA_INVALID_COLLISION_LAYER"; break;
+                case "spawn": definition.Spawns[0].y=99; expected="ARENA_INVALID_SPAWN"; break;
+                case "region": definition.SpawnRegions[0].Support="missing"; expected="ARENA_UNKNOWN_SPAWN_SUPPORT"; break;
+                default: definition.Transitions[0].OrderedFeet[0].y=99; expected="ARENA_INVALID_TRANSITION_ENDPOINT"; break;
+            }
+            var result=ArenaDefinitionValidator.Validate(definition,ProvingProfile.CreateArenaFamiliesDefault());
+            Assert.That(result.IsValid,Is.False);Assert.That(result.Code,Is.EqualTo(expected));Assert.That(result.FamilyId,Is.EqualTo(definition.FamilyId));Assert.That(result.ElementId,Is.Not.Empty);
+        }
+        [Test] public void ArenaFourValidator_RejectsDuplicateIdsAndBrokenTransitionOrder()
+        {
+            var duplicate=Generate().Copy();duplicate.Solids[1].Id=duplicate.Solids[0].Id;
+            Assert.That(ArenaDefinitionValidator.Validate(duplicate,ProvingProfile.CreateArenaFamiliesDefault()).Code,Is.EqualTo("ARENA_DUPLICATE_SOLID_ID"));
+            var broken=Generate().Copy();var feet=broken.Transitions[0].OrderedFeet;feet[1]=feet[0];
+            Assert.That(ArenaDefinitionValidator.Validate(broken,ProvingProfile.CreateArenaFamiliesDefault()).Code,Is.EqualTo("ARENA_DISCONTINUOUS_TRANSITION"));
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace StarTournament.ProvingGround
         }
         public void Build(ArenaDefinition definition, ProvingProfile profile)
         {
-            ArenaGenerator.Validate(definition); Definition=definition.Copy(); supports.Clear();
+            ArenaGenerator.Validate(definition, profile); Definition=definition.Copy(); supports.Clear();
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
