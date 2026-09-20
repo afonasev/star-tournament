@@ -55,16 +55,15 @@ namespace StarTournament.ProvingGround
             CreateBanner();ground.StartCombatReview(pads);ground.EnableNavigationReview();
             started=Time.realtimeSinceStartupAsDouble;collect=true;
             yield return Capture("start-empty");
-            float w=ground.Profile.Get("fixture.width"),rw=ground.Profile.Get("fixture.rampWidth"),wt=ground.Profile.Get("fixture.wallThickness");
-            float h=ground.Profile.Get("fixture.upperFloorHeight"),run=ground.Profile.Get("fixture.rampLength");
-            float stairs=Mathf.CeilToInt(h/ground.Profile.Get("fixture.stairRise"))*ground.Profile.Get("fixture.stairTread");
-            // Fixture placements only establish starting conditions; every route is executed by session actions.
+            var arena=ground.GetComponentInChildren<ProvingArena>();
+            // Definition endpoints establish starting conditions; every route is executed by session actions.
             ground.PlaceCombatReviewSeat(1,new Vector3(0,0,-12),0);ground.PlaceCombatReviewSeat(2,new Vector3(8,0,-12),0);
-            for(int side=-1;side<=1;side+=2)
+            foreach(var transition in arena.ReadNavigationTransitions())
             {
-                float x=side*(w/2-rw/2-wt);var bottom=new Vector3(x,0,-(side<0?stairs:run)-1);var top=new Vector3(x,h,1);
+                var lower=transition.OrderedFeet[0];var upper=transition.OrderedFeet[transition.OrderedFeet.Length-1];var forward=upper-lower;forward.y=0;forward.Normalize();
+                var bottom=lower-forward;var top=upper+forward;
                 ground.PlaceCombatReviewSeat(0,bottom,0);ground.NavigationReviewDriver.Controller.SetStaticGoal(top);
-                string kind=side<0?"stairs":"ramp";
+                string kind=transition.Id.Replace("transition:","");
                 yield return new WaitForSeconds(.8f);yield return Capture(kind+"-ascending");
                 yield return Arrive();yield return Capture(kind+"-upper");
                 ground.NavigationReviewDriver.Controller.SetStaticGoal(bottom);yield return new WaitForSeconds(.8f);yield return Capture(kind+"-descending");
@@ -77,7 +76,7 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(2,new Vector3(6,0,-8),0);yield return new WaitForSeconds(.2f);
             Check(ground.NavigationReviewDriver.Controller.Capture().Goal==seen,"hidden goal moved");yield return Capture("hidden-remembered-goal");
             yield return new WaitForSeconds(4.1f);Check(!ground.NavigationReviewDriver.Controller.Capture().HasGoal,"expired goal retained");yield return Capture("expired-goal");
-            ground.NavigationReviewDriver.Controller.SetStaticGoal(new Vector3(0,h,5));yield return new WaitForSeconds(.4f);
+            ground.NavigationReviewDriver.Controller.SetStaticGoal(arena.UpperRoutePoint);yield return new WaitForSeconds(.4f);
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));yield return new WaitForSecondsRealtime(.2f);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return new WaitForSecondsRealtime(.2f);
             var paused=JsonUtility.ToJson(ground.NavigationReviewDriver.Controller.Capture());double time=ground.Session.Time;

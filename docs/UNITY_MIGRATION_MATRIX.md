@@ -38,7 +38,7 @@
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
 | AI-1 GS §2,7; bot-ai honest observation | NativeBotPerception/ObservationProvider, FOV/LOS/time memory, delayed direct-only reports | Обычный lifecycle подключён handoff28; final-scene validation открыта | Hidden movement/death/respawn, expiry, no relay, pause/Repeat |
-| AI-2 bot-ai active navigation; multi-level-arena-navigation | Verified native routes/support/ordinary actions/bounded recovery (handoff 25) | Обычный planner integration подключён handoff28; generated-scene routing открыта | Stairs/ramp both directions × 3 lanes, overlap-XZ, blocker, replan |
+| AI-2 bot-ai active navigation; multi-level-arena-navigation | Fixture routes/support/ordinary actions/bounded recovery (handoff 25) | ARENA-3: generated-definition traversal всех пяти families; ordinary planner integration сохранён | 2 transitions × both directions × 3 lanes/family, overlap-XZ, owned-context, blocker, replan |
 | AI-3 GS §2; bot-ai active behavior | Planner verified in automated checks and focused FHD/4K Player pilot (handoff27) | Обычный setup подключён handoff28; generated-arena validation открыта | Real mixed-difficulty matches, contact/idle/stuck/jump cadence |
 | AI-4 bot-ai three difficulties | Behavior profile + reaction/aim/decision/personality без stat bonuses; internal Player pilot verified (handoff27) | Independent statistical acceptance | Equal stats contract + independent paired difficulty evaluation |
 | AI-5 bot-ai temporary support | Bounded support/retreat, allowlisted human/bot allies; internal Player pilot verified (handoff27) | Native pilot и final-map team metrics | Team support/disband/close-group metrics, FFA isolation |
@@ -51,8 +51,8 @@
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
 | ARENA-1 GS §2,7; unity-procedural-arena-foundation | Canonical `unity-two-level-fixture-v1` definition из independent seed/version/frozen profile fingerprint; collision/navigation/spawn/presentation derived от неё | ARENA-2 size/families, ARENA-4 fairness validators, ARENA-5 retry/fallback/replay lifecycle | EditMode identity/validation, PlayMode physical projection/allocator, muted 4K Player diagnostic; physical/art/performance acceptance остаются открыты |
-| ARENA-2 GS §2; architectural-height-semantics | Два уровня fixture | Five spatial families, closed floors predominance, basement/rooms/tunnels | Floor plans/sections/structural seed matrix/first-person views |
-| ARENA-3 GS §2; multi-level-arena-navigation | Verified fixture declared supports/transitions, two links and 3 lanes | Generated-map links/width/connectivity | Both directions/lanes, real headroom/feet support, no XZ shortcut |
+| ARENA-2 GS §2; architectural-height-semantics | Five explicit canonical families in `ArenaDefinition` | Architectural/art and comprehensive topology validation | Floor plans/sections/structural matrix/first-person views |
+| ARENA-3 GS §2; multi-level-arena-navigation | Fixture declared supports/transitions, two links and 3 lanes | Definition-derived traversal/physical route proof for every ARENA-2 family | 2 transitions × both directions × 3 lanes/family, feet/support/headroom, no XZ shortcut |
 | ARENA-4 GS §2,4; procedural-arena-generation | Fixed spawn safety | Complete topology/spawn/LOS/mode fairness validators, all sizes | Seed corpus/property tests + Player readability/playability |
 | ARENA-5 GS §7; match-session-lifecycle | Fixed arena Repeat | Exact generated definition/config frozen across Repeat | Auto/manual seed and retry/new seed/fallback journeys |
 

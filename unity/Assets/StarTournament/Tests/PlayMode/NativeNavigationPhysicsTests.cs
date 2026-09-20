@@ -47,6 +47,52 @@ namespace StarTournament.ProvingGround.Tests
             var go = new GameObject("participant"); go.layer = ProvingArena.ParticipantLayer; go.transform.SetParent(root.transform);
             go.AddComponent<CharacterController>(); var motor = go.AddComponent<CharacterMotor>(); motor.Initialize(movement, feet); return motor;
         }
+        [UnityTest] public IEnumerator GeneratedFamilies_DeclaredTransitions_ThreeLanesBothDirections()
+        {
+            // Each fixture owns the only valid supports. Building them one at a time also exercises the single active context contract.
+            Object.DestroyImmediate(arena.gameObject); yield return null;
+            for (int family = 0; family < ArenaFamilyCatalog.Ids.Count; family++)
+            {
+                var familyRoot = new GameObject("navigation-family-" + family); familyRoot.transform.SetParent(root.transform);
+                var definition = ArenaGenerator.Generate(new ArenaGenerationRequest { Seed = 41, GeneratorVersion = ArenaGenerator.FamiliesVersion, Profile = ProvingProfile.CreateArenaFamiliesDefault(family) });
+                var familyArena = familyRoot.AddComponent<ProvingArena>(); familyArena.Build(definition, movement);
+                var familyProvider = new NativeNavigationProvider(familyArena, movement, profile);
+                foreach (var transition in familyArena.ReadNavigationTransitions())
+                for (int direction = -1; direction <= 1; direction += 2)
+                for (int lane = -1; lane <= 1; lane++)
+                {
+                    Vector3 lower = transition.OrderedFeet[0], upper = transition.OrderedFeet[transition.OrderedFeet.Length - 1];
+                    Vector3 lateral = Vector3.Cross(Vector3.up, upper - lower); lateral.y = 0; lateral.Normalize();
+                    Vector3 forward = upper - lower; forward.y = 0; forward.Normalize();
+                    Vector3 bottom = lower - forward + lateral * lane * movement.Get("player.capsule.radius");
+                    Vector3 top = upper + forward + lateral * lane * movement.Get("player.capsule.radius");
+                    Vector3 start = direction > 0 ? bottom : top;
+                    Vector3 goal = direction > 0 ? top : bottom;
+                    Assert.That(familyProvider.TryRoute(start, goal, out var route, out var failure), Is.True, definition.FamilyId + " " + transition.Id + " " + failure);
+                    Assert.That(route, Has.Some.Matches<NativeNavigationPoint>(p => p.Support == transition.Id));
+                    var motor = Motor(start); var bot = new NativeBotNavigation(familyProvider, profile); bot.SetStaticGoal(goal);
+                    var own = new NativeBotKnowledge { Alive = true, OwnLife = 1 }; int recoveries = 0;
+                    for (int tick = 0; tick < 1800 && bot.Status != NativeNavigationStatus.Arrived && bot.Status != NativeNavigationStatus.Blocked; tick++)
+                    {
+                        var previous = motor.State.Position; var action = bot.Tick(tick / 60d, motor.State, own);
+                        Assert.That(action.Jump, Is.False); motor.Tick(action, 1 / 60f); Physics.SyncTransforms();
+                        Assert.That(Vector2.Distance(new Vector2(previous.x, previous.z), new Vector2(motor.State.Position.x, motor.State.Position.z)),
+                            Is.LessThan(movement.Get("player.movement.maximumGroundSpeed") / 60f + .02f), "Horizontal movement must remain motor-bounded; stair rise is physical contact.");
+                        if (motor.State.Grounded)
+                        {
+                            Assert.That(familyProvider.TryPhysicalSupport(motor.State.Position, out var support), Is.True, definition.FamilyId + " lost support");
+                            Assert.That(support.Support == transition.LowerSupport || support.Support == transition.UpperSupport || support.Support == transition.Id, Is.True);
+                        }
+                        recoveries = Mathf.Max(recoveries, bot.Capture().Recoveries);
+                    }
+                    Assert.That(bot.Status, Is.EqualTo(NativeNavigationStatus.Arrived), definition.FamilyId + " " + transition.Id + " direction=" + direction + " lane=" + lane + " pose=" + motor.State.Position + " " + bot.Capture().Failure);
+                    Assert.That(recoveries, Is.Zero, definition.FamilyId + " free transition recovered");
+                    Assert.That(motor.State.Position.y, Is.EqualTo(goal.y).Within(profile.Get("bots.navigation.heightTolerance")));
+                    Object.DestroyImmediate(motor.gameObject);
+                }
+                Object.DestroyImmediate(familyRoot); yield return null;
+            }
+        }
         [UnityTest] public IEnumerator StairsAndRamp_ThreeLanesBothDirections_WithMidwayRepath()
         {
             yield return null;

@@ -39,6 +39,7 @@ namespace StarTournament.ProvingGround
             var corners = path.corners;
             if (corners.Length == 0) return false;
             var result = new List<NativeNavigationPoint>();
+            var trace = new List<NativeNavigationPoint>();
             string previousSupport = start.Support;
             // Dense validation catches undeclared vertical shortcuts between sparse native corners.
             // Spacing derives from the existing capsule; it is not a second navigation tuning source.
@@ -52,6 +53,7 @@ namespace StarTournament.ProvingGround
                     var position = Vector3.Lerp(previous, corners[i], sample / (float)samples);
                     if (!TryPhysicalSupport(position, out validated, true) || !Connected(previousSupport, validated.Support))
                     { failure = "Invalid route support at " + position + " from " + previousSupport + " to " + validated.Support; return false; }
+                    trace.Add(validated);
                     if (validated.Support.StartsWith("transition:", StringComparison.Ordinal) || validated.Support != previousSupport)
                         result.Add(validated);
                     previousSupport = validated.Support;
@@ -59,9 +61,59 @@ namespace StarTournament.ProvingGround
                 result.Add(validated);
             }
             if (!Connected(previousSupport, end.Support)) { failure = "Wrong final support"; return false; }
+            if (!ValidateDeclaredTransitions(trace, start.Support, end.Support, out failure)) return false;
             // Physical floor height, not the slightly elevated navmesh polygon, is the feet target.
             result[result.Count - 1] = end;
             points = result.ToArray(); failure = null; return true;
+        }
+        bool ValidateDeclaredTransitions(List<NativeNavigationPoint> trace, string startSupport, string endSupport, out string failure)
+        {
+            failure = null;
+            string previous = startSupport;
+            for (int index = 0; index < trace.Count;)
+            {
+                string support = trace[index].Support;
+                if (!support.StartsWith("transition:", StringComparison.Ordinal)) { previous = support; index++; continue; }
+                int begin = index;
+                while (index < trace.Count && trace[index].Support == support) index++;
+                string next = index < trace.Count ? trace[index].Support : endSupport;
+                NativeNavigationTransition transition = null;
+                foreach (var candidate in transitions) if (candidate.Id == support) { transition = candidate; break; }
+                if (transition == null) { failure = "Unknown declared transition " + support; return false; }
+                // Replan/restore can begin while the capsule already stands on a declared transition. In that case the
+                // physical start support has already been checked; only a declared exit is permitted.
+                bool beginsInside = previous == support;
+                if ((!beginsInside && !OppositeEnds(transition, previous, next)) ||
+                    (beginsInside && next != transition.LowerSupport && next != transition.UpperSupport))
+                { failure = "Wrong declared transition endpoints " + previous + " -> " + support + " -> " + next; return false; }
+                if (!OrderedFeet(transition, trace, begin, index, previous)) { failure = "Invalid ordered feet " + support; return false; }
+                previous = support;
+            }
+            return true;
+        }
+        static bool OppositeEnds(NativeNavigationTransition transition, string from, string to) =>
+            (from == transition.LowerSupport && to == transition.UpperSupport) ||
+            (from == transition.UpperSupport && to == transition.LowerSupport);
+        bool OrderedFeet(NativeNavigationTransition transition, List<NativeNavigationPoint> trace, int begin, int end, string enteringSupport)
+        {
+            if (transition.OrderedFeet == null || transition.OrderedFeet.Length < 2 || begin >= end) return false;
+            // Native corners can cross several physical stair treads in one straight segment. The trace proves every sampled
+            // point has the declared collider support; every declared foot independently proves the physical transition boundary.
+            float direction = Mathf.Sign(transition.OrderedFeet[transition.OrderedFeet.Length - 1].y - transition.OrderedFeet[0].y);
+            if (direction == 0) return false;
+            for (int i = 1; i < transition.OrderedFeet.Length; i++)
+            {
+                var previous = transition.OrderedFeet[i - 1]; var current = transition.OrderedFeet[i];
+                if (!Finite(previous) || !Finite(current) || Vector3.Distance(previous, current) <= Mathf.Epsilon || direction * (current.y - previous.y) < 0) return false;
+            }
+            for (int i = 0; i < transition.OrderedFeet.Length; i++)
+            {
+                if (!TryPhysicalSupport(transition.OrderedFeet[i], out var located)) return false;
+                bool endpoint = i == 0 || i == transition.OrderedFeet.Length - 1;
+                string endpointSupport = i == 0 ? transition.LowerSupport : transition.UpperSupport;
+                if (located.Support != transition.Id && (!endpoint || located.Support != endpointSupport)) return false;
+            }
+            return true;
         }
         bool TrySample(Vector3 feet, out NativeNavigationPoint point)
         {
