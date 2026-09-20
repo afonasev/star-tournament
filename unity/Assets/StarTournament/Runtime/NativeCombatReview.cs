@@ -19,6 +19,7 @@ namespace StarTournament.ProvingGround
             public string scenario="native-combat-review-v1", acceptance="DIAGNOSTIC_NOT_PHYSICAL_ACCEPTANCE";
             public string state, movementProfile, combatProfile, lifeProfile;
             public int width, height, shots;
+            public float mouseDegreesPerPixel;
             public double sessionTime;
             public bool focused, running;
             public CombatLifeState[] lives;
@@ -29,9 +30,17 @@ namespace StarTournament.ProvingGround
             var args=Environment.GetCommandLineArgs(); int flag=Array.IndexOf(args,"-combatEvidence");
             directory=flag>=0 && flag+1<args.Length ? args[flag+1] : Path.Combine(Application.persistentDataPath,"combat-review");
             Directory.CreateDirectory(directory);
+            bool shotFeedback=Array.IndexOf(args,"-shotFeedbackReview")>=0;
             // Review timings/positions below are scenario fixtures, not shipping gameplay tuning.
             while(!Application.isFocused) yield return null;
             yield return new WaitForSecondsRealtime(1);
+            if(shotFeedback)
+            {
+                PlayerPrefs.DeleteKey(MouseSensitivityPreference.Key);PlayerPrefs.Save();yield return null;yield return Capture("sensitivity-default");
+                MouseSensitivityPreference.Set(ground.Profile,MouseSensitivityPreference.Descriptor(ground.Profile).Minimum);yield return null;yield return Capture("sensitivity-minimum");
+                MouseSensitivityPreference.Set(ground.Profile,MouseSensitivityPreference.Descriptor(ground.Profile).Maximum);yield return null;yield return Capture("sensitivity-maximum");
+                PlayerPrefs.DeleteKey(MouseSensitivityPreference.Key);PlayerPrefs.Save();yield return null;
+            }
             yield return Capture("setup");
             for(int i=0;i<pads.Length;i++) pads[i]=InputSystem.AddDevice<Gamepad>();
             ground.StartCombatReview(pads);
@@ -42,8 +51,10 @@ namespace StarTournament.ProvingGround
             yield return new WaitForSeconds(.3f);
             yield return Capture("live");
             InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});
-            yield return new WaitForSeconds(.2f);
-            yield return Capture("damage");
+            yield return new WaitForSeconds(shotFeedback?.05f:.2f);
+            yield return Capture(shotFeedback?"pellets-flight":"damage");
+            yield return new WaitForSeconds(shotFeedback?.14f:0);
+            if(shotFeedback)yield return Capture("pellets-impact");
             InputSystem.QueueStateEvent(pads[0],new GamepadState());
             yield return new WaitForSeconds(.8f);
             ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);
@@ -76,7 +87,7 @@ namespace StarTournament.ProvingGround
             var snapshot=new ReviewState { state=state, width=Screen.width, height=Screen.height, focused=Application.isFocused,
                 running=ground.Running, shots=ground.Session.ShotCount, sessionTime=ground.Session.Time,
                 movementProfile=ground.Profile.Id+"@"+ground.Profile.Version, combatProfile=ground.CombatProfile.Id+"@"+ground.CombatProfile.Version,
-                lifeProfile=ground.LifeProfile.Id+"@"+ground.LifeProfile.Version, lives=new CombatLifeState[4] };
+                lifeProfile=ground.LifeProfile.Id+"@"+ground.LifeProfile.Version,mouseDegreesPerPixel=MouseSensitivityPreference.Resolve(ground.Profile), lives=new CombatLifeState[4] };
             for(int i=0;i<4;i++) snapshot.lives[i]=ground.Session.Life(i);
             File.WriteAllText(Path.Combine(directory,state+".json"),JsonUtility.ToJson(snapshot,true));
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,state+".png"));

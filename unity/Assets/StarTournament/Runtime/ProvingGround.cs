@@ -170,7 +170,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
             if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();
-            if (args.Contains("-combatReview")) gameObject.AddComponent<NativeCombatReview>();
+            if (args.Contains("-combatReview") || args.Contains("-shotFeedbackReview")) gameObject.AddComponent<NativeCombatReview>();
 #endif
         }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

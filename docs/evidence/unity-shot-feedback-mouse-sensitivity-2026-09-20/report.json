@@ -9,7 +9,8 @@
     "macBuild": "passed"
   },
   "acceptance": {
-    "nativePlayerScreenshots": "pending",
+    "nativePlayerFourViewport": "captured-and-inspected",
+    "nativePlayerOneViewport": "pending",
     "physicalInput": "open",
     "artistic": "open",
     "performance": "open"
