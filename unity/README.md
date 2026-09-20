@@ -4,16 +4,22 @@
 
 Откройте эту директорию через Unity Hub редактором **6000.3.23f1**. Точные пакеты закреплены в `Packages/manifest.json` и `packages-lock.json`. После изменения импорта используйте меню **Star Tournament → Prepare proving ground**, затем сцену `Assets/StarTournament/Scenes/ProvingGround.unity`.
 
-Из корня репозитория:
+Из корня репозитория используйте удобные entrypoints:
 
 ```sh
-unity/tools.sh prepare
-unity/tools.sh test-edit
-unity/tools.sh test-play
-unity/tools.sh build
+make prepare
+make test-edit
+make test-play
+make check
+make unity-editor
+make unity-run
 ```
 
-Не запускайте два Unity-процесса для одного проекта одновременно. `UNITY_EDITOR` переопределяет путь редактора. Логи/XML сохраняются в `.local/unity-evidence/`; Mac Player — `unity/Builds/StarTournamentProvingGround.app`. Сборка Development, не production installer и не notarized release.
+`make check` выполняет canonical EditMode/PlayMode tests и local Development
+build; `make build` выполняет только build. Низкоуровневые эквиваленты остаются
+`unity/tools.sh prepare|test-edit|test-play|build|editor|run`.
+
+Не запускайте два Unity-процесса для одного проекта одновременно. `UNITY_EDITOR` переопределяет путь редактора. Логи/XML сохраняются в `.local/unity-evidence/`; Mac Player — `unity/Builds/StarTournamentProvingGround.app`. Сборка Development, не production installer и не notarized release. Deploy/distribution command отсутствует намеренно.
 
 Для обычного запуска выберите 1–4 места кнопками «Экранов − / Экраны +», выберите «Человек» или «AI» и назначьте устройство только человеку: `Space` присоединяет единственную keyboard/mouse пару, `Start` — конкретный gamepad. Поддержаны уникальные gamepads либо одна keyboard/mouse пара с остальными gamepads. AI-места не требуют устройств, включая состав целиком из AI. Escape и Start доступны оператору для паузы даже без назначения игрового устройства. После заполнения human slots кнопка старта получает UI focus. WASD/LS — движение, мышь/RS — взгляд, Space/A — прыжок, mouse button/RT — выстрел, Tab/View — список, Esc/Start — общая пауза. LB свободен. Disconnect/focus loss останавливает gameplay; reconnect не запускает игру автоматически. Поменять назначение можно через setup.
 

@@ -8,7 +8,7 @@
 - Для discovery используй `.agents/skills/flow-explore/SKILL.md`; для реализации и небольших inline fixes — `flow-apply`; для вопросов, human acceptance и finalization debt — `flow-inbox`. Не редактируй generated upstream skills.
 - Перед реализацией выбери и claim change. Если пользователь не выбрал change, покажи готовые варианты и спроси, какой брать. Не возобновляй historical/cancelled browser work автоматически.
 - Прочитай `.agents/references/flow/lifecycle.md` перед lifecycle-переходами; `delivery.md` — перед sync, merge, deploy и cleanup; `initiative.md` — для многоэтапной работы; `efficiency.md` — перед выбором модели или делегированием.
-- Human acceptance требуется для каждого результата. `make deploy` допускается лишь при отдельной явной авторизации, записанной в project profile; установка флоу её не даёт.
+- Human acceptance требуется для каждого результата. Native distribution/deploy не настроены и не выполняются без отдельного решения, записанного в project profile.
 - Вопросы, feedback, evidence, usage и lifecycle храни в соответствующем change. У разных worktree нет отдельной базы статуса. Не объявляй acceptance или delivery по checked task boxes, времени или отсутствию ошибок.
 <!-- END MANAGED OPEN SPEC FLOW -->
 
@@ -31,18 +31,18 @@
 - Небольшую однозначную правку можно вносить напрямую без полного OpenSpec-флоу; если она меняет утверждённое решение, одновременно обнови `docs/GAME_SPEC.md`.
 - Если неясно, является ли правка небольшой и однозначной, спроси пользователя до реализации.
 - Перед нетривиальным изменением, OpenSpec change, работой в worktree, интеграцией, архивированием или deploy прочитай [`.agents/references/delivery-workflow.md`](.agents/references/delivery-workflow.md).
-- Перед player-visible, input, split-screen, network-play, audio или browser-QA задачей прочитай [`.agents/references/game-qa.md`](.agents/references/game-qa.md).
+- Перед player-visible, input, split-screen, network-play или audio задачей прочитай [`.agents/references/game-qa.md`](.agents/references/game-qa.md). Для текущей Unity-версии применяй native Player QA; browser-QA относится только к historical evidence.
 - Перед делегированием или выбором custom agent прочитай [`.agents/references/model-routing.md`](.agents/references/model-routing.md).
 - Перед подключением MCP, плагина или внешнего сервиса прочитай [`.agents/references/external-tools.md`](.agents/references/external-tools.md).
 - Для длинной задачи, batch-генерации или после первого compaction прочитай [`.agents/references/context-efficiency.md`](.agents/references/context-efficiency.md).
 
 ## Архитектурные границы
 
-- Для Unity действуют утверждённые уточнения `GAME_SPEC`: native physics/motor, сериализуемое gameplay state, replay по записанным состояниям без строгого детерминизма; native cameras/UI и Player acceptance. Упоминания WebGL/DOM и детерминированного browser replay ниже относятся к сохраняемому browser baseline.
+- Unity — единственный executable runtime. Действуют утверждённые уточнения `GAME_SPEC`: native physics/motor, сериализуемое gameplay state, replay по записанным состояниям без строгого детерминизма, native cameras/UI и Player acceptance. Historical browser baseline не является исходником для запуска или новой реализации.
 
 - Симуляция является единственным источником истины: сущности, правила, таймеры, урон, оружие, боты, коллизии, матч и сериализуемое состояние не зависят от renderer-объектов.
-- Renderer отвечает за WebGL-сцену, анимацию, камеры, освещение и визуальные эффекты. HUD, меню, настройки, lobby и accessibility-sensitive интерфейсы по умолчанию остаются DOM-слоем.
-- Физические устройства отображай на явные игровые действия в одном input-модуле. Для каждого local seat отделяй игровое действие от конкретного устройства; управление камерой, меню и pointer-lock должны иметь ясную границу фокуса.
+- Unity presentation отвечает за нативную сцену, анимацию, камеры, освещение и визуальные эффекты. HUD, меню, настройки, lobby и accessibility-sensitive интерфейсы реализуются нативным Unity UI; они не владеют simulation state.
+- Физические устройства отображай на явные игровые действия в одном input-модуле. Для каждого local seat отделяй игровое действие от конкретного устройства; управление камерой, меню и native focus/pause должны иметь ясную границу фокуса.
 - Проектируй локальный матч, сетевую синхронизацию и replay как отдельные адаптеры одной детерминированной симуляции. Не выбирай сетевую модель до её явного утверждения в `GAME_SPEC`.
 - 3D-ассеты поставляй через manifest-ключи; стандартный формат — GLB/glTF 2.0. До интеграции фиксируй единицы, origin/pivot, коллизионные прокси, LOD и освещение.
 
