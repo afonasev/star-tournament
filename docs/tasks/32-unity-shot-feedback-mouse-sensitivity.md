@@ -4,6 +4,6 @@
 
 Проверено: strict OpenSpec, EditMode 87/87, PlayMode 66/66 и Mac Player build. Evidence: `docs/evidence/unity-shot-feedback-mouse-sensitivity-2026-09-20/report.json`.
 
-Muted native Player diagnostic из exact commit сохранён в `docs/evidence/unity-shot-feedback-mouse-sensitivity-2026-09-20/player-4/`: PNG/JSON для flight/contact impact и default/min/max sensitivity на 1920×1080 с четырьмя viewport. PNG осмотрены: impact читается, но burst дробин в одной точке слишком плотный для художественного approval.
+Muted native Player diagnostics сохранены в `docs/evidence/unity-shot-feedback-mouse-sensitivity-2026-09-20/player-4-v2/` и `player-1/`: PNG/JSON для default/min/max sensitivity и actual shot; 1-view JSON фиксирует ровно одну active camera. После presentation-only aggregation contact burst не засоряет 4-view кадр. PNG осмотрены: flight trace пока недостаточно заметен в обоих layout, поэтому visual requirement не закрыт.
 
-Открыто до handoff completion: 1-viewport Player PNG/JSON и отдельный visual-tuning decision; physical mouse/focus, artistic и reference-hardware performance acceptance. Не архивировать, не интегрировать и не деплоить.
+Открыто до handoff completion: сделать flight trace заметным без clutter и повторить Player QA; physical mouse/focus, artistic и reference-hardware performance acceptance. Не архивировать, не интегрировать и не деплоить.

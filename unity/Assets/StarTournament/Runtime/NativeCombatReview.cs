@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
         {
             public string scenario="native-combat-review-v1", acceptance="DIAGNOSTIC_NOT_PHYSICAL_ACCEPTANCE";
             public string state, movementProfile, combatProfile, lifeProfile;
-            public int width, height, shots;
+            public int width, height, cameras, shots;
             public float mouseDegreesPerPixel;
             public double sessionTime;
             public bool focused, running;
@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround
             directory=flag>=0 && flag+1<args.Length ? args[flag+1] : Path.Combine(Application.persistentDataPath,"combat-review");
             Directory.CreateDirectory(directory);
             bool shotFeedback=Array.IndexOf(args,"-shotFeedbackReview")>=0;
+            bool oneViewport=Array.IndexOf(args,"-oneViewportReview")>=0;
             // Review timings/positions below are scenario fixtures, not shipping gameplay tuning.
             while(!Application.isFocused) yield return null;
             yield return new WaitForSecondsRealtime(1);
@@ -44,6 +45,12 @@ namespace StarTournament.ProvingGround
             yield return Capture("setup");
             for(int i=0;i<pads.Length;i++) pads[i]=InputSystem.AddDevice<Gamepad>();
             ground.StartCombatReview(pads);
+            if(oneViewport)
+            {
+                var reviewCameras=ground.GetComponentsInChildren<Camera>();
+                for(int i=1;i<reviewCameras.Length;i++)reviewCameras[i].enabled=false;
+                if(reviewCameras.Length>0)reviewCameras[0].rect=new Rect(0,0,1,1);
+            }
             ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),20);
             ground.PlaceCombatReviewSeat(1,new Vector3(-8,0,3.5f),0);
             ground.PlaceCombatReviewSeat(2,new Vector3(0,0,3),0);
@@ -84,7 +91,7 @@ namespace StarTournament.ProvingGround
         IEnumerator Capture(string state)
         {
             yield return new WaitForEndOfFrame();
-            var snapshot=new ReviewState { state=state, width=Screen.width, height=Screen.height, focused=Application.isFocused,
+            var snapshot=new ReviewState { state=state, width=Screen.width, height=Screen.height,cameras=Camera.allCamerasCount, focused=Application.isFocused,
                 running=ground.Running, shots=ground.Session.ShotCount, sessionTime=ground.Session.Time,
                 movementProfile=ground.Profile.Id+"@"+ground.Profile.Version, combatProfile=ground.CombatProfile.Id+"@"+ground.CombatProfile.Version,
                 lifeProfile=ground.LifeProfile.Id+"@"+ground.LifeProfile.Version,mouseDegreesPerPixel=MouseSensitivityPreference.Resolve(ground.Profile), lives=new CombatLifeState[4] };

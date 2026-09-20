@@ -58,7 +58,13 @@ namespace StarTournament.ProvingGround
                 line.startWidth=line.endWidth=movement.Get("presentation.shotTracerWidth");line.material=ShotMaterial();
                 line.startColor=new Color(1f,.7f,.22f,.95f);line.endColor=new Color(1f,.35f,.08f,.15f);
                 var start=Muzzle(notice.Shooter,pellets.Count);line.SetPosition(0,start);line.SetPosition(1,start);
-                pellets.Add(new PelletEffect{Root=root,Trace=line,Start=start,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=pellet.Contact!=PelletContact.Miss});
+                bool contact=pellet.Contact!=PelletContact.Miss;
+                // Multiple hitscan pellets commonly share one small hit volume: render one readable contact flash,
+                // not a stack of identical spheres. The individual flight paths remain visible.
+                if(contact)
+                    foreach(var existing in pellets)
+                        if(existing.Contact && Vector3.Distance(existing.End,pellet.Endpoint)<movement.Get("presentation.shotImpactSize")*2f) { contact=false;break; }
+                pellets.Add(new PelletEffect{Root=root,Trace=line,Start=start,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact});
             }
         }
         Material ShotMaterial()
