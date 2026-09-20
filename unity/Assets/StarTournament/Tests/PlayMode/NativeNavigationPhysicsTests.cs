@@ -54,8 +54,8 @@ namespace StarTournament.ProvingGround.Tests
             for (int family = 0; family < ArenaFamilyCatalog.Ids.Count; family++)
             {
                 var familyRoot = new GameObject("navigation-family-" + family); familyRoot.transform.SetParent(root.transform);
-                var definition = ArenaGenerator.Generate(new ArenaGenerationRequest { Seed = 41, GeneratorVersion = ArenaGenerator.FamiliesVersion, Profile = ProvingProfile.CreateArenaFamiliesDefault(family) });
-                var familyArena = familyRoot.AddComponent<ProvingArena>(); familyArena.Build(definition, movement);
+                var frozen = ArenaGenerator.Freeze(new ArenaGenerationRequest { Seed = 41, GeneratorVersion = ArenaGenerator.FamiliesVersion, Profile = ProvingProfile.CreateArenaFamiliesDefault(family) }); var definition=frozen.Definition;
+                var familyArena = familyRoot.AddComponent<ProvingArena>(); familyArena.Build(frozen, movement);
                 var familyProvider = new NativeNavigationProvider(familyArena, movement, profile);
                 foreach (var transition in familyArena.ReadNavigationTransitions())
                 for (int direction = -1; direction <= 1; direction += 2)

@@ -147,7 +147,7 @@ namespace StarTournament.ProvingGround
                 Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_ARENA_FAMILY"), out int environmentFamily);
             if(environmentReview) ArenaProfile.Set("arena.family",environmentFamily);
             arena = Owned("unity-arena-families-v1").AddComponent<ProvingArena>();
-            arena.Build(ArenaGenerator.Generate(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile }), Profile);
+            arena.Build(ArenaGenerator.Freeze(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile }), Profile);
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile);

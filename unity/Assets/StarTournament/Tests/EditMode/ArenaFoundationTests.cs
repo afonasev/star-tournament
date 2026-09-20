@@ -5,6 +5,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class ArenaFoundationTests
     {
         static ArenaDefinition Generate(uint seed=17,int family=0) => ArenaGenerator.Generate(new ArenaGenerationRequest{Seed=seed,GeneratorVersion=ArenaGenerator.FamiliesVersion,Profile=ProvingProfile.CreateArenaFamiliesDefault(family)});
+        static ArenaFreezeSnapshot Freeze(uint seed=17,int family=0) => ArenaGenerator.Freeze(new ArenaGenerationRequest{Seed=seed,GeneratorVersion=ArenaGenerator.FamiliesVersion,Profile=ProvingProfile.CreateArenaFamiliesDefault(family)});
         [Test] public void SameRequest_HasStableIdentityAndIndependentCopy()
         {
             var left=Generate();var right=Generate();Assert.That(left.Identity,Is.EqualTo(right.Identity));Assert.That(left.Solids.Length,Is.EqualTo(right.Solids.Length));
@@ -13,6 +14,17 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ChangedSeedFamilyOrFrozenProfileValue_ChangesIdentity()
         {
             Assert.That(Generate(17).Identity,Is.Not.EqualTo(Generate(18).Identity));Assert.That(Generate(17,0).Identity,Is.Not.EqualTo(Generate(17,1).Identity));var p=ProvingProfile.CreateArenaFamiliesDefault();p.Set("fixture.width",33);var changed=ArenaGenerator.Generate(new ArenaGenerationRequest{Seed=17,GeneratorVersion=ArenaGenerator.FamiliesVersion,Profile=p});Assert.That(changed.Identity,Is.Not.EqualTo(Generate(17).Identity));
+        }
+        [Test] public void EveryFamily_FreezeRepeatsIdentity_AndRejectsDefinitionOrProfileDrift()
+        {
+            for(int family=0;family<ArenaFamilyCatalog.Ids.Count;family++)
+            {
+                var left=Freeze(91,family);var right=Freeze(91,family);Assert.That(left.Identity,Is.EqualTo(right.Identity));Assert.That(left.FamilyId,Is.EqualTo(ArenaFamilyCatalog.Ids[family]));
+                var drift=left.Definition;drift.Solids[0].Id+="-drift";
+                var driftError=Assert.Throws<System.ArgumentException>(()=>left.RequireDefinition(drift));Assert.That(driftError.Message,Does.StartWith("ARENA_FREEZE_DEFINITION_MISMATCH|family:"+left.FamilyId));
+            }
+            var profile=ProvingProfile.CreateArenaFamiliesDefault();var definition=Generate();profile.Set("fixture.width",33);
+            var error=Assert.Throws<System.ArgumentException>(()=>ArenaFreezeSnapshot.Create(definition,profile));Assert.That(error.Message,Does.StartWith("ARENA_FREEZE_PROFILE_MISMATCH|family:"+definition.FamilyId));
         }
         [Test] public void EveryRegisteredFamily_HasDistinctCompleteDefinition_AndSeedDoesNotChooseFamily()
         {

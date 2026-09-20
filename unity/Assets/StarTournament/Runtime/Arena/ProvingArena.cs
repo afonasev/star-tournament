@@ -20,6 +20,7 @@ namespace StarTournament.ProvingGround
         public Vector3 UpperRoutePoint { get; private set; }
         public NavMeshSurface Surface { get; private set; }
         public ArenaDefinition Definition { get; private set; }
+        public ArenaFreezeSnapshot FrozenSnapshot { get; private set; }
         readonly Dictionary<Collider,string> supports=new Dictionary<Collider,string>();
         NativeNavigationTransition[] navigationTransitions;
         public NativeNavigationTransition[] ReadNavigationTransitions()
@@ -38,11 +39,12 @@ namespace StarTournament.ProvingGround
         Material floor, wall, accent;
         public void Build(ProvingProfile profile)
         {
-            Build(ArenaGenerator.Generate(new ArenaGenerationRequest{Seed=1,GeneratorVersion=ArenaGenerator.FoundationVersion,Profile=ProvingProfile.CreateArenaFoundationDefault()}),profile);
+            Build(ArenaGenerator.Freeze(new ArenaGenerationRequest{Seed=1,GeneratorVersion=ArenaGenerator.FoundationVersion,Profile=ProvingProfile.CreateArenaFoundationDefault()}),profile);
         }
-        public void Build(ArenaDefinition definition, ProvingProfile profile)
+        public void Build(ArenaFreezeSnapshot frozen, ProvingProfile profile)
         {
-            ArenaGenerator.Validate(definition, profile); Definition=definition.Copy(); supports.Clear();
+            if(frozen==null) throw new System.ArgumentException("ARENA_FREEZE_MISSING_INPUT|family:unknown|element:snapshot");
+            var definition=frozen.Definition; frozen.RequireDefinition(definition); Definition=definition; FrozenSnapshot=frozen; supports.Clear();
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));

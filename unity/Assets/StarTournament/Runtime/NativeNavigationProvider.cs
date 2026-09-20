@@ -26,7 +26,8 @@ namespace StarTournament.ProvingGround
             sampleDistance = navigation.Get("bots.navigation.sampleDistance"); heightTolerance = navigation.Get("bots.navigation.heightTolerance");
             step = movement.Get("player.movement.stepOffset"); radius = movement.Get("player.capsule.radius");
             height = movement.Get("player.capsule.height"); skin = movement.Get("player.capsule.skinWidth");
-            if(arena.Definition==null) throw new ArgumentException("Arena definition is required");
+            if(arena.Definition==null || arena.FrozenSnapshot==null) throw new ArgumentException("ARENA_FREEZE_MISSING_INPUT|family:unknown|element:navigation");
+            arena.FrozenSnapshot.RequireDefinition(arena.Definition);
             Identity = arena.Definition.Identity + "|movement:" + ArenaGenerator.Fingerprint(movement);
         }
         public bool TryRoute(Vector3 from, Vector3 goal, out NativeNavigationPoint[] points, out string failure)

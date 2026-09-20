@@ -115,7 +115,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(selector.InitialFailure,Is.EqualTo("NoValidPlacement"));
             var foundation=ProvingProfile.CreateArenaFoundationDefault();foundation.Set("fixture.width",80);foundation.Set("fixture.depth",80);
             var dense=ProvingProfile.CreateNativeCombatDefault();dense.Set("spawn.spacing",2);dense.Set("spawn.inset",2);
-            var wideRoot=new GameObject("wide-foundation");SceneManager.MoveGameObjectToScene(wideRoot,scene);var wideArena=wideRoot.AddComponent<ProvingArena>();wideArena.Build(ArenaGenerator.Generate(new ArenaGenerationRequest{Seed=1,GeneratorVersion=ArenaGenerator.FoundationVersion,Profile=foundation}),ground.Profile);
+            var wideRoot=new GameObject("wide-foundation");SceneManager.MoveGameObjectToScene(wideRoot,scene);var wideArena=wideRoot.AddComponent<ProvingArena>();wideArena.Build(ArenaGenerator.Freeze(new ArenaGenerationRequest{Seed=1,GeneratorVersion=ArenaGenerator.FoundationVersion,Profile=foundation}),ground.Profile);
             var stress=new SafeSpawnSelector(scene.GetPhysicsScene(),wideArena,ground.Profile,dense);var watch=System.Diagnostics.Stopwatch.StartNew();
             Assert.That(stress.TryInitial(NativeMatchRoster.Ffa(8),1,out var oversized,100,1024),Is.False);watch.Stop();
             Assert.That(oversized,Is.Empty);Assert.That(stress.InitialFailure,Is.EqualTo("CandidateBudgetExceeded"));Assert.That(stress.InitialSearchNodes,Is.Zero);
