@@ -1,0 +1,277 @@
+{
+    "state": "stairs-west-descending",
+    "status": "NAVIGATION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "profile": "unity-bot-navigation-v1@1",
+    "arenaFamily": "wide-hall-circuit-v1",
+    "arenaIdentity": "unity-arena-families-v1|family:wide-hall-circuit-v1|seed:1|profile:arena.family=0;fixture.depth=32;fixture.floorHeight=0;fixture.floorThickness=0.3;fixture.headroomHeight=2.1;fixture.rampLength=12;fixture.rampWidth=4;fixture.stairRise=0.25;fixture.stairTread=0.75;fixture.upperFloorHeight=4;fixture.wallHeight=3;fixture.wallThickness=0.3;fixture.width=32",
+    "width": 1920,
+    "height": 1080,
+    "focused": true,
+    "muted": true,
+    "running": true,
+    "sessionTime": 2.639998957514763,
+    "pose": {
+        "Position": {
+            "x": -13.699999809265137,
+            "y": 3.143040180206299,
+            "z": -3.447991132736206
+        },
+        "Velocity": {
+            "x": 0.0,
+            "y": -1.9199855327606202,
+            "z": -3.3599987030029299
+        },
+        "Yaw": 0.0,
+        "Pitch": 0.0,
+        "Grounded": false
+    },
+    "navigation": {
+        "Version": 1,
+        "OwnLife": 1,
+        "Enemy": -1,
+        "EnemyLife": 0,
+        "Cursor": 3,
+        "Recoveries": 0,
+        "Replans": 3,
+        "Configuration": "unity-arena-families-v1|family:wide-hall-circuit-v1|seed:1|profile:arena.family=0;fixture.depth=32;fixture.floorHeight=0;fixture.floorThickness=0.3;fixture.headroomHeight=2.1;fixture.rampLength=12;fixture.rampWidth=4;fixture.stairRise=0.25;fixture.stairTread=0.75;fixture.upperFloorHeight=4;fixture.wallHeight=3;fixture.wallThickness=0.3;fixture.width=32|movement:camera.eyeHeight=1.55;camera.farClipPlane=250;camera.fieldOfViewDegrees=90;camera.maximumPitchDegrees=85;camera.nearClipPlane=0.05;camera.stairMaximumOffsetMeters=0.2;camera.stairSmoothingSeconds=0.12;fixture.depth=32;fixture.floorHeight=0;fixture.floorThickness=0.3;fixture.headroomHeight=2.1;fixture.rampLength=12;fixture.rampWidth=4;fixture.stairRise=0.25;fixture.stairTread=0.75;fixture.upperFloorHeight=4;fixture.wallHeight=3;fixture.wallThickness=0.3;fixture.width=32;input.deadzone=0.15;input.gamepadDegreesPerSecond=180;input.mouseDegreesPerPixel=0.12;navigation.sampleDistance=2;player.capsule.height=1.8;player.capsule.radius=0.55;player.capsule.skinWidth=0.01;player.movement.airAcceleration=12;player.movement.gravity=24;player.movement.groundAcceleration=45;player.movement.groundDeceleration=32;player.movement.jumpSpeed=8.5;player.movement.maximumGroundSpeed=9;player.movement.slopeLimitDegrees=45;player.movement.stepOffset=0.45;presentation.lightIntensity=1.1;presentation.shotFlightSeconds=0.28;presentation.shotImpactSeconds=0.12;presentation.shotImpactSize=0.16;presentation.shotMaxEffects=96;presentation.shotMuzzleClearance=0.5;presentation.shotTracerWidth=0.055;presentation.viewWeaponX=0.36;presentation.viewWeaponY=-0.34;presentation.viewWeaponZ=0.68;presentation.worldWeaponMountY=0.22;simulation.fixedTickHz=50;ui.fontSize=20;ui.headingFontSize=28;weapon.probeCooldown=0.7;weapon.probeRange=35|{\"id\":\"unity-bot-navigation-v1\",\"version\":1,\"descriptors\":[{\"Path\":\"bots.navigation.waypointRadius\",\"Group\":\"bot-navigation\",\"Label\":\"Достижение точки\",\"Description\":\"Горизонтальная точность прибытия к углу маршрута.\",\"Unit\":\"meters\",\"Minimum\":0.10000000149011612,\"Maximum\":1.0,\"Step\":0.05000000074505806,\"DefaultValue\":0.25},{\"Path\":\"bots.navigation.heightTolerance\",\"Group\":\"bot-navigation\",\"Label\":\"Высота опоры\",\"Description\":\"Допустимая разница высоты стоп и навигационной поверхности.\",\"Unit\":\"meters\",\"Minimum\":0.05000000074505806,\"Maximum\":0.6000000238418579,\"Step\":0.009999999776482582,\"DefaultValue\":0.30000001192092898},{\"Path\":\"bots.navigation.sampleDistance\",\"Group\":\"bot-navigation\",\"Label\":\"Поиск поверхности\",\"Description\":\"Радиус проекции стоп на NavMesh; высота проверяется отдельно.\",\"Unit\":\"meters\",\"Minimum\":0.10000000149011612,\"Maximum\":2.0,\"Step\":0.10000000149011612,\"DefaultValue\":0.6000000238418579},{\"Path\":\"bots.navigation.stuckSeconds\",\"Group\":\"bot-navigation\",\"Label\":\"Застревание\",\"Description\":\"Окно без уменьшения оставшегося пути до попытки выхода.\",\"Unit\":\"seconds\",\"Minimum\":0.5,\"Maximum\":5.0,\"Step\":0.10000000149011612,\"DefaultValue\":1.5},{\"Path\":\"bots.navigation.progressMeters\",\"Group\":\"bot-navigation\",\"Label\":\"Прогресс\",\"Description\":\"Минимальное уменьшение оставшегося пути за окно.\",\"Unit\":\"meters\",\"Minimum\":0.10000000149011612,\"Maximum\":2.0,\"Step\":0.10000000149011612,\"DefaultValue\":0.4000000059604645},{\"Path\":\"bots.navigation.recoverySeconds\",\"Group\":\"bot-navigation\",\"Label\":\"Уступание\",\"Description\":\"Длительность бокового выхода обычным движением.\",\"Unit\":\"seconds\",\"Minimum\":0.10000000149011612,\"Maximum\":2.0,\"Step\":0.10000000149011612,\"DefaultValue\":0.699999988079071},{\"Path\":\"bots.navigation.maximumRecoveries\",\"Group\":\"bot-navigation\",\"Label\":\"Попытки выхода\",\"Description\":\"Предел попыток без прогресса до явного отказа.\",\"Unit\":\"count\",\"Minimum\":1.0,\"Maximum\":8.0,\"Step\":1.0,\"DefaultValue\":3.0},{\"Path\":\"bots.navigation.repathSeconds\",\"Group\":\"bot-navigation\",\"Label\":\"Частота маршрута\",\"Description\":\"Минимальный интервал запросов при обновлении цели.\",\"Unit\":\"seconds\",\"Minimum\":0.10000000149011612,\"Maximum\":2.0,\"Step\":0.10000000149011612,\"DefaultValue\":0.30000001192092898},{\"Path\":\"bots.navigation.slowDistance\",\"Group\":\"bot-navigation\",\"Label\":\"Торможение к точке\",\"Description\":\"Расстояние плавного уменьшения команды у угла пути.\",\"Unit\":\"meters\",\"Minimum\":0.20000000298023225,\"Maximum\":3.0,\"Step\":0.10000000149011612,\"DefaultValue\":1.0}],\"values\":[{\"Path\":\"bots.navigation.waypointRadius\",\"Value\":0.25},{\"Path\":\"bots.navigation.heightTolerance\",\"Value\":0.30000001192092898},{\"Path\":\"bots.navigation.sampleDistance\",\"Value\":0.6000000238418579},{\"Path\":\"bots.navigation.stuckSeconds\",\"Value\":1.5},{\"Path\":\"bots.navigation.progressMeters\",\"Value\":0.4000000059604645},{\"Path\":\"bots.navigation.recoverySeconds\",\"Value\":0.699999988079071},{\"Path\":\"bots.navigation.maximumRecoveries\",\"Value\":3.0},{\"Path\":\"bots.navigation.repathSeconds\",\"Value\":0.30000001192092898},{\"Path\":\"bots.navigation.slowDistance\",\"Value\":1.0}]}",
+        "Failure": "",
+        "ActiveTransition": "transition:stairs-west",
+        "ExitSupport": "floor:lower",
+        "HasGoal": true,
+        "Goal": {
+            "x": -13.699999809265137,
+            "y": 0.0,
+            "z": -13.0
+        },
+        "TransitionExit": {
+            "x": -13.699999809265137,
+            "y": 0.0,
+            "z": -12.480622291564942
+        },
+        "ObservedAt": -1.0,
+        "Time": 2.6199989654123785,
+        "NextRepath": 2.239999245852232,
+        "ProgressAt": 2.1999991312623026,
+        "RecoveryUntil": 0.0,
+        "BestRemaining": 13.40735149383545,
+        "Status": 1,
+        "Route": [
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 4.0,
+                    "z": 1.0232073068618775
+                },
+                "Support": "floor:upper"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 4.0,
+                    "z": -0.015548797324299813
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 4.0,
+                    "z": -0.5349268317222595
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 3.75,
+                    "z": -1.0543049573898316
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 3.5,
+                    "z": -1.5736829042434693
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 3.5,
+                    "z": -2.0930609703063967
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 3.25,
+                    "z": -2.612438917160034
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 3.0,
+                    "z": -3.131817102432251
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 3.0,
+                    "z": -3.6511952877044679
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 2.75,
+                    "z": -4.1705732345581059
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 2.5,
+                    "z": -4.689950942993164
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 2.5,
+                    "z": -5.209329128265381
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 2.25,
+                    "z": -5.728707313537598
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 2.0,
+                    "z": -6.248085021972656
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 1.75,
+                    "z": -6.767463684082031
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 1.75,
+                    "z": -7.28684139251709
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 1.5,
+                    "z": -7.806219100952148
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 1.25,
+                    "z": -8.325597763061524
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 1.25,
+                    "z": -8.844975471496582
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 1.0,
+                    "z": -9.36435317993164
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.75,
+                    "z": -9.883731842041016
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.75,
+                    "z": -10.403109550476075
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.5,
+                    "z": -10.92248821258545
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.25,
+                    "z": -11.441865921020508
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.25,
+                    "z": -11.961243629455567
+                },
+                "Support": "transition:stairs-west"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.0,
+                    "z": -12.480622291564942
+                },
+                "Support": "floor:lower"
+            },
+            {
+                "Position": {
+                    "x": -13.699999809265137,
+                    "y": 0.0,
+                    "z": -13.0
+                },
+                "Support": "floor:lower"
+            }
+        ]
+    }
+}

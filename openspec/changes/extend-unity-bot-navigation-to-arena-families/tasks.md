@@ -11,4 +11,4 @@
 ## 3. Native evidence and handoff
 
 - [x] 3.1 Run full Unity EditMode/PlayMode, strict OpenSpec validation and Mac Development build; save XML/log/build identity and diagnostic workload JSON.
-- [ ] 3.2 Run muted native Player FHD/4K journeys on representative family layouts, inspect PNG/JSON, update GAME_SPEC/matrix/handoff and leave physical/art/performance acceptance open; verify `git diff --check` and commit the coherent change.
+- [x] 3.2 Run muted native Player FHD/4K journeys on representative family layouts, inspect PNG/JSON, update GAME_SPEC/matrix/handoff and leave physical/art/performance acceptance open; verify `git diff --check` and commit the coherent change.

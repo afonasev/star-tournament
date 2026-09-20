@@ -1,0 +1,60 @@
+{
+    "state": "return-setup",
+    "status": "NAVIGATION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "profile": "unity-bot-navigation-v1@1",
+    "arenaFamily": "lower-basement-v1",
+    "arenaIdentity": "unity-arena-families-v1|family:lower-basement-v1|seed:1|profile:arena.family=4;fixture.depth=32;fixture.floorHeight=0;fixture.floorThickness=0.3;fixture.headroomHeight=2.1;fixture.rampLength=12;fixture.rampWidth=4;fixture.stairRise=0.25;fixture.stairTread=0.75;fixture.upperFloorHeight=4;fixture.wallHeight=3;fixture.wallThickness=0.3;fixture.width=32",
+    "width": 3840,
+    "height": 2160,
+    "focused": true,
+    "muted": true,
+    "running": false,
+    "sessionTime": 0.0,
+    "pose": {
+        "Position": {
+            "x": -6.0,
+            "y": 0.0,
+            "z": -14.0
+        },
+        "Velocity": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "Yaw": 0.0,
+        "Pitch": 0.0,
+        "Grounded": false
+    },
+    "navigation": {
+        "Version": 1,
+        "OwnLife": 0,
+        "Enemy": -1,
+        "EnemyLife": 0,
+        "Cursor": 0,
+        "Recoveries": 0,
+        "Replans": 0,
+        "Configuration": "",
+        "Failure": "",
+        "ActiveTransition": "",
+        "ExitSupport": "",
+        "HasGoal": false,
+        "Goal": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "TransitionExit": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "ObservedAt": -1.0,
+        "Time": -1.0,
+        "NextRepath": 0.0,
+        "ProgressAt": 0.0,
+        "RecoveryUntil": 0.0,
+        "BestRemaining": 0.0,
+        "Status": 0,
+        "Route": []
+    }
+}
