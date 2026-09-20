@@ -1,0 +1,165 @@
+{
+  "status": "PASS_NATIVE_DIAGNOSTIC",
+  "physicalAcceptance": "OPEN",
+  "performanceAcceptance": "OPEN",
+  "profiles": [
+    "unity-proving-ground-v1@1",
+    "unity-combat-state-v1@1",
+    "unity-native-combat-v1@1"
+  ],
+  "unity": "6000.3.23f1",
+  "base": "a3a95e9",
+  "branch": "codex/unity-native-combat",
+  "scenarios": {
+    "fhd": {
+      "states": [
+        "setup",
+        "live",
+        "damage",
+        "killcam",
+        "complete",
+        "no-killer-orbit",
+        "pause",
+        "paused-timers",
+        "respawn"
+      ],
+      "resolution": [
+        1920,
+        1080
+      ],
+      "focusedThroughout": true,
+      "frameOnlyDiagnostic": {
+        "samples": 1023,
+        "frameP50Ms": 8.341171264648438,
+        "frameP95Ms": 14.689958572387695,
+        "frameP99Ms": 22.6976261138916,
+        "worstFrameMs": 67.06929016113281
+      }
+    },
+    "4k": {
+      "states": [
+        "setup",
+        "live",
+        "damage",
+        "killcam",
+        "complete",
+        "no-killer-orbit",
+        "pause",
+        "paused-timers",
+        "respawn"
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "focusedThroughout": true,
+      "frameOnlyDiagnostic": {
+        "samples": 826,
+        "frameP50Ms": 8.693750381469727,
+        "frameP95Ms": 15.611790657043457,
+        "frameP99Ms": 182.96754455566406,
+        "worstFrameMs": 217.4285430908203
+      }
+    }
+  },
+  "tests": {
+    "editmode": {
+      "total": "17",
+      "passed": "17",
+      "failed": "0",
+      "start-time": "2026-09-19 13:36:41Z",
+      "end-time": "2026-09-19 13:36:41Z"
+    },
+    "playmode": {
+      "total": "17",
+      "passed": "17",
+      "failed": "0",
+      "start-time": "2026-09-19 13:40:26Z",
+      "end-time": "2026-09-19 13:40:59Z"
+    }
+  },
+  "manual": [
+    "normal setup",
+    "keyboard/mouse join",
+    "missing devices block Start",
+    "diagnostic live",
+    "Escape pause",
+    "explicit Resume",
+    "clean exit"
+  ],
+  "limitations": [
+    "Four synthetic gamepads are not physical four-device acceptance.",
+    "No-killer orbit is an explicit world-damage fixture, not a weapon kill.",
+    "Timings include PNG capture and mixed live/pause workload; not a performance gate.",
+    "FrameTimingManager CPU/GPU samples are unpaired asynchronous raw diagnostics, not synchronized metrics.",
+    "Full match, scoring, results/repeat, teams/bots and additional layouts are subsequent roadmap slices."
+  ],
+  "sourceFilesSha256": {
+    "unity/Assets/StarTournament/Editor/ProvingGroundBuild.cs": "7471e222dd957eb1c8644d04c00ffdeb03c4bb1f351421bcbb1dfac3c95d234d",
+    "unity/Assets/StarTournament/Runtime/Arena/ProvingArena.cs": "ac041fda184c1a6c25ec060ac97bb2f2e923ff9d56e45ec7512d9c362f1eb311",
+    "unity/Assets/StarTournament/Runtime/CombatPresentation.cs": "9953e79c3e32257ba2f80f065366622f49fdc4a11b906a7ce29027a00f6c2556",
+    "unity/Assets/StarTournament/Runtime/Core/CombatLife.cs": "15ba08eaa843f8fe8d4bf35957d2b99e2c70b7432fbdfd77877a657f533a6c86",
+    "unity/Assets/StarTournament/Runtime/Core/LocalAction.cs": "a3a26f19debca41c2a540cfc29d847fbb062eb53cab9bd3e1716204c50f8f25b",
+    "unity/Assets/StarTournament/Runtime/Core/NativeCombatProfile.cs": "694cc9206811d8a3fae20326663958b22da3f2fd2932226f6f21762d357bfbff",
+    "unity/Assets/StarTournament/Runtime/Core/ParticipantState.cs": "29d93c3c6eb530e7ddfa679bf459d75f712984e88da313e6355d061b6a2ca1af",
+    "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs": "43f3d3eb61559fce7c1990042f6e2e584654e6ef75ed7e80e740bbedefc1e5f1",
+    "unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs": "ce2129817f4a7e0b799ddaa728b59d288ef69c401fdbccc094346d57085c070e",
+    "unity/Assets/StarTournament/Runtime/FpsDisplay.cs": "7cfc7d198da87909f417480b856c06262b1f9a0847415de7e3aac0a0c1770585",
+    "unity/Assets/StarTournament/Runtime/Input/SeatInputCoordinator.cs": "2d21257eb2ce4b053d59d10fa63ec2605883aa035a3ff6d7684891bf7f29862f",
+    "unity/Assets/StarTournament/Runtime/Motor/CharacterMotor.cs": "2948d245bf21aa63b1aebfaa491658de665e0b90e46f33a462516799de489f73",
+    "unity/Assets/StarTournament/Runtime/NativeCombatReview.cs": "b5d8d01d554379ba2d593bc1eb5dc1435ef34cdcccce59c75fab438314d690a7",
+    "unity/Assets/StarTournament/Runtime/NativeCombatSession.cs": "f1a18fe81aca994270ae72d412fbc3a8f87464319c45aa8a968e4bc6c9a370ce",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "d75e17a8296a605ca7d1d68a59756faa6fbf0d6a618d307634b5f7ebf19cd796",
+    "unity/Assets/StarTournament/Runtime/ProvingTelemetry.cs": "47ffda2f17c092ebfbe10d5cca4bb11f4e1d316dc391d1b0ece363244791842a",
+    "unity/Assets/StarTournament/Runtime/SafeSpawnSelector.cs": "eec9ab08ab11423d06d587d12edccfa70614a26e84d60b32d3c167b5d8f71110",
+    "unity/Assets/StarTournament/Tests/EditMode/CombatLifeTests.cs": "d2a78c62d052eef35f93b7d1650a07c02d6acfec7de6da4f68fe6fee99f96d9d",
+    "unity/Assets/StarTournament/Tests/EditMode/FpsAverageTests.cs": "bab8fbbcc35dc642c6f8b5c26092be11bc8e6cd86f271dcacc70bab757df04b4",
+    "unity/Assets/StarTournament/Tests/EditMode/MotorProfileTests.cs": "e569ee5775c01007135689664a959f9f65b5463ee45e0363af77cd7daeab656e",
+    "unity/Assets/StarTournament/Tests/EditMode/SeatInputTests.cs": "90d1d9a0205120cfb2a7d7306b6d7ffb05251306c62d74101b3d17deb4a7eac3",
+    "unity/Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs": "bed76e5c449fe471d1bb3de1e114f919cb2d15437d77089551dc2046b12da0fa",
+    "unity/Assets/StarTournament/Tests/PlayMode/FourPlayerMenuTests.cs": "824b2155d10788ddda475a3143bdc4f339a392984ab4dd34a9eb9b090eef3807",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeCombatTests.cs": "70e3c6ef26d9616496f1ae87acbaaad2565c33ba4d6ec6ac1e2278f3eddd9690",
+    "unity/Assets/StarTournament/Tests/PlayMode/ProvingGroundTests.cs": "fe77f6bc424eb1e2f3ce0af4a6a50ddf45aa0112d312937593b5c4d751dc56f9"
+  },
+  "playerContentManifestSha256": "ad76b9b32ea600940ec0a2064a106213b76d9eb49b4deee0c6d1fbec76daa2b7",
+  "evidenceSha256": {
+    "4k/complete.json": "47fbbb00e671cf45a3ee46ad7368ae5967c142e8431bae8e70e2f128c929f9e0",
+    "4k/complete.png": "7136095592bc4954c2d11b42103cfe829ea99ec5104f0da6f183252b55ec5c78",
+    "4k/damage.json": "026286255e278787b78dda249b054186273ec0951ce8dd6b5721ca2108261aea",
+    "4k/damage.png": "c3978cc10d9b08c05ba4eb0aec42dea5b0c7bc4418692e4c850156eae4d7f212",
+    "4k/killcam.json": "51e58b2f00a10c78e0ec07ad73954416305ba06f777030e3df28585fbf323277",
+    "4k/killcam.png": "d08740724e52be305f45f812c04bb2b2861790740f6c8e31b7b08cc3daccd9b8",
+    "4k/live.json": "a1809f21f0c26d78cd67e6af8a4eecdbc4099f02734edb9383fb0ddf23db8ba1",
+    "4k/live.png": "057267f0a0f2e91303941920956f203037c6d296bce221a920e68319edafc349",
+    "4k/no-killer-orbit.json": "8b2c23f7778bb1b2be46be405fbb27528ed2076b28b8ba37f9434275f51f2e2c",
+    "4k/no-killer-orbit.png": "96079153b1b7eb6f8b72304897a8ea7fa110321f2d0b5a2e5ce553061f5759b6",
+    "4k/pause.json": "9cc733e7b173484a812319a3393329f23af6127efa4d0ef082ae7b42fb929ba4",
+    "4k/pause.png": "7017922d14b3615bd4c3563a22dff6370de914a1f12af35173b72d98bb3e8d26",
+    "4k/paused-timers.json": "606eadb59154f6c89e62d9705804b14ee802b0fc4b87341c6667ae2343a27967",
+    "4k/paused-timers.png": "734ce37141d0806fc173de7acbd260d577e2525b847be8d4db0bebde7596e5de",
+    "4k/respawn.json": "d44b36c179bfd14a9cc30f8b9bc190d21341136ae82359b3e9c8537fde4eb838",
+    "4k/respawn.png": "1daed626b2ff60185853575ca6d7590449462929de551a71b7a9c5029f63adea",
+    "4k/setup.json": "30e73f326339ff2cbb0eb4142d1f36e931c33dfd736e1413681e8ce839f78757",
+    "4k/setup.png": "92dad1a33783d79f22124e4d4f8a98ac85c9629f82f08efefa61071a2bde6cbf",
+    "4k/timing.json": "3690c271d092fe6a8f7a5b0ee3e659df570167411b1c0694c89545fcdd7a937c",
+    "fhd/complete.json": "a187e177a729304dbfb99c7ca0f67d3df74a8241cd0bf9053a09f1be05d75af3",
+    "fhd/complete.png": "75c2687ae40e511487923b9a6fdadb3604c4f1ef237228eecb6bdcfee550aa4f",
+    "fhd/damage.json": "db0ae267cb819d7d94378ec02a00e703f521e797df1700d22069260496975cbd",
+    "fhd/damage.png": "2b30fcd7080605f4b31ab9a78e1b0caf43c5ea77537cf6782908c59af565ecf4",
+    "fhd/killcam.json": "49bdc1cb2a3f78e2f1b1c7cfb9962c7d5265ccbe67960378a7f36271c7794b45",
+    "fhd/killcam.png": "9688877ecb214eb312356ac5e2820f0528c4046886e001974fcc67d3fca6bc2f",
+    "fhd/live.json": "980213606fbd93c26c4aa11fba91c99747fec0f98cce5e0e9844a846bd9807dc",
+    "fhd/live.png": "654668e909e80427cbadb97740e6584487d83feafb59c68ae84ade3d96050cb0",
+    "fhd/no-killer-orbit.json": "b9326724aac2373b543283ce83533e0d2023331f1d3bedb1854b87f97278de95",
+    "fhd/no-killer-orbit.png": "a35a16130223d74c1c2f7869174238fac3a00dc6845e43c77f98313a9e218ed1",
+    "fhd/pause.json": "5e01d8d2d44b8f88c2b4a36023b2bfae26cddeb9e370985680711d7d7868c34e",
+    "fhd/pause.png": "db9db25c13de763804ff60621cf38bc8169b8b522350e7ecaf5384b6c81b563d",
+    "fhd/paused-timers.json": "7203401e7d02da7ea91284ce357ccc70eb1368904474f1646c3fdee367981843",
+    "fhd/paused-timers.png": "2f7c0f87bf8bab8cb51274758fd675512b491e4e4589b488d617ba2c94c4b6a8",
+    "fhd/respawn.json": "31700fa02bfb6dcf4a38c3b3c9cf66f5878e6486016fb4f971522449264479dc",
+    "fhd/respawn.png": "89c722e8ad2416ef27190b8d8538e6f0d90d64a3f833d3658c3bdbbb081b2cad",
+    "fhd/setup.json": "cbac5606f4f3a2c3d325d9f037c0a5154eefd5ca958f8b076964bf74de72d889",
+    "fhd/setup.png": "91eb4b37af9f901c7ffa77dbf9a1fb5f51c8927ea62dec888b8af58d19477591",
+    "fhd/timing.json": "ffaaed21f638cc33bdadc325216232f47353bcda09fae1ef1641c4f03162502b"
+  }
+}

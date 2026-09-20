@@ -1,0 +1,28 @@
+{
+  "editmode": {
+    "result": "Passed",
+    "total": "8",
+    "passed": "8",
+    "failed": "0",
+    "sha256": "63f622ed069bd1e1dab09829117ee58738aca443f5308bd20998083a538b2176"
+  },
+  "playmode": {
+    "result": "Passed",
+    "total": "9",
+    "passed": "9",
+    "failed": "0",
+    "sha256": "35b5fca4cec52a1b5f076f08b0ee0eb6527e5ee072ff29423a2b3a79562684aa"
+  },
+  "build": "Mac Development Player, Unity 6000.3.23f1; STAR_PROVING_BUILD_PASS 324721027",
+  "source": "6e73eeb + FPS settings changes; unity-proving-ground-v1 version 1",
+  "native": "Muted setup on/off, persisted off after restart, diagnostic live on/off, pause on/off; no runtime Exception/Error in Player.log. Screenshots show UI only, not performance acceptance.",
+  "screenshots": {
+    "pause-off.png": "fcb28ea5a6e88c63725eb2a2b5ce1cacd0a552c81e8ebcd505022764871b4ce5",
+    "restart-off.png": "b0e785b7d3bbd6a1506060df7361a4d75620843dacc1900687bc8f0dada6761f",
+    "live-on.png": "18b06a0f04039e0ade405b028b49dc946e7871b3c26b78b6ea29b5a1bbc546be",
+    "setup-on.png": "d839c7db44c4fb463f4bcf12860382bf5de6f4cbc0fa5974c67d4a6b0072eadf",
+    "pause-on.png": "b5142a23a3b0371bc4e9394e2f6f06c4f523f25fdb829576fe999b94e86cb1d0",
+    "setup-off.png": "ece8132e88f1419a47fe0aa3db8339bbfd94fd3b56de4ad2bf5d04a2bafd8a5b",
+    "live-off.png": "02f0ab243ff846e9ab5fe9b220acf83f99e00fe350f799f72cc1197dab6e301b"
+  }
+}

@@ -1,0 +1,117 @@
+{
+    "scenario": "native-match-review-v1",
+    "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "paused-clock",
+    "profile": "unity-native-match-v1@1",
+    "width": 1920,
+    "height": 1080,
+    "shots": 2,
+    "eventSystems": 1,
+    "listeners": 1,
+    "arenas": 1,
+    "corpses": 1,
+    "running": false,
+    "focused": true,
+    "muted": true,
+    "combatClock": 2.579998981207609,
+    "configuration": {
+        "DurationMinutes": 1,
+        "TargetEnabled": true,
+        "TargetPoints": 1000
+    },
+    "match": {
+        "Tick": 129,
+        "RemainingTicks": 2871,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 1,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 100,
+                "DamageDealt": 100.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 1,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 100.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 3,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            }
+        ]
+    },
+    "lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 18,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.38000011444091799,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 0.0,
+            "Ammo": 20,
+            "Dead": true,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 2.680000126361847,
+            "KillerId": "player-1",
+            "KillerLife": 1
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ]
+}

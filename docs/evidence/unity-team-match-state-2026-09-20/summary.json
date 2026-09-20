@@ -1,0 +1,44 @@
+{
+  "baseCommit": "9b2140610bee2793e1a275f26a20b4cda60fe58c",
+  "unity": "6000.3.23f1",
+  "profile": "unity-native-match-v1@1",
+  "buildReportedBytes": 459135536,
+  "playerBinarySha256": "841937bab05f0f97b8a80d717cb45f353a3672eaef089f22b9b8f13fa556f8a9",
+  "tests": {
+    "editmode": {
+      "id": "2",
+      "testcasecount": "41",
+      "result": "Passed",
+      "total": "41",
+      "passed": "41",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-09-19 19:40:48Z",
+      "end-time": "2026-09-19 19:40:49Z",
+      "duration": "0.2501868"
+    },
+    "playmode": {
+      "id": "2",
+      "testcasecount": "28",
+      "result": "Passed",
+      "total": "28",
+      "passed": "28",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-09-19 19:41:23Z",
+      "end-time": "2026-09-19 19:41:57Z",
+      "duration": "34.4655032"
+    }
+  },
+  "qa": "CUA native UI; keyboard join -> diagnostic 4 cameras -> Escape pause -> Repeat -> menu -> Exit; muted by ProvingGround Awake",
+  "scope": "data-only teams / 2-8 participants; native Player still FFA / 2-4 humans",
+  "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE"
+}

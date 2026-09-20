@@ -1,0 +1,166 @@
+{
+  "fhd": [
+    {
+      "state": "01-solo-invalid",
+      "width": 1920,
+      "height": 1080,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    },
+    {
+      "state": "02-solo-seven-setup",
+      "width": 1920,
+      "height": 1080,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    },
+    {
+      "state": "03-solo-combat",
+      "width": 1920,
+      "height": 1080,
+      "seed": 1778268033,
+      "shots": 95,
+      "time": 16.219993595033884
+    },
+    {
+      "state": "04-solo-standings",
+      "width": 1920,
+      "height": 1080,
+      "seed": 1778268033,
+      "shots": 98,
+      "time": 16.479993492364883
+    },
+    {
+      "state": "05-paused",
+      "width": 1920,
+      "height": 1080,
+      "seed": 1778268033,
+      "shots": 101,
+      "time": 16.539993468672037
+    },
+    {
+      "state": "06-repeat",
+      "width": 1920,
+      "height": 1080,
+      "seed": 1778268033,
+      "shots": 0,
+      "time": 0.019999992102384567
+    },
+    {
+      "state": "07-four-humans-four-bots-teams",
+      "width": 1920,
+      "height": 1080,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    },
+    {
+      "state": "08-teams-four-views",
+      "width": 1920,
+      "height": 1080,
+      "seed": 519144164,
+      "shots": 29,
+      "time": 11.99999526143074
+    },
+    {
+      "state": "09-results",
+      "width": 1920,
+      "height": 1080,
+      "seed": 519144164,
+      "shots": 806,
+      "time": 299.9998815357685
+    },
+    {
+      "state": "10-return-setup",
+      "width": 1920,
+      "height": 1080,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    }
+  ],
+  "4k": [
+    {
+      "state": "01-solo-invalid",
+      "width": 3840,
+      "height": 2160,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    },
+    {
+      "state": "02-solo-seven-setup",
+      "width": 3840,
+      "height": 2160,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    },
+    {
+      "state": "03-solo-combat",
+      "width": 3840,
+      "height": 2160,
+      "seed": 2075917601,
+      "shots": 93,
+      "time": 16.23999358713627
+    },
+    {
+      "state": "04-solo-standings",
+      "width": 3840,
+      "height": 2160,
+      "seed": 2075917601,
+      "shots": 94,
+      "time": 16.619993437081575
+    },
+    {
+      "state": "05-paused",
+      "width": 3840,
+      "height": 2160,
+      "seed": 2075917601,
+      "shots": 95,
+      "time": 16.81999335810542
+    },
+    {
+      "state": "06-repeat",
+      "width": 3840,
+      "height": 2160,
+      "seed": 2075917601,
+      "shots": 0,
+      "time": 0.07999996840953827
+    },
+    {
+      "state": "07-four-humans-four-bots-teams",
+      "width": 3840,
+      "height": 2160,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    },
+    {
+      "state": "08-teams-four-views",
+      "width": 3840,
+      "height": 2160,
+      "seed": 217721177,
+      "shots": 32,
+      "time": 11.99999526143074
+    },
+    {
+      "state": "09-results",
+      "width": 3840,
+      "height": 2160,
+      "seed": 217721177,
+      "shots": 759,
+      "time": 299.9998815357685
+    },
+    {
+      "state": "10-return-setup",
+      "width": 3840,
+      "height": 2160,
+      "seed": 0,
+      "shots": 0,
+      "time": 0.0
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+    "status": "DIAGNOSTIC_NOT_ARTISTIC_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "2-aim",
+    "profile": "unity-trooper-presentation-v1@1",
+    "width": 1920,
+    "height": 1080,
+    "seats": 2,
+    "cameras": 2,
+    "skinInstances": 14,
+    "uniqueSkinnedMeshes": 7,
+    "uniqueMaterials": 16,
+    "uniqueTextures": 27,
+    "focused": true,
+    "muted": true,
+    "running": true,
+    "clock": 2.4799990206956865,
+    "poses": [
+        {
+            "owner": "trooper-presentation",
+            "clip": "aim",
+            "time": 0.19999992102384568,
+            "root": {
+                "x": -8.0,
+                "y": 0.009999990463256836,
+                "z": -3.0
+            },
+            "hand": {
+                "x": -7.998378276824951,
+                "y": 1.197959542274475,
+                "z": -2.8650832176208498
+            }
+        },
+        {
+            "owner": "trooper-view",
+            "clip": "aim",
+            "time": 0.19999992102384568,
+            "root": {
+                "x": -7.880000114440918,
+                "y": 0.24580490589141847,
+                "z": -2.2216739654541017
+            },
+            "hand": {
+                "x": -7.878377914428711,
+                "y": 1.3794801235198975,
+                "z": -2.6014513969421388
+            }
+        },
+        {
+            "owner": "trooper-presentation",
+            "clip": "aim",
+            "time": 0.19999992102384568,
+            "root": {
+                "x": -5.114803791046143,
+                "y": 0.00999993085861206,
+                "z": 0.9999998807907105
+            },
+            "hand": {
+                "x": -5.116425514221191,
+                "y": 1.1979594230651856,
+                "z": 0.8650831580162048
+            }
+        },
+        {
+            "owner": "trooper-view",
+            "clip": "aim",
+            "time": 0.19999992102384568,
+            "root": {
+                "x": -5.234803676605225,
+                "y": 0.039999961853027347,
+                "z": 0.8499999046325684
+            },
+            "hand": {
+                "x": -5.236425876617432,
+                "y": 1.2279595136642457,
+                "z": 0.715083122253418
+            }
+        }
+    ]
+}

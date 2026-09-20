@@ -1,0 +1,8 @@
+# Full-resolution DCC frames remain local; review sheets are versioned.
+*.png
+!clip-overview.png
+!motion-phases.png
+!source-and-combat.png
+!rig-skeleton.png
+!export-readback-run.png
+!hands-and-grip.png

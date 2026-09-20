@@ -1,0 +1,63 @@
+{
+    "scenario": "native-seat-layouts-v1",
+    "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "2-repeat",
+    "width": 3840,
+    "height": 2160,
+    "seats": 2,
+    "participants": 2,
+    "cameras": 2,
+    "capsules": 2,
+    "eventSystems": 1,
+    "listeners": 1,
+    "arenas": 1,
+    "shots": 0,
+    "running": true,
+    "focused": true,
+    "muted": true,
+    "persistentStandings": false,
+    "combatClock": 0.15999993681907655,
+    "viewports": [
+        {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.5,
+            "height": 1.0
+        },
+        {
+            "serializedVersion": "2",
+            "x": 0.5,
+            "y": 0.0,
+            "width": 0.5,
+            "height": 1.0
+        }
+    ],
+    "match": {
+        "Tick": 8,
+        "RemainingTicks": 17992,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            }
+        ]
+    }
+}

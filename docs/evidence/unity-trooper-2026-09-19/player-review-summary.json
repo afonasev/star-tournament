@@ -1,0 +1,126 @@
+{
+  "status": "PASS_FUNCTIONAL_DIAGNOSTIC",
+  "physicalAcceptance": false,
+  "artisticAcceptance": false,
+  "runs": {
+    "fhd": {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "states": 36,
+      "allFocusedMuted": true,
+      "pauseBonePoseAndClockFrozen": true,
+      "clips": [
+        "aim",
+        "death",
+        "fire",
+        "hit",
+        "idle",
+        "run",
+        "walk"
+      ],
+      "resources": [
+        {
+          "seats": 2,
+          "cameras": 2,
+          "skinInstances": 14,
+          "uniqueSkinnedMeshes": 7,
+          "uniqueMaterials": 16,
+          "uniqueTextures": 27
+        },
+        {
+          "seats": 3,
+          "cameras": 3,
+          "skinInstances": 21,
+          "uniqueSkinnedMeshes": 7,
+          "uniqueMaterials": 16,
+          "uniqueTextures": 27
+        },
+        {
+          "seats": 4,
+          "cameras": 4,
+          "skinInstances": 28,
+          "uniqueSkinnedMeshes": 7,
+          "uniqueMaterials": 16,
+          "uniqueTextures": 27
+        }
+      ]
+    },
+    "4k": {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "states": 36,
+      "allFocusedMuted": true,
+      "pauseBonePoseAndClockFrozen": true,
+      "clips": [
+        "aim",
+        "death",
+        "fire",
+        "hit",
+        "idle",
+        "run",
+        "walk"
+      ],
+      "resources": [
+        {
+          "seats": 2,
+          "cameras": 2,
+          "skinInstances": 14,
+          "uniqueSkinnedMeshes": 7,
+          "uniqueMaterials": 16,
+          "uniqueTextures": 27
+        },
+        {
+          "seats": 3,
+          "cameras": 3,
+          "skinInstances": 21,
+          "uniqueSkinnedMeshes": 7,
+          "uniqueMaterials": 16,
+          "uniqueTextures": 27
+        },
+        {
+          "seats": 4,
+          "cameras": 4,
+          "skinInstances": 28,
+          "uniqueSkinnedMeshes": 7,
+          "uniqueMaterials": 16,
+          "uniqueTextures": 27
+        }
+      ]
+    }
+  },
+  "manualNativeUI": [
+    "ordinary setup",
+    "Space keyboard/mouse join",
+    "diagnostic start",
+    "Escape pause",
+    "Repeat reset",
+    "return to setup",
+    "Exit closes process"
+  ],
+  "shipping": [
+    {
+      "key": "player-body",
+      "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
+      "sha256": "91f8e00e54a9c781ce826a1f5b66c8a6329de6f338d833f0568cb3b814c1ecc7",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center",
+      "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+    },
+    {
+      "key": "player-hands",
+      "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
+      "sha256": "e7d03b157bd5164f5197cc78bba88fe18ee9846a0e4d4a570d98327e1d381a16",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center",
+      "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+    }
+  ]
+}

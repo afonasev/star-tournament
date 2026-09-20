@@ -1,0 +1,62 @@
+{
+  "base": "45e7f274dc5873fe82527f2113cfc2f687424799",
+  "branch": "codex/unity-participant-roster",
+  "unity": "6000.3.23f1",
+  "executable": "/private/tmp/star-tournament-unity-participant-roster/unity/Builds/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+  "executableSHA256": "db302ead46b45d5f6b71f1146cb1868057d20eb21469412e2e6f611d45184afe",
+  "sources": {
+    "unity/Assets/StarTournament/Editor/ProvingGroundBuild.cs": "7292ab70f17675c1cf4f407de0721c3099d2a85130e026a113cbc8e1050c7956",
+    "unity/Assets/StarTournament/Runtime/CombatPresentation.cs": "7a1692bd84adcfd0a42b26bcf67d5cd438b0c02a895e97498c105df57c0e88e6",
+    "unity/Assets/StarTournament/Runtime/Core/NativeMatchComposition.cs": "f3f805c35dcc3cc5c105e806f7e47c50a57332ee8ff7bed58e68a4034ca20a95",
+    "unity/Assets/StarTournament/Runtime/Core/NativeMatchComposition.cs.meta": "1e5bb3aa13c9182536c003a7b55a88100efb895995437950f00007ca39d6d50b",
+    "unity/Assets/StarTournament/Runtime/Core/NativeParticipantColors.cs": "29046ed0ed42e13e1ab2419b79274b7bfd53832c2c922c5c1f526e975fb8af16",
+    "unity/Assets/StarTournament/Runtime/Core/NativeParticipantColors.cs.meta": "eeb36a965f57867e04c9b62da45797b193c66bb77823b3db8ea3dfd5b49b9c53",
+    "unity/Assets/StarTournament/Runtime/Core/NativeRosterProfile.cs": "380ee56afd0215b7b8bb7db95290fe068336061a2af372e61ccae3b3e828392c",
+    "unity/Assets/StarTournament/Runtime/Core/NativeRosterProfile.cs.meta": "b389bda0fbc46951e75713518e0b3d63af14498e231883c437791eb6bb3c908e",
+    "unity/Assets/StarTournament/Runtime/NativeParticipantReview.cs": "b1444f8dbe43a0fca54b1ee56cf760c3d5dece5afee3c93d458f2af1a656fa39",
+    "unity/Assets/StarTournament/Runtime/NativeParticipantReview.cs.meta": "f029f24a5619aa81a643277ff0e41dde45df759f2cc2c62552d17a0743d8b9d9",
+    "unity/Assets/StarTournament/Runtime/NativeStandingsView.cs": "6af5ca8df998e4fcf3122c0c6a2d8a7d14f4108efc932382cdbd77043f66f0a1",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "bcf56710d4cb6e0560ced529b1779d8dab2764007d61d69fe8d1e4641651f446",
+    "unity/Assets/StarTournament/Runtime/SafeSpawnSelector.cs": "c84143e4b44d00f2679602841e1c8dffd7c8960178c64184db18f0c9c5f37992",
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity": "8d6af11475f9ed9b6a203956becbe386b7d7668da5c7d174bedee54bc46c10b7",
+    "unity/Assets/StarTournament/Tests/EditMode/NativeCompositionTests.cs": "8c0e9bb77ef810b7148d8a7784d009c8bcba9fbe5bd6405210ae80b2436f976d",
+    "unity/Assets/StarTournament/Tests/EditMode/NativeCompositionTests.cs.meta": "bbc177c5ac6579feea89b74c7a87cc9c277f34f265f9e85ec6691221ec19ee28",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeParticipantRosterTests.cs": "62901476f93bbd6bf1ffe592452d9c00f9863f9a09b3d56928561945fbec39cf",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeParticipantRosterTests.cs.meta": "1d575d2f2cdb4e671effd11602e34b36b54962aa76a2808d7a2a2d08963fca64",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeSeatLayoutTests.cs": "8774be1930580941acad3d509b7d9e0f8ad1d44f2a91ec49567ccf67fddc9721"
+  },
+  "tests": {
+    "editmode": {
+      "id": "2",
+      "testcasecount": "66",
+      "result": "Passed",
+      "total": "66",
+      "passed": "66",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-09-19 23:00:17Z",
+      "end-time": "2026-09-19 23:00:17Z",
+      "duration": "0.3735699"
+    },
+    "playmode": {
+      "id": "2",
+      "testcasecount": "49",
+      "result": "Passed",
+      "total": "49",
+      "passed": "49",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-09-19 23:06:10Z",
+      "end-time": "2026-09-19 23:06:47Z",
+      "duration": "37.250354"
+    }
+  }
+}

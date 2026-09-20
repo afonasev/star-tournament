@@ -1,0 +1,99 @@
+{
+  "status": "PASS_DIAGNOSTIC",
+  "thresholdUnchanged": 2,
+  "poses": 119,
+  "artisticAcceptance": false,
+  "clips": [
+    {
+      "clip": "idle",
+      "samples": 17,
+      "maxEdgeStretch": 1.9236410781622246,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          6735,
+          6782
+        ],
+        "phase": 0.0
+      }
+    },
+    {
+      "clip": "walk",
+      "samples": 17,
+      "maxEdgeStretch": 1.9317279357113113,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          6735,
+          6782
+        ],
+        "phase": 0.25
+      }
+    },
+    {
+      "clip": "run",
+      "samples": 17,
+      "maxEdgeStretch": 1.9213669440612968,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          7069,
+          7070
+        ],
+        "phase": 0.75
+      }
+    },
+    {
+      "clip": "aim",
+      "samples": 17,
+      "maxEdgeStretch": 1.9187403676579569,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          6735,
+          6782
+        ],
+        "phase": 0.0
+      }
+    },
+    {
+      "clip": "fire",
+      "samples": 17,
+      "maxEdgeStretch": 1.9187419934524919,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          6735,
+          6782
+        ],
+        "phase": 0.6875
+      }
+    },
+    {
+      "clip": "hit",
+      "samples": 17,
+      "maxEdgeStretch": 1.9453918816099227,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          6735,
+          6782
+        ],
+        "phase": 0.5
+      }
+    },
+    {
+      "clip": "death",
+      "samples": 17,
+      "maxEdgeStretch": 1.5841722655226478,
+      "worst": {
+        "mesh": "Object_3",
+        "edge": [
+          6734,
+          6776
+        ],
+        "phase": 0.9375
+      }
+    }
+  ]
+}

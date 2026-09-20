@@ -1,0 +1,13 @@
+{
+  "name": "StarTournament.ProvingGround.EditMode",
+  "references": [
+    "StarTournament.ProvingGround",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -1,0 +1,2333 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &1746725631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1746725633}
+  - component: {fileID: 1746725632}
+  m_Layer: 0
+  m_Name: Star Tournament Proving Ground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1746725632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746725631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: StarTournament.ProvingGround::StarTournament.ProvingGround.ProvingGround
+  RobotPrefab: {fileID: 0}
+  WorldWeaponPrefab: {fileID: 0}
+  ViewWeaponPrefab: {fileID: 0}
+  TrooperBodyPrefab: {fileID: 3136562236329590072, guid: 345aa6c8664344616ae0a3980a9f6ac6, type: 3}
+  TrooperArmsPrefab: {fileID: 206464274784029693, guid: 54b95b770862640cc94dc11340d68177, type: 3}
+  TrooperClips:
+  - {fileID: 7400000, guid: fc6e3cae87e53499e8f2ae83f8fc3127, type: 2}
+  - {fileID: 7400000, guid: 5cb3b159d01f84925ae4d3431763eb27, type: 2}
+  - {fileID: 7400000, guid: cc65308ec4ceb4f3eb1fe83010418cd9, type: 2}
+  - {fileID: 7400000, guid: 7333d29abd5284ee891a770c1caa52ae, type: 2}
+  - {fileID: 7400000, guid: 38e3446d9feb74199b6bb2d583161bf6, type: 2}
+  - {fileID: 7400000, guid: 4f19644510c5f43a79228c1ecd7f096a, type: 2}
+  - {fileID: 7400000, guid: 9f27516f7c4934364811b75d489893b2, type: 2}
+  TrooperProfile:
+    id: unity-trooper-presentation-v1
+    version: 1
+    descriptors:
+    - Path: animation.walkThreshold
+      Group: trooper-animation
+      Label: "\u041F\u043E\u0440\u043E\u0433 \u0448\u0430\u0433\u0430"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0444\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0430\u044F \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0434\u043B\u044F walk."
+      Unit: meters-per-second
+      Minimum: 0.01
+      Maximum: 3
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: animation.runThreshold
+      Group: trooper-animation
+      Label: "\u041F\u043E\u0440\u043E\u0433 \u0431\u0435\u0433\u0430"
+      Description: "\u0424\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0430\u044F
+        \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F
+        walk \u043D\u0430 run."
+      Unit: meters-per-second
+      Minimum: 3
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 6
+    - Path: animation.blendSeconds
+      Group: trooper-animation
+      Label: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u043F\u043E\u0437\u044B"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0441\u0433\u043B\u0430\u0436\u0438\u0432\u0430\u043D\u0438\u044F
+        \u0432\u0435\u0441\u043E\u0432 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u044B\u0445
+        \u043A\u043B\u0438\u043F\u043E\u0432."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: animation.aimHoldSeconds
+      Group: trooper-animation
+      Label: "\u0411\u043E\u0435\u0432\u0430\u044F \u0441\u0442\u043E\u0439\u043A\u0430"
+      Description: "\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0443\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0442\u044C
+        aim \u043F\u043E\u0441\u043B\u0435 \u043F\u0440\u0438\u043D\u044F\u0442\u043E\u0433\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.4
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.6
+    - Path: view.x
+      Group: trooper-view
+      Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u0438"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u0432\u0441\u0435\u0439
+        \u043C\u043E\u0434\u0435\u043B\u0438 \u0440\u0443\u043A \u0438 \u043E\u0440\u0443\u0436\u0438\u044F
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u0430\u043C\u0435\u0440\u044B."
+      Unit: meters
+      Minimum: -0.5
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: view.y
+      Group: trooper-view
+      Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0432\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u0438"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 feet-origin
+        \u043C\u043E\u0434\u0435\u043B\u0438 \u0440\u0443\u043A \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u0430\u043C\u0435\u0440\u044B."
+      Unit: meters
+      Minimum: -2
+      Maximum: -0.5
+      Step: 0.01
+      DefaultValue: -1.52
+    - Path: view.z
+      Group: trooper-view
+      Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0433\u043B\u0443\u0431\u0438\u043D\u0435"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0438
+        \u0440\u0443\u043A \u0432\u043F\u0435\u0440\u0451\u0434 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u0430\u043C\u0435\u0440\u044B."
+      Unit: meters
+      Minimum: -0.5
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.15
+    values:
+    - Path: animation.walkThreshold
+      Value: 0.1
+    - Path: animation.runThreshold
+      Value: 6
+    - Path: animation.blendSeconds
+      Value: 0.12
+    - Path: animation.aimHoldSeconds
+      Value: 1.6
+    - Path: view.x
+      Value: 0.12
+    - Path: view.y
+      Value: -1.52
+    - Path: view.z
+      Value: 0.15
+  Profile:
+    id: unity-proving-ground-v1
+    version: 1
+    descriptors:
+    - Path: simulation.fixedTickHz
+      Group: simulation
+      Label: Fixed tick frequency
+      Description: Frequency of native movement and gameplay ticks, independent of
+        rendered FPS.
+      Unit: Hz
+      Minimum: 30
+      Maximum: 120
+      Step: 1
+      DefaultValue: 50
+    - Path: player.capsule.radius
+      Group: player-capsule
+      Label: Capsule radius
+      Description: Collision radius of a participant capsule.
+      Unit: meters
+      Minimum: 0.2
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.55
+    - Path: player.capsule.height
+      Group: player-capsule
+      Label: Capsule height
+      Description: Full CharacterController capsule height.
+      Unit: meters
+      Minimum: 1
+      Maximum: 4
+      Step: 0.01
+      DefaultValue: 1.8
+    - Path: player.capsule.skinWidth
+      Group: player-capsule
+      Label: Controller skin width
+      Description: Minimum collision separation used by CharacterController.
+      Unit: meters
+      Minimum: 0.001
+      Maximum: 0.1
+      Step: 0.001
+      DefaultValue: 0.01
+    - Path: player.movement.maximumGroundSpeed
+      Group: player-movement
+      Label: Maximum ground speed
+      Description: Horizontal speed cap on ground and in air.
+      Unit: meters-per-second
+      Minimum: 1
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 9
+    - Path: player.movement.groundAcceleration
+      Group: player-movement
+      Label: Ground acceleration
+      Description: Horizontal acceleration while grounded.
+      Unit: meters-per-second-squared
+      Minimum: 0.1
+      Maximum: 200
+      Step: 0.1
+      DefaultValue: 45
+    - Path: player.movement.groundDeceleration
+      Group: player-movement
+      Label: Ground deceleration
+      Description: Horizontal deceleration without directional input.
+      Unit: meters-per-second-squared
+      Minimum: 0.1
+      Maximum: 200
+      Step: 0.1
+      DefaultValue: 32
+    - Path: player.movement.airAcceleration
+      Group: player-movement
+      Label: Air acceleration
+      Description: Horizontal steering acceleration while airborne.
+      Unit: meters-per-second-squared
+      Minimum: 0.1
+      Maximum: 100
+      Step: 0.1
+      DefaultValue: 12
+    - Path: player.movement.gravity
+      Group: player-movement
+      Label: Gravity
+      Description: Positive downward acceleration.
+      Unit: meters-per-second-squared
+      Minimum: 0.1
+      Maximum: 100
+      Step: 0.1
+      DefaultValue: 24
+    - Path: player.movement.jumpSpeed
+      Group: player-movement
+      Label: Jump speed
+      Description: Vertical speed applied to a grounded jump.
+      Unit: meters-per-second
+      Minimum: 0.1
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 8.5
+    - Path: player.movement.stepOffset
+      Group: player-movement
+      Label: Step offset
+      Description: Highest stair step traversable by CharacterController without
+        jumping.
+      Unit: meters
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.45
+    - Path: player.movement.slopeLimitDegrees
+      Group: player-movement
+      Label: Slope limit
+      Description: Maximum climbable CharacterController slope angle.
+      Unit: degrees
+      Minimum: 0
+      Maximum: 89
+      Step: 1
+      DefaultValue: 45
+    - Path: input.mouseDegreesPerPixel
+      Group: input
+      Label: Mouse degrees per pixel
+      Description: Look rotation created by one mouse pixel.
+      Unit: degrees-per-pixel
+      Minimum: 0.01
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: input.gamepadDegreesPerSecond
+      Group: input
+      Label: Gamepad degrees per second
+      Description: Maximum analog-stick look rotation rate.
+      Unit: degrees-per-second
+      Minimum: 1
+      Maximum: 720
+      Step: 1
+      DefaultValue: 180
+    - Path: input.deadzone
+      Group: input
+      Label: Input deadzone
+      Description: Radial deadzone applied before creating LocalAction.
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.95
+      Step: 0.01
+      DefaultValue: 0.15
+    - Path: camera.eyeHeight
+      Group: camera
+      Label: Eye height
+      Description: Camera height above the participant feet anchor.
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 2.5
+      Step: 0.01
+      DefaultValue: 1.55
+    - Path: camera.maximumPitchDegrees
+      Group: camera
+      Label: Maximum pitch
+      Description: Symmetric vertical aim clamp.
+      Unit: degrees
+      Minimum: 30
+      Maximum: 89
+      Step: 1
+      DefaultValue: 85
+    - Path: camera.fieldOfViewDegrees
+      Group: camera
+      Label: Field of view
+      Description: Vertical camera field of view.
+      Unit: degrees
+      Minimum: 50
+      Maximum: 130
+      Step: 1
+      DefaultValue: 90
+    - Path: camera.nearClipPlane
+      Group: camera
+      Label: Near clip plane
+      Description: Nearest camera rendering distance.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 10
+      Step: 0.01
+      DefaultValue: 0.05
+    - Path: camera.farClipPlane
+      Group: camera
+      Label: Far clip plane
+      Description: Farthest camera rendering distance.
+      Unit: meters
+      Minimum: 10
+      Maximum: 1000
+      Step: 1
+      DefaultValue: 250
+    - Path: camera.stairSmoothingSeconds
+      Group: camera
+      Label: Stair smoothing
+      Description: Camera-only vertical smoothing duration for stair traversal.
+      Unit: seconds
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: camera.stairMaximumOffsetMeters
+      Group: camera
+      Label: Maximum stair smoothing offset
+      Description: Maximum camera-only vertical smoothing offset.
+      Unit: meters
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.2
+    - Path: ui.fontSize
+      Group: ui
+      Label: Body font size
+      Description: Base font size for four-seat HUD labels.
+      Unit: points
+      Minimum: 12
+      Maximum: 48
+      Step: 1
+      DefaultValue: 20
+    - Path: ui.headingFontSize
+      Group: ui
+      Label: Heading font size
+      Description: Heading font size for setup and pause UI.
+      Unit: points
+      Minimum: 16
+      Maximum: 64
+      Step: 1
+      DefaultValue: 28
+    - Path: presentation.lightIntensity
+      Group: presentation
+      Label: Fixture light intensity
+      Description: Presentation-only fixture light intensity.
+      Unit: intensity
+      Minimum: 0.1
+      Maximum: 4
+      Step: 0.1
+      DefaultValue: 1.1
+    - Path: presentation.viewWeaponX
+      Group: presentation
+      Label: View weapon X
+      Description: First-person weapon mount horizontal translation from camera origin.
+      Unit: meters
+      Minimum: -2
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.36
+    - Path: presentation.viewWeaponY
+      Group: presentation
+      Label: View weapon Y
+      Description: First-person weapon mount vertical translation from camera origin.
+      Unit: meters
+      Minimum: -2
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: -0.34
+    - Path: presentation.viewWeaponZ
+      Group: presentation
+      Label: View weapon Z
+      Description: First-person weapon mount forward translation from camera origin.
+      Unit: meters
+      Minimum: -2
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.68
+    - Path: presentation.worldWeaponMountY
+      Group: presentation
+      Label: World weapon mount Y
+      Description: World weapon mount translation above the robot semantic hand mount.
+      Unit: meters
+      Minimum: -1
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.22
+    - Path: navigation.sampleDistance
+      Group: navigation
+      Label: Navigation sample distance
+      Description: Maximum endpoint projection distance for fixture navigation queries;
+        not bake spacing.
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 2
+    - Path: fixture.width
+      Group: fixture
+      Label: Fixture width
+      Description: Overall fixed proving-ground arena width.
+      Unit: meters
+      Minimum: 12
+      Maximum: 80
+      Step: 1
+      DefaultValue: 32
+    - Path: fixture.depth
+      Group: fixture
+      Label: Fixture depth
+      Description: Overall fixed proving-ground arena depth.
+      Unit: meters
+      Minimum: 12
+      Maximum: 80
+      Step: 1
+      DefaultValue: 32
+    - Path: fixture.wallThickness
+      Group: fixture
+      Label: Wall thickness
+      Description: Physical fixture wall thickness.
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.3
+    - Path: fixture.wallHeight
+      Group: fixture
+      Label: Wall height
+      Description: Physical fixture wall height.
+      Unit: meters
+      Minimum: 1.5
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3
+    - Path: fixture.floorThickness
+      Group: fixture
+      Label: Floor thickness
+      Description: Physical floor and upper slab thickness.
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.3
+    - Path: fixture.floorHeight
+      Group: fixture
+      Label: Lower floor height
+      Description: World height of the lower walkable floor.
+      Unit: meters
+      Minimum: -5
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 0
+    - Path: fixture.upperFloorHeight
+      Group: fixture
+      Label: Upper floor height
+      Description: World height of the upper walkable floor.
+      Unit: meters
+      Minimum: 2
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 4
+    - Path: fixture.stairRise
+      Group: fixture
+      Label: Stair rise
+      Description: Physical rise of one fixture stair.
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.25
+    - Path: fixture.stairTread
+      Group: fixture
+      Label: Stair tread
+      Description: Physical depth of one fixture stair.
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.75
+    - Path: fixture.rampLength
+      Group: fixture
+      Label: Ramp length
+      Description: Horizontal run of the fixture ramp.
+      Unit: meters
+      Minimum: 3
+      Maximum: 20
+      Step: 0.5
+      DefaultValue: 12
+    - Path: fixture.rampWidth
+      Group: fixture
+      Label: Ramp width
+      Description: Clear width of the fixture ramp.
+      Unit: meters
+      Minimum: 1.2
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 4
+    - Path: fixture.headroomHeight
+      Group: fixture
+      Label: Headroom height
+      Description: Actual lower-route clearance under the fixture upper slab.
+      Unit: meters
+      Minimum: 1
+      Maximum: 4
+      Step: 0.05
+      DefaultValue: 2.1
+    - Path: weapon.probeRange
+      Group: weapon
+      Label: Weapon probe range
+      Description: Fixture hitscan diagnostic range.
+      Unit: meters
+      Minimum: 1
+      Maximum: 100
+      Step: 1
+      DefaultValue: 35
+    - Path: weapon.probeCooldown
+      Group: weapon
+      Label: Weapon probe cooldown
+      Description: Minimum interval between fixture firing probes.
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.7
+    values:
+    - Path: simulation.fixedTickHz
+      Value: 50
+    - Path: player.capsule.radius
+      Value: 0.55
+    - Path: player.capsule.height
+      Value: 1.8
+    - Path: player.capsule.skinWidth
+      Value: 0.01
+    - Path: player.movement.maximumGroundSpeed
+      Value: 9
+    - Path: player.movement.groundAcceleration
+      Value: 45
+    - Path: player.movement.groundDeceleration
+      Value: 32
+    - Path: player.movement.airAcceleration
+      Value: 12
+    - Path: player.movement.gravity
+      Value: 24
+    - Path: player.movement.jumpSpeed
+      Value: 8.5
+    - Path: player.movement.stepOffset
+      Value: 0.45
+    - Path: player.movement.slopeLimitDegrees
+      Value: 45
+    - Path: input.mouseDegreesPerPixel
+      Value: 0.12
+    - Path: input.gamepadDegreesPerSecond
+      Value: 180
+    - Path: input.deadzone
+      Value: 0.15
+    - Path: camera.eyeHeight
+      Value: 1.55
+    - Path: camera.maximumPitchDegrees
+      Value: 85
+    - Path: camera.fieldOfViewDegrees
+      Value: 90
+    - Path: camera.nearClipPlane
+      Value: 0.05
+    - Path: camera.farClipPlane
+      Value: 250
+    - Path: camera.stairSmoothingSeconds
+      Value: 0.12
+    - Path: camera.stairMaximumOffsetMeters
+      Value: 0.2
+    - Path: ui.fontSize
+      Value: 20
+    - Path: ui.headingFontSize
+      Value: 28
+    - Path: presentation.lightIntensity
+      Value: 1.1
+    - Path: presentation.viewWeaponX
+      Value: 0.36
+    - Path: presentation.viewWeaponY
+      Value: -0.34
+    - Path: presentation.viewWeaponZ
+      Value: 0.68
+    - Path: presentation.worldWeaponMountY
+      Value: 0.22
+    - Path: navigation.sampleDistance
+      Value: 2
+    - Path: fixture.width
+      Value: 32
+    - Path: fixture.depth
+      Value: 32
+    - Path: fixture.wallThickness
+      Value: 0.3
+    - Path: fixture.wallHeight
+      Value: 3
+    - Path: fixture.floorThickness
+      Value: 0.3
+    - Path: fixture.floorHeight
+      Value: 0
+    - Path: fixture.upperFloorHeight
+      Value: 4
+    - Path: fixture.stairRise
+      Value: 0.25
+    - Path: fixture.stairTread
+      Value: 0.75
+    - Path: fixture.rampLength
+      Value: 12
+    - Path: fixture.rampWidth
+      Value: 4
+    - Path: fixture.headroomHeight
+      Value: 2.1
+    - Path: weapon.probeRange
+      Value: 35
+    - Path: weapon.probeCooldown
+      Value: 0.7
+  LifeProfile:
+    id: unity-combat-state-v1
+    version: 1
+    descriptors:
+    - Path: combat.maximumHealth
+      Group: combat
+      Label: "\u0417\u0434\u043E\u0440\u043E\u0432\u044C\u0435"
+      Description: "\u041F\u043E\u043B\u043D\u043E\u0435 \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435
+        \u043A\u0430\u0436\u0434\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0436\u0438\u0437\u043D\u0438."
+      Unit: health
+      Minimum: 1
+      Maximum: 1000
+      Step: 1
+      DefaultValue: 100
+    - Path: combat.startingAmmo
+      Group: shotgun
+      Label: "\u0421\u0442\u0430\u0440\u0442\u043E\u0432\u044B\u0439 \u0431\u043E\u0435\u0437\u0430\u043F\u0430\u0441"
+      Description: "\u041A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432 \u0432 \u043D\u0430\u0447\u0430\u043B\u0435
+        \u0436\u0438\u0437\u043D\u0438."
+      Unit: ammo
+      Minimum: 1
+      Maximum: 200
+      Step: 1
+      DefaultValue: 20
+    - Path: combat.emptyRefillAmmo
+      Group: shotgun
+      Label: "\u041F\u043E\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438
+        \u043D\u0443\u043B\u0435"
+      Description: "\u041D\u0435\u043C\u0435\u0434\u043B\u0435\u043D\u043D\u044B\u0439
+        \u0437\u0430\u043F\u0430\u0441 \u043F\u043E\u0441\u043B\u0435 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0433\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430 \u0431\u0435\u0437 \u0441\u0431\u0440\u043E\u0441\u0430
+        cooldown."
+      Unit: ammo
+      Minimum: 1
+      Maximum: 100
+      Step: 1
+      DefaultValue: 20
+    - Path: combat.cooldownSeconds
+      Group: shotgun
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        simulation \u0432\u0440\u0435\u043C\u044F \u0434\u043E \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 0.7
+    - Path: combat.killcamSeconds
+      Group: death
+      Label: "\u041E\u0436\u0438\u0434\u0430\u043D\u0438\u0435 \u0432\u043E\u0437\u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F"
+      Description: "Simulation \u0432\u0440\u0435\u043C\u044F \u0441\u043C\u0435\u0440\u0442\u0438
+        \u0434\u043E \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438
+        \u043A \u0432\u044B\u0431\u043E\u0440\u0443 spawn."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 3
+    values:
+    - Path: combat.maximumHealth
+      Value: 100
+    - Path: combat.startingAmmo
+      Value: 20
+    - Path: combat.emptyRefillAmmo
+      Value: 20
+    - Path: combat.cooldownSeconds
+      Value: 0.7
+    - Path: combat.killcamSeconds
+      Value: 3
+  CombatProfile:
+    id: unity-native-combat-v1
+    version: 1
+    descriptors:
+    - Path: shot.pellets
+      Group: shotgun
+      Label: "\u0414\u0440\u043E\u0431\u0438\u043D\u044B"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u043B\u0443\u0447\u0435\u0439
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0434\u0432\u0443\u0441\u0442\u0432\u043E\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: count
+      Minimum: 1
+      Maximum: 64
+      Step: 1
+      DefaultValue: 12
+    - Path: shot.spread
+      Group: shotgun
+      Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441"
+      Description: "\u0423\u0433\u043B\u043E\u0432\u043E\u0439 \u0440\u0430\u0434\u0438\u0443\u0441
+        \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u044F
+        \u0434\u0440\u043E\u0431\u0438."
+      Unit: degrees
+      Minimum: 0
+      Maximum: 45
+      Step: 0.1
+      DefaultValue: 7
+    - Path: shot.range
+      Group: shotgun
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043A\u0430\u0436\u0434\u043E\u0439
+        \u0434\u0440\u043E\u0431\u0438\u043D\u044B."
+      Unit: meters
+      Minimum: 1
+      Maximum: 200
+      Step: 0.5
+      DefaultValue: 35
+    - Path: shot.head
+      Group: shotgun
+      Label: "\u0423\u0440\u043E\u043D \u0433\u043E\u043B\u043E\u0432\u044B"
+      Description: "\u0423\u0440\u043E\u043D \u043F\u0440\u0438 \u043F\u043E\u043B\u043D\u043E\u043C
+        \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0438 \u0432\u0441\u0435\u0445
+        \u0434\u0440\u043E\u0431\u0438\u043D \u0432 \u0433\u043E\u043B\u043E\u0432\u0443."
+      Unit: health
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 100
+    - Path: shot.torso
+      Group: shotgun
+      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u0423\u0440\u043E\u043D \u043F\u0440\u0438 \u043F\u043E\u043B\u043D\u043E\u043C
+        \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0438 \u0432\u0441\u0435\u0445
+        \u0434\u0440\u043E\u0431\u0438\u043D \u0432 \u043A\u043E\u0440\u043F\u0443\u0441."
+      Unit: health
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 70
+    - Path: shot.limb
+      Group: shotgun
+      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439"
+      Description: "\u0423\u0440\u043E\u043D \u043F\u0440\u0438 \u043F\u043E\u043B\u043D\u043E\u043C
+        \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0438 \u0432\u0441\u0435\u0445
+        \u0434\u0440\u043E\u0431\u0438\u043D \u0432 \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0438."
+      Unit: health
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 30
+    - Path: zone.headY
+      Group: hit-zones
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0433\u043E\u043B\u043E\u0432\u044B"
+      Description: "\u0426\u0435\u043D\u0442\u0440 head sphere \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0432\u044B\u0441\u043E\u0442\u044B \u043A\u0430\u043F\u0441\u0443\u043B\u044B."
+      Unit: height-ratio
+      Minimum: 0.5
+      Maximum: 1.2
+      Step: 0.01
+      DefaultValue: 0.9
+    - Path: zone.headRadius
+      Group: hit-zones
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0433\u043E\u043B\u043E\u0432\u044B"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 head sphere \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0432\u044B\u0441\u043E\u0442\u044B \u043A\u0430\u043F\u0441\u0443\u043B\u044B."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: zone.torsoY
+      Group: hit-zones
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u0426\u0435\u043D\u0442\u0440 torso box \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0432\u044B\u0441\u043E\u0442\u044B \u043A\u0430\u043F\u0441\u0443\u043B\u044B."
+      Unit: height-ratio
+      Minimum: 0.2
+      Maximum: 0.9
+      Step: 0.01
+      DefaultValue: 0.6
+    - Path: zone.torsoX
+      Group: hit-zones
+      Label: "\u041F\u043E\u043B\u0443\u0448\u0438\u0440\u0438\u043D\u0430 \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u043E\u043B\u043E\u0432\u0438\u043D\u0430 torso box."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.4
+      Step: 0.01
+      DefaultValue: 0.17
+    - Path: zone.torsoHeight
+      Group: hit-zones
+      Label: "\u041F\u043E\u043B\u0443\u0432\u044B\u0441\u043E\u0442\u0430 \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u0412\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u043E\u043B\u043E\u0432\u0438\u043D\u0430 torso box."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.4
+      Step: 0.01
+      DefaultValue: 0.2
+    - Path: zone.torsoZ
+      Group: hit-zones
+      Label: "\u041F\u043E\u043B\u0443\u0433\u043B\u0443\u0431\u0438\u043D\u0430
+        \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u0413\u043B\u0443\u0431\u0438\u043D\u0430 \u043F\u043E\u043B\u043E\u0432\u0438\u043D\u044B
+        torso box."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.4
+      Step: 0.01
+      DefaultValue: 0.11
+    - Path: zone.armX
+      Group: hit-zones
+      Label: "\u0420\u0430\u0437\u043D\u043E\u0441 \u0440\u0443\u043A"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043A\u0430\u0436\u0434\u043E\u0439
+        arm capsule \u043E\u0442 \u043E\u0441\u0438 \u0442\u0435\u043B\u0430."
+      Unit: height-ratio
+      Minimum: 0.1
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.24
+    - Path: zone.armTop
+      Group: hit-zones
+      Label: "\u0412\u0435\u0440\u0445 \u0440\u0443\u043A\u0438"
+      Description: "\u0412\u0435\u0440\u0445\u043D\u044F\u044F \u0442\u043E\u0447\u043A\u0430
+        \u043E\u0441\u0438 arm capsule."
+      Unit: height-ratio
+      Minimum: 0.5
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.75
+    - Path: zone.armBottom
+      Group: hit-zones
+      Label: "\u041D\u0438\u0437 \u0440\u0443\u043A\u0438"
+      Description: "\u041D\u0438\u0436\u043D\u044F\u044F \u0442\u043E\u0447\u043A\u0430
+        \u043E\u0441\u0438 arm capsule."
+      Unit: height-ratio
+      Minimum: 0.1
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.41
+    - Path: zone.armRadius
+      Group: hit-zones
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0440\u0443\u043A\u0438"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 arm capsule."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.2
+      Step: 0.01
+      DefaultValue: 0.06
+    - Path: zone.legX
+      Group: hit-zones
+      Label: "\u0420\u0430\u0437\u043D\u043E\u0441 \u043D\u043E\u0433"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043A\u0430\u0436\u0434\u043E\u0439
+        leg capsule \u043E\u0442 \u043E\u0441\u0438 \u0442\u0435\u043B\u0430."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: zone.legTop
+      Group: hit-zones
+      Label: "\u0412\u0435\u0440\u0445 \u043D\u043E\u0433\u0438"
+      Description: "\u0412\u0435\u0440\u0445\u043D\u044F\u044F \u0442\u043E\u0447\u043A\u0430
+        \u043E\u0441\u0438 leg capsule."
+      Unit: height-ratio
+      Minimum: 0.2
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.36
+    - Path: zone.legBottom
+      Group: hit-zones
+      Label: "\u041D\u0438\u0437 \u043D\u043E\u0433\u0438"
+      Description: "\u041D\u0438\u0436\u043D\u044F\u044F \u0442\u043E\u0447\u043A\u0430
+        \u043E\u0441\u0438 leg capsule."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.2
+      Step: 0.01
+      DefaultValue: 0.07
+    - Path: zone.legRadius
+      Group: hit-zones
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043D\u043E\u0433\u0438"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 leg capsule."
+      Unit: height-ratio
+      Minimum: 0.01
+      Maximum: 0.2
+      Step: 0.01
+      DefaultValue: 0.07
+    - Path: spawn.spacing
+      Group: spawn
+      Label: "\u0428\u0430\u0433 slots"
+      Description: "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435
+        \u043C\u0435\u0436\u0434\u0443 \u0441\u043E\u0441\u0435\u0434\u043D\u0438\u043C\u0438
+        slots \u0440\u0435\u0433\u0438\u043E\u043D\u0430."
+      Unit: meters
+      Minimum: 2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 3
+    - Path: spawn.inset
+      Group: spawn
+      Label: "\u041E\u0442\u0441\u0442\u0443\u043F \u0440\u0435\u0433\u0438\u043E\u043D\u0430"
+      Description: "\u041E\u0442\u0441\u0442\u0443\u043F slots \u043E\u0442 \u0432\u043D\u0435\u0448\u043D\u0438\u0445
+        \u0441\u0442\u0435\u043D fixture."
+      Unit: meters
+      Minimum: 2
+      Maximum: 6
+      Step: 0.1
+      DefaultValue: 4
+    - Path: spawn.sample
+      Group: spawn
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043F\u043E\u0438\u0441\u043A\u0430
+        NavMesh"
+      Description: "\u041B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u043F\u043E\u0438\u0441\u043A
+        \u043E\u043F\u043E\u0440\u044B \u0431\u0435\u0437 \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430
+        \u043D\u0430 \u0441\u043E\u0441\u0435\u0434\u043D\u0438\u0439 \u044D\u0442\u0430\u0436."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: spawn.floorTolerance
+      Group: spawn
+      Label: "\u0414\u043E\u043F\u0443\u0441\u043A \u044D\u0442\u0430\u0436\u0430"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0440\u0430\u0437\u043D\u0438\u0446\u0430 authored floor \u0438 \u043D\u0430\u0439\u0434\u0435\u043D\u043D\u043E\u0439
+        \u043E\u043F\u043E\u0440\u044B."
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.15
+    - Path: death.corpseSeconds
+      Group: death
+      Label: "\u0412\u0440\u0435\u043C\u044F \u0442\u0435\u043B\u0430"
+      Description: "\u0421\u0440\u043E\u043A non-colliding \u0442\u0435\u043B\u0430
+        \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u0441\u0435\u0441\u0441\u0438\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 30
+      Step: 0.5
+      DefaultValue: 8
+    - Path: death.bodyHeight
+      Group: death
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043B\u0435\u0436\u0430\u0449\u0435\u0433\u043E
+        \u0442\u0435\u043B\u0430"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 pivot \u043F\u043E\u0432\u0451\u0440\u043D\u0443\u0442\u043E\u0433\u043E
+        GLB \u043D\u0430\u0434 \u043E\u043F\u043E\u0440\u043E\u0439."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.25
+    - Path: killcam.orbitRadius
+      Group: killcam
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043E\u0431\u043B\u0451\u0442\u0430"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F no-killer
+        \u043A\u0430\u043C\u0435\u0440\u044B \u043E\u0442 \u0442\u0435\u043B\u0430."
+      Unit: meters
+      Minimum: 1
+      Maximum: 6
+      Step: 0.1
+      DefaultValue: 2.5
+    - Path: killcam.orbitHeight
+      Group: killcam
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043E\u0431\u043B\u0451\u0442\u0430"
+      Description: "\u0412\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0441\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043A\u0430\u043C\u0435\u0440\u044B
+        \u043D\u0430\u0434 \u0442\u0435\u043B\u043E\u043C."
+      Unit: meters
+      Minimum: 0.5
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1.2
+    - Path: killcam.orbitSpeed
+      Group: killcam
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043E\u0431\u043B\u0451\u0442\u0430"
+      Description: "\u0423\u0433\u043B\u043E\u0432\u0430\u044F \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C
+        \u043A\u0430\u043C\u0435\u0440\u044B \u0431\u0435\u0437 \u0443\u0431\u0438\u0439\u0446\u044B."
+      Unit: degrees-per-second
+      Minimum: 1
+      Maximum: 45
+      Step: 1
+      DefaultValue: 12
+    - Path: killcam.clipRadius
+      Group: killcam
+      Label: "\u0417\u0430\u0437\u043E\u0440 \u043A\u0430\u043C\u0435\u0440\u044B"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 sphere query \u0434\u043B\u044F
+        \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u044F \u043A\u0430\u043C\u0435\u0440\u044B
+        \u0441\u0442\u0435\u043D\u0430\u043C\u0438."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.15
+    values:
+    - Path: shot.pellets
+      Value: 12
+    - Path: shot.spread
+      Value: 7
+    - Path: shot.range
+      Value: 35
+    - Path: shot.head
+      Value: 100
+    - Path: shot.torso
+      Value: 70
+    - Path: shot.limb
+      Value: 30
+    - Path: zone.headY
+      Value: 0.9
+    - Path: zone.headRadius
+      Value: 0.12
+    - Path: zone.torsoY
+      Value: 0.6
+    - Path: zone.torsoX
+      Value: 0.17
+    - Path: zone.torsoHeight
+      Value: 0.2
+    - Path: zone.torsoZ
+      Value: 0.11
+    - Path: zone.armX
+      Value: 0.24
+    - Path: zone.armTop
+      Value: 0.75
+    - Path: zone.armBottom
+      Value: 0.41
+    - Path: zone.armRadius
+      Value: 0.06
+    - Path: zone.legX
+      Value: 0.1
+    - Path: zone.legTop
+      Value: 0.36
+    - Path: zone.legBottom
+      Value: 0.07
+    - Path: zone.legRadius
+      Value: 0.07
+    - Path: spawn.spacing
+      Value: 3
+    - Path: spawn.inset
+      Value: 4
+    - Path: spawn.sample
+      Value: 0.5
+    - Path: spawn.floorTolerance
+      Value: 0.15
+    - Path: death.corpseSeconds
+      Value: 8
+    - Path: death.bodyHeight
+      Value: 0.25
+    - Path: killcam.orbitRadius
+      Value: 2.5
+    - Path: killcam.orbitHeight
+      Value: 1.2
+    - Path: killcam.orbitSpeed
+      Value: 12
+    - Path: killcam.clipRadius
+      Value: 0.15
+  BotPerceptionProfile:
+    id: unity-bot-perception-v1
+    version: 1
+    descriptors:
+    - Path: bots.easy.fieldOfViewDegrees
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043E\u043B\u0435
+        \u0437\u0440\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0433\u043E\u043B \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F
+        \u0432\u0440\u0430\u0433\u0430 \u043F\u0440\u0438 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C
+        LOS."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 180
+      Step: 1
+      DefaultValue: 110
+    - Path: bots.easy.memorySeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
+      Description: "\u0421\u0440\u043E\u043A \u0437\u043D\u0430\u043D\u0438\u044F
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u044F,
+        \u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0443
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 2
+    - Path: bots.normal.fieldOfViewDegrees
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043E\u043B\u0435 \u0437\u0440\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0433\u043E\u043B \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F
+        \u0432\u0440\u0430\u0433\u0430 \u043F\u0440\u0438 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C
+        LOS."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 180
+      Step: 1
+      DefaultValue: 130
+    - Path: bots.normal.memorySeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
+      Description: "\u0421\u0440\u043E\u043A \u0437\u043D\u0430\u043D\u0438\u044F
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u044F,
+        \u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0443
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.hard.fieldOfViewDegrees
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043E\u043B\u0435
+        \u0437\u0440\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0433\u043E\u043B \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F
+        \u0432\u0440\u0430\u0433\u0430 \u043F\u0440\u0438 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C
+        LOS."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 180
+      Step: 1
+      DefaultValue: 150
+    - Path: bots.hard.memorySeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
+      Description: "\u0421\u0440\u043E\u043A \u0437\u043D\u0430\u043D\u0438\u044F
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u044F,
+        \u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0443
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 6
+    - Path: bots.cooperation.communicationSeconds
+      Group: bots
+      Label: "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u043A\u043E\u043C\u0430\u043D\u0434\u044B"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434\u0430\u0447\u0438
+        \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439 \u043F\u043E\u0437\u0438\u0446\u0438\u0438
+        \u0432\u0440\u0430\u0433\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 0.3
+    values:
+    - Path: bots.easy.fieldOfViewDegrees
+      Value: 110
+    - Path: bots.easy.memorySeconds
+      Value: 2
+    - Path: bots.normal.fieldOfViewDegrees
+      Value: 130
+    - Path: bots.normal.memorySeconds
+      Value: 4
+    - Path: bots.hard.fieldOfViewDegrees
+      Value: 150
+    - Path: bots.hard.memorySeconds
+      Value: 6
+    - Path: bots.cooperation.communicationSeconds
+      Value: 0.3
+  BotNavigationProfile:
+    id: unity-bot-navigation-v1
+    version: 1
+    descriptors:
+    - Path: bots.navigation.waypointRadius
+      Group: bot-navigation
+      Label: "\u0414\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u0435 \u0442\u043E\u0447\u043A\u0438"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0442\u043E\u0447\u043D\u043E\u0441\u0442\u044C \u043F\u0440\u0438\u0431\u044B\u0442\u0438\u044F
+        \u043A \u0443\u0433\u043B\u0443 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.25
+    - Path: bots.navigation.heightTolerance
+      Group: bot-navigation
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043E\u043F\u043E\u0440\u044B"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u0430\u044F
+        \u0440\u0430\u0437\u043D\u0438\u0446\u0430 \u0432\u044B\u0441\u043E\u0442\u044B
+        \u0441\u0442\u043E\u043F \u0438 \u043D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u043E\u043D\u043D\u043E\u0439
+        \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.3
+    - Path: bots.navigation.sampleDistance
+      Group: bot-navigation
+      Label: "\u041F\u043E\u0438\u0441\u043A \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043F\u0440\u043E\u0435\u043A\u0446\u0438\u0438
+        \u0441\u0442\u043E\u043F \u043D\u0430 NavMesh; \u0432\u044B\u0441\u043E\u0442\u0430
+        \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 0.6
+    - Path: bots.navigation.stuckSeconds
+      Group: bot-navigation
+      Label: "\u0417\u0430\u0441\u0442\u0440\u0435\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u041E\u043A\u043D\u043E \u0431\u0435\u0437 \u0443\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u044F
+        \u043E\u0441\u0442\u0430\u0432\u0448\u0435\u0433\u043E\u0441\u044F \u043F\u0443\u0442\u0438
+        \u0434\u043E \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0445\u043E\u0434\u0430."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.5
+    - Path: bots.navigation.progressMeters
+      Group: bot-navigation
+      Label: "\u041F\u0440\u043E\u0433\u0440\u0435\u0441\u0441"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0443\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u0435 \u043E\u0441\u0442\u0430\u0432\u0448\u0435\u0433\u043E\u0441\u044F
+        \u043F\u0443\u0442\u0438 \u0437\u0430 \u043E\u043A\u043D\u043E."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 0.4
+    - Path: bots.navigation.recoverySeconds
+      Group: bot-navigation
+      Label: "\u0423\u0441\u0442\u0443\u043F\u0430\u043D\u0438\u0435"
+      Description: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E \u0432\u044B\u0445\u043E\u0434\u0430
+        \u043E\u0431\u044B\u0447\u043D\u044B\u043C \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435\u043C."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.navigation.maximumRecoveries
+      Group: bot-navigation
+      Label: "\u041F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0445\u043E\u0434\u0430"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B \u043F\u043E\u043F\u044B\u0442\u043E\u043A
+        \u0431\u0435\u0437 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441\u0430
+        \u0434\u043E \u044F\u0432\u043D\u043E\u0433\u043E \u043E\u0442\u043A\u0430\u0437\u0430."
+      Unit: count
+      Minimum: 1
+      Maximum: 8
+      Step: 1
+      DefaultValue: 3
+    - Path: bots.navigation.repathSeconds
+      Group: bot-navigation
+      Label: "\u0427\u0430\u0441\u0442\u043E\u0442\u0430 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432
+        \u043F\u0440\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0438
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 0.3
+    - Path: bots.navigation.slowDistance
+      Group: bot-navigation
+      Label: "\u0422\u043E\u0440\u043C\u043E\u0436\u0435\u043D\u0438\u0435 \u043A
+        \u0442\u043E\u0447\u043A\u0435"
+      Description: "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435
+        \u043F\u043B\u0430\u0432\u043D\u043E\u0433\u043E \u0443\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u044F
+        \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u0443 \u0443\u0433\u043B\u0430
+        \u043F\u0443\u0442\u0438."
+      Unit: meters
+      Minimum: 0.2
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
+    values:
+    - Path: bots.navigation.waypointRadius
+      Value: 0.25
+    - Path: bots.navigation.heightTolerance
+      Value: 0.3
+    - Path: bots.navigation.sampleDistance
+      Value: 0.6
+    - Path: bots.navigation.stuckSeconds
+      Value: 1.5
+    - Path: bots.navigation.progressMeters
+      Value: 0.4
+    - Path: bots.navigation.recoverySeconds
+      Value: 0.7
+    - Path: bots.navigation.maximumRecoveries
+      Value: 3
+    - Path: bots.navigation.repathSeconds
+      Value: 0.3
+    - Path: bots.navigation.slowDistance
+      Value: 1
+  BotBehaviorProfile:
+    id: unity-bot-behavior-v1
+    version: 1
+    descriptors:
+    - Path: bots.easy.reactionSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0420\u0435\u0430\u043A\u0446\u0438\u044F"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u0430\u0442\u0430\u043A\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.6
+    - Path: bots.easy.decisionSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430
+        \u0446\u0435\u043B\u0438 \u0438 \u043F\u0443\u0442\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.35
+    - Path: bots.easy.aimDegreesPerSecond
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 240
+      Step: 1
+      DefaultValue: 90
+    - Path: bots.easy.aimErrorDegrees
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041E\u0448\u0438\u0431\u043A\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0438\u0432\u0430\u043D\u0438\u044F."
+      Unit: degrees
+      Minimum: 0.5
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 12
+    - Path: bots.easy.aimPeriodSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0420\u0438\u0442\u043C
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u041F\u0435\u0440\u0438\u043E\u0434 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.4
+    - Path: bots.easy.fireToleranceDegrees
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041E\u043A\u043D\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 18
+    - Path: bots.easy.preferredDistanceMeters
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F"
+      Description: "\u0416\u0435\u043B\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 6
+    - Path: bots.easy.strafeSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0420\u0438\u0442\u043C
+        \u0441\u0442\u0440\u0435\u0439\u0444\u0430"
+      Description: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0430\u043D\u0451\u0432\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.8
+    - Path: bots.easy.strafeWeight
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0421\u0442\u0440\u0435\u0439\u0444"
+      Description: "\u0412\u0435\u0441 \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: bots.easy.jumpCooldownSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u0430\u0443\u0437\u0430
+        \u043F\u0440\u044B\u0436\u043A\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043F\u0440\u044B\u0436\u043A\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 6
+    - Path: bots.easy.jumpChance
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0411\u043E\u0435\u0432\u043E\u0439
+        \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u0412\u0435\u0440\u043E\u044F\u0442\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0440\u044B\u0436\u043A\u0430 \u043F\u0440\u0438 \u0441\u043C\u0435\u043D\u0435
+        \u0431\u043E\u0435\u0432\u043E\u0433\u043E \u043C\u0430\u043D\u0451\u0432\u0440\u0430
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u043C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: bots.easy.retreatSeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439
+        \u043E\u0442\u0445\u043E\u0434"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043E\u0442\u0445\u043E\u0434\u0430 \u043F\u043E\u0441\u043B\u0435
+        \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0443\u0433\u0440\u043E\u0437\u044B
+        \u043F\u0440\u0438 \u043D\u0438\u0437\u043A\u043E\u043C \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.easy.retreatHealthRatio
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043E\u0440\u043E\u0433
+        \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043E\u043B\u044F \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+        \u0434\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: bots.easy.supportChance
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u0421\u043A\u043B\u043E\u043D\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043C\u043E\u0447\u044C \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u043C\u0443
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: bots.normal.reactionSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0420\u0435\u0430\u043A\u0446\u0438\u044F"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u0430\u0442\u0430\u043A\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.28
+    - Path: bots.normal.decisionSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430
+        \u0446\u0435\u043B\u0438 \u0438 \u043F\u0443\u0442\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.2
+    - Path: bots.normal.aimDegreesPerSecond
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 240
+      Step: 1
+      DefaultValue: 160
+    - Path: bots.normal.aimErrorDegrees
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041E\u0448\u0438\u0431\u043A\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0438\u0432\u0430\u043D\u0438\u044F."
+      Unit: degrees
+      Minimum: 0.5
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 5
+    - Path: bots.normal.aimPeriodSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0420\u0438\u0442\u043C \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u041F\u0435\u0440\u0438\u043E\u0434 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1
+    - Path: bots.normal.fireToleranceDegrees
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041E\u043A\u043D\u043E \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 12
+    - Path: bots.normal.preferredDistanceMeters
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F"
+      Description: "\u0416\u0435\u043B\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 5
+    - Path: bots.normal.strafeSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0420\u0438\u0442\u043C \u0441\u0442\u0440\u0435\u0439\u0444\u0430"
+      Description: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0430\u043D\u0451\u0432\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 1.1
+    - Path: bots.normal.strafeWeight
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0421\u0442\u0440\u0435\u0439\u0444"
+      Description: "\u0412\u0435\u0441 \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: bots.normal.jumpCooldownSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u0430\u0443\u0437\u0430 \u043F\u0440\u044B\u0436\u043A\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043F\u0440\u044B\u0436\u043A\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.normal.jumpChance
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0411\u043E\u0435\u0432\u043E\u0439
+        \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u0412\u0435\u0440\u043E\u044F\u0442\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0440\u044B\u0436\u043A\u0430 \u043F\u0440\u0438 \u0441\u043C\u0435\u043D\u0435
+        \u0431\u043E\u0435\u0432\u043E\u0433\u043E \u043C\u0430\u043D\u0451\u0432\u0440\u0430
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u043C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.18
+    - Path: bots.normal.retreatSeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439
+        \u043E\u0442\u0445\u043E\u0434"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043E\u0442\u0445\u043E\u0434\u0430 \u043F\u043E\u0441\u043B\u0435
+        \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0443\u0433\u0440\u043E\u0437\u044B
+        \u043F\u0440\u0438 \u043D\u0438\u0437\u043A\u043E\u043C \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
+    - Path: bots.normal.retreatHealthRatio
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043E\u0440\u043E\u0433 \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043E\u043B\u044F \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+        \u0434\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.05
+      DefaultValue: 0.3
+    - Path: bots.normal.supportChance
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u0421\u043A\u043B\u043E\u043D\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043C\u043E\u0447\u044C \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u043C\u0443
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.45
+    - Path: bots.hard.reactionSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0420\u0435\u0430\u043A\u0446\u0438\u044F"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u0430\u0442\u0430\u043A\u043E\u0439 \u043D\u043E\u0432\u043E\u0439 \u0437\u0430\u043C\u0435\u0447\u0435\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: bots.hard.decisionSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430
+        \u0446\u0435\u043B\u0438 \u0438 \u043F\u0443\u0442\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: bots.hard.aimDegreesPerSecond
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 240
+      Step: 1
+      DefaultValue: 230
+    - Path: bots.hard.aimErrorDegrees
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041E\u0448\u0438\u0431\u043A\u0430
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0438\u0432\u0430\u043D\u0438\u044F."
+      Unit: degrees
+      Minimum: 0.5
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 1.5
+    - Path: bots.hard.aimPeriodSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0420\u0438\u0442\u043C
+        \u043F\u0440\u0438\u0446\u0435\u043B\u0430"
+      Description: "\u041F\u0435\u0440\u0438\u043E\u0434 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        \u043E\u0448\u0438\u0431\u043A\u0438 \u043F\u0440\u0438\u0446\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.hard.fireToleranceDegrees
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041E\u043A\u043D\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 8
+    - Path: bots.hard.preferredDistanceMeters
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F"
+      Description: "\u0416\u0435\u043B\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.hard.strafeSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0420\u0438\u0442\u043C
+        \u0441\u0442\u0440\u0435\u0439\u0444\u0430"
+      Description: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0430\u043D\u0451\u0432\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: bots.hard.strafeWeight
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0421\u0442\u0440\u0435\u0439\u0444"
+      Description: "\u0412\u0435\u0441 \u0431\u043E\u043A\u043E\u0432\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u0435\u043B\u043A\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.85
+    - Path: bots.hard.jumpCooldownSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u0430\u0443\u0437\u0430
+        \u043F\u0440\u044B\u0436\u043A\u043E\u0432"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043F\u0440\u044B\u0436\u043A\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 3
+    - Path: bots.hard.jumpChance
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0411\u043E\u0435\u0432\u043E\u0439
+        \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u0412\u0435\u0440\u043E\u044F\u0442\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0440\u044B\u0436\u043A\u0430 \u043F\u0440\u0438 \u0441\u043C\u0435\u043D\u0435
+        \u0431\u043E\u0435\u0432\u043E\u0433\u043E \u043C\u0430\u043D\u0451\u0432\u0440\u0430
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u043C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.22
+    - Path: bots.hard.retreatSeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439
+        \u043E\u0442\u0445\u043E\u0434"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043E\u0442\u0445\u043E\u0434\u0430 \u043F\u043E\u0441\u043B\u0435
+        \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0443\u0433\u0440\u043E\u0437\u044B
+        \u043F\u0440\u0438 \u043D\u0438\u0437\u043A\u043E\u043C \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1.2
+    - Path: bots.hard.retreatHealthRatio
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043E\u0440\u043E\u0433
+        \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043E\u043B\u044F \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+        \u0434\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.6
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: bots.hard.supportChance
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u0421\u043A\u043B\u043E\u043D\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043C\u043E\u0447\u044C \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u043C\u0443
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: bots.cooperation.separationMeters
+      Group: bots
+      Label: "\u041B\u0438\u0447\u043D\u043E\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0440\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u0438\u044F
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u043E\u0432."
+      Unit: meters
+      Minimum: 1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 2.5
+    - Path: bots.cooperation.supportSeconds
+      Group: bots
+      Label: "\u0412\u0440\u0435\u043C\u044F \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0434\u043D\u043E\u0433\u043E \u043E\u0431\u0449\u0435\u0433\u043E
+        \u043D\u0430\u043C\u0435\u0440\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3
+    - Path: bots.cooperation.supportDistanceMeters
+      Group: bots
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u043E \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0430
+        \u0434\u043B\u044F \u043F\u043E\u043C\u043E\u0449\u0438."
+      Unit: meters
+      Minimum: 3
+      Maximum: 40
+      Step: 1
+      DefaultValue: 18
+    - Path: bots.cooperation.personalitySpread
+      Group: bots
+      Label: "\u0420\u0430\u0437\u043D\u043E\u043E\u0431\u0440\u0430\u0437\u0438\u0435"
+      Description: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0438\u043D\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043B\u044C\u043D\u043E\u0439
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u0438 \u0438 \u0440\u0438\u0442\u043C\u0430
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043F\u0440\u043E\u0444\u0438\u043B\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.4
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: bots.tactics.retreatCooldownSeconds
+      Group: bots
+      Label: "\u041F\u0430\u0443\u0437\u0430 \u043E\u0442\u0445\u043E\u0434\u0430"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u0442\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u043C\u0438
+        \u043E\u0442\u0445\u043E\u0434\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 4
+    - Path: bots.tactics.supportCooldownSeconds
+      Group: bots
+      Label: "\u041F\u0430\u0443\u0437\u0430 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u0442\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u043C\u0438
+        \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F\u043C\u0438 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 5
+    - Path: bots.tactics.probeDistance
+      Group: bots
+      Label: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0440\u043E\u0431\u044B"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0442\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0439
+        \u043F\u0440\u043E\u0431\u044B \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430
+        \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0433\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
+    - Path: bots.tactics.jumpSamples
+      Group: bots
+      Label: "\u041F\u0440\u043E\u0431\u044B \u043F\u0440\u044B\u0436\u043A\u0430"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C fixed-step \u043F\u0440\u043E\u0431
+        \u0442\u0440\u0430\u0435\u043A\u0442\u043E\u0440\u0438\u0438 motor; \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u044F\u0435\u0442 \u043F\u0440\u044B\u0436\u043E\u043A."
+      Unit: count
+      Minimum: 4
+      Maximum: 512
+      Step: 1
+      DefaultValue: 128
+    - Path: bots.tactics.coverDistance
+      Group: bots
+      Label: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0443\u043A\u0440\u044B\u0442\u0438\u044F"
+      Description: "\u0426\u0435\u043B\u0435\u0432\u0430\u044F \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F
+        \u0434\u043E \u0442\u043E\u0447\u043A\u0438 \u043A\u0440\u0430\u0442\u043A\u043E\u0433\u043E
+        \u0443\u043A\u0440\u044B\u0442\u0438\u044F."
+      Unit: meters
+      Minimum: 1
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3
+    values:
+    - Path: bots.easy.reactionSeconds
+      Value: 0.6
+    - Path: bots.easy.decisionSeconds
+      Value: 0.35
+    - Path: bots.easy.aimDegreesPerSecond
+      Value: 90
+    - Path: bots.easy.aimErrorDegrees
+      Value: 12
+    - Path: bots.easy.aimPeriodSeconds
+      Value: 1.4
+    - Path: bots.easy.fireToleranceDegrees
+      Value: 18
+    - Path: bots.easy.preferredDistanceMeters
+      Value: 6
+    - Path: bots.easy.strafeSeconds
+      Value: 1.8
+    - Path: bots.easy.strafeWeight
+      Value: 0.35
+    - Path: bots.easy.jumpCooldownSeconds
+      Value: 6
+    - Path: bots.easy.jumpChance
+      Value: 0.12
+    - Path: bots.easy.retreatSeconds
+      Value: 0.7
+    - Path: bots.easy.retreatHealthRatio
+      Value: 0.2
+    - Path: bots.easy.supportChance
+      Value: 0.2
+    - Path: bots.normal.reactionSeconds
+      Value: 0.28
+    - Path: bots.normal.decisionSeconds
+      Value: 0.2
+    - Path: bots.normal.aimDegreesPerSecond
+      Value: 160
+    - Path: bots.normal.aimErrorDegrees
+      Value: 5
+    - Path: bots.normal.aimPeriodSeconds
+      Value: 1
+    - Path: bots.normal.fireToleranceDegrees
+      Value: 12
+    - Path: bots.normal.preferredDistanceMeters
+      Value: 5
+    - Path: bots.normal.strafeSeconds
+      Value: 1.1
+    - Path: bots.normal.strafeWeight
+      Value: 0.65
+    - Path: bots.normal.jumpCooldownSeconds
+      Value: 4
+    - Path: bots.normal.jumpChance
+      Value: 0.18
+    - Path: bots.normal.retreatSeconds
+      Value: 1
+    - Path: bots.normal.retreatHealthRatio
+      Value: 0.3
+    - Path: bots.normal.supportChance
+      Value: 0.45
+    - Path: bots.hard.reactionSeconds
+      Value: 0.12
+    - Path: bots.hard.decisionSeconds
+      Value: 0.1
+    - Path: bots.hard.aimDegreesPerSecond
+      Value: 230
+    - Path: bots.hard.aimErrorDegrees
+      Value: 1.5
+    - Path: bots.hard.aimPeriodSeconds
+      Value: 0.7
+    - Path: bots.hard.fireToleranceDegrees
+      Value: 8
+    - Path: bots.hard.preferredDistanceMeters
+      Value: 4
+    - Path: bots.hard.strafeSeconds
+      Value: 0.7
+    - Path: bots.hard.strafeWeight
+      Value: 0.85
+    - Path: bots.hard.jumpCooldownSeconds
+      Value: 3
+    - Path: bots.hard.jumpChance
+      Value: 0.22
+    - Path: bots.hard.retreatSeconds
+      Value: 1.2
+    - Path: bots.hard.retreatHealthRatio
+      Value: 0.35
+    - Path: bots.hard.supportChance
+      Value: 0.65
+    - Path: bots.cooperation.separationMeters
+      Value: 2.5
+    - Path: bots.cooperation.supportSeconds
+      Value: 3
+    - Path: bots.cooperation.supportDistanceMeters
+      Value: 18
+    - Path: bots.cooperation.personalitySpread
+      Value: 0.2
+    - Path: bots.tactics.retreatCooldownSeconds
+      Value: 4
+    - Path: bots.tactics.supportCooldownSeconds
+      Value: 5
+    - Path: bots.tactics.probeDistance
+      Value: 1
+    - Path: bots.tactics.jumpSamples
+      Value: 128
+    - Path: bots.tactics.coverDistance
+      Value: 3
+  RosterProfile:
+    id: unity-native-roster-v1
+    version: 1
+    descriptors:
+    - Path: spawn.initialSearchBudgetNodes
+      Group: spawn
+      Label: "\u0411\u044E\u0434\u0436\u0435\u0442 \u0441\u0442\u0430\u0440\u0442\u043E\u0432\u043E\u0439
+        \u0440\u0430\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0438"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u044B\u0445
+        \u0443\u0437\u043B\u043E\u0432 \u043F\u043E\u0438\u0441\u043A\u0430; \u0438\u0441\u0447\u0435\u0440\u043F\u0430\u043D\u0438\u0435
+        \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u044F\u0432\u043D\u0443\u044E
+        \u043E\u0448\u0438\u0431\u043A\u0443, \u0430 \u043D\u0435 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u0443\u044E
+        \u0440\u0430\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0443."
+      Unit: nodes
+      Minimum: 100
+      Maximum: 1000000
+      Step: 100
+      DefaultValue: 100000
+    - Path: spawn.initialCandidateBudget
+      Group: spawn
+      Label: "\u0411\u044E\u0434\u0436\u0435\u0442 \u0441\u0442\u0430\u0440\u0442\u043E\u0432\u044B\u0445
+        \u043A\u0430\u043D\u0434\u0438\u0434\u0430\u0442\u043E\u0432"
+      Description: "\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0432\u0430\u0435\u0442
+        generation/physics queries \u0438 \u0440\u0430\u0437\u043C\u0435\u0440 pair
+        tables; \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0435 \u0434\u0430\u0451\u0442
+        \u044F\u0432\u043D\u0443\u044E \u043E\u0448\u0438\u0431\u043A\u0443 \u0434\u043E
+        \u043F\u043E\u0438\u0441\u043A\u0430."
+      Unit: candidates
+      Minimum: 32
+      Maximum: 4096
+      Step: 32
+      DefaultValue: 1024
+    values:
+    - Path: spawn.initialSearchBudgetNodes
+      Value: 100000
+    - Path: spawn.initialCandidateBudget
+      Value: 1024
+  TeamProfile:
+    id: unity-native-team-v1
+    version: 1
+    descriptors:
+    - Path: spawn.initialOpponentSeparation
+      Group: spawn
+      Label: "\u0420\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u0438\u0435 \u043A\u043E\u043C\u0430\u043D\u0434
+        \u043D\u0430 \u0441\u0442\u0430\u0440\u0442\u0435"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043C\u0435\u0436\u0434\u0443
+        initial spawn \u043F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A\u043E\u0432;
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0438 \u043C\u043E\u0433\u0443\u0442
+        \u0441\u0442\u043E\u044F\u0442\u044C \u0440\u044F\u0434\u043E\u043C."
+      Unit: meters
+      Minimum: 1
+      Maximum: 8
+      Step: 0.5
+      DefaultValue: 5
+    values:
+    - Path: spawn.initialOpponentSeparation
+      Value: 5
+  MatchProfile:
+    id: unity-native-match-v1
+    version: 1
+    descriptors:
+    - Path: match.durationMinutes
+      Group: match
+      Label: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0435 \u0432\u0440\u0435\u043C\u044F;
+        \u0440\u0430\u0432\u0435\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442
+        overtime."
+      Unit: minutes
+      Minimum: 1
+      Maximum: 30
+      Step: 1
+      DefaultValue: 5
+    - Path: match.targetPoints
+      Group: match
+      Label: "\u0426\u0435\u043B\u044C \u043F\u043E \u043E\u0447\u043A\u0430\u043C"
+      Description: "\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F
+        \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u0438 \u0432\u043A\u043B\u044E\u0447\u0451\u043D\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438."
+      Unit: points
+      Minimum: 1000
+      Maximum: 20000
+      Step: 100
+      DefaultValue: 3000
+    - Path: score.assistWindow
+      Group: scoring
+      Label: "\u041E\u043A\u043D\u043E \u043F\u043E\u043C\u043E\u0449\u0438"
+      Description: "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u043F\u043E\u043B\u043E\u0436\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0440\u043E\u043D \u0443\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F
+        \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u043E."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 60
+      Step: 1
+      DefaultValue: 5
+    - Path: score.assistPoints
+      Group: scoring
+      Label: "\u041E\u0447\u043A\u0438 \u043F\u043E\u043C\u043E\u0449\u0438"
+      Description: "\u041D\u0430\u0433\u0440\u0430\u0434\u0430 \u043E\u0434\u0438\u043D
+        \u0440\u0430\u0437 \u0437\u0430 \u0447\u0443\u0436\u043E\u0435 \u0443\u0431\u0438\u0439\u0441\u0442\u0432\u043E."
+      Unit: points
+      Minimum: 0
+      Maximum: 1000
+      Step: 1
+      DefaultValue: 50
+    - Path: score.chainGap
+      Group: scoring
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0441\u0435\u0440\u0438\u0438"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043C\u0435\u0436\u0434\u0443
+        \u0443\u0431\u0438\u0439\u0441\u0442\u0432\u0430\u043C\u0438."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 60
+      Step: 1
+      DefaultValue: 10
+    - Path: score.chainTotal1
+      Group: scoring
+      Label: "\u0418\u0442\u043E\u0433 \u0441\u0435\u0440\u0438\u0438 1"
+      Description: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u043D\u0430\u0433\u0440\u0430\u0434\u0430 \u0441\u0435\u0440\u0438\u0438
+        \u0431\u0435\u0437 assists."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 100
+    - Path: score.chainTotal2
+      Group: scoring
+      Label: "\u0418\u0442\u043E\u0433 \u0441\u0435\u0440\u0438\u0438 2"
+      Description: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u043D\u0430\u0433\u0440\u0430\u0434\u0430 \u0441\u0435\u0440\u0438\u0438
+        \u0431\u0435\u0437 assists."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 300
+    - Path: score.chainTotal3
+      Group: scoring
+      Label: "\u0418\u0442\u043E\u0433 \u0441\u0435\u0440\u0438\u0438 3"
+      Description: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u043D\u0430\u0433\u0440\u0430\u0434\u0430 \u0441\u0435\u0440\u0438\u0438
+        \u0431\u0435\u0437 assists."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 500
+    - Path: score.chainTotal4
+      Group: scoring
+      Label: "\u0418\u0442\u043E\u0433 \u0441\u0435\u0440\u0438\u0438 4"
+      Description: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u043D\u0430\u0433\u0440\u0430\u0434\u0430 \u0441\u0435\u0440\u0438\u0438
+        \u0431\u0435\u0437 assists."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 800
+    - Path: score.chainTotal5
+      Group: scoring
+      Label: "\u0418\u0442\u043E\u0433 \u0441\u0435\u0440\u0438\u0438 5"
+      Description: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u043D\u0430\u0433\u0440\u0430\u0434\u0430 \u0441\u0435\u0440\u0438\u0438
+        \u0431\u0435\u0437 assists."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 1200
+    - Path: score.chainIncrement
+      Group: scoring
+      Label: "\u041F\u043E\u0441\u043B\u0435 \u043F\u044F\u0442\u043E\u0433\u043E"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u043D\u0430\u0433\u0440\u0430\u0434\u0430 \u0437\u0430 \u043A\u0430\u0436\u0434\u043E\u0435
+        \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0435 \u0443\u0431\u0438\u0439\u0441\u0442\u0432\u043E."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 400
+    values:
+    - Path: match.durationMinutes
+      Value: 5
+    - Path: match.targetPoints
+      Value: 3000
+    - Path: score.assistWindow
+      Value: 5
+    - Path: score.assistPoints
+      Value: 50
+    - Path: score.chainGap
+      Value: 10
+    - Path: score.chainTotal1
+      Value: 100
+    - Path: score.chainTotal2
+      Value: 300
+    - Path: score.chainTotal3
+      Value: 500
+    - Path: score.chainTotal4
+      Value: 800
+    - Path: score.chainTotal5
+      Value: 1200
+    - Path: score.chainIncrement
+      Value: 400
+--- !u!4 &1746725633
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746725631}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1746725633}

@@ -1,0 +1,11 @@
+{
+  "name": "StarTournament.ProvingGround.PlayMode",
+  "references": [
+    "StarTournament.ProvingGround",
+    "Unity.AI.Navigation",
+    "Unity.InputSystem"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

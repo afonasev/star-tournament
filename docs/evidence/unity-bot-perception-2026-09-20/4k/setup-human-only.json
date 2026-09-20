@@ -1,0 +1,79 @@
+{
+    "state": "setup-human-only",
+    "acceptance": "PERCEPTION_DIAGNOSTIC_NOT_PLAYABLE_BOTS",
+    "profile": "unity-bot-perception-v1@1",
+    "clock": "explicit diagnostic observation stream; not match/replay time",
+    "width": 3840,
+    "height": 2160,
+    "focused": true,
+    "muted": true,
+    "actualPoses": [
+        {
+            "Position": {
+                "x": -6.0,
+                "y": 0.0,
+                "z": -14.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        },
+        {
+            "Position": {
+                "x": -2.0,
+                "y": 0.0,
+                "z": -10.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        },
+        {
+            "Position": {
+                "x": 2.0,
+                "y": 0.0,
+                "z": -14.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        },
+        {
+            "Position": {
+                "x": 6.0,
+                "y": 0.0,
+                "z": -10.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": false
+        }
+    ],
+    "knowledge": {
+        "Version": 1,
+        "Configuration": "",
+        "Time": -1.0,
+        "Observers": [],
+        "Pending": []
+    }
+}

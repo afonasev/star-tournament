@@ -1,0 +1,34 @@
+{
+    "state": "10-return-setup",
+    "status": "ORDINARY_SETUP_SYNTHETIC_DEVICES_NOT_PHYSICAL_ACCEPTANCE",
+    "focused": true,
+    "muted": true,
+    "running": false,
+    "width": 3840,
+    "height": 2160,
+    "shots": 0,
+    "seed": 0,
+    "time": 0.0,
+    "composition": {
+        "Roster": {
+            "Mode": 0,
+            "Teams": []
+        },
+        "Participants": [],
+        "LocalParticipants": []
+    },
+    "match": {
+        "Tick": 0,
+        "RemainingTicks": 0,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": 0,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": []
+        },
+        "Standings": [],
+        "Teams": []
+    }
+}

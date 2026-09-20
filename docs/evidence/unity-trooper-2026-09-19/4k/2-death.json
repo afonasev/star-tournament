@@ -1,0 +1,64 @@
+{
+    "status": "DIAGNOSTIC_NOT_ARTISTIC_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "2-death",
+    "profile": "unity-trooper-presentation-v1@1",
+    "width": 3840,
+    "height": 2160,
+    "seats": 2,
+    "cameras": 2,
+    "skinInstances": 13,
+    "uniqueSkinnedMeshes": 7,
+    "uniqueMaterials": 16,
+    "uniqueTextures": 27,
+    "focused": true,
+    "muted": true,
+    "running": true,
+    "clock": 4.739998128265142,
+    "poses": [
+        {
+            "owner": "trooper-presentation",
+            "clip": "idle",
+            "time": 0.8199996761977673,
+            "root": {
+                "x": -8.0,
+                "y": 0.009999990463256836,
+                "z": -3.0
+            },
+            "hand": {
+                "x": -7.998378276824951,
+                "y": 1.209596037864685,
+                "z": -2.8748135566711427
+            }
+        },
+        {
+            "owner": "trooper-view",
+            "clip": "aim",
+            "time": 0.36666588485240939,
+            "root": {
+                "x": -7.880000114440918,
+                "y": 0.039999961853027347,
+                "z": -2.8499999046325685
+            },
+            "hand": {
+                "x": -7.878377914428711,
+                "y": 1.2279595136642457,
+                "z": -2.715083360671997
+            }
+        },
+        {
+            "owner": "corpse-2-life-1",
+            "clip": "death",
+            "time": 0.6999997235834599,
+            "root": {
+                "x": -3.8716824054718019,
+                "y": 0.0,
+                "z": 0.9999996423721314
+            },
+            "hand": {
+                "x": -4.149752616882324,
+                "y": 0.863663911819458,
+                "z": 1.4711002111434937
+            }
+        }
+    ]
+}

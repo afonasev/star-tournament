@@ -1,0 +1,15 @@
+{
+  "baseCommit": "4521a7d4999b42c599bf40f747d9b6f86de9e9fa",
+  "branch": "codex/unity-native-bots",
+  "unity": "6000.3.23f1",
+  "profile": "unity-bot-perception-v1@1",
+  "reportedBuildBytes": 459182721,
+  "buildTreeSha256": "c7e80961899aca8fc12178bde23ebb153b184d7aae4b6439bf877a27ef5a631b",
+  "buildTreeHashAlgorithm": "sorted relative POSIX path UTF-8 + NUL + SHA256(file bytes), aggregated SHA256; ordinary files only",
+  "buildPath": "/Users/eaafonasev/.codex/worktrees/292d/star-tournament/unity/Builds/StarTournamentProvingGround.app",
+  "tests": {
+    "editModePassed": 50,
+    "playModePassed": 36
+  },
+  "qaVault": "/Users/eaafonasev/Documents/Codex/qa-vault/star-tournament/bot-perception-2026-09-20"
+}

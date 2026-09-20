@@ -1,0 +1,212 @@
+{
+  "status": "PASS_GRIP_FIXTURE",
+  "fixtureOnly": true,
+  "gameWeaponFitAccepted": false,
+  "method": "Exact exported triangle projection after finite V-slab clipping; vertex contact per load-bearing digit. Right index reserved for trigger motion.",
+  "samples": [
+    {
+      "clip": "aim",
+      "phase": 0.25,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008540905172568547,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010082002237037163,
+        "Index": 0.0010134588608245812,
+        "Middle": 0.0011059520346898587,
+        "Ring": 0.001048513787650218,
+        "Little": 0.0009080421019593103
+      }
+    },
+    {
+      "clip": "aim",
+      "phase": 0.25,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008537795760639696,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.001008393896845005,
+        "Middle": 0.0011057856354556282,
+        "Ring": 0.0010480130348069073,
+        "Little": 0.0009077527327177465
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008538319488121264,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010080710799065882,
+        "Index": 0.0010132499405210748,
+        "Middle": 0.0011058298477753757,
+        "Ring": 0.0010483606904979977,
+        "Little": 0.0009077882700976262
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008536903244365463,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010081614716886253,
+        "Middle": 0.0011058540972335572,
+        "Ring": 0.0010482192665622486,
+        "Little": 0.0009076232827776304
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.125,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008537968826531031,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010079634705862834,
+        "Index": 0.0010130650633641926,
+        "Middle": 0.0011057311957595394,
+        "Ring": 0.0010484132785168426,
+        "Little": 0.000907709582587987
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.125,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008538228273914934,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.001008135638405179,
+        "Middle": 0.0011057150299441626,
+        "Ring": 0.0010481480051404077,
+        "Little": 0.0009077527327177465
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.22,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008540203258458263,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010079419331611077,
+        "Index": 0.0010131020176959438,
+        "Middle": 0.0011056296897772606,
+        "Ring": 0.0010482713065076376,
+        "Little": 0.0009079456452663724
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.22,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008536973316932947,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010082045244508917,
+        "Middle": 0.0011060763652892475,
+        "Ring": 0.0010481620104378139,
+        "Little": 0.0009076486638215252
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.25,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008539122895227034,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.001008109817406371,
+        "Index": 0.0010133236389617832,
+        "Middle": 0.001105783492611035,
+        "Ring": 0.0010483378973799628,
+        "Little": 0.0009078669576570885
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.25,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008538371135871705,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010082905883446198,
+        "Middle": 0.0011057017216004972,
+        "Ring": 0.0010480586205672236,
+        "Little": 0.0009077781145649352
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.5,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008537081144042069,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010080969136677836,
+        "Index": 0.0010134221145332658,
+        "Middle": 0.0011059225591751785,
+        "Ring": 0.0010483448994929555,
+        "Little": 0.0009076909666255356
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 0.5,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008538808781767478,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010082045244508917,
+        "Middle": 0.0011057392790937044,
+        "Ring": 0.0010481480051404077,
+        "Little": 0.0009078314201410157
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 1,
+      "side": "Left",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6356,
+      "surfaceMinClearanceMeters": 0.0008540905172568547,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.0010082002237037163,
+        "Index": 0.0010134588608245812,
+        "Middle": 0.0011059520346898587,
+        "Ring": 0.001048513787650218,
+        "Little": 0.0009080421019593103
+      }
+    },
+    {
+      "clip": "fire",
+      "phase": 1,
+      "side": "Right",
+      "radiusMeters": 0.012021838170595902,
+      "testedTriangles": 6388,
+      "surfaceMinClearanceMeters": 0.0008537795760639696,
+      "fingerMinClearanceMeters": {
+        "Thumb": 0.001008393896845005,
+        "Middle": 0.0011057856354556282,
+        "Ring": 0.0010480130348069073,
+        "Little": 0.0009077527327177465
+      }
+    }
+  ],
+  "errors": []
+}

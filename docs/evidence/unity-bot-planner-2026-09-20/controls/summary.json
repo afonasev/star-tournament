@@ -1,0 +1,32 @@
+{
+    "status": "PILOT_NOT_DIFFICULTY_OR_TARGET_PERFORMANCE_ACCEPTANCE",
+    "device": "Mac14,10",
+    "graphics": "Apple M2 Pro",
+    "width": 1920,
+    "height": 1080,
+    "frameSamples": 4662,
+    "cpuSamples": 1982,
+    "frameP95": 10.21008300000048,
+    "frameP99": 12.734667000000144,
+    "frameWorst": 87.63250000000156,
+    "cpuP95": 0.6802,
+    "cpuP99": 1.7731,
+    "cpuWorst": 2.2115,
+    "gpuAvailable": false,
+    "allocationsAvailable": false,
+    "runs": [
+        {
+            "name": "keyboard-vs-seven",
+            "seed": 20260920,
+            "firstDamage": 0.15999993681907655,
+            "damage": 2424.1666254997253,
+            "seconds": 40.15998414158821,
+            "shots": 238,
+            "deaths": 23,
+            "respawns": 21,
+            "jumps": 8,
+            "fireAttempts": 1090,
+            "maxTacticalQueries": 107
+        }
+    ]
+}

@@ -1,0 +1,228 @@
+{
+    "state": "09-results",
+    "status": "ORDINARY_SETUP_SYNTHETIC_DEVICES_NOT_PHYSICAL_ACCEPTANCE",
+    "focused": true,
+    "muted": true,
+    "running": false,
+    "width": 1920,
+    "height": 1080,
+    "shots": 806,
+    "seed": 519144164,
+    "time": 299.9998815357685,
+    "composition": {
+        "Roster": {
+            "Mode": 1,
+            "Teams": [
+                1,
+                2,
+                1,
+                2,
+                1,
+                2,
+                1,
+                2
+            ]
+        },
+        "Participants": [
+            {
+                "Kind": 0,
+                "Name": "Игрок 1",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 2",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 3",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 0,
+                "Name": "Игрок 4",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": -1
+            },
+            {
+                "Kind": 1,
+                "Name": "Atlas",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            },
+            {
+                "Kind": 1,
+                "Name": "Lyra",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 1
+            },
+            {
+                "Kind": 1,
+                "Name": "Sirius",
+                "Color": {
+                    "r": 0.23137255012989045,
+                    "g": 0.5098039507865906,
+                    "b": 0.9647058844566345,
+                    "a": 1.0
+                },
+                "Difficulty": 2
+            },
+            {
+                "Kind": 1,
+                "Name": "Rigel",
+                "Color": {
+                    "r": 0.8509804010391235,
+                    "g": 0.27450981736183169,
+                    "b": 0.9372549057006836,
+                    "a": 1.0
+                },
+                "Difficulty": 0
+            }
+        ],
+        "LocalParticipants": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "match": {
+        "Tick": 15000,
+        "RemainingTicks": 0,
+        "Phase": 2,
+        "Trigger": "time-limit",
+        "Winner": -1,
+        "WinnerTeam": 1,
+        "Roster": {
+            "Mode": 1,
+            "Teams": [
+                1,
+                2,
+                1,
+                2,
+                1,
+                2,
+                1,
+                2
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 6,
+                "Kills": 40,
+                "Assists": 3,
+                "Deaths": 13,
+                "Score": 6150,
+                "DamageDealt": 3984.9999804496765,
+                "DamageReceived": 1299.999981880188
+            },
+            {
+                "Seat": 5,
+                "Kills": 27,
+                "Assists": 6,
+                "Deaths": 12,
+                "Score": 4400,
+                "DamageDealt": 2788.3332800865173,
+                "DamageReceived": 1242.4999804496765
+            },
+            {
+                "Seat": 7,
+                "Kills": 10,
+                "Assists": 10,
+                "Deaths": 12,
+                "Score": 1700,
+                "DamageDealt": 927.4999814033508,
+                "DamageReceived": 1253.3333268165588
+            },
+            {
+                "Seat": 4,
+                "Kills": 4,
+                "Assists": 11,
+                "Deaths": 15,
+                "Score": 1050,
+                "DamageDealt": 513.3333220481873,
+                "DamageReceived": 1499.9999871253967
+            },
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 5,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 513.3333082199097
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 11,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 1099.99999666214
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 4,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 402.4999842643738
+            },
+            {
+                "Seat": 3,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 9,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 902.4999985694885
+            }
+        ],
+        "Teams": [
+            {
+                "Team": 1,
+                "Score": 7200
+            },
+            {
+                "Team": 2,
+                "Score": 6100
+            }
+        ]
+    }
+}

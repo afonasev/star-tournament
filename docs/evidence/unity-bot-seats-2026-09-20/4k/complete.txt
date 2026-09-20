@@ -1,0 +1,1 @@
+PASS: ordinary 2/3/4 views, sparse human, all-AI, actual planners/fire, Escape pause, resume, frozen repeat, exit. Physical device, TV and target-performance acceptance remain open.
