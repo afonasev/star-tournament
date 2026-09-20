@@ -66,7 +66,7 @@ namespace StarTournament.ProvingGround
         public void Clear() { Array.Clear(queued, 0, queued.Length); pauseRequested = false; for(int i=0;i<SeatCount;i++) fireReleaseRequired[i]=true; }
         public bool ConsumePause() { bool value = pauseRequested; pauseRequested = false; return value; }
         // Capture once per rendered frame; consume edges/delta once per simulation tick.
-        public void Capture(ProvingProfile profile, float deltaTime)
+        public void Capture(ProvingProfile profile, float deltaTime, float? mouseDegreesPerPixelOverride=null)
         {
             // The operator can always pause, including all-AI matches with no gameplay ownership.
             foreach(var device in InputSystem.devices)
@@ -82,7 +82,7 @@ namespace StarTournament.ProvingGround
                 {
                     a.Move = Vector2.ClampMagnitude(new Vector2((keyboard.dKey.isPressed ? 1 : 0) - (keyboard.aKey.isPressed ? 1 : 0),
                         (keyboard.wKey.isPressed ? 1 : 0) - (keyboard.sKey.isPressed ? 1 : 0)), 1);
-                    a.LookDegrees += pairedMouse.delta.ReadValue() * profile.Get("input.mouseDegreesPerPixel");
+                    a.LookDegrees += pairedMouse.delta.ReadValue() * (mouseDegreesPerPixelOverride ?? profile.Get("input.mouseDegreesPerPixel"));
                     a.Jump |= keyboard.spaceKey.wasPressedThisFrame;
                     CaptureFire(i, ref a, pairedMouse.leftButton.isPressed, pairedMouse.leftButton.wasPressedThisFrame);
                     a.ShowRoster = keyboard.tabKey.isPressed;

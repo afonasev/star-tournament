@@ -122,6 +122,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Life(0).Ammo,Is.EqualTo(19));
         }
         [UnityTest]
+        public IEnumerator ShotNoticeCapturesEveryResolvedEndpointWithoutChangingDamage()
+        {
+            Setup();yield return null;combat.Set("shot.spread",0);session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            motors[1].Initialize(movement,new Vector3(0,0,4));ShotNotice notice=default;int count=0;session.ShotResolved+=n=>{notice=n;count++;};
+            session.Tick(new[]{new LocalAction{Fire=true},default,default,default},.02f);
+            Assert.That(count,Is.EqualTo(1));Assert.That(notice.Pellets.Length,Is.EqualTo((int)combat.Get("shot.pellets")));
+            Assert.That(notice.Pellets[0].Contact,Is.EqualTo(PelletContact.Participant));Assert.That(notice.Pellets[0].TargetSeat,Is.EqualTo(1));
+            Assert.That(session.Life(1).Dead,Is.True);
+        }
+        [UnityTest]
         public IEnumerator FreshPressImmediatelyAfterRespawnIsAccepted()
         {
             Setup(); yield return null;

@@ -8,6 +8,7 @@ namespace StarTournament.ProvingGround
     public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
+        sealed class PelletEffect { public GameObject Root; public LineRenderer Trace; public Vector3 Start, End, Normal; public double Begins; public bool Contact; }
         readonly NativeCombatSession session;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
@@ -22,6 +23,9 @@ namespace StarTournament.ProvingGround
         readonly bool[] tracking;
         bool disposed;
         readonly List<Corpse> corpses = new List<Corpse>();
+        readonly List<PelletEffect> pellets = new List<PelletEffect>();
+        Material shotMaterial;
+        public int ActiveShotEffectCount => pellets.Count;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null)
         {
@@ -36,11 +40,61 @@ namespace StarTournament.ProvingGround
             session.Died += OnDeath;
             session.Respawned += OnRespawn;
             session.Fired += OnFire;
+            session.ShotResolved += OnShotResolved;
         }
         void OnFire(int seat,float damage)
         {
             bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
             int view=ViewOf(seat);if(view>=0)views[view].GetComponent<TrooperVisual>()?.Fire(session.Time);
+        }
+        void OnShotResolved(ShotNotice notice)
+        {
+            int capacity=(int)movement.Get("presentation.shotMaxEffects");
+            foreach(var pellet in notice.Pellets)
+            {
+                if(pellets.Count>=capacity) break;
+                var root=new GameObject("shot-pellet-"+notice.Sequence+"-"+pellets.Count);root.transform.SetParent(owner,false);
+                var line=root.AddComponent<LineRenderer>();line.useWorldSpace=true;line.positionCount=2;
+                line.startWidth=line.endWidth=movement.Get("presentation.shotTracerWidth");line.material=ShotMaterial();
+                line.startColor=new Color(1f,.7f,.22f,.95f);line.endColor=new Color(1f,.35f,.08f,.15f);
+                var start=Muzzle(notice.Shooter,pellets.Count);line.SetPosition(0,start);line.SetPosition(1,start);
+                pellets.Add(new PelletEffect{Root=root,Trace=line,Start=start,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=pellet.Contact!=PelletContact.Miss});
+            }
+        }
+        Material ShotMaterial()
+        {
+            if(shotMaterial)return shotMaterial;
+            var shader=Shader.Find("Sprites/Default") ?? Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color");
+            shotMaterial=new Material(shader){color=new Color(1f,.55f,.12f,1f)};return shotMaterial;
+        }
+        Vector3 Muzzle(int participant,int pellet)
+        {
+            int view=ViewOf(participant);
+            if(view>=0 && views[view]) return views[view].transform.TransformPoint(new Vector3(pellet%2==0?.07f:-.07f,-.05f,.72f));
+            return bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
+        }
+        void RenderPellets()
+        {
+            float flight=movement.Get("presentation.shotFlightSeconds"), impact=movement.Get("presentation.shotImpactSeconds");
+            for(int i=pellets.Count-1;i>=0;i--)
+            {
+                var effect=pellets[i];float elapsed=(float)(session.Time-effect.Begins);
+                if(elapsed<flight)
+                {
+                    float progress=Mathf.Clamp01(elapsed/flight);var head=Vector3.Lerp(effect.Start,effect.End,progress);
+                    var tail=Vector3.Lerp(effect.Start,effect.End,Mathf.Max(0,progress-.18f));
+                    effect.Trace.SetPosition(0,tail);effect.Trace.SetPosition(1,head);continue;
+                }
+                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Contact)CreateImpact(effect);}
+                if(elapsed>=flight+impact){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
+            }
+        }
+        void CreateImpact(PelletEffect effect)
+        {
+            var impact=GameObject.CreatePrimitive(PrimitiveType.Sphere);impact.name="shot-impact";impact.transform.SetParent(effect.Root.transform,false);
+            impact.transform.position=effect.End+effect.Normal*.01f;impact.transform.localScale=Vector3.one*movement.Get("presentation.shotImpactSize");
+            var collider=impact.GetComponent<Collider>();if(collider)Object.Destroy(collider);
+            var renderer=impact.GetComponent<Renderer>();renderer.material=ShotMaterial();renderer.material.color=new Color(1f,.82f,.42f,.9f);
         }
         void OnRespawn(int seat)
         {
@@ -53,9 +107,11 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;
+            session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();
+            foreach(var pellet in pellets)if(pellet.Root)Object.Destroy(pellet.Root);
+            pellets.Clear();if(shotMaterial)Object.Destroy(shotMaterial);
             foreach(var body in bodies)if(body)body.SetActive(true);
             foreach(var view in views)if(view)view.SetActive(true);
         }
@@ -138,6 +194,7 @@ namespace StarTournament.ProvingGround
         }
         public void Render()
         {
+            RenderPellets();
             for(int c=corpses.Count-1;c>=0;c--)
             {
                 if(session.Time>=corpses[c].Expires) { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }

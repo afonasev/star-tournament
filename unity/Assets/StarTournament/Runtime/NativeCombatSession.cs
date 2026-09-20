@@ -11,6 +11,22 @@ namespace StarTournament.ProvingGround
         public readonly ParticipantState Pose;
         public DeathNotice(int seat, CombatLifeState life, ParticipantState pose) { Seat=seat; Life=life; Pose=pose; }
     }
+    public enum PelletContact { Miss, World, Participant }
+    public readonly struct PelletNotice
+    {
+        public readonly Vector3 Direction, Endpoint, Normal;
+        public readonly PelletContact Contact;
+        public readonly int TargetSeat, TargetLife;
+        public PelletNotice(Vector3 direction,Vector3 endpoint,Vector3 normal,PelletContact contact,int targetSeat=-1,int targetLife=0)
+        { Direction=direction;Endpoint=endpoint;Normal=normal;Contact=contact;TargetSeat=targetSeat;TargetLife=targetLife; }
+    }
+    public readonly struct ShotNotice
+    {
+        public readonly uint Sequence; public readonly int Shooter, ShooterLife; public readonly double Time; public readonly Vector3 Origin;
+        public readonly PelletNotice[] Pellets;
+        public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets)
+        { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets; }
+    }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -31,6 +47,7 @@ namespace StarTournament.ProvingGround
         public event Action<DeathNotice> Died;
         public event Action<int> Respawned;
         public event Action<int, float> Fired;
+        public event Action<ShotNotice> ShotResolved;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null)
         {
@@ -68,7 +85,7 @@ namespace StarTournament.ProvingGround
             }
             Physics.SyncTransforms();
             var targets=LiveTargets();
-            var shots=new List<(int shooter, int life, float[] damage)>();
+            var shots=new List<(int shooter, int life, ShotNotice notice, float[] damage)>();
             for (int i = 0; i < lives.Length; i++)
             {
                 bool held = actions[i].FireHeld || actions[i].Fire;
@@ -79,13 +96,18 @@ namespace StarTournament.ProvingGround
                 }
                 // A newly captured physical edge also records an intervening release between ticks.
                 if (actions[i].Fire) lives[i].ClearHeldInput();
-                if (lives[i].Fire(held)) shots.Add((i, Life(i).Life, ResolveShot(i, targets)));
+                if (lives[i].Fire(held))
+                {
+                    var result=ResolveShot(i,targets);
+                    shots.Add((i,Life(i).Life,result.notice,result.damage));
+                }
             }
             foreach(var shot in shots)
             {
                 float applied=0;
                 for(int t=0;t<targets.Length;t++) if(shot.damage[t]>0)
                     applied+=ApplyDamage(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.PelletCount, shot.shooter, shot.life).Applied;
+                ShotResolved?.Invoke(shot.notice);
                 Fired?.Invoke(shot.shooter,applied);
             }
             Match?.EndTick();
@@ -103,21 +125,29 @@ namespace StarTournament.ProvingGround
                 }
             }
         }
-        float[] ResolveShot(int shooter, CombatTarget[] targets)
+        (ShotNotice notice,float[] damage) ResolveShot(int shooter, CombatTarget[] targets)
         {
             ShotCount++; shotSequence++;
             var damage = new float[targets.Length];
             var pose = Pose(shooter); var aim = Quaternion.Euler(pose.Pitch, pose.Yaw, 0);
             var origin = pose.Position + Vector3.up*movement.Get("camera.eyeHeight");
+            var pellets=new PelletNotice[resolver.PelletCount];
             for (int pellet = 0; pellet < resolver.PelletCount; pellet++)
             {
                 Vector3 direction = resolver.Direction(aim, pellet, shotSequence);
-                float limit = physics.Raycast(origin, direction, out var wall, resolver.Range, 1 << ProvingArena.WorldLayer,
-                    QueryTriggerInteraction.Ignore) ? wall.distance : resolver.Range;
+                bool worldHit=physics.Raycast(origin,direction,out var wall,resolver.Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                float limit=worldHit ? wall.distance : resolver.Range;
                 var hit = resolver.Resolve(origin, direction, targets, shooter, limit);
-                if (hit.TargetIndex >= 0 && !Allied(shooter,targets[hit.TargetIndex].Seat)) damage[hit.TargetIndex] += resolver.FullDamage(hit.Zone);
+                if(hit.TargetIndex>=0)
+                {
+                    var target=targets[hit.TargetIndex];
+                    pellets[pellet]=new PelletNotice(direction,origin+direction*hit.Distance,-direction,PelletContact.Participant,target.Seat,target.Life);
+                    if(!Allied(shooter,target.Seat)) damage[hit.TargetIndex]+=resolver.FullDamage(hit.Zone);
+                }
+                else if(worldHit) pellets[pellet]=new PelletNotice(direction,wall.point,wall.normal,PelletContact.World);
+                else pellets[pellet]=new PelletNotice(direction,origin+direction*resolver.Range,-direction,PelletContact.Miss);
             }
-            return damage;
+            return (new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,pellets),damage);
         }
 
         bool Allied(int a,int b) => Match != null && Match.Roster.AreAllies(a,b);

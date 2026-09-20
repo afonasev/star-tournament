@@ -1,0 +1,17 @@
+{
+  "change": "add-unity-shot-feedback-mouse-sensitivity",
+  "profile": "unity-proving-ground-v1@1",
+  "muted": true,
+  "automated": {
+    "editMode": { "total": 87, "passed": 87 },
+    "playMode": { "total": 66, "passed": 66 },
+    "openspecStrict": "passed",
+    "macBuild": "passed"
+  },
+  "acceptance": {
+    "nativePlayerScreenshots": "pending",
+    "physicalInput": "open",
+    "artistic": "open",
+    "performance": "open"
+  }
+}

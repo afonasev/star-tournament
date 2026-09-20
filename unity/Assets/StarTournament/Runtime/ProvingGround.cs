@@ -109,7 +109,7 @@ namespace StarTournament.ProvingGround
         int frozenSeatCount=SeatInputCoordinator.SeatCount;
         int probeCameraCount;
         public int LocalSeatCount => input.ActiveSeatCount;
-        Button repeat, menu, diagnosticButton, durationButton, targetButton, targetMinus, targetPlus;
+        Button repeat, menu, diagnosticButton, durationButton, targetButton, targetMinus, targetPlus, mouseSensitivityMinus, mouseSensitivityPlus;
         public NativeCombatSession Session { get; private set; }
         CombatPresentation presentation;
         float previousFixedDelta;
@@ -132,6 +132,7 @@ namespace StarTournament.ProvingGround
             if (Profile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
+            Profile.EnsureDefaultDescriptors();
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             AudioListener.volume = 0; // QA is muted, including all Player diagnostics.
@@ -296,7 +297,7 @@ namespace StarTournament.ProvingGround
             {
                 if (!input.Ready) Pause("Устройство отключено: "+string.Join(", ",Enumerable.Range(0,LocalSeatCount).Where(i=>input.IsHumanSeat(i)&&!input.IsConnected(i)).Select(i=>"P"+(i+1))));
                 else if(input.HasKeyboard && Cursor.lockState!=CursorLockMode.Locked) Pause("Захват курсора потерян");
-                else { input.Capture(frozenMovement ?? Profile, Time.deltaTime); if (input.ConsumePause()) Pause("Пауза"); }
+                else { var activeProfile=frozenMovement??Profile; input.Capture(activeProfile,Time.deltaTime,MouseSensitivityPreference.Resolve(activeProfile)); if (input.ConsumePause()) Pause("Пауза"); }
             }
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
@@ -472,6 +473,11 @@ namespace StarTournament.ProvingGround
             if(path=="match.durationMinutes") config.DurationMinutes=value; else config.TargetPoints=value;
             config.Validate(MatchProfile); Configuration=config; RefreshInterface();
         }
+        void StepMouseSensitivity(int direction)
+        {
+            if(phase==Phase.Running)return;
+            MouseSensitivityPreference.Step(Profile,direction);RefreshInterface();
+        }
         void Pause(string reason) { BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(diagnostic||input.Ready ? resume : menu); }
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
@@ -551,6 +557,8 @@ namespace StarTournament.ProvingGround
             settings.gameObject.name = "fps-setting";
             fps = canvasObject.AddComponent<FpsDisplay>();
             fps.Initialize(font, (int)Profile.Get("ui.fontSize"), settings.GetComponentInChildren<Text>());
+            mouseSensitivityMinus=ButtonElement(column.transform,"Чувствительность мыши −",()=>StepMouseSensitivity(-1));mouseSensitivityMinus.gameObject.name="mouse-sensitivity-minus";
+            mouseSensitivityPlus=ButtonElement(column.transform,"Чувствительность мыши +",()=>StepMouseSensitivity(1));mouseSensitivityPlus.gameObject.name="mouse-sensitivity-plus";
             ButtonElement(column.transform,"Выйти",()=>Application.Quit());
             CreateBotSetupInterface();
             CreateSeatSetupInterface();
@@ -631,6 +639,12 @@ namespace StarTournament.ProvingGround
             targetButton.gameObject.SetActive(phase==Phase.Setup);
             targetMinus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
             targetPlus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
+            var sensitivityDescriptor=MouseSensitivityPreference.Descriptor(Profile);var sensitivity=MouseSensitivityPreference.Resolve(Profile);
+            mouseSensitivityMinus.gameObject.SetActive(phase!=Phase.Running);mouseSensitivityPlus.gameObject.SetActive(phase!=Phase.Running);
+            mouseSensitivityMinus.interactable=sensitivity>sensitivityDescriptor.Minimum;
+            mouseSensitivityPlus.interactable=sensitivity<sensitivityDescriptor.Maximum;
+            mouseSensitivityMinus.GetComponentInChildren<Text>().text=sensitivityDescriptor.Label+": "+sensitivity.ToString("0.00")+" "+sensitivityDescriptor.Unit+"   −";
+            mouseSensitivityPlus.GetComponentInChildren<Text>().text=sensitivityDescriptor.Label+": "+sensitivity.ToString("0.00")+" "+sensitivityDescriptor.Unit+"   +";
             durationButton.GetComponentInChildren<Text>().text="Длительность: "+Configuration.DurationMinutes+" мин   +";
             targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
             results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition);
