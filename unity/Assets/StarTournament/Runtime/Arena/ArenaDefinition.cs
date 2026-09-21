@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
     [Serializable] public sealed class ArenaDefinition
     {
         public uint Seed; public string GeneratorVersion, FamilyId, ProfileFingerprint, Identity;
-        public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors; public Vector3 ArmorPickupAnchor;
+        public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors; public Vector3 ArmorPickupAnchor, SpeedPickupAnchor;
         public ArenaSpawnRegion[] SpawnRegions; public NativeNavigationTransition[] Transitions;
         public ArenaDefinition Copy() => JsonUtility.FromJson<ArenaDefinition>(JsonUtility.ToJson(this));
     }

@@ -38,6 +38,16 @@
       "front": "+Z",
       "pivot": "feet-center",
       "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+    },
+    {
+      "key": "speed-pickup",
+      "path": "Assets/StarTournament/Art/speed-pickup-lod0.glb",
+      "sha256": "9b8338b9b8a15ebc2bea70168ccda81a3e29fef4d9e55860c48ce3ce4254a49a",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Authored locally for add-speed-boost-pickup with explicit user authorization 2026-09-21; renderer-only, no collision proxy."
     }
   ]
 }

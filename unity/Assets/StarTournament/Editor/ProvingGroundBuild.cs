@@ -42,6 +42,7 @@ namespace StarTournament.ProvingGround.Editor
             var root=new GameObject("Star Tournament Proving Ground").AddComponent<ProvingGround>();
             root.ArenaProfile.Set("arena.family",arenaFamily);
             TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
+            root.SpeedPickupPrefab=Required("speed-pickup");
             EditorSceneManager.SaveScene(scene,Scene);
             EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(Scene,true)};
             AssetDatabase.SaveAssets();

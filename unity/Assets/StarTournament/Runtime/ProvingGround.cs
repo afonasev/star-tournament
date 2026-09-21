@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround
 {
     public sealed class ProvingGround : MonoBehaviour
     {
-        public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab;
+        public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, SpeedPickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab;
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
@@ -112,7 +112,7 @@ namespace StarTournament.ProvingGround
         Button repeat, menu, diagnosticButton, durationButton, targetButton, targetMinus, targetPlus, mouseSensitivityMinus, mouseSensitivityPlus;
         public NativeCombatSession Session { get; private set; }
         CombatPresentation presentation;
-        GameObject armorPickupVisual; Material armorPickupMaterial, armorCoreMaterial;
+        GameObject armorPickupVisual, speedPickupVisual; Material armorPickupMaterial, armorCoreMaterial;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
         enum Phase { Setup, Running, Paused, Results }
@@ -153,6 +153,7 @@ namespace StarTournament.ProvingGround
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile);
             CreateArmorPickupVisual();
+            CreateSpeedPickupVisual();
             presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views);
             Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
             int countFlag=Array.IndexOf(args,"-probeCameras");
@@ -341,7 +342,7 @@ namespace StarTournament.ProvingGround
         void LateUpdate()
         {
             if(Session == null) return;
-            RenderArmorPickup();
+            RenderArmorPickup();RenderSpeedPickup();
             if(phase!=Phase.Setup) presentation.Render();
             var snapshot=Session.Match?.Read();
             persistentStandings.Show(phase!=Phase.Setup && frozenSeatCount==3,snapshot,diagnostic||combatReview,Composition);
@@ -503,7 +504,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(armorPickupVisual)Destroy(armorPickupVisual);if(armorPickupMaterial)Destroy(armorPickupMaterial);if(armorCoreMaterial)Destroy(armorCoreMaterial); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(armorPickupVisual)Destroy(armorPickupVisual);if(speedPickupVisual)Destroy(speedPickupVisual);if(armorPickupMaterial)Destroy(armorPickupMaterial);if(armorCoreMaterial)Destroy(armorCoreMaterial); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         void CreateArmorPickupVisual()
         {
             armorPickupVisual=Owned("armor-pickup-presentation");
@@ -520,6 +521,18 @@ namespace StarTournament.ProvingGround
             if(!armorPickupVisual||Session==null)return;var pickup=Session.ArmorPickup;armorPickupVisual.SetActive(pickup.Available);if(!pickup.Available)return;
             armorPickupVisual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.armorPickupHoverHeight");
             armorPickupVisual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.armorPickupRotationDegreesPerSecond")),0);
+        }
+        void CreateSpeedPickupVisual()
+        {
+            if(!SpeedPickupPrefab) throw new InvalidOperationException("Missing manifest-owned speed pickup prefab");
+            speedPickupVisual=Instantiate(SpeedPickupPrefab,transform);speedPickupVisual.name="speed-pickup-presentation";
+            foreach(var collider in speedPickupVisual.GetComponentsInChildren<Collider>())Destroy(collider);
+        }
+        void RenderSpeedPickup()
+        {
+            if(!speedPickupVisual||Session==null)return;var pickup=Session.SpeedPickup;speedPickupVisual.SetActive(pickup.Available);if(!pickup.Available)return;
+            speedPickupVisual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.speedPickupHoverHeight");
+            speedPickupVisual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.speedPickupRotationDegreesPerSecond")),0);
         }
         void CreateInterface()
         {

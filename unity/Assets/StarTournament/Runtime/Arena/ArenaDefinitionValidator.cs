@@ -46,6 +46,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<definition.Spawns.Length;i++) if(!OnNamedFloor(definition.Spawns[i],definition.Solids,supports)) return Reject("ARENA_INVALID_SPAWN",family,"spawn:"+i,"Spawn must resolve to a named floor support.");
             for(int i=0;i<definition.RouteAnchors.Length;i++) if(!OnNamedFloor(definition.RouteAnchors[i],definition.Solids,supports)) return Reject("ARENA_INVALID_ROUTE_ANCHOR",family,"route-anchor:"+i,"Route anchor must resolve to a named floor support.");
             if(!OnNamedFloor(definition.ArmorPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_ARMOR_PICKUP_ANCHOR",family,"armor-pickup","Armor pickup anchor must resolve to a named floor support.");
+            if(!OnNamedFloor(definition.SpeedPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_SPEED_PICKUP_ANCHOR",family,"speed-pickup","Speed pickup anchor must resolve to a named floor support.");
 
             ids.Clear(); foreach(var region in definition.SpawnRegions)
             {

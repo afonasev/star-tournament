@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         private ProvingProfile profile;
         private ParticipantState state;
         private bool initialized;
+        private float horizontalSpeedMultiplier=1f;
 
         public ParticipantState State => state;
 
@@ -45,6 +46,11 @@ namespace StarTournament.ProvingGround
             controller.enabled = alive;
             if (!alive) state.Velocity = Vector3.zero;
         }
+        public void SetHorizontalSpeedMultiplier(float multiplier)
+        {
+            if(float.IsNaN(multiplier)||float.IsInfinity(multiplier)||multiplier<=0)throw new System.ArgumentOutOfRangeException(nameof(multiplier));
+            horizontalSpeedMultiplier=multiplier;
+        }
 
         public void Tick(LocalAction action, float dt)
         {
@@ -61,7 +67,7 @@ namespace StarTournament.ProvingGround
             var moveInput = Vector2.ClampMagnitude(action.Move, 1f);
             var desiredDirection = (transform.right * moveInput.x) + (transform.forward * moveInput.y);
             desiredDirection.y = 0f;
-            var desiredHorizontalVelocity = desiredDirection * profile.Get("player.movement.maximumGroundSpeed");
+            var desiredHorizontalVelocity = desiredDirection * profile.Get("player.movement.maximumGroundSpeed")*horizontalSpeedMultiplier;
             var horizontalVelocity = new Vector3(state.Velocity.x, 0f, state.Velocity.z);
             var acceleration = groundedBeforeMove
                 ? (moveInput.sqrMagnitude > 0f ? profile.Get("player.movement.groundAcceleration") : profile.Get("player.movement.groundDeceleration"))

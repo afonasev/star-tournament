@@ -166,6 +166,11 @@ namespace StarTournament.ProvingGround
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
             profile.Add("armor.respawnSeconds", "armor-pickup", "Возврат бонуса", "Simulation-время до возвращения щита после подбора.", "seconds", 1, 120, 1, 30);
             profile.Add("armor.pickupRadius", "armor-pickup", "Радиус подбора", "Горизонтальный радиус authoritative подбора щита.", "meters", .1f, 5, .05f, 1.2f);
+            profile.Add("speed.multiplier", "speed-pickup", "Множитель скорости", "Множитель horizontal maximum speed во время speed bonus.", "ratio", 1.05f, 3, .05f, 1.5f);
+            profile.Add("speed.durationSeconds", "speed-pickup", "Длительность ускорения", "Simulation-время действия speed bonus.", "seconds", .1f, 60, .1f, 10);
+            profile.Add("speed.initialDelaySeconds", "speed-pickup", "Первое появление", "Simulation-время от старта матча до первого speed bonus.", "seconds", 0, 60, .1f, 10);
+            profile.Add("speed.respawnSeconds", "speed-pickup", "Возврат ускорения", "Simulation-время от успешного подбора до следующего speed bonus.", "seconds", .1f, 120, .1f, 20);
+            profile.Add("speed.pickupRadius", "speed-pickup", "Радиус подбора ускорения", "Горизонтальный authoritative радиус speed bonus.", "meters", .1f, 5, .05f, 1.2f);
             profile.Add("combat.startingAmmo", "shotgun", "Стартовый боезапас", "Количество выстрелов в начале жизни.", "ammo", 1, 200, 1, 20);
             profile.Add("combat.emptyRefillAmmo", "shotgun", "Пополнение при нуле", "Немедленный запас после последнего выстрела без сброса cooldown.", "ammo", 1, 100, 1, 20);
             profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела.", "seconds", .05f, 5, .05f, .7f);
@@ -204,6 +209,8 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.lightIntensity", "presentation", "Fixture light intensity", "Presentation-only fixture light intensity.", "intensity", .1f, 4f, .1f, 1.1f);
             profile.Add("presentation.armorPickupHoverHeight", "armor-pickup", "Высота парения щита", "Presentation-only высота бонуса над опорной поверхностью.", "meters", 0, 3, .01f, .7f);
             profile.Add("presentation.armorPickupRotationDegreesPerSecond", "armor-pickup", "Вращение щита", "Presentation-only скорость вращения бонуса.", "degrees-per-second", 0, 720, 1, 80);
+            profile.Add("presentation.speedPickupHoverHeight", "speed-pickup", "Высота парения ускорения", "Presentation-only высота speed bonus над опорной поверхностью.", "meters", 0, 3, .01f, .7f);
+            profile.Add("presentation.speedPickupRotationDegreesPerSecond", "speed-pickup", "Вращение ускорения", "Presentation-only скорость вращения speed bonus.", "degrees-per-second", 0, 720, 1, 110);
             profile.Add("presentation.viewWeaponX", "presentation", "View weapon X", "First-person weapon mount horizontal translation from camera origin.", "meters", -2f, 2f, .01f, .36f);
             profile.Add("presentation.viewWeaponY", "presentation", "View weapon Y", "First-person weapon mount vertical translation from camera origin.", "meters", -2f, 2f, .01f, -.34f);
             profile.Add("presentation.viewWeaponZ", "presentation", "View weapon Z", "First-person weapon mount forward translation from camera origin.", "meters", -2f, 2f, .01f, .68f);

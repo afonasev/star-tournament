@@ -48,7 +48,7 @@ namespace StarTournament.ProvingGround
             var transitions=AddTransitions(Box,w,lo,hi,ft,wt,rw,run,p.Get("fixture.stairRise"),p.Get("fixture.stairTread"),lower,upper);
             var spawns=new Vector3[SeatInputCoordinator.SeatCount];for(int i=0;i<spawns.Length;i++)spawns[i]=new Vector3((i-(spawns.Length-1)/2f)*rw,lo,-d/2+rw/2+(i%2)*rw);
             float upperAnchorX=family==PerimeterGallery?-w/2+rw/2:family==SplitBalconies?-w/4:family==StackedCombat?-w/3:0;
-            return new ArenaDefinition{Solids=solids.ToArray(),Spawns=spawns,ArmorPickupAnchor=new Vector3(0,lo,0),RouteAnchors=new[]{new Vector3(0,lo,-d/2+rw/2),new Vector3(upperAnchorX,hi,d/4)},
+            return new ArenaDefinition{Solids=solids.ToArray(),Spawns=spawns,ArmorPickupAnchor=new Vector3(0,lo,0),SpeedPickupAnchor=new Vector3(w/2-rw,lo,d/2-rw),RouteAnchors=new[]{new Vector3(0,lo,-d/2+rw/2),new Vector3(upperAnchorX,hi,d/4)},
                 SpawnRegions=new[]{new ArenaSpawnRegion{Id="spawn:"+lower,Support=lower,Center=new Vector3(0,lo,0),Size=new Vector3(w,0,d)},new ArenaSpawnRegion{Id="spawn:"+upper,Support=upper,Center=new Vector3(0,hi,d/4),Size=new Vector3(w,0,d/2)}},Transitions=transitions};
         }
         delegate void AddBox(string id,Vector3 position,Vector3 size,string material,string support,int layer,Quaternion? rotation);
