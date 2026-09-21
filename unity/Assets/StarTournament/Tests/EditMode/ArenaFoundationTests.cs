@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(result.IsValid,Is.True,result.ToString());
             }
         }
-        [TestCase("solid")] [TestCase("layer")] [TestCase("spawn")] [TestCase("region")] [TestCase("transition")]
+        [TestCase("solid")] [TestCase("layer")] [TestCase("spawn")] [TestCase("armor")] [TestCase("region")] [TestCase("transition")]
         public void ArenaFourValidator_RejectsMutatedCanonicalDataWithElementDiagnostic(string mutation)
         {
             var definition=Generate().Copy(); string expected;
@@ -61,6 +61,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 case "solid": definition.Solids[0].Size.x=0; expected="ARENA_INVALID_SOLID_GEOMETRY"; break;
                 case "layer": definition.Solids[0].Layer=0; expected="ARENA_INVALID_COLLISION_LAYER"; break;
                 case "spawn": definition.Spawns[0].y=99; expected="ARENA_INVALID_SPAWN"; break;
+                case "armor": definition.ArmorPickupAnchor.y=99; expected="ARENA_INVALID_ARMOR_PICKUP_ANCHOR"; break;
                 case "region": definition.SpawnRegions[0].Support="missing"; expected="ARENA_UNKNOWN_SPAWN_SUPPORT"; break;
                 default: definition.Transitions[0].OrderedFeet[0].y=99; expected="ARENA_INVALID_TRANSITION_ENDPOINT"; break;
             }

@@ -8,6 +8,7 @@ namespace StarTournament.ProvingGround
         public string ParticipantId;
         public int Life;
         public float Health;
+        public float Armor;
         public int Ammo;
         public bool Dead;
         public bool FireHeld;
@@ -31,7 +32,7 @@ namespace StarTournament.ProvingGround
     /// </summary>
     public sealed class CombatLife
     {
-        readonly float maximumHealth;
+        readonly float maximumHealth, maximumArmor;
         readonly int startingAmmo, refillAmmo;
         readonly double cooldown, respawnDelay;
         CombatLifeState state;
@@ -41,9 +42,13 @@ namespace StarTournament.ProvingGround
         public CombatLife(string participantId, ProvingProfile profile)
         {
             if (string.IsNullOrWhiteSpace(participantId)) throw new ArgumentException("Participant identity required", nameof(participantId));
+            if(profile==null) throw new ArgumentException("Valid unity-combat-state-v1 profile required",nameof(profile));
+            profile=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(profile));
+            profile.EnsureCombatDescriptors();
             if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 1 || profile.Validate().Count != 0)
                 throw new ArgumentException("Valid unity-combat-state-v1 profile required", nameof(profile));
             maximumHealth = profile.Get("combat.maximumHealth");
+            maximumArmor = profile.Get("armor.maximum");
             startingAmmo = IntegerAmmo(profile.Get("combat.startingAmmo"));
             refillAmmo = IntegerAmmo(profile.Get("combat.emptyRefillAmmo"));
             cooldown = profile.Get("combat.cooldownSeconds");
@@ -67,6 +72,16 @@ namespace StarTournament.ProvingGround
         }
 
         public void ClearHeldInput() { state.FireHeld = false; }
+        public void GrantArmor(float amount)
+        {
+            if(float.IsNaN(amount)||float.IsInfinity(amount)||amount<0) throw new ArgumentOutOfRangeException(nameof(amount));
+            state.Armor=Math.Min(maximumArmor,state.Armor+amount);
+        }
+        public void Restore(CombatLifeState snapshot)
+        {
+            if(snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0) throw new ArgumentException("Invalid combat life snapshot",nameof(snapshot));
+            state=snapshot;
+        }
 
         public bool Fire(bool held)
         {
@@ -87,7 +102,9 @@ namespace StarTournament.ProvingGround
             if ((killerId == null && killerLife != 0) || (killerId != null && (string.IsNullOrWhiteSpace(killerId) || killerLife < 1)))
                 throw new ArgumentException("Killer requires both participant and life identity");
             if (state.Dead || state.Life != targetLife || amount == 0) return default;
-            float applied = Math.Min(state.Health, amount);
+            float absorbed=Math.Min(state.Armor,amount);
+            state.Armor-=absorbed;
+            float applied = Math.Min(state.Health, amount-absorbed);
             state.Health -= applied;
             bool killed = state.Health <= 0;
             if (killed)

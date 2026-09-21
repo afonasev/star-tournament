@@ -27,6 +27,7 @@ namespace StarTournament.ProvingGround
         public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets)
         { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets; }
     }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public double Time; public CombatLifeState[] Lives; public ArmorPickupState ArmorPickup; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -36,6 +37,8 @@ namespace StarTournament.ProvingGround
         readonly ShotgunResolver resolver;
         readonly ProvingProfile movement;
         readonly bool[] releaseRequired;
+        readonly bool[] armorPickupWasOutside;
+        readonly ArmorPickup armorPickup;
         uint shotSequence;
         bool stopped;
         public NativeMatchState Match { get; }
@@ -44,6 +47,14 @@ namespace StarTournament.ProvingGround
         public SafeSpawnSelector Spawns { get; }
         public double Time { get; private set; }
         public int ShotCount { get; private set; }
+        public ArmorPickupState ArmorPickup => armorPickup.Read();
+        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { Time=Time,Lives=Array.ConvertAll(lives,life=>life.Read()),ArmorPickup=armorPickup.Read() };
+        public void Restore(NativeCombatSessionSnapshot snapshot)
+        {
+            if(snapshot==null||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
+            for(int i=0;i<lives.Length;i++)lives[i].Restore(snapshot.Lives[i]);armorPickup.Restore(snapshot.ArmorPickup);Time=snapshot.Time;
+            for(int i=0;i<lives.Length;i++)armorPickupWasOutside[i]=!armorPickup.InRange(Pose(i).Position);
+        }
         public event Action<DeathNotice> Died;
         public event Action<int> Respawned;
         public event Action<int, float> Fired;
@@ -57,8 +68,10 @@ namespace StarTournament.ProvingGround
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
             resolver = new ShotgunResolver(tuning, movement.Get("player.capsule.height"));
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
-            lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];
+            lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];armorPickupWasOutside=new bool[motors.Length];
             for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle);
+            armorPickup=new ArmorPickup(arena.Definition.ArmorPickupAnchor,lifecycle);
+            for(int i=0;i<motors.Length;i++)armorPickupWasOutside[i]=!armorPickup.InRange(motors[i].State.Position);
         }
         public CombatLifeState Life(int seat) => lives[seat].Read();
         public ParticipantState Pose(int seat) => motors[seat].State;
@@ -78,12 +91,19 @@ namespace StarTournament.ProvingGround
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return;
             Match?.BeginTick();
             Time += seconds;
+            armorPickup.Advance(seconds);
             for (int i = 0; i < lives.Length; i++)
             {
                 lives[i].Advance(seconds);
                 if (!Life(i).Dead) motors[i].Tick(actions[i], seconds);
             }
             Physics.SyncTransforms();
+            for(int i=0;i<lives.Length;i++)
+            {
+                bool outside=!armorPickup.InRange(Pose(i).Position);
+                if(armorPickupWasOutside[i]&&!outside) armorPickup.TryCollect(Pose(i).Position,lives[i]);
+                armorPickupWasOutside[i]=outside;
+            }
             var targets=LiveTargets();
             var shots=new List<(int shooter, int life, ShotNotice notice, float[] damage)>();
             for (int i = 0; i < lives.Length; i++)

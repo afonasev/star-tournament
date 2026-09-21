@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile CombatProfile = ProvingProfile.CreateNativeCombatDefault();
         GameObject[] bodies = Array.Empty<GameObject>();
         readonly GameObject[] views = new GameObject[SeatInputCoordinator.SeatCount];
-        readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
+        readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], armor = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
         LocalAction[] localActions = new LocalAction[SeatInputCoordinator.SeatCount];
         public ProvingProfile BotPerceptionProfile = ProvingProfile.CreateBotPerceptionDefault();
@@ -112,6 +112,7 @@ namespace StarTournament.ProvingGround
         Button repeat, menu, diagnosticButton, durationButton, targetButton, targetMinus, targetPlus, mouseSensitivityMinus, mouseSensitivityPlus;
         public NativeCombatSession Session { get; private set; }
         CombatPresentation presentation;
+        GameObject armorPickupVisual; Material armorPickupMaterial, armorCoreMaterial;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
         enum Phase { Setup, Running, Paused, Results }
@@ -151,6 +152,7 @@ namespace StarTournament.ProvingGround
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile);
+            CreateArmorPickupVisual();
             presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views);
             Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
             int countFlag=Array.IndexOf(args,"-probeCameras");
@@ -339,13 +341,15 @@ namespace StarTournament.ProvingGround
         void LateUpdate()
         {
             if(Session == null) return;
+            RenderArmorPickup();
             if(phase!=Phase.Setup) presentation.Render();
             var snapshot=Session.Match?.Read();
             persistentStandings.Show(phase!=Phase.Setup && frozenSeatCount==3,snapshot,diagnostic||combatReview,Composition);
             for(int i=0;i<Composition.LocalCount;i++) if(hud[i])
             {
                 int participant=Composition.ParticipantAt(i);var life=Session.Life(participant);
-                health[i].text="ЗДОРОВЬЕ  "+Mathf.CeilToInt(life.Health);
+                health[i].text="♥ "+Mathf.CeilToInt(life.Health);
+                armor[i].gameObject.SetActive(life.Armor>0); if(life.Armor>0) armor[i].text="⬡ "+Mathf.CeilToInt(life.Armor);
                 ammo[i].text="ДВУСТВОЛКА  ·  "+life.Ammo;
                 crosshair[i].text=life.Dead ? presentation.DeathMessage(participant) : "+";
                 var match=Session.Match;
@@ -499,7 +503,24 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(armorPickupVisual)Destroy(armorPickupVisual);if(armorPickupMaterial)Destroy(armorPickupMaterial);if(armorCoreMaterial)Destroy(armorCoreMaterial); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void CreateArmorPickupVisual()
+        {
+            armorPickupVisual=Owned("armor-pickup-presentation");
+            var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
+            armorPickupMaterial=new Material(shader){color=new Color(.08f,.85f,1f,.72f)};armorCoreMaterial=new Material(shader){color=Color.white};
+            foreach(var item in new[]{(PrimitiveType.Cylinder,"glass-shield",armorPickupMaterial,new Vector3(.58f,.08f,.58f)),(PrimitiveType.Cylinder,"hex-core",armorCoreMaterial,new Vector3(.2f,.12f,.2f))})
+            {
+                var part=GameObject.CreatePrimitive(item.Item1);part.name=item.Item2;part.transform.SetParent(armorPickupVisual.transform,false);part.transform.localScale=item.Item4;
+                var collider=part.GetComponent<Collider>();if(collider)Destroy(collider);part.GetComponent<Renderer>().material=item.Item3;
+            }
+        }
+        void RenderArmorPickup()
+        {
+            if(!armorPickupVisual||Session==null)return;var pickup=Session.ArmorPickup;armorPickupVisual.SetActive(pickup.Available);if(!pickup.Available)return;
+            armorPickupVisual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.armorPickupHoverHeight");
+            armorPickupVisual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.armorPickupRotationDegreesPerSecond")),0);
+        }
         void CreateInterface()
         {
             var eventSystem = Owned("input-events"); eventSystem.AddComponent<EventSystem>(); eventSystem.AddComponent<InputSystemUIInputModule>();
@@ -519,8 +540,9 @@ namespace StarTournament.ProvingGround
                 hud[i].rectTransform.offsetMin=Vector2.one*padding;hud[i].rectTransform.offsetMax=-Vector2.one*padding;
                 hud[i].alignment = TextAnchor.UpperLeft;
                 health[i] = TextElement(viewportRoots[i],"health-"+i,"",(int)Profile.Get("ui.fontSize"));
+                armor[i] = TextElement(viewportRoots[i],"armor-"+i,"",(int)Profile.Get("ui.fontSize"));
                 ammo[i] = TextElement(viewportRoots[i],"ammo-"+i,"",(int)Profile.Get("ui.fontSize"));
-                foreach(var label in new[]{health[i],ammo[i]})
+                foreach(var label in new[]{health[i],armor[i],ammo[i]})
                 {
                     Layout(label.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));
                     label.rectTransform.offsetMin=Vector2.one*padding; label.rectTransform.offsetMax=-Vector2.one*padding;
@@ -528,7 +550,7 @@ namespace StarTournament.ProvingGround
                 timers[i]=TextElement(viewportRoots[i],"timer-"+i,"",(int)Profile.Get("ui.fontSize"));
                 Layout(timers[i].rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));
                 timers[i].rectTransform.offsetMax=-Vector2.one*padding; timers[i].alignment=TextAnchor.UpperCenter;
-                health[i].alignment=TextAnchor.LowerLeft; ammo[i].alignment=TextAnchor.LowerRight;
+                health[i].alignment=TextAnchor.LowerLeft;armor[i].alignment=TextAnchor.LowerLeft;armor[i].rectTransform.offsetMin+=Vector2.up*(padding*1.2f);armor[i].rectTransform.offsetMax+=Vector2.up*(padding*1.2f);health[i].color=new Color32(255,72,72,255);armor[i].color=new Color32(55,234,255,255); ammo[i].alignment=TextAnchor.LowerRight;
                 var cross = TextElement(viewportRoots[i],"crosshair-"+i,"+",(int)Profile.Get("ui.headingFontSize"));
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
             }
