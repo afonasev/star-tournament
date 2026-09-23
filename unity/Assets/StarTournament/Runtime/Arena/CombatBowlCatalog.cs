@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="8", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="9", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -84,13 +84,7 @@ namespace StarTournament.ProvingGround
             Grate("bridge-north",-2,2,8,18);Grate("bridge-south",-2,2,-18,-8);
             Roof("north-roof",-28,28,12,24,8);Roof("south-roof",-28,28,-24,-12,8);
             Roof("west-roof",-28,-16,-12,12,8);Roof("east-roof",16,28,-12,12,8);
-            // Opaque architectural soffits over the two lower spawn recesses protect them from
-            // grated-upper observers. They are part of the central shell, not eight spawn cages.
-            Roof("north-inner-soffit",-16,-4,12,20,2.6f);Roof("south-inner-soffit",4,16,-20,-12,2.6f);
-            Wall("north-inner-return-west",-16,12,-16,18,0,3.6f);Wall("north-inner-return-east",-4,12,-4,18,0,3.6f);
-            Wall("north-inner-offset-front",-16,18,-8,18,0,3.6f);
-            Wall("south-inner-return-west",4,-18,4,-12,0,3.6f);Wall("south-inner-return-east",16,-18,16,-12,0,3.6f);
-            Wall("south-inner-offset-front",8,-18,16,-18,0,3.6f);
+            // F3: R7 lower spawn anchors stay in the open flank; no extra cubbies or low soffits.
             Wall("inner-north-west",-16,12,-2.8f,12,0,4.2f);Wall("inner-north-east",2.8f,12,16,12,0,4.2f);
             Wall("inner-south-west",-16,-12,-2.8f,-12,0,4.2f);Wall("inner-south-east",2.8f,-12,16,-12,0,4.2f);
             Wall("hall-west-south",-6.2f,-8,-6.2f,1.8f,4,8);Wall("hall-west-north",-6.2f,6.2f,-6.2f,8,4,8);
@@ -144,7 +138,7 @@ namespace StarTournament.ProvingGround
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-36,36,8.4f);
             // Opaque hull piers, sills and headers surround smaller glazed openings.
-            // Every dimension below becomes range-validated authoring metadata, frozen in revision 8.
+            // Every dimension below becomes range-validated authoring metadata, frozen in revision 9.
             foreach(int side in new[]{-1,1})foreach(bool alongX in new[]{false,true})
             {
                 string axis=alongX?"z":"x",prefix="hull-"+axis+"-"+side;

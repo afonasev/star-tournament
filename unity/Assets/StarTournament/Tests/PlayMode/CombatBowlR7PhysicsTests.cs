@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests
             for(int count=2;count<=8;count++)Assert.That(spawn.TryInitial(NativeMatchRoster.Ffa(count),ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation"),out var positions),Is.True,$"FFA {count}: {spawn.InitialFailure}");
             yield return null;
         }
-        [UnityTest] public IEnumerator UpperGratingObserversCannotSeeCornerAndLowerSpawnBodies()
+        [UnityTest] public IEnumerator UpperGratingObserversCannotSeeCornerSpawnBodies()
         {
             foreach(var s in arena.Definition.Solids.Where(x=>x.Surface=="grating"))
             {
@@ -35,16 +35,29 @@ namespace StarTournament.ProvingGround.Tests
                 for(float z=-s.Size.z/2+inset;z<=s.Size.z/2-inset;z+=step)
                 {
                     var observer=s.Position+new Vector3(x,s.Size.y/2,z);
-                    foreach(int target in new[]{0,1,2,3,4,7})Assert.That(spawn.BodyVisible(observer,arena.Spawns[target]),Is.False,$"{s.Id} observer {observer} sees spawn {target} {arena.Spawns[target]}");
+                    foreach(int target in new[]{0,1,2,3})Assert.That(spawn.BodyVisible(observer,arena.Spawns[target]),Is.False,$"{s.Id} observer {observer} sees spawn {target} {arena.Spawns[target]}");
                 }
             }
             yield return null;
         }
-        [UnityTest] public IEnumerator LowerSpawnsAreHiddenAtBothSeparatedEntryApproaches()
+        [UnityTest] public IEnumerator LowerSpawnFlanksAreOpenWithoutAddedWallsOrLowCeilings()
         {
-            foreach(int side in new[]{-1,1})foreach(float x in new[]{-17f,-15f,-13f,13f,15f,17f})
-                foreach(float z in new[]{24.5f,26f,28f})
-                    Assert.That(spawn.BodyVisible(new Vector3(x,0,side*z),arena.Spawns[side>0?4:7]),Is.False,$"Entry {x},{side*z} exposes lower spawn");
+            foreach(int side in new[]{-1,1})
+            {
+                var route=new[]{new Vector3(-18*side,0,15*side),new Vector3(-10*side,0,15*side),new Vector3(-6*side,0,19*side)};
+                var go=new GameObject("open-spawn-flank-motor");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,route[0]);
+                foreach(var goal in route.Skip(1))
+                {
+                    for(int tick=0;tick<300;tick++)
+                    {
+                        var delta=goal-motor.State.Position;var move=new Vector2(delta.x,delta.z);if(move.magnitude<.2f)break;
+                        motor.Tick(new LocalAction{Move=move.normalized},1f/60);Physics.SyncTransforms();
+                    }
+                    Assert.That(Vector3.Distance(motor.State.Position,goal),Is.LessThan(.3f),$"Lower flank {side}: {motor.State.Position} -> {goal}");
+                }
+                Object.DestroyImmediate(go);
+            }
             yield return null;
         }
         [UnityTest] public IEnumerator OuterCorridorToBalconyAllowsDirectWalkingWithoutDetours()
