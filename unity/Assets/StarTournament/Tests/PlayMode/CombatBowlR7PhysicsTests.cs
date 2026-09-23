@@ -47,6 +47,31 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(spawn.BodyVisible(new Vector3(x,0,side*z),arena.Spawns[side>0?4:7]),Is.False,$"Entry {x},{side*z} exposes lower spawn");
             yield return null;
         }
+        [UnityTest] public IEnumerator OuterCorridorToBalconyAllowsDirectWalkingWithoutDetours()
+        {
+            var failures=new System.Collections.Generic.List<string>();
+            foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
+            foreach(bool reverse in new[]{false,true})foreach(float speed in new[]{1f,ProvingProfile.CreateCombatDefault().Get("speed.multiplier")})
+            {
+                var points=new[]{new Vector3(sx*32,4,sz*17),new Vector3(sx*32,4,sz*26),new Vector3(sx*24,4,sz*18)};
+                if(reverse)System.Array.Reverse(points);
+                var go=new GameObject("direct-diagonal-motor");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,points[0]);motor.SetHorizontalSpeedMultiplier(speed);
+                foreach(var goal in points.Skip(1))
+                {
+                    for(int tick=0;tick<300;tick++)
+                    {
+                        var delta=goal-motor.State.Position;var horizontal=new Vector2(delta.x,delta.z);
+                        if(horizontal.magnitude<.2f)break;
+                        motor.Tick(new LocalAction{Move=horizontal.normalized},1f/60);Physics.SyncTransforms();
+                    }
+                    if(Vector3.Distance(goal,motor.State.Position)>.3f)
+                        failures.Add($"corner {sx},{sz}, reverse={reverse}, speed={speed}, goal={goal}, stopped={motor.State.Position}");
+                }
+                Object.DestroyImmediate(go);
+            }
+            Assert.That(failures,Is.Empty,string.Join("\n",failures));yield return null;
+        }
         [UnityTest] public IEnumerator WideDiagonalsTraverseBothDirectionsAtNormalAndBoostedSpeed()
         {
             var tuning=ProvingProfile.CreateNavigationDefault();var provider=new NativeNavigationProvider(arena,movement,tuning);
