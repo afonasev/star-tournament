@@ -52,6 +52,35 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.GetComponentsInChildren<AudioListener>(true).Length,Is.EqualTo(1));
             Assert.That(ground.GetComponentsInChildren<ProvingArena>(true).Length,Is.EqualTo(1));
         }
+        [UnityTest] public IEnumerator SharedTimerAndPerSeatHudFollowOneToFourViewportLayouts()
+        {
+            yield return Load();
+            ground.AddBot(); // A single viewport still needs an opponent in the match roster.
+            foreach(int count in new[]{1,2,3,4})
+            {
+                if(count==2)ground.RemoveBot(0);
+                ground.StartCombatReview(pads.Take(count).ToArray());
+                yield return null;yield return new WaitForFixedUpdate();yield return null;
+                Assert.That(ground.Running,Is.True);
+                var panel=ground.transform.Find("native-ui/match-timer-panel").GetComponent<RectTransform>();
+                Assert.That(panel.gameObject.activeSelf,Is.True);
+                Assert.That(panel.Find("match-timer").GetComponent<Text>().text,Does.Match(@"^\d\d:\d\d$"));
+                Assert.That(panel.anchorMin,Is.EqualTo(count<3?new Vector2(.5f,1):new Vector2(.5f,.5f)));
+                Assert.That(ground.GetComponentsInChildren<Text>(true).Count(t=>t.name=="match-timer"),Is.EqualTo(1));
+                for(int seat=0;seat<count;seat++)
+                {
+                    var root=ground.transform.Find("native-ui/seat-viewport-"+seat);
+                    Assert.That(root.Find("timer-"+seat),Is.Null);
+                    var name=root.Find("seat-name-"+seat).GetComponent<Text>();
+                    Assert.That(name.text,Does.Contain("Игрок"));
+                    Assert.That(name.alignment,Is.EqualTo(TextAnchor.LowerCenter));
+                    var icons=root.GetComponentsInChildren<HudIndicatorIcon>(true);
+                    Assert.That(icons.Select(i=>i.Kind),Is.EquivalentTo(new[]{HudIndicatorIcon.IconKind.Heart,HudIndicatorIcon.IconKind.Shield,HudIndicatorIcon.IconKind.Cartridges}));
+                    Assert.That(root.GetComponentsInChildren<Text>(true).Single(t=>t.name=="ammo-"+seat).text,Does.Not.Contain("ДВУСТВОЛКА"));
+                }
+                Button("В главное меню").onClick.Invoke();yield return null;
+            }
+        }
         [UnityTest] public IEnumerator ChangingRosterAndRepeatingCannotLeaveHiddenParticipantsOrStaleRows()
         {
             yield return Load();
