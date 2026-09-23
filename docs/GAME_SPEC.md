@@ -32,7 +32,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 - Speed pickup (2026-09-21): жёлтый renderer-only GLB `speed-pickup-lod0.glb` адресуется manifest key `speed-pickup` и не создаёт collider, projectile occlusion или navigation geometry. Authoritative simulation first makes it available через 10 seconds; successful collection даёт 1.5x horizontal maximum speed на 10 seconds, immediately clears on death и запускает единственный 20-second respawn cooldown. Это не независимая periodic match-clock попытка spawn. Все числовые lifecycle/presentation параметры принадлежат versioned Balance Lab profile; snapshot хранит availability, cooldown и active effect.
 
-- Combat Bowl structural plan (2026-09-21): первая authored-карта `combat-bowl-v1@1` — компактный 2–4 participant Combat Bowl с открытым `central-encounter`, разными `left-flank`/`right-flank`, защищённым `lower-loop`, двумя разнесёнными двусторонними переходами `west-rise`/`east-rise` и двумя противоположными spawn clusters на lower loop. Setup явно выбирает `authored` либо `procedural`; authored выбор хранит immutable map ID/revision в initial snapshot и Repeat. Roster 5–8 для Combat Bowl отклоняется до initial tick без roster mutation или procedural fallback. `central-major-bonus`, `upper-weapon-zone`, `left-minor-bonus` и `right-minor-bonus` пока только semantic anchors без entity/effect. Обычные profile/Lab edits не меняют published карту; новый revision появляется только от явного edit/rebuild и отдельного review. Это structural plan, а не Unity scene, collision/NavMesh, assets, item system или playable acceptance; их реализует отдельный greybox change.
+- Combat Bowl authored layout (уточнение 2026-09-23): карта для 2–4 участников сохраняет central encounter, разные фланги, lower-loop и два разнесённых двусторонних подъёма. Пользователь выбрал четыре угловые spawn-комнаты, четыре колонны-укрытия вокруг усиления урона в центре главного зала и сквозной коридор север—юг под залом с бронёй. Между залом и коридором — сплошное перекрытие и разные named supports; pickup reach и выстрелы не проходят сквозь пол. Используются утверждённые правила бонусов без нового баланса. Setup различает authored/procedural, хранит immutable ID/revision в snapshot и Repeat; roster 5–8 отклоняется до tick без подмены. Lab не перестраивает published карту. Текущая схема P2 и её размеры ещё ожидают визуального согласования; Unity implementation и playable acceptance не заявлены. Shared change: `combat-bowl-greybox-validation`.
 
 - Native Unity shot feedback и mouse sensitivity (2026-09-20): существующий hitscan-дробовик получает derived renderer-only пути отдельных дробин до authoritative stopping point и краткий material-aware impact без collision, decals, damage, ammo, cooldown, replay state или gameplay RNG. В local first-person отображаемый capsule streak начинается на profile-controlled коротком зазоре после видимого muzzle mount, чтобы не сливаться с muzzle burst; его endpoint остаётся authoritative. Normal Settings UI даёт keyboard/mouse игроку сохраняемый user override чувствительности в тех же градусах на пиксель, что и профильный default; его stable descriptor, UI label/description/unit/range/step и validation принадлежат именованному Balance Lab profile `unity-proving-ground-v1@1`. Override применяется только к mouse look при создании action frame, не входит в snapshot и не влияет на gamepad; отсутствие или невалидность возвращает profile default. Настройка доступна вне captured gameplay и не меняет существующий cursor/focus/pause lifecycle. Это не вводит ARENA-3/4/5, replay, сетевую модель, assets, delivery или acceptance.
 
@@ -219,6 +219,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 10. Открытые решения
 
+- Combat Bowl: явное согласование полной схемы P2, включая проектную высоту главного зала для прохода под ним; после него — native Unity реализация и Player acceptance.
+
 - Отложено пользователем: детальная схема replay по состояниям Unity-версии, частота записи, события/seek, restore продолжения игры и необходимость поддержки исторических browser-записей.
 
 - Сетевая модель, платформы и требования к latency/region.
@@ -226,6 +228,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Бюджет и лицензии платных motor/navigation/generator расширений за пределами бесплатного первого среза.
 
 ## 11. Журнал изменений
+
+- 2026-09-23: пользователь заменил центральную стену Combat Bowl четырьмя колоннами, перенёс спавны в четыре угла, добавил нижний проход север—юг; выбрал усиление урона наверху и броню внизу. Прежние два боковых spawn-кластера и закрытый цоколь заменены новым планом, полная схема P2 ещё не принята.
 
 - 2026-09-20: утверждён ограниченный native Unity ARENA-1: отдельная каноническая identity `seed`/`generatorVersion`/profile для current two-level proving-ground layout и independent generation до матча. Пространственные семейства, полная валидация, replay и fallback намеренно оставлены следующими срезами.
 
