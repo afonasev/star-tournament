@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
     public sealed class NativeStandingsView
     {
         public GameObject Root { get; }
+        public float TopInset { get; set; }
         readonly Text[,] cells = new Text[11,7];
         readonly Image[] backgrounds = new Image[10];
         // Participant identities use the vetted palette. Grid ratios are layout structure, not gameplay tuning.
@@ -59,14 +60,15 @@ namespace StarTournament.ProvingGround
             }
             else foreach(var row in state.Standings) entries.Add((row,NativeTeam.None,0));
             int rowCount=Math.Max(5,entries.Count+1);
-            Rect((RectTransform)cells[0,0].transform.parent,new Vector2(0,1-1f/rowCount),Vector2.one);
+            float contentHeight=1-Mathf.Clamp01(TopInset/Mathf.Max(1,((RectTransform)Root.transform).rect.height));
+            Rect((RectTransform)cells[0,0].transform.parent,new Vector2(0,contentHeight*(1-1f/rowCount)),new Vector2(1,contentHeight));
             int maximum=state.Standings.Length>0?state.Standings[0].Score:0;
             for(int r=0;r<backgrounds.Length;r++)
             {
                 var root=backgrounds[r].gameObject;root.SetActive(r<entries.Count);
                 for(int c=0;c<7;c++) cells[r+1,c].text="";
                 if(r>=entries.Count) continue;
-                Rect((RectTransform)root.transform,new Vector2(0,1-(r+2f)/rowCount),new Vector2(1,1-(r+1f)/rowCount));
+                Rect((RectTransform)root.transform,new Vector2(0,contentHeight*(1-(r+2f)/rowCount)),new Vector2(1,contentHeight*(1-(r+1f)/rowCount)));
                 var entry=entries[r];
                 if(!entry.player.HasValue)
                 {
