@@ -105,6 +105,12 @@ namespace StarTournament.ProvingGround
             foreach(var light in shadowLights)light.enabled=false;
             yield return Capture("17a-basement-ceiling-lights-disabled-diagnostic");
             foreach(var light in shadowLights)light.enabled=true;
+            ground.PlaceCombatReviewSeat(1,new Vector3(-12,0,32),0,90);
+            artCamera.transform.position=new Vector3(0,1.6f,32);artCamera.transform.LookAt(new Vector3(-12,1.1f,32));
+            yield return Capture("17b-live-outer-ring-opponent");
+            ground.PlaceCombatReviewSeat(1,new Vector3(0,4,13),0,180);
+            artCamera.transform.position=new Vector3(0,6,5);artCamera.transform.LookAt(new Vector3(0,5,13));
+            yield return Capture("17c-live-north-bridge-opponent");
             Time.timeScale=reviewTimeScale;
             // Park actors outside the architectural shots after the gameplay readability capture.
             for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
