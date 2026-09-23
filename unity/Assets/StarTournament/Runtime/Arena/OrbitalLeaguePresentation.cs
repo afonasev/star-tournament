@@ -36,6 +36,7 @@ namespace StarTournament.ProvingGround
             ceiling=Surface("Service ceiling",p.Get("surface.wallValue")*p.Get("surface.ceilingValue"),false);
             trim=Flat("Anodized graphite",Palette("trim"));
             cyan=Flat("League cyan",Palette("cyan"));
+            InitializeWayfinding();
             media=Flat("Muted orbital horizon",Palette("cyan")*p.Get("broadcast.screenValue"));
             white=new Material(Shader.Find("StarTournament/OrbitalSurface")){name="Broad white luminaire"};white.SetColor("_Color",Palette("white")*p.Get("light.emission"));owned.Add(white);
             signFont=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -63,7 +64,7 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,-4),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
-            HallMarkings();Labels();BroadcastDetails();SpaceBackdrop();
+            HallMarkings();Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();
             // Six shared zones select actual luminaires. A bounded subset casts shadows for all viewports.
             for(int zone=0;zone<6;zone++)
             {
@@ -160,7 +161,17 @@ namespace StarTournament.ProvingGround
                     Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),s.Rotation);
                 }
                 Strip(trim,bottom+p.Get("detail.trimHeight")/2,p.Get("detail.trimHeight"),length);
-                Strip(cyan,bottom+p.Get("detail.bandHeight"),p.Get("detail.bandWidth"),length);
+                if(HasWayfinding)
+                {
+                    // Repeat at eye level of both routes, clipped to each opaque wall piece.
+                    foreach(float level in new[]{p.Get("wayfinding.lowerBandY"),p.Get("wayfinding.upperBandY")})
+                    {
+                        float h=p.Get("wayfinding.bandWidth");
+                        if(level-h/2>=bottom && level+h/2<=bottom+s.Size.y)
+                            AccentBox(new Vector3(face.x,level,face.z)+normal*(side*Epsilon),xWall?new Vector3(length,h,Epsilon):new Vector3(Epsilon,h,length),s.Rotation);
+                    }
+                }
+                else Strip(cyan,bottom+p.Get("detail.bandHeight"),p.Get("detail.bandWidth"),length);
                 Strip(trim,bottom+s.Size.y-p.Get("detail.headerInset"),p.Get("detail.headerWidth"),length);
                 Strip(white,bottom+s.Size.y-p.Get("detail.headerInset")-p.Get("detail.lightStripWidth"),p.Get("detail.lightStripWidth"),length*.85f);
                 if(length>3)
@@ -176,7 +187,7 @@ namespace StarTournament.ProvingGround
                 {
                     var pos=s.Position+direction*(s.Size.x/2+Epsilon*2);
                     Box(trim,pos,Mathf.Abs(direction.x)>.5f?new Vector3(Epsilon,p.Get("detail.columnStripHeight")+.2f,.18f):new Vector3(.18f,p.Get("detail.columnStripHeight")+.2f,Epsilon),Quaternion.identity);
-                    Box(cyan,pos+direction*Epsilon,Mathf.Abs(direction.x)>.5f?new Vector3(Epsilon,p.Get("detail.columnStripHeight"),p.Get("detail.columnStripWidth")):new Vector3(p.Get("detail.columnStripWidth"),p.Get("detail.columnStripHeight"),Epsilon),Quaternion.identity);
+                    AccentBox(pos+direction*Epsilon,Mathf.Abs(direction.x)>.5f?new Vector3(Epsilon,p.Get("detail.columnStripHeight"),p.Get("detail.columnStripWidth")):new Vector3(p.Get("detail.columnStripWidth"),p.Get("detail.columnStripHeight"),Epsilon),Quaternion.identity);
                 }
             }
         }
@@ -188,13 +199,13 @@ namespace StarTournament.ProvingGround
             if(s.Id.Contains("-step-"))
             {
                 bool xStep=s.Size.x<s.Size.z;
-                Box(cyan,top,xStep?new Vector3(w,Epsilon,s.Size.z*.85f):new Vector3(s.Size.x*.85f,Epsilon,w),s.Rotation);return;
+                AccentBox(top,xStep?new Vector3(w,Epsilon,s.Size.z*.85f):new Vector3(s.Size.x*.85f,Epsilon,w),s.Rotation);return;
             }
             if(s.Size.x<inset*2||s.Size.z<inset*2)return;
             foreach(int side in new[]{-1,1})
             {
-                Box(cyan,top+s.Rotation*new Vector3(side*(s.Size.x/2-inset),0,0),new Vector3(w,Epsilon,s.Size.z-inset*2),s.Rotation);
-                Box(cyan,top+s.Rotation*new Vector3(0,0,side*(s.Size.z/2-inset)),new Vector3(s.Size.x-inset*2,Epsilon,w),s.Rotation);
+                AccentBox(top+s.Rotation*new Vector3(side*(s.Size.x/2-inset),0,0),new Vector3(w,Epsilon,s.Size.z-inset*2),s.Rotation);
+                AccentBox(top+s.Rotation*new Vector3(0,0,side*(s.Size.z/2-inset)),new Vector3(s.Size.x-inset*2,Epsilon,w),s.Rotation);
             }
         }
         void Roof(ArenaSolid s)
@@ -234,7 +245,7 @@ namespace StarTournament.ProvingGround
         void Label(string text,Vector3 position,Quaternion rotation,float scale=1)
         {
             var go=new GameObject("Sector / "+text);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation*Quaternion.Euler(0,180,0);
-            var label=go.AddComponent<TextMesh>();label.text=text;label.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=64;label.characterSize=p.Get("detail.labelSize")*scale;label.anchor=TextAnchor.MiddleCenter;label.alignment=TextAlignment.Center;label.color=Palette("ink");
+            var label=go.AddComponent<TextMesh>();label.text=text;label.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=64;label.characterSize=p.Get("detail.labelSize")*scale;label.anchor=TextAnchor.MiddleCenter;label.alignment=TextAlignment.Center;label.color=HasWayfinding?RouteColor(position):Palette("ink");
             var r=go.GetComponent<MeshRenderer>();r.sharedMaterial=sign;r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=false;
         }
         void Labels()
@@ -264,21 +275,21 @@ namespace StarTournament.ProvingGround
                 var mark=Position("ring.spawn-mark-"+number);float x=mark.x,z=mark.z;
                 float markHeight=p.Get("broadcast.spawnMarkHeight");
                 Box(trim,new Vector3(x,mark.y,z),new Vector3(Epsilon,markHeight,markHeight*1.15f),Quaternion.identity);
-                Box(cyan,new Vector3(x-sx*Epsilon*2,mark.y,z-markHeight*.45f),new Vector3(Epsilon,markHeight*.87f,p.Get("broadcast.markWidth")),Quaternion.identity);
+                AccentBox(new Vector3(x-sx*Epsilon*2,mark.y,z-markHeight*.45f),new Vector3(Epsilon,markHeight*.87f,p.Get("broadcast.markWidth")),Quaternion.identity);
                 Label("0"+number,new Vector3(x-sx*Epsilon*3,mark.y,z),Quaternion.Euler(0,sx<0?90:-90,0),.72f);
             }
             foreach(int sx in new[]{-1,1})
             {
                 float x=sx*11,z=-sx*4;
                 // A single portal header follows the true ramp, with no extra apparent tread.
-                Box(cyan,new Vector3(x,5.2f,z),new Vector3(3.6f,p.Get("broadcast.markWidth"),Epsilon),Quaternion.identity);
+                AccentBox(new Vector3(x,5.2f,z),new Vector3(3.6f,p.Get("broadcast.markWidth"),Epsilon),Quaternion.identity);
                 Label(sx<0?"WEST RISE / 01":"EAST RISE / 02",new Vector3(x,5.48f,z),Quaternion.Euler(0,sx<0?90:-90,0),.68f);
             }
             for(int i=0;i<2;i++)BasementVent(Position("layout.broadcast-fan-"+i),Quaternion.Euler(0,-90,0));
             foreach(float z in new[]{-6f,0f,6f})
             {
                 Box(trim,new Vector3(2.59f,.4f,z),new Vector3(Epsilon,p.Get("broadcast.servicePanelHeight"),1.4f),Quaternion.identity);
-                Box(cyan,new Vector3(2.57f,.4f,z),new Vector3(Epsilon,p.Get("broadcast.markWidth"),1.2f),Quaternion.identity);
+                AccentBox(new Vector3(2.57f,.4f,z),new Vector3(Epsilon,p.Get("broadcast.markWidth"),1.2f),Quaternion.identity);
             }
         }
         void Screen(string title,Vector3 position,Quaternion rotation,int motif)
@@ -288,16 +299,16 @@ namespace StarTournament.ProvingGround
             Box(trim,position,new Vector3(w+.18f,h+.18f,.04f),rotation);
             Box(floor,face,new Vector3(w,h,Epsilon),rotation);
             // Static horizon and station sectors make the panels read as an orbital broadcast graphic.
-            Box(cyan,face+rotation*new Vector3(0,-h*.28f,-.012f),new Vector3(w*.86f,p.Get("broadcast.markWidth"),Epsilon),rotation);
+            AccentBox(face+rotation*new Vector3(0,-h*.28f,-.012f),new Vector3(w*.86f,p.Get("broadcast.markWidth"),Epsilon),rotation);
             for(int i=0;i<3;i++)Box(white,face+rotation*new Vector3(-w*.39f+i*.18f,-h*.38f,-.014f),new Vector3(.07f,.08f,Epsilon),rotation);
             if(motif==1)
             {
                 // West uses a diagonal track; north uses paired horizon rails.
-                Box(cyan,face+rotation*new Vector3(w*.27f,-.05f,-.015f),new Vector3(w*.35f,p.Get("broadcast.markWidth"),Epsilon),rotation*Quaternion.Euler(0,0,25));
+                AccentBox(face+rotation*new Vector3(w*.27f,-.05f,-.015f),new Vector3(w*.35f,p.Get("broadcast.markWidth"),Epsilon),rotation*Quaternion.Euler(0,0,25));
             }
             else if(motif>1)
             {
-                for(int i=0;i<2;i++)Box(cyan,face+rotation*new Vector3(w*.23f,.12f+i*.16f,-.015f),new Vector3(w*.3f,p.Get("broadcast.markWidth")*.55f,Epsilon),rotation);
+                for(int i=0;i<2;i++)AccentBox(face+rotation*new Vector3(w*.23f,.12f+i*.16f,-.015f),new Vector3(w*.3f,p.Get("broadcast.markWidth")*.55f,Epsilon),rotation);
             }
             var orbitCenter=face+rotation*new Vector3(-w*.26f,.05f,-.018f);
             for(int i=0;i<18;i++)
@@ -321,7 +332,7 @@ namespace StarTournament.ProvingGround
             }
             var go=new GameObject("Slow orbital emblem");go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation;
             var mesh=new Mesh{name="League orbit ring"};mesh.CombineMeshes(shapes.ToArray());owned.Add(mesh);
-            go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=cyan;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
+            go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=RouteMaterial(position);renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
             orbits.Add(go.transform);
             Box(white,position+rotation*Vector3.back*.01f,new Vector3(radius*.36f,radius*.36f,Epsilon),rotation*Quaternion.Euler(0,0,45));
         }

@@ -113,6 +113,10 @@ namespace StarTournament.ProvingGround
             var windowTargets=new[]{new Vector3(38,5.8f,30),new Vector3(-38,5.8f,-30),new Vector3(0,1.7f,-38),new Vector3(0,1.7f,38),new Vector3(38,5.8f,30)};
             var windowNames=new[]{"18-window-blue-planet","19-window-rock-planet","20-window-sun","21-window-stars","22-window-oblique-depth"};
             for(int i=0;i<windowPositions.Length;i++){artCamera.transform.position=windowPositions[i];artCamera.transform.LookAt(windowTargets[i]);yield return Capture(windowNames[i]);}
+            var routePositions=new[]{new Vector3(0,1.7f,30),new Vector3(0,1.7f,-30),new Vector3(-33,5.7f,18),new Vector3(33,5.7f,-18),new Vector3(0,.4f,-4),new Vector3(0,5.7f,18),new Vector3(0,5.7f,-18)};
+            var routeTargets=new[]{new Vector3(0,2.1f,24),new Vector3(0,2.1f,-24),new Vector3(-28,6,16),new Vector3(28,6,-16),new Vector3(2.6f,1,0),new Vector3(0,5.8f,24),new Vector3(0,5.8f,-24)};
+            var routeNames=new[]{"23-north-red","24-south-yellow","25-west-violet","26-east-violet","27-central-blue","28-north-upper-red","29-south-upper-yellow"};
+            for(int i=0;i<routePositions.Length;i++){artCamera.transform.position=routePositions[i];artCamera.transform.LookAt(routeTargets[i]);yield return Capture(routeNames[i]);}
             Time.timeScale=priorTimeScale;Destroy(artCameraObject);foreach(var c in reviewCameras)c.enabled=true;foreach(var c in reviewCanvases)c.enabled=true;
             // Real player projection, camera-only cutaway: roof/wall renderers hidden only for the labelled overview.
             var arena=ground.GetComponentInChildren<ProvingArena>();var cameras=ground.GetComponentsInChildren<Camera>();var canvases=ground.GetComponentsInChildren<Canvas>();

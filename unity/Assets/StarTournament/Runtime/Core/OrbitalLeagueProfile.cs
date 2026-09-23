@@ -78,7 +78,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=3;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=4;
             p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
             var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
@@ -112,6 +112,7 @@ namespace StarTournament.ProvingGround
             p.Add("ring.sunRadius","space","Sun angular size","Radius of the single sun on the south cube face.","face fraction",.01f,.12f,.005f,.02f);
             p.Add("ring.celestialElevation","space","Celestial elevation","Vertical texture centre of the planets and sun.","face fraction",.35f,.65f,.01f,.51f);
             p.Add("ring.celestialHorizontal","space","Celestial horizontal position","Horizontal texture centre on each distinct cube face.","face fraction",.25f,.75f,.01f,.5f);
+            WayfindingDescriptors(p);
             return p;
         }
         // Existing serialized scene profiles gain only missing presentation controls.
@@ -167,7 +168,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=ring?3:5;
+            version=ring?4:5;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

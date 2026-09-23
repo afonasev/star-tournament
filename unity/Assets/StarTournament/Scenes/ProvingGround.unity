@@ -503,6 +503,42 @@ MonoBehaviour:
       Maximum: 32
       Step: 1
       DefaultValue: 16
+    - Path: ui.killNoticeFontSize
+      Group: ui
+      Label: Kill notice size
+      Description: Font size of the per-seat kill and death notice.
+      Unit: points
+      Minimum: 12
+      Maximum: 48
+      Step: 1
+      DefaultValue: 26
+    - Path: ui.killNoticeSeconds
+      Group: ui
+      Label: Kill notice lifetime
+      Description: Simulation-time visibility after a direct kill.
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 2.5
+    - Path: ui.killNoticeBottom
+      Group: ui
+      Label: Kill notice bottom
+      Description: Bottom of the notice as a viewport-height fraction.
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 0.45
+      Step: 0.01
+      DefaultValue: 0.27
+    - Path: ui.killNoticeTop
+      Group: ui
+      Label: Kill notice top
+      Description: Top of the notice as a viewport-height fraction.
+      Unit: ratio
+      Minimum: 0.35
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.44
     - Path: ui.centerTimerSeamGap
       Group: ui
       Label: Center timer seam gap
@@ -881,6 +917,14 @@ MonoBehaviour:
       Value: 32
     - Path: ui.nameFontSize
       Value: 16
+    - Path: ui.killNoticeFontSize
+      Value: 26
+    - Path: ui.killNoticeSeconds
+      Value: 2.5
+    - Path: ui.killNoticeBottom
+      Value: 0.27
+    - Path: ui.killNoticeTop
+      Value: 0.44
     - Path: ui.centerTimerSeamGap
       Value: 16
     - Path: ui.viewportDividerWidth
@@ -1552,6 +1596,53 @@ MonoBehaviour:
       Maximum: 0.5
       Step: 0.01
       DefaultValue: 0.15
+    - Path: killcam.killerTransitionSeconds
+      Group: killcam
+      Label: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u043A \u0443\u0431\u0438\u0439\u0446\u0435"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u043F\u043B\u0430\u0432\u043D\u043E\u0433\u043E
+        \u0432\u044B\u0445\u043E\u0434\u0430 \u0438\u0437 death-eye \u043D\u0430
+        \u043E\u0440\u0431\u0438\u0442\u0443 \u0443\u0431\u0438\u0439\u0446\u044B."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 0.7
+    - Path: killcam.killerOrbitRadius
+      Group: killcam
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0443\u0431\u0438\u0439\u0446\u044B"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043A\u0430\u043C\u0435\u0440\u044B
+        \u043E\u0442 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u0439
+        \u0436\u0438\u0437\u043D\u0438 \u0443\u0431\u0438\u0439\u0446\u044B."
+      Unit: meters
+      Minimum: 1
+      Maximum: 6
+      Step: 0.1
+      DefaultValue: 2.4
+    - Path: killcam.killerAboveEyes
+      Group: killcam
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043D\u0430\u0434 \u0433\u043B\u0430\u0437\u0430\u043C\u0438
+        \u0443\u0431\u0438\u0439\u0446\u044B"
+      Description: "\u041D\u0435\u0431\u043E\u043B\u044C\u0448\u043E\u0439 \u0443\u0433\u043E\u043B
+        \u0441\u0432\u0435\u0440\u0445\u0443 \u043F\u0440\u0438 \u043E\u0431\u043B\u0451\u0442\u0435
+        \u0443\u0431\u0438\u0439\u0446\u044B."
+      Unit: meters
+      Minimum: 0
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: killcam.killerOrbitSpeed
+      Group: killcam
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0443\u0431\u0438\u0439\u0446\u044B"
+      Description: "\u0423\u0433\u043B\u043E\u0432\u0430\u044F \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C
+        \u043A\u0430\u043C\u0435\u0440\u044B \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0443\u0431\u0438\u0439\u0446\u044B."
+      Unit: degrees-per-second
+      Minimum: 1
+      Maximum: 90
+      Step: 1
+      DefaultValue: 35
     values:
     - Path: shot.pellets
       Value: 12
@@ -1619,6 +1710,14 @@ MonoBehaviour:
       Value: 12
     - Path: killcam.clipRadius
       Value: 0.15
+    - Path: killcam.killerTransitionSeconds
+      Value: 0.7
+    - Path: killcam.killerOrbitRadius
+      Value: 2.4
+    - Path: killcam.killerAboveEyes
+      Value: 0.35
+    - Path: killcam.killerOrbitSpeed
+      Value: 35
   BotPerceptionProfile:
     id: unity-bot-perception-v1
     version: 1
@@ -2720,7 +2819,7 @@ MonoBehaviour:
   CombatBowlReviewDirectory:
   OrbitalLeagueProfile:
     id: orbital-league-ring-v1
-    version: 3
+    version: 4
     descriptors:
     - Path: surface.tile
       Group: surfaces
@@ -4574,6 +4673,1002 @@ MonoBehaviour:
       Maximum: 0.75
       Step: 0.01
       DefaultValue: 0.5
+    - Path: wayfinding.centralHalfWidth
+      Group: wayfinding
+      Label: "\u041F\u043E\u043B\u0443\u0448\u0438\u0440\u0438\u043D\u0430 \u0446\u0435\u043D\u0442\u0440\u0430"
+      Description: "\u0413\u0440\u0430\u043D\u0438\u0446\u0430 \u0441\u0438\u043D\u0435\u0439
+        \u0446\u0435\u043D\u0442\u0440\u0430\u043B\u044C\u043D\u043E\u0439 \u0437\u043E\u043D\u044B
+        \u043D\u0430 \u043F\u043B\u0430\u043D\u0435."
+      Unit: m
+      Minimum: 8
+      Maximum: 20
+      Step: 0.5
+      DefaultValue: 16
+    - Path: wayfinding.centralHalfLength
+      Group: wayfinding
+      Label: "\u041F\u043E\u043B\u0443\u0434\u043B\u0438\u043D\u0430 \u0446\u0435\u043D\u0442\u0440\u0430"
+      Description: "\u0413\u0440\u0430\u043D\u0438\u0446\u0430 \u0441\u0435\u0432\u0435\u0440\u043D\u043E\u0439
+        \u0438 \u044E\u0436\u043D\u043E\u0439 \u0446\u0432\u0435\u0442\u043E\u0432\u044B\u0445
+        \u0437\u043E\u043D \u0443 \u0446\u0435\u043D\u0442\u0440\u0430."
+      Unit: m
+      Minimum: 8
+      Maximum: 18
+      Step: 0.5
+      DefaultValue: 12
+    - Path: wayfinding.sideStart
+      Group: wayfinding
+      Label: "\u0412\u043D\u0435\u0448\u043D\u044F\u044F \u0431\u043E\u043A\u043E\u0432\u0430\u044F
+        \u0437\u043E\u043D\u0430"
+      Description: "\u0413\u0440\u0430\u043D\u0438\u0446\u0430 \u0444\u0438\u043E\u043B\u0435\u0442\u043E\u0432\u043E\u0439
+        \u0432\u043D\u0435\u0448\u043D\u0435\u0439 \u0433\u0430\u043B\u0435\u0440\u0435\u0438
+        \u043F\u043E X."
+      Unit: m
+      Minimum: 24
+      Maximum: 32
+      Step: 0.5
+      DefaultValue: 28
+    - Path: wayfinding.outerCorner
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0432\u043D\u0435\u0448\u043D\u0435\u0433\u043E
+        \u043A\u043E\u043B\u044C\u0446\u0430"
+      Description: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u0444\u0438\u043E\u043B\u0435\u0442\u043E\u0432\u044B\u0445
+        \u0431\u043E\u043A\u043E\u0432 \u0432 \u0441\u0435\u0432\u0435\u0440/\u044E\u0433
+        \u043F\u043E Z."
+      Unit: m
+      Minimum: 24
+      Maximum: 32
+      Step: 0.5
+      DefaultValue: 28
+    - Path: wayfinding.lowerBandY
+      Group: wayfinding
+      Label: "\u041D\u0438\u0436\u043D\u0438\u0439 \u043D\u0430\u0441\u0442\u0435\u043D\u043D\u044B\u0439
+        \u043F\u043E\u044F\u0441"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043F\u043E\u043B\u043E\u0441
+        \u043D\u0430 \u043D\u0438\u0436\u043D\u0435\u043C \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0435;
+        \u0446\u0432\u0435\u0442 \u0437\u0430\u0432\u0438\u0441\u0438\u0442 \u043E\u0442
+        \u0441\u0442\u043E\u0440\u043E\u043D\u044B \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: 0.6
+      Maximum: 2.4
+      Step: 0.05
+      DefaultValue: 1.25
+    - Path: wayfinding.upperBandY
+      Group: wayfinding
+      Label: "\u0412\u0435\u0440\u0445\u043D\u0438\u0439 \u043D\u0430\u0441\u0442\u0435\u043D\u043D\u044B\u0439
+        \u043F\u043E\u044F\u0441"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043F\u043E\u043B\u043E\u0441
+        \u043D\u0430 \u0432\u0435\u0440\u0445\u043D\u0435\u043C \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0435;
+        \u0446\u0432\u0435\u0442 \u0437\u0430\u0432\u0438\u0441\u0438\u0442 \u043E\u0442
+        \u0441\u0442\u043E\u0440\u043E\u043D\u044B \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: 4.6
+      Maximum: 6.4
+      Step: 0.05
+      DefaultValue: 5.25
+    - Path: wayfinding.bandWidth
+      Group: wayfinding
+      Label: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043D\u0430\u0441\u0442\u0435\u043D\u043D\u043E\u0439
+        \u043F\u043E\u043B\u043E\u0441\u044B"
+      Description: "\u0422\u043E\u043B\u0449\u0438\u043D\u0430 \u0446\u0432\u0435\u0442\u043E\u0432\u043E\u0433\u043E
+        \u043E\u0440\u0438\u0435\u043D\u0442\u0438\u0440\u0430 \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u044B\u0445
+        \u0441\u0442\u0435\u043D\u0430\u0445."
+      Unit: m
+      Minimum: 0.05
+      Maximum: 0.4
+      Step: 0.01
+      DefaultValue: 0.18
+    - Path: wayfinding.panelWidth
+      Group: wayfinding
+      Label: "\u0428\u0438\u0440\u0438\u043D\u0430 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043D\u0430\u0441\u0442\u0435\u043D\u043D\u043E\u0439
+        \u043F\u0430\u043D\u0435\u043B\u0438 \u0441 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\u043C
+        \u0441\u0435\u043A\u0442\u043E\u0440\u0430."
+      Unit: m
+      Minimum: 2
+      Maximum: 6
+      Step: 0.1
+      DefaultValue: 4.4
+    - Path: wayfinding.panelHeight
+      Group: wayfinding
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0442\u0451\u043C\u043D\u043E\u0439
+        \u043F\u0430\u043D\u0435\u043B\u0438 \u043F\u043E\u0434 \u0446\u0432\u0435\u0442\u043D\u043E\u0439
+        \u043D\u0430\u0434\u043F\u0438\u0441\u044C\u044E."
+      Unit: m
+      Minimum: 0.4
+      Maximum: 1.2
+      Step: 0.05
+      DefaultValue: 0.8
+    - Path: wayfinding.panelStripe
+      Group: wayfinding
+      Label: "\u041F\u043E\u043B\u043E\u0441\u0430 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0446\u0432\u0435\u0442\u043D\u043E\u0439
+        \u043A\u0440\u043E\u043C\u043A\u0438 \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: m
+      Minimum: 0.03
+      Maximum: 0.15
+      Step: 0.01
+      DefaultValue: 0.07
+    - Path: wayfinding.labelScale
+      Group: wayfinding
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F
+        \u0437\u043E\u043D\u044B"
+      Description: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u043D\u0430\u0434\u043F\u0438\u0441\u0435\u0439
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043E\u0431\u0449\u0435\u0433\u043E \u0440\u0430\u0437\u043C\u0435\u0440\u0430
+        \u043C\u0430\u0440\u043A\u0438\u0440\u043E\u0432\u043A\u0438."
+      Unit: ratio
+      Minimum: 0.5
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 1.1
+    - Path: color.north.r
+      Group: wayfinding
+      Label: north / R
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.95
+    - Path: color.north.g
+      Group: wayfinding
+      Label: north / G
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.1
+    - Path: color.north.b
+      Group: wayfinding
+      Label: north / B
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.13
+    - Path: color.south.r
+      Group: wayfinding
+      Label: south / R
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 1
+    - Path: color.south.g
+      Group: wayfinding
+      Label: south / G
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.78
+    - Path: color.south.b
+      Group: wayfinding
+      Label: south / B
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.035
+    - Path: color.sides.r
+      Group: wayfinding
+      Label: sides / R
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.65
+    - Path: color.sides.g
+      Group: wayfinding
+      Label: sides / G
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.26
+    - Path: color.sides.b
+      Group: wayfinding
+      Label: sides / B
+      Description: "\u0426\u0432\u0435\u0442 \u043B\u0438\u043D\u0438\u0438, \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.95
+    - Path: wayfinding.sign-0.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 0"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 0
+    - Path: wayfinding.sign-0.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 0"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-0.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 0"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 23.78
+    - Path: wayfinding.sign-0.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        0"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 180
+    - Path: wayfinding.sign-1.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 1"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 0
+    - Path: wayfinding.sign-1.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 1"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-1.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 1"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 24.22
+    - Path: wayfinding.sign-1.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        1"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 0
+    - Path: wayfinding.sign-2.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 2"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 0
+    - Path: wayfinding.sign-2.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 2"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-2.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 2"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -23.78
+    - Path: wayfinding.sign-2.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        2"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 0
+    - Path: wayfinding.sign-3.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 3"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 0
+    - Path: wayfinding.sign-3.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 3"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-3.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 3"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -24.22
+    - Path: wayfinding.sign-3.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        3"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 180
+    - Path: wayfinding.sign-4.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 4"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -27.78
+    - Path: wayfinding.sign-4.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 4"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-4.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 4"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 9
+    - Path: wayfinding.sign-4.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        4"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 90
+    - Path: wayfinding.sign-5.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 5"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -27.78
+    - Path: wayfinding.sign-5.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 5"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-5.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 5"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -9
+    - Path: wayfinding.sign-5.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        5"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 90
+    - Path: wayfinding.sign-6.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 6"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 27.78
+    - Path: wayfinding.sign-6.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 6"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-6.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 6"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 9
+    - Path: wayfinding.sign-6.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        6"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: -90
+    - Path: wayfinding.sign-7.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 7"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 27.78
+    - Path: wayfinding.sign-7.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 7"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 2.1
+    - Path: wayfinding.sign-7.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 7"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -9
+    - Path: wayfinding.sign-7.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        7"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: -90
+    - Path: wayfinding.sign-8.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 8"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -28.22
+    - Path: wayfinding.sign-8.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 8"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 6.1
+    - Path: wayfinding.sign-8.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 8"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 16
+    - Path: wayfinding.sign-8.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        8"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: -90
+    - Path: wayfinding.sign-9.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 9"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -28.22
+    - Path: wayfinding.sign-9.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 9"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 6.1
+    - Path: wayfinding.sign-9.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 9"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -16
+    - Path: wayfinding.sign-9.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        9"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: -90
+    - Path: wayfinding.sign-10.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 10"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 28.22
+    - Path: wayfinding.sign-10.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 10"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 6.1
+    - Path: wayfinding.sign-10.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 10"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 16
+    - Path: wayfinding.sign-10.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        10"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 90
+    - Path: wayfinding.sign-11.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 11"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 28.22
+    - Path: wayfinding.sign-11.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 11"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 6.1
+    - Path: wayfinding.sign-11.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 11"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -16
+    - Path: wayfinding.sign-11.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        11"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 90
+    - Path: wayfinding.sign-12.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 12"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -28.22
+    - Path: wayfinding.sign-12.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 12"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: wayfinding.sign-12.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 12"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 7
+    - Path: wayfinding.sign-12.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        12"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: -90
+    - Path: wayfinding.sign-13.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 13"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -28.22
+    - Path: wayfinding.sign-13.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 13"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: wayfinding.sign-13.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 13"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -7
+    - Path: wayfinding.sign-13.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        13"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: -90
+    - Path: wayfinding.sign-14.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 14"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 28.22
+    - Path: wayfinding.sign-14.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 14"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: wayfinding.sign-14.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 14"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 7
+    - Path: wayfinding.sign-14.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        14"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 90
+    - Path: wayfinding.sign-15.x
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 15"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 28.22
+    - Path: wayfinding.sign-15.y
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 15"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: wayfinding.sign-15.z
+      Group: wayfinding
+      Label: "\u0423\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044C 15"
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u043D\u0430 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0439
+        \u0441\u0442\u0435\u043D\u0435; \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442
+        collision."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -7
+    - Path: wayfinding.sign-15.yaw
+      Group: wayfinding
+      Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        15"
+      Description: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u044B
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: degrees
+      Minimum: -180
+      Maximum: 180
+      Step: 1
+      DefaultValue: 90
     values:
     - Path: surface.tile
       Value: 2
@@ -4913,6 +6008,174 @@ MonoBehaviour:
       Value: 0.51
     - Path: ring.celestialHorizontal
       Value: 0.5
+    - Path: wayfinding.centralHalfWidth
+      Value: 16
+    - Path: wayfinding.centralHalfLength
+      Value: 12
+    - Path: wayfinding.sideStart
+      Value: 28
+    - Path: wayfinding.outerCorner
+      Value: 28
+    - Path: wayfinding.lowerBandY
+      Value: 1.25
+    - Path: wayfinding.upperBandY
+      Value: 5.25
+    - Path: wayfinding.bandWidth
+      Value: 0.18
+    - Path: wayfinding.panelWidth
+      Value: 4.4
+    - Path: wayfinding.panelHeight
+      Value: 0.8
+    - Path: wayfinding.panelStripe
+      Value: 0.07
+    - Path: wayfinding.labelScale
+      Value: 1.1
+    - Path: color.north.r
+      Value: 0.95
+    - Path: color.north.g
+      Value: 0.1
+    - Path: color.north.b
+      Value: 0.13
+    - Path: color.south.r
+      Value: 1
+    - Path: color.south.g
+      Value: 0.78
+    - Path: color.south.b
+      Value: 0.035
+    - Path: color.sides.r
+      Value: 0.65
+    - Path: color.sides.g
+      Value: 0.26
+    - Path: color.sides.b
+      Value: 0.95
+    - Path: wayfinding.sign-0.x
+      Value: 0
+    - Path: wayfinding.sign-0.y
+      Value: 2.1
+    - Path: wayfinding.sign-0.z
+      Value: 23.78
+    - Path: wayfinding.sign-0.yaw
+      Value: 180
+    - Path: wayfinding.sign-1.x
+      Value: 0
+    - Path: wayfinding.sign-1.y
+      Value: 2.1
+    - Path: wayfinding.sign-1.z
+      Value: 24.22
+    - Path: wayfinding.sign-1.yaw
+      Value: 0
+    - Path: wayfinding.sign-2.x
+      Value: 0
+    - Path: wayfinding.sign-2.y
+      Value: 2.1
+    - Path: wayfinding.sign-2.z
+      Value: -23.78
+    - Path: wayfinding.sign-2.yaw
+      Value: 0
+    - Path: wayfinding.sign-3.x
+      Value: 0
+    - Path: wayfinding.sign-3.y
+      Value: 2.1
+    - Path: wayfinding.sign-3.z
+      Value: -24.22
+    - Path: wayfinding.sign-3.yaw
+      Value: 180
+    - Path: wayfinding.sign-4.x
+      Value: -27.78
+    - Path: wayfinding.sign-4.y
+      Value: 2.1
+    - Path: wayfinding.sign-4.z
+      Value: 9
+    - Path: wayfinding.sign-4.yaw
+      Value: 90
+    - Path: wayfinding.sign-5.x
+      Value: -27.78
+    - Path: wayfinding.sign-5.y
+      Value: 2.1
+    - Path: wayfinding.sign-5.z
+      Value: -9
+    - Path: wayfinding.sign-5.yaw
+      Value: 90
+    - Path: wayfinding.sign-6.x
+      Value: 27.78
+    - Path: wayfinding.sign-6.y
+      Value: 2.1
+    - Path: wayfinding.sign-6.z
+      Value: 9
+    - Path: wayfinding.sign-6.yaw
+      Value: -90
+    - Path: wayfinding.sign-7.x
+      Value: 27.78
+    - Path: wayfinding.sign-7.y
+      Value: 2.1
+    - Path: wayfinding.sign-7.z
+      Value: -9
+    - Path: wayfinding.sign-7.yaw
+      Value: -90
+    - Path: wayfinding.sign-8.x
+      Value: -28.22
+    - Path: wayfinding.sign-8.y
+      Value: 6.1
+    - Path: wayfinding.sign-8.z
+      Value: 16
+    - Path: wayfinding.sign-8.yaw
+      Value: -90
+    - Path: wayfinding.sign-9.x
+      Value: -28.22
+    - Path: wayfinding.sign-9.y
+      Value: 6.1
+    - Path: wayfinding.sign-9.z
+      Value: -16
+    - Path: wayfinding.sign-9.yaw
+      Value: -90
+    - Path: wayfinding.sign-10.x
+      Value: 28.22
+    - Path: wayfinding.sign-10.y
+      Value: 6.1
+    - Path: wayfinding.sign-10.z
+      Value: 16
+    - Path: wayfinding.sign-10.yaw
+      Value: 90
+    - Path: wayfinding.sign-11.x
+      Value: 28.22
+    - Path: wayfinding.sign-11.y
+      Value: 6.1
+    - Path: wayfinding.sign-11.z
+      Value: -16
+    - Path: wayfinding.sign-11.yaw
+      Value: 90
+    - Path: wayfinding.sign-12.x
+      Value: -28.22
+    - Path: wayfinding.sign-12.y
+      Value: 3
+    - Path: wayfinding.sign-12.z
+      Value: 7
+    - Path: wayfinding.sign-12.yaw
+      Value: -90
+    - Path: wayfinding.sign-13.x
+      Value: -28.22
+    - Path: wayfinding.sign-13.y
+      Value: 3
+    - Path: wayfinding.sign-13.z
+      Value: -7
+    - Path: wayfinding.sign-13.yaw
+      Value: -90
+    - Path: wayfinding.sign-14.x
+      Value: 28.22
+    - Path: wayfinding.sign-14.y
+      Value: 3
+    - Path: wayfinding.sign-14.z
+      Value: 7
+    - Path: wayfinding.sign-14.yaw
+      Value: 90
+    - Path: wayfinding.sign-15.x
+      Value: 28.22
+    - Path: wayfinding.sign-15.y
+      Value: 3
+    - Path: wayfinding.sign-15.z
+      Value: -7
+    - Path: wayfinding.sign-15.yaw
+      Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
     version: 2
