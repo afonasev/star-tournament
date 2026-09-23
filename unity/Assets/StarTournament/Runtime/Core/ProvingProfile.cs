@@ -94,6 +94,18 @@ namespace StarTournament.ProvingGround
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
         }
+        public void EnsureMatchDescriptors()
+        {
+            // The old time gap is no longer a gameplay control: a chain ends only on death.
+            descriptors.RemoveAll(d=>d.Path=="score.chainGap");values.RemoveAll(v=>v.Path=="score.chainGap");
+            var current=CreateMatchDefault();
+            foreach(var descriptor in current.descriptors)
+            {
+                if(FindDescriptor(descriptor.Path)!=null)continue;
+                descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
+                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
+            }
+        }
         /// <summary>Append-only migration for serialized combat lifecycle fixtures.</summary>
         public void EnsureCombatDescriptors()
         {
@@ -228,6 +240,10 @@ namespace StarTournament.ProvingGround
             profile.Add("ui.headingFontSize", "ui", "Heading font size", "Heading font size for setup and pause UI.", "points", 16f, 64f, 1f, 28f);
             profile.Add("ui.indicatorVisualHeight", "ui", "HUD indicator height", "Visible height shared by health, armor and ammo icons and their numbers.", "points", 20f, 64f, 1f, 32f);
             profile.Add("ui.nameFontSize", "ui", "Player name size", "Font size of the bottom-centered per-seat name.", "points", 10f, 32f, 1f, 16f);
+            profile.Add("ui.killNoticeFontSize", "ui", "Kill notice size", "Font size of the per-seat kill and death notice.", "points", 12f, 48f, 1f, 26f);
+            profile.Add("ui.killNoticeSeconds", "ui", "Kill notice lifetime", "Simulation-time visibility after a direct kill.", "seconds", .5f, 8f, .1f, 2.5f);
+            profile.Add("ui.killNoticeBottom", "ui", "Kill notice bottom", "Bottom of the notice as a viewport-height fraction.", "ratio", .1f, .45f, .01f, .27f);
+            profile.Add("ui.killNoticeTop", "ui", "Kill notice top", "Top of the notice as a viewport-height fraction.", "ratio", .35f, .6f, .01f, .44f);
             profile.Add("ui.centerTimerSeamGap", "ui", "Center timer seam gap", "Distance below the horizontal viewport seam for the shared timer in the three-seat layout.", "points", 0f, 64f, 1f, 16f);
             profile.Add("ui.viewportDividerWidth", "ui", "Viewport divider width", "Thickness of opaque black lines between local viewports.", "points", 2f, 24f, 1f, 6f);
             profile.Add("presentation.lightIntensity", "presentation", "Fixture light intensity", "Presentation-only fixture light intensity.", "intensity", .1f, 4f, .1f, 1.1f);

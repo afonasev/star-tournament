@@ -27,6 +27,9 @@ namespace StarTournament.ProvingGround
         readonly GameObject[] views = new GameObject[SeatInputCoordinator.SeatCount];
         Light studioLight;
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], armor = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
+        readonly Text[] killNotice = new Text[SeatInputCoordinator.SeatCount];
+        readonly string[] killNoticeText = new string[SeatInputCoordinator.SeatCount];
+        readonly double[] killNoticeUntil = new double[SeatInputCoordinator.SeatCount];
         readonly GameObject[] armorGroups = new GameObject[SeatInputCoordinator.SeatCount];
         readonly HudIndicatorIcon[] ammoIcons = new HudIndicatorIcon[SeatInputCoordinator.SeatCount];
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
@@ -142,6 +145,7 @@ namespace StarTournament.ProvingGround
         public bool Running => phase == Phase.Running;
         void Start()
         {
+            MatchProfile.EnsureMatchDescriptors();
             if (Profile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
@@ -390,14 +394,52 @@ namespace StarTournament.ProvingGround
 
                 ammo[i].color=Session.DamageBoostRemaining(participant)>0?Color.red:Color.white;
                 ammoIcons[i].color=ammo[i].color;
-                crosshair[i].text=life.Dead ? presentation.DeathMessage(participant) : "+";
+                crosshair[i].text=life.Dead ? "" : "+";
+                if(killNotice[i]) killNotice[i].text=phase==Phase.Setup || phase==Phase.Results ? "" :
+                    life.Dead ? DeathNoticeText(participant,snapshot) :
+                    Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
                 standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition);
                 names[i].color=Composition.Participant(participant).Color;
                 names[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "");
                 hud[i].text=hit[participant] ?? "";
             }
         }
-        void OnApplicationFocus(bool focus) { if (!focus && phase == Phase.Running && !diagnostic) Pause("Окно потеряло фокус"); }
+        void OnApplicationFocus(bool focus) { if (!focus && phase == Phase.Running && !diagnostic && !combatReview) Pause("Окно потеряло фокус"); }
+        string ColoredName(int participant)
+        {
+            var info=Composition.Participant(participant);
+            // Participant names are plain text even though the notice uses Unity rich text for color.
+            string safe=info.Name.Replace('<','‹').Replace('>','›');
+            return "<color=#"+ColorUtility.ToHtmlStringRGB(info.Color)+">"+safe+"</color>";
+        }
+        int ParticipantWithId(string id)
+        {
+            for(int p=0;p<Session.ParticipantCount;p++)if(Session.Life(p).ParticipantId==id)return p;
+            return -1;
+        }
+        string DeathNoticeText(int participant,NativeMatchSnapshot snapshot)
+        {
+            if(snapshot==null)return presentation.DeathMessage(participant);
+            var life=Session.Life(participant);
+            int killer=life.KillerId==null?-1:ParticipantWithId(life.KillerId);
+            string message=killer<0?"Вы погибли":"Вас убил "+ColoredName(killer)+" · "+
+                snapshot.DirectKills(participant,killer)+":"+snapshot.DirectKills(killer,participant);
+            return message+"\nВозрождение через "+Mathf.CeilToInt((float)life.RespawnRemaining);
+        }
+        void OnMatchDeath(DeathNotice notice)
+        {
+            if(Session.Match==null || notice.Life.KillerId==null)return;
+            int killer=ParticipantWithId(notice.Life.KillerId);
+            if(killer<0)return;
+            int view=Composition.SeatOf(killer);
+            if(view<0)return;
+            var snapshot=Session.Match.Read();
+            int chain=snapshot.KillChain(killer);
+            killNoticeText[view]="Убит "+ColoredName(notice.Seat)+" · "+
+                snapshot.DirectKills(killer,notice.Seat)+":"+snapshot.DirectKills(notice.Seat,killer)+
+                (chain==2?"\nDouble kill!":chain>2?"\n"+chain+" kills!":"");
+            killNoticeUntil[view]=Session.Time+(frozenMovement??Profile).Get("ui.killNoticeSeconds");
+        }
         void Begin(bool diagnostics)
         {
             if ((!diagnostics && !input.Ready) || !ValidSetup()) return;
@@ -473,6 +515,8 @@ namespace StarTournament.ProvingGround
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition);
+            Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
+            Session.Died+=OnMatchDeath;
             Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
             persistentStandings.SwapTeamColors=results.SwapTeamColors=frozenSwappedColors;
@@ -668,6 +712,10 @@ namespace StarTournament.ProvingGround
                 names[i].alignment=TextAnchor.LowerCenter;
                 var cross = TextElement(viewportRoots[i],"crosshair-"+i,"+",(int)Profile.Get("ui.headingFontSize"));
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
+                var notice=TextElement(viewportRoots[i],"kill-notice-"+i,"",(int)Profile.Get("ui.killNoticeFontSize"));
+                Layout(notice.rectTransform,new Vector2(0,Profile.Get("ui.killNoticeBottom")),new Vector2(1,Profile.Get("ui.killNoticeTop")));
+                notice.alignment=TextAnchor.MiddleCenter;notice.supportRichText=true;killNotice[i]=notice;
+                var outline=notice.gameObject.AddComponent<Outline>();outline.effectColor=new Color(0,0,0,.9f);
             }
             for(int i=0;i<standings.Length;i++)
             {

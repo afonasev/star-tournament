@@ -28,16 +28,19 @@ namespace StarTournament.ProvingGround
         public NativeRosterSnapshot Roster;
         public NativeStanding[] Standings;
         public NativeTeamStanding[] Teams;
+        public int[] DirectKillsByPair, KillChains;
+        public int ParticipantCount => KillChains?.Length ?? 0;
+        public int DirectKills(int killer,int victim) => DirectKillsByPair[killer*ParticipantCount+victim];
+        public int KillChain(int participant) => KillChains[participant];
     }
     /// <summary>Data-only tick reducer. Damage is already capped and life-validated by CombatLife.</summary>
     public sealed class NativeMatchState
     {
         readonly NativeStanding[] rows;
         readonly long[,] ledger;
-        readonly int[] chains, chainAwards, totals;
-        readonly long[] lastKill;
+        readonly int[] chains, chainAwards, totals, directKillsByPair;
         readonly bool[] diedThisTick;
-        readonly long durationTicks, assistTicks, gapTicks;
+        readonly long durationTicks, assistTicks;
         readonly int assistPoints, increment, target;
         readonly double tickHz;
         long tick;
@@ -64,14 +67,13 @@ namespace StarTournament.ProvingGround
             config.Validate(profile); Configuration=config; tickHz=hz;
             durationTicks=(long)Math.Round(config.DurationMinutes*60d*hz);
             assistTicks=(long)Math.Ceiling(profile.Get("score.assistWindow")*hz);
-            gapTicks=(long)Math.Ceiling(profile.Get("score.chainGap")*hz);
             assistPoints=(int)profile.Get("score.assistPoints"); increment=(int)profile.Get("score.chainIncrement");
             totals=Enumerable.Range(1,5).Select(i=>(int)profile.Get("score.chainTotal"+i)).ToArray();
             for(int i=1;i<totals.Length;i++) if(totals[i]<totals[i-1]) throw new ArgumentException("Chain totals must be monotonic");
             target=config.TargetEnabled ? config.TargetPoints : 0;
             rows=new NativeStanding[seats]; ledger=new long[seats,seats]; chains=new int[seats]; chainAwards=new int[seats];
-            lastKill=new long[seats]; diedThisTick=new bool[seats];
-            for(int i=0;i<seats;i++) { rows[i].Seat=i; lastKill[i]=-1; ClearLedger(i); }
+            directKillsByPair=new int[seats*seats]; diedThisTick=new bool[seats];
+            for(int i=0;i<seats;i++) { rows[i].Seat=i; ClearLedger(i); }
         }
         void ClearLedger(int victim) { for(int i=0;i<rows.Length;i++) ledger[victim,i]=-1; }
         public void BeginTick() { if(Phase!=NativeMatchPhase.Finished) tick++; }
@@ -90,11 +92,11 @@ namespace StarTournament.ProvingGround
             { rows[i].Assists++; rows[i].Score+=assistPoints; }
             if(attacker>=0 && attacker!=victim)
             {
-                bool continues=lastKill[attacker]>=0 && tick-lastKill[attacker]<=gapTicks;
-                int length=continues ? chains[attacker]+1 : 1;
+                int length=chains[attacker]+1;
                 int award=length<=totals.Length ? totals[length-1] : totals[totals.Length-1]+(length-totals.Length)*increment;
-                rows[attacker].Kills++; rows[attacker].Score+=award-(continues?chainAwards[attacker]:0);
-                chains[attacker]=length; chainAwards[attacker]=award; lastKill[attacker]=tick;
+                rows[attacker].Kills++; rows[attacker].Score+=award-chainAwards[attacker];
+                directKillsByPair[attacker*rows.Length+victim]++;
+                chains[attacker]=length; chainAwards[attacker]=award;
             }
             ClearLedger(victim);
         }
@@ -103,7 +105,7 @@ namespace StarTournament.ProvingGround
             if(Phase==NativeMatchPhase.Finished) return;
             // Reset after every death award, including mutual kills: no dead participant keeps a chain.
             for(int i=0;i<rows.Length;i++) if(diedThisTick[i])
-            { chains[i]=chainAwards[i]=0; lastKill[i]=-1; diedThisTick[i]=false; }
+            { chains[i]=chainAwards[i]=0; diedThisTick[i]=false; }
             var teamRows = TeamTotals();
             int maximum = Roster.Mode == NativeMatchMode.Teams ? teamRows.Max(r=>r.Score) : rows.Max(r=>r.Score);
             if(trigger==null) trigger=target>0 && maximum>=target ? "score-limit" : tick>=durationTicks ? "time-limit" : null;
@@ -129,6 +131,7 @@ namespace StarTournament.ProvingGround
         NativeStanding[] Ordered() => rows.OrderByDescending(r=>r.Score).ThenBy(r=>r.Seat).ToArray();
         public NativeMatchSnapshot Read() => new NativeMatchSnapshot { Tick=tick, RemainingTicks=RemainingTicks,
             Phase=Phase, Trigger=trigger, Winner=winner, WinnerTeam=winnerTeam, Roster=Roster.Read(), Teams=TeamTotals(),
-            Standings=finalRows==null ? Ordered() : (NativeStanding[])finalRows.Clone() };
+            Standings=finalRows==null ? Ordered() : (NativeStanding[])finalRows.Clone(),
+            DirectKillsByPair=(int[])directKillsByPair.Clone(), KillChains=(int[])chains.Clone() };
     }
 }

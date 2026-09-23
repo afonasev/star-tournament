@@ -66,7 +66,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var camera=ground.GetComponentsInChildren<Camera>().Single();
             var target=ground.Session.Pose(0).Position+Vector3.up*ground.Profile.Get("camera.eyeHeight");
             Assert.That(Vector3.Angle(camera.transform.forward,target-camera.transform.position),Is.LessThan(.1f));
-            Assert.That(ground.transform.Find("native-ui/seat-viewport-0/crosshair-0").GetComponent<Text>().text,Does.Contain("Участник 1"));
+            var notice=ground.transform.Find("native-ui/seat-viewport-0/kill-notice-0").GetComponent<Text>().text;
+            Assert.That(notice,Does.Contain("Участник 1"));
+            Assert.That(notice,Does.Contain("<color=#"));
             var ownCorpse=ground.transform.Find("corpse-8-life-1");Assert.That(ownCorpse,Is.Not.Null);
             Assert.That(camera.cullingMask&(1<<ownCorpse.gameObject.layer),Is.Zero,"Own corpse cannot occlude killer tracking");
             var direction=camera.transform.forward;ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,500);yield return null;

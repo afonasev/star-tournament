@@ -44,6 +44,8 @@ namespace StarTournament.ProvingGround
             yield return Capture("live");
             Place();yield return new WaitForSeconds(.1f);
             yield return KillTarget();
+            yield return Capture("kill-notice-and-pair-score");
+            yield return new WaitForSeconds(.8f);yield return Capture("killer-orbit");
             InputSystem.QueueStateEvent(pads[1],new GamepadState().WithButton(GamepadButton.Select));
             yield return new WaitForSeconds(.1f);yield return Capture("killcam-standings");
             InputSystem.QueueStateEvent(pads[1],new GamepadState());
@@ -57,6 +59,8 @@ namespace StarTournament.ProvingGround
             {
                 while(ground.Session.Life(1).Dead)yield return null;
                 Place();yield return new WaitForSeconds(.1f);yield return KillTarget();
+                if(kill==1)yield return Capture("double-kill");
+                if(kill==2)yield return Capture("three-kills");
             }
             yield return new WaitForSeconds(.2f);yield return Capture("target-results");
             if(ground.Session.Match.Phase!=NativeMatchPhase.Finished)throw new InvalidOperationException("Review target did not finish");
@@ -75,15 +79,11 @@ namespace StarTournament.ProvingGround
         }
         IEnumerator KillTarget()
         {
-            // Shot spread is shipping tuning; this fixture must observe lethal state, not assume a one-shot headshot.
-            int attempts=0;
-            while(!ground.Session.Life(1).Dead)
-            {
-                if(++attempts>4)throw new InvalidOperationException("Review weapon fixture failed to kill");
-                InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return new WaitForSeconds(.8f);
-                InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});yield return new WaitForSeconds(.15f);
-                InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
-            }
+            // Diagnostic lethal event isolates killcam/HUD review from weapon spread and arena cover.
+            var victim=ground.Session.Life(1);var killer=ground.Session.Life(0);
+            var result=ground.Session.ApplyDamage(1,victim.Life,victim.Health,0,killer.Life);
+            if(!result.Killed)throw new InvalidOperationException("Review lethal event failed");
+            yield return null;
         }
         void Place()
         {

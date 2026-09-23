@@ -2504,18 +2504,6 @@ MonoBehaviour:
       Maximum: 1000
       Step: 1
       DefaultValue: 50
-    - Path: score.chainGap
-      Group: scoring
-      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0441\u0435\u0440\u0438\u0438"
-      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
-        \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
-        \u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043C\u0435\u0436\u0434\u0443
-        \u0443\u0431\u0438\u0439\u0441\u0442\u0432\u0430\u043C\u0438."
-      Unit: seconds
-      Minimum: 0
-      Maximum: 60
-      Step: 1
-      DefaultValue: 10
     - Path: score.chainTotal1
       Group: scoring
       Label: "\u0418\u0442\u043E\u0433 \u0441\u0435\u0440\u0438\u0438 1"
@@ -2591,8 +2579,6 @@ MonoBehaviour:
       Value: 5
     - Path: score.assistPoints
       Value: 50
-    - Path: score.chainGap
-      Value: 10
     - Path: score.chainTotal1
       Value: 100
     - Path: score.chainTotal2

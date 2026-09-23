@@ -159,15 +159,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(corpse.GetComponent<Renderer>().bounds.min.y,Is.EqualTo(0).Within(.01f));
             Assert.That(bodies[1].activeSelf,Is.False); Assert.That(views[1].activeSelf,Is.False);
             Vector3 anchor=cameras[1].transform.position;
+            Assert.That(Vector3.Distance(anchor,session.Pose(1).Position+Vector3.up*movement.Get("camera.eyeHeight")),Is.LessThan(combat.Get("killcam.clipRadius")*2f));
             motors[0].Initialize(movement,new Vector3(4,0,0)); presentation.Render();
-            Vector3 expected=(session.Pose(0).Position+Vector3.up*movement.Get("camera.eyeHeight")-anchor).normalized;
+            Vector3 expected=(session.Pose(0).Position+Vector3.up*movement.Get("camera.eyeHeight")-cameras[1].transform.position).normalized;
             Assert.That(Vector3.Angle(cameras[1].transform.forward,expected),Is.LessThan(.01f));
+            session.Tick(new LocalAction[4],.1f);presentation.Render();
+            Assert.That(Vector3.Distance(cameras[1].transform.position,anchor),Is.GreaterThan(.001f));
             session.ApplyDamage(0,1,100); presentation.Render();
             Quaternion frozen=cameras[1].transform.rotation;
+            Vector3 frozenPosition=cameras[1].transform.position;
             // Change transform after killer death; tracking must retain that life's final point.
             motors[0].Initialize(movement,new Vector3(-8,0,0)); presentation.Render();
             Assert.That(Quaternion.Angle(frozen,cameras[1].transform.rotation),Is.LessThan(.01f));
-            Assert.That(cameras[1].transform.position,Is.EqualTo(anchor));
+            Assert.That(cameras[1].transform.position,Is.EqualTo(frozenPosition));
             session.ApplyDamage(2,1,100); presentation.Render();
             Assert.That(presentation.DeathMessage(2),Does.StartWith("Вы погибли"));
         }

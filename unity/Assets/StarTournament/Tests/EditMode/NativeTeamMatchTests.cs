@@ -66,7 +66,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(s.Phase,Is.EqualTo(NativeMatchPhase.Overtime));
             Tick(s,()=>{s.RecordDamage(1,2,new DamageResult(1.25f,false));Kill(s,1,0);Kill(s,2,3);});
             Assert.That(s.Read().WinnerTeam,Is.EqualTo(NativeTeam.TeamA));Assert.That(s.Read().Trigger,Is.EqualTo("score-limit"));
-            Assert.That(Total(s,NativeTeam.TeamA),Is.EqualTo(2050));Assert.That(Total(s,NativeTeam.TeamB),Is.EqualTo(2000));
+            Assert.That(Total(s,NativeTeam.TeamA),Is.EqualTo(1050));Assert.That(Total(s,NativeTeam.TeamB),Is.EqualTo(1000));
+            Assert.That(s.Read().KillChain(0),Is.EqualTo(2));
         }
         [Test] public void TimeWinnerUsesTeamSumRatherThanTopIndividual()
         {

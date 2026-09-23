@@ -39,6 +39,10 @@ namespace StarTournament.ProvingGround
             p.Add("killcam.orbitHeight", "killcam", "Высота облёта", "Вертикальное смещение камеры над телом.", "meters", .5f, 3, .1f, 1.2f);
             p.Add("killcam.orbitSpeed", "killcam", "Скорость облёта", "Угловая скорость камеры без убийцы.", "degrees-per-second", 1, 45, 1, 12);
             p.Add("killcam.clipRadius", "killcam", "Зазор камеры", "Радиус sphere query для ограничения камеры стенами.", "meters", .05f, .5f, .01f, .15f);
+            p.Add("killcam.killerTransitionSeconds", "killcam", "Переход к убийце", "Время плавного выхода из death-eye на орбиту убийцы.", "seconds", .1f, 3f, .1f, .7f);
+            p.Add("killcam.killerOrbitRadius", "killcam", "Радиус вокруг убийцы", "Дистанция камеры от конкретной жизни убийцы.", "meters", 1f, 6f, .1f, 2.4f);
+            p.Add("killcam.killerAboveEyes", "killcam", "Высота над глазами убийцы", "Небольшой угол сверху при облёте убийцы.", "meters", 0f, 2f, .05f, .35f);
+            p.Add("killcam.killerOrbitSpeed", "killcam", "Скорость вокруг убийцы", "Угловая скорость камеры вокруг убийцы.", "degrees-per-second", 1f, 90f, 1f, 35f);
             return p;
         }
     }

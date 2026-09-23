@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
         readonly NativeMatchComposition composition;
         readonly int[] local;
         int ViewOf(int participant)=>composition!=null?composition.SeatOf(participant):participant;
-        readonly Vector3[] deathEye, deathFeet, killerPoint;
+        readonly Vector3[] deathEye, deathFeet, killerPoint, orbitStart;
         readonly double[] deathTime;
         readonly bool[] tracking;
         bool disposed;
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
-            deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length];
+            deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
             session.Died += OnDeath;
             session.Respawned += OnRespawn;
@@ -195,6 +195,9 @@ namespace StarTournament.ProvingGround
             corpses.Add(new Corpse { Participant=seat, Root=corpse, Visual=visual, Expires=session.Time+tuning.Get("death.corpseSeconds") });
             bodies[seat].SetActive(false);int view=ViewOf(seat);if(view>=0)views[view].SetActive(false);
             UpdateKiller(seat); // Capture killer life immediately, even if it dies later in this tick.
+            orbitStart[seat]=deathEye[seat]-killerPoint[seat];orbitStart[seat].y=0;
+            if(orbitStart[seat].sqrMagnitude<.0001f)orbitStart[seat]=Quaternion.Euler(0,notice.Pose.Yaw,0)*Vector3.back;
+            orbitStart[seat].Normalize();
         }
         void UpdateKiller(int seat)
         {
@@ -240,7 +243,23 @@ namespace StarTournament.ProvingGround
                     continue;
                 }
                 Vector3 position=deathEye[i], target;
-                if(life.KillerId!=null) { UpdateKiller(i); target=killerPoint[i]; }
+                if(life.KillerId!=null)
+                {
+                    UpdateKiller(i); target=killerPoint[i];
+                    float elapsed=(float)(session.Time-deathTime[i]);
+                    float transition=tuning.Get("killcam.killerTransitionSeconds");
+                    float progress=Mathf.Clamp01(elapsed/transition);
+                    progress=progress*progress*(3f-2f*progress);
+                    float angle=elapsed*tuning.Get("killcam.killerOrbitSpeed");
+                    Vector3 radial=Quaternion.Euler(0,angle,0)*orbitStart[i];
+                    Vector3 desired=target+radial*tuning.Get("killcam.killerOrbitRadius")+Vector3.up*tuning.Get("killcam.killerAboveEyes");
+                    position=Vector3.Lerp(deathEye[i],desired,progress);
+                    Vector3 offset=position-target;
+                    float radius=tuning.Get("killcam.clipRadius");
+                    if(offset.sqrMagnitude>0 && physics.SphereCast(target,radius,offset.normalized,out var wall,offset.magnitude,
+                        1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))
+                        position=target+offset.normalized*Mathf.Max(radius,wall.distance-radius);
+                }
                 else
                 {
                     target=deathFeet[i]+Vector3.up*tuning.Get("death.bodyHeight");

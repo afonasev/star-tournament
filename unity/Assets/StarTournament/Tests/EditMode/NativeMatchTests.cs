@@ -36,13 +36,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             s.BeginTick();Kill(s,2,-1);Kill(s,3,3);s.EndTick();
             Assert.That(Row(s,2).Deaths,Is.EqualTo(1));Assert.That(Row(s,3).Kills,Is.Zero);
         }
-        [Test] public void ChainGapIncludesBoundaryButNextTickStartsNewChain()
+        [Test] public void ChainContinuesAcrossAnyGapUntilDeathAndPairCountsRemain()
         {
             var s=Make();s.BeginTick();Kill(s,1,0);s.EndTick();
             for(int i=0;i<10;i++){s.BeginTick();if(i==9)Kill(s,1,0);s.EndTick();}
             Assert.That(Row(s,0).Score,Is.EqualTo(300));
             for(int i=0;i<11;i++){s.BeginTick();if(i==10)Kill(s,1,0);s.EndTick();}
-            Assert.That(Row(s,0).Score,Is.EqualTo(400));
+            Assert.That(Row(s,0).Score,Is.EqualTo(500));
+            Assert.That(s.Read().DirectKills(0,1),Is.EqualTo(3));
+            Assert.That(s.Read().KillChain(0),Is.EqualTo(3));
+            s.BeginTick();s.RecordDamage(1,2,new DamageResult(1,false));Kill(s,1,0);s.EndTick();
+            Assert.That(s.Read().DirectKills(2,1),Is.Zero);
+            s.BeginTick();Kill(s,0,1);s.EndTick();
+            Assert.That(s.Read().DirectKills(0,1),Is.EqualTo(4));
+            Assert.That(s.Read().DirectKills(1,0),Is.EqualTo(1));
+            Assert.That(s.Read().KillChain(0),Is.Zero);
+            var snapshot=s.Read();snapshot.DirectKillsByPair[1]=99;snapshot.KillChains[0]=99;
+            Assert.That(s.Read().DirectKills(0,1),Is.EqualTo(4));
+            Assert.That(s.Read().KillChain(0),Is.Zero);
+            Assert.That(Make().Read().DirectKills(0,1),Is.Zero);
         }
         [Test] public void FinalTickAppliesAllAwardsAndTargetPrecedesTimeWithFrozenResult()
         {

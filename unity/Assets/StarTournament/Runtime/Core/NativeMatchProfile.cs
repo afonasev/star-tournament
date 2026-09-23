@@ -13,7 +13,6 @@ namespace StarTournament.ProvingGround
             p.Add("match.targetPoints", "match", "Цель по очкам", "Используется только при включённой цели.", "points", 1000, 20000, 100, 3000);
             p.Add("score.assistWindow", "scoring", "Окно помощи", "Последний положительный урон учитывается включительно.", "seconds", 0, 60, 1, 5);
             p.Add("score.assistPoints", "scoring", "Очки помощи", "Награда один раз за чужое убийство.", "points", 0, 1000, 1, 50);
-            p.Add("score.chainGap", "scoring", "Интервал серии", "Максимальный включительный интервал между убийствами.", "seconds", 0, 60, 1, 10);
             int[] totals = { 100, 300, 500, 800, 1200 };
             for (int i = 0; i < totals.Length; i++)
                 p.Add("score.chainTotal"+(i+1), "scoring", "Итог серии "+(i+1), "Накопительная награда серии без assists.", "points", 0, 20000, 1, totals[i]);
