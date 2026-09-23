@@ -44,6 +44,9 @@ namespace StarTournament.ProvingGround
             // Park other live participants outside this paired diagnostic frame; the eight-player gameplay capture above is untouched.
             for(int seat=0;seat<ground.Session.ParticipantCount;seat++)
                 if(seat!=1)ground.PlaceCombatReviewSeat(seat,new Vector3(30,4,20-seat*1.5f),0,180);
+            // Corpses are independent presentation clones, so moving their participant cannot clear the diagnostic frame.
+            foreach(var corpse in ground.GetComponentsInChildren<Transform>(true).Where(t=>t.name.StartsWith("corpse-",StringComparison.Ordinal)))
+                corpse.gameObject.SetActive(false);
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
             yield return null;
             artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
