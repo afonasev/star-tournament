@@ -1,0 +1,21 @@
+{
+  "id": "vector-equipment-v1",
+  "reference": "add-vector-shotgun-and-armored-hands/assets/02-vector-approved-direction.png",
+  "authoringSource": "scripts/trooper/build_vector.py",
+  "baselineRigCommit": "49878a337e98f999787b530b9a071ce6698f55cb",
+  "units": "meters",
+  "up": "+Y",
+  "front": "+Z",
+  "pivot": "weapon-grip; embedded derivatives preserve Trooper weapon mount",
+  "collision": "none; presentation only",
+  "lod0": "vector-shotgun-lod0.glb",
+  "lod1": "vector-shotgun-lod1.glb",
+  "runtime": "embedded LOD0 matches authored geometry; original Trooper rig/clips; first person original new glove/gauntlet geometry",
+  "muzzles": [
+    "vector-muzzle-0",
+    "vector-muzzle-1"
+  ],
+  "materials": "shared ceramic/navy/titanium/woven glove/status; original generated 128px glove map",
+  "lighting": "URP scene lighting; no gameplay light or occlusion",
+  "acceptance": "pending native Player and human visual acceptance"
+}
