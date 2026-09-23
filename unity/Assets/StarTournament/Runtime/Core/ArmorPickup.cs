@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Pure authoritative lifecycle for the one central arena armor bonus.</summary>
     public sealed class ArmorPickup
     {
-        readonly float amount, radius;
+        readonly float amount, radius, heightTolerance;
         readonly double respawnSeconds;
         ArmorPickupState state;
         public ArmorPickup(Vector3 anchor, ProvingProfile profile)
@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround
             profile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile));
             profile.EnsureCombatDescriptors();
             if(profile==null||profile.Validate().Count!=0)throw new ArgumentException("Valid lifecycle profile required",nameof(profile));
-            amount=profile.Get("armor.pickupAmount");radius=profile.Get("armor.pickupRadius");respawnSeconds=profile.Get("armor.respawnSeconds");
+            heightTolerance=profile.Get("pickup.maximumHeightDifference");amount=profile.Get("armor.pickupAmount");radius=profile.Get("armor.pickupRadius");respawnSeconds=profile.Get("armor.respawnSeconds");
             state=new ArmorPickupState{Anchor=anchor,Available=true};
         }
         public ArmorPickupState Read()=>state;
@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround
         }
         public bool InRange(Vector3 feet)
         {
-            var delta=feet-state.Anchor;delta.y=0;return delta.sqrMagnitude<=radius*radius;
+            var delta=feet-state.Anchor;if(Mathf.Abs(delta.y)>heightTolerance)return false;delta.y=0;return delta.sqrMagnitude<=radius*radius;
         }
         public void Advance(double seconds)
         {

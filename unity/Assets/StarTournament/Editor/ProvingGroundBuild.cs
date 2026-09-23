@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround.Editor
         const string Scene = Root + "Scenes/ProvingGround.unity";
         [MenuItem("Star Tournament/Prepare proving ground")]
         public static void Prepare() => PrepareFamily(0,1920,1080);
-        static void PrepareFamily(int arenaFamily,int width,int height)
+        static void PrepareFamily(int arenaFamily,int width,int height,bool combatBowl=false)
         {
             Directory.CreateDirectory(Root+"Settings"); Directory.CreateDirectory(Root+"Scenes"); Directory.CreateDirectory(Root+"Resources");
             AssetDatabase.Refresh();
@@ -41,6 +41,8 @@ namespace StarTournament.ProvingGround.Editor
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var root=new GameObject("Star Tournament Proving Ground").AddComponent<ProvingGround>();
             root.ArenaProfile.Set("arena.family",arenaFamily);
+            root.StartWithCombatBowl=combatBowl;
+            root.CombatBowlReviewDirectory=combatBowl?System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_COMBAT_BOWL_EVIDENCE"):null;
             TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
             root.SpeedPickupPrefab=Required("speed-pickup");
             EditorSceneManager.SaveScene(scene,Scene);
@@ -65,7 +67,7 @@ namespace StarTournament.ProvingGround.Editor
             if(!string.IsNullOrEmpty(familyText)&&(!int.TryParse(familyText,out family)||family<0||family>=ArenaFamilyCatalog.Ids.Count))
                 throw new BuildFailedException("Invalid STAR_TOURNAMENT_QA_ARENA_FAMILY");
             int width=ReadQaDimension("STAR_TOURNAMENT_QA_WIDTH",1920),height=ReadQaDimension("STAR_TOURNAMENT_QA_HEIGHT",1080);
-            PrepareFamily(family,width,height);
+            PrepareFamily(family,width,height,string.IsNullOrEmpty(familyText));
             var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes=new[]{Scene}, locationPathName="Builds/StarTournamentProvingGround.app", target=BuildTarget.StandaloneOSX, options=BuildOptions.Development,
                 extraScriptingDefines=new[]{"STAR_TOURNAMENT_DEVELOPMENT_QA"} });
             // Keep the editable canonical scene at its default family after a one-off QA artifact build.
@@ -85,13 +87,15 @@ namespace StarTournament.ProvingGround.Editor
     [CustomEditor(typeof(ProvingGround))]
     public sealed class ProvingGroundInspector : UnityEditor.Editor
     {
+        bool showBowl;
         public override void OnInspectorGUI()
         {
             var ground=(ProvingGround)target;
             EditorGUILayout.LabelField(ground.Profile.Id+" / v"+ground.Profile.Version,EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("Профиль полигона. Диапазоны и validation используют один registry. Перезапустите Play после изменения.",MessageType.Info);
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
-            foreach(var profile in new[]{ground.Profile,ground.ArenaProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile})
+            showBowl=EditorGUILayout.Foldout(showBowl,"Combat Bowl authoring metadata (published revision remains frozen)");
+            foreach(var profile in new[]{ground.Profile,ground.ArenaProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
             {
             EditorGUILayout.LabelField(profile.Id+" / v"+profile.Version,EditorStyles.boldLabel);
             foreach(var descriptor in profile.Descriptors)

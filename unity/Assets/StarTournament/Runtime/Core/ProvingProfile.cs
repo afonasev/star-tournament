@@ -166,6 +166,12 @@ namespace StarTournament.ProvingGround
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
             profile.Add("armor.respawnSeconds", "armor-pickup", "Возврат бонуса", "Simulation-время до возвращения щита после подбора.", "seconds", 1, 120, 1, 30);
             profile.Add("armor.pickupRadius", "armor-pickup", "Радиус подбора", "Горизонтальный радиус authoritative подбора щита.", "meters", .1f, 5, .05f, 1.2f);
+            profile.Add("pickup.maximumHeightDifference", "pickups", "Допуск высоты подбора", "Максимальная разница высот стоп и anchor; исключает подбор с другого этажа.", "meters", .05f, 1, .05f, .5f);
+            profile.Add("damageBoost.multiplier", "damage-boost", "Множитель урона", "Множитель урона оружия до поглощения бронёй.", "ratio", 1, 4, .1f, 2);
+            profile.Add("damageBoost.durationSeconds", "damage-boost", "Длительность усиления", "Время усиления; смерть сразу снимает эффект.", "seconds", .1f, 60, .1f, 10);
+            profile.Add("damageBoost.initialDelaySeconds", "damage-boost", "Первое появление", "Задержка первого появления от начала матча.", "seconds", 0, 120, .1f, 15);
+            profile.Add("damageBoost.respawnSeconds", "damage-boost", "Возврат бонуса", "Задержка после успешного подбора.", "seconds", .1f, 120, .1f, 45);
+            profile.Add("damageBoost.pickupRadius", "damage-boost", "Радиус подбора", "Горизонтальный радиус; дополнительно проверяется этаж.", "meters", .1f, 5, .05f, 1.2f);
             profile.Add("speed.multiplier", "speed-pickup", "Множитель скорости", "Множитель horizontal maximum speed во время speed bonus.", "ratio", 1.05f, 3, .05f, 1.5f);
             profile.Add("speed.durationSeconds", "speed-pickup", "Длительность ускорения", "Simulation-время действия speed bonus.", "seconds", .1f, 60, .1f, 10);
             profile.Add("speed.initialDelaySeconds", "speed-pickup", "Первое появление", "Simulation-время от старта матча до первого speed bonus.", "seconds", 0, 60, .1f, 10);

@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround
         {
             string family=definition?.FamilyId;
             if(definition==null) return Reject("ARENA_NULL_DEFINITION",family,null,"Definition is required.");
-            if(!ArenaFamilyCatalog.Contains(family)) return Reject("ARENA_UNKNOWN_FAMILY",family,null,"Family is not registered.");
+            if(!ArenaFamilyCatalog.Contains(family) && !CombatBowlCatalog.Contains(family)) return Reject("ARENA_UNKNOWN_FAMILY",family,null,"Family is not registered.");
             if(profile==null || profile.Validate().Count!=0) return Reject("ARENA_INVALID_PROFILE",family,null,"Arena profile is invalid.");
             if(string.IsNullOrWhiteSpace(definition.Identity)) return Reject("ARENA_MISSING_IDENTITY",family,null,"Definition identity is required.");
             if(definition.Solids==null || definition.Spawns==null || definition.RouteAnchors==null || definition.SpawnRegions==null || definition.Transitions==null)
@@ -48,6 +48,7 @@ namespace StarTournament.ProvingGround
             if(!OnNamedFloor(definition.ArmorPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_ARMOR_PICKUP_ANCHOR",family,"armor-pickup","Armor pickup anchor must resolve to a named floor support.");
             if(!OnNamedFloor(definition.SpeedPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_SPEED_PICKUP_ANCHOR",family,"speed-pickup","Speed pickup anchor must resolve to a named floor support.");
 
+            if(definition.HasDamagePickup&&!OnNamedFloor(definition.DamagePickupAnchor,definition.Solids,supports))return Reject("ARENA_INVALID_DAMAGE_PICKUP_ANCHOR",family,"damage-pickup","Damage anchor requires a named floor.");
             ids.Clear(); foreach(var region in definition.SpawnRegions)
             {
                 if(region==null || string.IsNullOrWhiteSpace(region.Id) || !ids.Add(region.Id)) return Reject("ARENA_INVALID_SPAWN_REGION",family,region?.Id,"Spawn region ID must be unique.");

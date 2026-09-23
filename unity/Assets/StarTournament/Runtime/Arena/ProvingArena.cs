@@ -37,6 +37,13 @@ namespace StarTournament.ProvingGround
             return collider && collider.transform.IsChildOf(transform) && supports.TryGetValue(collider,out var support) ? support : null;
         }
         Material floor, wall, accent;
+        public void ClearProjection()
+        {
+            if (Surface) { Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
+            for(int i=transform.childCount-1;i>=0;i--) DestroyImmediate(transform.GetChild(i).gameObject);
+            if(floor)DestroyImmediate(floor);if(wall)DestroyImmediate(wall);if(accent)DestroyImmediate(accent);
+            supports.Clear(); navigationTransitions=System.Array.Empty<NativeNavigationTransition>(); Spawns=System.Array.Empty<Vector3>();
+        }
         public void Build(ProvingProfile profile)
         {
             Build(ArenaGenerator.Freeze(new ArenaGenerationRequest{Seed=1,GeneratorVersion=ArenaGenerator.FoundationVersion,Profile=ProvingProfile.CreateArenaFoundationDefault()}),profile);
@@ -44,6 +51,7 @@ namespace StarTournament.ProvingGround
         public void Build(ArenaFreezeSnapshot frozen, ProvingProfile profile)
         {
             if(frozen==null) throw new System.ArgumentException("ARENA_FREEZE_MISSING_INPUT|family:unknown|element:snapshot");
+            ClearProjection();
             var definition=frozen.Definition; frozen.RequireDefinition(definition); Definition=definition; FrozenSnapshot=frozen; supports.Clear();
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
@@ -56,6 +64,8 @@ namespace StarTournament.ProvingGround
             Surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
             // Keep Unity's baker, but give it the same capsule/step/slope contract as the motor.
             var settings=Surface.GetBuildSettings();
+            // Required for stacked floors/stairs: corner interpolation alone is not the physical height field.
+            settings.buildHeightMesh=true;
             settings.agentRadius=profile.Get("player.capsule.radius"); settings.agentHeight=profile.Get("player.capsule.height");
             settings.agentClimb=profile.Get("player.movement.stepOffset"); settings.agentSlope=profile.Get("player.movement.slopeLimitDegrees");
             var sources=new List<NavMeshBuildSource>();

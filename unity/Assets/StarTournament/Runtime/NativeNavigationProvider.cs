@@ -37,11 +37,16 @@ namespace StarTournament.ProvingGround
                 !Finite(from) || !Finite(goal) || !TrySample(from, out var start) || !TrySample(goal, out var end)) return false;
             if (!NavMesh.CalculatePath(start.Position, end.Position, NavMesh.AllAreas, path) || path.status != NavMeshPathStatus.PathComplete)
             { failure = "No complete route"; return false; }
-            var corners = path.corners;
+            // The baker may project an endpoint sideways near a ramp. Keep the requested, physically
+            // validated endpoint so the motor does not repeatedly arrive at a different XZ position.
+            if(!TryPhysicalSupport(goal,out var requestedEnd)||requestedEnd.Support!=end.Support)return false;
+            end=requestedEnd;
+            var nativeCorners=path.corners;
+            var corners=new Vector3[nativeCorners.Length+1];Array.Copy(nativeCorners,corners,nativeCorners.Length);corners[corners.Length-1]=end.Position;
             if (corners.Length == 0) return false;
             var result = new List<NativeNavigationPoint>();
             var trace = new List<NativeNavigationPoint>();
-            string previousSupport = start.Support;
+            string previousSupport = start.Support;float physicalHeight=start.Position.y;
             // Dense validation catches undeclared vertical shortcuts between sparse native corners.
             // Spacing derives from the existing capsule; it is not a second navigation tuning source.
             for (int i = 0; i < corners.Length; i++)
@@ -52,10 +57,16 @@ namespace StarTournament.ProvingGround
                 for (int sample = 1; sample <= samples; sample++)
                 {
                     var position = Vector3.Lerp(previous, corners[i], sample / (float)samples);
+                    // Walk the physical height field from the last proven feet height, in capsule-sized
+                    // horizontal samples. NavMesh corners may interpolate above an entire staircase.
+                    // Each step still requires the existing bounded owned ray, capsule headroom,
+                    // connected support and independently validated declared transition feet.
+                    position.y=physicalHeight;
                     if (!TryPhysicalSupport(position, out validated, true) || !Connected(previousSupport, validated.Support))
                     { failure = "Invalid route support at " + position + " from " + previousSupport + " to " + validated.Support; return false; }
-                    trace.Add(validated);
-                    if (validated.Support.StartsWith("transition:", StringComparison.Ordinal) || validated.Support != previousSupport)
+                    physicalHeight=validated.Position.y;trace.Add(validated);
+                    // Dense samples prove physical continuity; steering needs only support boundaries and native corners.
+                    if (validated.Support != previousSupport)
                         result.Add(validated);
                     previousSupport = validated.Support;
                 }
@@ -65,6 +76,8 @@ namespace StarTournament.ProvingGround
             if (!ValidateDeclaredTransitions(trace, start.Support, end.Support, out failure)) return false;
             // Physical floor height, not the slightly elevated navmesh polygon, is the feet target.
             result[result.Count - 1] = end;
+            // A duplicated last corner disables final-point braking and can make the motor oscillate.
+            for(int i=result.Count-1;i>0;i--)if(result[i].Support==result[i-1].Support&&result[i].Position==result[i-1].Position)result.RemoveAt(i);
             points = result.ToArray(); failure = null; return true;
         }
         bool ValidateDeclaredTransitions(List<NativeNavigationPoint> trace, string startSupport, string endSupport, out string failure)

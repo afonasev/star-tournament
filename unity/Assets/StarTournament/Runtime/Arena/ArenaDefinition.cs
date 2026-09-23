@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
     [Serializable] public sealed class ArenaDefinition
     {
         public uint Seed; public string GeneratorVersion, FamilyId, ProfileFingerprint, Identity;
-        public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors; public Vector3 ArmorPickupAnchor, SpeedPickupAnchor;
+        public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors; public Vector3 ArmorPickupAnchor, SpeedPickupAnchor, DamagePickupAnchor; public bool HasDamagePickup, DisableSpeedPickup;
         public ArenaSpawnRegion[] SpawnRegions; public NativeNavigationTransition[] Transitions;
         public ArenaDefinition Copy() => JsonUtility.FromJson<ArenaDefinition>(JsonUtility.ToJson(this));
     }
@@ -34,7 +34,7 @@ namespace StarTournament.ProvingGround
             if(definition==null || profile==null) throw new ArgumentException("ARENA_FREEZE_MISSING_INPUT|family:unknown|element:snapshot");
             var result=ArenaDefinitionValidator.Validate(definition,profile);
             if(!result.IsValid) throw new ArgumentException(result.ToString());
-            if(definition.ProfileFingerprint!=ArenaGenerator.Fingerprint(profile))
+            if(!definition.ProfileFingerprint.StartsWith("authored:",StringComparison.Ordinal) && definition.ProfileFingerprint!=ArenaGenerator.Fingerprint(profile))
                 throw new ArgumentException($"ARENA_FREEZE_PROFILE_MISMATCH|family:{definition.FamilyId}|element:profile");
             return new ArenaFreezeSnapshot(definition,profile);
         }
@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
             if(candidate==null || candidate.Identity!=definition.Identity || candidate.FamilyId!=definition.FamilyId ||
                 candidate.ProfileFingerprint!=definition.ProfileFingerprint || JsonUtility.ToJson(candidate)!=JsonUtility.ToJson(definition))
                 throw new ArgumentException($"ARENA_FREEZE_DEFINITION_MISMATCH|family:{FamilyId}|element:definition");
-            if(ArenaGenerator.Fingerprint(profile)!=ProfileFingerprint)
+            if(!ProfileFingerprint.StartsWith("authored:",StringComparison.Ordinal) && ArenaGenerator.Fingerprint(profile)!=ProfileFingerprint)
                 throw new ArgumentException($"ARENA_FREEZE_PROFILE_MISMATCH|family:{FamilyId}|element:profile");
         }
     }
