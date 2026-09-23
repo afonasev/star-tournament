@@ -45,7 +45,8 @@ namespace StarTournament.ProvingGround
         void OnFire(int seat,float damage)
         {
             bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
-            int view=ViewOf(seat);if(view>=0)views[view].GetComponent<TrooperVisual>()?.Fire(session.Time);
+            bodies[seat].GetComponent<VectorShotPresentation>()?.Fire(session.Time);
+            int view=ViewOf(seat);if(view>=0){views[view].GetComponent<TrooperVisual>()?.Fire(session.Time);views[view].GetComponent<VectorShotPresentation>()?.Fire(session.Time);}
         }
         void OnShotResolved(ShotNotice notice)
         {
@@ -83,23 +84,18 @@ namespace StarTournament.ProvingGround
         {
             if(traceMaterial)return traceMaterial;
             var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
-            traceMaterial=new Material(shader){color=new Color(.12f,.9f,1f,1f)};
-            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",new Color(.12f,.9f,1f,1f));
-            if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(.04f,.75f,1f,1f));}
+            traceMaterial=new Material(shader){color=new Color(1f,.78f,.4f,1f)};
+            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",new Color(1f,.78f,.4f,1f));
+            if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(1f,.55f,.15f,1f));}
             return traceMaterial;
         }
         Vector3 Muzzle(int participant,int pellet)
         {
             int view=ViewOf(participant);
-            // The arms root is animation-owned. Derive the visible weapon mount from the stable camera
-            // and its authored mount profile, so the presentation tube remains on the same aim axis as
-            // the authoritative endpoint instead of inheriting a sampled arm-pose transform.
-            if(view>=0 && cameras[view]) return cameras[view].transform.TransformPoint(new Vector3(
-                movement.Get("presentation.viewWeaponX")+(pellet%2==0?.07f:-.07f),
-                movement.Get("presentation.viewWeaponY")-.05f,
-                movement.Get("presentation.viewWeaponZ")+.72f));
-            return bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
+            var visual=(view>=0?views[view]:bodies[participant]).GetComponent<VectorShotPresentation>();
+            return visual!=null && visual.MuzzleCount==2?visual.Muzzle(pellet):bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
         }
+
         void RenderPellets()
         {
             float flight=movement.Get("presentation.shotFlightSeconds"), impact=movement.Get("presentation.shotImpactSeconds");
@@ -151,6 +147,7 @@ namespace StarTournament.ProvingGround
             deathTime[seat]=session.Time; tracking[seat]=true;
             killerPoint[seat]=deathEye[seat]+Quaternion.Euler(notice.Pose.Pitch,notice.Pose.Yaw,0)*Vector3.forward;
             var corpse=Object.Instantiate(bodies[seat],owner);
+            foreach(var particles in corpse.GetComponentsInChildren<ParticleSystem>())particles.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
             // Unity object cloning is not a contract for copying renderer property blocks.
             var sourceRenderers=bodies[seat].GetComponentsInChildren<Renderer>(true);
             var corpseRenderers=corpse.GetComponentsInChildren<Renderer>(true);
@@ -226,6 +223,8 @@ namespace StarTournament.ProvingGround
         public void Render()
         {
             RenderPellets();
+            foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Render(session.Time);
+            foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             for(int c=corpses.Count-1;c>=0;c--)
             {
                 if(session.Time>=corpses[c].Expires) { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }

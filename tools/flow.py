@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 
 STAGES = {'draft','ready','implementing','verified','merged','deployed','published','finalizing','awaiting-acceptance','rework-required','accepted','archived','cancelled'}
-EDGES = {'draft':{'ready'},'ready':{'implementing'},'implementing':{'verified'},'verified':{'merged','published'},'merged':{'deployed'},'deployed':{'finalizing'},'published':{'finalizing'},'finalizing':{'awaiting-acceptance'},'awaiting-acceptance':{'accepted','rework-required'},'rework-required':{'implementing'},'accepted':{'archived'}}
+EDGES = {'draft':{'ready'},'ready':{'implementing'},'implementing':{'verified'},'verified':{'merged','published'},'merged':{'deployed'},'deployed':{'finalizing'},'published':{'finalizing'},'finalizing':{'awaiting-acceptance','rework-required'},'awaiting-acceptance':{'accepted','rework-required'},'rework-required':{'implementing'},'accepted':{'archived'}}
 
 def now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()

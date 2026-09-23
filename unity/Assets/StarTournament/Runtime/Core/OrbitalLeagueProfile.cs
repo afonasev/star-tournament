@@ -5,12 +5,12 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=3};
+            var p=new ProvingProfile{id="orbital-league-v1",version=5};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
             V("surface.wallValue","surfaces","Светлота стен","Светлый окрашенный металл для силуэтов игроков.","ratio",.35f,.95f,.01f,.73f);
-            V("surface.floorValue","surfaces","Светлота пола","Матовый графитовый пол под спортивной разметкой.","ratio",.06f,.35f,.01f,.18f);
+            V("surface.floorValue","surfaces","Светлота пола","Матовый графитовый пол под спортивной разметкой; освещённый участок сохраняет контраст тени.","ratio",.06f,.35f,.01f,.28f);
             V("surface.metallic","surfaces","Металличность","Доля металлического отражения покрытия.","ratio",0,.7f,.01f,.25f);
             V("surface.smoothness","surfaces","Гладкость стен","Ширина блика на окрашенном металле.","ratio",0,.6f,.01f,.28f);
             V("surface.floorSmoothness","surfaces","Гладкость пола","Слабый блик без зеркальных отражений.","ratio",0,.4f,.01f,.13f);
@@ -27,15 +27,18 @@ namespace StarTournament.ProvingGround
             V("light.fixtureWidth","lighting","Ширина светильника","Широкая белая потолочная панель.","m",.3f,2,.1f,.9f);
             V("light.fixtureLength","lighting","Длина светильника","Длина белой панели.","m",1,4,.1f,2.8f);
             V("light.emission","lighting","Свечение панели","Белые светильники без отдельной realtime-тени.","multiplier",.5f,3,.1f,2.3f);
-            V("light.fill","lighting","Рассеянный свет","Равномерная читаемость закрытых помещений.","ratio",.2f,1,.05f,.65f);
-            V("light.intensity","lighting","Локальный свет","Сила шести потолочных источников.","intensity",0,12,.5f,8f);
-            V("light.studioKey","lighting","Общий направленный свет","Заполнение Combat Bowl, сохраняющее контраст локальных теней.","intensity",.1f,2,.05f,.65f);
-            V("light.range","lighting","Радиус света","Зона мягкого локального освещения.","m",3,12,.5f,10);
+            V("light.fill","lighting","Рассеянный свет","Равномерная читаемость закрытых помещений.","ratio",.2f,1,.05f,.45f);
+            V("light.intensity","lighting","Локальный свет","Сила шести потолочных источников.","intensity",0,12,.5f,11f);
+            V("light.studioKey","lighting","Общий направленный свет","Заполнение Combat Bowl, сохраняющее контраст локальных теней.","intensity",.1f,2,.05f,.4f);
+            V("light.range","lighting","Радиус света","Зона мягкого локального освещения.","m",3,12,.5f,12);
+            V("light.spotAngle","lighting","Угол потолочного света","Ширина направленного пятна, определяющая читаемость тени.","deg",60,120,5,100);
+            V("light.targetDrop","lighting","Наклон потолочного света","Смещение цели светильника вниз от центра зоны.","m",1,5,.25f,3);
+            V("light.hallAimOffsetZ","lighting","Цель света в зале","Смещение пятна главного зала вдоль маршрута от геометрического центра.","m",-4,4,.5f,-2.5f);
             V("light.shadowCasters","lighting","Источники с тенями","Максимум общих для всех камер потолочных источников с realtime-тенью.","count",0,4,1,4);
-            V("light.shadowStrength","lighting","Контраст тени","Мягкая тень оставляет соперника и вход различимыми.","ratio",0,.7f,.05f,.65f);
+            V("light.shadowStrength","lighting","Контраст тени","Мягкая тень оставляет соперника и вход различимыми.","ratio",0,1,.05f,1);
             V("light.shadowResolution","lighting","Разрешение тени","Размер одной карты тени в общем атласе URP.","px",256,512,256,512);
-            V("light.shadowBias","lighting","Смещение тени","Подавление самозатенения на игроках и стенах.","m",.01f,.2f,.01f,.05f);
-            V("light.shadowNormalBias","lighting","Нормальное смещение","Подавление артефактов на освещённых панелях.","m",0,1,.05f,.4f);
+            V("light.shadowBias","lighting","Смещение тени","Подавление самозатенения на игроках и стенах.","m",.01f,.2f,.01f,.02f);
+            V("light.shadowNormalBias","lighting","Нормальное смещение","Подавление артефактов на освещённых панелях.","m",0,1,.05f,.1f);
             V("surface.ceilingValue","surfaces","Светлота потолка","Доля светлоты стен для потолочных панелей.","ratio",.3f,1,.05f,.7f);
             V("surface.detailSmoothness","surfaces","Гладкость деталей","Ширина блика плинтуса и разметки.","ratio",0,.5f,.05f,.1f);
             V("detail.headerInset","details","Потолочный пояс","Отступ верхнего пояса от потолка.","m",.1f,.5f,.01f,.2f);
@@ -75,7 +78,9 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=1;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=3;
+            p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
+            var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
             {
                 for(int i=0;i<3;i++)
@@ -92,40 +97,77 @@ namespace StarTournament.ProvingGround
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
             {
                 int number=sz>0?(sx<0?1:2):(sx<0?3:4);
-                Position("ring.spawn-mark-"+number,new Vector3(sx*35.94f,6.2f,sz*17));
-                int oldIndex=4+(sx<0?0:2)+(sz<0?0:1);Position("layout.label-"+oldIndex,new Vector3(sx*35.94f,6.2f,sz*20));
+                Position("ring.spawn-mark-"+number,new Vector3(sx*35.94f,6.2f,sz*14));
+                int oldIndex=4+(sx<0?0:2)+(sz<0?0:1);Position("layout.label-"+oldIndex,new Vector3(sx*35.94f,6.2f,sz*14));
             }
             Position("layout.label-8",new Vector3(0,5.8f,23.78f));Position("layout.label-9",new Vector3(0,5.8f,-23.78f));
             Position("layout.label-10",new Vector3(-27.78f,5.8f,9));Position("layout.label-11",new Vector3(27.78f,5.8f,-9));
-            p.Add("ring.skyValue","ring","Window sky brightness","Brightness of the space backdrop in the sealed panoramic windows.","ratio",.01f,.3f,.01f,.08f);
+            p.Add("ring.skyValue","space","Space background brightness","Brightness of distant stars and nebula; never a texture on glass.","ratio",.01f,.5f,.01f,.16f);
+            p.Add("ring.glassOpacity","windows","Glass tint opacity","Light transmission tint; the separate backdrop remains visible through the pane.","ratio",0,.3f,.01f,.045f);
+            p.Add("ring.glassEdgeOpacity","windows","Glass grazing opacity","Subtle reflection tint at grazing viewing angles.","ratio",0,.5f,.01f,.18f);
+            p.Add("ring.spaceHalfExtent","space","Space cube distance","Half extent of the distant renderer-only cube, outside the station hull.","meters",100,140,10,120);
+            p.Add("ring.spaceCenterY","space","Space cube elevation","Vertical centre of the distant background cube.","meters",-20,20,1,4);
+            p.Add("ring.planetRadius","space","Blue planet angular size","Radius of the blue planet in its cube-face texture.","face fraction",.04f,.3f,.01f,.08f);
+            p.Add("ring.secondPlanetRadius","space","Rock planet angular size","Radius of the second planet on the opposite cube face.","face fraction",.04f,.3f,.01f,.06f);
+            p.Add("ring.sunRadius","space","Sun angular size","Radius of the single sun on the south cube face.","face fraction",.01f,.12f,.005f,.02f);
+            p.Add("ring.celestialElevation","space","Celestial elevation","Vertical texture centre of the planets and sun.","face fraction",.35f,.65f,.01f,.51f);
+            p.Add("ring.celestialHorizontal","space","Celestial horizontal position","Horizontal texture centre on each distinct cube face.","face fraction",.25f,.75f,.01f,.5f);
             return p;
         }
         // Existing serialized scene profiles gain only missing presentation controls.
         public void EnsureOrbitalLeagueDescriptors()
         {
-            if(id!="orbital-league-v1")return;
+            bool ring=id=="orbital-league-ring-v1";
+            if(!ring && id!="orbital-league-v1")return;
+            bool upgradeLegacy=!ring && version<3;
+            bool upgradeShadows=ring?version<2:version<4;
+            bool upgradeFloor=ring?version<2:version<5;
+            bool upgradeWindows=ring && version<3;
             // Retain designer overrides while upgrading the previous authored defaults.
-            if(version<3)
+            if(upgradeLegacy)
             {
                 if(Mathf.Approximately(Get("light.emission"),1.5f))Set("light.emission",2.3f);
                 if(Mathf.Approximately(Get("light.intensity"),1.4f))Set("light.intensity",8f);
                 if(Mathf.Approximately(Get("light.range"),7f))Set("light.range",10f);
             }
-            var current=CreateOrbitalLeagueDefault();
+            if(upgradeShadows)
+            {
+                if(Mathf.Approximately(Get("light.fill"),.65f))Set("light.fill",.45f);
+                if(Mathf.Approximately(Get("light.intensity"),8f))Set("light.intensity",11f);
+                if(Mathf.Approximately(Get("light.studioKey"),.65f))Set("light.studioKey",.4f);
+                if(Mathf.Approximately(Get("light.range"),10f))Set("light.range",12f);
+                if(Mathf.Approximately(Get("light.shadowStrength"),.65f))Set("light.shadowStrength",1);
+                if(Mathf.Approximately(Get("light.shadowBias"),.05f))Set("light.shadowBias",.02f);
+                if(Mathf.Approximately(Get("light.shadowNormalBias"),.4f))Set("light.shadowNormalBias",.1f);
+            }
+            if(upgradeFloor && Mathf.Approximately(Get("surface.floorValue"),.18f))Set("surface.floorValue",.28f);
+            var current=ring?CreateCombatBowlRingPresentationDefault():CreateOrbitalLeagueDefault();
+            if(upgradeWindows)
+            {
+                descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
+                if(Mathf.Approximately(Get("ring.windowFrameWidth"),.4f))Set("ring.windowFrameWidth",current.Get("ring.windowFrameWidth"));
+                if(Mathf.Approximately(Get("ring.skyValue"),.08f))Set("ring.skyValue",current.Get("ring.skyValue"));
+                foreach(var descriptor in current.descriptors)
+                {
+                    bool mark=descriptor.Path.StartsWith("ring.spawn-mark-") && descriptor.Path.EndsWith(".z");
+                    bool label=descriptor.Path.StartsWith("layout.label-") && descriptor.Path.EndsWith(".z") && Mathf.Approximately(Mathf.Abs(descriptor.DefaultValue),14);
+                    if((mark && Mathf.Approximately(Mathf.Abs(Get(descriptor.Path)),17)) || (label && Mathf.Approximately(Mathf.Abs(Get(descriptor.Path)),20)))Set(descriptor.Path,descriptor.DefaultValue);
+                }
+            }
             foreach(var descriptor in current.descriptors)
             {
                 int existing=descriptors.FindIndex(item=>item.Path==descriptor.Path);
                 if(existing>=0)
                 {
                     // The v2 range capped light intensity at four, below the new authored value.
-                    if(version<3 && (descriptor.Path=="light.intensity" || descriptor.Path=="light.emission" || descriptor.Path=="light.range"))
+                    if((upgradeShadows && descriptor.Path.StartsWith("light.")) || (upgradeWindows && (descriptor.Path.StartsWith("ring.") || descriptor.Path.StartsWith("layout.label-"))))
                         descriptors[existing]=JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor));
                     continue;
                 }
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=3;
+            version=ring?3:5;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

@@ -25,15 +25,20 @@ namespace StarTournament.ProvingGround.Editor
                 if(!original || original.legacy) throw new BuildFailedException("Missing nonlegacy trooper clip "+name);
                 string path=Output+name+".anim";
                 var clip=AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
-                if(!clip) { clip=new AnimationClip(); AssetDatabase.CreateAsset(clip,path); }
-                EditorUtility.CopySerialized(original,clip); clip.name=name;
+                bool created=!clip;
+                if(created) { clip=new AnimationClip(); AssetDatabase.CreateAsset(clip,path); }
+                // Vector changes equipment only. Preserve the accepted persisted motion curves;
+                // Blender GLB roundtrips resample them even when no animation edit was requested.
+                bool vectorEquipment=source.GetComponentsInChildren<Transform>(true).Any(t=>t.name=="vector-muzzle-0");
+                if(created || !vectorEquipment) EditorUtility.CopySerialized(original,clip);
+                clip.name=name;
                 var settings=AnimationUtility.GetAnimationClipSettings(clip);
                 settings.loopTime=i<4; settings.loopBlend=false;
                 AnimationUtility.SetAnimationClipSettings(clip,settings);
                 AnimationUtility.SetAnimationEvents(clip,Array.Empty<AnimationEvent>());
                 EditorUtility.SetDirty(clip); ground.TrooperClips[i]=clip;
             }
-            var materials=source.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Where(m=>m).GroupBy(m=>m.name).ToDictionary(g=>g.Key,g=>g.First());
+            var materials=source.GetComponentsInChildren<Renderer>(true).Concat(arms.GetComponentsInChildren<Renderer>(true)).SelectMany(r=>r.sharedMaterials).Where(m=>m).GroupBy(m=>m.name).ToDictionary(g=>g.Key,g=>g.First());
             ground.TrooperBodyPrefab=Persist(source,"TrooperBody",ground.TrooperClips,materials);
             ground.TrooperArmsPrefab=Persist(arms,"TrooperArms",ground.TrooperClips,materials);
             // License travels with the Player, not just the repository.

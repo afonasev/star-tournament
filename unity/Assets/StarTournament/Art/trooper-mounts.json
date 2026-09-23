@@ -8,11 +8,11 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "91f8e00e54a9c781ce826a1f5b66c8a6329de6f338d833f0568cb3b814c1ecc7"
+    "sha256": "b602d979a948c168978d3967124060a3a15f4f9311ec3966bdfefc7c6d323afd"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "e7d03b157bd5164f5197cc78bba88fe18ee9846a0e4d4a570d98327e1d381a16"
+    "sha256": "68e9fecf4dd59c9fc42efe5221966264b358227aa152096aab200da6bcace9a4"
   },
   "clips": [
     "idle",
@@ -1296,5 +1296,6 @@
     }
   },
   "maxTextureDimension": 1024,
-  "rootMotion": "death skeleton Root only; applyRootMotion=false on visual Animator; motor authoritative"
+  "rootMotion": "death skeleton Root only; applyRootMotion=false on visual Animator; motor authoritative",
+  "equipment": "vector-equipment-v1; original rig/grip motion with replacement first-person gloves and gauntlets"
 }

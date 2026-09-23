@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Renderer-only kit for immutable Combat Bowl. Never creates a physics object.</summary>
-    public sealed class OrbitalLeaguePresentation : MonoBehaviour
+    public sealed partial class OrbitalLeaguePresentation : MonoBehaviour
     {
         // Surface epsilon avoids coplanar z-fighting; technical, not traversable geometry.
         const float Epsilon=.006f;
@@ -63,15 +63,18 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,-4),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
-            HallMarkings();Labels();BroadcastDetails();
+            HallMarkings();Labels();BroadcastDetails();SpaceBackdrop();
             // Six shared zones select actual luminaires. A bounded subset casts shadows for all viewports.
             for(int zone=0;zone<6;zone++)
             {
                 Vector3 anchor=Position("layout.fill-"+zone);
                 Vector3 fixture=fixturePositions.OrderBy(v=>(v-anchor).sqrMagnitude).First();
                 var go=new GameObject("League ceiling light / "+zone);go.transform.SetParent(transform,false);go.transform.localPosition=fixture-Vector3.up*.12f;
-                go.transform.localRotation=Quaternion.Euler(90,0,0);
-                var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=120;l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");
+                // The visible fixture sits off-centre in some rooms; aim its real beam at the authored zone.
+                Vector3 target=anchor-Vector3.up*p.Get("light.targetDrop");
+                if(zone==0)target.z+=p.Get("light.hallAimOffsetZ");
+                go.transform.localRotation=Quaternion.LookRotation(target-go.transform.localPosition);
+                var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=p.Get("light.spotAngle");l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");
                 bool casts=zone<Mathf.RoundToInt(p.Get("light.shadowCasters"));
                 l.shadows=casts?LightShadows.Soft:LightShadows.None;
                 if(casts){l.shadowStrength=p.Get("light.shadowStrength");l.shadowCustomResolution=Mathf.RoundToInt(p.Get("light.shadowResolution"));l.shadowBias=p.Get("light.shadowBias");l.shadowNormalBias=p.Get("light.shadowNormalBias");ShadowLightCount++;}
@@ -96,21 +99,21 @@ namespace StarTournament.ProvingGround
         }
         void Window(ArenaSolid s,Transform target)
         {
-            var texture=new Texture2D(TextureSize,TextureSize,TextureFormat.RGB24,false){name="Orbital window sky",wrapMode=TextureWrapMode.Repeat};owned.Add(texture);
-            var pixels=new Color[TextureSize*TextureSize];
-            for(int y=0;y<TextureSize;y++)for(int x=0;x<TextureSize;x++)
+            bool alongX=s.Size.x>s.Size.z;float length=alongX?s.Size.x:s.Size.z;
+            var glass=new Material(Shader.Find("StarTournament/OrbitalGlass")){name="Transparent panoramic glazing"};owned.Add(glass);
+            var tint=Palette("cyan");tint.a=p.Get("ring.glassOpacity");glass.SetColor("_Color",tint);glass.SetFloat("_EdgeOpacity",p.Get("ring.glassEdgeOpacity"));
+            // A single plane avoids tinting both faces of a box; the original BoxCollider remains sealed.
+            var pane=new Mesh{name=s.Id+" / transparent pane"};owned.Add(pane);
+            pane.vertices=alongX?new[]{new Vector3(-.5f,-.5f,0),new Vector3(.5f,-.5f,0),new Vector3(.5f,.5f,0),new Vector3(-.5f,.5f,0)}:
+                new[]{new Vector3(0,-.5f,-.5f),new Vector3(0,-.5f,.5f),new Vector3(0,.5f,.5f),new Vector3(0,.5f,-.5f)};
+            pane.triangles=new[]{0,1,2,0,2,3};pane.RecalculateNormals();pane.RecalculateBounds();
+            target.GetComponent<MeshFilter>().sharedMesh=pane;var renderer=target.GetComponent<Renderer>();renderer.sharedMaterial=glass;renderer.shadowCastingMode=ShadowCastingMode.Off;
+            float frame=p.Get("ring.windowFrameWidth"),depth=alongX?s.Size.z:s.Size.x;
+            foreach(int side in new[]{-1,1})
             {
-                // Stable texture encoding, independent of all gameplay/map randomness.
-                uint hash=(uint)(x*73856093)^(uint)(y*19349663);hash^=hash>>13;
-                float horizon=Mathf.Max(0,1-Mathf.Abs(y-TextureSize*.25f)/(TextureSize*.12f));
-                pixels[y*TextureSize+x]=hash%997<3?Palette("white"):Color.Lerp(Palette("trim"),Palette("cyan"),horizon)*p.Get("ring.skyValue");
+                Box(trim,s.Position+(alongX?Vector3.right:Vector3.forward)*(side*(length-frame)/2),alongX?new Vector3(frame,s.Size.y,depth+Epsilon):new Vector3(depth+Epsilon,s.Size.y,frame),Quaternion.identity);
+                Box(trim,s.Position+Vector3.up*(side*(s.Size.y-frame)/2),alongX?new Vector3(length,frame,depth+Epsilon):new Vector3(depth+Epsilon,frame,length),Quaternion.identity);
             }
-            texture.SetPixels(pixels);texture.Apply(false,true);
-            var sky=new Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Sealed panoramic space glazing"};sky.SetTexture("_BaseMap",texture);sky.SetTextureScale("_BaseMap",new Vector2(Mathf.Max(s.Size.x,s.Size.z)/s.Size.y,1));owned.Add(sky);target.GetComponent<Renderer>().sharedMaterial=sky;
-            bool alongX=s.Size.x>s.Size.z;float length=alongX?s.Size.x:s.Size.z;float frame=p.Get("ring.windowFrameWidth"),pitch=p.Get("ring.windowFramePitch");
-            for(float offset=-length/2;offset<=length/2;offset+=pitch)
-                Box(trim,s.Position+(alongX?Vector3.right:Vector3.forward)*offset,alongX?new Vector3(frame,s.Size.y,frame):new Vector3(frame,s.Size.y,frame),Quaternion.identity);
-            foreach(int side in new[]{-1,1})Box(trim,s.Position+Vector3.up*(side*(s.Size.y-frame)/2),alongX?new Vector3(length,frame,frame):new Vector3(frame,frame,length),Quaternion.identity);
         }
         Vector3 Position(string key)=>new Vector3(p.Get(key+".x"),p.Get(key+".y"),p.Get(key+".z"));
         Color Palette(string key)=>new Color(p.Get("color."+key+".r"),p.Get("color."+key+".g"),p.Get("color."+key+".b"));
@@ -151,7 +154,11 @@ namespace StarTournament.ProvingGround
             {
                 Vector3 face=s.Position+normal*(side*(depth/2+Epsilon));
                 void Strip(Material m,float y,float h,float len)
-                    =>Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),s.Rotation);
+                {
+                    // Sills and headers only carry detail inside their opaque silhouette.
+                    if(y-h/2<bottom || y+h/2>bottom+s.Size.y)return;
+                    Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),s.Rotation);
+                }
                 Strip(trim,bottom+p.Get("detail.trimHeight")/2,p.Get("detail.trimHeight"),length);
                 Strip(cyan,bottom+p.Get("detail.bandHeight"),p.Get("detail.bandWidth"),length);
                 Strip(trim,bottom+s.Size.y-p.Get("detail.headerInset"),p.Get("detail.headerWidth"),length);
