@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             scene=SceneManager.CreateScene("match-atomic-"+Guid.NewGuid(),new CreateSceneParameters(LocalPhysicsMode.Physics3D));
             var owner=new GameObject("owner");SceneManager.MoveGameObjectToScene(owner,scene);
             var move=ProvingProfile.CreateDefault();var life=ProvingProfile.CreateCombatDefault();var combat=ProvingProfile.CreateNativeCombatDefault();combat.Set("shot.spread",0);
-            var arena=owner.AddComponent<ProvingArena>();arena.Build(move);
+            var arena=owner.AddComponent<ProvingArena>();arena.Build(AuthoredPhysicsFixture.Freeze(),move);
             var motors=new CharacterMotor[4];
             for(int i=0;i<4;i++){var go=new GameObject("seat");go.transform.SetParent(owner.transform);go.layer=ProvingArena.ParticipantLayer;motors[i]=go.AddComponent<CharacterMotor>();motors[i].Initialize(move,new Vector3(i*4,0,0));}
             motors[1].Initialize(move,new Vector3(0,0,4));motors[1].Tick(new LocalAction{LookDegrees=new Vector2(180,0)},.02f);

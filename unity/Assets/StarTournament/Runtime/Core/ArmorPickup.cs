@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
-    [Serializable] public struct ArmorPickupState { public Vector3 Anchor; public bool Available; public double RespawnRemaining; }
+    [Serializable] public struct ArmorPickupState { public string InstanceId; public Vector3 Anchor; public bool Available; public double RespawnRemaining; }
 
     /// <summary>Pure authoritative lifecycle for the one central arena armor bonus.</summary>
     public sealed class ArmorPickup
@@ -11,19 +11,19 @@ namespace StarTournament.ProvingGround
         readonly float amount, radius, heightTolerance;
         readonly double respawnSeconds;
         ArmorPickupState state;
-        public ArmorPickup(Vector3 anchor, ProvingProfile profile)
+        public ArmorPickup(Vector3 anchor, ProvingProfile profile,string instanceId="fixture")
         {
             if(profile==null) throw new ArgumentException("Valid lifecycle profile required",nameof(profile));
             profile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile));
             profile.EnsureCombatDescriptors();
             if(profile==null||profile.Validate().Count!=0)throw new ArgumentException("Valid lifecycle profile required",nameof(profile));
             heightTolerance=profile.Get("pickup.maximumHeightDifference");amount=profile.Get("armor.pickupAmount");radius=profile.Get("armor.pickupRadius");respawnSeconds=profile.Get("armor.respawnSeconds");
-            state=new ArmorPickupState{Anchor=anchor,Available=true};
+            state=new ArmorPickupState{InstanceId=instanceId,Anchor=anchor,Available=true};
         }
         public ArmorPickupState Read()=>state;
         public void Restore(ArmorPickupState snapshot)
         {
-            if(snapshot.Anchor!=state.Anchor||double.IsNaN(snapshot.RespawnRemaining)||double.IsInfinity(snapshot.RespawnRemaining)||snapshot.RespawnRemaining<0)throw new ArgumentException("Invalid armor pickup snapshot",nameof(snapshot));
+            if(snapshot.InstanceId!=state.InstanceId||snapshot.Anchor!=state.Anchor||double.IsNaN(snapshot.RespawnRemaining)||double.IsInfinity(snapshot.RespawnRemaining)||snapshot.RespawnRemaining<0)throw new ArgumentException("Invalid armor pickup snapshot",nameof(snapshot));
             state=snapshot;
         }
         public bool InRange(Vector3 feet)

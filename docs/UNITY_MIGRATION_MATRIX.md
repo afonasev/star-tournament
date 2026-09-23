@@ -48,6 +48,8 @@
 
 ## Арены
 
+R7 (`replace-procedural-arenas-with-combat-bowl-ring`) native candidate `combat-bowl-v1@7`: authored-only 2–8, новое внешнее кольцо и решётка, hidden-first all-live spawning, независимые pickup instances. Старые ARENA rows ниже — историческая реализация, а generator-only gaps отменены новым решением; не возобновлять их. Общие collision/navigation/freeze/validation contracts перенесены на authored fixtures. Точные результаты проверок и human acceptance ведутся в delivery.json change.
+
 | ID / source requirement | Текущее native состояние | Оставшаяся реализация | Необходимое доказательство |
 | --- | --- | --- | --- |
 | ARENA-1 GS §2,7; unity-procedural-arena-foundation | Canonical `unity-two-level-fixture-v1` definition из independent seed/version/frozen profile fingerprint; collision/navigation/spawn/presentation derived от неё | ARENA-2 size/families, ARENA-4 fairness validators, ARENA-5 retry/fallback/replay lifecycle | EditMode identity/validation, PlayMode physical projection/allocator, muted 4K Player diagnostic; physical/art/performance acceptance остаются открыты |

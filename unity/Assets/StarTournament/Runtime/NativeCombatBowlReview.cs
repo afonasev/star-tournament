@@ -16,13 +16,15 @@ namespace StarTournament.ProvingGround
             ground=GetComponent<ProvingGround>();directory=ground.CombatBowlReviewDirectory;Directory.CreateDirectory(directory);AudioListener.volume=0;Application.runInBackground=true;
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             yield return Capture("01-setup");
-            pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads,true);
-            if(!ground.Running)throw new InvalidOperationException("P4 review could not start match");
-            yield return Capture("02-four-corner-spawns");
+            pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();var roster=NativeMatchRoster.Ffa(8);
+            var metadata=Enumerable.Range(0,8).Select(i=>new NativeParticipantInfo(i<4?NativeParticipantKind.LocalHuman:NativeParticipantKind.Bot,i<4?"Игрок "+(i+1):"Бот "+(i-3),NativeParticipantColors.For(i),i<4?-1:1)).ToArray();
+            ground.StartBotReview(new NativeMatchComposition(roster,metadata,new[]{0,1,2,3}),20260923,pads);
+            if(!ground.Running)throw new InvalidOperationException("R7 review could not start match");
+            yield return Capture("02-eight-participants-four-viewports");
             ground.PlaceCombatReviewSeat(0,new Vector3(-4.5f,4,0),0,90);
             ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,-5),0,0);
             ground.PlaceCombatReviewSeat(2,new Vector3(0,0,13),10,180);
-            ground.PlaceCombatReviewSeat(3,new Vector3(-22,.6f,-12),15,90);
+            ground.PlaceCombatReviewSeat(3,new Vector3(-32,4,-26),15,90);
             yield return new WaitForSeconds(16);if(!ground.Running)throw new InvalidOperationException("Review paused before gameplay capture");yield return Capture("03-hall-basement-entrances");
             var playerCameras=ground.GetComponentsInChildren<Camera>();
             var oldRects=playerCameras.Select(c=>c.rect).ToArray();
@@ -48,27 +50,30 @@ namespace StarTournament.ProvingGround
             artCamera.transform.position=new Vector3(0,1,-7);artCamera.transform.LookAt(new Vector3(0,0,-3));yield return Capture("17-live-basement-opponent");
             // Park actors outside the architectural shots after the gameplay readability capture.
             for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
-            var positions=new[]{new Vector3(0,5.65f,-6.8f),new Vector3(0,.45f,-5.7f),new Vector3(-26,2.25f,-12),new Vector3(-16,1.65f,-7),new Vector3(-9,3.8f,4),new Vector3(-10,1.65f,17),new Vector3(10,3.8f,-4),new Vector3(-17,2.4f,-3),new Vector3(-25,2.2f,-16),new Vector3(-1.3f,1.1f,-5)};
-            var targets=new[]{new Vector3(0,5.4f,3),new Vector3(0,.6f,7),new Vector3(-20,1.6f,-12),new Vector3(-16,1.65f,6),new Vector3(-4,5.6f,4),new Vector3(-2,1.65f,13),new Vector3(5,5.6f,-4),new Vector3(-19.96f,2.6f,0),new Vector3(-27.94f,2.8f,-17),new Vector3(-2.59f,1.3f,-5)};
-            var names=new[]{"06-hall","07-basement","08-spawn","09-west-flank","10-west-rise","11-north-flank","12-east-rise","13-west-screen-oblique","14-spawn-marking","15-enclosed-fan"};
+            while(ground.Session.Life(1).Dead)yield return null;
+            ground.PlaceCombatReviewSeat(1,new Vector3(-25,0,0),0,0);
+            float priorTimeScale=Time.timeScale;Time.timeScale=0; // Freeze only staged architectural shots so combat cannot move/remove the lower-floor subject.
+            var positions=new[]{new Vector3(0,1.6f,32),new Vector3(32,5.6f,30),new Vector3(-34,1.6f,0),new Vector3(-32,5.6f,26),new Vector3(-25,5.6f,2),new Vector3(0,5.6f,17),new Vector3(0,5.6f,-17),new Vector3(-30,5.6f,30),new Vector3(30,5.6f,30),new Vector3(-30,5.6f,-30),new Vector3(30,5.6f,-30),new Vector3(0,.4f,-5)};
+            var targets=new[]{new Vector3(-16,1.6f,32),new Vector3(36,5.6f,30),new Vector3(-24,1.6f,0),new Vector3(-24,5.6f,18),new Vector3(-25,.6f,0),new Vector3(0,5.6f,4),new Vector3(0,5.6f,-4),new Vector3(-32,4.6f,32),new Vector3(32,4.6f,32),new Vector3(-32,4.6f,-32),new Vector3(32,4.6f,-32),new Vector3(0,.4f,4)};
+            var names=new[]{"06-lowered-outer-ring","07-panoramic-window","08-wide-west-gateway","09-wide-diagonal","10-grating-lower-player","11-north-bridge","12-south-bridge","13-speed-nw","14-armor-ne","15-armor-sw","16-speed-se","17-basement"};
             for(int i=0;i<positions.Length;i++){artCamera.transform.position=positions[i];artCamera.transform.LookAt(targets[i]);yield return Capture(names[i]);}
-            Destroy(artCameraObject);foreach(var c in reviewCameras)c.enabled=true;foreach(var c in reviewCanvases)c.enabled=true;
+            Time.timeScale=priorTimeScale;Destroy(artCameraObject);foreach(var c in reviewCameras)c.enabled=true;foreach(var c in reviewCanvases)c.enabled=true;
             // Real player projection, camera-only cutaway: roof/wall renderers hidden only for the labelled overview.
             var arena=ground.GetComponentInChildren<ProvingArena>();var cameras=ground.GetComponentsInChildren<Camera>();var canvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var camera in cameras)camera.enabled=false;foreach(var canvas in canvases)canvas.enabled=false;
             var hidden=arena.GetComponentsInChildren<Renderer>().Where(r=>r.name.Contains("roof")||r.name.Contains("ceiling")).ToArray();foreach(var r in hidden)r.enabled=false;
-            var go=new GameObject("P4-cutaway-camera");var overview=go.AddComponent<Camera>();overview.transform.position=new Vector3(42,58,-48);overview.transform.LookAt(new Vector3(0,0,0));overview.fieldOfView=52;overview.backgroundColor=new Color(.1f,.14f,.2f);overview.clearFlags=CameraClearFlags.SolidColor;
+            var go=new GameObject("R7-cutaway-camera");var overview=go.AddComponent<Camera>();overview.transform.position=new Vector3(62,78,-68);overview.transform.LookAt(new Vector3(0,0,0));overview.fieldOfView=52;overview.backgroundColor=new Color(.1f,.14f,.2f);overview.clearFlags=CameraClearFlags.SolidColor;
             yield return Capture("04-diagnostic-cutaway");
             foreach(var r in hidden)r.enabled=true;Destroy(go);foreach(var camera in cameras)camera.enabled=true;foreach(var canvas in canvases)canvas.enabled=true;
             var old=ground.Session;var repeat=ground.GetComponentsInChildren<Button>(true).Single(b=>b.GetComponentInChildren<Text>()?.text=="Повторить матч");repeat.onClick.Invoke();yield return null;
-            if(ground.Session==old||ground.Session.ArenaIdentity!=CombatBowlCatalog.Identity)throw new InvalidOperationException("P4 Repeat identity mismatch");
+            if(ground.Session==old||ground.Session.ArenaIdentity!=CombatBowlCatalog.Identity)throw new InvalidOperationException("R7 Repeat identity mismatch");
             yield return Capture("05-repeat");
-            File.WriteAllText(Path.Combine(directory,"review.json"),JsonUtility.ToJson(new Result{arena=ground.Session.ArenaIdentity,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,repeat=true,player="native macOS Development Player",note="Scripted live diagnostic match and views; physical controllers and human playable acceptance remain open."},true));
-            Debug.Log("COMBAT_BOWL_P4_REVIEW_COMPLETE "+directory);
+            File.WriteAllText(Path.Combine(directory,"review.json"),JsonUtility.ToJson(new Result{arena=ground.Session.ArenaIdentity,authoring=ground.CombatBowlAuthoring.Id+"@"+ground.CombatBowlAuthoring.Version,presentation=ground.OrbitalLeagueProfile.Id+"@"+ground.OrbitalLeagueProfile.Version,participants=ground.Session.ParticipantCount,seed=20260923,release=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_ID"),muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,repeat=true,player="native macOS Development Player",note="Scripted live diagnostic match; architectural views freeze time for staging; physical controllers and human playable acceptance remain open."},true));
+            Debug.Log("COMBAT_BOWL_R7_REVIEW_COMPLETE "+directory);
         }
         IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.35f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return new WaitForSecondsRealtime(.5f);}
         [Serializable] class Performance{public int samples,width,height,localLights;public long allocatedMemoryBytes;public float medianMs,p95Ms;public string note;}
-        [Serializable] class Result{public string arena,player,note;public bool muted,repeat;public int width,height;}
+        [Serializable] class Result{public string arena,authoring,presentation,release,player,note;public int participants;public uint seed;public bool muted,repeat;public int width,height;}
         void OnDestroy(){if(pads!=null)foreach(var pad in pads)if(pad.added)InputSystem.RemoveDevice(pad);}
     }
 }

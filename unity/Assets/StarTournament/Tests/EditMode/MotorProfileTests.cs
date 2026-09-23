@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(profile.Validate(), Is.Empty);
             Assert.That(profile.Get("player.movement.maximumGroundSpeed"), Is.EqualTo(9f));
             Assert.That(profile.Get("camera.eyeHeight"), Is.EqualTo(1.55f));
-            Assert.That(profile.Get("fixture.headroomHeight"), Is.EqualTo(2.1f));
+            Assert.That(profile.Get("world.minimumSupportHeight"), Is.EqualTo(-10f));
         }
 
         [Test]

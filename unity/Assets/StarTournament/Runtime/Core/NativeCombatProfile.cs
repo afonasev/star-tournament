@@ -4,7 +4,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateNativeCombatDefault()
         {
-            var p = new ProvingProfile { id = "unity-native-combat-v1", version = 1 };
+            var p = new ProvingProfile { id = "unity-native-combat-v1", version = 2 };
             p.Add("shot.pellets", "shotgun", "Дробины", "Число лучей одного двуствольного выстрела.", "count", 1, 64, 1, 12);
             p.Add("shot.spread", "shotgun", "Разброс", "Угловой радиус распределения дроби.", "degrees", 0, 45, .1f, 7);
             p.Add("shot.range", "shotgun", "Дальность", "Максимальная дальность каждой дробины.", "meters", 1, 200, .5f, 35);
@@ -26,8 +26,11 @@ namespace StarTournament.ProvingGround
             p.Add("zone.legTop", "hit-zones", "Верх ноги", "Верхняя точка оси leg capsule.", "height-ratio", .2f, .6f, .01f, .36f);
             p.Add("zone.legBottom", "hit-zones", "Низ ноги", "Нижняя точка оси leg capsule.", "height-ratio", .01f, .2f, .01f, .07f);
             p.Add("zone.legRadius", "hit-zones", "Радиус ноги", "Радиус leg capsule.", "height-ratio", .01f, .2f, .01f, .07f);
-            p.Add("spawn.spacing", "spawn", "Шаг slots", "Расстояние между соседними slots региона.", "meters", 2, 5, .1f, 3);
-            p.Add("spawn.inset", "spawn", "Отступ региона", "Отступ slots от внешних стен fixture.", "meters", 2, 6, .1f, 4);
+            p.Add("spawn.bodySampleRadiusFraction","spawn","Body width sampling","Radius fraction used to conservatively test exposed body sides.","ratio",.5f,1,.05f,.9f);
+            p.Add("spawn.bodySampleLow","spawn","Lower body sampling","Capsule-height fraction for lower-body visibility.","ratio",.05f,.3f,.01f,.1f);
+            p.Add("spawn.bodySampleMiddle","spawn","Body middle sampling","Capsule-height fraction for torso visibility.","ratio",.3f,.7f,.01f,.5f);
+            p.Add("spawn.bodySampleHigh","spawn","Upper body sampling","Capsule-height fraction for upper-body visibility.","ratio",.7f,.99f,.01f,.95f);
+            p.Add("spawn.groundProbeDistance","spawn","Ground probe distance","Vertical query range for distance ranking of airborne live participants.","meters",4,100,1,20);
             p.Add("spawn.sample", "spawn", "Радиус поиска NavMesh", "Локальный поиск опоры без перехода на соседний этаж.", "meters", .05f, 1, .05f, .5f);
             p.Add("spawn.floorTolerance", "spawn", "Допуск этажа", "Предельная разница authored floor и найденной опоры.", "meters", .01f, .5f, .01f, .15f);
             p.Add("death.corpseSeconds", "death", "Время тела", "Срок non-colliding тела по времени сессии.", "seconds", 1, 30, .5f, 8);

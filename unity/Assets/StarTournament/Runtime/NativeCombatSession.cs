@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround
@@ -27,7 +28,7 @@ namespace StarTournament.ProvingGround
         public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets)
         { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets; }
     }
-    [Serializable] public sealed class NativeCombatSessionSnapshot { public string ArenaIdentity; public double Time; public CombatLifeState[] Lives; public ArmorPickupState ArmorPickup; public SpeedPickupState SpeedPickup; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public string ArenaIdentity; public double Time; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -37,10 +38,14 @@ namespace StarTournament.ProvingGround
         readonly ShotgunResolver resolver;
         readonly ProvingProfile movement;
         readonly bool[] releaseRequired;
-        readonly bool[] armorPickupWasOutside;
-        readonly ArmorPickup armorPickup;
-        readonly SpeedPickup speedPickup;
-        readonly bool[] speedPickupWasOutside;
+        readonly bool[,] armorPickupWasOutside;
+        readonly ArmorPickup[] armorPickups;
+        ArmorPickup armorPickup=>armorPickups[0];
+        public ArmorPickupState[] ArmorPickups=>Array.ConvertAll(armorPickups,x=>x.Read());
+        readonly SpeedPickup[] speedPickups;
+        SpeedPickup speedPickup=>speedPickups[0];
+        public SpeedPickupState[] SpeedPickups=>Array.ConvertAll(speedPickups,x=>x.Read());
+        readonly bool[,] speedPickupWasOutside;
         readonly double[] speedRemaining;
         readonly DamageBoostPickup damagePickup; readonly double[] damageRemaining; readonly bool[] damageWasOutside;
         public bool HasDamagePickup { get; } public bool HasSpeedPickup { get; }
@@ -57,10 +62,13 @@ namespace StarTournament.ProvingGround
         public int ShotCount { get; private set; }
         public ArmorPickupState ArmorPickup => armorPickup.Read();
         public SpeedPickupState SpeedPickup => speedPickup.Read();
-        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { ArenaIdentity=ArenaIdentity,Time=Time,Lives=Array.ConvertAll(lives,life=>life.Read()),ArmorPickup=armorPickup.Read(),SpeedPickup=speedPickup.Read(),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
+        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
             if(snapshot==null||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
+            if(snapshot.ArmorPickups==null||snapshot.SpeedPickups==null||snapshot.ArmorPickups.Length!=armorPickups.Length||snapshot.SpeedPickups.Length!=speedPickups.Length||snapshot.ArmorPickups.Select(x=>x.InstanceId).Distinct().Count()!=armorPickups.Length||snapshot.SpeedPickups.Select(x=>x.InstanceId).Distinct().Count()!=speedPickups.Length)throw new ArgumentException("Invalid pickup instance set");
+            foreach(var item in armorPickups){var state=item.Read();var next=snapshot.ArmorPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.RespawnRemaining)||double.IsInfinity(next.RespawnRemaining)||next.RespawnRemaining<0)throw new ArgumentException("Invalid armor instance");}
+            foreach(var item in speedPickups){var state=item.Read();var next=snapshot.SpeedPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.Remaining)||double.IsInfinity(next.Remaining)||next.Remaining<0||(!next.Available&&next.Remaining==0))throw new ArgumentException("Invalid speed instance");}
             for(int i=0;i<lives.Length;i++){if(double.IsNaN(snapshot.SpeedRemaining[i])||double.IsInfinity(snapshot.SpeedRemaining[i])||snapshot.SpeedRemaining[i]<0)throw new ArgumentException("Invalid speed snapshot",nameof(snapshot));lives[i].Restore(snapshot.Lives[i]);speedRemaining[i]=snapshot.SpeedRemaining[i];}
             if(snapshot.DamageRemaining!=null)
             {
@@ -68,8 +76,11 @@ namespace StarTournament.ProvingGround
                 for(int i=0;i<lives.Length;i++){if(double.IsNaN(snapshot.DamageRemaining[i])||double.IsInfinity(snapshot.DamageRemaining[i])||snapshot.DamageRemaining[i]<0)throw new ArgumentException("Invalid damage snapshot");damageRemaining[i]=snapshot.DamageRemaining[i];}
                 damagePickup.Restore(snapshot.DamagePickup);
             }
-            armorPickup.Restore(snapshot.ArmorPickup);speedPickup.Restore(snapshot.SpeedPickup);Time=snapshot.Time;
-            for(int i=0;i<lives.Length;i++){damageWasOutside[i]=!damagePickup.InRange(Pose(i).Position);armorPickupWasOutside[i]=!armorPickup.InRange(Pose(i).Position);speedPickupWasOutside[i]=!speedPickup.InRange(Pose(i).Position);motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);}
+            foreach(var item in armorPickups)item.Restore(snapshot.ArmorPickups.Single(x=>x.InstanceId==item.Read().InstanceId));
+            foreach(var item in speedPickups)item.Restore(snapshot.SpeedPickups.Single(x=>x.InstanceId==item.Read().InstanceId));Time=snapshot.Time;
+            ResetPickupContacts();
+            for(int i=0;i<lives.Length;i++)motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);
+
         }
         public event Action<DeathNotice> Died;
         public event Action<int> Respawned;
@@ -85,12 +96,29 @@ namespace StarTournament.ProvingGround
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
             resolver = new ShotgunResolver(tuning, movement.Get("player.capsule.height"));
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
-            lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];armorPickupWasOutside=new bool[motors.Length];speedPickupWasOutside=new bool[motors.Length];speedRemaining=new double[motors.Length];
+            lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];speedRemaining=new double[motors.Length];
             for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle);
-            damagePickup=new DamageBoostPickup(arena.Definition.DamagePickupAnchor,lifecycle);damageRemaining=new double[motors.Length];damageWasOutside=new bool[motors.Length];HasDamagePickup=arena.Definition.HasDamagePickup;HasSpeedPickup=!arena.Definition.DisableSpeedPickup;
-            armorPickup=new ArmorPickup(arena.Definition.ArmorPickupAnchor,lifecycle);
-            speedPickup=new SpeedPickup(arena.Definition.SpeedPickupAnchor,lifecycle);
-            for(int i=0;i<motors.Length;i++){damageWasOutside[i]=!damagePickup.InRange(motors[i].State.Position);armorPickupWasOutside[i]=!armorPickup.InRange(motors[i].State.Position);speedPickupWasOutside[i]=!speedPickup.InRange(motors[i].State.Position);}
+            damagePickup=new DamageBoostPickup(arena.Definition.DamagePickupAnchor,lifecycle,arena.Definition.Pickups.FirstOrDefault(x=>x.Kind==ArenaPickupKind.Damage)?.Id??"damage-disabled");damageRemaining=new double[motors.Length];damageWasOutside=new bool[motors.Length];HasDamagePickup=arena.Definition.HasDamagePickup;HasSpeedPickup=!arena.Definition.DisableSpeedPickup;
+            armorPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Armor).Select(x=>new ArmorPickup(x.Anchor,lifecycle,x.Id)).ToArray();
+            speedPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Speed).Select(x=>new SpeedPickup(x.Anchor,lifecycle,x.Id)).ToArray();
+            armorPickupWasOutside=new bool[armorPickups.Length,motors.Length];speedPickupWasOutside=new bool[speedPickups.Length,motors.Length];
+            ResetPickupContacts();
+
+        }
+        void ResetPickupContacts()
+        {
+            for(int i=0;i<motors.Length;i++)
+            {
+                damageWasOutside[i]=!damagePickup.InRange(Pose(i).Position);
+                for(int k=0;k<armorPickups.Length;k++)armorPickupWasOutside[k,i]=!armorPickups[k].InRange(Pose(i).Position);
+                for(int k=0;k<speedPickups.Length;k++)speedPickupWasOutside[k,i]=!speedPickups[k].InRange(Pose(i).Position);
+            }
+        }
+        bool PickupReach(Vector3 feet,Vector3 anchor)
+        {
+            // Both endpoints are lifted by capsule radius to avoid a coplanar floor ray.
+            var delta=anchor-feet;
+            return !physics.Raycast(feet+Vector3.up*movement.Get("player.capsule.radius"),delta.normalized,out _,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
         }
         public CombatLifeState Life(int seat) => lives[seat].Read();
         public ParticipantState Pose(int seat) => motors[seat].State;
@@ -110,8 +138,8 @@ namespace StarTournament.ProvingGround
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return;
             Match?.BeginTick();
             Time += seconds;
-            armorPickup.Advance(seconds);
-            if(HasSpeedPickup)speedPickup.Advance(seconds);if(HasDamagePickup)damagePickup.Advance(seconds);
+            foreach(var item in armorPickups)item.Advance(seconds);
+            if(HasSpeedPickup)foreach(var item in speedPickups)item.Advance(seconds);if(HasDamagePickup)damagePickup.Advance(seconds);
             for (int i = 0; i < lives.Length; i++)
             {
                 lives[i].Advance(seconds);
@@ -123,14 +151,21 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<lives.Length;i++)
             {
                 bool damageOutside=!damagePickup.InRange(Pose(i).Position);
-                if(HasDamagePickup&&!Life(i).Dead&&damageWasOutside[i]&&!damageOutside&&damagePickup.TryCollect(Pose(i).Position))damageRemaining[i]=damagePickup.Duration;
+                if(HasDamagePickup&&!Life(i).Dead&&damageWasOutside[i]&&!damageOutside&&PickupReach(Pose(i).Position,damagePickup.Read().Anchor)&&damagePickup.TryCollect(Pose(i).Position))damageRemaining[i]=damagePickup.Duration;
                 damageWasOutside[i]=damageOutside;
-                bool outside=!armorPickup.InRange(Pose(i).Position);
-                if(armorPickupWasOutside[i]&&!outside) armorPickup.TryCollect(Pose(i).Position,lives[i]);
-                armorPickupWasOutside[i]=outside;
-                bool speedOutside=!speedPickup.InRange(Pose(i).Position);
-                if(HasSpeedPickup&&!Life(i).Dead&&speedPickupWasOutside[i]&&!speedOutside&&speedPickup.TryCollect(Pose(i).Position)){speedRemaining[i]=speedPickup.Duration;motors[i].SetHorizontalSpeedMultiplier(speedPickup.Multiplier);}
-                speedPickupWasOutside[i]=speedOutside;
+                for(int k=0;k<armorPickups.Length;k++)
+                {
+                    var item=armorPickups[k];bool outside=!item.InRange(Pose(i).Position);
+                    if(armorPickupWasOutside[k,i]&&!outside&&PickupReach(Pose(i).Position,item.Read().Anchor))item.TryCollect(Pose(i).Position,lives[i]);
+                    armorPickupWasOutside[k,i]=outside;
+                }
+                for(int k=0;k<speedPickups.Length;k++)
+                {
+                    var item=speedPickups[k];bool outside=!item.InRange(Pose(i).Position);
+                    if(HasSpeedPickup&&!Life(i).Dead&&speedPickupWasOutside[k,i]&&!outside&&PickupReach(Pose(i).Position,item.Read().Anchor)&&item.TryCollect(Pose(i).Position)){speedRemaining[i]=item.Duration;motors[i].SetHorizontalSpeedMultiplier(item.Multiplier);}
+                    speedPickupWasOutside[k,i]=outside;
+                }
+
             }
             var targets=LiveTargets();
             var shots=new List<(int shooter, int life, ShotNotice notice, float[] damage)>();
@@ -162,7 +197,7 @@ namespace StarTournament.ProvingGround
             if(Match?.Phase==NativeMatchPhase.Finished) return;
             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
             {
-                if (!Spawns.TryChoose(EnemiesOf(i), out var spawn))
+                if (!Spawns.TryChoose(LiveTargets(), out var spawn))
                     throw new InvalidOperationException("Fixed arena has no physically safe respawn slot");
                 if (lives[i].Respawn(Life(i).Life))
                 {

@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround.Tests
         [SetUp] public void Setup()
         {
             root = new GameObject("navigation-test"); movement = ProvingProfile.CreateDefault(); profile = ProvingProfile.CreateNavigationDefault();
-            var a = new GameObject("arena"); a.transform.SetParent(root.transform); arena = a.AddComponent<ProvingArena>(); arena.Build(movement);
+            var a = new GameObject("arena"); a.transform.SetParent(root.transform); arena = a.AddComponent<ProvingArena>(); arena.Build(AuthoredPhysicsFixture.Freeze(),movement);
             provider = new NativeNavigationProvider(arena, movement, profile);
         }
         [UnityTest] public IEnumerator ForeignNavMeshCannotReplaceDisabledOwnedSurface()
@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround.Tests
             var other=new GameObject("foreign-arena");SceneManager.MoveGameObjectToScene(other,scene);
             try
             {
-                var foreign=other.AddComponent<ProvingArena>();foreign.Build(movement);yield return null;
+                var foreign=other.AddComponent<ProvingArena>();foreign.Build(AuthoredPhysicsFixture.Freeze(),movement);yield return null;
                 Assert.That(foreign.Surface.navMeshData,Is.Not.Null);
                 Assert.That(provider.TryRoute(arena.LowerRoutePoint,arena.UpperRoutePoint,out _,out var failure),Is.True,failure);
                 arena.Surface.enabled=false;
@@ -51,10 +51,10 @@ namespace StarTournament.ProvingGround.Tests
         {
             // Each fixture owns the only valid supports. Building them one at a time also exercises the single active context contract.
             Object.DestroyImmediate(arena.gameObject); yield return null;
-            for (int family = 0; family < ArenaFamilyCatalog.Ids.Count; family++)
+            for (int family = 0; family < 1; family++)
             {
                 var familyRoot = new GameObject("navigation-family-" + family); familyRoot.transform.SetParent(root.transform);
-                var frozen = ArenaGenerator.Freeze(new ArenaGenerationRequest { Seed = 41, GeneratorVersion = ArenaGenerator.FamiliesVersion, Profile = ProvingProfile.CreateArenaFamiliesDefault(family) }); var definition=frozen.Definition;
+                var frozen = CombatBowlCatalog.Freeze(ProvingProfile.CreateDefault()); var definition=frozen.Definition;
                 var familyArena = familyRoot.AddComponent<ProvingArena>(); familyArena.Build(frozen, movement);
                 var familyProvider = new NativeNavigationProvider(familyArena, movement, profile);
                 foreach (var transition in familyArena.ReadNavigationTransitions())
@@ -68,7 +68,7 @@ namespace StarTournament.ProvingGround.Tests
                     Vector3 top = upper + forward + lateral * lane * movement.Get("player.capsule.radius");
                     Vector3 start = direction > 0 ? bottom : top;
                     Vector3 goal = direction > 0 ? top : bottom;
-                    Assert.That(familyProvider.TryRoute(start, goal, out var route, out var failure), Is.True, definition.FamilyId + " " + transition.Id + " " + failure);
+                    Assert.That(familyProvider.TryRoute(start, goal, out var route, out var failure), Is.True, definition.MapId + " " + transition.Id + " " + failure);
                     Assert.That(route, Has.Some.Matches<NativeNavigationPoint>(p => p.Support == transition.Id));
                     var motor = Motor(start); var bot = new NativeBotNavigation(familyProvider, profile); bot.SetStaticGoal(goal);
                     var own = new NativeBotKnowledge { Alive = true, OwnLife = 1 }; int recoveries = 0;
@@ -80,13 +80,13 @@ namespace StarTournament.ProvingGround.Tests
                             Is.LessThan(movement.Get("player.movement.maximumGroundSpeed") / 60f + .02f), "Horizontal movement must remain motor-bounded; stair rise is physical contact.");
                         if (motor.State.Grounded)
                         {
-                            Assert.That(familyProvider.TryPhysicalSupport(motor.State.Position, out var support), Is.True, definition.FamilyId + " lost support");
+                            Assert.That(familyProvider.TryPhysicalSupport(motor.State.Position, out var support), Is.True, definition.MapId + " lost support");
                             Assert.That(support.Support == transition.LowerSupport || support.Support == transition.UpperSupport || support.Support == transition.Id, Is.True);
                         }
                         recoveries = Mathf.Max(recoveries, bot.Capture().Recoveries);
                     }
-                    Assert.That(bot.Status, Is.EqualTo(NativeNavigationStatus.Arrived), definition.FamilyId + " " + transition.Id + " direction=" + direction + " lane=" + lane + " pose=" + motor.State.Position + " " + bot.Capture().Failure);
-                    Assert.That(recoveries, Is.Zero, definition.FamilyId + " free transition recovered");
+                    Assert.That(bot.Status, Is.EqualTo(NativeNavigationStatus.Arrived), definition.MapId + " " + transition.Id + " direction=" + direction + " lane=" + lane + " pose=" + motor.State.Position + " " + bot.Capture().Failure);
+                    Assert.That(recoveries, Is.Zero, definition.MapId + " free transition recovered");
                     Assert.That(motor.State.Position.y, Is.EqualTo(goal.y).Within(profile.Get("bots.navigation.heightTolerance")));
                     Object.DestroyImmediate(motor.gameObject);
                 }
@@ -96,15 +96,15 @@ namespace StarTournament.ProvingGround.Tests
         [UnityTest] public IEnumerator StairsAndRamp_ThreeLanesBothDirections_WithMidwayRepath()
         {
             yield return null;
-            float w = movement.Get("fixture.width"), rw = movement.Get("fixture.rampWidth"), wt = movement.Get("fixture.wallThickness");
-            float h = movement.Get("fixture.upperFloorHeight"), low = movement.Get("fixture.floorHeight");
-            float stairsRun = Mathf.CeilToInt((h-low)/movement.Get("fixture.stairRise")) * movement.Get("fixture.stairTread");
+            float w = AuthoredPhysicsFixture.Value("fixture.width"), rw = AuthoredPhysicsFixture.Value("fixture.rampWidth"), wt = AuthoredPhysicsFixture.Value("fixture.wallThickness");
+            float h = AuthoredPhysicsFixture.Value("fixture.upperFloorHeight"), low = AuthoredPhysicsFixture.Value("fixture.floorHeight");
+            float stairsRun = Mathf.CeilToInt((h-low)/AuthoredPhysicsFixture.Value("fixture.stairRise")) * AuthoredPhysicsFixture.Value("fixture.stairTread");
             for (int side = -1; side <= 1; side += 2)
             for (int lane = -1; lane <= 1; lane++)
             for (int direction = -1; direction <= 1; direction += 2)
             {
                 float x = side * (w/2-rw/2-wt) + lane * movement.Get("player.capsule.radius");
-                var bottom = new Vector3(x, low, -(side<0 ? stairsRun : movement.Get("fixture.rampLength"))-1);
+                var bottom = new Vector3(x, low, -(side<0 ? stairsRun : AuthoredPhysicsFixture.Value("fixture.rampLength"))-1);
                 var top = new Vector3(x, h, 1);
                 var motor = Motor(direction > 0 ? bottom : top); var goal = direction > 0 ? top : bottom;
                 var bot = new NativeBotNavigation(provider, profile); bot.SetStaticGoal(goal);
@@ -142,8 +142,8 @@ namespace StarTournament.ProvingGround.Tests
             yield return null;
             foreach(int side in new[]{-1,1})
             {
-                float x=side*(movement.Get("fixture.width")/2-movement.Get("fixture.rampWidth")/2-movement.Get("fixture.wallThickness"));
-                var start=new Vector3(x,0,-13);var top=new Vector3(x,movement.Get("fixture.upperFloorHeight"),1);
+                float x=side*(AuthoredPhysicsFixture.Value("fixture.width")/2-AuthoredPhysicsFixture.Value("fixture.rampWidth")/2-AuthoredPhysicsFixture.Value("fixture.wallThickness"));
+                var start=new Vector3(x,0,-13);var top=new Vector3(x,AuthoredPhysicsFixture.Value("fixture.upperFloorHeight"),1);
                 var motor=Motor(start);var bot=new NativeBotNavigation(provider,profile);bot.SetStaticGoal(top);
                 var own=new NativeBotKnowledge{Alive=true,OwnLife=1};bool reversed=false;float maxY=0;
                 for(int i=0;i<3600 && bot.Status!=NativeNavigationStatus.Blocked;i++)
@@ -161,7 +161,7 @@ namespace StarTournament.ProvingGround.Tests
         [UnityTest] public IEnumerator OverlappingFloors_UseDeclaredTransition_AndInvalidGoalIsRejected()
         {
             yield return null;
-            var bottom = new Vector3(0, 0, 5); var top = new Vector3(0, movement.Get("fixture.upperFloorHeight"), 5);
+            var bottom = new Vector3(0, 0, 5); var top = new Vector3(0, AuthoredPhysicsFixture.Value("fixture.upperFloorHeight"), 5);
             Assert.That(provider.TryRoute(bottom, top, out var route, out var failure), Is.True, failure);
             Assert.That(route.Length, Is.GreaterThan(2));
             Assert.That(provider.TryRoute(bottom, new Vector3(0, 1.5f, 5), out _, out _), Is.False);

@@ -36,7 +36,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             BuildArena();
             yield return null;
 
-            var spawn = new Vector3(3f, profile.Get("fixture.floorHeight"), 2f);
+            var spawn = new Vector3(3f, AuthoredPhysicsFixture.Value("fixture.floorHeight"), 2f);
             var motor = CreateMotor(spawn);
             motor.Tick(default, Time.fixedDeltaTime);
             yield return new WaitForFixedUpdate();
@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             BuildArena();yield return null;
             // Query through the barrier body; eye height intentionally lies above this low barrier.
-            var origin=new Vector3(-profile.Get("fixture.rampWidth")*1.5f,profile.Get("fixture.wallHeight")/4,-profile.Get("fixture.depth")/4);
+            var origin=new Vector3(-AuthoredPhysicsFixture.Value("fixture.rampWidth")*1.5f,AuthoredPhysicsFixture.Value("fixture.wallHeight")/4,-AuthoredPhysicsFixture.Value("fixture.depth")/4);
             var physics=testScene.GetPhysicsScene();
             Assert.That(physics.Raycast(origin,Vector3.right,out var movementHit,profile.Get("weapon.probeRange"),~0),Is.True);
             Assert.That(movementHit.collider.name,Is.EqualTo("movement-only-barrier"));
@@ -66,13 +66,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var arena = BuildArena();
             yield return null;
 
-            var wallMotor = CreateMotor(new Vector3(0f, profile.Get("fixture.floorHeight"), -profile.Get("fixture.depth") * .5f + 2f));
+            var wallMotor = CreateMotor(new Vector3(0f, AuthoredPhysicsFixture.Value("fixture.floorHeight"), -AuthoredPhysicsFixture.Value("fixture.depth") * .5f + 2f));
             yield return Settle(wallMotor);
             yield return MoveWorld(wallMotor, Vector3.back, 160);
-            var wallInnerFace = -profile.Get("fixture.depth") * .5f + profile.Get("fixture.wallThickness") * .5f;
+            var wallInnerFace = -AuthoredPhysicsFixture.Value("fixture.depth") * .5f + AuthoredPhysicsFixture.Value("fixture.wallThickness") * .5f;
             Assert.That(wallMotor.State.Position.z, Is.GreaterThanOrEqualTo(wallInnerFace + profile.Get("player.capsule.radius") - .08f));
 
-            var headroomMotor = CreateMotor(new Vector3(0f, profile.Get("fixture.floorHeight"), -profile.Get("fixture.depth") * .25f));
+            var headroomMotor = CreateMotor(new Vector3(0f, AuthoredPhysicsFixture.Value("fixture.floorHeight"), -AuthoredPhysicsFixture.Value("fixture.depth") * .25f));
             yield return Settle(headroomMotor);
             var highestHead = headroomMotor.State.Position.y + profile.Get("player.capsule.height");
             for (var tick = 0; tick < 100; tick++)
@@ -81,10 +81,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 highestHead = Mathf.Max(highestHead, headroomMotor.State.Position.y + profile.Get("player.capsule.height"));
                 yield return new WaitForFixedUpdate();
             }
-            Assert.That(highestHead, Is.LessThanOrEqualTo(profile.Get("fixture.headroomHeight") + profile.Get("player.capsule.skinWidth") + .08f));
+            Assert.That(highestHead, Is.LessThanOrEqualTo(AuthoredPhysicsFixture.Value("fixture.headroomHeight") + profile.Get("player.capsule.skinWidth") + .08f));
 
-            var blocker = CreateMotor(new Vector3(0f, profile.Get("fixture.floorHeight"), 4f));
-            var mover = CreateMotor(new Vector3(-3f, profile.Get("fixture.floorHeight"), 4f));
+            var blocker = CreateMotor(new Vector3(0f, AuthoredPhysicsFixture.Value("fixture.floorHeight"), 4f));
+            var mover = CreateMotor(new Vector3(-3f, AuthoredPhysicsFixture.Value("fixture.floorHeight"), 4f));
             var maximumMoverX = mover.State.Position.x;
             yield return Settle(blocker);
             yield return Settle(mover);
@@ -96,7 +96,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(horizontalDistance, Is.GreaterThanOrEqualTo(profile.Get("player.capsule.radius") * 2f - .08f));
             Assert.That(maximumMoverX, Is.LessThan(blockerStart.x), "The moving capsule must never pass through the stationary participant.");
             Assert.That(Vector3.Distance(blocker.State.Position, blockerStart), Is.LessThanOrEqualTo(.001f));
-            Assert.That(arena.Spawns.Length, Is.EqualTo(4));
+            Assert.That(arena.Spawns.Length, Is.EqualTo(8));
         }
 
         [UnityTest]
@@ -106,21 +106,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;
 
             var stairs = arenaRoot.transform.Find("stair-0");
-            var lastStair = arenaRoot.transform.Find("stair-" + (Mathf.CeilToInt((profile.Get("fixture.upperFloorHeight") - profile.Get("fixture.floorHeight")) / profile.Get("fixture.stairRise")) - 1));
+            var lastStair = arenaRoot.transform.Find("stair-" + (Mathf.CeilToInt((AuthoredPhysicsFixture.Value("fixture.upperFloorHeight") - AuthoredPhysicsFixture.Value("fixture.floorHeight")) / AuthoredPhysicsFixture.Value("fixture.stairRise")) - 1));
             Assert.That(stairs, Is.Not.Null);
             Assert.That(lastStair, Is.Not.Null);
 
-            var stairsUp = CreateMotor(stairs.position + Vector3.back * profile.Get("fixture.stairTread") * .45f + Vector3.up * profile.Get("fixture.floorThickness"));
+            var stairsUp = CreateMotor(stairs.position + Vector3.back * AuthoredPhysicsFixture.Value("fixture.stairTread") * .45f + Vector3.up * AuthoredPhysicsFixture.Value("fixture.floorThickness"));
             yield return Settle(stairsUp);
             yield return MoveWorld(stairsUp, Vector3.forward, 220);
-            Assert.That(stairsUp.State.Position.y, Is.GreaterThanOrEqualTo(profile.Get("fixture.upperFloorHeight") - .2f));
+            Assert.That(stairsUp.State.Position.y, Is.GreaterThanOrEqualTo(AuthoredPhysicsFixture.Value("fixture.upperFloorHeight") - .2f));
             Object.Destroy(stairsUp.gameObject);
             yield return null;
 
-            var stairsDown = CreateMotor(lastStair.position + Vector3.forward * profile.Get("fixture.stairTread") * .45f + Vector3.up * (profile.Get("fixture.upperFloorHeight") - lastStair.position.y + profile.Get("fixture.floorThickness")));
+            var stairsDown = CreateMotor(lastStair.position + Vector3.forward * AuthoredPhysicsFixture.Value("fixture.stairTread") * .45f + Vector3.up * (AuthoredPhysicsFixture.Value("fixture.upperFloorHeight") - lastStair.position.y + AuthoredPhysicsFixture.Value("fixture.floorThickness")));
             yield return Settle(stairsDown);
             yield return MoveWorld(stairsDown, Vector3.back, 220);
-            Assert.That(stairsDown.State.Position.y, Is.LessThanOrEqualTo(profile.Get("fixture.floorHeight") + .2f));
+            Assert.That(stairsDown.State.Position.y, Is.LessThanOrEqualTo(AuthoredPhysicsFixture.Value("fixture.floorHeight") + .2f));
             Object.Destroy(stairsDown.gameObject);
             yield return null;
 
@@ -132,17 +132,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var high = first.y < second.y ? second : first;
             var ascent = Vector3.ProjectOnPlane(high - low, Vector3.up).normalized;
 
-            var rampUp = CreateMotor(low - ascent * .35f + Vector3.up * profile.Get("fixture.floorThickness"));
+            var rampUp = CreateMotor(low - ascent * .35f + Vector3.up * AuthoredPhysicsFixture.Value("fixture.floorThickness"));
             yield return Settle(rampUp);
             yield return MoveWorld(rampUp, ascent, 220);
-            Assert.That(rampUp.State.Position.y, Is.GreaterThanOrEqualTo(high.y - profile.Get("fixture.floorThickness") - .2f));
+            Assert.That(rampUp.State.Position.y, Is.GreaterThanOrEqualTo(high.y - AuthoredPhysicsFixture.Value("fixture.floorThickness") - .2f));
             Object.Destroy(rampUp.gameObject);
             yield return null;
 
-            var rampDown = CreateMotor(high + ascent * .1f + Vector3.up * profile.Get("fixture.floorThickness"));
+            var rampDown = CreateMotor(high + ascent * .1f + Vector3.up * AuthoredPhysicsFixture.Value("fixture.floorThickness"));
             yield return Settle(rampDown);
             yield return MoveWorld(rampDown, -ascent, 220);
-            Assert.That(rampDown.State.Position.y, Is.LessThanOrEqualTo(low.y + profile.Get("fixture.floorThickness") + .2f));
+            Assert.That(rampDown.State.Position.y, Is.LessThanOrEqualTo(low.y + AuthoredPhysicsFixture.Value("fixture.floorThickness") + .2f));
         }
 
         [UnityTest]
@@ -205,10 +205,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(arena.TryRoute(arena.LowerRoutePoint, arena.UpperRoutePoint, profile.Get("navigation.sampleDistance"), out NavMeshPath route), Is.True);
             Assert.That(route.corners.Length, Is.GreaterThan(2));
 
-            var transitionX = profile.Get("fixture.width") * .5f - profile.Get("fixture.rampWidth") * .5f - profile.Get("fixture.wallThickness");
+            var transitionX = AuthoredPhysicsFixture.Value("fixture.width") * .5f - AuthoredPhysicsFixture.Value("fixture.rampWidth") * .5f - AuthoredPhysicsFixture.Value("fixture.wallThickness");
             var passesTransition = false;
             for (var index = 0; index < route.corners.Length; index++)
-                passesTransition |= Mathf.Abs(route.corners[index].x) >= transitionX - profile.Get("fixture.rampWidth");
+                passesTransition |= Mathf.Abs(route.corners[index].x) >= transitionX - AuthoredPhysicsFixture.Value("fixture.rampWidth");
             Assert.That(passesTransition, Is.True, "A lower-to-upper route must detour through a ramp or stairs, never cross the overlapping slab directly.");
         }
 
@@ -217,7 +217,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             arenaRoot = new GameObject("proving-ground-test-arena");
             SceneManager.MoveGameObjectToScene(arenaRoot, testScene);
             var arena = arenaRoot.AddComponent<ProvingArena>();
-            arena.Build(profile);
+            arena.Build(AuthoredPhysicsFixture.Freeze(),profile);
             return arena;
         }
 

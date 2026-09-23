@@ -66,6 +66,38 @@ namespace StarTournament.ProvingGround
             Position("layout.broadcast-crest",new Vector3(0,7.77f,0));
             Position("layout.broadcast-fan-0",new Vector3(-2.59f,1.3f,-5));
             Position("layout.broadcast-fan-1",new Vector3(-2.59f,1.3f,5));
+            p.Add("ring.gratingPitch","ring","Grating pitch","Spacing of visible metal bars; does not change the continuous actor support.","meters",.15f,1,.05f,.4f);
+            p.Add("ring.gratingBar","ring","Grating bar width","Visual thickness of metal bars; shots and LOS pass through the support surface.","meters",.01f,.1f,.01f,.04f);
+            p.Add("ring.gratingDepth","ring","Grating bar depth","Visible vertical bar depth; the actor support collider is unchanged.","meters",.01f,.2f,.01f,.05f);
+            p.Add("ring.windowFramePitch","ring","Window span","Distance between hull window structural frames.","meters",4,12,.5f,8);
+            p.Add("ring.windowFrameWidth","ring","Window frame width","Visible hull frame width within the canonical sealed boundary.","meters",.1f,1,.05f,.4f);
+            return p;
+        }
+        public static ProvingProfile CreateCombatBowlRingPresentationDefault()
+        {
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=1;
+            void Position(string key,Vector3 value)
+            {
+                for(int i=0;i<3;i++)
+                {
+                    var path=key+"."+new[]{"x","y","z"}[i];
+                    if(p.Descriptor(path)!=null){p.Descriptor(path).DefaultValue=value[i];p.Set(path,value[i]);}
+                    else p.Add(path,"ring-layout",path,"Authored R7 visual position; never changes collision.","meters",-40,40,.01f,value[i]);
+                }
+            }
+            Position("layout.label-0",new Vector3(0,7,7.985f));Position("layout.label-1",new Vector3(0,7,-7.985f));
+            Position("layout.broadcast-screen-0",new Vector3(0,7,7.98f));
+            Position("layout.broadcast-screen-1",new Vector3(-27.78f,5.8f,9));
+            Position("layout.broadcast-screen-2",new Vector3(-5,5.8f,23.78f));Position("layout.broadcast-screen-3",new Vector3(5,5.8f,23.78f));
+            foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
+            {
+                int number=sz>0?(sx<0?1:2):(sx<0?3:4);
+                Position("ring.spawn-mark-"+number,new Vector3(sx*35.94f,6.2f,sz*17));
+                int oldIndex=4+(sx<0?0:2)+(sz<0?0:1);Position("layout.label-"+oldIndex,new Vector3(sx*35.94f,6.2f,sz*20));
+            }
+            Position("layout.label-8",new Vector3(0,5.8f,23.78f));Position("layout.label-9",new Vector3(0,5.8f,-23.78f));
+            Position("layout.label-10",new Vector3(-27.78f,5.8f,9));Position("layout.label-11",new Vector3(27.78f,5.8f,-9));
+            p.Add("ring.skyValue","ring","Window sky brightness","Brightness of the space backdrop in the sealed panoramic windows.","ratio",.01f,.3f,.01f,.08f);
             return p;
         }
         // Existing serialized scene profiles gain only missing presentation controls.

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround
@@ -7,13 +8,13 @@ namespace StarTournament.ProvingGround
     /// <summary>Pure ARENA-4 gate. It validates canonical data before any Unity projection exists.</summary>
     public sealed class ArenaValidationResult
     {
-        public readonly string Code, FamilyId, ElementId, Message;
+        public readonly string Code, MapId, ElementId, Message;
         public bool IsValid => Code == null;
         ArenaValidationResult(string code, string familyId, string elementId, string message)
-        { Code=code; FamilyId=familyId; ElementId=elementId; Message=message; }
+        { Code=code; MapId=familyId; ElementId=elementId; Message=message; }
         public static ArenaValidationResult Accept() => new ArenaValidationResult(null,null,null,null);
         public static ArenaValidationResult Reject(string code, string familyId, string elementId, string message) => new ArenaValidationResult(code,familyId,elementId,message);
-        public override string ToString() => IsValid ? "Valid arena definition" : $"{Code}|family:{FamilyId ?? "unknown"}|element:{ElementId ?? "unknown"}|{Message}";
+        public override string ToString() => IsValid ? "Valid arena definition" : $"{Code}|family:{MapId ?? "unknown"}|element:{ElementId ?? "unknown"}|{Message}";
     }
 
     public static class ArenaDefinitionValidator
@@ -21,14 +22,16 @@ namespace StarTournament.ProvingGround
         const float SurfaceTolerance = .05f;
         public static ArenaValidationResult Validate(ArenaDefinition definition, ProvingProfile profile)
         {
-            string family=definition?.FamilyId;
+            string family=definition?.MapId;
             if(definition==null) return Reject("ARENA_NULL_DEFINITION",family,null,"Definition is required.");
-            if(!ArenaFamilyCatalog.Contains(family) && !CombatBowlCatalog.Contains(family)) return Reject("ARENA_UNKNOWN_FAMILY",family,null,"Family is not registered.");
-            if(profile==null || profile.Validate().Count!=0) return Reject("ARENA_INVALID_PROFILE",family,null,"Arena profile is invalid.");
-            if(string.IsNullOrWhiteSpace(definition.Identity)) return Reject("ARENA_MISSING_IDENTITY",family,null,"Definition identity is required.");
+            if(string.IsNullOrWhiteSpace(family)) return Reject("ARENA_UNKNOWN_FAMILY",family,null,"Family is not registered.");
+            if(profile==null || profile.Validate().Count!=0) return Reject("ARENA_INVALID_PROFILE",family,null,"Invalid arena profile.");
+            if(string.IsNullOrWhiteSpace(definition.Revision)||definition.Identity!=definition.MapId+"@"+definition.Revision) return Reject("ARENA_MISSING_IDENTITY",family,null,"Definition identity is required.");
             if(definition.Solids==null || definition.Spawns==null || definition.RouteAnchors==null || definition.SpawnRegions==null || definition.Transitions==null)
                 return Reject("ARENA_INCOMPLETE_DEFINITION",family,null,"Canonical arena collections are required.");
 
+            if(definition.Pickups==null||definition.Pickups.Length==0||definition.Pickups.Any(x=>x==null)||!definition.Pickups.Any(x=>x.Kind==ArenaPickupKind.Armor)||!definition.Pickups.Any(x=>x.Kind==ArenaPickupKind.Speed))return Reject("ARENA_MISSING_PICKUPS",family,null,"Authored armor and speed definitions required.");
+            if(definition.ProfileFingerprint!="authored:"+definition.Identity)return Reject("ARENA_INVALID_PROFILE_IDENTITY",family,null,"Authored identity fingerprint required.");
             var ids=new HashSet<string>(StringComparer.Ordinal); var supports=new HashSet<string>(StringComparer.Ordinal);
             foreach(var solid in definition.Solids)
             {
@@ -49,6 +52,12 @@ namespace StarTournament.ProvingGround
             if(!OnNamedFloor(definition.SpeedPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_SPEED_PICKUP_ANCHOR",family,"speed-pickup","Speed pickup anchor must resolve to a named floor support.");
 
             if(definition.HasDamagePickup&&!OnNamedFloor(definition.DamagePickupAnchor,definition.Solids,supports))return Reject("ARENA_INVALID_DAMAGE_PICKUP_ANCHOR",family,"damage-pickup","Damage anchor requires a named floor.");
+            if(definition.Pickups==null||definition.Pickups.Length==0)return Reject("ARENA_MISSING_PICKUPS",family,null,"Authored pickup definitions required.");
+            ids.Clear();foreach(var item in definition.Pickups)
+            {
+                if(item==null||string.IsNullOrWhiteSpace(item.Id)||!ids.Add(item.Id)||!Enum.IsDefined(typeof(ArenaPickupKind),item.Kind))return Reject("ARENA_INVALID_PICKUP",family,item?.Id,"Unique typed pickup IDs required.");
+                if(!OnNamedFloor(item.Anchor,definition.Solids,supports,item.Support))return Reject("ARENA_INVALID_PICKUP_SUPPORT",family,item.Id,"Pickup must belong to its named support.");
+            }
             ids.Clear(); foreach(var region in definition.SpawnRegions)
             {
                 if(region==null || string.IsNullOrWhiteSpace(region.Id) || !ids.Add(region.Id)) return Reject("ARENA_INVALID_SPAWN_REGION",family,region?.Id,"Spawn region ID must be unique.");
@@ -62,7 +71,7 @@ namespace StarTournament.ProvingGround
                 if(!supports.Contains(transition.Id)||!supports.Contains(transition.LowerSupport)||!supports.Contains(transition.UpperSupport)||transition.LowerSupport==transition.UpperSupport) return Reject("ARENA_INVALID_TRANSITION_SUPPORT",family,transition.Id,"Transition and two distinct endpoint supports must be declared.");
                 if(transition.OrderedFeet==null||transition.OrderedFeet.Length<2) return Reject("ARENA_INVALID_TRANSITION_FEET",family,transition.Id,"Transition needs ordered feet.");
                 if(!OnNamedFloor(transition.OrderedFeet[0],definition.Solids,supports,transition.LowerSupport)||!OnNamedFloor(transition.OrderedFeet[transition.OrderedFeet.Length-1],definition.Solids,supports,transition.UpperSupport)) return Reject("ARENA_INVALID_TRANSITION_ENDPOINT",family,transition.Id,"Transition feet must start and end on their declared supports.");
-                float direction=0f, maxSegment=Mathf.Sqrt(Mathf.Pow(profile.Get("fixture.rampLength"),2)+Mathf.Pow(profile.Get("fixture.upperFloorHeight")-profile.Get("fixture.floorHeight"),2))+SurfaceTolerance;
+                float direction=0f, maxSegment=profile.Get("world.maximumTransitionSegment")+SurfaceTolerance;
                 for(int i=0;i<transition.OrderedFeet.Length;i++)
                 {
                     if(!Finite(transition.OrderedFeet[i])) return Reject("ARENA_INVALID_TRANSITION_FEET",family,transition.Id,"Transition feet must be finite.");
@@ -81,8 +90,10 @@ namespace StarTournament.ProvingGround
             foreach(var solid in solids)
             {
                 if(solid==null||solid.Material!="floor"||string.IsNullOrEmpty(solid.Support)||!supports.Contains(solid.Support)||(requiredSupport!=null&&solid.Support!=requiredSupport)) continue;
-                if(Mathf.Abs(point.y-(solid.Position.y+solid.Size.y*.5f))>SurfaceTolerance) continue;
-                if(Mathf.Abs(point.x-solid.Position.x)<=solid.Size.x*.5f+SurfaceTolerance&&Mathf.Abs(point.z-solid.Position.z)<=solid.Size.z*.5f+SurfaceTolerance) return true;
+                var local=Quaternion.Inverse(solid.Rotation)*(point-solid.Position);
+                if(Mathf.Abs(local.y-solid.Size.y*.5f)>SurfaceTolerance)continue;
+                if(Mathf.Abs(local.x)<=solid.Size.x*.5f+SurfaceTolerance&&Mathf.Abs(local.z)<=solid.Size.z*.5f+SurfaceTolerance)return true;
+
             }
             return false;
         }

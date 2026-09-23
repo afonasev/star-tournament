@@ -3,19 +3,19 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
-    [Serializable] public struct DamageBoostPickupState { public Vector3 Anchor; public bool Available; public double Remaining; }
+    [Serializable] public struct DamageBoostPickupState { public string InstanceId; public Vector3 Anchor; public bool Available; public double Remaining; }
     /// <summary>Pure authoritative lifecycle for a delayed, post-collection damage boost pickup.</summary>
     public sealed class DamageBoostPickup
     {
         readonly float radius, duration, multiplier, respawn, heightTolerance;
         DamageBoostPickupState state;
-        public DamageBoostPickup(Vector3 anchor, ProvingProfile profile)
+        public DamageBoostPickup(Vector3 anchor, ProvingProfile profile,string instanceId="fixture")
         {
             if(profile==null) throw new ArgumentNullException(nameof(profile));
             profile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile)); profile.EnsureCombatDescriptors();
             if(profile.Validate().Count!=0) throw new ArgumentException("Invalid lifecycle profile",nameof(profile));
             heightTolerance=profile.Get("pickup.maximumHeightDifference");radius=profile.Get("damageBoost.pickupRadius"); duration=profile.Get("damageBoost.durationSeconds"); multiplier=profile.Get("damageBoost.multiplier"); respawn=profile.Get("damageBoost.respawnSeconds");
-            state=new DamageBoostPickupState { Anchor=anchor, Available=false, Remaining=profile.Get("damageBoost.initialDelaySeconds") };
+            state=new DamageBoostPickupState { InstanceId=instanceId,Anchor=anchor, Available=false, Remaining=profile.Get("damageBoost.initialDelaySeconds") };
         }
         public DamageBoostPickupState Read()=>state;
         public float Duration=>duration; public float Multiplier=>multiplier;
@@ -33,7 +33,7 @@ namespace StarTournament.ProvingGround
         }
         public void Restore(DamageBoostPickupState snapshot)
         {
-            if(snapshot.Anchor!=state.Anchor||double.IsNaN(snapshot.Remaining)||double.IsInfinity(snapshot.Remaining)||snapshot.Remaining<0||(!snapshot.Available&&snapshot.Remaining==0)) throw new ArgumentException("Invalid damage boost pickup snapshot",nameof(snapshot));
+            if(snapshot.InstanceId!=state.InstanceId||snapshot.Anchor!=state.Anchor||double.IsNaN(snapshot.Remaining)||double.IsInfinity(snapshot.Remaining)||snapshot.Remaining<0||(!snapshot.Available&&snapshot.Remaining==0)) throw new ArgumentException("Invalid damage boost pickup snapshot",nameof(snapshot));
             state=snapshot;
         }
     }

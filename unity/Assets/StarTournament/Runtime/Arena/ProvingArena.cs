@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
         }
         public void Build(ProvingProfile profile)
         {
-            Build(ArenaGenerator.Freeze(new ArenaGenerationRequest{Seed=1,GeneratorVersion=ArenaGenerator.FoundationVersion,Profile=ProvingProfile.CreateArenaFoundationDefault()}),profile);
+            Build(CombatBowlCatalog.Freeze(profile),profile);
         }
         public void Build(ArenaFreezeSnapshot frozen, ProvingProfile profile, ProvingProfile artProfile=null)
         {
@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround
             if(Definition.Identity==CombatBowlCatalog.Identity)
             {
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);
-                decoration.AddComponent<OrbitalLeaguePresentation>().Build(Definition,artProfile??ProvingProfile.CreateOrbitalLeagueDefault());
+                decoration.AddComponent<OrbitalLeaguePresentation>().Build(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
             }
         }
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)

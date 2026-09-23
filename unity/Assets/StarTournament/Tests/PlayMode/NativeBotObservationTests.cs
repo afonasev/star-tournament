@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             scene=SceneManager.CreateScene("perception-"+Guid.NewGuid(),new CreateSceneParameters(LocalPhysicsMode.Physics3D));
             root=new GameObject("perception-test");SceneManager.MoveGameObjectToScene(root,scene);
             movement=ProvingProfile.CreateDefault();var combat=ProvingProfile.CreateNativeCombatDefault();
-            var arenaRoot=new GameObject("arena");arenaRoot.transform.SetParent(root.transform);var arena=arenaRoot.AddComponent<ProvingArena>();arena.Build(movement);
+            var arenaRoot=new GameObject("arena");arenaRoot.transform.SetParent(root.transform);var arena=arenaRoot.AddComponent<ProvingArena>();arena.Build(AuthoredPhysicsFixture.Freeze(),movement);
             motors=new CharacterMotor[3];
             for(int i=0;i<3;i++){var go=new GameObject("participant-"+i);go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;motors[i]=go.AddComponent<CharacterMotor>();motors[i].Initialize(movement,new Vector3(-8+i*3,0,2));}
             var roster=teams?new NativeMatchRoster(NativeMatchMode.Teams,new[]{NativeTeam.TeamA,NativeTeam.TeamA,NativeTeam.TeamB}):NativeMatchRoster.Ffa(3);
@@ -55,7 +55,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             blocker.layer=ProvingArena.WorldLayer;Physics.SyncTransforms();Sample(.1);Assert.That(Enemy(0,2).Visible,Is.False);
             Object.Destroy(blocker);yield return null;Place(0,new Vector3(-8,0,2),180);Sample(.2);Assert.That(Enemy(0,2).Visible,Is.False);
             Place(0,new Vector3(-8,0,2));Sample(.3);Assert.That(Enemy(0,2).Visible,Is.True);Assert.That(Enemy(0,2).ObservedAt,Is.EqualTo(.3));
-            Place(0,new Vector3(0,0,3));Place(2,new Vector3(0,movement.Get("fixture.upperFloorHeight"),5));Sample(.4);
+            Place(0,new Vector3(0,0,3));Place(2,new Vector3(0,AuthoredPhysicsFixture.Value("fixture.upperFloorHeight"),5));Sample(.4);
             Assert.That(Enemy(0,2).Visible,Is.False,"Actual fixture upper slab must occlude the other floor");
         }
         [UnityTest] public IEnumerator DifficultyFovBoundariesUseHorizontalAngle()

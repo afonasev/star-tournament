@@ -178,7 +178,7 @@ namespace StarTournament.ProvingGround
             else corpse.transform.SetPositionAndRotation(notice.Pose.Position+Vector3.up*tuning.Get("death.bodyHeight"),Quaternion.Euler(90,notice.Pose.Yaw,0));
             // Presentation-only support projection also handles airborne deaths; it never moves the motor.
             Vector3 supportOrigin=notice.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
-            float supportRange=Mathf.Max(movement.Get("player.capsule.height"),supportOrigin.y-movement.Get("fixture.floorHeight")+movement.Get("player.capsule.height"));
+            float supportRange=Mathf.Max(movement.Get("player.capsule.height"),supportOrigin.y-movement.Get("world.minimumSupportHeight")+movement.Get("player.capsule.height"));
             if(physics.Raycast(supportOrigin,Vector3.down,out var support,supportRange,
                 (1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore))
             {

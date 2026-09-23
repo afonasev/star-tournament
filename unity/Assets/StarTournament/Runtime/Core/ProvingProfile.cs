@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 1;
+        public const int DefaultVersion = 2;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -72,7 +72,21 @@ namespace StarTournament.ProvingGround
         /// <summary>Append-only migration for serialized proving-ground fixtures when a descriptor is introduced.</summary>
         public void EnsureDefaultDescriptors()
         {
+            descriptors.RemoveAll(d=>d.Path.StartsWith("fixture.",StringComparison.Ordinal));values.RemoveAll(v=>v.Path.StartsWith("fixture.",StringComparison.Ordinal));
+            if(id==DefaultId)version=DefaultVersion;
             var current=CreateDefault();
+            foreach(var descriptor in current.descriptors)
+            {
+                if(FindDescriptor(descriptor.Path)!=null)continue;
+                descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
+                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
+            }
+        }
+        public void EnsureNativeCombatDescriptors()
+        {
+            descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
+            version=2;
+            var current=CreateNativeCombatDefault();
             foreach(var descriptor in current.descriptors)
             {
                 if(FindDescriptor(descriptor.Path)!=null)continue;
@@ -232,20 +246,10 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.shotImpactSize", "shot-feedback", "Размер impact", "Размер краткого material-aware contact impact.", "meters", .01f, 2f, .01f, .16f);
             profile.Add("presentation.shotMaxEffects", "shot-feedback", "Лимит дроби", "Максимум одновременно живых visual дробин одного presentation owner.", "count", 8f, 256f, 1f, 96f);
             profile.Add("navigation.sampleDistance", "navigation", "Navigation sample distance", "Maximum endpoint projection distance for fixture navigation queries; not bake spacing.", "meters", .1f, 10f, .1f, 2f);
-            profile.Add("fixture.width", "fixture", "Fixture width", "Overall fixed proving-ground arena width.", "meters", 12f, 80f, 1f, 32f);
-            profile.Add("fixture.depth", "fixture", "Fixture depth", "Overall fixed proving-ground arena depth.", "meters", 12f, 80f, 1f, 32f);
-            profile.Add("fixture.wallThickness", "fixture", "Wall thickness", "Physical fixture wall thickness.", "meters", .1f, 2f, .05f, .3f);
-            profile.Add("fixture.wallHeight", "fixture", "Wall height", "Physical fixture wall height.", "meters", 1.5f, 8f, .1f, 3f);
-            profile.Add("fixture.floorThickness", "fixture", "Floor thickness", "Physical floor and upper slab thickness.", "meters", .1f, 2f, .05f, .3f);
-            profile.Add("fixture.floorHeight", "fixture", "Lower floor height", "World height of the lower walkable floor.", "meters", -5f, 5f, .1f, 0f);
-            profile.Add("fixture.upperFloorHeight", "fixture", "Upper floor height", "World height of the upper walkable floor.", "meters", 2f, 10f, .1f, 4f);
-            profile.Add("fixture.stairRise", "fixture", "Stair rise", "Physical rise of one fixture stair.", "meters", .05f, .5f, .01f, .25f);
-            profile.Add("fixture.stairTread", "fixture", "Stair tread", "Physical depth of one fixture stair.", "meters", .1f, 1f, .01f, .75f);
-            profile.Add("fixture.rampLength", "fixture", "Ramp length", "Horizontal run of the fixture ramp.", "meters", 3f, 20f, .5f, 12f);
-            profile.Add("fixture.rampWidth", "fixture", "Ramp width", "Clear width of the fixture ramp.", "meters", 1.2f, 8f, .1f, 4f);
-            profile.Add("fixture.headroomHeight", "fixture", "Headroom height", "Actual lower-route clearance under the fixture upper slab.", "meters", 1f, 4f, .05f, 2.1f);
             profile.Add("weapon.probeRange", "weapon", "Weapon probe range", "Fixture hitscan diagnostic range.", "meters", 1f, 100f, 1f, 35f);
             profile.Add("weapon.probeCooldown", "weapon", "Weapon probe cooldown", "Minimum interval between fixture firing probes.", "seconds", .1f, 3f, .05f, .7f);
+            profile.Add("world.minimumSupportHeight","world-query","Lowest support probe","Lower world bound for corpse support queries; does not author geometry.","meters",-100,0,1,-10);
+            profile.Add("world.maximumTransitionSegment","world-query","Declared route segment bound","Maximum distance between declared traversal samples.","meters",1,100,.5f,20);
             return profile;
         }
 

@@ -127,7 +127,7 @@ namespace StarTournament.ProvingGround
             while(!Application.isFocused)yield return null;banner.text="NATIVE BOT NAVIGATION · DEVELOPMENT DIAGNOSTIC\n"+label+" · ordinary actions / CharacterMotor · no combat planner";
             yield return new WaitForEndOfFrame();
             var arena=ground.GetComponentInChildren<ProvingArena>();
-            var data=new Evidence{state=label,arenaFamily=arena.Definition.FamilyId,arenaIdentity=arena.Definition.Identity,width=Screen.width,height=Screen.height,focused=Application.isFocused,muted=AudioListener.volume==0,
+            var data=new Evidence{state=label,arenaFamily=arena.Definition.MapId,arenaIdentity=arena.Definition.Identity,width=Screen.width,height=Screen.height,focused=Application.isFocused,muted=AudioListener.volume==0,
                 running=ground.Running,sessionTime=ground.Session.Time,pose=ground.Session.Pose(0),navigation=ground.NavigationReviewDriver?.Controller.Capture()};
             File.WriteAllText(Path.Combine(directory,label+".json"),JsonUtility.ToJson(data,true));ScreenCapture.CaptureScreenshot(Path.Combine(directory,label+".png"));yield return null;
         }

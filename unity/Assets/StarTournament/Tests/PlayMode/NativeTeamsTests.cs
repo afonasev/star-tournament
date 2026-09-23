@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator InitialAllocationCoversEveryNonemptyAssignmentAndOccupancy()
         {
             var owner=Owner();var move=ProvingProfile.CreateDefault();var combat=ProvingProfile.CreateNativeCombatDefault();
-            var arena=owner.AddComponent<ProvingArena>();arena.Build(move);yield return null;
+            var arena=owner.AddComponent<ProvingArena>();arena.Build(CombatBowlCatalog.Freeze(move),move);yield return null;
             var selector=new SafeSpawnSelector(scene.GetPhysicsScene(),arena,move,combat);
             float separation=ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation");
             for(int count=2;count<=4;count++) for(int mask=1;mask<(1<<count)-1;mask++)
@@ -45,7 +45,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator AlliedBodyBlocksActualShotAndDirectDamageButFfaStillDamages()
         {
             var owner=Owner();var move=ProvingProfile.CreateDefault();var combat=ProvingProfile.CreateNativeCombatDefault();combat.Set("shot.spread",0);
-            var arena=owner.AddComponent<ProvingArena>();arena.Build(move);var motors=new CharacterMotor[4];
+            var arena=owner.AddComponent<ProvingArena>();arena.Build(AuthoredPhysicsFixture.Freeze(),move);var motors=new CharacterMotor[4];
             for(int i=0;i<4;i++) { var go=new GameObject("p"+i);go.transform.SetParent(owner.transform);go.layer=ProvingArena.ParticipantLayer;motors[i]=go.AddComponent<CharacterMotor>();motors[i].Initialize(move,new Vector3(0,0,i*2)); }
             var p=ProvingProfile.CreateMatchDefault();var config=NativeMatchConfiguration.Default(p);
             var match=new NativeMatchState(Roster(NativeTeam.TeamA,NativeTeam.TeamA,NativeTeam.TeamB,NativeTeam.TeamB),config,p,50);
@@ -59,10 +59,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var ffa=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,ProvingProfile.CreateCombatDefault(),combat,new NativeMatchState(4,config,p,50));
             Assert.That(ffa.ApplyDamage(1,1,10,0,1).Applied,Is.EqualTo(10));
         }
-        [UnityTest] public IEnumerator RespawnIgnoresVisibleAlliesForDangerButReservesEveryCapsule()
+        [UnityTest] public IEnumerator RespawnCountsVisibleAlliesAndReservesEveryCapsule()
         {
             var owner=Owner();var move=ProvingProfile.CreateDefault();var combat=ProvingProfile.CreateNativeCombatDefault();var life=ProvingProfile.CreateCombatDefault();
-            var arena=owner.AddComponent<ProvingArena>();arena.Build(move);var motors=new CharacterMotor[4];
+            var arena=owner.AddComponent<ProvingArena>();arena.Build(AuthoredPhysicsFixture.Freeze(),move);var motors=new CharacterMotor[4];
             Vector3[] positions={new Vector3(8,0,-10),new Vector3(-10,0,-10),new Vector3(8,0,8),new Vector3(4,0,8)};
             for(int i=0;i<4;i++){var go=new GameObject("p"+i);go.transform.SetParent(owner.transform);go.layer=ProvingArena.ParticipantLayer;motors[i]=go.AddComponent<CharacterMotor>();motors[i].Initialize(move,positions[i]);}
             var p=ProvingProfile.CreateMatchDefault();var match=new NativeMatchState(Roster(NativeTeam.TeamA,NativeTeam.TeamA,NativeTeam.TeamB,NativeTeam.TeamA),NativeMatchConfiguration.Default(p),p,50);
@@ -73,7 +73,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Vector3.Distance(expected,countingAlly),Is.GreaterThan(.1f),"Fixture must distinguish enemy and ally ranking");
             Assert.That(session.Spawns.Valid(session.Pose(1).Position,out _),Is.False);
             for(int i=0;i<300 && session.Life(0).Dead;i++)session.Tick(new LocalAction[4],.02f);
-            Assert.That(session.Life(0).Dead,Is.False);Assert.That(Vector3.Distance(session.Pose(0).Position,expected),Is.LessThan(.1f));
+            Assert.That(session.Life(0).Dead,Is.False);Assert.That(Vector3.Distance(session.Pose(0).Position,countingAlly),Is.LessThan(.1f));
             Assert.That(session.Pose(0).Position,Is.Not.EqualTo(session.Pose(3).Position),"Simultaneous allied respawn reserves distinct slots");
             Assert.That(session.Life(3).Dead,Is.False);
         }

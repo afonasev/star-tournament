@@ -11,9 +11,8 @@ namespace StarTournament.ProvingGround
             family = 0;
             bool requested = !string.IsNullOrEmpty(evidenceDirectory) || !string.IsNullOrEmpty(arenaFamily);
             if (!requested) return false;
-            if (!Path.IsPathFullyQualified(evidenceDirectory) || !int.TryParse(arenaFamily, out family) ||
-                family < 0 || family >= ArenaFamilyCatalog.Ids.Count)
-                throw new ArgumentException("Invalid development navigation review handoff");
+            if(!string.IsNullOrEmpty(arenaFamily))throw new ArgumentException("Procedural arena source is unsupported; use the authored catalog.");
+            if(!Path.IsPathFullyQualified(evidenceDirectory))throw new ArgumentException("Invalid development navigation review handoff");
             return true;
         }
     }

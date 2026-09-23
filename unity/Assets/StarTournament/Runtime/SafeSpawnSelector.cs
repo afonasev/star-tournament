@@ -17,13 +17,6 @@ namespace StarTournament.ProvingGround
         public SafeSpawnSelector(PhysicsScene physics, ProvingArena arena, ProvingProfile motor, ProvingProfile combat)
         {
             this.physics = physics; this.arena = arena; this.motor = motor; this.combat = combat;
-            float inset = combat.Get("spawn.inset"), spacing = combat.Get("spawn.spacing");
-            foreach(var region in arena.Definition.SpawnRegions)
-                for (int side = -1; side <= 1; side += 2)
-                    for (int x = 0; x < 2; x++)
-                        for (int z = 0; z < 2; z++)
-                            slots.Add(new Vector3(region.Center.x+side*(region.Size.x/2-inset-x*spacing),region.Center.y,
-                                region.Center.z+(region.Id=="spawn:lower"?-region.Size.z/2+inset+z*spacing:region.Size.z/2-inset-z*spacing)));
             slots.AddRange(arena.Spawns);
         }
         public bool Valid(Vector3 authored, out Vector3 position)
@@ -55,34 +48,22 @@ namespace StarTournament.ProvingGround
             if(candidateBudget<1)throw new System.ArgumentOutOfRangeException(nameof(candidateBudget));
             InitialSearchNodes=0;InitialFailure=null;selected=System.Array.Empty<Vector3>();
             var candidates=new List<Vector3>();
-            // Initial-only coverage of the fixed fixture, using existing profile geometry/inset/spacing.
-            // Corner regions alone cannot satisfy eight-way FFA separation; never reduce that separation.
             var initialSlots=new List<Vector3>(slots);
-            float inset=combat.Get("spawn.inset"),step=Mathf.Max(combat.Get("spawn.spacing"),separation);
-            foreach(var region in arena.Definition.SpawnRegions)
-            {
-                float halfWidth=region.Size.x/2-inset,halfDepth=region.Size.z/2-inset;
-                for(float x=-halfWidth;x<=halfWidth;x+=step)
-                    for(float z=-halfDepth;z<=halfDepth;z+=step)
-                    {
-                        if(initialSlots.Count>=candidateBudget){InitialFailure="CandidateBudgetExceeded";return false;}
-                        initialSlots.Add(new Vector3(region.Center.x+x,region.Center.y,region.Center.z+z));
-                    }
-            }
+            if(initialSlots.Count>candidateBudget){InitialFailure="CandidateBudgetExceeded";return false;}
             foreach(var slot in initialSlots)if(Valid(slot,out var candidate)&&!candidates.Contains(candidate))candidates.Add(candidate);
-            int n=candidates.Count;var overlapPair=new bool[n,n];var closePair=new bool[n,n];
+            int n=candidates.Count;var overlapPair=new bool[n,n];var closePair=new bool[n,n];var visiblePair=new bool[n,n];
             float radius=motor.Get("player.capsule.radius")+motor.Get("player.capsule.skinWidth");
             for(int a=0;a<n;a++)for(int b=0;b<n;b++)
             {
                 var delta=candidates[a]-candidates[b];
                 float gap=Mathf.Max(0,Mathf.Abs(delta.y)-(motor.Get("player.capsule.height")-2*motor.Get("player.capsule.radius")));
                 overlapPair[a,b]=delta.x*delta.x+delta.z*delta.z+gap*gap<4*radius*radius;
-                closePair[a,b]=delta.magnitude<separation;
+                closePair[a,b]=delta.magnitude<separation;visiblePair[a,b]=BodyVisible(candidates[a],candidates[b])||BodyVisible(candidates[b],candidates[a]);
             }
             var reserved=new int[roster.Count];bool exhausted=false;
             bool Compatible(int participant,int candidate,int prefix)
             {
-                for(int j=0;j<prefix;j++)if(overlapPair[candidate,reserved[j]] ||
+                for(int j=0;j<prefix;j++)if(overlapPair[candidate,reserved[j]] || visiblePair[candidate,reserved[j]] ||
                     (!roster.AreAllies(participant,j)&&closePair[candidate,reserved[j]]))return false;
                 return true;
             }
@@ -108,6 +89,19 @@ namespace StarTournament.ProvingGround
             if(Place(0)){selected=reserved.Select(i=>candidates[i]).ToArray();return true;}
             InitialFailure=exhausted?"SearchBudgetExceeded":"NoValidPlacement";return false;
         }
+        public bool BodyVisible(Vector3 observerFeet,Vector3 targetFeet)
+        {
+            var eye=observerFeet+Vector3.up*motor.Get("camera.eyeHeight");
+            float radius=motor.Get("player.capsule.radius")*combat.Get("spawn.bodySampleRadiusFraction");
+            float height=motor.Get("player.capsule.height");
+            foreach(float fraction in new[]{combat.Get("spawn.bodySampleLow"),combat.Get("spawn.bodySampleMiddle"),combat.Get("spawn.bodySampleHigh")})
+                foreach(Vector3 offset in new[]{Vector3.zero,Vector3.right*radius,Vector3.left*radius,Vector3.forward*radius,Vector3.back*radius})
+                {
+                    var delta=targetFeet+Vector3.up*(height*fraction)+offset-eye;
+                    if(!physics.Raycast(eye,delta.normalized,out _,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))return true;
+                }
+            return false;
+        }
         public bool TryChoose(CombatTarget[] live, out Vector3 selected)
         {
             selected = default; bool found = false, bestHidden = false; float bestDistance = -1;
@@ -118,12 +112,11 @@ namespace StarTournament.ProvingGround
                 foreach (var enemy in live)
                 {
                     Vector3 eye = enemy.Pose.Position + Vector3.up*motor.Get("camera.eyeHeight");
-                    Vector3 delta = candidate + Vector3.up*motor.Get("camera.eyeHeight") - eye;
-                    if (!physics.Raycast(eye, delta.normalized, out _, delta.magnitude, 1 << ProvingArena.WorldLayer, QueryTriggerInteraction.Ignore)) hidden = false;
+                    if(BodyVisible(enemy.Pose.Position,candidate))hidden=false;
                     // Ground airborne opponents before a small NavMesh query. A failed route is
                     // zero safety, never infinite distance or permission to invent a connection.
                     Vector3 endpoint = enemy.Pose.Position;
-                    if (physics.Raycast(eye, Vector3.down, out var ground, motor.Get("fixture.upperFloorHeight") + motor.Get("fixture.wallHeight"),
+                    if (physics.Raycast(eye, Vector3.down, out var ground, combat.Get("spawn.groundProbeDistance"),
                         1 << ProvingArena.WorldLayer, QueryTriggerInteraction.Ignore)) endpoint = ground.point;
                     float distance = 0;
                     if (arena.TryRoute(candidate, endpoint, combat.Get("spawn.sample"), out var path))

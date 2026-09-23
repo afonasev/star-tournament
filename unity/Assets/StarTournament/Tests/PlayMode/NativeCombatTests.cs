@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             owner=new GameObject("test-session"); SceneManager.MoveGameObjectToScene(owner,scene);
             movement=ProvingProfile.CreateDefault(); combat=ProvingProfile.CreateNativeCombatDefault(); combat.Set("shot.spread",0);
             lifecycle=ProvingProfile.CreateCombatDefault(); lifecycle.Set("combat.killcamSeconds",.2f);
-            var root=new GameObject("arena"); root.transform.SetParent(owner.transform); arena=root.AddComponent<ProvingArena>(); arena.Build(movement);
+            var root=new GameObject("arena"); root.transform.SetParent(owner.transform); arena=root.AddComponent<ProvingArena>(); arena.Build(AuthoredPhysicsFixture.Freeze(),movement);
             motors=new CharacterMotor[4];
             for(int i=0;i<4;i++)
             {
@@ -97,7 +97,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=1;i<4;i++) session.ApplyDamage(i,1,100);
             motors[0].Initialize(movement,new Vector3(0,0,4));
             Assert.That(session.Spawns.TryChoose(session.LiveTargets(),out var first),Is.True);
-            Assert.That(first.y,Is.EqualTo(movement.Get("fixture.upperFloorHeight")+movement.Get("player.capsule.skinWidth")).Within(.01f));
+            Assert.That(first.y,Is.EqualTo(AuthoredPhysicsFixture.Value("fixture.upperFloorHeight")+movement.Get("player.capsule.skinWidth")).Within(.01f));
             Vector3 origin=motors[0].State.Position+Vector3.up*movement.Get("camera.eyeHeight");
             Vector3 ray=first+Vector3.up*movement.Get("camera.eyeHeight")-origin;
             Assert.That(scene.GetPhysicsScene().Raycast(origin,ray.normalized,out _,ray.magnitude,1<<ProvingArena.WorldLayer),Is.True,"Slab occludes chosen spawn");

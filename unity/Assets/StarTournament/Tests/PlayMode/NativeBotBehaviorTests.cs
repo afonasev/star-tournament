@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             if(fixedTickHz>0)ground.Profile.Set("simulation.fixedTickHz",fixedTickHz);
             ground.StartBotReview(composition,seed);ground.enabled=false;
-            Assert.That(ground.Running,Is.True);Assert.That(ground.BotDriver,Is.Not.Null);
+            Assert.That(ground.Running,Is.True,string.Join(" | ",ground.GetComponentsInChildren<UnityEngine.UI.Text>(true).Select(x=>x.text)));Assert.That(ground.BotDriver,Is.Not.Null);
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
@@ -41,9 +41,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         void PlaceEight()
         {
-            float floor=ground.Profile.Get("fixture.floorHeight");
+            float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight");
             float[] x={-7,-2,2,7,-7,-2,2,7};
-            for(int p=0;p<8;p++) ground.PlaceCombatReviewSeat(p,new Vector3(x[p],floor,p<4?-2:2),0,p<4?0:180);
+            for(int p=0;p<8;p++) ground.PlaceCombatReviewSeat(p,new Vector3(x[p],floor,p<4?30:34),0,p<4?0:180);
             Physics.SyncTransforms();
         }
         Stats Drive(float maximumSeconds)
@@ -74,10 +74,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var watch=Stopwatch.StartNew();int ticks=0;while(session.Time<600&&session.Match.Phase!=NativeMatchPhase.Finished)
             {
                 Array.Clear(actions,0,actions.Length);driver.ProduceActions(actions,dt);stats.MaxDriverMilliseconds=Math.Max(stats.MaxDriverMilliseconds,driver.LastMilliseconds);stats.MaxQueries=Math.Max(stats.MaxQueries,driver.LastQueries);session.Tick(actions,dt);ticks++;
+                for(int participant=0;participant<session.ParticipantCount;participant++)Assert.That(session.Pose(participant).Position.y,Is.GreaterThan(-2),$"Participant {participant} fell through authored support at tick {ticks}: {session.Pose(participant).Position}");
                 if(ticks%500==0)yield return null;
             }
-            watch.Stop();float w=ground.Profile.Get("fixture.width"),d=ground.Profile.Get("fixture.depth"),h=ground.Profile.Get("fixture.upperFloorHeight")+ground.Profile.Get("fixture.wallHeight");
-            for(int p=0;p<session.ParticipantCount;p++){var pose=session.Pose(p).Position;Assert.That(float.IsNaN(pose.x)||float.IsNaN(pose.y)||float.IsNaN(pose.z),Is.False);Assert.That(Mathf.Abs(pose.x),Is.LessThanOrEqualTo(w/2+1));Assert.That(Mathf.Abs(pose.z),Is.LessThanOrEqualTo(d/2+1));Assert.That(pose.y,Is.InRange(-.1f,h+1));}
+            watch.Stop();var bounds=ground.GetComponentInChildren<ProvingArena>().Definition.Solids;float w=bounds.Max(x=>Mathf.Abs(x.Position.x)+x.Size.x/2)*2,d=bounds.Max(x=>Mathf.Abs(x.Position.z)+x.Size.z/2)*2,h=bounds.Max(x=>x.Position.y+x.Size.y/2);
+            for(int p=0;p<session.ParticipantCount;p++){var pose=session.Pose(p).Position;Assert.That(float.IsNaN(pose.x)||float.IsNaN(pose.y)||float.IsNaN(pose.z),Is.False);Assert.That(Mathf.Abs(pose.x),Is.LessThanOrEqualTo(w/2+1));Assert.That(Mathf.Abs(pose.z),Is.LessThanOrEqualTo(d/2+1));Assert.That(pose.y,Is.InRange(-1.3f,h+1));}
             UnityEngine.Debug.Log($"BOT_NATURAL_SMOKE mode={session.Match.Roster.Mode} sim={session.Time:F2} wallMs={watch.Elapsed.TotalMilliseconds:F2} shots={stats.Shots} damage={stats.Damaged} deaths={stats.Deaths} respawns={stats.Respawns} maxDriverMs={stats.MaxDriverMilliseconds:F3} maxQueries={stats.MaxQueries}");
             Assert.That(session.Match.Phase,Is.EqualTo(NativeMatchPhase.Finished));Assert.That(stats.Damaged,Is.GreaterThan(0));Assert.That(stats.Deaths,Is.GreaterThan(0));Assert.That(stats.Respawns,Is.GreaterThan(0));
         }
@@ -104,8 +105,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 
         [UnityTest] public IEnumerator FacingBotUsesRealDriverShotReleaseAndLifecycleKeepsFrozenBehavior()
         {
-            yield return Load(BotsAndHuman(false,1),107);float floor=ground.Profile.Get("fixture.floorHeight");
-            ground.PlaceCombatReviewSeat(0,new Vector3(-8,floor,2),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-8,floor,6),0,180);Physics.SyncTransforms();
+            yield return Load(BotsAndHuman(false,1),107);float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight");
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,floor,30),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-8,floor,34),0,180);Physics.SyncTransforms();
             var driver=ground.BotDriver;var session=ground.Session;var actions=new LocalAction[2];float dt=1f/ground.Profile.Get("simulation.fixedTickHz");bool pressed=false,released=false,damaged=false;
             session.Fired+=(p,d)=>damaged|=d>0;
             for(int i=0;i<500&&!(damaged&&released);i++)
@@ -135,9 +136,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load(BotsAndHuman(false,1),109);var arena=ground.GetComponentInChildren<ProvingArena>();
             var tactics=new NativeBotTactics(arena,scene.GetPhysicsScene(),new NativeNavigationProvider(arena,ground.Profile,ground.BotNavigationProfile),ground.Profile,ground.CombatProfile,ground.BotBehaviorProfile);
-            float floor=ground.Profile.Get("fixture.floorHeight"),w=ground.Profile.Get("fixture.width"),d=ground.Profile.Get("fixture.depth");
-            Assert.That(tactics.CanMove(new Vector3(w/2-1,floor,0),Vector3.right,1),Is.False,"World wall must reject a capsule move.");
-            Assert.That(tactics.CanJump(new ParticipantState{Position=new Vector3(0,floor,-d/4),Grounded=true},Vector3.forward),Is.False,"Low headroom must reject a jump arc.");
+            float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight"),w=AuthoredPhysicsFixture.Value("fixture.width"),d=AuthoredPhysicsFixture.Value("fixture.depth");
+            Assert.That(tactics.CanMove(new Vector3(35,4,18),Vector3.right,1),Is.False,"World wall must reject a capsule move.");
+            Assert.That(tactics.CanJump(new ParticipantState{Position=new Vector3(-10,0,14),Grounded=true},Vector3.forward),Is.False,"Low headroom must reject a jump arc.");
             Assert.That(tactics.CanMove(arena.LowerRoutePoint,Vector3.right,.2f),Is.True,"An unobstructed lower-floor probe must remain usable.");
         }
 
@@ -148,7 +149,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             behavior.Set("bots.easy.strafeSeconds",.2f);behavior.Set("bots.easy.strafeWeight",1);
             var routes=new NativeNavigationProvider(arena,ground.Profile,ground.BotNavigationProfile);
             var tactics=new NativeBotTactics(arena,scene.GetPhysicsScene(),routes,ground.Profile,ground.CombatProfile,behavior);
-            var start=arena.LowerRoutePoint;
+            var start=new Vector3(19,0,8);
             var actor=new GameObject("jump-proof");actor.transform.SetParent(ground.transform);actor.layer=ProvingArena.ParticipantLayer;actor.AddComponent<CharacterController>();var motor=actor.AddComponent<CharacterMotor>();motor.Initialize(ground.Profile,start);
             float dt=1f/ground.Profile.Get("simulation.fixedTickHz");motor.Tick(new LocalAction{Move=Vector2.up},dt);var predicted=motor.State;
             Assert.That(predicted.Velocity.z,Is.GreaterThan(0));Assert.That(tactics.CanJump(predicted,Vector3.right),Is.True,"Selected lower-floor patch must permit the profile-owned jump.");bool airborne=false,landed=false;
@@ -160,17 +161,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 if(airborne&&motor.State.Grounded){landed=true;break;}
             }
             Assert.That(airborne,Is.True);Assert.That(landed,Is.True);Assert.That(routes.TryLocate(motor.State.Position,out var support),Is.True);
-            Assert.That(support.Support,Is.EqualTo("floor:lower"));Object.Destroy(actor);
+            Assert.That(support.Support,Is.EqualTo("support:lower-loop"));Object.Destroy(actor);
         }
 
         [UnityTest] public IEnumerator VisibleTargetKeepsRealStairAndRampTransitionsUnderPlannerControl()
         {
             yield return Load(BotsAndHuman(false,1),127);var arena=ground.GetComponentInChildren<ProvingArena>();
-            float w=ground.Profile.Get("fixture.width"),rw=ground.Profile.Get("fixture.rampWidth"),wt=ground.Profile.Get("fixture.wallThickness"),low=ground.Profile.Get("fixture.floorHeight"),high=ground.Profile.Get("fixture.upperFloorHeight");
-            float stairRun=Mathf.CeilToInt((high-low)/ground.Profile.Get("fixture.stairRise"))*ground.Profile.Get("fixture.stairTread");
-            foreach(int side in new[]{-1,1})
+            int side=0;
+            foreach(var transition in arena.Definition.Transitions.Where(t=>t.Id=="transition:west-rise"||t.Id=="transition:northwest-outer-rise"))
             {
-                float x=side*(w/2-rw/2-wt);var start=new Vector3(x,low,-(side<0?stairRun:ground.Profile.Get("fixture.rampLength"))-1);var target=new Vector3(x,high,1);
+                side++;var along=(transition.OrderedFeet.Last()-transition.OrderedFeet[0]);along.y=0;along.Normalize();
+                var start=transition.OrderedFeet[0]-along*.5f;var target=transition.OrderedFeet.Last()+along*.5f;
                 var actor=new GameObject("planner-transition");actor.transform.SetParent(ground.transform);actor.layer=ProvingArena.ParticipantLayer;actor.AddComponent<CharacterController>();var motor=actor.AddComponent<CharacterMotor>();motor.Initialize(ground.Profile,start);
                 var routes=new NativeNavigationProvider(arena,ground.Profile,ground.BotNavigationProfile);var tactics=new NativeBotTactics(arena,scene.GetPhysicsScene(),routes,ground.Profile,ground.CombatProfile,ground.BotBehaviorProfile);
                 var planner=new NativeBotPlanner(NativeBotDifficulty.Easy,(uint)(211+side),ground.BotBehaviorProfile,ground.BotNavigationProfile,routes,tactics,new NativeShotgunPolicy(ground.Profile,ground.CombatProfile),100);
@@ -194,10 +195,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 
         [UnityTest] public IEnumerator CloseVisibleEnemyOnOtherFloorUsesRouteInsteadOfLocalStrafe()
         {
-            yield return Load(BotsAndHuman(false,1),131);var arena=ground.GetComponentInChildren<ProvingArena>();float low=ground.Profile.Get("fixture.floorHeight"),high=ground.Profile.Get("fixture.upperFloorHeight");
+            yield return Load(BotsAndHuman(false,1),131);var arena=ground.GetComponentInChildren<ProvingArena>();float low=AuthoredPhysicsFixture.Value("fixture.floorHeight"),high=AuthoredPhysicsFixture.Value("fixture.upperFloorHeight");
             var routes=new NativeNavigationProvider(arena,ground.Profile,ground.BotNavigationProfile);var tactics=new NativeBotTactics(arena,scene.GetPhysicsScene(),routes,ground.Profile,ground.CombatProfile,ground.BotBehaviorProfile);
             var planner=new NativeBotPlanner(NativeBotDifficulty.Easy,137,ground.BotBehaviorProfile,ground.BotNavigationProfile,routes,tactics,new NativeShotgunPolicy(ground.Profile,ground.CombatProfile),100);
-            var pose=new ParticipantState{Position=new Vector3(0,low,5),Grounded=true};var target=new Vector3(0,high,5);
+            var pose=new ParticipantState{Position=new Vector3(-25,0,0),Grounded=true};var target=new Vector3(-25,4,0);
             var action=planner.Tick(0,1f/60f,new NativeBotFrame{Pose=pose,Life=new CombatLifeState{Life=1,Health=100,Ammo=20},Knowledge=new NativeBotKnowledge{OwnLife=1,Alive=true,Enemies=new[]{new NativeBotMemoryEntry{Sighting=new NativeBotSighting(1,1,target),ObservedAt=0,Visible=true}}}});
             Assert.That(action.Move.sqrMagnitude,Is.GreaterThan(0));Assert.That(action.Jump,Is.False);Assert.That(planner.Jumps,Is.Zero);
             Assert.That(planner.Capture().Navigation.Status,Is.EqualTo(NativeNavigationStatus.Moving));

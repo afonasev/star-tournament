@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests
         [UnityTest] public IEnumerator ArtPreservesAllCollisionAndRepeatOwnsItsResources()
         {
             root=new GameObject("orbital-test");var arena=root.AddComponent<ProvingArena>();
-            var frozen=CombatBowlCatalog.Freeze(ProvingProfile.CreateArenaFamiliesDefault());var before=JsonUtility.ToJson(frozen.Definition);
+            var frozen=CombatBowlCatalog.Freeze(ProvingProfile.CreateDefault());var before=JsonUtility.ToJson(frozen.Definition);
             arena.Build(frozen,ProvingProfile.CreateDefault());yield return null;
             foreach(var s in frozen.Definition.Solids)
             {
@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(collider,Is.Not.Null,s.Id);Assert.That(t.position,Is.EqualTo(s.Position));Assert.That(t.localScale,Is.EqualTo(s.Size));Assert.That(Quaternion.Angle(t.rotation,s.Rotation),Is.LessThan(.01f));
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();
-            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-v1@3"));
+            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@1"));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Slow orbital emblem"),Is.EqualTo(5));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Enclosed slow fan"),Is.EqualTo(2));
             Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);

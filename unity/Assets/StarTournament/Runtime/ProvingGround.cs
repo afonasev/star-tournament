@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,7 +17,6 @@ namespace StarTournament.ProvingGround
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
         public ProvingProfile Profile = ProvingProfile.CreateDefault();
-        public ProvingProfile ArenaProfile = ProvingProfile.CreateArenaFoundationDefault();
         readonly SeatInputCoordinator input = new SeatInputCoordinator();
         CharacterMotor[] motors = Array.Empty<CharacterMotor>();
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
@@ -102,7 +102,7 @@ namespace StarTournament.ProvingGround
         public NativeMatchRoster SetupRoster() => SetupComposition().Roster;
         bool ValidSetup()
         {
-            try { if(reviewComposition==null)SetupRoster();return !combatBowlSelected || CombatBowlRules.SupportsParticipantCount(SetupComposition().ParticipantCount); } catch(ArgumentException) { return false; }
+            try { return CombatBowlRules.SupportsParticipantCount((reviewComposition??SetupComposition()).ParticipantCount); } catch(ArgumentException) { return false; }
         }
         Text matchTimer;
         RectTransform timerPanel;
@@ -118,7 +118,8 @@ namespace StarTournament.ProvingGround
         public NativeCombatSession Session { get; private set; }
         CombatPresentation presentation;
         bool[] damageTinted=Array.Empty<bool>();
-        GameObject armorPickupVisual, speedPickupVisual, damagePickupVisual;
+        readonly List<GameObject> armorPickupVisuals=new List<GameObject>(),speedPickupVisuals=new List<GameObject>();
+        GameObject damagePickupVisual;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
         enum Phase { Setup, Running, Paused, Results }
@@ -129,11 +130,11 @@ namespace StarTournament.ProvingGround
         GameObject overlay;
         Text status;
         Button start, resume, rebind;
-        public bool StartWithCombatBowl; public string CombatBowlReviewDirectory;
-        public ProvingProfile OrbitalLeagueProfile=ProvingProfile.CreateOrbitalLeagueDefault();
+        public string CombatBowlReviewDirectory;
+        public ProvingProfile OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
         public ProvingProfile CombatBowlAuthoring=CombatBowlCatalog.AuthoringProfile();
         Button arenaButton;
-        bool combatBowlSelected;
+
         Font font;
         FpsDisplay fps;
         string pauseReason = "";
@@ -144,7 +145,7 @@ namespace StarTournament.ProvingGround
             if (Profile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
-            Profile.EnsureDefaultDescriptors();
+            Profile.EnsureDefaultDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             AudioListener.volume = 0; // QA is muted, including all Player diagnostics.
@@ -153,12 +154,18 @@ namespace StarTournament.ProvingGround
             studioLight.type = LightType.Directional; studioLight.intensity = Profile.Get("presentation.lightIntensity");
             studioLight.transform.rotation = Quaternion.Euler(50, -30, 0); // Authored fixture light orientation.
             var args=Environment.GetCommandLineArgs();int familyFlag=Array.IndexOf(args,"-arenaFamily");
-            if(familyFlag>=0&&familyFlag+1<args.Length&&int.TryParse(args[familyFlag+1],out int family))ArenaProfile.Set("arena.family",family);
+            if(familyFlag>=0||args.Contains("-procedural"))throw new ArgumentException("Procedural arena source is unsupported.");
             bool environmentReview=DevelopmentNavigationReviewHandoff.TryParse(
                 Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"),
                 Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_ARENA_FAMILY"), out int environmentFamily);
-            if(environmentReview) ArenaProfile.Set("arena.family",environmentFamily);
-            combatBowlSelected=StartWithCombatBowl||args.Contains("-combatBowl");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            int bowlReviewFlag=Array.IndexOf(args,"-combatBowlReview");
+            if(bowlReviewFlag>=0)
+            {
+                if(bowlReviewFlag+1>=args.Length||!System.IO.Path.IsPathFullyQualified(args[bowlReviewFlag+1]))throw new ArgumentException("Absolute Combat Bowl review directory required");
+                CombatBowlReviewDirectory=args[bowlReviewFlag+1];
+            }
+#endif
             arena = Owned("unity-arena").AddComponent<ProvingArena>();
             BuildSelectedArena();
             Composition=HumanComposition(SetupRoster(),false);
@@ -401,9 +408,10 @@ namespace StarTournament.ProvingGround
         static ProvingProfile Copy(ProvingProfile p) => JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(p));
         void BuildSelectedArena()
         {
+            if(OrbitalLeagueProfile.Id=="orbital-league-v1")OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
-            studioLight.intensity=combatBowlSelected?OrbitalLeagueProfile.Get("light.studioKey"):Profile.Get("presentation.lightIntensity");
-            var frozen=combatBowlSelected ? CombatBowlCatalog.Freeze(ArenaProfile) : ArenaGenerator.Freeze(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile });
+            studioLight.intensity=OrbitalLeagueProfile.Get("light.studioKey");
+            var frozen=CombatBowlCatalog.Freeze(Profile);
             arena.Build(frozen,Profile,OrbitalLeagueProfile);
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
@@ -422,7 +430,7 @@ namespace StarTournament.ProvingGround
                 if(TeamProfile.Id!="unity-native-team-v1" || TeamProfile.Version!=1 || TeamProfile.Validate().Count!=0) throw new InvalidOperationException("Invalid team profile");
                 foreach(var descriptor in TeamProfile.Descriptors) NativeMatchConfiguration.ValidateValue(TeamProfile,descriptor.Path,TeamProfile.Get(descriptor.Path));
                 Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):SetupComposition();
-                if(combatBowlSelected) CombatBowlRules.RequireParticipantCount(Composition.ParticipantCount);
+                CombatBowlRules.RequireParticipantCount(Composition.ParticipantCount);
                 bool hasBots=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot);
                 if(hasBots&&!botReviewEnabled)botSeed=(uint)UnityEngine.Random.Range(1,int.MaxValue);
                 Composition.RequireSupportedSources(true,reviewComposition!=null&&!botReviewEnabled);
@@ -574,19 +582,28 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);if(armorPickupVisual)Destroy(armorPickupVisual);if(speedPickupVisual)Destroy(speedPickupVisual); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         void CreateArmorPickupVisual()
         {
-            if(!ArmorPickupPrefab) throw new InvalidOperationException("Missing manifest-owned armor pickup prefab");
-            armorPickupVisual=Instantiate(ArmorPickupPrefab,transform);armorPickupVisual.name="armor-pickup-presentation";
-            foreach(var collider in armorPickupVisual.GetComponentsInChildren<Collider>())Destroy(collider);
+            if(!ArmorPickupPrefab)throw new InvalidOperationException("Missing manifest-owned armor prefab");
+            foreach(var pickup in Session.ArmorPickups)
+            {
+                var visual=Instantiate(ArmorPickupPrefab,transform);visual.name=pickup.InstanceId+"-presentation";
+                foreach(var collider in visual.GetComponentsInChildren<Collider>())Destroy(collider);
+                armorPickupVisuals.Add(visual);
+            }
         }
         void RenderArmorPickup()
         {
-            if(!armorPickupVisual||Session==null)return;var pickup=Session.ArmorPickup;armorPickupVisual.SetActive(pickup.Available);if(!pickup.Available)return;
-            armorPickupVisual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.armorPickupHoverHeight");
-            armorPickupVisual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.armorPickupRotationDegreesPerSecond")),0);
+            if(Session==null)return;var states=Session.ArmorPickups;
+            for(int i=0;i<armorPickupVisuals.Count;i++)
+            {
+                var visual=armorPickupVisuals[i];var pickup=states[i];visual.SetActive(pickup.Available);if(!pickup.Available)continue;
+                visual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.armorPickupHoverHeight");
+                visual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.armorPickupRotationDegreesPerSecond")),0);
+            }
         }
+
         void CreateDamagePickupVisual()
         {
             if(!DamagePickupPrefab) throw new InvalidOperationException("Missing manifest-owned damage pickup prefab");
@@ -602,16 +619,25 @@ namespace StarTournament.ProvingGround
         }
         void CreateSpeedPickupVisual()
         {
-            if(!SpeedPickupPrefab) throw new InvalidOperationException("Missing manifest-owned speed pickup prefab");
-            speedPickupVisual=Instantiate(SpeedPickupPrefab,transform);speedPickupVisual.name="speed-pickup-presentation";
-            foreach(var collider in speedPickupVisual.GetComponentsInChildren<Collider>())Destroy(collider);
+            if(!SpeedPickupPrefab)throw new InvalidOperationException("Missing manifest-owned speed prefab");
+            foreach(var pickup in Session.SpeedPickups)
+            {
+                var visual=Instantiate(SpeedPickupPrefab,transform);visual.name=pickup.InstanceId+"-presentation";
+                foreach(var collider in visual.GetComponentsInChildren<Collider>())Destroy(collider);
+                speedPickupVisuals.Add(visual);
+            }
         }
         void RenderSpeedPickup()
         {
-            if(!speedPickupVisual||Session==null)return;var pickup=Session.SpeedPickup;speedPickupVisual.SetActive(Session.HasSpeedPickup&&pickup.Available);if(!Session.HasSpeedPickup||!pickup.Available)return;
-            speedPickupVisual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.speedPickupHoverHeight");
-            speedPickupVisual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.speedPickupRotationDegreesPerSecond")),0);
+            if(Session==null)return;var states=Session.SpeedPickups;
+            for(int i=0;i<speedPickupVisuals.Count;i++)
+            {
+                var visual=speedPickupVisuals[i];var pickup=states[i];visual.SetActive(pickup.Available);if(!pickup.Available)continue;
+                visual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.speedPickupHoverHeight");
+                visual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.speedPickupRotationDegreesPerSecond")),0);
+            }
         }
+
         void CreateInterface()
         {
             var eventSystem = Owned("input-events"); eventSystem.AddComponent<EventSystem>(); eventSystem.AddComponent<InputSystemUIInputModule>();
@@ -672,7 +698,7 @@ namespace StarTournament.ProvingGround
             seatsMinus=ButtonElement(column.transform,"Игроки −",()=>SetSeatCount(LocalSeatCount-1)); seatsMinus.gameObject.name="seats-minus";
             seatsPlus=ButtonElement(column.transform,"Экраны +",()=>SetSeatCount(LocalSeatCount+1)); seatsPlus.gameObject.name="seats-plus";
             modeButton=ButtonElement(column.transform,"Режим",()=>SetMatchMode(SetupMode==NativeMatchMode.Ffa?NativeMatchMode.Teams:NativeMatchMode.Ffa));modeButton.gameObject.name="match-mode";
-            arenaButton=ButtonElement(column.transform,"Арена",()=>{if(phase==Phase.Setup){combatBowlSelected=!combatBowlSelected;setupError=null;RefreshInterface();}});arenaButton.gameObject.name="arena-source";
+            arenaButton=ButtonElement(column.transform,"Арена",()=>{});arenaButton.gameObject.name="authored-map";arenaButton.interactable=false;
             teamRow=new GameObject("team-assignments",typeof(RectTransform),typeof(HorizontalLayoutGroup));teamRow.transform.SetParent(column.transform,false);
             var teamLayout=teamRow.GetComponent<HorizontalLayoutGroup>();teamLayout.childControlWidth=teamLayout.childControlHeight=true;teamLayout.childForceExpandWidth=teamLayout.childForceExpandHeight=true;
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }
@@ -801,7 +827,7 @@ namespace StarTournament.ProvingGround
             modeButton.gameObject.SetActive(phase==Phase.Setup);
             modeButton.GetComponentInChildren<Text>().text="Режим: "+(SetupMode==NativeMatchMode.Teams?"Team A / Team B":"Каждый сам за себя");
             arenaButton.gameObject.SetActive(phase==Phase.Setup);
-            arenaButton.GetComponentInChildren<Text>().text="Арена: "+(combatBowlSelected?"Combat Bowl · 2–4":"Procedural arena");
+            arenaButton.GetComponentInChildren<Text>().text="Арена: "+"Combat Bowl · 2–8";
             teamRow.SetActive(phase==Phase.Setup && SetupMode==NativeMatchMode.Teams);
             colorButton.gameObject.SetActive(teamRow.activeSelf);
             for(int i=0;i<teamButtons.Length;i++)

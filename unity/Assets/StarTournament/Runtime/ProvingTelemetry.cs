@@ -63,8 +63,8 @@ namespace StarTournament.ProvingGround
             finished=true;
             var ground=GetComponent<ProvingGround>();
             var builtArena=ground.GetComponentInChildren<ProvingArena>();
-            var report=new Report {unity=Application.unityVersion,profile=ground.Profile.Id+"@"+ground.Profile.Version,arenaProfile=ground.ArenaProfile.Id+"@"+ground.ArenaProfile.Version,
-                profileSha256=Hash(JsonUtility.ToJson(ground.Profile)),arenaFamily=builtArena?.Definition?.FamilyId,arenaIdentity=builtArena?.Definition?.Identity,
+            var report=new Report {unity=Application.unityVersion,profile=ground.Profile.Id+"@"+ground.Profile.Version,arenaProfile=ground.CombatBowlAuthoring.Id+"@"+ground.CombatBowlAuthoring.Version,
+                profileSha256=Hash(JsonUtility.ToJson(ground.Profile)),arenaFamily=builtArena?.Definition?.MapId,arenaIdentity=builtArena?.Definition?.Identity,
                 device=SystemInfo.deviceModel,graphics=SystemInfo.graphicsDeviceName,operatingSystem=SystemInfo.operatingSystem,
                 width=Screen.width,height=Screen.height,cameras=Camera.allCamerasCount,samples=frames.Count,
                 state=ground.Running?"running-diagnostic":"setup-or-pause",frameP50Ms=Percentile(frames,.5f),frameP95Ms=Percentile(frames,.95f),

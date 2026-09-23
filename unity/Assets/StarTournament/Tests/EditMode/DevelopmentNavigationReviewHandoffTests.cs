@@ -7,8 +7,8 @@ namespace StarTournament.ProvingGround.Tests
     {
         [Test] public void ParsesCompleteAbsoluteHandoff()
         {
-            Assert.That(DevelopmentNavigationReviewHandoff.TryParse("/private/tmp/arena-evidence", "4", out var family), Is.True);
-            Assert.That(family, Is.EqualTo(4));
+            Assert.That(DevelopmentNavigationReviewHandoff.TryParse("/private/tmp/arena-evidence", null, out var family), Is.True);
+            Assert.That(family, Is.EqualTo(0));
         }
 
         [Test] public void LeavesAnAbsentHandoffInactive()
@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround.Tests
         }
 
         [TestCase("relative-evidence", "0")]
-        [TestCase("/private/tmp/evidence", null)]
+        [TestCase("/private/tmp/evidence", "0")]
         [TestCase("/private/tmp/evidence", "five")]
         [TestCase("/private/tmp/evidence", "-1")]
         [TestCase("/private/tmp/evidence", "5")]

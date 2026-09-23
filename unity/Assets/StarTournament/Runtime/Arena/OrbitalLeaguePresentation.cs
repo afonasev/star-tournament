@@ -44,6 +44,8 @@ namespace StarTournament.ProvingGround
             foreach(var s in definition.Solids)
             {
                 var target=transform.parent.Find(s.Id);if(!target)continue;
+                if(s.Surface=="grating"){Grating(s,target);continue;}
+                if(s.Surface=="window"){Window(s,target);continue;}
                 bool roof=s.Id.Contains("roof")||s.Id.Contains("ceiling");bool ground=s.Material=="floor";
                 var filter=target.GetComponent<MeshFilter>();var mesh=Instantiate(filter.sharedMesh);owned.Add(mesh);
                 var normals=mesh.normals;var uv=mesh.uv;var vertices=mesh.vertices;
@@ -82,6 +84,34 @@ namespace StarTournament.ProvingGround
                 go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=entry.Key;r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=false;
             }
         }
+        void Grating(ArenaSolid s,Transform target)
+        {
+            var bars=new List<CombineInstance>();float pitch=p.Get("ring.gratingPitch"),width=p.Get("ring.gratingBar"),depth=p.Get("ring.gratingDepth")/s.Size.y;float y=(1-depth)/2;
+            for(float x=-s.Size.x/2+width/2;x<s.Size.x/2;x+=pitch)
+                bars.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(new Vector3(x/s.Size.x,y,0),Quaternion.identity,new Vector3(width/s.Size.x,depth,1))});
+            for(float z=-s.Size.z/2+width/2;z<s.Size.z/2;z+=pitch)
+                bars.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(new Vector3(0,y,z/s.Size.z),Quaternion.identity,new Vector3(1,depth,width/s.Size.z))});
+            var mesh=new Mesh{name=s.Id+" / open grating",indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(bars.ToArray());owned.Add(mesh);
+            target.GetComponent<MeshFilter>().sharedMesh=mesh;target.GetComponent<Renderer>().sharedMaterial=trim;
+        }
+        void Window(ArenaSolid s,Transform target)
+        {
+            var texture=new Texture2D(TextureSize,TextureSize,TextureFormat.RGB24,false){name="Orbital window sky",wrapMode=TextureWrapMode.Repeat};owned.Add(texture);
+            var pixels=new Color[TextureSize*TextureSize];
+            for(int y=0;y<TextureSize;y++)for(int x=0;x<TextureSize;x++)
+            {
+                // Stable texture encoding, independent of all gameplay/map randomness.
+                uint hash=(uint)(x*73856093)^(uint)(y*19349663);hash^=hash>>13;
+                float horizon=Mathf.Max(0,1-Mathf.Abs(y-TextureSize*.25f)/(TextureSize*.12f));
+                pixels[y*TextureSize+x]=hash%997<3?Palette("white"):Color.Lerp(Palette("trim"),Palette("cyan"),horizon)*p.Get("ring.skyValue");
+            }
+            texture.SetPixels(pixels);texture.Apply(false,true);
+            var sky=new Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Sealed panoramic space glazing"};sky.SetTexture("_BaseMap",texture);sky.SetTextureScale("_BaseMap",new Vector2(Mathf.Max(s.Size.x,s.Size.z)/s.Size.y,1));owned.Add(sky);target.GetComponent<Renderer>().sharedMaterial=sky;
+            bool alongX=s.Size.x>s.Size.z;float length=alongX?s.Size.x:s.Size.z;float frame=p.Get("ring.windowFrameWidth"),pitch=p.Get("ring.windowFramePitch");
+            for(float offset=-length/2;offset<=length/2;offset+=pitch)
+                Box(trim,s.Position+(alongX?Vector3.right:Vector3.forward)*offset,alongX?new Vector3(frame,s.Size.y,frame):new Vector3(frame,s.Size.y,frame),Quaternion.identity);
+            foreach(int side in new[]{-1,1})Box(trim,s.Position+Vector3.up*(side*(s.Size.y-frame)/2),alongX?new Vector3(length,frame,frame):new Vector3(frame,frame,length),Quaternion.identity);
+        }
         Vector3 Position(string key)=>new Vector3(p.Get(key+".x"),p.Get(key+".y"),p.Get(key+".z"));
         Color Palette(string key)=>new Color(p.Get("color."+key+".r"),p.Get("color."+key+".g"),p.Get("color."+key+".b"));
         Material Surface(string name,float value,bool isFloor)
@@ -115,13 +145,13 @@ namespace StarTournament.ProvingGround
         {
             // Surface-mounted strips stay within the wall silhouette (six millimetre overlay).
             bool xWall=s.Size.x>s.Size.z;float length=xWall?s.Size.x:s.Size.z;
-            var along=xWall?Vector3.right:Vector3.forward;var normal=xWall?Vector3.forward:Vector3.right;
+            var normal=s.Rotation*(xWall?Vector3.forward:Vector3.right);
             float depth=xWall?s.Size.z:s.Size.x;float bottom=s.Position.y-s.Size.y/2;
             foreach(int side in new[]{-1,1})
             {
                 Vector3 face=s.Position+normal*(side*(depth/2+Epsilon));
                 void Strip(Material m,float y,float h,float len)
-                    =>Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),Quaternion.identity);
+                    =>Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),s.Rotation);
                 Strip(trim,bottom+p.Get("detail.trimHeight")/2,p.Get("detail.trimHeight"),length);
                 Strip(cyan,bottom+p.Get("detail.bandHeight"),p.Get("detail.bandWidth"),length);
                 Strip(trim,bottom+s.Size.y-p.Get("detail.headerInset"),p.Get("detail.headerWidth"),length);
@@ -162,6 +192,8 @@ namespace StarTournament.ProvingGround
         }
         void Roof(ArenaSolid s)
         {
+            if(s.Id=="interior-shell-roof")return; // The shell closes gaps; existing room ceilings own fixtures.
+            if(Mathf.Min(s.Size.x,s.Size.z)<p.Get("light.fixtureWidth")+p.Get("light.fixtureFrame"))return;
             float spacing=p.Get("light.fixtureSpacing");int nx=Mathf.Max(1,Mathf.FloorToInt(s.Size.x/spacing)),nz=Mathf.Max(1,Mathf.FloorToInt(s.Size.z/spacing));
             for(int x=0;x<nx;x++)for(int z=0;z<nz;z++)
             {
@@ -221,12 +253,12 @@ namespace StarTournament.ProvingGround
             Crest(Position("layout.broadcast-crest"),Quaternion.Euler(90,0,0),p.Get("broadcast.orbitRadius")*1.5f);
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
             {
-                int number=(sx<0?0:2)+(sz<0?1:2);
-                float x=sx*27.94f,z=sz*17;
+                int number=sz>0?(sx<0?1:2):(sx<0?3:4);
+                var mark=Position("ring.spawn-mark-"+number);float x=mark.x,z=mark.z;
                 float markHeight=p.Get("broadcast.spawnMarkHeight");
-                Box(trim,new Vector3(x,2.8f,z),new Vector3(Epsilon,markHeight,markHeight*1.15f),Quaternion.identity);
-                Box(cyan,new Vector3(x-sx*Epsilon*2,2.8f,z-markHeight*.45f),new Vector3(Epsilon,markHeight*.87f,p.Get("broadcast.markWidth")),Quaternion.identity);
-                Label("0"+number,new Vector3(x-sx*Epsilon*3,2.8f,z),Quaternion.Euler(0,sx<0?90:-90,0),.72f);
+                Box(trim,new Vector3(x,mark.y,z),new Vector3(Epsilon,markHeight,markHeight*1.15f),Quaternion.identity);
+                Box(cyan,new Vector3(x-sx*Epsilon*2,mark.y,z-markHeight*.45f),new Vector3(Epsilon,markHeight*.87f,p.Get("broadcast.markWidth")),Quaternion.identity);
+                Label("0"+number,new Vector3(x-sx*Epsilon*3,mark.y,z),Quaternion.Euler(0,sx<0?90:-90,0),.72f);
             }
             foreach(int sx in new[]{-1,1})
             {

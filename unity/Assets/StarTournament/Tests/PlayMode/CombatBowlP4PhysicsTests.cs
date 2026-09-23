@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround.Tests
         [UnitySetUp] public IEnumerator Setup()
         {
             root=new GameObject("P4-physics");arena=root.AddComponent<ProvingArena>();movement=ProvingProfile.CreateDefault();navigation=ProvingProfile.CreateNavigationDefault();
-            arena.Build(CombatBowlCatalog.Freeze(ProvingProfile.CreateArenaFamiliesDefault()),movement);provider=new NativeNavigationProvider(arena,movement,navigation);yield return null;
+            arena.Build(CombatBowlCatalog.Freeze(ProvingProfile.CreateDefault()),movement);provider=new NativeNavigationProvider(arena,movement,navigation);yield return null;
         }
         [UnityTearDown] public IEnumerator Teardown(){Object.Destroy(root);yield return null;}
         CharacterMotor Motor(Vector3 feet)
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround.Tests
         {
             foreach(var spawn in arena.Spawns)
             {
-                Assert.That(provider.TryPhysicalSupport(spawn,out var support),Is.True);Assert.That(support.Support,Does.StartWith("support:spawn-"));
+                Assert.That(provider.TryPhysicalSupport(spawn,out var support),Is.True);Assert.That(support.Support,Is.EqualTo(arena.Definition.SpawnRegions.Single(r=>r.Center==spawn).Support));
                 Assert.That(provider.TryRoute(spawn,arena.Definition.ArmorPickupAnchor,out _,out var error),Is.True,spawn+" to B "+error);
                 Assert.That(provider.TryRoute(spawn,arena.Definition.DamagePickupAnchor,out _,out error),Is.True,spawn+" to A "+error);
             }
