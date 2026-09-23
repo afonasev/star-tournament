@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=3};
+            var p=new ProvingProfile{id="orbital-league-v1",version=4};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
@@ -27,15 +27,18 @@ namespace StarTournament.ProvingGround
             V("light.fixtureWidth","lighting","Ширина светильника","Широкая белая потолочная панель.","m",.3f,2,.1f,.9f);
             V("light.fixtureLength","lighting","Длина светильника","Длина белой панели.","m",1,4,.1f,2.8f);
             V("light.emission","lighting","Свечение панели","Белые светильники без отдельной realtime-тени.","multiplier",.5f,3,.1f,2.3f);
-            V("light.fill","lighting","Рассеянный свет","Равномерная читаемость закрытых помещений.","ratio",.2f,1,.05f,.65f);
-            V("light.intensity","lighting","Локальный свет","Сила шести потолочных источников.","intensity",0,12,.5f,8f);
-            V("light.studioKey","lighting","Общий направленный свет","Заполнение Combat Bowl, сохраняющее контраст локальных теней.","intensity",.1f,2,.05f,.65f);
-            V("light.range","lighting","Радиус света","Зона мягкого локального освещения.","m",3,12,.5f,10);
+            V("light.fill","lighting","Рассеянный свет","Равномерная читаемость закрытых помещений.","ratio",.2f,1,.05f,.45f);
+            V("light.intensity","lighting","Локальный свет","Сила шести потолочных источников.","intensity",0,12,.5f,11f);
+            V("light.studioKey","lighting","Общий направленный свет","Заполнение Combat Bowl, сохраняющее контраст локальных теней.","intensity",.1f,2,.05f,.4f);
+            V("light.range","lighting","Радиус света","Зона мягкого локального освещения.","m",3,12,.5f,12);
+            V("light.spotAngle","lighting","Угол потолочного света","Ширина направленного пятна, определяющая читаемость тени.","deg",60,120,5,100);
+            V("light.targetDrop","lighting","Наклон потолочного света","Смещение цели светильника вниз от центра зоны.","m",1,5,.25f,3);
+            V("light.hallAimOffsetZ","lighting","Цель света в зале","Смещение пятна главного зала вдоль маршрута от геометрического центра.","m",-4,4,.5f,-2.5f);
             V("light.shadowCasters","lighting","Источники с тенями","Максимум общих для всех камер потолочных источников с realtime-тенью.","count",0,4,1,4);
-            V("light.shadowStrength","lighting","Контраст тени","Мягкая тень оставляет соперника и вход различимыми.","ratio",0,.7f,.05f,.65f);
+            V("light.shadowStrength","lighting","Контраст тени","Мягкая тень оставляет соперника и вход различимыми.","ratio",0,1,.05f,1);
             V("light.shadowResolution","lighting","Разрешение тени","Размер одной карты тени в общем атласе URP.","px",256,512,256,512);
-            V("light.shadowBias","lighting","Смещение тени","Подавление самозатенения на игроках и стенах.","m",.01f,.2f,.01f,.05f);
-            V("light.shadowNormalBias","lighting","Нормальное смещение","Подавление артефактов на освещённых панелях.","m",0,1,.05f,.4f);
+            V("light.shadowBias","lighting","Смещение тени","Подавление самозатенения на игроках и стенах.","m",.01f,.2f,.01f,.02f);
+            V("light.shadowNormalBias","lighting","Нормальное смещение","Подавление артефактов на освещённых панелях.","m",0,1,.05f,.1f);
             V("surface.ceilingValue","surfaces","Светлота потолка","Доля светлоты стен для потолочных панелей.","ratio",.3f,1,.05f,.7f);
             V("surface.detailSmoothness","surfaces","Гладкость деталей","Ширина блика плинтуса и разметки.","ratio",0,.5f,.05f,.1f);
             V("detail.headerInset","details","Потолочный пояс","Отступ верхнего пояса от потолка.","m",.1f,.5f,.01f,.2f);
@@ -111,6 +114,16 @@ namespace StarTournament.ProvingGround
                 if(Mathf.Approximately(Get("light.intensity"),1.4f))Set("light.intensity",8f);
                 if(Mathf.Approximately(Get("light.range"),7f))Set("light.range",10f);
             }
+            if(version<4)
+            {
+                if(Mathf.Approximately(Get("light.fill"),.65f))Set("light.fill",.45f);
+                if(Mathf.Approximately(Get("light.intensity"),8f))Set("light.intensity",11f);
+                if(Mathf.Approximately(Get("light.studioKey"),.65f))Set("light.studioKey",.4f);
+                if(Mathf.Approximately(Get("light.range"),10f))Set("light.range",12f);
+                if(Mathf.Approximately(Get("light.shadowStrength"),.65f))Set("light.shadowStrength",1);
+                if(Mathf.Approximately(Get("light.shadowBias"),.05f))Set("light.shadowBias",.02f);
+                if(Mathf.Approximately(Get("light.shadowNormalBias"),.4f))Set("light.shadowNormalBias",.1f);
+            }
             var current=CreateOrbitalLeagueDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -118,14 +131,14 @@ namespace StarTournament.ProvingGround
                 if(existing>=0)
                 {
                     // The v2 range capped light intensity at four, below the new authored value.
-                    if(version<3 && (descriptor.Path=="light.intensity" || descriptor.Path=="light.emission" || descriptor.Path=="light.range"))
+                    if(version<4 && descriptor.Path.StartsWith("light."))
                         descriptors[existing]=JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor));
                     continue;
                 }
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=3;
+            version=4;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

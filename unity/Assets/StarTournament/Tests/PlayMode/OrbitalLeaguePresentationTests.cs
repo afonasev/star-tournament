@@ -28,6 +28,7 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(art.LocalLightCount,Is.EqualTo(6));Assert.That(art.ShadowLightCount,Is.EqualTo(4));
             Assert.That(art.GetComponentsInChildren<Light>().Count(l=>l.shadows==LightShadows.Soft),Is.EqualTo(4));
             Assert.That(art.GetComponentsInChildren<Light>().All(l=>l.type==LightType.Spot),Is.True);
+            Assert.That(art.GetComponentsInChildren<Light>().All(l=>Mathf.Approximately(l.spotAngle,100)),Is.True);
             int renderers=arena.GetComponentsInChildren<Renderer>().Length;
             arena.Build(frozen,ProvingProfile.CreateDefault());yield return null;
             Assert.That(arena.GetComponentsInChildren<OrbitalLeaguePresentation>().Length,Is.EqualTo(1));
@@ -45,15 +46,32 @@ namespace StarTournament.ProvingGround.Tests
         }
         [Test] public void SerializedV2LightingUpgradesValuesAndRangeTogether()
         {
-            var json=JsonUtility.ToJson(ProvingProfile.CreateOrbitalLeagueDefault()).Replace("\"version\":3","\"version\":2");
+            var json=JsonUtility.ToJson(ProvingProfile.CreateOrbitalLeagueDefault()).Replace("\"version\":4","\"version\":2");
             Assert.That(json,Does.Contain("\"version\":2"));
             var old=JsonUtility.FromJson<ProvingProfile>(json);
             old.Set("light.intensity",1.4f);old.Descriptor("light.intensity").Maximum=4;
             old.Set("light.range",7);old.Set("light.emission",1.5f);
             old.EnsureOrbitalLeagueDescriptors();
-            Assert.That(old.Version,Is.EqualTo(3));
-            Assert.That(old.Get("light.intensity"),Is.EqualTo(8));
+            Assert.That(old.Version,Is.EqualTo(4));
+            Assert.That(old.Get("light.intensity"),Is.EqualTo(11));
             Assert.That(old.Descriptor("light.intensity").Maximum,Is.EqualTo(12));
+            Assert.That(old.Validate(),Is.Empty);
+        }
+        [Test] public void SerializedV3LightingKeepsOverridesAndUpgradesOldDefaults()
+        {
+            var json=JsonUtility.ToJson(ProvingProfile.CreateOrbitalLeagueDefault()).Replace("\"version\":4","\"version\":3");
+            var old=JsonUtility.FromJson<ProvingProfile>(json);
+            old.Set("light.fill",.65f);old.Set("light.intensity",8);old.Set("light.studioKey",.65f);
+            old.Set("light.range",10);old.Set("light.shadowStrength",.65f);old.Descriptor("light.shadowStrength").Maximum=.7f;
+            old.Set("light.shadowNormalBias",.4f);old.Set("light.shadowBias",.05f);
+            old.Set("light.emission",1.8f); // Designer override, not the former default.
+            old.EnsureOrbitalLeagueDescriptors();
+            Assert.That(old.Version,Is.EqualTo(4));
+            Assert.That(old.Get("light.fill"),Is.EqualTo(.45f));
+            Assert.That(old.Get("light.intensity"),Is.EqualTo(11));
+            Assert.That(old.Get("light.shadowStrength"),Is.EqualTo(1));
+            Assert.That(old.Get("light.emission"),Is.EqualTo(1.8f));
+            Assert.That(old.Descriptor("light.shadowStrength").Maximum,Is.EqualTo(1));
             Assert.That(old.Validate(),Is.Empty);
         }
     }
