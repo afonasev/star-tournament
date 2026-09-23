@@ -11,6 +11,7 @@ namespace StarTournament.ProvingGround
 {
     public sealed class ProvingGround : MonoBehaviour
     {
+        public static readonly Quaternion ArmorPickupSilhouetteLocalRotation=Quaternion.Euler(90f,0f,0f);
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, SpeedPickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab;
         public AnimationClip[] TrooperClips;
@@ -513,6 +514,7 @@ namespace StarTournament.ProvingGround
             foreach(var item in new[]{(PrimitiveType.Cylinder,"glass-shield",armorPickupMaterial,new Vector3(.58f,.08f,.58f)),(PrimitiveType.Cylinder,"hex-core",armorCoreMaterial,new Vector3(.2f,.12f,.2f))})
             {
                 var part=GameObject.CreatePrimitive(item.Item1);part.name=item.Item2;part.transform.SetParent(armorPickupVisual.transform,false);part.transform.localScale=item.Item4;
+                part.transform.localRotation=ArmorPickupSilhouetteLocalRotation;
                 var collider=part.GetComponent<Collider>();if(collider)Destroy(collider);part.GetComponent<Renderer>().material=item.Item3;
             }
         }
