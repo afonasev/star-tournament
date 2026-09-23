@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="9", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="10", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -49,6 +49,11 @@ namespace StarTournament.ProvingGround
                 =>Box(id,new Vector3((x1+x2)/2,(bottom+top)/2,(z1+z2)/2),new Vector3(Mathf.Abs(x2-x1)+thickness,top-bottom,Mathf.Abs(z2-z1)+thickness));
             void Roof(string id,float x1,float x2,float z1,float z2,float underside,float depth=slab)
                 =>Box(id,new Vector3((x1+x2)/2,underside+depth/2,(z1+z2)/2),new Vector3(x2-x1,depth,z2-z1));
+            void SlopingRoof(string id,Vector3 low,Vector3 high,float width)
+            {
+                var rotation=Quaternion.LookRotation(high-low,Vector3.up);
+                Box(id,(low+high)/2+rotation*Vector3.up*slab/2,new Vector3(width,slab,Vector3.Distance(low,high)),"wall","",rotation);
+            }
             void Steps(string id,Vector3 start,Vector3 direction,int count,float rise,float tread,float width,string lower,string upper)
             {
                 var feet=new List<Vector3>{start-direction*.2f};
@@ -104,8 +109,8 @@ namespace StarTournament.ProvingGround
                     float xa=Mathf.Min(sx*28,sx*36),xb=Mathf.Max(sx*28,sx*36),za=sz>0?14:-36,zb=sz>0?36:-14;
                     Box(corner+"-spawn",new Vector3((xa+xb)/2,2,(za+zb)/2),new Vector3(xb-xa,4,zb-za),"floor",hall);Roof(corner+"-roof",xa,xb,za,zb,8);
                     Steps(corner+"-outer-rise",new Vector3(sx*32,0,sz*4),Vector3.forward*sz,20,.2f,.5f,8,low,hall);
-                    // Matching stepped ceiling has the same rise/run and maintains full headroom.
-                    for(int i=0;i<20;i++)Roof(corner+"-slope-ceiling-"+i,xa,xb,Mathf.Min(sz*(4+i*.5f),sz*(4+(i+1)*.5f)),Mathf.Max(sz*(4+i*.5f),sz*(4+(i+1)*.5f)),3.2f+(i+1)*.2f,1.2f);
+                    // F4: one continuous underside joins the flat low and high ceilings.
+                    SlopingRoof(corner+"-slope-ceiling",new Vector3(sx*32,3.2f,sz*4),new Vector3(sx*32,8,sz*14),8);
                     Wall(corner+"-divider",sx*28,sz*4,sx*28,sz*20,0,8);
                     Wall(corner+"-gateway-jamb",sx*28,sz*4,sx*30,sz*4,0,8);
                     // Wide diagonal link; its opaque sidewalls put the spawn off the sight axis.
@@ -124,7 +129,7 @@ namespace StarTournament.ProvingGround
                 {
                     string id=side+(sx<0?"west":"east")+"-cross-rise";
                     Steps(id,new Vector3(sx*18,0,sz*32),Vector3.right*sx,20,.2f,.5f,8,low,hall);
-                    for(int i=0;i<20;i++)Roof(id+"-ceiling-"+i,Mathf.Min(sx*(18+i*.5f),sx*(18+(i+1)*.5f)),Mathf.Max(sx*(18+i*.5f),sx*(18+(i+1)*.5f)),za,zb,3.2f+(i+1)*.2f,1.2f);
+                    SlopingRoof(id+"-ceiling",new Vector3(sx*18,3.2f,sz*32),new Vector3(sx*28,8,sz*32),8);
                     Floor(side+"-entry-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,0,low);
                     Roof(side+"-entry-roof-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,3.2f);
                 }
@@ -138,7 +143,7 @@ namespace StarTournament.ProvingGround
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-36,36,8.4f);
             // Opaque hull piers, sills and headers surround smaller glazed openings.
-            // Every dimension below becomes range-validated authoring metadata, frozen in revision 9.
+            // Every dimension below becomes range-validated authoring metadata, frozen in revision 10.
             foreach(int side in new[]{-1,1})foreach(bool alongX in new[]{false,true})
             {
                 string axis=alongX?"z":"x",prefix="hull-"+axis+"-"+side;

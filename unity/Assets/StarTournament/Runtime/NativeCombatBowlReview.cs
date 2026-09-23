@@ -117,6 +117,11 @@ namespace StarTournament.ProvingGround
             var routeTargets=new[]{new Vector3(0,2.1f,24),new Vector3(0,2.1f,-24),new Vector3(-28,6,16),new Vector3(28,6,-16),new Vector3(2.6f,1,0),new Vector3(0,5.8f,24),new Vector3(0,5.8f,-24)};
             var routeNames=new[]{"23-north-red","24-south-yellow","25-west-violet","26-east-violet","27-central-blue","28-north-upper-red","29-south-upper-yellow"};
             for(int i=0;i<routePositions.Length;i++){artCamera.transform.position=routePositions[i];artCamera.transform.LookAt(routeTargets[i]);yield return Capture(routeNames[i]);}
+            // F4: unhidden native views looking down both orientations of the smooth ceiling.
+            artCamera.transform.position=new Vector3(-32,5.65f,17);
+            artCamera.transform.LookAt(new Vector3(-32,3.8f,7));yield return Capture("32-smooth-west-ceiling");
+            artCamera.transform.position=new Vector3(31,5.65f,32);
+            artCamera.transform.LookAt(new Vector3(21,3.8f,32));yield return Capture("33-smooth-north-ceiling");
             // F3 diagnostic views of the restored open flanks, with all runtime walls/ceilings visible.
             foreach(int side in new[]{-1,1})
             {

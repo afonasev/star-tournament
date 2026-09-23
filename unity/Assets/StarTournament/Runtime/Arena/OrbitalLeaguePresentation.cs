@@ -215,8 +215,8 @@ namespace StarTournament.ProvingGround
             float spacing=p.Get("light.fixtureSpacing");int nx=Mathf.Max(1,Mathf.FloorToInt(s.Size.x/spacing)),nz=Mathf.Max(1,Mathf.FloorToInt(s.Size.z/spacing));
             for(int x=0;x<nx;x++)for(int z=0;z<nz;z++)
             {
-                var pos=s.Position+new Vector3((x+.5f)*s.Size.x/nx-s.Size.x/2,-s.Size.y/2-Epsilon,(z+.5f)*s.Size.z/nz-s.Size.z/2);
-                CeilingFixture(pos,s.Size.x>s.Size.z?Quaternion.Euler(0,90,0):Quaternion.identity);
+                var pos=s.Position+s.Rotation*new Vector3((x+.5f)*s.Size.x/nx-s.Size.x/2,-s.Size.y/2-Epsilon,(z+.5f)*s.Size.z/nz-s.Size.z/2);
+                CeilingFixture(pos,s.Rotation*(s.Size.x>s.Size.z?Quaternion.Euler(0,90,0):Quaternion.identity));
             }
         }
         void CeilingFixture(Vector3 pos,Quaternion rotation)
@@ -224,7 +224,7 @@ namespace StarTournament.ProvingGround
             fixturePositions.Add(pos);
             float w=p.Get("light.fixtureWidth"),len=p.Get("light.fixtureLength");
             Box(trim,pos,new Vector3(w+p.Get("light.fixtureFrame"),p.Get("light.fixtureDepth"),len+p.Get("light.fixtureFrame")),rotation);
-            Box(white,pos-Vector3.up*.05f,new Vector3(w,.025f,len),rotation);
+            Box(white,pos-rotation*Vector3.up*.05f,new Vector3(w,.025f,len),rotation);
             foreach(int side in new[]{-1,1})
             {
                 var offset=rotation*new Vector3(side*(w/2+.25f),0,0);
