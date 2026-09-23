@@ -106,6 +106,7 @@ namespace StarTournament.ProvingGround
         }
         Text matchTimer;
         RectTransform timerPanel;
+        RectTransform verticalDivider, horizontalDivider;
         readonly NativeStandingsView[] standings = new NativeStandingsView[SeatInputCoordinator.SeatCount];
         NativeStandingsView results, persistentStandings;
         readonly RectTransform[] viewportRoots=new RectTransform[SeatInputCoordinator.SeatCount];
@@ -527,6 +528,23 @@ namespace StarTournament.ProvingGround
                     persistentStandings.TopInset=Profile.Get("ui.headingFontSize")+Profile.Get("ui.fontSize")+2*seamGap;
                 }
             }
+            float dividerWidth=Profile.Get("ui.viewportDividerWidth");
+            if(verticalDivider)
+            {
+                verticalDivider.gameObject.SetActive(renderedCount>=2);
+                verticalDivider.anchorMin=new Vector2(.5f,0);
+                verticalDivider.anchorMax=new Vector2(.5f,1);
+                verticalDivider.sizeDelta=new Vector2(dividerWidth,0);
+                verticalDivider.anchoredPosition=Vector2.zero;
+            }
+            if(horizontalDivider)
+            {
+                horizontalDivider.gameObject.SetActive(renderedCount>=3);
+                horizontalDivider.anchorMin=new Vector2(0,.5f);
+                horizontalDivider.anchorMax=new Vector2(1,.5f);
+                horizontalDivider.sizeDelta=new Vector2(0,dividerWidth);
+                horizontalDivider.anchoredPosition=Vector2.zero;
+            }
             if(timerPanel)
             {
                 bool center=renderedCount>=3;
@@ -632,6 +650,8 @@ namespace StarTournament.ProvingGround
             }
             persistentStandings=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"persistent-standings",new Vector2(.5f,0),new Vector2(1,.5f));
             persistentStandings.Root.SetActive(false);
+            verticalDivider=CreateViewportDivider(canvasObject.transform,"viewport-divider-vertical");
+            horizontalDivider=CreateViewportDivider(canvasObject.transform,"viewport-divider-horizontal");
             var timerObject=new GameObject("match-timer-panel",typeof(RectTransform),typeof(Image));
             timerObject.transform.SetParent(canvasObject.transform,false);timerPanel=(RectTransform)timerObject.transform;
             timerObject.GetComponent<Image>().color=new Color32(7,21,37,255);
@@ -755,6 +775,14 @@ namespace StarTournament.ProvingGround
             var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter; return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }
+        static RectTransform CreateViewportDivider(Transform parent,string name)
+        {
+            var divider=new GameObject(name,typeof(RectTransform),typeof(Image));
+            divider.transform.SetParent(parent,false);
+            var image=divider.GetComponent<Image>();image.color=Color.black;image.raycastTarget=false;
+            divider.SetActive(false);
+            return (RectTransform)divider.transform;
+        }
         void RefreshInterface()
         {
             if (!overlay) return;

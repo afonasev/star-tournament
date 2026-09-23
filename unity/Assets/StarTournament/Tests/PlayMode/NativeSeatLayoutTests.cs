@@ -65,6 +65,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var panel=ground.transform.Find("native-ui/match-timer-panel").GetComponent<RectTransform>();
                 Assert.That(panel.gameObject.activeSelf,Is.True);
                 Assert.That(panel.Find("match-timer").GetComponent<Text>().text,Does.Match(@"^\d\d:\d\d$"));
+                var vertical=ground.transform.Find("native-ui/viewport-divider-vertical").GetComponent<RectTransform>();
+                var horizontal=ground.transform.Find("native-ui/viewport-divider-horizontal").GetComponent<RectTransform>();
+                Assert.That(vertical.gameObject.activeSelf,Is.EqualTo(count>=2));
+                Assert.That(horizontal.gameObject.activeSelf,Is.EqualTo(count>=3));
+                foreach(var divider in new[]{vertical,horizontal})
+                {
+                    var image=divider.GetComponent<Image>();
+                    Assert.That(image.color,Is.EqualTo(Color.black));
+                    Assert.That(image.raycastTarget,Is.False);
+                    Assert.That(divider.anchoredPosition,Is.EqualTo(Vector2.zero));
+                }
+                Assert.That(vertical.sizeDelta.x,Is.EqualTo(ground.Profile.Get("ui.viewportDividerWidth")));
+                Assert.That(horizontal.sizeDelta.y,Is.EqualTo(ground.Profile.Get("ui.viewportDividerWidth")));
+                Assert.That(vertical.anchorMin,Is.EqualTo(new Vector2(.5f,0)));
+                Assert.That(vertical.anchorMax,Is.EqualTo(new Vector2(.5f,1)));
+                Assert.That(horizontal.anchorMin,Is.EqualTo(new Vector2(0,.5f)));
+                Assert.That(horizontal.anchorMax,Is.EqualTo(new Vector2(1,.5f)));
                 Assert.That(panel.anchorMin,Is.EqualTo(count<3?new Vector2(.5f,1):new Vector2(.5f,.5f)));
                 Assert.That(panel.pivot,Is.EqualTo(new Vector2(.5f,1f)));
                 if(count>=3) Assert.That(panel.anchoredPosition.y,Is.EqualTo(-ground.Profile.Get("ui.centerTimerSeamGap")).Within(.01f));
