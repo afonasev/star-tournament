@@ -41,13 +41,33 @@
     },
     {
       "key": "speed-pickup",
-      "path": "Assets/StarTournament/Art/speed-pickup-lod0.glb",
-      "sha256": "9b8338b9b8a15ebc2bea70168ccda81a3e29fef4d9e55860c48ce3ce4254a49a",
+      "path": "Assets/StarTournament/Art/speed-pickup-crystal-runes-lod0.glb",
+      "sha256": "b26da468da4b5e3623e45660a7eb1f509fc14237f696fbd95f58cee62cd5901f",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "ground-center",
-      "source": "Authored locally for add-speed-boost-pickup with explicit user authorization 2026-09-21; renderer-only, no collision proxy."
+      "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
+    },
+    {
+      "key": "armor-pickup",
+      "path": "Assets/StarTournament/Art/armor-pickup-crystal-runes-lod0.glb",
+      "sha256": "fe12268943bc53f0bb165282dede79e776f1469d48823ed59158efbd87286559",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
+    },
+    {
+      "key": "damage-pickup",
+      "path": "Assets/StarTournament/Art/damage-pickup-crystal-runes-lod0.glb",
+      "sha256": "4463b30db626bf76fa6220fa7d5d8b8b003b5aeaa9a00a38d4c6216b8b2d6b0e",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
     }
   ]
 }

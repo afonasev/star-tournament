@@ -1,0 +1,8 @@
+{
+    "arena": "combat-bowl-v1@6",
+    "secondType": "damage",
+    "note": "Scripted native Player visual diagnostic; human physical-playability acceptance remains open.",
+    "muted": true,
+    "width": 3456,
+    "height": 2160
+}

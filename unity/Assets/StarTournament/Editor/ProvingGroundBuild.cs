@@ -44,7 +44,9 @@ namespace StarTournament.ProvingGround.Editor
             root.StartWithCombatBowl=combatBowl;
             root.CombatBowlReviewDirectory=combatBowl?System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_COMBAT_BOWL_EVIDENCE"):null;
             TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
+            root.ArmorPickupPrefab=Required("armor-pickup");
             root.SpeedPickupPrefab=Required("speed-pickup");
+            root.DamagePickupPrefab=Required("damage-pickup");
             EditorSceneManager.SaveScene(scene,Scene);
             EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(Scene,true)};
             AssetDatabase.SaveAssets();

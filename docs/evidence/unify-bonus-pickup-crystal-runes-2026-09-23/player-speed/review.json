@@ -1,0 +1,8 @@
+{
+    "arena": "unity-arena-families-v1|family:wide-hall-circuit-v1|seed:1|profile:arena.family=0;fixture.depth=32;fixture.floorHeight=0;fixture.floorThickness=0.3;fixture.headroomHeight=2.1;fixture.rampLength=12;fixture.rampWidth=4;fixture.stairRise=0.25;fixture.stairTread=0.75;fixture.upperFloorHeight=4;fixture.wallHeight=3;fixture.wallThickness=0.3;fixture.width=32",
+    "secondType": "speed",
+    "note": "Scripted native Player visual diagnostic; human physical-playability acceptance remains open.",
+    "muted": true,
+    "width": 3456,
+    "height": 2160
+}

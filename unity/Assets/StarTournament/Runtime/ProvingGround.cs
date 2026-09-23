@@ -11,8 +11,7 @@ namespace StarTournament.ProvingGround
 {
     public sealed class ProvingGround : MonoBehaviour
     {
-        public static readonly Quaternion ArmorPickupSilhouetteLocalRotation=Quaternion.Euler(90f,0f,0f);
-        public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, SpeedPickupPrefab;
+        public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab;
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
@@ -114,7 +113,7 @@ namespace StarTournament.ProvingGround
         public NativeCombatSession Session { get; private set; }
         CombatPresentation presentation;
         bool[] damageTinted=Array.Empty<bool>();
-        GameObject armorPickupVisual, speedPickupVisual, damagePickupVisual; Material damagePickupMaterial; Material armorPickupMaterial, armorCoreMaterial;
+        GameObject armorPickupVisual, speedPickupVisual, damagePickupVisual;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
         enum Phase { Setup, Running, Paused, Results }
@@ -194,6 +193,11 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
             if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();
             if (args.Contains("-combatReview") || args.Contains("-shotFeedbackReview")) gameObject.AddComponent<NativeCombatReview>();
+            if (args.Contains("-bonusVisualReview"))
+            {
+                Application.runInBackground = true;
+                gameObject.AddComponent<NativeBonusVisualReview>();
+            }
         }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         public void StartBotReview(NativeMatchComposition composition,uint seed,InputDevice[] devices=null)
@@ -520,18 +524,12 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);if(damagePickupMaterial)Destroy(damagePickupMaterial);if(armorPickupVisual)Destroy(armorPickupVisual);if(speedPickupVisual)Destroy(speedPickupVisual);if(armorPickupMaterial)Destroy(armorPickupMaterial);if(armorCoreMaterial)Destroy(armorCoreMaterial); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);if(armorPickupVisual)Destroy(armorPickupVisual);if(speedPickupVisual)Destroy(speedPickupVisual); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         void CreateArmorPickupVisual()
         {
-            armorPickupVisual=Owned("armor-pickup-presentation");
-            var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
-            armorPickupMaterial=new Material(shader){color=new Color(.08f,.85f,1f,.72f)};armorCoreMaterial=new Material(shader){color=Color.white};
-            foreach(var item in new[]{(PrimitiveType.Cylinder,"glass-shield",armorPickupMaterial,new Vector3(.58f,.08f,.58f)),(PrimitiveType.Cylinder,"hex-core",armorCoreMaterial,new Vector3(.2f,.12f,.2f))})
-            {
-                var part=GameObject.CreatePrimitive(item.Item1);part.name=item.Item2;part.transform.SetParent(armorPickupVisual.transform,false);part.transform.localScale=item.Item4;
-                part.transform.localRotation=ArmorPickupSilhouetteLocalRotation;
-                var collider=part.GetComponent<Collider>();if(collider)Destroy(collider);part.GetComponent<Renderer>().material=item.Item3;
-            }
+            if(!ArmorPickupPrefab) throw new InvalidOperationException("Missing manifest-owned armor pickup prefab");
+            armorPickupVisual=Instantiate(ArmorPickupPrefab,transform);armorPickupVisual.name="armor-pickup-presentation";
+            foreach(var collider in armorPickupVisual.GetComponentsInChildren<Collider>())Destroy(collider);
         }
         void RenderArmorPickup()
         {
@@ -541,10 +539,9 @@ namespace StarTournament.ProvingGround
         }
         void CreateDamagePickupVisual()
         {
-            damagePickupVisual=Instantiate(armorPickupVisual,transform);damagePickupVisual.name="damage-boost-greybox-presentation";
+            if(!DamagePickupPrefab) throw new InvalidOperationException("Missing manifest-owned damage pickup prefab");
+            damagePickupVisual=Instantiate(DamagePickupPrefab,transform);damagePickupVisual.name="damage-pickup-presentation";
             foreach(var collider in damagePickupVisual.GetComponentsInChildren<Collider>())Destroy(collider);
-            damagePickupMaterial=new Material(armorPickupMaterial){color=Color.red};
-            foreach(var renderer in damagePickupVisual.GetComponentsInChildren<Renderer>())if(renderer.name=="glass-shield")renderer.sharedMaterial=damagePickupMaterial;
         }
         void RenderDamagePickup()
         {

@@ -1,14 +1,34 @@
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class ArmorPickupTests
     {
-        [Test] public void ArmorPickupSilhouetteIsVerticalAboveItsSupport()
+        [Test] public void CrystalRunePickupAssetsAreUprightTwoSidedAndCollisionFree()
         {
-            var normal=ProvingGround.ArmorPickupSilhouetteLocalRotation*Vector3.up;
-            Assert.That(Mathf.Abs(Vector3.Dot(normal,Vector3.up)),Is.LessThan(.001f));
+            foreach(var name in new[]{"armor","speed","damage"})
+            {
+                var path="Assets/StarTournament/Art/"+name+"-pickup-crystal-runes-lod0.glb";
+                var asset=AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                Assert.That(asset,Is.Not.Null,path);
+                var instance=Object.Instantiate(asset);
+                try
+                {
+                    Assert.That(instance.GetComponentsInChildren<Collider>().Length,Is.Zero,name);
+                    var renderers=instance.GetComponentsInChildren<Renderer>();
+                    Assert.That(renderers.Length,Is.GreaterThan(2),name);
+                    var bounds=renderers[0].bounds;
+                    foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
+                    Assert.That(bounds.size.y,Is.InRange(.75f,1.1f),name+" must stand upright without dominating the view");
+                    Assert.That(bounds.size.z,Is.InRange(.09f,.18f),name+" must be slim but still two-sided");
+                    var names=System.Array.ConvertAll(instance.GetComponentsInChildren<Transform>(),t=>t.name);
+                    Assert.That(System.Array.Exists(names,n=>n.EndsWith("-front")),Is.True,name);
+                    Assert.That(System.Array.Exists(names,n=>n.EndsWith("-rear")),Is.True,name);
+                }
+                finally { Object.DestroyImmediate(instance); }
+            }
         }
         [Test] public void FullArmorConsumesPickupAndItReturnsOnExactCooldown()
         {

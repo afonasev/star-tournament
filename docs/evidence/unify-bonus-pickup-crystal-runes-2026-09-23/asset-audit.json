@@ -1,0 +1,83 @@
+[
+  {
+    "key": "armor-pickup",
+    "sha256": "fe12268943bc53f0bb165282dede79e776f1469d48823ed59158efbd87286559",
+    "mesh_count": 8,
+    "triangle_count": 1168,
+    "material_names": [
+      "armor-cyan-glass",
+      "armor-inner-crystal",
+      "armor-white-cyan-trace"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.36692,
+        -0.08455,
+        0.01718
+      ],
+      "max": [
+        0.36692,
+        0.08455,
+        0.96682
+      ]
+    },
+    "front_meshes": 3,
+    "rear_meshes": 3,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  },
+  {
+    "key": "speed-pickup",
+    "sha256": "b26da468da4b5e3623e45660a7eb1f509fc14237f696fbd95f58cee62cd5901f",
+    "mesh_count": 9,
+    "triangle_count": 1660,
+    "material_names": [
+      "speed-gold-glass",
+      "speed-inner-crystal",
+      "speed-white-gold-trace"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.42438,
+        -0.0869,
+        0.09227
+      ],
+      "max": [
+        0.4332,
+        0.0869,
+        0.90816
+      ]
+    },
+    "front_meshes": 3,
+    "rear_meshes": 3,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  },
+  {
+    "key": "damage-pickup",
+    "sha256": "4463b30db626bf76fa6220fa7d5d8b8b003b5aeaa9a00a38d4c6216b8b2d6b0e",
+    "mesh_count": 9,
+    "triangle_count": 2300,
+    "material_names": [
+      "damage-crimson-glass",
+      "damage-orange-crystal",
+      "damage-white-orange-trace"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.41318,
+        -0.0869,
+        0.01952
+      ],
+      "max": [
+        0.41371,
+        0.0869,
+        0.96607
+      ]
+    },
+    "front_meshes": 3,
+    "rear_meshes": 3,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  }
+]
