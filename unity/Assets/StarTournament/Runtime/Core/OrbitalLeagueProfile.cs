@@ -5,12 +5,12 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=4};
+            var p=new ProvingProfile{id="orbital-league-v1",version=5};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
             V("surface.wallValue","surfaces","Светлота стен","Светлый окрашенный металл для силуэтов игроков.","ratio",.35f,.95f,.01f,.73f);
-            V("surface.floorValue","surfaces","Светлота пола","Матовый графитовый пол под спортивной разметкой.","ratio",.06f,.35f,.01f,.18f);
+            V("surface.floorValue","surfaces","Светлота пола","Матовый графитовый пол под спортивной разметкой; освещённый участок сохраняет контраст тени.","ratio",.06f,.35f,.01f,.28f);
             V("surface.metallic","surfaces","Металличность","Доля металлического отражения покрытия.","ratio",0,.7f,.01f,.25f);
             V("surface.smoothness","surfaces","Гладкость стен","Ширина блика на окрашенном металле.","ratio",0,.6f,.01f,.28f);
             V("surface.floorSmoothness","surfaces","Гладкость пола","Слабый блик без зеркальных отражений.","ratio",0,.4f,.01f,.13f);
@@ -124,6 +124,7 @@ namespace StarTournament.ProvingGround
                 if(Mathf.Approximately(Get("light.shadowBias"),.05f))Set("light.shadowBias",.02f);
                 if(Mathf.Approximately(Get("light.shadowNormalBias"),.4f))Set("light.shadowNormalBias",.1f);
             }
+            if(version<5 && Mathf.Approximately(Get("surface.floorValue"),.18f))Set("surface.floorValue",.28f);
             var current=CreateOrbitalLeagueDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -138,7 +139,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=4;
+            version=5;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

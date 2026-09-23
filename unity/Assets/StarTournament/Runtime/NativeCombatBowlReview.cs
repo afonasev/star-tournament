@@ -42,7 +42,7 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
             yield return null;
             reviewTimeScale=Time.timeScale;Time.timeScale=0;
-            artCamera.transform.position=new Vector3(1.5f,6.5f,-6.5f);artCamera.transform.LookAt(new Vector3(0,5,-3));yield return Capture("16-live-hall-opponent");
+            artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
             var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>();
             var renderers=ground.GetComponentsInChildren<Renderer>(true);
             File.WriteAllText(Path.Combine(directory,"lighting-diagnostic.json"),JsonUtility.ToJson(new LightingDiagnostic{
