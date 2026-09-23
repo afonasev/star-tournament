@@ -161,7 +161,7 @@ namespace StarTournament.ProvingGround
                     Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),s.Rotation);
                 }
                 Strip(trim,bottom+p.Get("detail.trimHeight")/2,p.Get("detail.trimHeight"),length);
-                if(HasWayfinding)
+                if(HasWayfinding && Route(s.Position)!="central")
                 {
                     // Repeat at eye level of both routes, clipped to each opaque wall piece.
                     foreach(float level in new[]{p.Get("wayfinding.lowerBandY"),p.Get("wayfinding.upperBandY")})
@@ -301,15 +301,7 @@ namespace StarTournament.ProvingGround
             // Static horizon and station sectors make the panels read as an orbital broadcast graphic.
             AccentBox(face+rotation*new Vector3(0,-h*.28f,-.012f),new Vector3(w*.86f,p.Get("broadcast.markWidth"),Epsilon),rotation);
             for(int i=0;i<3;i++)Box(white,face+rotation*new Vector3(-w*.39f+i*.18f,-h*.38f,-.014f),new Vector3(.07f,.08f,Epsilon),rotation);
-            if(motif==1)
-            {
-                // West uses a diagonal track; north uses paired horizon rails.
-                AccentBox(face+rotation*new Vector3(w*.27f,-.05f,-.015f),new Vector3(w*.35f,p.Get("broadcast.markWidth"),Epsilon),rotation*Quaternion.Euler(0,0,25));
-            }
-            else if(motif>1)
-            {
-                for(int i=0;i<2;i++)AccentBox(face+rotation*new Vector3(w*.23f,.12f+i*.16f,-.015f),new Vector3(w*.3f,p.Get("broadcast.markWidth")*.55f,Epsilon),rotation);
-            }
+            // Keep the title field clear; the lower route band carries the sector colour.
             var orbitCenter=face+rotation*new Vector3(-w*.26f,.05f,-.018f);
             for(int i=0;i<18;i++)
             {

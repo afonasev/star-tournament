@@ -84,14 +84,14 @@ namespace StarTournament.ProvingGround
             V("panelWidth","Ширина указателя","Ширина настенной панели с названием сектора.","m",2,6,.1f,4.4f);
             V("panelHeight","Высота указателя","Высота тёмной панели под цветной надписью.","m",.4f,1.2f,.05f,.8f);
             V("panelStripe","Полоса указателя","Высота цветной кромки панели.","m",.03f,.15f,.01f,.07f);
-            V("labelScale","Размер названия зоны","Масштаб надписей относительно общего размера маркировки.","ratio",.5f,1.5f,.05f,1.1f);
+            V("labelScale","Размер названия зоны","Масштаб надписей относительно общего размера маркировки.","ratio",.5f,1.5f,.05f,1f);
             void ColorValue(string key,Color value)
             {for(int i=0;i<3;i++)p.Add("color."+key+"."+new[]{"r","g","b"}[i],"wayfinding",key+" / "+new[]{"R","G","B"}[i],"Цвет линии, панели и названия стороны карты.","ratio",0,1,.005f,value[i]);}
             ColorValue("north",new Color(.95f,.10f,.13f));ColorValue("south",new Color(1,.78f,.035f));ColorValue("sides",new Color(.65f,.26f,.95f));
             var positions=new[]{
                 new Vector3(0,2.1f,23.78f),new Vector3(0,2.1f,24.22f),new Vector3(0,2.1f,-23.78f),new Vector3(0,2.1f,-24.22f),
                 new Vector3(-27.78f,2.1f,9),new Vector3(-27.78f,2.1f,-9),new Vector3(27.78f,2.1f,9),new Vector3(27.78f,2.1f,-9),
-                new Vector3(-28.22f,6.1f,16),new Vector3(-28.22f,6.1f,-16),new Vector3(28.22f,6.1f,16),new Vector3(28.22f,6.1f,-16),
+                new Vector3(-28.22f,6.1f,15),new Vector3(-28.22f,6.1f,-15),new Vector3(28.22f,6.1f,15),new Vector3(28.22f,6.1f,-15),
                 new Vector3(-28.22f,3,7),new Vector3(-28.22f,3,-7),new Vector3(28.22f,3,7),new Vector3(28.22f,3,-7)};
             var yaw=new[]{180f,0,0,180,90,90,-90,-90,-90,-90,90,90,-90,-90,90,90};
             for(int i=0;i<positions.Length;i++)

@@ -4801,7 +4801,7 @@ MonoBehaviour:
       Minimum: 0.5
       Maximum: 1.5
       Step: 0.05
-      DefaultValue: 1.1
+      DefaultValue: 1
     - Path: color.north.r
       Group: wayfinding
       Label: north / R
@@ -5320,7 +5320,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: 16
+      DefaultValue: 15
     - Path: wayfinding.sign-8.yaw
       Group: wayfinding
       Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
@@ -5368,7 +5368,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: -16
+      DefaultValue: -15
     - Path: wayfinding.sign-9.yaw
       Group: wayfinding
       Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
@@ -5416,7 +5416,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: 16
+      DefaultValue: 15
     - Path: wayfinding.sign-10.yaw
       Group: wayfinding
       Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
@@ -5464,7 +5464,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: -16
+      DefaultValue: -15
     - Path: wayfinding.sign-11.yaw
       Group: wayfinding
       Label: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
@@ -6029,7 +6029,7 @@ MonoBehaviour:
     - Path: wayfinding.panelStripe
       Value: 0.07
     - Path: wayfinding.labelScale
-      Value: 1.1
+      Value: 1
     - Path: color.north.r
       Value: 0.95
     - Path: color.north.g
@@ -6117,7 +6117,7 @@ MonoBehaviour:
     - Path: wayfinding.sign-8.y
       Value: 6.1
     - Path: wayfinding.sign-8.z
-      Value: 16
+      Value: 15
     - Path: wayfinding.sign-8.yaw
       Value: -90
     - Path: wayfinding.sign-9.x
@@ -6125,7 +6125,7 @@ MonoBehaviour:
     - Path: wayfinding.sign-9.y
       Value: 6.1
     - Path: wayfinding.sign-9.z
-      Value: -16
+      Value: -15
     - Path: wayfinding.sign-9.yaw
       Value: -90
     - Path: wayfinding.sign-10.x
@@ -6133,7 +6133,7 @@ MonoBehaviour:
     - Path: wayfinding.sign-10.y
       Value: 6.1
     - Path: wayfinding.sign-10.z
-      Value: 16
+      Value: 15
     - Path: wayfinding.sign-10.yaw
       Value: 90
     - Path: wayfinding.sign-11.x
@@ -6141,7 +6141,7 @@ MonoBehaviour:
     - Path: wayfinding.sign-11.y
       Value: 6.1
     - Path: wayfinding.sign-11.z
-      Value: -16
+      Value: -15
     - Path: wayfinding.sign-11.yaw
       Value: 90
     - Path: wayfinding.sign-12.x
