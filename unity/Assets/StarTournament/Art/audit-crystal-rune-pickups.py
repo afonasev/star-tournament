@@ -8,7 +8,8 @@ import bpy
 
 
 art = Path(__file__).resolve().parent
-out = art.parents[3] / "docs/evidence/unify-bonus-pickup-crystal-runes-2026-09-23/asset-audit.json"
+out = art.parents[3] / "docs/evidence/unify-bonus-pickup-crystal-runes-detail-2026-09-23/asset-audit.json"
+out.parent.mkdir(parents=True, exist_ok=True)
 records = []
 for name in ("armor", "speed", "damage"):
     bpy.ops.object.select_all(action="SELECT")

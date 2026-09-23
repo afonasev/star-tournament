@@ -9,7 +9,7 @@ from mathutils import Vector
 
 
 ART = Path(__file__).resolve().parent
-OUT = ART.parents[3] / "docs/evidence/unify-bonus-pickup-crystal-runes-2026-09-23"
+OUT = ART.parents[3] / "docs/evidence/unify-bonus-pickup-crystal-runes-detail-2026-09-23"
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)

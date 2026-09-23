@@ -1,0 +1,89 @@
+[
+  {
+    "key": "armor-pickup",
+    "sha256": "008bdd25f5da8746a22eff813e5a4879a2dcb6cd0e416f13e8819b306775a764",
+    "mesh_count": 28,
+    "triangle_count": 1432,
+    "material_names": [
+      "armor-cyan-glass",
+      "armor-deep-facets",
+      "armor-ice-facets",
+      "armor-inner-crystal",
+      "armor-white-cyan-trace"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.36692,
+        -0.08455,
+        0.01718
+      ],
+      "max": [
+        0.36692,
+        0.08455,
+        0.96682
+      ]
+    },
+    "front_meshes": 13,
+    "rear_meshes": 13,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  },
+  {
+    "key": "speed-pickup",
+    "sha256": "201b9f6ff8e347df38a11b7703073ccfca8c01a3cf4c9861a58cae2750f894d8",
+    "mesh_count": 23,
+    "triangle_count": 1842,
+    "material_names": [
+      "speed-amber-facets",
+      "speed-bronze-facets",
+      "speed-gold-glass",
+      "speed-inner-crystal",
+      "speed-white-gold-trace"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.42438,
+        -0.0869,
+        0.09227
+      ],
+      "max": [
+        0.4332,
+        0.0869,
+        0.90816
+      ]
+    },
+    "front_meshes": 10,
+    "rear_meshes": 10,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  },
+  {
+    "key": "damage-pickup",
+    "sha256": "5a1aca5f919ab4631c3ef0711b9cc23f190cbb0c7414c1334bd26d48a21756c1",
+    "mesh_count": 23,
+    "triangle_count": 2562,
+    "material_names": [
+      "damage-crimson-glass",
+      "damage-ember-facets",
+      "damage-molten-facets",
+      "damage-orange-crystal",
+      "damage-white-orange-trace"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.41318,
+        -0.0869,
+        0.01952
+      ],
+      "max": [
+        0.41371,
+        0.0869,
+        0.96607
+      ]
+    },
+    "front_meshes": 10,
+    "rear_meshes": 10,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  }
+]

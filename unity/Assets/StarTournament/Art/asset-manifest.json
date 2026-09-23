@@ -42,7 +42,7 @@
     {
       "key": "speed-pickup",
       "path": "Assets/StarTournament/Art/speed-pickup-crystal-runes-lod0.glb",
-      "sha256": "b26da468da4b5e3623e45660a7eb1f509fc14237f696fbd95f58cee62cd5901f",
+      "sha256": "201b9f6ff8e347df38a11b7703073ccfca8c01a3cf4c9861a58cae2750f894d8",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -52,7 +52,7 @@
     {
       "key": "armor-pickup",
       "path": "Assets/StarTournament/Art/armor-pickup-crystal-runes-lod0.glb",
-      "sha256": "fe12268943bc53f0bb165282dede79e776f1469d48823ed59158efbd87286559",
+      "sha256": "008bdd25f5da8746a22eff813e5a4879a2dcb6cd0e416f13e8819b306775a764",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -62,7 +62,7 @@
     {
       "key": "damage-pickup",
       "path": "Assets/StarTournament/Art/damage-pickup-crystal-runes-lod0.glb",
-      "sha256": "4463b30db626bf76fa6220fa7d5d8b8b003b5aeaa9a00a38d4c6216b8b2d6b0e",
+      "sha256": "5a1aca5f919ab4631c3ef0711b9cc23f190cbb0c7414c1334bd26d48a21756c1",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
