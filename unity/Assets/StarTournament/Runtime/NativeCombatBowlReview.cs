@@ -40,8 +40,11 @@ namespace StarTournament.ProvingGround
             foreach(var c in reviewCameras)c.enabled=false;foreach(var c in reviewCanvases)c.enabled=false;
             var artCameraObject=new GameObject("Orbital architectural capture");var artCamera=artCameraObject.AddComponent<Camera>();artCamera.fieldOfView=72;artCamera.nearClipPlane=.05f;
             while(ground.Session.Life(1).Dead)yield return null;
-            ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
             reviewTimeScale=Time.timeScale;Time.timeScale=0;
+            // Park other live participants outside this paired diagnostic frame; the eight-player gameplay capture above is untouched.
+            for(int seat=0;seat<ground.Session.ParticipantCount;seat++)
+                if(seat!=1)ground.PlaceCombatReviewSeat(seat,new Vector3(30,4,20-seat*1.5f),0,180);
+            ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
             yield return null;
             artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
             var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>();
