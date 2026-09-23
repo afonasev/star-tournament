@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Explicit development capture. Diagnostic framing constants never enter gameplay state.</summary>
     public sealed class NativeCombatBowlReview : MonoBehaviour
     {
-        ProvingGround ground; string directory;Gamepad[] pads;
+        ProvingGround ground; string directory;Gamepad[] pads;float reviewTimeScale=1;
         IEnumerator Start()
         {
             ground=GetComponent<ProvingGround>();directory=ground.CombatBowlReviewDirectory;Directory.CreateDirectory(directory);AudioListener.volume=0;Application.runInBackground=true;
@@ -39,15 +39,64 @@ namespace StarTournament.ProvingGround
             var reviewCameras=ground.GetComponentsInChildren<Camera>();var reviewCanvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var c in reviewCameras)c.enabled=false;foreach(var c in reviewCanvases)c.enabled=false;
             var artCameraObject=new GameObject("Orbital architectural capture");var artCamera=artCameraObject.AddComponent<Camera>();artCamera.fieldOfView=72;artCamera.nearClipPlane=.05f;
+            while(ground.Session.Life(1).Dead)yield return null;
+            reviewTimeScale=Time.timeScale;Time.timeScale=0;
+            // Park other live participants outside this paired diagnostic frame; the eight-player gameplay capture above is untouched.
+            for(int seat=0;seat<ground.Session.ParticipantCount;seat++)
+                if(seat!=1)ground.PlaceCombatReviewSeat(seat,new Vector3(30,4,20-seat*1.5f),0,180);
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
-            artCamera.transform.position=new Vector3(1.5f,6.5f,-6.5f);artCamera.transform.LookAt(new Vector3(0,5,-3));yield return Capture("16-live-hall-opponent");
+            yield return null;
+            artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
             var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>();
+            var renderers=ground.GetComponentsInChildren<Renderer>(true);
+            File.WriteAllText(Path.Combine(directory,"lighting-diagnostic.json"),JsonUtility.ToJson(new LightingDiagnostic{
+                pipeline=UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline?.name,
+                qualityShadows=QualitySettings.shadows.ToString(),
+                casterRenderers=renderers.Count(renderer=>renderer.shadowCastingMode!=UnityEngine.Rendering.ShadowCastingMode.Off),
+                receiverRenderers=renderers.Count(renderer=>renderer.receiveShadows),
+                skinnedShadowPasses=renderers.OfType<SkinnedMeshRenderer>().Select(renderer=>{
+                    var material=renderer.sharedMaterial;
+                    return renderer.name+" | "+(material?material.shader.name:"missing")+" | "+(material?material.FindPass("ShadowCaster"):-1);
+                }).Distinct().ToArray(),
+                lights=shadowLights.Select(light=>new LightSnapshot{name=light.name,position=light.transform.position,range=light.range,spotAngle=light.spotAngle,intensity=light.intensity,shadows=light.shadows.ToString(),strength=light.shadowStrength}).ToArray()
+            },true));
             var shadowModes=shadowLights.Select(light=>light.shadows).ToArray();
             foreach(var light in shadowLights)light.shadows=LightShadows.None;
             yield return Capture("16a-hall-shadow-disabled-diagnostic");
             for(int light=0;light<shadowLights.Length;light++)shadowLights[light].shadows=shadowModes[light];
+            foreach(var light in shadowLights)light.enabled=false;
+            yield return Capture("16b-hall-ceiling-lights-disabled-diagnostic");
+            foreach(var light in shadowLights)light.enabled=true;
+            // Isolate one real spotlight to distinguish a missing shadow pass from excess fill.
+            var studio=ground.GetComponentsInChildren<Light>().First(light=>light.type==LightType.Directional);
+            var oldStudio=studio.intensity;var oldAmbient=RenderSettings.ambientLight;
+            var oldSpotIntensity=shadowLights[0].intensity;var oldSpotRange=shadowLights[0].range;
+            studio.intensity=0;RenderSettings.ambientLight=Color.white*.05f;
+            for(int light=1;light<shadowLights.Length;light++)shadowLights[light].enabled=false;
+            shadowLights[0].intensity=30;shadowLights[0].range=15;
+            yield return Capture("16c-isolated-spot-shadow-on-diagnostic");
+            shadowLights[0].shadows=LightShadows.None;
+            yield return Capture("16d-isolated-spot-shadow-off-diagnostic");
+            var proof=new GameObject("Diagnostic shadow caster without collider");
+            proof.transform.SetParent(ground.transform,false);proof.transform.position=new Vector3(-3.1f,5,0);proof.transform.localScale=new Vector3(1,2,1);
+            proof.AddComponent<MeshFilter>().sharedMesh=ground.GetComponentInChildren<ProvingArena>().GetComponentInChildren<MeshFilter>().sharedMesh;
+            var proofMaterial=new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            proof.AddComponent<MeshRenderer>().sharedMaterial=proofMaterial;
+            artCamera.transform.position=new Vector3(-3,6.5f,-5);artCamera.transform.LookAt(new Vector3(-3.1f,5,0));
+            shadowLights[0].shadows=shadowModes[0];
+            yield return Capture("16e-proof-cube-shadow-on-diagnostic");
+            shadowLights[0].shadows=LightShadows.None;
+            yield return Capture("16f-proof-cube-shadow-off-diagnostic");
+            Destroy(proof);Destroy(proofMaterial);
+            shadowLights[0].shadows=shadowModes[0];shadowLights[0].intensity=oldSpotIntensity;shadowLights[0].range=oldSpotRange;
+            for(int light=1;light<shadowLights.Length;light++)shadowLights[light].enabled=true;
+            RenderSettings.ambientLight=oldAmbient;studio.intensity=oldStudio;
+            Time.timeScale=reviewTimeScale;
+            while(ground.Session.Life(1).Dead)yield return null;
             ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,-3),0,180);
+            Time.timeScale=0;
             artCamera.transform.position=new Vector3(0,1,-7);artCamera.transform.LookAt(new Vector3(0,0,-3));yield return Capture("17-live-basement-opponent");
+            Time.timeScale=reviewTimeScale;
             // Park actors outside the architectural shots after the gameplay readability capture.
             for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
             while(ground.Session.Life(1).Dead)yield return null;
@@ -74,6 +123,8 @@ namespace StarTournament.ProvingGround
         IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.35f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return new WaitForSecondsRealtime(.5f);}
         [Serializable] class Performance{public int samples,width,height,localLights;public long allocatedMemoryBytes;public float medianMs,p95Ms;public string note;}
         [Serializable] class Result{public string arena,authoring,presentation,release,player,note;public int participants;public uint seed;public bool muted,repeat;public int width,height;}
-        void OnDestroy(){if(pads!=null)foreach(var pad in pads)if(pad.added)InputSystem.RemoveDevice(pad);}
+        [Serializable] class LightingDiagnostic{public string pipeline,qualityShadows;public int casterRenderers,receiverRenderers;public string[] skinnedShadowPasses;public LightSnapshot[] lights;}
+        [Serializable] class LightSnapshot{public string name,shadows;public Vector3 position;public float range,spotAngle,intensity,strength;}
+        void OnDestroy(){Time.timeScale=reviewTimeScale;if(pads!=null)foreach(var pad in pads)if(pad.added)InputSystem.RemoveDevice(pad);}
     }
 }

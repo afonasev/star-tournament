@@ -70,8 +70,11 @@ namespace StarTournament.ProvingGround
                 Vector3 anchor=Position("layout.fill-"+zone);
                 Vector3 fixture=fixturePositions.OrderBy(v=>(v-anchor).sqrMagnitude).First();
                 var go=new GameObject("League ceiling light / "+zone);go.transform.SetParent(transform,false);go.transform.localPosition=fixture-Vector3.up*.12f;
-                go.transform.localRotation=Quaternion.Euler(90,0,0);
-                var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=120;l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");
+                // The visible fixture sits off-centre in some rooms; aim its real beam at the authored zone.
+                Vector3 target=anchor-Vector3.up*p.Get("light.targetDrop");
+                if(zone==0)target.z+=p.Get("light.hallAimOffsetZ");
+                go.transform.localRotation=Quaternion.LookRotation(target-go.transform.localPosition);
+                var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=p.Get("light.spotAngle");l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");
                 bool casts=zone<Mathf.RoundToInt(p.Get("light.shadowCasters"));
                 l.shadows=casts?LightShadows.Soft:LightShadows.None;
                 if(casts){l.shadowStrength=p.Get("light.shadowStrength");l.shadowCustomResolution=Mathf.RoundToInt(p.Get("light.shadowResolution"));l.shadowBias=p.Get("light.shadowBias");l.shadowNormalBias=p.Get("light.shadowNormalBias");ShadowLightCount++;}
