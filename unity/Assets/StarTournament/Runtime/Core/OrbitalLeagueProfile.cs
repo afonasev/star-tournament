@@ -78,7 +78,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=1;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=2;
             void Position(string key,Vector3 value)
             {
                 for(int i=0;i<3;i++)
@@ -106,15 +106,19 @@ namespace StarTournament.ProvingGround
         // Existing serialized scene profiles gain only missing presentation controls.
         public void EnsureOrbitalLeagueDescriptors()
         {
-            if(id!="orbital-league-v1")return;
+            bool ring=id=="orbital-league-ring-v1";
+            if(!ring && id!="orbital-league-v1")return;
+            bool upgradeLegacy=!ring && version<3;
+            bool upgradeShadows=ring?version<2:version<4;
+            bool upgradeFloor=ring?version<2:version<5;
             // Retain designer overrides while upgrading the previous authored defaults.
-            if(version<3)
+            if(upgradeLegacy)
             {
                 if(Mathf.Approximately(Get("light.emission"),1.5f))Set("light.emission",2.3f);
                 if(Mathf.Approximately(Get("light.intensity"),1.4f))Set("light.intensity",8f);
                 if(Mathf.Approximately(Get("light.range"),7f))Set("light.range",10f);
             }
-            if(version<4)
+            if(upgradeShadows)
             {
                 if(Mathf.Approximately(Get("light.fill"),.65f))Set("light.fill",.45f);
                 if(Mathf.Approximately(Get("light.intensity"),8f))Set("light.intensity",11f);
@@ -124,22 +128,22 @@ namespace StarTournament.ProvingGround
                 if(Mathf.Approximately(Get("light.shadowBias"),.05f))Set("light.shadowBias",.02f);
                 if(Mathf.Approximately(Get("light.shadowNormalBias"),.4f))Set("light.shadowNormalBias",.1f);
             }
-            if(version<5 && Mathf.Approximately(Get("surface.floorValue"),.18f))Set("surface.floorValue",.28f);
-            var current=CreateOrbitalLeagueDefault();
+            if(upgradeFloor && Mathf.Approximately(Get("surface.floorValue"),.18f))Set("surface.floorValue",.28f);
+            var current=ring?CreateCombatBowlRingPresentationDefault():CreateOrbitalLeagueDefault();
             foreach(var descriptor in current.descriptors)
             {
                 int existing=descriptors.FindIndex(item=>item.Path==descriptor.Path);
                 if(existing>=0)
                 {
                     // The v2 range capped light intensity at four, below the new authored value.
-                    if(version<4 && descriptor.Path.StartsWith("light."))
+                    if(upgradeShadows && descriptor.Path.StartsWith("light."))
                         descriptors[existing]=JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor));
                     continue;
                 }
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=5;
+            version=ring?2:5;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

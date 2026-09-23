@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(collider,Is.Not.Null,s.Id);Assert.That(t.position,Is.EqualTo(s.Position));Assert.That(t.localScale,Is.EqualTo(s.Size));Assert.That(Quaternion.Angle(t.rotation,s.Rotation),Is.LessThan(.01f));
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();
-            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@1"));
+            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@2"));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Slow orbital emblem"),Is.EqualTo(5));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Enclosed slow fan"),Is.EqualTo(2));
             Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
@@ -84,6 +84,23 @@ namespace StarTournament.ProvingGround.Tests
             old.EnsureOrbitalLeagueDescriptors();
             Assert.That(old.Version,Is.EqualTo(5));
             Assert.That(old.Get("surface.floorValue"),Is.EqualTo(.24f));
+            Assert.That(old.Validate(),Is.Empty);
+        }
+        [Test] public void SerializedRingV1UpgradesLightingAndPreservesRingOverrides()
+        {
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":2","\"version\":1");
+            var old=JsonUtility.FromJson<ProvingProfile>(json);
+            old.Set("light.fill",.65f);old.Set("light.intensity",8f);
+            old.Set("light.shadowStrength",.65f);old.Descriptor("light.shadowStrength").Maximum=.7f;
+            old.Set("surface.floorValue",.18f);old.Set("ring.gratingDepth",.08f);
+            old.EnsureOrbitalLeagueDescriptors();
+            Assert.That(old.Version,Is.EqualTo(2));
+            Assert.That(old.Get("light.intensity"),Is.EqualTo(11f));
+            Assert.That(old.Get("light.shadowStrength"),Is.EqualTo(1f));
+            Assert.That(old.Get("surface.floorValue"),Is.EqualTo(.28f));
+            Assert.That(old.Get("ring.gratingDepth"),Is.EqualTo(.08f));
+            old.Set("light.intensity",9f);old.EnsureOrbitalLeagueDescriptors();
+            Assert.That(old.Get("light.intensity"),Is.EqualTo(9f));
             Assert.That(old.Validate(),Is.Empty);
         }
     }

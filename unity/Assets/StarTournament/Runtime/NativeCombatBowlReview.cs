@@ -39,9 +39,10 @@ namespace StarTournament.ProvingGround
             var reviewCameras=ground.GetComponentsInChildren<Camera>();var reviewCanvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var c in reviewCameras)c.enabled=false;foreach(var c in reviewCanvases)c.enabled=false;
             var artCameraObject=new GameObject("Orbital architectural capture");var artCamera=artCameraObject.AddComponent<Camera>();artCamera.fieldOfView=72;artCamera.nearClipPlane=.05f;
+            while(ground.Session.Life(1).Dead)yield return null;
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
-            yield return null;
             reviewTimeScale=Time.timeScale;Time.timeScale=0;
+            yield return null;
             artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
             var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>();
             var renderers=ground.GetComponentsInChildren<Renderer>(true);
@@ -88,8 +89,11 @@ namespace StarTournament.ProvingGround
             for(int light=1;light<shadowLights.Length;light++)shadowLights[light].enabled=true;
             RenderSettings.ambientLight=oldAmbient;studio.intensity=oldStudio;
             Time.timeScale=reviewTimeScale;
+            while(ground.Session.Life(1).Dead)yield return null;
             ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,-3),0,180);
+            Time.timeScale=0;
             artCamera.transform.position=new Vector3(0,1,-7);artCamera.transform.LookAt(new Vector3(0,0,-3));yield return Capture("17-live-basement-opponent");
+            Time.timeScale=reviewTimeScale;
             // Park actors outside the architectural shots after the gameplay readability capture.
             for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
             while(ground.Session.Life(1).Dead)yield return null;
