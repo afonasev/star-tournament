@@ -34,7 +34,7 @@ namespace StarTournament.ProvingGround
             var samples=new System.Collections.Generic.List<float>();
             for(int frame=0;frame<360;frame++){yield return null;if(!ground.Running)throw new InvalidOperationException("Review paused during timing");samples.Add(Time.unscaledDeltaTime*1000);}
             samples.Sort();
-            File.WriteAllText(Path.Combine(directory,"performance.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),width=Screen.width,height=Screen.height,localLights=6,note="Diagnostic on current Mac; four native cameras, scripted stationary views, vsync/frame cap included. Not reference hardware acceptance."},true));
+            File.WriteAllText(Path.Combine(directory,"performance.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),width=Screen.width,height=Screen.height,localLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().LocalLightCount,note="Diagnostic on current Mac; four native cameras, scripted stationary views, vsync/frame cap included. Not reference hardware acceptance."},true));
             // Full-screen architectural views are real Player renders; no wall or roof is hidden.
             var reviewCameras=ground.GetComponentsInChildren<Camera>();var reviewCanvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var c in reviewCameras)c.enabled=false;foreach(var c in reviewCanvases)c.enabled=false;
@@ -50,7 +50,9 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
             yield return null;
             artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
-            var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>();
+            var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>()
+                .OrderBy(light=>int.Parse(light.name.Split('/').Last().Trim())).ToArray();
+            var studio=ground.GetComponentsInChildren<Light>().First(light=>light.type==LightType.Directional);
             var renderers=ground.GetComponentsInChildren<Renderer>(true);
             File.WriteAllText(Path.Combine(directory,"lighting-diagnostic.json"),JsonUtility.ToJson(new LightingDiagnostic{
                 pipeline=UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline?.name,
@@ -61,17 +63,18 @@ namespace StarTournament.ProvingGround
                     var material=renderer.sharedMaterial;
                     return renderer.name+" | "+(material?material.shader.name:"missing")+" | "+(material?material.FindPass("ShadowCaster"):-1);
                 }).Distinct().ToArray(),
-                lights=shadowLights.Select(light=>new LightSnapshot{name=light.name,position=light.transform.position,range=light.range,spotAngle=light.spotAngle,intensity=light.intensity,shadows=light.shadows.ToString(),strength=light.shadowStrength}).ToArray()
+                lights=shadowLights.Concat(new[]{studio}).Select(light=>new LightSnapshot{name=light.name,position=light.transform.position,direction=light.transform.forward,range=light.range,spotAngle=light.spotAngle,intensity=light.intensity,shadows=light.shadows.ToString(),strength=light.shadowStrength}).ToArray()
             },true));
             var shadowModes=shadowLights.Select(light=>light.shadows).ToArray();
+            var studioShadowMode=studio.shadows;studio.shadows=LightShadows.None;
             foreach(var light in shadowLights)light.shadows=LightShadows.None;
             yield return Capture("16a-hall-shadow-disabled-diagnostic");
             for(int light=0;light<shadowLights.Length;light++)shadowLights[light].shadows=shadowModes[light];
+            studio.shadows=studioShadowMode;
             foreach(var light in shadowLights)light.enabled=false;
             yield return Capture("16b-hall-ceiling-lights-disabled-diagnostic");
             foreach(var light in shadowLights)light.enabled=true;
             // Isolate one real spotlight to distinguish a missing shadow pass from excess fill.
-            var studio=ground.GetComponentsInChildren<Light>().First(light=>light.type==LightType.Directional);
             var oldStudio=studio.intensity;var oldAmbient=RenderSettings.ambientLight;
             var oldSpotIntensity=shadowLights[0].intensity;var oldSpotRange=shadowLights[0].range;
             studio.intensity=0;RenderSettings.ambientLight=Color.white*.05f;
@@ -99,6 +102,9 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,-3),0,180);
             Time.timeScale=0;
             artCamera.transform.position=new Vector3(0,1,-7);artCamera.transform.LookAt(new Vector3(0,0,-3));yield return Capture("17-live-basement-opponent");
+            foreach(var light in shadowLights)light.enabled=false;
+            yield return Capture("17a-basement-ceiling-lights-disabled-diagnostic");
+            foreach(var light in shadowLights)light.enabled=true;
             Time.timeScale=reviewTimeScale;
             // Park actors outside the architectural shots after the gameplay readability capture.
             for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
@@ -108,7 +114,21 @@ namespace StarTournament.ProvingGround
             var positions=new[]{new Vector3(0,1.6f,32),new Vector3(32,5.6f,30),new Vector3(-34,1.6f,0),new Vector3(-32,5.6f,26),new Vector3(-25,5.6f,2),new Vector3(0,5.6f,17),new Vector3(0,5.6f,-17),new Vector3(-30,5.6f,30),new Vector3(30,5.6f,30),new Vector3(-30,5.6f,-30),new Vector3(30,5.6f,-30),new Vector3(0,.4f,-5)};
             var targets=new[]{new Vector3(-16,1.6f,32),new Vector3(36,5.6f,30),new Vector3(-24,1.6f,0),new Vector3(-24,5.6f,18),new Vector3(-25,.6f,0),new Vector3(0,5.6f,4),new Vector3(0,5.6f,-4),new Vector3(-32,4.6f,32),new Vector3(32,4.6f,32),new Vector3(-32,4.6f,-32),new Vector3(32,4.6f,-32),new Vector3(0,.4f,4)};
             var names=new[]{"06-lowered-outer-ring","07-panoramic-window","08-wide-west-gateway","09-wide-diagonal","10-grating-lower-player","11-north-bridge","12-south-bridge","13-speed-nw","14-armor-ne","15-armor-sw","16-speed-se","17-basement"};
-            for(int i=0;i<positions.Length;i++){artCamera.transform.position=positions[i];artCamera.transform.LookAt(targets[i]);yield return Capture(names[i]);}
+            for(int i=0;i<positions.Length;i++)
+            {
+                artCamera.transform.position=positions[i];artCamera.transform.LookAt(targets[i]);yield return Capture(names[i]);
+                if(i!=0)continue;
+                foreach(var light in shadowLights)light.enabled=false;
+                yield return Capture("06a-outer-ring-ceiling-lights-disabled-diagnostic");
+                foreach(var light in shadowLights)light.enabled=true;
+                var outerAmbient=RenderSettings.ambientLight;var outerStudio=studio.intensity;
+                studio.intensity=0;RenderSettings.ambientLight=Color.white*.05f;
+                foreach(var light in shadowLights)light.enabled=false;
+                shadowLights[12].enabled=true;
+                yield return Capture("06b-outer-ring-isolated-spot-diagnostic");
+                foreach(var light in shadowLights)light.enabled=true;
+                studio.intensity=outerStudio;RenderSettings.ambientLight=outerAmbient;
+            }
             var windowPositions=new[]{new Vector3(31,5.8f,30),new Vector3(-31,5.8f,-30),new Vector3(0,1.7f,-31),new Vector3(0,1.7f,31),new Vector3(32,5.8f,27)};
             var windowTargets=new[]{new Vector3(38,5.8f,30),new Vector3(-38,5.8f,-30),new Vector3(0,1.7f,-38),new Vector3(0,1.7f,38),new Vector3(38,5.8f,30)};
             var windowNames=new[]{"18-window-blue-planet","19-window-rock-planet","20-window-sun","21-window-stars","22-window-oblique-depth"};
@@ -135,7 +155,7 @@ namespace StarTournament.ProvingGround
         [Serializable] class Performance{public int samples,width,height,localLights;public long allocatedMemoryBytes;public float medianMs,p95Ms;public string note;}
         [Serializable] class Result{public string arena,authoring,presentation,release,player,note;public int participants;public uint seed;public bool muted,repeat;public int width,height;}
         [Serializable] class LightingDiagnostic{public string pipeline,qualityShadows;public int casterRenderers,receiverRenderers;public string[] skinnedShadowPasses;public LightSnapshot[] lights;}
-        [Serializable] class LightSnapshot{public string name,shadows;public Vector3 position;public float range,spotAngle,intensity,strength;}
+        [Serializable] class LightSnapshot{public string name,shadows;public Vector3 position,direction;public float range,spotAngle,intensity,strength;}
         void OnDestroy(){Time.timeScale=reviewTimeScale;if(pads!=null)foreach(var pad in pads)if(pad.added)InputSystem.RemoveDevice(pad);}
     }
 }

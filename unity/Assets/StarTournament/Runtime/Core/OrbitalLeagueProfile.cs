@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=5};
+            var p=new ProvingProfile{id="orbital-league-v1",version=6};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
@@ -27,14 +27,16 @@ namespace StarTournament.ProvingGround
             V("light.fixtureWidth","lighting","Ширина светильника","Широкая белая потолочная панель.","m",.3f,2,.1f,.9f);
             V("light.fixtureLength","lighting","Длина светильника","Длина белой панели.","m",1,4,.1f,2.8f);
             V("light.emission","lighting","Свечение панели","Белые светильники без отдельной realtime-тени.","multiplier",.5f,3,.1f,2.3f);
-            V("light.fill","lighting","Рассеянный свет","Равномерная читаемость закрытых помещений.","ratio",.2f,1,.05f,.45f);
-            V("light.intensity","lighting","Локальный свет","Сила шести потолочных источников.","intensity",0,12,.5f,11f);
-            V("light.studioKey","lighting","Общий направленный свет","Заполнение Combat Bowl, сохраняющее контраст локальных теней.","intensity",.1f,2,.05f,.4f);
-            V("light.range","lighting","Радиус света","Зона мягкого локального освещения.","m",3,12,.5f,12);
-            V("light.spotAngle","lighting","Угол потолочного света","Ширина направленного пятна, определяющая читаемость тени.","deg",60,120,5,100);
+            V("light.fill","lighting","Рассеянный свет","Читаемость между локальными световыми пятнами.","ratio",.15f,1,.05f,.25f);
+            V("light.intensity","lighting","Локальный свет","Сила ограниченного набора потолочных источников.","intensity",0,20,.5f,16f);
+            V("light.studioKey","lighting","Общий направленный свет","Опорный свет для читаемой тени игрока во всех зонах.","intensity",.1f,2,.05f,.6f);
+            V("light.keyShadowStrength","lighting","Тень игрока","Контраст общего мягкого света под игроком и крупной архитектурой.","ratio",0,1,.05f,.85f);
+            V("light.range","lighting","Радиус света","Зона локального освещения под потолочной панелью.","m",3,16,.5f,10);
+            V("light.spotAngle","lighting","Угол потолочного света","Ширина видимого светового пятна.","deg",45,120,5,70);
             V("light.targetDrop","lighting","Наклон потолочного света","Смещение цели светильника вниз от центра зоны.","m",1,5,.25f,3);
+            V("light.outerAimInset","lighting","Цель света в кольце","Смещение светового пятна от плафона вдоль внешнего прохода.","m",0,8,.5f,2);
             V("light.hallAimOffsetZ","lighting","Цель света в зале","Смещение пятна главного зала вдоль маршрута от геометрического центра.","m",-4,4,.5f,-2.5f);
-            V("light.shadowCasters","lighting","Источники с тенями","Максимум общих для всех камер потолочных источников с realtime-тенью.","count",0,4,1,4);
+            V("light.shadowCasters","lighting","Источники с тенями","Максимум общих для всех камер потолочных источников с realtime-тенью.","count",0,4,1,2);
             V("light.shadowStrength","lighting","Контраст тени","Мягкая тень оставляет соперника и вход различимыми.","ratio",0,1,.05f,1);
             V("light.shadowResolution","lighting","Разрешение тени","Размер одной карты тени в общем атласе URP.","px",256,512,256,512);
             V("light.shadowBias","lighting","Смещение тени","Подавление самозатенения на игроках и стенах.","m",.01f,.2f,.01f,.02f);
@@ -54,7 +56,9 @@ namespace StarTournament.ProvingGround
             // Layout coordinates are authoring controls only; collider and pickup positions remain immutable.
             void Position(string key,Vector3 value)
             {for(int i=0;i<3;i++)V(key+"."+new[]{"x","y","z"}[i],"layout",key+" / "+new[]{"x","y","z"}[i],"Положение элемента оформления; не изменяет геометрию карты.","m",-40,40,.01f,value[i]);}
-            var lights=new[]{new Vector3(0,7,0),new Vector3(0,2,0),new Vector3(-16,3,0),new Vector3(16,3,0),new Vector3(0,3,15),new Vector3(0,3,-15)};
+            var lights=new[]{new Vector3(0,7,0),new Vector3(0,2,-5),new Vector3(-16,3,0),new Vector3(16,3,0),new Vector3(0,3,15),new Vector3(0,3,-15),
+                new Vector3(-31,3,0),new Vector3(31,3,0),new Vector3(-31,7,27),new Vector3(31,7,27),new Vector3(-31,7,-27),new Vector3(31,7,-27),
+                new Vector3(-12,3,32),new Vector3(-12,3,-32),new Vector3(12,3,32),new Vector3(12,3,-32)};
             for(int i=0;i<lights.Length;i++)Position("layout.fill-"+i,lights[i]);
             var labels=new[]{new Vector3(0,6.3f,7.985f),new Vector3(0,6.3f,-7.985f),new Vector3(-2.585f,1.2f,0),new Vector3(2.585f,1.2f,0),new Vector3(-27.985f,2.6f,-16),new Vector3(-27.985f,2.6f,16),new Vector3(27.985f,2.6f,-16),new Vector3(27.985f,2.6f,16),new Vector3(-11,2.5f,19.985f),new Vector3(11,2.5f,-19.985f),new Vector3(-19.985f,2.5f,0),new Vector3(19.985f,2.5f,0)};
             for(int i=0;i<labels.Length;i++)Position("layout.label-"+i,labels[i]);
@@ -78,7 +82,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=4;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=5;
             p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
             var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
@@ -124,6 +128,7 @@ namespace StarTournament.ProvingGround
             bool upgradeShadows=ring?version<2:version<4;
             bool upgradeFloor=ring?version<2:version<5;
             bool upgradeWindows=ring && version<3;
+            bool upgradeDepth=ring?version<5:version<6;
             // Retain designer overrides while upgrading the previous authored defaults.
             if(upgradeLegacy)
             {
@@ -142,6 +147,17 @@ namespace StarTournament.ProvingGround
                 if(Mathf.Approximately(Get("light.shadowNormalBias"),.4f))Set("light.shadowNormalBias",.1f);
             }
             if(upgradeFloor && Mathf.Approximately(Get("surface.floorValue"),.18f))Set("surface.floorValue",.28f);
+            if(upgradeDepth)
+            {
+                if(Mathf.Approximately(Get("light.fill"),.45f))Set("light.fill",.25f);
+                if(Mathf.Approximately(Get("light.intensity"),11f))Set("light.intensity",16f);
+                if(Mathf.Approximately(Get("light.studioKey"),.4f))Set("light.studioKey",.6f);
+                if(Mathf.Approximately(Get("light.range"),12f))Set("light.range",10f);
+                if(Mathf.Approximately(Get("light.spotAngle"),100f))Set("light.spotAngle",70f);
+                if(Mathf.Approximately(Get("light.shadowCasters"),4f))Set("light.shadowCasters",2f);
+                if(Mathf.Approximately(Get("layout.fill-1.z"),0f))Set("layout.fill-1.z",-5f);
+                for(int zone=6;zone<=7;zone++)if(Mathf.Approximately(Get("layout.fill-"+zone+".y"),7f))Set("layout.fill-"+zone+".y",3f);
+            }
             var current=ring?CreateCombatBowlRingPresentationDefault():CreateOrbitalLeagueDefault();
             if(upgradeWindows)
             {
@@ -161,14 +177,14 @@ namespace StarTournament.ProvingGround
                 if(existing>=0)
                 {
                     // The v2 range capped light intensity at four, below the new authored value.
-                    if((upgradeShadows && descriptor.Path.StartsWith("light.")) || (upgradeWindows && (descriptor.Path.StartsWith("ring.") || descriptor.Path.StartsWith("layout.label-"))))
+                    if(((upgradeShadows || upgradeDepth) && descriptor.Path.StartsWith("light.")) || (upgradeWindows && (descriptor.Path.StartsWith("ring.") || descriptor.Path.StartsWith("layout.label-"))))
                         descriptors[existing]=JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor));
                     continue;
                 }
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=ring?4:5;
+            version=ring?5:6;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {
