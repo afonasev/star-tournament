@@ -214,6 +214,7 @@ namespace StarTournament.ProvingGround
             profile.Add("ui.headingFontSize", "ui", "Heading font size", "Heading font size for setup and pause UI.", "points", 16f, 64f, 1f, 28f);
             profile.Add("ui.indicatorVisualHeight", "ui", "HUD indicator height", "Visible height shared by health, armor and ammo icons and their numbers.", "points", 20f, 64f, 1f, 32f);
             profile.Add("ui.nameFontSize", "ui", "Player name size", "Font size of the bottom-centered per-seat name.", "points", 10f, 32f, 1f, 16f);
+            profile.Add("ui.centerTimerSeamGap", "ui", "Center timer seam gap", "Distance below the horizontal viewport seam for the shared timer in three- and four-seat layouts.", "points", 0f, 64f, 1f, 16f);
             profile.Add("presentation.lightIntensity", "presentation", "Fixture light intensity", "Presentation-only fixture light intensity.", "intensity", .1f, 4f, .1f, 1.1f);
             profile.Add("presentation.armorPickupHoverHeight", "armor-pickup", "Высота парения щита", "Presentation-only высота бонуса над опорной поверхностью.", "meters", 0, 3, .01f, .7f);
             profile.Add("presentation.armorPickupRotationDegreesPerSecond", "armor-pickup", "Вращение щита", "Presentation-only скорость вращения бонуса.", "degrees-per-second", 0, 720, 1, 80);

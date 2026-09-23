@@ -1,0 +1,106 @@
+{
+    "scenario": "native-seat-layouts-v1",
+    "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "4-armor",
+    "width": 1920,
+    "height": 1080,
+    "seats": 4,
+    "participants": 4,
+    "cameras": 4,
+    "capsules": 4,
+    "eventSystems": 1,
+    "listeners": 1,
+    "arenas": 1,
+    "shots": 0,
+    "running": true,
+    "focused": true,
+    "muted": true,
+    "persistentStandings": false,
+    "combatClock": 0.2599998973309994,
+    "viewports": [
+        {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.5,
+            "width": 0.5,
+            "height": 0.5
+        },
+        {
+            "serializedVersion": "2",
+            "x": 0.5,
+            "y": 0.5,
+            "width": 0.5,
+            "height": 0.5
+        },
+        {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.5,
+            "height": 0.5
+        },
+        {
+            "serializedVersion": "2",
+            "x": 0.5,
+            "y": 0.0,
+            "width": 0.5,
+            "height": 0.5
+        }
+    ],
+    "match": {
+        "Tick": 13,
+        "RemainingTicks": 14987,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 3,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            }
+        ],
+        "Teams": []
+    }
+}

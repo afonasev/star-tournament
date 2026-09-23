@@ -66,6 +66,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(panel.gameObject.activeSelf,Is.True);
                 Assert.That(panel.Find("match-timer").GetComponent<Text>().text,Does.Match(@"^\d\d:\d\d$"));
                 Assert.That(panel.anchorMin,Is.EqualTo(count<3?new Vector2(.5f,1):new Vector2(.5f,.5f)));
+                Assert.That(panel.pivot,Is.EqualTo(new Vector2(.5f,1f)));
+                if(count>=3) Assert.That(panel.anchoredPosition.y,Is.EqualTo(-ground.Profile.Get("ui.centerTimerSeamGap")).Within(.01f));
+                if(count==3)
+                {
+                    Canvas.ForceUpdateCanvases();
+                    var table=ground.transform.Find("native-ui/persistent-standings/row-0").GetComponent<RectTransform>();
+                    var timerCorners=new Vector3[4];var tableCorners=new Vector3[4];
+                    panel.GetWorldCorners(timerCorners);table.GetWorldCorners(tableCorners);
+                    Assert.That(tableCorners[1].y,Is.LessThan(timerCorners[0].y));
+                }
                 Assert.That(ground.GetComponentsInChildren<Text>(true).Count(t=>t.name=="match-timer"),Is.EqualTo(1));
                 for(int seat=0;seat<count;seat++)
                 {

@@ -519,14 +519,20 @@ namespace StarTournament.ProvingGround
             {
                 persistentStandings.Root.SetActive(false);
                 var r=LocalSeatLayout.PersistentStandings(count);
-                if(r.HasValue) Layout((RectTransform)persistentStandings.Root.transform,new Vector2(r.Value.xMin,r.Value.yMin),new Vector2(r.Value.xMax,r.Value.yMax));
+                if(r.HasValue)
+                {
+                    var table=(RectTransform)persistentStandings.Root.transform;
+                    Layout(table,new Vector2(r.Value.xMin,r.Value.yMin),new Vector2(r.Value.xMax,r.Value.yMax));
+                    float seamGap=Profile.Get("ui.centerTimerSeamGap");
+                    persistentStandings.TopInset=Profile.Get("ui.headingFontSize")+Profile.Get("ui.fontSize")+2*seamGap;
+                }
             }
             if(timerPanel)
             {
                 bool center=renderedCount>=3;
                 timerPanel.anchorMin=timerPanel.anchorMax=center?new Vector2(.5f,.5f):new Vector2(.5f,1f);
-                timerPanel.pivot=center?new Vector2(.5f,.5f):new Vector2(.5f,1f);
-                timerPanel.anchoredPosition=center?Vector2.zero:new Vector2(0,-Profile.Get("ui.fontSize"));
+                timerPanel.pivot=new Vector2(.5f,1f);
+                timerPanel.anchoredPosition=new Vector2(0,-Profile.Get(center?"ui.centerTimerSeamGap":"ui.fontSize"));
             }
         }
         void StepConfiguration(string path,int direction)
