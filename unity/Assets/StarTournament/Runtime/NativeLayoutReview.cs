@@ -31,11 +31,13 @@ namespace StarTournament.ProvingGround
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-layoutEvidence");
             directory=flag>=0 && flag+1<args.Length?args[flag+1]:Path.Combine(Application.persistentDataPath,"layout-review");
             Directory.CreateDirectory(directory);
-            while(!Application.isFocused) yield return null;
+            // Synthetic Player evidence must also run when macOS opens the test window unfocused.
             yield return new WaitForSecondsRealtime(1);
             for(int i=0;i<pads.Length;i++) pads[i]=InputSystem.AddDevice<Gamepad>();
-            foreach(int count in new[]{4,2,3})
+            ground.AddBot(); // The single-view case still needs a second match participant.
+            foreach(int count in new[]{1,4,2,3})
             {
+                if(count==4)ground.RemoveBot(0);
                 ground.StartCombatReview(pads.Take(count).ToArray());yield return new WaitForSeconds(.2f);
                 yield return Capture(count+"-live");
                 // Real adapter: movement and View belong only to the last active seat.
@@ -45,6 +47,18 @@ namespace StarTournament.ProvingGround
                 InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));yield return new WaitForSecondsRealtime(.15f);
                 InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return Capture(count+"-pause");
                 Button("Повторить матч").onClick.Invoke();yield return new WaitForSeconds(.15f);yield return Capture(count+"-repeat");
+                if(count==4)
+                {
+                    var armor=ground.Session.Capture();var life=armor.Lives[0];life.Armor=50;armor.Lives[0]=life;
+                    ground.Session.Restore(armor);yield return null;yield return Capture("4-armor");
+                    // Fast-forward the data-only match clock; this is an overtime display fixture.
+                    while(ground.Session.Match.Phase==NativeMatchPhase.Running)
+                    {
+                        ground.Session.Match.BeginTick();ground.Session.Match.EndTick();
+                    }
+                    if(ground.Session.Match.Phase!=NativeMatchPhase.Overtime)throw new InvalidOperationException("Layout review did not reach overtime");
+                    yield return null;yield return Capture("4-overtime");
+                }
                 if(count==3)
                 {
                     ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);

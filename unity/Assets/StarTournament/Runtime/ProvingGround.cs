@@ -20,13 +20,15 @@ namespace StarTournament.ProvingGround
         readonly SeatInputCoordinator input = new SeatInputCoordinator();
         CharacterMotor[] motors = Array.Empty<CharacterMotor>();
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
-        readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount];
+        readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount], names = new Text[SeatInputCoordinator.SeatCount];
         public ProvingProfile LifeProfile = ProvingProfile.CreateCombatDefault();
         public ProvingProfile CombatProfile = ProvingProfile.CreateNativeCombatDefault();
         GameObject[] bodies = Array.Empty<GameObject>();
         readonly GameObject[] views = new GameObject[SeatInputCoordinator.SeatCount];
         Light studioLight;
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], armor = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
+        readonly GameObject[] armorGroups = new GameObject[SeatInputCoordinator.SeatCount];
+        readonly HudIndicatorIcon[] ammoIcons = new HudIndicatorIcon[SeatInputCoordinator.SeatCount];
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
         LocalAction[] localActions = new LocalAction[SeatInputCoordinator.SeatCount];
         public ProvingProfile BotPerceptionProfile = ProvingProfile.CreateBotPerceptionDefault();
@@ -102,7 +104,8 @@ namespace StarTournament.ProvingGround
         {
             try { if(reviewComposition==null)SetupRoster();return !combatBowlSelected || CombatBowlRules.SupportsParticipantCount(SetupComposition().ParticipantCount); } catch(ArgumentException) { return false; }
         }
-        readonly Text[] timers = new Text[SeatInputCoordinator.SeatCount];
+        Text matchTimer;
+        RectTransform timerPanel;
         readonly NativeStandingsView[] standings = new NativeStandingsView[SeatInputCoordinator.SeatCount];
         NativeStandingsView results, persistentStandings;
         readonly RectTransform[] viewportRoots=new RectTransform[SeatInputCoordinator.SeatCount];
@@ -361,20 +364,29 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Setup) presentation.Render();
             var snapshot=Session.Match?.Read();
             persistentStandings.Show(phase!=Phase.Setup && frozenSeatCount==3,snapshot,diagnostic||combatReview,Composition);
+            var match=Session.Match;
+            if(timerPanel)timerPanel.gameObject.SetActive(phase==Phase.Running && match!=null);
+            if(matchTimer && match!=null)
+            {
+                matchTimer.text=match.Phase==NativeMatchPhase.Overtime ? "ОВЕРТАЙМ" : TimeLabel(match.RemainingSeconds);
+                float padding=Profile.Get("ui.fontSize");
+                timerPanel.sizeDelta=new Vector2(matchTimer.preferredWidth+padding*2,Profile.Get("ui.headingFontSize")+padding);
+            }
             for(int i=0;i<Composition.LocalCount;i++) if(hud[i])
             {
                 int participant=Composition.ParticipantAt(i);var life=Session.Life(participant);
-                health[i].text="♥ "+Mathf.CeilToInt(life.Health);
-                armor[i].gameObject.SetActive(life.Armor>0); if(life.Armor>0) armor[i].text="⬡ "+Mathf.CeilToInt(life.Armor);
-                ammo[i].text="ДВУСТВОЛКА  ·  "+life.Ammo+(Session.DamageBoostRemaining(participant)>0?"  ×2":"");
+                health[i].text=Mathf.CeilToInt(life.Health).ToString();
+                armorGroups[i].SetActive(life.Armor>0); if(life.Armor>0) armor[i].text=Mathf.CeilToInt(life.Armor).ToString();
+                ammo[i].text=life.Ammo+(Session.DamageBoostRemaining(participant)>0?" ×2":"");
+                ResizeHudIndicator(health[i]);if(life.Armor>0)ResizeHudIndicator(armor[i]);ResizeHudIndicator(ammo[i]);
 
                 ammo[i].color=Session.DamageBoostRemaining(participant)>0?Color.red:Color.white;
+                ammoIcons[i].color=ammo[i].color;
                 crosshair[i].text=life.Dead ? presentation.DeathMessage(participant) : "+";
-                var match=Session.Match;
-                timers[i].text=match==null ? "" : match.Phase==NativeMatchPhase.Overtime ? "ОВЕРТАЙМ" : TimeLabel(match.RemainingSeconds);
                 standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition);
-                hud[i].color=Composition.Participant(participant).Color;
-                hud[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "")+"\n"+(hit[participant] ?? "");
+                names[i].color=Composition.Participant(participant).Color;
+                names[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "");
+                hud[i].text=hit[participant] ?? "";
             }
         }
         void OnApplicationFocus(bool focus) { if (!focus && phase == Phase.Running && !diagnostic) Pause("Окно потеряло фокус"); }
@@ -509,6 +521,13 @@ namespace StarTournament.ProvingGround
                 var r=LocalSeatLayout.PersistentStandings(count);
                 if(r.HasValue) Layout((RectTransform)persistentStandings.Root.transform,new Vector2(r.Value.xMin,r.Value.yMin),new Vector2(r.Value.xMax,r.Value.yMax));
             }
+            if(timerPanel)
+            {
+                bool center=renderedCount>=3;
+                timerPanel.anchorMin=timerPanel.anchorMax=center?new Vector2(.5f,.5f):new Vector2(.5f,1f);
+                timerPanel.pivot=center?new Vector2(.5f,.5f):new Vector2(.5f,1f);
+                timerPanel.anchoredPosition=center?Vector2.zero:new Vector2(0,-Profile.Get("ui.fontSize"));
+            }
         }
         void StepConfiguration(string path,int direction)
         {
@@ -585,18 +604,16 @@ namespace StarTournament.ProvingGround
                 float padding=Profile.Get("ui.fontSize");
                 hud[i].rectTransform.offsetMin=Vector2.one*padding;hud[i].rectTransform.offsetMax=-Vector2.one*padding;
                 hud[i].alignment = TextAnchor.UpperLeft;
-                health[i] = TextElement(viewportRoots[i],"health-"+i,"",(int)Profile.Get("ui.fontSize"));
-                armor[i] = TextElement(viewportRoots[i],"armor-"+i,"",(int)Profile.Get("ui.fontSize"));
-                ammo[i] = TextElement(viewportRoots[i],"ammo-"+i,"",(int)Profile.Get("ui.fontSize"));
-                foreach(var label in new[]{health[i],armor[i],ammo[i]})
-                {
-                    Layout(label.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));
-                    label.rectTransform.offsetMin=Vector2.one*padding; label.rectTransform.offsetMax=-Vector2.one*padding;
-                }
-                timers[i]=TextElement(viewportRoots[i],"timer-"+i,"",(int)Profile.Get("ui.fontSize"));
-                Layout(timers[i].rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));
-                timers[i].rectTransform.offsetMax=-Vector2.one*padding; timers[i].alignment=TextAnchor.UpperCenter;
-                health[i].alignment=TextAnchor.LowerLeft;armor[i].alignment=TextAnchor.LowerLeft;armor[i].rectTransform.offsetMin+=Vector2.up*(padding*1.2f);armor[i].rectTransform.offsetMax+=Vector2.up*(padding*1.2f);health[i].color=new Color32(255,72,72,255);armor[i].color=new Color32(55,234,255,255); ammo[i].alignment=TextAnchor.LowerRight;
+                int indicatorHeight=(int)Profile.Get("ui.indicatorVisualHeight");
+                health[i]=CreateHudIndicator(viewportRoots[i],"health-"+i,HudIndicatorIcon.IconKind.Heart,new Color32(255,72,72,255),false,padding,indicatorHeight,out _);
+                armor[i]=CreateHudIndicator(viewportRoots[i],"armor-"+i,HudIndicatorIcon.IconKind.Shield,new Color32(55,234,255,255),false,padding*2+indicatorHeight,indicatorHeight,out _);
+                armorGroups[i]=armor[i].transform.parent.gameObject;
+                ammo[i]=CreateHudIndicator(viewportRoots[i],"ammo-"+i,HudIndicatorIcon.IconKind.Cartridges,Color.white,true,padding,indicatorHeight,out ammoIcons[i]);
+                names[i]=TextElement(viewportRoots[i],"seat-name-"+i,"",(int)Profile.Get("ui.nameFontSize"));
+                Layout(names[i].rectTransform,Vector2.zero,Vector2.one);
+                names[i].rectTransform.offsetMin=Vector2.one*padding;
+                names[i].rectTransform.offsetMax=-Vector2.one*padding;
+                names[i].alignment=TextAnchor.LowerCenter;
                 var cross = TextElement(viewportRoots[i],"crosshair-"+i,"+",(int)Profile.Get("ui.headingFontSize"));
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
             }
@@ -609,6 +626,14 @@ namespace StarTournament.ProvingGround
             }
             persistentStandings=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"persistent-standings",new Vector2(.5f,0),new Vector2(1,.5f));
             persistentStandings.Root.SetActive(false);
+            var timerObject=new GameObject("match-timer-panel",typeof(RectTransform),typeof(Image));
+            timerObject.transform.SetParent(canvasObject.transform,false);timerPanel=(RectTransform)timerObject.transform;
+            timerObject.GetComponent<Image>().color=new Color32(7,21,37,255);
+            timerObject.GetComponent<Image>().raycastTarget=false;
+            matchTimer=TextElement(timerObject.transform,"match-timer","",(int)Profile.Get("ui.headingFontSize"));
+            Layout(matchTimer.rectTransform,Vector2.zero,Vector2.one);
+            matchTimer.alignment=TextAnchor.MiddleCenter;
+            timerObject.SetActive(false);
             overlay = new GameObject("setup-pause",typeof(RectTransform),typeof(Image)); overlay.transform.SetParent(canvasObject.transform,false);
             Layout((RectTransform)overlay.transform,Vector2.zero,Vector2.one); overlay.GetComponent<Image>().color=new Color32(10,18,30,245);
             var column = new GameObject("menu",typeof(RectTransform),typeof(VerticalLayoutGroup)); column.transform.SetParent(overlay.transform,false);
@@ -685,6 +710,36 @@ namespace StarTournament.ProvingGround
         {
             var go=new GameObject(name,typeof(RectTransform),typeof(Text)); go.transform.SetParent(parent,false);
             var text=go.GetComponent<Text>(); text.text=value; text.font=font; text.fontSize=size; text.color=Color.white; text.raycastTarget=false; return text;
+        }
+        Text CreateHudIndicator(Transform parent,string name,HudIndicatorIcon.IconKind kind,Color tint,bool right,float bottom,int height,out HudIndicatorIcon icon)
+        {
+            var group=new GameObject(name+"-group",typeof(RectTransform));group.transform.SetParent(parent,false);
+            var rect=(RectTransform)group.transform;
+            rect.anchorMin=rect.anchorMax=right?new Vector2(1,0):Vector2.zero;
+            rect.pivot=right?new Vector2(1,0):Vector2.zero;
+            rect.anchoredPosition=new Vector2(right?-Profile.Get("ui.fontSize"):Profile.Get("ui.fontSize"),bottom);
+            rect.sizeDelta=new Vector2(height*5,height);
+            var iconObject=new GameObject(name+"-icon",typeof(RectTransform),typeof(HudIndicatorIcon));
+            iconObject.transform.SetParent(group.transform,false);
+            icon=iconObject.GetComponent<HudIndicatorIcon>();icon.Kind=kind;icon.color=tint;icon.raycastTarget=false;
+            var iconRect=(RectTransform)iconObject.transform;
+            iconRect.anchorMin=iconRect.anchorMax=iconRect.pivot=Vector2.zero;
+            iconRect.anchoredPosition=Vector2.zero;iconRect.sizeDelta=Vector2.one*height;
+            // LegacyRuntime.ttf's digit cap height is smaller than its nominal point size;
+            // this font-metric compensation makes digit ink match the profile-owned icon height.
+            var value=TextElement(group.transform,name,"",Mathf.RoundToInt(height*1.1f));
+            var valueRect=value.rectTransform;
+            valueRect.anchorMin=valueRect.anchorMax=valueRect.pivot=Vector2.zero;
+            valueRect.anchoredPosition=new Vector2(height+Profile.Get("ui.fontSize")*.5f,0);
+            valueRect.sizeDelta=new Vector2(height*4,height);
+            value.alignment=TextAnchor.MiddleLeft;value.verticalOverflow=VerticalWrapMode.Overflow;
+            value.horizontalOverflow=HorizontalWrapMode.Overflow;value.color=tint;
+            return value;
+        }
+        void ResizeHudIndicator(Text value)
+        {
+            var rect=(RectTransform)value.transform.parent;
+            rect.sizeDelta=new Vector2(value.rectTransform.anchoredPosition.x+value.preferredWidth,rect.sizeDelta.y);
         }
         Button ButtonElement(Transform parent,string title,UnityEngine.Events.UnityAction action)
         {
