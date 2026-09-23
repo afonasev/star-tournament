@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(collider,Is.Not.Null,s.Id);Assert.That(t.position,Is.EqualTo(s.Position));Assert.That(t.localScale,Is.EqualTo(s.Size));Assert.That(Quaternion.Angle(t.rotation,s.Rotation),Is.LessThan(.01f));
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();
-            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@2"));
+            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@3"));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Slow orbital emblem"),Is.EqualTo(5));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Enclosed slow fan"),Is.EqualTo(2));
             Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
@@ -36,6 +36,30 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(arena.GetComponentsInChildren<Light>().Length,Is.EqualTo(6));
             Assert.That(JsonUtility.ToJson(frozen.Definition),Is.EqualTo(before));
             Object.Destroy(root);yield return null;
+        }
+        [UnityTest] public IEnumerator WindowsTransmitSeparateDistantSpaceAndRemainSolid()
+        {
+            root=new GameObject("window-contract");var arena=root.AddComponent<ProvingArena>();arena.Build(CombatBowlCatalog.Freeze(ProvingProfile.CreateDefault()),ProvingProfile.CreateDefault());yield return null;
+            var windows=arena.Definition.Solids.Where(s=>s.Surface=="window").ToArray();Assert.That(windows.Length,Is.EqualTo(20));
+            foreach(var window in windows)
+            {
+                var pane=arena.transform.Find(window.Id);var material=pane.GetComponent<Renderer>().sharedMaterial;
+                Assert.That(material.shader.name,Is.EqualTo("StarTournament/OrbitalGlass"));Assert.That(material.renderQueue,Is.EqualTo(3000));
+                Assert.That(material.GetColor("_Color").a,Is.LessThan(.1f));Assert.That(material.HasProperty("_BaseMap"),Is.False,"Space texture must not live on glass");
+                Assert.That(window.Size.y,Is.LessThan(3));Assert.That(Mathf.Max(window.Size.x,window.Size.z),Is.LessThan(10));
+                var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
+                Assert.That(Physics.Raycast(window.Position+inward*2,-inward,out var hit,4,1<<ProvingArena.WorldLayer),Is.True);Assert.That(hit.collider.transform,Is.EqualTo(pane));
+            }
+            foreach(bool alongX in new[]{false,true})foreach(int side in new[]{-1,1})
+            for(float along=-35.9f;along<36;along+=1.1f)for(float y=.1f;y<8.4f;y+=.6f)
+            {
+                var normal=alongX?Vector3.forward*side:Vector3.right*side;
+                var point=alongX?new Vector3(along,y,side*35.9f):new Vector3(side*35.9f,y,along);
+                Assert.That(Physics.Raycast(point,normal,.6f,1<<ProvingArena.WorldLayer),Is.True,"Hull leak "+point);
+            }
+            var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();var faces=art.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name.StartsWith("Distant space cube / ")).ToArray();
+            Assert.That(faces.Length,Is.EqualTo(6));Assert.That(faces.Count(r=>r.name.EndsWith("planet")),Is.EqualTo(2));Assert.That(faces.Count(r=>r.name.EndsWith("Sun")),Is.EqualTo(1));
+            Assert.That(faces.All(r=>r.bounds.center.magnitude>100),Is.True);Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
         }
         [Test] public void ArtProfileRejectsOutOfRangeAndPublishesCompleteMetadata()
         {
@@ -86,15 +110,25 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(old.Get("surface.floorValue"),Is.EqualTo(.24f));
             Assert.That(old.Validate(),Is.Empty);
         }
+        [Test] public void SerializedRingV2GainsWindowsWithoutResettingLightingOrCustomFrame()
+        {
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":3","\"version\":2");
+            Assert.That(json,Does.Contain("\"version\":2"));var old=JsonUtility.FromJson<ProvingProfile>(json);
+            old.Set("light.intensity",9);old.Set("ring.windowFrameWidth",.4f);old.Set("ring.spawn-mark-1.z",17);old.Set("ring.skyValue",.08f);
+            old.EnsureOrbitalLeagueDescriptors();Assert.That(old.Version,Is.EqualTo(3));
+            Assert.That(old.Get("light.intensity"),Is.EqualTo(9));Assert.That(old.Get("ring.windowFrameWidth"),Is.EqualTo(.18f));Assert.That(old.Get("ring.spawn-mark-1.z"),Is.EqualTo(14));Assert.That(old.Get("ring.skyValue"),Is.EqualTo(.16f));
+            var custom=JsonUtility.FromJson<ProvingProfile>(json);custom.Set("ring.windowFrameWidth",.8f);custom.EnsureOrbitalLeagueDescriptors();
+            Assert.That(custom.Get("ring.windowFrameWidth"),Is.EqualTo(.8f));Assert.That(custom.Validate(),Is.Empty);
+        }
         [Test] public void SerializedRingV1UpgradesLightingAndPreservesRingOverrides()
         {
-            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":2","\"version\":1");
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":3","\"version\":1");
             var old=JsonUtility.FromJson<ProvingProfile>(json);
             old.Set("light.fill",.65f);old.Set("light.intensity",8f);
             old.Set("light.shadowStrength",.65f);old.Descriptor("light.shadowStrength").Maximum=.7f;
             old.Set("surface.floorValue",.18f);old.Set("ring.gratingDepth",.08f);
             old.EnsureOrbitalLeagueDescriptors();
-            Assert.That(old.Version,Is.EqualTo(2));
+            Assert.That(old.Version,Is.EqualTo(3));
             Assert.That(old.Get("light.intensity"),Is.EqualTo(11f));
             Assert.That(old.Get("light.shadowStrength"),Is.EqualTo(1f));
             Assert.That(old.Get("surface.floorValue"),Is.EqualTo(.28f));

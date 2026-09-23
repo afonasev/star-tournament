@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
-    /// <summary>Published R7. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
+    /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="7", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="8", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -143,11 +143,31 @@ namespace StarTournament.ProvingGround
             }
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-36,36,8.4f);
-            // Continuous outer hull: glazing blocks both movement and projectiles.
-            foreach(int side in new[]{-1,1})
+            // Opaque hull piers, sills and headers surround smaller glazed openings.
+            // Every dimension below becomes range-validated authoring metadata, frozen in revision 8.
+            foreach(int side in new[]{-1,1})foreach(bool alongX in new[]{false,true})
             {
-                Box("window-x-"+side,new Vector3(side*36.2f,4,0),new Vector3(.4f,8,72.4f));solids[solids.Count-1].Surface="window";
-                Box("window-z-"+side,new Vector3(0,4,side*36.2f),new Vector3(72.4f,8,.4f));solids[solids.Count-1].Surface="window";
+                string axis=alongX?"z":"x",prefix="hull-"+axis+"-"+side;
+                var centers=alongX?new[]{-32f,-12f,0f,12f,32f}:new[]{-30f,-20f,0f,20f,30f};
+                float cursor=-36.2f;
+                void HullPart(string id,float from,float to,float bottom,float top,bool glass=false)
+                {
+                    Box(id,alongX?new Vector3((from+to)/2,(bottom+top)/2,side*36.2f):new Vector3(side*36.2f,(bottom+top)/2,(from+to)/2),
+                        alongX?new Vector3(to-from,top-bottom,.4f):new Vector3(.4f,top-bottom,to-from));
+                    if(glass)solids[solids.Count-1].Surface="window";
+                }
+                for(int i=0;i<centers.Length;i++)
+                {
+                    float center=centers[i];bool upper=Mathf.Abs(center)>(alongX?28:14);
+                    float width=alongX?(upper?6:8):(upper?8:6),bottom=upper?4.8f:.6f,top=upper?7.4f:2.6f;
+                    float left=center-width/2,right=center+width/2;
+                    HullPart(prefix+"-pier-"+i,cursor,left,0,8.4f);
+                    HullPart(prefix+"-sill-"+i,left,right,0,bottom);
+                    HullPart(prefix+"-header-"+i,left,right,top,8.4f);
+                    HullPart("window-"+axis+"-"+side+"-"+i,left,right,bottom,top,true);
+                    cursor=right;
+                }
+                HullPart(prefix+"-pier-end",cursor,36.2f,0,8.4f);
             }
             // Keep the accepted ordinary hall ramps and basement as an additional route pair.
             foreach(int side in new[]{-1,1})

@@ -106,6 +106,10 @@ namespace StarTournament.ProvingGround
             var targets=new[]{new Vector3(-16,1.6f,32),new Vector3(36,5.6f,30),new Vector3(-24,1.6f,0),new Vector3(-24,5.6f,18),new Vector3(-25,.6f,0),new Vector3(0,5.6f,4),new Vector3(0,5.6f,-4),new Vector3(-32,4.6f,32),new Vector3(32,4.6f,32),new Vector3(-32,4.6f,-32),new Vector3(32,4.6f,-32),new Vector3(0,.4f,4)};
             var names=new[]{"06-lowered-outer-ring","07-panoramic-window","08-wide-west-gateway","09-wide-diagonal","10-grating-lower-player","11-north-bridge","12-south-bridge","13-speed-nw","14-armor-ne","15-armor-sw","16-speed-se","17-basement"};
             for(int i=0;i<positions.Length;i++){artCamera.transform.position=positions[i];artCamera.transform.LookAt(targets[i]);yield return Capture(names[i]);}
+            var windowPositions=new[]{new Vector3(31,5.8f,30),new Vector3(-31,5.8f,-30),new Vector3(0,1.7f,-31),new Vector3(0,1.7f,31),new Vector3(32,5.8f,27)};
+            var windowTargets=new[]{new Vector3(38,5.8f,30),new Vector3(-38,5.8f,-30),new Vector3(0,1.7f,-38),new Vector3(0,1.7f,38),new Vector3(38,5.8f,30)};
+            var windowNames=new[]{"18-window-blue-planet","19-window-rock-planet","20-window-sun","21-window-stars","22-window-oblique-depth"};
+            for(int i=0;i<windowPositions.Length;i++){artCamera.transform.position=windowPositions[i];artCamera.transform.LookAt(windowTargets[i]);yield return Capture(windowNames[i]);}
             Time.timeScale=priorTimeScale;Destroy(artCameraObject);foreach(var c in reviewCameras)c.enabled=true;foreach(var c in reviewCanvases)c.enabled=true;
             // Real player projection, camera-only cutaway: roof/wall renderers hidden only for the labelled overview.
             var arena=ground.GetComponentInChildren<ProvingArena>();var cameras=ground.GetComponentsInChildren<Camera>();var canvases=ground.GetComponentsInChildren<Canvas>();

@@ -78,7 +78,9 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=2;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=3;
+            p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
+            var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
             {
                 for(int i=0;i<3;i++)
@@ -95,12 +97,21 @@ namespace StarTournament.ProvingGround
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
             {
                 int number=sz>0?(sx<0?1:2):(sx<0?3:4);
-                Position("ring.spawn-mark-"+number,new Vector3(sx*35.94f,6.2f,sz*17));
-                int oldIndex=4+(sx<0?0:2)+(sz<0?0:1);Position("layout.label-"+oldIndex,new Vector3(sx*35.94f,6.2f,sz*20));
+                Position("ring.spawn-mark-"+number,new Vector3(sx*35.94f,6.2f,sz*14));
+                int oldIndex=4+(sx<0?0:2)+(sz<0?0:1);Position("layout.label-"+oldIndex,new Vector3(sx*35.94f,6.2f,sz*14));
             }
             Position("layout.label-8",new Vector3(0,5.8f,23.78f));Position("layout.label-9",new Vector3(0,5.8f,-23.78f));
             Position("layout.label-10",new Vector3(-27.78f,5.8f,9));Position("layout.label-11",new Vector3(27.78f,5.8f,-9));
-            p.Add("ring.skyValue","ring","Window sky brightness","Brightness of the space backdrop in the sealed panoramic windows.","ratio",.01f,.3f,.01f,.08f);
+            p.Add("ring.skyValue","space","Space background brightness","Brightness of distant stars and nebula; never a texture on glass.","ratio",.01f,.5f,.01f,.16f);
+            p.Add("ring.glassOpacity","windows","Glass tint opacity","Light transmission tint; the separate backdrop remains visible through the pane.","ratio",0,.3f,.01f,.045f);
+            p.Add("ring.glassEdgeOpacity","windows","Glass grazing opacity","Subtle reflection tint at grazing viewing angles.","ratio",0,.5f,.01f,.18f);
+            p.Add("ring.spaceHalfExtent","space","Space cube distance","Half extent of the distant renderer-only cube, outside the station hull.","meters",100,140,10,120);
+            p.Add("ring.spaceCenterY","space","Space cube elevation","Vertical centre of the distant background cube.","meters",-20,20,1,4);
+            p.Add("ring.planetRadius","space","Blue planet angular size","Radius of the blue planet in its cube-face texture.","face fraction",.04f,.3f,.01f,.08f);
+            p.Add("ring.secondPlanetRadius","space","Rock planet angular size","Radius of the second planet on the opposite cube face.","face fraction",.04f,.3f,.01f,.06f);
+            p.Add("ring.sunRadius","space","Sun angular size","Radius of the single sun on the south cube face.","face fraction",.01f,.12f,.005f,.02f);
+            p.Add("ring.celestialElevation","space","Celestial elevation","Vertical texture centre of the planets and sun.","face fraction",.35f,.65f,.01f,.51f);
+            p.Add("ring.celestialHorizontal","space","Celestial horizontal position","Horizontal texture centre on each distinct cube face.","face fraction",.25f,.75f,.01f,.5f);
             return p;
         }
         // Existing serialized scene profiles gain only missing presentation controls.
@@ -111,6 +122,7 @@ namespace StarTournament.ProvingGround
             bool upgradeLegacy=!ring && version<3;
             bool upgradeShadows=ring?version<2:version<4;
             bool upgradeFloor=ring?version<2:version<5;
+            bool upgradeWindows=ring && version<3;
             // Retain designer overrides while upgrading the previous authored defaults.
             if(upgradeLegacy)
             {
@@ -130,20 +142,32 @@ namespace StarTournament.ProvingGround
             }
             if(upgradeFloor && Mathf.Approximately(Get("surface.floorValue"),.18f))Set("surface.floorValue",.28f);
             var current=ring?CreateCombatBowlRingPresentationDefault():CreateOrbitalLeagueDefault();
+            if(upgradeWindows)
+            {
+                descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
+                if(Mathf.Approximately(Get("ring.windowFrameWidth"),.4f))Set("ring.windowFrameWidth",current.Get("ring.windowFrameWidth"));
+                if(Mathf.Approximately(Get("ring.skyValue"),.08f))Set("ring.skyValue",current.Get("ring.skyValue"));
+                foreach(var descriptor in current.descriptors)
+                {
+                    bool mark=descriptor.Path.StartsWith("ring.spawn-mark-") && descriptor.Path.EndsWith(".z");
+                    bool label=descriptor.Path.StartsWith("layout.label-") && descriptor.Path.EndsWith(".z") && Mathf.Approximately(Mathf.Abs(descriptor.DefaultValue),14);
+                    if((mark && Mathf.Approximately(Mathf.Abs(Get(descriptor.Path)),17)) || (label && Mathf.Approximately(Mathf.Abs(Get(descriptor.Path)),20)))Set(descriptor.Path,descriptor.DefaultValue);
+                }
+            }
             foreach(var descriptor in current.descriptors)
             {
                 int existing=descriptors.FindIndex(item=>item.Path==descriptor.Path);
                 if(existing>=0)
                 {
                     // The v2 range capped light intensity at four, below the new authored value.
-                    if(upgradeShadows && descriptor.Path.StartsWith("light."))
+                    if((upgradeShadows && descriptor.Path.StartsWith("light.")) || (upgradeWindows && (descriptor.Path.StartsWith("ring.") || descriptor.Path.StartsWith("layout.label-"))))
                         descriptors[existing]=JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor));
                     continue;
                 }
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=ring?2:5;
+            version=ring?3:5;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {
