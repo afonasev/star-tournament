@@ -1,0 +1,156 @@
+{
+    "scenario": "native-match-review-v1",
+    "acceptance": "DIAGNOSTIC_NOT_PHYSICAL_OR_PERFORMANCE_ACCEPTANCE",
+    "state": "repeat",
+    "profile": "unity-native-match-v1@1",
+    "width": 1280,
+    "height": 800,
+    "shots": 0,
+    "eventSystems": 1,
+    "listeners": 1,
+    "arenas": 1,
+    "corpses": 0,
+    "running": true,
+    "focused": true,
+    "muted": true,
+    "combatClock": 0.1799999289214611,
+    "configuration": {
+        "DurationMinutes": 1,
+        "TargetEnabled": true,
+        "TargetPoints": 1000
+    },
+    "match": {
+        "Tick": 9,
+        "RemainingTicks": 2991,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            },
+            {
+                "Seat": 3,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0
+            }
+        ],
+        "Teams": [],
+        "DirectKillsByPair": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "KillChains": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 20,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ]
+}
