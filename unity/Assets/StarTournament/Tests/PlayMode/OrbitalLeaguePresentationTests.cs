@@ -20,6 +20,9 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(collider,Is.Not.Null,s.Id);Assert.That(t.position,Is.EqualTo(s.Position));Assert.That(t.localScale,Is.EqualTo(s.Size));Assert.That(Quaternion.Angle(t.rotation,s.Rotation),Is.LessThan(.01f));
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();
+            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-v1@2"));
+            Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Slow orbital emblem"),Is.EqualTo(5));
+            Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Enclosed slow fan"),Is.EqualTo(2));
             Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
             Assert.That(arena.GetComponentsInChildren<Collider>().Length,Is.EqualTo(frozen.Definition.Solids.Length));
             Assert.That(art.LocalLightCount,Is.EqualTo(6));Assert.That(art.GetComponentsInChildren<Light>().All(l=>l.shadows==LightShadows.None),Is.True);
@@ -33,7 +36,9 @@ namespace StarTournament.ProvingGround.Tests
         [Test] public void ArtProfileRejectsOutOfRangeAndPublishesCompleteMetadata()
         {
             var p=ProvingProfile.CreateOrbitalLeagueDefault();Assert.That(p.Validate(),Is.Empty);
-            Assert.That(p.Descriptors.All(d=>d.Validate(out _)),Is.True);p.Set("light.range",1000);Assert.That(p.Validate(),Is.Not.Empty);
+            Assert.That(p.Descriptors.All(d=>d.Validate(out _)),Is.True);
+            Assert.That(p.Descriptor("broadcast.orbitSpeed").Group,Is.EqualTo("broadcast"));
+            p.Set("broadcast.orbitSpeed",1000);Assert.That(p.Validate(),Is.Not.Empty);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=1};
+            var p=new ProvingProfile{id="orbital-league-v1",version=2};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
@@ -52,7 +52,43 @@ namespace StarTournament.ProvingGround
             void ColorValue(string key,Color value)
             {for(int i=0;i<3;i++)V("color."+key+"."+new[]{"r","g","b"}[i],"palette",key+" / "+new[]{"R","G","B"}[i],"Компонента палитры Orbital League.","ratio",0,1,.005f,value[i]);}
             ColorValue("trim",new Color(.095f,.12f,.14f));ColorValue("cyan",new Color(.035f,.55f,.72f));ColorValue("white",new Color(.92f,.97f,1));ColorValue("ink",new Color(.06f,.37f,.52f));ColorValue("fill",new Color(.85f,.94f,1));
+            BroadcastDescriptors(p);
+            Position("layout.broadcast-screen-0",new Vector3(0,6.25f,7.96f));
+            Position("layout.broadcast-screen-1",new Vector3(-19.96f,2.6f,0));
+            Position("layout.broadcast-screen-2",new Vector3(-11,2.6f,19.96f));
+            Position("layout.broadcast-screen-3",new Vector3(11,2.6f,19.96f));
+            Position("layout.broadcast-crest",new Vector3(0,7.77f,0));
+            Position("layout.broadcast-fan-0",new Vector3(-2.59f,1.3f,-5));
+            Position("layout.broadcast-fan-1",new Vector3(-2.59f,1.3f,5));
             return p;
+        }
+        // Existing serialized scene profiles gain only missing presentation controls.
+        public void EnsureOrbitalLeagueDescriptors()
+        {
+            if(id!="orbital-league-v1")return;
+            var current=CreateOrbitalLeagueDefault();
+            foreach(var descriptor in current.descriptors)
+            {
+                if(Descriptor(descriptor.Path)!=null)continue;
+                descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
+                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
+            }
+            version=2;
+        }
+        static void BroadcastDescriptors(ProvingProfile p)
+        {
+            void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
+                =>p.Add(key,group,label,description,unit,min,max,step,value);
+            V("broadcast.screenWidth","broadcast","Ширина экрана","Ширина крупных настенных панелей без прохода.","m",2,7,.1f,4.8f);
+            V("broadcast.screenHeight","broadcast","Высота экрана","Высота панелей выше линии боя.","m",.8f,2.4f,.1f,1.7f);
+            V("broadcast.orbitRadius","broadcast","Радиус орбиты","Размер спокойной орбитальной графики.","m",.2f,.8f,.05f,.5f);
+            V("broadcast.orbitSpeed","broadcast","Скорость орбиты","Медленное вращение фона экрана.","deg/s",0,8,.1f,2);
+            V("broadcast.fanSpeed","broadcast","Скорость вентилятора","Медленное движение за закрытой решёткой.","deg/s",0,18,.5f,6);
+            V("broadcast.screenValue","broadcast","Яркость экранов","Пассивная яркость ниже игровых сигналов.","ratio",.05f,.5f,.01f,.21f);
+            V("broadcast.markWidth","broadcast","Ширина ориентиров","Крупная маркировка спавнов и подъёмов.","m",.05f,.3f,.01f,.12f);
+            V("broadcast.ventRadius","broadcast","Радиус вентилятора","Размер закрытого технического вентилятора.","m",.2f,.65f,.05f,.4f);
+            V("broadcast.spawnMarkHeight","broadcast","Высота номера спавна","Высота маркировки стартовой комнаты.","m",1,3,.1f,2.4f);
+            V("broadcast.servicePanelHeight","broadcast","Высота сервисной панели","Высота закрытой панели подвала.","m",.8f,2,.1f,1.6f);
         }
     }
 }

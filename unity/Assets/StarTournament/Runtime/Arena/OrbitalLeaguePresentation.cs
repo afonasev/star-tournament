@@ -15,12 +15,14 @@ namespace StarTournament.ProvingGround
         const int TextureSize=256;
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
-        Mesh cube; Material wall,floor,ceiling,trim,cyan,white,sign; Font signFont; ProvingProfile p;
+        readonly List<Transform> orbits=new List<Transform>(),fans=new List<Transform>();
+        Mesh cube; Material wall,floor,ceiling,trim,cyan,media,white,sign; Font signFont; ProvingProfile p;
         Color oldAmbient; AmbientMode oldMode;
         public int LocalLightCount {get;private set;}
         public string ProfileIdentity {get;private set;}
         public void Build(ArenaDefinition definition,ProvingProfile profile)
         {
+            profile.EnsureOrbitalLeagueDescriptors();
             if(profile.Validate().Count!=0)throw new ArgumentException("Invalid Orbital League art profile");
             p=profile;ProfileIdentity=p.Id+"@"+p.Version;
             oldAmbient=RenderSettings.ambientLight;oldMode=RenderSettings.ambientMode;
@@ -32,6 +34,7 @@ namespace StarTournament.ProvingGround
             ceiling=Surface("Service ceiling",p.Get("surface.wallValue")*p.Get("surface.ceilingValue"),false);
             trim=Flat("Anodized graphite",Palette("trim"));
             cyan=Flat("League cyan",Palette("cyan"));
+            media=Flat("Muted orbital horizon",Palette("cyan")*p.Get("broadcast.screenValue"));
             white=new Material(Shader.Find("StarTournament/OrbitalSurface")){name="Broad white luminaire"};white.SetColor("_Color",Palette("white")*p.Get("light.emission"));owned.Add(white);
             signFont=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             signFont.RequestCharactersInTexture("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 /",64,FontStyle.Normal);
@@ -56,7 +59,7 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,-4),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
-            HallMarkings();Labels();
+            HallMarkings();Labels();BroadcastDetails();
             // Fixed six-zone rig is a technical budget, not a per-fixture light spawn rule.
             for(int zone=0;zone<6;zone++)
             {
@@ -187,19 +190,109 @@ namespace StarTournament.ProvingGround
         }
         void Labels()
         {
-            Label("ORBITAL LEAGUE\nCOMBAT BOWL",Position("layout.label-0"),Quaternion.Euler(0,180,0),.85f);
+            // The original hall title is now part of the large, wall-mounted scoreboard.
             Label("01  /  UPPER ARENA",Position("layout.label-1"),Quaternion.identity,.7f);
             Label("B1\nARMOR\nCORRIDOR",Position("layout.label-2"),Quaternion.Euler(0,90,0),.7f);
             Label("B1\nLOWER\nTRANSIT",Position("layout.label-3"),Quaternion.Euler(0,-90,0),.7f);
-            int sector=0;
-            foreach(int x in new[]{-1,1})foreach(int z in new[]{-1,1})
-            {
-                sector++;Label("0"+sector+"\nREADY\nROOM",Position("layout.label-"+(sector+3)),Quaternion.Euler(0,x<0?90:-90,0),.8f);
-            }
+            // Spawn numbers use the large plaques below; avoid duplicate lettering behind them.
             Label("NORTH  /  02",Position("layout.label-8"),Quaternion.Euler(0,180,0));
             Label("SOUTH  /  04",Position("layout.label-9"),Quaternion.identity);
             Label("WEST  /  03",Position("layout.label-10"),Quaternion.Euler(0,90,0));
             Label("EAST  /  01",Position("layout.label-11"),Quaternion.Euler(0,-90,0));
+        }
+        void BroadcastDetails()
+        {
+            // All panels sit on continuous walls. They neither punch openings nor own gameplay state.
+            Screen("ORBITAL\nLEAGUE",Position("layout.broadcast-screen-0"),Quaternion.identity,0);
+            Screen("WEST  /  03",Position("layout.broadcast-screen-1"),Quaternion.Euler(0,-90,0),1);
+            Screen("NORTH  /  02",Position("layout.broadcast-screen-2"),Quaternion.identity,2);
+            Screen("NORTH  /  02",Position("layout.broadcast-screen-3"),Quaternion.identity,3);
+            // Emblem hangs within the hall ceiling silhouette, above players and the pickup.
+            Crest(Position("layout.broadcast-crest"),Quaternion.Euler(90,0,0),p.Get("broadcast.orbitRadius")*1.5f);
+            foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
+            {
+                int number=(sx<0?0:2)+(sz<0?1:2);
+                float x=sx*27.94f,z=sz*17;
+                float markHeight=p.Get("broadcast.spawnMarkHeight");
+                Box(trim,new Vector3(x,2.8f,z),new Vector3(Epsilon,markHeight,markHeight*1.15f),Quaternion.identity);
+                Box(cyan,new Vector3(x-sx*Epsilon*2,2.8f,z-markHeight*.45f),new Vector3(Epsilon,markHeight*.87f,p.Get("broadcast.markWidth")),Quaternion.identity);
+                Label("0"+number,new Vector3(x-sx*Epsilon*3,2.8f,z),Quaternion.Euler(0,sx<0?90:-90,0),.72f);
+            }
+            foreach(int sx in new[]{-1,1})
+            {
+                float x=sx*11,z=-sx*4;
+                // A single portal header follows the true ramp, with no extra apparent tread.
+                Box(cyan,new Vector3(x,5.2f,z),new Vector3(3.6f,p.Get("broadcast.markWidth"),Epsilon),Quaternion.identity);
+                Label(sx<0?"WEST RISE / 01":"EAST RISE / 02",new Vector3(x,5.48f,z),Quaternion.Euler(0,sx<0?90:-90,0),.68f);
+            }
+            for(int i=0;i<2;i++)BasementVent(Position("layout.broadcast-fan-"+i),Quaternion.Euler(0,-90,0));
+            foreach(float z in new[]{-6f,0f,6f})
+            {
+                Box(trim,new Vector3(2.59f,.4f,z),new Vector3(Epsilon,p.Get("broadcast.servicePanelHeight"),1.4f),Quaternion.identity);
+                Box(cyan,new Vector3(2.57f,.4f,z),new Vector3(Epsilon,p.Get("broadcast.markWidth"),1.2f),Quaternion.identity);
+            }
+        }
+        void Screen(string title,Vector3 position,Quaternion rotation,int motif)
+        {
+            float w=p.Get("broadcast.screenWidth"),h=p.Get("broadcast.screenHeight"),r=p.Get("broadcast.orbitRadius");
+            var face=position+rotation*Vector3.back*.035f;
+            Box(trim,position,new Vector3(w+.18f,h+.18f,.04f),rotation);
+            Box(floor,face,new Vector3(w,h,Epsilon),rotation);
+            // Static horizon and station sectors make the panels read as an orbital broadcast graphic.
+            Box(cyan,face+rotation*new Vector3(0,-h*.28f,-.012f),new Vector3(w*.86f,p.Get("broadcast.markWidth"),Epsilon),rotation);
+            for(int i=0;i<3;i++)Box(white,face+rotation*new Vector3(-w*.39f+i*.18f,-h*.38f,-.014f),new Vector3(.07f,.08f,Epsilon),rotation);
+            if(motif==1)
+            {
+                // West uses a diagonal track; north uses paired horizon rails.
+                Box(cyan,face+rotation*new Vector3(w*.27f,-.05f,-.015f),new Vector3(w*.35f,p.Get("broadcast.markWidth"),Epsilon),rotation*Quaternion.Euler(0,0,25));
+            }
+            else if(motif>1)
+            {
+                for(int i=0;i<2;i++)Box(cyan,face+rotation*new Vector3(w*.23f,.12f+i*.16f,-.015f),new Vector3(w*.3f,p.Get("broadcast.markWidth")*.55f,Epsilon),rotation);
+            }
+            var orbitCenter=face+rotation*new Vector3(-w*.26f,.05f,-.018f);
+            for(int i=0;i<18;i++)
+            {
+                float x0=-w*.44f+i*w*.047f,x1=x0+w*.047f;
+                float y0=-h*.12f+.13f*Mathf.Sin((x0+w*.44f)*Mathf.PI/w),y1=-h*.12f+.13f*Mathf.Sin((x1+w*.44f)*Mathf.PI/w);
+                Vector3 a=new Vector3(x0,y0,-.013f),b=new Vector3(x1,y1,-.013f);
+                Box(media,face+rotation*((a+b)*.5f),new Vector3(Vector3.Distance(a,b),p.Get("broadcast.markWidth")*.55f,Epsilon),rotation*Quaternion.Euler(0,0,Mathf.Atan2(y1-y0,x1-x0)*Mathf.Rad2Deg));
+            }
+            Crest(orbitCenter,rotation,r*(motif==0?1.15f:.8f));
+            Label(title,face+rotation*new Vector3(w*.12f,.12f,-.025f),rotation==Quaternion.identity?Quaternion.Euler(0,180,0):Quaternion.Euler(0,90,0),motif==0?.65f:.63f);
+            if(motif>0)Label("SECTOR 0"+(motif==1?3:2),face+rotation*new Vector3(w*.13f,-.25f,-.027f),rotation==Quaternion.identity?Quaternion.Euler(0,180,0):Quaternion.Euler(0,90,0),.48f);
+        }
+        void Crest(Vector3 position,Quaternion rotation,float radius)
+        {
+            var shapes=new List<CombineInstance>();
+            for(int i=0;i<24;i++)
+            {
+                float a=i*Mathf.PI*2/24;
+                shapes.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(new Vector3(Mathf.Cos(a)*radius,Mathf.Sin(a)*radius,0),Quaternion.Euler(0,0,a*Mathf.Rad2Deg+90),new Vector3(radius*.35f,p.Get("broadcast.markWidth"),Epsilon))});
+            }
+            var go=new GameObject("Slow orbital emblem");go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation;
+            var mesh=new Mesh{name="League orbit ring"};mesh.CombineMeshes(shapes.ToArray());owned.Add(mesh);
+            go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=cyan;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
+            orbits.Add(go.transform);
+            Box(white,position+rotation*Vector3.back*.01f,new Vector3(radius*.36f,radius*.36f,Epsilon),rotation*Quaternion.Euler(0,0,45));
+        }
+        void BasementVent(Vector3 position,Quaternion rotation)
+        {
+            float r=p.Get("broadcast.ventRadius");
+            Box(trim,position,new Vector3(r*2.6f,r*2.6f,Epsilon),rotation);
+            var shapes=new List<CombineInstance>();
+            for(int i=0;i<4;i++)shapes.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(Vector3.zero,Quaternion.Euler(0,0,i*90),new Vector3(r*1.6f,p.Get("broadcast.markWidth"),Epsilon))});
+            var go=new GameObject("Enclosed slow fan");go.transform.SetParent(transform,false);go.transform.localPosition=position+rotation*Vector3.back*.012f;go.transform.localRotation=rotation;
+            var mesh=new Mesh{name="Fan rotor"};mesh.CombineMeshes(shapes.ToArray());owned.Add(mesh);go.AddComponent<MeshFilter>().sharedMesh=mesh;
+            var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=media;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;fans.Add(go.transform);
+            for(int i=-2;i<=2;i++)Box(trim,position+rotation*new Vector3(0,i*r*.38f,-.026f),new Vector3(r*2.25f,p.Get("broadcast.markWidth")*.55f,Epsilon),rotation);
+        }
+        void Update()
+        {
+            if(p==null)return;
+            float dt=Time.unscaledDeltaTime;
+            foreach(var t in orbits)if(t)t.Rotate(0,0,p.Get("broadcast.orbitSpeed")*dt,Space.Self);
+            foreach(var t in fans)if(t)t.Rotate(0,0,p.Get("broadcast.fanSpeed")*dt,Space.Self);
         }
         static Mesh CubeMesh()
         {
