@@ -1,6 +1,6 @@
 {
-  "id": "vector-equipment-v1",
-  "reference": "add-vector-shotgun-and-armored-hands/assets/02-vector-approved-direction.png",
+  "id": "orbital-equipment-v2",
+  "reference": "add-vector-shotgun-and-armored-hands/assets/f1-02-orbital-refined.png",
   "authoringSource": "scripts/trooper/build_vector.py",
   "baselineRigCommit": "49878a337e98f999787b530b9a071ce6698f55cb",
   "units": "meters",
@@ -15,7 +15,8 @@
     "vector-muzzle-0",
     "vector-muzzle-1"
   ],
-  "materials": "shared ceramic/navy/titanium/woven glove/status; original generated 128px glove map",
+  "materials": "ceramic/navy/titanium; embedded woven color and tangent normal maps, sculpted surfaces and geometric seams",
   "lighting": "URP scene lighting; no gameplay light or occlusion",
-  "acceptance": "pending native Player and human visual acceptance"
+  "acceptance": "Native diagnostic and automated checks complete; human artistic acceptance pending",
+  "compatibility": "Vector manifest paths and muzzle node names retained as stable pipeline keys"
 }

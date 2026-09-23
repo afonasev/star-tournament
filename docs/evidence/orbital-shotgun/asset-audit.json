@@ -1,0 +1,64 @@
+{
+  "weapon": {
+    "sha256": "3909c71cfb695e90c69cb5fe34e24a32f3b6eb7509dcceae0d60c5dd0b187828",
+    "triangles": 74338,
+    "materials": [
+      "identity-vector-status",
+      "vector-bore",
+      "vector-ceramic",
+      "vector-chassis",
+      "vector-glove",
+      "vector-titanium"
+    ],
+    "clips": []
+  },
+  "arms": {
+    "sha256": "139351ea8544bed899cd81c1725223e3ca1262ba1b8f0371fec861ddf669e6b5",
+    "triangles": 136874,
+    "materials": [
+      "identity-vector-status",
+      "vector-bore",
+      "vector-ceramic",
+      "vector-chassis",
+      "vector-glove",
+      "vector-titanium"
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "weightedVertices": 37026
+  },
+  "body": {
+    "sha256": "5f1a9161743b7dad8f43a87b53c6b81bd65cbcb7f1fb953f44837d60d820df34",
+    "triangles": 105175,
+    "materials": [
+      "TECI_helmet",
+      "gear",
+      "identity-vector-status",
+      "jumpjet",
+      "material",
+      "pants",
+      "torso",
+      "vector-bore",
+      "vector-ceramic",
+      "vector-chassis",
+      "vector-glove",
+      "vector-titanium"
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ]
+  }
+}

@@ -4,42 +4,42 @@
     {
       "key": "world-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "b4fc2e7dac28de61295e435ab049de16c64f0780548b0ddb28f38732e1d262b5",
+      "sha256": "3909c71cfb695e90c69cb5fe34e24a32f3b6eb7509dcceae0d60c5dd0b187828",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "weapon-grip",
-      "source": "Original authored Vector; embedded equivalent in trooper derivatives"
+      "source": "Original authored Orbital refined; embedded equivalent in trooper derivatives"
     },
     {
       "key": "view-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "b4fc2e7dac28de61295e435ab049de16c64f0780548b0ddb28f38732e1d262b5",
+      "sha256": "3909c71cfb695e90c69cb5fe34e24a32f3b6eb7509dcceae0d60c5dd0b187828",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "camera-weapon-grip",
-      "source": "Original authored Vector; embedded equivalent in trooper derivatives"
+      "source": "Original authored Orbital refined; embedded equivalent in trooper derivatives"
     },
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "b602d979a948c168978d3967124060a3a15f4f9311ec3966bdfefc7c6d323afd",
+      "sha256": "5f1a9161743b7dad8f43a87b53c6b81bd65cbcb7f1fb953f44837d60d820df34",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Original Vector equipment + existing attributed Trooper rig/clips; build_vector.py"
+      "source": "Original Orbital equipment + existing attributed Trooper rig/clips; build_vector.py"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "68e9fecf4dd59c9fc42efe5221966264b358227aa152096aab200da6bcace9a4",
+      "sha256": "139351ea8544bed899cd81c1725223e3ca1262ba1b8f0371fec861ddf669e6b5",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Original Vector equipment + existing attributed Trooper rig/clips; build_vector.py"
+      "source": "Original Orbital equipment + existing attributed Trooper rig/clips; build_vector.py"
     },
     {
       "key": "speed-pickup",
