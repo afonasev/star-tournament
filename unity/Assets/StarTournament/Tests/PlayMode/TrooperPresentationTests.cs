@@ -25,6 +25,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
+        [UnityTest] public IEnumerator VectorMuzzlesAndParticlesRespectSeatClockAndLifetime()
+        {
+            yield return Load(2);
+            var view=ground.transform.Find("seat-camera-1/trooper-view");
+            var effect=view.GetComponent<VectorShotPresentation>();
+            Assert.That(effect.MuzzleCount,Is.EqualTo(2));
+            Assert.That(Vector3.Distance(effect.Muzzle(0),effect.Muzzle(1)),Is.GreaterThan(.01f));
+            Assert.That(view.GetComponentsInChildren<Transform>().Count(t=>t.name=="vector-armored-hands"),Is.EqualTo(1));
+            effect.Render(0);effect.Render(1);Assert.That(effect.LiveParticles,Is.Zero,"No accepted fire means no burst");
+            var before=ground.Session.Pose(0);
+            effect.Fire(2);effect.Render(2.02);Assert.That(effect.LiveParticles,Is.GreaterThan(0));
+            int frozen=effect.LiveParticles;effect.Render(2.02);Assert.That(effect.LiveParticles,Is.EqualTo(frozen));
+            Assert.That(view.GetComponentsInChildren<ParticleSystem>().All(p=>p.gameObject.layer==15),Is.True);
+            effect.Render(4);Assert.That(effect.LiveParticles,Is.Zero);
+            Assert.That(ground.Session.Pose(0).Position,Is.EqualTo(before.Position));
+        }
         [UnityTest] public IEnumerator ActualBonesMoveWithoutMovingGameplayAndFreezeAtSameClock()
         {
             yield return Load(2);

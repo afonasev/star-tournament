@@ -1,0 +1,91 @@
+[
+  {
+    "file": "trooper-body-animated.glb",
+    "sha256": "b602d979a948c168978d3967124060a3a15f4f9311ec3966bdfefc7c6d323afd",
+    "triangles": 61025,
+    "materials": [
+      "TECI_helmet",
+      "vector-chassis",
+      "vector-ceramic",
+      "vector-titanium",
+      "vector-bore",
+      "identity-vector-status",
+      "vector-glove",
+      "material",
+      "gear",
+      "jumpjet",
+      "pants",
+      "torso"
+    ],
+    "animations": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "muzzles": [
+      "vector-muzzle-0",
+      "vector-muzzle-1"
+    ]
+  },
+  {
+    "file": "trooper-arms-animated.glb",
+    "sha256": "68e9fecf4dd59c9fc42efe5221966264b358227aa152096aab200da6bcace9a4",
+    "triangles": 43524,
+    "materials": [
+      "vector-glove",
+      "vector-ceramic",
+      "vector-titanium",
+      "vector-chassis",
+      "vector-bore",
+      "identity-vector-status",
+      "vector-glove"
+    ],
+    "animations": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "muzzles": [
+      "vector-muzzle-0",
+      "vector-muzzle-1"
+    ]
+  },
+  {
+    "file": "vector-shotgun-lod0.glb",
+    "sha256": "b4fc2e7dac28de61295e435ab049de16c64f0780548b0ddb28f38732e1d262b5",
+    "triangles": 30268,
+    "materials": [
+      "vector-chassis",
+      "vector-ceramic",
+      "vector-titanium",
+      "vector-bore",
+      "identity-vector-status",
+      "vector-glove"
+    ],
+    "animations": [],
+    "muzzles": []
+  },
+  {
+    "file": "vector-shotgun-lod1.glb",
+    "sha256": "d30052fd8aec8126542c073d977d2f654bdaaa7aa8fe14364dad20cb84677a81",
+    "triangles": 16646,
+    "materials": [
+      "vector-chassis",
+      "vector-ceramic",
+      "vector-titanium",
+      "vector-bore",
+      "identity-vector-status",
+      "vector-glove"
+    ],
+    "animations": [],
+    "muzzles": []
+  }
+]

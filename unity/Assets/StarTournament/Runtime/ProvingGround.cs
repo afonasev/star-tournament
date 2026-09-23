@@ -200,6 +200,7 @@ namespace StarTournament.ProvingGround
                 if(reviewType==null) throw new InvalidOperationException("Development navigation review is not packaged");
                 gameObject.AddComponent(reviewType); Debug.Log("NATIVE_BOT_NAVIGATION_REVIEW_BOOTSTRAPPED");
             }
+            if (args.Contains("-vectorReview")) gameObject.AddComponent<VectorVisualReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
@@ -273,6 +274,7 @@ namespace StarTournament.ProvingGround
             body.transform.localScale=Vector3.one*(movement.Get("player.capsule.height")/1.8f);
             body.AddComponent<TrooperVisual>().Initialize(TrooperClips,trooper);
             ApplyIdentity(body,index); SetLayer(body,ownerSeat>=0?11+ownerSeat:0); bodies[index]=body;
+            body.AddComponent<VectorShotPresentation>().Initialize(movement);
         }
         void CreateView(int index,int participant,ProvingProfile movement,ProvingProfile trooper)
         {
@@ -289,6 +291,7 @@ namespace StarTournament.ProvingGround
             foreach(var renderer in view.GetComponentsInChildren<Renderer>(true))renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             view.AddComponent<TrooperVisual>().Initialize(TrooperClips,trooper,true);
             ApplyIdentity(view,participant);
+            view.AddComponent<VectorShotPresentation>().Initialize(movement);
             view.transform.localPosition=new Vector3(trooper.Get("view.x"),trooper.Get("view.y"),trooper.Get("view.z"));
             if (index == 0) cameraObject.AddComponent<AudioListener>();
         }

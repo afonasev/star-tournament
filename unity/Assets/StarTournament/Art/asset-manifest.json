@@ -3,41 +3,43 @@
   "entries": [
     {
       "key": "world-weapon",
-      "path": "Assets/StarTournament/Art/double-barrel-shotgun-lod0.glb",
-      "sha256": "7e0c178ee759dd0267dcce712f4c9587dc203294e29a7a1a2c417a9b24394834",
+      "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
+      "sha256": "b4fc2e7dac28de61295e435ab049de16c64f0780548b0ddb28f38732e1d262b5",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
-      "pivot": "weapon-grip"
+      "pivot": "weapon-grip",
+      "source": "Original authored Vector; embedded equivalent in trooper derivatives"
     },
     {
       "key": "view-weapon",
-      "path": "Assets/StarTournament/Art/first-person-shotgun-lod0.glb",
-      "sha256": "ea3ebcfebbe31d0a40c23cc6d3468e76f712bdaedaf63b404e0e3acb0f97e2ca",
+      "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
+      "sha256": "b4fc2e7dac28de61295e435ab049de16c64f0780548b0ddb28f38732e1d262b5",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
-      "pivot": "camera-weapon-grip"
+      "pivot": "camera-weapon-grip",
+      "source": "Original authored Vector; embedded equivalent in trooper derivatives"
     },
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "91f8e00e54a9c781ce826a1f5b66c8a6329de6f338d833f0568cb3b814c1ecc7",
+      "sha256": "b602d979a948c168978d3967124060a3a15f4f9311ec3966bdfefc7c6d323afd",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+      "source": "Original Vector equipment + existing attributed Trooper rig/clips; build_vector.py"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "e7d03b157bd5164f5197cc78bba88fe18ee9846a0e4d4a570d98327e1d381a16",
+      "sha256": "68e9fecf4dd59c9fc42efe5221966264b358227aa152096aab200da6bcace9a4",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "ART_LOLL trooper v2 / a47acfe + unity-trooper-shipping-v2"
+      "source": "Original Vector equipment + existing attributed Trooper rig/clips; build_vector.py"
     },
     {
       "key": "speed-pickup",
