@@ -16,9 +16,11 @@ namespace StarTournament.ProvingGround
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
         readonly List<Transform> orbits=new List<Transform>(),fans=new List<Transform>();
+        readonly List<Vector3> fixturePositions=new List<Vector3>();
         Mesh cube; Material wall,floor,ceiling,trim,cyan,media,white,sign; Font signFont; ProvingProfile p;
         Color oldAmbient; AmbientMode oldMode;
         public int LocalLightCount {get;private set;}
+        public int ShadowLightCount {get;private set;}
         public string ProfileIdentity {get;private set;}
         public void Build(ArenaDefinition definition,ProvingProfile profile)
         {
@@ -60,11 +62,18 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
             HallMarkings();Labels();BroadcastDetails();
-            // Fixed six-zone rig is a technical budget, not a per-fixture light spawn rule.
+            // Six shared zones select actual luminaires. A bounded subset casts shadows for all viewports.
             for(int zone=0;zone<6;zone++)
             {
-                var go=new GameObject("League zone fill");go.transform.SetParent(transform,false);go.transform.localPosition=Position("layout.fill-"+zone);
-                var l=go.AddComponent<Light>();l.type=LightType.Point;l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");l.shadows=LightShadows.None;LocalLightCount++;
+                Vector3 anchor=Position("layout.fill-"+zone);
+                Vector3 fixture=fixturePositions.OrderBy(v=>(v-anchor).sqrMagnitude).First();
+                var go=new GameObject("League ceiling light / "+zone);go.transform.SetParent(transform,false);go.transform.localPosition=fixture-Vector3.up*.12f;
+                go.transform.localRotation=Quaternion.Euler(90,0,0);
+                var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=120;l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");
+                bool casts=zone<Mathf.RoundToInt(p.Get("light.shadowCasters"));
+                l.shadows=casts?LightShadows.Soft:LightShadows.None;
+                if(casts){l.shadowStrength=p.Get("light.shadowStrength");l.shadowCustomResolution=Mathf.RoundToInt(p.Get("light.shadowResolution"));l.shadowBias=p.Get("light.shadowBias");l.shadowNormalBias=p.Get("light.shadowNormalBias");ShadowLightCount++;}
+                LocalLightCount++;
             }
             foreach(var entry in batches)
             {
@@ -162,6 +171,7 @@ namespace StarTournament.ProvingGround
         }
         void CeilingFixture(Vector3 pos,Quaternion rotation)
         {
+            fixturePositions.Add(pos);
             float w=p.Get("light.fixtureWidth"),len=p.Get("light.fixtureLength");
             Box(trim,pos,new Vector3(w+p.Get("light.fixtureFrame"),p.Get("light.fixtureDepth"),len+p.Get("light.fixtureFrame")),rotation);
             Box(white,pos-Vector3.up*.05f,new Vector3(w,.025f,len),rotation);

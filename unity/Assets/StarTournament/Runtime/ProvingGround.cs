@@ -25,6 +25,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile CombatProfile = ProvingProfile.CreateNativeCombatDefault();
         GameObject[] bodies = Array.Empty<GameObject>();
         readonly GameObject[] views = new GameObject[SeatInputCoordinator.SeatCount];
+        Light studioLight;
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], armor = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         LocalAction[] actions = new LocalAction[SeatInputCoordinator.SeatCount];
         LocalAction[] localActions = new LocalAction[SeatInputCoordinator.SeatCount];
@@ -144,9 +145,9 @@ namespace StarTournament.ProvingGround
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             AudioListener.volume = 0; // QA is muted, including all Player diagnostics.
             font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            var light = Owned("arena-light").AddComponent<Light>();
-            light.type = LightType.Directional; light.intensity = Profile.Get("presentation.lightIntensity");
-            light.transform.rotation = Quaternion.Euler(50, -30, 0); // Authored fixture light orientation.
+            studioLight = Owned("arena-light").AddComponent<Light>();
+            studioLight.type = LightType.Directional; studioLight.intensity = Profile.Get("presentation.lightIntensity");
+            studioLight.transform.rotation = Quaternion.Euler(50, -30, 0); // Authored fixture light orientation.
             var args=Environment.GetCommandLineArgs();int familyFlag=Array.IndexOf(args,"-arenaFamily");
             if(familyFlag>=0&&familyFlag+1<args.Length&&int.TryParse(args[familyFlag+1],out int family))ArenaProfile.Set("arena.family",family);
             bool environmentReview=DevelopmentNavigationReviewHandoff.TryParse(
@@ -273,6 +274,8 @@ namespace StarTournament.ProvingGround
             cameras[index].backgroundColor = new Color32(15, 22, 35, 255);
             var view = Instantiate(TrooperArmsPrefab,cameraObject.transform); view.name="trooper-view";
             SetLayer(view,15+index); views[index]=view;
+            // First-person arms are camera-local presentation, never a world silhouette.
+            foreach(var renderer in view.GetComponentsInChildren<Renderer>(true))renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             view.AddComponent<TrooperVisual>().Initialize(TrooperClips,trooper,true);
             ApplyIdentity(view,participant);
             view.transform.localPosition=new Vector3(trooper.Get("view.x"),trooper.Get("view.y"),trooper.Get("view.z"));
@@ -385,6 +388,8 @@ namespace StarTournament.ProvingGround
         static ProvingProfile Copy(ProvingProfile p) => JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(p));
         void BuildSelectedArena()
         {
+            OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
+            studioLight.intensity=combatBowlSelected?OrbitalLeagueProfile.Get("light.studioKey"):Profile.Get("presentation.lightIntensity");
             var frozen=combatBowlSelected ? CombatBowlCatalog.Freeze(ArenaProfile) : ArenaGenerator.Freeze(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile });
             arena.Build(frozen,Profile,OrbitalLeagueProfile);
         }
