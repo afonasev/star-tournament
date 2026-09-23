@@ -84,7 +84,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(horizontal.anchorMax,Is.EqualTo(new Vector2(1,.5f)));
                 Assert.That(panel.anchorMin,Is.EqualTo(count<3?new Vector2(.5f,1):new Vector2(.5f,.5f)));
                 Assert.That(panel.pivot,Is.EqualTo(new Vector2(.5f,1f)));
-                if(count>=3) Assert.That(panel.anchoredPosition.y,Is.EqualTo(-ground.Profile.Get("ui.centerTimerSeamGap")).Within(.01f));
+                if(count==3) Assert.That(panel.anchoredPosition.y,Is.EqualTo(-ground.Profile.Get("ui.centerTimerSeamGap")).Within(.01f));
+                if(count==4)
+                {
+                    Canvas.ForceUpdateCanvases();
+                    var timerCorners=new Vector3[4];var lineCorners=new Vector3[4];
+                    panel.GetWorldCorners(timerCorners);horizontal.GetWorldCorners(lineCorners);
+                    Assert.That(timerCorners[1].y,Is.EqualTo(lineCorners[0].y).Within(.01f),"Timer top touches the divider's lower edge");
+                }
                 if(count==3)
                 {
                     Canvas.ForceUpdateCanvases();

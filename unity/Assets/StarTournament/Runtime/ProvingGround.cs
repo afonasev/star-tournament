@@ -550,7 +550,9 @@ namespace StarTournament.ProvingGround
                 bool center=renderedCount>=3;
                 timerPanel.anchorMin=timerPanel.anchorMax=center?new Vector2(.5f,.5f):new Vector2(.5f,1f);
                 timerPanel.pivot=new Vector2(.5f,1f);
-                timerPanel.anchoredPosition=new Vector2(0,-Profile.Get(center?"ui.centerTimerSeamGap":"ui.fontSize"));
+                // The four-seat timer touches the lower edge of the centered divider.
+                float topInset=renderedCount==4?dividerWidth*.5f:Profile.Get(center?"ui.centerTimerSeamGap":"ui.fontSize");
+                timerPanel.anchoredPosition=new Vector2(0,-topInset);
             }
         }
         void StepConfiguration(string path,int direction)
