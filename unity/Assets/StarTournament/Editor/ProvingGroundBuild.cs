@@ -95,7 +95,7 @@ namespace StarTournament.ProvingGround.Editor
             EditorGUILayout.HelpBox("Профиль полигона. Диапазоны и validation используют один registry. Перезапустите Play после изменения.",MessageType.Info);
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
             showBowl=EditorGUILayout.Foldout(showBowl,"Combat Bowl authoring metadata (published revision remains frozen)");
-            foreach(var profile in new[]{ground.Profile,ground.ArenaProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
+            foreach(var profile in new[]{ground.Profile,ground.OrbitalLeagueProfile,ground.ArenaProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
             {
             EditorGUILayout.LabelField(profile.Id+" / v"+profile.Version,EditorStyles.boldLabel);
             foreach(var descriptor in profile.Descriptors)

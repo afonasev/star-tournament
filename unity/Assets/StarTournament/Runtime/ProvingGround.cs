@@ -126,6 +126,7 @@ namespace StarTournament.ProvingGround
         Text status;
         Button start, resume, rebind;
         public bool StartWithCombatBowl; public string CombatBowlReviewDirectory;
+        public ProvingProfile OrbitalLeagueProfile=ProvingProfile.CreateOrbitalLeagueDefault();
         public ProvingProfile CombatBowlAuthoring=CombatBowlCatalog.AuthoringProfile();
         Button arenaButton;
         bool combatBowlSelected;
@@ -218,13 +219,13 @@ namespace StarTournament.ProvingGround
             if(devices!=null)for(int seat=0;seat<devices.Length;seat++)if(input.IsHumanSeat(seat)&&!input.Assign(seat,devices[seat]))throw new ArgumentException("Invalid local device");
             Begin(devices==null);
         }
-        public void StartCombatReview(Gamepad[] pads)
+        public void StartCombatReview(Gamepad[] pads,bool backgroundDiagnostic=false)
         {
             if(phase!=Phase.Setup) Menu();
             SetSeatCount(pads.Length);
             input.Reset();
             for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
-            combatReview=true; Begin(false);
+            combatReview=true; Begin(backgroundDiagnostic);
         }
         public void PlaceCombatReviewSeat(int seat, Vector3 feet, float pitch,float yaw=0)
         {
@@ -381,7 +382,7 @@ namespace StarTournament.ProvingGround
         void BuildSelectedArena()
         {
             var frozen=combatBowlSelected ? CombatBowlCatalog.Freeze(ArenaProfile) : ArenaGenerator.Freeze(new ArenaGenerationRequest { Seed=1, GeneratorVersion=ArenaGenerator.FamiliesVersion, Profile=ArenaProfile });
-            arena.Build(frozen,Profile);
+            arena.Build(frozen,Profile,OrbitalLeagueProfile);
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
         void CreateMatch(bool repeating)
