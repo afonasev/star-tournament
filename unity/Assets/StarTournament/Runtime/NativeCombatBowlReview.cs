@@ -33,12 +33,21 @@ namespace StarTournament.ProvingGround
             for(int frame=0;frame<360;frame++){yield return null;if(!ground.Running)throw new InvalidOperationException("Review paused during timing");samples.Add(Time.unscaledDeltaTime*1000);}
             samples.Sort();
             File.WriteAllText(Path.Combine(directory,"performance.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),width=Screen.width,height=Screen.height,localLights=6,note="Diagnostic on current Mac; four native cameras, scripted stationary views, vsync/frame cap included. Not reference hardware acceptance."},true));
-            // Park actors outside the architectural shots after the gameplay readability capture.
-            for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
             // Full-screen architectural views are real Player renders; no wall or roof is hidden.
             var reviewCameras=ground.GetComponentsInChildren<Camera>();var reviewCanvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var c in reviewCameras)c.enabled=false;foreach(var c in reviewCanvases)c.enabled=false;
             var artCameraObject=new GameObject("Orbital architectural capture");var artCamera=artCameraObject.AddComponent<Camera>();artCamera.fieldOfView=72;artCamera.nearClipPlane=.05f;
+            ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
+            artCamera.transform.position=new Vector3(1.5f,6.5f,-6.5f);artCamera.transform.LookAt(new Vector3(0,5,-3));yield return Capture("16-live-hall-opponent");
+            var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>();
+            var shadowModes=shadowLights.Select(light=>light.shadows).ToArray();
+            foreach(var light in shadowLights)light.shadows=LightShadows.None;
+            yield return Capture("16a-hall-shadow-disabled-diagnostic");
+            for(int light=0;light<shadowLights.Length;light++)shadowLights[light].shadows=shadowModes[light];
+            ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,-3),0,180);
+            artCamera.transform.position=new Vector3(0,1,-7);artCamera.transform.LookAt(new Vector3(0,0,-3));yield return Capture("17-live-basement-opponent");
+            // Park actors outside the architectural shots after the gameplay readability capture.
+            for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(26,.6f,-11-seat*2),0,180);
             var positions=new[]{new Vector3(0,5.65f,-6.8f),new Vector3(0,.45f,-5.7f),new Vector3(-26,2.25f,-12),new Vector3(-16,1.65f,-7),new Vector3(-9,3.8f,4),new Vector3(-10,1.65f,17),new Vector3(10,3.8f,-4),new Vector3(-17,2.4f,-3),new Vector3(-25,2.2f,-16),new Vector3(-1.3f,1.1f,-5)};
             var targets=new[]{new Vector3(0,5.4f,3),new Vector3(0,.6f,7),new Vector3(-20,1.6f,-12),new Vector3(-16,1.65f,6),new Vector3(-4,5.6f,4),new Vector3(-2,1.65f,13),new Vector3(5,5.6f,-4),new Vector3(-19.96f,2.6f,0),new Vector3(-27.94f,2.8f,-17),new Vector3(-2.59f,1.3f,-5)};
             var names=new[]{"06-hall","07-basement","08-spawn","09-west-flank","10-west-rise","11-north-flank","12-east-rise","13-west-screen-oblique","14-spawn-marking","15-enclosed-fan"};
