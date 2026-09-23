@@ -5,6 +5,11 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class ArmorPickupTests
     {
+        [Test] public void ArmorPickupSilhouetteIsVerticalAboveItsSupport()
+        {
+            var normal=ProvingGround.ArmorPickupSilhouetteLocalRotation*Vector3.up;
+            Assert.That(Mathf.Abs(Vector3.Dot(normal,Vector3.up)),Is.LessThan(.001f));
+        }
         [Test] public void FullArmorConsumesPickupAndItReturnsOnExactCooldown()
         {
             var profile=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p1",profile);life.GrantArmor(100);
