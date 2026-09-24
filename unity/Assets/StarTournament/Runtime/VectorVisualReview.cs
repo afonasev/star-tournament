@@ -23,6 +23,7 @@ namespace StarTournament.ProvingGround
             var roster=NativeMatchRoster.Ffa(2);
             var composition=new NativeMatchComposition(roster,new[]{new NativeParticipantInfo(NativeParticipantKind.LocalHuman,"Игрок 1",NativeStandingsView.Palette[0]),new NativeParticipantInfo(NativeParticipantKind.DiagnosticFixture,"Fixture",NativeStandingsView.Palette[1])},new[]{0});
             ground.StartParticipantReview(composition);yield return new WaitForSeconds(.2f);
+            if(!ground.transform.Find("seat-camera-1/trooper-view"))throw new InvalidOperationException("Equipment review did not create a first-person view");
             var anchor=ground.Session.Pose(0).Position;
             ground.PlaceCombatReviewSeat(0,anchor,0,45);yield return new WaitForSeconds(.2f);
             yield return Capture("01-idle");
@@ -35,12 +36,14 @@ namespace StarTournament.ProvingGround
             ground.Session.Tick(new LocalAction[2],.14f);ground.SendMessage("LateUpdate");
             yield return Capture("03-smoke");
             ground.Session.Tick(new LocalAction[2],.5f);ground.SendMessage("LateUpdate");
-            yield return Capture("04-settled");ground.enabled=true;
+            yield return Capture("04-settled");
+            ground.Session.Tick(new[]{new LocalAction{Move=new Vector2(0,1)},new LocalAction()},.1f);ground.SendMessage("LateUpdate");
+            yield return Capture("06-motion");ground.enabled=true;
             ground.StartCombatReview(pads,true);yield return new WaitForSeconds(.2f);
             anchor=ground.Session.Pose(0).Position;
             ground.PlaceCombatReviewSeat(0,anchor,0,0);ground.PlaceCombatReviewSeat(1,anchor+Vector3.forward*2,0,180);
             yield return new WaitForSeconds(.3f);yield return Capture("05-two-seats-world");
-            File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"DIAGNOSTIC_NOT_ACCEPTANCE\",\"muted\":true,\"profile\":\"unity-proving-ground-v1@1\",\"hands\":\"orbital-v2\"}");
+            File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"DIAGNOSTIC_NOT_ACCEPTANCE\",\"muted\":true,\"profile\":\"unity-proving-ground-v1@1\",\"hands\":\"orbital-v3-f2\"}");
             Debug.Log("VECTOR_REVIEW_COMPLETE "+directory);
         }
         IEnumerator Capture(string name){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return null;}

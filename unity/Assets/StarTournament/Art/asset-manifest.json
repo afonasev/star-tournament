@@ -4,42 +4,42 @@
     {
       "key": "world-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "3909c71cfb695e90c69cb5fe34e24a32f3b6eb7509dcceae0d60c5dd0b187828",
+      "sha256": "c916d125071117c749c0319163c7bdf2285a159cf4de8d6740a014cab16e6a8e",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "weapon-grip",
-      "source": "Original authored Orbital refined; embedded equivalent in trooper derivatives"
+      "source": "Original authored Orbital F2 shells; embedded equivalent in trooper derivatives"
     },
     {
       "key": "view-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "3909c71cfb695e90c69cb5fe34e24a32f3b6eb7509dcceae0d60c5dd0b187828",
+      "sha256": "c916d125071117c749c0319163c7bdf2285a159cf4de8d6740a014cab16e6a8e",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "camera-weapon-grip",
-      "source": "Original authored Orbital refined; embedded equivalent in trooper derivatives"
+      "source": "Original authored Orbital F2 shells; embedded equivalent in trooper derivatives"
     },
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "5f1a9161743b7dad8f43a87b53c6b81bd65cbcb7f1fb953f44837d60d820df34",
+      "sha256": "52879043a61d61357dbc568c458a7141da3b80c6f540d7ec6950e6631c5c8edf",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Original Orbital equipment + existing attributed Trooper rig/clips; build_vector.py"
+      "source": "Orbital F2 armor + attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py and orbital_hands.py"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "139351ea8544bed899cd81c1725223e3ca1262ba1b8f0371fec861ddf669e6b5",
+      "sha256": "f1ccde06de7ad1cd5ccf9fb170758b2a36873305ec8be8959b09bfcd55fffaaf",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Original Orbital equipment + existing attributed Trooper rig/clips; build_vector.py"
+      "source": "Orbital F2 armor + attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py and orbital_hands.py"
     },
     {
       "key": "speed-pickup",

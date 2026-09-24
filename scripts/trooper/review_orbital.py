@@ -1,8 +1,8 @@
 """Read exported Orbital GLBs, audit contracts, render real asset and articulated hands."""
 import bpy,json,hashlib,math
 from pathlib import Path
-from mathutils import Vector
-ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'docs/evidence/orbital-shotgun';OUT.mkdir(parents=True,exist_ok=True)
+from mathutils import Vector,Quaternion
+ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'docs/evidence/orbital-f2';OUT.mkdir(parents=True,exist_ok=True)
 report={}
 def scene():
  s=bpy.context.scene;s.render.engine='CYCLES';s.cycles.samples=32
@@ -20,6 +20,7 @@ for kind in ['weapon','arms','body']:
  file='vector-shotgun-lod0.glb' if kind=='weapon' else 'trooper-'+kind+'-animated.glb'
  path=ART/file;bpy.ops.import_scene.gltf(filepath=str(path));s=scene();meshes=[o for o in s.objects if o.type=='MESH']
  triangles=0
+ assert all(math.isfinite(c) for o in meshes for v in o.data.vertices for c in v.co), 'Nonfinite asset geometry'
  for o in meshes:o.data.calc_loop_triangles();triangles+=len(o.data.loop_triangles)
  report[kind]={'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'triangles':triangles,'materials':sorted({m.name for o in meshes for m in o.data.materials if m}),'clips':sorted(a.name for a in bpy.data.actions)}
  if kind=='weapon':
@@ -30,6 +31,17 @@ for kind in ['weapon','arms','body']:
  if kind=='body':continue
  for track in rig.animation_data.nla_tracks:track.mute=True
  action=bpy.data.actions['aim'];rig.animation_data.action=action;rig.animation_data.action_slot=action.slots[0];a,b=action.frame_range;s.frame_set(int(a+(b-a)*.25));bpy.context.view_layer.update()
+ # Mirror the authored additive native support-grip correction, using right-handed Blender axes.
+ rig.animation_data.action=None
+ handbone=rig.data.bones['LeftHand']
+ axis=handbone.matrix_local.to_3x3().inverted()@(rig.data.bones['LeftMiddleProximal'].head_local-handbone.head_local).normalized()
+ rig.pose.bones['LeftHand'].rotation_quaternion @= Quaternion(axis,math.radians(55))
+ row=(rig.data.bones['LeftLittleProximal'].head_local-rig.data.bones['LeftIndexProximal'].head_local).normalized()
+ for digit in ['Thumb','Index','Middle','Ring','Little']:
+  for segment in ['Proximal','Intermediate','Distal']:
+   name='Left'+digit+segment;axis=rig.data.bones[name].matrix_local.to_3x3().inverted()@row
+   rig.pose.bones[name].rotation_quaternion @= Quaternion(axis,math.radians(5 if digit=='Thumb' else 12))
+ bpy.context.view_layer.update()
  gun=bpy.data.objects['weapon:joined'];center=gun.matrix_world@Vector((0,-.4,.1))
  camera(s,center,(.7,-.8,.6),.67);render(s,'hands-and-weapon')
  hand=rig.matrix_world@rig.pose.bones['LeftHand'].head

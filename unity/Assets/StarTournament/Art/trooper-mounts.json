@@ -8,11 +8,11 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "5f1a9161743b7dad8f43a87b53c6b81bd65cbcb7f1fb953f44837d60d820df34"
+    "sha256": "52879043a61d61357dbc568c458a7141da3b80c6f540d7ec6950e6631c5c8edf"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "139351ea8544bed899cd81c1725223e3ca1262ba1b8f0371fec861ddf669e6b5"
+    "sha256": "f1ccde06de7ad1cd5ccf9fb170758b2a36873305ec8be8959b09bfcd55fffaaf"
   },
   "clips": [
     "idle",
@@ -1297,5 +1297,5 @@
   },
   "maxTextureDimension": 1024,
   "rootMotion": "death skeleton Root only; applyRootMotion=false on visual Animator; motor authoritative",
-  "equipment": "orbital-equipment-v2; original rig/grip motion with replacement first-person gloves and gauntlets"
+  "equipment": "orbital-equipment-v3-f2; anatomical surface authoring, original rig motion with replacement first-person gloves and gauntlets"
 }

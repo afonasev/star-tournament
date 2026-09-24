@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         AnimationMixerPlayable mixer;
         AnimationClipPlayable[] playable;
         ProvingProfile profile;
+        OrbitalGripPose equipmentGrip;
         readonly double[] starts=new double[7]; // Fixed clip contract, not tunable gameplay data.
         readonly float[] weights=new float[7], transitionFrom=new float[7];
         double transitionAt;
@@ -36,6 +37,7 @@ namespace StarTournament.ProvingGround
             animator.runtimeAnimatorController=null; animator.applyRootMotion=false;
             animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
             animator.Rebind();
+            equipmentGrip=new OrbitalGripPose(animator.transform);
             graph=PlayableGraph.Create("trooper-presentation"); graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
             mixer=AnimationMixerPlayable.Create(graph,clips.Length);
             playable=new AnimationClipPlayable[clips.Length];
@@ -95,6 +97,7 @@ namespace StarTournament.ProvingGround
             }
             if(immediate) Array.Copy(weights,transitionFrom,weights.Length);
             graph.Evaluate(0);
+            if(!corpse)equipmentGrip?.Apply(profile);
         }
         public void Release()
         {

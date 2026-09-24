@@ -297,6 +297,10 @@ namespace StarTournament.ProvingGround
             ApplyIdentity(view,participant);
             view.AddComponent<VectorShotPresentation>().Initialize(movement);
             view.transform.localPosition=new Vector3(trooper.Get("view.x"),trooper.Get("view.y"),trooper.Get("view.z"));
+            var fillObject=new GameObject("equipment-fill");fillObject.transform.SetParent(cameraObject.transform,false);
+            var fill=fillObject.AddComponent<Light>();fill.type=LightType.Point;
+            fill.intensity=trooper.Get("view.fillIntensity");fill.range=trooper.Get("view.fillRange");
+            fill.cullingMask=1<<(15+index);fill.shadows=LightShadows.None;
             if (index == 0) cameraObject.AddComponent<AudioListener>();
         }
         NativeMatchComposition HumanComposition(NativeMatchRoster roster,bool swapped)

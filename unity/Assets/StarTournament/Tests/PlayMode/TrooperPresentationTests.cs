@@ -76,6 +76,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<bones.Length;i++)Assert.That(Quaternion.Angle(death[i],bones[i].localRotation),Is.LessThan(.01f));
             }
         }
+        [UnityTest] public IEnumerator OrbitalGripDoesNotAccumulateAcrossFrozenSamples()
+        {
+            yield return Load(2);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var bones=visual.GetComponentsInChildren<Transform>().Where(t=>t.name=="LeftHand"||t.name=="LeftIndexProximal").ToArray();
+            visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+            var rotations=bones.Select(t=>t.localRotation).ToArray();
+            for(int sample=0;sample<5;sample++)visual.Render(.25,Vector3.zero,100,1);
+            for(int i=0;i<bones.Length;i++)Assert.That(Quaternion.Angle(rotations[i],bones[i].localRotation),Is.LessThan(.01f));
+        }
         [UnityTest] public IEnumerator DeathRespawnAndRepeatClearViewAndCorpseState()
         {
             yield return Load(3);
@@ -106,6 +116,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 ground.StartCombatReview(pads.Take(count).ToArray());yield return null;
                 Assert.That(ground.GetComponentsInChildren<TrooperVisual>().Count(v=>v.gameObject.activeInHierarchy),Is.EqualTo(count*2));
                 var cams=ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled).ToArray();
+                var fills=ground.GetComponentsInChildren<Light>().Where(l=>l.name=="equipment-fill").ToArray();
+                Assert.That(fills.Length,Is.EqualTo(count));
+                for(int i=0;i<count;i++)Assert.That(fills[i].cullingMask,Is.EqualTo(1<<(15+i)));
                 for(int i=0;i<count;i++)for(int j=0;j<count;j++)
                 {
                     Assert.That((cams[i].cullingMask&(1<<(15+j)))!=0,Is.EqualTo(i==j));

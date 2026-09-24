@@ -1,0 +1,73 @@
+{
+  "vector-shotgun-lod0.glb": {
+    "sha256": "c916d125071117c749c0319163c7bdf2285a159cf4de8d6740a014cab16e6a8e",
+    "triangles": 128570,
+    "embeddedImages": 3,
+    "normalMappedMaterials": [
+      "vector-ceramic",
+      "vector-glove"
+    ],
+    "skinJoints": [],
+    "clips": []
+  },
+  "vector-shotgun-lod1.glb": {
+    "sha256": "9e363e415c0a0ea74c208d8649b445ab28b721b2ad5b163af9fc664594761dee",
+    "triangles": 70713,
+    "embeddedImages": 3,
+    "normalMappedMaterials": [
+      "vector-ceramic",
+      "vector-glove"
+    ],
+    "skinJoints": [],
+    "clips": []
+  },
+  "trooper-arms-animated.glb": {
+    "sha256": "f1ccde06de7ad1cd5ccf9fb170758b2a36873305ec8be8959b09bfcd55fffaaf",
+    "triangles": 208238,
+    "embeddedImages": 7,
+    "normalMappedMaterials": [
+      "material",
+      "vector-glove",
+      "vector-ceramic"
+    ],
+    "skinJoints": [
+      57
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ]
+  },
+  "trooper-body-animated.glb": {
+    "sha256": "52879043a61d61357dbc568c458a7141da3b80c6f540d7ec6950e6631c5c8edf",
+    "triangles": 159327,
+    "embeddedImages": 27,
+    "normalMappedMaterials": [
+      "TECI_helmet",
+      "vector-ceramic",
+      "vector-glove",
+      "material",
+      "gear",
+      "jumpjet",
+      "pants",
+      "torso"
+    ],
+    "skinJoints": [
+      57
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ]
+  }
+}
