@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=6};
+            var p=new ProvingProfile{id="orbital-league-v1",version=9};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
@@ -29,6 +29,9 @@ namespace StarTournament.ProvingGround
             V("light.emission","lighting","Свечение панели","Белые светильники без отдельной realtime-тени.","multiplier",.5f,3,.1f,2.3f);
             V("light.fill","lighting","Рассеянный свет","Читаемость между локальными световыми пятнами.","ratio",.15f,1,.05f,.25f);
             V("light.intensity","lighting","Локальный свет","Сила ограниченного набора потолочных источников.","intensity",0,20,.5f,16f);
+            V("light.fixtureContribution","lighting","Свет каждой панели","Дополнительный локальный свет от каждой видимой потолочной панели без новой карты теней.","ratio",0,1,.05f,.5f);
+            V("light.fixtureRange","lighting","Дальность света панели","Компактное световое пятно под каждой панелью без лишнего перекрытия соседних источников.","m",4,12,.5f,6.5f);
+            V("light.fixtureSurfaceReach","lighting","Достижение поверхности","Запас дальности для панелей над нижним этажом: луч сохраняет заметное пятно на ближайшей поверхности.","ratio",1,1.5f,.05f,1.25f);
             V("light.studioKey","lighting","Общий направленный свет","Опорный свет для читаемой тени игрока во всех зонах.","intensity",.1f,2,.05f,.6f);
             V("light.keyShadowStrength","lighting","Тень игрока","Контраст общего мягкого света под игроком и крупной архитектурой.","ratio",0,1,.05f,.85f);
             V("light.range","lighting","Радиус света","Зона локального освещения под потолочной панелью.","m",3,16,.5f,10);
@@ -82,7 +85,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=5;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=8;
             p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
             var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
@@ -184,7 +187,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=ring?5:6;
+            version=ring?8:9;
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

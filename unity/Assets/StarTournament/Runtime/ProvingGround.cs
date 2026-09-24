@@ -277,8 +277,27 @@ namespace StarTournament.ProvingGround
             // Shipping recipe has a measured 1.8m rest height and feet origin; never normalize animated bounds.
             body.transform.localScale=Vector3.one*(movement.Get("player.capsule.height")/1.8f);
             body.AddComponent<TrooperVisual>().Initialize(TrooperClips,trooper);
-            ApplyIdentity(body,index); SetLayer(body,ownerSeat>=0?11+ownerSeat:0); bodies[index]=body;
+            ApplyIdentity(body,index); SetLayer(body,ownerSeat>=0?11+ownerSeat:0);
+            if(ownerSeat>=0)CreateOwnShadowProxy(body);
+            bodies[index]=body;
             body.AddComponent<VectorShotPresentation>().Initialize(movement);
+        }
+        static void CreateOwnShadowProxy(GameObject body)
+        {
+            // Owner cameras hide the third-person body layer. A shadow-only skin on the world
+            // layer reuses its animated bones, so the player sees the real silhouette on the floor.
+            // This is renderer routing only: no duplicate motor, animator or collider is created.
+            foreach(var source in body.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if(!source.sharedMesh)continue;
+                var go=new GameObject("own-shadow-proxy");go.transform.SetParent(source.transform,false);go.layer=0;
+                var proxy=go.AddComponent<SkinnedMeshRenderer>();
+                proxy.sharedMesh=source.sharedMesh;proxy.sharedMaterials=source.sharedMaterials;
+                proxy.bones=source.bones;proxy.rootBone=source.rootBone;proxy.localBounds=source.localBounds;
+                proxy.updateWhenOffscreen=true;
+                proxy.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                proxy.receiveShadows=false;
+            }
         }
         void CreateView(int index,int participant,ProvingProfile movement,ProvingProfile trooper)
         {

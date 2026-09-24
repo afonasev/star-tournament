@@ -3,22 +3,23 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Explicit development capture. Diagnostic framing constants never enter gameplay state.</summary>
     public sealed class NativeCombatBowlReview : MonoBehaviour
     {
-        ProvingGround ground; string directory;Gamepad[] pads;float reviewTimeScale=1;
+        ProvingGround ground; string directory;float reviewTimeScale=1;
         IEnumerator Start()
         {
             ground=GetComponent<ProvingGround>();directory=ground.CombatBowlReviewDirectory;Directory.CreateDirectory(directory);AudioListener.volume=0;Application.runInBackground=true;
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             yield return Capture("01-setup");
-            pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();var roster=NativeMatchRoster.Ffa(8);
+            var roster=NativeMatchRoster.Ffa(8);
             var metadata=Enumerable.Range(0,8).Select(i=>new NativeParticipantInfo(i<4?NativeParticipantKind.LocalHuman:NativeParticipantKind.Bot,i<4?"Игрок "+(i+1):"Бот "+(i-3),NativeParticipantColors.For(i),i<4?-1:1)).ToArray();
-            ground.StartBotReview(new NativeMatchComposition(roster,metadata,new[]{0,1,2,3}),20260923,pads);
+            // A capture owns its scripted camera poses; diagnostic mode keeps the review independent
+            // of macOS cursor focus while another native Player is open.
+            ground.StartBotReview(new NativeMatchComposition(roster,metadata,new[]{0,1,2,3}),20260923);
             if(!ground.Running)throw new InvalidOperationException("R7 review could not start match");
             yield return Capture("02-eight-participants-four-viewports");
             ground.PlaceCombatReviewSeat(0,new Vector3(-4.5f,4,0),0,90);
@@ -32,15 +33,41 @@ namespace StarTournament.ProvingGround
             playerCameras[0].rect=new Rect(0,0,1,1);yield return Capture("03a-single-viewport");
             for(int i=0;i<playerCameras.Length;i++){playerCameras[i].rect=oldRects[i];playerCameras[i].enabled=true;}
             var samples=new System.Collections.Generic.List<float>();
-            for(int frame=0;frame<360;frame++){yield return null;if(!ground.Running)throw new InvalidOperationException("Review paused during timing");samples.Add(Time.unscaledDeltaTime*1000);}
+            int unfocusedFrames=0;
+            for(int frame=0;frame<360;frame++){yield return null;if(!ground.Running)throw new InvalidOperationException("Review paused during timing");if(!Application.isFocused)unfocusedFrames++;samples.Add(Time.unscaledDeltaTime*1000);}
             samples.Sort();
-            File.WriteAllText(Path.Combine(directory,"performance.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),width=Screen.width,height=Screen.height,localLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().LocalLightCount,note="Diagnostic on current Mac; four native cameras, scripted stationary views, vsync/frame cap included. Not reference hardware acceptance."},true));
+            File.WriteAllText(Path.Combine(directory,"performance.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,unfocusedFrames=unfocusedFrames,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),width=Screen.width,height=Screen.height,localLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().LocalLightCount,note="Diagnostic on current Mac; four native cameras, scripted stationary views, vsync/frame cap included. Not reference hardware acceptance."},true));
+            var budgetFixtureLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>()
+                .Where(light=>light.name.StartsWith("League fixture light /",StringComparison.Ordinal)).ToArray();
+            foreach(var light in budgetFixtureLights)light.enabled=false;
+            for(int frame=0;frame<30;frame++)yield return null; // Let renderer settle after changing the light set.
+            samples.Clear();unfocusedFrames=0;
+            for(int frame=0;frame<360;frame++){yield return null;if(!ground.Running)throw new InvalidOperationException("Review paused during fixture budget timing");if(!Application.isFocused)unfocusedFrames++;samples.Add(Time.unscaledDeltaTime*1000);}
+            samples.Sort();
+            File.WriteAllText(Path.Combine(directory,"performance-fixtures-disabled.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,unfocusedFrames=unfocusedFrames,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],allocatedMemoryBytes=UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),width=Screen.width,height=Screen.height,localLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().LocalLightCount-budgetFixtureLights.Length,note="Same Player session, four native cameras and scripted poses as performance.json; only fixture lights disabled for paired diagnostic."},true));
+            foreach(var light in budgetFixtureLights)light.enabled=true;
             // Full-screen architectural views are real Player renders; no wall or roof is hidden.
             var reviewCameras=ground.GetComponentsInChildren<Camera>();var reviewCanvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var c in reviewCameras)c.enabled=false;foreach(var c in reviewCanvases)c.enabled=false;
             var artCameraObject=new GameObject("Orbital architectural capture");var artCamera=artCameraObject.AddComponent<Camera>();artCamera.fieldOfView=72;artCamera.nearClipPlane=.05f;
-            while(ground.Session.Life(1).Dead)yield return null;
+            while(ground.Session.Life(0).Dead||ground.Session.Life(1).Dead)yield return null;
             reviewTimeScale=Time.timeScale;Time.timeScale=0;
+            var ownCamera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var ownShadowProxies=ground.transform.Find("player-1/trooper-presentation")
+                .GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                .Where(renderer=>renderer.name=="own-shadow-proxy").ToArray();
+            artCamera.cullingMask=ownCamera.cullingMask;artCamera.fieldOfView=ownCamera.fieldOfView;
+            foreach(int yaw in new[]{0,90,180,270})
+            {
+                ground.PlaceCombatReviewSeat(0,new Vector3(0,4,-3),70,yaw);
+                yield return null;
+                artCamera.transform.SetPositionAndRotation(ownCamera.transform.position,ownCamera.transform.rotation);
+                yield return Capture("03b-own-shadow-yaw-"+yaw);
+                foreach(var proxy in ownShadowProxies)proxy.enabled=false;
+                yield return Capture("03c-own-shadow-disabled-yaw-"+yaw);
+                foreach(var proxy in ownShadowProxies)proxy.enabled=true;
+            }
+            artCamera.cullingMask=~0;artCamera.fieldOfView=72;
             // Park other live participants outside this paired diagnostic frame; the eight-player gameplay capture above is untouched.
             for(int seat=0;seat<ground.Session.ParticipantCount;seat++)
                 if(seat!=1)ground.PlaceCombatReviewSeat(seat,new Vector3(30,4,20-seat*1.5f),0,180);
@@ -51,12 +78,28 @@ namespace StarTournament.ProvingGround
             yield return null;
             artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
             var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>()
-                .OrderBy(light=>int.Parse(light.name.Split('/').Last().Trim())).ToArray();
+                .OrderBy(light=>light.name.StartsWith("League ceiling light /",StringComparison.Ordinal)?0:1)
+                .ThenBy(light=>int.Parse(light.name.Split('/').Last().Trim())).ToArray();
             var studio=ground.GetComponentsInChildren<Light>().First(light=>light.type==LightType.Directional);
             var renderers=ground.GetComponentsInChildren<Renderer>(true);
+            var lighting=ground.GetComponentInChildren<OrbitalLeaguePresentation>();
+            var auxiliaryLights=shadowLights.Where(light=>light.name.StartsWith("League fixture light /",StringComparison.Ordinal)).ToArray();
+            // A lower-floor lamp needs its own visible pool, not only a ray that reaches a collider.
+            var lowerFloorLamp=auxiliaryLights.Single(light=>light.name=="League fixture light / 8");
+            var lampPosition=lowerFloorLamp.transform.position;
+            artCamera.transform.position=new Vector3(lampPosition.x,2,lampPosition.z-8);
+            artCamera.transform.LookAt(new Vector3(lampPosition.x,2.8f,lampPosition.z));
+            yield return Capture("08b-lower-floor-fixture-on");
+            lowerFloorLamp.enabled=false;
+            yield return Capture("08c-lower-floor-fixture-off");
+            lowerFloorLamp.enabled=true;
+            int surfaceMask=(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer);
             File.WriteAllText(Path.Combine(directory,"lighting-diagnostic.json"),JsonUtility.ToJson(new LightingDiagnostic{
                 pipeline=UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline?.name,
                 qualityShadows=QualitySettings.shadows.ToString(),
+                fixtures=lighting.FixtureCount,fixtureLights=lighting.FixtureLightCount,
+                fixtureRaysHit=auxiliaryLights.Count(light=>Physics.Raycast(light.transform.position,light.transform.forward,
+                    light.range,surfaceMask,QueryTriggerInteraction.Ignore)),
                 casterRenderers=renderers.Count(renderer=>renderer.shadowCastingMode!=UnityEngine.Rendering.ShadowCastingMode.Off),
                 receiverRenderers=renderers.Count(renderer=>renderer.receiveShadows),
                 skinnedShadowPasses=renderers.OfType<SkinnedMeshRenderer>().Select(renderer=>{
@@ -123,6 +166,13 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<positions.Length;i++)
             {
                 artCamera.transform.position=positions[i];artCamera.transform.LookAt(targets[i]);yield return Capture(names[i]);
+                if(i==2)
+                {
+                    var fixtureLights=shadowLights.Where(light=>light.name.StartsWith("League fixture light /",StringComparison.Ordinal)).ToArray();
+                    foreach(var light in fixtureLights)light.enabled=false;
+                    yield return Capture("08a-wide-west-gateway-fixture-lights-disabled");
+                    foreach(var light in fixtureLights)light.enabled=true;
+                }
                 if(i!=0)continue;
                 foreach(var light in shadowLights)light.enabled=false;
                 yield return Capture("06a-outer-ring-ceiling-lights-disabled-diagnostic");
@@ -203,10 +253,10 @@ namespace StarTournament.ProvingGround
         [Serializable] class Walk{public string label;public Vector3 start,end;public bool arrived;}
         [Serializable] class Walks{public Walk[] routes;public string note;}
         IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.35f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return new WaitForSecondsRealtime(.5f);}
-        [Serializable] class Performance{public int samples,width,height,localLights;public long allocatedMemoryBytes;public float medianMs,p95Ms;public string note;}
+        [Serializable] class Performance{public int samples,unfocusedFrames,width,height,localLights;public long allocatedMemoryBytes;public float medianMs,p95Ms;public string note;}
         [Serializable] class Result{public string arena,authoring,presentation,release,player,note;public int participants;public uint seed;public bool muted,repeat;public int width,height;}
-        [Serializable] class LightingDiagnostic{public string pipeline,qualityShadows;public int casterRenderers,receiverRenderers;public string[] skinnedShadowPasses;public LightSnapshot[] lights;}
+        [Serializable] class LightingDiagnostic{public string pipeline,qualityShadows;public int fixtures,fixtureLights,fixtureRaysHit,casterRenderers,receiverRenderers;public string[] skinnedShadowPasses;public LightSnapshot[] lights;}
         [Serializable] class LightSnapshot{public string name,shadows;public Vector3 position,direction;public float range,spotAngle,intensity,strength;}
-        void OnDestroy(){Time.timeScale=reviewTimeScale;if(pads!=null)foreach(var pad in pads)if(pad.added)InputSystem.RemoveDevice(pad);}
+        void OnDestroy(){Time.timeScale=reviewTimeScale;}
     }
 }

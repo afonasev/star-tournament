@@ -21,6 +21,8 @@ namespace StarTournament.ProvingGround
         Color oldAmbient; AmbientMode oldMode;
         public int LocalLightCount {get;private set;}
         public int ShadowLightCount {get;private set;}
+        public int FixtureCount => fixturePositions.Count;
+        public int FixtureLightCount {get;private set;}
         public string ProfileIdentity {get;private set;}
         public void Build(ArenaDefinition definition,ProvingProfile profile)
         {
@@ -66,11 +68,13 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
             HallMarkings();Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();
-            // Shared ceiling zones reach the outer ring; two local shadow maps plus the key stay bounded for split-screen.
+            // Shared ceiling zones retain the accepted F2 light and two bounded local shadow maps.
+            var poweredFixtures=new HashSet<int>();
             for(int zone=0;zone<16;zone++)
             {
                 Vector3 anchor=Position("layout.fill-"+zone);
-                Vector3 fixture=fixturePositions.OrderBy(v=>(v-anchor).sqrMagnitude).First();
+                int fixtureIndex=Enumerable.Range(0,fixturePositions.Count).OrderBy(i=>(fixturePositions[i]-anchor).sqrMagnitude).First();
+                Vector3 fixture=fixturePositions[fixtureIndex];poweredFixtures.Add(fixtureIndex);
                 var go=new GameObject("League ceiling light / "+zone);go.transform.SetParent(transform,false);go.transform.localPosition=fixture-Vector3.up*.12f;
                 // The visible fixture sits off-centre in some rooms; aim its real beam at the authored zone.
                 Vector3 target=anchor-Vector3.up*p.Get("light.targetDrop");
@@ -83,6 +87,28 @@ namespace StarTournament.ProvingGround
                 l.shadows=casts?LightShadows.Soft:LightShadows.None;
                 if(casts){l.shadowStrength=p.Get("light.shadowStrength");l.shadowCustomResolution=Mathf.RoundToInt(p.Get("light.shadowResolution"));l.shadowBias=p.Get("light.shadowBias");l.shadowNormalBias=p.Get("light.shadowNormalBias");ShadowLightCount++;}
                 LocalLightCount++;
+            }
+            // Every remaining luminous panel needs a real local contribution. These lights share
+            // the existing range/angle controls and never allocate another shadow map.
+            for(int i=0;i<fixturePositions.Count;i++)
+            {
+                if(poweredFixtures.Contains(i))continue;
+                var go=new GameObject("League fixture light / "+i);go.transform.SetParent(transform,false);
+                go.transform.localPosition=fixturePositions[i]-Vector3.up*.12f;
+                go.transform.localRotation=Quaternion.LookRotation(Vector3.down);
+                var light=go.AddComponent<Light>();light.type=LightType.Spot;
+                light.spotAngle=p.Get("light.spotAngle");light.color=Palette("fill");
+                float baseRange=p.Get("light.fixtureRange");
+                float maxRange=p.Descriptor("light.fixtureRange").Maximum;
+                int surfaces=(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer);
+                if(gameObject.scene.GetPhysicsScene().Raycast(go.transform.position,Vector3.down,out var surface,maxRange,surfaces,QueryTriggerInteraction.Ignore))
+                    light.range=Mathf.Clamp(Mathf.Max(baseRange,surface.distance*p.Get("light.fixtureSurfaceReach")),baseRange,maxRange);
+                else light.range=baseRange;
+                // Preserve a comparable pool on the lower floor when the beam must travel farther.
+                float reach=light.range/baseRange;
+                light.intensity=p.Get("light.intensity")*p.Get("light.fixtureContribution")*reach*reach;
+                light.shadows=LightShadows.None;
+                LocalLightCount++;FixtureLightCount++;
             }
             foreach(var entry in batches)
             {

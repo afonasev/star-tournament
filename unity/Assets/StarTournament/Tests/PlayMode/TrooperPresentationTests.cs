@@ -129,5 +129,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.GetComponentsInChildren<Animator>().All(a=>!a.applyRootMotion),Is.True);
             }
         }
+        [UnityTest] public IEnumerator LocalBodyCastsAnAnimatedShadowWithoutRenderingInItsOwnCamera()
+        {
+            yield return Load(2);
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var body=ground.transform.Find("player-1/trooper-presentation");
+            var proxies=body.GetComponentsInChildren<SkinnedMeshRenderer>()
+                .Where(r=>r.name=="own-shadow-proxy").ToArray();
+            var source=body.GetComponentsInChildren<SkinnedMeshRenderer>()
+                .Where(r=>r.name!="own-shadow-proxy").ToArray();
+            Assert.That(proxies.Length,Is.EqualTo(source.Length));
+            Assert.That(proxies.Length,Is.GreaterThan(0));
+            Assert.That((camera.cullingMask&(1<<11)),Is.Zero);
+            Assert.That((camera.cullingMask&1),Is.Not.Zero);
+            foreach(var proxy in proxies)
+            {
+                Assert.That(proxy.gameObject.layer,Is.Zero);
+                Assert.That(proxy.shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly));
+                Assert.That(proxy.GetComponents<Collider>(),Is.Empty);
+                Assert.That(proxy.GetComponents<Animator>(),Is.Empty);
+                Assert.That(proxy.bones.Length,Is.GreaterThan(0));
+            }
+        }
     }
 }
