@@ -25,6 +25,13 @@ namespace StarTournament.ProvingGround.Tests
             for(int count=2;count<=8;count++)Assert.That(spawn.TryInitial(NativeMatchRoster.Ffa(count),ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation"),out var positions),Is.True,$"FFA {count}: {spawn.InitialFailure}");
             yield return null;
         }
+        [UnityTest] public IEnumerator UpperNorthSouthDividersBlockExtraStraightOpenings()
+        {
+            foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
+            foreach(float x in new[]{19f,21f,23f})foreach(float height in new[]{4.5f,5.6f,7.5f})
+                Assert.That(Physics.Raycast(new Vector3(sx*x,height,sz*22),Vector3.forward*sz,4,1<<ProvingArena.WorldLayer),Is.True,$"Upper divider opening {sx*x},{sz}, height {height}");
+            yield return null;
+        }
         [UnityTest] public IEnumerator WideDiagonalsSupportStraightMotorMovementAcrossFullWidth()
         {
             foreach(var solid in arena.Definition.Solids.Where(x=>x.Id.EndsWith("-diagonal")))

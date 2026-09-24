@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="11", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="12", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -147,6 +147,11 @@ namespace StarTournament.ProvingGround
                 Wall(side+"-divider-middle",-12,sz*24,12,sz*24,0,8);
                 Wall(side+"-divider-left",-28,sz*24,-18,sz*24,0,3.6f);
                 Wall(side+"-divider-right",18,sz*24,28,sz*24,0,3.6f);
+                // Join the retained diagonal side at the N/S contour; only the corner aperture stays open.
+                // This authored junction is exported into the range-validated authoring profile below.
+                float diagonalJunction=30-3.2f*Mathf.Sqrt(2);
+                Wall(side+"-upper-divider-left",-diagonalJunction,sz*24,-18,sz*24,3.6f,8);
+                Wall(side+"-upper-divider-right",18,sz*24,diagonalJunction,sz*24,3.6f,8);
                 Wall(side+"-entry-lintel-left",-18,sz*24,-12,sz*24,2.6f,8);
                 Wall(side+"-entry-lintel-right",12,sz*24,18,sz*24,2.6f,8);
                 Wall("hall-"+side+"-left",-6,sz*8.2f,-2.2f,sz*8.2f,4,8);Wall("hall-"+side+"-right",2.2f,sz*8.2f,6,sz*8.2f,4,8);
@@ -154,7 +159,7 @@ namespace StarTournament.ProvingGround
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-36,36,8.4f);
             // Opaque hull piers, sills and headers surround smaller glazed openings.
-            // Every dimension below becomes range-validated authoring metadata, frozen in revision 11.
+            // Every dimension below becomes range-validated authoring metadata, frozen in revision 12.
             foreach(int side in new[]{-1,1})foreach(bool alongX in new[]{false,true})
             {
                 string axis=alongX?"z":"x",prefix="hull-"+axis+"-"+side;

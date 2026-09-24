@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateCombatBowlAuthoringDefault(ArenaDefinition d)
         {
-            var p=new ProvingProfile{id="combat-bowl-ring-r7-authoring-v1",version=5};
+            var p=new ProvingProfile{id="combat-bowl-ring-r7-authoring-v1",version=6};
             void V(string path,Vector3 value,string group,string unit="meters",bool positive=false)
             {
                 var axes=new[]{"x","y","z"};
