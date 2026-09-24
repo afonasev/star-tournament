@@ -85,7 +85,8 @@ namespace StarTournament.ProvingGround
             var lighting=ground.GetComponentInChildren<OrbitalLeaguePresentation>();
             var auxiliaryLights=shadowLights.Where(light=>light.name.StartsWith("League fixture light /",StringComparison.Ordinal)).ToArray();
             // A lower-floor lamp needs its own visible pool, not only a ray that reaches a collider.
-            var lowerFloorLamp=auxiliaryLights.Single(light=>light.name=="League fixture light / 8");
+            // Select the west gateway fixture by position: generated fixture indices change with authored map revisions.
+            var lowerFloorLamp=auxiliaryLights.OrderBy(light=>Vector3.Distance(light.transform.position,new Vector3(-20.36f,7.87f,15f))).First();
             var lampPosition=lowerFloorLamp.transform.position;
             artCamera.transform.position=new Vector3(lampPosition.x,2,lampPosition.z-8);
             artCamera.transform.LookAt(new Vector3(lampPosition.x,2.8f,lampPosition.z));
