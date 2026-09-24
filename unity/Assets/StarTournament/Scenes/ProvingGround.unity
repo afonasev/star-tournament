@@ -6627,7 +6627,7 @@ MonoBehaviour:
       Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
-    version: 5
+    version: 6
     descriptors:
     - Path: foundation-north.position.x
       Group: geometry
@@ -26249,6 +26249,186 @@ MonoBehaviour:
       Maximum: 360
       Step: 0.1
       DefaultValue: 0
+    - Path: south-upper-divider-left.position.x
+      Group: geometry
+      Label: south-upper-divider-left.position / x
+      Description: Authored R7 south-upper-divider-left.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -21.737259
+    - Path: south-upper-divider-left.position.y
+      Group: geometry
+      Label: south-upper-divider-left.position / y
+      Description: Authored R7 south-upper-divider-left.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 5.8
+    - Path: south-upper-divider-left.position.z
+      Group: geometry
+      Label: south-upper-divider-left.position / z
+      Description: Authored R7 south-upper-divider-left.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -24
+    - Path: south-upper-divider-left.size.x
+      Group: geometry
+      Label: south-upper-divider-left.size / x
+      Description: Authored R7 south-upper-divider-left.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 7.874516
+    - Path: south-upper-divider-left.size.y
+      Group: geometry
+      Label: south-upper-divider-left.size / y
+      Description: Authored R7 south-upper-divider-left.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.4
+    - Path: south-upper-divider-left.size.z
+      Group: geometry
+      Label: south-upper-divider-left.size / z
+      Description: Authored R7 south-upper-divider-left.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0.4
+    - Path: south-upper-divider-left.rotation.x
+      Group: geometry
+      Label: south-upper-divider-left.rotation / x
+      Description: Authored R7 south-upper-divider-left.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: south-upper-divider-left.rotation.y
+      Group: geometry
+      Label: south-upper-divider-left.rotation / y
+      Description: Authored R7 south-upper-divider-left.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: south-upper-divider-left.rotation.z
+      Group: geometry
+      Label: south-upper-divider-left.rotation / z
+      Description: Authored R7 south-upper-divider-left.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: south-upper-divider-right.position.x
+      Group: geometry
+      Label: south-upper-divider-right.position / x
+      Description: Authored R7 south-upper-divider-right.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 21.737259
+    - Path: south-upper-divider-right.position.y
+      Group: geometry
+      Label: south-upper-divider-right.position / y
+      Description: Authored R7 south-upper-divider-right.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 5.8
+    - Path: south-upper-divider-right.position.z
+      Group: geometry
+      Label: south-upper-divider-right.position / z
+      Description: Authored R7 south-upper-divider-right.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -24
+    - Path: south-upper-divider-right.size.x
+      Group: geometry
+      Label: south-upper-divider-right.size / x
+      Description: Authored R7 south-upper-divider-right.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 7.874516
+    - Path: south-upper-divider-right.size.y
+      Group: geometry
+      Label: south-upper-divider-right.size / y
+      Description: Authored R7 south-upper-divider-right.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.4
+    - Path: south-upper-divider-right.size.z
+      Group: geometry
+      Label: south-upper-divider-right.size / z
+      Description: Authored R7 south-upper-divider-right.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0.4
+    - Path: south-upper-divider-right.rotation.x
+      Group: geometry
+      Label: south-upper-divider-right.rotation / x
+      Description: Authored R7 south-upper-divider-right.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: south-upper-divider-right.rotation.y
+      Group: geometry
+      Label: south-upper-divider-right.rotation / y
+      Description: Authored R7 south-upper-divider-right.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: south-upper-divider-right.rotation.z
+      Group: geometry
+      Label: south-upper-divider-right.rotation / z
+      Description: Authored R7 south-upper-divider-right.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
     - Path: south-entry-lintel-left.position.x
       Group: geometry
       Label: south-entry-lintel-left.position / x
@@ -31194,6 +31374,186 @@ MonoBehaviour:
       Label: north-divider-right.rotation / z
       Description: Authored R7 north-divider-right.rotation; changes require an explicit
         rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: north-upper-divider-left.position.x
+      Group: geometry
+      Label: north-upper-divider-left.position / x
+      Description: Authored R7 north-upper-divider-left.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -21.737259
+    - Path: north-upper-divider-left.position.y
+      Group: geometry
+      Label: north-upper-divider-left.position / y
+      Description: Authored R7 north-upper-divider-left.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 5.8
+    - Path: north-upper-divider-left.position.z
+      Group: geometry
+      Label: north-upper-divider-left.position / z
+      Description: Authored R7 north-upper-divider-left.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 24
+    - Path: north-upper-divider-left.size.x
+      Group: geometry
+      Label: north-upper-divider-left.size / x
+      Description: Authored R7 north-upper-divider-left.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 7.874516
+    - Path: north-upper-divider-left.size.y
+      Group: geometry
+      Label: north-upper-divider-left.size / y
+      Description: Authored R7 north-upper-divider-left.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.4
+    - Path: north-upper-divider-left.size.z
+      Group: geometry
+      Label: north-upper-divider-left.size / z
+      Description: Authored R7 north-upper-divider-left.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0.4
+    - Path: north-upper-divider-left.rotation.x
+      Group: geometry
+      Label: north-upper-divider-left.rotation / x
+      Description: Authored R7 north-upper-divider-left.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: north-upper-divider-left.rotation.y
+      Group: geometry
+      Label: north-upper-divider-left.rotation / y
+      Description: Authored R7 north-upper-divider-left.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: north-upper-divider-left.rotation.z
+      Group: geometry
+      Label: north-upper-divider-left.rotation / z
+      Description: Authored R7 north-upper-divider-left.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: north-upper-divider-right.position.x
+      Group: geometry
+      Label: north-upper-divider-right.position / x
+      Description: Authored R7 north-upper-divider-right.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 21.737259
+    - Path: north-upper-divider-right.position.y
+      Group: geometry
+      Label: north-upper-divider-right.position / y
+      Description: Authored R7 north-upper-divider-right.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 5.8
+    - Path: north-upper-divider-right.position.z
+      Group: geometry
+      Label: north-upper-divider-right.position / z
+      Description: Authored R7 north-upper-divider-right.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 24
+    - Path: north-upper-divider-right.size.x
+      Group: geometry
+      Label: north-upper-divider-right.size / x
+      Description: Authored R7 north-upper-divider-right.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 7.874516
+    - Path: north-upper-divider-right.size.y
+      Group: geometry
+      Label: north-upper-divider-right.size / y
+      Description: Authored R7 north-upper-divider-right.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.4
+    - Path: north-upper-divider-right.size.z
+      Group: geometry
+      Label: north-upper-divider-right.size / z
+      Description: Authored R7 north-upper-divider-right.size; changes require an
+        explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0.4
+    - Path: north-upper-divider-right.rotation.x
+      Group: geometry
+      Label: north-upper-divider-right.rotation / x
+      Description: Authored R7 north-upper-divider-right.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: north-upper-divider-right.rotation.y
+      Group: geometry
+      Label: north-upper-divider-right.rotation / y
+      Description: Authored R7 north-upper-divider-right.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: north-upper-divider-right.rotation.z
+      Group: geometry
+      Label: north-upper-divider-right.rotation / z
+      Description: Authored R7 north-upper-divider-right.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
       Unit: degrees
       Minimum: -360
       Maximum: 360
@@ -51354,6 +51714,42 @@ MonoBehaviour:
       Value: 0
     - Path: south-divider-right.rotation.z
       Value: 0
+    - Path: south-upper-divider-left.position.x
+      Value: -21.737259
+    - Path: south-upper-divider-left.position.y
+      Value: 5.8
+    - Path: south-upper-divider-left.position.z
+      Value: -24
+    - Path: south-upper-divider-left.size.x
+      Value: 7.874516
+    - Path: south-upper-divider-left.size.y
+      Value: 4.4
+    - Path: south-upper-divider-left.size.z
+      Value: 0.4
+    - Path: south-upper-divider-left.rotation.x
+      Value: -0
+    - Path: south-upper-divider-left.rotation.y
+      Value: 0
+    - Path: south-upper-divider-left.rotation.z
+      Value: 0
+    - Path: south-upper-divider-right.position.x
+      Value: 21.737259
+    - Path: south-upper-divider-right.position.y
+      Value: 5.8
+    - Path: south-upper-divider-right.position.z
+      Value: -24
+    - Path: south-upper-divider-right.size.x
+      Value: 7.874516
+    - Path: south-upper-divider-right.size.y
+      Value: 4.4
+    - Path: south-upper-divider-right.size.z
+      Value: 0.4
+    - Path: south-upper-divider-right.rotation.x
+      Value: -0
+    - Path: south-upper-divider-right.rotation.y
+      Value: 0
+    - Path: south-upper-divider-right.rotation.z
+      Value: 0
     - Path: south-entry-lintel-left.position.x
       Value: -15
     - Path: south-entry-lintel-left.position.y
@@ -52343,6 +52739,42 @@ MonoBehaviour:
     - Path: north-divider-right.rotation.y
       Value: 0
     - Path: north-divider-right.rotation.z
+      Value: 0
+    - Path: north-upper-divider-left.position.x
+      Value: -21.737259
+    - Path: north-upper-divider-left.position.y
+      Value: 5.8
+    - Path: north-upper-divider-left.position.z
+      Value: 24
+    - Path: north-upper-divider-left.size.x
+      Value: 7.874516
+    - Path: north-upper-divider-left.size.y
+      Value: 4.4
+    - Path: north-upper-divider-left.size.z
+      Value: 0.4
+    - Path: north-upper-divider-left.rotation.x
+      Value: -0
+    - Path: north-upper-divider-left.rotation.y
+      Value: 0
+    - Path: north-upper-divider-left.rotation.z
+      Value: 0
+    - Path: north-upper-divider-right.position.x
+      Value: 21.737259
+    - Path: north-upper-divider-right.position.y
+      Value: 5.8
+    - Path: north-upper-divider-right.position.z
+      Value: 24
+    - Path: north-upper-divider-right.size.x
+      Value: 7.874516
+    - Path: north-upper-divider-right.size.y
+      Value: 4.4
+    - Path: north-upper-divider-right.size.z
+      Value: 0.4
+    - Path: north-upper-divider-right.rotation.x
+      Value: -0
+    - Path: north-upper-divider-right.rotation.y
+      Value: 0
+    - Path: north-upper-divider-right.rotation.z
       Value: 0
     - Path: north-entry-lintel-left.position.x
       Value: -15
