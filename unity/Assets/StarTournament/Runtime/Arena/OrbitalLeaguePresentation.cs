@@ -18,6 +18,7 @@ namespace StarTournament.ProvingGround
         readonly List<Transform> orbits=new List<Transform>(),fans=new List<Transform>();
         readonly List<Vector3> fixturePositions=new List<Vector3>();
         Mesh cube; Material wall,floor,ceiling,trim,cyan,media,white,sign; Font signFont; ProvingProfile p;
+        ArenaSolid[] structuralSolids;int structuralIndex;
         Color oldAmbient; AmbientMode oldMode;
         public int LocalLightCount {get;private set;}
         public int ShadowLightCount {get;private set;}
@@ -44,20 +45,35 @@ namespace StarTournament.ProvingGround
             signFont=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             signFont.RequestCharactersInTexture("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 /",64,FontStyle.Normal);
             sign=new Material(Shader.Find("StarTournament/OrbitalSurface")){name="Depth-tested league lettering"};owned.Add(sign);RefreshFont(signFont);Font.textureRebuilt+=RefreshFont;
-            foreach(var s in definition.Solids)
+            structuralSolids=definition.Solids;
+            for(int solidIndex=0;solidIndex<definition.Solids.Length;solidIndex++)
             {
+                var s=definition.Solids[solidIndex];
+                structuralIndex=solidIndex;
                 var target=transform.parent.Find(s.Id);if(!target)continue;
                 if(s.Surface=="grating"){Grating(s,target);continue;}
                 if(s.Surface=="window"){Window(s,target);continue;}
                 bool roof=s.Id.Contains("roof")||s.Id.Contains("ceiling");bool ground=s.Material=="floor";
-                var filter=target.GetComponent<MeshFilter>();var mesh=Instantiate(filter.sharedMesh);owned.Add(mesh);
+                var filter=target.GetComponent<MeshFilter>();
+                // Authored collision boxes intentionally overlap. Their coincident render faces
+                // must be removed without changing the immutable solids or their colliders.
+                var mesh=VisibleSolidMesh(s,definition.Solids,solidIndex)??Instantiate(filter.sharedMesh);owned.Add(mesh);
                 var normals=mesh.normals;var uv=mesh.uv;var vertices=mesh.vertices;
                 for(int i=0;i<uv.Length;i++)
                 {
                     Vector3 v=Vector3.Scale(vertices[i],s.Size);var n=normals[i];
                     uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/p.Get("surface.tile");
                 }
-                mesh.uv=uv;filter.sharedMesh=mesh;target.GetComponent<Renderer>().sharedMaterial=roof?ceiling:ground?floor:wall;
+                mesh.uv=uv;
+                if(s.Id.EndsWith("-diagonal",StringComparison.Ordinal))
+                {
+                    // The yawed deck shares its top plane with the balcony and spawn slab.
+                    // Lift only its render mesh by two surface epsilons; collider stays authored.
+                    var lifted=mesh.vertices;
+                    for(int i=0;i<lifted.Length;i++)lifted[i].y+=2*Epsilon/s.Size.y;
+                    mesh.vertices=lifted;mesh.RecalculateBounds();
+                }
+                filter.sharedMesh=mesh;target.GetComponent<Renderer>().sharedMaterial=roof?ceiling:ground?floor:wall;
                 // Ceiling panels are below the roof. The roof must not shadow the arena-wide key light.
                 if(roof){target.GetComponent<Renderer>().shadowCastingMode=ShadowCastingMode.Off;Roof(s);}
                 else if(ground)Floor(s);
@@ -187,6 +203,7 @@ namespace StarTournament.ProvingGround
                 {
                     // Sills and headers only carry detail inside their opaque silhouette.
                     if(y-h/2<bottom || y+h/2>bottom+s.Size.y)return;
+                    if(!ExposedAt(s,new Vector3(face.x,y,face.z),normal*side))return;
                     Box(m,new Vector3(face.x,y,face.z)+normal*(side*Epsilon*(m==trim?0:m==white?2:1)),xWall?new Vector3(len,h,Epsilon):new Vector3(Epsilon,h,len),s.Rotation);
                 }
                 Strip(trim,bottom+p.Get("detail.trimHeight")/2,p.Get("detail.trimHeight"),length);
@@ -196,7 +213,7 @@ namespace StarTournament.ProvingGround
                     foreach(float level in new[]{p.Get("wayfinding.lowerBandY"),p.Get("wayfinding.upperBandY")})
                     {
                         float h=p.Get("wayfinding.bandWidth");
-                        if(level-h/2>=bottom && level+h/2<=bottom+s.Size.y)
+                        if(level-h/2>=bottom && level+h/2<=bottom+s.Size.y && ExposedAt(s,new Vector3(face.x,level,face.z),normal*side))
                             AccentBox(new Vector3(face.x,level,face.z)+normal*(side*Epsilon),xWall?new Vector3(length,h,Epsilon):new Vector3(Epsilon,h,length),s.Rotation);
                     }
                 }
@@ -224,6 +241,8 @@ namespace StarTournament.ProvingGround
         {
             float inset=p.Get("detail.inset"),w=p.Get("detail.lineWidth");
             Vector3 top=s.Position+s.Rotation*Vector3.up*(s.Size.y/2+Epsilon);
+            if(s.Id.EndsWith("-diagonal",StringComparison.Ordinal))top+=Vector3.up*2*Epsilon;
+            if(!ExposedAt(s,top,s.Rotation*Vector3.up))return;
             // Stair nosings emphasize actual existing edges, never fake steps.
             if(s.Id.Contains("-step-"))
             {
@@ -245,8 +264,32 @@ namespace StarTournament.ProvingGround
             for(int x=0;x<nx;x++)for(int z=0;z<nz;z++)
             {
                 var pos=s.Position+s.Rotation*new Vector3((x+.5f)*s.Size.x/nx-s.Size.x/2,-s.Size.y/2-Epsilon,(z+.5f)*s.Size.z/nz-s.Size.z/2);
+                if(!ExposedAt(s,pos,-(s.Rotation*Vector3.up)))continue;
                 CeilingFixture(pos,s.Rotation*(s.Size.x>s.Size.z?Quaternion.Euler(0,90,0):Quaternion.identity));
             }
+        }
+        bool ExposedAt(ArenaSolid solid,Vector3 point,Vector3 normal)
+        {
+            if(Quaternion.Angle(solid.Rotation,Quaternion.identity)>.01f)return true;
+            int axis=Mathf.Abs(normal.x)>.5f?0:Mathf.Abs(normal.y)>.5f?1:2;
+            int sign=normal[axis]>0?1:-1;
+            float plane=solid.Position[axis]+sign*solid.Size[axis]*.5f;
+            const float tolerance=.0001f;
+            for(int i=0;i<structuralSolids.Length;i++)
+            {
+                if(i==structuralIndex)continue;var other=structuralSolids[i];
+                if(other.Surface=="window"||other.Surface=="grating"||Quaternion.Angle(other.Rotation,Quaternion.identity)>.01f)continue;
+                float near=other.Position[axis]-other.Size[axis]*.5f,far=other.Position[axis]+other.Size[axis]*.5f;
+                if(near>plane+tolerance||far<plane-tolerance)continue;
+                bool outside=sign>0?far>plane+tolerance:near<plane-tolerance;
+                bool sameOuter=sign>0?Mathf.Abs(far-plane)<=tolerance:Mathf.Abs(near-plane)<=tolerance;
+                if(!outside&&!(sameOuter&&i>structuralIndex))continue;
+                bool covered=true;
+                for(int a=0;a<3;a++)if(a!=axis &&
+                    (point[a]<other.Position[a]-other.Size[a]*.5f-tolerance || point[a]>other.Position[a]+other.Size[a]*.5f+tolerance))covered=false;
+                if(covered)return false;
+            }
+            return true;
         }
         void CeilingFixture(Vector3 pos,Quaternion rotation)
         {
@@ -385,6 +428,68 @@ namespace StarTournament.ProvingGround
                 triangles.AddRange(new[]{index,index+1,index+2,index,index+2,index+3});
             }
             var m=new Mesh{name="League detail cube"};m.SetVertices(vertices);m.SetColors(System.Linq.Enumerable.Repeat(Color.white,vertices.Count).ToArray());m.SetNormals(normals);m.SetUVs(0,uv);m.SetTriangles(triangles,0);return m;
+        }
+        // Render-only union of axis-aligned authored boxes. Subtract covered rectangles
+        // directly instead of crossing every X/Y boundary, which would create a dense grid.
+        // Later solids own equal outer planes, so repeated slabs have one stable owner.
+        static Mesh VisibleSolidMesh(ArenaSolid solid,ArenaSolid[] all,int index)
+        {
+            if(Quaternion.Angle(solid.Rotation,Quaternion.identity)>.01f)return null;
+            var vertices=new List<Vector3>();var normals=new List<Vector3>();var uv=new List<Vector2>();var triangles=new List<int>();
+            const float tolerance=.0001f; // Floating-point comparison of authored faces, not a game dimension.
+            float Min(ArenaSolid s,int axis)=>s.Position[axis]-s.Size[axis]*.5f;
+            float Max(ArenaSolid s,int axis)=>s.Position[axis]+s.Size[axis]*.5f;
+            for(int face=0;face<6;face++)
+            {
+                int axis=face/2,sign=face%2==0?1:-1;
+                int u,v;
+                if(axis==0){u=sign>0?1:2;v=sign>0?2:1;}
+                else if(axis==1){u=sign>0?2:0;v=sign>0?0:2;}
+                else {u=sign>0?0:1;v=sign>0?1:0;}
+                float plane=sign>0?Max(solid,axis):Min(solid,axis);
+                float uMin=Min(solid,u),uMax=Max(solid,u),vMin=Min(solid,v),vMax=Max(solid,v);
+                var visible=new List<Rect>{Rect.MinMaxRect(uMin,vMin,uMax,vMax)};
+                for(int j=0;j<all.Length;j++)
+                {
+                    if(j==index)continue;var other=all[j];
+                    if(other.Surface=="window"||other.Surface=="grating"||Quaternion.Angle(other.Rotation,Quaternion.identity)>.01f)continue;
+                    float near=Min(other,axis),far=Max(other,axis);
+                    if(near>plane+tolerance||far<plane-tolerance)continue;
+                    bool outside=sign>0?far>plane+tolerance:near<plane-tolerance;
+                    bool sameOuter=sign>0?Mathf.Abs(far-plane)<=tolerance:Mathf.Abs(near-plane)<=tolerance;
+                    if(!outside && !(sameOuter&&j>index))continue;
+                    float left=Mathf.Max(uMin,Min(other,u)),right=Mathf.Min(uMax,Max(other,u));
+                    float bottom=Mathf.Max(vMin,Min(other,v)),top=Mathf.Min(vMax,Max(other,v));
+                    if(right-left<=tolerance||top-bottom<=tolerance)continue;
+                    var remainder=new List<Rect>();
+                    foreach(var region in visible)
+                    {
+                        float a=Mathf.Max(region.xMin,left),b=Mathf.Min(region.xMax,right);
+                        float c=Mathf.Max(region.yMin,bottom),d=Mathf.Min(region.yMax,top);
+                        if(b-a<=tolerance||d-c<=tolerance){remainder.Add(region);continue;}
+                        if(a-region.xMin>tolerance)remainder.Add(Rect.MinMaxRect(region.xMin,region.yMin,a,region.yMax));
+                        if(region.xMax-b>tolerance)remainder.Add(Rect.MinMaxRect(b,region.yMin,region.xMax,region.yMax));
+                        if(c-region.yMin>tolerance)remainder.Add(Rect.MinMaxRect(a,region.yMin,b,c));
+                        if(region.yMax-d>tolerance)remainder.Add(Rect.MinMaxRect(a,d,b,region.yMax));
+                    }
+                    visible=remainder;
+                    if(visible.Count==0)break;
+                }
+                var normal=Vector3.zero;normal[axis]=sign;
+                foreach(var region in visible)
+                {
+                    int start=vertices.Count;
+                    foreach(var point in new[]{new Vector2(region.xMin,region.yMin),new Vector2(region.xMax,region.yMin),new Vector2(region.xMax,region.yMax),new Vector2(region.xMin,region.yMax)})
+                    {
+                        var world=Vector3.zero;world[axis]=plane;world[u]=point.x;world[v]=point.y;
+                        vertices.Add(new Vector3((world.x-solid.Position.x)/solid.Size.x,(world.y-solid.Position.y)/solid.Size.y,(world.z-solid.Position.z)/solid.Size.z));
+                        normals.Add(normal);uv.Add(Vector2.zero);
+                    }
+                    triangles.AddRange(new[]{start,start+1,start+2,start,start+2,start+3});
+                }
+            }
+            var mesh=new Mesh{name=solid.Id+" / exposed faces",indexFormat=IndexFormat.UInt32};
+            mesh.SetVertices(vertices);mesh.SetNormals(normals);mesh.SetUVs(0,uv);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();return mesh;
         }
         void RefreshFont(Font font){if(font==signFont&&sign)sign.SetTexture("_MainTex",font.material.mainTexture);}
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;RenderSettings.ambientLight=oldAmbient;RenderSettings.ambientMode=oldMode;foreach(var asset in owned)if(asset)DestroyImmediate(asset);}

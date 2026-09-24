@@ -9,6 +9,40 @@ namespace StarTournament.ProvingGround.Tests
     {
         GameObject root;
         [UnityTearDown] public IEnumerator Cleanup(){if(root)Object.Destroy(root);yield return null;}
+        static bool HasRenderedFace(Transform solid,Vector3 point,Vector3 outward)
+        {
+            var mesh=solid.GetComponent<MeshFilter>().sharedMesh;var vertices=mesh.vertices;var triangles=mesh.triangles;
+            for(int i=0;i<triangles.Length;i+=3)
+            {
+                var a=solid.TransformPoint(vertices[triangles[i]]);var b=solid.TransformPoint(vertices[triangles[i+1]]);var c=solid.TransformPoint(vertices[triangles[i+2]]);
+                var normal=Vector3.Cross(b-a,c-a);
+                if(Vector3.Dot(normal.normalized,outward)<.99f||Mathf.Abs(Vector3.Dot(point-a,outward))>.001f)continue;
+                var v0=b-a;var v1=c-a;var v2=point-a;
+                float d00=Vector3.Dot(v0,v0),d01=Vector3.Dot(v0,v1),d11=Vector3.Dot(v1,v1);
+                float d20=Vector3.Dot(v2,v0),d21=Vector3.Dot(v2,v1),denominator=d00*d11-d01*d01;
+                if(Mathf.Abs(denominator)<.000001f)continue;
+                float v=(d11*d20-d01*d21)/denominator,w=(d00*d21-d01*d20)/denominator;
+                if(v>=-.0001f&&w>=-.0001f&&v+w<=1.0001f)return true;
+            }
+            return false;
+        }
+        [UnityTest] public IEnumerator OverlappingFloorAndHallWallHaveOneVisibleFace()
+        {
+            root=new GameObject("surface-ownership");var arena=root.AddComponent<ProvingArena>();
+            var frozen=CombatBowlCatalog.Freeze(ProvingProfile.CreateDefault());var original=JsonUtility.ToJson(frozen.Definition);
+            arena.Build(frozen,ProvingProfile.CreateDefault());yield return null;
+            var floorPoint=new Vector3(0,0,18);
+            Assert.That(HasRenderedFace(arena.transform.Find("foundation-north"),floorPoint,Vector3.up),Is.False);
+            Assert.That(HasRenderedFace(arena.transform.Find("north-flank"),floorPoint,Vector3.up),Is.True);
+            var wallPoint=new Vector3(-6,6,-3);
+            Assert.That(HasRenderedFace(arena.transform.Find("shell-west--1"),wallPoint,Vector3.right),Is.False);
+            Assert.That(HasRenderedFace(arena.transform.Find("hall-west-south"),wallPoint,Vector3.right),Is.True);
+            var diagonal=arena.transform.Find("northwest-diagonal");
+            Assert.That(diagonal.GetComponent<MeshFilter>().sharedMesh.bounds.max.y,Is.GreaterThan(.5f),"Diagonal render deck must win its coplanar overlap");
+            Assert.That(diagonal.GetComponent<BoxCollider>().center,Is.EqualTo(Vector3.zero),"Renderer lift must not move collision");
+            Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(original));
+            Assert.That(arena.GetComponentsInChildren<Collider>().Length,Is.EqualTo(frozen.Definition.Solids.Length));
+        }
         [UnityTest] public IEnumerator ArtPreservesAllCollisionAndRepeatOwnsItsResources()
         {
             root=new GameObject("orbital-test");var arena=root.AddComponent<ProvingArena>();

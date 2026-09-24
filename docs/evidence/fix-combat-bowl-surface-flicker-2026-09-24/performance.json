@@ -1,0 +1,11 @@
+{
+    "samples": 360,
+    "unfocusedFrames": 0,
+    "width": 1920,
+    "height": 1080,
+    "localLights": 120,
+    "allocatedMemoryBytes": 109242051,
+    "medianMs": 15.754131317138672,
+    "p95Ms": 17.317171096801759,
+    "note": "Diagnostic on current Mac; four native cameras, scripted stationary views, vsync/frame cap included. Not reference hardware acceptance."
+}

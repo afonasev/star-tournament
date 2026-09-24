@@ -1,0 +1,14 @@
+{
+    "arena": "combat-bowl-v1@14",
+    "authoring": "combat-bowl-ring-r7-authoring-v1@8",
+    "presentation": "orbital-league-ring-v1@8",
+    "release": "",
+    "player": "native macOS Development Player",
+    "note": "Scripted live diagnostic match; architectural views freeze time for staging; physical controllers and human playable acceptance remain open.",
+    "participants": 8,
+    "seed": 20260923,
+    "muted": true,
+    "repeat": true,
+    "width": 1920,
+    "height": 1080
+}
