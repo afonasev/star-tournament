@@ -1,0 +1,73 @@
+{
+  "weapon": {
+    "sha256": "62e04715c7834fe01846908da0b53f3834d91f3d4bbcedb6029fdc8829f56b1f",
+    "triangles": 34104,
+    "materials": [
+      "identity-vector-status",
+      "orbital-seam-thread",
+      "strata-oxblood-accent",
+      "vector-bore",
+      "vector-ceramic",
+      "vector-chassis",
+      "vector-glove",
+      "vector-titanium"
+    ],
+    "clips": []
+  },
+  "arms": {
+    "sha256": "ad6d6b11252c141b3b146d7a3b1caff9b4d8fb2d3fad1986a8552397cee04d80",
+    "triangles": 113852,
+    "materials": [
+      "identity-vector-status",
+      "material",
+      "orbital-seam-thread",
+      "strata-oxblood-accent",
+      "strata-oxblood-fabric",
+      "vector-bore",
+      "vector-ceramic",
+      "vector-chassis",
+      "vector-glove",
+      "vector-titanium"
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "weightedVertices": 57378
+  },
+  "body": {
+    "sha256": "6809bf4e3f7123c4bd2675f8d11b9c1358645dbbb6d59499c6c1cf621e924e78",
+    "triangles": 67173,
+    "materials": [
+      "TECI_helmet",
+      "gear",
+      "identity-vector-status",
+      "jumpjet",
+      "material",
+      "orbital-seam-thread",
+      "pants",
+      "strata-oxblood-accent",
+      "strata-oxblood-fabric",
+      "torso",
+      "vector-bore",
+      "vector-ceramic",
+      "vector-chassis",
+      "vector-glove",
+      "vector-titanium"
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ]
+  }
+}

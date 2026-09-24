@@ -1,4 +1,4 @@
-"""F2 armor authoring over retained, attributed anatomical glove topology/UVs. Dimensions in metres are asset design, not runtime tuning.
+"""Strata armor authoring over retained, attributed anatomical glove topology/UVs. Dimensions in metres are asset design, not runtime tuning.
 The source rig's dorsum is (sign,0,1), never global -Y. All shells use that frame.
 """
 import bpy, math
@@ -9,6 +9,7 @@ def build(api, rig):
  mesh_object,skin,join,tube,white,navy,rubber,metal = [api[k] for k in ('mesh_object','skin_detail','join','tube','white','navy','rubber','metal')]
  leather=api['leather']
  thread=api['thread']
+ cloth=api['cloth']
  pieces=list(api.get('source_gloves',[]))
  def surface(name, verts, faces, material, bone):
   o=mesh_object(name,verts,faces,material);skin(o,rig,bone);return o
@@ -79,7 +80,7 @@ def build(api, rig):
    for i in range(3):
     bone=side+region+('' if i==0 else 'Twist'+str(i));bone=bone if bone in bones else side+region;a=start.lerp(end,i/3);b=start.lerp(end,(i+1)/3+.015)
     width=width0+(width1-width0)*i/3;depth=depth0+(depth1-depth0)*i/3
-    pieces.append(loft(side+' tailored sleeve '+region+str(i),a,b,width,depth,dorsal,bone,[(0,1,1),(.2,1,1),(.75,.96,.96),(1,.93,.93)]))
+    pieces.append(loft(side+' tailored sleeve '+region+str(i),a,b,width,depth,dorsal,bone,[(0,1,1),(.2,1,1),(.75,.96,.96),(1,.93,.93)],cloth))
     if region=='UpperArm':continue
     axis,lat,norm=frame(a,b,dorsal)
     # Thin circumferential gauntlet shells reveal construction from the FPS viewing side.

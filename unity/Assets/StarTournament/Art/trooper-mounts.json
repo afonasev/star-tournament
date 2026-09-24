@@ -8,11 +8,11 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "6cc1ec518f9968905768a724bf07d775ae8cd8383c69bd5c7bc1b769cd935fe3"
+    "sha256": "6809bf4e3f7123c4bd2675f8d11b9c1358645dbbb6d59499c6c1cf621e924e78"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "d809c961dd4baf15e7bad2050d8489a7ef7d295ba1f081fc65a11dde1bb82976"
+    "sha256": "ad6d6b11252c141b3b146d7a3b1caff9b4d8fb2d3fad1986a8552397cee04d80"
   },
   "clips": [
     "idle",
@@ -1297,5 +1297,5 @@
   },
   "maxTextureDimension": 1024,
   "rootMotion": "death skeleton Root only; applyRootMotion=false on visual Animator; motor authoritative",
-  "equipment": "orbital-equipment-v4-f3; continuous grip receiver connection; F2 hands and grip preserved"
+  "equipment": "strata-oxblood-equipment-v1-f4; continuous grip receiver connection; attributed gloves and clips preserved"
 }

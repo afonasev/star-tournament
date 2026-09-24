@@ -1,4 +1,4 @@
-"""Orbital refined equipment geometry (stable Vector pipeline keys). Blender background; preserves imported rig/clip contracts.
+"""Strata F4 equipment (stable Vector pipeline keys). Blender background; preserves imported rig/clip contracts.
 Authored dimensions are mesh content in meters, not runtime balance parameters.
 """
 import bpy, bmesh, math, json, hashlib
@@ -6,7 +6,7 @@ from pathlib import Path
 from mathutils import Vector, Matrix
 ROOT=Path(__file__).resolve().parents[2]
 ART=ROOT/'unity/Assets/StarTournament/Art'
-OUT=ROOT/'.local/orbital-f3-source';OUT.mkdir(parents=True,exist_ok=True)
+OUT=ROOT/'.local/strata-f4-source';OUT.mkdir(parents=True,exist_ok=True)
 
 def material(name,color,metal=0,rough=.4):
  m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True
@@ -14,14 +14,32 @@ def material(name,color,metal=0,rough=.4):
  return m
 
 def setup():
- global white,navy,rubber,metal,light,dark,parts,thread,leather
- white=material('vector-ceramic',(.64,.625,.58),.12,.47);navy=material('vector-chassis',(.025,.042,.061),.7,.33)
+ global white,navy,rubber,metal,light,dark,parts,thread,leather,oxblood,cloth
+ white=material('vector-ceramic',(.79,.77,.71),.14,.49);navy=material('vector-chassis',(.025,.029,.034),.72,.34)
+ oxblood=material('strata-oxblood-accent',(.12,.013,.025),.26,.52)
+ cloth=material('strata-oxblood-fabric',(.07,.009,.016),0,.82)
  rubber=material('vector-glove',(.018,.025,.032),.05,.66);metal=material('vector-titanium',(.32,.38,.42),.82,.28)
  leather=material('orbital-palm-leather',(.038,.041,.045),0,.83)
  thread=material('orbital-seam-thread',(.055,.065,.073),0,.9)
  light=material('identity-vector-status',(.05,.7,.85),.4,.25);dark=material('vector-bore',(.004,.006,.009),0,.8)
  light.node_tree.nodes.get('Principled BSDF').inputs['Emission Color'].default_value=(.01,.5,.8,1)
  light.node_tree.nodes.get('Principled BSDF').inputs['Emission Strength'].default_value=.7
+ # Packed ceramic albedo retains a quiet machined surface instead of a flat
+ # plastic white. These are authored texture marks, not runtime variation.
+ import random
+ rng=random.Random(2402)
+ ceramic=bpy.data.images.new('strata-ceramic-albedo',width=512,height=512)
+ pixels=[]
+ for y in range(512):
+  for x in range(512):
+   micro=rng.uniform(-.023,.023)
+   scratch=-.18 if (x*13+y*7)%263<2 and rng.random()<.22 else 0
+   grime=-.10 if rng.random()<.003 else 0
+   value=max(.48,min(.91,.77+micro+scratch+grime))
+   pixels.extend((value,value*.965,value*.91,1))
+ ceramic.pixels=pixels;ceramic.pack()
+ albedo=white.node_tree.nodes.new('ShaderNodeTexImage');albedo.image=ceramic
+ white.node_tree.links.new(albedo.outputs['Color'],white.node_tree.nodes.get('Principled BSDF').inputs['Base Color'])
  # Original seamless woven glove map; no external material dependencies.
  image=bpy.data.images.new('vector-woven-glove',width=128,height=128)
  pixels=[]
@@ -42,7 +60,6 @@ def setup():
  rubber.node_tree.links.new(nt.outputs['Color'],nm.inputs['Color']);rubber.node_tree.links.new(nm.outputs['Normal'],rubber.node_tree.nodes.get('Principled BSDF').inputs['Normal'])
  # Ceramic microfinish: low-amplitude tangent-space grain, visible under grazing light.
  grain=bpy.data.images.new('orbital-ceramic-microfinish',width=256,height=256);grain.colorspace_settings.name='Non-Color'
- import random
  rng=random.Random(17);pixels=[]
  for y in range(256):
   for x in range(256):
@@ -176,102 +193,53 @@ def marking(text,loc,size,side):
  bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o;bpy.ops.object.convert(target='MESH');return finish(bpy.context.object,'orbital marking '+text,navy)
 
 def weapon():
- parts.clear()
- axial_shell('sculpted receiver core',[(-.5,.14,.08,.13),(-.43,.14,.12,.16),(-.30,.14,.14,.18),(-.08,.14,.139,.18),(.06,.14,.125,.16),(.115,.14,.09,.11)],navy)
- for z in [.035,.245]:
-  ring('barrel liner',-.64,z,.081,.068,.76,navy,48)
-  ring('round ceramic muzzle socket',-1.001,z,.106,.075,.12,white,48)
-  ring('machined titanium crown',-1.073,z,.095,.071,.026,metal,64)
-  ring('concentric inner lip',-1.085,z,.078,.067,.012,navy,48)
-  ring('recessed bore',-1.00,z,.072,.062,.16,dark,48)
-  cyl('deep bore',(0,-.80,z),.064,.006,dark)
-  for y in [-1.06,-1.025,-.97]:ring('machined collar groove',y,z,.107,.103,.005,navy,48)
-  for i in range(12):
-   angle=i*math.tau/12;ellipsoid('crown fastener',(.10*math.cos(angle),-1.042,z+.10*math.sin(angle)),(.003,.003,.003),metal)
- for side in [-1,1]:
-  # Two sweeping enclosed ceramic fairings, separated by a recessed breathing channel.
-  sculpt('upper flowing barrel shell',side*.076,[(-1.01,.284),(-.95,.343),(-.73,.358),(-.39,.346),(-.27,.301),(-.32,.273),(-.47,.266),(-.58,.293),(-.70,.288),(-.82,.249),(-.96,.243)],.052,white)
-  sculpt('lower flowing fore-end',side*.079,[(-1.00,.064),(-.88,.119),(-.56,.147),(-.38,.113),(-.29,.018),(-.36,-.049),(-.47,-.052),(-.52,-.010),(-.66,.012),(-.78,-.021),(-.91,-.068),(-.98,-.048)],.056,white)
-  sculpt('rounded receiver cheek',side*.116,[(-.34,.301),(-.22,.335),(.025,.313),(.078,.258),(.064,.116),(.025,.067),(-.040,.092),(-.098,.154),(-.23,.138),(-.28,.201)],.039,white)
-  sculpt('rear swept heel',side*.074,[(.007,.31),(.095,.31),(.155,.231),(.15,.10),(.108,.08),(.06,.174)],.035,white)
-  # Dark elongated recesses use inset rim + smaller face, visibly nested in fairings.
-  for y,z,length in [(-.73,.282,.14),(-.50,.285,.16),(-.62,.044,.12)]:
-   profile=[(y-length/2,z-.013),(y+length/2,z-.013),(y+length/2+.009,z),(y+length/2,z+.013),(y-length/2,z+.013),(y-length/2-.009,z)]
-   sculpt('vent machined rim',side*(.109 if z<.1 else .103),profile,.004,metal)
-   sculpt('vent dark well',side*(.112 if z<.1 else .106),[(y+(a-y)*.9,z+(b-z)*.64) for a,b in profile],.0015,dark)
-   for j in range(4):box('recessed vent louvre',(side*(.113 if z<.1 else .107),y-length*.3+j*length*.2,z),(.003,.004,.013),navy,.001)
-  for j in range(3):
-   y=-.87+j*.047;sculpt('swept forward gill',side*.110,[(y-.013,.014),(y+.012,.023),(y+.017,.035),(y-.011,.029)],.003,dark)
-  sculpt('status pocket',side*.121,[(-.22,.13),(-.12,.13),(-.10,.15),(-.21,.157)],.005,navy)
-  sculpt('status lens',side*.125,[(-.207,.139),(-.13,.14),(-.125,.148),(-.205,.149)],.003,light)
-  for y,z,x in [(-.33,.278,.111),(.045,.24,.156),(-.30,.084,.133),(-.84,.102,.111)]:screw('flush shell fastener',side,y,z,x)
-  marking('ORBITAL', (side*.138,-.21,.253),.014,side)
-  marking('02', (side*.138,-.245,.23),.027,side)
-  marking('DUAL / KINETIC', (side*.105,-.72,.325),.012,side)
-  # Recessed concentric service ports in the receiver.
-  screw('receiver service socket',side,-.044,.213,.137,.022)
-  # Subtle continuous orbit mark in actual geometry, not an external decal dependency.
-  pts=[(side*.138,-.164+.035*math.cos(t),.235+.023*math.sin(t)) for t in [i*math.tau/48 for i in range(48)]]
-  tube('orbital insignia',pts,.0018,navy,True)
- # Constructed recessed cooling channel follows the scalloped shell cutaway.
- for side in [-1,1]:
-  for z in [.192,.246]:box('recessed cooling channel lip',(side*.099,-.63,z),(.014,.39,.009),navy,.003)
-  for j in range(9):
-   y=-.79+j*.038
-   panel('internal diagonal cooling fin',side*.075,[(y,.20),(y+.012,.20),(y+.030,.235),(y+.018,.235)],.022,metal)
-  sculpt('fore-end exposed leather saddle',side*.086,[(-.87,-.047),(-.76,.0),(-.66,.015),(-.55,-.007),(-.50,-.038),(-.57,-.071),(-.78,-.075)],.008,rubber)
-  tube('receiver shell parting gasket',[(side*.132,y,z) for y,z in [(-.30,.30),(-.28,.265),(-.285,.22),(-.24,.168),(-.12,.16)]],.003,navy)
- # Rounded crown/spine with nested sight rails and rear face visible in FPS.
- axial_shell('ceramic crown',[(-.94,.332,.04,.024),(-.85,.357,.045,.023),(-.53,.376,.052,.017),(-.32,.365,.054,.02),(-.12,.346,.058,.026),(.045,.32,.055,.023)],white)
- box('sight bed',(0,-.35,.389),(.062,.81,.018),navy,.008)
- for i in range(8):box('sight micro rail',(0,-.65+i*.081,.405),(.057,.009,.008),metal,.003)
- sculpt('rear upper shroud',.0,[(-.07,.3),(.09,.27),(.09,.17),(.02,.16),(-.04,.2)],.07,navy)
- box('rear recessed face',(0,.109,.19),(.15,.022,.16),navy,.03)
- box('rear ceramic brow',(0,.128,.256),(.14,.026,.039),white,.005)
- for x in [-.057,.057]:box('rear cheek lip',(x,.127,.175),(.015,.016,.10),white,.003)
- for i in range(4):box('rear heatsink',(0,.129,.15+i*.018),(.082,.011,.005),metal,.002)
- box('rear sight',(0,.045,.354),(.085,.081,.022),navy,.009)
- box('rear sight signal',(0,.077,.365),(.032,.006,.007),light,.002)
- # Ergonomic palm swell and open rounded trigger guard.
- axial_shell('curved palm grip',[(.035,-.27,.048,.047),(.025,-.245,.060,.074),(.00,-.185,.066,.101),(-.025,-.12,.064,.11),(-.055,-.064,.051,.075)],rubber)
- for side in [-1,1]:
-  sculpt('grip sculpted heel',side*.050,[(-.06,-.042),(.035,-.055),(.103,-.23),(.092,-.31),(.015,-.317),(-.044,-.23)],.023,white)
-  sculpt('grip rubber insert',side*.073,[(-.048,-.065),(.012,-.083),(.066,-.231),(.056,-.281),(.009,-.284),(-.026,-.22)],.004,leather)
-  for i in range(12):
-   for j in range(4):ellipsoid('grip grip stipple',(side*.079,-.025+j*.018+i*.003,-.098-i*.014),(.0015,.0028,.0028),navy)
- guard=[(0,-.07,-.053),(0,-.28,-.056),(0,-.301,-.093),(0,-.292,-.157),(0,-.25,-.185),(0,-.13,-.19),(0,-.06,-.16)]
- curve=smooth_outline([(y,z) for x,y,z in guard],6);tube('rounded trigger guard',[(0,p.x,p.y) for p in curve],.010,navy,True)
- tube('curved trigger',[(0,-.145,-.034),(0,-.15,-.075),(0,-.13,-.119),(0,-.15,-.139)],.009,navy)
- axial_shell('underbarrel palm rest',[(-.87,-.065,.06,.016),(-.78,-.089,.089,.035),(-.62,-.102,.091,.038),(-.47,-.093,.078,.03),(-.38,-.07,.055,.018)],rubber)
- for i in range(13):
-  y=-.79+i*.025;tube('foregrip traction',[(x,y,-.133+abs(x)*.32) for x in [-.07,-.035,0,.035,.07]],.0028,navy)
- for side in [-1,1]:
-  tube('stitched foregrip binding',[(side*.068,y,-.10) for y in [-.79,-.70,-.61,-.51]],.001,thread)
- # Fit the authored shell above the retained support-hand trajectory. Grip and palm
- # rests remain anchored to the accepted animation; front shells clear curled fingertips.
- for part in parts:
-  if any(label in part.name for label in ['grip','trigger','palm rest','foregrip']):continue
-  for vertex in part.data.vertices:
-   point=part.matrix_world@vertex.co
-   point.z+=.105
-   if point.y<-.4:point.y-=.08*min(1,(-point.y-.4)/.5)
-   vertex.co=part.matrix_world.inverted()@point
- axial_shell('support throat',[(-.82,-.022,.055,.044),(-.66,.012,.074,.072),(-.48,.019,.073,.078),(-.35,.045,.052,.065)],navy)
- # Enclosed foregrip chassis also fills the lifted barrel-to-palm-rest space across its width.
- box('solid foregrip barrel bridge',(0,-.635,.020),(.166,.47,.260),navy,.024)
- for side in [-1,1]:
-  sculpt('continuous foregrip sidewall',side*.081,[(-.88,.065),(-.76,.142),(-.49,.149),(-.35,.083),(-.39,-.047),(-.50,-.106),(-.75,-.116),(-.855,-.075)],.015,navy)
- # Solid receiver neck closes the F2 lift gap while leaving the accepted hands anchored.
- # Authored mesh dimensions: deliberate overlap with receiver and grip avoids a floating assembly.
- axial_shell('continuous grip receiver neck',[(-.23,.040,.053,.074),(-.14,.044,.077,.130),(-.045,.031,.085,.163),(.045,.037,.078,.162),(.11,.087,.061,.110)],navy)
- for side in [-1,1]:
-  sculpt('grip receiver ceramic transition',side*.076,[(-.17,.140),(-.10,.175),(.048,.180),(.099,.127),(.090,.027),(.067,-.102),(.022,-.133),(-.047,-.107),(-.086,-.015),(-.15,.018)],.023,white)
- return join(parts[:],'weapon:joined')
+ import sys
+ sys.path.insert(0,str(ROOT/'scripts/trooper'))
+ from strata_weapon import build
+ return build(globals())
 
 def attach_skin(o,rig,bone):
  # Geometry is authored directly in rig rest coordinates.
  group=o.vertex_groups.new(name=bone);group.add(list(range(len(o.data.vertices))),1,'REPLACE')
  mod=o.modifiers.new('TrooperHumanoid','ARMATURE');mod.object=rig;o.parent=rig
+
+def body_armor(rig):
+ # F4's pale segmented plates are tied to the existing bones. These are
+ # presentation surfaces only; collider, skeleton and clips are unchanged.
+ for side in ['Left','Right']:
+  for plate_index,(region,stations,width,depth) in enumerate([
+   ('LowerLeg',[(.12,.67),(.18,.97),(.34,1),(.39,.61)],.165,.205),
+   ('LowerLeg',[(.45,.67),(.50,1),(.75,.92),(.82,.60)],.158,.195),
+   ('UpperLeg',[(.22,.48),(.28,.78),(.42,.84),(.48,.54)],.19,.22),
+   ('UpperArm',[(.05,.57),(.13,.90),(.53,.88),(.61,.58)],.16,.185)]):
+   name=side+region;bone=rig.data.bones[name]
+   a,b=bone.head_local,bone.tail_local;axis=(b-a).normalized()
+   front=Vector((0,-1,0));front=(front-axis*front.dot(axis)).normalized()
+   lateral=axis.cross(front).normalized();verts=[];faces=[];count=14
+   for layer in [1,0]:
+    for t,span in stations:
+     for i in range(count):
+      theta=2.35*(i/(count-1)-.5)*span
+      v=a.lerp(b,t)+lateral*(math.sin(theta)*width/2)+front*(math.cos(theta)*depth/2+(.007 if layer else 0))
+      verts.append(v)
+   ringcount=len(stations)*count
+   for layer in range(2):
+    for j in range(len(stations)-1):
+     for i in range(count-1):
+      q=layer*ringcount+j*count+i
+      f=(q,q+1,q+count+1,q+count)
+      faces.append(f if layer==0 else tuple(reversed(f)))
+   for j in range(len(stations)-1):
+    for edge in [0,count-1]:
+     q=j*count+edge;faces.append((q,q+count,q+ringcount+count,q+ringcount))
+   for i in range(count-1):
+    for edge in [0,(len(stations)-1)*count]:
+     q=edge+i;faces.append((q,q+1,q+ringcount+1,q+ringcount))
+   plate=mesh_object('Strata ceramic '+name+' '+str(plate_index),verts,faces,white)
+   attach_skin(plate,rig,name)
+   if region=='UpperArm':
+    tailored('Strata oxblood '+name+' sleeve',a,b,.15,.15,cloth,rig,name,
+             [(.03,.73),(.11,.96),(.48,1),(.82,.94),(.96,.72)])
 
 def segment(name,a,b,width,depth,mat,rig,bone):
  a,b=Vector(a),Vector(b)
@@ -329,6 +297,10 @@ for kind in ['body','arms']:
  with tempfile.NamedTemporaryFile(suffix='.glb') as source:
   source.write(baseline);source.flush();bpy.ops.import_scene.gltf(filepath=source.name)
  rig=next(o for o in bpy.context.scene.objects if o.type=='ARMATURE')
+ import sys
+ sys.path.insert(0,str(ROOT/'scripts/trooper'))
+ from strata_palette import apply as apply_strata_palette
+ apply_strata_palette()
  old=bpy.data.objects['weapon:joined'];parent=old.parent;transform=old.matrix_local.copy()
  bpy.data.objects.remove(old,do_unlink=True);setup();gun=weapon()
  if kind=='body':
@@ -339,6 +311,7 @@ for kind in ['body','arms']:
   export(ART/'vector-shotgun-lod1.glb',[low]);bpy.data.objects.remove(low,do_unlink=True)
   gun.scale=(1,1,1)
  gun.parent=parent;gun.matrix_local=transform
+ if kind=='body':body_armor(rig)
  for index,z in enumerate([.035,.245]):
   node=bpy.data.objects.new('vector-muzzle-'+str(index),None);bpy.context.collection.objects.link(node);node.parent=gun;node.location=(0,-1.18,z+.105)
  if kind=='arms':
@@ -359,16 +332,16 @@ for kind in ['body','arms']:
  keep=[o for o in bpy.context.scene.objects if o==rig or o.parent is not None]
  export(path,keep)
  # Save an inspectable authored Blender source for reproducibility.
- bpy.ops.wm.save_as_mainfile(filepath=str(OUT/('orbital-'+kind+'.blend')))
+ bpy.ops.wm.save_as_mainfile(filepath=str(OUT/('strata-'+kind+'.blend')))
 manifest_path=ART/'asset-manifest.json';manifest=json.loads(manifest_path.read_text())
 for entry in manifest['entries']:
  if entry['key'] in ['world-weapon','view-weapon']:
-  entry['path']='Assets/StarTournament/Art/vector-shotgun-lod0.glb';entry['sha256']=hashlib.sha256((ART/'vector-shotgun-lod0.glb').read_bytes()).hexdigest();entry['source']='Original authored Orbital F3 connected receiver shells; embedded equivalent in trooper derivatives'
+  entry['path']='Assets/StarTournament/Art/vector-shotgun-lod0.glb';entry['sha256']=hashlib.sha256((ART/'vector-shotgun-lod0.glb').read_bytes()).hexdigest();entry['source']='Authored Strata F4 ceramic/metal continuous twin-barrel shell; embedded equivalent in trooper derivatives'
  if entry['key'] in ['player-body','player-hands']:
-  entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='Orbital F2 armor + attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py and orbital_hands.py'
+  entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='Strata F4 oxblood fabric and ceramic armor over attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py, strata_palette.py and orbital_hands.py'
 manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
 print('VECTOR_EXPORT_COMPLETE')
 mount_path=ART/'trooper-mounts.json';mount_data=json.loads(mount_path.read_text())
-mount_data['equipment']='orbital-equipment-v4-f3; continuous grip receiver connection; F2 hands and grip preserved'
+mount_data['equipment']='strata-oxblood-equipment-v1-f4; continuous grip receiver connection; attributed gloves and clips preserved'
 for key,file in [('body','trooper-body-animated.glb'),('arms','trooper-arms-animated.glb')]:mount_data[key]['sha256']=hashlib.sha256((ART/file).read_bytes()).hexdigest()
 mount_path.write_text(json.dumps(mount_data,indent=2)+'\n')

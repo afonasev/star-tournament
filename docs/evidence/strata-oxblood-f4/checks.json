@@ -1,0 +1,37 @@
+{
+  "editmode": {
+    "total": 109,
+    "passed": 109,
+    "failed": 0
+  },
+  "playmode": {
+    "total": 106,
+    "passed": 106,
+    "failed": 0
+  },
+  "build": {
+    "command": "unity/tools.sh build",
+    "result": "STAR_PROVING_BUILD_PASS 469469824",
+    "exit_code": 0,
+    "log": ".local/unity-evidence/build.log"
+  },
+  "player": {
+    "command": "-vectorReview -screen-width 1920 -screen-height 1080",
+    "audio": "muted",
+    "diagnostic": {
+      "status": "DIAGNOSTIC_NOT_ACCEPTANCE",
+      "muted": true,
+      "profile": "unity-proving-ground-v1@1",
+      "equipment": "strata-oxblood-equipment-v1-f4"
+    },
+    "states": [
+      "01-idle.png",
+      "02-fire.png",
+      "03-smoke.png",
+      "04-settled.png",
+      "05-two-seats-world.png",
+      "06-motion.png"
+    ],
+    "error_lines": []
+  }
+}
