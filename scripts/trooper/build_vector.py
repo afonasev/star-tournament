@@ -6,7 +6,7 @@ from pathlib import Path
 from mathutils import Vector, Matrix
 ROOT=Path(__file__).resolve().parents[2]
 ART=ROOT/'unity/Assets/StarTournament/Art'
-OUT=ROOT/'.local/orbital-f2-source';OUT.mkdir(parents=True,exist_ok=True)
+OUT=ROOT/'.local/orbital-f3-source';OUT.mkdir(parents=True,exist_ok=True)
 
 def material(name,color,metal=0,rough=.4):
  m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True
@@ -257,6 +257,15 @@ def weapon():
    if point.y<-.4:point.y-=.08*min(1,(-point.y-.4)/.5)
    vertex.co=part.matrix_world.inverted()@point
  axial_shell('support throat',[(-.82,-.022,.055,.044),(-.66,.012,.074,.072),(-.48,.019,.073,.078),(-.35,.045,.052,.065)],navy)
+ # Enclosed foregrip chassis also fills the lifted barrel-to-palm-rest space across its width.
+ box('solid foregrip barrel bridge',(0,-.635,.020),(.166,.47,.260),navy,.024)
+ for side in [-1,1]:
+  sculpt('continuous foregrip sidewall',side*.081,[(-.88,.065),(-.76,.142),(-.49,.149),(-.35,.083),(-.39,-.047),(-.50,-.106),(-.75,-.116),(-.855,-.075)],.015,navy)
+ # Solid receiver neck closes the F2 lift gap while leaving the accepted hands anchored.
+ # Authored mesh dimensions: deliberate overlap with receiver and grip avoids a floating assembly.
+ axial_shell('continuous grip receiver neck',[(-.23,.040,.053,.074),(-.14,.044,.077,.130),(-.045,.031,.085,.163),(.045,.037,.078,.162),(.11,.087,.061,.110)],navy)
+ for side in [-1,1]:
+  sculpt('grip receiver ceramic transition',side*.076,[(-.17,.140),(-.10,.175),(.048,.180),(.099,.127),(.090,.027),(.067,-.102),(.022,-.133),(-.047,-.107),(-.086,-.015),(-.15,.018)],.023,white)
  return join(parts[:],'weapon:joined')
 
 def attach_skin(o,rig,bone):
@@ -354,12 +363,12 @@ for kind in ['body','arms']:
 manifest_path=ART/'asset-manifest.json';manifest=json.loads(manifest_path.read_text())
 for entry in manifest['entries']:
  if entry['key'] in ['world-weapon','view-weapon']:
-  entry['path']='Assets/StarTournament/Art/vector-shotgun-lod0.glb';entry['sha256']=hashlib.sha256((ART/'vector-shotgun-lod0.glb').read_bytes()).hexdigest();entry['source']='Original authored Orbital F2 shells; embedded equivalent in trooper derivatives'
+  entry['path']='Assets/StarTournament/Art/vector-shotgun-lod0.glb';entry['sha256']=hashlib.sha256((ART/'vector-shotgun-lod0.glb').read_bytes()).hexdigest();entry['source']='Original authored Orbital F3 connected receiver shells; embedded equivalent in trooper derivatives'
  if entry['key'] in ['player-body','player-hands']:
   entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='Orbital F2 armor + attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py and orbital_hands.py'
 manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
 print('VECTOR_EXPORT_COMPLETE')
 mount_path=ART/'trooper-mounts.json';mount_data=json.loads(mount_path.read_text())
-mount_data['equipment']='orbital-equipment-v3-f2; anatomical surface authoring, original rig motion with replacement first-person gloves and gauntlets'
+mount_data['equipment']='orbital-equipment-v4-f3; continuous grip receiver connection; F2 hands and grip preserved'
 for key,file in [('body','trooper-body-animated.glb'),('arms','trooper-arms-animated.glb')]:mount_data[key]['sha256']=hashlib.sha256((ART/file).read_bytes()).hexdigest()
 mount_path.write_text(json.dumps(mount_data,indent=2)+'\n')

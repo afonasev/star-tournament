@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.1758399">
+  <test-suite type="TestSuite" id="1133" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.175840" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1125" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/8050/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.170197" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="85265" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1126" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.169204" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1127" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.168370" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1128" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.167538" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1129" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="63" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.166524" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1117" name="TrooperPresentationTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:39:19Z" duration="28.165100" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1119" name="ActualBonesMoveWithoutMovingGameplayAndFreezeAtSameClock" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.ActualBonesMoveWithoutMovingGameplayAndFreezeAtSameClock" methodname="ActualBonesMoveWithoutMovingGameplayAndFreezeAtSameClock" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="372091170" result="Passed" start-time="2026-09-24 12:38:51Z" end-time="2026-09-24 12:38:55Z" duration="4.152641" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1122" name="DeathRespawnAndRepeatClearViewAndCorpseState" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.DeathRespawnAndRepeatClearViewAndCorpseState" methodname="DeathRespawnAndRepeatClearViewAndCorpseState" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="1379513602" result="Passed" start-time="2026-09-24 12:38:55Z" end-time="2026-09-24 12:38:58Z" duration="3.313573" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1120" name="ImmediateResetAndDeathKeepActualBonesAtTheSameClock" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.ImmediateResetAndDeathKeepActualBonesAtTheSameClock" methodname="ImmediateResetAndDeathKeepActualBonesAtTheSameClock" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="1746903771" result="Passed" start-time="2026-09-24 12:38:58Z" end-time="2026-09-24 12:39:01Z" duration="3.176059" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1124" name="LocalBodyCastsAnAnimatedShadowWithoutRenderingInItsOwnCamera" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.LocalBodyCastsAnAnimatedShadowWithoutRenderingInItsOwnCamera" methodname="LocalBodyCastsAnAnimatedShadowWithoutRenderingInItsOwnCamera" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="1078598161" result="Passed" start-time="2026-09-24 12:39:01Z" end-time="2026-09-24 12:39:05Z" duration="3.169653" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1121" name="OrbitalGripDoesNotAccumulateAcrossFrozenSamples" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.OrbitalGripDoesNotAccumulateAcrossFrozenSamples" methodname="OrbitalGripDoesNotAccumulateAcrossFrozenSamples" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="1670624649" result="Passed" start-time="2026-09-24 12:39:05Z" end-time="2026-09-24 12:39:08Z" duration="3.179991" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1123" name="SeatsShareAssetsButNeverRenderAnotherFirstPersonView" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.SeatsShareAssetsButNeverRenderAnotherFirstPersonView" methodname="SeatsShareAssetsButNeverRenderAnotherFirstPersonView" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="2108185662" result="Passed" start-time="2026-09-24 12:39:08Z" end-time="2026-09-24 12:39:16Z" duration="7.999539" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1118" name="VectorMuzzlesAndParticlesRespectSeatClockAndLifetime" fullname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.VectorMuzzlesAndParticlesRespectSeatClockAndLifetime" methodname="VectorMuzzlesAndParticlesRespectSeatClockAndLifetime" classname="StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests" runstate="Runnable" seed="1695355521" result="Passed" start-time="2026-09-24 12:39:16Z" end-time="2026-09-24 12:39:19Z" duration="3.165961" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

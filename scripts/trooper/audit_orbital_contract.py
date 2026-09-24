@@ -27,6 +27,6 @@ manifest=json.loads((ART/'asset-manifest.json').read_text())
 for entry in manifest['entries']:
     name=Path(entry['path']).name
     if name in REPORT:assert entry['sha256']==REPORT[name]['sha256'], entry['key']
-output=ROOT/'docs/evidence/orbital-f2/export-contract.json'
+output=ROOT/'docs/evidence/orbital-f3/export-contract.json'
 output.write_text(json.dumps(REPORT,indent=2)+'\n')
-print('ORBITAL_F2_CONTRACT_PASS', {name:item['triangles'] for name,item in REPORT.items()})
+print('ORBITAL_F3_CONTRACT_PASS', {name:item['triangles'] for name,item in REPORT.items()})

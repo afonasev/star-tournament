@@ -2,7 +2,7 @@
 import bpy,json,hashlib,math
 from pathlib import Path
 from mathutils import Vector,Quaternion
-ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'docs/evidence/orbital-f2';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'docs/evidence/orbital-f3';OUT.mkdir(parents=True,exist_ok=True)
 report={}
 def scene():
  s=bpy.context.scene;s.render.engine='CYCLES';s.cycles.samples=32
@@ -24,7 +24,8 @@ for kind in ['weapon','arms','body']:
  for o in meshes:o.data.calc_loop_triangles();triangles+=len(o.data.loop_triangles)
  report[kind]={'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'triangles':triangles,'materials':sorted({m.name for o in meshes for m in o.data.materials if m}),'clips':sorted(a.name for a in bpy.data.actions)}
  if kind=='weapon':
-  camera(s,Vector((0,-.155,.025)),(.65,-.8,.46),.47);render(s,'equipment-model');continue
+  camera(s,Vector((0,-.155,.025)),(.65,-.8,.46),.47);render(s,'equipment-model')
+  center=Vector((0,-.155,.025));s.camera.location=center+Vector((.8,0,0));s.camera.rotation_euler=(center-s.camera.location).to_track_quat('-Z','Y').to_euler();render(s,'equipment-side');continue
  rig=next(o for o in s.objects if o.type=='ARMATURE');assert len(rig.data.bones)==57
  assert {'idle','walk','run','aim','fire','hit','death'} <= {a.name for a in bpy.data.actions}
  assert all(bpy.data.objects.get('vector-muzzle-'+str(i)) for i in range(2))
