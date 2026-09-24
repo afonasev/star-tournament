@@ -25,6 +25,36 @@ namespace StarTournament.ProvingGround.Tests
             for(int count=2;count<=8;count++)Assert.That(spawn.TryInitial(NativeMatchRoster.Ffa(count),ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation"),out var positions),Is.True,$"FFA {count}: {spawn.InitialFailure}");
             yield return null;
         }
+        [UnityTest] public IEnumerator OuterCeilingCavitiesAreSolidUpToShell()
+        {
+            foreach(var solid in arena.Definition.Solids.Where(s=>s.Id.Contains("slope-ceiling")||s.Id.Contains("cross-rise-ceiling")||s.Id.EndsWith("low-ceiling")||s.Id.Contains("entry-roof")))
+            foreach(float along in new[]{-.4f,0,.4f})foreach(float across in new[]{-.4f,0,.4f})
+            {
+                var underside=solid.Position+solid.Rotation*new Vector3(across*solid.Size.x,-solid.Size.y/2,along*solid.Size.z);
+                for(float y=underside.y+.5f;y<8.3f;y+=.5f)
+                    Assert.That(Physics.CheckSphere(new Vector3(underside.x,y,underside.z),.04f,1<<ProvingArena.WorldLayer),Is.True,$"Open ceiling cavity {solid.Id} at {underside.x},{y},{underside.z}");
+            }
+            yield return null;
+        }
+        [UnityTest] public IEnumerator JumpingDownOuterRisesCannotLandAboveCeiling()
+        {
+            foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})foreach(bool cross in new[]{false,true})
+            {
+                var start=cross?new Vector3(sx*29,4,sz*32):new Vector3(sx*32,4,sz*15);
+                var move=cross?new Vector2(-sx,0):new Vector2(0,-sz);
+                var go=new GameObject("ceiling-jump-proof");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();
+                var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,start);
+                for(int tick=0;tick<180;tick++)
+                {
+                    motor.Tick(new LocalAction{Move=move,Jump=tick%30==1},1f/60);Physics.SyncTransforms();
+                    var pos=motor.State.Position;float distance=cross?Mathf.Abs(pos.x)-18:Mathf.Abs(pos.z)-4;
+                    if(distance>=0&&distance<=10)
+                        Assert.That(pos.y,Is.LessThan(3.2f+distance*.48f),$"Motor entered above ceiling: {pos}, cross={cross}");
+                }
+                Object.DestroyImmediate(go);
+            }
+            yield return null;
+        }
         [UnityTest] public IEnumerator UpperNorthSouthDividersBlockExtraStraightOpenings()
         {
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})

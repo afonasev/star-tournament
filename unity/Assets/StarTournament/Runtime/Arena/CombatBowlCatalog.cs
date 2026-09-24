@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="12", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="13", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -52,7 +52,10 @@ namespace StarTournament.ProvingGround
             void SlopingRoof(string id,Vector3 low,Vector3 high,float width)
             {
                 var rotation=Quaternion.LookRotation(high-low,Vector3.up);
-                Box(id,(low+high)/2+rotation*Vector3.up*slab/2,new Vector3(width,slab,Vector3.Distance(low,high)),"wall","",rotation);
+                // Fill the inaccessible roof cavity while preserving the exact smooth underside.
+                // Shell height is an authored structural junction, exported with the resulting solid.
+                float depth=(8.4f-low.y)/(rotation*Vector3.up).y;
+                Box(id,(low+high)/2+rotation*Vector3.up*depth/2,new Vector3(width,depth,Vector3.Distance(low,high)),"wall","",rotation);
             }
             void Steps(string id,Vector3 start,Vector3 direction,int count,float rise,float tread,float width,string lower,string upper)
             {
@@ -99,7 +102,7 @@ namespace StarTournament.ProvingGround
             {
                 string side=sx<0?"west":"east",low=loop;
                 Floor(side+"-low",Mathf.Min(sx*28,sx*36),Mathf.Max(sx*28,sx*36),-4,4,0,low);
-                Roof(side+"-low-ceiling",Mathf.Min(sx*28,sx*36),Mathf.Max(sx*28,sx*36),-4,4,3.2f);
+                Roof(side+"-low-ceiling",Mathf.Min(sx*28,sx*36),Mathf.Max(sx*28,sx*36),-4,4,3.2f,8.4f-3.2f);
                 // Wide gateway with a flush lower link and an opaque lintel.
                 Floor(side+"-gateway",Mathf.Min(sx*24,sx*32),Mathf.Max(sx*24,sx*32),-4,4,0,low);
                 Wall(side+"-gateway-lintel",sx*28,-4,sx*28,4,3.2f,8);
@@ -135,14 +138,14 @@ namespace StarTournament.ProvingGround
             foreach(int sz in new[]{-1,1})
             {
                 string side=sz>0?"north":"south",low=loop;float za=sz>0?28:-36,zb=sz>0?36:-28;
-                Floor(side+"-outer-low",-18,18,za,zb,0,low);Roof(side+"-outer-low-ceiling",-18,18,za,zb,3.2f);
+                Floor(side+"-outer-low",-18,18,za,zb,0,low);Roof(side+"-outer-low-ceiling",-18,18,za,zb,3.2f,8.4f-3.2f);
                 foreach(int sx in new[]{-1,1})
                 {
                     string id=side+(sx<0?"west":"east")+"-cross-rise";
                     Steps(id,new Vector3(sx*18,0,sz*32),Vector3.right*sx,20,.2f,.5f,8,low,hall);
                     SlopingRoof(id+"-ceiling",new Vector3(sx*18,3.2f,sz*32),new Vector3(sx*28,8,sz*32),8);
                     Floor(side+"-entry-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,0,low);
-                    Roof(side+"-entry-roof-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,2.6f);
+                    Roof(side+"-entry-roof-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,2.6f,8.4f-2.6f);
                 }
                 Wall(side+"-divider-middle",-12,sz*24,12,sz*24,0,8);
                 Wall(side+"-divider-left",-28,sz*24,-18,sz*24,0,3.6f);
@@ -159,7 +162,7 @@ namespace StarTournament.ProvingGround
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-36,36,8.4f);
             // Opaque hull piers, sills and headers surround smaller glazed openings.
-            // Every dimension below becomes range-validated authoring metadata, frozen in revision 12.
+            // Every dimension below becomes range-validated authoring metadata, frozen in revision 13.
             foreach(int side in new[]{-1,1})foreach(bool alongX in new[]{false,true})
             {
                 string axis=alongX?"z":"x",prefix="hull-"+axis+"-"+side;
