@@ -129,6 +129,7 @@ namespace StarTournament.ProvingGround
                 artCamera.transform.LookAt(new Vector3(-6*side,1.4f,15*side));
                 yield return Capture(side>0?"30-open-north-spawn-flank":"31-open-south-spawn-flank");
             }
+            yield return CaptureDirectDiagonalWalks(artCamera);
             Time.timeScale=priorTimeScale;Destroy(artCameraObject);foreach(var c in reviewCameras)c.enabled=true;foreach(var c in reviewCanvases)c.enabled=true;
             // Real player projection, camera-only cutaway: roof/wall renderers hidden only for the labelled overview.
             var arena=ground.GetComponentInChildren<ProvingArena>();var cameras=ground.GetComponentsInChildren<Camera>();var canvases=ground.GetComponentsInChildren<Canvas>();
@@ -143,6 +144,35 @@ namespace StarTournament.ProvingGround
             File.WriteAllText(Path.Combine(directory,"review.json"),JsonUtility.ToJson(new Result{arena=ground.Session.ArenaIdentity,authoring=ground.CombatBowlAuthoring.Id+"@"+ground.CombatBowlAuthoring.Version,presentation=ground.OrbitalLeagueProfile.Id+"@"+ground.OrbitalLeagueProfile.Version,participants=ground.Session.ParticipantCount,seed=20260923,release=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_ID"),muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,repeat=true,player="native macOS Development Player",note="Scripted live diagnostic match; architectural views freeze time for staging; physical controllers and human playable acceptance remain open."},true));
             Debug.Log("COMBAT_BOWL_R7_REVIEW_COMPLETE "+directory);
         }
+        IEnumerator CaptureDirectDiagonalWalks(Camera camera)
+        {
+            // Diagnostic route coordinates and time bounds; actual movement uses the gameplay capsule profile.
+            var walks=new System.Collections.Generic.List<Walk>();float eye=ground.Profile.Get("camera.eyeHeight");
+            foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})foreach(bool reverse in new[]{false,true})
+            {
+                var route=new[]{new Vector3(sx*32,4,sz*17),new Vector3(sx*32,4,sz*26),new Vector3(sx*24,4,sz*18)};
+                if(reverse)Array.Reverse(route);
+                var walker=new GameObject("F3 diagnostic walking capsule");walker.layer=ProvingArena.ParticipantLayer;
+                walker.AddComponent<CharacterController>();var motor=walker.AddComponent<CharacterMotor>();motor.Initialize(ground.Profile,route[0]);
+                string label=$"34-diagonal-{sx}-{sz}-{(reverse?"out":"in")}";
+                camera.transform.position=motor.State.Position+Vector3.up*eye;camera.transform.LookAt(route[1]+Vector3.up*eye);
+                yield return Capture(label+"-start");
+                foreach(var goal in route.Skip(1))
+                {
+                    for(int tick=0;tick<300;tick++)
+                    {
+                        var delta=goal-motor.State.Position;var move=new Vector2(delta.x,delta.z);if(move.magnitude<.2f)break;
+                        motor.Tick(new LocalAction{Move=move.normalized},1f/60);Physics.SyncTransforms();
+                        camera.transform.position=motor.State.Position+Vector3.up*eye;camera.transform.LookAt(goal+Vector3.up*eye);yield return null;
+                    }
+                    if(Vector3.Distance(motor.State.Position,goal)>.3f)throw new InvalidOperationException($"F3 direct walk blocked {label}: {motor.State.Position} -> {goal}");
+                }
+                walks.Add(new Walk{label=label,start=route[0],end=motor.State.Position,arrived=true});yield return Capture(label+"-end");Destroy(walker);
+            }
+            File.WriteAllText(Path.Combine(directory,"f3-walks.json"),JsonUtility.ToJson(new Walks{routes=walks.ToArray(),note="Native CharacterMotor direct input, frozen match and diagnostic camera, no pathfinding; human playtest remains open."},true));
+        }
+        [Serializable] class Walk{public string label;public Vector3 start,end;public bool arrived;}
+        [Serializable] class Walks{public Walk[] routes;public string note;}
         IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.35f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return new WaitForSecondsRealtime(.5f);}
         [Serializable] class Performance{public int samples,width,height,localLights;public long allocatedMemoryBytes;public float medianMs,p95Ms;public string note;}
         [Serializable] class Result{public string arena,authoring,presentation,release,player,note;public int participants;public uint seed;public bool muted,repeat;public int width,height;}

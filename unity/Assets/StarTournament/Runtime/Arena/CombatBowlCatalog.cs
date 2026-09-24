@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="10", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="11", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -111,13 +111,24 @@ namespace StarTournament.ProvingGround
                     Steps(corner+"-outer-rise",new Vector3(sx*32,0,sz*4),Vector3.forward*sz,20,.2f,.5f,8,low,hall);
                     // F4: one continuous underside joins the flat low and high ceilings.
                     SlopingRoof(corner+"-slope-ceiling",new Vector3(sx*32,3.2f,sz*4),new Vector3(sx*32,8,sz*14),8);
-                    Wall(corner+"-divider",sx*28,sz*4,sx*28,sz*20,0,8);
+                    Wall(corner+"-divider",sx*28,sz*4,sx*28,sz*17.5f,0,8);
                     Wall(corner+"-gateway-jamb",sx*28,sz*4,sx*30,sz*4,0,8);
-                    // Wide diagonal link; its opaque sidewalls put the spawn off the sight axis.
+                    // F3: retain the diagonal deck, keeping wall faces inside the inner contour.
                     var start=new Vector3(sx*24,4,sz*18);var end=new Vector3(sx*32,4,sz*26);var mid=(start+end)/2;
                     var dir=(end-start).normalized;var across=Vector3.Cross(Vector3.up,dir);var rot=Quaternion.LookRotation(dir);
                     Box(corner+"-diagonal",mid-Vector3.up*slab/2,new Vector3(6,slab,Vector3.Distance(start,end)+2),"floor",hall,rot);
-                    foreach(int edge in new[]{-1,1})Box(corner+"-diagonal-side-"+edge,mid+dir*1.75f+across*(edge*3.2f)+Vector3.up*2,new Vector3(.4f,4,Vector3.Distance(start,end)-1.5f),"wall","",rot);
+                    foreach(int edge in new[]{-1,1})
+                    {
+                        var axis=mid+across*(edge*3.2f);
+                        float halfLength=(Vector3.Distance(start,end)-1.5f)/2;
+                        float from=1.75f-halfLength;
+                        float to=Mathf.Min(1.75f+halfLength,
+                            Mathf.Min((28.2f-sx*axis.x-thickness/2*Mathf.Abs(across.x))/Mathf.Abs(dir.x),
+                                      (24.2f-sz*axis.z-thickness/2*Mathf.Abs(across.z))/Mathf.Abs(dir.z)));
+                        // Discard a sub-thickness remnant rather than leave a collision sliver at the doorway.
+                        if(to-from<thickness)continue;
+                        Box(corner+"-diagonal-side-"+edge,axis+dir*((from+to)/2)+Vector3.up*2,new Vector3(thickness,4,to-from),"wall","",rot);
+                    }
                     spawns.Add(new Vector3(sx*33,4,sz*17));regions.Add(new ArenaSpawnRegion{Id="spawn-"+corner,Support=hall,Center=new Vector3(sx*33,4,sz*17),Size=new Vector3(1,0,1)});
                 }
             }
@@ -131,19 +142,19 @@ namespace StarTournament.ProvingGround
                     Steps(id,new Vector3(sx*18,0,sz*32),Vector3.right*sx,20,.2f,.5f,8,low,hall);
                     SlopingRoof(id+"-ceiling",new Vector3(sx*18,3.2f,sz*32),new Vector3(sx*28,8,sz*32),8);
                     Floor(side+"-entry-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,0,low);
-                    Roof(side+"-entry-roof-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,3.2f);
+                    Roof(side+"-entry-roof-"+sx,sx<0?-18:12,sx<0?-12:18,sz>0?24:-28,sz>0?28:-24,2.6f);
                 }
                 Wall(side+"-divider-middle",-12,sz*24,12,sz*24,0,8);
                 Wall(side+"-divider-left",-28,sz*24,-18,sz*24,0,3.6f);
                 Wall(side+"-divider-right",18,sz*24,28,sz*24,0,3.6f);
-                Wall(side+"-entry-lintel-left",-18,sz*24,-12,sz*24,3.2f,8);
-                Wall(side+"-entry-lintel-right",12,sz*24,18,sz*24,3.2f,8);
+                Wall(side+"-entry-lintel-left",-18,sz*24,-12,sz*24,2.6f,8);
+                Wall(side+"-entry-lintel-right",12,sz*24,18,sz*24,2.6f,8);
                 Wall("hall-"+side+"-left",-6,sz*8.2f,-2.2f,sz*8.2f,4,8);Wall("hall-"+side+"-right",2.2f,sz*8.2f,6,sz*8.2f,4,8);
             }
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-36,36,8.4f);
             // Opaque hull piers, sills and headers surround smaller glazed openings.
-            // Every dimension below becomes range-validated authoring metadata, frozen in revision 10.
+            // Every dimension below becomes range-validated authoring metadata, frozen in revision 11.
             foreach(int side in new[]{-1,1})foreach(bool alongX in new[]{false,true})
             {
                 string axis=alongX?"z":"x",prefix="hull-"+axis+"-"+side;

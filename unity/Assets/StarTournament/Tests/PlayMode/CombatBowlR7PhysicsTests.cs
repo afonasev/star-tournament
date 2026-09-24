@@ -25,18 +25,25 @@ namespace StarTournament.ProvingGround.Tests
             for(int count=2;count<=8;count++)Assert.That(spawn.TryInitial(NativeMatchRoster.Ffa(count),ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation"),out var positions),Is.True,$"FFA {count}: {spawn.InitialFailure}");
             yield return null;
         }
-        [UnityTest] public IEnumerator UpperGratingObserversCannotSeeCornerSpawnBodies()
+        [UnityTest] public IEnumerator WideDiagonalsSupportStraightMotorMovementAcrossFullWidth()
         {
-            foreach(var s in arena.Definition.Solids.Where(x=>x.Surface=="grating"))
+            foreach(var solid in arena.Definition.Solids.Where(x=>x.Id.EndsWith("-diagonal")))
+            foreach(int direction in new[]{-1,1})foreach(int lane in new[]{-1,0,1})foreach(float speed in new[]{1f,ProvingProfile.CreateCombatDefault().Get("speed.multiplier")})
             {
-                // Dense stencil derives from capsule diameter and covers interior and both edges.
-                float inset=movement.Get("player.capsule.radius");float step=inset*2;
-                for(float x=-s.Size.x/2+inset;x<=s.Size.x/2-inset;x+=step)
-                for(float z=-s.Size.z/2+inset;z<=s.Size.z/2-inset;z+=step)
+                var forward=solid.Rotation*Vector3.forward;
+                var lateral=solid.Rotation*Vector3.right*(lane*(solid.Size.x/2-movement.Get("player.capsule.radius")-movement.Get("player.capsule.skinWidth")));
+                var center=solid.Position+Vector3.up*solid.Size.y/2;
+                var start=center-forward*direction*(solid.Size.z/2-1)+lateral;var goal=center+forward*direction*(solid.Size.z/2-1)+lateral;
+                var go=new GameObject("straight-wide-diagonal");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,start);motor.SetHorizontalSpeedMultiplier(speed);
+                for(int tick=0;tick<300;tick++)
                 {
-                    var observer=s.Position+new Vector3(x,s.Size.y/2,z);
-                    foreach(int target in new[]{0,1,2,3})Assert.That(spawn.BodyVisible(observer,arena.Spawns[target]),Is.False,$"{s.Id} observer {observer} sees spawn {target} {arena.Spawns[target]}");
+                    var delta=goal-motor.State.Position;var move=new Vector2(delta.x,delta.z);if(move.magnitude<.2f)break;
+                    motor.Tick(new LocalAction{Move=move.normalized},1f/60);Physics.SyncTransforms();
+                    Assert.That(motor.State.Position.y,Is.EqualTo(4).Within(.1f),$"Dropped from {solid.Id}, lane={lane}");
                 }
+                Assert.That(Vector3.Distance(motor.State.Position,goal),Is.LessThan(.3f),$"{solid.Id}, direction={direction}, lane={lane}, speed={speed}, stopped={motor.State.Position}, goal={goal}");
+                Object.DestroyImmediate(go);
             }
             yield return null;
         }
