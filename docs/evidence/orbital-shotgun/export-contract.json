@@ -1,0 +1,23 @@
+{
+  "vector-shotgun-lod0.glb": {
+    "triangles": 74338,
+    "embeddedImages": 2,
+    "normalMappedMaterials": [
+      "vector-glove"
+    ]
+  },
+  "vector-shotgun-lod1.glb": {
+    "triangles": 40885,
+    "embeddedImages": 2,
+    "normalMappedMaterials": [
+      "vector-glove"
+    ]
+  },
+  "trooper-arms-animated.glb": {
+    "triangles": 136794,
+    "embeddedImages": 2,
+    "normalMappedMaterials": [
+      "vector-glove"
+    ]
+  }
+}

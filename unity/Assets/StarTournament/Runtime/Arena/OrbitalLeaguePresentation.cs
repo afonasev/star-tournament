@@ -56,7 +56,8 @@ namespace StarTournament.ProvingGround
                     uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/p.Get("surface.tile");
                 }
                 mesh.uv=uv;filter.sharedMesh=mesh;target.GetComponent<Renderer>().sharedMaterial=roof?ceiling:ground?floor:wall;
-                if(roof)Roof(s);
+                // Ceiling panels are below the roof. The roof must not shadow the arena-wide key light.
+                if(roof){target.GetComponent<Renderer>().shadowCastingMode=ShadowCastingMode.Off;Roof(s);}
                 else if(ground)Floor(s);
                 else Walls(s);
             }
@@ -65,8 +66,8 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
             HallMarkings();Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();
-            // Six shared zones select actual luminaires. A bounded subset casts shadows for all viewports.
-            for(int zone=0;zone<6;zone++)
+            // Shared ceiling zones reach the outer ring; two local shadow maps plus the key stay bounded for split-screen.
+            for(int zone=0;zone<16;zone++)
             {
                 Vector3 anchor=Position("layout.fill-"+zone);
                 Vector3 fixture=fixturePositions.OrderBy(v=>(v-anchor).sqrMagnitude).First();
@@ -74,6 +75,8 @@ namespace StarTournament.ProvingGround
                 // The visible fixture sits off-centre in some rooms; aim its real beam at the authored zone.
                 Vector3 target=anchor-Vector3.up*p.Get("light.targetDrop");
                 if(zone==0)target.z+=p.Get("light.hallAimOffsetZ");
+                if(zone>=6 && zone<=11)target.x-=Mathf.Sign(fixture.x)*p.Get("light.outerAimInset");
+                if(zone>=12)target.x-=Mathf.Sign(fixture.x)*p.Get("light.outerAimInset");
                 go.transform.localRotation=Quaternion.LookRotation(target-go.transform.localPosition);
                 var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=p.Get("light.spotAngle");l.color=Palette("fill");l.intensity=p.Get("light.intensity");l.range=p.Get("light.range");
                 bool casts=zone<Mathf.RoundToInt(p.Get("light.shadowCasters"));

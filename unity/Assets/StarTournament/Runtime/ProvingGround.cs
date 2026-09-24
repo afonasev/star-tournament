@@ -456,6 +456,10 @@ namespace StarTournament.ProvingGround
             if(OrbitalLeagueProfile.Id=="orbital-league-v1")OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
             studioLight.intensity=OrbitalLeagueProfile.Get("light.studioKey");
+            studioLight.shadowStrength=OrbitalLeagueProfile.Get("light.keyShadowStrength");
+            studioLight.shadows=studioLight.shadowStrength>0?LightShadows.Soft:LightShadows.None;
+            studioLight.shadowBias=OrbitalLeagueProfile.Get("light.shadowBias");
+            studioLight.shadowNormalBias=OrbitalLeagueProfile.Get("light.shadowNormalBias");
             var frozen=CombatBowlCatalog.Freeze(Profile);
             arena.Build(frozen,Profile,OrbitalLeagueProfile);
         }
