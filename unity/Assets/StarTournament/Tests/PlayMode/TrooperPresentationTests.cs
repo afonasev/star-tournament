@@ -80,11 +80,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load(2);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
-            var bones=visual.GetComponentsInChildren<Transform>().Where(t=>t.name=="LeftHand"||t.name=="LeftIndexProximal").ToArray();
+            var bones=visual.GetComponentsInChildren<Transform>().Where(t=>t.name=="LeftHand"||t.name=="LeftIndexProximal"||t.name=="RightHand"||t.name=="RightIndexProximal"||t.name=="trooper:rig:weapon-mount").ToArray();
             visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
-            var rotations=bones.Select(t=>t.localRotation).ToArray();
+            var rotations=bones.Select(t=>t.localRotation).ToArray();var positions=bones.Select(t=>t.localPosition).ToArray();
             for(int sample=0;sample<5;sample++)visual.Render(.25,Vector3.zero,100,1);
-            for(int i=0;i<bones.Length;i++)Assert.That(Quaternion.Angle(rotations[i],bones[i].localRotation),Is.LessThan(.01f));
+            for(int i=0;i<bones.Length;i++)
+            {
+                Assert.That(Quaternion.Angle(rotations[i],bones[i].localRotation),Is.LessThan(.01f),bones[i].name);
+                Assert.That(Vector3.Distance(positions[i],bones[i].localPosition),Is.LessThan(.0001f),bones[i].name);
+            }
         }
         [UnityTest] public IEnumerator DeathRespawnAndRepeatClearViewAndCorpseState()
         {

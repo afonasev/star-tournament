@@ -27,7 +27,7 @@ manifest=json.loads((ART/'asset-manifest.json').read_text())
 for entry in manifest['entries']:
     name=Path(entry['path']).name
     if name in REPORT:assert entry['sha256']==REPORT[name]['sha256'], entry['key']
-output=ROOT/'docs/evidence/strata-oxblood-f4/export-contract.json'
+output=ROOT/'docs/evidence/strata-grip-f5/export-contract.json'
 output.parent.mkdir(parents=True,exist_ok=True)
 output.write_text(json.dumps(REPORT,indent=2)+'\n')
-print('STRATA_F4_CONTRACT_PASS', {name:item['triangles'] for name,item in REPORT.items()})
+print('STRATA_F5_CONTRACT_PASS', {name:item['triangles'] for name,item in REPORT.items()})

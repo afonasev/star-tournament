@@ -117,6 +117,16 @@ namespace StarTournament.ProvingGround
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
         }
+        public void EnsureTrooperDescriptors()
+        {
+            var current=CreateTrooperDefault();
+            foreach(var descriptor in current.descriptors)
+            {
+                if(FindDescriptor(descriptor.Path)!=null)continue;
+                descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
+                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
+            }
+        }
 
         public float Get(string path)
         {

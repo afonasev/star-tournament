@@ -38,7 +38,17 @@ namespace StarTournament.ProvingGround.Editor
                 AnimationUtility.SetAnimationEvents(clip,Array.Empty<AnimationEvent>());
                 EditorUtility.SetDirty(clip); ground.TrooperClips[i]=clip;
             }
+            var bodyMaterials=source.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Where(m=>m).GroupBy(m=>m.name).ToDictionary(g=>g.Key,g=>g.First());
             var materials=source.GetComponentsInChildren<Renderer>(true).Concat(arms.GetComponentsInChildren<Renderer>(true)).SelectMany(r=>r.sharedMaterials).Where(m=>m).GroupBy(m=>m.name).ToDictionary(g=>g.Key,g=>g.First());
+            // Blender appends .001 to a repeated Strata material when the F3 hands
+            // are imported before the new weapon. Both views must share the body
+            // material subasset, including after a fresh Player build.
+            foreach(var key in materials.Keys.ToArray())
+            {
+                int dot=key.LastIndexOf('.');
+                if(dot<0 || key.Length-dot!=4 || !int.TryParse(key.Substring(dot+1),out _))continue;
+                if(bodyMaterials.TryGetValue(key.Substring(0,dot),out var shared))materials[key]=shared;
+            }
             ground.TrooperBodyPrefab=Persist(source,"TrooperBody",ground.TrooperClips,materials);
             ground.TrooperArmsPrefab=Persist(arms,"TrooperArms",ground.TrooperClips,materials);
             // License travels with the Player, not just the repository.

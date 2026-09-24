@@ -43,8 +43,9 @@ namespace StarTournament.ProvingGround
             anchor=ground.Session.Pose(0).Position;
             ground.PlaceCombatReviewSeat(0,anchor,0,0);ground.PlaceCombatReviewSeat(1,anchor+Vector3.forward*2,0,180);
             yield return new WaitForSeconds(.3f);yield return Capture("05-two-seats-world");
-            File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"DIAGNOSTIC_NOT_ACCEPTANCE\",\"muted\":true,\"profile\":\"unity-proving-ground-v1@1\",\"equipment\":\"strata-oxblood-equipment-v1-f4\"}");
+            File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"DIAGNOSTIC_NOT_ACCEPTANCE\",\"muted\":true,\"profile\":\"unity-proving-ground-v1@1\",\"equipment\":\"strata-oxblood-equipment-v2-f5\"}");
             Debug.Log("VECTOR_REVIEW_COMPLETE "+directory);
+            yield return new WaitForSecondsRealtime(.5f);Application.Quit();
         }
         IEnumerator Capture(string name){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return null;}
         void OnDestroy(){if(pads!=null)foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);}

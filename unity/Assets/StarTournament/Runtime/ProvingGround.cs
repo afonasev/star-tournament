@@ -146,6 +146,7 @@ namespace StarTournament.ProvingGround
         void Start()
         {
             MatchProfile.EnsureMatchDescriptors();
+            TrooperProfile.EnsureTrooperDescriptors();
             if (Profile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);

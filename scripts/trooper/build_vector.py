@@ -6,7 +6,7 @@ from pathlib import Path
 from mathutils import Vector, Matrix
 ROOT=Path(__file__).resolve().parents[2]
 ART=ROOT/'unity/Assets/StarTournament/Art'
-OUT=ROOT/'.local/strata-f4-source';OUT.mkdir(parents=True,exist_ok=True)
+OUT=ROOT/'.local/strata-f5-source';OUT.mkdir(parents=True,exist_ok=True)
 
 def material(name,color,metal=0,rough=.4):
  m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True
@@ -291,17 +291,22 @@ def export(path,objs):
 for kind in ['body','arms']:
  bpy.ops.wm.read_factory_settings(use_empty=True)
  path=ART/('trooper-'+kind+'-animated.glb')
- # Always rebuild from the committed baseline, not a previously generated derivative.
+ # The body retains the canonical rig baseline. The user selected the exact
+ # accepted F3/F2 view hands for FPS; import that immutable derivative instead.
  import subprocess,tempfile
- baseline=subprocess.check_output(['git','show','49878a337e98f999787b530b9a071ce6698f55cb:unity/Assets/StarTournament/Art/'+path.name],cwd=ROOT)
+ revision='bd1e06d79d5c0ae2af9f549b9e3ba6eead611200' if kind=='arms' else '49878a337e98f999787b530b9a071ce6698f55cb'
+ baseline=subprocess.check_output(['git','show',revision+':unity/Assets/StarTournament/Art/'+path.name],cwd=ROOT)
  with tempfile.NamedTemporaryFile(suffix='.glb') as source:
   source.write(baseline);source.flush();bpy.ops.import_scene.gltf(filepath=source.name)
  rig=next(o for o in bpy.context.scene.objects if o.type=='ARMATURE')
  import sys
  sys.path.insert(0,str(ROOT/'scripts/trooper'))
  from strata_palette import apply as apply_strata_palette
- apply_strata_palette()
+ if kind=='body':apply_strata_palette()
  old=bpy.data.objects['weapon:joined'];parent=old.parent;transform=old.matrix_local.copy()
+ for index in range(2):
+  old_muzzle=bpy.data.objects.get('vector-muzzle-'+str(index))
+  if old_muzzle:bpy.data.objects.remove(old_muzzle,do_unlink=True)
  bpy.data.objects.remove(old,do_unlink=True);setup();gun=weapon()
  if kind=='body':
   gun.scale=(.32,.32,.32)
@@ -314,20 +319,8 @@ for kind in ['body','arms']:
  if kind=='body':body_armor(rig)
  for index,z in enumerate([.035,.245]):
   node=bpy.data.objects.new('vector-muzzle-'+str(index),None);bpy.context.collection.objects.link(node);node.parent=gun;node.location=(0,-1.18,z+.105)
- if kind=='arms':
-  # Retain the original attributed anatomical glove topology/UVs; replace sleeve/armor authoring.
-  # Cutting follows hand/finger weights, so pose and texture detail remain coherent.
-  import bmesh
-  source_gloves=[]
-  for o in list(bpy.context.scene.objects):
-   if o.type!='MESH' or o.find_armature()!=rig:continue
-   hand_groups={g.index for g in o.vertex_groups if any(x in g.name for x in ['Hand','Thumb','Index','Middle','Ring','Little'])}
-   bm=bmesh.new();bm.from_mesh(o.data);deform=bm.verts.layers.deform.active
-   remove=[v for v in bm.verts if sum(weight for group,weight in v[deform].items() if group in hand_groups)<.5]
-   bmesh.ops.delete(bm,geom=remove,context='VERTS');bm.to_mesh(o.data);bm.free();o.data.update()
-   if len(o.data.vertices):source_gloves.append(o)
-   else:bpy.data.objects.remove(o,do_unlink=True)
-  hands(rig)
+ # The F3/F2 arms already contain the approved glove mesh, armor and weights.
+ # Do not rebuild or recolor them while replacing only the embedded weapon.
  # Remove importer-only shape helpers, never export diagnostic geometry.
  keep=[o for o in bpy.context.scene.objects if o==rig or o.parent is not None]
  export(path,keep)
@@ -336,12 +329,14 @@ for kind in ['body','arms']:
 manifest_path=ART/'asset-manifest.json';manifest=json.loads(manifest_path.read_text())
 for entry in manifest['entries']:
  if entry['key'] in ['world-weapon','view-weapon']:
-  entry['path']='Assets/StarTournament/Art/vector-shotgun-lod0.glb';entry['sha256']=hashlib.sha256((ART/'vector-shotgun-lod0.glb').read_bytes()).hexdigest();entry['source']='Authored Strata F4 ceramic/metal continuous twin-barrel shell; embedded equivalent in trooper derivatives'
- if entry['key'] in ['player-body','player-hands']:
-  entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='Strata F4 oxblood fabric and ceramic armor over attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py, strata_palette.py and orbital_hands.py'
+  entry['sha256']=hashlib.sha256((ART/'vector-shotgun-lod0.glb').read_bytes()).hexdigest();entry['source']='Strata F5 with fitted primary palm grip; same authored model in world and view'
+ if entry['key']=='player-body':
+  entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='Strata F4 oxblood world body with fitted primary palm grip; build_vector.py and strata_palette.py'
+ if entry['key']=='player-hands':
+  entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='Selected Orbital F3/F2 FPS hands and Strata F5 weapon over attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py'
 manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
 print('VECTOR_EXPORT_COMPLETE')
 mount_path=ART/'trooper-mounts.json';mount_data=json.loads(mount_path.read_text())
-mount_data['equipment']='strata-oxblood-equipment-v1-f4; continuous grip receiver connection; attributed gloves and clips preserved'
+mount_data['equipment']='strata-oxblood-equipment-v2-f5; Strata weapon with Orbital F3/F2 FPS hands; right grip corrected; attributed gloves and clips preserved'
 for key,file in [('body','trooper-body-animated.glb'),('arms','trooper-arms-animated.glb')]:mount_data[key]['sha256']=hashlib.sha256((ART/file).read_bytes()).hexdigest()
 mount_path.write_text(json.dumps(mount_data,indent=2)+'\n')

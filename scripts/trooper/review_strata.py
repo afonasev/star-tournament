@@ -1,8 +1,8 @@
 """Read exported Strata GLBs, audit contracts, render real asset and articulated hands."""
-import bpy,json,hashlib,math
+import bpy,json,hashlib,math,os
 from pathlib import Path
 from mathutils import Vector,Quaternion
-ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'docs/evidence/strata-oxblood-f4';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'docs/evidence/strata-grip-f5';OUT.mkdir(parents=True,exist_ok=True)
 report={}
 def scene():
  s=bpy.context.scene;s.render.engine='CYCLES';s.cycles.samples=32
@@ -15,7 +15,7 @@ def camera(s,center,offset,scale):
  for off,power,size in [((1,-1,2),110,1.5),((-1,-.5,.7),70,1),((.3,1,1),130,1)]:
   bpy.ops.object.light_add(type='AREA',location=center+Vector(off));l=bpy.context.object;l.data.energy=power;l.data.shape='DISK';l.data.size=size;l.rotation_euler=(center-l.location).to_track_quat('-Z','Y').to_euler()
 def render(s,name):s.render.filepath=str(OUT/(name+'.png'));bpy.ops.render.render(write_still=True)
-for kind in ['weapon','arms','body']:
+for kind in os.environ.get('REVIEW_KINDS','weapon,arms,body').split(','):
  bpy.ops.wm.read_factory_settings(use_empty=True)
  file='vector-shotgun-lod0.glb' if kind=='weapon' else 'trooper-'+kind+'-animated.glb'
  path=ART/file;bpy.ops.import_scene.gltf(filepath=str(path));s=scene();meshes=[o for o in s.objects if o.type=='MESH']
@@ -45,10 +45,23 @@ for kind in ['weapon','arms','body']:
    name='Left'+digit+segment;axis=rig.data.bones[name].matrix_local.to_3x3().inverted()@row
    rig.pose.bones[name].rotation_quaternion @= Quaternion(axis,math.radians(5 if digit=='Thumb' else 12))
  bpy.context.view_layer.update()
- gun=bpy.data.objects['weapon:joined'];center=gun.matrix_world@Vector((0,-.4,.1))
+ gun=bpy.data.objects['weapon:joined'];gun_world=gun.matrix_world.copy()
+ # Mirror the primary right-finger additive fit over the preserved F3/F2 hand.
+ for digit in ['Thumb','Index','Middle','Ring','Little']:
+  for segment,angle in [('Proximal',15),('Intermediate',28),('Distal',18)]:
+   if digit=='Thumb':angle*=.5
+   name='Right'+digit+segment;axis=rig.data.bones[name].matrix_local.to_3x3().inverted()@Vector((0,-1,0))
+   rig.pose.bones[name].rotation_quaternion @= Quaternion(axis,math.radians(angle))
+ bpy.context.view_layer.update();gun.matrix_world=gun_world;bpy.context.view_layer.update()
+ center=gun.matrix_world@Vector((0,-.4,.1))
  camera(s,center,(.7,-.8,.6),.67);render(s,'hands-and-weapon')
  hand=rig.matrix_world@rig.pose.bones['LeftHand'].head
  s.camera.location=hand+Vector((.4,-.4,.32));s.camera.rotation_euler=(hand-s.camera.location).to_track_quat('-Z','Y').to_euler();s.camera.data.ortho_scale=.28;render(s,'hand-detail')
+ right=rig.matrix_world@rig.pose.bones['RightHand'].head
+ for name,offset in [('right-grip-side',(.34,.30,.18)),('right-grip-opposite',(-.34,.30,.18)),('right-grip-under',(.10,.20,-.30))]:
+  target=right+Vector((0,-.06,-.025));s.camera.location=target+Vector(offset)
+  s.camera.rotation_euler=(target-s.camera.location).to_track_quat('-Z','Y').to_euler()
+  s.camera.data.ortho_scale=.36;render(s,name)
  report[kind]['weightedVertices']=sum(bool(v.groups) for o in meshes if o.find_armature() for v in o.data.vertices)
 (OUT/'asset-audit.json').write_text(json.dumps(report,indent=2)+'\n')
 print('STRATA_AUDIT_COMPLETE',report)

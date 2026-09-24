@@ -8,11 +8,11 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "6809bf4e3f7123c4bd2675f8d11b9c1358645dbbb6d59499c6c1cf621e924e78"
+    "sha256": "4f77896887dce890db3d703bb223cd77c68fcf691ef6e7c69710a71213a3fdea"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "ad6d6b11252c141b3b146d7a3b1caff9b4d8fb2d3fad1986a8552397cee04d80"
+    "sha256": "c74d56b1cd0cb6d58fdaa1d26ec3bb480ec44980e4ecbdae7f37ebfb2124bb20"
   },
   "clips": [
     "idle",
@@ -1297,5 +1297,5 @@
   },
   "maxTextureDimension": 1024,
   "rootMotion": "death skeleton Root only; applyRootMotion=false on visual Animator; motor authoritative",
-  "equipment": "strata-oxblood-equipment-v1-f4; continuous grip receiver connection; attributed gloves and clips preserved"
+  "equipment": "strata-oxblood-equipment-v2-f5; Strata weapon with Orbital F3/F2 FPS hands; right grip corrected; attributed gloves and clips preserved"
 }
