@@ -1,0 +1,1 @@
+PASS: native Player menu, persisted profile UI, Y picker, occupied profile, disconnected setup device and explicit Y rebind. Synthetic input; no human acceptance.

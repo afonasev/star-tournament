@@ -124,7 +124,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Running,Is.False);Assert.That(driver.Planner(0).Capture().Pressed,Is.False);
             ground.BotBehaviorProfile.Set("bots.easy.reactionSeconds",2);Button("Повторить матч").onClick.Invoke();yield return null;
             Assert.That(ground.BotDriver,Is.Not.SameAs(driver));Assert.That(ground.BotDriver.Planner(0).Capture().Configuration,Is.EqualTo(frozen));
-            Button("В главное меню").onClick.Invoke();yield return null;Assert.That(ground.BotDriver,Is.Null);
+            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;Assert.That(ground.BotDriver,Is.Null);
         }
 
         [UnityTest] public IEnumerator MatchAndRepeatUseFrozenProfileOwnedFixedTickCadence()

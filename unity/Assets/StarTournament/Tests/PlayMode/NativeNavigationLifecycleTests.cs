@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround.Tests
             ground.NavigationReviewDriver.Controller.SetStaticGoal(new Vector3(-13,4,2));
             ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,500);yield return new WaitForFixedUpdate();yield return null;
             Assert.That(ground.NavigationReviewDriver.Controller.Capture().HasGoal,Is.False);
-            Button("В главное меню").onClick.Invoke();Assert.That(ground.NavigationReviewDriver,Is.Null);
+            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();Assert.That(ground.NavigationReviewDriver,Is.Null);
         }
     }
 }

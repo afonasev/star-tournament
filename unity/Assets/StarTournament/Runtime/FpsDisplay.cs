@@ -63,6 +63,12 @@ namespace StarTournament.ProvingGround
             PlayerPrefs.Save(); // Write only on explicit settings changes, never per frame.
             Refresh();
         }
+        public void SetSessionVisibility(bool visible)
+        {
+            Visible = visible;
+            Refresh();
+        }
+        public void RestoreGeneralPreference() => SetSessionVisibility(PlayerPrefs.GetInt(PreferenceKey, 1) != 0);
         void Refresh()
         {
             counter.transform.parent.gameObject.SetActive(Visible);

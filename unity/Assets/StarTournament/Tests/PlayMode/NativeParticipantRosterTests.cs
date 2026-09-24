@@ -51,7 +51,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.Session.Match.Read().Standings,Has.Length.EqualTo(8));
                 Assert.That(ground.GetComponentsInChildren<Camera>(true).Length,Is.EqualTo(humans));
             }
-            Button("В главное меню").onClick.Invoke();yield return null;
+            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;
             Assert.That(ground.Composition.ParticipantCount,Is.EqualTo(ground.LocalSeatCount));
         }
         [UnityTest] public IEnumerator SeatZeroInputMovesParticipantSevenAndNonlocalKillerOwnsKillcam()
@@ -87,7 +87,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.GetComponentsInChildren<CharacterController>().Length,Is.EqualTo(ground.LocalSeatCount));
                 item.Item1.Set(item.Item2,original);ground.StartParticipantReview(Mixed(1));yield return null;
                 Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ParticipantCount,Is.EqualTo(8));
-                Button("В главное меню").onClick.Invoke();yield return null;
+                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;
             }
         }
         [UnityTest] public IEnumerator TeamTotalUsesFrozenCompositionColors()

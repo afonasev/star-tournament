@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -82,13 +83,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             scene=SceneManager.GetSceneByName("ProvingGround");
             yield return null;
             var ground=Object.FindFirstObjectByType<ProvingGround>(); Assert.That(ground,Is.Not.Null);
+            ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="main-action-0").onClick.Invoke();
             Assert.That(ground.Running,Is.False);
             for(int i=0;i<4;i++)
             {
                 pads[i]=InputSystem.AddDevice<Gamepad>();
-                InputSystem.QueueStateEvent(pads[i],new GamepadState().WithButton(GamepadButton.Start));
+                InputSystem.QueueStateEvent(pads[i],new GamepadState().WithButton(GamepadButton.North));
                 yield return null;yield return null;
                 InputSystem.QueueStateEvent(pads[i],new GamepadState());yield return null;
+                ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="identity-guest").onClick.Invoke();
             }
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));
             yield return null;yield return null;

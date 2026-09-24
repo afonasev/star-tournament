@@ -1,0 +1,11 @@
+{
+    "Version": 1,
+    "Profiles": [
+        {
+            "Id": "1267bd3b3e374b158bb77e04ff9272ef",
+            "Name": "QA Алексей",
+            "MouseDegreesPerPixel": 0.25,
+            "ShowFps": true
+        }
+    ]
+}

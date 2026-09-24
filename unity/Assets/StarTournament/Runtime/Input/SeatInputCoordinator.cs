@@ -14,6 +14,8 @@ namespace StarTournament.ProvingGround
         readonly bool[] humanSeats = { true, true, true, true };
         Mouse pairedMouse;
         bool pauseRequested;
+        public event Action<int,InputDevice> Joined;
+        public event Action<InputDevice> JoinRejected;
         public int ActiveSeatCount { get; private set; } = SeatCount;
         public bool HasKeyboard { get { for(int i=0;i<ActiveSeatCount;i++) if(devices[i] is Keyboard) return true; return false; } }
         public void SetActiveSeatCount(int count)
@@ -40,6 +42,7 @@ namespace StarTournament.ProvingGround
             (!(devices[slot] is Keyboard) || (pairedMouse != null && pairedMouse.added));
         public string Label(int slot) => devices[slot] == null ? "Ожидает устройство" :
             devices[slot] is Keyboard ? "Клавиатура + мышь" : devices[slot].displayName + " #" + devices[slot].deviceId;
+        public InputDevice DeviceAt(int slot) => slot>=0 && slot<ActiveSeatCount ? devices[slot] : null;
         public bool Assign(int slot, InputDevice device)
         {
             if (slot < 0 || slot >= ActiveSeatCount || !humanSeats[slot] || device == null || !device.added || !(device is Keyboard || device is Gamepad)) return false;
@@ -55,12 +58,26 @@ namespace StarTournament.ProvingGround
         }
         void Join(InputDevice device)
         {
-            for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && devices[i] == null) { Assign(i, device); return; }
+            for(int i=0;i<ActiveSeatCount;i++) if(devices[i]==device) return;
+            // Y explicitly replaces a lost device before claiming a fresh seat.
+            for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && devices[i] != null && !IsConnected(i))
+            {
+                ReleaseSeat(i);
+                if(Assign(i, device)) Joined?.Invoke(i,device);
+                return;
+            }
+            for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && devices[i] == null)
+            {
+                if(Assign(i, device)) Joined?.Invoke(i,device);
+                return;
+            }
+            JoinRejected?.Invoke(device);
         }
         public void PollSetup()
         {
+            if(HasKeyboard && (pairedMouse == null || !pairedMouse.added) && Mouse.current != null) pairedMouse=Mouse.current;
             if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && Mouse.current != null) Join(Keyboard.current);
-            foreach (var pad in Gamepad.all) if (pad.startButton.wasPressedThisFrame) Join(pad);
+            foreach (var pad in Gamepad.all) if (pad.buttonNorth.wasPressedThisFrame) Join(pad);
         }
         public void Reset() { Array.Clear(devices, 0, devices.Length); pairedMouse=null; Clear(); }
         public void Clear() { Array.Clear(queued, 0, queued.Length); pauseRequested = false; for(int i=0;i<SeatCount;i++) fireReleaseRequired[i]=true; }
