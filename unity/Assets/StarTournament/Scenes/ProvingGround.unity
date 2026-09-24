@@ -6627,7 +6627,7 @@ MonoBehaviour:
       Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
-    version: 6
+    version: 7
     descriptors:
     - Path: foundation-north.position.x
       Group: geometry
@@ -11328,7 +11328,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 5.8
     - Path: west-low-ceiling.position.z
       Group: geometry
       Label: west-low-ceiling.position / z
@@ -11358,7 +11358,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.2
     - Path: west-low-ceiling.size.z
       Group: geometry
       Label: west-low-ceiling.size / z
@@ -13578,7 +13578,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: southwest-slope-ceiling.position.z
       Group: geometry
       Label: southwest-slope-ceiling.position / z
@@ -13588,7 +13588,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -8.913454
+      DefaultValue: -7.752
     - Path: southwest-slope-ceiling.size.x
       Group: geometry
       Label: southwest-slope-ceiling.size / x
@@ -13608,7 +13608,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: southwest-slope-ceiling.size.z
       Group: geometry
       Label: southwest-slope-ceiling.size / z
@@ -16008,7 +16008,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: northwest-slope-ceiling.position.z
       Group: geometry
       Label: northwest-slope-ceiling.position / z
@@ -16018,7 +16018,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 8.913454
+      DefaultValue: 7.752
     - Path: northwest-slope-ceiling.size.x
       Group: geometry
       Label: northwest-slope-ceiling.size / x
@@ -16038,7 +16038,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: northwest-slope-ceiling.size.z
       Group: geometry
       Label: northwest-slope-ceiling.size / z
@@ -16548,7 +16548,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 5.8
     - Path: east-low-ceiling.position.z
       Group: geometry
       Label: east-low-ceiling.position / z
@@ -16578,7 +16578,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.2
     - Path: east-low-ceiling.size.z
       Group: geometry
       Label: east-low-ceiling.size / z
@@ -18798,7 +18798,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: southeast-slope-ceiling.position.z
       Group: geometry
       Label: southeast-slope-ceiling.position / z
@@ -18808,7 +18808,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -8.913454
+      DefaultValue: -7.752
     - Path: southeast-slope-ceiling.size.x
       Group: geometry
       Label: southeast-slope-ceiling.size / x
@@ -18828,7 +18828,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: southeast-slope-ceiling.size.z
       Group: geometry
       Label: southeast-slope-ceiling.size / z
@@ -21228,7 +21228,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: northeast-slope-ceiling.position.z
       Group: geometry
       Label: northeast-slope-ceiling.position / z
@@ -21238,7 +21238,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 8.913454
+      DefaultValue: 7.752
     - Path: northeast-slope-ceiling.size.x
       Group: geometry
       Label: northeast-slope-ceiling.size / x
@@ -21258,7 +21258,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: northeast-slope-ceiling.size.z
       Group: geometry
       Label: northeast-slope-ceiling.size / z
@@ -21768,7 +21768,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 5.8
     - Path: south-outer-low-ceiling.position.z
       Group: geometry
       Label: south-outer-low-ceiling.position / z
@@ -21798,7 +21798,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.2
     - Path: south-outer-low-ceiling.size.z
       Group: geometry
       Label: south-outer-low-ceiling.size / z
@@ -23648,7 +23648,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -22.913454
+      DefaultValue: -21.752
     - Path: southwest-cross-rise-ceiling.position.y
       Group: geometry
       Label: southwest-cross-rise-ceiling.position / y
@@ -23658,7 +23658,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: southwest-cross-rise-ceiling.position.z
       Group: geometry
       Label: southwest-cross-rise-ceiling.position / z
@@ -23688,7 +23688,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: southwest-cross-rise-ceiling.size.z
       Group: geometry
       Label: southwest-cross-rise-ceiling.size / z
@@ -23838,7 +23838,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 2.8
+      DefaultValue: 5.5
     - Path: south-entry-roof--1.position.z
       Group: geometry
       Label: south-entry-roof--1.position / z
@@ -23868,7 +23868,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7999997
     - Path: south-entry-roof--1.size.z
       Group: geometry
       Label: south-entry-roof--1.size / z
@@ -25718,7 +25718,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 22.913454
+      DefaultValue: 21.752
     - Path: southeast-cross-rise-ceiling.position.y
       Group: geometry
       Label: southeast-cross-rise-ceiling.position / y
@@ -25728,7 +25728,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: southeast-cross-rise-ceiling.position.z
       Group: geometry
       Label: southeast-cross-rise-ceiling.position / z
@@ -25758,7 +25758,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: southeast-cross-rise-ceiling.size.z
       Group: geometry
       Label: southeast-cross-rise-ceiling.size / z
@@ -25908,7 +25908,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 2.8
+      DefaultValue: 5.5
     - Path: south-entry-roof-1.position.z
       Group: geometry
       Label: south-entry-roof-1.position / z
@@ -25938,7 +25938,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7999997
     - Path: south-entry-roof-1.size.z
       Group: geometry
       Label: south-entry-roof-1.size / z
@@ -26898,7 +26898,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 5.8
     - Path: north-outer-low-ceiling.position.z
       Group: geometry
       Label: north-outer-low-ceiling.position / z
@@ -26928,7 +26928,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.2
     - Path: north-outer-low-ceiling.size.z
       Group: geometry
       Label: north-outer-low-ceiling.size / z
@@ -28778,7 +28778,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -22.913454
+      DefaultValue: -21.752
     - Path: northwest-cross-rise-ceiling.position.y
       Group: geometry
       Label: northwest-cross-rise-ceiling.position / y
@@ -28788,7 +28788,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: northwest-cross-rise-ceiling.position.z
       Group: geometry
       Label: northwest-cross-rise-ceiling.position / z
@@ -28818,7 +28818,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: northwest-cross-rise-ceiling.size.z
       Group: geometry
       Label: northwest-cross-rise-ceiling.size / z
@@ -28968,7 +28968,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 2.8
+      DefaultValue: 5.5
     - Path: north-entry-roof--1.position.z
       Group: geometry
       Label: north-entry-roof--1.position / z
@@ -28998,7 +28998,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7999997
     - Path: north-entry-roof--1.size.z
       Group: geometry
       Label: north-entry-roof--1.size / z
@@ -30848,7 +30848,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 22.913454
+      DefaultValue: 21.752
     - Path: northeast-cross-rise-ceiling.position.y
       Group: geometry
       Label: northeast-cross-rise-ceiling.position / y
@@ -30858,7 +30858,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.7803044
+      DefaultValue: 8.2
     - Path: northeast-cross-rise-ceiling.position.z
       Group: geometry
       Label: northeast-cross-rise-ceiling.position / z
@@ -30888,7 +30888,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7680163
     - Path: northeast-cross-rise-ceiling.size.z
       Group: geometry
       Label: northeast-cross-rise-ceiling.size / z
@@ -31038,7 +31038,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 2.8
+      DefaultValue: 5.5
     - Path: north-entry-roof-1.position.z
       Group: geometry
       Label: north-entry-roof-1.position / z
@@ -31068,7 +31068,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 5.7999997
     - Path: north-entry-roof-1.size.z
       Group: geometry
       Label: north-entry-roof-1.size / z
@@ -48729,13 +48729,13 @@ MonoBehaviour:
     - Path: west-low-ceiling.position.x
       Value: -32
     - Path: west-low-ceiling.position.y
-      Value: 3.4
+      Value: 5.8
     - Path: west-low-ceiling.position.z
       Value: 0
     - Path: west-low-ceiling.size.x
       Value: 8
     - Path: west-low-ceiling.size.y
-      Value: 0.4
+      Value: 5.2
     - Path: west-low-ceiling.size.z
       Value: 8
     - Path: west-low-ceiling.rotation.x
@@ -49179,13 +49179,13 @@ MonoBehaviour:
     - Path: southwest-slope-ceiling.position.x
       Value: -32
     - Path: southwest-slope-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: southwest-slope-ceiling.position.z
-      Value: -8.913454
+      Value: -7.752
     - Path: southwest-slope-ceiling.size.x
       Value: 8
     - Path: southwest-slope-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: southwest-slope-ceiling.size.z
       Value: 11.0923395
     - Path: southwest-slope-ceiling.rotation.x
@@ -49665,13 +49665,13 @@ MonoBehaviour:
     - Path: northwest-slope-ceiling.position.x
       Value: -32
     - Path: northwest-slope-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: northwest-slope-ceiling.position.z
-      Value: 8.913454
+      Value: 7.752
     - Path: northwest-slope-ceiling.size.x
       Value: 8
     - Path: northwest-slope-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: northwest-slope-ceiling.size.z
       Value: 11.0923395
     - Path: northwest-slope-ceiling.rotation.x
@@ -49773,13 +49773,13 @@ MonoBehaviour:
     - Path: east-low-ceiling.position.x
       Value: 32
     - Path: east-low-ceiling.position.y
-      Value: 3.4
+      Value: 5.8
     - Path: east-low-ceiling.position.z
       Value: 0
     - Path: east-low-ceiling.size.x
       Value: 8
     - Path: east-low-ceiling.size.y
-      Value: 0.4
+      Value: 5.2
     - Path: east-low-ceiling.size.z
       Value: 8
     - Path: east-low-ceiling.rotation.x
@@ -50223,13 +50223,13 @@ MonoBehaviour:
     - Path: southeast-slope-ceiling.position.x
       Value: 32
     - Path: southeast-slope-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: southeast-slope-ceiling.position.z
-      Value: -8.913454
+      Value: -7.752
     - Path: southeast-slope-ceiling.size.x
       Value: 8
     - Path: southeast-slope-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: southeast-slope-ceiling.size.z
       Value: 11.0923395
     - Path: southeast-slope-ceiling.rotation.x
@@ -50709,13 +50709,13 @@ MonoBehaviour:
     - Path: northeast-slope-ceiling.position.x
       Value: 32
     - Path: northeast-slope-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: northeast-slope-ceiling.position.z
-      Value: 8.913454
+      Value: 7.752
     - Path: northeast-slope-ceiling.size.x
       Value: 8
     - Path: northeast-slope-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: northeast-slope-ceiling.size.z
       Value: 11.0923395
     - Path: northeast-slope-ceiling.rotation.x
@@ -50817,13 +50817,13 @@ MonoBehaviour:
     - Path: south-outer-low-ceiling.position.x
       Value: 0
     - Path: south-outer-low-ceiling.position.y
-      Value: 3.4
+      Value: 5.8
     - Path: south-outer-low-ceiling.position.z
       Value: -32
     - Path: south-outer-low-ceiling.size.x
       Value: 36
     - Path: south-outer-low-ceiling.size.y
-      Value: 0.4
+      Value: 5.2
     - Path: south-outer-low-ceiling.size.z
       Value: 8
     - Path: south-outer-low-ceiling.rotation.x
@@ -51193,15 +51193,15 @@ MonoBehaviour:
     - Path: southwest-cross-rise-step-19.rotation.z
       Value: 0
     - Path: southwest-cross-rise-ceiling.position.x
-      Value: -22.913454
+      Value: -21.752
     - Path: southwest-cross-rise-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: southwest-cross-rise-ceiling.position.z
       Value: -32
     - Path: southwest-cross-rise-ceiling.size.x
       Value: 8
     - Path: southwest-cross-rise-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: southwest-cross-rise-ceiling.size.z
       Value: 11.0923395
     - Path: southwest-cross-rise-ceiling.rotation.x
@@ -51231,13 +51231,13 @@ MonoBehaviour:
     - Path: south-entry-roof--1.position.x
       Value: -15
     - Path: south-entry-roof--1.position.y
-      Value: 2.8
+      Value: 5.5
     - Path: south-entry-roof--1.position.z
       Value: -26
     - Path: south-entry-roof--1.size.x
       Value: 6
     - Path: south-entry-roof--1.size.y
-      Value: 0.4
+      Value: 5.7999997
     - Path: south-entry-roof--1.size.z
       Value: 4
     - Path: south-entry-roof--1.rotation.x
@@ -51607,15 +51607,15 @@ MonoBehaviour:
     - Path: southeast-cross-rise-step-19.rotation.z
       Value: 0
     - Path: southeast-cross-rise-ceiling.position.x
-      Value: 22.913454
+      Value: 21.752
     - Path: southeast-cross-rise-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: southeast-cross-rise-ceiling.position.z
       Value: -32
     - Path: southeast-cross-rise-ceiling.size.x
       Value: 8
     - Path: southeast-cross-rise-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: southeast-cross-rise-ceiling.size.z
       Value: 11.0923395
     - Path: southeast-cross-rise-ceiling.rotation.x
@@ -51645,13 +51645,13 @@ MonoBehaviour:
     - Path: south-entry-roof-1.position.x
       Value: 15
     - Path: south-entry-roof-1.position.y
-      Value: 2.8
+      Value: 5.5
     - Path: south-entry-roof-1.position.z
       Value: -26
     - Path: south-entry-roof-1.size.x
       Value: 6
     - Path: south-entry-roof-1.size.y
-      Value: 0.4
+      Value: 5.7999997
     - Path: south-entry-roof-1.size.z
       Value: 4
     - Path: south-entry-roof-1.rotation.x
@@ -51843,13 +51843,13 @@ MonoBehaviour:
     - Path: north-outer-low-ceiling.position.x
       Value: 0
     - Path: north-outer-low-ceiling.position.y
-      Value: 3.4
+      Value: 5.8
     - Path: north-outer-low-ceiling.position.z
       Value: 32
     - Path: north-outer-low-ceiling.size.x
       Value: 36
     - Path: north-outer-low-ceiling.size.y
-      Value: 0.4
+      Value: 5.2
     - Path: north-outer-low-ceiling.size.z
       Value: 8
     - Path: north-outer-low-ceiling.rotation.x
@@ -52219,15 +52219,15 @@ MonoBehaviour:
     - Path: northwest-cross-rise-step-19.rotation.z
       Value: 0
     - Path: northwest-cross-rise-ceiling.position.x
-      Value: -22.913454
+      Value: -21.752
     - Path: northwest-cross-rise-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: northwest-cross-rise-ceiling.position.z
       Value: 32
     - Path: northwest-cross-rise-ceiling.size.x
       Value: 8
     - Path: northwest-cross-rise-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: northwest-cross-rise-ceiling.size.z
       Value: 11.0923395
     - Path: northwest-cross-rise-ceiling.rotation.x
@@ -52257,13 +52257,13 @@ MonoBehaviour:
     - Path: north-entry-roof--1.position.x
       Value: -15
     - Path: north-entry-roof--1.position.y
-      Value: 2.8
+      Value: 5.5
     - Path: north-entry-roof--1.position.z
       Value: 26
     - Path: north-entry-roof--1.size.x
       Value: 6
     - Path: north-entry-roof--1.size.y
-      Value: 0.4
+      Value: 5.7999997
     - Path: north-entry-roof--1.size.z
       Value: 4
     - Path: north-entry-roof--1.rotation.x
@@ -52633,15 +52633,15 @@ MonoBehaviour:
     - Path: northeast-cross-rise-step-19.rotation.z
       Value: 0
     - Path: northeast-cross-rise-ceiling.position.x
-      Value: 22.913454
+      Value: 21.752
     - Path: northeast-cross-rise-ceiling.position.y
-      Value: 5.7803044
+      Value: 8.2
     - Path: northeast-cross-rise-ceiling.position.z
       Value: 32
     - Path: northeast-cross-rise-ceiling.size.x
       Value: 8
     - Path: northeast-cross-rise-ceiling.size.y
-      Value: 0.4
+      Value: 5.7680163
     - Path: northeast-cross-rise-ceiling.size.z
       Value: 11.0923395
     - Path: northeast-cross-rise-ceiling.rotation.x
@@ -52671,13 +52671,13 @@ MonoBehaviour:
     - Path: north-entry-roof-1.position.x
       Value: 15
     - Path: north-entry-roof-1.position.y
-      Value: 2.8
+      Value: 5.5
     - Path: north-entry-roof-1.position.z
       Value: 26
     - Path: north-entry-roof-1.size.x
       Value: 6
     - Path: north-entry-roof-1.size.y
-      Value: 0.4
+      Value: 5.7999997
     - Path: north-entry-roof-1.size.z
       Value: 4
     - Path: north-entry-roof-1.rotation.x
