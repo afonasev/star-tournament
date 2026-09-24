@@ -53,12 +53,17 @@ namespace StarTournament.ProvingGround.Tests
                 var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
                 Assert.That(Physics.Raycast(window.Position+inward*2,-inward,out var hit,4,1<<ProvingArena.WorldLayer),Is.True);Assert.That(hit.collider.transform,Is.EqualTo(pane));
             }
+            var shell=arena.Definition.Solids.Single(s=>s.Id=="interior-shell-roof");
             foreach(bool alongX in new[]{false,true})foreach(int side in new[]{-1,1})
-            for(float along=-35.9f;along<36;along+=1.1f)for(float y=.1f;y<8.4f;y+=.6f)
             {
-                var normal=alongX?Vector3.forward*side:Vector3.right*side;
-                var point=alongX?new Vector3(along,y,side*35.9f):new Vector3(side*35.9f,y,along);
-                Assert.That(Physics.Raycast(point,normal,.6f,1<<ProvingArena.WorldLayer),Is.True,"Hull leak "+point);
+                float alongExtent=(alongX?shell.Size.x:shell.Size.z)/2;
+                float crossExtent=(alongX?shell.Size.z:shell.Size.x)/2;
+                for(float along=-alongExtent+.1f;along<alongExtent;along+=1.1f)for(float y=.1f;y<8.4f;y+=.6f)
+                {
+                    var normal=alongX?Vector3.forward*side:Vector3.right*side;
+                    var point=alongX?new Vector3(along,y,side*(crossExtent-.1f)):new Vector3(side*(crossExtent-.1f),y,along);
+                    Assert.That(Physics.Raycast(point,normal,.6f,1<<ProvingArena.WorldLayer),Is.True,"Hull leak "+point);
+                }
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();var faces=art.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name.StartsWith("Distant space cube / ")).ToArray();
             Assert.That(faces.Length,Is.EqualTo(6));Assert.That(faces.Count(r=>r.name.EndsWith("planet")),Is.EqualTo(2));Assert.That(faces.Count(r=>r.name.EndsWith("Sun")),Is.EqualTo(1));

@@ -105,8 +105,8 @@ namespace StarTournament.ProvingGround
             foreach(var light in shadowLights)light.enabled=false;
             yield return Capture("17a-basement-ceiling-lights-disabled-diagnostic");
             foreach(var light in shadowLights)light.enabled=true;
-            ground.PlaceCombatReviewSeat(1,new Vector3(-12,0,32),0,90);
-            artCamera.transform.position=new Vector3(0,1.6f,32);artCamera.transform.LookAt(new Vector3(-12,1.1f,32));
+            ground.PlaceCombatReviewSeat(1,new Vector3(-12,0,28),0,90);
+            artCamera.transform.position=new Vector3(0,1.6f,28);artCamera.transform.LookAt(new Vector3(-12,1.1f,28));
             yield return Capture("17b-live-outer-ring-opponent");
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,13),0,180);
             artCamera.transform.position=new Vector3(0,6,5);artCamera.transform.LookAt(new Vector3(0,5,13));
@@ -117,8 +117,8 @@ namespace StarTournament.ProvingGround
             while(ground.Session.Life(1).Dead)yield return null;
             ground.PlaceCombatReviewSeat(1,new Vector3(-25,0,0),0,0);
             float priorTimeScale=Time.timeScale;Time.timeScale=0; // Freeze only staged architectural shots so combat cannot move/remove the lower-floor subject.
-            var positions=new[]{new Vector3(0,1.6f,32),new Vector3(32,5.6f,30),new Vector3(-34,1.6f,0),new Vector3(-32,5.6f,26),new Vector3(-25,5.6f,2),new Vector3(0,5.6f,17),new Vector3(0,5.6f,-17),new Vector3(-30,5.6f,30),new Vector3(30,5.6f,30),new Vector3(-30,5.6f,-30),new Vector3(30,5.6f,-30),new Vector3(0,.4f,-5)};
-            var targets=new[]{new Vector3(-16,1.6f,32),new Vector3(36,5.6f,30),new Vector3(-24,1.6f,0),new Vector3(-24,5.6f,18),new Vector3(-25,.6f,0),new Vector3(0,5.6f,4),new Vector3(0,5.6f,-4),new Vector3(-32,4.6f,32),new Vector3(32,4.6f,32),new Vector3(-32,4.6f,-32),new Vector3(32,4.6f,-32),new Vector3(0,.4f,4)};
+            var positions=new[]{new Vector3(0,1.6f,28),new Vector3(32,5.6f,30),new Vector3(-34,1.6f,0),new Vector3(-32,5.6f,26),new Vector3(-25,5.6f,2),new Vector3(0,5.6f,17),new Vector3(0,5.6f,-17),new Vector3(-30,5.6f,30),new Vector3(30,5.6f,30),new Vector3(-30,5.6f,-30),new Vector3(30,5.6f,-30),new Vector3(0,.4f,-5)};
+            var targets=new[]{new Vector3(-16,1.6f,28),new Vector3(36,5.6f,30),new Vector3(-24,1.6f,0),new Vector3(-24,5.6f,18),new Vector3(-25,.6f,0),new Vector3(0,5.6f,4),new Vector3(0,5.6f,-4),new Vector3(-32,4.6f,32),new Vector3(32,4.6f,32),new Vector3(-32,4.6f,-32),new Vector3(32,4.6f,-32),new Vector3(0,.4f,4)};
             var names=new[]{"06-lowered-outer-ring","07-panoramic-window","08-wide-west-gateway","09-wide-diagonal","10-grating-lower-player","11-north-bridge","12-south-bridge","13-speed-nw","14-armor-ne","15-armor-sw","16-speed-se","17-basement"};
             for(int i=0;i<positions.Length;i++)
             {
@@ -135,8 +135,8 @@ namespace StarTournament.ProvingGround
                 foreach(var light in shadowLights)light.enabled=true;
                 studio.intensity=outerStudio;RenderSettings.ambientLight=outerAmbient;
             }
-            var windowPositions=new[]{new Vector3(31,5.8f,30),new Vector3(-31,5.8f,-30),new Vector3(0,1.7f,-31),new Vector3(0,1.7f,31),new Vector3(32,5.8f,27)};
-            var windowTargets=new[]{new Vector3(38,5.8f,30),new Vector3(-38,5.8f,-30),new Vector3(0,1.7f,-38),new Vector3(0,1.7f,38),new Vector3(38,5.8f,30)};
+            var windowPositions=new[]{new Vector3(31,5.8f,27),new Vector3(-31,5.8f,-27),new Vector3(0,1.7f,-31),new Vector3(0,1.7f,31),new Vector3(32,5.8f,27)};
+            var windowTargets=new[]{new Vector3(38,5.8f,27),new Vector3(-38,5.8f,-27),new Vector3(0,1.7f,-38),new Vector3(0,1.7f,38),new Vector3(38,5.8f,27)};
             var windowNames=new[]{"18-window-blue-planet","19-window-rock-planet","20-window-sun","21-window-stars","22-window-oblique-depth"};
             for(int i=0;i<windowPositions.Length;i++){artCamera.transform.position=windowPositions[i];artCamera.transform.LookAt(windowTargets[i]);yield return Capture(windowNames[i]);}
             var routePositions=new[]{new Vector3(0,1.7f,30),new Vector3(0,1.7f,-30),new Vector3(-33,5.7f,18),new Vector3(33,5.7f,-18),new Vector3(0,.4f,-4),new Vector3(0,5.7f,18),new Vector3(0,5.7f,-18)};
@@ -146,8 +146,8 @@ namespace StarTournament.ProvingGround
             // F4: unhidden native views looking down both orientations of the smooth ceiling.
             artCamera.transform.position=new Vector3(-32,5.65f,17);
             artCamera.transform.LookAt(new Vector3(-32,3.8f,7));yield return Capture("32-smooth-west-ceiling");
-            artCamera.transform.position=new Vector3(31,5.65f,32);
-            artCamera.transform.LookAt(new Vector3(21,3.8f,32));yield return Capture("33-smooth-north-ceiling");
+            artCamera.transform.position=new Vector3(31,5.65f,28);
+            artCamera.transform.LookAt(new Vector3(21,3.8f,28));yield return Capture("33-smooth-north-ceiling");
             // F3 diagnostic views of the restored open flanks, with all runtime walls/ceilings visible.
             foreach(int side in new[]{-1,1})
             {
@@ -155,6 +155,9 @@ namespace StarTournament.ProvingGround
                 artCamera.transform.LookAt(new Vector3(-6*side,1.4f,15*side));
                 yield return Capture(side>0?"30-open-north-spawn-flank":"31-open-south-spawn-flank");
             }
+            var f7Positions=new[]{new Vector3(0,1.65f,14),new Vector3(-13,1.65f,10),new Vector3(13,1.65f,-10),new Vector3(0,.45f,6),new Vector3(-17,1.65f,28)};
+            var f7Targets=new[]{new Vector3(0,3,0),new Vector3(-5,3,0),new Vector3(5,3,0),new Vector3(0,.45f,-7),new Vector3(-28,5,28)};
+            for(int i=0;i<f7Positions.Length;i++){artCamera.transform.position=f7Positions[i];artCamera.transform.LookAt(f7Targets[i]);yield return Capture("40-f7-architecture-"+i);}
             yield return CaptureDirectDiagonalWalks(artCamera);
             Time.timeScale=priorTimeScale;Destroy(artCameraObject);foreach(var c in reviewCameras)c.enabled=true;foreach(var c in reviewCanvases)c.enabled=true;
             // Real player projection, camera-only cutaway: roof/wall renderers hidden only for the labelled overview.

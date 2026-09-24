@@ -106,7 +106,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator FacingBotUsesRealDriverShotReleaseAndLifecycleKeepsFrozenBehavior()
         {
             yield return Load(BotsAndHuman(false,1),107);float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight");
-            ground.PlaceCombatReviewSeat(0,new Vector3(-8,floor,30),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-8,floor,34),0,180);Physics.SyncTransforms();
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,floor,26),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-8,floor,30),0,180);Physics.SyncTransforms();
             var driver=ground.BotDriver;var session=ground.Session;var actions=new LocalAction[2];float dt=1f/ground.Profile.Get("simulation.fixedTickHz");bool pressed=false,released=false,damaged=false;
             session.Fired+=(p,d)=>damaged|=d>0;
             for(int i=0;i<500&&!(damaged&&released);i++)

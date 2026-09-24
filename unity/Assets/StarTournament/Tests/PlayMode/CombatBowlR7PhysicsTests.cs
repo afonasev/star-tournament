@@ -25,6 +25,64 @@ namespace StarTournament.ProvingGround.Tests
             for(int count=2;count<=8;count++)Assert.That(spawn.TryInitial(NativeMatchRoster.Ffa(count),ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation"),out var positions),Is.True,$"FFA {count}: {spawn.InitialFailure}");
             yield return null;
         }
+        [UnityTest] public IEnumerator CentralFacadeHasNoHorizontalFloorSeamOpening()
+        {
+            foreach(int side in new[]{-1,1})for(float x=-8.2f;x<=8.2f;x+=.2f)
+                Assert.That(Physics.CheckSphere(new Vector3(x,3.8f,side*8.2f),.02f,1<<ProvingArena.WorldLayer),Is.True,"Open facade seam at "+x+","+side);
+            yield return null;
+        }
+        [UnityTest] public IEnumerator LowerTunnelTraversesEndToEndWithOrdinaryMotor()
+        {
+            foreach(int direction in new[]{-1,1})foreach(float lane in new[]{-1.5f,0f,1.5f})
+            {
+                var go=new GameObject("F7-tunnel-motor");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,new Vector3(lane,0,-direction*12));
+                bool reachedBasement=false;
+                for(int tick=0;tick<600;tick++)
+                {
+                    motor.Tick(new LocalAction{Move=new Vector2(0,direction)},1f/60);Physics.SyncTransforms();
+                    if(Mathf.Abs(motor.State.Position.z)<5)reachedBasement|=motor.State.Position.y< -1;
+                    if(direction*motor.State.Position.z>12)break;
+                }
+                Assert.That(reachedBasement,Is.True,"Tunnel descent missing");
+                Assert.That(direction*motor.State.Position.z,Is.GreaterThan(12),"Tunnel blocked: "+motor.State.Position);
+                Assert.That(motor.State.Position.y,Is.EqualTo(0).Within(.12f));Object.DestroyImmediate(go);
+            }
+            yield return null;
+        }
+        [UnityTest] public IEnumerator CentralPlinthAndRampUndersidesRejectWalkingEntry()
+        {
+            foreach(int side in new[]{-1,1})foreach(float x in new[]{7f,10f,13f})
+            {
+                float z=-side*4;
+                var go=new GameObject("F7-under-ramp-probe");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();
+                motor.Initialize(movement,new Vector3(side*x,0,12));
+                for(int tick=0;tick<180;tick++){motor.Tick(new LocalAction{Move=Vector2.down},1f/60);Physics.SyncTransforms();}
+                Assert.That(motor.State.Position.z,Is.GreaterThan(z+2),"Entered ramp underside: "+motor.State.Position);
+                Object.DestroyImmediate(go);
+            }
+            foreach(int side in new[]{-1,1})foreach(float z in new[]{-7f,0f,7f})
+                Assert.That(Physics.CheckSphere(new Vector3(side*5,1,z),.1f,1<<ProvingArena.WorldLayer),Is.True,"Open central plinth");
+            yield return null;
+        }
+        [UnityTest] public IEnumerator ExteriorCrossStairsSpanAllUsableLanes()
+        {
+            foreach(int side in new[]{-1,1})foreach(int direction in new[]{-1,1})foreach(float lane in new[]{25f,28f,31f})
+            {
+                var go=new GameObject("F7-full-width-motor");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,new Vector3(direction*17,0,side*lane));
+                for(int tick=0;tick<180;tick++)
+                {
+                    motor.Tick(new LocalAction{Move=new Vector2(direction,0)},1f/60);Physics.SyncTransforms();
+                    if(Mathf.Abs(motor.State.Position.x)>29)break;
+                }
+                Assert.That(Mathf.Abs(motor.State.Position.x),Is.GreaterThan(28.5f),"Blocked outer lane: "+motor.State.Position);
+                Assert.That(motor.State.Position.y,Is.EqualTo(4).Within(.12f),"Side bypass at "+motor.State.Position);
+                Object.DestroyImmediate(go);
+            }
+            yield return null;
+        }
         [UnityTest] public IEnumerator OuterCeilingCavitiesAreSolidUpToShell()
         {
             foreach(var solid in arena.Definition.Solids.Where(s=>s.Id.Contains("slope-ceiling")||s.Id.Contains("cross-rise-ceiling")||s.Id.EndsWith("low-ceiling")||s.Id.Contains("entry-roof")))
@@ -40,7 +98,7 @@ namespace StarTournament.ProvingGround.Tests
         {
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})foreach(bool cross in new[]{false,true})
             {
-                var start=cross?new Vector3(sx*29,4,sz*32):new Vector3(sx*32,4,sz*15);
+                var start=cross?new Vector3(sx*29,4,sz*28):new Vector3(sx*32,4,sz*15);
                 var move=cross?new Vector2(-sx,0):new Vector2(0,-sz);
                 var go=new GameObject("ceiling-jump-proof");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();
                 var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,start);
@@ -206,9 +264,9 @@ namespace StarTournament.ProvingGround.Tests
         {
             CharacterMotor Motor(Vector3 feet)
             {var go=new GameObject("pickup-test-player");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();var m=go.AddComponent<CharacterMotor>();m.Initialize(movement,feet);return m;}
-            var first=Motor(new Vector3(-32,4,-28));var second=Motor(new Vector3(32,4,28));
+            var first=Motor(new Vector3(-32,4,-24));var second=Motor(new Vector3(32,4,24));
             var session=new NativeCombatSession(new[]{first,second},arena,Physics.defaultPhysicsScene,movement,ProvingProfile.CreateCombatDefault(),combat);
-            first.Initialize(movement,new Vector3(-32,4,-32));session.Tick(new LocalAction[2],1f/60);
+            first.Initialize(movement,new Vector3(-32,4,-28));session.Tick(new LocalAction[2],1f/60);
             Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-sw").Available,Is.False);
             Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-ne").Available,Is.True);
             Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-basement").Available,Is.True);
@@ -219,13 +277,13 @@ namespace StarTournament.ProvingGround.Tests
             var before=JsonUtility.ToJson(session.Capture());Assert.Throws<System.ArgumentException>(()=>session.Restore(invalid));Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(before));
             for(int tick=0;tick<601;tick++)session.Tick(new LocalAction[2],1f/60);
             Assert.That(session.SpeedPickups.All(x=>x.Available),Is.True);
-            first.Initialize(movement,new Vector3(-32,4,32));session.Tick(new LocalAction[2],1f/60);
+            first.Initialize(movement,new Vector3(-32,4,28));session.Tick(new LocalAction[2],1f/60);
             Assert.That(session.SpeedPickups.Single(x=>x.InstanceId=="speed-nw").Available,Is.False);Assert.That(session.SpeedPickups.Single(x=>x.InstanceId=="speed-se").Available,Is.True);
             yield return null;
         }
         [UnityTest] public IEnumerator StationCeilingSealsEveryInteriorAndOuterJunction()
         {
-            for(int x=-35;x<=35;x+=2)for(int z=-35;z<=35;z+=2)
+            for(int x=-35;x<=35;x+=2)for(int z=-31;z<=31;z+=2)
                 Assert.That(Physics.Raycast(new Vector3(x,8.2f,z),Vector3.up,1,1<<ProvingArena.WorldLayer),Is.True,$"Open roof at {x},{z}");
             yield return null;
         }
