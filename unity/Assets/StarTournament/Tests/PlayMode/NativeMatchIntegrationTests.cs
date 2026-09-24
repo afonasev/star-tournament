@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<2999;i++){match.BeginTick();match.EndTick();}
             var session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat,match);
             yield return null;
-            var actions=new LocalAction[4];actions[0].Fire=actions[1].Fire=true;session.Tick(actions,.02f);
+            var actions=new LocalAction[4];actions[0].Fire=actions[1].Fire=true;actions[0].SelectWeapon=actions[1].SelectWeapon=WeaponSelection.Shotgun;session.Tick(actions,.02f);
             Assert.That(session.Life(0).Dead && session.Life(1).Dead,Is.True,"Both admitted shots survive the first death");
             Assert.That(match.Phase,Is.EqualTo(NativeMatchPhase.Overtime));Assert.That(match.Read().Trigger,Is.EqualTo("score-limit"));
             Assert.That(match.Read().Standings.Take(2).All(r=>r.Kills==1 && r.Deaths==1 && r.Score==1000),Is.True);

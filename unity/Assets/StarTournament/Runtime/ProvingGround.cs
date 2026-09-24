@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
     public sealed class ProvingGround : MonoBehaviour
     {
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab;
-        public GameObject TrooperBodyPrefab, TrooperArmsPrefab;
+        public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab;
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
         public ProvingProfile Profile = ProvingProfile.CreateDefault();
@@ -241,10 +241,11 @@ namespace StarTournament.ProvingGround
             if(devices!=null)for(int seat=0;seat<devices.Length;seat++)if(input.IsHumanSeat(seat)&&!input.Assign(seat,devices[seat]))throw new ArgumentException("Invalid local device");
             Begin(devices==null);
         }
-        public void StartCombatReview(Gamepad[] pads,bool backgroundDiagnostic=false)
+        public void StartCombatReview(Gamepad[] pads,bool backgroundDiagnostic=false,bool ensureOpponent=false)
         {
             if(phase!=Phase.Setup) Menu();
             SetSeatCount(pads.Length);
+            if(ensureOpponent && pads.Length==1)AddBot();
             input.Reset();
             for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
             combatReview=true; Begin(backgroundDiagnostic);
@@ -282,6 +283,7 @@ namespace StarTournament.ProvingGround
             if(ownerSeat>=0)CreateOwnShadowProxy(body);
             bodies[index]=body;
             body.AddComponent<VectorShotPresentation>().Initialize(movement);
+            body.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement);
         }
         static void CreateOwnShadowProxy(GameObject body)
         {
@@ -316,6 +318,7 @@ namespace StarTournament.ProvingGround
             view.AddComponent<TrooperVisual>().Initialize(TrooperClips,trooper,true);
             ApplyIdentity(view,participant);
             view.AddComponent<VectorShotPresentation>().Initialize(movement);
+            view.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement);
             view.transform.localPosition=new Vector3(trooper.Get("view.x"),trooper.Get("view.y"),trooper.Get("view.z"));
             var fillObject=new GameObject("equipment-fill");fillObject.transform.SetParent(cameraObject.transform,false);
             var fill=fillObject.AddComponent<Light>();fill.type=LightType.Point;
@@ -397,6 +400,9 @@ namespace StarTournament.ProvingGround
             RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();
             for(int p=0;p<Composition.ParticipantCount;p++)
             {
+                bodies[p].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
+                int localView=Composition.SeatOf(p);
+                if(localView>=0)views[localView].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
                 bool boosted=Session.DamageBoostRemaining(p)>0;if(damageTinted[p]==boosted)continue;damageTinted[p]=boosted;
                 var tint=boosted?Color.red:Composition.Participant(p).Color;ApplyIdentity(bodies[p],tint);int seat=Composition.SeatOf(p);if(seat>=0)ApplyIdentity(views[seat],tint);
             }
@@ -417,6 +423,7 @@ namespace StarTournament.ProvingGround
                 health[i].text=Mathf.CeilToInt(life.Health).ToString();
                 armorGroups[i].SetActive(life.Armor>0); if(life.Armor>0) armor[i].text=Mathf.CeilToInt(life.Armor).ToString();
                 ammo[i].text=life.Ammo+(Session.DamageBoostRemaining(participant)>0?" ×2":"");
+                ammoIcons[i].Kind=life.SelectedWeapon==WeaponId.Rifle?HudIndicatorIcon.IconKind.Rifle:HudIndicatorIcon.IconKind.Shotgun;
                 ResizeHudIndicator(health[i]);if(life.Armor>0)ResizeHudIndicator(armor[i]);ResizeHudIndicator(ammo[i]);
 
                 ammo[i].color=Session.DamageBoostRemaining(participant)>0?Color.red:Color.white;

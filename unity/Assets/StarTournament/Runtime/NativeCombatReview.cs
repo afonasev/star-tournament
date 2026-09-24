@@ -45,13 +45,27 @@ namespace StarTournament.ProvingGround
             }
             yield return Capture("setup");
             for(int i=0;i<pads.Length;i++) pads[i]=InputSystem.AddDevice<Gamepad>();
-            ground.StartCombatReview(pads);
             if(oneViewport)
             {
-                var reviewCameras=ground.GetComponentsInChildren<Camera>();
-                for(int i=1;i<reviewCameras.Length;i++)reviewCameras[i].enabled=false;
-                if(reviewCameras.Length>0)reviewCameras[0].rect=new Rect(0,0,1,1);
+                ground.StartCombatReview(new[]{pads[0]},ensureOpponent:true);
+                ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);
+                ground.PlaceCombatReviewSeat(1,new Vector3(-8,0,10),0);
+                yield return new WaitForSeconds(.3f);
+                yield return Capture("rifle-live");
+                bool rifleFired=false;
+                ground.Session.ShotResolved+=notice=>rifleFired|=notice.Shooter==0&&notice.Weapon==WeaponId.Rifle;
+                InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});
+                float deadline=Time.realtimeSinceStartup+3f;
+                while(!rifleFired&&Time.realtimeSinceStartup<deadline)yield return null;
+                if(!rifleFired)throw new InvalidOperationException("Rifle review did not fire");
+                yield return Capture("rifle-fire");
+                InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));
+                yield return new WaitForSeconds(.2f);
+                yield return Capture("shotgun-selected");
+                Debug.Log("NATIVE_RIFLE_REVIEW_COMPLETE "+directory);
+                yield break;
             }
+            ground.StartCombatReview(pads);
             ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);
             // Eight metres of separation exposes the existing pellet spread in a first-person capture
             // while keeping this QA-only target on the shooter's current aim ray.
@@ -100,8 +114,8 @@ namespace StarTournament.ProvingGround
             var snapshot=new ReviewState { state=state, width=Screen.width, height=Screen.height,cameras=Camera.allCamerasCount, focused=Application.isFocused,
                 running=ground.Running, shots=ground.Session.ShotCount, sessionTime=ground.Session.Time,
                 movementProfile=ground.Profile.Id+"@"+ground.Profile.Version, combatProfile=ground.CombatProfile.Id+"@"+ground.CombatProfile.Version,
-                lifeProfile=ground.LifeProfile.Id+"@"+ground.LifeProfile.Version,mouseDegreesPerPixel=MouseSensitivityPreference.Resolve(ground.Profile), lives=new CombatLifeState[4] };
-            for(int i=0;i<4;i++) snapshot.lives[i]=ground.Session.Life(i);
+                lifeProfile=ground.LifeProfile.Id+"@"+ground.LifeProfile.Version,mouseDegreesPerPixel=MouseSensitivityPreference.Resolve(ground.Profile), lives=new CombatLifeState[ground.Session.ParticipantCount] };
+            for(int i=0;i<snapshot.lives.Length;i++) snapshot.lives[i]=ground.Session.Life(i);
             File.WriteAllText(Path.Combine(directory,state+".json"),JsonUtility.ToJson(snapshot,true));
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,state+".png"));
         }

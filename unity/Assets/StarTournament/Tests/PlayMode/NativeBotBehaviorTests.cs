@@ -115,7 +115,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 if(pressed&&!actions[0].Fire)released=true;if(actions[0].Fire)pressed=true;
                 session.Tick(actions,dt);
             }
-            Assert.That(pressed,Is.True);Assert.That(released,Is.True,"The real driver must emit a false action between presses.");Assert.That(damaged,Is.True);
+            Assert.That(pressed,Is.True,$"bot life={session.Life(0).Life} ammo={session.Life(0).Ammo} weapon={session.Life(0).SelectedWeapon} shots={session.ShotCount} targetHealth={session.Life(1).Health}");
+            Assert.That(released,Is.True,"The real driver must emit a false action between presses.");
+            Assert.That(damaged,Is.True,$"shots={session.ShotCount} targetHealth={session.Life(1).Health}");
             string frozen=driver.Planner(0).Capture().Configuration;ground.enabled=true;yield return new WaitForFixedUpdate();
             ground.SendMessage("Pause","bot lifecycle test");long pausedTick=session.Match.Read().Tick;double pausedTime=session.Time;
             yield return new WaitForFixedUpdate();Assert.That(session.Match.Read().Tick,Is.EqualTo(pausedTick));Assert.That(session.Time,Is.EqualTo(pausedTime));ground.enabled=false;

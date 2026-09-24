@@ -225,10 +225,21 @@ namespace StarTournament.ProvingGround
                 if(maneuver&&f.Pose.Grounded&&time>=state.NextJump&&Random()<P("jumpChance")&&tactics.CanJump(f.Pose,direction))
                 {action.Jump=true;state.JumpActive=true;state.JumpDirection=direction;state.NextJump=time+P("jumpCooldownSeconds")*state.Personality;Jumps++;}
             }
-            // A true press must be followed by a complete false tick even when the weapon is ready.
+            // Short-range engagements favour the shotgun; empty slots fall back to the other weapon.
+            float targetDistance=memory.HasValue?Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position):float.PositiveInfinity;
+            bool closeShotgun=targetDistance<=P("preferredDistanceMeters")*state.Personality;
+            var desired=f.Life.SelectedWeapon;
+            if(f.Life.ShotgunAmmo>0 && (f.Life.RifleAmmo==0||closeShotgun))desired=WeaponId.Shotgun;
+            else if(f.Life.RifleAmmo>0)desired=WeaponId.Rifle;
+            if(desired!=f.Life.SelectedWeapon)action.SelectWeapon=desired==WeaponId.Rifle?WeaponSelection.Rifle:WeaponSelection.Shotgun;
+            int readyAmmo=desired==WeaponId.Rifle?f.Life.RifleAmmo:f.Life.ShotgunAmmo;
+            double readyCooldown=desired==WeaponId.Rifle?f.Life.RifleCooldownRemaining:f.Life.ShotgunCooldownRemaining;
+            // Older isolated planner fixtures have no loadout; keep their supplied ammo/cooldown.
+            if(f.Life.SelectedWeapon==0){readyAmmo=f.Life.Ammo;readyCooldown=f.Life.CooldownRemaining;action.SelectWeapon=WeaponSelection.None;}
+            // A shotgun press must be followed by a complete false tick.
             bool release=state.Pressed;state.Pressed=false;
             if(!release&&visible&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
-                f.Life.Ammo>0&&f.Life.CooldownRemaining<=0&&Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position)<=weapon.Range&&!AllyInLine(f,memory.Value.Sighting.Position))
+                readyAmmo>0&&readyCooldown<=0&&targetDistance<=weapon.Range&&!AllyInLine(f,memory.Value.Sighting.Position))
             {action.Fire=true;state.Pressed=true;FireAttempts++;}
             return action;
         }

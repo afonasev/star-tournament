@@ -28,6 +28,24 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
+        [UnityTest] public IEnumerator AssignedDpadWeaponChoicesAreSeatLocalAndConsumedOnce()
+        {
+            pads[0]=InputSystem.AddDevice<Gamepad>();pads[1]=InputSystem.AddDevice<Gamepad>();
+            var seats=new SeatInputCoordinator();seats.SetActiveSeatCount(2);
+            Assert.That(seats.Assign(0,pads[0]),Is.True);Assert.That(seats.Assign(1,pads[1]),Is.True);
+            yield return null;
+            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadLeft));
+            yield return null;
+            seats.Capture(ProvingProfile.CreateDefault(),Time.deltaTime);
+            Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.Rifle));
+            Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.None));
+            Assert.That(seats.Consume(1).SelectWeapon,Is.EqualTo(WeaponSelection.None));
+            InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
+            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));yield return null;
+            seats.Capture(ProvingProfile.CreateDefault(),Time.deltaTime);
+            Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.Shotgun));
+            seats.Clear();Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.None));
+        }
         void AssertLayout(int count)
         {
             Assert.That(ground.LocalSeatCount,Is.EqualTo(count));
@@ -109,7 +127,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(name.text,Does.Contain("Игрок"));
                     Assert.That(name.alignment,Is.EqualTo(TextAnchor.LowerCenter));
                     var icons=root.GetComponentsInChildren<HudIndicatorIcon>(true);
-                    Assert.That(icons.Select(i=>i.Kind),Is.EquivalentTo(new[]{HudIndicatorIcon.IconKind.Heart,HudIndicatorIcon.IconKind.Shield,HudIndicatorIcon.IconKind.Cartridges}));
+                    Assert.That(icons.Select(i=>i.Kind),Is.EquivalentTo(new[]{HudIndicatorIcon.IconKind.Heart,HudIndicatorIcon.IconKind.Shield,HudIndicatorIcon.IconKind.Rifle}));
                     Assert.That(root.GetComponentsInChildren<Text>(true).Single(t=>t.name=="ammo-"+seat).text,Does.Not.Contain("ДВУСТВОЛКА"));
                 }
                 Button("В главное меню").onClick.Invoke();yield return null;

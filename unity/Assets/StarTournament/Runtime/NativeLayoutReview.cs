@@ -34,6 +34,18 @@ namespace StarTournament.ProvingGround
             // Synthetic Player evidence must also run when macOS opens the test window unfocused.
             yield return new WaitForSecondsRealtime(1);
             for(int i=0;i<pads.Length;i++) pads[i]=InputSystem.AddDevice<Gamepad>();
+            if(Array.IndexOf(args,"-rifleLayoutReview")>=0)
+            {
+                foreach(int count in new[]{2,3})
+                {
+                    ground.StartCombatReview(pads.Take(count).ToArray());
+                    yield return new WaitForSeconds(.2f);
+                    yield return Capture(count+"-rifle-live");
+                    Button("В главное меню").onClick.Invoke();
+                }
+                Debug.Log("NATIVE_RIFLE_LAYOUT_REVIEW_COMPLETE "+directory);
+                yield break;
+            }
             ground.AddBot(); // The single-view case still needs a second match participant.
             foreach(int count in new[]{1,4,2,3})
             {

@@ -70,6 +70,26 @@
       "front": "+Z",
       "pivot": "ground-center",
       "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
+    },
+    {
+      "key": "rifle-lod0",
+      "path": "Assets/StarTournament/Art/automatic-rifle-lod0.glb",
+      "sha256": "042456059164630b7fa4b7d37b5190a96ef3963eea297d493219bc1b743bb6c0",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "rifle-grip",
+      "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
+    },
+    {
+      "key": "rifle-lod1",
+      "path": "Assets/StarTournament/Art/automatic-rifle-lod1.glb",
+      "sha256": "831e76388bf323b83133aa3f1b1cf3eb358ee1579d24e05f0a150ccbac1266f2",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "rifle-grip",
+      "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
     }
   ]
 }

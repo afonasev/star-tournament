@@ -76,7 +76,11 @@ namespace StarTournament.ProvingGround
             if(!anyHuman)foreach(var pad in Gamepad.all)pauseRequested |= pad.startButton.wasPressedThisFrame;
             for (int i = 0; i < ActiveSeatCount; i++)
             {
-                if (!humanSeats[i] || !IsConnected(i)) continue;
+                if (!humanSeats[i] || !IsConnected(i))
+                {
+                    queued[i]=default;fireReleaseRequired[i]=true;
+                    continue;
+                }
                 var a = queued[i];
                 if (devices[i] is Keyboard keyboard)
                 {
@@ -85,6 +89,11 @@ namespace StarTournament.ProvingGround
                     a.LookDegrees += pairedMouse.delta.ReadValue() * (mouseDegreesPerPixelOverride ?? profile.Get("input.mouseDegreesPerPixel"));
                     a.Jump |= keyboard.spaceKey.wasPressedThisFrame;
                     CaptureFire(i, ref a, pairedMouse.leftButton.isPressed, pairedMouse.leftButton.wasPressedThisFrame);
+                    if(keyboard.digit1Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;
+                    else if(keyboard.digit2Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Shotgun;
+                    else if(keyboard.qKey.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Previous;
+                    else if(keyboard.eKey.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Next;
+                    else if(pairedMouse.scroll.ReadValue().y!=0)a.SelectWeapon=pairedMouse.scroll.ReadValue().y>0?WeaponSelection.Previous:WeaponSelection.Next;
                     a.ShowRoster = keyboard.tabKey.isPressed;
                 }
                 else if (devices[i] is Gamepad pad)
@@ -93,6 +102,8 @@ namespace StarTournament.ProvingGround
                     a.LookDegrees += Deadzone(pad.rightStick.ReadValue(), profile.Get("input.deadzone")) * profile.Get("input.gamepadDegreesPerSecond") * deltaTime;
                     a.Jump |= pad.buttonSouth.wasPressedThisFrame;
                     CaptureFire(i, ref a, pad.rightTrigger.isPressed, pad.rightTrigger.wasPressedThisFrame);
+                    if(pad.dpad.left.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;
+                    else if(pad.dpad.up.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Shotgun;
                     a.ShowRoster = pad.selectButton.isPressed;
                     pauseRequested |= pad.startButton.wasPressedThisFrame;
                 }
@@ -119,7 +130,7 @@ namespace StarTournament.ProvingGround
         public LocalAction Consume(int slot)
         {
             var value = queued[slot];
-            queued[slot].Jump = false; queued[slot].Fire = false; queued[slot].LookDegrees = Vector2.zero;
+            queued[slot].Jump = false; queued[slot].Fire = false; queued[slot].SelectWeapon=WeaponSelection.None; queued[slot].LookDegrees = Vector2.zero;
             return value;
         }
     }

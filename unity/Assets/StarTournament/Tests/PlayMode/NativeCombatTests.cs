@@ -44,7 +44,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Setup(); yield return null;
             motors[1].Initialize(movement,new Vector3(0,0,4));
             int deaths=0; session.Died+=_=>deaths++;
-            var actions=new LocalAction[4]; actions[0].FireHeld=true;
+            var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].FireHeld=true;
             session.Tick(actions,.02f);
             Assert.That(session.Life(1).Dead,Is.True); Assert.That(deaths,Is.EqualTo(1));
             Assert.That(motors[1].GetComponent<CharacterController>().enabled,Is.False);
@@ -54,7 +54,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Time,Is.EqualTo(paused)); Assert.That(session.Life(1).RespawnRemaining,Is.EqualTo(remaining).Within(.00001));
             for(int i=0;i<15;i++) session.Tick(actions,.02f);
             Assert.That(session.Life(1).Dead,Is.False); Assert.That(session.Life(1).Life,Is.EqualTo(2));
-            Assert.That(session.Life(1).Health,Is.EqualTo(100)); Assert.That(session.Life(1).Ammo,Is.EqualTo(20));
+            Assert.That(session.Life(1).Health,Is.EqualTo(100)); Assert.That(session.Life(1).RifleAmmo,Is.EqualTo(100)); Assert.That(session.Life(1).ShotgunAmmo,Is.EqualTo(20));
             Assert.That(motors[1].GetComponent<CharacterController>().enabled,Is.True);
             Assert.That(session.ShotCount,Is.EqualTo(1),"Held trigger cannot shoot again through pause or cooldown");
             Assert.That(session.ApplyDamage(1,1,100,0,1).Applied,Is.Zero,"Old-life damage cannot hit respawn");
@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             motors[1].Initialize(movement,new Vector3(0,0,4));
             var wall=GameObject.CreatePrimitive(PrimitiveType.Cube); wall.transform.SetParent(owner.transform);
             wall.layer=ProvingArena.WorldLayer; wall.transform.position=new Vector3(0,1,2); wall.transform.localScale=new Vector3(2,2,.3f); Physics.SyncTransforms();
-            var actions=new LocalAction[4]; actions[0].Fire=true; session.Tick(actions,.02f);
+            var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true; session.Tick(actions,.02f);
             Assert.That(session.Life(1).Health,Is.EqualTo(100));
             wall.layer=ProvingArena.MovementOnlyLayer;
             for(int i=0;i<40;i++) session.Tick(new LocalAction[4],.02f);
@@ -114,7 +114,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             combat.Set("shot.spread",7);
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
             motors[1].Initialize(movement,new Vector3(0,0,4));
-            var actions=new LocalAction[4]; actions[0].Fire=true;
+            var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true;
             session.Tick(actions,.02f);
             // Fixed sampling identity 1: one head, four torso and one arm pellet; remaining rays miss.
             // Expected damage = (100 + 4*70 + 30)/12, independent of applied-damage implementation.
@@ -126,10 +126,36 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             Setup();yield return null;combat.Set("shot.spread",0);session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
             motors[1].Initialize(movement,new Vector3(0,0,4));ShotNotice notice=default;int count=0;session.ShotResolved+=n=>{notice=n;count++;};
-            session.Tick(new[]{new LocalAction{Fire=true},default,default,default},.02f);
+            session.Tick(new[]{new LocalAction{SelectWeapon=WeaponSelection.Shotgun,Fire=true},default,default,default},.02f);
             Assert.That(count,Is.EqualTo(1));Assert.That(notice.Pellets.Length,Is.EqualTo((int)combat.Get("shot.pellets")));
             Assert.That(notice.Pellets[0].Contact,Is.EqualTo(PelletContact.Participant));Assert.That(notice.Pellets[0].TargetSeat,Is.EqualTo(1));
             Assert.That(session.Life(1).Dead,Is.True);
+        }
+        [UnityTest]
+        public IEnumerator RifleHoldAndSameTickSelectionUseDistinctAuthoritativeShots()
+        {
+            Setup();yield return null;
+            combat.Set("rifle.spread",0);
+            session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            motors[1].Initialize(movement,new Vector3(0,0,4));
+            ShotNotice notice=default;session.ShotResolved+=n=>notice=n;
+            var actions=new LocalAction[4];actions[0].FireHeld=true;
+            session.Tick(actions,.02f);
+            Assert.That(notice.Weapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(notice.Pellets.Length,Is.EqualTo(1));
+            Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(99));
+            Assert.That(session.Life(1).Health,Is.LessThan(100));
+            for(int tick=0;tick<7;tick++)session.Tick(actions,.02f);
+            Assert.That(session.ShotCount,Is.GreaterThan(1),"Held rifle fire repeats on its own cadence");
+            int before=session.ShotCount;
+            actions[0].SelectWeapon=WeaponSelection.Shotgun;session.Tick(actions,.02f);
+            Assert.That(session.Life(0).SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            Assert.That(session.ShotCount,Is.EqualTo(before),"Switching while held does not edge-fire shotgun");
+            actions[0]=default;session.Tick(actions,.02f);
+            actions[0]=new LocalAction{Fire=true,SelectWeapon=WeaponSelection.Shotgun};session.Tick(actions,.02f);
+            Assert.That(session.ShotCount,Is.EqualTo(before+1));
+            Assert.That(notice.Weapon,Is.EqualTo(WeaponId.Shotgun));
+            Assert.That(session.Life(0).ShotgunAmmo,Is.EqualTo(19));
         }
         [UnityTest]
         public IEnumerator FreshPressImmediatelyAfterRespawnIsAccepted()

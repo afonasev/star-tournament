@@ -4,13 +4,18 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateNativeCombatDefault()
         {
-            var p = new ProvingProfile { id = "unity-native-combat-v1", version = 2 };
+            var p = new ProvingProfile { id = "unity-native-combat-v1", version = 3 };
             p.Add("shot.pellets", "shotgun", "Дробины", "Число лучей одного двуствольного выстрела.", "count", 1, 64, 1, 12);
             p.Add("shot.spread", "shotgun", "Разброс", "Угловой радиус распределения дроби.", "degrees", 0, 45, .1f, 7);
             p.Add("shot.range", "shotgun", "Дальность", "Максимальная дальность каждой дробины.", "meters", 1, 200, .5f, 35);
             p.Add("shot.head", "shotgun", "Урон головы", "Урон при полном попадании всех дробин в голову.", "health", 0, 500, 1, 100);
             p.Add("shot.torso", "shotgun", "Урон корпуса", "Урон при полном попадании всех дробин в корпус.", "health", 0, 500, 1, 70);
             p.Add("shot.limb", "shotgun", "Урон конечностей", "Урон при полном попадании всех дробин в конечности.", "health", 0, 500, 1, 30);
+            p.Add("rifle.spread", "rifle", "Разброс винтовки", "Угловой радиус одного выстрела.", "degrees", 0, 10, .1f, 1.2f);
+            p.Add("rifle.range", "rifle", "Дальность винтовки", "Дальность одиночной пули.", "meters", 1, 200, .5f, 80);
+            p.Add("rifle.head", "rifle", "Урон головы", "Урон одной пули в голову.", "health", 0, 200, 1, 30);
+            p.Add("rifle.torso", "rifle", "Урон корпуса", "Урон одной пули в корпус.", "health", 0, 200, 1, 20);
+            p.Add("rifle.limb", "rifle", "Урон конечностей", "Урон одной пули в конечность.", "health", 0, 200, 1, 12);
             // Volumes use fractions of motor height, preserving one feet anchor across capsule tuning.
             p.Add("zone.headY", "hit-zones", "Высота головы", "Центр head sphere относительно высоты капсулы.", "height-ratio", .5f, 1.2f, .01f, .9f);
             p.Add("zone.headRadius", "hit-zones", "Радиус головы", "Радиус head sphere относительно высоты капсулы.", "height-ratio", .01f, .3f, .01f, .12f);

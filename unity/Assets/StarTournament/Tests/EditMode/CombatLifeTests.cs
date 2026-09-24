@@ -6,19 +6,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class CombatLifeTests
     {
-        [Test] public void LastShotRefillsButHeldTriggerDoesNotAutoFire()
+        [Test] public void BothWeaponsStopAtZeroUntilRespawnAndShotgunNeedsANewEdge()
         {
             var profile = ProvingProfile.CreateCombatDefault();
             profile.Set("combat.startingAmmo", 1);
+            profile.Set("rifle.startingAmmo", 1);
             var life = new CombatLife("p1", profile);
             Assert.That(life.Fire(true), Is.True);
-            Assert.That(life.Read().Ammo, Is.EqualTo(profile.Get("combat.emptyRefillAmmo")));
+            Assert.That(life.Read().RifleAmmo, Is.Zero);
             life.Advance(10);
             Assert.That(life.Fire(true), Is.False);
+            life.Select(WeaponSelection.Shotgun);
+            Assert.That(life.Fire(true),Is.False,"Holding the rifle trigger does not edge-fire the shotgun");
             Assert.That(life.Fire(false), Is.False);
             Assert.That(life.Fire(true), Is.True);
-            life.Fire(false);
-            Assert.That(life.Fire(true), Is.False, "New press cannot bypass cooldown");
+            Assert.That(life.Read().ShotgunAmmo,Is.Zero);
+            life.Advance(10);life.Fire(false);
+            Assert.That(life.Fire(true),Is.False);
+            life.Damage(1,100);life.Advance(profile.Get("combat.killcamSeconds"));life.Respawn(1);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(life.Read().RifleAmmo,Is.EqualTo(1));
+            Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(1));
         }
         [Test] public void CooldownBoundaryAndExplicitInputReset()
         {
@@ -32,6 +40,24 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             life.Advance(cooldown / 2);
             life.ClearHeldInput();
             Assert.That(life.Fire(true), Is.True);
+        }
+        [Test] public void SlotsKeepIndependentAmmoAndCooldownAcrossSelectionAndSnapshot()
+        {
+            var profile=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p1",profile);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(life.Fire(true),Is.True);var rifleCooldown=life.Read().CooldownRemaining;
+            life.Select(WeaponSelection.Next);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            Assert.That(life.Read().CooldownRemaining,Is.Zero);
+            Assert.That(life.Fire(true),Is.False);
+            life.Fire(false);Assert.That(life.Fire(true),Is.True);
+            var snapshot=JsonUtility.FromJson<CombatLifeState>(JsonUtility.ToJson(life.Read()));
+            life.Select(WeaponSelection.Previous);
+            Assert.That(life.Read().RifleAmmo,Is.EqualTo(profile.Get("rifle.startingAmmo")-1));
+            Assert.That(life.Read().CooldownRemaining,Is.EqualTo(rifleCooldown));
+            life.Restore(snapshot);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(profile.Get("combat.startingAmmo")-1));
         }
         [Test] public void DeathIsOnceAndRespawnRejectsHitsForOldLife()
         {
@@ -52,7 +78,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Respawn(1), Is.True);
             Assert.That(life.Read().Life, Is.EqualTo(2));
             Assert.That(life.Read().Health, Is.EqualTo(profile.Get("combat.maximumHealth")));
-            Assert.That(life.Read().Ammo, Is.EqualTo(profile.Get("combat.startingAmmo")));
+            Assert.That(life.Read().Ammo, Is.EqualTo(profile.Get("rifle.startingAmmo")));
+            Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(profile.Get("combat.startingAmmo")));
             Assert.That(life.Read().KillerId, Is.Null);
             Assert.That(life.Read().FireHeld, Is.False);
             Assert.That(life.Damage(1, 1000).Applied, Is.Zero);

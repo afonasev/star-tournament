@@ -23,12 +23,13 @@ namespace StarTournament.ProvingGround
     }
     public readonly struct ShotNotice
     {
+        public readonly WeaponId Weapon;
         public readonly uint Sequence; public readonly int Shooter, ShooterLife; public readonly double Time; public readonly Vector3 Origin;
         public readonly PelletNotice[] Pellets;
-        public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets)
-        { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets; }
+        public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets,WeaponId weapon=WeaponId.Shotgun)
+        { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets;Weapon=weapon; }
     }
-    [Serializable] public sealed class NativeCombatSessionSnapshot { public string ArenaIdentity; public double Time; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=2; public string ArenaIdentity; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -62,10 +63,10 @@ namespace StarTournament.ProvingGround
         public int ShotCount { get; private set; }
         public ArmorPickupState ArmorPickup => armorPickup.Read();
         public SpeedPickupState SpeedPickup => speedPickup.Read();
-        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
+        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
-            if(snapshot==null||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
+            if(snapshot==null||snapshot.Version!=2||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
             if(snapshot.ArmorPickups==null||snapshot.SpeedPickups==null||snapshot.ArmorPickups.Length!=armorPickups.Length||snapshot.SpeedPickups.Length!=speedPickups.Length||snapshot.ArmorPickups.Select(x=>x.InstanceId).Distinct().Count()!=armorPickups.Length||snapshot.SpeedPickups.Select(x=>x.InstanceId).Distinct().Count()!=speedPickups.Length)throw new ArgumentException("Invalid pickup instance set");
             foreach(var item in armorPickups){var state=item.Read();var next=snapshot.ArmorPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.RespawnRemaining)||double.IsInfinity(next.RespawnRemaining)||next.RespawnRemaining<0)throw new ArgumentException("Invalid armor instance");}
             foreach(var item in speedPickups){var state=item.Read();var next=snapshot.SpeedPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.Remaining)||double.IsInfinity(next.Remaining)||next.Remaining<0||(!next.Available&&next.Remaining==0))throw new ArgumentException("Invalid speed instance");}
@@ -77,7 +78,7 @@ namespace StarTournament.ProvingGround
                 damagePickup.Restore(snapshot.DamagePickup);
             }
             foreach(var item in armorPickups)item.Restore(snapshot.ArmorPickups.Single(x=>x.InstanceId==item.Read().InstanceId));
-            foreach(var item in speedPickups)item.Restore(snapshot.SpeedPickups.Single(x=>x.InstanceId==item.Read().InstanceId));Time=snapshot.Time;
+            foreach(var item in speedPickups)item.Restore(snapshot.SpeedPickups.Single(x=>x.InstanceId==item.Read().InstanceId));Time=snapshot.Time;shotSequence=snapshot.ShotSequence;ShotCount=snapshot.ShotCount;
             ResetPickupContacts();
             for(int i=0;i<lives.Length;i++)motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);
 
@@ -171,6 +172,7 @@ namespace StarTournament.ProvingGround
             var shots=new List<(int shooter, int life, ShotNotice notice, float[] damage)>();
             for (int i = 0; i < lives.Length; i++)
             {
+                lives[i].Select(actions[i].SelectWeapon); // Selection is authoritative before fire on this tick.
                 bool held = actions[i].FireHeld || actions[i].Fire;
                 if (releaseRequired[i])
                 {
@@ -189,7 +191,7 @@ namespace StarTournament.ProvingGround
             {
                 float applied=0;
                 for(int t=0;t<targets.Length;t++) if(shot.damage[t]>0)
-                    applied+=ApplyDamage(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.PelletCount, shot.shooter, shot.life).Applied;
+                    applied+=ApplyDamage(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.ProjectileCount(shot.notice.Weapon), shot.shooter, shot.life).Applied;
                 ShotResolved?.Invoke(shot.notice);
                 Fired?.Invoke(shot.shooter,applied);
             }
@@ -214,23 +216,25 @@ namespace StarTournament.ProvingGround
             var damage = new float[targets.Length];
             var pose = Pose(shooter); var aim = Quaternion.Euler(pose.Pitch, pose.Yaw, 0);
             var origin = pose.Position + Vector3.up*movement.Get("camera.eyeHeight");
-            var pellets=new PelletNotice[resolver.PelletCount];
-            for (int pellet = 0; pellet < resolver.PelletCount; pellet++)
+            var weapon=Life(shooter).SelectedWeapon;
+            var pellets=new PelletNotice[resolver.ProjectileCount(weapon)];
+            for (int pellet = 0; pellet < pellets.Length; pellet++)
             {
-                Vector3 direction = resolver.Direction(aim, pellet, shotSequence);
-                bool worldHit=physics.Raycast(origin,direction,out var wall,resolver.Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
-                float limit=worldHit ? wall.distance : resolver.Range;
-                var hit = resolver.Resolve(origin, direction, targets, shooter, limit);
+                Vector3 direction = resolver.Direction(aim, pellet, shotSequence,weapon);
+                float range=resolver.RangeFor(weapon);
+                bool worldHit=physics.Raycast(origin,direction,out var wall,range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                float limit=worldHit ? wall.distance : range;
+                var hit = resolver.Resolve(origin, direction, targets, shooter, limit,weapon);
                 if(hit.TargetIndex>=0)
                 {
                     var target=targets[hit.TargetIndex];
                     pellets[pellet]=new PelletNotice(direction,origin+direction*hit.Distance,-direction,PelletContact.Participant,target.Seat,target.Life);
-                    if(!Allied(shooter,target.Seat)) damage[hit.TargetIndex]+=resolver.FullDamage(hit.Zone)*(damageRemaining[shooter]>0?damagePickup.Multiplier:1);
+                    if(!Allied(shooter,target.Seat)) damage[hit.TargetIndex]+=resolver.FullDamage(hit.Zone,weapon)*(damageRemaining[shooter]>0?damagePickup.Multiplier:1);
                 }
                 else if(worldHit) pellets[pellet]=new PelletNotice(direction,wall.point,wall.normal,PelletContact.World);
-                else pellets[pellet]=new PelletNotice(direction,origin+direction*resolver.Range,-direction,PelletContact.Miss);
+                else pellets[pellet]=new PelletNotice(direction,origin+direction*range,-direction,PelletContact.Miss);
             }
-            return (new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,pellets),damage);
+            return (new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,pellets,weapon),damage);
         }
 
         bool Allied(int a,int b) => Match != null && Match.Roster.AreAllies(a,b);

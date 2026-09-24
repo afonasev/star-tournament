@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1494715378
+--- !u!1 &1275379835
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1494715380}
-  - component: {fileID: 1494715379}
+  - component: {fileID: 1275379837}
+  - component: {fileID: 1275379836}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,17 +136,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1494715379
+--- !u!114 &1275379836
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1494715378}
+  m_GameObject: {fileID: 1275379835}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: StarTournament.ProvingGround::StarTournament.ProvingGround.ProvingGround
   RobotPrefab: {fileID: 0}
   WorldWeaponPrefab: {fileID: 0}
@@ -156,6 +156,7 @@ MonoBehaviour:
   DamagePickupPrefab: {fileID: 4094532259542819320, guid: cde2ae0f51a5643e8bec3a03b69b0804, type: 3}
   TrooperBodyPrefab: {fileID: 3136562236329590072, guid: 345aa6c8664344616ae0a3980a9f6ac6, type: 3}
   TrooperArmsPrefab: {fileID: 206464274784029693, guid: 54b95b770862640cc94dc11340d68177, type: 3}
+  RiflePrefab: {fileID: 8771091787928289351, guid: 33e6bac6b2ca94f7da778d3c4e7dc40f, type: 3}
   TrooperClips:
   - {fileID: 7400000, guid: fc6e3cae87e53499e8f2ae83f8fc3127, type: 2}
   - {fileID: 7400000, guid: 5cb3b159d01f84925ae4d3431763eb27, type: 2}
@@ -287,6 +288,57 @@ MonoBehaviour:
       Maximum: 45
       Step: 1
       DefaultValue: 5
+    - Path: grip.primaryProximalCurl
+      Group: trooper-grip
+      Label: "\u041E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u043F\u0440\u0430\u0432\u043E\u0439 \u0440\u0443\u043A\u0438"
+      Description: "\u0414\u043E\u0431\u0430\u0432\u043E\u0447\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439
+        \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 40
+      Step: 1
+      DefaultValue: 15
+    - Path: grip.primaryIntermediateCurl
+      Group: trooper-grip
+      Label: "\u0421\u0440\u0435\u0434\u043D\u0438\u0435 \u0444\u0430\u043B\u0430\u043D\u0433\u0438
+        \u043F\u0440\u0430\u0432\u043E\u0439 \u0440\u0443\u043A\u0438"
+      Description: "\u0414\u043E\u0431\u0430\u0432\u043E\u0447\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u0441\u0440\u0435\u0434\u043D\u0438\u0445 \u0444\u0430\u043B\u0430\u043D\u0433
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 45
+      Step: 1
+      DefaultValue: 28
+    - Path: grip.primaryDistalCurl
+      Group: trooper-grip
+      Label: "\u041A\u043E\u043D\u0447\u0438\u043A\u0438 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u043F\u0440\u0430\u0432\u043E\u0439 \u0440\u0443\u043A\u0438"
+      Description: "\u0414\u043E\u0431\u0430\u0432\u043E\u0447\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u043A\u043E\u043D\u0447\u0438\u043A\u043E\u0432
+        \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 40
+      Step: 1
+      DefaultValue: 18
+    - Path: grip.primaryThumbFactor
+      Group: trooper-grip
+      Label: "\u0421\u0433\u0438\u0431 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u0440\u0443\u043A\u0438"
+      Description: "\u0414\u043E\u043B\u044F \u0441\u0433\u0438\u0431\u0430 \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u0445
+        \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u0434\u043B\u044F \u043E\u043F\u043F\u043E\u0437\u0438\u0446\u0438\u0438
+        \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E \u043F\u0430\u043B\u044C\u0446\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
     - Path: view.fillIntensity
       Group: trooper-view
       Label: "\u041F\u043E\u0434\u0441\u0432\u0435\u0442\u043A\u0430 \u043E\u0431\u043E\u0440\u0443\u0434\u043E\u0432\u0430\u043D\u0438\u044F"
@@ -332,13 +384,21 @@ MonoBehaviour:
       Value: 12
     - Path: grip.supportThumbCurl
       Value: 5
+    - Path: grip.primaryProximalCurl
+      Value: 15
+    - Path: grip.primaryIntermediateCurl
+      Value: 28
+    - Path: grip.primaryDistalCurl
+      Value: 18
+    - Path: grip.primaryThumbFactor
+      Value: 0.5
     - Path: view.fillIntensity
       Value: 0.05
     - Path: view.fillRange
       Value: 2
   Profile:
     id: unity-proving-ground-v1
-    version: 2
+    version: 3
     descriptors:
     - Path: simulation.fixedTickHz
       Group: simulation
@@ -848,6 +908,52 @@ MonoBehaviour:
       Maximum: 0.2
       Step: 0.005
       DefaultValue: 0.01
+    - Path: presentation.rifleTracerWidth
+      Group: rifle
+      Label: "\u0422\u043E\u043B\u0449\u0438\u043D\u0430 \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043A\u043E\u0440\u043E\u0442\u043A\u043E\u0433\u043E
+        \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430 \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438."
+      Unit: meters
+      Minimum: 0.002
+      Maximum: 0.1
+      Step: 0.001
+      DefaultValue: 0.006
+    - Path: presentation.rifleTracerLength
+      Group: rifle
+      Label: "\u0414\u043B\u0438\u043D\u0430 \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0432\u0438\u0434\u0438\u043C\u0430\u044F \u0434\u043B\u0438\u043D\u0430
+        \u0441\u043B\u0435\u0434\u0430 \u043E\u0442 \u0434\u0443\u043B\u044C\u043D\u043E\u0439
+        \u0442\u043E\u0447\u043A\u0438."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 3
+    - Path: presentation.rifleMuzzleSize
+      Group: rifle
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0432\u0441\u043F\u044B\u0448\u043A\u0438"
+      Description: "\u041A\u043E\u0440\u043E\u0442\u043A\u0430\u044F \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0451\u043D\u043D\u0430\u044F
+        \u0432\u0441\u043F\u044B\u0448\u043A\u0430 \u0443 \u0434\u0443\u043B\u0430
+        \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438."
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.08
+    - Path: presentation.rifleModelScale
+      Group: rifle
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u043C\u043E\u0434\u0435\u043B\u0438
+        \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438"
+      Description: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043D\u0430 grip mount
+        \u0434\u043B\u044F \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0433\u043E
+        \u0445\u0432\u0430\u0442\u0430 \u0438 \u0432\u0438\u0434\u0430 \u043E\u0442
+        \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u043B\u0438\u0446\u0430."
+      Unit: ratio
+      Minimum: 0.5
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 2
     - Path: presentation.shotMuzzleClearance
       Group: shot-feedback
       Label: "\u0417\u0430\u0437\u043E\u0440 \u043E\u0442 muzzle"
@@ -1045,6 +1151,14 @@ MonoBehaviour:
       Value: 0.12
     - Path: presentation.shotTracerWidth
       Value: 0.01
+    - Path: presentation.rifleTracerWidth
+      Value: 0.006
+    - Path: presentation.rifleTracerLength
+      Value: 3
+    - Path: presentation.rifleMuzzleSize
+      Value: 0.08
+    - Path: presentation.rifleModelScale
+      Value: 2
     - Path: presentation.shotMuzzleClearance
       Value: 0.1
     - Path: presentation.shotImpactSeconds
@@ -1065,7 +1179,7 @@ MonoBehaviour:
       Value: 20
   LifeProfile:
     id: unity-combat-state-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: combat.maximumHealth
       Group: combat
@@ -1254,19 +1368,29 @@ MonoBehaviour:
       Maximum: 200
       Step: 1
       DefaultValue: 20
-    - Path: combat.emptyRefillAmmo
-      Group: shotgun
-      Label: "\u041F\u043E\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0438
-        \u043D\u0443\u043B\u0435"
-      Description: "\u041D\u0435\u043C\u0435\u0434\u043B\u0435\u043D\u043D\u044B\u0439
-        \u0437\u0430\u043F\u0430\u0441 \u043F\u043E\u0441\u043B\u0435 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0433\u043E
-        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430 \u0431\u0435\u0437 \u0441\u0431\u0440\u043E\u0441\u0430
-        cooldown."
+    - Path: rifle.startingAmmo
+      Group: rifle
+      Label: "\u0411\u043E\u0435\u0437\u0430\u043F\u0430\u0441 \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432
+        \u0434\u043E \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E
+        \u0432\u043E\u0437\u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F."
       Unit: ammo
       Minimum: 1
-      Maximum: 100
+      Maximum: 300
       Step: 1
-      DefaultValue: 20
+      DefaultValue: 100
+    - Path: rifle.cooldownSeconds
+      Group: rifle
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432"
+      Description: "\u041F\u0440\u043E\u043C\u0435\u0436\u0443\u0442\u043E\u043A
+        \u043C\u0435\u0436\u0434\u0443 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430\u043C\u0438
+        \u043F\u0440\u0438 \u0443\u0434\u0435\u0440\u0436\u0430\u043D\u0438\u0438
+        \u043E\u0433\u043D\u044F."
+      Unit: seconds
+      Minimum: 0.02
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.12
     - Path: combat.cooldownSeconds
       Group: shotgun
       Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432"
@@ -1324,15 +1448,17 @@ MonoBehaviour:
       Value: 1.2
     - Path: combat.startingAmmo
       Value: 20
-    - Path: combat.emptyRefillAmmo
-      Value: 20
+    - Path: rifle.startingAmmo
+      Value: 100
+    - Path: rifle.cooldownSeconds
+      Value: 0.12
     - Path: combat.cooldownSeconds
       Value: 0.7
     - Path: combat.killcamSeconds
       Value: 3
   CombatProfile:
     id: unity-native-combat-v1
-    version: 2
+    version: 3
     descriptors:
     - Path: shot.pellets
       Group: shotgun
@@ -1400,6 +1526,56 @@ MonoBehaviour:
       Maximum: 500
       Step: 1
       DefaultValue: 30
+    - Path: rifle.spread
+      Group: rifle
+      Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438"
+      Description: "\u0423\u0433\u043B\u043E\u0432\u043E\u0439 \u0440\u0430\u0434\u0438\u0443\u0441
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: degrees
+      Minimum: 0
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 1.2
+    - Path: rifle.range
+      Group: rifle
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438"
+      Description: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043E\u0434\u0438\u043D\u043E\u0447\u043D\u043E\u0439
+        \u043F\u0443\u043B\u0438."
+      Unit: meters
+      Minimum: 1
+      Maximum: 200
+      Step: 0.5
+      DefaultValue: 80
+    - Path: rifle.head
+      Group: rifle
+      Label: "\u0423\u0440\u043E\u043D \u0433\u043E\u043B\u043E\u0432\u044B"
+      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
+        \u0432 \u0433\u043E\u043B\u043E\u0432\u0443."
+      Unit: health
+      Minimum: 0
+      Maximum: 200
+      Step: 1
+      DefaultValue: 30
+    - Path: rifle.torso
+      Group: rifle
+      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
+        \u0432 \u043A\u043E\u0440\u043F\u0443\u0441."
+      Unit: health
+      Minimum: 0
+      Maximum: 200
+      Step: 1
+      DefaultValue: 20
+    - Path: rifle.limb
+      Group: rifle
+      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439"
+      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
+        \u0432 \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u044C."
+      Unit: health
+      Minimum: 0
+      Maximum: 200
+      Step: 1
+      DefaultValue: 12
     - Path: zone.headY
       Group: hit-zones
       Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0433\u043E\u043B\u043E\u0432\u044B"
@@ -1730,6 +1906,16 @@ MonoBehaviour:
       Value: 70
     - Path: shot.limb
       Value: 30
+    - Path: rifle.spread
+      Value: 1.2
+    - Path: rifle.range
+      Value: 80
+    - Path: rifle.head
+      Value: 30
+    - Path: rifle.torso
+      Value: 20
+    - Path: rifle.limb
+      Value: 12
     - Path: zone.headY
       Value: 0.9
     - Path: zone.headRadius
@@ -2890,10 +3076,10 @@ MonoBehaviour:
       Value: 1200
     - Path: score.chainIncrement
       Value: 400
-  CombatBowlReviewDirectory:
+  CombatBowlReviewDirectory: 
   OrbitalLeagueProfile:
     id: orbital-league-ring-v1
-    version: 5
+    version: 8
     descriptors:
     - Path: surface.tile
       Group: surfaces
@@ -3115,6 +3301,48 @@ MonoBehaviour:
       Maximum: 20
       Step: 0.5
       DefaultValue: 16
+    - Path: light.fixtureContribution
+      Group: lighting
+      Label: "\u0421\u0432\u0435\u0442 \u043A\u0430\u0436\u0434\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0441\u0432\u0435\u0442
+        \u043E\u0442 \u043A\u0430\u0436\u0434\u043E\u0439 \u0432\u0438\u0434\u0438\u043C\u043E\u0439
+        \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438
+        \u0431\u0435\u0437 \u043D\u043E\u0432\u043E\u0439 \u043A\u0430\u0440\u0442\u044B
+        \u0442\u0435\u043D\u0435\u0439."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: light.fixtureRange
+      Group: lighting
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0441\u0432\u0435\u0442\u0430
+        \u043F\u0430\u043D\u0435\u043B\u0438"
+      Description: "\u041A\u043E\u043C\u043F\u0430\u043A\u0442\u043D\u043E\u0435
+        \u0441\u0432\u0435\u0442\u043E\u0432\u043E\u0435 \u043F\u044F\u0442\u043D\u043E
+        \u043F\u043E\u0434 \u043A\u0430\u0436\u0434\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u044C\u044E
+        \u0431\u0435\u0437 \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043F\u0435\u0440\u0435\u043A\u0440\u044B\u0442\u0438\u044F
+        \u0441\u043E\u0441\u0435\u0434\u043D\u0438\u0445 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u043E\u0432."
+      Unit: m
+      Minimum: 4
+      Maximum: 12
+      Step: 0.5
+      DefaultValue: 6.5
+    - Path: light.fixtureSurfaceReach
+      Group: lighting
+      Label: "\u0414\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u0435 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438"
+      Description: "\u0417\u0430\u043F\u0430\u0441 \u0434\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438
+        \u0434\u043B\u044F \u043F\u0430\u043D\u0435\u043B\u0435\u0439 \u043D\u0430\u0434
+        \u043D\u0438\u0436\u043D\u0438\u043C \u044D\u0442\u0430\u0436\u043E\u043C:
+        \u043B\u0443\u0447 \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u0442
+        \u0437\u0430\u043C\u0435\u0442\u043D\u043E\u0435 \u043F\u044F\u0442\u043D\u043E
+        \u043D\u0430 \u0431\u043B\u0438\u0436\u0430\u0439\u0448\u0435\u0439 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 1.25
     - Path: light.studioKey
       Group: lighting
       Label: "\u041E\u0431\u0449\u0438\u0439 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u044B\u0439
@@ -6171,6 +6399,12 @@ MonoBehaviour:
       Value: 0.25
     - Path: light.intensity
       Value: 16
+    - Path: light.fixtureContribution
+      Value: 0.5
+    - Path: light.fixtureRange
+      Value: 6.5
+    - Path: light.fixtureSurfaceReach
+      Value: 1.25
     - Path: light.studioKey
       Value: 0.6
     - Path: light.keyShadowStrength
@@ -55520,13 +55754,13 @@ MonoBehaviour:
       Value: 4
     - Path: damage-hall.anchor.z
       Value: 0
---- !u!4 &1494715380
+--- !u!4 &1275379837
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1494715378}
+  m_GameObject: {fileID: 1275379835}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -55539,4 +55773,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1494715380}
+  - {fileID: 1275379837}

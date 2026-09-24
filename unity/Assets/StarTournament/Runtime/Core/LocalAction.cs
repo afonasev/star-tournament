@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
+    public enum WeaponId { Rifle = 1, Shotgun = 2 }
+    public enum WeaponSelection { None, Rifle, Shotgun, Previous, Next }
     /// <summary>Device-independent command consumed by one local participant on one fixed tick.</summary>
     [Serializable]
     public struct LocalAction
@@ -12,6 +14,7 @@ namespace StarTournament.ProvingGround
         public bool Jump;
         public bool Fire; // Latched short tap between fixed ticks.
         public bool FireHeld; // Physical level persists across fixed ticks.
+        public WeaponSelection SelectWeapon; // One command, consumed on the next fixed tick.
         public bool ShowRoster;
     }
 }

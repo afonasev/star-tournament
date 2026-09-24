@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     // Native UI geometry is presentation-only; no font glyph or texture import decides the HUD icon shape.
     public sealed class HudIndicatorIcon : MaskableGraphic
     {
-        public enum IconKind { Heart, Shield, Cartridges }
+        public enum IconKind { Heart, Shield, Cartridges, Rifle, Shotgun }
 
         IconKind kind;
         public IconKind Kind
@@ -44,6 +44,20 @@ namespace StarTournament.ProvingGround
                     Frame(mesh, rect, .57f, .10f, .88f, .90f);
                     Quad(mesh, rect, .12f, .24f, .43f, .31f);
                     Quad(mesh, rect, .57f, .24f, .88f, .31f);
+                    break;
+                case IconKind.Rifle:
+                    Quad(mesh,rect,.04f,.42f,.20f,.59f); // stock
+                    Quad(mesh,rect,.19f,.43f,.72f,.68f); // receiver and fore-end
+                    Quad(mesh,rect,.71f,.51f,.97f,.59f); // long barrel
+                    Quad(mesh,rect,.35f,.20f,.47f,.44f); // grip
+                    Quad(mesh,rect,.43f,.72f,.58f,.78f); // raised sight
+                    break;
+                case IconKind.Shotgun:
+                    Quad(mesh,rect,.05f,.38f,.25f,.56f);
+                    Quad(mesh,rect,.23f,.41f,.66f,.63f);
+                    Quad(mesh,rect,.64f,.53f,.96f,.61f); // upper barrel
+                    Quad(mesh,rect,.64f,.42f,.96f,.50f); // lower barrel
+                    Quad(mesh,rect,.38f,.22f,.50f,.43f);
                     break;
             }
         }
