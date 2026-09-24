@@ -138,7 +138,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var tactics=new NativeBotTactics(arena,scene.GetPhysicsScene(),new NativeNavigationProvider(arena,ground.Profile,ground.BotNavigationProfile),ground.Profile,ground.CombatProfile,ground.BotBehaviorProfile);
             float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight"),w=AuthoredPhysicsFixture.Value("fixture.width"),d=AuthoredPhysicsFixture.Value("fixture.depth");
             Assert.That(tactics.CanMove(new Vector3(35,4,18),Vector3.right,1),Is.False,"World wall must reject a capsule move.");
-            Assert.That(tactics.CanJump(new ParticipantState{Position=new Vector3(-10,0,14),Grounded=true},Vector3.forward),Is.False,"Low headroom must reject a jump arc.");
+            // The spawn flank is open; probe beneath the retained north entry roof.
+            Assert.That(tactics.CanJump(new ParticipantState{Position=new Vector3(-15,0,26),Grounded=true},Vector3.forward),Is.False,"Low headroom must reject a jump arc.");
             Assert.That(tactics.CanMove(arena.LowerRoutePoint,Vector3.right,.2f),Is.True,"An unobstructed lower-floor probe must remain usable.");
         }
 

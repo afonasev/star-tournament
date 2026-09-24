@@ -2819,7 +2819,7 @@ MonoBehaviour:
   CombatBowlReviewDirectory:
   OrbitalLeagueProfile:
     id: orbital-league-ring-v1
-    version: 4
+    version: 5
     descriptors:
     - Path: surface.tile
       Group: surfaces
@@ -3022,59 +3022,72 @@ MonoBehaviour:
     - Path: light.fill
       Group: lighting
       Label: "\u0420\u0430\u0441\u0441\u0435\u044F\u043D\u043D\u044B\u0439 \u0441\u0432\u0435\u0442"
-      Description: "\u0420\u0430\u0432\u043D\u043E\u043C\u0435\u0440\u043D\u0430\u044F
-        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0441\u0442\u044C \u0437\u0430\u043A\u0440\u044B\u0442\u044B\u0445
-        \u043F\u043E\u043C\u0435\u0449\u0435\u043D\u0438\u0439."
+      Description: "\u0427\u0438\u0442\u0430\u0435\u043C\u043E\u0441\u0442\u044C
+        \u043C\u0435\u0436\u0434\u0443 \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u043C\u0438
+        \u0441\u0432\u0435\u0442\u043E\u0432\u044B\u043C\u0438 \u043F\u044F\u0442\u043D\u0430\u043C\u0438."
       Unit: ratio
-      Minimum: 0.2
+      Minimum: 0.15
       Maximum: 1
       Step: 0.05
-      DefaultValue: 0.45
+      DefaultValue: 0.25
     - Path: light.intensity
       Group: lighting
       Label: "\u041B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0441\u0432\u0435\u0442"
-      Description: "\u0421\u0438\u043B\u0430 \u0448\u0435\u0441\u0442\u0438 \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0445
+      Description: "\u0421\u0438\u043B\u0430 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043D\u0430\u0431\u043E\u0440\u0430 \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0445
         \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u043E\u0432."
       Unit: intensity
       Minimum: 0
-      Maximum: 12
+      Maximum: 20
       Step: 0.5
-      DefaultValue: 11
+      DefaultValue: 16
     - Path: light.studioKey
       Group: lighting
       Label: "\u041E\u0431\u0449\u0438\u0439 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u044B\u0439
         \u0441\u0432\u0435\u0442"
-      Description: "\u0417\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435
-        Combat Bowl, \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0449\u0435\u0435
-        \u043A\u043E\u043D\u0442\u0440\u0430\u0441\u0442 \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0445
-        \u0442\u0435\u043D\u0435\u0439."
+      Description: "\u041E\u043F\u043E\u0440\u043D\u044B\u0439 \u0441\u0432\u0435\u0442
+        \u0434\u043B\u044F \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0439 \u0442\u0435\u043D\u0438
+        \u0438\u0433\u0440\u043E\u043A\u0430 \u0432\u043E \u0432\u0441\u0435\u0445
+        \u0437\u043E\u043D\u0430\u0445."
       Unit: intensity
       Minimum: 0.1
       Maximum: 2
       Step: 0.05
-      DefaultValue: 0.4
+      DefaultValue: 0.6
+    - Path: light.keyShadowStrength
+      Group: lighting
+      Label: "\u0422\u0435\u043D\u044C \u0438\u0433\u0440\u043E\u043A\u0430"
+      Description: "\u041A\u043E\u043D\u0442\u0440\u0430\u0441\u0442 \u043E\u0431\u0449\u0435\u0433\u043E
+        \u043C\u044F\u0433\u043A\u043E\u0433\u043E \u0441\u0432\u0435\u0442\u0430
+        \u043F\u043E\u0434 \u0438\u0433\u0440\u043E\u043A\u043E\u043C \u0438 \u043A\u0440\u0443\u043F\u043D\u043E\u0439
+        \u0430\u0440\u0445\u0438\u0442\u0435\u043A\u0442\u0443\u0440\u043E\u0439."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.85
     - Path: light.range
       Group: lighting
       Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0441\u0432\u0435\u0442\u0430"
-      Description: "\u0417\u043E\u043D\u0430 \u043C\u044F\u0433\u043A\u043E\u0433\u043E
-        \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E \u043E\u0441\u0432\u0435\u0449\u0435\u043D\u0438\u044F."
+      Description: "\u0417\u043E\u043D\u0430 \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u043E\u0441\u0432\u0435\u0449\u0435\u043D\u0438\u044F \u043F\u043E\u0434
+        \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u044C\u044E."
       Unit: m
       Minimum: 3
-      Maximum: 12
+      Maximum: 16
       Step: 0.5
-      DefaultValue: 12
+      DefaultValue: 10
     - Path: light.spotAngle
       Group: lighting
       Label: "\u0423\u0433\u043E\u043B \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u043E\u0433\u043E
         \u0441\u0432\u0435\u0442\u0430"
-      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u043E\u0433\u043E
-        \u043F\u044F\u0442\u043D\u0430, \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u044E\u0449\u0430\u044F
-        \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0441\u0442\u044C \u0442\u0435\u043D\u0438."
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u0432\u0438\u0434\u0438\u043C\u043E\u0433\u043E
+        \u0441\u0432\u0435\u0442\u043E\u0432\u043E\u0433\u043E \u043F\u044F\u0442\u043D\u0430."
       Unit: deg
-      Minimum: 60
+      Minimum: 45
       Maximum: 120
       Step: 5
-      DefaultValue: 100
+      DefaultValue: 70
     - Path: light.targetDrop
       Group: lighting
       Label: "\u041D\u0430\u043A\u043B\u043E\u043D \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u043E\u0433\u043E
@@ -3087,6 +3100,18 @@ MonoBehaviour:
       Maximum: 5
       Step: 0.25
       DefaultValue: 3
+    - Path: light.outerAimInset
+      Group: lighting
+      Label: "\u0426\u0435\u043B\u044C \u0441\u0432\u0435\u0442\u0430 \u0432 \u043A\u043E\u043B\u044C\u0446\u0435"
+      Description: "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u0441\u0432\u0435\u0442\u043E\u0432\u043E\u0433\u043E
+        \u043F\u044F\u0442\u043D\u0430 \u043E\u0442 \u043F\u043B\u0430\u0444\u043E\u043D\u0430
+        \u0432\u0434\u043E\u043B\u044C \u0432\u043D\u0435\u0448\u043D\u0435\u0433\u043E
+        \u043F\u0440\u043E\u0445\u043E\u0434\u0430."
+      Unit: m
+      Minimum: 0
+      Maximum: 8
+      Step: 0.5
+      DefaultValue: 2
     - Path: light.hallAimOffsetZ
       Group: lighting
       Label: "\u0426\u0435\u043B\u044C \u0441\u0432\u0435\u0442\u0430 \u0432 \u0437\u0430\u043B\u0435"
@@ -3111,7 +3136,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 4
       Step: 1
-      DefaultValue: 4
+      DefaultValue: 2
     - Path: light.shadowStrength
       Group: lighting
       Label: "\u041A\u043E\u043D\u0442\u0440\u0430\u0441\u0442 \u0442\u0435\u043D\u0438"
@@ -3352,7 +3377,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: 0
+      DefaultValue: -5
     - Path: layout.fill-2.x
       Group: layout
       Label: layout.fill-2 / x
@@ -3497,6 +3522,366 @@ MonoBehaviour:
       Maximum: 40
       Step: 0.01
       DefaultValue: -15
+    - Path: layout.fill-6.x
+      Group: layout
+      Label: layout.fill-6 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -31
+    - Path: layout.fill-6.y
+      Group: layout
+      Label: layout.fill-6 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: layout.fill-6.z
+      Group: layout
+      Label: layout.fill-6 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 0
+    - Path: layout.fill-7.x
+      Group: layout
+      Label: layout.fill-7 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 31
+    - Path: layout.fill-7.y
+      Group: layout
+      Label: layout.fill-7 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: layout.fill-7.z
+      Group: layout
+      Label: layout.fill-7 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 0
+    - Path: layout.fill-8.x
+      Group: layout
+      Label: layout.fill-8 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -31
+    - Path: layout.fill-8.y
+      Group: layout
+      Label: layout.fill-8 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 7
+    - Path: layout.fill-8.z
+      Group: layout
+      Label: layout.fill-8 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 27
+    - Path: layout.fill-9.x
+      Group: layout
+      Label: layout.fill-9 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 31
+    - Path: layout.fill-9.y
+      Group: layout
+      Label: layout.fill-9 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 7
+    - Path: layout.fill-9.z
+      Group: layout
+      Label: layout.fill-9 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 27
+    - Path: layout.fill-10.x
+      Group: layout
+      Label: layout.fill-10 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -31
+    - Path: layout.fill-10.y
+      Group: layout
+      Label: layout.fill-10 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 7
+    - Path: layout.fill-10.z
+      Group: layout
+      Label: layout.fill-10 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -27
+    - Path: layout.fill-11.x
+      Group: layout
+      Label: layout.fill-11 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 31
+    - Path: layout.fill-11.y
+      Group: layout
+      Label: layout.fill-11 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 7
+    - Path: layout.fill-11.z
+      Group: layout
+      Label: layout.fill-11 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -27
+    - Path: layout.fill-12.x
+      Group: layout
+      Label: layout.fill-12 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -12
+    - Path: layout.fill-12.y
+      Group: layout
+      Label: layout.fill-12 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: layout.fill-12.z
+      Group: layout
+      Label: layout.fill-12 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 32
+    - Path: layout.fill-13.x
+      Group: layout
+      Label: layout.fill-13 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -12
+    - Path: layout.fill-13.y
+      Group: layout
+      Label: layout.fill-13 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: layout.fill-13.z
+      Group: layout
+      Label: layout.fill-13 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -32
+    - Path: layout.fill-14.x
+      Group: layout
+      Label: layout.fill-14 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 12
+    - Path: layout.fill-14.y
+      Group: layout
+      Label: layout.fill-14 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: layout.fill-14.z
+      Group: layout
+      Label: layout.fill-14 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 32
+    - Path: layout.fill-15.x
+      Group: layout
+      Label: layout.fill-15 / x
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 12
+    - Path: layout.fill-15.y
+      Group: layout
+      Label: layout.fill-15 / y
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: 3
+    - Path: layout.fill-15.z
+      Group: layout
+      Label: layout.fill-15 / z
+      Description: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u044F; \u043D\u0435
+        \u0438\u0437\u043C\u0435\u043D\u044F\u0435\u0442 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E
+        \u043A\u0430\u0440\u0442\u044B."
+      Unit: m
+      Minimum: -40
+      Maximum: 40
+      Step: 0.01
+      DefaultValue: -32
     - Path: layout.label-0.x
       Group: layout
       Label: layout.label-0 / x
@@ -5709,21 +6094,25 @@ MonoBehaviour:
     - Path: light.emission
       Value: 2.3
     - Path: light.fill
-      Value: 0.45
+      Value: 0.25
     - Path: light.intensity
-      Value: 11
+      Value: 16
     - Path: light.studioKey
-      Value: 0.4
+      Value: 0.6
+    - Path: light.keyShadowStrength
+      Value: 0.85
     - Path: light.range
-      Value: 12
+      Value: 10
     - Path: light.spotAngle
-      Value: 100
+      Value: 70
     - Path: light.targetDrop
       Value: 3
+    - Path: light.outerAimInset
+      Value: 2
     - Path: light.hallAimOffsetZ
       Value: -2.5
     - Path: light.shadowCasters
-      Value: 4
+      Value: 2
     - Path: light.shadowStrength
       Value: 1
     - Path: light.shadowResolution
@@ -5767,7 +6156,7 @@ MonoBehaviour:
     - Path: layout.fill-1.y
       Value: 2
     - Path: layout.fill-1.z
-      Value: 0
+      Value: -5
     - Path: layout.fill-2.x
       Value: -16
     - Path: layout.fill-2.y
@@ -5792,6 +6181,66 @@ MonoBehaviour:
       Value: 3
     - Path: layout.fill-5.z
       Value: -15
+    - Path: layout.fill-6.x
+      Value: -31
+    - Path: layout.fill-6.y
+      Value: 3
+    - Path: layout.fill-6.z
+      Value: 0
+    - Path: layout.fill-7.x
+      Value: 31
+    - Path: layout.fill-7.y
+      Value: 3
+    - Path: layout.fill-7.z
+      Value: 0
+    - Path: layout.fill-8.x
+      Value: -31
+    - Path: layout.fill-8.y
+      Value: 7
+    - Path: layout.fill-8.z
+      Value: 27
+    - Path: layout.fill-9.x
+      Value: 31
+    - Path: layout.fill-9.y
+      Value: 7
+    - Path: layout.fill-9.z
+      Value: 27
+    - Path: layout.fill-10.x
+      Value: -31
+    - Path: layout.fill-10.y
+      Value: 7
+    - Path: layout.fill-10.z
+      Value: -27
+    - Path: layout.fill-11.x
+      Value: 31
+    - Path: layout.fill-11.y
+      Value: 7
+    - Path: layout.fill-11.z
+      Value: -27
+    - Path: layout.fill-12.x
+      Value: -12
+    - Path: layout.fill-12.y
+      Value: 3
+    - Path: layout.fill-12.z
+      Value: 32
+    - Path: layout.fill-13.x
+      Value: -12
+    - Path: layout.fill-13.y
+      Value: 3
+    - Path: layout.fill-13.z
+      Value: -32
+    - Path: layout.fill-14.x
+      Value: 12
+    - Path: layout.fill-14.y
+      Value: 3
+    - Path: layout.fill-14.z
+      Value: 32
+    - Path: layout.fill-15.x
+      Value: 12
+    - Path: layout.fill-15.y
+      Value: 3
+    - Path: layout.fill-15.z
+      Value: -32
     - Path: layout.label-0.x
       Value: 0
     - Path: layout.label-0.y
@@ -6178,7 +6627,7 @@ MonoBehaviour:
       Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
-    version: 4
+    version: 5
     descriptors:
     - Path: foundation-north.position.x
       Group: geometry
@@ -13229,7 +13678,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -12
+      DefaultValue: -10.75
     - Path: southwest-divider.size.x
       Group: geometry
       Label: southwest-divider.size / x
@@ -13259,7 +13708,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 16.4
+      DefaultValue: 13.9
     - Path: southwest-divider.rotation.x
       Group: geometry
       Label: southwest-divider.rotation / x
@@ -13479,7 +13928,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -26.974695
+      DefaultValue: -24.519062
     - Path: southwest-diagonal-side--1.position.y
       Group: geometry
       Label: southwest-diagonal-side--1.position / y
@@ -13499,7 +13948,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -25.500177
+      DefaultValue: -23.044544
     - Path: southwest-diagonal-side--1.size.x
       Group: geometry
       Label: southwest-diagonal-side--1.size / x
@@ -13529,7 +13978,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 9.813708
+      DefaultValue: 2.868126
     - Path: southwest-diagonal-side--1.rotation.x
       Group: geometry
       Label: southwest-diagonal-side--1.rotation / x
@@ -13554,96 +14003,6 @@ MonoBehaviour:
       Group: geometry
       Label: southwest-diagonal-side--1.rotation / z
       Description: Authored R7 southwest-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 0
-    - Path: southwest-diagonal-side-1.position.x
-      Group: geometry
-      Label: southwest-diagonal-side-1.position / x
-      Description: Authored R7 southwest-diagonal-side-1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: -31.500177
-    - Path: southwest-diagonal-side-1.position.y
-      Group: geometry
-      Label: southwest-diagonal-side-1.position / y
-      Description: Authored R7 southwest-diagonal-side-1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 6
-    - Path: southwest-diagonal-side-1.position.z
-      Group: geometry
-      Label: southwest-diagonal-side-1.position / z
-      Description: Authored R7 southwest-diagonal-side-1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: -20.974695
-    - Path: southwest-diagonal-side-1.size.x
-      Group: geometry
-      Label: southwest-diagonal-side-1.size / x
-      Description: Authored R7 southwest-diagonal-side-1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 0.4
-    - Path: southwest-diagonal-side-1.size.y
-      Group: geometry
-      Label: southwest-diagonal-side-1.size / y
-      Description: Authored R7 southwest-diagonal-side-1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 4
-    - Path: southwest-diagonal-side-1.size.z
-      Group: geometry
-      Label: southwest-diagonal-side-1.size / z
-      Description: Authored R7 southwest-diagonal-side-1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 9.813708
-    - Path: southwest-diagonal-side-1.rotation.x
-      Group: geometry
-      Label: southwest-diagonal-side-1.rotation / x
-      Description: Authored R7 southwest-diagonal-side-1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: -0
-    - Path: southwest-diagonal-side-1.rotation.y
-      Group: geometry
-      Label: southwest-diagonal-side-1.rotation / y
-      Description: Authored R7 southwest-diagonal-side-1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 225
-    - Path: southwest-diagonal-side-1.rotation.z
-      Group: geometry
-      Label: southwest-diagonal-side-1.rotation / z
-      Description: Authored R7 southwest-diagonal-side-1.rotation; changes require
         an explicit rebuild and a new reviewed map revision.
       Unit: degrees
       Minimum: -360
@@ -15749,7 +16108,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 12
+      DefaultValue: 10.75
     - Path: northwest-divider.size.x
       Group: geometry
       Label: northwest-divider.size / x
@@ -15779,7 +16138,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 16.4
+      DefaultValue: 13.9
     - Path: northwest-divider.rotation.x
       Group: geometry
       Label: northwest-divider.rotation / x
@@ -15990,96 +16349,6 @@ MonoBehaviour:
       Maximum: 360
       Step: 0.1
       DefaultValue: -0
-    - Path: northwest-diagonal-side--1.position.x
-      Group: geometry
-      Label: northwest-diagonal-side--1.position / x
-      Description: Authored R7 northwest-diagonal-side--1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: -31.500177
-    - Path: northwest-diagonal-side--1.position.y
-      Group: geometry
-      Label: northwest-diagonal-side--1.position / y
-      Description: Authored R7 northwest-diagonal-side--1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 6
-    - Path: northwest-diagonal-side--1.position.z
-      Group: geometry
-      Label: northwest-diagonal-side--1.position / z
-      Description: Authored R7 northwest-diagonal-side--1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 20.974695
-    - Path: northwest-diagonal-side--1.size.x
-      Group: geometry
-      Label: northwest-diagonal-side--1.size / x
-      Description: Authored R7 northwest-diagonal-side--1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 0.4
-    - Path: northwest-diagonal-side--1.size.y
-      Group: geometry
-      Label: northwest-diagonal-side--1.size / y
-      Description: Authored R7 northwest-diagonal-side--1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 4
-    - Path: northwest-diagonal-side--1.size.z
-      Group: geometry
-      Label: northwest-diagonal-side--1.size / z
-      Description: Authored R7 northwest-diagonal-side--1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 9.813708
-    - Path: northwest-diagonal-side--1.rotation.x
-      Group: geometry
-      Label: northwest-diagonal-side--1.rotation / x
-      Description: Authored R7 northwest-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: -0
-    - Path: northwest-diagonal-side--1.rotation.y
-      Group: geometry
-      Label: northwest-diagonal-side--1.rotation / y
-      Description: Authored R7 northwest-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 315
-    - Path: northwest-diagonal-side--1.rotation.z
-      Group: geometry
-      Label: northwest-diagonal-side--1.rotation / z
-      Description: Authored R7 northwest-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: -0
     - Path: northwest-diagonal-side-1.position.x
       Group: geometry
       Label: northwest-diagonal-side-1.position / x
@@ -16089,7 +16358,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -26.974695
+      DefaultValue: -24.519062
     - Path: northwest-diagonal-side-1.position.y
       Group: geometry
       Label: northwest-diagonal-side-1.position / y
@@ -16109,7 +16378,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 25.500177
+      DefaultValue: 23.044544
     - Path: northwest-diagonal-side-1.size.x
       Group: geometry
       Label: northwest-diagonal-side-1.size / x
@@ -16139,7 +16408,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 9.813708
+      DefaultValue: 2.868126
     - Path: northwest-diagonal-side-1.rotation.x
       Group: geometry
       Label: northwest-diagonal-side-1.rotation / x
@@ -18629,7 +18898,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -12
+      DefaultValue: -10.75
     - Path: southeast-divider.size.x
       Group: geometry
       Label: southeast-divider.size / x
@@ -18659,7 +18928,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 16.4
+      DefaultValue: 13.9
     - Path: southeast-divider.rotation.x
       Group: geometry
       Label: southeast-divider.rotation / x
@@ -18870,96 +19139,6 @@ MonoBehaviour:
       Maximum: 360
       Step: 0.1
       DefaultValue: 0
-    - Path: southeast-diagonal-side--1.position.x
-      Group: geometry
-      Label: southeast-diagonal-side--1.position / x
-      Description: Authored R7 southeast-diagonal-side--1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 31.500177
-    - Path: southeast-diagonal-side--1.position.y
-      Group: geometry
-      Label: southeast-diagonal-side--1.position / y
-      Description: Authored R7 southeast-diagonal-side--1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 6
-    - Path: southeast-diagonal-side--1.position.z
-      Group: geometry
-      Label: southeast-diagonal-side--1.position / z
-      Description: Authored R7 southeast-diagonal-side--1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: -20.974695
-    - Path: southeast-diagonal-side--1.size.x
-      Group: geometry
-      Label: southeast-diagonal-side--1.size / x
-      Description: Authored R7 southeast-diagonal-side--1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 0.4
-    - Path: southeast-diagonal-side--1.size.y
-      Group: geometry
-      Label: southeast-diagonal-side--1.size / y
-      Description: Authored R7 southeast-diagonal-side--1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 4
-    - Path: southeast-diagonal-side--1.size.z
-      Group: geometry
-      Label: southeast-diagonal-side--1.size / z
-      Description: Authored R7 southeast-diagonal-side--1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 9.813708
-    - Path: southeast-diagonal-side--1.rotation.x
-      Group: geometry
-      Label: southeast-diagonal-side--1.rotation / x
-      Description: Authored R7 southeast-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: -0
-    - Path: southeast-diagonal-side--1.rotation.y
-      Group: geometry
-      Label: southeast-diagonal-side--1.rotation / y
-      Description: Authored R7 southeast-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 135
-    - Path: southeast-diagonal-side--1.rotation.z
-      Group: geometry
-      Label: southeast-diagonal-side--1.rotation / z
-      Description: Authored R7 southeast-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 0
     - Path: southeast-diagonal-side-1.position.x
       Group: geometry
       Label: southeast-diagonal-side-1.position / x
@@ -18969,7 +19148,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 26.974695
+      DefaultValue: 24.519062
     - Path: southeast-diagonal-side-1.position.y
       Group: geometry
       Label: southeast-diagonal-side-1.position / y
@@ -18989,7 +19168,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: -25.500177
+      DefaultValue: -23.044544
     - Path: southeast-diagonal-side-1.size.x
       Group: geometry
       Label: southeast-diagonal-side-1.size / x
@@ -19019,7 +19198,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 9.813708
+      DefaultValue: 2.868126
     - Path: southeast-diagonal-side-1.rotation.x
       Group: geometry
       Label: southeast-diagonal-side-1.rotation / x
@@ -21149,7 +21328,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 12
+      DefaultValue: 10.75
     - Path: northeast-divider.size.x
       Group: geometry
       Label: northeast-divider.size / x
@@ -21179,7 +21358,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 16.4
+      DefaultValue: 13.9
     - Path: northeast-divider.rotation.x
       Group: geometry
       Label: northeast-divider.rotation / x
@@ -21399,7 +21578,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 26.974695
+      DefaultValue: 24.519062
     - Path: northeast-diagonal-side--1.position.y
       Group: geometry
       Label: northeast-diagonal-side--1.position / y
@@ -21419,7 +21598,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 25.500177
+      DefaultValue: 23.044544
     - Path: northeast-diagonal-side--1.size.x
       Group: geometry
       Label: northeast-diagonal-side--1.size / x
@@ -21449,7 +21628,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 9.813708
+      DefaultValue: 2.868126
     - Path: northeast-diagonal-side--1.rotation.x
       Group: geometry
       Label: northeast-diagonal-side--1.rotation / x
@@ -21474,96 +21653,6 @@ MonoBehaviour:
       Group: geometry
       Label: northeast-diagonal-side--1.rotation / z
       Description: Authored R7 northeast-diagonal-side--1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 0
-    - Path: northeast-diagonal-side-1.position.x
-      Group: geometry
-      Label: northeast-diagonal-side-1.position / x
-      Description: Authored R7 northeast-diagonal-side-1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 31.500177
-    - Path: northeast-diagonal-side-1.position.y
-      Group: geometry
-      Label: northeast-diagonal-side-1.position / y
-      Description: Authored R7 northeast-diagonal-side-1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 6
-    - Path: northeast-diagonal-side-1.position.z
-      Group: geometry
-      Label: northeast-diagonal-side-1.position / z
-      Description: Authored R7 northeast-diagonal-side-1.position; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: -100
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 20.974695
-    - Path: northeast-diagonal-side-1.size.x
-      Group: geometry
-      Label: northeast-diagonal-side-1.size / x
-      Description: Authored R7 northeast-diagonal-side-1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 0.4
-    - Path: northeast-diagonal-side-1.size.y
-      Group: geometry
-      Label: northeast-diagonal-side-1.size / y
-      Description: Authored R7 northeast-diagonal-side-1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 4
-    - Path: northeast-diagonal-side-1.size.z
-      Group: geometry
-      Label: northeast-diagonal-side-1.size / z
-      Description: Authored R7 northeast-diagonal-side-1.size; changes require an
-        explicit rebuild and a new reviewed map revision.
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 100
-      Step: 0.01
-      DefaultValue: 9.813708
-    - Path: northeast-diagonal-side-1.rotation.x
-      Group: geometry
-      Label: northeast-diagonal-side-1.rotation / x
-      Description: Authored R7 northeast-diagonal-side-1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: -0
-    - Path: northeast-diagonal-side-1.rotation.y
-      Group: geometry
-      Label: northeast-diagonal-side-1.rotation / y
-      Description: Authored R7 northeast-diagonal-side-1.rotation; changes require
-        an explicit rebuild and a new reviewed map revision.
-      Unit: degrees
-      Minimum: -360
-      Maximum: 360
-      Step: 0.1
-      DefaultValue: 45
-    - Path: northeast-diagonal-side-1.rotation.z
-      Group: geometry
-      Label: northeast-diagonal-side-1.rotation / z
-      Description: Authored R7 northeast-diagonal-side-1.rotation; changes require
         an explicit rebuild and a new reviewed map revision.
       Unit: degrees
       Minimum: -360
@@ -23749,7 +23838,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 2.8
     - Path: south-entry-roof--1.position.z
       Group: geometry
       Label: south-entry-roof--1.position / z
@@ -25819,7 +25908,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 2.8
     - Path: south-entry-roof-1.position.z
       Group: geometry
       Label: south-entry-roof-1.position / z
@@ -26179,7 +26268,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.6
+      DefaultValue: 5.3
     - Path: south-entry-lintel-left.position.z
       Group: geometry
       Label: south-entry-lintel-left.position / z
@@ -26209,7 +26298,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 4.8
+      DefaultValue: 5.4
     - Path: south-entry-lintel-left.size.z
       Group: geometry
       Label: south-entry-lintel-left.size / z
@@ -26269,7 +26358,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.6
+      DefaultValue: 5.3
     - Path: south-entry-lintel-right.position.z
       Group: geometry
       Label: south-entry-lintel-right.position / z
@@ -26299,7 +26388,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 4.8
+      DefaultValue: 5.4
     - Path: south-entry-lintel-right.size.z
       Group: geometry
       Label: south-entry-lintel-right.size / z
@@ -28699,7 +28788,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 2.8
     - Path: north-entry-roof--1.position.z
       Group: geometry
       Label: north-entry-roof--1.position / z
@@ -30769,7 +30858,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 3.4
+      DefaultValue: 2.8
     - Path: north-entry-roof-1.position.z
       Group: geometry
       Label: north-entry-roof-1.position / z
@@ -31129,7 +31218,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.6
+      DefaultValue: 5.3
     - Path: north-entry-lintel-left.position.z
       Group: geometry
       Label: north-entry-lintel-left.position / z
@@ -31159,7 +31248,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 4.8
+      DefaultValue: 5.4
     - Path: north-entry-lintel-left.size.z
       Group: geometry
       Label: north-entry-lintel-left.size / z
@@ -31219,7 +31308,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 5.6
+      DefaultValue: 5.3
     - Path: north-entry-lintel-right.position.z
       Group: geometry
       Label: north-entry-lintel-right.position / z
@@ -31249,7 +31338,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 4.8
+      DefaultValue: 5.4
     - Path: north-entry-lintel-right.size.z
       Group: geometry
       Label: north-entry-lintel-right.size / z
@@ -48750,13 +48839,13 @@ MonoBehaviour:
     - Path: southwest-divider.position.y
       Value: 4
     - Path: southwest-divider.position.z
-      Value: -12
+      Value: -10.75
     - Path: southwest-divider.size.x
       Value: 0.4
     - Path: southwest-divider.size.y
       Value: 8
     - Path: southwest-divider.size.z
-      Value: 16.4
+      Value: 13.9
     - Path: southwest-divider.rotation.x
       Value: -0
     - Path: southwest-divider.rotation.y
@@ -48800,40 +48889,22 @@ MonoBehaviour:
     - Path: southwest-diagonal.rotation.z
       Value: 0
     - Path: southwest-diagonal-side--1.position.x
-      Value: -26.974695
+      Value: -24.519062
     - Path: southwest-diagonal-side--1.position.y
       Value: 6
     - Path: southwest-diagonal-side--1.position.z
-      Value: -25.500177
+      Value: -23.044544
     - Path: southwest-diagonal-side--1.size.x
       Value: 0.4
     - Path: southwest-diagonal-side--1.size.y
       Value: 4
     - Path: southwest-diagonal-side--1.size.z
-      Value: 9.813708
+      Value: 2.868126
     - Path: southwest-diagonal-side--1.rotation.x
       Value: -0
     - Path: southwest-diagonal-side--1.rotation.y
       Value: 225
     - Path: southwest-diagonal-side--1.rotation.z
-      Value: 0
-    - Path: southwest-diagonal-side-1.position.x
-      Value: -31.500177
-    - Path: southwest-diagonal-side-1.position.y
-      Value: 6
-    - Path: southwest-diagonal-side-1.position.z
-      Value: -20.974695
-    - Path: southwest-diagonal-side-1.size.x
-      Value: 0.4
-    - Path: southwest-diagonal-side-1.size.y
-      Value: 4
-    - Path: southwest-diagonal-side-1.size.z
-      Value: 9.813708
-    - Path: southwest-diagonal-side-1.rotation.x
-      Value: -0
-    - Path: southwest-diagonal-side-1.rotation.y
-      Value: 225
-    - Path: southwest-diagonal-side-1.rotation.z
       Value: 0
     - Path: northwest-spawn.position.x
       Value: -32
@@ -49254,13 +49325,13 @@ MonoBehaviour:
     - Path: northwest-divider.position.y
       Value: 4
     - Path: northwest-divider.position.z
-      Value: 12
+      Value: 10.75
     - Path: northwest-divider.size.x
       Value: 0.4
     - Path: northwest-divider.size.y
       Value: 8
     - Path: northwest-divider.size.z
-      Value: 16.4
+      Value: 13.9
     - Path: northwest-divider.rotation.x
       Value: -0
     - Path: northwest-divider.rotation.y
@@ -49303,36 +49374,18 @@ MonoBehaviour:
       Value: 315
     - Path: northwest-diagonal.rotation.z
       Value: -0
-    - Path: northwest-diagonal-side--1.position.x
-      Value: -31.500177
-    - Path: northwest-diagonal-side--1.position.y
-      Value: 6
-    - Path: northwest-diagonal-side--1.position.z
-      Value: 20.974695
-    - Path: northwest-diagonal-side--1.size.x
-      Value: 0.4
-    - Path: northwest-diagonal-side--1.size.y
-      Value: 4
-    - Path: northwest-diagonal-side--1.size.z
-      Value: 9.813708
-    - Path: northwest-diagonal-side--1.rotation.x
-      Value: -0
-    - Path: northwest-diagonal-side--1.rotation.y
-      Value: 315
-    - Path: northwest-diagonal-side--1.rotation.z
-      Value: -0
     - Path: northwest-diagonal-side-1.position.x
-      Value: -26.974695
+      Value: -24.519062
     - Path: northwest-diagonal-side-1.position.y
       Value: 6
     - Path: northwest-diagonal-side-1.position.z
-      Value: 25.500177
+      Value: 23.044544
     - Path: northwest-diagonal-side-1.size.x
       Value: 0.4
     - Path: northwest-diagonal-side-1.size.y
       Value: 4
     - Path: northwest-diagonal-side-1.size.z
-      Value: 9.813708
+      Value: 2.868126
     - Path: northwest-diagonal-side-1.rotation.x
       Value: -0
     - Path: northwest-diagonal-side-1.rotation.y
@@ -49830,13 +49883,13 @@ MonoBehaviour:
     - Path: southeast-divider.position.y
       Value: 4
     - Path: southeast-divider.position.z
-      Value: -12
+      Value: -10.75
     - Path: southeast-divider.size.x
       Value: 0.4
     - Path: southeast-divider.size.y
       Value: 8
     - Path: southeast-divider.size.z
-      Value: 16.4
+      Value: 13.9
     - Path: southeast-divider.rotation.x
       Value: -0
     - Path: southeast-divider.rotation.y
@@ -49879,36 +49932,18 @@ MonoBehaviour:
       Value: 135
     - Path: southeast-diagonal.rotation.z
       Value: 0
-    - Path: southeast-diagonal-side--1.position.x
-      Value: 31.500177
-    - Path: southeast-diagonal-side--1.position.y
-      Value: 6
-    - Path: southeast-diagonal-side--1.position.z
-      Value: -20.974695
-    - Path: southeast-diagonal-side--1.size.x
-      Value: 0.4
-    - Path: southeast-diagonal-side--1.size.y
-      Value: 4
-    - Path: southeast-diagonal-side--1.size.z
-      Value: 9.813708
-    - Path: southeast-diagonal-side--1.rotation.x
-      Value: -0
-    - Path: southeast-diagonal-side--1.rotation.y
-      Value: 135
-    - Path: southeast-diagonal-side--1.rotation.z
-      Value: 0
     - Path: southeast-diagonal-side-1.position.x
-      Value: 26.974695
+      Value: 24.519062
     - Path: southeast-diagonal-side-1.position.y
       Value: 6
     - Path: southeast-diagonal-side-1.position.z
-      Value: -25.500177
+      Value: -23.044544
     - Path: southeast-diagonal-side-1.size.x
       Value: 0.4
     - Path: southeast-diagonal-side-1.size.y
       Value: 4
     - Path: southeast-diagonal-side-1.size.z
-      Value: 9.813708
+      Value: 2.868126
     - Path: southeast-diagonal-side-1.rotation.x
       Value: -0
     - Path: southeast-diagonal-side-1.rotation.y
@@ -50334,13 +50369,13 @@ MonoBehaviour:
     - Path: northeast-divider.position.y
       Value: 4
     - Path: northeast-divider.position.z
-      Value: 12
+      Value: 10.75
     - Path: northeast-divider.size.x
       Value: 0.4
     - Path: northeast-divider.size.y
       Value: 8
     - Path: northeast-divider.size.z
-      Value: 16.4
+      Value: 13.9
     - Path: northeast-divider.rotation.x
       Value: -0
     - Path: northeast-divider.rotation.y
@@ -50384,40 +50419,22 @@ MonoBehaviour:
     - Path: northeast-diagonal.rotation.z
       Value: 0
     - Path: northeast-diagonal-side--1.position.x
-      Value: 26.974695
+      Value: 24.519062
     - Path: northeast-diagonal-side--1.position.y
       Value: 6
     - Path: northeast-diagonal-side--1.position.z
-      Value: 25.500177
+      Value: 23.044544
     - Path: northeast-diagonal-side--1.size.x
       Value: 0.4
     - Path: northeast-diagonal-side--1.size.y
       Value: 4
     - Path: northeast-diagonal-side--1.size.z
-      Value: 9.813708
+      Value: 2.868126
     - Path: northeast-diagonal-side--1.rotation.x
       Value: -0
     - Path: northeast-diagonal-side--1.rotation.y
       Value: 45
     - Path: northeast-diagonal-side--1.rotation.z
-      Value: 0
-    - Path: northeast-diagonal-side-1.position.x
-      Value: 31.500177
-    - Path: northeast-diagonal-side-1.position.y
-      Value: 6
-    - Path: northeast-diagonal-side-1.position.z
-      Value: 20.974695
-    - Path: northeast-diagonal-side-1.size.x
-      Value: 0.4
-    - Path: northeast-diagonal-side-1.size.y
-      Value: 4
-    - Path: northeast-diagonal-side-1.size.z
-      Value: 9.813708
-    - Path: northeast-diagonal-side-1.rotation.x
-      Value: -0
-    - Path: northeast-diagonal-side-1.rotation.y
-      Value: 45
-    - Path: northeast-diagonal-side-1.rotation.z
       Value: 0
     - Path: south-outer-low.position.x
       Value: 0
@@ -50854,7 +50871,7 @@ MonoBehaviour:
     - Path: south-entry-roof--1.position.x
       Value: -15
     - Path: south-entry-roof--1.position.y
-      Value: 3.4
+      Value: 2.8
     - Path: south-entry-roof--1.position.z
       Value: -26
     - Path: south-entry-roof--1.size.x
@@ -51268,7 +51285,7 @@ MonoBehaviour:
     - Path: south-entry-roof-1.position.x
       Value: 15
     - Path: south-entry-roof-1.position.y
-      Value: 3.4
+      Value: 2.8
     - Path: south-entry-roof-1.position.z
       Value: -26
     - Path: south-entry-roof-1.size.x
@@ -51340,13 +51357,13 @@ MonoBehaviour:
     - Path: south-entry-lintel-left.position.x
       Value: -15
     - Path: south-entry-lintel-left.position.y
-      Value: 5.6
+      Value: 5.3
     - Path: south-entry-lintel-left.position.z
       Value: -24
     - Path: south-entry-lintel-left.size.x
       Value: 6.4
     - Path: south-entry-lintel-left.size.y
-      Value: 4.8
+      Value: 5.4
     - Path: south-entry-lintel-left.size.z
       Value: 0.4
     - Path: south-entry-lintel-left.rotation.x
@@ -51358,13 +51375,13 @@ MonoBehaviour:
     - Path: south-entry-lintel-right.position.x
       Value: 15
     - Path: south-entry-lintel-right.position.y
-      Value: 5.6
+      Value: 5.3
     - Path: south-entry-lintel-right.position.z
       Value: -24
     - Path: south-entry-lintel-right.size.x
       Value: 6.4
     - Path: south-entry-lintel-right.size.y
-      Value: 4.8
+      Value: 5.4
     - Path: south-entry-lintel-right.size.z
       Value: 0.4
     - Path: south-entry-lintel-right.rotation.x
@@ -51844,7 +51861,7 @@ MonoBehaviour:
     - Path: north-entry-roof--1.position.x
       Value: -15
     - Path: north-entry-roof--1.position.y
-      Value: 3.4
+      Value: 2.8
     - Path: north-entry-roof--1.position.z
       Value: 26
     - Path: north-entry-roof--1.size.x
@@ -52258,7 +52275,7 @@ MonoBehaviour:
     - Path: north-entry-roof-1.position.x
       Value: 15
     - Path: north-entry-roof-1.position.y
-      Value: 3.4
+      Value: 2.8
     - Path: north-entry-roof-1.position.z
       Value: 26
     - Path: north-entry-roof-1.size.x
@@ -52330,13 +52347,13 @@ MonoBehaviour:
     - Path: north-entry-lintel-left.position.x
       Value: -15
     - Path: north-entry-lintel-left.position.y
-      Value: 5.6
+      Value: 5.3
     - Path: north-entry-lintel-left.position.z
       Value: 24
     - Path: north-entry-lintel-left.size.x
       Value: 6.4
     - Path: north-entry-lintel-left.size.y
-      Value: 4.8
+      Value: 5.4
     - Path: north-entry-lintel-left.size.z
       Value: 0.4
     - Path: north-entry-lintel-left.rotation.x
@@ -52348,13 +52365,13 @@ MonoBehaviour:
     - Path: north-entry-lintel-right.position.x
       Value: 15
     - Path: north-entry-lintel-right.position.y
-      Value: 5.6
+      Value: 5.3
     - Path: north-entry-lintel-right.position.z
       Value: 24
     - Path: north-entry-lintel-right.size.x
       Value: 6.4
     - Path: north-entry-lintel-right.size.y
-      Value: 4.8
+      Value: 5.4
     - Path: north-entry-lintel-right.size.z
       Value: 0.4
     - Path: north-entry-lintel-right.rotation.x

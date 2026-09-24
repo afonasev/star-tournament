@@ -67,6 +67,22 @@ namespace StarTournament.ProvingGround.Tests
             }
             yield return null;
         }
+        [UnityTest] public IEnumerator LowerEntriesKeepStandingCapsuleHeadroomInBothDirections()
+        {
+            foreach(int side in new[]{-1,1})foreach(int entry in new[]{-1,1})foreach(bool reverse in new[]{false,true})
+            {
+                var start=new Vector3(entry*15,0,side*(reverse?20:30));var goal=new Vector3(entry*15,0,side*(reverse?30:20));
+                var go=new GameObject("entry-headroom-motor");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;
+                go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,start);
+                for(int tick=0;tick<300;tick++)
+                {
+                    var delta=goal-motor.State.Position;var move=new Vector2(delta.x,delta.z);if(move.magnitude<.2f)break;
+                    motor.Tick(new LocalAction{Move=move.normalized},1f/60);Physics.SyncTransforms();
+                }
+                Assert.That(Vector3.Distance(motor.State.Position,goal),Is.LessThan(.3f),$"Entry {entry},{side}, reverse={reverse}: {motor.State.Position}");Object.DestroyImmediate(go);
+            }
+            yield return null;
+        }
         [UnityTest] public IEnumerator OuterCorridorToBalconyAllowsDirectWalkingWithoutDetours()
         {
             var failures=new System.Collections.Generic.List<string>();
