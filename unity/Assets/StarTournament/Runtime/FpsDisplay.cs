@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround
         readonly FpsAverage average = new FpsAverage();
         Text counter, setting;
         public bool Visible { get; private set; }
+        public string CurrentText => counter ? counter.text : "FPS —";
         public void Initialize(Font font, int fontSize, Text settingLabel)
         {
             setting = settingLabel;

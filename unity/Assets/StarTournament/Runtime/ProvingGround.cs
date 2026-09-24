@@ -224,6 +224,7 @@ namespace StarTournament.ProvingGround
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
+            if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
 #endif
         }
         static string PlayerProfilesPath()
@@ -393,8 +394,24 @@ namespace StarTournament.ProvingGround
             {
                 if (!input.Ready) Pause("Устройство отключено: "+string.Join(", ",Enumerable.Range(0,LocalSeatCount).Where(i=>input.IsHumanSeat(i)&&!input.IsConnected(i)).Select(i=>"P"+(i+1))));
                 else if(input.HasKeyboard && Cursor.lockState!=CursorLockMode.Locked) Pause("Захват курсора потерян");
-                else { var activeProfile=frozenMovement??Profile; input.Capture(activeProfile,Time.deltaTime,ActiveMouseSensitivity()); if (input.ConsumePause()) Pause("Пауза"); }
+                else
+                {
+                    var activeProfile=frozenMovement??Profile; input.Capture(activeProfile,Time.deltaTime,ActiveMouseSensitivity());
+                    if(UseSeatPauseMenus)
+                    {
+                        input.ConsumePause();
+                        int mask=SeatPausePressedMask();
+                        if(mask!=0)
+                        {
+                            int first=Enumerable.Range(0,LocalSeatCount).First(i=>(mask&(1<<i))!=0);
+                            Pause("Пауза",first);
+                            for(int i=0;i<LocalSeatCount;i++)if(i!=first&&(mask&(1<<i))!=0)OpenSeatPause(i);
+                        }
+                    }
+                    else if (input.ConsumePause()) Pause("Пауза");
+                }
             }
+            else if(phase==Phase.Paused && UseSeatPauseMenus)UpdateSeatPauseInput();
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
         }
@@ -684,7 +701,18 @@ namespace StarTournament.ProvingGround
             if(phase==Phase.Running)return;
             MouseSensitivityPreference.Step(Profile,direction);RefreshInterface();
         }
-        void Pause(string reason) { BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(diagnostic||input.Ready ? resume : menu); }
+        void Pause(string reason) => Pause(reason,-1);
+        void Pause(string reason,int seat)
+        {
+            BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false);
+            if(UseSeatPauseMenus)
+            {
+                OpenSeatPause(seat>=0?seat:DefaultPauseSeat());
+                EventSystem.current.sendNavigationEvents=false;
+            }
+            RefreshInterface();
+            if(!UseSeatPauseMenus)Select(diagnostic||input.Ready ? resume : menu);
+        }
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
@@ -838,6 +866,7 @@ namespace StarTournament.ProvingGround
             CreateBotSetupInterface();
             CreateSeatSetupInterface();
             CreateModernMenuUi(overlay.transform);
+            CreateSeatPauseUi();
             ApplyLayout(LocalSeatCount); RefreshInterface(); Select(rebind);
         }
         void CreateSeatSetupInterface()
@@ -927,7 +956,7 @@ namespace StarTournament.ProvingGround
         {
             if (!overlay) return;
             RefreshModernMenuUi();
-            overlay.SetActive(phase!=Phase.Running);
+            overlay.SetActive(phase!=Phase.Running && !(phase==Phase.Paused && UseSeatPauseMenus));
             start.gameObject.SetActive(phase==Phase.Setup); start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
             start.GetComponentInChildren<Text>().text="Начать · людей: "+botSetup.HumanCount(LocalSeatCount)+" · AI: "+(LocalSeatCount-botSetup.HumanCount(LocalSeatCount)+botSetup.Count);
             seatsMinus.gameObject.SetActive(phase==Phase.Setup); seatsMinus.interactable=LocalSeatCount>1;
@@ -1001,6 +1030,7 @@ namespace StarTournament.ProvingGround
                 status.text=(result.Roster.Mode==NativeMatchMode.Teams ? "ПОБЕДИЛА "+NativeStandingsView.TeamName(result.WinnerTeam) : "ПОБЕДИЛ "+Composition.Participant(result.Winner).Name)+" · "+(result.Trigger=="score-limit"?"ЦЕЛЬ ПО ОЧКАМ":"ВРЕМЯ")+(input.Ready||diagnostic?"":"\nПодключите устройства для повтора или вернитесь в меню");
             }
             RefreshModernMenuUi();
+            RefreshSeatPauseUi();
         }
     }
 }

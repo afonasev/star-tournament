@@ -118,6 +118,7 @@ namespace StarTournament.ProvingGround
         void OpenSetup() { fps.RestoreGeneralPreference();phase=Phase.Setup;setupError=null;RefreshInterface();Select(rebind); }
         void ToMainMenu()
         {
+            ClearSeatPauseMenus();
             if(phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results)Menu();
             pendingSeat=-1;fps.RestoreGeneralPreference();phase=Phase.MainMenu;SetCursor(false);RefreshInterface();Select(mainBattleButton);
         }
@@ -257,23 +258,32 @@ namespace StarTournament.ProvingGround
         void StepMenuSensitivity(int direction)
         {
             if(settingsSeat<0)MouseSensitivityPreference.Step(Profile,direction);
-            else
-            {
-                var id=identities.ProfileId(settingsSeat);
-                if(id!=null) {selectedProfileId=id;StepSelectedProfile(direction);}
-                else {var guest=identities.GuestAt(settingsSeat);if(guest!=null){var d=MouseSensitivityPreference.Descriptor(Profile);guest.MouseDegreesPerPixel=Mathf.Clamp(guest.MouseDegreesPerPixel+direction*d.Step,d.Minimum,d.Maximum);}}
-            }
+            else StepPersonalSensitivity(settingsSeat,direction);
             RefreshInterface();
         }
         void ToggleMenuFps()
         {
             if(settingsSeat<0)fps.Toggle();
+            else TogglePersonalFps(settingsSeat);
+            RefreshInterface();
+        }
+        void StepPersonalSensitivity(int seat,int direction)
+        {
+            var id=identities.ProfileId(seat);
+            if(id!=null) {selectedProfileId=id;StepSelectedProfile(direction);}
             else
             {
-                var id=identities.ProfileId(settingsSeat);if(id!=null){selectedProfileId=id;ToggleSelectedProfileFps();}
-                else {var guest=identities.GuestAt(settingsSeat);if(guest!=null)guest.ShowFps=!guest.ShowFps;}
+                var guest=identities.GuestAt(seat);
+                if(guest!=null){var d=MouseSensitivityPreference.Descriptor(Profile);guest.MouseDegreesPerPixel=Mathf.Clamp(guest.MouseDegreesPerPixel+direction*d.Step,d.Minimum,d.Maximum);}
             }
-            RefreshInterface();
+            RefreshSeatPauseUi();
+        }
+        void TogglePersonalFps(int seat)
+        {
+            var id=identities.ProfileId(seat);
+            if(id!=null){selectedProfileId=id;ToggleSelectedProfileFps();}
+            else {var guest=identities.GuestAt(seat);if(guest!=null)guest.ShowFps=!guest.ShowFps;}
+            RefreshSeatPauseUi();
         }
         float ActiveMouseSensitivity()
         {
@@ -286,6 +296,7 @@ namespace StarTournament.ProvingGround
         }
         void ApplyMatchFpsPreference()
         {
+            if(UseSeatPauseMenus){fps.SetSessionVisibility(false);RefreshSeatPauseUi();return;}
             int operatorSeat=-1;
             for(int i=0;i<LocalSeatCount;i++)if(input.IsHumanSeat(i) && input.DeviceAt(i) is Keyboard){operatorSeat=i;break;}
             if(operatorSeat<0)for(int i=0;i<LocalSeatCount;i++)if(input.IsHumanSeat(i)){operatorSeat=i;break;}
