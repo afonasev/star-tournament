@@ -32,6 +32,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
         }
+        void SelectShotgun()
+        {
+            var actions=new LocalAction[4];actions[0].SelectWeapon=WeaponSelection.Shotgun;
+            session.Tick(actions,.02f);
+            for(int tick=0;tick<51;tick++)session.Tick(new LocalAction[4],.02f);
+            Assert.That(session.Life(0).SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+        }
         [UnityTearDown]
         public IEnumerator Cleanup()
         {
@@ -43,6 +50,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             Setup(); yield return null;
             motors[1].Initialize(movement,new Vector3(0,0,4));
+            SelectShotgun();
             int deaths=0; session.Died+=_=>deaths++;
             var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].FireHeld=true;
             session.Tick(actions,.02f);
@@ -83,6 +91,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             motors[1].Initialize(movement,new Vector3(0,0,4));
             var wall=GameObject.CreatePrimitive(PrimitiveType.Cube); wall.transform.SetParent(owner.transform);
             wall.layer=ProvingArena.WorldLayer; wall.transform.position=new Vector3(0,1,2); wall.transform.localScale=new Vector3(2,2,.3f); Physics.SyncTransforms();
+            SelectShotgun();
             var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true; session.Tick(actions,.02f);
             Assert.That(session.Life(1).Health,Is.EqualTo(100));
             wall.layer=ProvingArena.MovementOnlyLayer;
@@ -114,6 +123,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             combat.Set("shot.spread",7);
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
             motors[1].Initialize(movement,new Vector3(0,0,4));
+            SelectShotgun();
             var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true;
             session.Tick(actions,.02f);
             // Fixed sampling identity 1: one head, four torso and one arm pellet; remaining rays miss.
@@ -126,6 +136,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             Setup();yield return null;combat.Set("shot.spread",0);session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
             motors[1].Initialize(movement,new Vector3(0,0,4));ShotNotice notice=default;int count=0;session.ShotResolved+=n=>{notice=n;count++;};
+            SelectShotgun();
             session.Tick(new[]{new LocalAction{SelectWeapon=WeaponSelection.Shotgun,Fire=true},default,default,default},.02f);
             Assert.That(count,Is.EqualTo(1));Assert.That(notice.Pellets.Length,Is.EqualTo((int)combat.Get("shot.pellets")));
             Assert.That(notice.Pellets[0].Contact,Is.EqualTo(PelletContact.Participant));Assert.That(notice.Pellets[0].TargetSeat,Is.EqualTo(1));
@@ -149,8 +160,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.ShotCount,Is.GreaterThan(1),"Held rifle fire repeats on its own cadence");
             int before=session.ShotCount;
             actions[0].SelectWeapon=WeaponSelection.Shotgun;session.Tick(actions,.02f);
-            Assert.That(session.Life(0).SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            Assert.That(session.Life(0).SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(session.ShotCount,Is.EqualTo(before),"Switching while held does not edge-fire shotgun");
+            for(int tick=0;tick<51;tick++)session.Tick(actions,.02f);
+            Assert.That(session.Life(0).SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            Assert.That(session.ShotCount,Is.EqualTo(before),"Held trigger cannot fire during the switch");
             actions[0]=default;session.Tick(actions,.02f);
             actions[0]=new LocalAction{Fire=true,SelectWeapon=WeaponSelection.Shotgun};session.Tick(actions,.02f);
             Assert.That(session.ShotCount,Is.EqualTo(before+1));

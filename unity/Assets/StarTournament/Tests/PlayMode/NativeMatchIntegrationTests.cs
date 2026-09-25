@@ -37,6 +37,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var match=new NativeMatchState(4,config,profile,50);
             for(int i=0;i<2999;i++){match.BeginTick();match.EndTick();}
             var session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat,match);
+            var equipped=session.Capture();
+            for(int i=0;i<2;i++){equipped.Lives[i].SelectedWeapon=WeaponId.Shotgun;equipped.Lives[i].Ammo=equipped.Lives[i].ShotgunAmmo;}
+            session.Restore(equipped); // Set up the scoring order directly; switching timing is covered separately.
             yield return null;
             var actions=new LocalAction[4];actions[0].Fire=actions[1].Fire=true;actions[0].SelectWeapon=actions[1].SelectWeapon=WeaponSelection.Shotgun;session.Tick(actions,.02f);
             Assert.That(session.Life(0).Dead && session.Life(1).Dead,Is.True,"Both admitted shots survive the first death");

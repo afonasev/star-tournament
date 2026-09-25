@@ -152,10 +152,10 @@ namespace StarTournament.ProvingGround
             input.JoinRejected += device => { setupError="Нет свободного места для "+device.displayName; RefreshInterface(); };
             MatchProfile.EnsureMatchDescriptors();
             TrooperProfile.EnsureTrooperDescriptors();
-            if (Profile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
+            Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
+            if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
-            Profile.EnsureDefaultDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             AudioListener.volume = 0; // QA is muted, including all Player diagnostics.

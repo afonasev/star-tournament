@@ -54,7 +54,7 @@ namespace StarTournament.ProvingGround
     public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
-        sealed class PelletEffect { public GameObject Root, Trace, Flash; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact; public WeaponId Weapon; }
+        sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
@@ -109,21 +109,14 @@ namespace StarTournament.ProvingGround
                 var start=muzzle+pellet.Direction*clearance;
                 trace.transform.position=start;
                 var traceEnd=notice.Weapon==WeaponId.Rifle?start+pellet.Direction*Mathf.Min(movement.Get("presentation.rifleTracerLength"),Vector3.Distance(start,pellet.Endpoint)):pellet.Endpoint;
-                GameObject flash=null;
-                if(notice.Weapon==WeaponId.Rifle)
-                {
-                    flash=GameObject.CreatePrimitive(PrimitiveType.Sphere);flash.name="rifle-muzzle-flash";flash.transform.SetParent(root.transform,false);
-                    flash.transform.position=muzzle;flash.transform.localScale=Vector3.one*movement.Get("presentation.rifleMuzzleSize");
-                    var flashCollider=flash.GetComponent<Collider>();if(flashCollider)Object.Destroy(flashCollider);
-                    flash.GetComponent<Renderer>().material=TraceMaterial(WeaponId.Rifle);
-                }
-                bool contact=pellet.Contact!=PelletContact.Miss;
+                // Rifle presentation is tracer only: no green sphere at muzzle or endpoint.
+                bool contact=notice.Weapon!=WeaponId.Rifle && pellet.Contact!=PelletContact.Miss;
                 // Multiple hitscan pellets commonly share one small hit volume: render one readable contact flash,
                 // not a stack of identical spheres. The individual flight paths remain visible.
                 if(contact)
                     foreach(var existing in pellets)
                         if(existing.Contact && Vector3.Distance(existing.End,pellet.Endpoint)<movement.Get("presentation.shotImpactSize")*2f) { contact=false;break; }
-                pellets.Add(new PelletEffect{Root=root,Trace=trace,Flash=flash,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon});
+                pellets.Add(new PelletEffect{Root=root,Trace=trace,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon});
             }
         }
         Material ShotMaterial()
@@ -141,8 +134,9 @@ namespace StarTournament.ProvingGround
             {
                 if(rifleTraceMaterial)return rifleTraceMaterial;
                 var rifleShader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
-                rifleTraceMaterial=new Material(rifleShader){color=new Color(.65f,1f,.08f,1f)};
-                if(rifleTraceMaterial.HasProperty("_BaseColor"))rifleTraceMaterial.SetColor("_BaseColor",new Color(.65f,1f,.08f,1f));
+                var color=new Color(movement.Get("presentation.rifleTracerRed"),movement.Get("presentation.rifleTracerGreen"),movement.Get("presentation.rifleTracerBlue"),1f);
+                rifleTraceMaterial=new Material(rifleShader){color=color};
+                if(rifleTraceMaterial.HasProperty("_BaseColor"))rifleTraceMaterial.SetColor("_BaseColor",color);
                 return rifleTraceMaterial;
             }
             if(traceMaterial)return traceMaterial;
@@ -177,7 +171,7 @@ namespace StarTournament.ProvingGround
                     Vector3 delta=head-tail;effect.Trace.transform.SetPositionAndRotation((head+tail)*.5f,Quaternion.FromToRotation(Vector3.up,delta.normalized));
                     float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);continue;
                 }
-                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Flash)Object.Destroy(effect.Flash);if(effect.Contact)CreateImpact(effect);}
+                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Contact)CreateImpact(effect);}
                 if(elapsed>=flight+impact){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
             }
         }

@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 3;
+        public const int DefaultVersion = 4;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -73,6 +73,7 @@ namespace StarTournament.ProvingGround
         public void EnsureDefaultDescriptors()
         {
             descriptors.RemoveAll(d=>d.Path.StartsWith("fixture.",StringComparison.Ordinal));values.RemoveAll(v=>v.Path.StartsWith("fixture.",StringComparison.Ordinal));
+            descriptors.RemoveAll(d=>d.Path=="presentation.rifleMuzzleSize");values.RemoveAll(v=>v.Path=="presentation.rifleMuzzleSize");
             if(id==DefaultId)version=DefaultVersion;
             var current=CreateDefault();
             foreach(var descriptor in current.descriptors)
@@ -111,8 +112,14 @@ namespace StarTournament.ProvingGround
         {
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
-            version=2;
+            version=3;
             var current=CreateCombatDefault();
+            var cadence=FindDescriptor("rifle.cooldownSeconds");
+            if(cadence!=null)
+            {
+                cadence.Label="Скорострельность (интервал)";
+                cadence.Description="Время между выстрелами при удержании огня: меньше секунд — выше скорострельность.";
+            }
             foreach(var descriptor in current.descriptors)
             {
                 if(FindDescriptor(descriptor.Path)!=null)continue;
@@ -199,7 +206,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 2 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 3 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
@@ -218,7 +225,8 @@ namespace StarTournament.ProvingGround
             profile.Add("speed.pickupRadius", "speed-pickup", "Радиус подбора ускорения", "Горизонтальный authoritative радиус speed bonus.", "meters", .1f, 5, .05f, 1.2f);
             profile.Add("combat.startingAmmo", "shotgun", "Стартовый боезапас", "Количество выстрелов в начале жизни.", "ammo", 1, 200, 1, 20);
             profile.Add("rifle.startingAmmo", "rifle", "Боезапас винтовки", "Число выстрелов до следующего возрождения.", "ammo", 1, 300, 1, 100);
-            profile.Add("rifle.cooldownSeconds", "rifle", "Интервал выстрелов", "Промежуток между выстрелами при удержании огня.", "seconds", .02f, 1f, .01f, .12f);
+            profile.Add("rifle.cooldownSeconds", "rifle", "Скорострельность (интервал)", "Время между выстрелами при удержании огня: меньше секунд — выше скорострельность.", "seconds", .02f, 1f, .01f, .12f);
+            profile.Add("weapon.switchSeconds", "weapon-switch", "Время смены оружия", "Время запрета стрельбы до выбора другого слота.", "seconds", .1f, 3f, .1f, 1f);
             profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела.", "seconds", .05f, 5, .05f, .7f);
             profile.Add("combat.killcamSeconds", "death", "Ожидание возрождения", "Simulation время смерти до готовности к выбору spawn.", "seconds", 0, 15, .1f, 3);
             return profile;
@@ -283,7 +291,9 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .01f);
             profile.Add("presentation.rifleTracerWidth", "rifle", "Толщина трассера", "Ширина короткого трассера винтовки.", "meters", .002f, .1f, .001f, .006f);
             profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Максимальная видимая длина следа от дульной точки.", "meters", .1f, 10f, .1f, 3f);
-            profile.Add("presentation.rifleMuzzleSize", "rifle", "Размер вспышки", "Короткая подтверждённая вспышка у дула винтовки.", "meters", .01f, .3f, .01f, .08f);
+            profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .65f);
+            profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, 1f);
+            profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .08f);
             profile.Add("presentation.rifleModelScale", "rifle", "Масштаб модели винтовки", "Размер на grip mount для читаемого хвата и вида от первого лица.", "ratio", .5f, 3f, .1f, 2f);
             profile.Add("presentation.shotMuzzleClearance", "shot-feedback", "Зазор от muzzle", "Начальный presentation-only зазор, отделяющий дробь от muzzle burst first-person оружия.", "meters", 0f, 3f, .05f, .1f);
             profile.Add("presentation.shotImpactSeconds", "shot-feedback", "Длительность impact", "Время видимого contact impact без persistent decal.", "seconds", .02f, 1f, .01f, .12f);

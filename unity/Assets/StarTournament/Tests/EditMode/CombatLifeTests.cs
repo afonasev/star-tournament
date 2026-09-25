@@ -18,6 +18,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Fire(true), Is.False);
             life.Select(WeaponSelection.Shotgun);
             Assert.That(life.Fire(true),Is.False,"Holding the rifle trigger does not edge-fire the shotgun");
+            life.Advance(profile.Get("weapon.switchSeconds"));
             Assert.That(life.Fire(false), Is.False);
             Assert.That(life.Fire(true), Is.True);
             Assert.That(life.Read().ShotgunAmmo,Is.Zero);
@@ -45,19 +46,51 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var profile=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p1",profile);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
-            Assert.That(life.Fire(true),Is.True);var rifleCooldown=life.Read().CooldownRemaining;
+            Assert.That(life.Fire(true),Is.True);
             life.Select(WeaponSelection.Next);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(life.Read().SwitchRemaining,Is.EqualTo(1).Within(.00001));
+            Assert.That(life.Fire(true),Is.False);
+            life.Advance(profile.Get("weapon.switchSeconds"));
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
             Assert.That(life.Read().CooldownRemaining,Is.Zero);
             Assert.That(life.Fire(true),Is.False);
             life.Fire(false);Assert.That(life.Fire(true),Is.True);
             var snapshot=JsonUtility.FromJson<CombatLifeState>(JsonUtility.ToJson(life.Read()));
             life.Select(WeaponSelection.Previous);
+            Assert.That(life.Read().PendingWeapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            life.Advance(profile.Get("weapon.switchSeconds"));
             Assert.That(life.Read().RifleAmmo,Is.EqualTo(profile.Get("rifle.startingAmmo")-1));
-            Assert.That(life.Read().CooldownRemaining,Is.EqualTo(rifleCooldown));
+            Assert.That(life.Read().CooldownRemaining,Is.Zero);
             life.Restore(snapshot);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
             Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(profile.Get("combat.startingAmmo")-1));
+        }
+        [Test] public void SwitchingWaitsForSimulationTimeSurvivesRestoreAndDeathCancelsIt()
+        {
+            var profile=ProvingProfile.CreateCombatDefault();
+            var life=new CombatLife("p1",profile);
+            life.Select(WeaponSelection.Shotgun);
+            life.Select(WeaponSelection.Rifle);
+            Assert.That(life.Read().PendingWeapon,Is.EqualTo(WeaponId.Shotgun),"Second command cannot replace the pending switch");
+            Assert.That(life.Fire(true),Is.False);
+            life.Advance(.4);
+            var snapshot=JsonUtility.FromJson<CombatLifeState>(JsonUtility.ToJson(life.Read()));
+            Assert.That(snapshot.SwitchRemaining,Is.EqualTo(.6).Within(.00001));
+            life.Advance(.6);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            life.Restore(snapshot);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(life.Read().PendingWeapon,Is.EqualTo(WeaponId.Shotgun));
+            life.Advance(.6);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
+            life.Select(WeaponSelection.Rifle);
+            life.Damage(1,100);
+            Assert.That(life.Read().SwitchRemaining,Is.Zero);
+            Assert.That(life.Read().PendingWeapon,Is.EqualTo(default(WeaponId)));
+            life.Advance(profile.Get("combat.killcamSeconds"));life.Respawn(1);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
         }
         [Test] public void DeathIsOnceAndRespawnRejectsHitsForOldLife()
         {

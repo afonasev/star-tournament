@@ -398,7 +398,7 @@ MonoBehaviour:
       Value: 2
   Profile:
     id: unity-proving-ground-v1
-    version: 3
+    version: 4
     descriptors:
     - Path: simulation.fixedTickHz
       Group: simulation
@@ -930,15 +930,37 @@ MonoBehaviour:
       Maximum: 10
       Step: 0.1
       DefaultValue: 3
-    - Path: presentation.rifleMuzzleSize
+    - Path: presentation.rifleTracerRed
       Group: rifle
-      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0432\u0441\u043F\u044B\u0448\u043A\u0438"
-      Description: "\u041A\u043E\u0440\u043E\u0442\u043A\u0430\u044F \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0451\u043D\u043D\u0430\u044F
-        \u0432\u0441\u043F\u044B\u0448\u043A\u0430 \u0443 \u0434\u0443\u043B\u0430
+      Label: "\u0422\u0440\u0430\u0441\u0441\u0435\u0440 \xB7 \u043A\u0440\u0430\u0441\u043D\u044B\u0439"
+      Description: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439 \u043A\u0430\u043D\u0430\u043B
+        \u0446\u0432\u0435\u0442\u0430 \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430
         \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438."
-      Unit: meters
-      Minimum: 0.01
-      Maximum: 0.3
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.65
+    - Path: presentation.rifleTracerGreen
+      Group: rifle
+      Label: "\u0422\u0440\u0430\u0441\u0441\u0435\u0440 \xB7 \u0437\u0435\u043B\u0451\u043D\u044B\u0439"
+      Description: "\u0417\u0435\u043B\u0451\u043D\u044B\u0439 \u043A\u0430\u043D\u0430\u043B
+        \u0446\u0432\u0435\u0442\u0430 \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430
+        \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 1
+    - Path: presentation.rifleTracerBlue
+      Group: rifle
+      Label: "\u0422\u0440\u0430\u0441\u0441\u0435\u0440 \xB7 \u0441\u0438\u043D\u0438\u0439"
+      Description: "\u0421\u0438\u043D\u0438\u0439 \u043A\u0430\u043D\u0430\u043B
+        \u0446\u0432\u0435\u0442\u0430 \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430
+        \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
       Step: 0.01
       DefaultValue: 0.08
     - Path: presentation.rifleModelScale
@@ -1155,7 +1177,11 @@ MonoBehaviour:
       Value: 0.006
     - Path: presentation.rifleTracerLength
       Value: 3
-    - Path: presentation.rifleMuzzleSize
+    - Path: presentation.rifleTracerRed
+      Value: 0.65
+    - Path: presentation.rifleTracerGreen
+      Value: 1
+    - Path: presentation.rifleTracerBlue
       Value: 0.08
     - Path: presentation.rifleModelScale
       Value: 2
@@ -1179,7 +1205,7 @@ MonoBehaviour:
       Value: 20
   LifeProfile:
     id: unity-combat-state-v1
-    version: 2
+    version: 3
     descriptors:
     - Path: combat.maximumHealth
       Group: combat
@@ -1381,16 +1407,29 @@ MonoBehaviour:
       DefaultValue: 100
     - Path: rifle.cooldownSeconds
       Group: rifle
-      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432"
-      Description: "\u041F\u0440\u043E\u043C\u0435\u0436\u0443\u0442\u043E\u043A
-        \u043C\u0435\u0436\u0434\u0443 \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430\u043C\u0438
-        \u043F\u0440\u0438 \u0443\u0434\u0435\u0440\u0436\u0430\u043D\u0438\u0438
-        \u043E\u0433\u043D\u044F."
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u0440\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        (\u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B)"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u043C\u0435\u0436\u0434\u0443
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430\u043C\u0438 \u043F\u0440\u0438
+        \u0443\u0434\u0435\u0440\u0436\u0430\u043D\u0438\u0438 \u043E\u0433\u043D\u044F:
+        \u043C\u0435\u043D\u044C\u0448\u0435 \u0441\u0435\u043A\u0443\u043D\u0434
+        \u2014 \u0432\u044B\u0448\u0435 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0440\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C."
       Unit: seconds
       Minimum: 0.02
       Maximum: 1
       Step: 0.01
       DefaultValue: 0.12
+    - Path: weapon.switchSeconds
+      Group: weapon-switch
+      Label: "\u0412\u0440\u0435\u043C\u044F \u0441\u043C\u0435\u043D\u044B \u043E\u0440\u0443\u0436\u0438\u044F"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0437\u0430\u043F\u0440\u0435\u0442\u0430
+        \u0441\u0442\u0440\u0435\u043B\u044C\u0431\u044B \u0434\u043E \u0432\u044B\u0431\u043E\u0440\u0430
+        \u0434\u0440\u0443\u0433\u043E\u0433\u043E \u0441\u043B\u043E\u0442\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
     - Path: combat.cooldownSeconds
       Group: shotgun
       Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432"
@@ -1452,6 +1491,8 @@ MonoBehaviour:
       Value: 100
     - Path: rifle.cooldownSeconds
       Value: 0.12
+    - Path: weapon.switchSeconds
+      Value: 1
     - Path: combat.cooldownSeconds
       Value: 0.7
     - Path: combat.killcamSeconds

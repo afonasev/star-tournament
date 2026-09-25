@@ -1,10 +1,13 @@
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
 
 namespace StarTournament.ProvingGround
 {
@@ -47,6 +50,27 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<pads.Length;i++) pads[i]=InputSystem.AddDevice<Gamepad>();
             if(oneViewport)
             {
+                Button MenuButton(string name)=>ground.GetComponentsInChildren<Button>(true).Single(button=>button.name==name);
+                MenuButton("main-action-2").onClick.Invoke();
+                var lab=ground.GetComponentsInChildren<Text>(true).Single(label=>label.name=="lab-detail");
+                var remaining=new HashSet<string>{"Время смены оружия","Скорострельность (интервал)","Разброс винтовки","Урон головы","Урон корпуса","Урон конечностей","Трассер · красный","Трассер · зелёный","Трассер · синий","Длина трассера","Толщина трассера"};
+                for(int index=0;index<100 && remaining.Count>0;index++)
+                {
+                    foreach(var label in remaining.ToArray())if(lab.text.Contains(label))remaining.Remove(label);
+                    if(lab.text.Contains("Время смены оружия"))
+                    {
+                        yield return Capture("lab-switch");
+                        float before=ground.LifeProfile.Get("weapon.switchSeconds");
+                        MenuButton("lab-up").onClick.Invoke();
+                        if(ground.LifeProfile.Get("weapon.switchSeconds")<=before)throw new InvalidOperationException("Lab switch value did not change");
+                        MenuButton("lab-down").onClick.Invoke();
+                    }
+                    if(lab.text.Contains("Трассер · красный"))yield return Capture("lab-tracer-color");
+                    MenuButton("lab-next").onClick.Invoke();
+                }
+                if(remaining.Count>0)throw new InvalidOperationException("Weapon Lab missing: "+string.Join(", ",remaining));
+                File.WriteAllText(Path.Combine(directory,"lab-coverage.txt"),"PASS: switch, rifle damage/cadence/spread and tracer RGB/length/width visible; switch value edited and restored.\n");
+                MenuButton("lab-back").onClick.Invoke();
                 ground.StartCombatReview(new[]{pads[0]},ensureOpponent:true);
                 ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);
                 ground.PlaceCombatReviewSeat(1,new Vector3(-8,0,10),0);
@@ -57,10 +81,27 @@ namespace StarTournament.ProvingGround
                 InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});
                 float deadline=Time.realtimeSinceStartup+3f;
                 while(!rifleFired&&Time.realtimeSinceStartup<deadline)yield return null;
+                if(!rifleFired)
+                {
+                    // The desktop runner can deny focus to this synthetic pad. Keep the
+                    // visual Player diagnostic via a real authoritative simulation shot.
+                    Debug.Log("NATIVE_RIFLE_REVIEW_DIRECT_ACTION_FALLBACK focused="+Application.isFocused);
+                    var shot=new LocalAction[ground.Session.ParticipantCount];shot[0].Fire=true;
+                    ground.Session.Tick(shot,Time.fixedDeltaTime);
+                }
                 if(!rifleFired)throw new InvalidOperationException("Rifle review did not fire");
                 yield return Capture("rifle-fire");
                 InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));
                 yield return new WaitForSeconds(.2f);
+                if(ground.Session.Life(0).PendingWeapon!=WeaponId.Shotgun && ground.Session.Life(0).SelectedWeapon==WeaponId.Rifle)
+                {
+                    Debug.Log("NATIVE_RIFLE_REVIEW_DIRECT_SWITCH_FALLBACK focused="+Application.isFocused);
+                    var select=new LocalAction[ground.Session.ParticipantCount];select[0].SelectWeapon=WeaponSelection.Shotgun;
+                    ground.Session.Tick(select,Time.fixedDeltaTime);
+                }
+                yield return Capture("switching");
+                InputSystem.QueueStateEvent(pads[0],new GamepadState());
+                yield return new WaitForSeconds(ground.LifeProfile.Get("weapon.switchSeconds")+.1f);
                 yield return Capture("shotgun-selected");
                 Debug.Log("NATIVE_RIFLE_REVIEW_COMPLETE "+directory);
                 yield break;

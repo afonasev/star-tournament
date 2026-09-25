@@ -1,5 +1,7 @@
 # Automatic rifle native Player review
 
+Rework F1 (2026-09-25) evidence is in [`rework-f1-native-final/README.md`](rework-f1-native-final/README.md). The captures below are the previous candidate and retain its original visual behavior.
+
 Muted macOS development Player, synthetic local gamepads, 1920×1080 capture. These captures are diagnostic evidence, not physical-device, performance, or human acceptance.
 
 | Capture | Observation |
