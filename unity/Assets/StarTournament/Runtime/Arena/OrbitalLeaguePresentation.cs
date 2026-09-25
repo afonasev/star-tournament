@@ -352,10 +352,19 @@ namespace StarTournament.ProvingGround
             }
             foreach(int sx in new[]{-1,1})
             {
-                float x=sx*11,z=-sx*4;
-                // A single portal header follows the true ramp, with no extra apparent tread.
-                AccentBox(new Vector3(x,5.2f,z),new Vector3(3.6f,p.Get("broadcast.markWidth"),Epsilon),Quaternion.identity);
-                Label(sx<0?"WEST RISE / 01":"EAST RISE / 02",new Vector3(x,5.48f,z),Quaternion.Euler(0,sx<0?90:-90,0),.68f);
+                // Mount the rise title on the existing opaque side wall. A title over the
+                // ramp centre has no backing and appears to float when seen from the hall.
+                var wallSolid=structuralSolids.First(s=>s.Id==(sx<0?"west-rise-south":"east-rise-north"));
+                Vector3 outward=sx<0?Vector3.forward:Vector3.back;
+                var rotation=Quaternion.Euler(0,sx<0?0:180,0);
+                float width=p.Get("wayfinding.panelWidth"),height=p.Get("wayfinding.panelHeight");
+                float y=p.Get("wayfinding.upperBandY")+p.Get("wayfinding.bandWidth")/2+height/2;
+                var panel=new Vector3(wallSolid.Position.x,y,wallSolid.Position.z)+outward*(wallSolid.Size.z/2+Epsilon*2);
+                Box(trim,panel,new Vector3(width,height,Epsilon),rotation);
+                AccentBox(panel+outward*Epsilon*2+Vector3.down*(height/2-p.Get("wayfinding.panelStripe")/2),
+                    new Vector3(width,p.Get("wayfinding.panelStripe"),Epsilon),rotation);
+                // Preserve the authored rise title size within its new wall backing.
+                Label(sx<0?"WEST RISE / 01":"EAST RISE / 02",panel+outward*Epsilon*4,rotation,.68f);
             }
             for(int i=0;i<2;i++)BasementVent(Position("layout.broadcast-fan-"+i),Quaternion.Euler(0,-90,0));
             foreach(float z in new[]{-6f,0f,6f})

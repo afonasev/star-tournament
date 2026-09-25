@@ -77,6 +77,12 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,-3),0,180);
             yield return null;
             artCamera.transform.position=new Vector3(0,7,-7);artCamera.transform.LookAt(new Vector3(0,4.75f,-3));yield return Capture("16-live-hall-opponent");
+            foreach(int side in new[]{-1,1})
+            {
+                artCamera.transform.position=new Vector3(side*16,3.8f,-side*4);
+                artCamera.transform.LookAt(new Vector3(side*12,5.74f,-side*2));
+                yield return Capture(side<0?"16f-west-rise-wall-label":"16g-east-rise-wall-label");
+            }
             var shadowLights=ground.GetComponentInChildren<OrbitalLeaguePresentation>().GetComponentsInChildren<Light>()
                 .OrderBy(light=>light.name.StartsWith("League ceiling light /",StringComparison.Ordinal)?0:1)
                 .ThenBy(light=>int.Parse(light.name.Split('/').Last().Trim())).ToArray();

@@ -127,6 +127,13 @@ namespace StarTournament.ProvingGround.Tests
             var center=labels.Single(l=>l.text.Contains("ARMOR"));
             Assert.That(center.color.b,Is.GreaterThan(center.color.r*3),"Central corridor keeps blue text");
             var p=ProvingProfile.CreateCombatBowlRingPresentationDefault();
+            foreach(var title in new[]{"WEST RISE / 01","EAST RISE / 02"})
+            {
+                var rise=labels.Single(l=>l.text==title);
+                Assert.That(Physics.Raycast(rise.transform.position,rise.transform.forward,out var support,.1f,1<<ProvingArena.WorldLayer),Is.True,title+" must face an opaque wall");
+                Assert.That(support.collider.name,Is.EqualTo(title.StartsWith("WEST")?"west-rise-south":"east-rise-north"));
+                Assert.That(rise.GetComponent<MeshRenderer>().bounds.size.x,Is.LessThan(p.Get("wayfinding.panelWidth")),title+" must fit its backing");
+            }
             for(int i=0;i<16;i++)
             {
                 string key="wayfinding.sign-"+i;
