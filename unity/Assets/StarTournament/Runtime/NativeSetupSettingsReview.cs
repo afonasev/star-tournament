@@ -4,6 +4,9 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
 namespace StarTournament.ProvingGround
@@ -34,6 +37,12 @@ namespace StarTournament.ProvingGround
                 shadows=QualitySettings.shadows!=ShadowQuality.Disable},true));
             yield return new WaitForSecondsRealtime(.5f);
         }
+        IEnumerator Press(Gamepad pad,GamepadButton button)
+        {
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(button));
+            yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+        }
         IEnumerator Start()
         {
             Application.runInBackground=true;ground=GetComponent<ProvingGround>();
@@ -52,9 +61,14 @@ namespace StarTournament.ProvingGround
             Button("Назад к главному меню").onClick.Invoke();
             Button("main-action-4").onClick.Invoke();Check(Object("settings-image").activeInHierarchy,"Image section is not default");
             yield return Capture("04-image-settings");
+            var pad=InputSystem.AddDevice<Gamepad>();
+            yield return Press(pad,GamepadButton.DpadRight);
+            Check(EventSystem.current.currentSelectedGameObject.name=="settings-display-mode","Gamepad did not reach image control");
+            yield return Capture("04a-gamepad-focus");
             Button("settings-resolution").onClick.Invoke();Check(Object("resolution-picker").activeInHierarchy,"Resolution picker did not open");
             yield return Capture("05-resolution-picker");
-            Button("resolution-cancel").onClick.Invoke();
+            yield return Press(pad,GamepadButton.East);
+            Check(EventSystem.current.currentSelectedGameObject.name=="settings-resolution","Gamepad did not close resolution picker");
             var oldMode=Screen.fullScreenMode;int oldWidth=Screen.width,oldHeight=Screen.height;
             Button("settings-display-mode").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);
             Check(Object("display-confirmation").activeInHierarchy,"Display change did not request confirmation");
@@ -79,6 +93,7 @@ namespace StarTournament.ProvingGround
             if(!oldShadows)Button("settings-shadows").onClick.Invoke();
             Button("settings-section-1").onClick.Invoke();yield return Capture("09-control-settings");
             Button("settings-section-2").onClick.Invoke();yield return Capture("10-interface-settings");
+            InputSystem.RemoveDevice(pad);
             File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: map → rules → players, back navigation, native settings sections, supported resolution picker, display rollback, shadows toggle. Muted synthetic Player journey; physical gamepad and human acceptance pending.");
             Debug.Log("NATIVE_SETUP_SETTINGS_REVIEW_COMPLETE "+directory);
         }

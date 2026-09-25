@@ -388,6 +388,7 @@ namespace StarTournament.ProvingGround
         void Update()
         {
             TickDisplayConfirmation();
+            UpdateSettingsBackInput();
             if (phase == Phase.Setup)
             {
                 bool ready=input.Ready; input.PollSetup();

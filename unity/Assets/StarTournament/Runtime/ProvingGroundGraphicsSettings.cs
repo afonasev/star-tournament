@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace StarTournament.ProvingGround
 {
@@ -15,6 +17,11 @@ namespace StarTournament.ProvingGround
         const float DisplayConfirmationSeconds=12f;
         SettingsSection settingsSection;
         readonly Button[] settingsSectionButtons=new Button[3];
+        Button settingsBackButton,settingsModeButton,settingsResolutionButton,settingsShadowsButton;
+        Button settingsSensitivityMinus,settingsSensitivityPlus,settingsFpsButton;
+        Button resolutionCancelButton,settingsRevertButton;
+        Button displayReturnButton;
+        readonly Dictionary<Button,GameObject> settingsFocusBorders=new Dictionary<Button,GameObject>();
         GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsConfirmation,resolutionPicker;
         Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsSensitivity,settingsFps,settingsConfirmationText;
         Button settingsConfirmButton;
@@ -43,33 +50,33 @@ namespace StarTournament.ProvingGround
                 float top=.88f-i*.14f;
                 settingsSectionButtons[i]=MenuButton(navigation.transform,"settings-section-"+i,names[i],new Vector2(.06f,top-.10f),new Vector2(.94f,top),()=>SelectSettingsSection((SettingsSection)section));
             }
-            MenuButton(navigation.transform,"settings-back","‹ НАЗАД",new Vector2(.06f,.05f),new Vector2(.94f,.15f),CloseSettings);
+            settingsBackButton=MenuButton(navigation.transform,"settings-back","‹ НАЗАД",new Vector2(.06f,.05f),new Vector2(.94f,.15f),CloseSettings);
             settingsHeading=Label(content.transform,"settings-heading","НАСТРОЙКИ ИГРЫ",35,new Vector2(.05f,.85f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
             settingsDescription=Label(content.transform,"settings-description","",21,new Vector2(.05f,.77f),new Vector2(.95f,.87f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
 
             settingsImagePage=Panel(content.transform,"settings-image",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
             Panel(settingsImagePage.transform,"display-mode-card",new Vector2(.02f,.75f),new Vector2(.98f,.98f),MenuCard);
             settingsDisplayMode=Label(settingsImagePage.transform,"display-mode-label","",25,new Vector2(.04f,.78f),new Vector2(.96f,.96f),TextAnchor.MiddleLeft,Color.white);
-            MenuButton(settingsImagePage.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,.78f),new Vector2(.96f,.96f),ChangeDisplayMode);
+            settingsModeButton=MenuButton(settingsImagePage.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,.78f),new Vector2(.96f,.96f),ChangeDisplayMode);
             Panel(settingsImagePage.transform,"resolution-card-row",new Vector2(.02f,.47f),new Vector2(.98f,.73f),MenuCard);
             settingsResolution=Label(settingsImagePage.transform,"resolution-label","",25,new Vector2(.04f,.50f),new Vector2(.96f,.72f),TextAnchor.MiddleLeft,Color.white);
-            MenuButton(settingsImagePage.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,.51f),new Vector2(.96f,.69f),OpenResolutionPicker);
+            settingsResolutionButton=MenuButton(settingsImagePage.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,.51f),new Vector2(.96f,.69f),OpenResolutionPicker);
             Panel(settingsImagePage.transform,"shadows-card",new Vector2(.02f,.19f),new Vector2(.98f,.45f),MenuCard);
             settingsShadows=Label(settingsImagePage.transform,"shadows-label","",25,new Vector2(.04f,.22f),new Vector2(.96f,.44f),TextAnchor.MiddleLeft,Color.white);
-            MenuButton(settingsImagePage.transform,"settings-shadows","ВКЛ / ВЫКЛ",new Vector2(.59f,.24f),new Vector2(.96f,.42f),ToggleShadows);
+            settingsShadowsButton=MenuButton(settingsImagePage.transform,"settings-shadows","ВКЛ / ВЫКЛ",new Vector2(.59f,.24f),new Vector2(.96f,.42f),ToggleShadows);
             Label(settingsImagePage.transform,"graphics-help","Графика общая для всех экранов. Новое разрешение нужно подтвердить.",20,new Vector2(.04f,.03f),new Vector2(.96f,.18f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
 
             settingsControlPage=Panel(content.transform,"settings-control",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
             Panel(settingsControlPage.transform,"sensitivity-card",new Vector2(.02f,.26f),new Vector2(.98f,.94f),MenuCard);
             settingsSensitivity=Label(settingsControlPage.transform,"sensitivity-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
             Label(settingsControlPage.transform,"sensitivity-help","Поворот камеры за пиксель движения мыши.",20,new Vector2(.04f,.52f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
-            MenuButton(settingsControlPage.transform,"settings-sensitivity-minus","−",new Vector2(.04f,.30f),new Vector2(.40f,.49f),()=>StepMenuSensitivity(-1));
-            MenuButton(settingsControlPage.transform,"settings-sensitivity-plus","+",new Vector2(.60f,.30f),new Vector2(.96f,.49f),()=>StepMenuSensitivity(1));
+            settingsSensitivityMinus=MenuButton(settingsControlPage.transform,"settings-sensitivity-minus","−",new Vector2(.04f,.30f),new Vector2(.40f,.49f),()=>StepMenuSensitivity(-1));
+            settingsSensitivityPlus=MenuButton(settingsControlPage.transform,"settings-sensitivity-plus","+",new Vector2(.60f,.30f),new Vector2(.96f,.49f),()=>StepMenuSensitivity(1));
             settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
             Panel(settingsInterfacePage.transform,"fps-card",new Vector2(.02f,.25f),new Vector2(.98f,.94f),MenuCard);
             settingsFps=Label(settingsInterfacePage.transform,"fps-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
             Label(settingsInterfacePage.transform,"fps-help","Индикатор частоты кадров без изменения правил матча.",20,new Vector2(.04f,.50f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
-            MenuButton(settingsInterfacePage.transform,"settings-fps","ВКЛ / ВЫКЛ",new Vector2(.55f,.28f),new Vector2(.96f,.47f),ToggleMenuFps);
+            settingsFpsButton=MenuButton(settingsInterfacePage.transform,"settings-fps","ВКЛ / ВЫКЛ",new Vector2(.55f,.28f),new Vector2(.96f,.47f),ToggleMenuFps);
 
             resolutionPicker=Panel(settingsScreen.transform,"resolution-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
             var pickerCard=Panel(resolutionPicker.transform,"resolution-card",new Vector2(.26f,.15f),new Vector2(.74f,.85f),MenuCard);
@@ -82,17 +89,84 @@ namespace StarTournament.ProvingGround
             resolutionPagePrevious=MenuButton(pickerCard.transform,"resolution-page-prev","‹",new Vector2(.06f,.11f),new Vector2(.27f,.20f),()=>ChangeResolutionPage(-1));
             resolutionPageLabel=Label(pickerCard.transform,"resolution-page-label","",21,new Vector2(.31f,.11f),new Vector2(.69f,.20f),TextAnchor.MiddleCenter,Color.white);
             resolutionPageNext=MenuButton(pickerCard.transform,"resolution-page-next","›",new Vector2(.73f,.11f),new Vector2(.94f,.20f),()=>ChangeResolutionPage(1));
-            MenuButton(pickerCard.transform,"resolution-cancel","‹ К НАСТРОЙКАМ",new Vector2(.06f,.02f),new Vector2(.94f,.10f),CloseResolutionPicker);
+            resolutionCancelButton=MenuButton(pickerCard.transform,"resolution-cancel","‹ К НАСТРОЙКАМ",new Vector2(.06f,.02f),new Vector2(.94f,.10f),CloseResolutionPicker);
             settingsConfirmation=Panel(settingsScreen.transform,"display-confirmation",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
             var confirmCard=Panel(settingsConfirmation.transform,"confirmation-card",new Vector2(.27f,.30f),new Vector2(.73f,.70f),MenuCard);
             settingsConfirmationText=Label(confirmCard.transform,"confirmation-text","",29,new Vector2(.07f,.37f),new Vector2(.93f,.88f),TextAnchor.MiddleCenter,Color.white);
             settingsConfirmButton=MenuButton(confirmCard.transform,"settings-confirm","СОХРАНИТЬ",new Vector2(.07f,.10f),new Vector2(.47f,.29f),ConfirmDisplay);
-            MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);
+            settingsRevertButton=MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);
+            foreach(var button in settingsScreen.GetComponentsInChildren<Button>(true))
+            {
+                button.GetComponent<Image>().color=Color.white;
+                var colors=button.colors;
+                colors.normalColor=MenuCard;
+                colors.highlightedColor=new Color32(61,96,112,255);
+                colors.selectedColor=MenuCard;
+                colors.pressedColor=new Color32(176,125,66,255);
+                colors.disabledColor=new Color32(50,62,69,255);
+                button.colors=colors;
+                var border=new GameObject("controller-focus",typeof(RectTransform));
+                border.transform.SetParent(button.transform,false);
+                Layout((RectTransform)border.transform,Vector2.zero,Vector2.one);
+                AddFocusEdge(border.transform,"top",new Vector2(0,.94f),Vector2.one);
+                AddFocusEdge(border.transform,"bottom",Vector2.zero,new Vector2(1,.06f));
+                AddFocusEdge(border.transform,"left",Vector2.zero,new Vector2(.015f,1));
+                AddFocusEdge(border.transform,"right",new Vector2(.985f,0),Vector2.one);
+                border.SetActive(false);
+                settingsFocusBorders[button]=border;
+            }
+            ConfigureSettingsNavigation();
+        }
+        void AddFocusEdge(Transform parent,string name,Vector2 min,Vector2 max)
+        {
+            var edge=new GameObject(name,typeof(RectTransform),typeof(Image));
+            edge.transform.SetParent(parent,false);
+            Layout((RectTransform)edge.transform,min,max);
+            var image=edge.GetComponent<Image>();image.color=MenuGold;image.raycastTarget=false;
+        }
+        void RefreshSettingsFocus()
+        {
+            var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
+            foreach(var pair in settingsFocusBorders)
+            {
+                bool focused=pair.Key.gameObject==selected && pair.Key.IsActive() && pair.Key.IsInteractable();
+                if(pair.Value.activeSelf!=focused)pair.Value.SetActive(focused);
+            }
+        }
+        static void Link(Button button,Button up=null,Button down=null,Button left=null,Button right=null)
+        {
+            button.navigation=new Navigation { mode=Navigation.Mode.Explicit,selectOnUp=up,selectOnDown=down,
+                selectOnLeft=left,selectOnRight=right };
+        }
+        Button FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
+            settingsSection==SettingsSection.Control?settingsSensitivityMinus:settingsFpsButton;
+        void ConfigureSettingsNavigation()
+        {
+            Link(settingsSectionButtons[0],settingsBackButton,settingsSectionButtons[1],null,settingsModeButton);
+            Link(settingsSectionButtons[1],settingsSeat<0?settingsSectionButtons[0]:settingsBackButton,
+                settingsSectionButtons[2],null,settingsSensitivityMinus);
+            Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsBackButton,null,settingsFpsButton);
+            Link(settingsBackButton,settingsSectionButtons[2],settingsSeat<0?settingsSectionButtons[0]:settingsSectionButtons[1],
+                null,FirstSettingsAction());
+            Link(settingsModeButton,settingsShadowsButton,settingsResolutionButton,settingsSectionButtons[0]);
+            Link(settingsResolutionButton,settingsModeButton,settingsShadowsButton,settingsSectionButtons[0]);
+            Link(settingsShadowsButton,settingsResolutionButton,settingsModeButton,settingsSectionButtons[0]);
+            Link(settingsSensitivityMinus,settingsSectionButtons[1],settingsBackButton,settingsSectionButtons[1],settingsSensitivityPlus);
+            Link(settingsSensitivityPlus,settingsSectionButtons[1],settingsBackButton,settingsSensitivityMinus);
+            Link(settingsFpsButton,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);
+            for(int i=0;i<resolutionChoices.Length;i++)
+                Link(resolutionChoices[i],i==0?resolutionCancelButton:resolutionChoices[i-1],
+                    i==resolutionChoices.Length-1?resolutionPagePrevious:resolutionChoices[i+1]);
+            Link(resolutionPagePrevious,resolutionChoices[resolutionChoices.Length-1],resolutionCancelButton,null,resolutionPageNext);
+            Link(resolutionPageNext,resolutionChoices[resolutionChoices.Length-1],resolutionCancelButton,resolutionPagePrevious);
+            Link(resolutionCancelButton,resolutionPagePrevious,resolutionChoices[0]);
+            Link(settingsConfirmButton,null,null,null,settingsRevertButton);
+            Link(settingsRevertButton,null,null,settingsConfirmButton);
         }
         void SelectSettingsSection(SettingsSection section)
         {
             if(settingsSeat>=0 && section==SettingsSection.Image)return;
-            settingsSection=section;RefreshSettingsUi();Select(settingsSectionButtons[(int)section]);
+            settingsSection=section;RefreshSettingsUi();ConfigureSettingsNavigation();Select(FirstSettingsAction());
         }
         void RefreshSettingsUi()
         {
@@ -107,8 +181,8 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<settingsSectionButtons.Length;i++)
             {
                 bool selected=i==(int)settingsSection;
-                settingsSectionButtons[i].GetComponent<Image>().color=selected?MenuGold:MenuCard;
-                settingsSectionButtons[i].GetComponentInChildren<Text>().color=selected?MenuInk:Color.white;
+                settingsSectionButtons[i].GetComponentInChildren<Text>().text=(selected?"› ":"")+
+                    (i==0?"ИЗОБРАЖЕНИЕ":i==1?"УПРАВЛЕНИЕ":"ИНТЕРФЕЙС");
             }
             settingsHeading.text=settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat);
             settingsDescription.text=settingsSection==SettingsSection.Image?"Режим вывода и тени применяются ко всем игровым экранам":
@@ -126,6 +200,7 @@ namespace StarTournament.ProvingGround
                     Mathf.CeilToInt(Mathf.Max(0,displayConfirmationDeadline-Time.unscaledTime))+" с";
             settingsConfirmButton.interactable=displayConfirmationActive && Time.frameCount>displayChangeFrame;
             RefreshResolutionChoices();
+            RefreshSettingsFocus();
         }
         static FullScreenMode EffectiveDisplayMode() => Screen.fullScreenMode==FullScreenMode.Windowed?FullScreenMode.Windowed:FullScreenMode.FullScreenWindow;
         static List<Vector2Int> SupportedResolutions()
@@ -144,6 +219,7 @@ namespace StarTournament.ProvingGround
         {
             if(displayConfirmationActive)return;
             var mode=EffectiveDisplayMode()==FullScreenMode.Windowed?FullScreenMode.FullScreenWindow:FullScreenMode.Windowed;
+            displayReturnButton=settingsModeButton;
             BeginDisplayChange(Screen.width,Screen.height,mode);
         }
         void OpenResolutionPicker()
@@ -156,7 +232,7 @@ namespace StarTournament.ProvingGround
         }
         void CloseResolutionPicker()
         {
-            resolutionPickerOpen=false;RefreshSettingsUi();Select(settingsSectionButtons[0]);
+            resolutionPickerOpen=false;RefreshSettingsUi();Select(settingsResolutionButton);
         }
         void ChangeResolutionPage(int direction)
         {
@@ -182,13 +258,25 @@ namespace StarTournament.ProvingGround
             resolutionPagePrevious.interactable=resolutionPage>0;
             resolutionPageNext.interactable=resolutionPage+1<pageCount;
             resolutionPageLabel.text=(resolutionPage+1)+" / "+pageCount;
+            int last=Mathf.Min(resolutionChoices.Length-1,sizes.Count-resolutionPage*resolutionChoices.Length-1);
+            Button pageAction=resolutionPagePrevious.interactable?resolutionPagePrevious:
+                resolutionPageNext.interactable?resolutionPageNext:resolutionCancelButton;
+            for(int i=0;i<=last;i++)
+                Link(resolutionChoices[i],i==0?resolutionCancelButton:resolutionChoices[i-1],
+                    i==last?pageAction:resolutionChoices[i+1]);
+            Link(resolutionPagePrevious,resolutionChoices[last],resolutionCancelButton,null,
+                resolutionPageNext.interactable?resolutionPageNext:resolutionCancelButton);
+            Link(resolutionPageNext,resolutionChoices[last],resolutionCancelButton,
+                resolutionPagePrevious.interactable?resolutionPagePrevious:resolutionCancelButton);
+            Link(resolutionCancelButton,pageAction,resolutionChoices[0]);
         }
         void ChooseResolution(int row)
         {
             var sizes=SupportedResolutions();int index=resolutionPage*resolutionChoices.Length+row;
             if(index<0||index>=sizes.Count)return;
             var size=sizes[index];resolutionPickerOpen=false;
-            if(size.x==Screen.width&&size.y==Screen.height){RefreshSettingsUi();return;}
+            if(size.x==Screen.width&&size.y==Screen.height){RefreshSettingsUi();Select(settingsResolutionButton);return;}
+            displayReturnButton=settingsResolutionButton;
             BeginDisplayChange(size.x,size.y,EffectiveDisplayMode());
         }
         void BeginDisplayChange(int width,int height,FullScreenMode mode)
@@ -206,7 +294,11 @@ namespace StarTournament.ProvingGround
             if(Time.unscaledTime>=displayConfirmationDeadline){RollbackDisplay();return;}
             if(settingsConfirmationText)settingsConfirmationText.text="Подтвердить режим?\n"+pendingDisplayWidth+" × "+pendingDisplayHeight+
                 "\nВозврат через "+Mathf.CeilToInt(displayConfirmationDeadline-Time.unscaledTime)+" с";
-            if(settingsConfirmButton)settingsConfirmButton.interactable=Time.frameCount>displayChangeFrame;
+            if(settingsConfirmButton && Time.frameCount>displayChangeFrame && !settingsConfirmButton.interactable)
+            {
+                settingsConfirmButton.interactable=true;
+                Select(settingsConfirmButton);
+            }
         }
         void ConfirmDisplay()
         {
@@ -214,7 +306,7 @@ namespace StarTournament.ProvingGround
             displayConfirmationActive=false;
             PlayerPrefs.SetInt(DisplayWidthKey,Screen.width);PlayerPrefs.SetInt(DisplayHeightKey,Screen.height);
             PlayerPrefs.SetInt(DisplayModeKey,Screen.fullScreenMode==FullScreenMode.Windowed?0:1);PlayerPrefs.Save();
-            RefreshSettingsUi();Select(settingsSectionButtons[0]);
+            RefreshSettingsUi();Select(displayReturnButton??settingsModeButton);
         }
         void RollbackDisplay()
         {
@@ -222,7 +314,21 @@ namespace StarTournament.ProvingGround
             displayConfirmationActive=false;
             Screen.SetResolution(oldDisplayWidth,oldDisplayHeight,oldDisplayMode);
             if(settingsScreen)RefreshSettingsUi();
-            if(phase==Phase.Settings)Select(settingsSectionButtons[0]);
+            if(phase==Phase.Settings)Select(displayReturnButton??settingsModeButton);
+        }
+        void UpdateSettingsBackInput()
+        {
+            if(phase!=Phase.Settings)return;
+            bool back=Keyboard.current!=null && Keyboard.current.escapeKey.wasPressedThisFrame;
+            if(settingsSeat>=0)
+            {
+                if(input.DeviceAt(settingsSeat) is Gamepad pad)back|=pad.buttonEast.wasPressedThisFrame;
+            }
+            else foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
+            if(!back)return;
+            if(displayConfirmationActive)RollbackDisplay();
+            else if(resolutionPickerOpen)CloseResolutionPicker();
+            else CloseSettings();
         }
         void InitializeGraphicsPreferences()
         {

@@ -241,9 +241,15 @@ namespace StarTournament.ProvingGround
         void OpenSettings(int seat)
         {
             settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
-            phase=Phase.Settings;RefreshInterface();Select(settingsSectionButtons[(int)settingsSection]);
+            phase=Phase.Settings;RefreshInterface();ConfigureSettingsNavigation();Select(settingsSectionButtons[(int)settingsSection]);
         }
-        void CloseSettings() { if(displayConfirmationActive)RollbackDisplay();resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;RefreshInterface(); }
+        void CloseSettings()
+        {
+            if(displayConfirmationActive)RollbackDisplay();
+            int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;RefreshInterface();
+            if(phase==Phase.MainMenu)Select(mainMenuScreen.transform.Find("actions/main-action-4").GetComponent<Button>());
+            else if(phase==Phase.Setup && seat>=0 && seat<seatIdentityButtons.Length)Select(seatIdentityButtons[seat]);
+        }
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;
