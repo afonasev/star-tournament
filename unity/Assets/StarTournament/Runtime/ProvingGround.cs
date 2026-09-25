@@ -178,6 +178,7 @@ namespace StarTournament.ProvingGround
 #endif
             arena = Owned("unity-arena").AddComponent<ProvingArena>();
             BuildSelectedArena();
+            InitializeGraphicsPreferences();
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile);
@@ -225,6 +226,7 @@ namespace StarTournament.ProvingGround
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
+            if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
 #endif
         }
         static string PlayerProfilesPath()
@@ -385,10 +387,11 @@ namespace StarTournament.ProvingGround
         static void SetLayer(GameObject root, int layer) { foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer; }
         void Update()
         {
+            TickDisplayConfirmation();
             if (phase == Phase.Setup)
             {
                 bool ready=input.Ready; input.PollSetup();
-                if(!ready && input.Ready && IdentitiesReady()) { start.interactable=true; Select(start); }
+                if(!ready && input.Ready && IdentitiesReady()) { start.interactable=true; Select(setupStep==2?start:setupNext); }
             }
             else if (phase == Phase.Running && !diagnostic)
             {
@@ -477,7 +480,11 @@ namespace StarTournament.ProvingGround
                 hud[i].text=hit[participant] ?? "";
             }
         }
-        void OnApplicationFocus(bool focus) { if (!focus && phase == Phase.Running && !diagnostic && !combatReview) Pause("Окно потеряло фокус"); }
+        void OnApplicationFocus(bool focus)
+        {
+            if(!focus && displayConfirmationActive)RollbackDisplay();
+            if (!focus && phase == Phase.Running && !diagnostic && !combatReview) Pause("Окно потеряло фокус");
+        }
         string ColoredName(int participant)
         {
             var info=Composition.Participant(participant);
@@ -533,6 +540,7 @@ namespace StarTournament.ProvingGround
             studioLight.shadowNormalBias=OrbitalLeagueProfile.Get("light.shadowNormalBias");
             var frozen=CombatBowlCatalog.Freeze(Profile);
             arena.Build(frozen,Profile,OrbitalLeagueProfile);
+            ApplyShadowPreference();
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
         void CreateMatch(bool repeating)
@@ -624,6 +632,7 @@ namespace StarTournament.ProvingGround
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat);
             presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition);
             actions=new LocalAction[Composition.ParticipantCount];ApplyLayout(LocalSeatCount);
+            setupStep=setupMaxStep=2;
             input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(input.Ready?start:rebind);
         }
         void SetSeatCount(int count)
@@ -717,7 +726,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         void CreateArmorPickupVisual()
         {
             if(!ArmorPickupPrefab)throw new InvalidOperationException("Missing manifest-owned armor prefab");

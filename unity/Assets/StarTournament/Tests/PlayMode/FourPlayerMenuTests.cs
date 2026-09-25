@@ -85,6 +85,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var ground=Object.FindFirstObjectByType<ProvingGround>(); Assert.That(ground,Is.Not.Null);
             ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="main-action-0").onClick.Invoke();
             Assert.That(ground.Running,Is.False);
+            var next=ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="setup-next");
+            next.onClick.Invoke();next.onClick.Invoke();
             for(int i=0;i<4;i++)
             {
                 pads[i]=InputSystem.AddDevice<Gamepad>();

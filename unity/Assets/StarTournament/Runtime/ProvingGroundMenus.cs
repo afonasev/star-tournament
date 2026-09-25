@@ -12,11 +12,13 @@ namespace StarTournament.ProvingGround
         static readonly Color32 MenuInk = new Color32(17,30,41,255);
         static readonly Color32 MenuCard = new Color32(28,49,60,255);
         static readonly Color32 MenuGold = new Color32(255,189,98,255);
-        GameObject oldMenuColumn, mainMenuScreen, profilesScreen, settingsScreen, labScreen, identityScreen;
+        GameObject oldMenuColumn, mainMenuScreen, setupScreen, setupMapPage, setupRulesPage, setupPlayersPage, profilesScreen, settingsScreen, labScreen, identityScreen;
         Transform profileList, identityList;
-        Text profileDetail, identityHeading, settingsHeading, labDetail;
+        Text profileDetail, identityHeading, settingsHeading, labDetail, setupSummary, setupMessage;
         InputField profileNameInput;
-        Button mainBattleButton, profilesBackButton;
+        Button mainBattleButton, profilesBackButton, setupNext, setupPrevious;
+        readonly Button[] setupSteps = new Button[3];
+        int setupStep, setupMaxStep;
         Button identitySettingsButton;
         Button[] seatIdentityButtons = new Button[SeatInputCoordinator.SeatCount];
         string selectedProfileId;
@@ -73,6 +75,8 @@ namespace StarTournament.ProvingGround
             Label(right.transform,"route","01 / ЛОКАЛЬНЫЙ МАТЧ\n\nВыберите состав, профили и устройства",26,new Vector2(.08f,.36f),new Vector2(.93f,.61f),TextAnchor.UpperLeft,Color.white);
             Label(right.transform,"controls","МЫШЬ: выбор   ·   ГЕЙМПАД: крестовина / A",22,new Vector2(.08f,.07f),new Vector2(.95f,.19f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
 
+            CreateSetupUi(parent);
+
             profilesScreen=Panel(parent,"profiles-screen",Vector2.zero,Vector2.one,MenuInk);
             var listCard=Panel(profilesScreen.transform,"profile-list-card",new Vector2(.06f,.12f),new Vector2(.57f,.89f),new Color32(20,39,53,255));
             var detailCard=Panel(profilesScreen.transform,"profile-detail-card",new Vector2(.59f,.12f),new Vector2(.94f,.89f),MenuCard);
@@ -88,13 +92,7 @@ namespace StarTournament.ProvingGround
             MenuButton(detailCard.transform,"profile-fps","Показывать FPS · переключить",new Vector2(.08f,.23f),new Vector2(.92f,.32f),ToggleSelectedProfileFps);
             MenuButton(detailCard.transform,"profile-delete","Удалить профиль",new Vector2(.08f,.06f),new Vector2(.92f,.16f),DeleteSelectedProfile);
 
-            settingsScreen=Panel(parent,"settings-screen",Vector2.zero,Vector2.one,MenuInk);
-            var settingsCard=Panel(settingsScreen.transform,"settings-card",new Vector2(.21f,.16f),new Vector2(.79f,.84f),MenuCard);
-            settingsHeading=Label(settingsCard.transform,"settings-heading","НАСТРОЙКИ ИГРЫ",37,new Vector2(.06f,.80f),new Vector2(.94f,.95f),TextAnchor.MiddleCenter,MenuGold);
-            MenuButton(settingsCard.transform,"settings-sensitivity-minus","Чувствительность мыши −",new Vector2(.10f,.59f),new Vector2(.90f,.70f),()=>StepMenuSensitivity(-1));
-            MenuButton(settingsCard.transform,"settings-sensitivity-plus","Чувствительность мыши +",new Vector2(.10f,.46f),new Vector2(.90f,.57f),()=>StepMenuSensitivity(1));
-            MenuButton(settingsCard.transform,"settings-fps","Показывать FPS · переключить",new Vector2(.10f,.33f),new Vector2(.90f,.44f),ToggleMenuFps);
-            MenuButton(settingsCard.transform,"settings-back","‹ НАЗАД",new Vector2(.10f,.12f),new Vector2(.90f,.23f),CloseSettings);
+            CreateSettingsUi(parent);
 
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
             var labCard=Panel(labScreen.transform,"lab-card",new Vector2(.20f,.15f),new Vector2(.80f,.85f),MenuCard);
@@ -118,7 +116,110 @@ namespace StarTournament.ProvingGround
             {
                 int localSeat=seat;
                 seatIdentityButtons[seat]=MenuButton(parent,"seat-identity-"+seat,"Выбрать профиль",new Vector2(.53f,.57f-seat*.07f),new Vector2(.97f,.63f-seat*.07f),()=>OpenIdentityPicker(localSeat));
+                seatIdentityButtons[seat].transform.SetParent(setupPlayersPage.transform,false);
+                float top=.42f-seat*.055f;
+                Layout((RectTransform)seatIdentityButtons[seat].transform,new Vector2(.065f,top-.047f),new Vector2(.49f,top));
             }
+        }
+        void MoveSetupControl(Button button,GameObject page,Vector2 min,Vector2 max)
+        {
+            button.transform.SetParent(page.transform,false);
+            Layout((RectTransform)button.transform,min,max);
+            button.GetComponent<Image>().color=MenuCard;
+        }
+        void CreateSetupUi(Transform parent)
+        {
+            setupScreen=Panel(parent,"setup-screen",Vector2.zero,Vector2.one,MenuInk);
+            Label(setupScreen.transform,"setup-brand","STAR TOURNAMENT  /  БИТВА",35,new Vector2(.05f,.91f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
+            Label(setupScreen.transform,"setup-description","Выберите карту, задайте правила, соберите игроков и начните матч.",22,new Vector2(.05f,.86f),new Vector2(.95f,.92f),TextAnchor.MiddleLeft,Color.white);
+            var steps=new[]{"1  КАРТА","2  ПРАВИЛА","3  ИГРОКИ"};
+            for(int i=0;i<3;i++)
+            {
+                int selected=i;float left=.05f+i*.305f;
+                setupSteps[i]=MenuButton(setupScreen.transform,"setup-step-"+i,steps[i],new Vector2(left,.78f),new Vector2(left+.29f,.85f),()=>ShowSetupStep(selected));
+            }
+            var content=Panel(setupScreen.transform,"setup-content",new Vector2(.05f,.12f),new Vector2(.69f,.76f),new Color32(20,39,53,255));
+            var summary=Panel(setupScreen.transform,"setup-summary-card",new Vector2(.71f,.12f),new Vector2(.95f,.76f),MenuCard);
+            Label(summary.transform,"summary-title","ПЕРЕД СТАРТОМ",26,new Vector2(.07f,.85f),new Vector2(.93f,.96f),TextAnchor.MiddleLeft,MenuGold);
+            setupSummary=Label(summary.transform,"setup-summary","",22,new Vector2(.07f,.33f),new Vector2(.93f,.83f),TextAnchor.UpperLeft,Color.white);
+            setupMessage=Label(summary.transform,"setup-message","",18,new Vector2(.07f,.22f),new Vector2(.93f,.34f),TextAnchor.UpperLeft,new Color32(255,213,157,255));
+            setupPrevious=MenuButton(summary.transform,"setup-previous","‹ НАЗАД",new Vector2(.07f,.12f),new Vector2(.93f,.20f),PreviousSetupStep);
+            setupNext=MenuButton(summary.transform,"setup-next","ДАЛЕЕ ›",new Vector2(.07f,.02f),new Vector2(.93f,.10f),NextSetupStep);
+            setupMapPage=Panel(content.transform,"setup-map",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
+            Label(setupMapPage.transform,"map-title","ВЫБЕРИТЕ КАРТУ",30,new Vector2(.05f,.86f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
+            Label(setupMapPage.transform,"map-help","Опубликованные карты с точной ревизией. Выбор не меняет геометрию.",20,new Vector2(.05f,.77f),new Vector2(.95f,.86f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            var mapCard=Panel(setupMapPage.transform,"selected-map",new Vector2(.05f,.36f),new Vector2(.95f,.73f),MenuCard);
+            Label(mapCard.transform,"map-name","COMBAT BOWL",31,new Vector2(.05f,.59f),new Vector2(.95f,.90f),TextAnchor.MiddleLeft,MenuGold);
+            Label(mapCard.transform,"map-revision","Орбитальная арена · combat-bowl-v1@14\nФиксированная карта · 2–8 участников",21,new Vector2(.05f,.14f),new Vector2(.95f,.58f),TextAnchor.MiddleLeft,Color.white);
+            MoveSetupControl(arenaButton,setupMapPage,new Vector2(.05f,.15f),new Vector2(.95f,.30f));
+            MenuButton(setupMapPage.transform,"setup-map-exit","‹ ГЛАВНОЕ МЕНЮ",new Vector2(.05f,.03f),new Vector2(.45f,.12f),ToMainMenu);
+
+            setupRulesPage=Panel(content.transform,"setup-rules",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
+            Label(setupRulesPage.transform,"rules-title","ПРАВИЛА МАТЧА",30,new Vector2(.05f,.87f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
+            MoveSetupControl(modeButton,setupRulesPage,new Vector2(.05f,.68f),new Vector2(.95f,.82f));
+            Label(setupRulesPage.transform,"mode-help","Каждый за себя или две команды с отдельным счётом.",19,new Vector2(.05f,.61f),new Vector2(.95f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            MoveSetupControl(durationButton,setupRulesPage,new Vector2(.05f,.47f),new Vector2(.69f,.59f));
+            var durationMinus=oldMenuColumn.transform.Find("duration-minus").GetComponent<Button>();
+            MoveSetupControl(durationMinus,setupRulesPage,new Vector2(.71f,.47f),new Vector2(.95f,.59f));
+            Label(setupRulesPage.transform,"duration-help","Матч закончится по времени или раньше по цели.",19,new Vector2(.05f,.40f),new Vector2(.95f,.46f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            MoveSetupControl(targetButton,setupRulesPage,new Vector2(.05f,.27f),new Vector2(.69f,.39f));
+            MoveSetupControl(targetMinus,setupRulesPage,new Vector2(.71f,.27f),new Vector2(.82f,.39f));
+            MoveSetupControl(targetPlus,setupRulesPage,new Vector2(.84f,.27f),new Vector2(.95f,.39f));
+            Label(setupRulesPage.transform,"target-help","Необязательный порог по очкам.",19,new Vector2(.05f,.20f),new Vector2(.95f,.26f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            teamRow.transform.SetParent(setupRulesPage.transform,false);
+            Layout((RectTransform)teamRow.transform,new Vector2(.05f,.09f),new Vector2(.95f,.20f));
+            MoveSetupControl(colorButton,setupRulesPage,new Vector2(.05f,.01f),new Vector2(.95f,.08f));
+
+            setupPlayersPage=Panel(content.transform,"setup-players",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
+            Label(setupPlayersPage.transform,"players-title","ИГРОКИ И БОТЫ",30,new Vector2(.05f,.87f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
+            seatPanel.transform.SetParent(setupPlayersPage.transform,false);
+            Layout((RectTransform)seatPanel.transform,new Vector2(.05f,.45f),new Vector2(.49f,.85f));
+            botPanel.transform.SetParent(setupPlayersPage.transform,false);
+            Layout((RectTransform)botPanel.transform,new Vector2(.51f,.19f),new Vector2(.95f,.85f));
+            MoveSetupControl(seatsMinus,setupPlayersPage,new Vector2(.05f,.08f),new Vector2(.25f,.16f));
+            MoveSetupControl(seatsPlus,setupPlayersPage,new Vector2(.27f,.08f),new Vector2(.47f,.16f));
+            MoveSetupControl(rebind,setupPlayersPage,new Vector2(.51f,.08f),new Vector2(.95f,.16f));
+            MoveSetupControl(start,summary,new Vector2(.07f,.02f),new Vector2(.93f,.10f));
+            MoveSetupControl(setupBack,setupPlayersPage,new Vector2(.05f,.01f),new Vector2(.47f,.07f));
+            MoveSetupControl(diagnosticButton,setupPlayersPage,new Vector2(.51f,.01f),new Vector2(.95f,.07f));
+        }
+        void ShowSetupStep(int step)
+        {
+            if(phase!=Phase.Setup || step<0 || step>setupMaxStep || step>2)return;
+            setupStep=step;RefreshInterface();Select(step==2?start:setupNext);
+        }
+        void NextSetupStep() { setupMaxStep=Mathf.Max(setupMaxStep,Mathf.Min(2,setupStep+1));ShowSetupStep(Mathf.Min(2,setupStep+1)); }
+        void PreviousSetupStep() { if(setupStep==0)ToMainMenu();else ShowSetupStep(setupStep-1); }
+        string SetupBlockingReason()
+        {
+            if(!ValidSetup())return LocalSeatCount+botSetup.Count<2?"Добавьте игрока или бота":"Для команд нужны обе команды";
+            if(!input.Ready)return "Подключите устройства людей";
+            if(!IdentitiesReady())return "Выберите профиль или гостя каждому человеку";
+            return "Все участники готовы";
+        }
+        void RefreshSetupUi()
+        {
+            if(setupScreen==null)return;
+            setupScreen.SetActive(phase==Phase.Setup && pendingSeat<0);
+            setupMapPage.SetActive(setupStep==0);setupRulesPage.SetActive(setupStep==1);setupPlayersPage.SetActive(setupStep==2);
+            for(int i=0;i<setupSteps.Length;i++)
+            {
+                setupSteps[i].interactable=i<=setupMaxStep;
+                setupSteps[i].GetComponent<Image>().color=i==setupStep?MenuGold:MenuCard;
+                setupSteps[i].GetComponentInChildren<Text>().color=i==setupStep?MenuInk:Color.white;
+            }
+            setupPrevious.GetComponentInChildren<Text>().text=setupStep==0?"‹ МЕНЮ":"‹ НАЗАД";
+            setupNext.gameObject.SetActive(setupStep<2);
+            start.gameObject.SetActive(phase==Phase.Setup && setupStep==2);
+            start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
+            seatPanel.SetActive(phase==Phase.Setup && setupStep==2);botPanel.SetActive(phase==Phase.Setup && setupStep==2);
+            for(int i=0;i<seatIdentityButtons.Length;i++)seatIdentityButtons[i].gameObject.SetActive(
+                phase==Phase.Setup && setupStep==2 && pendingSeat<0 && i<LocalSeatCount && input.IsHumanSeat(i));
+            setupSummary.text="КАРТА\nCombat Bowl · @14\n\nПРАВИЛА\n"+
+                (SetupMode==NativeMatchMode.Teams?"Команды":"Каждый сам за себя")+" · "+Configuration.DurationMinutes+" мин"+
+                (Configuration.TargetEnabled?"\nЦель: "+Configuration.TargetPoints:"\nБез цели по очкам")+"\n\nСОСТАВ\n"+
+                botSetup.HumanCount(LocalSeatCount)+" человек · "+(LocalSeatCount-botSetup.HumanCount(LocalSeatCount)+botSetup.Count)+" AI";
+            setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"Значения сохраняются при переходе между шагами");
         }
         InputField CreateNameInput(Transform parent)
         {
@@ -128,7 +229,7 @@ namespace StarTournament.ProvingGround
             input.textComponent=value;input.characterLimit=24;input.contentType=InputField.ContentType.Standard;
             return input;
         }
-        void OpenSetup() { fps.RestoreGeneralPreference();phase=Phase.Setup;setupError=null;RefreshInterface();Select(rebind); }
+        void OpenSetup() { fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;RefreshInterface();Select(setupNext); }
         void ToMainMenu()
         {
             ClearSeatPauseMenus();
@@ -139,9 +240,10 @@ namespace StarTournament.ProvingGround
         void OpenLab() { phase=Phase.Lab;labWeaponsOnly=true;labIndex=0;RefreshLab();RefreshInterface(); }
         void OpenSettings(int seat)
         {
-            settingsReturn=phase;settingsSeat=seat;phase=Phase.Settings;RefreshInterface();
+            settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
+            phase=Phase.Settings;RefreshInterface();Select(settingsSectionButtons[(int)settingsSection]);
         }
-        void CloseSettings() { phase=settingsReturn;settingsSeat=-1;RefreshInterface(); }
+        void CloseSettings() { if(displayConfirmationActive)RollbackDisplay();resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;RefreshInterface(); }
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;
@@ -180,7 +282,7 @@ namespace StarTournament.ProvingGround
             var device=input.DeviceAt(pendingSeat);
             if(!input.IsConnected(pendingSeat)||device==null||!identities.ChooseProfile(pendingSeat,device.deviceId,id,playerProfiles))
             {setupError="Профиль занят или устройство отключено";RefreshIdentityOptions();return;}
-            pendingSeat=-1;RefreshInterface();Select(start);
+            pendingSeat=-1;RefreshInterface();Select(setupStep==2?start:setupNext);
         }
         void CreateAndChooseProfile()
         {
@@ -192,7 +294,7 @@ namespace StarTournament.ProvingGround
             var device=input.DeviceAt(pendingSeat);
             if(!input.IsConnected(pendingSeat)||device==null){setupError="Устройство отключено";RefreshInterface();return;}
             identities.ChooseGuest(pendingSeat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
-            pendingSeat=-1;RefreshInterface();Select(start);
+            pendingSeat=-1;RefreshInterface();Select(setupStep==2?start:setupNext);
         }
         bool IdentitiesReady()
         {
@@ -337,7 +439,7 @@ namespace StarTournament.ProvingGround
         {
             if(mainMenuScreen==null)return;
             bool shell=phase==Phase.MainMenu||phase==Phase.Profiles||phase==Phase.Settings||phase==Phase.Lab;
-            oldMenuColumn.SetActive(!shell && pendingSeat<0);
+            oldMenuColumn.SetActive(!shell && phase!=Phase.Setup && pendingSeat<0);
             mainMenuScreen.SetActive(phase==Phase.MainMenu);
             profilesScreen.SetActive(phase==Phase.Profiles);
             settingsScreen.SetActive(phase==Phase.Settings);
@@ -349,15 +451,8 @@ namespace StarTournament.ProvingGround
                 seatIdentityButtons[seat].GetComponentInChildren<Text>().text="Игрок "+(seat+1)+" · "+IdentityLabel(seat)+" · "+
                     (input.DeviceAt(seat)==null?"Ожидает устройство":input.IsConnected(seat)?input.Label(seat):"Устройство отключено — назначьте заново");
             }
-            if(seatPanel)seatPanel.SetActive(phase==Phase.Setup && pendingSeat<0);
-            if(botPanel)botPanel.SetActive(phase==Phase.Setup && pendingSeat<0);
-            if(phase==Phase.Settings)
-            {
-                float sensitivity=settingsSeat<0?MouseSensitivityPreference.Resolve(Profile):PersonalSensitivity(settingsSeat);
-                bool showFps=settingsSeat<0?fps.Visible:PersonalFps(settingsSeat);
-                settingsHeading.text=(settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat))+
-                    "\nМышь: "+sensitivity.ToString("0.00")+"°/px · FPS: "+(showFps?"вкл":"выкл");
-            }
+            RefreshSetupUi();
+            if(phase==Phase.Settings)RefreshSettingsUi();
         }
         float PersonalSensitivity(int seat)
         {

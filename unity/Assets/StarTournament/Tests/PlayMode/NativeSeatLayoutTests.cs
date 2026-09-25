@@ -196,6 +196,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator TwoGamepadsJoinThroughSetupAndThirdDeviceCannotControlOrPauseGame()
         {
             yield return Load();Button("seats-minus").onClick.Invoke();Button("seats-minus").onClick.Invoke();
+            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
             Assert.That(Button("Начать — четыре игрока").interactable,Is.False);
             for(int i=0;i<2;i++)
             {

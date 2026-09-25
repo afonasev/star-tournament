@@ -19,6 +19,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             B("main-action-0").onClick.Invoke();
+            B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();
             for(int i=0;i<3;i++)B("seats-minus").onClick.Invoke();
             Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(B("Начать — четыре игрока").interactable,Is.False);
             pad=InputSystem.AddDevice<Gamepad>();InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
@@ -42,6 +43,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.BotDriver,Is.Not.SameAs(driver));Assert.That(ground.Session,Is.Not.SameAs(session));Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));
             ground.SendMessage("Pause","Exit");B("В главное меню").onClick.Invoke();yield return null;
             B("main-action-0").onClick.Invoke();
+            B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();
             Assert.That(ground.BotDriver,Is.Null);Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(ground.SetupBotCount,Is.EqualTo(7));
             for(int i=0;i<7;i++){B("bot-remove-0").onClick.Invoke();Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.activeInHierarchy,Is.True,"Removal keeps a navigable control selected");}Assert.That(B("Начать — четыре игрока").interactable,Is.False);
             B("seats-plus").onClick.Invoke();ground.SetMatchMode(NativeMatchMode.Ffa);B("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
