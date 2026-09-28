@@ -99,7 +99,10 @@ namespace StarTournament.ProvingGround
             yield return Configure(1,8,true);Lineup(180);yield return Capture("10-ffa-eight-one-view-front");Lineup(90);yield return Capture("11-ffa-eight-side");Lineup(0);yield return Capture("12-ffa-eight-rear");
             yield return Configure(4,8,true);Lineup(180);yield return Capture("13-ffa-eight-four-views-ai-only");
             yield return Configure(4,8,false);Lineup(180);yield return Capture("14-ffa-eight-four-views-mixed");
-            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Select));yield return null;yield return null;yield return Capture("15-ffa-live-standings");
+            var liveTable=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="standings-0").gameObject;
+            Time.timeScale=1;InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Select));
+            float deadline=Time.realtimeSinceStartup+2;while(!liveTable.activeInHierarchy&&Time.realtimeSinceStartup<deadline)yield return null;
+            Check(liveTable.activeInHierarchy,"live standings unavailable");Time.timeScale=0;Lineup(180);yield return Capture("15-ffa-live-standings");
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             yield return Results("15b-ffa-results");B("Повторить матч").onClick.Invoke();yield return null;
             yield return Configure(4,8,true,NativeMatchMode.Teams);Lineup(180);yield return Capture("16-teams-four-views");
