@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 4;
+        public const int DefaultVersion = 5;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
-            version=3;
+            version=4;
             var current=CreateCombatDefault();
             var cadence=FindDescriptor("rifle.cooldownSeconds");
             if(cadence!=null)
@@ -211,7 +211,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 3 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 4 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
@@ -223,6 +223,10 @@ namespace StarTournament.ProvingGround
             profile.Add("damageBoost.initialDelaySeconds", "damage-boost", "Первое появление", "Задержка первого появления от начала матча.", "seconds", 0, 120, .1f, 15);
             profile.Add("damageBoost.respawnSeconds", "damage-boost", "Возврат бонуса", "Задержка после успешного подбора.", "seconds", .1f, 120, .1f, 45);
             profile.Add("damageBoost.pickupRadius", "damage-boost", "Радиус подбора", "Горизонтальный радиус; дополнительно проверяется этаж.", "meters", .1f, 5, .05f, 1.2f);
+            profile.Add("heal.targetHealth", "full-heal", "Здоровье после лечения", "Целевое здоровье; ограничено максимумом и не снижает здоровье.", "health", 1, 1000, 1, 100);
+            profile.Add("heal.initialDelaySeconds", "full-heal", "Первое появление", "Задержка от начала нового матча.", "seconds", 0, 120, .1f, 20);
+            profile.Add("heal.respawnSeconds", "full-heal", "Возврат бонуса", "Simulation-время после подбора.", "seconds", .1f, 120, .1f, 30);
+            profile.Add("heal.pickupRadius", "full-heal", "Радиус подбора", "Горизонтальный радиус с общей проверкой этажа.", "meters", .1f, 5, .05f, 1.2f);
             profile.Add("speed.multiplier", "speed-pickup", "Множитель скорости", "Множитель horizontal maximum speed во время speed bonus.", "ratio", 1.05f, 3, .05f, 1.5f);
             profile.Add("speed.durationSeconds", "speed-pickup", "Длительность ускорения", "Simulation-время действия speed bonus.", "seconds", .1f, 60, .1f, 10);
             profile.Add("speed.initialDelaySeconds", "speed-pickup", "Первое появление", "Simulation-время от старта матча до первого speed bonus.", "seconds", 0, 60, .1f, 10);
@@ -276,6 +280,9 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.lightIntensity", "presentation", "Fixture light intensity", "Presentation-only fixture light intensity.", "intensity", .1f, 4f, .1f, 1.1f);
             profile.Add("presentation.armorPickupHoverHeight", "armor-pickup", "Высота парения щита", "Presentation-only высота бонуса над опорной поверхностью.", "meters", 0, 3, .01f, .7f);
             profile.Add("presentation.armorPickupRotationDegreesPerSecond", "armor-pickup", "Вращение щита", "Presentation-only скорость вращения бонуса.", "degrees-per-second", 0, 720, 1, 80);
+            profile.Add("presentation.healPickupHoverHeight", "full-heal", "Высота парения", "Высота сердца над support.", "meters", 0, 3, .01f, .7f);
+            profile.Add("presentation.healPickupRotationDegreesPerSecond", "full-heal", "Вращение сердца", "Presentation-only скорость вращения вокруг вертикальной оси.", "degrees-per-second", 0, 720, 1, 80);
+            profile.Add("presentation.healPickupScale", "full-heal", "Размер сердца", "Масштаб GLB; не меняет радиус подбора.", "ratio", .25f, 3, .05f, 1);
             profile.Add("presentation.speedPickupHoverHeight", "speed-pickup", "Высота парения ускорения", "Presentation-only высота speed bonus над опорной поверхностью.", "meters", 0, 3, .01f, .7f);
             profile.Add("presentation.speedPickupRotationDegreesPerSecond", "speed-pickup", "Вращение ускорения", "Presentation-only скорость вращения speed bonus.", "degrees-per-second", 0, 720, 1, 110);
             profile.Add("presentation.viewWeaponX", "presentation", "View weapon X", "First-person weapon mount horizontal translation from camera origin.", "meters", -2f, 2f, .01f, .36f);

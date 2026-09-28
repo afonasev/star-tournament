@@ -36,7 +36,7 @@ namespace StarTournament.ProvingGround.Tests
             foreach(var spawn in arena.Spawns)
             {
                 Assert.That(provider.TryPhysicalSupport(spawn,out var support),Is.True);Assert.That(support.Support,Is.EqualTo(arena.Definition.SpawnRegions.Single(r=>r.Center==spawn).Support));
-                Assert.That(provider.TryRoute(spawn,arena.Definition.ArmorPickupAnchor,out _,out var error),Is.True,spawn+" to B "+error);
+                Assert.That(provider.TryRoute(spawn,arena.Definition.Pickups.Single(x=>x.Kind==ArenaPickupKind.FullHeal).Anchor,out _,out var error),Is.True,spawn+" to B "+error);
                 Assert.That(provider.TryRoute(spawn,arena.Definition.DamagePickupAnchor,out _,out error),Is.True,spawn+" to A "+error);
             }
             Assert.That(provider.TryPhysicalSupport(new Vector3(0,-1.2f,0),out var b),Is.True);Assert.That(b.Support,Is.EqualTo("support:armor-corridor"));

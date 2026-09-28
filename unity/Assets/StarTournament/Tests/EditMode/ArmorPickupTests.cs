@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     {
         [Test] public void CrystalRunePickupAssetsAreUprightTwoSidedAndCollisionFree()
         {
-            foreach(var name in new[]{"armor","speed","damage"})
+            foreach(var name in new[]{"armor","speed","damage","heal"})
             {
                 var path="Assets/StarTournament/Art/"+name+"-pickup-crystal-runes-lod0.glb";
                 var asset=AssetDatabase.LoadAssetAtPath<GameObject>(path);

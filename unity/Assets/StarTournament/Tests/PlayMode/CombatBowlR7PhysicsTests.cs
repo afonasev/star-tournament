@@ -269,7 +269,7 @@ namespace StarTournament.ProvingGround.Tests
             first.Initialize(movement,new Vector3(-32,4,-28));session.Tick(new LocalAction[2],1f/60);
             Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-sw").Available,Is.False);
             Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-ne").Available,Is.True);
-            Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-basement").Available,Is.True);
+            Assert.That(session.HealPickups.Single(x=>x.InstanceId=="heal-basement").Available,Is.False);
             var snapshot=session.Capture();System.Array.Reverse(snapshot.ArmorPickups);System.Array.Reverse(snapshot.SpeedPickups);
             session.Tick(new LocalAction[2],1f/60);session.Restore(snapshot);
             Assert.That(session.ArmorPickups.Single(x=>x.InstanceId=="armor-sw").RespawnRemaining,Is.EqualTo(snapshot.ArmorPickups.Single(x=>x.InstanceId=="armor-sw").RespawnRemaining));

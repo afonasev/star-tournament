@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 namespace StarTournament.ProvingGround.Tests.EditMode
@@ -22,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 case "solid": definition.Solids[0].Size.x=0; expected="ARENA_INVALID_SOLID_GEOMETRY"; break;
                 case "layer": definition.Solids[0].Layer=0; expected="ARENA_INVALID_COLLISION_LAYER"; break;
                 case "spawn": definition.Spawns[0].y=99; expected="ARENA_INVALID_SPAWN"; break;
-                case "armor": definition.Pickups[0].Anchor.y=99; expected="ARENA_INVALID_ARMOR_PICKUP_ANCHOR"; break;
+                case "armor": definition.Pickups.First(x=>x.Kind==ArenaPickupKind.Armor).Anchor.y=99; expected="ARENA_INVALID_ARMOR_PICKUP_ANCHOR"; break;
                 case "region": definition.SpawnRegions[0].Support="missing"; expected="ARENA_UNKNOWN_SPAWN_SUPPORT"; break;
                 default: definition.Transitions[0].OrderedFeet[0].y=99; expected="ARENA_INVALID_TRANSITION_ENDPOINT"; break;
             }

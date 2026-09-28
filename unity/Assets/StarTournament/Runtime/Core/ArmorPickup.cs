@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
 {
     [Serializable] public struct ArmorPickupState { public string InstanceId; public Vector3 Anchor; public bool Available; public double RespawnRemaining; }
 
-    /// <summary>Pure authoritative lifecycle for the one central arena armor bonus.</summary>
+    /// <summary>Pure authoritative lifecycle for each authored arena armor bonus.</summary>
     public sealed class ArmorPickup
     {
         readonly float amount, radius, heightTolerance;
