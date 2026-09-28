@@ -22,3 +22,12 @@ FPS скрыт в главном меню, подготовке, профиля�
 5. Выйти в главное меню: счётчик исчезает; при следующем матче выбор применяется снова.
 
 Human acceptance ожидается; автоматизированная проверка её не заменяет.
+
+## Проверки и сборка
+
+- Implementation revision: `8f92dba5ed69133ccc98b7df61b9e4a45df817b2`.
+- `unity/tools.sh test-edit`: 112/112 passed.
+- `unity/tools.sh test-play`: 115/115 passed, включая сохранение FPS и запрет отображения вне матча.
+- `unity/tools.sh build`: exit 0, `STAR_PROVING_BUILD_PASS 469813698`. Unity 6000.3.23f1; проверки использовали существующий licensing IPC `LicenseClient-eaafonasev-6000.3.23` через локальную обёртку UNITY_EDITOR.
+- Muted native Player `-pauseReview … -pauseReviewCount 1`: complete.txt PASS; main menu: visibleFps=0; running: visibleFps=1; paused: visibleFps=1; return main menu: visibleFps=0. PNG просмотрены. Synthetic devices; human acceptance pending.
+- Локальный кандидат: `/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/fps-match-only/8f92dba/StarTournamentProvingGround.app`.
