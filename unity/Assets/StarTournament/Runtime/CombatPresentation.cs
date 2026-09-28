@@ -58,6 +58,21 @@ namespace StarTournament.ProvingGround
             if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
             if(pulse)pulse.SetActive(weapon==WeaponId.RocketLauncher);
         }
+        public void Tint(Color identity,bool boosted)
+        {
+            var renderers=new List<Renderer>();if(shotgun)renderers.Add(shotgun);
+            if(rifle)renderers.AddRange(rifle.GetComponentsInChildren<Renderer>(true));
+            if(pulse)renderers.AddRange(pulse.GetComponentsInChildren<Renderer>(true));
+            if(cutter)renderers.AddRange(cutter.GetComponentsInChildren<Renderer>(true));
+            foreach(var renderer in renderers)
+                for(int slot=0;slot<renderer.sharedMaterials.Length;slot++)
+                {
+                    var material=renderer.sharedMaterials[slot];if(!material)continue;
+                    bool status=TrooperIdentityPresentation.IsStatus(material);
+                    if(boosted||status)TrooperIdentityPresentation.Paint(renderer,slot,boosted?Color.red:identity,status);
+                    else renderer.SetPropertyBlock(null,slot);
+                }
+        }
         static Material RifleMaterial(string name)
         {
             string key=name ?? "dark";
