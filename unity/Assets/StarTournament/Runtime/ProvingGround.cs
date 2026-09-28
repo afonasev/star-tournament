@@ -237,6 +237,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
+            if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
@@ -464,8 +465,6 @@ namespace StarTournament.ProvingGround
             for(int p=0;p<Composition.ParticipantCount;p++)
             {
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
-                int localView=Composition.SeatOf(p);
-                if(localView>=0)views[localView].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
                 bool boosted=Session.DamageBoostRemaining(p)>0;if(damageTinted[p]==boosted)continue;damageTinted[p]=boosted;
                 var tint=boosted?Color.red:Composition.Participant(p).Color;ApplyIdentity(bodies[p],tint);int seat=Composition.SeatOf(p);if(seat>=0)ApplyIdentity(views[seat],tint);
             }

@@ -156,6 +156,7 @@ namespace StarTournament.ProvingGround
             var delta=anchor-feet;
             return !physics.Raycast(feet+Vector3.up*movement.Get("player.capsule.radius"),delta.normalized,out _,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
         }
+        public double WeaponSwitchSeconds => lives[0].SwitchSeconds;
         public CombatLifeState Life(int seat) => lives[seat].Read();
         public ParticipantState Pose(int seat) => motors[seat].State;
         public CombatTarget[] LiveTargets()

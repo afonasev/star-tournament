@@ -135,6 +135,7 @@ namespace StarTournament.ProvingGround
         {
             valueIndex=null;
             var current=CreateTrooperDefault();
+            version=current.version;
             foreach(var descriptor in current.descriptors)
             {
                 if(FindDescriptor(descriptor.Path)!=null)continue;

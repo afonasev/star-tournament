@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
         // Exact predecessor registry for additive native Lab history migration. Historical snapshots remain immutable.
         internal ProvingProfile BeforePulse()
         {
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=BeforeWeaponSwitch();
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("rocket.")||d.Path.StartsWith("presentation.rocket"));
             p.values.RemoveAll(v=>v.Path.StartsWith("rocket.")||v.Path.StartsWith("presentation.rocket"));
             if(p.id==DefaultId)p.version=5;

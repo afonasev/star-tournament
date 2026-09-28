@@ -85,6 +85,7 @@ namespace StarTournament.ProvingGround
         readonly PhysicsScene physics;
         readonly Camera[] cameras;
         readonly GameObject[] bodies, views;
+        readonly FirstPersonWeaponSwitch[] weaponSwitches;
         readonly NativeMatchComposition composition;
         readonly int[] local;
         int ViewOf(int participant)=>composition!=null?composition.SeatOf(participant):participant;
@@ -105,6 +106,9 @@ namespace StarTournament.ProvingGround
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
+            weaponSwitches=new FirstPersonWeaponSwitch[views.Length];
+            for(int v=0;v<views.Length;v++)
+                if(views[v].GetComponent<TrooperVisual>())weaponSwitches[v]=new FirstPersonWeaponSwitch(views[v],cameras[v]);
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner);
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
@@ -122,6 +126,9 @@ namespace StarTournament.ProvingGround
         }
         void OnShotResolved(ShotNotice notice)
         {
+            // A shot can occur on the completion tick before LateUpdate; reset the muzzle pose first.
+            int view=ViewOf(notice.Shooter);
+            if(view>=0)weaponSwitches[view]?.Apply(session.Life(notice.Shooter),session.WeaponSwitchSeconds);
             int capacity=(int)movement.Get("presentation.shotMaxEffects");
             foreach(var pellet in notice.Pellets)
             {
@@ -327,6 +334,7 @@ namespace StarTournament.ProvingGround
                 if(!life.Dead)
                 {
                     views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+                    weaponSwitches[v]?.Apply(life,session.WeaponSwitchSeconds);
                     cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;
                 }
