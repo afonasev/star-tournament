@@ -101,6 +101,16 @@ namespace StarTournament.ProvingGround
             return false;
         }
         public void ClearSeat(int seat) { seatProfile[seat]=null; seatGuest[seat]=null; }
+        public void RemoveSeat(int seat,int count)
+        {
+            for(int i=seat;i<count-1;i++){seatProfile[i]=seatProfile[i+1];seatGuest[i]=seatGuest[i+1];}
+            ClearSeat(count-1);
+        }
+        public void RememberBinding(int seat,int deviceId)
+        {
+            if(seatProfile[seat]!=null)preferredProfileByDevice[deviceId]=seatProfile[seat];
+            else if(seatGuest[seat]!=null){guestByDevice[deviceId]=seatGuest[seat];preferredProfileByDevice.Remove(deviceId);}
+        }
         public void ForgetProfile(string id)
         {
             for(int i=0;i<seatProfile.Length;i++) if(seatProfile[i]==id) ClearSeat(i);

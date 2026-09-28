@@ -87,7 +87,7 @@ namespace StarTournament.ProvingGround
         }
         public NativeMatchComposition SetupComposition()=>botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
         public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);setupError=null;RefreshInterface();}
-        public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();Select(botSetup.Count>0?botDifficulty[Math.Min(index,botSetup.Count-1)]:addBot);}
+        public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();if(setupStep==2)FocusRosterCard(LocalSeatCount+Math.Min(index,botSetup.Count-1));else Select(setupNext);}
         public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);RefreshInterface();}
         public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
         public void SetMatchMode(NativeMatchMode mode)
@@ -149,7 +149,14 @@ namespace StarTournament.ProvingGround
         {
             playerProfiles = new PlayerProfileCatalog(PlayerProfilesPath());
             input.Joined += OnDeviceJoined;
-            input.JoinRejected += device => { setupError="Нет свободного места для "+device.displayName; RefreshInterface(); };
+            input.JoinRejected += device => {
+                if(phase==Phase.Setup && setupStep==2 && LocalSeatCount<4 && RosterTotal<8)
+                {
+                    int seat=LocalSeatCount;botSetup.SetAi(seat,false);SetSeatCount(seat+1);
+                    if(input.Assign(seat,device)){OnDeviceJoined(seat,device);return;}
+                }
+                setupError="Нет свободного места для "+device.displayName; RefreshInterface();
+            };
             MatchProfile.EnsureMatchDescriptors();
             TrooperProfile.EnsureTrooperDescriptors();
             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
@@ -230,6 +237,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
+            if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
             if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
 #endif
         }
@@ -393,10 +401,11 @@ namespace StarTournament.ProvingGround
         {
             TickDisplayConfirmation();
             UpdateSettingsBackInput();
+            UpdateRosterInput();
             if (phase == Phase.Setup)
             {
                 bool ready=input.Ready; input.PollSetup();
-                if(!ready && input.Ready && IdentitiesReady()) { start.interactable=true; Select(setupStep==2?start:setupNext); }
+                if(!ready && input.Ready && IdentitiesReady() && rosterEditing<0 && pendingSeat<0) { start.interactable=true; Select(setupStep==2?start:setupNext); }
             }
             else if (phase == Phase.Running && !diagnostic)
             {
@@ -650,8 +659,14 @@ namespace StarTournament.ProvingGround
         {
             // Structural product limits; never silently discard configured bots.
             if(phase!=Phase.Setup || count<1 || count>SeatInputCoordinator.SeatCount || count+botSetup.Count>NativeMatchRoster.MaximumParticipants) return;
-            for(int i=count;i<LocalSeatCount;i++)identities.ClearSeat(i);
+            int previous=LocalSeatCount;
+            // Extra-bot indices follow the view seats; preserve the participant being edited on Y join.
+            if(rosterEditing>=previous)rosterEditing+=count-previous;
+            else if(rosterEditing>=count)rosterEditing=-1;
+            for(int i=count;i<previous;i++)identities.ClearSeat(i);
             input.SetActiveSeatCount(count);SyncHumanSeats();setupError=null; ApplyLayout(count); RefreshInterface();
+            // Picker callbacks capture indices. Discard them after a structural roster change.
+            if(count!=previous && rosterPicker!=null && rosterPicker.activeSelf)CloseRosterPicker();
         }
         void ApplyLayout(int count)
         {

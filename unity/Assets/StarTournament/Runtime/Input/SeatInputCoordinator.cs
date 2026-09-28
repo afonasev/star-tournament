@@ -38,14 +38,33 @@ namespace StarTournament.ProvingGround
             if(!HasKeyboard) pairedMouse=null;
         }
         public bool Ready { get { for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && !IsConnected(i)) return false; return true; } }
-        public bool IsConnected(int slot) => slot >= 0 && slot < ActiveSeatCount && devices[slot] != null && devices[slot].added &&
-            (!(devices[slot] is Keyboard) || (pairedMouse != null && pairedMouse.added));
+        public bool IsConnected(int slot) => slot >= 0 && slot < ActiveSeatCount && devices[slot] != null && devices[slot].added && devices[slot].enabled &&
+            (!(devices[slot] is Keyboard) || (pairedMouse != null && pairedMouse.added && pairedMouse.enabled));
         public string Label(int slot) => devices[slot] == null ? "Ожидает устройство" :
             devices[slot] is Keyboard ? "Клавиатура + мышь" : devices[slot].displayName + " #" + devices[slot].deviceId;
         public InputDevice DeviceAt(int slot) => slot>=0 && slot<ActiveSeatCount ? devices[slot] : null;
+        public bool Replace(int slot, InputDevice device)
+        {
+            if(slot<0 || slot>=ActiveSeatCount || !humanSeats[slot] || device==null || !device.added || !device.enabled ||
+                !(device is Keyboard || device is Gamepad) || (device is Keyboard && Mouse.current==null))return false;
+            for(int i=0;i<ActiveSeatCount;i++)if(i!=slot && devices[i]==device)return false;
+            ReleaseSeat(slot);
+            if(!HasKeyboard)pairedMouse=null;
+            return Assign(slot,device);
+        }
+        // Setup compaction moves ownership (including disconnected handles), never rejoins devices.
+        public void RemoveSeat(int slot)
+        {
+            if(ActiveSeatCount<=1 || slot<0 || slot>=ActiveSeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
+            for(int i=slot;i<ActiveSeatCount-1;i++)
+            { devices[i]=devices[i+1];humanSeats[i]=humanSeats[i+1]; }
+            ActiveSeatCount--;ReleaseSeat(ActiveSeatCount);humanSeats[ActiveSeatCount]=true;
+            if(!HasKeyboard)pairedMouse=null;
+            Clear();
+        }
         public bool Assign(int slot, InputDevice device)
         {
-            if (slot < 0 || slot >= ActiveSeatCount || !humanSeats[slot] || device == null || !device.added || !(device is Keyboard || device is Gamepad)) return false;
+            if (slot < 0 || slot >= ActiveSeatCount || !humanSeats[slot] || device == null || !device.added || !device.enabled || !(device is Keyboard || device is Gamepad)) return false;
             for (int i = 0; i < SeatCount; i++) if (devices[i] == device) return false;
             if (device is Keyboard)
             {

@@ -151,22 +151,14 @@ namespace StarTournament.ProvingGround
             MoveSetupControl(colorButton,setupRulesPage,new Vector2(.05f,.01f),new Vector2(.95f,.08f));
 
             setupPlayersPage=Panel(content.transform,"setup-players",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
-            Label(setupPlayersPage.transform,"players-title","ИГРОКИ И БОТЫ",30,new Vector2(.05f,.87f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
-            seatPanel.transform.SetParent(setupPlayersPage.transform,false);
-            Layout((RectTransform)seatPanel.transform,new Vector2(.05f,.45f),new Vector2(.49f,.85f));
-            botPanel.transform.SetParent(setupPlayersPage.transform,false);
-            Layout((RectTransform)botPanel.transform,new Vector2(.51f,.19f),new Vector2(.95f,.85f));
-            MoveSetupControl(seatsMinus,setupPlayersPage,new Vector2(.05f,.08f),new Vector2(.25f,.16f));
-            MoveSetupControl(seatsPlus,setupPlayersPage,new Vector2(.27f,.08f),new Vector2(.47f,.16f));
-            MoveSetupControl(rebind,setupPlayersPage,new Vector2(.51f,.08f),new Vector2(.95f,.16f));
             MoveSetupControl(start,summary,new Vector2(.07f,.02f),new Vector2(.93f,.10f));
-            MoveSetupControl(setupBack,setupPlayersPage,new Vector2(.05f,.01f),new Vector2(.47f,.07f));
-            MoveSetupControl(diagnosticButton,setupPlayersPage,new Vector2(.51f,.01f),new Vector2(.95f,.07f));
+            CreateRosterUi(parent);
+
         }
         void ShowSetupStep(int step)
         {
             if(phase!=Phase.Setup || step<0 || step>setupMaxStep || step>2)return;
-            setupStep=step;RefreshInterface();Select(step==2?start:setupNext);
+            rosterEditing=-1;setupStep=step;RefreshInterface();if(step==2)FocusRosterCard(0);else Select(setupNext);
         }
         void NextSetupStep() { setupMaxStep=Mathf.Max(setupMaxStep,Mathf.Min(2,setupStep+1));ShowSetupStep(Mathf.Min(2,setupStep+1)); }
         void PreviousSetupStep() { if(setupStep==0)ToMainMenu();else ShowSetupStep(setupStep-1); }
@@ -175,7 +167,7 @@ namespace StarTournament.ProvingGround
             if(!ValidSetup())return LocalSeatCount+botSetup.Count<2?"Добавьте игрока или бота":"Для команд нужны обе команды";
             if(!input.Ready)return "Подключите устройства людей";
             if(!IdentitiesReady())return "Выберите профиль или гостя каждому человеку";
-            return "Все участники готовы";
+            return "";
         }
         void RefreshSetupUi()
         {
@@ -185,6 +177,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<setupSteps.Length;i++)
             {
                 setupSteps[i].interactable=i<=setupMaxStep;
+                float left=.05f+i*.305f;Layout((RectTransform)setupSteps[i].transform,new Vector2(left,setupStep==2?.745f:.78f),new Vector2(left+.29f,setupStep==2?.815f:.85f));
                 setupSteps[i].GetComponent<Image>().color=i==setupStep?MenuGold:MenuCard;
                 setupSteps[i].GetComponentInChildren<Text>().color=i==setupStep?MenuInk:Color.white;
             }
@@ -192,14 +185,42 @@ namespace StarTournament.ProvingGround
             setupNext.gameObject.SetActive(setupStep<2);
             start.gameObject.SetActive(phase==Phase.Setup && setupStep==2);
             start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
-            seatPanel.SetActive(phase==Phase.Setup && setupStep==2);botPanel.SetActive(phase==Phase.Setup && setupStep==2);
+            start.GetComponentInChildren<Text>().text="НАЧАТЬ МАТЧ";
+            start.GetComponentInChildren<Text>().fontSize=26;
+            start.GetComponentInChildren<Text>().color=MenuInk;
+            start.GetComponent<Image>().color=MenuGold;
+            seatPanel.SetActive(false);botPanel.SetActive(false);
+            seatsMinus.gameObject.SetActive(false);seatsPlus.gameObject.SetActive(false);rebind.gameObject.SetActive(false);setupBack.gameObject.SetActive(false);diagnosticButton.gameObject.SetActive(false);teamRow.SetActive(false);
             for(int i=0;i<seatIdentityButtons.Length;i++)seatIdentityButtons[i].gameObject.SetActive(
-                phase==Phase.Setup && setupStep==2 && pendingSeat<0 && i<LocalSeatCount && input.IsHumanSeat(i));
-            setupSummary.text="КАРТА\nCombat Bowl · @14\n\nПРАВИЛА\n"+
+                false);
+            setupSummary.text="КАРТА\nCombat Bowl · @"+CombatBowlCatalog.Revision+"\n\nПРАВИЛА\n"+
                 (SetupMode==NativeMatchMode.Teams?"Команды":"Каждый сам за себя")+" · "+Configuration.DurationMinutes+" мин"+
                 (Configuration.TargetEnabled?"\nЦель: "+Configuration.TargetPoints:"\nБез цели по очкам")+"\n\nСОСТАВ\n"+
                 botSetup.HumanCount(LocalSeatCount)+" человек · "+(LocalSeatCount-botSetup.HumanCount(LocalSeatCount)+botSetup.Count)+" AI";
+            bool roster=setupStep==2;
+            var content=(RectTransform)setupPlayersPage.transform.parent;
+            Layout(content,new Vector2(.05f,roster?.185f:.12f),new Vector2(roster?.95f:.69f,roster?.73f:.76f));
+            var summary=(RectTransform)setupSummary.transform.parent;
+            Layout(summary,new Vector2(roster?.05f:.71f,roster?.05f:.12f),new Vector2(.95f,roster?.165f:.76f));
+            summary.Find("summary-title").gameObject.SetActive(!roster);
+            setupLabIdentity.gameObject.SetActive(!roster);
+            Layout(setupSummary.rectTransform,roster?new Vector2(.02f,.38f):new Vector2(.07f,.53f),roster?new Vector2(.70f,.94f):new Vector2(.93f,.83f));
+            setupSummary.fontSize=roster?24:20;
+            if(roster)setupSummary.text="COMBAT BOWL · @"+CombatBowlCatalog.Revision+"\n"+(SetupMode==NativeMatchMode.Teams?"Две команды":"Каждый за себя")+" · "+Configuration.DurationMinutes+" мин · "+(Configuration.TargetEnabled?"Цель: "+Configuration.TargetPoints:"Без цели по очкам");
+            Layout(setupMessage.rectTransform,roster?new Vector2(.17f,.015f):new Vector2(.07f,.22f),roster?new Vector2(.70f,.36f):new Vector2(.93f,.34f));
+            Layout((RectTransform)start.transform,roster?new Vector2(.74f,.16f):new Vector2(.07f,.02f),roster?new Vector2(.98f,.84f):new Vector2(.93f,.10f));
+            Layout((RectTransform)setupPrevious.transform,roster?new Vector2(.02f,.015f):new Vector2(.07f,.12f),roster?new Vector2(.15f,.33f):new Vector2(.93f,.20f));
+            var brand=setupScreen.transform.Find("setup-brand").GetComponent<Text>();brand.text=roster?"STAR TOURNAMENT":"STAR TOURNAMENT  /  БИТВА";
+            brand.fontSize=roster?25:35;brand.fontStyle=roster?FontStyle.Bold:FontStyle.Normal;
+            Layout(brand.rectTransform,roster?new Vector2(.05f,.915f):new Vector2(.05f,.91f),roster?new Vector2(.95f,.965f):new Vector2(.95f,.98f));
+            rosterPageTitle.gameObject.SetActive(roster);
+            var description=setupScreen.transform.Find("setup-description").GetComponent<Text>();
+            Layout(description.rectTransform,roster?new Vector2(.05f,.83f):new Vector2(.05f,.86f),roster?new Vector2(.95f,.87f):new Vector2(.95f,.92f));
+            description.color=roster?RosterMuted:Color.white;
+            start.GetComponentInChildren<Text>().fontStyle=FontStyle.Bold;
+            setupScreen.transform.Find("setup-description").GetComponent<Text>().text=roster?"Выберите карточку, чтобы изменить участника. Свободный геймпад: Y — присоединиться.":"Выберите карту, задайте правила, соберите игроков и начните матч.";
             setupLabIdentity.text=LabSavedIdentity;
+            RefreshRosterUi();
             setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"Значения сохраняются при переходе между шагами");
         }
         InputField CreateNameInput(Transform parent)
@@ -213,6 +234,7 @@ namespace StarTournament.ProvingGround
         void OpenSetup() { ApplySavedLabRevision(); Configuration=NativeMatchConfiguration.Default(MatchProfile); fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;RefreshInterface();Select(setupNext); }
         void ToMainMenu()
         {
+            rosterEditing=-1;
             if(phase==Phase.Lab && LabDirty){ConfirmLabDiscard(ToMainMenu);return;}
             ClearSeatPauseMenus();
             if(phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results)Menu();
@@ -230,18 +252,19 @@ namespace StarTournament.ProvingGround
             if(displayConfirmationActive)RollbackDisplay();
             int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;RefreshInterface();
             if(phase==Phase.MainMenu)Select(mainMenuScreen.transform.Find("actions/main-action-4").GetComponent<Button>());
-            else if(phase==Phase.Setup && seat>=0 && seat<seatIdentityButtons.Length)Select(seatIdentityButtons[seat]);
+            else if(phase==Phase.Setup && seat>=0 && seat<seatIdentityButtons.Length)FocusRosterCard(seat);
         }
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;
-            identities.ClearSeat(seat);
+            if(identities.HasIdentity(seat)){identities.RememberBinding(seat,device.deviceId);RefreshInterface();return;}
             if(!identities.TryRestore(seat,device.deviceId,playerProfiles))OpenIdentityPicker(seat);
             else RefreshInterface();
         }
         void OpenIdentityPicker(int seat)
         {
             if(phase!=Phase.Setup || !input.IsHumanSeat(seat))return;
+            if(setupStep==2){OpenRosterEditor(seat);return;}
             pendingSeat=seat;RefreshIdentityOptions();RefreshInterface();
         }
         void RefreshIdentityOptions()
