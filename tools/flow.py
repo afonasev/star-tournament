@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 
 STAGES = {'draft','ready','implementing','verified','merged','deployed','published','finalizing','awaiting-acceptance','rework-required','accepted','archived','cancelled'}
-EDGES = {'draft':{'ready'},'ready':{'implementing'},'implementing':{'verified'},'verified':{'merged','published'},'merged':{'deployed'},'deployed':{'finalizing'},'published':{'finalizing'},'finalizing':{'awaiting-acceptance','rework-required'},'awaiting-acceptance':{'accepted','rework-required'},'rework-required':{'implementing'},'accepted':{'archived'}}
+EDGES = {'draft':{'ready'},'ready':{'implementing'},'implementing':{'verified'},'verified':{'merged','published'},'merged':{'deployed'},'deployed':{'finalizing'},'published':{'finalizing'},'finalizing':{'awaiting-acceptance','accepted','rework-required'},'awaiting-acceptance':{'accepted','rework-required'},'rework-required':{'implementing'},'accepted':{'archived','rework-required'}}
 
 def now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -83,7 +83,8 @@ class Flow:
                 try: _,dep=self.get(edge['id'])
                 except ValueError: errors.append('missing:'+edge['id']); continue
                 threshold=edge['threshold']; stage=dep['stage']
-                ok = stage in {'accepted','archived'} if threshold=='accepted' else stage in ({'deployed','finalizing','awaiting-acceptance','accepted','archived'} if dep['kind']=='software' else {'published','finalizing','awaiting-acceptance','accepted','archived'})
+                delivered=stage in ({'deployed','finalizing','awaiting-acceptance','accepted','archived'} if dep['kind']=='software' else {'published','finalizing','awaiting-acceptance','accepted','archived'})
+                ok=delivered and (threshold!='accepted' or self.acceptance_status(dep)=='accepted')
                 if not ok: errors.append('dependency:'+edge['id'])
         return errors
 
@@ -116,10 +117,98 @@ class Flow:
 
     def evidence(self,cid,key,value):
         p,d=self.get(cid)
-        if key in {'acceptance','cancellation'}: raise ValueError('Use explicit human transition')
+        if key in {'acceptance','acceptance_deferred','cancellation'}: raise ValueError('Use explicit human decision command')
         if not value: raise ValueError('Empty evidence')
         d['evidence'][key]=value
         return self.save(p,d,'evidence',key=key)
+
+    def result_binding(self,d):
+        # Identity fields only: cleanup paths, prose and other metadata do not change a result.
+        e=d['evidence']; binding={}
+        commit=e.get('commit')
+        if commit:
+            revision=(commit.get('revision') or commit.get('commit')) if isinstance(commit,dict) else commit
+            if revision: binding['commit']=revision
+        for key in ['release','publication']:
+            value=e.get(key)
+            if isinstance(value,dict):
+                fields={k:value[k] for k in ['identity','revision','archive_sha256','sha256','path','url'] if value.get(k)}
+                # Locations may move without changing an identified immutable artifact.
+                if fields.get('identity') or fields.get('revision') or fields.get('sha256') or fields.get('archive_sha256'):
+                    fields.pop('path',None); fields.pop('url',None)
+                if fields: binding[key]=fields
+            elif value: binding[key]=value
+        return binding
+
+    def binding_matches(self,recorded,current):
+        if not recorded: return False
+        for key,value in recorded.items():
+            actual=current.get(key)
+            if isinstance(value,dict):
+                if not isinstance(actual,dict) or any(actual.get(k)!=v for k,v in value.items()): return False
+            elif actual!=value: return False
+        return True
+
+    def acceptance_status(self,d):
+        current=self.result_binding(d); a=d['evidence'].get('acceptance')
+        if a and a.get('decision') and a.get('source'):
+            if 'binding' not in a:
+                if d['stage'] in {'accepted','archived'}: return 'accepted'
+            elif self.binding_matches(a['binding'],current): return 'accepted'
+        deferred=d['evidence'].get('acceptance_deferred')
+        if deferred and self.binding_matches(deferred.get('binding'),current): return 'deferred'
+        return 'stale' if a else 'pending'
+
+    def acceptance_record(self,d,decision,source,ref,scope):
+        if not all(isinstance(v,str) and v.strip() for v in [decision,source,ref,scope]):
+            raise ValueError('Explicit human decision, source, exact result ref and scope required')
+        if d['stage'] not in {'verified','merged','deployed','published','finalizing','awaiting-acceptance','accepted'}:
+            raise ValueError('No verified reviewable result at this stage')
+        binding=self.result_binding(d)
+        refs=[]
+        for value in binding.values():
+            refs.extend(value.values() if isinstance(value,dict) else [value])
+        if ref not in refs: raise ValueError('Ref must identify the recorded result')
+        for child in d['children']:
+            if self.acceptance_status(self.get(child)[1])!='accepted': raise ValueError('Child not accepted: '+child)
+        return {'decision':decision,'source':source,'ref':ref,'scope':scope,'binding':binding,'at':now()}
+
+    def accept(self,cid,decision,source,ref,scope):
+        p,d=self.get(cid)
+        record=self.acceptance_record(d,decision,source,ref,scope)
+        if d['evidence'].get('acceptance'):
+            d['history'].append({'at':now(),'event':'previous-acceptance','acceptance':d['evidence']['acceptance']})
+        d['evidence']['acceptance']=record
+        d['evidence'].pop('acceptance_deferred',None)
+        # Human decisions do not steal the worker claim or advance technical delivery.
+        return self.save(p,d,'human-acceptance',source=source,ref=ref,scope=scope)
+
+    def defer_acceptance(self,cid,source,reason):
+        p,d=self.get(cid)
+        if not source.strip() or not reason.strip(): raise ValueError('Human source and reason required')
+        if d['stage'] not in {'verified','merged','deployed','published','finalizing','awaiting-acceptance'} or not self.result_binding(d):
+            raise ValueError('No reviewable result to defer')
+        if self.acceptance_status(d)=='accepted': raise ValueError('Already accepted; use explicit rework for a defect')
+        d['evidence']['acceptance_deferred']={'source':source,'reason':reason,'binding':self.result_binding(d),'at':now()}
+        return self.save(p,d,'acceptance-deferred',source=source)
+
+    def finalization_errors(self,p,d):
+        errors=self.blocks(d,'awaiting-acceptance')
+        for key in ['spec_sync','cleanup','acceptance_guide']:
+            if not d['evidence'].get(key): errors.append('missing:'+key)
+        if d['evidence'].get('cleanup_pending',{}).get('completed') is False:
+            errors.append('cleanup-pending')
+        guide=d['evidence'].get('acceptance_guide')
+        if guide and not (p.parent/guide).is_file(): errors.append('acceptance-guide-missing')
+        for child in d['children']:
+            if self.get(child)[1]['stage'] not in {'awaiting-acceptance','accepted','archived'}:
+                errors.append('child-not-finalized:'+child)
+        return errors
+
+    def finalize(self,cid,owner=None):
+        _,d=self.get(cid)
+        target='accepted' if self.acceptance_status(d)=='accepted' else 'awaiting-acceptance'
+        return self.transition(cid,target,owner)
 
     def dependency(self,cid,dep,threshold):
         p,d=self.get(cid); self.get(dep)
@@ -153,19 +242,23 @@ class Flow:
         if target=='merged':
             e=d['evidence']['merge']
             subprocess.run(['git','-C',e['repo'],'merge-base','--is-ancestor',e['commit'],e['main_ref']],check=True,capture_output=True)
-        if target=='awaiting-acceptance':
-            guide=d['evidence']['acceptance_guide']
-            if not (p.parent/guide).is_file(): raise ValueError('Acceptance guide missing')
-            if d['kind']=='initiative':
-                for child in d['children']:
-                    _,c=self.get(child)
-                    if c['stage'] not in {'awaiting-acceptance','accepted','archived'}: raise ValueError('Child not finalized: '+child)
+        if target in {'awaiting-acceptance','accepted','archived'}:
+            errors=self.finalization_errors(p,d)
+            if errors: raise ValueError('Finalization incomplete: '+str(errors))
         if target=='accepted':
-            if not decision or not source: raise ValueError('Explicit human decision/source required')
-            if any(q['status']!='resolved' for q in d['questions']): raise ValueError('Unresolved human questions')
+            if decision or source:
+                # Compatibility for existing transition callers after technical finalization.
+                binding=self.result_binding(d)
+                first=next(iter(binding.values()),None)
+                ref=next(iter(first.values()),None) if isinstance(first,dict) else first
+                d['evidence']['acceptance']=self.acceptance_record(d,decision,source,ref,'Whole change result')
+                d['evidence'].pop('acceptance_deferred',None)
+            if self.acceptance_status(d)!='accepted': raise ValueError('Explicit human acceptance of current result required')
+        if target in {'accepted','archived'}:
+            if self.acceptance_status(d)!='accepted': raise ValueError('Current result is not accepted')
+            if any(q['status']!='resolved' for q in d['questions']): raise ValueError('Unresolved questions prevent closure')
             for child in d['children']:
-                if self.get(child)[1]['stage'] not in {'accepted','archived'}: raise ValueError('Child not accepted: '+child)
-            d['evidence']['acceptance']={'decision':decision,'source':source,'at':now()}
+                if self.get(child)[1]['stage'] not in {'accepted','archived'}: raise ValueError('Child not finalized and accepted: '+child)
         if target=='rework-required':
             if not decision or not source: raise ValueError('Feedback and source required')
             d['history'].append({'event':'previous-delivery','at':now(),'evidence':d['evidence']})
@@ -180,7 +273,7 @@ class Flow:
         for _,d in self.records().values():
             qs=[q for q in d['questions'] if q['status']!='resolved']
             stage=d['stage']
-            result.append({'id':d['id'],'stage':stage,'owner':d['owner'],'parent':d['parent'],'paused':d['paused'],'questions':qs,'ready':stage in {'ready','rework-required'} and not d['owner'] and not self.blocks(d,'implementing'),'acceptance':stage=='awaiting-acceptance','finalization_debt':stage in {'verified','merged','deployed','published','finalizing','accepted'},'blocks':self.blocks(d,'implementing')})
+            result.append({'id':d['id'],'stage':stage,'owner':d['owner'],'parent':d['parent'],'paused':d['paused'],'questions':qs,'ready':stage in {'ready','rework-required'} and not d['owner'] and not self.blocks(d,'implementing'),'acceptance':stage in {'verified','merged','deployed','published','finalizing','awaiting-acceptance','accepted'} and bool(self.result_binding(d)) and self.acceptance_status(d) in {'pending','stale'},'acceptance_status':self.acceptance_status(d),'finalization_debt':stage in {'verified','merged','deployed','published','finalizing','accepted'},'blocks':self.blocks(d,'implementing')})
         return result
 
     def lease(self,action,name,owner,reason=None):
@@ -212,6 +305,9 @@ def main():
     a=sub.add_parser('answer'); a.add_argument('id'); a.add_argument('question'); a.add_argument('--answer',required=True); a.add_argument('--source',required=True); a.add_argument('--resolution')
     a=sub.add_parser('evidence'); a.add_argument('id'); a.add_argument('key'); a.add_argument('--json-file',required=True)
     a=sub.add_parser('transition'); a.add_argument('id'); a.add_argument('stage'); a.add_argument('--owner'); a.add_argument('--decision'); a.add_argument('--source')
+    a=sub.add_parser('accept'); a.add_argument('id'); a.add_argument('--decision',required=True); a.add_argument('--source',required=True); a.add_argument('--ref',required=True); a.add_argument('--scope',required=True)
+    a=sub.add_parser('defer-acceptance'); a.add_argument('id'); a.add_argument('--source',required=True); a.add_argument('--reason',required=True)
+    a=sub.add_parser('finalize'); a.add_argument('id'); a.add_argument('--owner')
     a=sub.add_parser('dependency'); a.add_argument('id'); a.add_argument('dependency'); a.add_argument('--threshold',choices=['delivered','accepted'],required=True)
     a=sub.add_parser('pause'); a.add_argument('id'); a.add_argument('--reason',required=True)
     a=sub.add_parser('resume'); a.add_argument('id'); a.add_argument('--reason',required=True)
@@ -229,6 +325,9 @@ def main():
             elif c=='answer':out=f.answer(args.id,args.question,args.answer,args.source,args.resolution)
             elif c=='evidence':out=f.evidence(args.id,args.key,json.loads(Path(args.json_file).read_text()))
             elif c=='transition':out=f.transition(args.id,args.stage,args.owner,args.decision,args.source)
+            elif c=='accept':out=f.accept(args.id,args.decision,args.source,args.ref,args.scope)
+            elif c=='defer-acceptance':out=f.defer_acceptance(args.id,args.source,args.reason)
+            elif c=='finalize':out=f.finalize(args.id,args.owner)
             elif c=='dependency':out=f.dependency(args.id,args.dependency,args.threshold)
             elif c=='lease':out=f.lease(args.action,args.name,args.owner,args.reason)
             elif c=='usage':
