@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround
         ProvingGround ground;string directory;Gamepad pad;
         [Serializable] sealed class Evidence
         {
-            public string state,status="NATIVE_PLAYER_COLOR_QA_SYNTHETIC_DEVICE_PLACEMENT_AND_BOOST_FIXTURES_NOT_HUMAN_ACCEPTANCE";
+            public string state,status="NATIVE_PLAYER_COLOR_QA_SYNTHETIC_DEVICE_PLACEMENT_BOOST_AND_ROSTER_ACTION_FIXTURES_NOT_HUMAN_ACCEPTANCE";
             public bool focused,muted,running;public int width,height;public uint botSeed;
             public NativeCompositionSnapshot composition;public NativeCombatSessionSnapshot session;public NativeMatchSnapshot match;
         }
@@ -99,11 +99,12 @@ namespace StarTournament.ProvingGround
             yield return Configure(1,8,true);Lineup(180);yield return Capture("10-ffa-eight-one-view-front");Lineup(90);yield return Capture("11-ffa-eight-side");Lineup(0);yield return Capture("12-ffa-eight-rear");
             yield return Configure(4,8,true);Lineup(180);yield return Capture("13-ffa-eight-four-views-ai-only");
             yield return Configure(4,8,false);Lineup(180);yield return Capture("14-ffa-eight-four-views-mixed");
-            var liveTable=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="standings-0").gameObject;
-            Time.timeScale=1;InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Select));
-            float deadline=Time.realtimeSinceStartup+2;while(!liveTable.activeInHierarchy&&Time.realtimeSinceStartup<deadline)yield return null;
-            Check(liveTable.activeInHierarchy,"live standings unavailable");Time.timeScale=0;Lineup(180);yield return Capture("15-ffa-live-standings");
-            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            // Labelled action fixture: exercise the actual live table while placement remains frozen.
+            // Device/control acceptance is a separate gate from this color presentation review.
+            var frameActions=(LocalAction[])typeof(ProvingGround).GetField("actions",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
+            frameActions[0].ShowRoster=true;yield return null;yield return null;
+            Check(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="standings-0").gameObject.activeInHierarchy,"live standings unavailable");
+            yield return Capture("15-ffa-live-standings-action-fixture");frameActions[0].ShowRoster=false;yield return null;
             yield return Results("15b-ffa-results");B("Повторить матч").onClick.Invoke();yield return null;
             yield return Configure(4,8,true,NativeMatchMode.Teams);Lineup(180);yield return Capture("16-teams-four-views");
             yield return Configure(4,8,true,NativeMatchMode.Teams,true);Lineup(180);yield return Capture("17-teams-swapped-four-views");
