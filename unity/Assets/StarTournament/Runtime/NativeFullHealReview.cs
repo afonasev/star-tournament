@@ -48,11 +48,16 @@ namespace StarTournament.ProvingGround
             var pickups=CombatBowlCatalog.Build().Pickups;
             foreach(var kind in new[]{ArenaPickupKind.Armor,ArenaPickupKind.Speed})
             {
+                if(kind==ArenaPickupKind.Speed)Advance((int)Math.Ceiling(ground.LifeProfile.Get("speed.initialDelaySeconds")/.02f));
                 var pair=pickups.Where(x=>x.Kind==kind).ToArray();
                 for(int i=0;i<2;i++)ViewMarker(i,pair[i].Anchor);
+                bool ready=kind==ArenaPickupKind.Armor?ground.Session.ArmorPickups.All(x=>x.Available):ground.Session.SpeedPickups.All(x=>x.Available);
+                if(!ready)throw new InvalidOperationException("Marker available capture preceded "+kind+" spawn");
                 yield return Capture("00-marker-"+kind+"-available");
                 for(int i=0;i<2;i++)ground.PlaceCombatReviewSeat(i,pair[i].Anchor,18,0);
                 Advance(1);
+                bool collected=kind==ArenaPickupKind.Armor?ground.Session.ArmorPickups.All(x=>!x.Available):ground.Session.SpeedPickups.All(x=>!x.Available);
+                if(!collected)throw new InvalidOperationException("Marker cooldown capture preceded "+kind+" collection");
                 for(int i=0;i<2;i++)ViewMarker(i,pair[i].Anchor);
                 yield return Capture("00-marker-"+kind+"-cooldown");
             }
