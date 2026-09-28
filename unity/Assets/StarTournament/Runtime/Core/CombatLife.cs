@@ -16,6 +16,7 @@ namespace StarTournament.ProvingGround
         public int RifleAmmo;
         public int ShotgunAmmo;
         public int RocketAmmo;
+        public double CutterEnergy;
         public double RifleCooldownRemaining;
         public double ShotgunCooldownRemaining;
         public double RocketCooldownRemaining;
@@ -42,13 +43,14 @@ namespace StarTournament.ProvingGround
     public sealed class CombatLife
     {
         readonly float maximumHealth, maximumArmor;
+        readonly double cutterCapacity;
         readonly int startingAmmo, rifleStartingAmmo, rocketStartingAmmo;
         readonly double cooldown, rifleCooldown, rocketCooldown, respawnDelay, switchSeconds;
         CombatLifeState state;
         public CombatLifeState Read() => state; // Value DTO: readers cannot mutate owned state.
         public bool ReadyToRespawn => state.Dead && state.RespawnRemaining <= 0;
 
-        public CombatLife(string participantId, ProvingProfile profile)
+        public CombatLife(string participantId, ProvingProfile profile, ProvingProfile cutter=null)
         {
             if (string.IsNullOrWhiteSpace(participantId)) throw new ArgumentException("Participant identity required", nameof(participantId));
             if(profile==null) throw new ArgumentException("Valid unity-combat-state-v1 profile required",nameof(profile));
@@ -56,6 +58,7 @@ namespace StarTournament.ProvingGround
             profile.EnsureCombatDescriptors();
             if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 5 || profile.Validate().Count != 0)
                 throw new ArgumentException("Valid unity-combat-state-v1 profile required", nameof(profile));
+            cutterCapacity=(cutter??ProvingProfile.CreateCutterDefault()).Get("cutter.energyCapacity");
             maximumHealth = profile.Get("combat.maximumHealth");
             maximumArmor = profile.Get("armor.maximum");
             startingAmmo = IntegerAmmo(profile.Get("combat.startingAmmo"));
@@ -74,7 +77,7 @@ namespace StarTournament.ProvingGround
         {
             ParticipantId=participantId, Life=life, Health=maximumHealth,
             SelectedWeapon=WeaponId.Rifle, RifleAmmo=rifleStartingAmmo,
-            ShotgunAmmo=startingAmmo, RocketAmmo=rocketStartingAmmo, Ammo=rifleStartingAmmo
+            CutterEnergy=cutterCapacity, ShotgunAmmo=startingAmmo, RocketAmmo=rocketStartingAmmo, Ammo=rifleStartingAmmo
         };
 
         static int IntegerAmmo(float value)
@@ -114,8 +117,9 @@ namespace StarTournament.ProvingGround
                 case WeaponSelection.Rifle: target=WeaponId.Rifle; break;
                 case WeaponSelection.Shotgun: target=WeaponId.Shotgun; break;
                 case WeaponSelection.RocketLauncher: target=WeaponId.RocketLauncher; break;
-                case WeaponSelection.Previous: target=(WeaponId)(((int)state.SelectedWeapon+1)%3+1); break;
-                case WeaponSelection.Next: target=(WeaponId)((int)state.SelectedWeapon%3+1); break;
+                case WeaponSelection.Cutter: target=WeaponId.Cutter; break;
+                case WeaponSelection.Previous: target=(WeaponId)(((int)state.SelectedWeapon+2)%4+1); break;
+                case WeaponSelection.Next: target=(WeaponId)((int)state.SelectedWeapon%4+1); break;
                 default: throw new ArgumentOutOfRangeException(nameof(selection));
             }
             if (target == state.SelectedWeapon) return;
@@ -132,23 +136,26 @@ namespace StarTournament.ProvingGround
             if(float.IsNaN(amount)||float.IsInfinity(amount)||amount<0) throw new ArgumentOutOfRangeException(nameof(amount));
             state.Armor=Math.Min(maximumArmor,state.Armor+amount);
         }
-        public static int AmmoFor(CombatLifeState s, WeaponId id) => id==WeaponId.Rifle?s.RifleAmmo:id==WeaponId.Shotgun?s.ShotgunAmmo:s.RocketAmmo;
-        public static double CooldownFor(CombatLifeState s, WeaponId id) => id==WeaponId.Rifle?s.RifleCooldownRemaining:id==WeaponId.Shotgun?s.ShotgunCooldownRemaining:s.RocketCooldownRemaining;
-        static bool WeaponValid(WeaponId id) => id>=WeaponId.Rifle && id<=WeaponId.RocketLauncher;
+        public static int AmmoFor(CombatLifeState s, WeaponId id) => id==WeaponId.Cutter?(int)Math.Ceiling(s.CutterEnergy):id==WeaponId.Rifle?s.RifleAmmo:id==WeaponId.Shotgun?s.ShotgunAmmo:s.RocketAmmo;
+        public static double CooldownFor(CombatLifeState s, WeaponId id) => id==WeaponId.Cutter?0:id==WeaponId.Rifle?s.RifleCooldownRemaining:id==WeaponId.Shotgun?s.ShotgunCooldownRemaining:s.RocketCooldownRemaining;
+        static bool WeaponValid(WeaponId id) => id>=WeaponId.Rifle && id<=WeaponId.Cutter;
         static bool ValidTimer(double v) => !double.IsNaN(v) && !double.IsInfinity(v) && v>=0;
         public void ValidateSnapshot(CombatLifeState snapshot)
         {
-            if(snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
+            if(!ValidTimer(snapshot.CutterEnergy)||snapshot.CutterEnergy>cutterCapacity||snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
                 throw new ArgumentException("Invalid combat life snapshot",nameof(snapshot));
             if(snapshot.Ammo!=AmmoFor(snapshot,snapshot.SelectedWeapon))throw new ArgumentException("Selected ammo mismatch",nameof(snapshot));
         }
         public void Restore(CombatLifeState snapshot) { ValidateSnapshot(snapshot); state=snapshot; }
 
+        public void ConsumeCutter(double amount)
+        { state.CutterEnergy=Math.Max(0,state.CutterEnergy-amount); if(state.SelectedWeapon==WeaponId.Cutter)state.Ammo=AmmoFor(state,WeaponId.Cutter); }
+
         public bool Fire(bool held)
         {
             bool edge = held && !state.FireHeld;
             state.FireHeld = held;
-            if (state.Dead || state.SwitchRemaining > 0 || !held || state.CooldownRemaining > 0 || state.Ammo == 0 ||
+            if (state.SelectedWeapon==WeaponId.Cutter || state.Dead || state.SwitchRemaining > 0 || !held || state.CooldownRemaining > 0 || state.Ammo == 0 ||
                 (state.SelectedWeapon!=WeaponId.Rifle && !edge)) return false;
             if(state.SelectedWeapon==WeaponId.Rifle)
             {

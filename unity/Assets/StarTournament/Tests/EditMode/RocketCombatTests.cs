@@ -12,12 +12,14 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ThirdSlotCyclesIndependentlyNeedsReleaseAndRestoresExactly()
         {
             var p=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p",p);
-            life.Select(WeaponSelection.Previous);life.Advance(1);
+            life.Select(WeaponSelection.RocketLauncher);life.Advance(1);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.RocketLauncher));
             Assert.That(life.Read().Ammo,Is.EqualTo(20));Assert.That(life.Fire(true),Is.True);
             life.Advance(p.Get("rocket.cooldownSeconds"));Assert.That(life.Fire(true),Is.False,"Holding does not auto-fire Pulse");
             life.Fire(false);Assert.That(life.Fire(true),Is.True);
             var snapshot=life.Read();life.Select(WeaponSelection.Next);life.Advance(1);
+            Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter));
+            life.Select(WeaponSelection.Next);life.Advance(1);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(life.Read().RifleAmmo,Is.EqualTo(100));Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(20));
             life.Restore(snapshot);Assert.That(life.Read().RocketAmmo,Is.EqualTo(18));

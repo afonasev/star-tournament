@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
                 tactics[p]=new NativeBotTactics(arena,physics,routes,movement,combat,behavior);
                 // Stable integer seed mixing is an identity protocol, never a balance multiplier.
                 uint participantSeed=seed^((uint)(p+1)*0x9e3779b9u);if(participantSeed==0)participantSeed=1;
-                planners[p]=new NativeBotPlanner(difficulties[p],participantSeed,behavior,navigation,routes,tactics[p],new NativeShotgunPolicy(movement,combat),life.Get("combat.maximumHealth"));
+                planners[p]=new NativeBotPlanner(difficulties[p],participantSeed,behavior,navigation,routes,tactics[p],new NativeShotgunPolicy(movement,combat,session.CutterProfile),life.Get("combat.maximumHealth"));
             }
         }
         public void Release(){foreach(var p in planners)p?.Release();}

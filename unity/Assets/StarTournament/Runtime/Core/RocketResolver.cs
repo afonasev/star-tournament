@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
             float d=b*b-c;if(d<0)return -1;
             float t=-b-Mathf.Sqrt(d);return t>=0?t:-1;
         }
-        static float Capsule(Vector3 o,Vector3 d,float bottom,float top,float radius)
+        internal static float Capsule(Vector3 o,Vector3 d,float bottom,float top,float radius)
         {
             float best=float.PositiveInfinity;
             void Add(float t){if(t>=0)best=Mathf.Min(best,t);}

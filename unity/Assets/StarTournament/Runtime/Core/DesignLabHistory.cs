@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
         public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1";
         public bool IsVisible(string path)=>path!="weapon.probeRange"&&path!="weapon.probeCooldown";
         public bool IsEditable(string path)=>IsVisible(path)&&!IsAuthoring(path);
-        public string Domain(string path)=>IsAuthoring(path)?"Authored map":Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
+        public string Domain(string path)=>IsAuthoring(path)?"Authored map":Profile(path).Descriptor(path).Group=="cutter-effects"||Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
         public List<ProfileValidationIssue> Validate()
         {
             var issues=Profiles.SelectMany(p=>p.Validate()).ToList();
@@ -81,7 +81,7 @@ namespace StarTournament.ProvingGround
     public sealed class DesignLabHistory
     {
         public const string ReleaseId="unity-shipped-release";
-        readonly string path; readonly LabBundle shipped,prePulse,preHeal; readonly Action<string,string> atomicPublish; LabHistoryFile data;
+        readonly string path; readonly LabBundle shipped,preCutter,prePulse,preHeal; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
         public IReadOnlyList<LabHistoryProfile> Profiles=>JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data)).Profiles;
@@ -92,7 +92,7 @@ namespace StarTournament.ProvingGround
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
         {
-            this.path=path;this.shipped=shipped.Clone();prePulse=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforePulse()).ToList()};preHeal=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};this.atomicPublish=atomicPublish??Publish;
+            this.path=path;this.shipped=shipped.Clone();preCutter=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};prePulse=new LabBundle{Profiles=preCutter.Profiles.Select(p=>p.BeforePulse()).ToList()};preHeal=new LabBundle{Profiles=preCutter.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};this.atomicPublish=atomicPublish??Publish;
             data=NewFile();
             if(!File.Exists(path))return;
             try
@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround
                 if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
                 foreach(var r in p.Revisions)
                 {
-                    var registry=r.Snapshot!=null&&Current(r.Snapshot)?shipped:r.Snapshot!=null&&RegistryMatches(prePulse,r.Snapshot)?prePulse:preHeal;
+                    var registry=r.Snapshot!=null&&Current(r.Snapshot)?shipped:r.Snapshot!=null&&RegistryMatches(preCutter,r.Snapshot)?preCutter:r.Snapshot!=null&&RegistryMatches(prePulse,r.Snapshot)?prePulse:preHeal;
                     var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
                     if(r.Number<1||r.Snapshot==null||!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
                     // Metadata is trusted only from the shipped registry, never from the file.
@@ -126,7 +126,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
-            if(release.Hash!=shipped.Hash()&&release.Hash!=prePulse.Hash()&&release.Hash!=preHeal.Hash())throw new InvalidDataException("Shipped release несовместим");
+            if(release.Hash!=shipped.Hash()&&release.Hash!=preCutter.Hash()&&release.Hash!=prePulse.Hash()&&release.Hash!=preHeal.Hash())throw new InvalidDataException("Shipped release несовместим");
             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
         }
         static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version));

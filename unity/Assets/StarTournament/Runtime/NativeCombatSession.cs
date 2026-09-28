@@ -29,11 +29,15 @@ namespace StarTournament.ProvingGround
         public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets,WeaponId weapon=WeaponId.Shotgun)
         { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets;Weapon=weapon; }
     }
-    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=5; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=5; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
         readonly CharacterMotor[] motors;
+        readonly CutterBeam[] beams;
+        readonly ProvingProfile cutter;
+        public ProvingProfile CutterProfile=>JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutter));
+        public CutterBeamState Beam(int seat)=>beams[seat].Read();
         readonly CombatLife[] lives;
         readonly PhysicsScene physics;
         readonly ShotgunResolver resolver;
@@ -72,7 +76,7 @@ namespace StarTournament.ProvingGround
         public int ShotCount { get; private set; }
         public ArmorPickupState ArmorPickup => armorPickup.Read();
         public SpeedPickupState SpeedPickup => speedPickup.Read();
-        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
+        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
             if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=5||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
@@ -80,6 +84,8 @@ namespace StarTournament.ProvingGround
             foreach(var item in armorPickups){var state=item.Read();var next=snapshot.ArmorPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.RespawnRemaining)||double.IsInfinity(next.RespawnRemaining)||next.RespawnRemaining<0)throw new ArgumentException("Invalid armor instance");}
             foreach(var item in speedPickups){var state=item.Read();var next=snapshot.SpeedPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.Remaining)||double.IsInfinity(next.Remaining)||next.Remaining<0||(!next.Available&&next.Remaining==0))throw new ArgumentException("Invalid speed instance");}
             if(snapshot.Rockets==null||snapshot.Rockets.Select(x=>x.Id).Distinct().Count()!=snapshot.Rockets.Length)throw new ArgumentException("Invalid rocket set");
+            if(snapshot.Beams!=null){if(snapshot.Beams.Length!=beams.Length)throw new ArgumentException("Invalid beams");for(int i=0;i<beams.Length;i++)beams[i].ValidateSnapshot(snapshot.Beams[i]);}
+            if(snapshot.BeamReleaseRequired!=null&&snapshot.BeamReleaseRequired.Length!=beams.Length)throw new ArgumentException("Invalid beam release state");
             foreach(var r in snapshot.Rockets)rocketResolver.Validate(r,lives.Length,snapshot.ShotSequence);
             foreach(var r in snapshot.Rockets)if(r.OwnerLife>snapshot.Lives[r.Owner].Life)throw new ArgumentException("Rocket owner life is in the future");
             for(int i=0;i<lives.Length;i++)lives[i].ValidateSnapshot(snapshot.Lives[i]);
@@ -98,6 +104,9 @@ namespace StarTournament.ProvingGround
             foreach(var item in healPickups)item.Restore(snapshot.HealPickups.Single(x=>x.InstanceId==item.Read().InstanceId));
             foreach(var item in armorPickups)item.Restore(snapshot.ArmorPickups.Single(x=>x.InstanceId==item.Read().InstanceId));
             foreach(var item in speedPickups)item.Restore(snapshot.SpeedPickups.Single(x=>x.InstanceId==item.Read().InstanceId));Time=snapshot.Time;shotSequence=snapshot.ShotSequence;ShotCount=snapshot.ShotCount;
+            if(snapshot.Beams!=null){if(snapshot.Beams.Length!=beams.Length)throw new ArgumentException("Invalid beams");for(int i=0;i<beams.Length;i++)beams[i].Restore(snapshot.Beams[i]);}
+            else foreach(var beam in beams)beam.Reset();
+            if(snapshot.BeamReleaseRequired!=null)Array.Copy(snapshot.BeamReleaseRequired,releaseRequired,beams.Length);
             rockets.Clear();rockets.AddRange(snapshot.Rockets);StateRestored?.Invoke();
             ResetPickupContacts();
             for(int i=0;i<lives.Length;i++){motors[i].SetAlive(!Life(i).Dead);motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);}
@@ -108,10 +117,12 @@ namespace StarTournament.ProvingGround
         public event Action<int, float> Fired;
         public event Action<ShotNotice> ShotResolved;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
-            ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null)
+            ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null)
         {
             if(match != null && match.Roster.Count != motors.Length) throw new ArgumentException("Roster/motor count mismatch");
             this.designProfile=designProfile?.Clone();
+            cutter=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutterProfile??ProvingProfile.CreateCutterDefault()));
+            beams=new CutterBeam[motors.Length];for(int i=0;i<beams.Length;i++)beams[i]=new CutterBeam(cutter,motors.Length);
             ArenaIdentity=arena.Definition.Identity;
             this.motors = motors; this.physics = physics; Match=match;
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
@@ -121,7 +132,7 @@ namespace StarTournament.ProvingGround
             rocketResolver = new RocketResolver(tuning,this.movement);
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
             lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];speedRemaining=new double[motors.Length];
-            for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle);
+            for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle,cutter);
             damagePickup=new DamageBoostPickup(arena.Definition.DamagePickupAnchor,lifecycle,arena.Definition.Pickups.FirstOrDefault(x=>x.Kind==ArenaPickupKind.Damage)?.Id??"damage-disabled");damageRemaining=new double[motors.Length];damageWasOutside=new bool[motors.Length];HasDamagePickup=arena.Definition.HasDamagePickup;HasSpeedPickup=!arena.Definition.DisableSpeedPickup;
             healPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.FullHeal).Select(x=>new FullHealPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             armorPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Armor).Select(x=>new ArmorPickup(x.Anchor,lifecycle,x.Id)).ToArray();
@@ -155,7 +166,7 @@ namespace StarTournament.ProvingGround
         }
         public void ClearInput()
         {
-            for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); releaseRequired[i] = true; }
+            for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); beams[i].Stop(); releaseRequired[i] = true; }
         }
         public void Tick(LocalAction[] actions, float seconds)
         {
@@ -200,10 +211,18 @@ namespace StarTournament.ProvingGround
             {
                 lives[i].Select(actions[i].SelectWeapon); // Selection is authoritative before fire on this tick.
                 bool held = actions[i].FireHeld || actions[i].Fire;
+                if(Life(i).SelectedWeapon!=WeaponId.Cutter||Life(i).SwitchRemaining>0||Life(i).Dead||!held)beams[i].Stop();
                 if (releaseRequired[i])
                 {
                     if (!held) releaseRequired[i] = false;
                     lives[i].Fire(false); continue;
+                }
+                if(Life(i).SelectedWeapon==WeaponId.Cutter)
+                {
+                    if(actions[i].Fire)beams[i].Stop();
+                    lives[i].Fire(held);
+                    if(held&&!Life(i).Dead&&Life(i).SwitchRemaining==0)AdvanceBeam(i,seconds);
+                    continue;
                 }
                 // A newly captured physical edge also records an intervening release between ticks.
                 if (actions[i].Fire) lives[i].ClearHeldInput();
@@ -232,12 +251,34 @@ namespace StarTournament.ProvingGround
                     throw new InvalidOperationException("Fixed arena has no physically safe respawn slot");
                 if (lives[i].Respawn(Life(i).Life))
                 {
+                    beams[i].Reset();
                     motors[i].Initialize(movement, spawn);
                     releaseRequired[i] = actions[i].FireHeld || actions[i].Fire;
                     Physics.SyncTransforms(); // Reserve this live capsule before the next participant chooses.
                     Respawned?.Invoke(i);
                 }
             }
+        }
+        void AdvanceBeam(int shooter,float seconds)
+        {
+            var pose=Pose(shooter);var direction=Quaternion.Euler(pose.Pitch,pose.Yaw,0)*Vector3.forward;
+            var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
+            float limit=float.PositiveInfinity;
+            if(physics.Raycast(origin,direction,out var wall,beams[shooter].Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))limit=wall.distance;
+            var distances=new float[lives.Length];var identities=new int[lives.Length];
+            float radius=movement.Get("player.capsule.radius"),height=movement.Get("player.capsule.height");
+            for(int i=0;i<lives.Length;i++)
+            {
+                identities[i]=Life(i).Life;
+                distances[i]=i==shooter||Life(i).Dead||Allied(shooter,i)?-1:RocketResolver.Capsule(origin-Pose(i).Position,direction,radius,height-radius,radius+cutter.Get("cutter.hitRadius"));
+            }
+            bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;
+            if(began){ShotCount++;shotSequence++;ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Cutter));}
+            double spent=beams[shooter].Advance(seconds,Life(shooter).CutterEnergy,origin,direction,limit,distances,identities,
+                damageRemaining[shooter]>0?damagePickup.Multiplier:1,(target,amount)=>applied+=ApplyDamage(target,identities[target],amount,shooter,Life(shooter).Life).Applied);
+            lives[shooter].ConsumeCutter(spent);
+            if(began||applied>0)Fired?.Invoke(shooter,applied);
+            if(Life(shooter).CutterEnergy<=0)beams[shooter].Stop();
         }
         void LaunchRocket(int shooter)
         {
@@ -329,6 +370,7 @@ namespace StarTournament.ProvingGround
             Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife));
             if (result.Killed)
             {
+                beams[seat].Stop();
                 damageRemaining[seat]=0;speedRemaining[seat]=0;motors[seat].SetHorizontalSpeedMultiplier(1);
                 motors[seat].SetAlive(false);
                 releaseRequired[seat] = true;

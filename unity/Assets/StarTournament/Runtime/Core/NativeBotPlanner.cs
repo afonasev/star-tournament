@@ -33,17 +33,20 @@ namespace StarTournament.ProvingGround
     public sealed class NativeShotgunPolicy : INativeBotWeaponPolicy
     {
         readonly float eye, target, maxPitch;
-        readonly ProvingProfile combat;
+        readonly ProvingProfile combat,cutter;
+        public float CutterMinimum=>cutter.Get("cutter.botMinimumDistance");
+        public float CutterPreferredRange=>cutter.Get("cutter.maxRangeMeters")*cutter.Get("cutter.botRangeFraction");
         public float EyeHeight=>eye; public float TargetHeight=>target;
         public float RocketMinimumDistance=>combat.Get("rocket.botMinimumDistance");
         public float RocketSafety=>combat.Get("rocket.radius")+combat.Get("rocket.botSafetyMargin");
-        public float RangeFor(WeaponId id)=>combat.Get(id==WeaponId.RocketLauncher?"rocket.range":id==WeaponId.Rifle?"rifle.range":"shot.range");
+        public float RangeFor(WeaponId id)=>id==WeaponId.Cutter?cutter.Get("cutter.maxRangeMeters"):combat.Get(id==WeaponId.RocketLauncher?"rocket.range":id==WeaponId.Rifle?"rifle.range":"shot.range");
         public float Range { get; }
         public string Identity { get; }
-        public NativeShotgunPolicy(ProvingProfile movement, ProvingProfile combat)
+        public NativeShotgunPolicy(ProvingProfile movement, ProvingProfile combat, ProvingProfile cutter=null)
         {
+            this.cutter=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutter??ProvingProfile.CreateCutterDefault()));
             this.combat=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));this.combat.EnsureNativeCombatDescriptors();
-            Identity="native-loadout-pulse-v1|"+JsonUtility.ToJson(movement)+"|"+JsonUtility.ToJson(combat);
+            Identity="native-loadout-cutter-v1|"+JsonUtility.ToJson(movement)+"|"+JsonUtility.ToJson(combat)+"|"+JsonUtility.ToJson(this.cutter);
             maxPitch=movement.Get("camera.maximumPitchDegrees");eye=movement.Get("camera.eyeHeight");target=movement.Get("player.capsule.height")*combat.Get("zone.torsoY");
             Range=combat.Get("shot.range");
         }
@@ -245,11 +248,12 @@ namespace StarTournament.ProvingGround
                 rocketSafe=rocketTactics.ClearRocketShot(origin,direction,targetDistance,out var endpoint)&&Vector3.Distance(endpoint,f.Pose.Position)>loadout.RocketSafety;
                 foreach(var ally in f.Allies)if(Vector3.Distance(endpoint,ally.Position)<=loadout.RocketSafety+loadout.TargetHeight)rocketSafe=false;
             }
-            if(rocketSafe)desired=WeaponId.RocketLauncher;
+            if(visible&&f.Life.CutterEnergy>0&&weapon is NativeShotgunPolicy beamPolicy&&targetDistance>=beamPolicy.CutterMinimum&&targetDistance<=beamPolicy.CutterPreferredRange)desired=WeaponId.Cutter;
+            else if(rocketSafe)desired=WeaponId.RocketLauncher;
             else if(f.Life.ShotgunAmmo>0 && (f.Life.RifleAmmo==0||closeShotgun))desired=WeaponId.Shotgun;
             else if(f.Life.RifleAmmo>0)desired=WeaponId.Rifle;
             else if(desired==WeaponId.RocketLauncher)desired=WeaponId.Rifle; // Never use unsafe rockets as an empty fallback.
-            if(desired!=f.Life.SelectedWeapon)action.SelectWeapon=desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;
+            if(desired!=f.Life.SelectedWeapon)action.SelectWeapon=desired==WeaponId.Cutter?WeaponSelection.Cutter:desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;
             int readyAmmo=CombatLife.AmmoFor(f.Life,desired);
             double readyCooldown=CombatLife.CooldownFor(f.Life,desired);
             float weaponRange=weapon is NativeShotgunPolicy policy?policy.RangeFor(desired):weapon.Range;
@@ -257,9 +261,9 @@ namespace StarTournament.ProvingGround
             if(f.Life.SelectedWeapon==0){readyAmmo=f.Life.Ammo;readyCooldown=f.Life.CooldownRemaining;action.SelectWeapon=WeaponSelection.None;}
             // A shotgun press must be followed by a complete false tick.
             bool release=state.Pressed;state.Pressed=false;
-            if(!release&&visible&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
+            if((!release||desired==WeaponId.Cutter)&&visible&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
                 readyAmmo>0&&readyCooldown<=0&&targetDistance<=weaponRange&&(desired!=WeaponId.RocketLauncher||rocketSafe)&&!AllyInLine(f,memory.Value.Sighting.Position))
-            {action.Fire=true;state.Pressed=true;FireAttempts++;}
+            {if(desired==WeaponId.Cutter)action.FireHeld=true;else {action.Fire=true;state.Pressed=true;}FireAttempts++;}
             return action;
         }
         bool AllyInLine(NativeBotFrame f,Vector3 target)

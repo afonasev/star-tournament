@@ -8,10 +8,11 @@ namespace StarTournament.ProvingGround
     {
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
-        GameObject rifle,pulse;
-        Transform rifleMuzzle;
+        GameObject rifle,pulse,cutter;
+        Transform rifleMuzzle,cutterMuzzle;
+        public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
-        public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null)
+        public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null)
         {
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));
             var mount=GetComponentsInChildren<Transform>(true).Single(x=>x.name=="trooper:rig:weapon-mount");
@@ -38,12 +39,23 @@ namespace StarTournament.ProvingGround
                 foreach(var r in pulse.GetComponentsInChildren<Renderer>(true))
                 { if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off; }
             }
+            if(cutterPrefab)
+            {
+                var cp=cutterProfile??ProvingProfile.CreateCutterDefault();
+                cutter=Object.Instantiate(cutterPrefab,mount);cutter.name="cutter";
+                cutter.transform.localPosition=new Vector3(cp.Get("cutter.modelX"),cp.Get("cutter.modelY"),cp.Get("cutter.modelZ"));
+                cutter.transform.localRotation=Quaternion.Euler(cp.Get("cutter.modelPitch"),cp.Get("cutter.modelYaw"),cp.Get("cutter.modelRoll"));cutter.transform.localScale=Vector3.one*cp.Get("cutter.modelScale");
+                cutterMuzzle=cutter.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="cutter-muzzle");
+                foreach(var t in cutter.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
+                foreach(var renderer in cutter.GetComponentsInChildren<Renderer>(true))if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
             Show(WeaponId.Rifle);
         }
         public void Show(WeaponId weapon)
         {
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
+            if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
             if(pulse)pulse.SetActive(weapon==WeaponId.RocketLauncher);
         }
         static Material RifleMaterial(string name)
@@ -67,6 +79,7 @@ namespace StarTournament.ProvingGround
         sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly RocketPresentation rocketPresentation;
+        readonly CutterPresentation cutterPresentation;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
         readonly PhysicsScene physics;
@@ -92,6 +105,7 @@ namespace StarTournament.ProvingGround
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
+            cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner);
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
@@ -205,7 +219,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            rocketPresentation.Dispose();
+            rocketPresentation.Dispose();cutterPresentation.Dispose();
             session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();
@@ -347,6 +361,7 @@ namespace StarTournament.ProvingGround
                 Vector3 direction=target-position;
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
+            cutterPresentation.Render();
         }
     }
 }

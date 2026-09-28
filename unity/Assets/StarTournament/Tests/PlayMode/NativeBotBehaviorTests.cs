@@ -107,7 +107,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load(BotsAndHuman(false,1),107);float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight");
             ground.PlaceCombatReviewSeat(0,new Vector3(-8,floor,26),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-8,floor,30),0,180);Physics.SyncTransforms();
-            var driver=ground.BotDriver;var session=ground.Session;var actions=new LocalAction[2];float dt=1f/ground.Profile.Get("simulation.fixedTickHz");bool pressed=false,released=false,damaged=false;
+            var driver=ground.BotDriver;var session=ground.Session;
+            // This scenario verifies discrete shot press/release lifecycle; continuous Cutter is covered separately.
+            var discrete=session.Capture();discrete.Lives[0].CutterEnergy=0;session.Restore(discrete);
+            var actions=new LocalAction[2];float dt=1f/ground.Profile.Get("simulation.fixedTickHz");bool pressed=false,released=false,damaged=false;
             session.Fired+=(p,d)=>damaged|=d>0;
             for(int i=0;i<500&&!(damaged&&released);i++)
             {

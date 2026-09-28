@@ -127,6 +127,7 @@ namespace StarTournament.ProvingGround
                     CaptureFire(i, ref a, pairedMouse.leftButton.isPressed, pairedMouse.leftButton.wasPressedThisFrame);
                     if(keyboard.digit1Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;
                     else if(keyboard.digit2Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Shotgun;
+                    else if(keyboard.digit4Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Cutter;
                     else if(keyboard.digit3Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.RocketLauncher;
                     else if(keyboard.qKey.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Previous;
                     else if(keyboard.eKey.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Next;
@@ -141,6 +142,7 @@ namespace StarTournament.ProvingGround
                     CaptureFire(i, ref a, pad.rightTrigger.isPressed, pad.rightTrigger.wasPressedThisFrame);
                     if(pad.dpad.left.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;
                     else if(pad.dpad.up.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Shotgun;
+                    else if(pad.dpad.down.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Cutter;
                     else if(pad.dpad.right.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.RocketLauncher;
                     a.ShowRoster = pad.selectButton.isPressed;
                     pauseRequested |= pad.startButton.wasPressedThisFrame;

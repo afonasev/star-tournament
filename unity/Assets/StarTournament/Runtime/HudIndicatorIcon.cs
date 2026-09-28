@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     // Native UI geometry is presentation-only; no font glyph or texture import decides the HUD icon shape.
     public sealed class HudIndicatorIcon : MaskableGraphic
     {
-        public enum IconKind { Heart, Shield, Cartridges, Rifle, Shotgun, Rocket }
+        public enum IconKind { Heart, Shield, Cartridges, Rifle, Shotgun, Rocket, Cutter }
 
         IconKind kind;
         public IconKind Kind
@@ -51,6 +51,10 @@ namespace StarTournament.ProvingGround
                     Quad(mesh,rect,.71f,.51f,.97f,.59f); // long barrel
                     Quad(mesh,rect,.35f,.20f,.47f,.44f); // grip
                     Quad(mesh,rect,.43f,.72f,.58f,.78f); // raised sight
+                    break;
+                case IconKind.Cutter:
+                    // Authored icon contour is a technical glyph, not a balance parameter.
+                    FillPolygon(mesh,rect,new[]{new Vector2(.58f,.94f),new Vector2(.16f,.43f),new Vector2(.44f,.43f),new Vector2(.32f,.06f),new Vector2(.85f,.60f),new Vector2(.56f,.60f)});
                     break;
                 case IconKind.Rocket:
                     FillPolygon(mesh,rect,new[]{new Vector2(.03f,.50f),new Vector2(.20f,.66f),new Vector2(.76f,.66f),new Vector2(.95f,.78f),new Vector2(.88f,.50f),new Vector2(.95f,.22f),new Vector2(.76f,.34f),new Vector2(.20f,.34f)});

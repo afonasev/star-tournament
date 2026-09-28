@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
@@ -56,6 +56,15 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             ((System.Collections.Generic.List<NumericDescriptor>)profile.Descriptors).RemoveAll(d=>d.Path==key);
             var values=(System.Collections.Generic.List<ProvingProfileValue>)typeof(ProvingProfile).GetField("values",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(profile);values.RemoveAll(v=>v.Path==key);
             profile.EnsureOrbitalLeagueDescriptors();Assert.That(profile.Get(key),Is.EqualTo(expected));
+        }
+        [Test]public void PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash()
+        {
+            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id=="cutter-beam-v1");
+            var first=new DesignLabHistory(path,old);first.Create("Старый");var prior=first.Selected;
+            var current=new DesignLabHistory(path,Shipped());Assert.That(current.StorageError,Is.Null);
+            Assert.That(current.Selected.Snapshot.Get("cutter.energyCapacity"),Is.EqualTo(30));
+            Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            Assert.That(current.Selected.Number,Is.GreaterThan(prior.Number));
         }
         [Test]public void TamperedSnapshotHashFailsWithoutDestroyingFile()
         {var history=new DesignLabHistory(path,Shipped());history.Create("test");string original=File.ReadAllText(path);File.WriteAllText(path,original.Replace("\"Value\": 30.0","\"Value\": 31.0"));var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Not.Null);}
