@@ -66,6 +66,32 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
             Assert.That(current.Selected.Number,Is.GreaterThan(prior.Number));
         }
+        static LabBundle FirstCutterRelease()
+        {
+            var old=Shipped();int index=old.Profiles.FindIndex(p=>p.Id=="cutter-beam-v1");
+            old.Profiles[index]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(old.Profiles[index]).Replace("\"version\":2","\"version\":1"));
+            old.Set("cutter.width",0.012f);return old;
+        }
+        [Test]public void CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease()
+        {
+            var old=FirstCutterRelease();
+            var first=new DesignLabHistory(path,old);first.Create("Настроенный");
+            var draft=first.Selected.Snapshot;draft.Set("cutter.width",0.021f);first.Save(draft);var prior=first.Selected;
+            var current=new DesignLabHistory(path,Shipped());Assert.That(current.StorageError,Is.Null);
+            Assert.That(current.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(0.021f));
+            Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            current.DeleteSelected();Assert.That(current.Selected.Hash,Is.EqualTo(Shipped().Hash()));
+            var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);
+            Assert.That(restarted.Selected.Hash,Is.EqualTo(Shipped().Hash()));
+        }
+        [Test]public void CutterThicknessUpgradeSelectsNewShippedRevision()
+        {
+            var old=FirstCutterRelease();
+            var first=new DesignLabHistory(path,old);first.Create("Временный");first.DeleteSelected();var prior=first.Selected;
+            var current=new DesignLabHistory(path,Shipped());Assert.That(current.StorageError,Is.Null);
+            Assert.That(current.Selected.Hash,Is.EqualTo(Shipped().Hash()));
+            Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+        }
         [Test]public void TamperedSnapshotHashFailsWithoutDestroyingFile()
         {var history=new DesignLabHistory(path,Shipped());history.Create("test");string original=File.ReadAllText(path);File.WriteAllText(path,original.Replace("\"Value\": 30.0","\"Value\": 31.0"));var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Not.Null);}
     }

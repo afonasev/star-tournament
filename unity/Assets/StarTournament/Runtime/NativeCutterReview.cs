@@ -24,7 +24,9 @@ namespace StarTournament.ProvingGround
             var args=Environment.GetCommandLineArgs();directory=args[Array.IndexOf(args,"-cutterReview")+1];Directory.CreateDirectory(directory);
             ground=GetComponent<ProvingGround>();AudioListener.volume=0;Application.runInBackground=true;
             yield return new WaitForSecondsRealtime(1);ground.enabled=false;
-            Click("main-action-2");yield return null;Click("group-cutter");yield return null;yield return Capture("01-lab-cutter");Click("group-cutter-effects");yield return null;yield return Capture("01b-lab-effects");Click("lab-back");
+            Click("main-action-2");yield return null;Click("group-cutter");yield return null;yield return Capture("01-lab-cutter");Click("group-cutter-effects");yield return null;yield return Capture("01b-lab-effects");
+            ground.GetComponentsInChildren<InputField>(true).Single(f=>f.name=="lab-search").text="cutter.width";
+            yield return null;yield return Capture("01c-lab-width");Click("lab-back");
             pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();
             ground.StartCombatReview(new[]{pads[0]},backgroundDiagnostic:true,ensureOpponent:true);
             Place(0,new Vector3(0,-1.2f,-5));Place(1,new Vector3(0,-1.2f,5));SelectAll();yield return Capture("02-first-person");

@@ -2,9 +2,21 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Exact first-release registry for immutable Lab history compatibility.
+        internal ProvingProfile BeforeCutterThickness()
+        {
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            if(p.id=="cutter-beam-v1")
+            {
+                p.version=1;
+                p.Set("cutter.width",0.012f);
+                p.descriptors.Find(d=>d.Path=="cutter.width").DefaultValue=0.012f;
+            }
+            return p;
+        }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=1 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=2 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -15,7 +27,7 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.hitRadius","cutter","Радиус луча","Расширение gameplay капсулы при запросе.","m",0f,0.5f,0.01f,0.02f);
             p.Add("cutter.botMinimumDistance","cutter-bots","Бот: минимум","Ближняя граница выбора Резака.","m",0f,30f,0.1f,3f);
             p.Add("cutter.botRangeFraction","cutter-bots","Бот: запас дальности","Доля дальности для выбора луча.","ratio",0.1f,1f,0.01f,0.9f);
-            p.Add("cutter.width","cutter-effects","Толщина","Толщина яркой прямой сердцевины.","m",0.001f,0.3f,0.001f,0.012f);
+            p.Add("cutter.width","cutter-effects","Толщина луча","Визуальная толщина сердцевины; не меняет радиус попадания.","m",0.001f,0.3f,0.001f,0.03f);
             p.Add("cutter.jitter","cutter-effects","Изломы","Радиус электрических ветвей вокруг оси.","m",0f,0.5f,0.01f,0.08f);
             p.Add("cutter.frequency","cutter-effects","Частота","Частота движения ветвей.","Hz",0f,100f,1f,24f);
             p.Add("cutter.segments","cutter-effects","Сегменты","Число визуальных электрических сегментов.","count",2f,64f,1f,20f);
