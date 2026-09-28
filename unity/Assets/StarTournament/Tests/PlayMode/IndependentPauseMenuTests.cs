@@ -22,7 +22,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
-            Button("main-action-0").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
             for(int seat=0;seat<2;seat++)
             {

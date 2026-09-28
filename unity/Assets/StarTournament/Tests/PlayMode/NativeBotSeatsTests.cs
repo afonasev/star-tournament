@@ -31,7 +31,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             scene = SceneManager.GetSceneByName("ProvingGround");
             yield return null;
             ground = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<ProvingGround>()).Single();
-            Button("main-action-0").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             // Use our own current device: batchmode may keep an unrelated keyboard alive.
             syntheticKeyboard = InputSystem.AddDevice<Keyboard>();
         }
@@ -80,7 +80,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.GetComponentsInChildren<Camera>(true).Count(camera => camera.enabled), Is.EqualTo(4));
             Assert.That(ground.BotDriver.Planner(0), Is.Not.Null); Assert.That(ground.BotDriver.Planner(1), Is.Not.Null); Assert.That(ground.BotDriver.Planner(3), Is.Not.Null);
             ground.SendMessage("Pause", "test setup transition"); Button("В главное меню").onClick.Invoke(); yield return null;
-            Button("main-action-0").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             InputSystem.RemoveDevice(pads[0]); pads[0] = null;
 
             // An all-AI ordinary match has no hidden device prerequisite and keeps one TrooperVisual implementation per body/view.
@@ -100,7 +100,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(JsonUtility.ToJson(ground.Composition.Read()), Is.EqualTo(frozen));
             yield return PauseEscape(); Button("В главное меню").onClick.Invoke(); yield return null;
             Button("main-action-0").onClick.Invoke();
-            Assert.That(ground.BotDriver, Is.Null); Assert.That(JsonUtility.ToJson(ground.SetupComposition().Read()), Is.EqualTo(frozen));
+            Assert.That(ground.BotDriver, Is.Null);Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(ground.SetupBotCount,Is.EqualTo(1));
+            Assert.That(ground.SetupComposition().Participant(0).Kind,Is.EqualTo(NativeParticipantKind.LocalHuman));Assert.That(ground.SetupComposition().Participant(1).Kind,Is.EqualTo(NativeParticipantKind.Bot));
         }
 
         [UnityTest] public IEnumerator ChangingSeatKindReleasesDeviceAndSwitchesTheNextHumanOwner()

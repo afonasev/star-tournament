@@ -81,7 +81,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
-            Button("main-action-0").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             ground.TeamProfile.Set("spawn.initialOpponentSeparation",5.1f);
             Assert.DoesNotThrow(()=>Button("Диагностика четырёх камер · без управления").onClick.Invoke());Assert.That(ground.Running,Is.False);
             Assert.That(ground.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("Invalid value/step")),Is.True);
@@ -108,7 +108,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(JsonUtility.ToJson(ground.Session.Match.Roster.Read()),Is.EqualTo(roster));
             Assert.That(ground.Session.Match.Read().Standings.All(r=>r.Score==0),Is.True);Assert.That(ground.Session.Life(1).Health,Is.EqualTo(100));
             AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),expected);
-            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();ground.SetMatchMode(NativeMatchMode.Ffa);Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
+            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,3);ground.SetMatchMode(NativeMatchMode.Ffa);Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
             Assert.That(ground.Session.Match.Roster.Mode,Is.EqualTo(NativeMatchMode.Ffa));AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),NativeStandingsView.Palette[0]);
             Assert.That(table.GetComponentsInChildren<Text>().Any(t=>t.text=="Team A"||t.text=="Team B"),Is.False);
         }

@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
-            Button("main-action-0").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
         }
         [UnityTearDown] public IEnumerator Cleanup()
@@ -77,7 +77,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.AddBot(); // A single viewport still needs an opponent in the match roster.
             foreach(int count in new[]{1,2,3,4})
             {
-                if(count==2)ground.RemoveBot(0);
+                // New-match fixture above already clears the previous solo opponent.
                 ground.StartCombatReview(pads.Take(count).ToArray());
                 yield return null;yield return new WaitForFixedUpdate();yield return null;
                 Assert.That(ground.Running,Is.True);
@@ -131,7 +131,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(icons.Select(i=>i.Kind),Is.EquivalentTo(new[]{HudIndicatorIcon.IconKind.Heart,HudIndicatorIcon.IconKind.Shield,HudIndicatorIcon.IconKind.Rifle}));
                     Assert.That(root.GetComponentsInChildren<Text>(true).Single(t=>t.name=="ammo-"+seat).text,Does.Not.Contain("ДВУСТВОЛКА"));
                 }
-                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;
+                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
             }
         }
         [UnityTest] public IEnumerator ChangingRosterAndRepeatingCannotLeaveHiddenParticipantsOrStaleRows()
@@ -173,7 +173,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var result=ground.transform.Find("native-ui/setup-pause/results-table");
                 Assert.That(result.gameObject.activeSelf,Is.True);Assert.That(result.Find("row-4").gameObject.activeSelf,Is.EqualTo(count==4));
                 Button("Повторить матч").onClick.Invoke();yield return null;yield return new WaitForFixedUpdate();yield return null;AssertLayout(count);
-                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;
+                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 Assert.That(ground.transform.Find("native-ui/persistent-standings").gameObject.activeSelf,Is.False);
             }
         }
@@ -186,11 +186,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 field.SetValue(ground,pair[0]);
                 Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
                 Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(System.Math.Min(pair[0],ground.LocalSeatCount)));
-                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;
+                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 while(ground.LocalSeatCount>pair[1])Button("seats-minus").onClick.Invoke();
                 while(ground.LocalSeatCount<pair[1])Button("seats-plus").onClick.Invoke();
                 Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;AssertLayout(pair[1]);
-                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;
+                Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
             }
         }
         [UnityTest] public IEnumerator TwoGamepadsJoinThroughSetupAndThirdDeviceCannotControlOrPauseGame()

@@ -753,7 +753,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void CreateHealPickupVisual()
         {
@@ -833,7 +833,12 @@ namespace StarTournament.ProvingGround
 
         void CreateInterface()
         {
-            var eventSystem = Owned("input-events"); eventSystem.AddComponent<EventSystem>(); eventSystem.AddComponent<InputSystemUIInputModule>();
+            var eventSystem = Owned("input-events"); eventSystem.AddComponent<EventSystem>();menuInputModule=eventSystem.AddComponent<InputSystemUIInputModule>();
+            // Only intentional UI actions select the menu operator; pointer motion is not ownership.
+            menuSubmitAction=menuInputModule.submit.action;menuMoveAction=menuInputModule.move.action;menuClickAction=menuInputModule.leftClick.action;
+            menuSubmitAction.performed+=RememberMenuDevice;
+            menuMoveAction.performed+=RememberMenuDevice;
+            menuClickAction.performed+=RememberMenuDevice;
             var canvasObject = Owned("native-ui", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             canvasObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             var scaler = canvasObject.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

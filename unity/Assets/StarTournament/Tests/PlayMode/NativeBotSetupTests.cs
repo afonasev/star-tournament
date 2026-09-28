@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
-            B("main-action-0").onClick.Invoke();
+            B("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();
             for(int i=0;i<3;i++)B("seats-minus").onClick.Invoke();
             Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(B("Начать — четыре игрока").interactable,Is.False);
@@ -44,7 +44,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SendMessage("Pause","Exit");B("В главное меню").onClick.Invoke();yield return null;
             B("main-action-0").onClick.Invoke();
             B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();
-            Assert.That(ground.BotDriver,Is.Null);Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(ground.SetupBotCount,Is.EqualTo(7));
+            Assert.That(ground.BotDriver,Is.Null);Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(ground.SetupBotCount,Is.EqualTo(1),"New match resets to one bot");
+            for(int i=1;i<7;i++)ground.AddBot();
             for(int i=0;i<7;i++){B("bot-remove-0").onClick.Invoke();Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.activeInHierarchy,Is.True,"Removal keeps a navigable control selected");}Assert.That(B("Начать — четыре игрока").interactable,Is.False);
             B("seats-plus").onClick.Invoke();ground.SetMatchMode(NativeMatchMode.Ffa);B("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
             Assert.That(ground.Running,Is.True);Assert.That(ground.BotDriver,Is.Null);Assert.That(ground.Session.ParticipantCount,Is.EqualTo(2));

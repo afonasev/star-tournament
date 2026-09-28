@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
-            Click("main-action-0");Click("setup-next");Click("setup-next");
+            Click("main-action-0");NativeSetupFixture.UnboundHumans(ground);Click("setup-next");Click("setup-next");
         }
         [UnityTearDown] public IEnumerator Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(secondPad!=null&&secondPad.added)InputSystem.RemoveDevice(secondPad);if(profilesPath!=null&&File.Exists(profilesPath))File.Delete(profilesPath);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
         IEnumerator Press(GamepadButton b)

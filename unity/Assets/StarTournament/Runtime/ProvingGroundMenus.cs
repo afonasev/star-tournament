@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 namespace StarTournament.ProvingGround
@@ -19,6 +20,9 @@ namespace StarTournament.ProvingGround
         Button mainBattleButton, profilesBackButton, setupNext, setupPrevious;
         readonly Button[] setupSteps = new Button[3];
         int setupStep, setupMaxStep;
+        InputSystemUIInputModule menuInputModule;
+        InputAction menuSubmitAction,menuMoveAction,menuClickAction;
+        InputDevice menuDevice;
         Button identitySettingsButton;
         Button[] seatIdentityButtons = new Button[SeatInputCoordinator.SeatCount];
         string selectedProfileId;
@@ -231,7 +235,27 @@ namespace StarTournament.ProvingGround
             input.textComponent=value;input.characterLimit=24;input.contentType=InputField.ContentType.Standard;
             return input;
         }
-        void OpenSetup() { ApplySavedLabRevision(); Configuration=NativeMatchConfiguration.Default(MatchProfile); fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;RefreshInterface();Select(setupNext); }
+        void RememberMenuDevice(InputAction.CallbackContext context)
+        {
+            if(phase!=Phase.MainMenu && phase!=Phase.Profiles && phase!=Phase.Settings && phase!=Phase.Lab)return;
+            var device=context.control?.device;
+            if(device is Mouse)device=Keyboard.current;
+            if(device is Keyboard || device is Gamepad)menuDevice=device;
+        }
+        void OpenSetup()
+        {
+            ApplySavedLabRevision();Configuration=NativeMatchConfiguration.Default(MatchProfile);fps.RestoreGeneralPreference();
+            phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;pendingSeat=-1;rosterEditing=-1;
+            input.Reset();input.SetActiveSeatCount(1);
+            for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++){identities.ClearSeat(seat);botSetup.SetAi(seat,false);botSetup.SetSeatDifficulty(seat,(int)NativeBotDifficulty.Normal);teamAssignments[seat]=seat%2==0?NativeTeam.TeamA:NativeTeam.TeamB;}
+            while(botSetup.Count>0)botSetup.Remove(botSetup.Count-1);
+            botSetup.Add(1);SyncHumanSeats();
+            var device=menuDevice;
+            if(device==null || !device.added || !device.enabled)device=(InputDevice)Keyboard.current??Gamepad.all.FirstOrDefault(p=>p.added&&p.enabled);
+            if(input.Assign(0,device) && !identities.TryRestore(0,device.deviceId,playerProfiles))
+                identities.ChooseGuest(0,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
+            ApplyLayout(1);RefreshInterface();Select(setupNext);
+        }
         void ToMainMenu()
         {
             rosterEditing=-1;

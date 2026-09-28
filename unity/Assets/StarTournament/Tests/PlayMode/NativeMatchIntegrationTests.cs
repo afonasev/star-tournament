@@ -67,6 +67,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string text) => ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==text);
         void ChooseGuestsForAssignedSeats()
         {
+            var seats=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
+            for(int seat=0;seat<ground.LocalSeatCount;seat++)Assert.That(seats.Assign(seat,pads[seat]),Is.True);
             Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
             for(int seat=0;seat<ground.LocalSeatCount;seat++)
             {
@@ -102,7 +104,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;yield return new WaitForFixedUpdate();
             InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});yield return null;yield return new WaitForFixedUpdate();
             Assert.That(ground.Session.ShotCount,Is.EqualTo(1));
-            var last=ground.Session;Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();ChooseGuestsForAssignedSeats();yield return null;
+            var last=ground.Session;Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ChooseGuestsForAssignedSeats();yield return null;
             Assert.That(ground.Running,Is.False);clock=last.Time;yield return new WaitForFixedUpdate();Assert.That(last.Time,Is.EqualTo(clock));
             Button("Начать — четыре игрока").onClick.Invoke();yield return null;Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(last));
         }
@@ -135,7 +137,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("В главное меню").onClick.Invoke();Button("main-action-2").onClick.Invoke();yield return null;
             ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="lab-search").text="score.chainTotal1";yield return null;
             ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="input-score.chainTotal1").text="200";Button("lab-save").onClick.Invoke();yield return null;
-            Button("lab-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();ChooseGuestsForAssignedSeats();yield return null;
+            Button("lab-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ChooseGuestsForAssignedSeats();yield return null;
             Button("duration-plus").onClick.Invoke();Button("target-toggle").onClick.Invoke();
             Button("Начать — четыре игрока").onClick.Invoke();yield return null;
             Assert.That(ground.Session.Match.Configuration.DurationMinutes,Is.EqualTo(6));Assert.That(ground.Session.Match.Configuration.TargetEnabled,Is.True);

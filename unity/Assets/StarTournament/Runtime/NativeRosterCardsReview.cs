@@ -57,15 +57,35 @@ namespace StarTournament.ProvingGround
         void ChangeView(int p,bool own){Click("roster-card-"+p);Click("roster-device");Click(own?"roster-choice-view-on":"roster-choice-view-off");Click("roster-done");}
         IEnumerator Start()
         {
-            Application.runInBackground=true;UnityEngine.Random.InitState(20260928);ground=GetComponent<ProvingGround>();
+            Application.runInBackground=true;
+            // Synthetic QA must ignore OS focus changes from concurrent local Player reviews.
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            UnityEngine.Random.InitState(20260928);ground=GetComponent<ProvingGround>();
             var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-rosterCardsReview");
             if(at<0||at+1>=args.Length||!Path.IsPathFullyQualified(args[at+1]))throw new ArgumentException("Absolute roster review directory required");
             directory=args[at+1];Directory.CreateDirectory(directory);
             yield return new WaitForSecondsRealtime(1f);
             var keyboard=Keyboard.current??InputSystem.AddDevice<Keyboard>();if(Mouse.current==null)InputSystem.AddDevice<Mouse>();
             var pad=InputSystem.AddDevice<Gamepad>();
-            Click("main-action-0");Click("setup-next");Click("setup-next");
-            while(ground.LocalSeatCount>2)Remove(ground.LocalSeatCount-1);
+            EventSystem.current.SetSelectedGameObject(Button("main-action-0").gameObject);
+            // Actual menu Submit assigns the pad without a profile prompt or phantom humans.
+            yield return Press(pad,GamepadButton.South);Click("setup-next");Click("setup-next");
+            Check(ground.LocalSeatCount==1&&ground.SetupBotCount==1&&Input.DeviceAt(0)==pad&&Input.Ready,"Gamepad default roster invalid");
+            yield return Capture("00-default-gamepad-one-human-one-bot");
+            Invoke("ToMainMenu");
+            Canvas.ForceUpdateCanvases();var entry=(RectTransform)Button("main-action-0").transform;
+            var entryCenter=RectTransformUtility.WorldToScreenPoint(null,entry.TransformPoint(entry.rect.center));
+            InputSystem.QueueStateEvent(Mouse.current,new MouseState{position=entryCenter});yield return null;
+            InputSystem.QueueStateEvent(Mouse.current,new MouseState{position=entryCenter}.WithButton(MouseButton.Left));yield return null;yield return null;
+            InputSystem.QueueStateEvent(Mouse.current,new MouseState{position=entryCenter});yield return null;
+            Click("setup-next");Click("setup-next");
+            Check(ground.LocalSeatCount==1&&ground.SetupBotCount==1&&Input.DeviceAt(0)==keyboard&&Input.Ready,"Mouse default roster invalid");
+            yield return Capture("00-default-mouse-one-human-one-bot");
+            Invoke("ToMainMenu");yield return PressKey(keyboard,Key.Enter);Click("setup-next");Click("setup-next");
+            Check(ground.LocalSeatCount==1&&ground.SetupBotCount==1&&Input.DeviceAt(0)==keyboard&&Input.Ready,"Keyboard default roster invalid");
+            yield return Capture("00-default-keyboard-one-human-one-bot");
+            // Author the two-human fixture explicitly for the established roster coverage below.
+            ground.RemoveBot(0);Invoke("SetSeatCount",2);
             GuestAndDevice(0,keyboard);
             // Free gamepad Y assigns an available human view and opens its editor.
             yield return Press(pad,GamepadButton.North);Check(Object("roster-editor").activeInHierarchy,"Y did not open editor");
@@ -150,7 +170,7 @@ namespace StarTournament.ProvingGround
             Check(JsonUtility.ToJson(ground.Composition.Read())==frozen,"Repeat changed frozen composition");
             Invoke("Menu");Click("setup-step-2");yield return Capture("22-return-from-match");
             InputSystem.RemoveDevice(pad);
-            File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: actual muted native Player pixels; synthetic mouse, keyboard and gamepad navigation; FFA 2–8, teams 4+4/7+1/6+2, add/edit/remove, four views, promotion/demotion, AI-only, disabled/removed/replaced devices, preserved identity, back draft and frozen Repeat. Physical controllers/TV and human visual acceptance pending.");
+            File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: actual muted native Player pixels; synthetic mouse, keyboard and gamepad navigation; default mouse/keyboard/gamepad one human + one bot, FFA 2–8, teams 4+4/7+1/6+2, add/edit/remove, four views, promotion/demotion, AI-only, disabled/removed/replaced devices, preserved identity, back draft and frozen Repeat. Physical controllers/TV and human visual acceptance pending.");
             Debug.Log("NATIVE_ROSTER_CARDS_REVIEW_COMPLETE "+directory);
         }
     }
