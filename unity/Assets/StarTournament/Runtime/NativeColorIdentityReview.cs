@@ -53,9 +53,9 @@ namespace StarTournament.ProvingGround
         }
         void Lineup(float yaw)
         {
-            ground.PlaceCombatReviewSeat(0,new Vector3(0,4,-7),0,0);
+            ground.PlaceCombatReviewSeat(0,new Vector3(0,4,-3),0,0);
             for(int p=1;p<ground.Composition.ParticipantCount;p++)
-                ground.PlaceCombatReviewSeat(p,new Vector3((p-(ground.Composition.ParticipantCount/2f))*1.6f,4,0),0,yaw);
+                ground.PlaceCombatReviewSeat(p,new Vector3((p-(ground.Composition.ParticipantCount/2f))*1.3f,4,0),0,yaw);
         }
         IEnumerator Capture(string state)
         {
