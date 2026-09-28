@@ -9,7 +9,7 @@
 - В `flow-inbox` нумеруй все предлагаемые пользователю варианты, чтобы на них можно было однозначно сослаться номером.
 - Перед реализацией выбери и claim change. Если пользователь не выбрал change, покажи готовые варианты и спроси, какой брать. Не возобновляй historical/cancelled browser work автоматически.
 - Прочитай `.agents/references/flow/lifecycle.md` перед lifecycle-переходами; `delivery.md` — перед sync, merge, deploy и cleanup; `initiative.md` — для многоэтапной работы; `efficiency.md` — перед выбором модели или делегированием.
-- Human acceptance требуется для каждого результата. Native distribution/deploy не настроены и не выполняются без отдельного решения, записанного в project profile.
+- Human acceptance требуется для каждого результата. Явное решение о точном проверенном результате записывай через helper `accept` сразу или в другой сессии, независимо от cleanup и владельца технической работы. При отложенной приёмке используй `defer-acceptance`, продолжай разрешённую финализацию и не повторяй вопрос до возвращения пользователя к проверке. После технических gates helper `finalize` использует уже записанную приёмку либо переводит change в `awaiting-acceptance`. Согласование концепта не является приёмкой Player. Native distribution/deploy выполняй только в пределах отдельного решения, записанного в project profile; локальный кандидат не означает разрешения на внешнюю публикацию.
 - Вопросы, feedback, evidence, usage и lifecycle храни в соответствующем change. У разных worktree нет отдельной базы статуса. Не объявляй acceptance или delivery по checked task boxes, времени или отсутствию ошибок.
 <!-- END MANAGED OPEN SPEC FLOW -->
 
