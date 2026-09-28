@@ -130,7 +130,7 @@ namespace StarTournament.ProvingGround
             Label(setupMapPage.transform,"map-help","Опубликованные карты с точной ревизией. Выбор не меняет геометрию.",20,new Vector2(.05f,.77f),new Vector2(.95f,.86f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
             var mapCard=Panel(setupMapPage.transform,"selected-map",new Vector2(.05f,.36f),new Vector2(.95f,.73f),MenuCard);
             Label(mapCard.transform,"map-name","COMBAT BOWL",31,new Vector2(.05f,.59f),new Vector2(.95f,.90f),TextAnchor.MiddleLeft,MenuGold);
-            Label(mapCard.transform,"map-revision","Орбитальная арена · combat-bowl-v1@14\nФиксированная карта · 2–8 участников",21,new Vector2(.05f,.14f),new Vector2(.95f,.58f),TextAnchor.MiddleLeft,Color.white);
+            Label(mapCard.transform,"map-revision","Орбитальная арена · "+CombatBowlCatalog.Identity+"\nФиксированная карта · 2–8 участников",21,new Vector2(.05f,.14f),new Vector2(.95f,.58f),TextAnchor.MiddleLeft,Color.white);
             MoveSetupControl(arenaButton,setupMapPage,new Vector2(.05f,.15f),new Vector2(.95f,.30f));
             MenuButton(setupMapPage.transform,"setup-map-exit","‹ ГЛАВНОЕ МЕНЮ",new Vector2(.05f,.03f),new Vector2(.45f,.12f),ToMainMenu);
 

@@ -1,0 +1,31 @@
+[
+  {
+    "key": "heal-pickup",
+    "sha256": "4f9c9ff0db669759d9bf69f4b40eaad9510a24ca5a2e3ac4041cedd0df8200d9",
+    "mesh_count": 12,
+    "triangle_count": 1932,
+    "material_names": [
+      "heal-deep-facets",
+      "heal-inner-crystal",
+      "heal-light-facets",
+      "heal-red-glass",
+      "heal-white-pulse"
+    ],
+    "bounds_blender_xyz_m": {
+      "min": [
+        -0.44139,
+        -0.0787,
+        0.0342
+      ],
+      "max": [
+        0.44139,
+        0.0787,
+        0.94968
+      ]
+    },
+    "front_meshes": 5,
+    "rear_meshes": 5,
+    "degenerate_normal_faces": 0,
+    "collider_nodes": []
+  }
+]

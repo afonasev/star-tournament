@@ -90,6 +90,16 @@
       "front": "+Z",
       "pivot": "rifle-grip",
       "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
+    },
+    {
+      "key": "heal-pickup",
+      "path": "Assets/StarTournament/Art/heal-pickup-crystal-runes-lod0.glb",
+      "sha256": "4f9c9ff0db669759d9bf69f4b40eaad9510a24ca5a2e3ac4041cedd0df8200d9",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender generate-heal-pickup.py; approved red heart concept 2 (2026-09-28), shared planning add-full-heal-pickup/assets/red-heart-selected.png; renderer-only, no collision or navigation proxy."
     }
   ]
 }

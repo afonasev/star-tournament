@@ -36,7 +36,9 @@ namespace StarTournament.ProvingGround
         void InitializeDesignLab()
         {
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
-            string historyPath=Path.Combine(Application.persistentDataPath,"design-lab-history-v1.json");
+            // Registry v2 adds heal fields and replaces the authored basement armor paths.
+            // Keep v1 histories and their immutable hashes intact; v2 starts from the new shipped baseline.
+            string historyPath=Path.Combine(Application.persistentDataPath,"design-lab-history-v2.json");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if(!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY")))historyPath=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");
             var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-labReview");
@@ -65,7 +67,7 @@ namespace StarTournament.ProvingGround
             {
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
                 case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
-                case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";
+                case "full-heal":return "Бонусы → Полное исцеление";case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";
                 case "pickups":return "Бонусы → Подбор";case "combat":return "Игрок → Здоровье";case "motor":return "Игрок → Движение";
                 case "capsule":return "Игрок → Капсула";case "camera":return "Камера → Вид игрока";case "input":return "Игрок → Управление";
                 case "death":return "Смерть → Тело";case "spawn":return "Смерть → Возрождение";case "killcam":return "Камера → Killcam";

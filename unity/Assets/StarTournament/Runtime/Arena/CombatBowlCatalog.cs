@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="14", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="15", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -230,7 +230,7 @@ namespace StarTournament.ProvingGround
             Spawn("spawn-inner-north",new Vector3(-10,0,14),loop);Spawn("spawn-outer-north",new Vector3(6,0,28),loop);
             Spawn("spawn-outer-south",new Vector3(-6,0,-28),loop);Spawn("spawn-inner-south",new Vector3(10,0,-14),loop);
             return new ArenaDefinition{Revision=Revision,MapId=Id,Identity=Identity,ProfileFingerprint="authored:"+Identity,Pickups=new[]{
-                new ArenaPickupDefinition{Id="armor-basement",Kind=ArenaPickupKind.Armor,Support=basement,Anchor=new Vector3(0,-1.2f,0)},
+                new ArenaPickupDefinition{Id="heal-basement",Kind=ArenaPickupKind.FullHeal,Support=basement,Anchor=new Vector3(0,-1.2f,0)},
                 new ArenaPickupDefinition{Id="armor-sw",Kind=ArenaPickupKind.Armor,Support=hall,Anchor=new Vector3(-32,4,-28)},
                 new ArenaPickupDefinition{Id="armor-ne",Kind=ArenaPickupKind.Armor,Support=hall,Anchor=new Vector3(32,4,28)},
                 new ArenaPickupDefinition{Id="speed-nw",Kind=ArenaPickupKind.Speed,Support=hall,Anchor=new Vector3(-32,4,28)},

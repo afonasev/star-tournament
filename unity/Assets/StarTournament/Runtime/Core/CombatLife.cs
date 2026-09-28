@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround
             if(profile==null) throw new ArgumentException("Valid unity-combat-state-v1 profile required",nameof(profile));
             profile=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(profile));
             profile.EnsureCombatDescriptors();
-            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 3 || profile.Validate().Count != 0)
+            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 4 || profile.Validate().Count != 0)
                 throw new ArgumentException("Valid unity-combat-state-v1 profile required", nameof(profile));
             maximumHealth = profile.Get("combat.maximumHealth");
             maximumArmor = profile.Get("armor.maximum");
@@ -115,6 +115,11 @@ namespace StarTournament.ProvingGround
             if (target == state.SelectedWeapon) return;
             state.PendingWeapon = target;
             state.SwitchRemaining = switchSeconds;
+        }
+        public void HealTo(float target)
+        {
+            if(float.IsNaN(target)||float.IsInfinity(target)||target<0)throw new ArgumentOutOfRangeException(nameof(target));
+            if(!state.Dead)state.Health=Math.Max(state.Health,Math.Min(target,maximumHealth));
         }
         public void GrantArmor(float amount)
         {

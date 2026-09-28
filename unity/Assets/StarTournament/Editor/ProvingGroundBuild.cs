@@ -49,6 +49,7 @@ namespace StarTournament.ProvingGround.Editor
             root.ArmorPickupPrefab=Required("armor-pickup");
             root.SpeedPickupPrefab=Required("speed-pickup");
             root.DamagePickupPrefab=Required("damage-pickup");
+            root.HealPickupPrefab=Required("heal-pickup");
             EditorSceneManager.SaveScene(scene,Scene);
             EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(Scene,true)};
             AssetDatabase.SaveAssets();

@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround : MonoBehaviour
     {
-        public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab;
+        public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab, HealPickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab;
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
@@ -186,6 +186,7 @@ namespace StarTournament.ProvingGround
             CreateArmorPickupVisual();
             CreateSpeedPickupVisual();
             CreateDamagePickupVisual();
+            CreateHealPickupVisual();
             presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views);
             Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
             int countFlag=Array.IndexOf(args,"-probeCameras");
@@ -226,6 +227,7 @@ namespace StarTournament.ProvingGround
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
+            if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
@@ -424,6 +426,9 @@ namespace StarTournament.ProvingGround
         }
         void FixedUpdate()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if(FullHealReviewManualTick)return;
+#endif
             if (phase != Phase.Running) return;
             for(int seat=0;seat<localActions.Length;seat++)localActions[seat]=diagnostic?default:input.Consume(seat);
             Composition.AssembleLocalActions(localActions,actions);
@@ -443,7 +448,7 @@ namespace StarTournament.ProvingGround
         void LateUpdate()
         {
             if(Session == null) return;
-            RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();
+            RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();RenderHealPickup();
             for(int p=0;p<Composition.ParticipantCount;p++)
             {
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
@@ -732,7 +737,29 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        readonly List<GameObject> healPickupVisuals=new List<GameObject>();
+        void CreateHealPickupVisual()
+        {
+            if(!HealPickupPrefab)throw new InvalidOperationException("Missing manifest-owned heal prefab");
+            foreach(var pickup in Session.HealPickups)
+            {
+                var visual=Instantiate(HealPickupPrefab,transform);visual.name=pickup.InstanceId+"-presentation";
+                foreach(var collider in visual.GetComponentsInChildren<Collider>())Destroy(collider);
+                healPickupVisuals.Add(visual);
+            }
+        }
+        void RenderHealPickup()
+        {
+            if(Session==null)return;var states=Session.HealPickups;
+            for(int i=0;i<healPickupVisuals.Count;i++)
+            {
+                var visual=healPickupVisuals[i];var pickup=states[i];visual.SetActive(pickup.Available);if(!pickup.Available)continue;
+                visual.transform.position=pickup.Anchor+Vector3.up*Profile.Get("presentation.healPickupHoverHeight");
+                visual.transform.rotation=Quaternion.Euler(0,(float)(Session.Time*Profile.Get("presentation.healPickupRotationDegreesPerSecond")),0);
+                visual.transform.localScale=Vector3.one*Profile.Get("presentation.healPickupScale");
+            }
+        }
         void CreateArmorPickupVisual()
         {
             if(!ArmorPickupPrefab)throw new InvalidOperationException("Missing manifest-owned armor prefab");
