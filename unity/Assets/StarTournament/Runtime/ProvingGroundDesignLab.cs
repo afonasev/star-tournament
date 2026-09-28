@@ -66,7 +66,7 @@ namespace StarTournament.ProvingGround
             switch(group)
             {
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
-                case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
+                case "rocket-effects":return "Оружие → Pulse · оформление";case "rocket":return "Оружие → Pulse";case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
                 case "full-heal":return "Бонусы → Полное исцеление";case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";
                 case "pickups":return "Бонусы → Подбор";case "combat":return "Игрок → Здоровье";case "motor":return "Игрок → Движение";
                 case "capsule":return "Игрок → Капсула";case "camera":return "Камера → Вид игрока";case "input":return "Игрок → Управление";
@@ -273,7 +273,7 @@ namespace StarTournament.ProvingGround
         void ShowLabRevisions()
         {
             var card=LabDialog("Выберите сохранённую ревизию");var scroll=LabScroll(card,"revision-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
-            foreach(var r in labHistory.SelectedProfile.Revisions.OrderByDescending(r=>r.Number)){int n=r.Number;var b=MenuButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(labHistory.SelectedProfileId,n),true)));PlaceLabRow((RectTransform)b.transform,i++,55);first=first??b;}
+            foreach(var r in labHistory.SelectedProfile.Revisions.OrderByDescending(r=>r.Number)){int n=r.Number;var b=MenuButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12)+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(labHistory.SelectedProfileId,n),true)));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,55);if(b.interactable)first=first??b;}
             ((RectTransform)list).sizeDelta=new Vector2(0,i*55);MenuButton(card,"cancel","Отмена",new Vector2(.05f,.02f),new Vector2(.95f,.12f),CloseLabDialog);if(first!=null)Select(first);
         }
         void LabNameDialog(bool rename)

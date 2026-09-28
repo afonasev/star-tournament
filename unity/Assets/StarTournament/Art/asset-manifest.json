@@ -100,6 +100,28 @@
       "front": "+Z",
       "pivot": "ground-center",
       "source": "Original Blender generate-heal-pickup.py; approved red heart concept 2 (2026-09-28), shared planning add-full-heal-pickup/assets/red-heart-selected.png; renderer-only, no collision or navigation proxy."
+    },
+    {
+      "key": "pulse-lod0",
+      "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
+      "sha256": "a105e145b0f566a818892657d861304a7aa4f6ea11c4bf576127bedd87a3dfa1",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "pulse-grip",
+      "source": "Original Pulse concept 03 adaptation; scripts/trooper/build_pulse.py; renderer-only, no collision proxy.",
+      "lod": 0
+    },
+    {
+      "key": "pulse-lod1",
+      "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
+      "sha256": "35616098b0292ba74389e2529b243bdc73644d5e9d2683950e5bdea2f781969d",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "pulse-grip",
+      "source": "Original Pulse concept 03 adaptation; scripts/trooper/build_pulse.py; renderer-only, no collision proxy.",
+      "lod": 1
     }
   ]
 }

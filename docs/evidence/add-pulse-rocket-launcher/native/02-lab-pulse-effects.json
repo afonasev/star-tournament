@@ -1,0 +1,181 @@
+{
+    "Version": 5,
+    "Rockets": [],
+    "HealPickups": [
+        {
+            "InstanceId": "heal-basement",
+            "Anchor": {
+                "x": 0.0,
+                "y": -1.2000000476837159,
+                "z": 0.0
+            },
+            "Available": false,
+            "Remaining": 20.0
+        }
+    ],
+    "ArenaIdentity": "combat-bowl-v1@15",
+    "DesignProfile": {
+        "ProfileId": "",
+        "Revision": 0,
+        "Hash": ""
+    },
+    "Time": 0.0,
+    "ShotSequence": 0,
+    "ShotCount": 0,
+    "Lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 20,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 20,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 20,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 20,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "ArmorPickups": [
+        {
+            "InstanceId": "armor-sw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        },
+        {
+            "InstanceId": "armor-ne",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        }
+    ],
+    "SpeedPickups": [
+        {
+            "InstanceId": "speed-nw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": false,
+            "Remaining": 10.0
+        },
+        {
+            "InstanceId": "speed-se",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": false,
+            "Remaining": 10.0
+        }
+    ],
+    "SpeedRemaining": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "DamagePickup": {
+        "InstanceId": "damage-hall",
+        "Anchor": {
+            "x": 0.0,
+            "y": 4.0,
+            "z": 0.0
+        },
+        "Available": false,
+        "Remaining": 15.0
+    },
+    "DamageRemaining": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ]
+}

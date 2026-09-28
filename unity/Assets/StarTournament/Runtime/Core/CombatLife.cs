@@ -15,8 +15,10 @@ namespace StarTournament.ProvingGround
         public double SwitchRemaining;
         public int RifleAmmo;
         public int ShotgunAmmo;
+        public int RocketAmmo;
         public double RifleCooldownRemaining;
         public double ShotgunCooldownRemaining;
+        public double RocketCooldownRemaining;
         public bool Dead;
         public bool FireHeld;
         public double CooldownRemaining;
@@ -40,8 +42,8 @@ namespace StarTournament.ProvingGround
     public sealed class CombatLife
     {
         readonly float maximumHealth, maximumArmor;
-        readonly int startingAmmo, rifleStartingAmmo;
-        readonly double cooldown, rifleCooldown, respawnDelay, switchSeconds;
+        readonly int startingAmmo, rifleStartingAmmo, rocketStartingAmmo;
+        readonly double cooldown, rifleCooldown, rocketCooldown, respawnDelay, switchSeconds;
         CombatLifeState state;
         public CombatLifeState Read() => state; // Value DTO: readers cannot mutate owned state.
         public bool ReadyToRespawn => state.Dead && state.RespawnRemaining <= 0;
@@ -52,12 +54,14 @@ namespace StarTournament.ProvingGround
             if(profile==null) throw new ArgumentException("Valid unity-combat-state-v1 profile required",nameof(profile));
             profile=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(profile));
             profile.EnsureCombatDescriptors();
-            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 4 || profile.Validate().Count != 0)
+            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 5 || profile.Validate().Count != 0)
                 throw new ArgumentException("Valid unity-combat-state-v1 profile required", nameof(profile));
             maximumHealth = profile.Get("combat.maximumHealth");
             maximumArmor = profile.Get("armor.maximum");
             startingAmmo = IntegerAmmo(profile.Get("combat.startingAmmo"));
             rifleStartingAmmo = IntegerAmmo(profile.Get("rifle.startingAmmo"));
+            rocketStartingAmmo = IntegerAmmo(profile.Get("rocket.startingAmmo"));
+            rocketCooldown = profile.Get("rocket.cooldownSeconds");
             cooldown = profile.Get("combat.cooldownSeconds");
             rifleCooldown = profile.Get("rifle.cooldownSeconds");
             switchSeconds = profile.Get("weapon.switchSeconds");
@@ -70,7 +74,7 @@ namespace StarTournament.ProvingGround
         {
             ParticipantId=participantId, Life=life, Health=maximumHealth,
             SelectedWeapon=WeaponId.Rifle, RifleAmmo=rifleStartingAmmo,
-            ShotgunAmmo=startingAmmo, Ammo=rifleStartingAmmo
+            ShotgunAmmo=startingAmmo, RocketAmmo=rocketStartingAmmo, Ammo=rifleStartingAmmo
         };
 
         static int IntegerAmmo(float value)
@@ -85,6 +89,7 @@ namespace StarTournament.ProvingGround
                 throw new ArgumentOutOfRangeException(nameof(seconds));
             state.RifleCooldownRemaining = Math.Max(0, state.RifleCooldownRemaining - seconds);
             state.ShotgunCooldownRemaining = Math.Max(0, state.ShotgunCooldownRemaining - seconds);
+            state.RocketCooldownRemaining = Math.Max(0, state.RocketCooldownRemaining - seconds);
             if (!state.Dead && state.SwitchRemaining > 0)
             {
                 state.SwitchRemaining = Math.Max(0, state.SwitchRemaining - seconds);
@@ -92,10 +97,10 @@ namespace StarTournament.ProvingGround
                 {
                     state.SelectedWeapon = state.PendingWeapon;
                     state.PendingWeapon = default;
-                    state.Ammo = state.SelectedWeapon == WeaponId.Rifle ? state.RifleAmmo : state.ShotgunAmmo;
+                    state.Ammo = AmmoFor(state, state.SelectedWeapon);
                 }
             }
-            state.CooldownRemaining = state.SelectedWeapon==WeaponId.Rifle ? state.RifleCooldownRemaining : state.ShotgunCooldownRemaining;
+            state.CooldownRemaining = CooldownFor(state, state.SelectedWeapon);
             if (state.Dead) state.RespawnRemaining = Math.Max(0, state.RespawnRemaining - seconds);
         }
 
@@ -108,8 +113,9 @@ namespace StarTournament.ProvingGround
             {
                 case WeaponSelection.Rifle: target=WeaponId.Rifle; break;
                 case WeaponSelection.Shotgun: target=WeaponId.Shotgun; break;
-                case WeaponSelection.Previous: case WeaponSelection.Next:
-                    target=state.SelectedWeapon==WeaponId.Rifle?WeaponId.Shotgun:WeaponId.Rifle; break;
+                case WeaponSelection.RocketLauncher: target=WeaponId.RocketLauncher; break;
+                case WeaponSelection.Previous: target=(WeaponId)(((int)state.SelectedWeapon+1)%3+1); break;
+                case WeaponSelection.Next: target=(WeaponId)((int)state.SelectedWeapon%3+1); break;
                 default: throw new ArgumentOutOfRangeException(nameof(selection));
             }
             if (target == state.SelectedWeapon) return;
@@ -126,23 +132,32 @@ namespace StarTournament.ProvingGround
             if(float.IsNaN(amount)||float.IsInfinity(amount)||amount<0) throw new ArgumentOutOfRangeException(nameof(amount));
             state.Armor=Math.Min(maximumArmor,state.Armor+amount);
         }
-        public void Restore(CombatLifeState snapshot)
+        public static int AmmoFor(CombatLifeState s, WeaponId id) => id==WeaponId.Rifle?s.RifleAmmo:id==WeaponId.Shotgun?s.ShotgunAmmo:s.RocketAmmo;
+        public static double CooldownFor(CombatLifeState s, WeaponId id) => id==WeaponId.Rifle?s.RifleCooldownRemaining:id==WeaponId.Shotgun?s.ShotgunCooldownRemaining:s.RocketCooldownRemaining;
+        static bool WeaponValid(WeaponId id) => id>=WeaponId.Rifle && id<=WeaponId.RocketLauncher;
+        static bool ValidTimer(double v) => !double.IsNaN(v) && !double.IsInfinity(v) && v>=0;
+        public void ValidateSnapshot(CombatLifeState snapshot)
         {
-            if(snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.SelectedWeapon!=WeaponId.Rifle&&snapshot.SelectedWeapon!=WeaponId.Shotgun||double.IsNaN(snapshot.RifleCooldownRemaining)||double.IsInfinity(snapshot.RifleCooldownRemaining)||snapshot.RifleCooldownRemaining<0||double.IsNaN(snapshot.ShotgunCooldownRemaining)||double.IsInfinity(snapshot.ShotgunCooldownRemaining)||snapshot.ShotgunCooldownRemaining<0||double.IsNaN(snapshot.SwitchRemaining)||double.IsInfinity(snapshot.SwitchRemaining)||snapshot.SwitchRemaining<0||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(snapshot.PendingWeapon==default||snapshot.PendingWeapon==snapshot.SelectedWeapon||snapshot.PendingWeapon!=WeaponId.Rifle&&snapshot.PendingWeapon!=WeaponId.Shotgun)) throw new ArgumentException("Invalid combat life snapshot",nameof(snapshot));
-            if(snapshot.Ammo!=(snapshot.SelectedWeapon==WeaponId.Rifle?snapshot.RifleAmmo:snapshot.ShotgunAmmo))throw new ArgumentException("Selected ammo mismatch",nameof(snapshot));
-            state=snapshot;
+            if(snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
+                throw new ArgumentException("Invalid combat life snapshot",nameof(snapshot));
+            if(snapshot.Ammo!=AmmoFor(snapshot,snapshot.SelectedWeapon))throw new ArgumentException("Selected ammo mismatch",nameof(snapshot));
         }
+        public void Restore(CombatLifeState snapshot) { ValidateSnapshot(snapshot); state=snapshot; }
 
         public bool Fire(bool held)
         {
             bool edge = held && !state.FireHeld;
             state.FireHeld = held;
             if (state.Dead || state.SwitchRemaining > 0 || !held || state.CooldownRemaining > 0 || state.Ammo == 0 ||
-                (state.SelectedWeapon==WeaponId.Shotgun && !edge)) return false;
+                (state.SelectedWeapon!=WeaponId.Rifle && !edge)) return false;
             if(state.SelectedWeapon==WeaponId.Rifle)
             {
                 state.RifleAmmo--; state.RifleCooldownRemaining=rifleCooldown;
                 state.Ammo=state.RifleAmmo;
+            }
+            else if(state.SelectedWeapon==WeaponId.RocketLauncher)
+            {
+                state.RocketAmmo--; state.RocketCooldownRemaining=rocketCooldown; state.Ammo=state.RocketAmmo;
             }
             else
             {
@@ -150,7 +165,7 @@ namespace StarTournament.ProvingGround
                 state.ShotgunAmmo--; state.ShotgunCooldownRemaining=cooldown;
                 state.Ammo=state.ShotgunAmmo;
             }
-            state.CooldownRemaining = state.SelectedWeapon==WeaponId.Rifle?state.RifleCooldownRemaining:state.ShotgunCooldownRemaining;
+            state.CooldownRemaining = CooldownFor(state, state.SelectedWeapon);
             return true;
         }
 

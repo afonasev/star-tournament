@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
             Ticks++;LastMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-start)*1000.0/System.Diagnostics.Stopwatch.Frequency;
         }
     }
-    public sealed class NativeBotTactics : INativeBotTactics
+    public sealed class NativeBotTactics : INativeBotTactics, INativeRocketTactics
     {
         readonly PhysicsScene physics;
         readonly INativeNavigation navigation;
@@ -79,6 +79,11 @@ namespace StarTournament.ProvingGround
             groundAcceleration=movement.Get("player.movement.groundAcceleration");airAcceleration=movement.Get("player.movement.airAcceleration");fixedSeconds=1/movement.Get("simulation.fixedTickHz");
             eye=movement.Get("camera.eyeHeight");target=height*combat.Get("zone.torsoY");probe=behavior.Get("bots.tactics.probeDistance");jumpSamples=(int)behavior.Get("bots.tactics.jumpSamples");
             anchors=new[]{arena.LowerRoutePoint,arena.UpperRoutePoint}.Concat(arena.ReadNavigationTransitions().SelectMany(t=>new[]{t.OrderedFeet[0],t.OrderedFeet[t.OrderedFeet.Length-1]})).ToArray();
+        }
+        public bool ClearRocketShot(Vector3 origin,Vector3 direction,float distance,out Vector3 endpoint)
+        {
+            Queries++;bool hit=physics.Raycast(origin,direction,out var wall,distance,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+            endpoint=hit?wall.point:origin+direction*distance;return !hit;
         }
         bool Locate(Vector3 feet,out NativeNavigationPoint point){Queries++;return navigation.TryLocate(feet,out point);}
         public bool CanMove(Vector3 feet,Vector3 direction,float distance)

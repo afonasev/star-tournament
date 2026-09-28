@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1275379835
+--- !u!1 &743525815
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1275379837}
-  - component: {fileID: 1275379836}
+  - component: {fileID: 743525817}
+  - component: {fileID: 743525816}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1275379836
+--- !u!114 &743525816
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275379835}
+  m_GameObject: {fileID: 743525815}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -158,6 +158,7 @@ MonoBehaviour:
   TrooperBodyPrefab: {fileID: 3136562236329590072, guid: 345aa6c8664344616ae0a3980a9f6ac6, type: 3}
   TrooperArmsPrefab: {fileID: 206464274784029693, guid: 54b95b770862640cc94dc11340d68177, type: 3}
   RiflePrefab: {fileID: 8771091787928289351, guid: 33e6bac6b2ca94f7da778d3c4e7dc40f, type: 3}
+  PulsePrefab: {fileID: 8771091787928289351, guid: 6c03537e491940e2a99ea85b7f47e934, type: 3}
   TrooperClips:
   - {fileID: 7400000, guid: fc6e3cae87e53499e8f2ae83f8fc3127, type: 2}
   - {fileID: 7400000, guid: 5cb3b159d01f84925ae4d3431763eb27, type: 2}
@@ -399,7 +400,7 @@ MonoBehaviour:
       Value: 2
   Profile:
     id: unity-proving-ground-v1
-    version: 5
+    version: 6
     descriptors:
     - Path: simulation.fixedTickHz
       Group: simulation
@@ -1100,6 +1101,114 @@ MonoBehaviour:
       Maximum: 100
       Step: 0.5
       DefaultValue: 20
+    - Path: presentation.rocketModelScale
+      Group: rocket-effects
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 Pulse"
+      Description: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u043E\u0440\u0443\u0436\u0438\u044F
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        trooper grip mount."
+      Unit: ratio
+      Minimum: 0.5
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.4
+    - Path: presentation.rocketBodyRadius
+      Group: rocket-effects
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0440\u0430\u043A\u0435\u0442\u044B"
+      Description: "\u0412\u0438\u0434\u0438\u043C\u044B\u0439 \u0440\u0430\u0434\u0438\u0443\u0441
+        \u0441\u043D\u0430\u0440\u044F\u0434\u0430, \u0431\u0435\u0437 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F
+        collision."
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 0.4
+      Step: 0.01
+      DefaultValue: 0.08
+    - Path: presentation.rocketBodyLength
+      Group: rocket-effects
+      Label: "\u0414\u043B\u0438\u043D\u0430 \u0440\u0430\u043A\u0435\u0442\u044B"
+      Description: "\u0412\u0438\u0434\u0438\u043C\u0430\u044F \u0434\u043B\u0438\u043D\u0430
+        \u043B\u0435\u0442\u044F\u0449\u0435\u0433\u043E \u0441\u043D\u0430\u0440\u044F\u0434\u0430."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.35
+    - Path: presentation.rocketTrailLength
+      Group: rocket-effects
+      Label: "\u0414\u043B\u0438\u043D\u0430 \u0441\u043B\u0435\u0434\u0430"
+      Description: "\u0414\u043B\u0438\u043D\u0430 \u0441\u0432\u0435\u0442\u044F\u0449\u0435\u0433\u043E\u0441\u044F
+        \u0441\u043B\u0435\u0434\u0430 \u043F\u043E\u0437\u0430\u0434\u0438 \u0440\u0430\u043A\u0435\u0442\u044B."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 1.2
+    - Path: presentation.rocketTrailWidth
+      Group: rocket-effects
+      Label: "\u0422\u043E\u043B\u0449\u0438\u043D\u0430 \u0441\u043B\u0435\u0434\u0430"
+      Description: "\u0422\u043E\u043B\u0449\u0438\u043D\u0430 \u0441\u0432\u0435\u0442\u044F\u0449\u0435\u0433\u043E\u0441\u044F
+        \u0441\u043B\u0435\u0434\u0430."
+      Unit: meters
+      Minimum: 0.005
+      Maximum: 0.3
+      Step: 0.005
+      DefaultValue: 0.05
+    - Path: presentation.rocketExplosionSeconds
+      Group: rocket-effects
+      Label: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u0432\u0437\u0440\u044B\u0432\u0430"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430 \u043F\u043E simulation
+        clock."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.45
+    - Path: presentation.rocketExplosionSize
+      Group: rocket-effects
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0432\u0441\u043F\u044B\u0448\u043A\u0438"
+      Description: "\u0412\u0438\u0434\u0438\u043C\u044B\u0439 \u0440\u0430\u0434\u0438\u0443\u0441
+        \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430; \u043D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442
+        \u043D\u0430 \u0443\u0440\u043E\u043D."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 1.8
+    - Path: presentation.rocketRed
+      Group: rocket-effects
+      Label: "\u0418\u043C\u043F\u0443\u043B\u044C\u0441 \xB7 \u043A\u0440\u0430\u0441\u043D\u044B\u0439"
+      Description: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439 \u043A\u0430\u043D\u0430\u043B
+        \u0441\u0432\u0435\u0442\u044F\u0449\u0435\u0433\u043E\u0441\u044F \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430
+        \u0438 \u0441\u043B\u0435\u0434\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 1
+    - Path: presentation.rocketGreen
+      Group: rocket-effects
+      Label: "\u0418\u043C\u043F\u0443\u043B\u044C\u0441 \xB7 \u0437\u0435\u043B\u0451\u043D\u044B\u0439"
+      Description: "\u0417\u0435\u043B\u0451\u043D\u044B\u0439 \u043A\u0430\u043D\u0430\u043B
+        \u0441\u0432\u0435\u0442\u044F\u0449\u0435\u0433\u043E\u0441\u044F \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430
+        \u0438 \u0441\u043B\u0435\u0434\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.32
+    - Path: presentation.rocketBlue
+      Group: rocket-effects
+      Label: "\u0418\u043C\u043F\u0443\u043B\u044C\u0441 \xB7 \u0441\u0438\u043D\u0438\u0439"
+      Description: "\u0421\u0438\u043D\u0438\u0439 \u043A\u0430\u043D\u0430\u043B
+        \u0441\u0432\u0435\u0442\u044F\u0449\u0435\u0433\u043E\u0441\u044F \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430
+        \u0438 \u0441\u043B\u0435\u0434\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.04
     values:
     - Path: simulation.fixedTickHz
       Value: 50
@@ -1243,9 +1352,29 @@ MonoBehaviour:
       Value: -10
     - Path: world.maximumTransitionSegment
       Value: 20
+    - Path: presentation.rocketModelScale
+      Value: 1.4
+    - Path: presentation.rocketBodyRadius
+      Value: 0.08
+    - Path: presentation.rocketBodyLength
+      Value: 0.35
+    - Path: presentation.rocketTrailLength
+      Value: 1.2
+    - Path: presentation.rocketTrailWidth
+      Value: 0.05
+    - Path: presentation.rocketExplosionSeconds
+      Value: 0.45
+    - Path: presentation.rocketExplosionSize
+      Value: 1.8
+    - Path: presentation.rocketRed
+      Value: 1
+    - Path: presentation.rocketGreen
+      Value: 0.32
+    - Path: presentation.rocketBlue
+      Value: 0.04
   LifeProfile:
     id: unity-combat-state-v1
-    version: 4
+    version: 5
     descriptors:
     - Path: combat.maximumHealth
       Group: combat
@@ -1536,6 +1665,27 @@ MonoBehaviour:
       Maximum: 15
       Step: 0.1
       DefaultValue: 3
+    - Path: rocket.startingAmmo
+      Group: rocket
+      Label: "\u0421\u0442\u0430\u0440\u0442\u043E\u0432\u044B\u0435 \u0440\u0430\u043A\u0435\u0442\u044B"
+      Description: "\u0417\u0430\u043F\u0430\u0441 Pulse \u0432 \u043D\u0430\u0447\u0430\u043B\u0435
+        \u043A\u0430\u0436\u0434\u043E\u0439 \u0436\u0438\u0437\u043D\u0438."
+      Unit: ammo
+      Minimum: 1
+      Maximum: 200
+      Step: 1
+      DefaultValue: 20
+    - Path: rocket.cooldownSeconds
+      Group: rocket
+      Label: "\u041F\u0430\u0443\u0437\u0430 Pulse"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u043C\u0438
+        \u043D\u0430\u0436\u0430\u0442\u0438\u044F\u043C\u0438 \u043E\u0433\u043D\u044F."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 1.2
     values:
     - Path: combat.maximumHealth
       Value: 100
@@ -1589,9 +1739,13 @@ MonoBehaviour:
       Value: 0.7
     - Path: combat.killcamSeconds
       Value: 3
+    - Path: rocket.startingAmmo
+      Value: 20
+    - Path: rocket.cooldownSeconds
+      Value: 1.2
   CombatProfile:
     id: unity-native-combat-v1
-    version: 3
+    version: 4
     descriptors:
     - Path: shot.pellets
       Group: shotgun
@@ -2026,6 +2180,78 @@ MonoBehaviour:
       Maximum: 90
       Step: 1
       DefaultValue: 35
+    - Path: rocket.speed
+      Group: rocket
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0440\u0430\u043A\u0435\u0442\u044B"
+      Description: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0440\u044F\u043C\u043E\u0433\u043E
+        \u043F\u043E\u043B\u0451\u0442\u0430; sweep \u0438\u0441\u043A\u043B\u044E\u0447\u0430\u0435\u0442
+        \u043F\u0440\u043E\u043F\u0443\u0441\u043A \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u043E\u0432."
+      Unit: meters-per-second
+      Minimum: 1
+      Maximum: 120
+      Step: 1
+      DefaultValue: 30
+    - Path: rocket.radius
+      Group: rocket
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0432\u0437\u0440\u044B\u0432\u0430"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043B\u0438\u043D\u0435\u0439\u043D\u043E\u0433\u043E
+        \u0443\u0440\u043E\u043D\u0430 \u0434\u043E \u0431\u043B\u0438\u0436\u0430\u0439\u0448\u0435\u0439
+        \u0442\u043E\u0447\u043A\u0438 gameplay capsule."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 4
+    - Path: rocket.maximumDamage
+      Group: rocket
+      Label: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0440\u043E\u043D"
+      Description: "\u0415\u0434\u0438\u043D\u044B\u0439 \u043F\u0440\u0435\u0434\u0435\u043B
+        \u043F\u0440\u044F\u043C\u043E\u0433\u043E \u0438 \u0440\u0430\u0434\u0438\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0443\u0440\u043E\u043D\u0430, \u0432\u043A\u043B\u044E\u0447\u0430\u044F
+        \u0443\u0441\u0438\u043B\u0435\u043D\u0438\u0435."
+      Unit: health
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 100
+    - Path: rocket.range
+      Group: rocket
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043F\u043E\u043B\u0451\u0442\u0430"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u044B\u0439
+        \u043F\u0443\u0442\u044C; \u0431\u0435\u0437 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0440\u0430\u043A\u0435\u0442\u0430 \u0433\u0430\u0441\u043D\u0435\u0442
+        \u0431\u0435\u0437 \u0432\u0437\u0440\u044B\u0432\u0430."
+      Unit: meters
+      Minimum: 10
+      Maximum: 500
+      Step: 1
+      DefaultValue: 200
+    - Path: rocket.botMinimumDistance
+      Group: rocket
+      Label: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0431\u043E\u0442\u0430"
+      Description: "\u0412\u0431\u043B\u0438\u0437\u0438 \u0431\u043E\u0442 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442
+        \u0434\u0440\u043E\u0431\u043E\u0432\u0438\u043A/\u0430\u0432\u0442\u043E\u043C\u0430\u0442
+        \u0432\u043C\u0435\u0441\u0442\u043E Pulse."
+      Unit: meters
+      Minimum: 1
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 7
+    - Path: rocket.botSafetyMargin
+      Group: rocket
+      Label: "\u0417\u0430\u043F\u0430\u0441 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438
+        \u0431\u043E\u0442\u0430"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043E\u0442 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0433\u043E
+        \u0432\u0437\u0440\u044B\u0432\u0430 \u0434\u043B\u044F \u0441\u0435\u0431\u044F
+        \u0438 \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u043E\u0432."
+      Unit: meters
+      Minimum: 0
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 1
     values:
     - Path: shot.pellets
       Value: 12
@@ -2111,6 +2337,18 @@ MonoBehaviour:
       Value: 0.35
     - Path: killcam.killerOrbitSpeed
       Value: 35
+    - Path: rocket.speed
+      Value: 30
+    - Path: rocket.radius
+      Value: 4
+    - Path: rocket.maximumDamage
+      Value: 100
+    - Path: rocket.range
+      Value: 200
+    - Path: rocket.botMinimumDistance
+      Value: 7
+    - Path: rocket.botSafetyMargin
+      Value: 1
   BotPerceptionProfile:
     id: unity-bot-perception-v1
     version: 1
@@ -55887,13 +56125,13 @@ MonoBehaviour:
       Value: 4
     - Path: damage-hall.anchor.z
       Value: 0
---- !u!4 &1275379837
+--- !u!4 &743525817
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275379835}
+  m_GameObject: {fileID: 743525815}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -55906,4 +56144,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1275379837}
+  - {fileID: 743525817}

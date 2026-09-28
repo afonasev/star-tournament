@@ -28,14 +28,22 @@ namespace StarTournament.ProvingGround
             float phase, float turnRate, float error, float period, out float residualDegrees);
         float Range { get; }
     }
+    public interface INativeRocketTactics
+    { bool ClearRocketShot(Vector3 origin,Vector3 direction,float distance,out Vector3 endpoint); }
     public sealed class NativeShotgunPolicy : INativeBotWeaponPolicy
     {
         readonly float eye, target, maxPitch;
+        readonly ProvingProfile combat;
+        public float EyeHeight=>eye; public float TargetHeight=>target;
+        public float RocketMinimumDistance=>combat.Get("rocket.botMinimumDistance");
+        public float RocketSafety=>combat.Get("rocket.radius")+combat.Get("rocket.botSafetyMargin");
+        public float RangeFor(WeaponId id)=>combat.Get(id==WeaponId.RocketLauncher?"rocket.range":id==WeaponId.Rifle?"rifle.range":"shot.range");
         public float Range { get; }
         public string Identity { get; }
         public NativeShotgunPolicy(ProvingProfile movement, ProvingProfile combat)
         {
-            Identity="native-shotgun-v1|"+JsonUtility.ToJson(movement)+"|"+JsonUtility.ToJson(combat);
+            this.combat=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));this.combat.EnsureNativeCombatDescriptors();
+            Identity="native-loadout-pulse-v1|"+JsonUtility.ToJson(movement)+"|"+JsonUtility.ToJson(combat);
             maxPitch=movement.Get("camera.maximumPitchDegrees");eye=movement.Get("camera.eyeHeight");target=movement.Get("player.capsule.height")*combat.Get("zone.torsoY");
             Range=combat.Get("shot.range");
         }
@@ -225,21 +233,32 @@ namespace StarTournament.ProvingGround
                 if(maneuver&&f.Pose.Grounded&&time>=state.NextJump&&Random()<P("jumpChance")&&tactics.CanJump(f.Pose,direction))
                 {action.Jump=true;state.JumpActive=true;state.JumpDirection=direction;state.NextJump=time+P("jumpCooldownSeconds")*state.Personality;Jumps++;}
             }
-            // Short-range engagements favour the shotgun; empty slots fall back to the other weapon.
+            // Use only observed target information and allowlisted allied poses. No hidden enemy query.
             float targetDistance=memory.HasValue?Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position):float.PositiveInfinity;
             bool closeShotgun=targetDistance<=P("preferredDistanceMeters")*state.Personality;
             var desired=f.Life.SelectedWeapon;
-            if(f.Life.ShotgunAmmo>0 && (f.Life.RifleAmmo==0||closeShotgun))desired=WeaponId.Shotgun;
+            bool rocketSafe=false;
+            if(visible&&memory.HasValue&&weapon is NativeShotgunPolicy loadout&&tactics is INativeRocketTactics rocketTactics&&f.Life.RocketAmmo>0&&targetDistance>=Mathf.Max(loadout.RocketMinimumDistance,loadout.RocketSafety)&&targetDistance<=loadout.RangeFor(WeaponId.RocketLauncher))
+            {
+                var origin=f.Pose.Position+Vector3.up*loadout.EyeHeight;
+                var direction=Quaternion.Euler(f.Pose.Pitch-action.LookDegrees.y,f.Pose.Yaw+action.LookDegrees.x,0)*Vector3.forward;
+                rocketSafe=rocketTactics.ClearRocketShot(origin,direction,targetDistance,out var endpoint)&&Vector3.Distance(endpoint,f.Pose.Position)>loadout.RocketSafety;
+                foreach(var ally in f.Allies)if(Vector3.Distance(endpoint,ally.Position)<=loadout.RocketSafety+loadout.TargetHeight)rocketSafe=false;
+            }
+            if(rocketSafe)desired=WeaponId.RocketLauncher;
+            else if(f.Life.ShotgunAmmo>0 && (f.Life.RifleAmmo==0||closeShotgun))desired=WeaponId.Shotgun;
             else if(f.Life.RifleAmmo>0)desired=WeaponId.Rifle;
-            if(desired!=f.Life.SelectedWeapon)action.SelectWeapon=desired==WeaponId.Rifle?WeaponSelection.Rifle:WeaponSelection.Shotgun;
-            int readyAmmo=desired==WeaponId.Rifle?f.Life.RifleAmmo:f.Life.ShotgunAmmo;
-            double readyCooldown=desired==WeaponId.Rifle?f.Life.RifleCooldownRemaining:f.Life.ShotgunCooldownRemaining;
+            else if(desired==WeaponId.RocketLauncher)desired=WeaponId.Rifle; // Never use unsafe rockets as an empty fallback.
+            if(desired!=f.Life.SelectedWeapon)action.SelectWeapon=desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;
+            int readyAmmo=CombatLife.AmmoFor(f.Life,desired);
+            double readyCooldown=CombatLife.CooldownFor(f.Life,desired);
+            float weaponRange=weapon is NativeShotgunPolicy policy?policy.RangeFor(desired):weapon.Range;
             // Older isolated planner fixtures have no loadout; keep their supplied ammo/cooldown.
             if(f.Life.SelectedWeapon==0){readyAmmo=f.Life.Ammo;readyCooldown=f.Life.CooldownRemaining;action.SelectWeapon=WeaponSelection.None;}
             // A shotgun press must be followed by a complete false tick.
             bool release=state.Pressed;state.Pressed=false;
             if(!release&&visible&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
-                readyAmmo>0&&readyCooldown<=0&&targetDistance<=weapon.Range&&!AllyInLine(f,memory.Value.Sighting.Position))
+                readyAmmo>0&&readyCooldown<=0&&targetDistance<=weaponRange&&(desired!=WeaponId.RocketLauncher||rocketSafe)&&!AllyInLine(f,memory.Value.Sighting.Position))
             {action.Fire=true;state.Pressed=true;FireAttempts++;}
             return action;
         }

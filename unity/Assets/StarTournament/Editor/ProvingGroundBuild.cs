@@ -46,6 +46,7 @@ namespace StarTournament.ProvingGround.Editor
             root.CombatBowlReviewDirectory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_COMBAT_BOWL_EVIDENCE");
             TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
             root.RiflePrefab=Required("rifle-lod0");
+            root.PulsePrefab=Required("pulse-lod0");
             root.ArmorPickupPrefab=Required("armor-pickup");
             root.SpeedPickupPrefab=Required("speed-pickup");
             root.DamagePickupPrefab=Required("damage-pickup");

@@ -1,0 +1,72 @@
+{
+  "change": "add-pulse-rocket-launcher",
+  "preintegration_revision": "cd526f18adc1f4496f0b44d6fa43ff7fb0e4602a",
+  "checks": [
+    {
+      "name": "editmode",
+      "result": "Passed",
+      "passed": 142,
+      "failed": 0,
+      "source_revision": "87c6778eff2a67254e46786a87cb5250a3fd0916",
+      "xml": "docs/evidence/add-pulse-rocket-launcher/editmode.xml"
+    },
+    {
+      "name": "playmode",
+      "result": "Passed",
+      "passed": 123,
+      "failed": 0,
+      "source_revision": "87c6778eff2a67254e46786a87cb5250a3fd0916",
+      "xml": "docs/evidence/add-pulse-rocket-launcher/playmode.xml"
+    },
+    {
+      "name": "pulse-playmode",
+      "result": "Passed",
+      "passed": 5,
+      "failed": 0,
+      "source_revision": "87c6778eff2a67254e46786a87cb5250a3fd0916",
+      "xml": "docs/evidence/add-pulse-rocket-launcher/pulse-playmode.xml"
+    }
+  ],
+  "build": {
+    "command": "UNITY_EDITOR=/tmp/pulse-unity-editor-01a0e69b unity/tools.sh build",
+    "result": "exit 0 / STAR_PROVING_BUILD_PASS",
+    "revision": "cd526f18adc1f4496f0b44d6fa43ff7fb0e4602a"
+  },
+  "test_environment": "Unity 6000.3.23f1; owned wrapper uses existing versioned licensing IPC; PlayMode uses graphics to avoid startup unload deadlock. EditMode retains nographics.",
+  "native_preview": {
+    "revision": "e465e22",
+    "result": {
+      "classification": "AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",
+      "arena": "combat-bowl-v1@15",
+      "profile": "Опубликованный профиль · v1-без-даты\nunity-shipped-release\nSHA256 1b63565b6a73cd7e5b14f01234b72edfc62e036481b06a0c9a6f65a285645df5",
+      "muted": true,
+      "explosions": 1,
+      "width": 1920,
+      "height": 1080
+    },
+    "images_inspected": 7,
+    "classification": "Scripted native Player, not physical device or human acceptance"
+  },
+  "later_changes": "After tests: diagnostic review assertions/placements and authored model PBR/batching; gameplay core unchanged. Integrated neighbor pickup marker presentation retains its own checks.",
+  "human_acceptance": "pending",
+  "physical_devices": "pending",
+  "performance": "No benchmark or 60 FPS acceptance claim",
+  "after_roster_integration": {
+    "source_revision": "2e6f48794f1c6fd02c7b00a705b181fba73770b0",
+    "editmode": {
+      "passed": 145,
+      "failed": 0,
+      "xml": "after-roster-editmode.xml"
+    },
+    "playmode_focused": {
+      "passed": 14,
+      "failed": 0,
+      "classes": [
+        "RocketSessionTests",
+        "RosterCardsTests",
+        "NativeParticipantRosterTests"
+      ],
+      "xml": "after-roster-playmode.xml"
+    }
+  }
+}

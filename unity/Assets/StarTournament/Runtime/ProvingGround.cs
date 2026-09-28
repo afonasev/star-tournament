@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingGround : MonoBehaviour
     {
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab, HealPickupPrefab;
-        public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab;
+        public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab, PulsePrefab;
         public AnimationClip[] TrooperClips;
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
         public ProvingProfile Profile = ProvingProfile.CreateDefault();
@@ -235,6 +235,7 @@ namespace StarTournament.ProvingGround
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
+            if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
@@ -320,7 +321,7 @@ namespace StarTournament.ProvingGround
             if(ownerSeat>=0)CreateOwnShadowProxy(body);
             bodies[index]=body;
             body.AddComponent<VectorShotPresentation>().Initialize(movement);
-            body.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement);
+            body.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement,PulsePrefab);
         }
         static void CreateOwnShadowProxy(GameObject body)
         {
@@ -355,7 +356,7 @@ namespace StarTournament.ProvingGround
             view.AddComponent<TrooperVisual>().Initialize(TrooperClips,trooper,true);
             ApplyIdentity(view,participant);
             view.AddComponent<VectorShotPresentation>().Initialize(movement);
-            view.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement);
+            view.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement,PulsePrefab);
             view.transform.localPosition=new Vector3(trooper.Get("view.x"),trooper.Get("view.y"),trooper.Get("view.z"));
             var fillObject=new GameObject("equipment-fill");fillObject.transform.SetParent(cameraObject.transform,false);
             var fill=fillObject.AddComponent<Light>();fill.type=LightType.Point;
@@ -482,8 +483,8 @@ namespace StarTournament.ProvingGround
                 int participant=Composition.ParticipantAt(i);var life=Session.Life(participant);
                 health[i].text=Mathf.CeilToInt(life.Health).ToString();
                 armorGroups[i].SetActive(life.Armor>0); if(life.Armor>0) armor[i].text=Mathf.CeilToInt(life.Armor).ToString();
-                ammo[i].text=life.Ammo+(Session.DamageBoostRemaining(participant)>0?" ×2":"");
-                ammoIcons[i].Kind=life.SelectedWeapon==WeaponId.Rifle?HudIndicatorIcon.IconKind.Rifle:HudIndicatorIcon.IconKind.Shotgun;
+                ammo[i].text=life.Ammo+(Session.DamageBoostRemaining(participant)>0&&life.SelectedWeapon!=WeaponId.RocketLauncher?" ×2":"");
+                ammoIcons[i].Kind=life.SelectedWeapon==WeaponId.Rifle?HudIndicatorIcon.IconKind.Rifle:life.SelectedWeapon==WeaponId.Shotgun?HudIndicatorIcon.IconKind.Shotgun:HudIndicatorIcon.IconKind.Rocket;
                 ResizeHudIndicator(health[i]);if(life.Armor>0)ResizeHudIndicator(armor[i]);ResizeHudIndicator(ammo[i]);
 
                 ammo[i].color=Session.DamageBoostRemaining(participant)>0?Color.red:Color.white;

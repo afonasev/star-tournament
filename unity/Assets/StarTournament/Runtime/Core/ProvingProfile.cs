@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 5;
+        public const int DefaultVersion = 6;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -88,7 +88,7 @@ namespace StarTournament.ProvingGround
         {
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
-            version=3;
+            version=4;
             var current=CreateNativeCombatDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
-            version=4;
+            version=5;
             var current=CreateCombatDefault();
             var cadence=FindDescriptor("rifle.cooldownSeconds");
             if(cadence!=null)
@@ -211,7 +211,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 4 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 5 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
@@ -238,6 +238,7 @@ namespace StarTournament.ProvingGround
             profile.Add("weapon.switchSeconds", "weapon-switch", "Время смены оружия", "Время запрета стрельбы до выбора другого слота.", "seconds", .1f, 3f, .1f, 1f);
             profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела.", "seconds", .05f, 5, .05f, .7f);
             profile.Add("combat.killcamSeconds", "death", "Ожидание возрождения", "Simulation время смерти до готовности к выбору spawn.", "seconds", 0, 15, .1f, 3);
+            AddRocketLife(profile);
             return profile;
         }
 
@@ -316,6 +317,7 @@ namespace StarTournament.ProvingGround
             profile.Add("weapon.probeCooldown", "weapon", "Weapon probe cooldown", "Minimum interval between fixture firing probes.", "seconds", .1f, 3f, .05f, .7f);
             profile.Add("world.minimumSupportHeight","world-query","Lowest support probe","Lower world bound for corpse support queries; does not author geometry.","meters",-100,0,1,-10);
             profile.Add("world.maximumTransitionSegment","world-query","Declared route segment bound","Maximum distance between declared traversal samples.","meters",1,100,.5f,20);
+            AddRocketPresentation(profile);
             return profile;
         }
 

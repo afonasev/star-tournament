@@ -1,0 +1,133 @@
+{
+    "Version": 5,
+    "Rockets": [],
+    "HealPickups": [
+        {
+            "InstanceId": "heal-basement",
+            "Anchor": {
+                "x": 0.0,
+                "y": -1.2000000476837159,
+                "z": 0.0
+            },
+            "Available": false,
+            "Remaining": 18.60000003129244
+        }
+    ],
+    "ArenaIdentity": "combat-bowl-v1@15",
+    "DesignProfile": {
+        "ProfileId": "diagnostic-fixture",
+        "Revision": 0,
+        "Hash": "1b63565b6a73cd7e5b14f01234b72edfc62e036481b06a0c9a6f65a285645df5"
+    },
+    "Time": 1.3999999687075616,
+    "ShotSequence": 1,
+    "ShotCount": 1,
+    "Lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 19,
+            "SelectedWeapon": 3,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 19,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.860000055283308,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.860000055283308,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 0.0,
+            "Armor": 0.0,
+            "Ammo": 20,
+            "SelectedWeapon": 3,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 20,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": true,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 2.9600000008940698,
+            "KillerId": "player-1",
+            "KillerLife": 1
+        }
+    ],
+    "ArmorPickups": [
+        {
+            "InstanceId": "armor-sw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        },
+        {
+            "InstanceId": "armor-ne",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        }
+    ],
+    "SpeedPickups": [
+        {
+            "InstanceId": "speed-nw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": false,
+            "Remaining": 8.600000031292439
+        },
+        {
+            "InstanceId": "speed-se",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": false,
+            "Remaining": 8.600000031292439
+        }
+    ],
+    "SpeedRemaining": [
+        0.0,
+        0.0
+    ],
+    "DamagePickup": {
+        "InstanceId": "damage-hall",
+        "Anchor": {
+            "x": 0.0,
+            "y": 4.0,
+            "z": 0.0
+        },
+        "Available": false,
+        "Remaining": 13.600000031292439
+    },
+    "DamageRemaining": [
+        0.0,
+        0.0
+    ]
+}

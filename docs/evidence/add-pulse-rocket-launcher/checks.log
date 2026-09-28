@@ -1,0 +1,6 @@
+EditMode: 142/142 passed, exit 0.
+PlayMode: 123/123 passed, exit 0.
+Focused Pulse PlayMode after keyboard focus repair: 5/5 passed, exit 0.
+Build at cd526f18adc1f4496f0b44d6fa43ff7fb0e4602a: exit 0; STAR_PROVING_BUILD_PASS.
+Native Player preview: muted, one explosion, seven PNG and snapshot pairs; program exit 0, all PNG inspected.
+Rejected Setup UI captures and white-material preview are excluded.

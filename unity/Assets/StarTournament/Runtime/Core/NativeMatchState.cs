@@ -77,7 +77,7 @@ namespace StarTournament.ProvingGround
         }
         void ClearLedger(int victim) { for(int i=0;i<rows.Length;i++) ledger[victim,i]=-1; }
         public void BeginTick() { if(Phase!=NativeMatchPhase.Finished) tick++; }
-        public void RecordDamage(int victim, int attacker, DamageResult result)
+        public void RecordDamage(int victim, int attacker, DamageResult result, bool chainEligible=true)
         {
             if(Phase==NativeMatchPhase.Finished || result.Applied<=0) return;
             rows[victim].DamageReceived+=result.Applied;
@@ -92,11 +92,11 @@ namespace StarTournament.ProvingGround
             { rows[i].Assists++; rows[i].Score+=assistPoints; }
             if(attacker>=0 && attacker!=victim)
             {
-                int length=chains[attacker]+1;
+                int length=chainEligible?chains[attacker]+1:1;
                 int award=length<=totals.Length ? totals[length-1] : totals[totals.Length-1]+(length-totals.Length)*increment;
-                rows[attacker].Kills++; rows[attacker].Score+=award-chainAwards[attacker];
+                rows[attacker].Kills++; rows[attacker].Score+=chainEligible?award-chainAwards[attacker]:award;
                 directKillsByPair[attacker*rows.Length+victim]++;
-                chains[attacker]=length; chainAwards[attacker]=award;
+                if(chainEligible){chains[attacker]=length; chainAwards[attacker]=award;}
             }
             ClearLedger(victim);
         }

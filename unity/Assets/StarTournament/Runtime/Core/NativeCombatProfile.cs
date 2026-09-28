@@ -4,7 +4,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateNativeCombatDefault()
         {
-            var p = new ProvingProfile { id = "unity-native-combat-v1", version = 3 };
+            var p = new ProvingProfile { id = "unity-native-combat-v1", version = 4 };
             p.Add("shot.pellets", "shotgun", "Дробины", "Число лучей одного двуствольного выстрела.", "count", 1, 64, 1, 12);
             p.Add("shot.spread", "shotgun", "Разброс", "Угловой радиус распределения дроби.", "degrees", 0, 45, .1f, 7);
             p.Add("shot.range", "shotgun", "Дальность", "Максимальная дальность каждой дробины.", "meters", 1, 200, .5f, 35);
@@ -48,6 +48,7 @@ namespace StarTournament.ProvingGround
             p.Add("killcam.killerOrbitRadius", "killcam", "Радиус вокруг убийцы", "Дистанция камеры от конкретной жизни убийцы.", "meters", 1f, 6f, .1f, 2.4f);
             p.Add("killcam.killerAboveEyes", "killcam", "Высота над глазами убийцы", "Небольшой угол сверху при облёте убийцы.", "meters", 0f, 2f, .05f, .35f);
             p.Add("killcam.killerOrbitSpeed", "killcam", "Скорость вокруг убийцы", "Угловая скорость камеры вокруг убийцы.", "degrees-per-second", 1f, 90f, 1f, 35f);
+            AddRocketCombat(p);
             return p;
         }
     }

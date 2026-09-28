@@ -47,7 +47,7 @@ namespace StarTournament.ProvingGround.Tests
         [Test] public void MigrationHasAllDescriptorsAndRejectsInvalidRanges()
         {
             var life=ProvingProfile.CreateCombatDefault();var presentation=ProvingProfile.CreateDefault();life.EnsureCombatDescriptors();presentation.EnsureDefaultDescriptors();
-            Assert.That(life.Version,Is.EqualTo(4));Assert.That(presentation.Version,Is.EqualTo(5));
+            Assert.That(life.Version,Is.EqualTo(5));Assert.That(presentation.Version,Is.EqualTo(6));
             foreach(var pair in new[]{(life,"heal.targetHealth"),(life,"heal.initialDelaySeconds"),(life,"heal.respawnSeconds"),(life,"heal.pickupRadius"),(presentation,"presentation.healPickupHoverHeight"),(presentation,"presentation.healPickupRotationDegreesPerSecond"),(presentation,"presentation.healPickupScale")})
             {
                 var d=pair.Item1.Descriptor(pair.Item2);Assert.That(d,Is.Not.Null);Assert.That(d.Group,Is.EqualTo("full-heal"));Assert.That(d.Label,Is.Not.Empty);Assert.That(d.Description,Is.Not.Empty);Assert.That(d.Unit,Is.Not.Empty);

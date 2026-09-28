@@ -8,10 +8,10 @@ namespace StarTournament.ProvingGround
     {
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
-        GameObject rifle;
+        GameObject rifle,pulse;
         Transform rifleMuzzle;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
-        public void Initialize(GameObject prefab,ProvingProfile profile)
+        public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null)
         {
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));
             var mount=GetComponentsInChildren<Transform>(true).Single(x=>x.name=="trooper:rig:weapon-mount");
@@ -29,12 +29,22 @@ namespace StarTournament.ProvingGround
                 renderer.sharedMaterials=imported;
             }
             rifleMuzzle=rifle.GetComponentsInChildren<Transform>(true).Single(x=>x.name=="rifle-muzzle");
+            if(pulsePrefab)
+            {
+                pulse=Object.Instantiate(pulsePrefab,mount);pulse.name="pulse-launcher";
+                pulse.transform.localPosition=Vector3.zero;pulse.transform.localRotation=Quaternion.identity;
+                pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale");
+                foreach(var t in pulse.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
+                foreach(var r in pulse.GetComponentsInChildren<Renderer>(true))
+                { if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off; }
+            }
             Show(WeaponId.Rifle);
         }
         public void Show(WeaponId weapon)
         {
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
+            if(pulse)pulse.SetActive(weapon==WeaponId.RocketLauncher);
         }
         static Material RifleMaterial(string name)
         {
@@ -56,6 +66,7 @@ namespace StarTournament.ProvingGround
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
         sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact; public WeaponId Weapon; }
         readonly NativeCombatSession session;
+        readonly RocketPresentation rocketPresentation;
         readonly ProvingProfile movement, tuning;
         readonly Transform owner;
         readonly PhysicsScene physics;
@@ -81,6 +92,7 @@ namespace StarTournament.ProvingGround
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
+            rocketPresentation=new RocketPresentation(session,movement,owner);
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
             session.Died += OnDeath;
@@ -193,6 +205,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
+            rocketPresentation.Dispose();
             session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();
@@ -284,7 +297,7 @@ namespace StarTournament.ProvingGround
         }
         public void Render()
         {
-            RenderPellets();
+            RenderPellets();rocketPresentation.Render();
             foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             for(int c=corpses.Count-1;c>=0;c--)
