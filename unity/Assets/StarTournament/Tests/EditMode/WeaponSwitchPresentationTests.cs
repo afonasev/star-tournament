@@ -49,15 +49,38 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
         }
         [Test]
+        public void ShoulderGestureKeepsPivotsAttachedAndRepeatedRenderingDoesNotAccumulate()
+        {
+            var cameraRoot=new GameObject("switch-test-camera");var camera=cameraRoot.AddComponent<Camera>();
+            var view=UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Trooper/TrooperArms.prefab"),camera.transform);
+            try
+            {
+                var visual=view.AddComponent<TrooperVisual>();var profile=ProvingProfile.CreateTrooperDefault();
+                visual.Initialize(TrooperVisual.ClipNames.Select(n=>UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/StarTournament/Trooper/"+n+".anim")).ToArray(),profile,true);
+                var type=typeof(TrooperVisual).Assembly.GetType("StarTournament.ProvingGround.FirstPersonWeaponSwitch");
+                var transition=Activator.CreateInstance(type,new object[]{view,camera});var apply=type.GetMethod("Apply");
+                var bones=view.GetComponentsInChildren<Transform>(true);var shoulder=bones.Single(t=>t.name=="RightUpperArm");var hand=bones.Single(t=>t.name=="RightHand");
+                var pivot=shoulder.localPosition;var worldPivot=shoulder.position;var baseline=shoulder.localRotation;var handRest=hand.position;var root=view.transform.localPosition;
+                var state=new CombatLifeState{SelectedWeapon=WeaponId.Rifle,PendingWeapon=WeaponId.Shotgun,SwitchRemaining=.5};
+                apply.Invoke(transition,new object[]{state,1d});var reached=shoulder.localRotation;
+                Assert.That(view.transform.localPosition,Is.EqualTo(root));Assert.That(shoulder.localPosition,Is.EqualTo(pivot));Assert.That(shoulder.position,Is.EqualTo(worldPivot));
+                Assert.That(Vector3.Distance(handRest,hand.position),Is.GreaterThan(.1f));Assert.That(camera.transform.InverseTransformPoint(hand.position).z,Is.LessThan(0));
+                apply.Invoke(transition,new object[]{state,1d});Assert.That(Quaternion.Angle(reached,shoulder.localRotation),Is.LessThan(.001f));
+                state.SwitchRemaining=0;state.SelectedWeapon=WeaponId.Shotgun;apply.Invoke(transition,new object[]{state,1d});
+                Assert.That(Quaternion.Angle(baseline,shoulder.localRotation),Is.LessThan(.001f));Assert.That(Vector3.Distance(handRest,hand.position),Is.LessThan(.00001f));
+            }
+            finally{UnityEngine.Object.DestroyImmediate(view);UnityEngine.Object.DestroyImmediate(cameraRoot);}
+        }
+        [Test]
         public void LabUpgradePreservesPreSwitchAndOlderProfileHistory()
         {
             var current=new LabBundle{Profiles=new System.Collections.Generic.List<ProvingProfile>{ProvingProfile.CreateDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateCutterDefault()}};
-            foreach(string predecessor in new[]{"BeforeWeaponSwitch","BeforeCutterSwitch","BeforeCutterThickness","BeforeCutterThicknessSwitch","BeforePulse","BeforeFullHeal"})
+            foreach(string predecessor in new[]{"BeforeShoulderSwitch","BeforeWeaponSwitch","BeforeCutterSwitch","BeforeCutterThickness","BeforeCutterThicknessSwitch","BeforePulse","BeforeFullHeal"})
             {
                 string path=Path.Combine(Path.GetTempPath(),"switch-history-"+Guid.NewGuid()+".json");
                 try
                 {
-                    var legacy=new LabBundle{Profiles=current.Profiles.Where(p=>predecessor=="BeforeWeaponSwitch"||predecessor.StartsWith("BeforeCutterThickness")||p.Id!="cutter-beam-v1").Select(p=>
+                    var legacy=new LabBundle{Profiles=current.Profiles.Where(p=>predecessor=="BeforeShoulderSwitch"||predecessor=="BeforeWeaponSwitch"||predecessor.StartsWith("BeforeCutterThickness")||p.Id!="cutter-beam-v1").Select(p=>
                     {
                         if(predecessor=="BeforeCutterThicknessSwitch")p=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponSwitch",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null);
                         string method=predecessor=="BeforeCutterSwitch"?"BeforeWeaponSwitch":predecessor=="BeforeCutterThicknessSwitch"?"BeforeCutterThickness":predecessor;
@@ -68,7 +91,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
                     Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(before.Number));
                     Assert.That(upgraded.Selected.Snapshot.Get("view.y"),Is.EqualTo(-1.5f));Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
-                    Assert.That(upgraded.Selected.Snapshot.Get("view.switchClearance"),Is.EqualTo(.1f));
+                    Assert.That(upgraded.Selected.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(145f));
                     if(legacy.Descriptors.Any(d=>d.Path=="cutter.width"))Assert.That(upgraded.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(.021f));
                     Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==before.Number).Hash,Is.EqualTo(before.Hash));
                     int count=upgraded.SelectedProfile.Revisions.Count;var reopened=new DesignLabHistory(path,current);

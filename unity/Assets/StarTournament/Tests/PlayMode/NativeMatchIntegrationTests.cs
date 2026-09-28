@@ -137,6 +137,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("В главное меню").onClick.Invoke();Button("main-action-2").onClick.Invoke();yield return null;
             ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="lab-search").text="score.chainTotal1";yield return null;
             ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="input-score.chainTotal1").text="200";Button("lab-save").onClick.Invoke();yield return null;
+            var saved=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
+            Assert.That(saved.Selected.Snapshot.Get("score.chainTotal1"),Is.EqualTo(200),"Lab save: "+ground.GetComponentsInChildren<Text>().First(t=>t.name=="lab-status").text);
             Button("lab-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ChooseGuestsForAssignedSeats();yield return null;
             Button("duration-plus").onClick.Invoke();Button("target-toggle").onClick.Invoke();
             Button("Начать — четыре игрока").onClick.Invoke();yield return null;

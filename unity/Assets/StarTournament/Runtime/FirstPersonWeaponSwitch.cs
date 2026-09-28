@@ -23,44 +23,43 @@ namespace StarTournament.ProvingGround
 
     internal sealed class FirstPersonWeaponSwitch
     {
-        readonly Transform root;
+        readonly Transform root,axis;
         readonly WeaponModelPresentation model;
+        readonly TrooperVisual visual;
+        readonly Transform[] joints;
+        readonly Quaternion[] sampled;
+        readonly float[] angles;
         readonly Vector3 rest;
-        readonly float lift;
+        int revision=-1;
         public FirstPersonWeaponSwitch(GameObject view,Camera camera)
         {
-            root=view.transform;model=view.GetComponent<WeaponModelPresentation>();
-            var profile=view.GetComponent<TrooperVisual>().Tuning;
-            rest=new Vector3(profile.Get("view.x"),profile.Get("view.y"),profile.Get("view.z"));
-            root.localPosition=rest;
-            float clearance=0;
-            float slope=Mathf.Tan(camera.fieldOfView*Mathf.Deg2Rad*.5f);
-            // The minimum comes from all equipment geometry (including pending inactive models).
-            // It guarantees the mesh swap is above the viewport even for a large launcher or resized split-screen.
-            foreach(var renderer in view.GetComponentsInChildren<Renderer>(true))
+            root=view.transform;axis=camera.transform;model=view.GetComponent<WeaponModelPresentation>();
+            visual=view.GetComponent<TrooperVisual>();var profile=visual.Tuning;
+            rest=new Vector3(profile.Get("view.x"),profile.Get("view.y"),profile.Get("view.z"));root.localPosition=rest;
+            var bones=view.GetComponentsInChildren<Transform>(true);
+            // Joint names are the imported Humanoid rig contract; pivots never translate.
+            joints=new Transform[4];sampled=new Quaternion[4];angles=new float[4];
+            string[] names={"LeftUpperArm","RightUpperArm","LeftLowerArm","RightLowerArm"};
+            for(int i=0;i<names.Length;i++)
             {
-                Mesh mesh=null;bool baked=false;
-                if(renderer is SkinnedMeshRenderer skin)
-                {
-                    // Imported skinned culling bounds are deliberately oversized; sample the actual resting equipment.
-                    mesh=new Mesh();skin.BakeMesh(mesh);baked=true;
-                }
-                else if(renderer is MeshRenderer)mesh=renderer.GetComponent<MeshFilter>()?.sharedMesh;
-                if(!mesh)continue;
-                foreach(var vertex in mesh.vertices)
-                {
-                    var cameraPoint=camera.transform.InverseTransformPoint(renderer.transform.TransformPoint(vertex));
-                    clearance=Mathf.Max(clearance,cameraPoint.z*slope-cameraPoint.y);
-                }
-                if(baked)UnityEngine.Object.Destroy(mesh);
+                joints[i]=Array.Find(bones,b=>b.name==names[i]);
+                if(!joints[i])throw new InvalidOperationException("Weapon switch joint missing: "+names[i]);
+                angles[i]=profile.Get(i<2?"view.switchShoulderDegrees":"view.switchElbowDegrees");
             }
-            lift=clearance+profile.Get("view.switchClearance");
         }
         public void Apply(CombatLifeState state,double duration)
         {
             var pose=WeaponSwitchPose.Read(state,duration);
-            root.localPosition=rest+Vector3.up*(pose.Lift*lift);
-            model?.Show(pose.Weapon);
+            if(revision!=visual.PoseRevision)
+            {
+                for(int i=0;i<joints.Length;i++)sampled[i]=joints[i].localRotation;
+                revision=visual.PoseRevision;
+            }
+            // Start from the sampled clip each time, including repeated render and completion-tick muzzle reads.
+            for(int i=0;i<joints.Length;i++)joints[i].localRotation=sampled[i];
+            for(int i=0;i<joints.Length;i++)
+                joints[i].rotation=Quaternion.AngleAxis(-angles[i]*pose.Lift,axis.right)*joints[i].rotation;
+            root.localPosition=rest;model?.Show(pose.Weapon);
         }
     }
 }

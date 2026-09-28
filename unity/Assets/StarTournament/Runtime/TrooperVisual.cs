@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
         public string State => active<0?"uninitialized":ClipNames[active];
         public double SampleTime { get; private set; }
         public bool GraphValid => graph.IsValid();
+        public int PoseRevision { get; private set; }
         public void Initialize(AnimationClip[] clips,ProvingProfile tuning,bool view=false)
         {
             Release(); Clips=clips; profile=tuning; firstPerson=view;
@@ -98,6 +99,7 @@ namespace StarTournament.ProvingGround
             if(immediate) Array.Copy(weights,transitionFrom,weights.Length);
             graph.Evaluate(0);
             if(!corpse)equipmentGrip?.Apply(profile);
+            PoseRevision++;
         }
         public void Release()
         {

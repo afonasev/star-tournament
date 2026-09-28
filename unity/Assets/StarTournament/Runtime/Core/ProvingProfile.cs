@@ -133,6 +133,8 @@ namespace StarTournament.ProvingGround
         }
         public void EnsureTrooperDescriptors()
         {
+            descriptors.RemoveAll(d=>d.Path=="view.switchClearance");
+            values.RemoveAll(v=>v.Path=="view.switchClearance");
             valueIndex=null;
             var current=CreateTrooperDefault();
             version=current.version;

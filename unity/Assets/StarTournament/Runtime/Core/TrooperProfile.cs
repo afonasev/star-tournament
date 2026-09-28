@@ -4,22 +4,35 @@ namespace StarTournament.ProvingGround
     {
         internal ProvingProfile BeforeWeaponSwitch()
         {
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=BeforeShoulderSwitch();
             p.descriptors.RemoveAll(d=>d.Path=="view.switchClearance");
             p.values.RemoveAll(v=>v.Path=="view.switchClearance");
             if(p.id=="unity-trooper-presentation-v1")p.version=2;
             return p;
         }
+        internal ProvingProfile BeforeShoulderSwitch()
+        {
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            foreach(var path in new[]{"view.switchShoulderDegrees","view.switchElbowDegrees"})
+            {p.descriptors.RemoveAll(d=>d.Path==path);p.values.RemoveAll(v=>v.Path==path);}
+            if(p.id=="unity-trooper-presentation-v1")
+            {
+                p.version=3;
+                p.Add("view.switchClearance","trooper-view","Запас подъёма при смене","Дополнительный подъём над верхней границей кадра после учёта размеров рук и всех оружий. Длительность задаёт weapon.switchSeconds.","meters",.01f,.5f,.01f,.1f);
+            }
+            return p;
+        }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=3};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=4};
             p.Add("animation.walkThreshold","trooper-animation","Порог шага","Минимальная фактическая горизонтальная скорость для walk.","meters-per-second",.01f,3,.01f,.1f);
             p.Add("animation.runThreshold","trooper-animation","Порог бега","Фактическая горизонтальная скорость переключения walk на run.","meters-per-second",3,15,.1f,6);
             p.Add("animation.blendSeconds","trooper-animation","Переход позы","Время сглаживания весов только визуальных клипов.","seconds",0,.5f,.01f,.12f);
             p.Add("animation.aimHoldSeconds","trooper-animation","Боевая стойка","Сколько удерживать aim после принятого выстрела.","seconds",.4f,5,.1f,1.6f);
             p.Add("view.x","trooper-view","Руки по горизонтали","Смещение всей модели рук и оружия относительно камеры.","meters",-.5f,.5f,.01f,.20f);
             p.Add("view.y","trooper-view","Руки по вертикали","Смещение feet-origin модели рук относительно камеры.","meters",-2,-.5f,.01f,-1.46f);
-            p.Add("view.switchClearance","trooper-view","Запас подъёма при смене","Дополнительный подъём над верхней границей кадра после учёта размеров рук и всех оружий. Длительность задаёт weapon.switchSeconds.","meters",.01f,.5f,.01f,.1f);
+            p.Add("view.switchShoulderDegrees","trooper-view","Замах за спину","Вращение рук от неподвижных плеч за голову при смене оружия. Весь цикл следует weapon.switchSeconds.","degrees",120,175,1,145);
+            p.Add("view.switchElbowDegrees","trooper-view","Сгиб локтей при смене","Дополнительный сгиб предплечий при убирании оружия за спину; плечи остаются на месте.","degrees",0,60,1,35);
             p.Add("view.z","trooper-view","Руки по глубине","Смещение модели рук вперёд относительно камеры.","meters",-.5f,1,.01f,.05f);
             p.Add("grip.supportRoll","trooper-grip","Разворот опорной кисти","Доворот тыльной стороны левой кисти к внешней стороне цевья после клипа.","degrees",-90,90,1,55);
             p.Add("grip.supportFingerCurl","trooper-grip","Хват опорных пальцев","Добавочный сгиб пальцев вокруг цевья; не меняет стрельбу.","degrees",-30,45,1,12);

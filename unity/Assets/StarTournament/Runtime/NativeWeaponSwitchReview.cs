@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
     {
         ProvingGround ground;string directory;Gamepad[] pads;readonly List<string> checks=new List<string>();
         GameObject View(int seat)=>ground.GetComponentsInChildren<Camera>().Single(c=>c.name=="seat-camera-"+(seat+1)).transform.Find("trooper-view").gameObject;
+        Transform Bone(int seat,string name)=>View(seat).GetComponentsInChildren<Transform>(true).Single(t=>t.name==name);
         void Require(bool condition,string message){if(!condition)throw new InvalidOperationException(message);}
         void Render(){ground.SendMessage("RefreshInterface");ground.SendMessage("LateUpdate");}
         void TickTo(double remaining)
@@ -51,17 +52,23 @@ namespace StarTournament.ProvingGround
                 {
                     var from=ground.Session.Life(0).SelectedWeapon;Select(target);
                     var pending=ground.Session.Life(0).PendingWeapon;int shots=ground.Session.ShotCount;
-                    TickTo(duration*.75);Require(View(0).transform.localPosition.y>rest.y,"Hands failed to rise");
+                    var shoulderLocal=Bone(0,"RightUpperArm").localPosition;
+                    TickTo(duration*.75);Require(View(0).transform.localPosition==rest,"View root detached from body");
+                    Require(Bone(0,"RightUpperArm").localPosition==shoulderLocal,"Shoulder joint translated");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("02-old-weapon-rising");
                     TickTo(duration*.5);
+                    var camera=View(0).transform.parent;
+                    var hand=camera.InverseTransformPoint(Bone(0,"RightHand").position);
+                    Require(hand.z<0,"Weapon hand did not reach behind the head");
+                    Require(View(0).transform.localPosition==rest,"Midpoint root moved");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("03-model-swap-above-frame");
                     TickTo(duration*.25);Require(ground.Session.Life(0).SelectedWeapon==from,"Authoritative slot changed early");
                     var phase=WeaponSwitchPose.Read(ground.Session.Life(0),duration);Require(phase.Weapon==pending,"Pending model missing on descent");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)
                     {
                         yield return Capture("04-new-weapon-descending");
-                        var paused=View(0).transform.localPosition;double time=ground.Session.Time;yield return new WaitForSecondsRealtime(.25f);Render();
-                        Require(ground.Session.Time==time&&View(0).transform.localPosition==paused,"Paused pose drifted");checks.Add("pause freezes simulation and pose");
+                        var paused=Bone(0,"RightUpperArm").localRotation;double time=ground.Session.Time;yield return new WaitForSecondsRealtime(.25f);Render();
+                        Require(ground.Session.Time==time&&Bone(0,"RightUpperArm").localRotation==paused,"Paused pose drifted");checks.Add("pause freezes simulation and pose");
                     }
                     if(seconds==1&&target==WeaponSelection.Cutter&&from==WeaponId.Rifle)yield return Capture("08-cutter-descending");
                     var fire=new LocalAction[ground.Session.ParticipantCount];fire[0].Fire=true;fire[0].FireHeld=true;
@@ -95,8 +102,15 @@ namespace StarTournament.ProvingGround
             }
             ground.LifeProfile.Set("weapon.switchSeconds",1);ground.StartCombatReview(pads,backgroundDiagnostic:true);
             for(int i=0;i<4;i++)ground.PlaceCombatReviewSeat(i,new Vector3(0,-1.2f,-6+i*3),0);
-            Render();var others=Enumerable.Range(1,3).Select(i=>View(i).transform.localPosition).ToArray();Select(WeaponSelection.Shotgun);TickTo(.75);
-            for(int i=1;i<4;i++)Require(View(i).transform.localPosition==others[i-1],"Cross-seat pose leaked");
+            Render();Select(WeaponSelection.Shotgun);TickTo(.75);
+            for(int i=1;i<4;i++)
+            {
+                // Compare the rendered joint to its clean clip at the SAME clock; idle breathing is legitimate.
+                var observed=Bone(i,"RightUpperArm").localRotation;var life=ground.Session.Life(i);
+                View(i).GetComponent<TrooperVisual>().Render(ground.Session.Time,ground.Session.Pose(i).Velocity,life.Health,life.Life);
+                Require(Quaternion.Angle(observed,Bone(i,"RightUpperArm").localRotation)<.01f,"Cross-seat additive pose leaked");
+                Require(WeaponSwitchPose.Read(life,ground.Session.WeaponSwitchSeconds).Lift==0,"Cross-seat switch state leaked");
+            }
             yield return Capture("06-four-seat-independent-switch");checks.Add("four independent first-person views");
             ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,100);Render();
             int budgetRespawn=500;while(ground.Session.Life(0).Dead&&budgetRespawn-->0)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);Render();
