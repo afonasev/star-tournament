@@ -1,0 +1,63 @@
+using System;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using UnityEngine;
+namespace StarTournament.ProvingGround.Tests.EditMode
+{
+    public sealed class DesignLabHistoryTests
+    {
+        string directory,path;
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile()}};
+        [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
+        [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
+        {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts()
+        {
+            var history=new DesignLabHistory(path,Shipped());history.Create("Первый");string id=history.SelectedProfile.Id;var v1=history.Selected;
+            var draft=v1.Snapshot.Clone();draft.Set("rifle.head",31);history.Save(draft);var v2=history.Selected;
+            history.Select(id,1);draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",32);history.Save(draft);
+            Assert.That(history.Selected.Number,Is.EqualTo(3));history.Rename("Новое имя");
+            var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);Assert.That(restarted.Selected.Number,Is.EqualTo(3));Assert.That(restarted.SelectedProfile.Id,Is.EqualTo(id));
+            Assert.That(restarted.SelectedProfile.Revisions[0].Hash,Is.EqualTo(v1.Hash));Assert.That(restarted.SelectedProfile.Revisions[1].Hash,Is.EqualTo(v2.Hash));
+            var detached=restarted.Selected;detached.Snapshot.Set("rifle.head",99);Assert.That(restarted.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(32));
+        }
+        [Test]public void CorruptionIsPreservedAndCannotBeOverwritten()
+        {File.WriteAllText(path,"broken");var history=new DesignLabHistory(path,Shipped());Assert.That(history.StorageError,Is.Not.Null);Assert.Throws<IOException>(()=>history.Create("test"));Assert.That(File.ReadAllText(path),Is.EqualTo("broken"));}
+        [Test]public void ProtectedReleaseCannotBeDeletedAndLocalProfileDeletionReturnsToRelease()
+        {var history=new DesignLabHistory(path,Shipped());Assert.Throws<InvalidOperationException>(()=>history.DeleteSelected());history.Create("Локальный");history.DeleteSelected();Assert.That(history.SelectedProfile.Id,Is.EqualTo(DesignLabHistory.ReleaseId));Assert.That(history.Profiles.Count,Is.EqualTo(1));}
+        [Test]public void InvalidRangeStepAndCrossFieldDraftCannotSave()
+        {
+            var history=new DesignLabHistory(path,Shipped());var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",999);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",30.5f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            draft=history.Selected.Snapshot.Clone();draft.Set("score.chainTotal2",0);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            draft=history.Selected.Snapshot.Clone();draft.Set("zone.armTop",.5f);draft.Set("zone.armBottom",.6f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            Assert.That(File.Exists(path),Is.False);
+        }
+        [Test]public void WriteFailureLeavesSelectionAndExistingFileIntact()
+        {
+            var initial=new DesignLabHistory(path,Shipped());initial.Create("test");string original=File.ReadAllText(path),hash=initial.Selected.Hash;
+            var history=new DesignLabHistory(path,Shipped(),(temp,destination)=>throw new IOException("Injected atomic replace failure"));var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",31);
+            Assert.Throws<IOException>(()=>history.Save(draft));Assert.That(history.Selected.Hash,Is.EqualTo(hash));Assert.That(draft.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(File.ReadAllText(path),Is.EqualTo(original));Assert.That(Directory.GetFiles(directory),Has.Length.EqualTo(1));
+        }
+        [Test]public void AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning()
+        {
+            var history=new DesignLabHistory(path,Shipped());var draft=history.Selected.Snapshot.Clone();
+            var field=draft.Descriptors.First(d=>draft.IsAuthoring(d.Path));draft.Set(field.Path,draft.Get(field.Path)+field.Step);
+            Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            Assert.That(draft.IsEditable("weapon.probeRange"),Is.False);Assert.That(draft.Domain("rifle.head"),Is.EqualTo("Gameplay"));
+            Assert.That(draft.Domain("presentation.rifleTracerWidth"),Is.EqualTo("Presentation"));
+        }
+        [Test]public void DescriptorMigrationRefreshesPreviouslyUsedValueIndex()
+        {
+            var profile=ProvingProfile.CreateCombatBowlRingPresentationDefault();string key="broadcast.screenValue";float expected=profile.Get(key);
+            ((System.Collections.Generic.List<NumericDescriptor>)profile.Descriptors).RemoveAll(d=>d.Path==key);
+            var values=(System.Collections.Generic.List<ProvingProfileValue>)typeof(ProvingProfile).GetField("values",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(profile);values.RemoveAll(v=>v.Path==key);
+            profile.EnsureOrbitalLeagueDescriptors();Assert.That(profile.Get(key),Is.EqualTo(expected));
+        }
+        [Test]public void TamperedSnapshotHashFailsWithoutDestroyingFile()
+        {var history=new DesignLabHistory(path,Shipped());history.Create("test");string original=File.ReadAllText(path);File.WriteAllText(path,original.Replace("\"Value\": 30.0","\"Value\": 31.0"));var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Not.Null);}
+    }
+}

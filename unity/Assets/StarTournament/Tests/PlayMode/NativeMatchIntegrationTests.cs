@@ -15,13 +15,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class NativeMatchIntegrationTests
     {
-        Scene scene;
+        Scene scene;string labDirectory,oldLabEnvironment;
+        [SetUp]public void IsolateDesignHistory()
+        {
+            labDirectory=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"st-match-lab-"+Guid.NewGuid());System.IO.Directory.CreateDirectory(labDirectory);
+            oldLabEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",System.IO.Path.Combine(labDirectory,"history.json"));
+        }
         readonly Gamepad[] pads=new Gamepad[4];
         ProvingGround ground;
         [UnityTearDown] public IEnumerator Cleanup()
         {
             foreach(var p in pads) if(p!=null && p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",oldLabEnvironment);if(System.IO.Directory.Exists(labDirectory))System.IO.Directory.Delete(labDirectory,true);
         }
         [UnityTest] public IEnumerator SnapshotAllowsMutualLethalAndLateSeatForcesOvertime()
         {
@@ -125,7 +131,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("Повторить матч").onClick.Invoke();yield return null;
             ground.Session.ApplyDamage(1,1,100,0,1);
             Assert.That(ground.Session.Match.Read().Standings[0].Score,Is.EqualTo(100));
-            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();ChooseGuestsForAssignedSeats();yield return null;
+            Button("В главное меню").onClick.Invoke();Button("main-action-2").onClick.Invoke();yield return null;
+            ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="lab-search").text="score.chainTotal1";yield return null;
+            ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="input-score.chainTotal1").text="200";Button("lab-save").onClick.Invoke();yield return null;
+            Button("lab-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();ChooseGuestsForAssignedSeats();yield return null;
             Button("duration-plus").onClick.Invoke();Button("target-toggle").onClick.Invoke();
             Button("Начать — четыре игрока").onClick.Invoke();yield return null;
             Assert.That(ground.Session.Match.Configuration.DurationMinutes,Is.EqualTo(6));Assert.That(ground.Session.Match.Configuration.TargetEnabled,Is.True);

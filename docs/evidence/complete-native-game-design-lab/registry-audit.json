@@ -1,0 +1,106 @@
+{
+  "profiles": [
+    {
+      "id": "unity-proving-ground-v1",
+      "version": 4,
+      "registered": 68,
+      "editable": 66,
+      "read_only": 0,
+      "excluded_diagnostic_paths": [
+        "weapon.probeRange",
+        "weapon.probeCooldown"
+      ]
+    },
+    {
+      "id": "unity-combat-state-v1",
+      "version": 3,
+      "registered": 22,
+      "editable": 22,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-native-combat-v1",
+      "version": 3,
+      "registered": 42,
+      "editable": 42,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-trooper-presentation-v1",
+      "version": 2,
+      "registered": 16,
+      "editable": 16,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-native-match-v1",
+      "version": 1,
+      "registered": 10,
+      "editable": 10,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-native-team-v1",
+      "version": 1,
+      "registered": 1,
+      "editable": 1,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-native-roster-v1",
+      "version": 1,
+      "registered": 2,
+      "editable": 2,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-bot-perception-v1",
+      "version": 1,
+      "registered": 7,
+      "editable": 7,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-bot-navigation-v1",
+      "version": 1,
+      "registered": 9,
+      "editable": 9,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "unity-bot-behavior-v1",
+      "version": 1,
+      "registered": 51,
+      "editable": 51,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "orbital-league-ring-v1",
+      "version": 8,
+      "registered": 288,
+      "editable": 288,
+      "read_only": 0,
+      "excluded_diagnostic_paths": []
+    },
+    {
+      "id": "combat-bowl-ring-r7-authoring-v1",
+      "version": 8,
+      "registered": 4068,
+      "editable": 0,
+      "read_only": 4068,
+      "excluded_diagnostic_paths": []
+    }
+  ],
+  "total_registered": 4584,
+  "total_editable": 514,
+  "coverage_contract": "All 12 public runtime profile fields; duplicate path and descriptor validity checks; immutable authored geometry excluded from tuning"
+}

@@ -1,0 +1,3 @@
+QA профиль · переименован · v3-20260928
+519c4ddf35e6481d9c5683ac42e0b7c0
+SHA256 b7ac4ace4ddc614ede45c9c47d6943c03b11a207e8e2a2f7e4e538f403754fea

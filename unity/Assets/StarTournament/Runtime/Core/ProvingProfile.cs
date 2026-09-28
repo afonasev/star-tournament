@@ -72,6 +72,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Append-only migration for serialized proving-ground fixtures when a descriptor is introduced.</summary>
         public void EnsureDefaultDescriptors()
         {
+            valueIndex=null;
             descriptors.RemoveAll(d=>d.Path.StartsWith("fixture.",StringComparison.Ordinal));values.RemoveAll(v=>v.Path.StartsWith("fixture.",StringComparison.Ordinal));
             descriptors.RemoveAll(d=>d.Path=="presentation.rifleMuzzleSize");values.RemoveAll(v=>v.Path=="presentation.rifleMuzzleSize");
             if(id==DefaultId)version=DefaultVersion;
@@ -85,6 +86,7 @@ namespace StarTournament.ProvingGround
         }
         public void EnsureNativeCombatDescriptors()
         {
+            valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
             version=3;
             var current=CreateNativeCombatDefault();
@@ -97,6 +99,7 @@ namespace StarTournament.ProvingGround
         }
         public void EnsureMatchDescriptors()
         {
+            valueIndex=null;
             // The old time gap is no longer a gameplay control: a chain ends only on death.
             descriptors.RemoveAll(d=>d.Path=="score.chainGap");values.RemoveAll(v=>v.Path=="score.chainGap");
             var current=CreateMatchDefault();
@@ -110,6 +113,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Append-only migration for serialized combat lifecycle fixtures.</summary>
         public void EnsureCombatDescriptors()
         {
+            valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
             version=3;
@@ -129,6 +133,7 @@ namespace StarTournament.ProvingGround
         }
         public void EnsureTrooperDescriptors()
         {
+            valueIndex=null;
             var current=CreateTrooperDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -138,22 +143,22 @@ namespace StarTournament.ProvingGround
             }
         }
 
+        [NonSerialized] Dictionary<string,ProvingProfileValue> valueIndex;
+        void IndexValues()
+        {
+            if(valueIndex!=null)return;
+            valueIndex=new Dictionary<string,ProvingProfileValue>();
+            foreach(var value in values)if(value!=null&&!valueIndex.ContainsKey(value.Path))valueIndex.Add(value.Path,value);
+        }
         public float Get(string path)
         {
-            for (var index = 0; index < values.Count; index++)
-                if (values[index].Path == path) return values[index].Value;
+            IndexValues();if(valueIndex.TryGetValue(path,out var value))return value.Value;
             throw new KeyNotFoundException($"Unknown proving profile path '{path}'.");
         }
-
         /// <summary>Sets an authored value; call Validate before using a changed profile.</summary>
-        public void Set(string path, float value)
+        public void Set(string path,float value)
         {
-            for (var index = 0; index < values.Count; index++)
-            {
-                if (values[index].Path != path) continue;
-                values[index].Value = value;
-                return;
-            }
+            IndexValues();if(valueIndex.TryGetValue(path,out var entry)){entry.Value=value;return;}
             throw new KeyNotFoundException($"Unknown proving profile path '{path}'.");
         }
 
@@ -309,6 +314,7 @@ namespace StarTournament.ProvingGround
 
         private void Add(string path, string group, string label, string description, string unit, float minimum, float maximum, float step, float defaultValue)
         {
+            valueIndex=null;
             descriptors.Add(new NumericDescriptor { Path = path, Group = group, Label = label, Description = description, Unit = unit, Minimum = minimum, Maximum = maximum, Step = step, DefaultValue = defaultValue });
             values.Add(new ProvingProfileValue { Path = path, Value = defaultValue });
         }

@@ -154,6 +154,7 @@ namespace StarTournament.ProvingGround
             TrooperProfile.EnsureTrooperDescriptors();
             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
+            InitializeDesignLab();
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
@@ -224,6 +225,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent<NativeBonusVisualReview>();
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
@@ -416,6 +418,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             else if(phase==Phase.Paused && UseSeatPauseMenus)UpdateSeatPauseInput();
+            UpdateDesignLab();
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
         }
@@ -525,7 +528,7 @@ namespace StarTournament.ProvingGround
         {
             if ((!diagnostics && (!input.Ready || !IdentitiesReady())) || !ValidSetup()) return;
             diagnostic = diagnostics;
-            try { BuildSelectedArena(); CreateMatch(false); } catch(Exception error) when(error is InvalidOperationException || error is ArgumentException) { Menu();setupError=error.Message;RefreshInterface();return; }
+            try { if(!diagnostics&&!combatReview&&!botReviewEnabled&&reviewComposition==null)ApplySavedLabRevision(); BuildSelectedArena(); CreateMatch(false); } catch(Exception error) when(error is InvalidOperationException || error is ArgumentException) { Menu();setupError=error.Message;RefreshInterface();return; }
             setupError=null; input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostics && input.HasKeyboard);
             ApplyMatchFpsPreference();
         }
@@ -570,6 +573,8 @@ namespace StarTournament.ProvingGround
                 frozenRosterProfile=Copy(RosterProfile);
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
                 frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile);
+                FrozenLabIdentity=LabSavedIdentity;
+                frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:labHistory.Selected.Number,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             Time.fixedDeltaTime=1/frozenMovement.Get("simulation.fixedTickHz");
@@ -598,7 +603,7 @@ namespace StarTournament.ProvingGround
             ApplyLayout(frozenSeatCount);
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
-            Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match);
+            Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match,frozenLabReference);
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
@@ -727,7 +732,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         void CreateArmorPickupVisual()
         {
             if(!ArmorPickupPrefab)throw new InvalidOperationException("Missing manifest-owned armor prefab");

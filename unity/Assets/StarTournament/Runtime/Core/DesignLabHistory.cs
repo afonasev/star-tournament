@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using UnityEngine;
+
+namespace StarTournament.ProvingGround
+{
+    [Serializable] public sealed class LabBundle
+    {
+        public List<ProvingProfile> Profiles = new List<ProvingProfile>();
+        public LabBundle Clone() => JsonUtility.FromJson<LabBundle>(JsonUtility.ToJson(this));
+        [NonSerialized] Dictionary<string,ProvingProfile> owners;
+        public ProvingProfile Profile(string path)
+        {
+            if(owners==null){owners=new Dictionary<string,ProvingProfile>();foreach(var p in Profiles)foreach(var d in p.Descriptors)owners.Add(d.Path,p);}
+            return owners[path];
+        }
+        public float Get(string path) => Profile(path).Get(path);
+        public void Set(string path,float value) => Profile(path).Set(path,value);
+        public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
+        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1";
+        public bool IsVisible(string path)=>path!="weapon.probeRange"&&path!="weapon.probeCooldown";
+        public bool IsEditable(string path)=>IsVisible(path)&&!IsAuthoring(path);
+        public string Domain(string path)=>IsAuthoring(path)?"Authored map":Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
+        public List<ProfileValidationIssue> Validate()
+        {
+            var issues=Profiles.SelectMany(p=>p.Validate()).ToList();
+            foreach(var duplicate in Descriptors.GroupBy(d=>d.Path).Where(g=>g.Count()!=1))
+                issues.Add(new ProfileValidationIssue{Path=duplicate.Key,Message="Путь зарегистрирован несколько раз"});
+            foreach(var d in Descriptors)
+            {
+                // Step is anchored at the shipped value: several authored defaults are not min-aligned.
+                double steps=(Get(d.Path)-d.DefaultValue)/d.Step;
+                if(Math.Abs(steps-Math.Round(steps))>.002)
+                    issues.Add(new ProfileValidationIssue{Path=d.Path,Message="Значение должно соответствовать шагу "+d.Step});
+            }
+            CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
+            CheckOrder(issues,"zone.armBottom","zone.armTop",1);
+            CheckOrder(issues,"zone.legBottom","zone.legTop",1);
+            for(int i=2;i<=5;i++)CheckOrder(issues,"score.chainTotal"+(i-1),"score.chainTotal"+i,1,false);
+            return issues;
+        }
+        void CheckOrder(List<ProfileValidationIssue> issues,string low,string high,float factor,bool strict=true)
+        {
+            if(Descriptors.Any(d=>d.Path==low)&&Descriptors.Any(d=>d.Path==high)&&(strict?Get(low)*factor>=Get(high):Get(low)*factor>Get(high)))
+                issues.Add(new ProfileValidationIssue{Path=high,Message=high+" должно быть больше "+low+" × "+factor});
+        }
+        public string Hash()
+        {
+            string canonical=string.Join("\n",Profiles.Select(p=>p.Id+"@"+p.Version))+"\n"+string.Join("\n",Descriptors.OrderBy(d=>d.Path,StringComparer.Ordinal).Select(d=>
+                d.Path+"["+Domain(d.Path)+"]="+Get(d.Path).ToString("R",CultureInfo.InvariantCulture)));
+            using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(canonical))).Replace("-","").ToLowerInvariant();
+        }
+    }
+    [Serializable] public sealed class LabRevisionReference
+    {
+        public string ProfileId; public int Revision; public string Hash;
+        public LabRevisionReference Clone()=>JsonUtility.FromJson<LabRevisionReference>(JsonUtility.ToJson(this));
+        public bool Matches(LabRevisionReference other)=>other!=null&&ProfileId==other.ProfileId&&Revision==other.Revision&&Hash==other.Hash;
+    }
+    [Serializable] public sealed class LabRevision
+    {
+        public int Number; public string Date; public string Hash; public LabBundle Snapshot;
+        public string Label => "v"+Number+"-"+(string.IsNullOrEmpty(Date)?"без-даты":Date);
+        public LabRevision Clone()=>JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this));
+    }
+    [Serializable] public sealed class LabHistoryProfile
+    {
+        public string Id; public string Name; public bool Protected;
+        public List<LabRevision> Revisions=new List<LabRevision>();
+    }
+    [Serializable] public sealed class LabHistoryFile
+    {
+        public int Schema=1; public string SelectedId; public int SelectedRevision;
+        public List<LabHistoryProfile> Profiles=new List<LabHistoryProfile>();
+    }
+    public sealed class DesignLabHistory
+    {
+        public const string ReleaseId="unity-shipped-release";
+        readonly string path; readonly LabBundle shipped; readonly Action<string,string> atomicPublish; LabHistoryFile data;
+        public string StorageError {get;private set;}
+        public bool Writable=>StorageError==null;
+        public IReadOnlyList<LabHistoryProfile> Profiles=>JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data)).Profiles;
+        public string SelectedProfileId=>data.SelectedId;
+        public string SelectedProfileName=>data.Profiles.Single(p=>p.Id==data.SelectedId).Name;
+        public bool SelectedProfileProtected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Protected;
+        public LabHistoryProfile SelectedProfile=>JsonUtility.FromJson<LabHistoryProfile>(JsonUtility.ToJson(data.Profiles.Single(p=>p.Id==data.SelectedId)));
+        public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
+        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
+        {
+            this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;
+            data=NewFile();
+            if(!File.Exists(path))return;
+            try
+            {
+                var loaded=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));ValidateFile(loaded);data=loaded;
+            }
+            catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
+        }
+        LabHistoryFile NewFile()=>new LabHistoryFile{SelectedId=ReleaseId,SelectedRevision=1,Profiles=new List<LabHistoryProfile>{
+            new LabHistoryProfile{Id=ReleaseId,Name="Опубликованный профиль",Protected=true,Revisions=new List<LabRevision>{Revision(shipped,1,null)}}}};
+        static LabRevision Revision(LabBundle bundle,int number,string date)=>new LabRevision{Number=number,Date=date,Hash=bundle.Hash(),Snapshot=bundle.Clone()};
+        void ValidateFile(LabHistoryFile file)
+        {
+            if(file==null||file.Schema!=1||file.Profiles==null||file.Profiles.Count==0)throw new InvalidDataException("Неподдерживаемая схема");
+            var paths=shipped.Descriptors.Select(d=>d.Path).OrderBy(p=>p).ToArray();
+            if(file.Profiles.Select(p=>p.Id).Distinct().Count()!=file.Profiles.Count)throw new InvalidDataException("Повтор ID");
+            foreach(var p in file.Profiles)
+            {
+                if(string.IsNullOrWhiteSpace(p.Id)||string.IsNullOrWhiteSpace(p.Name)||p.Revisions==null||p.Revisions.Count==0||p.Protected!=(p.Id==ReleaseId))throw new InvalidDataException("Некорректный профиль");
+                if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
+                foreach(var r in p.Revisions)
+                {
+                    if(r.Number<1||r.Snapshot==null||!shipped.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
+                    // Metadata is trusted only from the shipped registry, never from the file.
+                    var trusted=shipped.Clone();foreach(var d in trusted.Descriptors)trusted.Set(d.Path,r.Snapshot.Get(d.Path));
+                    if(trusted.Descriptors.Any(d=>!trusted.IsEditable(d.Path)&&trusted.Get(d.Path)!=shipped.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
+                    if(trusted.Validate().Count!=0)throw new InvalidDataException("Невалидный снимок");r.Snapshot=trusted;
+                }
+            }
+            var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
+            if(release.Hash!=shipped.Hash())throw new InvalidDataException("Shipped release несовместим");
+            if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
+        }
+        void Commit(Action<LabHistoryFile> mutation)
+        {
+            if(!Writable)throw new IOException(StorageError);
+            var next=JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data));mutation(next);ValidateFile(next);
+            string temp=path+"."+Guid.NewGuid().ToString("N")+".tmp";
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                using(var stream=new FileStream(temp,FileMode.CreateNew,FileAccess.Write,FileShare.None))
+                {byte[] bytes=Encoding.UTF8.GetBytes(JsonUtility.ToJson(next,true));stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
+                atomicPublish(temp,path);
+                data=next;
+            }
+            finally {if(File.Exists(temp))File.Delete(temp);}
+        }
+        static void Publish(string temp,string destination){if(File.Exists(destination))File.Replace(temp,destination,null);else File.Move(temp,destination);}
+        public void Select(string id,int number)=>Commit(f=>{f.SelectedId=id;f.SelectedRevision=number;});
+        public void Save(LabBundle draft)
+        {
+            if(draft.Descriptors.Any(d=>!draft.IsEditable(d.Path)&&draft.Get(d.Path)!=shipped.Get(d.Path)))throw new ArgumentException("Read-only metadata cannot be saved");
+            if(draft.Validate().Count!=0)throw new ArgumentException("Черновик содержит ошибки");
+            if(draft.Hash()==Selected.Hash)throw new ArgumentException("Нет изменений");
+            Commit(f=>{var p=f.Profiles.Single(x=>x.Id==f.SelectedId);int n=p.Revisions.Max(r=>r.Number)+1;
+                p.Revisions.Add(Revision(draft,n,DateTime.Now.ToString("yyyyMMdd")));f.SelectedRevision=n;});
+        }
+        public void Create(string name)
+        {
+            RequireName(name);var baseSnapshot=Selected.Snapshot;string id=Guid.NewGuid().ToString("N");
+            Commit(f=>{f.Profiles.Add(new LabHistoryProfile{Id=id,Name=name.Trim(),Revisions=new List<LabRevision>{Revision(baseSnapshot,1,DateTime.Now.ToString("yyyyMMdd"))}});f.SelectedId=id;f.SelectedRevision=1;});
+        }
+        public void Rename(string name){RequireName(name);Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Name=name.Trim());}
+        public void DeleteSelected()
+        {
+            if(SelectedProfileProtected)throw new InvalidOperationException("Опубликованный профиль защищён");
+            Commit(f=>{f.Profiles.RemoveAll(p=>p.Id==f.SelectedId);f.SelectedId=ReleaseId;f.SelectedRevision=1;});
+        }
+        static void RequireName(string name){if(string.IsNullOrWhiteSpace(name)||name.Trim().Length>48)throw new ArgumentException("Имя: от 1 до 48 символов");}
+    }
+}

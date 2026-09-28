@@ -188,6 +188,7 @@ namespace StarTournament.ProvingGround
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
             version=ring?8:9;
+            valueIndex=null; // Descriptor migration invalidates the runtime lookup cache.
         }
         static void BroadcastDescriptors(ProvingProfile p)
         {

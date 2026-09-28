@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround
         static readonly Color32 MenuGold = new Color32(255,189,98,255);
         GameObject oldMenuColumn, mainMenuScreen, setupScreen, setupMapPage, setupRulesPage, setupPlayersPage, profilesScreen, settingsScreen, labScreen, identityScreen;
         Transform profileList, identityList;
-        Text profileDetail, identityHeading, settingsHeading, labDetail, setupSummary, setupMessage;
+        Text profileDetail, identityHeading, settingsHeading, labDetail, setupSummary, setupMessage, setupLabIdentity;
         InputField profileNameInput;
         Button mainBattleButton, profilesBackButton, setupNext, setupPrevious;
         readonly Button[] setupSteps = new Button[3];
@@ -22,18 +22,7 @@ namespace StarTournament.ProvingGround
         Button identitySettingsButton;
         Button[] seatIdentityButtons = new Button[SeatInputCoordinator.SeatCount];
         string selectedProfileId;
-        int pendingSeat = -1, settingsSeat = -1, labIndex;
-        bool labWeaponsOnly = true;
-        readonly struct LabParameter
-        {
-            public readonly ProvingProfile Profile;
-            public readonly NumericDescriptor Descriptor;
-            public LabParameter(ProvingProfile profile, NumericDescriptor descriptor) { Profile=profile; Descriptor=descriptor; }
-        }
-        LabParameter[] LabParameters() => new[]{Profile,LifeProfile,CombatProfile}
-            .SelectMany(profile=>profile.Descriptors.Select(descriptor=>new LabParameter(profile,descriptor)))
-            .Where(entry=>!labWeaponsOnly || entry.Descriptor.Group=="rifle" || entry.Descriptor.Group=="shotgun" || entry.Descriptor.Group=="weapon-switch")
-            .OrderBy(entry=>entry.Descriptor.Group).ThenBy(entry=>entry.Descriptor.Path).ToArray();
+        int pendingSeat = -1, settingsSeat = -1;
         Phase settingsReturn = Phase.MainMenu;
 
         GameObject Panel(Transform parent,string name,Vector2 min,Vector2 max,Color color)
@@ -94,17 +83,7 @@ namespace StarTournament.ProvingGround
 
             CreateSettingsUi(parent);
 
-            labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
-            var labCard=Panel(labScreen.transform,"lab-card",new Vector2(.20f,.15f),new Vector2(.80f,.85f),MenuCard);
-            Label(labCard.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",34,new Vector2(.05f,.82f),new Vector2(.95f,.96f),TextAnchor.MiddleCenter,MenuGold);
-            labDetail=Label(labCard.transform,"lab-detail","",25,new Vector2(.07f,.50f),new Vector2(.93f,.78f),TextAnchor.MiddleCenter,Color.white);
-            MenuButton(labCard.transform,"lab-weapons","Оружие",new Vector2(.06f,.42f),new Vector2(.48f,.49f),()=>{labWeaponsOnly=true;labIndex=0;RefreshLab();});
-            MenuButton(labCard.transform,"lab-all","Все параметры",new Vector2(.52f,.42f),new Vector2(.94f,.49f),()=>{labWeaponsOnly=false;labIndex=0;RefreshLab();});
-            MenuButton(labCard.transform,"lab-prev","‹ Параметр",new Vector2(.06f,.31f),new Vector2(.48f,.40f),()=>{var count=LabParameters().Length;labIndex=(labIndex+count-1)%count;RefreshLab();});
-            MenuButton(labCard.transform,"lab-next","Параметр ›",new Vector2(.52f,.31f),new Vector2(.94f,.40f),()=>{labIndex=(labIndex+1)%LabParameters().Length;RefreshLab();});
-            MenuButton(labCard.transform,"lab-down","−",new Vector2(.06f,.20f),new Vector2(.48f,.29f),()=>StepLab(-1));
-            MenuButton(labCard.transform,"lab-up","+",new Vector2(.52f,.20f),new Vector2(.94f,.29f),()=>StepLab(1));
-            MenuButton(labCard.transform,"lab-back","‹ ГЛАВНОЕ МЕНЮ",new Vector2(.06f,.05f),new Vector2(.94f,.15f),ToMainMenu);
+            CreateDesignLabUi(parent);
 
             identityScreen=Panel(parent,"identity-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,248));
             var identityCard=Panel(identityScreen.transform,"identity-card",new Vector2(.17f,.12f),new Vector2(.83f,.88f),new Color32(20,39,53,255));
@@ -141,7 +120,8 @@ namespace StarTournament.ProvingGround
             var content=Panel(setupScreen.transform,"setup-content",new Vector2(.05f,.12f),new Vector2(.69f,.76f),new Color32(20,39,53,255));
             var summary=Panel(setupScreen.transform,"setup-summary-card",new Vector2(.71f,.12f),new Vector2(.95f,.76f),MenuCard);
             Label(summary.transform,"summary-title","ПЕРЕД СТАРТОМ",26,new Vector2(.07f,.85f),new Vector2(.93f,.96f),TextAnchor.MiddleLeft,MenuGold);
-            setupSummary=Label(summary.transform,"setup-summary","",22,new Vector2(.07f,.33f),new Vector2(.93f,.83f),TextAnchor.UpperLeft,Color.white);
+            setupSummary=Label(summary.transform,"setup-summary","",20,new Vector2(.07f,.53f),new Vector2(.93f,.83f),TextAnchor.UpperLeft,Color.white);
+            setupLabIdentity=Label(summary.transform,"setup-lab-identity","",16,new Vector2(.07f,.34f),new Vector2(.93f,.52f),TextAnchor.UpperLeft,Color.white);setupLabIdentity.supportRichText=false;
             setupMessage=Label(summary.transform,"setup-message","",18,new Vector2(.07f,.22f),new Vector2(.93f,.34f),TextAnchor.UpperLeft,new Color32(255,213,157,255));
             setupPrevious=MenuButton(summary.transform,"setup-previous","‹ НАЗАД",new Vector2(.07f,.12f),new Vector2(.93f,.20f),PreviousSetupStep);
             setupNext=MenuButton(summary.transform,"setup-next","ДАЛЕЕ ›",new Vector2(.07f,.02f),new Vector2(.93f,.10f),NextSetupStep);
@@ -219,6 +199,7 @@ namespace StarTournament.ProvingGround
                 (SetupMode==NativeMatchMode.Teams?"Команды":"Каждый сам за себя")+" · "+Configuration.DurationMinutes+" мин"+
                 (Configuration.TargetEnabled?"\nЦель: "+Configuration.TargetPoints:"\nБез цели по очкам")+"\n\nСОСТАВ\n"+
                 botSetup.HumanCount(LocalSeatCount)+" человек · "+(LocalSeatCount-botSetup.HumanCount(LocalSeatCount)+botSetup.Count)+" AI";
+            setupLabIdentity.text=LabSavedIdentity;
             setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"Значения сохраняются при переходе между шагами");
         }
         InputField CreateNameInput(Transform parent)
@@ -229,15 +210,16 @@ namespace StarTournament.ProvingGround
             input.textComponent=value;input.characterLimit=24;input.contentType=InputField.ContentType.Standard;
             return input;
         }
-        void OpenSetup() { fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;RefreshInterface();Select(setupNext); }
+        void OpenSetup() { ApplySavedLabRevision(); Configuration=NativeMatchConfiguration.Default(MatchProfile); fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;RefreshInterface();Select(setupNext); }
         void ToMainMenu()
         {
+            if(phase==Phase.Lab && LabDirty){ConfirmLabDiscard(ToMainMenu);return;}
             ClearSeatPauseMenus();
             if(phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results)Menu();
             pendingSeat=-1;fps.RestoreGeneralPreference();phase=Phase.MainMenu;SetCursor(false);RefreshInterface();Select(mainBattleButton);
         }
         void OpenProfiles() { phase=Phase.Profiles;RefreshProfilesUi();RefreshInterface();Select(profilesBackButton); }
-        void OpenLab() { phase=Phase.Lab;labWeaponsOnly=true;labIndex=0;RefreshLab();RefreshInterface(); }
+        void OpenLab() { OpenDesignLab(); }
         void OpenSettings(int seat)
         {
             settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
@@ -422,24 +404,6 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<LocalSeatCount;i++)if(input.IsHumanSeat(i) && input.DeviceAt(i) is Keyboard){operatorSeat=i;break;}
             if(operatorSeat<0)for(int i=0;i<LocalSeatCount;i++)if(input.IsHumanSeat(i)){operatorSeat=i;break;}
             fps.SetSessionVisibility(operatorSeat<0?PlayerPrefs.GetInt(FpsDisplay.PreferenceKey,1)!=0:PersonalFps(operatorSeat));
-        }
-        void RefreshLab()
-        {
-            var entries=LabParameters();
-            if(labDetail==null||entries.Length==0)return;
-            labIndex%=entries.Length;
-            var entry=entries[labIndex];var d=entry.Descriptor;
-            var colorNote=d.Path.StartsWith("presentation.rifleTracer",StringComparison.Ordinal) &&
-                (d.Path.EndsWith("Red",StringComparison.Ordinal)||d.Path.EndsWith("Green",StringComparison.Ordinal)||d.Path.EndsWith("Blue",StringComparison.Ordinal))
-                ?"\nЦвет трассера: #"+ColorUtility.ToHtmlStringRGB(new Color(Profile.Get("presentation.rifleTracerRed"),Profile.Get("presentation.rifleTracerGreen"),Profile.Get("presentation.rifleTracerBlue")))
-                :"";
-            labDetail.text=d.Group+" / "+d.Label+"\n"+d.Description+"\n\n"+entry.Profile.Get(d.Path).ToString("0.###")+" "+d.Unit+colorNote+"\n"+(labIndex+1)+" / "+entries.Length;
-        }
-        void StepLab(int direction)
-        {
-            var entries=LabParameters();if(entries.Length==0)return;
-            var entry=entries[labIndex%entries.Length];var d=entry.Descriptor;
-            entry.Profile.Set(d.Path,Mathf.Clamp(entry.Profile.Get(d.Path)+direction*d.Step,d.Minimum,d.Maximum));RefreshLab();
         }
         void RefreshModernMenuUi()
         {

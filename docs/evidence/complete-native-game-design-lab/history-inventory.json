@@ -1,0 +1,41 @@
+{
+  "sha256": "3b2993746918f70fe476971d00159177dc17076db9cecc31f543786559ffe8a7",
+  "selected_id": "519c4ddf35e6481d9c5683ac42e0b7c0",
+  "selected_revision": 3,
+  "profiles": [
+    {
+      "id": "unity-shipped-release",
+      "name": "Опубликованный профиль",
+      "protected": true,
+      "revisions": [
+        {
+          "number": 1,
+          "date": "",
+          "hash": "5d9c2437d8b0264b3e8ac742d096a7b109e77865a1c89d5a0f81aefd34a10053"
+        }
+      ]
+    },
+    {
+      "id": "519c4ddf35e6481d9c5683ac42e0b7c0",
+      "name": "QA профиль · переименован",
+      "protected": false,
+      "revisions": [
+        {
+          "number": 1,
+          "date": "20260928",
+          "hash": "5d9c2437d8b0264b3e8ac742d096a7b109e77865a1c89d5a0f81aefd34a10053"
+        },
+        {
+          "number": 2,
+          "date": "20260928",
+          "hash": "47fa6ce1092630c8504b4513f7ce15386e6263975ac530f3862c158ff4809711"
+        },
+        {
+          "number": 3,
+          "date": "20260928",
+          "hash": "b7ac4ace4ddc614ede45c9c47d6943c03b11a207e8e2a2f7e4e538f403754fea"
+        }
+      ]
+    }
+  ]
+}
