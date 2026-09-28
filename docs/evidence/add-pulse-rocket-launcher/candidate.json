@@ -1,0 +1,12 @@
+{
+  "identity": "local-macos-player-candidate/27a9636048f2d9d6ad2d1532a0209b59c2bfffe2/20260928T073745Z",
+  "revision": "27a9636048f2d9d6ad2d1532a0209b59c2bfffe2",
+  "build_marker": "20260928T073745Z",
+  "unity_build_marker": "470521704",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-pulse-rocket-launcher/27a9636048f2d9d6ad2d1532a0209b59c2bfffe2/20260928T073745Z/StarTournamentProvingGround.app",
+  "binary_sha256": "8a7e942e51035afd8cd299a4f9c85b771117054be25cad0fb5e4af165bbb95f9",
+  "unsigned": true,
+  "external_publication": false,
+  "app_content_sha256": "cf476eb7ab2d8a13f5e4af10a4237e8f59a2f2898b2569005bb9a2fb62a17ba3",
+  "file_count": 281
+}

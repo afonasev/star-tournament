@@ -2,7 +2,9 @@
 
 Результат: третий слот Pulse по концепту №3, прямой полёт, единый урон с максимумом 100, броня перед HP, self/friendly splash, стартовые 20 ракет. Боты используют среднюю и дальнюю дистанцию при чистой линии огня и безопасном splash; вблизи переключаются на дробовик/автомат.
 
-Точная ревизия, локальный immutable candidate и результаты проверок записаны в `verification.json`. Скриншоты `native/` получены из настоящего muted Unity Player со сценарными размещениями и синтетическими устройствами. Это автоматизированная проверка Player; физические устройства, TV, performance contract и human acceptance подтверждаются отдельно.
+Точная ревизия Player: `27a9636048f2d9d6ad2d1532a0209b59c2bfffe2`; build marker `20260928T073745Z`.
+
+Локальная сборка: [StarTournamentProvingGround.app](/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-pulse-rocket-launcher/27a9636048f2d9d6ad2d1532a0209b59c2bfffe2/20260928T073745Z/StarTournamentProvingGround.app). Content SHA256 `cf476eb7ab2d8a13f5e4af10a4237e8f59a2f2898b2569005bb9a2fb62a17ba3`. Полные результаты проверок записаны в `verification.json`. Скриншоты `native/` получены из настоящего muted Unity Player со сценарными размещениями и синтетическими устройствами. Это автоматизированная проверка Player; физические устройства, TV, performance contract и human acceptance подтверждаются отдельно.
 
 Native fixture: `diagnostic-fixture@0`, hash `1b63565b6a73cd7e5b14f01234b72edfc62e036481b06a0c9a6f65a285645df5`; настройки совпадают с `unity-shipped-release@1`. Арена `combat-bowl-v1@15`. Точные runtime snapshots сохранены рядом с каждым PNG. Счётчик FPS на этих кадрах отражает создание сцен и сохранение PNG, не устойчивый benchmark.
 
