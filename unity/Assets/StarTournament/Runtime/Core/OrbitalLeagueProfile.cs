@@ -53,7 +53,7 @@ namespace StarTournament.ProvingGround
             V("detail.ventElevation","details","Положение решётки","Высота центра решётки над основанием стены.","m",.3f,.8f,.05f,.5f);
             V("detail.columnStripHeight","details","Полоса колонны","Высота голубой вставки колонны.","m",1,3,.1f,2.1f);
             V("detail.columnStripWidth","details","Ширина вставки","Ширина голубой вставки колонны.","m",.03f,.15f,.01f,.07f);
-            V("detail.ringRadius","details","Центральный круг","Радиус спортивного круга вокруг точки A.","m",1,2,.05f,1.65f);
+            V("detail.ringRadius","details","Круг бонуса","Общий радиус белой напольной разметки точек бонусов.","m",1,2,.05f,1.65f);
             V("light.fixtureFrame","lighting","Рамка панели","Толщина рамки светового модуля.","m",.05f,.3f,.01f,.18f);
             V("light.fixtureDepth","lighting","Глубина панели","Выступ потолочного модуля вниз.","m",.03f,.15f,.01f,.08f);
             // Layout coordinates are authoring controls only; collider and pickup positions remain immutable.

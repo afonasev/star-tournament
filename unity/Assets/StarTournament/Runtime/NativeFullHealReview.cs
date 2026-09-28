@@ -38,6 +38,26 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,rear?distance:-distance),9,rear?180:0);
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,rear?distance:-distance),9,rear?180:0);
         }
+        void ViewMarker(int seat,Vector3 anchor)
+        {
+            bool south=anchor.z<0;
+            ground.PlaceCombatReviewSeat(seat,anchor+Vector3.forward*(south?5:-5),18,south?180:0);
+        }
+        IEnumerator CornerMarkers()
+        {
+            var pickups=CombatBowlCatalog.Build().Pickups;
+            foreach(var kind in new[]{ArenaPickupKind.Armor,ArenaPickupKind.Speed})
+            {
+                var pair=pickups.Where(x=>x.Kind==kind).ToArray();
+                for(int i=0;i<2;i++)ViewMarker(i,pair[i].Anchor);
+                yield return Capture("00-marker-"+kind+"-available");
+                for(int i=0;i<2;i++)ground.PlaceCombatReviewSeat(i,pair[i].Anchor,18,0);
+                Advance(1);
+                for(int i=0;i<2;i++)ViewMarker(i,pair[i].Anchor);
+                yield return Capture("00-marker-"+kind+"-cooldown");
+            }
+            ground.FullHealReviewRepeat();
+        }
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(x=>x.name==name);
         InputField Input(string name)=>ground.GetComponentsInChildren<InputField>(true).Single(x=>x.name==name);
         IEnumerator Start()
@@ -48,6 +68,7 @@ namespace StarTournament.ProvingGround
             directory=args[at+1];Directory.CreateDirectory(directory);ground=GetComponent<ProvingGround>();yield return new WaitForSecondsRealtime(.5f);
             pads=new[]{InputSystem.AddDevice<Gamepad>(),InputSystem.AddDevice<Gamepad>()};ground.StartCombatReview(pads,true);ground.FullHealReviewManualTick=true;
             if(!ground.Running)throw new InvalidOperationException("Heal review did not start");
+            if(args.Contains("-pickupMarkerReview"))yield return CornerMarkers();
             Place(5);ground.Session.ApplyDamage(0,1,50);
             var initial=ground.Session.Capture();initial.Lives[0].Armor=35;ground.Session.Restore(initial);
             Advance(999);yield return Capture("01-before-first-spawn");Advance(1);yield return Capture("02-distant-heart-and-flame");
