@@ -30,6 +30,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 2. Утверждённые решения
 
+- Native distribution (2026-09-28): первый распространяемый релиз — macOS и Windows; прежний https://robowar.afonasev.tech становится простым лендингом игры со ссылками скачивания. Первый внешний установщик уже содержит updater. В главном меню показывается только `<version> (<publication-date:dd.MM.yyyy>)`, например `0.1.0 (28.09.2026)`, без подписей и времени; дата относится к публикации установленной версии, не к скачиванию/установке на устройстве. Новая версия скачивается только после «Обновить» в главном меню, в фоне с прогрессом; во время загрузки можно играть. После полной загрузки/проверки кнопка меняется на «Перезапустить»; обновление применяется этим действием либо при обычном выходе и следующем запуске. Работающий матч не заменяется/не закрывается автоматически, version/date меняются только после активации нового клиента. Профили/настройки и рабочая установленная версия сохраняются при ошибке загрузки. Инициатива `native-client-distribution`: сначала локальный install/update candidate, затем лендинг и внешний release pipeline. Требования согласованы; реализация, режим OS signing, exact команды и приёмка пакетов остаются отдельными gates.
+
 - R7 authored-only решение имеет приоритет над historical generation/family контрактами ниже. Точный статус реализации, проверок и delivery ведётся в delivery.json этого change. Respawn сначала отбрасывает invalid/occupied точки, затем строго выбирает hidden от всех других живых участников (включая союзников), независимо от camera facing. Visible fallback допустим только при отсутствии valid hidden; последовательные placements используют стабильные reservations.
 
 - Speed pickup (2026-09-21, visual refresh 2026-09-23): золотистый renderer-only GLB из семейства Crystal Runes адресуется manifest key `speed-pickup`: объёмный двойной шеврон с молнией, одинаково оформленный с лица и оборота. Он не создаёт collider, projectile occlusion или navigation geometry. Authoritative simulation first makes it available через 10 seconds; successful collection даёт 1.5x horizontal maximum speed на 10 seconds, immediately clears on death и запускает независимый 20-second respawn cooldown подобранного экземпляра. Это не независимая periodic match-clock попытка spawn. Все числовые lifecycle/presentation параметры принадлежат versioned Balance Lab profile; snapshot хранит availability, cooldown и active effect.
@@ -241,9 +243,11 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - Каждое изменение разрабатывается и проверяется в отдельном Git worktree на отдельной ветке; основной checkout `main` служит только для интеграции.
 - Проверка конкретной ветки выполняется на dev-стенде, запущенном из её worktree. Пользователю сообщается фактический URL с портом после HTTP-проверки доступности.
 - Завершённые проверенные ветки последовательно вливаются в `main`. После интеграции архивируются завершённые OpenSpec changes, архивные изменения также вливаются в `main`, и только затем выполняется деплой актуального `main` с post-deploy проверкой.
-- Browser `make dev`/`make deploy` и `robowar.afonasev.tech` относятся только к удалённому historical runtime и не являются командами текущего дерева. Native Unity build/Player verification выполняются по `unity/tools.sh`; distribution, release identity, deployment и smoke требуют отдельного будущего решения.
+- Browser `make dev`/`make deploy` относятся к historical runtime и не являются командами текущего дерева. Для `robowar.afonasev.tech` согласован новый native download landing вместо browser runtime в инициативе `native-client-distribution`. Native Unity candidate build/Player verification выполняются по `unity/tools.sh`; install/update release identity, команды пакетов обеих ОС, VPS publication и post-deploy smoke должны быть проверены и записаны в project profile до выполнения. Согласование требований не запускает реализацию или публикацию.
 
 ## 10. Открытые решения
+
+- Native distribution: режим первого релиза (тестовые пакеты без developer code signing либо подписанный выпуск), поддерживаемые архитектуры, готовый updater и доступная Windows install/QA среда; `prepare-native-installable-client` пока draft.
 
 - Combat Bowl R7: схема утверждена; native Player ещё требует отдельной проверки и human acceptance. Текущий lifecycle — только delivery.json соответствующего change.
 
@@ -256,6 +260,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - В Combat Bowl одно красное фасетное сердце Crystal Runes заменяет нижнюю броню на прежнем support/anchor. Именованный профиль `unity-combat-state-v1@4` задаёт delayed first spawn и cooldown после подбора. Живой участник мгновенно лечится до target, ограниченного maximum health; здоровье выше target не снижается, armor не меняется. Полное здоровье расходует бонус, dead participant не подбирает. Shared height tolerance исключает подбор через перекрытие. Таймеры принадлежат simulation, snapshot сохраняет состояние, Repeat начинает initial delay заново. Presentation profile `unity-proving-ground-v1@5` задаёт hover, rotation и scale; renderer-only GLB имеет двусторонний пульс.
 
 ## 11. Журнал изменений
+
+- 2026-09-28: согласованы macOS/Windows установка с лендинга на прежнем VPS адресе, компактная версия с датой публикации и ручная фоновая загрузка обновлений с прогрессом и игрой во время загрузки. Готовый пакет применяется через «Перезапустить» или обычный выход/следующий запуск; дата установки исключена. План `native-client-distribution`; реализация не авторизована в режиме flow-explore.
 
 - 2026-09-28: новый матч начинается с одного игрока на устройстве меню и одного бота; без незанятых human seats и автоматического создания сохранённых профилей. По умолчанию запомненный профиль устройства либо гость.
 
