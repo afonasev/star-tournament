@@ -50,6 +50,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(draft.IsEditable("weapon.probeRange"),Is.False);Assert.That(draft.Domain("rifle.head"),Is.EqualTo("Gameplay"));
             Assert.That(draft.Domain("presentation.rifleTracerWidth"),Is.EqualTo("Presentation"));
         }
+        [Test]public void LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible()
+        {
+            var bundle=Shipped();
+            foreach(var d in bundle.Descriptors.Where(d=>bundle.IsAuthoring(d.Path)))Assert.That(bundle.IsVisible(d.Path),Is.False,d.Path);
+            foreach(var path in new[]{"layout.fill-0.x","ring.spawn-mark-1.y","wayfinding.sign-0.yaw","wayfinding.centralHalfWidth","detail.ventWidth","broadcast.screenWidth","light.fixtureWidth","ring.spaceCenterY","ring.windowFrameWidth"})
+            {Assert.That(bundle.IsVisible(path),Is.False,path);Assert.That(bundle.IsEditable(path),Is.False,path);}
+            foreach(var path in new[]{"rifle.head","player.movement.jumpSpeed","light.intensity","surface.wallValue","color.north.r","ring.glassOpacity","broadcast.fanSpeed"})Assert.That(bundle.IsEditable(path),Is.True,path);
+        }
+        [Test]public void LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision()
+        {
+            var history=new DesignLabHistory(path,Shipped());history.Create("Legacy");
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
+            old.Snapshot.Set("layout.fill-0.x",1);old.Hash=old.Snapshot.Hash();string oldHash=old.Hash;
+            File.WriteAllText(path,JsonUtility.ToJson(file,true));
+            var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Null);
+            var draft=restored.Selected.Snapshot;draft.Set("rifle.head",31);restored.Save(draft);
+            var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);
+            Assert.That(restarted.Selected.Snapshot.Get("layout.fill-0.x"),Is.EqualTo(1));
+            Assert.That(restarted.SelectedProfile.Revisions.First().Hash,Is.EqualTo(oldHash));
+            draft=restarted.Selected.Snapshot;draft.Set("layout.fill-0.x",2);Assert.Throws<ArgumentException>(()=>restarted.Save(draft));
+        }
         [Test]public void DescriptorMigrationRefreshesPreviouslyUsedValueIndex()
         {
             var profile=ProvingProfile.CreateCombatBowlRingPresentationDefault();string key="broadcast.screenValue";float expected=profile.Get(key);

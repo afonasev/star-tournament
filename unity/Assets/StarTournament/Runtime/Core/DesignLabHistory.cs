@@ -23,7 +23,26 @@ namespace StarTournament.ProvingGround
         public void Set(string path,float value) => Profile(path).Set(path,value);
         public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
         public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1";
-        public bool IsVisible(string path)=>path!="weapon.probeRange"&&path!="weapon.probeCooldown";
+        public bool IsDiagnostic(string path)=>path=="weapon.probeRange"||path=="weapon.probeCooldown";
+        public bool IsLevelAuthoring(string path)
+        {
+            if(IsAuthoring(path))return true;
+            var profile=Profile(path);
+            if(profile.Id!="orbital-league-ring-v1"&&profile.Id!="orbital-league-v1")return false;
+            // Scene placement and mesh dimensions belong to map authoring, not balance tuning.
+            var group=profile.Descriptor(path).Group;
+            return path.StartsWith("layout.")||path.StartsWith("ring.spawn-mark-")||
+                path.StartsWith("wayfinding.")||group=="details"||group=="ring"||
+                LevelGeometryPaths.Contains(path);
+        }
+        static readonly HashSet<string> LevelGeometryPaths=new HashSet<string>{
+            "light.fixtureSpacing","light.fixtureWidth","light.fixtureLength","light.fixtureFrame","light.fixtureDepth",
+            "light.targetDrop","light.outerAimInset","light.hallAimOffsetZ",
+            "broadcast.screenWidth","broadcast.screenHeight","broadcast.orbitRadius","broadcast.markWidth",
+            "broadcast.ventRadius","broadcast.spawnMarkHeight","broadcast.servicePanelHeight",
+            "ring.spaceHalfExtent","ring.spaceCenterY","ring.planetRadius","ring.secondPlanetRadius","ring.sunRadius",
+            "ring.celestialElevation","ring.celestialHorizontal"};
+        public bool IsVisible(string path)=>!IsDiagnostic(path)&&!IsLevelAuthoring(path);
         public bool IsEditable(string path)=>IsVisible(path)&&!IsAuthoring(path);
         public string Domain(string path)=>IsAuthoring(path)?"Authored map":Profile(path).Descriptor(path).Group=="cutter-effects"||Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
         public List<ProfileValidationIssue> Validate()
@@ -121,7 +140,7 @@ namespace StarTournament.ProvingGround
                     if(r.Number<1||r.Snapshot==null||!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
                     // Metadata is trusted only from the shipped registry, never from the file.
                     var trusted=registry.Clone();foreach(var d in trusted.Descriptors)trusted.Set(d.Path,r.Snapshot.Get(d.Path));
-                    if(trusted.Descriptors.Any(d=>!trusted.IsEditable(d.Path)&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
+                    if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
                     if(trusted.Validate().Count!=0)throw new InvalidDataException("Невалидный снимок");r.Snapshot=trusted;
                 }
             }
@@ -168,7 +187,10 @@ namespace StarTournament.ProvingGround
         public void Select(string id,int number)=>Commit(f=>{var r=f.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);if(!Current(r.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");f.SelectedId=id;f.SelectedRevision=number;});
         public void Save(LabBundle draft)
         {
-            if(draft.Descriptors.Any(d=>!draft.IsEditable(d.Path)&&draft.Get(d.Path)!=shipped.Get(d.Path)))throw new ArgumentException("Read-only metadata cannot be saved");
+            // Previously editable placement overrides remain valid immutable history.
+            // New revisions may retain them, but cannot introduce further changes to hidden fields.
+            var baseline=Selected.Snapshot;
+            if(draft.Descriptors.Any(d=>!draft.IsEditable(d.Path)&&draft.Get(d.Path)!=baseline.Get(d.Path)))throw new ArgumentException("Read-only metadata cannot be saved");
             if(draft.Validate().Count!=0)throw new ArgumentException("Черновик содержит ошибки");
             if(draft.Hash()==Selected.Hash)throw new ArgumentException("Нет изменений");
             Commit(f=>{var p=f.Profiles.Single(x=>x.Id==f.SelectedId);int n=p.Revisions.Max(r=>r.Number)+1;

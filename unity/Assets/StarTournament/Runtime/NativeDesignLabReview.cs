@@ -41,7 +41,13 @@ namespace StarTournament.ProvingGround
             if(Button("lab-delete").interactable)throw new InvalidOperationException("Protected release deletion enabled");
             Click("lab-profile-select");yield return null;var qaProfile=ground.GetComponentsInChildren<Button>().Single(b=>b.name.StartsWith("profile-")&&b.GetComponentInChildren<Text>().text=="QA профиль · переименован");qaProfile.onClick.Invoke();yield return null;
             Input("lab-search").text="jumpSpeed";yield return null;yield return Capture("07-global-search");Input("lab-search").text="";yield return null;
-            Click("group-map-geometry");yield return null;yield return Capture("07c-authored-read-only");Click("group-rifle");yield return null;
+            if(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("group-map-")||b.name=="group-layout"||b.name=="group-ring-layout"||b.name=="group-details"||b.name=="group-ring"))throw new InvalidOperationException("Level authoring group is visible");
+            foreach(var hidden in new[]{"layout.fill-0.x","wayfinding.sign-0.yaw","broadcast.screenWidth","ring.spaceCenterY"})
+            {
+                Input("lab-search").text=hidden;yield return null;
+                if(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-"+hidden))throw new InvalidOperationException("Level authoring search result: "+hidden);
+            }
+            yield return Capture("07c-level-placement-excluded");Input("lab-search").text="";Click("group-lighting");yield return null;yield return Capture("07d-lighting-tuning");Click("group-rifle");yield return null;
             EventSystem.current.SetSelectedGameObject(Input("input-rifle.head").gameObject);yield return null;yield return Capture("08-keyboard-focus-hint");
             Click("lab-back");yield return null;Click("main-action-0");yield return null;yield return Capture("09-setup-revision-hash");
             if(AudioListener.volume!=0)throw new InvalidOperationException("QA not muted");
