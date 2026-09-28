@@ -16,3 +16,13 @@
 4. Возле боезапаса справа снизу и по отдельным viewport повторов нет.
 
 Human acceptance ожидается; synthetic Player checks не заменяют решение пользователя.
+
+## Проверки
+
+- Tested implementation: `d4c38d295146099da8f9da489b04456fbcca2b45`.
+- `unity/tools.sh test-edit`: 121/121 passed.
+- `unity/tools.sh test-play`: 116/116 passed.
+- `unity/tools.sh build`: exit 0, `STAR_PROVING_BUILD_PASS 469877700`, Unity 6000.3.23f1, BuildOptions.Development. Editor commands использовали существующий licensing IPC `LicenseClient-eaafonasev-6000.3.23` через локальную UNITY_EDITOR-обёртку.
+- Native muted Player `-pauseReview … -pauseReviewCount 1` и `4`: оба complete.txt PASS. Во всех семи снимках buildLabels=1, unityDeveloperWatermark=false; top-left anchors проверены. PNG меню, матча и паузы для 1/4 viewport просмотрены.
+- Локальный кандидат: `/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/shared-build-label/d4c38d2/StarTournamentProvingGround.app`.
+- Human acceptance pending; synthetic gamepads не являются физической приёмкой управления.
