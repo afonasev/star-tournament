@@ -25,6 +25,7 @@ namespace StarTournament.ProvingGround
             File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(new ReviewState
             {
                 state=name,localSeats=count,running=ground.Running,matchTime=ground.Session.Time,
+                visibleFps=VisibleFpsCount(),
                 openMenus=Enumerable.Range(0,count).Count(i=>Button("pause-action-"+i+"-0").transform.parent.parent.gameObject.activeInHierarchy),
                 focused=Application.isFocused,muted=AudioListener.volume==0
             },true));
@@ -33,10 +34,12 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class ReviewState
         {
             public string state,classification="SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE";
-            public int localSeats,openMenus;
+            public int localSeats,openMenus,visibleFps;
             public bool running,focused,muted;
             public double matchTime;
         }
+        int VisibleFpsCount()=>ground.GetComponentsInChildren<Text>(true).Count(t=>
+            (t.name=="fps-value"||t.name.StartsWith("seat-fps-"))&&t.gameObject.activeInHierarchy);
         IEnumerator Press(Gamepad pad,GamepadButton button)
         {
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(button));yield return null;yield return null;
@@ -53,7 +56,10 @@ namespace StarTournament.ProvingGround
             if(countAt<0||countAt+1>=args.Length||!int.TryParse(args[countAt+1],out count)||count<1||count>4)
                 throw new ArgumentException("Pause review requires 1–4 local seats");
             yield return new WaitForSecondsRealtime(1);
+            if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in the main menu");
+            yield return Capture("00-main-menu");
             Button("main-action-0").onClick.Invoke();
+            if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in match setup");
             while(ground.LocalSeatCount>count)Button("seats-minus").onClick.Invoke();
             if(count==1)Button("bot-add").onClick.Invoke();
             pads=new Gamepad[count];
@@ -81,6 +87,13 @@ namespace StarTournament.ProvingGround
                 Button("pause-repeat-yes-1").onClick.Invoke();yield return null;
                 if(!ground.Running)throw new InvalidOperationException("Confirmed repeat did not start a fresh match");
                 yield return Capture("07-after-repeat");
+            }
+            if(count==1)
+            {
+                Button("pause-action-0-3").onClick.Invoke();
+                Button("pause-exit-yes-0").onClick.Invoke();
+                if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS remains visible after exiting a match");
+                yield return Capture("08-return-main-menu");
             }
             File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: muted native Player, "+count+" viewport pause menus; synthetic devices, no physical-controller or human acceptance.");
             Debug.Log("NATIVE_PAUSE_REVIEW_COMPLETE "+count+" "+directory);
