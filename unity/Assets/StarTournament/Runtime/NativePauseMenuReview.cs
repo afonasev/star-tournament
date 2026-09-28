@@ -18,14 +18,21 @@ namespace StarTournament.ProvingGround
         string directory;
         int count;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
+        Text[] BuildLabels()=>ground.GetComponentsInChildren<Text>(true).Where(t=>t.name=="development-build-label"&&t.gameObject.activeInHierarchy).ToArray();
         IEnumerator Capture(string name)
         {
+            var labels=BuildLabels();
+            if(labels.Length!=1 || labels[0].rectTransform.anchorMin!=new Vector2(0,1) || labels[0].rectTransform.anchorMax!=new Vector2(0,1))
+                throw new InvalidOperationException("Expected one global top-left build label");
+            if(UnityEngine.Rendering.Watermark.showDeveloperWatermark)
+                throw new InvalidOperationException("Unity development watermark remains enabled");
             yield return new WaitForEndOfFrame();
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));
             File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(new ReviewState
             {
                 state=name,localSeats=count,running=ground.Running,matchTime=ground.Session.Time,
                 visibleFps=VisibleFpsCount(),
+                buildLabels=BuildLabels().Length,unityDeveloperWatermark=UnityEngine.Rendering.Watermark.showDeveloperWatermark,
                 openMenus=Enumerable.Range(0,count).Count(i=>Button("pause-action-"+i+"-0").transform.parent.parent.gameObject.activeInHierarchy),
                 focused=Application.isFocused,muted=AudioListener.volume==0
             },true));
@@ -34,8 +41,8 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class ReviewState
         {
             public string state,classification="SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE";
-            public int localSeats,openMenus,visibleFps;
-            public bool running,focused,muted;
+            public int localSeats,openMenus,visibleFps,buildLabels;
+            public bool running,focused,muted,unityDeveloperWatermark;
             public double matchTime;
         }
         int VisibleFpsCount()=>ground.GetComponentsInChildren<Text>(true).Count(t=>

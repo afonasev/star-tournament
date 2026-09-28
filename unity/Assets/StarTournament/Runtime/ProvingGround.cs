@@ -882,6 +882,18 @@ namespace StarTournament.ProvingGround
             CreateSeatSetupInterface();
             CreateModernMenuUi(overlay.transform);
             CreateSeatPauseUi();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // One global UI label replaces Unity's per-camera watermark while retaining Development Build diagnostics.
+            UnityEngine.Rendering.Watermark.showDeveloperWatermark=false;
+            int buildFontSize=(int)Profile.Get("ui.fontSize");
+            var buildLabel=TextElement(canvasObject.transform,"development-build-label","Development Build",buildFontSize);
+            buildLabel.fontStyle=FontStyle.Bold;
+            buildLabel.alignment=TextAnchor.UpperLeft;
+            var buildRect=buildLabel.rectTransform;
+            buildRect.anchorMin=buildRect.anchorMax=buildRect.pivot=new Vector2(0,1);
+            buildRect.anchoredPosition=new Vector2(buildFontSize,-buildFontSize);
+            buildRect.sizeDelta=new Vector2(buildLabel.preferredWidth,buildLabel.preferredHeight);
+#endif
             ApplyLayout(LocalSeatCount); RefreshInterface(); Select(rebind);
         }
         void CreateSeatSetupInterface()
