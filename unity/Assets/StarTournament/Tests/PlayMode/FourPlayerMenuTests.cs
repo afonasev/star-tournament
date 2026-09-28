@@ -51,6 +51,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var display=root.AddComponent<FpsDisplay>();
                 display.Initialize(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),24,label);
                 Assert.That(display.Visible,Is.True);
+                var overlay=root.transform.Find("fps-overlay").gameObject;
+                Assert.That(overlay.activeSelf,Is.False,"Menus hide FPS without disabling the preference");
+                display.SetMatchActive(true);
+                Assert.That(overlay.activeSelf,Is.True);
+                display.SetMatchActive(false);
+                display.Toggle();
+                display.Toggle();
+                Assert.That(display.Visible,Is.True);
+                Assert.That(overlay.activeSelf,Is.False,"Enabling the setting in menus must not reveal FPS");
+                display.SetMatchActive(true);
+                Assert.That(overlay.activeSelf,Is.True,"The next match restores the enabled counter");
                 display.Toggle();
                 Assert.That(display.Visible,Is.False);
                 Assert.That(root.transform.Find("fps-overlay").gameObject.activeSelf,Is.False);

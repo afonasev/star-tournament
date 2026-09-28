@@ -30,6 +30,7 @@ namespace StarTournament.ProvingGround
         public const string PreferenceKey = "StarTournament.Settings.ShowFps";
         readonly FpsAverage average = new FpsAverage();
         Text counter, setting;
+        bool matchActive;
         public bool Visible { get; private set; }
         public string CurrentText => counter ? counter.text : "FPS —";
         public void Initialize(Font font, int fontSize, Text settingLabel)
@@ -70,9 +71,14 @@ namespace StarTournament.ProvingGround
             Refresh();
         }
         public void RestoreGeneralPreference() => SetSessionVisibility(PlayerPrefs.GetInt(PreferenceKey, 1) != 0);
+        public void SetMatchActive(bool active)
+        {
+            matchActive = active;
+            Refresh();
+        }
         void Refresh()
         {
-            counter.transform.parent.gameObject.SetActive(Visible);
+            counter.transform.parent.gameObject.SetActive(Visible && matchActive);
             setting.text = "Настройки · Показывать FPS: " + (Visible ? "вкл" : "выкл");
         }
         void Update()

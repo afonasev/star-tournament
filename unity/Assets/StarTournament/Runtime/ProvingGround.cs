@@ -970,6 +970,7 @@ namespace StarTournament.ProvingGround
         void RefreshInterface()
         {
             if (!overlay) return;
+            fps.SetMatchActive(phase==Phase.Running || phase==Phase.Paused);
             RefreshModernMenuUi();
             overlay.SetActive(phase!=Phase.Running && !(phase==Phase.Paused && UseSeatPauseMenus));
             start.gameObject.SetActive(phase==Phase.Setup); start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
