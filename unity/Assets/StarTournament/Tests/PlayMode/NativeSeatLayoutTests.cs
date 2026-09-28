@@ -202,8 +202,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 InputSystem.QueueStateEvent(pads[i],new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
                 InputSystem.QueueStateEvent(pads[i],new GamepadState());yield return null;
-                Button("identity-guest").onClick.Invoke();
+                Button("roster-identity").onClick.Invoke();Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
             }
+            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadDown));yield return null;yield return null;
+            InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
+            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("Начать — четыре игрока"));
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
             Assert.That(ground.Running,Is.True);yield return null;AssertLayout(2);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());

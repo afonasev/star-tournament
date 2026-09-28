@@ -24,6 +24,13 @@ namespace StarTournament.ProvingGround
         {
             RequireSeat(seat);aiSeats[seat]=value;
         }
+        public void RemoveSeat(int seat,int views)
+        {
+            RequireSeat(seat);
+            if(views<=1 || views>NativeMatchComposition.MaximumLocalSeats || seat>=views)throw new ArgumentOutOfRangeException(nameof(views));
+            for(int i=seat;i<views-1;i++){aiSeats[i]=aiSeats[i+1];seatDifficulties[i]=seatDifficulties[i+1];}
+            aiSeats[views-1]=false;seatDifficulties[views-1]=(int)NativeBotDifficulty.Normal;
+        }
         public int SeatDifficulty(int seat)
         {
             RequireSeat(seat);return seatDifficulties[seat];

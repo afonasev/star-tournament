@@ -67,10 +67,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string text) => ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==text);
         void ChooseGuestsForAssignedSeats()
         {
+            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
             for(int seat=0;seat<ground.LocalSeatCount;seat++)
             {
-                Button("seat-identity-"+seat).onClick.Invoke();
-                ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="identity-guest"&&b.gameObject.activeInHierarchy).onClick.Invoke();
+                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();
+                ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="roster-choice-guest"&&b.gameObject.activeInHierarchy).onClick.Invoke();Button("roster-done").onClick.Invoke();
             }
         }
         [UnityTest] public IEnumerator KillcamViewPauseRepeatAndMenuKeepOneSceneAndFreshLifecycle()
