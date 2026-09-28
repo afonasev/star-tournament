@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         internal void FullHealReviewPause(){Pause("Full heal timer QA");}
         internal void FullHealReviewResume(){phase=Phase.Running;RefreshInterface();}
         internal void FullHealReviewRepeat(){Repeat();}
+        internal void FullHealReviewSetup(){OpenSetup();}
         internal void FullHealReviewLab(string path)
         {
             phase=Phase.MainMenu;OpenLab();labGroup="full-heal";labQuery=path;labSearch.SetTextWithoutNotify(path);
@@ -70,7 +71,7 @@ namespace StarTournament.ProvingGround
             // Repeat retains the original frozen profile; a new match applies the newly saved revision.
             ground.FullHealReviewRepeat();Place(5);ground.Session.ApplyDamage(0,1,50);Advance(1000);ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,0),0,0);Advance(1);
             if(ground.Session.Life(0).Health!=100)throw new InvalidOperationException("Repeat lost its original profile");yield return Capture("16-repeat-retains-base-target");
-            ground.StartCombatReview(pads,true);Place(5);ground.Session.ApplyDamage(0,1,50);Advance(1000);ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,0),0,0);Advance(1);
+            ground.FullHealReviewSetup();ground.StartCombatReview(pads,true);Place(5);ground.Session.ApplyDamage(0,1,50);Advance(1000);ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,0),0,0);Advance(1);
             if(ground.Session.Life(0).Health!=80)throw new InvalidOperationException("Saved heal target did not apply to new match");yield return Capture("17-new-match-saved-target");
             File.WriteAllText(Path.Combine(directory,"saved-profile-identity.txt"),savedIdentity);
             File.WriteAllText(Path.Combine(directory,"review.json"),JsonUtility.ToJson(new Result{map=ground.Session.ArenaIdentity,movement=ground.Profile.Id+"@"+ground.Profile.Version,lifecycle=ground.LifeProfile.Id+"@"+ground.LifeProfile.Version,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height},true));
