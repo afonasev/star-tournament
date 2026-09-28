@@ -64,7 +64,7 @@ namespace StarTournament.ProvingGround
             {ground.FullHealReviewLab(path);yield return Capture("11-lab-"+path);}
             ground.FullHealReviewLab("heal.targetHealth");Button("lab-create").onClick.Invoke();yield return null;
             Input("lab-profile-name").text="Full heal QA";Button("submit").onClick.Invoke();yield return null;
-            ground.FullHealReviewLab("heal.targetHealth");Input("input-heal.targetHealth").text="80";yield return Capture("14-lab-edited-target");
+            ground.FullHealReviewLab("heal.targetHealth");yield return null;Input("input-heal.targetHealth").text="80";yield return Capture("14-lab-edited-target");
             if(!Button("lab-save").interactable)throw new InvalidOperationException("Valid heal draft cannot save");Button("lab-save").onClick.Invoke();yield return Capture("15-lab-saved-target");
             var savedIdentity=ground.LabSavedIdentity;
             // Repeat retains the original frozen profile; a new match applies the newly saved revision.
