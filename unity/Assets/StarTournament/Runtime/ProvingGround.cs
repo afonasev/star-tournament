@@ -239,6 +239,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
             if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
+            if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
@@ -387,18 +388,8 @@ namespace StarTournament.ProvingGround
         static void ApplyIdentity(GameObject root,int seat) => ApplyIdentity(root,NativeStandingsView.Palette[seat]);
         static void ApplyIdentity(GameObject root,Color color)
         {
-            foreach(var renderer in root.GetComponentsInChildren<Renderer>(true))
-            {
-                var materials=renderer.sharedMaterials;
-                for(int i=0;i<materials.Length;i++) if(materials[i] && materials[i].name.StartsWith("identity",StringComparison.OrdinalIgnoreCase))
-                {
-                    var block=new MaterialPropertyBlock(); renderer.GetPropertyBlock(block,i);
-                    // glTFast and URP material property aliases; preserve authored textures and shared ownership.
-                    foreach(string property in new[]{"_BaseColor","baseColorFactor","_EmissionColor","emissiveFactor"})
-                        if(materials[i].HasProperty(property)) block.SetColor(property,color);
-                    renderer.SetPropertyBlock(block,i);
-                }
-            }
+            TrooperIdentityPresentation.ApplyBody(root,color);
+            root.GetComponent<WeaponModelPresentation>()?.Tint(color,false);
         }
         static void SetLayer(GameObject root, int layer) { foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer; }
         void Update()
@@ -466,7 +457,9 @@ namespace StarTournament.ProvingGround
             {
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
                 bool boosted=Session.DamageBoostRemaining(p)>0;if(damageTinted[p]==boosted)continue;damageTinted[p]=boosted;
-                var tint=boosted?Color.red:Composition.Participant(p).Color;ApplyIdentity(bodies[p],tint);int seat=Composition.SeatOf(p);if(seat>=0)ApplyIdentity(views[seat],tint);
+                var color=Composition.Participant(p).Color;
+                bodies[p].GetComponent<WeaponModelPresentation>()?.Tint(color,boosted);
+                int seat=Composition.SeatOf(p);if(seat>=0)views[seat].GetComponent<WeaponModelPresentation>()?.Tint(color,boosted);
             }
             if(phase!=Phase.Setup) presentation.Render();
             var snapshot=Session.Match?.Read();
@@ -579,6 +572,7 @@ namespace StarTournament.ProvingGround
                 foreach(var descriptor in TeamProfile.Descriptors) NativeMatchConfiguration.ValidateValue(TeamProfile,descriptor.Path,TeamProfile.Get(descriptor.Path));
                 Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):
                     (combatReview||diagnostic?SetupComposition():WithSelectedNames(SetupComposition()));
+                if(reviewComposition==null&&!combatReview&&!diagnostic)Composition=NativeParticipantColors.FreezeNewMatch(Composition);
                 CombatBowlRules.RequireParticipantCount(Composition.ParticipantCount);
                 bool hasBots=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot);
                 if(hasBots&&!botReviewEnabled)botSeed=(uint)UnityEngine.Random.Range(1,int.MaxValue);

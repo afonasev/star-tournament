@@ -81,7 +81,7 @@ namespace StarTournament.ProvingGround
                 bool local=composition!=null?composition.SeatOf(s.Seat)>=0:!diagnostic;
                 string[] values={composition?.Participant(s.Seat).Label ?? ("Игрок "+(s.Seat+1)+(diagnostic?" · D":" · Ч")),s.Kills.ToString(),s.Assists.ToString(),s.Deaths.ToString(),
                     Math.Round(s.DamageDealt,MidpointRounding.AwayFromZero).ToString(),Math.Round(s.DamageReceived,MidpointRounding.AwayFromZero).ToString(),s.Score.ToString()};
-                for(int c=0;c<7;c++) { cells[r+1,c].text=values[c];cells[r+1,c].color=teams || s.Score==maximum?color:Color.white; }
+                for(int c=0;c<7;c++) { cells[r+1,c].text=values[c];cells[r+1,c].color=c==0 || teams || s.Score==maximum?color:Color.white; }
                 backgrounds[r].color=!local?new Color32(23,39,52,255):Color.Lerp(new Color32(23,39,52,255),color,.15f);
             }
         }
