@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,-4),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
-            HallMarkings();Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();
+            PickupMarkings(definition);Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();
             // Shared ceiling zones retain the accepted F2 light and two bounded local shadow maps.
             var poweredFixtures=new HashSet<int>();
             for(int zone=0;zone<16;zone++)
@@ -304,14 +304,21 @@ namespace StarTournament.ProvingGround
                 for(int i=0;i<12;i++)Box(wall,pos+offset+rotation*new Vector3(0,-.02f,(i+.5f)*len/12-len/2),new Vector3(.15f,.02f,.025f),rotation);
             }
         }
-        void HallMarkings()
+        void PickupMarkings(ArenaDefinition definition)
         {
-            float w=p.Get("detail.lineWidth");
-            // Sports centre circle, sixty-four vertices is fixed mesh tessellation.
-            for(int i=0;i<64;i++)
+            float width=p.Get("detail.lineWidth"),radius=p.Get("detail.ringRadius");
+            // Permanent presentation follows authored anchors, independently of pickup availability.
+            foreach(var pickup in definition.Pickups ?? Array.Empty<ArenaPickupDefinition>())
             {
-                float a=i*Mathf.PI*2/64,b=(i+1)*Mathf.PI*2/64;var start=new Vector3(Mathf.Sin(a)*p.Get("detail.ringRadius"),4+Epsilon*2,Mathf.Cos(a)*p.Get("detail.ringRadius"));var end=new Vector3(Mathf.Sin(b)*p.Get("detail.ringRadius"),4+Epsilon*2,Mathf.Cos(b)*p.Get("detail.ringRadius"));
-                Box(white,(start+end)/2,new Vector3(w,Epsilon,Vector3.Distance(start,end)),Quaternion.LookRotation(end-start));
+                var center=pickup.Anchor+Vector3.up*(Epsilon*2);
+                // Sixty-four segments are a fixed mesh tessellation invariant, not a balance value.
+                for(int i=0;i<64;i++)
+                {
+                    float a=i*Mathf.PI*2/64,b=(i+1)*Mathf.PI*2/64;
+                    var start=center+new Vector3(Mathf.Sin(a)*radius,0,Mathf.Cos(a)*radius);
+                    var end=center+new Vector3(Mathf.Sin(b)*radius,0,Mathf.Cos(b)*radius);
+                    Box(white,(start+end)/2,new Vector3(width,Epsilon,Vector3.Distance(start,end)),Quaternion.LookRotation(end-start));
+                }
             }
         }
         void Label(string text,Vector3 position,Quaternion rotation,float scale=1)
