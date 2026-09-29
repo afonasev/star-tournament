@@ -144,7 +144,8 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors()
         {
             if(predecessors!=null)return predecessors;
-            string key=shipped.Hash();
+            // Hash covers gameplay values; metadata is also trusted during migration.
+            string key=shipped.Hash()+"|"+JsonUtility.ToJson(shipped);
             lock(historicalLock)
             {
                 if(historicalCache.TryGetValue(key,out var cached))return predecessors=cached;
