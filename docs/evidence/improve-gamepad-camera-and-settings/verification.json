@@ -1,0 +1,38 @@
+{
+  "checks": [
+    {
+      "command": "unity/tools.sh test-edit",
+      "exit_code": 0,
+      "passed": 204,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/editmode.xml",
+      "duration_seconds": 356.2098626
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "exit_code": 0,
+      "passed": 139,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/playmode.xml",
+      "duration_seconds": 672.0826911
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode -testFilter GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests",
+      "exit_code": 0,
+      "passed": 9,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/camera-settings-focused.xml",
+      "duration_seconds": 56.9738771
+    }
+  ],
+  "source_revision": "c75f91a8780d92381a7ab0e373c06219299005b3",
+  "build": "pending",
+  "native_player": "pending",
+  "human_acceptance": "pending",
+  "candidate_source_revision": "a143600",
+  "post_suite_changes": [
+    "New profiles inherit general gamepad axes and auto-level through all creation paths; native QA asserts persistence",
+    "Integrated main 0f4d16c with damage vignette; combined default profile v9; post-integration migration checks pending",
+    "Cache identical exact gamepad predecessors instead of repeatedly serializing them; migration assertions pending"
+  ]
+}
