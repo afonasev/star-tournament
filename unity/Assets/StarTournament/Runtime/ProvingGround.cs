@@ -43,6 +43,7 @@ namespace StarTournament.ProvingGround
         public NativeNavigationDriver NavigationReviewDriver { get; private set; }
         bool navigationReviewEnabled;
         ProvingProfile frozenNavigation, frozenPerception;
+        public ProvingProfile ParticipantPaletteProfile = ProvingProfile.CreateParticipantPaletteDefault();
         public ProvingProfile RosterProfile = ProvingProfile.CreateRosterDefault();
         ProvingProfile frozenRosterProfile;
         public NativeMatchComposition Composition { get; private set; }
@@ -559,7 +560,7 @@ namespace StarTournament.ProvingGround
         void CreateMatch(bool repeating)
         {
             if(!repeating)
-                foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,CutterProfile})
+                foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,ParticipantPaletteProfile,CutterProfile})
                 {
                     if(profile==null||profile.Validate().Count!=0)throw new ArgumentException("Invalid match profile");
                     foreach(var descriptor in profile.Descriptors)NativeMatchConfiguration.ValidateValue(profile,descriptor.Path,profile.Get(descriptor.Path));
@@ -572,7 +573,7 @@ namespace StarTournament.ProvingGround
                 foreach(var descriptor in TeamProfile.Descriptors) NativeMatchConfiguration.ValidateValue(TeamProfile,descriptor.Path,TeamProfile.Get(descriptor.Path));
                 Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):
                     (combatReview||diagnostic?SetupComposition():WithSelectedNames(SetupComposition()));
-                if(reviewComposition==null&&!combatReview&&!diagnostic)Composition=NativeParticipantColors.FreezeNewMatch(Composition);
+                if(reviewComposition==null&&!combatReview&&!diagnostic)Composition=NativeParticipantColors.FreezeNewMatch(Composition,profile:ParticipantPaletteProfile);
                 CombatBowlRules.RequireParticipantCount(Composition.ParticipantCount);
                 bool hasBots=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot);
                 if(hasBots&&!botReviewEnabled)botSeed=(uint)UnityEngine.Random.Range(1,int.MaxValue);

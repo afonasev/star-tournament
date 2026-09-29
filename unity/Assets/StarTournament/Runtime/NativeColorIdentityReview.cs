@@ -80,6 +80,13 @@ namespace StarTournament.ProvingGround
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-colorIdentityEvidence");
             directory=at>=0&&at+1<args.Length?args[at+1]:Path.Combine(Application.persistentDataPath,"color-identity-review");Directory.CreateDirectory(directory);AudioListener.volume=0;
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
+            B("main-action-2").onClick.Invoke();yield return null;
+            B("group-participant-colors").onClick.Invoke();yield return null;yield return new WaitForEndOfFrame();
+            Check(ground.GetComponentsInChildren<InputField>().Count(f=>f.name.StartsWith("input-participant.color."))==24,"palette Lab fields missing");
+            File.WriteAllText(Path.Combine(directory,"00-palette-lab.json"),JsonUtility.ToJson(new Evidence{state="00-palette-lab",focused=Application.isFocused,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height},true));
+            File.WriteAllText(Path.Combine(directory,"palette-profile.json"),JsonUtility.ToJson(ground.ParticipantPaletteProfile,true));
+            ScreenCapture.CaptureScreenshot(Path.Combine(directory,"00-palette-lab.png"));yield return new WaitForSecondsRealtime(.25f);
+            B("lab-back").onClick.Invoke();yield return null;
             pad=InputSystem.AddDevice<Gamepad>();
             // AI-only composition uses the ordinary menu path and needs no artificial human identity.
             yield return Configure(1,2,true);Lineup(180);yield return Capture("01-ffa-two-front");

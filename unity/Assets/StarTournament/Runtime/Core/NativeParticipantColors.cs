@@ -6,22 +6,27 @@ namespace StarTournament.ProvingGround
 {
     public static class NativeParticipantColors
     {
-        // Approved vetted identity palette from src/match/participantPalette.ts; presentation constants, not balance.
-        static readonly Color[] colors={
-            new Color32(59,130,246,255),new Color32(217,70,239,255),new Color32(251,113,133,255),new Color32(139,92,246,255),
-            new Color32(16,185,129,255),new Color32(245,158,11,255),new Color32(225,29,72,255),new Color32(14,165,233,255),
-            new Color32(99,102,241,255),new Color32(20,184,166,255),new Color32(34,197,94,255),new Color32(168,85,247,255)};
+        static readonly string[] keys={"blue","magenta","yellow","orange","cyan","green","red","white"};
+        static readonly Color[] colors=Read(ProvingProfile.CreateParticipantPaletteDefault());
         // Separate presentation RNG: setup preview and gameplay UnityEngine.Random never consume it.
         static readonly System.Random assignmentRandom=new System.Random();
-        public static NativeMatchComposition FreezeNewMatch(NativeMatchComposition draft,Func<int,int> next=null)
+        public static NativeMatchComposition FreezeNewMatch(NativeMatchComposition draft,Func<int,int> next=null,ProvingProfile profile=null)
         {
             if(draft==null)throw new ArgumentNullException(nameof(draft));
-            if(draft.Roster.Mode!=NativeMatchMode.Ffa)return draft;
+            var palette=Read(profile);
+            if(draft.Roster.Mode!=NativeMatchMode.Ffa)
+            {
+                if(profile==null)return draft;
+                var teams=draft.Read();
+                // Setup already resolves the selected blue/magenta team swap.
+                for(int p=0;p<teams.Participants.Length;p++)teams.Participants[p].Color=palette[draft.Participant(p).Color==For(0)?0:1];
+                return NativeMatchComposition.Restore(teams);
+            }
             if(next==null)
             {
-                lock(assignmentRandom)return FreezeNewMatch(draft,assignmentRandom.Next);
+                lock(assignmentRandom)return FreezeNewMatch(draft,assignmentRandom.Next,profile);
             }
-            var palette=Read();var snapshot=draft.Read();
+            var snapshot=draft.Read();
             // Partial Fisher-Yates samples without replacement from the full approved palette.
             for(int p=0;p<snapshot.Participants.Length;p++)
             {
@@ -33,7 +38,17 @@ namespace StarTournament.ProvingGround
             return NativeMatchComposition.Restore(snapshot);
         }
         public static bool Contains(Color color)=>colors.Contains(color);
-        public static Color[] Read()=>(Color[])colors.Clone();
+        public static Color[] Read(ProvingProfile profile=null)
+        {
+            if(profile==null)return (Color[])colors.Clone();
+            if(profile.Id!=ProvingProfile.ParticipantPaletteId||profile.Version!=1||profile.Validate().Count!=0)
+                throw new ArgumentException("Invalid participant palette profile");
+            foreach(var d in profile.Descriptors)NativeMatchConfiguration.ValidateValue(profile,d.Path,profile.Get(d.Path));
+            var palette=keys.Select(key=>new Color32((byte)profile.Get("participant.color."+key+".r"),
+                (byte)profile.Get("participant.color."+key+".g"),(byte)profile.Get("participant.color."+key+".b"),255)).Select(c=>(Color)c).ToArray();
+            if(palette.Distinct().Count()!=palette.Length)throw new ArgumentException("Participant colors must be unique");
+            return palette;
+        }
         public static Color For(int participant)=>colors[participant];
     }
 }

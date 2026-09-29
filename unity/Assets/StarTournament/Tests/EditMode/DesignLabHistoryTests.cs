@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
@@ -105,7 +105,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash()
         {
-            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id=="cutter-beam-v1");
+            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id=="cutter-beam-v1"||p.Id==ProvingProfile.ParticipantPaletteId);
             var first=new DesignLabHistory(path,old);first.Create("Старый");var prior=first.Selected;
             var current=new DesignLabHistory(path,Shipped());Assert.That(current.StorageError,Is.Null);
             Assert.That(current.Selected.Snapshot.Get("cutter.energyCapacity"),Is.EqualTo(30));
@@ -114,7 +114,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         static LabBundle FirstCutterRelease()
         {
-            var old=Shipped();int index=old.Profiles.FindIndex(p=>p.Id=="cutter-beam-v1");
+            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);int index=old.Profiles.FindIndex(p=>p.Id=="cutter-beam-v1");
             old.Profiles[index]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(old.Profiles[index]).Replace("\"version\":2","\"version\":1"));
             old.Set("cutter.width",0.012f);return old;
         }
@@ -137,6 +137,24 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var current=new DesignLabHistory(path,Shipped());Assert.That(current.StorageError,Is.Null);
             Assert.That(current.Selected.Hash,Is.EqualTo(Shipped().Hash()));
             Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+        }
+        [Test]public void PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning()
+        {
+            var before=Shipped();before.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);
+            var old=new DesignLabHistory(path,before);old.Create("До новой палитры");
+            var original=old.Selected;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==original.Number).Hash,Is.EqualTo(original.Hash));
+            var draft=upgraded.Selected.Snapshot;
+            Assert.That(draft.IsEditable("participant.color.yellow.r"),Is.True);
+            Assert.That(draft.Domain("participant.color.yellow.r"),Is.EqualTo("Presentation"));
+            var descriptor=draft.Profile("participant.color.yellow.r").Descriptor("participant.color.yellow.r");
+            Assert.That(descriptor.Minimum,Is.EqualTo(0));Assert.That(descriptor.Maximum,Is.EqualTo(255));Assert.That(descriptor.Step,Is.EqualTo(1));
+            draft.Set("participant.color.yellow.r",254);upgraded.Save(draft);
+            var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);
+            Assert.That(restarted.Selected.Snapshot.Get("participant.color.yellow.r"),Is.EqualTo(254));
+            foreach(var channel in new[]{"r","g","b"})draft.Set("participant.color.yellow."+channel,draft.Get("participant.color.blue."+channel));
+            Assert.Throws<ArgumentException>(()=>upgraded.Save(draft));
         }
         [Test]public void TamperedSnapshotHashFailsWithoutDestroyingFile()
         {var history=new DesignLabHistory(path,Shipped());history.Create("test");string original=File.ReadAllText(path);File.WriteAllText(path,original.Replace("\"Value\": 30.0","\"Value\": 31.0"));var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Not.Null);}

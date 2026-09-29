@@ -68,6 +68,9 @@ namespace StarTournament.ProvingGround
                 if(Math.Abs(steps-Math.Round(steps))>.002)
                     issues.Add(new ProfileValidationIssue{Path=d.Path,Message="Значение должно соответствовать шагу "+d.Step});
             }
+            foreach(var palette in Profiles.Where(p=>p.Id==ProvingProfile.ParticipantPaletteId))
+                try { NativeParticipantColors.Read(palette); }
+                catch(ArgumentException e) { issues.Add(new ProfileValidationIssue{Path="participant.color.blue.r",Message=e.Message}); }
             CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
             CheckOrder(issues,"zone.armBottom","zone.armTop",1);
             CheckOrder(issues,"zone.legBottom","zone.legTop",1);
@@ -122,10 +125,10 @@ namespace StarTournament.ProvingGround
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
         {
-            this.path=path;this.shipped=shipped.Clone();preSwitch=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};preCutterThickness=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};preCutter=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};this.atomicPublish=atomicPublish??Publish;
-            var low=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
-            var shoulder=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
-            predecessors=new[]{this.shipped,low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
+            this.path=path;this.shipped=shipped.Clone();var beforePalette=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};this.atomicPublish=atomicPublish??Publish;
+            var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
+            var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
+            predecessors=new[]{this.shipped,beforePalette,low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
             data=NewFile();
             if(!File.Exists(path))return;
             try

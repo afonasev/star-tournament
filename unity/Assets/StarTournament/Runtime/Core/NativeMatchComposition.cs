@@ -46,11 +46,12 @@ namespace StarTournament.ProvingGround
             var snapshot=roster.Read();Roster=new NativeMatchRoster(snapshot.Mode,snapshot.Teams);
             participants=(NativeParticipantInfo[])metadata.Clone();localParticipants=(int[])mapping.Clone();
             participantSeats=Enumerable.Repeat(-1,participants.Length).ToArray();
+            // Frozen RGB values are independent of the current palette and remain valid after profile upgrades.
             for(int i=0;i<participants.Length;i++)
             {
                 var p=participants[i];
                 if(!Enum.IsDefined(typeof(NativeParticipantKind),p.Kind) || string.IsNullOrWhiteSpace(p.Name) ||
-                    !NativeParticipantColors.Contains(p.Color)||!FiniteUnit(p.Color.r)||!FiniteUnit(p.Color.g)||!FiniteUnit(p.Color.b)||p.Color.a!=1)
+                    !FiniteUnit(p.Color.r)||!FiniteUnit(p.Color.g)||!FiniteUnit(p.Color.b)||p.Color.a!=1)
                     throw new ArgumentException("Invalid participant metadata");
                 if(p.Kind==NativeParticipantKind.Bot ? p.Difficulty<0 || p.Difficulty>2 : p.Difficulty!=-1)
                     throw new ArgumentException("Invalid difficulty for participant kind");
