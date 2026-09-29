@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround
         public void Set(string path,float value) => Profile(path).Set(path,value);
         public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
         public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1";
-        public bool IsDiagnostic(string path)=>path=="weapon.probeRange"||path=="weapon.probeCooldown";
+        public bool IsDiagnostic(string path)=>path.StartsWith("bots.evaluation.")||path=="weapon.probeRange"||path=="weapon.probeCooldown";
         public bool IsLevelAuthoring(string path)
         {
             if(IsAuthoring(path))return true;
@@ -140,6 +140,7 @@ namespace StarTournament.ProvingGround
                 return copy;
             }
             predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))}).GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))).Select(g=>g.First()).ToArray();
+            predecessors=predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}}).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;
             try

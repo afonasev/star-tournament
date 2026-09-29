@@ -214,6 +214,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-botSeatsReview")) gameObject.AddComponent<NativeBotSeatsReview>();
             if (args.Contains("-botSetupReview")) gameObject.AddComponent<NativeBotSetupReview>();
             if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
+            if (args.Contains("-botTacticsReview")) gameObject.AddComponent<NativeBotTacticsReview>();
             if (args.Contains("-botBehaviorReview")) gameObject.AddComponent<NativeBotBehaviorReview>();
             if (args.Contains("-participantReview")) gameObject.AddComponent<NativeParticipantReview>();
             if (args.Contains("-botNavigationReview")||environmentReview)
@@ -263,6 +264,7 @@ namespace StarTournament.ProvingGround
             return path;
         }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public void ConfigureBotTacticsReview(NativeMatchConfiguration config){config.Validate(MatchProfile);Configuration=config;}
         public void StartBotReview(NativeMatchComposition composition,uint seed,InputDevice[] devices=null)
         {
             if(phase!=Phase.Setup)Menu();

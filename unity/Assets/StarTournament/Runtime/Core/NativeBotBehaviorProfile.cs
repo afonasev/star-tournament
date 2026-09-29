@@ -4,7 +4,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateBotBehaviorDefault()
         {
-            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 1 };
+            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 2 };
             string[] ids = { "easy", "normal", "hard" }, labels = { "Салага", "Боец", "Ветеран" };
             float[] reaction = { .6f, .28f, .12f }, decision = { .35f, .2f, .1f };
             float[] aimSpeed = { 90, 160, 230 }, aimError = { 12, 5, 1.5f }, aimPeriod = { 1.4f, 1, .7f };
@@ -39,7 +39,48 @@ namespace StarTournament.ProvingGround
             p.Add("bots.tactics.probeDistance", "bots", "Дистанция пробы", "Дистанция тактической пробы для выбора безопасного действия.", "meters", .1f, 3, .1f, 1);
             p.Add("bots.tactics.jumpSamples", "bots", "Пробы прыжка", "Максимум fixed-step проб траектории motor; превышение отклоняет прыжок.", "count", 4, 512, 1, 128);
             p.Add("bots.tactics.coverDistance", "bots", "Дистанция укрытия", "Целевая дистанция до точки краткого укрытия.", "meters", 1, 8, .1f, 3);
+            AddBotTactics(p);
             return p;
+        }
+        internal ProvingProfile BeforeBotTactics()
+        {
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            if(p.id=="unity-bot-behavior-v1"){p.version=1;p.descriptors.RemoveAll(d=>d.Path.StartsWith("bots.strategy.")||d.Path.EndsWith(".leadQuality"));p.values.RemoveAll(v=>v.Path.StartsWith("bots.strategy.")||v.Path.EndsWith(".leadQuality"));}
+            if(p.id=="unity-bot-perception-v1"){p.version=1;p.descriptors.RemoveAll(d=>d.Path.EndsWith(".pickupDelaySeconds"));p.values.RemoveAll(v=>v.Path.EndsWith(".pickupDelaySeconds"));}
+            return p;
+        }
+        public void EnsureBotDescriptors()
+        {
+            var current=id=="unity-bot-behavior-v1"?CreateBotBehaviorDefault():id=="unity-bot-perception-v1"?CreateBotPerceptionDefault():null;
+            if(current==null)return;valueIndex=null;version=current.version;
+            foreach(var d in current.descriptors)if(FindDescriptor(d.Path)==null){descriptors.Add(UnityEngine.JsonUtility.FromJson<NumericDescriptor>(UnityEngine.JsonUtility.ToJson(d)));values.Add(new ProvingProfileValue{Path=d.Path,Value=current.Get(d.Path)});}
+        }
+        static void AddBotTactics(ProvingProfile p)
+        {
+            p.Add("bots.strategy.healUrgency","bot-behavior","Срочность лечения","Вес восстановления здоровья относительно открытия оружия.","ratio",1,5,.1f,2);
+            p.Add("bots.strategy.intentHoldSeconds","bot-behavior","Устойчивость цели","Минимальное время полезной pickup цели до обычного пересмотра.","seconds",0f,5f,0.05f,0.8f);
+            p.Add("bots.strategy.pickupRetrySeconds","bot-behavior","Повтор пути","Пауза перед повтором недостижимого pickup.","seconds",1f,60f,1f,12f);
+            p.Add("bots.strategy.pickupTimeoutSeconds","bot-behavior","Время задачи","Предельное время подхода к pickup перед отказом.","seconds",2f,60f,1f,20f);
+            p.Add("bots.strategy.routeCostPerMeter","bot-behavior","Цена маршрута","Снижение utility за метр фактического маршрута.","utility/m",0.01f,10f,0.01f,0.6f);
+            p.Add("bots.strategy.pickupBaseUtility","bot-behavior","Сбор бонуса","Основной вес полезного pickup.","utility",1f,500f,1f,100f);
+            p.Add("bots.strategy.combatUtility","bot-behavior","Вес боя","Стоимость ухода из видимого боя ради pickup.","utility",0f,500f,1f,75f);
+            p.Add("bots.strategy.riskRadiusMeters","bot-behavior","Радиус угрозы","Расстояние от известного врага до pickup для штрафа риска.","meters",1f,50f,0.5f,12f);
+            p.Add("bots.strategy.riskWeight","bot-behavior","Штраф угрозы","Штраф опасного маршрута от допустимой памяти.","utility",0f,500f,1f,70f);
+            p.Add("bots.strategy.vulnerableWeight","bot-behavior","Уязвимость","Уменьшение стоимости выбора уязвимой цели.","meters",0f,100f,0.5f,15f);
+            p.Add("bots.strategy.strongerRatio","bot-behavior","Крепкий противник","Отношение живучести для отхода.","ratio",1f,5f,0.05f,1.6f);
+            p.Add("bots.strategy.weaponHoldSeconds","bot-behavior","Удержание оружия","Пауза между обычными сменами подходящего оружия.","seconds",0f,5f,0.05f,0.7f);
+            p.Add("bots.strategy.weaponHysteresis","bot-behavior","Порог смены","Преимущество альтернативного оружия для смены.","ratio",1f,3f,0.05f,1.15f);
+            p.Add("bots.strategy.switchPenalty","bot-behavior","Цена смены","Штраф utility переключения оружия.","ratio",0f,1f,0.05f,0.15f);
+            p.Add("bots.strategy.rocketCloseMeters","bot-behavior","Близкий Pulse","Верхняя граница безопасного прицела в корпус.","meters",1f,30f,0.5f,10f);
+            p.Add("bots.strategy.rocketLeadSeconds","bot-behavior","Предел упреждения","Предельный прогноз только наблюдаемого движения.","seconds",0f,3f,0.05f,1f);
+            p.Add("bots.strategy.surfaceProbeMeters","bot-behavior","Поиск поверхности","Предельная вертикальная проба под наблюдаемыми ногами.","meters",0.1f,10f,0.1f,2f);
+            p.Add("bots.strategy.impactToleranceMeters","bot-behavior","Допуск контакта","Допуск первого контакта около предполагаемой поверхности.","meters",0.05f,3f,0.05f,0.35f);
+            p.Add("bots.strategy.bodySafetyMargin","bot-behavior","Запас участника","Расширение self/allied splash проверки.","meters",0f,3f,0.05f,0.5f);
+            p.Add("bots.strategy.lowAmmoRatio","bot-behavior","Refill","Доля оставшегося запаса для полезного refill.","ratio",0f,1f,0.05f,0.55f);
+            p.Add("bots.strategy.allyNeedWeight","bot-behavior","Потребность союзника","Уменьшение utility бонуса для более нуждающегося союзника.","ratio",0f,1f,0.05f,0.8f);
+            p.Add("bots.strategy.weaponHorizonSeconds","bot-behavior","Окно атаки","Временное окно сравнения burst и непрерывного огня.","seconds",.1f,3,.05f,.25f);
+            string[] ids={"easy","normal","hard"};float[] quality={.35f,.7f,1f};
+            for(int i=0;i<ids.Length;i++)p.Add("bots."+ids[i]+".leadQuality","bot-behavior",ids[i]+" · Упреждение","Доля наблюдаемой скорости для упреждения.","ratio",0,1,.05f,quality[i]);
         }
     }
 }
