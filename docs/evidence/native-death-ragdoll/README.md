@@ -1,6 +1,6 @@
 # Native death ragdoll
 
-Изменение: `add-weapon-driven-death-ragdoll`. Ниже записан **исходный** кандидат `262518ea2ec8ac6e81f76e40ae1bc82d0e535810`. После просмотра пользователь попросил усилить все четыре импульса ×1.5; новый source `2262f6d` с профилем `unity-death-presentation-v1@2` прошёл affected EditMode 27/27 (XML `editmode-1.5x.xml`), но ещё ожидает PlayMode и новой сборки. Не приписывать старые кадры новым числам.
+Изменение: `add-weapon-driven-death-ragdoll`. Ниже записан **исходный** кандидат `262518ea2ec8ac6e81f76e40ae1bc82d0e535810`. После просмотра пользователь попросил усилить все четыре импульса ×1.5; новый source `2262f6d` с профилем `unity-death-presentation-v1@2` прошёл affected EditMode 27/27 (XML `editmode-1.5x.xml`) и PlayMode 20/20 (XML `playmode-1.5x.xml`), но ещё ожидает новой сборки. Не приписывать старые кадры новым числам.
 
 Passive ragdoll создаётся из evaluated позы и скорости, получает однократный weapon-driven импульс, контактирует с копией authored окружения в отдельной physics scene и следует session clock. Оружие corpse скрыто; двуручный grip и animation writers выключены. Настройки исходного кандидата: `unity-death-presentation-v1@1`.
 
