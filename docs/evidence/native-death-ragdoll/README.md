@@ -1,8 +1,8 @@
 # Native death ragdoll
 
-Изменение: `add-weapon-driven-death-ragdoll`. Runtime revision: `262518ea2ec8ac6e81f76e40ae1bc82d0e535810`.
+Изменение: `add-weapon-driven-death-ragdoll`. Ниже записан **исходный** кандидат `262518ea2ec8ac6e81f76e40ae1bc82d0e535810`. После просмотра пользователь попросил усилить все четыре импульса ×1.5; новый source `48c4968` с профилем `unity-death-presentation-v1@2` ещё ожидает Unity-проверок и новой сборки. Не приписывать старые кадры новым числам.
 
-Passive ragdoll создаётся из evaluated позы и скорости, получает однократный weapon-driven импульс, контактирует с копией authored окружения в отдельной physics scene и следует session clock. Оружие corpse скрыто; двуручный grip и animation writers выключены. Настройки: `unity-death-presentation-v1@1`.
+Passive ragdoll создаётся из evaluated позы и скорости, получает однократный weapon-driven импульс, контактирует с копией authored окружения в отдельной physics scene и следует session clock. Оружие corpse скрыто; двуручный grip и animation writers выключены. Настройки исходного кандидата: `unity-death-presentation-v1@1`.
 
 ## Проверки
 
@@ -20,4 +20,4 @@ QA state: arena `combat-bowl-v1@16`, frozen design profile `38aeaf3191e89e7d71c5
 
 ## Приёмка
 
-Automated/native evidence не устанавливает human acceptance. Оценка плавности, свободной позы рук и читаемости силы оружия остаётся за пользователем на точном локальном Player candidate. Четыре физических устройства, TV и performance reference hardware не проверены этим automated review.
+Automated/native evidence не устанавливает human acceptance. Падение и свободные руки на исходной записи пользователь одобрил с требованием увеличить все силы ×1.5. Изменённый Player ещё не просмотрен; техническая проверка и приёмка точного нового результата остаются открытыми. Четыре физических устройства, TV и performance reference hardware не проверены этим automated review.
