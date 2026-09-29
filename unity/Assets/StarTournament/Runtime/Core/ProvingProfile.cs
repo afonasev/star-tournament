@@ -93,6 +93,17 @@ namespace StarTournament.ProvingGround
             bool NewLookPath(string path)=>path==GamepadLookSettings.HorizontalPath||path==GamepadLookSettings.VerticalPath||path.StartsWith("input.gamepadReturn",StringComparison.Ordinal);
             old.descriptors.RemoveAll(d=>NewLookPath(d.Path));old.values.RemoveAll(v=>NewLookPath(v.Path));return old;
         }
+        public ProvingProfile BeforeDamageVignette()
+        {
+            // Only this registry changed; share untouched profiles rather than serialize every
+            // historical schema combination again while opening the Lab.
+            if(id!=DefaultId||FindDescriptor("ui.damageVignette.width")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
+            copy.values.RemoveAll(v=>v.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
+            if(copy.version==8)copy.version=7;
+            return copy;
+        }
         public void EnsureNativeCombatDescriptors()
         {
             valueIndex=null;
@@ -305,6 +316,10 @@ namespace StarTournament.ProvingGround
             profile.Add("ui.killNoticeBottom", "ui", "Kill notice bottom", "Bottom of the notice as a viewport-height fraction.", "ratio", .1f, .45f, .01f, .27f);
             profile.Add("ui.killNoticeTop", "ui", "Kill notice top", "Top of the notice as a viewport-height fraction.", "ratio", .35f, .6f, .01f, .44f);
             profile.Add("ui.centerTimerSeamGap", "ui", "Center timer seam gap", "Distance below the horizontal viewport seam for the shared timer in the three-seat layout.", "points", 0f, 64f, 1f, 16f);
+            profile.Add("ui.damageVignette.width", "damage-vignette", "Ширина рамки урона", "Доля ширины и высоты viewport: градиент исчезает до чистого центра.", "доля viewport", .03f, .25f, .01f, .16f);
+            profile.Add("ui.damageVignette.opacity", "damage-vignette", "Непрозрачность рамки урона", "Максимальная непрозрачность у края при одиночных и повторных попаданиях.", "доля", .05f, .6f, .01f, .34f);
+            profile.Add("ui.damageVignette.attackSeconds", "damage-vignette", "Появление рамки урона", "Время быстрого плавного появления после применённого урона.", "секунды", .01f, .15f, .01f, .04f);
+            profile.Add("ui.damageVignette.fadeSeconds", "damage-vignette", "Затухание рамки урона", "Время плавного исчезновения после пика; отсчитывается по времени матча.", "секунды", .1f, 1.5f, .05f, .55f);
             profile.Add("ui.viewportDividerWidth", "ui", "Viewport divider width", "Thickness of opaque black lines between local viewports.", "points", 2f, 24f, 1f, 6f);
             profile.Add("presentation.lightIntensity", "presentation", "Fixture light intensity", "Presentation-only fixture light intensity.", "intensity", .1f, 4f, .1f, 1.1f);
             profile.Add("presentation.armorPickupHoverHeight", "armor-pickup", "Высота парения щита", "Presentation-only высота бонуса над опорной поверхностью.", "meters", 0, 3, .01f, .7f);
