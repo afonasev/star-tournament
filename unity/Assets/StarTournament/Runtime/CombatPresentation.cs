@@ -95,7 +95,7 @@ namespace StarTournament.ProvingGround
     public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
-        sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact; public WeaponId Weapon; }
+        sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly RocketPresentation rocketPresentation;
         readonly CutterPresentation cutterPresentation;
@@ -159,7 +159,9 @@ namespace StarTournament.ProvingGround
                 var trace=GameObject.CreatePrimitive(PrimitiveType.Capsule);trace.name="pellet-streak";trace.transform.SetParent(root.transform,false);
                 // Destroy is deferred; disable now so another fixed tick cannot collide with a visual.
                 var collider=trace.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
-                trace.GetComponent<Renderer>().material=TraceMaterial(notice.Weapon);
+                var traceRenderer=trace.GetComponent<Renderer>();traceRenderer.material=TraceMaterial(notice.Weapon);
+                // No intermediate frame may expose the shot-time pose before the final view pose is sampled.
+                traceRenderer.enabled=false;
                 var muzzle=Muzzle(notice.Shooter,pelletIndex,notice.Weapon);
                 var direction=(pellet.Endpoint-muzzle).normalized;
                 var clearance=Mathf.Min(movement.Get("presentation.shotMuzzleClearance"),Vector3.Distance(muzzle,pellet.Endpoint)*.5f);
@@ -173,7 +175,7 @@ namespace StarTournament.ProvingGround
                 if(contact)
                     foreach(var existing in pellets)
                         if(existing.Contact && Vector3.Distance(existing.End,pellet.Endpoint)<movement.Get("presentation.shotImpactSize")*2f) { contact=false;break; }
-                pellets.Add(new PelletEffect{Root=root,Trace=trace,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon});
+                pellets.Add(new PelletEffect{Root=root,Trace=trace,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon,Shooter=notice.Shooter,Barrel=pelletIndex});
             }
         }
         Material ShotMaterial()
@@ -230,16 +232,33 @@ namespace StarTournament.ProvingGround
             return visual!=null && visual.MuzzleCount==2?visual.Muzzle(pellet):bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
         }
 
+        const float TraceWindowFraction=.18f; // Existing authored trace window; shared by birth and subsequent travel.
+        void BeginVisiblePellet(PelletEffect effect,float flight)
+        {
+            if(!session.Life(effect.Shooter).Dead)
+            {
+                var muzzle=Muzzle(effect.Shooter,effect.Barrel,effect.Weapon);
+                var direction=(effect.End-muzzle).normalized;
+                var clearance=Mathf.Min(movement.Get("presentation.shotMuzzleClearance"),Vector3.Distance(muzzle,effect.End)*.5f);
+                effect.Start=muzzle+direction*clearance;
+                effect.TraceEnd=effect.Weapon==WeaponId.Rifle?effect.Start+direction*Mathf.Min(movement.Get("presentation.rifleTracerLength"),Vector3.Distance(effect.Start,effect.End)):effect.End;
+            }
+            // First draw has a nonzero segment whose tail is still at the rendered muzzle.
+            // Its age is derived from the configured fixed tick and existing trace window, not another timer setting.
+            effect.Begins=session.Time-Mathf.Min(1f/movement.Get("simulation.fixedTickHz"),flight*TraceWindowFraction);
+            effect.Emitted=true;effect.Trace.GetComponent<Renderer>().enabled=true;
+        }
         void RenderPellets()
         {
             float flight=movement.Get("presentation.shotFlightSeconds"), impact=movement.Get("presentation.shotImpactSeconds");
             for(int i=pellets.Count-1;i>=0;i--)
             {
-                var effect=pellets[i];float elapsed=(float)(session.Time-effect.Begins);
+                var effect=pellets[i];if(!effect.Emitted)BeginVisiblePellet(effect,flight);
+                float elapsed=(float)(session.Time-effect.Begins);
                 if(elapsed<flight)
                 {
                     float progress=Mathf.Clamp01(elapsed/flight);var head=Vector3.Lerp(effect.Start,effect.TraceEnd,progress);
-                    var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-.18f));
+                    var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-TraceWindowFraction));
                     Vector3 delta=head-tail;effect.Trace.transform.SetPositionAndRotation((head+tail)*.5f,Quaternion.FromToRotation(Vector3.up,delta.normalized));
                     float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);continue;
                 }
@@ -357,7 +376,7 @@ namespace StarTournament.ProvingGround
         }
         public void Render()
         {
-            RenderPellets();rocketPresentation.Render();
+            rocketPresentation.Render();
             foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             for(int c=corpses.Count-1;c>=0;c--)
@@ -413,7 +432,8 @@ namespace StarTournament.ProvingGround
                 Vector3 direction=target-position;
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
-            cutterPresentation.Render();
+            // Capture a new trace only after all cameras, animation and weapon-switch joints are final for this frame.
+            RenderPellets();cutterPresentation.Render();
         }
     }
 }

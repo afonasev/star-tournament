@@ -12,13 +12,30 @@ namespace StarTournament.ProvingGround
     /// <summary>Bounded regression fixture shared by PlayMode and muted native Player QA.</summary>
     public sealed class NativeShotOriginReview:MonoBehaviour
     {
-        Gamepad[] pads;readonly List<string> checks=new List<string>();
+        Gamepad[] pads;readonly List<string> checks=new List<string>();readonly List<float> riflePixelErrors=new List<float>();
         ProvingGround ground;string directory;int capture;
         Transform View(int seat)=>ground.transform.Find("seat-camera-"+(seat+1)+"/trooper-view");
         void Require(bool condition,string message){if(!condition)throw new InvalidOperationException(message);}
         void Render(){ground.SendMessage("RefreshInterface");ground.SendMessage("LateUpdate");}
         Vector3 Muzzle(int seat,WeaponId weapon,int index=0)=>weapon==WeaponId.Shotgun?View(seat).GetComponent<VectorShotPresentation>().Muzzle(index):
             weapon==WeaponId.Rifle?View(seat).GetComponent<WeaponModelPresentation>().RifleMuzzle:View(seat).GetComponent<WeaponModelPresentation>().PulseMuzzle;
+        void RequireRenderedRifleCenter(int seat,Transform trace,Vector3 endpoint)
+        {
+            // Independent reference: actual bore mesh, rather than the muzzle getter under test.
+            var bore=View(seat).GetComponentsInChildren<MeshFilter>(true).Single(m=>m.name=="dark muzzle bore");
+            var center=bore.transform.TransformPoint(bore.sharedMesh.bounds.center);
+            var bounds=trace.GetComponent<MeshFilter>().sharedMesh.bounds;
+            var tail=trace.TransformPoint(bounds.center+Vector3.down*bounds.extents.y);
+            var head=trace.TransformPoint(bounds.center+Vector3.up*bounds.extents.y);
+            var camera=View(seat).parent.GetComponent<Camera>();
+            Vector2 a=camera.WorldToScreenPoint(tail),b=camera.WorldToScreenPoint(head),c=camera.WorldToScreenPoint(center);
+            var line=b-a;Require(line.magnitude>1,"First visible rifle trace has no readable segment");
+            float pixels=Mathf.Abs(line.x*(c-a).y-line.y*(c-a).x)/line.magnitude;
+            riflePixelErrors.Add(pixels);
+            Require(pixels<=.5f,"First visible rifle trace misses rendered bore center by "+pixels+" pixels");
+            var expected=center+(endpoint-center).normalized*Mathf.Min(ground.Profile.Get("presentation.shotMuzzleClearance"),Vector3.Distance(center,endpoint)*.5f);
+            Require(Vector3.Distance(tail,expected)<.0001f,"First visible rifle tail did not start at current bore clearance");
+        }
         IEnumerator Start()
         {
             var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-shotOriginReview");if(flag<0)yield break;
@@ -72,6 +89,8 @@ namespace StarTournament.ProvingGround
                     var stateBeforeRender=JsonUtility.ToJson(ground.Session.Capture());
                     Render();
                     Require(JsonUtility.ToJson(ground.Session.Capture())==stateBeforeRender,"Render changed combat snapshot");
+                    if(weapon==WeaponId.Rifle)
+                        RequireRenderedRifleCenter(0,ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="pellet-streak"),notice.Pellets[0].Endpoint);
                     if(weapon==WeaponId.RocketLauncher)
                     {
                         var rocket=ground.Session.Rockets.Single();var visual=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id);
@@ -99,6 +118,17 @@ namespace StarTournament.ProvingGround
                         yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,(++capture).ToString("D2")+"-"+weapon+"-"+side+".png"));
                         yield return new WaitForSecondsRealtime(.1f);
                     }
+                    if(weapon==WeaponId.Rifle)
+                    {
+                        var trace=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="pellet-streak");
+                        var bounds=trace.GetComponent<MeshFilter>().sharedMesh.bounds;
+                        var tail=trace.TransformPoint(bounds.center+Vector3.down*bounds.extents.y);
+                        var axis=trace.TransformDirection(Vector3.up).normalized;
+                        var later=new LocalAction[2];later[0].Move=Vector2.right;later[0].LookDegrees=new Vector2(10,0);
+                        ground.Session.Tick(later,.02f);Render();
+                        var laterTail=trace.TransformPoint(bounds.center+Vector3.down*bounds.extents.y);
+                        Require(Vector3.Cross(laterTail-tail,axis).magnitude<.0001f,"Already visible rifle trace moved with the later camera/weapon pose");
+                    }
                 }
             ground.StartCombatReview(pads,backgroundDiagnostic:true);
             for(int seat=0;seat<4;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(-6+seat*3,-1.2f,-5),0);
@@ -118,20 +148,18 @@ namespace StarTournament.ProvingGround
                 int previousShots=ground.Session.ShotCount;ground.Session.Tick(held,.02f);Render();
                 if(ground.Session.ShotCount==previousShots)continue;
                 var trace=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="pellet-streak"&&t.parent.name.StartsWith("shot-pellet-"+automatic.Sequence+"-"));
-                var muzzle=Muzzle(0,WeaponId.Rifle);var end=automatic.Pellets[0].Endpoint;
-                var expected=muzzle+(end-muzzle).normalized*Mathf.Min(ground.Profile.Get("presentation.shotMuzzleClearance"),Vector3.Distance(muzzle,end)*.5f);
-                Require(Vector3.Distance(trace.position,expected)<.0001f,"Automatic recoil reset detached tracer from visible muzzle");followUps++;
+                RequireRenderedRifleCenter(0,trace,automatic.Pellets[0].Endpoint);followUps++;
             }
             Require(followUps>=2,"Automatic fixture did not produce consecutive rifle shots");
             checks.Add("automatic rifle: consecutive shots agree with the rendered recoil pose");
             if(directory!=null)
             {
                 yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,"10-four-seats.png"));yield return new WaitForSecondsRealtime(.1f);
-                File.WriteAllText(Path.Combine(directory,"complete.json"),JsonUtility.ToJson(new Result{checks=checks.ToArray(),arena=ground.Session.ArenaIdentity,profile=ground.Session.DesignProfile.Hash,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height},true));
+                File.WriteAllText(Path.Combine(directory,"complete.json"),JsonUtility.ToJson(new Result{checks=checks.ToArray(),arena=ground.Session.ArenaIdentity,profile=ground.Session.DesignProfile.Hash,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,rifleBoreLineErrorsPixels=riflePixelErrors.ToArray()},true));
             }
         }
         void OnDestroy(){if(pads!=null)foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);}
-        [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public bool muted;public int width,height;public string[] checks;}
+        [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public bool muted;public int width,height;public string[] checks;public float[] rifleBoreLineErrorsPixels;}
     }
 }
 #endif
