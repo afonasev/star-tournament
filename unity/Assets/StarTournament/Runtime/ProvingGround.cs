@@ -114,6 +114,7 @@ namespace StarTournament.ProvingGround
         RectTransform verticalDivider, horizontalDivider;
         readonly NativeStandingsView[] standings = new NativeStandingsView[SeatInputCoordinator.SeatCount];
         NativeStandingsView results, persistentStandings;
+        readonly DamageVignette[] damageVignettes=new DamageVignette[SeatInputCoordinator.SeatCount];
         readonly RectTransform[] viewportRoots=new RectTransform[SeatInputCoordinator.SeatCount];
         Button seatsMinus, seatsPlus;
         int frozenSeatCount=SeatInputCoordinator.SeatCount;
@@ -242,6 +243,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
             if (args.Contains("-weaponPickupReview")) gameObject.AddComponent<NativeWeaponPickupReview>();
+            if (args.Contains("-damageVignetteReview")) gameObject.AddComponent<NativeDamageVignetteReview>();
             if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
             if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
@@ -480,6 +482,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<Composition.LocalCount;i++) if(hud[i])
             {
                 int participant=Composition.ParticipantAt(i);var life=Session.Life(participant);
+                damageVignettes[i]?.Render(phase==Phase.Running&&!life.Dead);
                 health[i].text=Mathf.CeilToInt(life.Health).ToString();
                 armorGroups[i].SetActive(life.Armor>0); if(life.Armor>0) armor[i].text=Mathf.CeilToInt(life.Armor).ToString();
                 ammo[i].text=(life.SelectedWeapon==WeaponId.Cutter?life.CutterEnergy.ToString("0.0"):life.Ammo.ToString())+(Session.DamageBoostRemaining(participant)>0&&life.SelectedWeapon!=WeaponId.RocketLauncher?" ×2":"");
@@ -624,6 +627,8 @@ namespace StarTournament.ProvingGround
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition);
             Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
+            for(int seat=0;seat<damageVignettes.Length;seat++)
+                damageVignettes[seat]?.Bind(seat<frozenSeatCount?Session:null,seat<frozenSeatCount?Composition.ParticipantAt(seat):-1,frozenMovement);
             Session.Died+=OnMatchDeath;
             Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
@@ -638,6 +643,7 @@ namespace StarTournament.ProvingGround
         void Menu()
         {
             NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
+            foreach(var vignette in damageVignettes)vignette?.Bind(null,-1,Profile);
             phase=Phase.Setup; diagnostic=false; combatReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
             bool wasReview=reviewComposition!=null;
             reviewComposition=null;reviewShowStandings=false;if(wasReview&&LocalSeatCount<2)input.SetActiveSeatCount(2);SyncHumanSeats();
@@ -848,6 +854,10 @@ namespace StarTournament.ProvingGround
                 if(!cameras[i].enabled) continue;
                 var root=new GameObject("seat-viewport-"+i,typeof(RectTransform)); root.transform.SetParent(canvasObject.transform,false);
                 viewportRoots[i]=(RectTransform)root.transform;
+                var effect=new GameObject("damage-vignette-"+i,typeof(RectTransform),typeof(CanvasRenderer),typeof(DamageVignette));
+                effect.transform.SetParent(viewportRoots[i],false);
+                damageVignettes[i]=effect.GetComponent<DamageVignette>();
+                Layout(damageVignettes[i].rectTransform,Vector2.zero,Vector2.one);
                 var rect = new Rect(0,0,1,1);
                 hud[i] = TextElement(viewportRoots[i], "seat-hud-"+i, "", (int)Profile.Get("ui.fontSize"));
                 Layout(hud[i].rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax));

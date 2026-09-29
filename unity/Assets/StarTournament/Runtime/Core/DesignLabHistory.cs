@@ -141,8 +141,16 @@ namespace StarTournament.ProvingGround
             }
             // Keep exact historical registries and additive schema combinations; version tuples
             // alone cannot distinguish a new descriptor on an otherwise unchanged profile.
+            var vignettePredecessors=new Dictionary<ProvingProfile,ProvingProfile>();
+            ProvingProfile WithoutVignette(ProvingProfile profile)
+            {
+                if(!vignettePredecessors.TryGetValue(profile,out var previous))
+                {previous=profile.BeforeDamageVignette();vignettePredecessors.Add(profile,previous);}
+                return previous;
+            }
             predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}})
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeCutterDamage()).ToList()}})
                 .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First()).ToArray();
