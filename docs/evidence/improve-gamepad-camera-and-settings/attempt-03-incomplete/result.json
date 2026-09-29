@@ -1,0 +1,12 @@
+{
+  "classification": "INCOMPLETE_NATIVE_QA_FOCUS_GATE",
+  "source_revision": "070498f237e20f69815f2d47750ea2fc8c176416",
+  "build_marker": "STAR_PROVING_BUILD_PASS 471126076",
+  "candidate": "local-macos-player-candidate/070498f237e20f69815f2d47750ea2fc8c176416/20260929T1700Z",
+  "settings_and_profile_checks": "passed",
+  "match_started": true,
+  "camera_checks": "not_started",
+  "failure": "Codex automation stole OS focus; fixture required Application.isFocused despite combat review background input",
+  "fix": "Record OS focus as diagnostic and keep physical focus acceptance pending",
+  "physical_controller_acceptance": "not_performed"
+}
