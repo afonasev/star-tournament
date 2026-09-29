@@ -48,7 +48,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var snapshot=JsonUtility.FromJson<NativeMatchSnapshot>(JsonUtility.ToJson(s.Read()));var restored=Make(false);restored.Restore(snapshot);
             var mismatched=Make(false,false,p);Assert.Throws<ArgumentException>(()=>mismatched.Restore(snapshot));
             restored.BeginTick();Hit(restored,3,1,75,true);restored.EndTick();Assert.That(Row(restored,2).Assists,Is.EqualTo(1));Assert.That(Row(restored,0).AccumulatedPenalty,Is.EqualTo(200));
-            while(restored.Read().Tick<60){restored.BeginTick();restored.EndTick();}Assert.That(restored.Read().Winner,Is.EqualTo(1));
+            for(int guard=0;guard<60&&restored.Read().Tick<60;guard++){restored.BeginTick();restored.EndTick();}
+            Assert.That(restored.Read().Tick,Is.EqualTo(60),"Match stopped advancing before its one-minute time limit: "+JsonUtility.ToJson(restored.Read()));
+            Assert.That(restored.Read().Winner,Is.EqualTo(1));
             var final=JsonUtility.FromJson<NativeMatchSnapshot>(JsonUtility.ToJson(restored.Read()));var finalRestore=Make(false);finalRestore.Restore(final);Hit(finalRestore,1,1,100,true);
             Assert.That(JsonUtility.ToJson(finalRestore.Read()),Is.EqualTo(JsonUtility.ToJson(final)));
             Assert.That(Make(false).Read().Standings.All(r=>r.Score==0&&r.AccumulatedPenalty==0&&r.AllyDamageDealt==0&&r.SelfKills==0&&r.AllyKills==0),Is.True);
