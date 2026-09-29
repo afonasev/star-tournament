@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
     {
         // Legacy field name: stable participant slot, not a device/viewport binding.
         public int Seat, Kills, Assists, Deaths, Score;
-        public double DamageDealt, DamageReceived;
+        public double DamageDealt, DamageReceived, AllyDamageDealt;
     }
     [Serializable]
     public struct NativeTeamStanding
@@ -77,20 +77,26 @@ namespace StarTournament.ProvingGround
         }
         void ClearLedger(int victim) { for(int i=0;i<rows.Length;i++) ledger[victim,i]=-1; }
         public void BeginTick() { if(Phase!=NativeMatchPhase.Finished) tick++; }
-        public void RecordDamage(int victim, int attacker, DamageResult result, bool chainEligible=true)
+        public void RecordDamage(int victim, int attacker, DamageResult result, bool chainEligible=true, int? originalSource=null)
         {
             if(Phase==NativeMatchPhase.Finished || result.Applied<=0) return;
+            int source=originalSource??attacker;
+            if(victim<0||victim>=rows.Length||source < -1||source>=rows.Length||attacker < -1||attacker>=rows.Length)throw new ArgumentOutOfRangeException();
             rows[victim].DamageReceived+=result.Applied;
-            if(attacker>=0 && attacker!=victim)
+            bool ally=source>=0&&source!=victim&&Roster.AreAllies(source,victim);
+            bool enemy=attacker>=0&&attacker!=victim&&!ally;
+            if(ally)rows[source].AllyDamageDealt+=result.Applied;
+            if(enemy)
             {
                 rows[attacker].DamageDealt+=result.Applied;
                 ledger[victim,attacker]=tick;
             }
             if(!result.Killed) return;
             rows[victim].Deaths++; diedThisTick[victim]=true;
-            for(int i=0;i<rows.Length;i++) if(i!=attacker && i!=victim && ledger[victim,i]>=0 && tick-ledger[victim,i]<=assistTicks)
+            if(!ally&&source!=victim)for(int i=0;i<rows.Length;i++) if(i!=attacker && i!=victim && ledger[victim,i]>=0 && tick-ledger[victim,i]<=assistTicks)
             { rows[i].Assists++; rows[i].Score+=assistPoints; }
-            if(attacker>=0 && attacker!=victim)
+            if(ally&&chainEligible)chains[source]=chainAwards[source]=0;
+            if(enemy)
             {
                 int length=chainEligible?chains[attacker]+1:1;
                 int award=length<=totals.Length ? totals[length-1] : totals[totals.Length-1]+(length-totals.Length)*increment;

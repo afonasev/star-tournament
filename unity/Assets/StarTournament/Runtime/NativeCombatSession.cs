@@ -53,6 +53,7 @@ namespace StarTournament.ProvingGround
         readonly float pickupHeightTolerance;
         readonly ShotgunResolver resolver;
         readonly RocketResolver rocketResolver;
+        readonly float friendlyMultiplier,selfMultiplier;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
         public event Action<RocketExplosion> RocketExploded;
@@ -148,6 +149,7 @@ namespace StarTournament.ProvingGround
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
             tuning.EnsureNativeCombatDescriptors();
+            friendlyMultiplier=tuning.Get("damage.friendlyMultiplier");selfMultiplier=tuning.Get("damage.selfMultiplier");
             resolver = new ShotgunResolver(tuning, movement.Get("player.capsule.height"));
             rocketResolver = new RocketResolver(tuning,this.movement);
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
@@ -304,7 +306,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<lives.Length;i++)
             {
                 identities[i]=Life(i).Life;
-                distances[i]=i==shooter||Life(i).Dead||Allied(shooter,i)?-1:RocketResolver.Capsule(origin-Pose(i).Position,direction,radius,height-radius,radius+cutter.Get("cutter.hitRadius"));
+                distances[i]=i==shooter||Life(i).Dead?-1:RocketResolver.Capsule(origin-Pose(i).Position,direction,radius,height-radius,radius+cutter.Get("cutter.hitRadius"));
             }
             bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;
             if(began){ShotCount++;shotSequence++;ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Cutter));}
@@ -377,7 +379,7 @@ namespace StarTournament.ProvingGround
                 {
                     var target=targets[hit.TargetIndex];
                     pellets[pellet]=new PelletNotice(direction,origin+direction*hit.Distance,-direction,PelletContact.Participant,target.Seat,target.Life);
-                    if(!Allied(shooter,target.Seat)) damage[hit.TargetIndex]+=resolver.FullDamage(hit.Zone,weapon)*(damageRemaining[shooter]>0?damagePickup.Multiplier:1);
+                    damage[hit.TargetIndex]+=resolver.FullDamage(hit.Zone,weapon)*(damageRemaining[shooter]>0?damagePickup.Multiplier:1);
                 }
                 else if(worldHit) pellets[pellet]=new PelletNotice(direction,wall.point,wall.normal,PelletContact.World);
                 else pellets[pellet]=new PelletNotice(direction,origin+direction*range,-direction,PelletContact.Miss);
@@ -397,15 +399,16 @@ namespace StarTournament.ProvingGround
         DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket)
         {
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return default;
-            if(!rocket && killer >= 0 && Allied(killer,seat)) return default;
+            if(seat<0||seat>=lives.Length||killer < -1||killer>=lives.Length)throw new ArgumentOutOfRangeException();
+            if(float.IsNaN(damage)||float.IsInfinity(damage)||damage<0)throw new ArgumentOutOfRangeException(nameof(damage));
+            if(killer>=0)damage*=killer==seat?selfMultiplier:Allied(killer,seat)?friendlyMultiplier:1;
             var before=Life(seat);
             var result = lives[seat].Damage(life, damage, killer < 0 ? null : Life(killer).ParticipantId, killerLife);
             var after=Life(seat);
             float healthLost=before.Health-after.Health,armorLost=before.Armor-after.Armor;
             if(healthLost>0||armorLost>0)Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time));
-            // Friendly splash can kill, but cannot earn enemy kill/assist rewards.
-            int scorer=killer>=0&&killer!=seat&&Allied(killer,seat)?-1:killer;
-            Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife));
+            // Preserve the original source for relation-aware statistics and lethal policy.
+            Match?.RecordDamage(seat,killer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer);
             if (result.Killed)
             {
                 beams[seat].Stop();

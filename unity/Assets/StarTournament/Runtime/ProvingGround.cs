@@ -229,6 +229,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-shotOriginReview")) gameObject.AddComponent<NativeShotOriginReview>();
             if (args.Contains("-vectorReview")) gameObject.AddComponent<VectorVisualReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
+            if (args.Contains("-unifiedDamageReview")) gameObject.AddComponent<NativeUnifiedDamageReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
             if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();

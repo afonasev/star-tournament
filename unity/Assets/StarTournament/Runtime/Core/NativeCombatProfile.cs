@@ -4,6 +4,39 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateNativeCombatDefault()
         {
+            var p=CreateLegacyNativeCombatDefault();
+            p.UpgradeBodyDamage();
+            return p;
+        }
+        void UpgradeBodyDamage()
+        {
+            float rifle=FindDescriptor("rifle.torso")!=null?Get("rifle.torso"):20;
+            float shot=FindDescriptor("shot.torso")!=null?Get("shot.torso"):70;
+            foreach(var prefix in new[]{"rifle.","shot."})
+                foreach(var zone in new[]{"head","torso","limb"})
+                { descriptors.RemoveAll(d=>d.Path==prefix+zone);values.RemoveAll(v=>v.Path==prefix+zone); }
+            valueIndex=null;
+            if(FindDescriptor("rifle.damage")==null){Add("rifle.damage","rifle","Урон автомата","Урон одной пули независимо от части тела.","health",0,200,1,20);Set("rifle.damage",rifle);}
+            if(FindDescriptor("shot.damage")==null){Add("shot.damage","shotgun","Урон дробовика","Суммарный урон всех попавших дробин независимо от части тела.","health",0,500,1,70);Set("shot.damage",shot);}
+            if(FindDescriptor("damage.friendlyMultiplier")==null)Add("damage.friendlyMultiplier","damage-policy","Урон союзникам","Доля рассчитанного урона союзнику до поглощения щитом.","ratio",0,1,.05f,.5f);
+            if(FindDescriptor("damage.selfMultiplier")==null)Add("damage.selfMultiplier","damage-policy","Урон себе","Доля урона себе там, где возможен self contact, до щита.","ratio",0,1,.05f,.5f);
+            version=5;
+        }
+        public ProvingProfile BeforeUnifiedBodyDamage()
+        {
+            if(id!="unity-native-combat-v1"||FindDescriptor("rifle.damage")==null)return this;
+            var legacy=CreateLegacyNativeCombatDefault();
+            // Reconstruct trusted historical metadata; saved snapshots supply their own unchanged values.
+            var copy=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path=="rifle.damage"||d.Path=="shot.damage"||d.Path.StartsWith("damage.",System.StringComparison.Ordinal));
+            copy.values.RemoveAll(v=>v.Path=="rifle.damage"||v.Path=="shot.damage"||v.Path.StartsWith("damage.",System.StringComparison.Ordinal));
+            foreach(var d in legacy.descriptors)
+                if((d.Path=="rifle.head"||d.Path=="rifle.torso"||d.Path=="rifle.limb"||d.Path=="shot.head"||d.Path=="shot.torso"||d.Path=="shot.limb")&&copy.FindDescriptor(d.Path)==null)
+                {copy.descriptors.Add(UnityEngine.JsonUtility.FromJson<NumericDescriptor>(UnityEngine.JsonUtility.ToJson(d)));copy.values.Add(new ProvingProfileValue{Path=d.Path,Value=legacy.Get(d.Path)});}
+            if(copy.version==5)copy.version=4;copy.valueIndex=null;return copy;
+        }
+        static ProvingProfile CreateLegacyNativeCombatDefault()
+        {
             var p = new ProvingProfile { id = "unity-native-combat-v1", version = 4 };
             p.Add("shot.pellets", "shotgun", "Дробины", "Число лучей одного двуствольного выстрела.", "count", 1, 64, 1, 12);
             p.Add("shot.spread", "shotgun", "Разброс", "Угловой радиус распределения дроби.", "degrees", 0, 45, .1f, 7);

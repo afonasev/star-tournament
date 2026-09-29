@@ -66,10 +66,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Life(2).Health,Is.LessThan(100));Assert.That(session.Rockets,Is.Empty);
             float hp=session.Life(1).Health;Ticks(20);Assert.That(session.Life(1).Health,Is.EqualTo(hp));Assert.That(explosions,Is.EqualTo(1));
         }
-        [UnityTest] public IEnumerator FriendlyDirectAndSelfSplashPreserveRifleProtectionAndNoFriendlyKillAward()
+        [UnityTest] public IEnumerator FriendlyDirectAndSelfSplashAreHalvedWithoutFriendlyKillAward()
         {
             Setup(true);yield return null;motors[1].Initialize(move,new Vector3(-8,0,2));
-            Assert.That(session.ApplyDamage(1,1,10,0,1).Applied,Is.Zero,"Other weapon policy stays protected");
+            Assert.That(session.ApplyDamage(1,1,10,0,1).Applied,Is.EqualTo(5),"All weapons share friendly policy");
+            var snapshot=session.Capture();snapshot.Lives[1].Health=40;session.Restore(snapshot);
             Fire();Ticks(4);Assert.That(session.Life(1).Dead,Is.True);Assert.That(session.Life(0).Health,Is.LessThan(100));
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Kills,Is.Zero);
         }

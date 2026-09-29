@@ -171,8 +171,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ArmorAbsorbsDamageBeforeHealthAndResetsOnRespawn()
         {
             var profile=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p1",profile);
-            life.GrantArmor(50);Assert.That(life.Damage(1,40).Applied,Is.Zero);Assert.That(life.Read().Armor,Is.EqualTo(10));Assert.That(life.Read().Health,Is.EqualTo(100));
-            Assert.That(life.Damage(1,50).Applied,Is.EqualTo(40));Assert.That(life.Read().Armor,Is.Zero);Assert.That(life.Read().Health,Is.EqualTo(60));
+            life.GrantArmor(50);Assert.That(life.Damage(1,40).Applied,Is.EqualTo(40));Assert.That(life.Read().Armor,Is.EqualTo(10));Assert.That(life.Read().Health,Is.EqualTo(100));
+            Assert.That(life.Damage(1,50).Applied,Is.EqualTo(50));Assert.That(life.Read().Armor,Is.Zero);Assert.That(life.Read().Health,Is.EqualTo(60));
             life.GrantArmor(50);life.Damage(1,200);life.Advance(profile.Get("combat.killcamSeconds"));life.Respawn(1);Assert.That(life.Read().Armor,Is.Zero);
         }
     }

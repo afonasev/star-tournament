@@ -24,9 +24,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             serialized.descriptors=serialized.descriptors.Where(d=>d.Path!="presentation.rocketMuzzleBlendDistance").ToArray();
             serialized.values=serialized.values.Where(v=>v.Path!="presentation.rocketMuzzleBlendDistance").ToArray();
             old.Profiles[old.Profiles.IndexOf(profile)]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(serialized));
-            var history=new DesignLabHistory(path,old);history.Create("Existing");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            var history=new DesignLabHistory(path,old);history.Create("Existing");var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);
             var hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
-            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
             Assert.That(upgraded.Selected.Snapshot.Get("presentation.rocketMuzzleBlendDistance"),Is.EqualTo(3));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(v=>v.Hash==hash),Is.True);
             Assert.That(upgraded.Selected.Snapshot.IsEditable("presentation.rocketMuzzleBlendDistance"),Is.True);
@@ -36,12 +36,12 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts()
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Первый");string id=history.SelectedProfile.Id;var v1=history.Selected;
-            var draft=v1.Snapshot.Clone();draft.Set("rifle.head",31);history.Save(draft);var v2=history.Selected;
-            history.Select(id,1);draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",32);history.Save(draft);
+            var draft=v1.Snapshot.Clone();draft.Set("rifle.damage",31);history.Save(draft);var v2=history.Selected;
+            history.Select(id,1);draft=history.Selected.Snapshot.Clone();draft.Set("rifle.damage",32);history.Save(draft);
             Assert.That(history.Selected.Number,Is.EqualTo(3));history.Rename("Новое имя");
             var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);Assert.That(restarted.Selected.Number,Is.EqualTo(3));Assert.That(restarted.SelectedProfile.Id,Is.EqualTo(id));
             Assert.That(restarted.SelectedProfile.Revisions[0].Hash,Is.EqualTo(v1.Hash));Assert.That(restarted.SelectedProfile.Revisions[1].Hash,Is.EqualTo(v2.Hash));
-            var detached=restarted.Selected;detached.Snapshot.Set("rifle.head",99);Assert.That(restarted.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(32));
+            var detached=restarted.Selected;detached.Snapshot.Set("rifle.damage",99);Assert.That(restarted.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(32));
         }
         [Test]public void CorruptionIsPreservedAndCannotBeOverwritten()
         {File.WriteAllText(path,"broken");var history=new DesignLabHistory(path,Shipped());Assert.That(history.StorageError,Is.Not.Null);Assert.Throws<IOException>(()=>history.Create("test"));Assert.That(File.ReadAllText(path),Is.EqualTo("broken"));}
@@ -49,8 +49,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {var history=new DesignLabHistory(path,Shipped());Assert.Throws<InvalidOperationException>(()=>history.DeleteSelected());history.Create("Локальный");history.DeleteSelected();Assert.That(history.SelectedProfile.Id,Is.EqualTo(DesignLabHistory.ReleaseId));Assert.That(history.Profiles.Count,Is.EqualTo(1));}
         [Test]public void InvalidRangeStepAndCrossFieldDraftCannotSave()
         {
-            var history=new DesignLabHistory(path,Shipped());var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",999);Assert.Throws<ArgumentException>(()=>history.Save(draft));
-            draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",30.5f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            var history=new DesignLabHistory(path,Shipped());var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.damage",999);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            draft=history.Selected.Snapshot.Clone();draft.Set("rifle.damage",30.5f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
             draft=history.Selected.Snapshot.Clone();draft.Set("score.chainTotal2",0);Assert.Throws<ArgumentException>(()=>history.Save(draft));
             draft=history.Selected.Snapshot.Clone();draft.Set("zone.armTop",.5f);draft.Set("zone.armBottom",.6f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
             Assert.That(File.Exists(path),Is.False);
@@ -58,8 +58,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void WriteFailureLeavesSelectionAndExistingFileIntact()
         {
             var initial=new DesignLabHistory(path,Shipped());initial.Create("test");string original=File.ReadAllText(path),hash=initial.Selected.Hash;
-            var history=new DesignLabHistory(path,Shipped(),(temp,destination)=>throw new IOException("Injected atomic replace failure"));var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.head",31);
-            Assert.Throws<IOException>(()=>history.Save(draft));Assert.That(history.Selected.Hash,Is.EqualTo(hash));Assert.That(draft.Get("rifle.head"),Is.EqualTo(31));
+            var history=new DesignLabHistory(path,Shipped(),(temp,destination)=>throw new IOException("Injected atomic replace failure"));var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.damage",31);
+            Assert.Throws<IOException>(()=>history.Save(draft));Assert.That(history.Selected.Hash,Is.EqualTo(hash));Assert.That(draft.Get("rifle.damage"),Is.EqualTo(31));
             Assert.That(File.ReadAllText(path),Is.EqualTo(original));Assert.That(Directory.GetFiles(directory),Has.Length.EqualTo(1));
         }
         [Test]public void AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning()
@@ -67,7 +67,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var history=new DesignLabHistory(path,Shipped());var draft=history.Selected.Snapshot.Clone();
             var field=draft.Descriptors.First(d=>draft.IsAuthoring(d.Path));draft.Set(field.Path,draft.Get(field.Path)+field.Step);
             Assert.Throws<ArgumentException>(()=>history.Save(draft));
-            Assert.That(draft.IsEditable("weapon.probeRange"),Is.False);Assert.That(draft.Domain("rifle.head"),Is.EqualTo("Gameplay"));
+            Assert.That(draft.IsEditable("weapon.probeRange"),Is.False);Assert.That(draft.Domain("rifle.damage"),Is.EqualTo("Gameplay"));
             Assert.That(draft.Domain("presentation.rifleTracerWidth"),Is.EqualTo("Presentation"));
         }
         [Test]public void LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible()
@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             foreach(var d in bundle.Descriptors.Where(d=>bundle.IsAuthoring(d.Path)))Assert.That(bundle.IsVisible(d.Path),Is.False,d.Path);
             foreach(var path in new[]{"layout.fill-0.x","ring.spawn-mark-1.y","wayfinding.sign-0.yaw","wayfinding.centralHalfWidth","detail.ventWidth","broadcast.screenWidth","light.fixtureWidth","ring.spaceCenterY","ring.windowFrameWidth"})
             {Assert.That(bundle.IsVisible(path),Is.False,path);Assert.That(bundle.IsEditable(path),Is.False,path);}
-            foreach(var path in new[]{"rifle.head","player.movement.jumpSpeed","light.intensity","surface.wallValue","color.north.r","ring.glassOpacity","broadcast.fanSpeed"})Assert.That(bundle.IsEditable(path),Is.True,path);
+            foreach(var path in new[]{"rifle.damage","player.movement.jumpSpeed","light.intensity","surface.wallValue","color.north.r","ring.glassOpacity","broadcast.fanSpeed"})Assert.That(bundle.IsEditable(path),Is.True,path);
         }
         [Test]public void LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision()
         {
@@ -85,7 +85,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             old.Snapshot.Set("layout.fill-0.x",1);old.Hash=old.Snapshot.Hash();string oldHash=old.Hash;
             File.WriteAllText(path,JsonUtility.ToJson(file,true));
             var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Null);
-            var draft=restored.Selected.Snapshot;draft.Set("rifle.head",31);restored.Save(draft);
+            var draft=restored.Selected.Snapshot;draft.Set("rifle.damage",31);restored.Save(draft);
             var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);
             Assert.That(restarted.Selected.Snapshot.Get("layout.fill-0.x"),Is.EqualTo(1));
             Assert.That(restarted.SelectedProfile.Revisions.First().Hash,Is.EqualTo(oldHash));
@@ -104,7 +104,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             old.Hash=old.Snapshot.Hash();string priorHash=old.Hash;File.WriteAllText(path,JsonUtility.ToJson(file,true));
             var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Null);
-            var draft=restored.Selected.Snapshot;draft.Set("rifle.head",31);restored.Save(draft);
+            var draft=restored.Selected.Snapshot;draft.Set("rifle.damage",31);restored.Save(draft);
             var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);
             Assert.That(restarted.SelectedProfile.Revisions.First().Hash,Is.EqualTo(priorHash));
             foreach(var key in LabBundle.AuditedExcludedPaths)
@@ -113,7 +113,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 draft=restarted.Selected.Snapshot;draft.Set(key,Shipped().Get(key));
                 Assert.Throws<ArgumentException>(()=>restarted.Save(draft),key);
             }
-            foreach(var key in new[]{"rifle.head","player.movement.jumpSpeed","bots.navigation.stuckSeconds","light.intensity","view.switchShoulderDegrees","view.switchElbowDegrees","cutter.width"})
+            foreach(var key in new[]{"rifle.damage","player.movement.jumpSpeed","bots.navigation.stuckSeconds","light.intensity","view.switchShoulderDegrees","view.switchElbowDegrees","cutter.width"})
                 Assert.That(restarted.Selected.Snapshot.IsEditable(key),Is.True,key);
         }
         [Test]public void DescriptorMigrationRefreshesPreviouslyUsedValueIndex()
@@ -178,10 +178,10 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory()
         {
             var priorBundle=Shipped();priorBundle.Profiles=priorBundle.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponPickups",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
-            var old=new DesignLabHistory(path,priorBundle);old.Create("До подбора");var draft=old.Selected.Snapshot;draft.Set("rifle.head",31);old.Save(draft);var prior=old.Selected;
+            var old=new DesignLabHistory(path,priorBundle);old.Create("До подбора");var draft=old.Selected.Snapshot;draft.Set("rifle.damage",31);old.Save(draft);var prior=old.Selected;
             var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
-            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));Assert.That(upgraded.Selected.Snapshot.Get("weaponPickup.respawnSeconds"),Is.EqualTo(15));
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));Assert.That(upgraded.Selected.Snapshot.Get("weaponPickup.respawnSeconds"),Is.EqualTo(15));
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning()

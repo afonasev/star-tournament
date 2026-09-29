@@ -67,11 +67,11 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             string path=Path.Combine(Path.GetTempPath(),"pulse-history-"+Guid.NewGuid()+".json");
             try
             {
-                var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.head",31);old.Save(draft);
+                var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.damage",31);old.Save(draft);
                 var before=old.Selected;string id=old.SelectedProfileId;
                 var upgraded=new DesignLabHistory(path,bundle);Assert.That(upgraded.StorageError,Is.Null);
                 Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(before.Number));
-                Assert.That(upgraded.Selected.Snapshot.Get("rocket.maximumDamage"),Is.EqualTo(100));Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+                Assert.That(upgraded.Selected.Snapshot.Get("rocket.maximumDamage"),Is.EqualTo(100));Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
                 Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==before.Number).Hash,Is.EqualTo(before.Hash));
                 int count=upgraded.SelectedProfile.Revisions.Count;var reopened=new DesignLabHistory(path,bundle);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.SelectedProfile.Revisions.Count,Is.EqualTo(count));
                 Assert.Throws<InvalidOperationException>(()=>reopened.Select(id,before.Number));

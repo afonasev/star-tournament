@@ -54,8 +54,8 @@ namespace StarTournament.ProvingGround
             if(distance>RangeFor(id))return 0;
             if(id==WeaponId.Cutter)return cutter.Get("cutter.referenceDamage")/cutter.Get("cutter.referenceContactSeconds")*horizon*Mathf.Clamp01(1-velocity.magnitude/RangeFor(id));
             if(id==WeaponId.RocketLauncher)return combat.Get("rocket.maximumDamage")*Mathf.Clamp01(1-TargetHeight/RocketRadius);
-            if(id==WeaponId.Shotgun)return combat.Get("shot.torso")*Mathf.Max(1,horizon/life.Get("combat.cooldownSeconds"))*Mathf.Clamp01(TargetHeight/Mathf.Max(TargetHeight,distance*Mathf.Tan(combat.Get("shot.spread")*Mathf.Deg2Rad)));
-            return combat.Get("rifle.torso")*Mathf.Max(1,horizon/life.Get("rifle.cooldownSeconds"));
+            if(id==WeaponId.Shotgun)return combat.Get("shot.damage")*Mathf.Max(1,horizon/life.Get("combat.cooldownSeconds"))*Mathf.Clamp01(TargetHeight/Mathf.Max(TargetHeight,distance*Mathf.Tan(combat.Get("shot.spread")*Mathf.Deg2Rad)));
+            return combat.Get("rifle.damage")*Mathf.Max(1,horizon/life.Get("rifle.cooldownSeconds"));
         }
         public float CutterMinimum=>cutter.Get("cutter.botMinimumDistance");
         public float CutterPreferredRange=>cutter.Get("cutter.maxRangeMeters")*cutter.Get("cutter.botRangeFraction");

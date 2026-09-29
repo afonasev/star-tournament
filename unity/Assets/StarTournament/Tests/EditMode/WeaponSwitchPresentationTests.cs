@@ -133,7 +133,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                         string method=predecessor=="BeforeCutterSwitch"?"BeforeWeaponSwitch":predecessor=="BeforeCutterThicknessSwitch"?"BeforeCutterThickness":predecessor;
                         return (ProvingProfile)typeof(ProvingProfile).GetMethod(method,BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null);
                     }).ToList()};
-                    var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.head",31);if(draft.Descriptors.Any(d=>d.Path=="cutter.width"))draft.Set("cutter.width",.021f);old.Save(draft);
+                    var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.damage",31);if(draft.Descriptors.Any(d=>d.Path=="cutter.width"))draft.Set("cutter.width",.021f);old.Save(draft);
                     // Historical policy allowed this placement override. Write the authentic old
                     // snapshot/hash directly: current Save intentionally forbids new placement edits.
                     var file=UnityEngine.JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
@@ -142,7 +142,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     string id=old.SelectedProfileId;
                     var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
                     Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(before.Number));
-                    Assert.That(upgraded.Selected.Snapshot.Get("view.y"),Is.EqualTo(-1.5f));Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+                    Assert.That(upgraded.Selected.Snapshot.Get("view.y"),Is.EqualTo(-1.5f));Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
                     Assert.That(upgraded.Selected.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(60f));
                     if(legacy.Descriptors.Any(d=>d.Path=="cutter.width"))Assert.That(upgraded.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(.021f));
                     Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==before.Number).Hash,Is.EqualTo(before.Hash));

@@ -160,8 +160,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true;
             session.Tick(actions,.02f);
             // Fixed sampling identity 1: one head, four torso and one arm pellet; remaining rays miss.
-            // Expected damage = (100 + 4*70 + 30)/12, independent of applied-damage implementation.
-            Assert.That(session.Life(1).Health,Is.EqualTo(100f-410f/12).Within(.01f));
+            // Expected damage = 6*70/12, independent of applied-damage implementation.
+            Assert.That(session.Life(1).Health,Is.EqualTo(100f-420f/12).Within(.01f));
             Assert.That(session.Life(0).Ammo,Is.EqualTo(19));
         }
         [UnityTest]

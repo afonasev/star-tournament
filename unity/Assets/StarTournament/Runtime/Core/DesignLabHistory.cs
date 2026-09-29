@@ -148,11 +148,20 @@ namespace StarTournament.ProvingGround
                 {previous=profile.BeforeDamageVignette();vignettePredecessors.Add(profile,previous);}
                 return previous;
             }
+            var damagePredecessors=new Dictionary<ProvingProfile,ProvingProfile>();
+            ProvingProfile WithoutUnifiedDamage(ProvingProfile profile)
+            {
+                if(!damagePredecessors.TryGetValue(profile,out var previous))
+                {previous=profile.BeforeUnifiedBodyDamage();damagePredecessors.Add(profile,previous);}
+                return previous;
+            }
             predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeCutterDamage()).ToList()}})
+                .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First())
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutUnifiedDamage).ToList()}})
                 .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First()).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;
@@ -202,6 +211,8 @@ namespace StarTournament.ProvingGround
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
                     var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path)));
+                    foreach(var weapon in new[]{"rifle","shot"})
+                        if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&next.Descriptors.Any(d=>d.Path==weapon+".damage"))next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==next.Hash());
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;

@@ -29,11 +29,11 @@ namespace StarTournament.ProvingGround
         public ShotgunResolver(ProvingProfile profile, float height)
         {
             if (profile.Validate().Count != 0 || profile.Id != "unity-native-combat-v1") throw new ArgumentException("Invalid native combat profile");
-            this.profile = profile; this.height = height;
+            this.profile = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile)); this.profile.EnsureNativeCombatDescriptors(); this.height = height;
         }
         float Z(string key) => profile.Get("zone." + key) * height;
-        public float FullDamage(HitZone zone) => profile.Get("shot." + zone.ToString().ToLowerInvariant());
-        public float FullDamage(HitZone zone,WeaponId weapon) => profile.Get((weapon==WeaponId.Rifle?"rifle.":"shot.")+zone.ToString().ToLowerInvariant());
+        public float FullDamage(HitZone zone) => profile.Get("shot.damage");
+        public float FullDamage(HitZone zone,WeaponId weapon) => profile.Get(weapon==WeaponId.Rifle?"rifle.damage":"shot.damage");
         public Vector3 Direction(Quaternion aim, int pellet, uint shotSeed)
             => Direction(aim,pellet,shotSeed,WeaponId.Shotgun);
         public Vector3 Direction(Quaternion aim, int pellet, uint shotSeed,WeaponId weapon)

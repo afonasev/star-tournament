@@ -99,7 +99,7 @@ namespace StarTournament.ProvingGround
         {
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
-            version=4;
+            UpgradeBodyDamage();
             var current=CreateNativeCombatDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -216,6 +216,9 @@ namespace StarTournament.ProvingGround
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Value has no descriptor." });
                 else if ((descriptor.Unit == "ammo" || descriptor.Unit == "count") && value.Value != Mathf.Round(value.Value))
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Count must be integral." });
+                else if ((value.Path=="rifle.damage"||value.Path=="shot.damage"||value.Path.StartsWith("damage.",StringComparison.Ordinal)) &&
+                    Math.Abs((value.Value-descriptor.DefaultValue)/descriptor.Step-Math.Round((value.Value-descriptor.DefaultValue)/descriptor.Step))>.002)
+                    issues.Add(new ProfileValidationIssue { Path=value.Path, Message="Value must match descriptor step." });
                 else if (!descriptor.Contains(value.Value))
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = $"Value {value.Value} is outside [{descriptor.Minimum}, {descriptor.Maximum}]." });
             }

@@ -31,9 +31,11 @@ namespace StarTournament.ProvingGround
 
     public readonly struct DamageResult
     {
-        public readonly float Applied;
+        public readonly float Applied, HealthLost, ArmorLost;
         public readonly bool Killed;
-        public DamageResult(float applied, bool killed) { Applied = applied; Killed = killed; }
+        public DamageResult(float applied, bool killed) : this(applied,0,killed) { }
+        public DamageResult(float healthLost,float armorLost,bool killed)
+        { HealthLost=healthLost;ArmorLost=armorLost;Applied=healthLost+armorLost;Killed=killed; }
     }
 
     /// <summary>
@@ -206,6 +208,7 @@ namespace StarTournament.ProvingGround
             if ((killerId == null && killerLife != 0) || (killerId != null && (string.IsNullOrWhiteSpace(killerId) || killerLife < 1)))
                 throw new ArgumentException("Killer requires both participant and life identity");
             if (state.Dead || state.Life != targetLife || amount == 0) return default;
+            float beforeHealth=state.Health,beforeArmor=state.Armor;
             float absorbed=Math.Min(state.Armor,amount);
             state.Armor-=absorbed;
             float applied = Math.Min(state.Health, amount-absorbed);
@@ -225,7 +228,7 @@ namespace StarTournament.ProvingGround
                 state.PendingWeapon = default;
                 state.SwitchRemaining = 0;
             }
-            return new DamageResult(applied, killed);
+            return new DamageResult(beforeHealth-state.Health, beforeArmor-state.Armor, killed);
         }
 
         public bool Respawn(int expectedLife)
