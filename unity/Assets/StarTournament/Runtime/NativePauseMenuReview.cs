@@ -15,6 +15,7 @@ namespace StarTournament.ProvingGround
     {
         ProvingGround ground;
         Gamepad[] pads;
+        InputSettings.BackgroundBehavior previousBackgroundBehavior;
         string directory;
         int count;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
@@ -55,6 +56,8 @@ namespace StarTournament.ProvingGround
         IEnumerator Start()
         {
             Application.runInBackground=true;
+            previousBackgroundBehavior=InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
             ground=GetComponent<ProvingGround>();
             var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-pauseReview");
             if(at<0||at+1>=args.Length||!Path.IsPathFullyQualified(args[at+1]))throw new ArgumentException("Absolute pause review directory required");
@@ -117,6 +120,7 @@ namespace StarTournament.ProvingGround
         }
         void OnDestroy()
         {
+            InputSystem.settings.backgroundBehavior=previousBackgroundBehavior;
             if(pads==null)return;
             foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);
         }

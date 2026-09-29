@@ -13,6 +13,7 @@ namespace StarTournament.ProvingGround
     public sealed class NativeGamepadCameraReview : MonoBehaviour
     {
         ProvingGround ground;string directory;Gamepad[] pads;
+        InputSettings.BackgroundBehavior previousBackgroundBehavior;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(x=>x.name==name);
         IEnumerator Capture(string name)
         {
@@ -25,6 +26,8 @@ namespace StarTournament.ProvingGround
         IEnumerator Start()
         {
             Application.runInBackground=true;ground=GetComponent<ProvingGround>();
+            previousBackgroundBehavior=InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
             var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-gamepadCameraReview");
             if(at<0||at+1>=args.Length||!Path.IsPathFullyQualified(args[at+1]))throw new ArgumentException("Absolute camera review path required");
             directory=args[at+1];Directory.CreateDirectory(directory);yield return new WaitForSecondsRealtime(1);
@@ -106,6 +109,11 @@ namespace StarTournament.ProvingGround
             Debug.Log("NATIVE_GAMEPAD_CAMERA_REVIEW_COMPLETE");
             foreach(var pad in pads)if(pad.added)InputSystem.RemoveDevice(pad);
             Application.Quit();
+        }
+        void OnDestroy()
+        {
+            InputSystem.settings.backgroundBehavior=previousBackgroundBehavior;
+            if(pads!=null)foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);
         }
     }
 }
