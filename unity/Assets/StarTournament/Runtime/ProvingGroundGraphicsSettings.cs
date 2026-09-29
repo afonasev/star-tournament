@@ -17,11 +17,10 @@ namespace StarTournament.ProvingGround
         const float DisplayConfirmationSeconds=12f;
         SettingsSection settingsSection;
         readonly Button[] settingsSectionButtons=new Button[3];
-        Button settingsBackButton,settingsModeButton,settingsResolutionButton,settingsShadowsButton;
-        Button settingsSensitivityMinus,settingsSensitivityPlus,settingsFpsButton;
+        Button settingsBackButton,settingsModeButton,settingsResolutionButton;
         Button resolutionCancelButton,settingsRevertButton;
         Button displayReturnButton;
-        readonly Dictionary<Button,GameObject> settingsFocusBorders=new Dictionary<Button,GameObject>();
+        readonly Dictionary<Selectable,GameObject> settingsFocusBorders=new Dictionary<Selectable,GameObject>();
         GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsConfirmation,resolutionPicker;
         Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsSensitivity,settingsFps,settingsConfirmationText;
         Button settingsConfirmButton;
@@ -63,21 +62,25 @@ namespace StarTournament.ProvingGround
             settingsResolutionButton=MenuButton(settingsImagePage.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,.51f),new Vector2(.96f,.69f),OpenResolutionPicker);
             Panel(settingsImagePage.transform,"shadows-card",new Vector2(.02f,.19f),new Vector2(.98f,.45f),MenuCard);
             settingsShadows=Label(settingsImagePage.transform,"shadows-label","",25,new Vector2(.04f,.22f),new Vector2(.96f,.44f),TextAnchor.MiddleLeft,Color.white);
-            settingsShadowsButton=MenuButton(settingsImagePage.transform,"settings-shadows","ВКЛ / ВЫКЛ",new Vector2(.59f,.24f),new Vector2(.96f,.42f),ToggleShadows);
+            settingsShadowsToggle=BooleanSetting(settingsImagePage.transform,"settings-shadows","Тени",new Vector2(.59f,.24f),new Vector2(.96f,.42f),v=>{if(v!=shadowsEnabled)ToggleShadows();});
             Label(settingsImagePage.transform,"graphics-help","Графика общая для всех экранов. Новое разрешение нужно подтвердить.",20,new Vector2(.04f,.03f),new Vector2(.96f,.18f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
 
             settingsControlPage=Panel(content.transform,"settings-control",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
-            Panel(settingsControlPage.transform,"sensitivity-card",new Vector2(.02f,.26f),new Vector2(.98f,.94f),MenuCard);
-            settingsSensitivity=Label(settingsControlPage.transform,"sensitivity-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
-            Label(settingsControlPage.transform,"sensitivity-help","Поворот камеры за пиксель движения мыши.",20,new Vector2(.04f,.52f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
-            settingsSensitivityMinus=MenuButton(settingsControlPage.transform,"settings-sensitivity-minus","−",new Vector2(.04f,.30f),new Vector2(.40f,.49f),()=>StepMenuSensitivity(-1));
-            settingsSensitivityPlus=MenuButton(settingsControlPage.transform,"settings-sensitivity-plus","+",new Vector2(.60f,.30f),new Vector2(.96f,.49f),()=>StepMenuSensitivity(1));
+            settingsMouseSlider=NumericSetting(settingsControlPage.transform,"settings-mouse-sensitivity","Мышь",new Vector2(.02f,.77f),new Vector2(.98f,.99f),MouseSensitivityPreference.Descriptor(Profile),SetMenuMouse);
+            settingsHorizontalSlider=NumericSetting(settingsControlPage.transform,"settings-gamepad-horizontal","Геймпад: горизонталь",new Vector2(.02f,.54f),new Vector2(.98f,.76f),Profile.Descriptor(GamepadLookSettings.HorizontalPath),v=>SetMenuGamepad(0,v));
+            settingsVerticalSlider=NumericSetting(settingsControlPage.transform,"settings-gamepad-vertical","Геймпад: вертикаль",new Vector2(.02f,.31f),new Vector2(.98f,.53f),Profile.Descriptor(GamepadLookSettings.VerticalPath),v=>SetMenuGamepad(1,v));
+            settingsAutoLevelToggle=BooleanSetting(settingsControlPage.transform,"settings-auto-level","Выравнивать взгляд по полу / лестнице",new Vector2(.02f,.16f),new Vector2(.98f,.29f),v=>SetMenuGamepad(2,0,v));
+            settingsHelpButton=MenuButton(settingsControlPage.transform,"settings-controls-help","СПРАВКА ПО КНОПКАМ",new Vector2(.02f,.01f),new Vector2(.98f,.14f),()=>SetHelp(true));
             settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
             Panel(settingsInterfacePage.transform,"fps-card",new Vector2(.02f,.25f),new Vector2(.98f,.94f),MenuCard);
             settingsFps=Label(settingsInterfacePage.transform,"fps-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
             Label(settingsInterfacePage.transform,"fps-help","Индикатор частоты кадров без изменения правил матча.",20,new Vector2(.04f,.50f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
-            settingsFpsButton=MenuButton(settingsInterfacePage.transform,"settings-fps","ВКЛ / ВЫКЛ",new Vector2(.55f,.28f),new Vector2(.96f,.47f),ToggleMenuFps);
+            settingsFpsToggle=BooleanSetting(settingsInterfacePage.transform,"settings-fps","Показывать FPS",new Vector2(.05f,.28f),new Vector2(.96f,.47f),SetMenuFps);
 
+            settingsHelpPage=Panel(content.transform,"settings-help-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,39,53,255));
+            Label(settingsHelpPage.transform,"keyboard-help",KeyboardHelp,20,new Vector2(.02f,.17f),new Vector2(.49f,.98f),TextAnchor.UpperLeft,Color.white);
+            Label(settingsHelpPage.transform,"gamepad-help",GamepadHelp,20,new Vector2(.52f,.17f),new Vector2(.98f,.98f),TextAnchor.UpperLeft,Color.white);
+            settingsHelpBack=MenuButton(settingsHelpPage.transform,"settings-help-back","‹ К НАСТРОЙКАМ",new Vector2(.02f,.02f),new Vector2(.98f,.13f),()=>SetHelp(false));
             resolutionPicker=Panel(settingsScreen.transform,"resolution-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
             var pickerCard=Panel(resolutionPicker.transform,"resolution-card",new Vector2(.26f,.15f),new Vector2(.74f,.85f),MenuCard);
             Label(pickerCard.transform,"resolution-title","ВЫБЕРИТЕ РАЗРЕШЕНИЕ",30,new Vector2(.06f,.84f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
@@ -95,9 +98,9 @@ namespace StarTournament.ProvingGround
             settingsConfirmationText=Label(confirmCard.transform,"confirmation-text","",29,new Vector2(.07f,.37f),new Vector2(.93f,.88f),TextAnchor.MiddleCenter,Color.white);
             settingsConfirmButton=MenuButton(confirmCard.transform,"settings-confirm","СОХРАНИТЬ",new Vector2(.07f,.10f),new Vector2(.47f,.29f),ConfirmDisplay);
             settingsRevertButton=MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);
-            foreach(var button in settingsScreen.GetComponentsInChildren<Button>(true))
+            foreach(var button in settingsScreen.GetComponentsInChildren<Selectable>(true))
             {
-                button.GetComponent<Image>().color=Color.white;
+                if(button is Button)button.GetComponent<Image>().color=Color.white;
                 var colors=button.colors;
                 colors.normalColor=MenuCard;
                 colors.highlightedColor=new Color32(61,96,112,255);
@@ -133,27 +136,31 @@ namespace StarTournament.ProvingGround
                 if(pair.Value.activeSelf!=focused)pair.Value.SetActive(focused);
             }
         }
-        static void Link(Button button,Button up=null,Button down=null,Button left=null,Button right=null)
+        static void Link(Selectable button,Selectable up=null,Selectable down=null,Selectable left=null,Selectable right=null)
         {
             button.navigation=new Navigation { mode=Navigation.Mode.Explicit,selectOnUp=up,selectOnDown=down,
                 selectOnLeft=left,selectOnRight=right };
         }
-        Button FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
-            settingsSection==SettingsSection.Control?settingsSensitivityMinus:settingsFpsButton;
+        Selectable FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
+            settingsSection==SettingsSection.Control?settingsMouseSlider:settingsFpsToggle;
         void ConfigureSettingsNavigation()
         {
             Link(settingsSectionButtons[0],settingsBackButton,settingsSectionButtons[1],null,settingsModeButton);
-            Link(settingsSectionButtons[1],settingsSeat<0?settingsSectionButtons[0]:settingsBackButton,
-                settingsSectionButtons[2],null,settingsSensitivityMinus);
-            Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsBackButton,null,settingsFpsButton);
-            Link(settingsBackButton,settingsSectionButtons[2],settingsSeat<0?settingsSectionButtons[0]:settingsSectionButtons[1],
+            Link(settingsSectionButtons[1],settingsSeat<0&&settingsProfileId==null?settingsSectionButtons[0]:settingsBackButton,
+                settingsSectionButtons[2],null,settingsMouseSlider);
+            Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsBackButton,null,settingsFpsToggle);
+            Link(settingsBackButton,settingsSectionButtons[2],settingsSeat<0&&settingsProfileId==null?settingsSectionButtons[0]:settingsSectionButtons[1],
                 null,FirstSettingsAction());
-            Link(settingsModeButton,settingsShadowsButton,settingsResolutionButton,settingsSectionButtons[0]);
-            Link(settingsResolutionButton,settingsModeButton,settingsShadowsButton,settingsSectionButtons[0]);
-            Link(settingsShadowsButton,settingsResolutionButton,settingsModeButton,settingsSectionButtons[0]);
-            Link(settingsSensitivityMinus,settingsSectionButtons[1],settingsBackButton,settingsSectionButtons[1],settingsSensitivityPlus);
-            Link(settingsSensitivityPlus,settingsSectionButtons[1],settingsBackButton,settingsSensitivityMinus);
-            Link(settingsFpsButton,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);
+            Link(settingsModeButton,settingsShadowsToggle,settingsResolutionButton,settingsSectionButtons[0]);
+            Link(settingsResolutionButton,settingsModeButton,settingsShadowsToggle,settingsSectionButtons[0]);
+            Link(settingsShadowsToggle,settingsResolutionButton,settingsModeButton,settingsSectionButtons[0]);
+            Link(settingsMouseSlider,settingsSectionButtons[1],settingsHorizontalSlider);
+            Link(settingsHorizontalSlider,settingsMouseSlider,settingsVerticalSlider);
+            Link(settingsVerticalSlider,settingsHorizontalSlider,settingsAutoLevelToggle);
+            Link(settingsAutoLevelToggle,settingsVerticalSlider,settingsHelpButton,settingsSectionButtons[1]);
+            Link(settingsHelpButton,settingsAutoLevelToggle,settingsSectionButtons[1],settingsSectionButtons[1]);
+            Link(settingsHelpBack);
+            Link(settingsFpsToggle,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);
             for(int i=0;i<resolutionChoices.Length;i++)
                 Link(resolutionChoices[i],i==0?resolutionCancelButton:resolutionChoices[i-1],
                     i==resolutionChoices.Length-1?resolutionPagePrevious:resolutionChoices[i+1]);
@@ -165,16 +172,17 @@ namespace StarTournament.ProvingGround
         }
         void SelectSettingsSection(SettingsSection section)
         {
-            if(settingsSeat>=0 && section==SettingsSection.Image)return;
-            settingsSection=section;RefreshSettingsUi();ConfigureSettingsNavigation();Select(FirstSettingsAction());
+            if((settingsSeat>=0||settingsProfileId!=null) && section==SettingsSection.Image)return;
+            settingsHelpOpen=false;settingsSection=section;RefreshSettingsUi();ConfigureSettingsNavigation();Select(FirstSettingsAction());
         }
         void RefreshSettingsUi()
         {
             if(settingsImagePage==null)return;
-            settingsSectionButtons[0].interactable=settingsSeat<0 && !displayConfirmationActive && !resolutionPickerOpen;
+            settingsSectionButtons[0].interactable=settingsSeat<0 && settingsProfileId==null && !displayConfirmationActive && !resolutionPickerOpen;
             for(int i=1;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!displayConfirmationActive && !resolutionPickerOpen;
-            settingsImagePage.SetActive(settingsSection==SettingsSection.Image && settingsSeat<0);
-            settingsControlPage.SetActive(settingsSection==SettingsSection.Control);
+            settingsImagePage.SetActive(settingsSection==SettingsSection.Image && settingsSeat<0 && settingsProfileId==null);
+            settingsControlPage.SetActive(settingsSection==SettingsSection.Control && !settingsHelpOpen);
+            settingsHelpPage.SetActive(settingsHelpOpen);
             settingsInterfacePage.SetActive(settingsSection==SettingsSection.Interface);
             resolutionPicker.SetActive(resolutionPickerOpen && !displayConfirmationActive);
             settingsConfirmation.SetActive(displayConfirmationActive);
@@ -184,16 +192,22 @@ namespace StarTournament.ProvingGround
                 settingsSectionButtons[i].GetComponentInChildren<Text>().text=(selected?"› ":"")+
                     (i==0?"ИЗОБРАЖЕНИЕ":i==1?"УПРАВЛЕНИЕ":"ИНТЕРФЕЙС");
             }
-            settingsHeading.text=settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat);
+            settingsHeading.text=settingsProfileId!=null?"НАСТРОЙКИ · "+playerProfiles.Find(settingsProfileId).Name:settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat);
+            settingsDescription.gameObject.SetActive(!settingsHelpOpen);
+            if(settingsHelpOpen)settingsHeading.text="УПРАВЛЕНИЕ · СПРАВКА";
             settingsDescription.text=settingsSection==SettingsSection.Image?"Режим вывода и тени применяются ко всем игровым экранам":
                 settingsSection==SettingsSection.Control?"Личная чувствительность сохраняется в профиле; общая служит начальным значением":
                 "Индикатор FPS можно настроить отдельно для каждого игрока";
             settingsDisplayMode.text="РЕЖИМ ЭКРАНА\n"+(EffectiveDisplayMode()==FullScreenMode.Windowed?"Окно":"Полный экран");
             settingsResolution.text="РАЗРЕШЕНИЕ\n"+Screen.width+" × "+Screen.height;
             settingsShadows.text="ТЕНИ\n"+(shadowsEnabled?"Вкл":"Выкл");
-            float sensitivity=settingsSeat<0?MouseSensitivityPreference.Resolve(Profile):PersonalSensitivity(settingsSeat);
-            settingsSensitivity.text="ЧУВСТВИТЕЛЬНОСТЬ МЫШИ\n"+sensitivity.ToString("0.00")+" °/px";
-            settingsFps.text="ПОКАЗЫВАТЬ FPS\n"+((settingsSeat<0?fps.Visible:PersonalFps(settingsSeat))?"Вкл":"Выкл");
+            var sensitivity=MenuMouseSensitivity();var look=MenuGamepadLook();
+            RefreshNumericSetting(settingsMouseSlider,"Чувствительность мыши",sensitivity,"°/px");
+            RefreshNumericSetting(settingsHorizontalSlider,"Геймпад: горизонталь",look.Horizontal,"°/с");
+            RefreshNumericSetting(settingsVerticalSlider,"Геймпад: вертикаль",look.Vertical,"°/с");
+            RefreshToggle(settingsAutoLevelToggle,look.AutoLevel);RefreshToggle(settingsShadowsToggle,shadowsEnabled);
+            RefreshToggle(settingsFpsToggle,MenuFps());
+            settingsFps.text="ПОКАЗЫВАТЬ FPS";
             if(displayConfirmationActive)
                 settingsConfirmationText.text="Подтвердить режим?\n"+pendingDisplayWidth+" × "+pendingDisplayHeight+" · "+
                     (pendingDisplayMode==FullScreenMode.Windowed?"Окно":"Полный экран")+"\nВозврат через "+
@@ -328,6 +342,7 @@ namespace StarTournament.ProvingGround
             if(!back)return;
             if(displayConfirmationActive)RollbackDisplay();
             else if(resolutionPickerOpen)CloseResolutionPicker();
+            else if(settingsHelpOpen)SetHelp(false);
             else CloseSettings();
         }
         void InitializeGraphicsPreferences()

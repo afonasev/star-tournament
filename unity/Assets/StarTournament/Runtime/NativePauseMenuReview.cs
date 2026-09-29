@@ -82,14 +82,22 @@ namespace StarTournament.ProvingGround
             if(ground.Running||Enumerable.Range(0,count).Any(i=>!Button("pause-action-"+i+"-0").gameObject.activeInHierarchy))
                 throw new InvalidOperationException("Independent viewport menus did not open");
             yield return Capture("02-all-open-"+count);
+            if(count==4)
+            {
+                Button("pause-action-0-1").onClick.Invoke();yield return Capture("03-four-seat-settings");
+                Button("pause-setting-0-5").onClick.Invoke();yield return Capture("04-four-seat-help-top");
+                var helpScroll=Button("pause-help-pad-0").transform.parent.GetComponentInChildren<ScrollRect>(true);
+                Canvas.ForceUpdateCanvases();helpScroll.verticalNormalizedPosition=0;yield return Capture("05-four-seat-help-bottom");
+                Button("pause-help-back-0").onClick.Invoke();
+            }
             if(count==2)
             {
                 Button("pause-action-0-1").onClick.Invoke();yield return Capture("03-seat-one-settings");
-                Button("pause-setting-0-0").onClick.Invoke();Button("pause-setting-0-2").onClick.Invoke();
+                ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="pause-setting-0-0").value+=.01f;var fpsToggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-4");fpsToggle.isOn=!fpsToggle.isOn;
                 yield return Capture("04-personal-values");
                 Button("pause-action-1-3").onClick.Invoke();yield return Capture("05-exit-confirmation");
                 Button("pause-exit-no-1").onClick.Invoke();
-                Button("pause-setting-0-3").onClick.Invoke();
+                Button("pause-setting-0-6").onClick.Invoke();
                 Button("pause-action-1-2").onClick.Invoke();yield return Capture("06-repeat-confirmation");
                 Button("pause-repeat-yes-1").onClick.Invoke();yield return null;
                 if(!ground.Running)throw new InvalidOperationException("Confirmed repeat did not start a fresh match");

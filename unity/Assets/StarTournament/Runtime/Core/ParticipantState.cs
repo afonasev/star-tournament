@@ -12,5 +12,7 @@ namespace StarTournament.ProvingGround
         public float Yaw;
         public float Pitch;
         public bool Grounded;
+        public float LookNeutralSeconds; // Gameplay clock only; serializable assistance phase.
+        public float LookReturnVelocity;
     }
 }

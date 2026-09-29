@@ -29,7 +29,7 @@ namespace StarTournament.ProvingGround
         public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets,WeaponId weapon=WeaponId.Shotgun)
         { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets;Weapon=weapon; }
     }
-    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=6; public WeaponPickupState[] WeaponPickups; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=6; public ParticipantState[] Poses; public WeaponPickupState[] WeaponPickups; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -82,10 +82,12 @@ namespace StarTournament.ProvingGround
         public int ShotCount { get; private set; }
         public ArmorPickupState ArmorPickup => armorPickup.Read();
         public SpeedPickupState SpeedPickup => speedPickup.Read();
-        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { WeaponPickups=WeaponPickups, BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
+        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { Poses=Array.ConvertAll(motors,m=>m.State),WeaponPickups=WeaponPickups, BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
             if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=6||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
+            // Optional append-only pose payload: older combat snapshots keep their original layout.
+            if(snapshot.Poses!=null){if(snapshot.Poses.Length!=motors.Length)throw new ArgumentException("Invalid pose roster");for(int i=0;i<motors.Length;i++)motors[i].ValidateState(snapshot.Poses[i]);}
             if(snapshot.ArmorPickups==null||snapshot.SpeedPickups==null||snapshot.ArmorPickups.Length!=armorPickups.Length||snapshot.SpeedPickups.Length!=speedPickups.Length||snapshot.ArmorPickups.Select(x=>x.InstanceId).Distinct().Count()!=armorPickups.Length||snapshot.SpeedPickups.Select(x=>x.InstanceId).Distinct().Count()!=speedPickups.Length)throw new ArgumentException("Invalid pickup instance set");
             if(snapshot.WeaponPickups==null||snapshot.WeaponPickups.Length!=weaponPickups.Length||snapshot.WeaponPickups.Select(x=>x.InstanceId).Distinct().Count()!=weaponPickups.Length)throw new ArgumentException("Invalid weapon pickup set");
             foreach(var item in weaponPickups)item.ValidateSnapshot(snapshot.WeaponPickups.SingleOrDefault(x=>x.InstanceId==item.Read().InstanceId));
@@ -116,6 +118,7 @@ namespace StarTournament.ProvingGround
             if(snapshot.Beams!=null){if(snapshot.Beams.Length!=beams.Length)throw new ArgumentException("Invalid beams");for(int i=0;i<beams.Length;i++)beams[i].Restore(snapshot.Beams[i]);}
             else foreach(var beam in beams)beam.Reset();
             if(snapshot.BeamReleaseRequired!=null)Array.Copy(snapshot.BeamReleaseRequired,releaseRequired,beams.Length);
+            if(snapshot.Poses!=null)for(int i=0;i<motors.Length;i++)motors[i].RestoreState(snapshot.Poses[i]);
             rockets.Clear();rockets.AddRange(snapshot.Rockets);StateRestored?.Invoke();
             ResetPickupContacts();
             for(int i=0;i<lives.Length;i++){motors[i].SetAlive(!Life(i).Dead);motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);}

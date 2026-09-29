@@ -17,6 +17,7 @@ namespace StarTournament.ProvingGround
         ProvingGround ground;
         string directory;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
+        void ToggleShadows(){var t=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="settings-shadows");t.isOn=!t.isOn;}
         GameObject Object(string name)=>ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name==name).gameObject;
         void Check(bool value,string message) { if(!value)throw new InvalidOperationException(message); }
         [Serializable] sealed class ReviewState
@@ -83,14 +84,14 @@ namespace StarTournament.ProvingGround
             Check(Screen.fullScreenMode==oldMode && Screen.width==oldWidth && Screen.height==oldHeight,"Display timeout did not restore effective mode");
             yield return Capture("07a-display-timeout-reverted");
             bool oldShadows=QualitySettings.shadows!=ShadowQuality.Disable;
-            if(!oldShadows)Button("settings-shadows").onClick.Invoke();
-            Button("settings-shadows").onClick.Invoke();Check(QualitySettings.shadows==ShadowQuality.Disable,"Shadow toggle did not disable shadows");
+            if(!oldShadows)ToggleShadows();
+            ToggleShadows();Check(QualitySettings.shadows==ShadowQuality.Disable,"Shadow toggle did not disable shadows");
             yield return Capture("08-shadows-toggled");
             var overlay=Object("setup-pause");overlay.SetActive(false);
             yield return Capture("08a-world-shadows-off");overlay.SetActive(true);
-            Button("settings-shadows").onClick.Invoke();Check(QualitySettings.shadows!=ShadowQuality.Disable,"Shadow toggle did not restore shadows");
+            ToggleShadows();Check(QualitySettings.shadows!=ShadowQuality.Disable,"Shadow toggle did not restore shadows");
             overlay.SetActive(false);yield return Capture("08b-world-shadows-on");overlay.SetActive(true);
-            if(!oldShadows)Button("settings-shadows").onClick.Invoke();
+            if(!oldShadows)ToggleShadows();
             Button("settings-section-1").onClick.Invoke();yield return Capture("09-control-settings");
             Button("settings-section-2").onClick.Invoke();yield return Capture("10-interface-settings");
             InputSystem.RemoveDevice(pad);

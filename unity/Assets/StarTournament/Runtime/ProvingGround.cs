@@ -248,6 +248,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
+            if (args.Contains("-gamepadCameraReview"))gameObject.AddComponent<NativeGamepadCameraReview>();
             if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
 #endif
         }
@@ -298,9 +299,11 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
             combatReview=true; Begin(backgroundDiagnostic);
         }
+        public CharacterMotor CameraReviewMotor(int seat)=>motors[seat];
+        public ProvingArena CameraReviewArena=>arena;
         public void PlaceCombatReviewSeat(int seat, Vector3 feet, float pitch,float yaw=0)
         {
-            motors[seat].Initialize(Profile,feet);
+            motors[seat].Initialize(frozenMovement??Profile,feet,arena);
             motors[seat].Tick(new LocalAction{LookDegrees=new Vector2(yaw,-pitch)},Time.fixedDeltaTime);
         }
         public void EnableNavigationReview()
@@ -321,7 +324,7 @@ namespace StarTournament.ProvingGround
         void CreateActor(int index,int ownerSeat,ProvingProfile movement,ProvingProfile trooper)
         {
             var player = Owned("player-" + (index+1));player.SetActive(false); player.layer = ProvingArena.ParticipantLayer;
-            motors[index] = player.AddComponent<CharacterMotor>(); motors[index].Initialize(movement, arena.Spawns[index%arena.Spawns.Length]);
+            motors[index] = player.AddComponent<CharacterMotor>(); motors[index].Initialize(movement, arena.Spawns[index%arena.Spawns.Length],arena);
             if (!TrooperBodyPrefab || !TrooperArmsPrefab) throw new InvalidOperationException("Trooper assets missing; run Prepare in Editor.");
             var body = Instantiate(TrooperBodyPrefab, player.transform); body.name = "trooper-presentation";
             // Shipping recipe has a measured 1.8m rest height and feet origin; never normalize animated bounds.
@@ -414,7 +417,7 @@ namespace StarTournament.ProvingGround
                 else if(input.HasKeyboard && Cursor.lockState!=CursorLockMode.Locked) Pause("Захват курсора потерян");
                 else
                 {
-                    var activeProfile=frozenMovement??Profile; input.Capture(activeProfile,Time.deltaTime,ActiveMouseSensitivity());
+                    var activeProfile=frozenMovement??Profile; input.Capture(activeProfile,Time.deltaTime,ActiveMouseSensitivity(),PersonalGamepadLook);
                     if(UseSeatPauseMenus)
                     {
                         input.ConsumePause();
@@ -751,7 +754,7 @@ namespace StarTournament.ProvingGround
         }
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
-        static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
+        static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
         void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();

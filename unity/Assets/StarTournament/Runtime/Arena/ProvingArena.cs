@@ -23,6 +23,25 @@ namespace StarTournament.ProvingGround
         public ArenaFreezeSnapshot FrozenSnapshot { get; private set; }
         readonly Dictionary<Collider,string> supports=new Dictionary<Collider,string>();
         NativeNavigationTransition[] navigationTransitions;
+        public float SupportPitch(Collider support,Vector3 normal,Vector3 forward)
+        {
+            // Continuous ramps have a real inclined floor: preserve its exact plane.
+            if(normal.x!=0f||normal.z!=0f)return CharacterMotor.SurfacePitch(normal,forward);
+            var id=NavigationSupport(support);
+            if(navigationTransitions!=null)foreach(var transition in navigationTransitions)
+            {
+                if(transition.Id!=id)continue;
+                var feet=transition.OrderedFeet;
+                if(feet==null||feet.Length<2)break;
+                // Authored transition endpoints define the whole march, independent of tread normals.
+                var delta=feet[feet.Length-1]-feet[0];
+                var horizontal=new Vector3(delta.x,0,delta.z);
+                if(horizontal.sqrMagnitude<=0)break;
+                var gradient=horizontal*(delta.y/horizontal.sqrMagnitude);
+                return -Mathf.Atan(Vector3.Dot(gradient,forward))*Mathf.Rad2Deg;
+            }
+            return CharacterMotor.SurfacePitch(normal,forward);
+        }
         public NativeNavigationTransition[] ReadNavigationTransitions()
         {
             var copy=new NativeNavigationTransition[navigationTransitions.Length];

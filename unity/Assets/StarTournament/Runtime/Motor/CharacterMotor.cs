@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace StarTournament.ProvingGround
 {
@@ -12,18 +13,19 @@ namespace StarTournament.ProvingGround
     {
         private CharacterController controller;
         private ProvingProfile profile;
+        private ProvingArena arena;
         private ParticipantState state;
         private bool initialized;
         private float horizontalSpeedMultiplier=1f;
 
         public ParticipantState State => state;
 
-        public void Initialize(ProvingProfile provingProfile, Vector3 spawn)
+        public void Initialize(ProvingProfile provingProfile, Vector3 spawn, ProvingArena supportArena=null)
         {
             if (provingProfile == null) throw new System.ArgumentNullException(nameof(provingProfile));
             if (provingProfile.Validate().Count != 0) throw new System.ArgumentException("Proving profile is invalid.", nameof(provingProfile));
 
-            profile = provingProfile;
+            profile = provingProfile;arena=supportArena;
             controller = GetComponent<CharacterController>();
             // Auto Sync Transforms is disabled by project settings. Recreate the native controller
             // at its requested feet anchor, never at the temporary AddComponent origin.
@@ -41,6 +43,18 @@ namespace StarTournament.ProvingGround
             initialized = true;
         }
 
+        public void ValidateState(ParticipantState value)
+        {
+            foreach(var number in new[]{value.Position.x,value.Position.y,value.Position.z,value.Velocity.x,value.Velocity.y,value.Velocity.z,value.Yaw,value.Pitch,value.LookNeutralSeconds,value.LookReturnVelocity})
+                if(float.IsNaN(number)||float.IsInfinity(number))throw new System.ArgumentException("Invalid participant pose");
+            if(Mathf.Abs(value.Pitch)>profile.Get("camera.maximumPitchDegrees")||value.LookNeutralSeconds<0)throw new System.ArgumentException("Invalid participant look state");
+        }
+        public void RestoreState(ParticipantState value)
+        {
+            ValidateState(value);bool enabled=controller.enabled;controller.enabled=false;
+            transform.SetPositionAndRotation(value.Position,Quaternion.Euler(0,value.Yaw,0));
+            controller.enabled=enabled;state=value;Physics.SyncTransforms();
+        }
         public void SetAlive(bool alive)
         {
             controller.enabled = alive;
@@ -95,6 +109,32 @@ namespace StarTournament.ProvingGround
             state.Position = transform.position;
             state.Velocity = actualVelocity;
             state.Grounded = controller.isGrounded || (collisionFlags & CollisionFlags.Below) != 0;
+            ApplyLookAssistance(action,dt);
+
+        }
+        void ApplyLookAssistance(LocalAction action,float dt)
+        {
+            if(!action.GamepadLookAssistance||action.ManualLook||action.LookDegrees.sqrMagnitude>0f||!state.Grounded||action.Jump)
+            {state.LookNeutralSeconds=0;state.LookReturnVelocity=0;return;}
+            state.LookNeutralSeconds+=dt;
+            if(state.LookNeutralSeconds<=profile.Get("input.gamepadReturnDelay"))return;
+            var origin=state.Position+Vector3.up*profile.Get("player.movement.stepOffset");
+            // Capsule contact on an incline can sit above the centre-foot plane by its radius.
+            var distance=profile.Get("player.movement.stepOffset")+profile.Get("player.capsule.radius")+profile.Get("player.capsule.skinWidth")*2;
+            if(!gameObject.scene.GetPhysicsScene().Raycast(origin,Vector3.down,out var hit,distance,
+                (1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore))return;
+            var forward=Quaternion.Euler(0,state.Yaw,0)*Vector3.forward;
+            float target=arena?arena.SupportPitch(hit.collider,hit.normal,forward):SurfacePitch(hit.normal,forward);
+            target=Mathf.Clamp(target,-profile.Get("camera.maximumPitchDegrees"),profile.Get("camera.maximumPitchDegrees"));
+            state.Pitch=Mathf.SmoothDamp(state.Pitch,target,ref state.LookReturnVelocity,
+                profile.Get("input.gamepadReturnSmoothingSeconds"),profile.Get("input.gamepadReturnDegreesPerSecond"),dt);
+        }
+        public static float SurfacePitch(Vector3 normal,Vector3 forward)
+        {
+            // Reject walls and vertical normals: they cannot be grounded walkable support.
+            if(normal.y<=0)return 0;
+            var gradient=new Vector3(-normal.x/normal.y,0,-normal.z/normal.y);
+            return -Mathf.Atan(Vector3.Dot(gradient,forward))*Mathf.Rad2Deg;
         }
     }
 }

@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 7;
+        public const int DefaultVersion = 8;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -81,8 +81,17 @@ namespace StarTournament.ProvingGround
             {
                 if(FindDescriptor(descriptor.Path)!=null)continue;
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
-                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
+                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=(descriptor.Path==GamepadLookSettings.HorizontalPath||descriptor.Path==GamepadLookSettings.VerticalPath)?Get("input.gamepadDegreesPerSecond"):current.Get(descriptor.Path)});
             }
+            valueIndex=null;
+        }
+        internal ProvingProfile BeforeGamepadLook()
+        {
+            if(id!=DefaultId||Descriptor(GamepadLookSettings.HorizontalPath)==null)return this;
+            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            if(old.version==8)old.version=7;
+            bool NewLookPath(string path)=>path==GamepadLookSettings.HorizontalPath||path==GamepadLookSettings.VerticalPath||path.StartsWith("input.gamepadReturn",StringComparison.Ordinal);
+            old.descriptors.RemoveAll(d=>NewLookPath(d.Path));old.values.RemoveAll(v=>NewLookPath(v.Path));return old;
         }
         public void EnsureNativeCombatDescriptors()
         {
@@ -273,6 +282,11 @@ namespace StarTournament.ProvingGround
             profile.Add("player.movement.slopeLimitDegrees", "player-movement", "Slope limit", "Maximum climbable CharacterController slope angle.", "degrees", 0f, 89f, 1f, 45f);
             profile.Add("input.mouseDegreesPerPixel", "input", "Mouse degrees per pixel", "Look rotation created by one mouse pixel.", "degrees-per-pixel", .01f, 2f, .01f, .12f);
             profile.Add("input.gamepadDegreesPerSecond", "input", "Gamepad degrees per second", "Maximum analog-stick look rotation rate.", "degrees-per-second", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadHorizontalDegreesPerSecond", "input", "Геймпад: горизонталь", "Скорость поворота при полном отклонении правого стика по горизонтали.", "°/с", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadVerticalDegreesPerSecond", "input", "Геймпад: вертикаль", "Скорость наклона при полном отклонении правого стика по вертикали.", "°/с", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadReturnDelay", "input", "Задержка выравнивания", "Пауза после отпускания правого стика перед возвратом взгляда.", "с", 0f, 3f, .05f, .35f);
+            profile.Add("input.gamepadReturnDegreesPerSecond", "input", "Скорость выравнивания", "Максимальная скорость плавного возврата наклона к уклону пола.", "°/с", 1f, 180f, 1f, 45f);
+            profile.Add("input.gamepadReturnSmoothingSeconds", "input", "Плавность выравнивания", "Время плавного приближения наклона к целевому уклону без скачка.", "с", .01f, 2f, .01f, .3f);
             profile.Add("input.deadzone", "input", "Input deadzone", "Radial deadzone applied before creating LocalAction.", "ratio", 0f, .95f, .01f, .15f);
             profile.Add("camera.eyeHeight", "camera", "Eye height", "Camera height above the participant feet anchor.", "meters", .1f, 2.5f, .01f, 1.55f);
             profile.Add("camera.maximumPitchDegrees", "camera", "Maximum pitch", "Symmetric vertical aim clamp.", "degrees", 30f, 89f, 1f, 85f);

@@ -45,6 +45,7 @@ namespace StarTournament.ProvingGround
         // Approved audit: engine/query controls, obsolete fields and fixed asset placement stay in
         // snapshots for compatibility, but are never exposed as designer balance controls.
         static readonly HashSet<string> AuditedExclusions=new HashSet<string>{
+            "input.gamepadDegreesPerSecond", // Legacy shared-axis value retained only for revision migration.
             "navigation.sampleDistance","world.maximumTransitionSegment","world.minimumSupportHeight","simulation.fixedTickHz",
             "light.shadowResolution","light.shadowBias","light.shadowNormalBias","light.shadowCasters",
             "bots.navigation.heightTolerance","bots.navigation.sampleDistance",
@@ -145,6 +146,7 @@ namespace StarTournament.ProvingGround
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeCutterDamage()).ToList()}})
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeGamepadLook()).ToList()}})
                 .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First()).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;
@@ -194,6 +196,11 @@ namespace StarTournament.ProvingGround
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
                     var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path)));
+                    if(!old.Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath))
+                    {
+                        var legacy=old.Snapshot.Get("input.gamepadDegreesPerSecond");
+                        next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);
+                    }
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==next.Hash());
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;

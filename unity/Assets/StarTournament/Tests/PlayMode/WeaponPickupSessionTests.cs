@@ -35,6 +35,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     motors[0].Initialize(move,new Vector3(0,-1.2f,0));motors[1].Initialize(move,new Vector3(0,-1.2f,3));
                     for(int i=0;i<50;i++)session.Tick(new LocalAction[2],.02f);
                     session.Restore(snap);Assert.That(session.WeaponPickups.Single(x=>x.InstanceId==pickup.InstanceId).Remaining,Is.EqualTo(15));
+                    Assert.That(session.Pose(0).Position,Is.EqualTo(snap.Poses[0].Position),"Complete snapshots restore motor pose as well as camera return state");
+                    // The cooldown check requires both restored participants to leave the pickup.
+                    motors[0].Initialize(move,new Vector3(0,-1.2f,0));motors[1].Initialize(move,new Vector3(0,-1.2f,3));
                     for(int i=0;i<750;i++)session.Tick(new LocalAction[2],.02f);session.Tick(new LocalAction[2],.02f);
                     Assert.That(session.WeaponPickups.All(x=>x.Available),Is.True);
                 }

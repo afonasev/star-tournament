@@ -70,13 +70,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
             Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
-            var before0=Object("seat-pause-0").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
-            var before1=Object("seat-pause-1").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
-            Button("pause-setting-0-0").onClick.Invoke();
-            var after0=Object("seat-pause-0").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
-            var after1=Object("seat-pause-1").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
+            var slider0=Object("pause-setting-0-0").GetComponent<Slider>();var slider1=Object("pause-setting-1-0").GetComponent<Slider>();
+            var before0=slider0.value;var before1=slider1.value;
+            slider0.value+=.01f;
+            var after0=slider0.value;
+            var after1=slider1.value;
             Assert.That(after0,Is.Not.EqualTo(before0));Assert.That(after1,Is.EqualTo(before1));
-            Button("pause-setting-0-3").onClick.Invoke();Button("pause-setting-1-3").onClick.Invoke();
+            var x0=Object("pause-setting-0-1").GetComponent<Slider>();var x1=Object("pause-setting-1-1").GetComponent<Slider>();
+            var otherX=x1.value;x0.value=x0.value==120?121:120;yield return null;
+            Assert.That(x1.value,Is.EqualTo(otherX),"gamepad axis belongs to its seat");
+            var level0=Object("pause-setting-0-3").GetComponent<Toggle>();var level1=Object("pause-setting-1-3").GetComponent<Toggle>();
+            var otherLevel=level1.isOn;level0.isOn=!level0.isOn;yield return null;
+            Assert.That(level1.isOn,Is.EqualTo(otherLevel),"auto-level preference belongs to its seat");
+            Button("pause-setting-0-6").onClick.Invoke();Button("pause-setting-1-6").onClick.Invoke();
             Button("pause-action-1-3").onClick.Invoke();
             Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
             Button("pause-exit-no-1").onClick.Invoke();

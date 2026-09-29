@@ -11,6 +11,22 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
+            // Construct the file written by the former runtime: its shared axis was editable.
+            // The current Save contract correctly refuses edits to that obsolete field.
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var prior=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+            prior.Snapshot.Set("input.gamepadDegreesPerSecond",90);prior.Hash=prior.Snapshot.Hash();
+            File.WriteAllText(path,JsonUtility.ToJson(file,true));
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.HorizontalPath),Is.EqualTo(90));
+            Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.VerticalPath),Is.EqualTo(90));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath),Is.False);
+        }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
         [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
@@ -93,7 +109,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
             var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
-            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(25));
+            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(26));
             foreach(var key in LabBundle.AuditedExcludedPaths)
             {
                 var d=old.Snapshot.Profile(key).Descriptor(key);float value=old.Snapshot.Get(key);

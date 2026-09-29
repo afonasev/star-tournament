@@ -16,6 +16,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Scene scene;
         Gamepad pad;
         ProvingGround ground;
+        GamepadLookSettings originalGamepad;
+        float originalMouse;
+        bool preferencesCaptured;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(button=>button.name==name);
         string Focus=>EventSystem.current.currentSelectedGameObject?.name;
 
@@ -24,6 +27,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
+            originalGamepad=GamepadLookSettings.General(ground.Profile);originalMouse=MouseSensitivityPreference.Resolve(ground.Profile);preferencesCaptured=true;
             pad=InputSystem.AddDevice<Gamepad>();yield return null;
             Button("main-action-4").onClick.Invoke();yield return null;
             Assert.That(Focus,Is.EqualTo("settings-section-0"));
@@ -42,6 +46,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
+            if(preferencesCaptured){GamepadLookSettings.SaveGeneral(originalGamepad);MouseSensitivityPreference.Set(ground.Profile,originalMouse);preferencesCaptured=false;}
             if(pad!=null && pad.added)InputSystem.RemoveDevice(pad);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
@@ -57,9 +62,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-shadows"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-0"));
             yield return MoveStick(Vector2.down);Assert.That(Focus,Is.EqualTo("settings-section-1"));
-            yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-sensitivity-minus"));
-            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-sensitivity-plus"));
-            yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-sensitivity-minus"));
+            yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-mouse-sensitivity"));
+            var slider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-mouse-sensitivity");
+            slider.value=.5f;float before=slider.value;
+            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-mouse-sensitivity"));Assert.That(slider.value,Is.GreaterThan(before));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-gamepad-horizontal"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-gamepad-vertical"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-auto-level"));
+            var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="settings-auto-level");var checkedBefore=toggle.isOn;
+            yield return Press(GamepadButton.South);Assert.That(toggle.isOn,Is.EqualTo(!checkedBefore));
+            yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-help-back"));
+            yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-controls-help"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-fps"));
