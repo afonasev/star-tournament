@@ -57,9 +57,19 @@
       "failed": 0,
       "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-ragdoll-playmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter affected migration and profile cases",
+      "source_revision": "50839aab13b1761ac8eed4a8dd341903addd1006",
+      "exit_code": 1,
+      "passed": null,
+      "failed": null,
+      "result": "compiler_error_before_test_execution",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/compile-failure-50839aa.log",
+      "fix_revision": "29bd468f878e565a70ed4b066f48820813a50cdf"
     }
   ],
-  "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
+  "source_revision": "29bd468f878e565a70ed4b066f48820813a50cdf",
   "build": {
     "command": "unity/tools.sh build",
     "exit_code": 0,
@@ -69,7 +79,7 @@
     "pass_marker": "STAR_PROVING_BUILD_PASS 471125991"
   },
   "native_player": {
-    "status": "pending_fresh_build_and_shared_host_player_slot",
+    "status": "blocked_pending_shared_host_release_and_exact_source_checks",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -85,8 +95,7 @@
     ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
-      "pending_client_id": "client-new-thread:6b68cfec-865f-4e8a-b840-42bc48a2a5ce",
-      "reason": "actual thread ID unavailable; no lookup/cancel capability; future launch not confirmed/cancelled",
+      "reason": "Unowned Star Tournament Player PID 74287 in bot worktree remains active; coordinator is checking whether the user launched it. Exact-source Unity retry requires natural process exit, fresh host guard, and a separate ACK.",
       "own_runtime_lease": "released",
       "own_active_processes": []
     }
@@ -97,6 +106,9 @@
     "New profiles inherit general gamepad axes and auto-level through all creation paths; native QA asserts persistence",
     "Integrated main 0f4d16c with damage vignette; combined default profile v9; post-integration migration checks pending",
     "Cache identical exact gamepad predecessors instead of repeatedly serializing them; migration assertions pending",
-    "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending"
+    "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending",
+    "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
+    "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
+    "Final exact-source affected/full Unity suites, build, and Player remain pending shared host release"
   ]
 }
