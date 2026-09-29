@@ -32,6 +32,8 @@ namespace StarTournament.ProvingGround
             var row=Panel(parent,name,min,max,MenuCard);var toggle=row.AddComponent<Toggle>();
             var box=Panel(row.transform,"box",new Vector2(.04f,.18f),new Vector2(.10f,.82f),new Color32(79,102,114,255));
             var mark=Label(box.transform,"check","✓",font,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,MenuInk);
+            // The glyph may exceed the compact box in four-seat layout, while remaining inside its row.
+            mark.verticalOverflow=VerticalWrapMode.Overflow;
             var fill=Panel(box.transform,"check-fill",new Vector2(.08f,.08f),new Vector2(.92f,.92f),MenuGold);
             mark.transform.SetAsLastSibling();toggle.graphic=fill.GetComponent<Image>();toggle.targetGraphic=box.GetComponent<Image>();
             // The filled gold box is the checked-state marker; decorative glyph follows it.
