@@ -170,7 +170,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 9f27516f7c4934364811b75d489893b2, type: 2}
   TrooperProfile:
     id: unity-trooper-presentation-v1
-    version: 5
+    version: 6
     descriptors:
     - Path: animation.walkThreshold
       Group: trooper-animation
@@ -243,12 +243,12 @@ MonoBehaviour:
     - Path: view.switchShoulderDegrees
       Group: trooper-view
       Label: "\u041f\u043e\u0434\u044a\u0451\u043c \u0440\u0443\u043a \u043f\u0440\u0438 \u0441\u043c\u0435\u043d\u0435"
-      Description: "\u041d\u0435\u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u043f\u043e\u0434\u044a\u0451\u043c \u043e\u0442 \u043d\u0435\u043f\u043e\u0434\u0432\u0438\u0436\u043d\u044b\u0445 \u043f\u043b\u0435\u0447 \u043f\u0435\u0440\u0435\u0434 \u043a\u0430\u043c\u0435\u0440\u043e\u0439; \u0432 \u0432\u0435\u0440\u0445\u043d\u0435\u0439 \u043f\u043e\u0437\u0435 \u043e\u0440\u0443\u0436\u0438\u0435 \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f \u0432 \u0440\u0443\u043a\u0430\u0445. \u0412\u0435\u0441\u044c \u0446\u0438\u043a\u043b \u0441\u043b\u0435\u0434\u0443\u0435\u0442 weapon.switchSeconds."
+      Description: "\u041f\u0440\u043e\u043c\u0435\u0436\u0443\u0442\u043e\u0447\u043d\u044b\u0439 \u043f\u043e \u0432\u044b\u0441\u043e\u0442\u0435 \u043f\u043e\u0434\u044a\u0451\u043c \u043e\u0442 \u043d\u0435\u043f\u043e\u0434\u0432\u0438\u0436\u043d\u044b\u0445 \u043f\u043b\u0435\u0447 \u043f\u0435\u0440\u0435\u0434 \u043a\u0430\u043c\u0435\u0440\u043e\u0439; \u0432 \u0432\u0435\u0440\u0445\u043d\u0435\u0439 \u043f\u043e\u0437\u0435 \u043e\u0440\u0443\u0436\u0438\u0435 \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f \u0432 \u0440\u0443\u043a\u0430\u0445. \u0412\u0435\u0441\u044c \u0446\u0438\u043a\u043b \u0441\u043b\u0435\u0434\u0443\u0435\u0442 weapon.switchSeconds."
       Unit: degrees
       Minimum: 0
-      Maximum: 35
+      Maximum: 75
       Step: 1
-      DefaultValue: 25
+      DefaultValue: 60
     - Path: view.switchElbowDegrees
       Group: trooper-view
       Label: "\u0421\u0433\u0438\u0431 \u043b\u043e\u043a\u0442\u0435\u0439 \u043f\u0440\u0438 \u0441\u043c\u0435\u043d\u0435"
@@ -398,7 +398,7 @@ MonoBehaviour:
     - Path: view.y
       Value: -1.46
     - Path: view.switchShoulderDegrees
-      Value: 25
+      Value: 60
     - Path: view.switchElbowDegrees
       Value: 0
     - Path: view.z

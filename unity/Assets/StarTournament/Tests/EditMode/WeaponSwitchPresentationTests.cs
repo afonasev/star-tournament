@@ -71,7 +71,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{UnityEngine.Object.DestroyImmediate(view);UnityEngine.Object.DestroyImmediate(cameraRoot);}
         }
-        [TestCase(25,0)][TestCase(35,10)]
+        [TestCase(60,0)][TestCase(75,10)]
         public void HandGeometryRemainsAheadOfCameraThroughoutTheGesture(float shoulderDegrees,float elbowDegrees)
         {
             var owner=new GameObject("safe-gesture-camera");var camera=owner.AddComponent<Camera>();camera.nearClipPlane=ProvingProfile.CreateDefault().Get("camera.nearClipPlane");
@@ -102,16 +102,17 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{UnityEngine.Object.DestroyImmediate(mesh);UnityEngine.Object.DestroyImmediate(view);UnityEngine.Object.DestroyImmediate(owner);}
         }
-        [Test]
-        public void LabUpgradePreservesPreSwitchAndOlderProfileHistory()
+        [TestCase(false)][TestCase(true)]
+        public void LabUpgradePreservesPreSwitchAndOlderProfileHistory(bool includePalette)
         {
             var current=new LabBundle{Profiles=new System.Collections.Generic.List<ProvingProfile>{ProvingProfile.CreateDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateCutterDefault()}};
-            foreach(string predecessor in new[]{"BeforeLowWeaponSwitch","BeforeShoulderSwitch","BeforeWeaponSwitch","BeforeCutterSwitch","BeforeCutterThickness","BeforeCutterThicknessSwitch","BeforePulse","BeforeFullHeal"})
+            if(includePalette)current.Profiles.Add(ProvingProfile.CreateParticipantPaletteDefault());
+            foreach(string predecessor in new[]{"BeforeMediumWeaponSwitch","BeforeLowWeaponSwitch","BeforeShoulderSwitch","BeforeWeaponSwitch","BeforeCutterSwitch","BeforeCutterThickness","BeforeCutterThicknessSwitch","BeforePulse","BeforeFullHeal"})
             {
                 string path=Path.Combine(Path.GetTempPath(),"switch-history-"+Guid.NewGuid()+".json");
                 try
                 {
-                    var legacy=new LabBundle{Profiles=current.Profiles.Where(p=>predecessor=="BeforeLowWeaponSwitch"||predecessor=="BeforeShoulderSwitch"||predecessor=="BeforeWeaponSwitch"||predecessor.StartsWith("BeforeCutterThickness")||p.Id!="cutter-beam-v1").Select(p=>
+                    var legacy=new LabBundle{Profiles=current.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId||predecessor=="BeforeMediumWeaponSwitch").Where(p=>predecessor=="BeforeMediumWeaponSwitch"||predecessor=="BeforeLowWeaponSwitch"||predecessor=="BeforeShoulderSwitch"||predecessor=="BeforeWeaponSwitch"||predecessor.StartsWith("BeforeCutterThickness")||p.Id!="cutter-beam-v1").Select(p=>
                     {
                         if(predecessor=="BeforeCutterThicknessSwitch")p=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponSwitch",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null);
                         string method=predecessor=="BeforeCutterSwitch"?"BeforeWeaponSwitch":predecessor=="BeforeCutterThicknessSwitch"?"BeforeCutterThickness":predecessor;
@@ -127,7 +128,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
                     Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(before.Number));
                     Assert.That(upgraded.Selected.Snapshot.Get("view.y"),Is.EqualTo(-1.5f));Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
-                    Assert.That(upgraded.Selected.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(25f));
+                    Assert.That(upgraded.Selected.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(60f));
                     if(legacy.Descriptors.Any(d=>d.Path=="cutter.width"))Assert.That(upgraded.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(.021f));
                     Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==before.Number).Hash,Is.EqualTo(before.Hash));
                     int count=upgraded.SelectedProfile.Revisions.Count;var reopened=new DesignLabHistory(path,current);
