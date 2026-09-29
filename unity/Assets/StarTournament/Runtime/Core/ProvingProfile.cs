@@ -114,6 +114,7 @@ namespace StarTournament.ProvingGround
             // The old time gap is no longer a gameplay control: a chain ends only on death.
             descriptors.RemoveAll(d=>d.Path=="score.chainGap");values.RemoveAll(v=>v.Path=="score.chainGap");
             var current=CreateMatchDefault();
+            version=current.version;
             foreach(var descriptor in current.descriptors)
             {
                 if(FindDescriptor(descriptor.Path)!=null)continue;
@@ -293,6 +294,11 @@ namespace StarTournament.ProvingGround
             profile.Add("camera.stairSmoothingSeconds", "camera", "Stair smoothing", "Camera-only vertical smoothing duration for stair traversal.", "seconds", 0f, 1f, .01f, .12f);
             profile.Add("camera.stairMaximumOffsetMeters", "camera", "Maximum stair smoothing offset", "Maximum camera-only vertical smoothing offset.", "meters", 0f, 1f, .01f, .2f);
             // Palette and layer identities are technical fixture constants, not balance controls.
+            profile.Add("ui.standingsFontSize", "standings", "Таблица · цифры", "Размер цифр; автоматически уменьшается при нехватке ширины всей группы.", "points", 12, 48, 1, 20);
+            profile.Add("ui.standingsIconSize", "standings", "Таблица · значки", "Высота заголовков и markers в общей сетке.", "pixels", 12, 40, 1, 22);
+            profile.Add("ui.standingsPadding", "standings", "Таблица · отступ", "Внутренний отступ сетки от края таблицы.", "pixels", 0, 40, 1, 16);
+            profile.Add("ui.standingsDeadOpacity", "standings", "Таблица · погибшие", "Яркость погибших строк; красные события сохраняют полную яркость.", "ratio", .2f, 1, .01f, .55f);
+            profile.Add("ui.standingsLeaderAccent", "standings", "Таблица · лидер", "Доля цвета лидера в фоне строки.", "ratio", 0, 1, .01f, .14f);
             profile.Add("ui.fontSize", "ui", "Body font size", "Base font size for four-seat HUD labels.", "points", 12f, 48f, 1f, 20f);
             profile.Add("ui.headingFontSize", "ui", "Heading font size", "Heading font size for setup and pause UI.", "points", 16f, 64f, 1f, 28f);
             profile.Add("ui.indicatorVisualHeight", "ui", "HUD indicator height", "Visible height shared by health, armor and ammo icons and their numbers.", "points", 20f, 64f, 1f, 32f);

@@ -85,7 +85,7 @@ namespace StarTournament.ProvingGround
         static readonly Dictionary<string,string> GroupDisplayNames=new Dictionary<string,string>{
             {"surfaces","Оформление → Поверхности"},{"details","Оформление → Детали"},{"lighting","Оформление → Свет"},{"broadcast","Оформление → Экраны"},{"palette","Оформление → Палитра"},{"atmosphere","Оформление → Атмосфера"},{"player-capsule","Игрок → Капсула"},{"player-movement","Игрок → Движение"},{"navigation","Арена → Навигация"},
             {"scoring","Матч → Очки"},{"trooper-animation","Оформление → Анимация"},{"trooper-grip","Оформление → Хват оружия"},
-            {"participant-colors","Оформление → Цвета участников"},{"trooper-view","Оформление → Модель игрока"},{"damage-vignette","Оформление → Получение урона"},{"ui","Оформление → HUD"},{"world-query","Арена → Проверки мира"},
+            {"participant-colors","Оформление → Цвета участников"},{"trooper-view","Оформление → Модель игрока"},{"standings","Интерфейс → Таблица результатов"},{"damage-vignette","Оформление → Получение урона"},{"ui","Оформление → HUD"},{"world-query","Арена → Проверки мира"},
             {"ring","Оформление → Станция"},{"ring-layout","Оформление → Детали станции"},{"space","Оформление → Космос"},
             {"windows","Оформление → Иллюминаторы"},{"geometry","Карта → Геометрия"},{"transitions","Карта → Переходы"},
             {"routes","Карта → Маршруты"},{"bonuses","Карта → Точки бонусов"},{"weapon","Оружие → Диагностика"}};

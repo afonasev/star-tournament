@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Globalization;
 
 namespace StarTournament.ProvingGround
 {
@@ -9,7 +10,8 @@ namespace StarTournament.ProvingGround
     {
         // Legacy field name: stable participant slot, not a device/viewport binding.
         public int Seat, Kills, Assists, Deaths, Score;
-        public double DamageDealt, DamageReceived;
+        public int SelfKills, AllyKills, AccumulatedPenalty;
+        public double DamageDealt, DamageReceived, AllyDamageDealt;
     }
     [Serializable]
     public struct NativeTeamStanding
@@ -20,6 +22,12 @@ namespace StarTournament.ProvingGround
     [Serializable]
     public sealed class NativeMatchSnapshot
     {
+        // Additive counters deserialize to zero in historical projections; they cannot be reconstructed.
+        public int Version = 2;
+        public string TuningIdentity;
+        public long[] AssistLedger;
+        public int[] ChainAwards;
+        public bool[] DiedThisTick;
         public long Tick, RemainingTicks;
         public NativeMatchPhase Phase;
         public string Trigger;
@@ -41,8 +49,9 @@ namespace StarTournament.ProvingGround
         readonly int[] chains, chainAwards, totals, directKillsByPair;
         readonly bool[] diedThisTick;
         readonly long durationTicks, assistTicks;
-        readonly int assistPoints, increment, target;
+        readonly int assistPoints, increment, target, penalty;
         readonly double tickHz;
+        readonly string tuningIdentity;
         long tick;
         string trigger;
         bool enteredOvertime;
@@ -61,7 +70,7 @@ namespace StarTournament.ProvingGround
         {
             Roster = roster ?? throw new ArgumentNullException(nameof(roster));
             int seats = roster.Count;
-            if (hz <= 0 || float.IsNaN(hz) || float.IsInfinity(hz) || profile == null || profile.Id != "unity-native-match-v1" || profile.Version != 1 || profile.Validate().Count != 0)
+            if (hz <= 0 || float.IsNaN(hz) || float.IsInfinity(hz) || profile == null || profile.Id != "unity-native-match-v1" || (profile.Version != 1 && profile.Version != 2) || profile.Validate().Count != 0)
                 throw new ArgumentException("Invalid match profile");
             foreach (var d in profile.Descriptors) NativeMatchConfiguration.ValidateValue(profile, d.Path, profile.Get(d.Path));
             config.Validate(profile); Configuration=config; tickHz=hz;
@@ -70,27 +79,40 @@ namespace StarTournament.ProvingGround
             assistPoints=(int)profile.Get("score.assistPoints"); increment=(int)profile.Get("score.chainIncrement");
             totals=Enumerable.Range(1,5).Select(i=>(int)profile.Get("score.chainTotal"+i)).ToArray();
             for(int i=1;i<totals.Length;i++) if(totals[i]<totals[i-1]) throw new ArgumentException("Chain totals must be monotonic");
+            penalty=profile.Descriptor("score.friendlyOrSelfKillPenalty")==null
+                ? (int)ProvingProfile.CreateMatchDefault().Get("score.friendlyOrSelfKillPenalty")
+                : (int)profile.Get("score.friendlyOrSelfKillPenalty");
             target=config.TargetEnabled ? config.TargetPoints : 0;
+            tuningIdentity=string.Join("|",new[]{hz.ToString("R",CultureInfo.InvariantCulture),durationTicks.ToString(),assistTicks.ToString(),assistPoints.ToString(),increment.ToString(),target.ToString(),penalty.ToString(),string.Join(",",totals)});
             rows=new NativeStanding[seats]; ledger=new long[seats,seats]; chains=new int[seats]; chainAwards=new int[seats];
             directKillsByPair=new int[seats*seats]; diedThisTick=new bool[seats];
             for(int i=0;i<seats;i++) { rows[i].Seat=i; ClearLedger(i); }
         }
         void ClearLedger(int victim) { for(int i=0;i<rows.Length;i++) ledger[victim,i]=-1; }
         public void BeginTick() { if(Phase!=NativeMatchPhase.Finished) tick++; }
-        public void RecordDamage(int victim, int attacker, DamageResult result, bool chainEligible=true)
+        public void RecordDamage(int victim, int attacker, DamageResult result, bool chainEligible=true, int? originalSource=null)
         {
             if(Phase==NativeMatchPhase.Finished || result.Applied<=0) return;
+            int source=originalSource??attacker;
+            if(victim<0 || victim>=rows.Length || source < -1 || source>=rows.Length || attacker < -1 || attacker>=rows.Length) throw new ArgumentOutOfRangeException();
+            bool enemy=attacker>=0 && attacker!=victim && !Roster.AreAllies(attacker,victim);
             rows[victim].DamageReceived+=result.Applied;
-            if(attacker>=0 && attacker!=victim)
+            if(source>=0 && source!=victim && Roster.AreAllies(source,victim)) rows[source].AllyDamageDealt+=result.Applied;
+            if(enemy)
             {
                 rows[attacker].DamageDealt+=result.Applied;
                 ledger[victim,attacker]=tick;
             }
             if(!result.Killed) return;
             rows[victim].Deaths++; diedThisTick[victim]=true;
-            for(int i=0;i<rows.Length;i++) if(i!=attacker && i!=victim && ledger[victim,i]>=0 && tick-ledger[victim,i]<=assistTicks)
+            if(source>=0 && (source==victim || Roster.AreAllies(source,victim)))
+            {
+                if(source==victim) rows[source].SelfKills++; else rows[source].AllyKills++;
+                rows[source].AccumulatedPenalty+=penalty; rows[source].Score-=penalty;
+            }
+            for(int i=0;i<rows.Length;i++) if(i!=attacker && i!=victim && !Roster.AreAllies(i,victim) && ledger[victim,i]>=0 && tick-ledger[victim,i]<=assistTicks)
             { rows[i].Assists++; rows[i].Score+=assistPoints; }
-            if(attacker>=0 && attacker!=victim)
+            if(enemy)
             {
                 int length=chainEligible?chains[attacker]+1:1;
                 int award=length<=totals.Length ? totals[length-1] : totals[totals.Length-1]+(length-totals.Length)*increment;
@@ -129,9 +151,37 @@ namespace StarTournament.ProvingGround
             return a>=b ? new[]{teamA,teamB} : new[]{teamB,teamA};
         }
         NativeStanding[] Ordered() => rows.OrderByDescending(r=>r.Score).ThenBy(r=>r.Seat).ToArray();
-        public NativeMatchSnapshot Read() => new NativeMatchSnapshot { Tick=tick, RemainingTicks=RemainingTicks,
+        public NativeMatchSnapshot Read() => new NativeMatchSnapshot { TuningIdentity=tuningIdentity, Tick=tick, RemainingTicks=RemainingTicks,
             Phase=Phase, Trigger=trigger, Winner=winner, WinnerTeam=winnerTeam, Roster=Roster.Read(), Teams=TeamTotals(),
             Standings=finalRows==null ? Ordered() : (NativeStanding[])finalRows.Clone(),
-            DirectKillsByPair=(int[])directKillsByPair.Clone(), KillChains=(int[])chains.Clone() };
+            DirectKillsByPair=(int[])directKillsByPair.Clone(), KillChains=(int[])chains.Clone(),
+            AssistLedger=Enumerable.Range(0,rows.Length*rows.Length).Select(i=>ledger[i/rows.Length,i%rows.Length]).ToArray(),
+            ChainAwards=(int[])chainAwards.Clone(), DiedThisTick=(bool[])diedThisTick.Clone() };
+
+        public void ValidateSnapshot(NativeMatchSnapshot snapshot)
+        {
+            int count=rows.Length;
+            if(snapshot==null || snapshot.Version!=2 || snapshot.TuningIdentity!=tuningIdentity || snapshot.Tick<0 || !Enum.IsDefined(typeof(NativeMatchPhase),snapshot.Phase) ||
+                snapshot.Roster==null || snapshot.Roster.Mode!=Roster.Mode || snapshot.Roster.Teams==null || !snapshot.Roster.Teams.SequenceEqual(Roster.Read().Teams) ||
+                snapshot.Standings==null || snapshot.Standings.Length!=count || !snapshot.Standings.Select(r=>r.Seat).OrderBy(i=>i).SequenceEqual(Enumerable.Range(0,count)) ||
+                snapshot.AssistLedger?.Length!=count*count || snapshot.DirectKillsByPair?.Length!=count*count ||
+                snapshot.KillChains?.Length!=count || snapshot.ChainAwards?.Length!=count || snapshot.DiedThisTick?.Length!=count)
+                throw new ArgumentException("Invalid resumable match snapshot");
+            foreach(var row in snapshot.Standings)
+                if(row.Kills<0 || row.Assists<0 || row.Deaths<0 || row.SelfKills<0 || row.AllyKills<0 || row.AccumulatedPenalty<0 ||
+                    !FiniteDamage(row.DamageDealt) || !FiniteDamage(row.DamageReceived) || !FiniteDamage(row.AllyDamageDealt)) throw new ArgumentException("Invalid match counters");
+        }
+        static bool FiniteDamage(double value)=>value>=0 && !double.IsNaN(value) && !double.IsInfinity(value);
+        public void Restore(NativeMatchSnapshot snapshot)
+        {
+            ValidateSnapshot(snapshot);
+            tick=snapshot.Tick;Phase=snapshot.Phase;trigger=snapshot.Trigger;winner=snapshot.Winner;winnerTeam=snapshot.WinnerTeam;
+            enteredOvertime=snapshot.RemainingTicks==0 && trigger!=null;
+            foreach(var row in snapshot.Standings)rows[row.Seat]=row;
+            Array.Copy(snapshot.KillChains,chains,rows.Length);Array.Copy(snapshot.ChainAwards,chainAwards,rows.Length);
+            Array.Copy(snapshot.DirectKillsByPair,directKillsByPair,directKillsByPair.Length);Array.Copy(snapshot.DiedThisTick,diedThisTick,rows.Length);
+            for(int i=0;i<snapshot.AssistLedger.Length;i++)ledger[i/rows.Length,i%rows.Length]=snapshot.AssistLedger[i];
+            finalRows=Phase==NativeMatchPhase.Finished?Ordered():null;
+        }
     }
 }

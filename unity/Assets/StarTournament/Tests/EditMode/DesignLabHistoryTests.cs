@@ -32,6 +32,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.IsEditable("presentation.rocketMuzzleBlendDistance"),Is.True);
             Assert.That(upgraded.Selected.Snapshot.Validate(),Is.Empty);
         }
+        [Test]public void ScoreboardUpgradePreservesOldValuesAndHashes()
+        {
+            var old=Shipped();
+            foreach(var profile in old.Profiles.Where(p=>p.Id==ProvingProfile.DefaultId||p.Id=="unity-native-match-v1").ToArray())
+            {
+                var serialized=JsonUtility.FromJson<LegacyProfile>(JsonUtility.ToJson(profile));
+                if(profile.Id=="unity-native-match-v1")serialized.version=1;
+                serialized.descriptors=serialized.descriptors.Where(d=>d.Path!="score.friendlyOrSelfKillPenalty"&&!d.Path.StartsWith("ui.standings")).ToArray();
+                serialized.values=serialized.values.Where(d=>d.Path!="score.friendlyOrSelfKillPenalty"&&!d.Path.StartsWith("ui.standings")).ToArray();
+                old.Profiles[old.Profiles.IndexOf(profile)]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(serialized));
+            }
+            var history=new DesignLabHistory(path,old);history.Create("Сохранённый");var draft=history.Selected.Snapshot;draft.Set("score.assistPoints",63);history.Save(draft);
+            var hash=history.Selected.Hash;var revision=history.Selected.Number;var releaseHash=history.Profiles.Single(p=>p.Protected).Revisions[0].Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("score.assistPoints"),Is.EqualTo(63));Assert.That(upgraded.Selected.Snapshot.Get("score.friendlyOrSelfKillPenalty"),Is.EqualTo(200));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==revision).Hash,Is.EqualTo(hash));
+            Assert.That(upgraded.Profiles.Single(p=>p.Protected).Revisions[0].Hash,Is.EqualTo(releaseHash));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [System.Serializable]sealed class LegacyProfile{public string id;public int version;public NumericDescriptor[] descriptors;public ProvingProfileValue[] values;}
         [Test]public void SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts()
         {

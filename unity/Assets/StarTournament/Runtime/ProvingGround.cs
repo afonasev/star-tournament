@@ -239,6 +239,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent<NativeBonusVisualReview>();
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-scoreboardReview")) gameObject.AddComponent<NativeScoreboardReview>();
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
@@ -469,8 +470,8 @@ namespace StarTournament.ProvingGround
                 int seat=Composition.SeatOf(p);if(seat>=0)views[seat].GetComponent<WeaponModelPresentation>()?.Tint(color,boosted);
             }
             if(phase!=Phase.Setup) presentation.Render();
-            var snapshot=Session.Match?.Read();
-            persistentStandings.Show(phase!=Phase.Setup && frozenSeatCount==3,snapshot,diagnostic||combatReview,Composition);
+            var snapshot=Session.Match?.Read();var lifeStates=Session.LifeStates;
+            persistentStandings.Show(phase!=Phase.Setup && frozenSeatCount==3,snapshot,diagnostic||combatReview,Composition,lifeStates);
             var match=Session.Match;
             if(timerPanel)timerPanel.gameObject.SetActive(phase==Phase.Running && match!=null);
             if(matchTimer && match!=null)
@@ -495,7 +496,7 @@ namespace StarTournament.ProvingGround
                 if(killNotice[i]) killNotice[i].text=phase==Phase.Setup || phase==Phase.Results ? "" :
                     life.Dead ? DeathNoticeText(participant,snapshot) :
                     Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
-                standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition);
+                standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition,lifeStates);
                 names[i].color=Composition.Participant(participant).Color;
                 names[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "");
                 hud[i].text=hit[participant] ?? "";
@@ -688,7 +689,7 @@ namespace StarTournament.ProvingGround
                 var r=LocalSeatLayout.Viewport(renderedCount,i); cameras[i].rect=r;
                 if(viewportRoots[i]) Layout(viewportRoots[i],new Vector2(r.xMin,r.yMin),new Vector2(r.xMax,r.yMax));
                 if(standings[i]!=null) Layout((RectTransform)standings[i].Root.transform,
-                    new Vector2(r.xMin,r.yMin+r.height*.25f),new Vector2(r.xMax,r.yMin+r.height*.75f));
+                    new Vector2(r.xMin,r.yMin+r.height*.12f),new Vector2(r.xMax,r.yMin+r.height*.88f));
             }
             if(persistentStandings!=null)
             {
@@ -885,10 +886,10 @@ namespace StarTournament.ProvingGround
             {
                 var r=cameras[i].rect;
                 standings[i]=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"standings-"+i,
-                    new Vector2(r.xMin,r.yMin+r.height*.25f),new Vector2(r.xMax,r.yMin+r.height*.75f));
+                    new Vector2(r.xMin,r.yMin+r.height*.12f),new Vector2(r.xMax,r.yMin+r.height*.88f),Profile);
                 standings[i].Root.SetActive(false);
             }
-            persistentStandings=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"persistent-standings",new Vector2(.5f,0),new Vector2(1,.5f));
+            persistentStandings=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"persistent-standings",new Vector2(.5f,0),new Vector2(1,.5f),Profile);
             persistentStandings.Root.SetActive(false);
             verticalDivider=CreateViewportDivider(canvasObject.transform,"viewport-divider-vertical");
             horizontalDivider=CreateViewportDivider(canvasObject.transform,"viewport-divider-horizontal");
@@ -927,7 +928,7 @@ namespace StarTournament.ProvingGround
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
-            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.45f),new Vector2(.94f,.77f));
+            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile);
             results.Root.SetActive(false);
             var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
             settings.gameObject.name = "fps-setting";
@@ -1080,7 +1081,7 @@ namespace StarTournament.ProvingGround
             mouseSensitivityPlus.GetComponentInChildren<Text>().text=sensitivityDescriptor.Label+": "+sensitivity.ToString("0.00")+" "+sensitivityDescriptor.Unit+"   +";
             durationButton.GetComponentInChildren<Text>().text="Длительность: "+Configuration.DurationMinutes+" мин   +";
             targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
-            results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition);
+            results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition,phase==Phase.Results?Session.LifeStates:null);
             var menuRect=(RectTransform)status.transform.parent;
             Layout(menuRect,new Vector2(phase==Phase.Setup?.04f:.15f,phase==Phase.Results?.06f:.08f),new Vector2(phase==Phase.Setup?.51f:.85f,phase==Phase.Results?.40f:.92f));
             if(seatPanel)
