@@ -20,17 +20,21 @@ namespace StarTournament.ProvingGround
         {
             ground=GetComponent<ProvingGround>();Application.runInBackground=true;var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-labReview");directory=args[flag+1];Directory.CreateDirectory(directory);
             yield return new WaitForSecondsRealtime(1);Click("main-action-2");yield return null;
+            Canvas.ForceUpdateCanvases();
+            var fields=ground.GetComponentsInChildren<ScrollRect>().Single(r=>r.name=="lab-fields");
+            var row=(RectTransform)Input("input-rifle.head").transform.parent;
+            if(fields.viewport.rect.height<row.rect.height*6)throw new InvalidOperationException("Compact Lab must fit six complete parameter rows");
             yield return Capture("01-editor-base");
             if(File.Exists(Path.Combine(directory,"first-run-complete.json")))
             {
                 yield return Capture("10-restarted-history");Click("lab-revision-select");yield return null;yield return Capture("11-restarted-revisions");
                 File.WriteAllText(Path.Combine(directory,"restart-complete.txt"),ground.LabSavedIdentity);Application.Quit();yield break;
             }
-            Click("lab-create");yield return null;Input("lab-profile-name").text="QA профиль";Click("submit");yield return null;
+            Click("lab-create");yield return null;yield return Capture("00-create-profile");Input("lab-profile-name").text="QA профиль";Click("submit");yield return null;
             EventSystem.current.SetSelectedGameObject(Input("input-rifle.head").gameObject);Input("input-rifle.head").text="31";yield return null;yield return Capture("02-direct-input-draft");
             Input("lab-search").text="armor.pickupAmount";yield return null;Input("input-armor.pickupAmount").text="55";Input("lab-search").text="";yield return null;
             Click("lab-changes");yield return null;yield return Capture("03-all-changes");Click("jump-rifle.head");yield return null;
-            Input("input-rifle.head").text="999";yield return null;if(Button("lab-save").interactable)throw new InvalidOperationException("Invalid draft save enabled");yield return Capture("04-local-errors");
+            Input("input-rifle.head").text="999";yield return null;if(Button("lab-save").interactable)throw new InvalidOperationException("Invalid draft save enabled");yield return Capture("04-local-errors");Click("lab-errors");yield return null;yield return Capture("04b-error-summary");Click("cancel");yield return null;
             Click("lab-back");yield return null;yield return Capture("05-dirty-exit-guard");Click("cancel");yield return null;
             Input("input-rifle.head").text="31";yield return null;Click("lab-save");yield return null;string v2=ground.LabSavedIdentity;
             Click("lab-revision-select");yield return null;yield return Capture("06-history");Click("revision-1");yield return null;

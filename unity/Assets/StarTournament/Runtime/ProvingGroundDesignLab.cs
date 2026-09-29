@@ -104,10 +104,17 @@ namespace StarTournament.ProvingGround
                 if(available>0&&overflow!=0)scroll.verticalNormalizedPosition=Mathf.Clamp01(scroll.verticalNormalizedPosition+overflow/available);
             }
         }
+        // Editor layout uses Full HD design pixels; these are UI invariants, not gameplay tuning values.
+        const float LabTreeRowHeight=34,LabFieldRowHeight=112,LabOptionRowHeight=38;
+        Button LabButton(Transform parent,string name,string text,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)
+        {
+            var button=MenuButton(parent,name,text,min,max,action);
+            button.GetComponentInChildren<Text>().fontSize=16;return button;
+        }
         InputField LabInput(Transform parent,string name,string text,Vector2 min,Vector2 max)
         {
             var panel=Panel(parent,name,min,max,new Color32(38,61,72,255));var input=panel.AddComponent<InputField>();
-            input.textComponent=Label(panel.transform,"value",text,19,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,Color.white);
+            input.textComponent=Label(panel.transform,"value",text,16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,Color.white);
             input.text=text;return input;
         }
         ScrollRect LabScroll(Transform parent,string name,Vector2 min,Vector2 max,out Transform content)
@@ -121,30 +128,30 @@ namespace StarTournament.ProvingGround
         void CreateDesignLabUi(Transform parent)
         {
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
-            labBack=MenuButton(labScreen.transform,"lab-back","‹ Назад",new Vector2(.02f,.91f),new Vector2(.12f,.98f),ToMainMenu);
-            Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",25,new Vector2(.14f,.91f),new Vector2(.65f,.98f),TextAnchor.MiddleLeft,MenuGold);
-            var clear=MenuButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.73f,.91f),new Vector2(.85f,.98f),()=>{ResetLabDraft();RefreshLabWorkspace();});
-            labSave=MenuButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.86f,.91f),new Vector2(.98f,.98f),()=>LabOperation(()=>labHistory.Save(labDraft),true));
+            labBack=LabButton(labScreen.transform,"lab-back","‹ Назад",new Vector2(.02f,.94f),new Vector2(.105f,.979f),ToMainMenu);
+            Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",21,new Vector2(.12f,.94f),new Vector2(.75f,.979f),TextAnchor.MiddleLeft,MenuGold);
+            var clear=LabButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.80f,.94f),new Vector2(.88f,.979f),()=>{ResetLabDraft();RefreshLabWorkspace();});
+            labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.89f,.94f),new Vector2(.98f,.979f),()=>LabOperation(()=>labHistory.Save(labDraft),true));
             labSave.GetComponent<Image>().color=MenuGold;labSave.GetComponentInChildren<Text>().color=MenuInk;
-            labHint=Label(labScreen.transform,"lab-hint","",17,new Vector2(.02f,.005f),new Vector2(.98f,.075f),TextAnchor.MiddleLeft,MenuGold);
+            labHint=Label(labScreen.transform,"lab-hint","",14,new Vector2(.02f,.005f),new Vector2(.98f,.055f),TextAnchor.MiddleLeft,MenuGold);
             Hint(clear.gameObject,"Очистить: вернуть все поля к выбранной базе; история сохраняется.");Hint(labSave.gameObject,"Сохранить: добавить новую неизменяемую ревизию. Нужен изменённый черновик без ошибок.");
-            labProfileSelector=MenuButton(labScreen.transform,"lab-profile-select","Профиль ▾",new Vector2(.02f,.83f),new Vector2(.15f,.90f),ShowLabProfiles);
-            labRevisionSelector=MenuButton(labScreen.transform,"lab-revision-select","Ревизия ▾",new Vector2(.16f,.83f),new Vector2(.29f,.90f),ShowLabRevisions);
-            MenuButton(labScreen.transform,"lab-create","Создать",new Vector2(.30f,.83f),new Vector2(.40f,.90f),()=>LabNameDialog(false));
-            MenuButton(labScreen.transform,"lab-rename","Переименовать",new Vector2(.41f,.83f),new Vector2(.56f,.90f),()=>LabNameDialog(true));
-            labDelete=MenuButton(labScreen.transform,"lab-delete","Удалить",new Vector2(.57f,.83f),new Vector2(.68f,.90f),()=>LabConfirm("Удалить «"+labHistory.SelectedProfileName+"»?\nРевизий: "+labHistory.SelectedProfile.Revisions.Count,"Удалить профиль",()=>LabOperation(labHistory.DeleteSelected,true)));
+            labProfileSelector=LabButton(labScreen.transform,"lab-profile-select","Профиль ▾",new Vector2(.02f,.889f),new Vector2(.205f,.928f),ShowLabProfiles);
+            labRevisionSelector=LabButton(labScreen.transform,"lab-revision-select","Ревизия ▾",new Vector2(.215f,.889f),new Vector2(.37f,.928f),ShowLabRevisions);
+            LabButton(labScreen.transform,"lab-create","Создать",new Vector2(.38f,.889f),new Vector2(.46f,.928f),()=>LabNameDialog(false));
+            LabButton(labScreen.transform,"lab-rename","Переименовать",new Vector2(.47f,.889f),new Vector2(.58f,.928f),()=>LabNameDialog(true));
+            labDelete=LabButton(labScreen.transform,"lab-delete","Удалить",new Vector2(.59f,.889f),new Vector2(.67f,.928f),()=>LabConfirm("Удалить «"+labHistory.SelectedProfileName+"»?\nРевизий: "+labHistory.SelectedProfile.Revisions.Count,"Удалить профиль",()=>LabOperation(labHistory.DeleteSelected,true)));
             Hint(labDelete.gameObject,"Удаляется целый локальный профиль после подтверждения. Опубликованный профиль защищён.");
-            MenuButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.70f,.83f),new Vector2(.98f,.90f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
-            labIdentity=Label(labScreen.transform,"lab-identity","",15,new Vector2(.02f,.745f),new Vector2(.98f,.825f),TextAnchor.MiddleLeft,Color.white);
-            labSearch=LabInput(labScreen.transform,"lab-search","",new Vector2(.02f,.685f),new Vector2(.52f,.74f));
-            labSearch.placeholder=Label(labSearch.transform,"search-placeholder","Поиск по названию, описанию или пути…",19,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            LabButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.68f,.889f),new Vector2(.82f,.928f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
+            labIdentity=Label(labScreen.transform,"lab-identity","",14,new Vector2(.02f,.813f),new Vector2(.98f,.883f),TextAnchor.MiddleLeft,Color.white);
+            labSearch=LabInput(labScreen.transform,"lab-search","",new Vector2(.02f,.765f),new Vector2(.47f,.804f));
+            labSearch.placeholder=Label(labSearch.transform,"search-placeholder","Поиск по названию, описанию или пути…",16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
             Hint(labSearch.gameObject,"Поиск во всех сущностях: название, влияние, группа или stable path. Очистите для возврата к выбранной сущности.");
             labSearch.onValueChanged.AddListener(q=>{labQuery=q;labAllChanges=false;RefreshLabWorkspace();});
-            labStatus=Label(labScreen.transform,"lab-status","",17,new Vector2(.54f,.685f),new Vector2(.85f,.74f),TextAnchor.MiddleLeft,MenuGold);
-            MenuButton(labScreen.transform,"lab-errors","Ошибки",new Vector2(.86f,.685f),new Vector2(.98f,.74f),ShowLabErrors);
-            labTreeScroll=LabScroll(labScreen.transform,"lab-tree",new Vector2(.02f,.08f),new Vector2(.27f,.67f),out labTree);
-            labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",22,new Vector2(.29f,.62f),new Vector2(.98f,.67f),TextAnchor.MiddleLeft,MenuGold);
-            labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.29f,.08f),new Vector2(.98f,.615f),out labFields);
+            labStatus=Label(labScreen.transform,"lab-status","",14,new Vector2(.49f,.765f),new Vector2(.86f,.804f),TextAnchor.MiddleLeft,MenuGold);
+            LabButton(labScreen.transform,"lab-errors","Ошибки",new Vector2(.88f,.765f),new Vector2(.98f,.804f),ShowLabErrors);
+            labTreeScroll=LabScroll(labScreen.transform,"lab-tree",new Vector2(.02f,.065f),new Vector2(.22f,.75f),out labTree);
+            labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",18,new Vector2(.24f,.717f),new Vector2(.98f,.75f),TextAnchor.MiddleLeft,MenuGold);
+            labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.24f,.065f),new Vector2(.98f,.712f),out labFields);
         }
         void OpenDesignLab(){if(phase!=Phase.MainMenu)return;phase=Phase.Lab;ResetLabDraft();RefreshLabWorkspace();labTreeScroll.verticalNormalizedPosition=1;labFieldsScroll.verticalNormalizedPosition=1;var group=labTree.Find("group-"+labGroup);if(group)RevealLabFocus(group.gameObject);RefreshInterface();Select(labBack);}
         void ResetLabDraft()
@@ -165,44 +172,44 @@ namespace StarTournament.ProvingGround
             int i=0;
             foreach(var parentGroup in LabDescriptors().GroupBy(d=>GroupLabel(LabGroup(d)).Split('→')[0].Trim()))
             {
-                var heading=Label(labTree,"parent-"+parentGroup.Key,parentGroup.Key+" · "+parentGroup.Count(Changed),18,Vector2.zero,Vector2.one,TextAnchor.MiddleLeft,MenuGold);PlaceLabRow(heading.rectTransform,i++,48);
+                var heading=Label(labTree,"parent-"+parentGroup.Key,parentGroup.Key+" · "+parentGroup.Count(Changed),16,Vector2.zero,Vector2.one,TextAnchor.MiddleLeft,MenuGold);PlaceLabRow(heading.rectTransform,i++,LabTreeRowHeight);
                 foreach(var group in parentGroup.GroupBy(d=>LabGroup(d)))
                 {
                     string key=group.Key;int count=group.Count(Changed);string label=GroupLabel(key).Split('→').Last().Trim();
-                    var b=MenuButton(labTree,"group-"+key,"   "+label+(count>0?" · "+count:""),Vector2.zero,Vector2.one,()=>{labGroup=key;labAllChanges=false;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();labFieldsScroll.verticalNormalizedPosition=1;});
-                    PlaceLabRow((RectTransform)b.transform,i++,48);b.GetComponentInChildren<Text>().fontSize=17;b.GetComponent<Image>().color=key==labGroup&&!labAllChanges?new Color32(48,78,92,255):MenuCard;b.GetComponentInChildren<Text>().color=key==labGroup&&!labAllChanges?MenuGold:Color.white;Hint(b.gameObject,GroupLabel(key)+" · полей "+group.Count()+" · правок "+count);
+                    var b=LabButton(labTree,"group-"+key,"   "+label+(count>0?" · "+count:""),Vector2.zero,Vector2.one,()=>{labGroup=key;labAllChanges=false;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();labFieldsScroll.verticalNormalizedPosition=1;});
+                    PlaceLabRow((RectTransform)b.transform,i++,LabTreeRowHeight);b.GetComponentInChildren<Text>().fontSize=16;b.GetComponent<Image>().color=key==labGroup&&!labAllChanges?new Color32(48,78,92,255):MenuCard;b.GetComponentInChildren<Text>().color=key==labGroup&&!labAllChanges?MenuGold:Color.white;Hint(b.gameObject,GroupLabel(key)+" · полей "+group.Count()+" · правок "+count);
                 }
             }
-            ((RectTransform)labTree).sizeDelta=new Vector2(0,i*48);
+            ((RectTransform)labTree).sizeDelta=new Vector2(0,i*LabTreeRowHeight);
             var fields=LabDescriptors().Where(d=>labAllChanges?Changed(d):labQuery.Length>0?
                 (GroupLabel(LabGroup(d))+" "+d.Group+" "+d.Label+" "+d.Description+" "+d.Path).IndexOf(labQuery,StringComparison.OrdinalIgnoreCase)>=0:LabGroup(d)==labGroup).ToArray();
             labFieldsTitle.text=labAllChanges?"Все изменения":labQuery.Length>0?"Результаты поиска · "+fields.Length:GroupLabel(labGroup);
             i=0;foreach(var d in fields)BuildLabField(d,i++);
             if(fields.Length==0)Label(labFields,"empty",labAllChanges?"Нет изменений":"Ничего не найдено",23,new Vector2(0,.7f),Vector2.one,TextAnchor.MiddleCenter,Color.white);
-            ((RectTransform)labFields).sizeDelta=new Vector2(0,Mathf.Max(120,i*150));
+            ((RectTransform)labFields).sizeDelta=new Vector2(0,Mathf.Max(120,i*LabFieldRowHeight));
             Canvas.ForceUpdateCanvases();labTreeScroll.verticalNormalizedPosition=treePosition;labFieldsScroll.verticalNormalizedPosition=fieldPosition;
             RefreshLabValues();
             if(oldFocus!=null){var control=labScreen.GetComponentsInChildren<Selectable>().FirstOrDefault(c=>c.name==oldFocus&&c.interactable);if(control)SelectLabControl(control);else SelectLabControl(labSearch);}else SelectLabControl(labSearch);
         }
         void BuildLabField(NumericDescriptor d,int index)
         {
-            var row=Panel(labFields,"field-"+d.Path,Vector2.zero,Vector2.one,MenuCard);PlaceLabRow((RectTransform)row.transform,index,150);
-            Label(row.transform,"label",d.Label,22,new Vector2(.02f,.72f),new Vector2(.57f,.96f),TextAnchor.MiddleLeft,Color.white);
-            Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+d.Description,16,new Vector2(.02f,.45f),new Vector2(.57f,.73f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
-            var input=LabInput(row.transform,"input-"+d.Path,labRaw.TryGetValue(d.Path,out var raw)?raw:LabNumber(labDraft.Get(d.Path)),new Vector2(.64f,.55f),new Vector2(.82f,.94f));
-            var down=MenuButton(row.transform,"minus-"+d.Path,"−",new Vector2(.58f,.55f),new Vector2(.63f,.94f),()=>EditLabValue(d,labDraft.Get(d.Path)-d.Step));
-            var up=MenuButton(row.transform,"plus-"+d.Path,"+",new Vector2(.83f,.55f),new Vector2(.88f,.94f),()=>EditLabValue(d,labDraft.Get(d.Path)+d.Step));
-            var reset=MenuButton(row.transform,"reset-"+d.Path,"Сброс",new Vector2(.89f,.55f),new Vector2(.98f,.94f),()=>{labRaw.Remove(d.Path);labDraft.Set(d.Path,labBaseline.Get(d.Path));RefreshLabValues();});
-            Label(row.transform,"unit",d.Unit+" · "+LabNumber(d.Minimum)+"…"+LabNumber(d.Maximum)+" · шаг "+LabNumber(d.Step),15,new Vector2(.58f,.30f),new Vector2(.98f,.53f),TextAnchor.MiddleLeft,Color.white);
-            var diff=Label(row.transform,"diff","",17,new Vector2(.02f,.19f),new Vector2(.98f,.43f),TextAnchor.MiddleLeft,MenuGold);
-            var error=Label(row.transform,"error","",16,new Vector2(.02f,.01f),new Vector2(.98f,.19f),TextAnchor.MiddleLeft,new Color32(255,140,126,255));
+            var row=Panel(labFields,"field-"+d.Path,Vector2.zero,Vector2.one,MenuCard);PlaceLabRow((RectTransform)row.transform,index,LabFieldRowHeight);
+            Label(row.transform,"label",d.Label,18,new Vector2(.02f,.76f),new Vector2(.56f,.98f),TextAnchor.MiddleLeft,Color.white);
+            Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+d.Description,14,new Vector2(.02f,.36f),new Vector2(.56f,.75f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            var input=LabInput(row.transform,"input-"+d.Path,labRaw.TryGetValue(d.Path,out var raw)?raw:LabNumber(labDraft.Get(d.Path)),new Vector2(.64f,.57f),new Vector2(.82f,.90f));
+            var down=LabButton(row.transform,"minus-"+d.Path,"−",new Vector2(.58f,.57f),new Vector2(.63f,.90f),()=>EditLabValue(d,labDraft.Get(d.Path)-d.Step));
+            var up=LabButton(row.transform,"plus-"+d.Path,"+",new Vector2(.83f,.57f),new Vector2(.88f,.90f),()=>EditLabValue(d,labDraft.Get(d.Path)+d.Step));
+            var reset=LabButton(row.transform,"reset-"+d.Path,"Сброс",new Vector2(.89f,.57f),new Vector2(.98f,.90f),()=>{labRaw.Remove(d.Path);labDraft.Set(d.Path,labBaseline.Get(d.Path));RefreshLabValues();});
+            Label(row.transform,"unit",d.Unit+" · "+LabNumber(d.Minimum)+"…"+LabNumber(d.Maximum)+" · шаг "+LabNumber(d.Step),14,new Vector2(.58f,.34f),new Vector2(.98f,.55f),TextAnchor.MiddleLeft,Color.white);
+            var diff=Label(row.transform,"diff","",14,new Vector2(.02f,.17f),new Vector2(labAllChanges?.72f:.98f,.34f),TextAnchor.MiddleLeft,MenuGold);
+            var error=Label(row.transform,"error","",14,new Vector2(.02f,.00f),new Vector2(labAllChanges?.72f:.98f,.17f),TextAnchor.MiddleLeft,new Color32(255,140,126,255));
             bool editable=labDraft.IsEditable(d.Path);input.interactable=editable;down.interactable=editable;up.interactable=editable;reset.interactable=editable;
             labViews[d.Path]=new LabFieldView{Input=input,Diff=diff,Error=error,Background=row.GetComponent<Image>()};
             input.onValueChanged.AddListener(value=>{labRaw[d.Path]=value;if(float.TryParse(value.Replace(',','.'),NumberStyles.Float,CultureInfo.InvariantCulture,out float n)&&!float.IsNaN(n)&&!float.IsInfinity(n)){labDraft.Set(d.Path,n);labRaw.Remove(d.Path);}RefreshLabValues(false);});
             string hint=(editable?labDraft.Domain(d.Path):"Только чтение · "+CombatBowlCatalog.Identity+" · новая геометрия требует отдельной map revision")+" · "+d.Description+"\n"+d.Path+" · "+d.Unit+" · диапазон "+d.Minimum+"…"+d.Maximum+" · шаг "+d.Step;
             foreach(var go in new[]{input.gameObject,down.gameObject,up.gameObject,reset.gameObject})Hint(go,hint);
-            if(!editable){var info=MenuButton(row.transform,"info-"+d.Path,"Описание",new Vector2(.80f,.02f),new Vector2(.98f,.20f),()=>labHint.text=hint);Hint(info.gameObject,hint);}
-            if(labAllChanges){var jump=MenuButton(row.transform,"jump-"+d.Path,"К полю",new Vector2(.74f,.02f),new Vector2(.98f,.2f),()=>{labAllChanges=false;labGroup=LabGroup(d);RefreshLabWorkspace();SelectLabControl(labViews[d.Path].Input);});Hint(jump.gameObject,"Открыть "+GroupLabel(LabGroup(d))+" и выбрать поле "+d.Label);}
+            if(!editable){var info=LabButton(row.transform,"info-"+d.Path,"Описание",new Vector2(.80f,.02f),new Vector2(.98f,.20f),()=>labHint.text=hint);Hint(info.gameObject,hint);}
+            if(labAllChanges){var jump=LabButton(row.transform,"jump-"+d.Path,"К полю",new Vector2(.75f,.035f),new Vector2(.98f,.32f),()=>{labAllChanges=false;labGroup=LabGroup(d);RefreshLabWorkspace();SelectLabControl(labViews[d.Path].Input);});Hint(jump.gameObject,"Открыть "+GroupLabel(LabGroup(d))+" и выбрать поле "+d.Label);}
         }
         static string LabNumber(float n)=>n.ToString("0.#####",CultureInfo.InvariantCulture);
         void EditLabValue(NumericDescriptor d,float n){labRaw.Remove(d.Path);labDraft.Set(d.Path,(float)Math.Round(n,6));RefreshLabValues();}
@@ -254,33 +261,33 @@ namespace StarTournament.ProvingGround
             CloseLabDialog();labDialogReturn=previous;
             foreach(var control in labScreen.GetComponentsInChildren<Selectable>()){labDialogControls[control]=control.interactable;control.interactable=false;}
             labDialog=Panel(labScreen.transform,"lab-dialog",Vector2.zero,Vector2.one,new Color32(4,10,17,250));
-            var card=Panel(labDialog.transform,"dialog-card",new Vector2(.20f,.15f),new Vector2(.80f,.85f),MenuCard);
-            Label(card.transform,"title",title,25,new Vector2(.05f,.76f),new Vector2(.95f,.96f),TextAnchor.MiddleLeft,MenuGold);return card.transform;
+            var card=Panel(labDialog.transform,"dialog-card",new Vector2(.22f,.27f),new Vector2(.78f,.73f),MenuCard);
+            Label(card.transform,"title",title,20,new Vector2(.05f,.76f),new Vector2(.95f,.96f),TextAnchor.MiddleLeft,MenuGold);return card.transform;
         }
         void LabConfirm(string title,string confirm,Action action)
-        {var card=LabDialog(title);var cancel=MenuButton(card,"cancel","Продолжить редактирование",new Vector2(.05f,.12f),new Vector2(.95f,.26f),CloseLabDialog);MenuButton(card,"confirm",confirm,new Vector2(.05f,.32f),new Vector2(.95f,.46f),()=>action());Select(cancel);}
+        {var card=LabDialog(title);var cancel=LabButton(card,"cancel","Продолжить редактирование",new Vector2(.05f,.10f),new Vector2(.55f,.185f),CloseLabDialog);LabButton(card,"confirm",confirm,new Vector2(.60f,.10f),new Vector2(.95f,.185f),()=>action());Select(cancel);}
         void ConfirmLabDiscard(Action next)=>LabConfirm("Черновик содержит несохранённые изменения","Отбросить",()=>{ResetLabDraft();CloseLabDialog();next();});
         void GuardLabSelection(Action action){if(LabDirty)ConfirmLabDiscard(action);else action();}
         void ShowLabErrors()
         {
             var issues=LabIssues();var card=LabDialog(issues.Count==0?"Нет ошибок":"Ошибки черновика");var scroll=LabScroll(card,"error-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;
-            foreach(var issue in issues){string path=issue.Path;var b=MenuButton(list,"error-"+path,path+" · "+issue.Message,Vector2.zero,Vector2.one,()=>{CloseLabDialog();labQuery=path;labAllChanges=false;labSearch.SetTextWithoutNotify(path);RefreshLabWorkspace();if(labViews.TryGetValue(path,out var field))SelectLabControl(field.Input);});PlaceLabRow((RectTransform)b.transform,i++,65);b.GetComponentInChildren<Text>().fontSize=18;}
-            ((RectTransform)list).sizeDelta=new Vector2(0,i*65);var cancel=MenuButton(card,"cancel","Назад",new Vector2(.05f,.02f),new Vector2(.95f,.12f),CloseLabDialog);Select(cancel);
+            foreach(var issue in issues){string path=issue.Path;var b=LabButton(list,"error-"+path,path+" · "+issue.Message,Vector2.zero,Vector2.one,()=>{CloseLabDialog();labQuery=path;labAllChanges=false;labSearch.SetTextWithoutNotify(path);RefreshLabWorkspace();if(labViews.TryGetValue(path,out var field))SelectLabControl(field.Input);});PlaceLabRow((RectTransform)b.transform,i++,50);b.GetComponentInChildren<Text>().fontSize=16;}
+            ((RectTransform)list).sizeDelta=new Vector2(0,i*50);var cancel=LabButton(card,"cancel","Назад",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);Select(cancel);
         }
         void ShowLabProfiles()
         {
             var card=LabDialog("Выберите профиль");var scroll=LabScroll(card,"profile-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
-            foreach(var profile in labHistory.Profiles){var p=profile;var b=MenuButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(p.Id,p.Revisions.Max(r=>r.Number)),true)));PlaceLabRow((RectTransform)b.transform,i++,55);first=first??b;}
-            ((RectTransform)list).sizeDelta=new Vector2(0,i*55);MenuButton(card,"cancel","Отмена",new Vector2(.05f,.02f),new Vector2(.95f,.12f),CloseLabDialog);if(first!=null)Select(first);
+            foreach(var profile in labHistory.Profiles){var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(p.Id,p.Revisions.Max(r=>r.Number)),true)));PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;}
+            ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void ShowLabRevisions()
         {
             var card=LabDialog("Выберите сохранённую ревизию");var scroll=LabScroll(card,"revision-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
-            foreach(var r in labHistory.SelectedProfile.Revisions.OrderByDescending(r=>r.Number)){int n=r.Number;var b=MenuButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12)+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(labHistory.SelectedProfileId,n),true)));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,55);if(b.interactable)first=first??b;}
-            ((RectTransform)list).sizeDelta=new Vector2(0,i*55);MenuButton(card,"cancel","Отмена",new Vector2(.05f,.02f),new Vector2(.95f,.12f),CloseLabDialog);if(first!=null)Select(first);
+            foreach(var r in labHistory.SelectedProfile.Revisions.OrderByDescending(r=>r.Number)){int n=r.Number;var b=LabButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12)+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(labHistory.SelectedProfileId,n),true)));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);if(b.interactable)first=first??b;}
+            ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void LabNameDialog(bool rename)
-        {var card=LabDialog(rename?"Переименовать профиль":"Создать от выбранной сохранённой базы");var name=LabInput(card,"lab-profile-name",rename?labHistory.SelectedProfileName:"Новый профиль",new Vector2(.05f,.52f),new Vector2(.95f,.67f));MenuButton(card,"submit",rename?"Переименовать":"Создать",new Vector2(.05f,.30f),new Vector2(.95f,.44f),()=>{string value=name.text;if(rename)LabOperation(()=>labHistory.Rename(value),false);else GuardLabSelection(()=>LabOperation(()=>labHistory.Create(value),true));});MenuButton(card,"cancel","Отмена",new Vector2(.05f,.10f),new Vector2(.95f,.24f),CloseLabDialog);SelectLabControl(name);}
+        {var card=LabDialog(rename?"Переименовать профиль":"Создать от выбранной сохранённой базы");var name=LabInput(card,"lab-profile-name",rename?labHistory.SelectedProfileName:"Новый профиль",new Vector2(.05f,.52f),new Vector2(.95f,.605f));LabButton(card,"submit",rename?"Переименовать":"Создать",new Vector2(.60f,.15f),new Vector2(.95f,.235f),()=>{string value=name.text;if(rename)LabOperation(()=>labHistory.Rename(value),false);else GuardLabSelection(()=>LabOperation(()=>labHistory.Create(value),true));});LabButton(card,"cancel","Отмена",new Vector2(.05f,.15f),new Vector2(.55f,.235f),CloseLabDialog);SelectLabControl(name);}
         void UpdateDesignLab()
         {
             if(phase!=Phase.Lab)return;bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
