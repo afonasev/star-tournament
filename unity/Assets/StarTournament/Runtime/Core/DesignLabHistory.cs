@@ -150,11 +150,13 @@ namespace StarTournament.ProvingGround
                 {previous=profile.BeforeDamageVignette();vignettePredecessors.Add(profile,previous);}
                 return previous;
             }
+            var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
             predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeCutterDamage()).ToList()}})
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p).ToList()}})
                 // Preserve exact registries with and without the additive death profile.
                 // The current registry remains first, avoiding a historical scan on ordinary loads.
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()}})

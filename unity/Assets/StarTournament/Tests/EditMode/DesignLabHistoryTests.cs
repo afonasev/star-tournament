@@ -19,9 +19,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var history=new DesignLabHistory(path,old);history.Create("До ragdoll");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
             string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
             Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
-            Assert.That(upgraded.Selected.Snapshot.Get("corpse.shotgunSpeed"),Is.EqualTo(6));
+            Assert.That(upgraded.Selected.Snapshot.Get("corpse.shotgunSpeed"),Is.EqualTo(9));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
             Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.shotgunSpeed"),Is.True);
+        }
+        [Test]public void DeathImpulseUpgradeKeepsCustomValuesAndOldHashes()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeDeathImpulseIncrease()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой импульс");var draft=history.Selected.Snapshot;draft.Set("corpse.rifleSpeed",4.3f);history.Save(draft);
+            string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("corpse.rifleSpeed"),Is.EqualTo(4.3f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.Profile("corpse.rifleSpeed").Version,Is.EqualTo(2));
+            Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.rifleSpeed"),Is.True);
         }
         [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
         {

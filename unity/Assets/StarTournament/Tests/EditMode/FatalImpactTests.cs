@@ -18,6 +18,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void WeaponStrengthAndExplosionFalloffAreProfileOwned()
         {
             var p=ProvingProfile.CreateDeathDefault();Assert.That(p.Validate(),Is.Empty);
+            Assert.That(p.Get("corpse.shotgunSpeed"),Is.EqualTo(9));Assert.That(p.Get("corpse.rifleSpeed"),Is.EqualTo(3.75f));
+            Assert.That(p.Get("corpse.cutterSpeed"),Is.EqualTo(.375f));Assert.That(p.Get("corpse.rocketSpeed"),Is.EqualTo(13.5f));
             float Speed(WeaponId w,float fraction=0)=>new FatalImpact(w,1,Vector3.up,Vector3.zero,fraction).Velocity(p).magnitude;
             Assert.That(Speed(WeaponId.Shotgun),Is.GreaterThan(Speed(WeaponId.Rifle)));Assert.That(Speed(WeaponId.Rifle),Is.GreaterThan(Speed(WeaponId.Cutter)));
             Assert.That(Speed(WeaponId.RocketLauncher,.75f),Is.LessThan(Speed(WeaponId.RocketLauncher,.25f)));Assert.That(Speed(WeaponId.RocketLauncher,1),Is.Zero);
