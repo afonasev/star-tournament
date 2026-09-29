@@ -132,6 +132,7 @@ namespace StarTournament.ProvingGround
         Phase phase;
         bool diagnostic;
         bool combatReview;
+        bool nativeInputReview;
         ProvingArena arena;
         GameObject overlay;
         Text status;
@@ -303,10 +304,20 @@ namespace StarTournament.ProvingGround
             combatReview=true; Begin(backgroundDiagnostic);
         }
         public string CombatReviewDiagnostic() => "phase="+phase+", ready="+input.Ready+", validSetup="+ValidSetup()+", seats="+LocalSeatCount+", error="+setupError;
+        public void EnableNativeInputReview()
+        {
+            if(phase!=Phase.Running||!combatReview)throw new InvalidOperationException("Native input review requires a running combat fixture");
+            nativeInputReview=true;combatReview=false;RefreshInterface();
+        }
         public void OpenPauseReviewSeat(int seat)
         {
             if(phase==Phase.Running)Pause("Пауза",seat);
             else if(phase==Phase.Paused)OpenSeatPause(seat);
+        }
+        public void ResumeNativeInputReview()
+        {
+            if(!nativeInputReview||phase!=Phase.Paused)return;
+            ClearSeatPauseMenus();Resume();RefreshInterface();
         }
         public CharacterMotor CameraReviewMotor(int seat)=>motors[seat];
         public ProvingArena CameraReviewArena=>arena;
@@ -514,7 +525,7 @@ namespace StarTournament.ProvingGround
         void OnApplicationFocus(bool focus)
         {
             if(!focus && displayConfirmationActive)RollbackDisplay();
-            if (!focus && phase == Phase.Running && !diagnostic && !combatReview) Pause("Окно потеряло фокус");
+            if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
         }
         string ColoredName(int participant)
         {
@@ -654,7 +665,7 @@ namespace StarTournament.ProvingGround
         {
             NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
             foreach(var vignette in damageVignettes)vignette?.Bind(null,-1,Profile);
-            phase=Phase.Setup; diagnostic=false; combatReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
+            phase=Phase.Setup; diagnostic=false; combatReview=false; nativeInputReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
             bool wasReview=reviewComposition!=null;
             reviewComposition=null;reviewShowStandings=false;if(wasReview&&LocalSeatCount<2)input.SetActiveSeatCount(2);SyncHumanSeats();
             // Setup preview is not a playable roster; preserve invalid drafts for editing.

@@ -55,8 +55,9 @@ namespace StarTournament.ProvingGround
             while(ground.LocalSeatCount<2)Button("seats-plus").onClick.Invoke();
             for(int i=0;i<2;i++)ground.SetSeatAi(i,false);
             pads=new Gamepad[2];for(int i=0;i<2;i++){pads[i]=InputSystem.AddDevice<Gamepad>();if(!pads[i].enabled)InputSystem.EnableDevice(pads[i]);}
-            ground.StartCombatReview(pads);yield return new WaitForSecondsRealtime(.5f);
+            ground.StartCombatReview(pads);
             if(!ground.Running)throw new InvalidOperationException("NATIVE_CAMERA_QA_MATCH_DID_NOT_START "+ground.CombatReviewDiagnostic());
+            ground.EnableNativeInputReview();yield return new WaitForSecondsRealtime(.5f);
             // Codex can take OS focus while reading Player evidence. Synthetic input remains a diagnostic;
             // the exact focused/unfocused state is recorded and physical focus acceptance stays separate.
             Debug.Log("NATIVE_CAMERA_PLAYER_FOCUS_DIAGNOSTIC "+Application.isFocused);
@@ -68,11 +69,12 @@ namespace StarTournament.ProvingGround
             yield return Capture("05-personal-sliders-split-screen");
             Button("pause-setting-0-5").onClick.Invoke();yield return Capture("06-personal-help");
             Button("pause-help-back-0").onClick.Invoke();Button("pause-setting-0-6").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
+            if(!ground.Running){Debug.Log("NATIVE_CAMERA_RESUME_VISUAL_FALLBACK_UNFOCUSED");ground.ResumeNativeInputReview();}
             var arena=ground.CameraReviewArena;var transition=arena.ReadNavigationTransitions().First(t=>t.Id.Contains("outer-rise"));
             var feet=transition.OrderedFeet;var delta=feet[feet.Length-1]-feet[0];float yaw=Mathf.Atan2(delta.x,delta.z)*Mathf.Rad2Deg;
             var midpoint=feet[feet.Length/2];ground.PlaceCombatReviewSeat(0,midpoint,30,yaw);
             yield return Capture("07-stairs-manual-pitch");yield return new WaitForSecondsRealtime(3);
-            if(!ground.Running)throw new InvalidOperationException("Player lost focus during camera review");
+            if(!ground.Running)throw new InvalidOperationException("Camera review match did not resume after visual pause");
             if(ground.Session.Pose(0).Pitch>=-1)throw new InvalidOperationException("Stair pitch did not return upward");
             yield return Capture("08-stairs-return-up");
             ground.PlaceCombatReviewSeat(0,midpoint,-30,yaw+180);yield return new WaitForSecondsRealtime(3);yield return Capture("09-stairs-return-down");
@@ -97,12 +99,15 @@ namespace StarTournament.ProvingGround
             if(ground.Running){Debug.Log("NATIVE_CAMERA_PAUSE_INPUT_FALLBACK_UNFOCUSED");ground.OpenPauseReviewSeat(0);}
             Button("pause-action-0-1").onClick.Invoke();var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-3");toggle.isOn=false;
             Button("pause-setting-0-6").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
+            if(!ground.Running){Debug.Log("NATIVE_CAMERA_RESUME_VISUAL_FALLBACK_UNFOCUSED");ground.ResumeNativeInputReview();}
             ground.PlaceCombatReviewSeat(0,flat,25,0);yield return new WaitForSecondsRealtime(2);yield return Capture("13-return-disabled");
             if(Mathf.Abs(ground.Session.Pose(0).Pitch-25)>.1f)throw new InvalidOperationException("Disabled assistance changed pitch");
             InputSystem.DisableDevice(pads[0]);yield return null;yield return null;var paused=ground.Session.Time;
             yield return new WaitForSecondsRealtime(.5f);yield return Capture("14-disconnected-pause");
             if(ground.Running||ground.Session.Time!=paused)throw new InvalidOperationException("Disconnect did not freeze gameplay");
-            InputSystem.EnableDevice(pads[0]);yield return null;Button("pause-action-0-0").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);
+            InputSystem.EnableDevice(pads[0]);yield return null;Button("pause-action-0-0").onClick.Invoke();
+            if(!ground.Running){Debug.Log("NATIVE_CAMERA_RESUME_VISUAL_FALLBACK_UNFOCUSED");ground.ResumeNativeInputReview();}
+            yield return new WaitForSecondsRealtime(.5f);
             if(!ground.Running||Mathf.Abs(ground.Session.Pose(0).Pitch-25)>.1f)throw new InvalidOperationException("Reconnect lost personal assistance preference");
             yield return Capture("15-reconnected");
             File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"classification\":\"SYNTHETIC_NATIVE_PLAYER_NOT_PHYSICAL_ACCEPTANCE\",\"muted\":true,\"focusedAtCompletion\":"+(Application.isFocused?"true":"false")+"}");
