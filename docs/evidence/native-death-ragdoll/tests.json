@@ -1,0 +1,32 @@
+{
+  "runtime_revision": "262518ea2ec8ac6e81f76e40ae1bc82d0e535810",
+  "checks": {
+    "editmode": {
+      "result": "Passed",
+      "total": "203",
+      "passed": "203",
+      "failed": "0",
+      "start-time": "2026-09-29 13:23:06Z",
+      "end-time": "2026-09-29 13:28:20Z",
+      "duration": "313.2345979"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "138",
+      "passed": "138",
+      "failed": "0",
+      "start-time": "2026-09-29 13:28:39Z",
+      "end-time": "2026-09-29 13:40:00Z",
+      "duration": "680.9135928"
+    },
+    "ragdoll-migration": {
+      "result": "Passed",
+      "total": "23",
+      "passed": "23",
+      "failed": "0",
+      "start-time": "2026-09-29 13:18:01Z",
+      "end-time": "2026-09-29 13:22:44Z",
+      "duration": "282.3257072"
+    }
+  }
+}
