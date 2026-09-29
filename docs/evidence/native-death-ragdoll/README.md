@@ -10,7 +10,13 @@ Passive ragdoll создаётся из evaluated позы и скорости, 
 - Full EditMode: 203/203, exit 0, 313.23 s.
 - Full PlayMode: 138/138, exit 0, 680.9135928 s.
 - macOS build: exit 0, `STAR_PROVING_BUILD_PASS 471102531`.
-- Native Player review: ждёт окна на общем QA-хосте; результат будет записан после просмотра кадров.
+- Исходный immutable native Player: natural exit 0, 52.4 s; `player/complete.json`. Все четыре real fatal paths, воздушная смерть, support contacts, pause, respawn, Repeat и четыре viewport прошли scripted guards.
+- Просмотрены последовательности оружия и финальные позы на t=3 s: руки свободны, оружие скрыто, импульсы различимы. Для ракеты это промежуточная поза.
+- Диагностический Tick с четырьмя corpse: mean 0.391 ms, max 1.700 ms; это не общий FPS и не reference-hardware acceptance.
+- Ракурсы ступеней/края перекрыты окружением; camera fixture исправлен, требуется финальная пересъёмка и affected checks объединённого source. Исходные кадры сохранены без ретуши.
+- [Последовательности оружия](player/weapons.gif), [позы на t=3 s](player/final-poses.png), [четыре killcam](player/four-views.png).
+
+QA state: arena `combat-bowl-v1@16`, frozen design profile `38aeaf3191e89e7d71c5822ea637f82a6c5ad1ce3eb3efedf3541c7bfa67ec75`; muted synthetic-input diagnostic. Fresh empty QA history. Кадры в GIF идут с интервалом 0.1 s по session clock; последний кадр удерживается для просмотра.
 
 ## Приёмка
 
