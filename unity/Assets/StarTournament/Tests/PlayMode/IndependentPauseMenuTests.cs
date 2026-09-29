@@ -82,7 +82,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var level0=Object("pause-setting-0-3").GetComponent<Toggle>();var level1=Object("pause-setting-1-3").GetComponent<Toggle>();
             var otherLevel=level1.isOn;level0.isOn=!level0.isOn;yield return null;
             Assert.That(level1.isOn,Is.EqualTo(otherLevel),"auto-level preference belongs to its seat");
+            int priorEffects=NativeAudioPreferences.Effects(ground.Profile);
             Button("pause-setting-0-6").onClick.Invoke();Button("pause-setting-1-6").onClick.Invoke();
+            var effects0=Object("pause-audio-0-1").GetComponent<Slider>();var effects1=Object("pause-audio-1-1").GetComponent<Slider>();
+            effects0.value=50;yield return null;
+            Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(50));
+            Assert.That(effects1.value,Is.EqualTo(50),"audio volume is shared across local seats");
+            NativeAudioPreferences.SetEffects(priorEffects);
+            Button("pause-audio-0-2").onClick.Invoke();Button("pause-audio-1-2").onClick.Invoke();
+            Button("pause-setting-0-7").onClick.Invoke();Button("pause-setting-1-7").onClick.Invoke();
             Button("pause-action-1-3").onClick.Invoke();
             Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
             Button("pause-exit-no-1").onClick.Invoke();

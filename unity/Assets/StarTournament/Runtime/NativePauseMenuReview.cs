@@ -102,7 +102,7 @@ namespace StarTournament.ProvingGround
                 yield return Capture("04-personal-values");
                 Button("pause-action-1-3").onClick.Invoke();yield return Capture("05-exit-confirmation");
                 Button("pause-exit-no-1").onClick.Invoke();
-                Button("pause-setting-0-6").onClick.Invoke();
+                Button("pause-setting-0-7").onClick.Invoke();
                 Button("pause-action-1-2").onClick.Invoke();yield return Capture("06-repeat-confirmation");
                 Button("pause-repeat-yes-1").onClick.Invoke();yield return null;
                 if(!ground.Running)throw new InvalidOperationException("Confirmed repeat did not start a fresh match");

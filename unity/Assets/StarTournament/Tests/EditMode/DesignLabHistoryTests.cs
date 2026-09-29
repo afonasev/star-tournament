@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).Select(p=>p.BeforeAudio()).ToList();
             if(beforeVignette)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageVignette()).ToList();
             Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(beforeVignette?7:8));
             var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
@@ -31,6 +31,34 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void AudioUpgradePreservesOldRevisionHashAndCustomCombatValues()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeAudio();
+            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(9));
+            var history=new DesignLabHistory(path,old);history.Create("До звука");
+            var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
+        [Test]public void GamepadUpgradePreservesAudioOnlyRevisionHash()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var prior=current.BeforeGamepadLook();
+            Assert.That(prior.Version,Is.EqualTo(9));
+            old.Profiles[old.Profiles.IndexOf(current)]=prior;
+            var history=new DesignLabHistory(path,old);history.Create("Звук до отдельных осей");
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
+            Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.HorizontalPath),Is.EqualTo(180));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
         [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
         {
             var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
@@ -55,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             // The historical v6 registry predates damage-vignette descriptors as well.
-            var profile=current.BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
+            var profile=current.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
             var json=JsonUtility.ToJson(profile);
             // Exact v6 predecessor: remove only the new additive descriptor/value.
             var serialized=JsonUtility.FromJson<LegacyProfile>(json);serialized.version=6;

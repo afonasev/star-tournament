@@ -89,5 +89,35 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.False);
             Assert.That(Focus,Is.EqualTo("settings-display-mode"));
         }
+        [UnityTest] public IEnumerator AudioSettingsPersistAndRemainGamepadNavigable()
+        {
+            const string musicKey="StarTournament.Audio.MusicPercent",effectsKey="StarTournament.Audio.EffectsPercent";
+            bool hadMusic=PlayerPrefs.HasKey(musicKey),hadEffects=PlayerPrefs.HasKey(effectsKey);
+            int oldMusic=PlayerPrefs.GetInt(musicKey),oldEffects=PlayerPrefs.GetInt(effectsKey);
+            try
+            {
+                yield return Load();
+                yield return Press(GamepadButton.DpadDown);
+                yield return Press(GamepadButton.DpadDown);
+                yield return Press(GamepadButton.DpadDown);
+                Assert.That(Focus,Is.EqualTo("settings-section-3"));
+                yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-music"));
+                var musicSlider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-music");
+                musicSlider.value=50;
+                yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-music"));
+                Assert.That(NativeAudioPreferences.Music(ground.Profile),Is.EqualTo(55));
+                yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-effects"));
+                var effectsSlider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-effects");
+                effectsSlider.value=50;
+                yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-effects"));
+                Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(55));
+            }
+            finally
+            {
+                if(hadMusic)PlayerPrefs.SetInt(musicKey,oldMusic);else PlayerPrefs.DeleteKey(musicKey);
+                if(hadEffects)PlayerPrefs.SetInt(effectsKey,oldEffects);else PlayerPrefs.DeleteKey(effectsKey);
+                PlayerPrefs.Save();
+            }
+        }
     }
 }

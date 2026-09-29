@@ -144,6 +144,8 @@ namespace StarTournament.ProvingGround
         Button arenaButton;
 
         Font font;
+        NativeGameAudio gameAudio;
+        GameObject lastAudioSelection;
         FpsDisplay fps;
         string pauseReason = "";
         PlayerProfileCatalog playerProfiles;
@@ -171,7 +173,13 @@ namespace StarTournament.ProvingGround
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
-            AudioListener.volume = 0; // QA is muted, including all Player diagnostics.
+            // Automated reviews are silent. Ordinary Player sessions use the user's effects preference.
+            var soundArgs=Environment.GetCommandLineArgs();
+            bool muteReview=(Application.isEditor||Application.isBatchMode||
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"))||
+                soundArgs.Any(a=>a.EndsWith("Review",StringComparison.Ordinal)||a=="-diagnostic"))&&!soundArgs.Contains("-audioReview");
+            AudioListener.volume=muteReview?0:1;
+            gameAudio=new NativeGameAudio(transform,Profile,muteReview);
             font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             studioLight = Owned("arena-light").AddComponent<Light>();
             studioLight.type = LightType.Directional; studioLight.intensity = Profile.Get("presentation.lightIntensity");
@@ -195,6 +203,7 @@ namespace StarTournament.ProvingGround
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile,cutterProfile:CutterProfile);
+            gameAudio.Bind(Session,Composition);
             CreateArmorPickupVisual();
             CreateSpeedPickupVisual();
             CreateDamagePickupVisual();
@@ -458,6 +467,15 @@ namespace StarTournament.ProvingGround
             UpdateDesignLab();
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
+            UpdateMenuSelectionAudio();
+            gameAudio?.UpdateVolume();
+        }
+        void UpdateMenuSelectionAudio()
+        {
+            var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
+            if(selected==lastAudioSelection)return;
+            if(selected!=null&&lastAudioSelection!=null&&phase!=Phase.Running)gameAudio?.MenuMove();
+            lastAudioSelection=selected;
         }
         void FixedUpdate()
         {
@@ -472,8 +490,10 @@ namespace StarTournament.ProvingGround
                 NavigationReviewDriver?.ProduceActions(actions);
                 BotDriver?.ProduceActions(actions,Time.fixedDeltaTime);
                 Session.Tick(actions, Time.fixedDeltaTime);
+                gameAudio?.Tick(true);
                 if(Session.Match?.Phase==NativeMatchPhase.Finished)
                 {
+                    gameAudio?.StopEffects();
                     phase=Phase.Results; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length);
                     SetCursor(false); RefreshInterface(); Select(repeat.interactable?repeat:menu);
                 }
@@ -645,6 +665,7 @@ namespace StarTournament.ProvingGround
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match,frozenLabReference,frozenCutter);
+            gameAudio?.Bind(Session,Composition);
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
@@ -680,6 +701,7 @@ namespace StarTournament.ProvingGround
             var safeMovement=frozenMovement??previewMovement;var safeLife=frozenLife??previewLife;var safeCombat=frozenCombat??previewCombat;
             RebuildActors(Composition,safeMovement,frozenTrooper??previewTrooper);
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat,cutterProfile:CutterProfile);
+            gameAudio?.Bind(Session,Composition);
             presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile);
             actions=new LocalAction[Composition.ParticipantCount];ApplyLayout(LocalSeatCount);
             setupStep=setupMaxStep=2;
@@ -769,7 +791,7 @@ namespace StarTournament.ProvingGround
         void Pause(string reason) => Pause(reason,-1);
         void Pause(string reason,int seat)
         {
-            BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false);
+            BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); gameAudio?.StopEffects(); Array.Clear(actions,0,actions.Length); SetCursor(false);
             if(UseSeatPauseMenus)
             {
                 OpenSeatPause(seat>=0?seat:DefaultPauseSeat());
@@ -782,7 +804,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void CreateHealPickupVisual()
         {
@@ -1048,7 +1070,12 @@ namespace StarTournament.ProvingGround
         {
             var go=new GameObject(title,typeof(RectTransform),typeof(Image),typeof(Button)); go.transform.SetParent(parent,false);
             go.GetComponent<Image>().color=new Color32(32,75,92,255);
-            var button=go.GetComponent<Button>(); button.onClick.AddListener(action);
+            var button=go.GetComponent<Button>(); button.onClick.AddListener(()=>{if(go.name.Contains("back")||go.name.Contains("cancel")||title.StartsWith("‹"))gameAudio?.MenuBack();else gameAudio?.MenuConfirm();action();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;});
+            var hover=go.AddComponent<EventTrigger>();var enter=new EventTrigger.Entry{eventID=EventTriggerType.PointerEnter};
+            enter.callback.AddListener(_=>{if(!go.name.StartsWith("pause-action-",StringComparison.Ordinal)&&
+                !go.name.StartsWith("pause-setting-",StringComparison.Ordinal)&&!go.name.StartsWith("pause-audio-",StringComparison.Ordinal)&&
+                !go.name.StartsWith("pause-help-",StringComparison.Ordinal)&&!go.name.StartsWith("pause-repeat-",StringComparison.Ordinal)&&
+                !go.name.StartsWith("pause-exit-",StringComparison.Ordinal))gameAudio?.MenuMove();});hover.triggers.Add(enter);
             var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter; return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }

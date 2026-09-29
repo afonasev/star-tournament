@@ -68,7 +68,7 @@ namespace StarTournament.ProvingGround
             ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-3").isOn=true;
             yield return Capture("05-personal-sliders-split-screen");
             Button("pause-setting-0-5").onClick.Invoke();yield return Capture("06-personal-help");
-            Button("pause-help-back-0").onClick.Invoke();Button("pause-setting-0-6").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
+            Button("pause-help-back-0").onClick.Invoke();Button("pause-setting-0-7").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
             if(!ground.Running){Debug.Log("NATIVE_CAMERA_RESUME_VISUAL_FALLBACK_UNFOCUSED");ground.ResumeNativeInputReview();}
             var arena=ground.CameraReviewArena;var transition=arena.ReadNavigationTransitions().First(t=>t.Id.Contains("outer-rise"));
             var feet=transition.OrderedFeet;var delta=feet[feet.Length-1]-feet[0];float yaw=Mathf.Atan2(delta.x,delta.z)*Mathf.Rad2Deg;
@@ -98,7 +98,7 @@ namespace StarTournament.ProvingGround
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return Press(pads[0],GamepadButton.Start);
             if(ground.Running){Debug.Log("NATIVE_CAMERA_PAUSE_INPUT_FALLBACK_UNFOCUSED");ground.OpenPauseReviewSeat(0);}
             Button("pause-action-0-1").onClick.Invoke();var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-3");toggle.isOn=false;
-            Button("pause-setting-0-6").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
+            Button("pause-setting-0-7").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
             if(!ground.Running){Debug.Log("NATIVE_CAMERA_RESUME_VISUAL_FALLBACK_UNFOCUSED");ground.ResumeNativeInputReview();}
             ground.PlaceCombatReviewSeat(0,flat,25,0);yield return new WaitForSecondsRealtime(2);yield return Capture("13-return-disabled");
             if(Mathf.Abs(ground.Session.Pose(0).Pitch-25)>.1f)throw new InvalidOperationException("Disabled assistance changed pitch");
