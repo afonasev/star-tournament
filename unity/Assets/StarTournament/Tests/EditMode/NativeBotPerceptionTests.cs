@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ProfilesAreFrozenAndUseExistingDifficultyMetadata()
         {
             var p = ProvingProfile.CreateBotPerceptionDefault(); var k = Make(profile:p);
-            Assert.That(p.Validate(), Is.Empty); Assert.That(p.Descriptors.Count, Is.EqualTo(7));
+            Assert.That(p.Validate(), Is.Empty); Assert.That(p.Descriptors.Count, Is.EqualTo(10));
             Assert.That(Enumerable.Range(0,3).Select(k.FieldOfView), Is.EqualTo(new[] {110f,130f,150f}));
             p.Set("bots.easy.fieldOfViewDegrees", 180); Assert.That(k.FieldOfView(0), Is.EqualTo(110));
             p.Set("bots.easy.memorySeconds", float.NaN); Assert.Throws<ArgumentException>(() => Make(profile:p));

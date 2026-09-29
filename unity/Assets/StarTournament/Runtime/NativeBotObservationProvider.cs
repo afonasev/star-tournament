@@ -45,7 +45,7 @@ namespace StarTournament.ProvingGround
                     // Horizontal FOV preserves the approved bot contract; vertical LOS still tests slabs.
                     if (Vector3.Angle(forward, horizontal) > knowledge.FieldOfView(observer) * .5f) continue;
                     if (physics.Raycast(origin, delta.normalized, out _, delta.magnitude, 1 << ProvingArena.WorldLayer, QueryTriggerInteraction.Ignore)) continue;
-                    seen.Add(new NativeBotSighting(target, life.Life, feet));
+                    seen.Add(new NativeBotSighting(target, life.Life, feet, life.Health, life.Armor));
                 }
                 frame.Direct = seen.ToArray();
             }

@@ -79,7 +79,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ProfileCopiesAllBehaviorTuningAndDifficultyDefaultsReachWeaponPolicy()
         {
             var profile=ProvingProfile.CreateBotBehaviorDefault(); Assert.That(profile.Validate(), Is.Empty);
-            Assert.That(profile.Descriptors, Has.Count.EqualTo(51));
+            Assert.That(profile.Descriptors, Has.Count.EqualTo(76));
             Assert.That(profile.Descriptors.Any(d=>d.Path.Contains("fieldOfView")||d.Path.Contains("memorySeconds")), Is.False);
             var expected = new[] { new[]{.6f,90f,12f,1.4f}, new[]{.28f,160f,5f,1f}, new[]{.12f,230f,1.5f,.7f} };
             for(int i=0;i<3;i++)

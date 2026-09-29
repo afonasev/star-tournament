@@ -68,6 +68,7 @@ namespace StarTournament.ProvingGround
         public bool HasDamagePickup { get; } public bool HasSpeedPickup { get; }
         public DamageBoostPickupState DamagePickup => damagePickup.Read();
         public double DamageBoostRemaining(int seat)=>damageRemaining[seat];
+        public double SpeedBoostRemaining(int seat)=>speedRemaining[seat];
         uint shotSequence;
         bool stopped;
         public NativeMatchState Match { get; }
@@ -123,6 +124,7 @@ namespace StarTournament.ProvingGround
         public event Action<DeathNotice> Died;
         public event Action<int> Respawned;
         public event Action<int, float> Fired;
+        public event Action<int,string,NativeBotPickupKind> PickupCollected;
         public event Action<ShotNotice> ShotResolved;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null)
@@ -208,21 +210,21 @@ namespace StarTournament.ProvingGround
             {
                 foreach(var item in weaponPickups)
                     if(!Life(i).Dead&&item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor))
-                        item.TryCollect(Pose(i).Position,PickupSupport(Pose(i).Position),lives[i]);
-                foreach(var item in healPickups)if(!Life(i).Dead&&item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor))item.TryCollect(Pose(i).Position,lives[i]);
+                        if(item.TryCollect(Pose(i).Position,PickupSupport(Pose(i).Position),lives[i]))PickupCollected?.Invoke(i,item.Read().InstanceId,NativeBotPickupKind.Weapon);
+                foreach(var item in healPickups)if(!Life(i).Dead&&item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor))if(item.TryCollect(Pose(i).Position,lives[i]))PickupCollected?.Invoke(i,item.Read().InstanceId,NativeBotPickupKind.Heal);
                 bool damageOutside=!damagePickup.InRange(Pose(i).Position);
-                if(HasDamagePickup&&!Life(i).Dead&&damageWasOutside[i]&&!damageOutside&&PickupReach(Pose(i).Position,damagePickup.Read().Anchor)&&damagePickup.TryCollect(Pose(i).Position))damageRemaining[i]=damagePickup.Duration;
+                if(HasDamagePickup&&!Life(i).Dead&&damageWasOutside[i]&&!damageOutside&&PickupReach(Pose(i).Position,damagePickup.Read().Anchor)&&damagePickup.TryCollect(Pose(i).Position)){damageRemaining[i]=damagePickup.Duration;PickupCollected?.Invoke(i,damagePickup.Read().InstanceId,NativeBotPickupKind.Damage);}
                 damageWasOutside[i]=damageOutside;
                 for(int k=0;k<armorPickups.Length;k++)
                 {
                     var item=armorPickups[k];bool outside=!item.InRange(Pose(i).Position);
-                    if(armorPickupWasOutside[k,i]&&!outside&&PickupReach(Pose(i).Position,item.Read().Anchor))item.TryCollect(Pose(i).Position,lives[i]);
+                    if(armorPickupWasOutside[k,i]&&!outside&&PickupReach(Pose(i).Position,item.Read().Anchor))if(item.TryCollect(Pose(i).Position,lives[i]))PickupCollected?.Invoke(i,item.Read().InstanceId,NativeBotPickupKind.Armor);
                     armorPickupWasOutside[k,i]=outside;
                 }
                 for(int k=0;k<speedPickups.Length;k++)
                 {
                     var item=speedPickups[k];bool outside=!item.InRange(Pose(i).Position);
-                    if(HasSpeedPickup&&!Life(i).Dead&&speedPickupWasOutside[k,i]&&!outside&&PickupReach(Pose(i).Position,item.Read().Anchor)&&item.TryCollect(Pose(i).Position)){speedRemaining[i]=item.Duration;motors[i].SetHorizontalSpeedMultiplier(item.Multiplier);}
+                    if(HasSpeedPickup&&!Life(i).Dead&&speedPickupWasOutside[k,i]&&!outside&&PickupReach(Pose(i).Position,item.Read().Anchor)&&item.TryCollect(Pose(i).Position)){PickupCollected?.Invoke(i,item.Read().InstanceId,NativeBotPickupKind.Speed);speedRemaining[i]=item.Duration;motors[i].SetHorizontalSpeedMultiplier(item.Multiplier);}
                     speedPickupWasOutside[k,i]=outside;
                 }
 

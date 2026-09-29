@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1377238137
+--- !u!1 &1520040215
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1377238139}
-  - component: {fileID: 1377238138}
+  - component: {fileID: 1520040217}
+  - component: {fileID: 1520040216}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1377238138
+--- !u!114 &1520040216
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377238137}
+  m_GameObject: {fileID: 1520040215}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -242,8 +242,16 @@ MonoBehaviour:
       DefaultValue: -1.46
     - Path: view.switchShoulderDegrees
       Group: trooper-view
-      Label: "\u041f\u043e\u0434\u044a\u0451\u043c \u0440\u0443\u043a \u043f\u0440\u0438 \u0441\u043c\u0435\u043d\u0435"
-      Description: "\u041f\u0440\u043e\u043c\u0435\u0436\u0443\u0442\u043e\u0447\u043d\u044b\u0439 \u043f\u043e \u0432\u044b\u0441\u043e\u0442\u0435 \u043f\u043e\u0434\u044a\u0451\u043c \u043e\u0442 \u043d\u0435\u043f\u043e\u0434\u0432\u0438\u0436\u043d\u044b\u0445 \u043f\u043b\u0435\u0447 \u043f\u0435\u0440\u0435\u0434 \u043a\u0430\u043c\u0435\u0440\u043e\u0439; \u0432 \u0432\u0435\u0440\u0445\u043d\u0435\u0439 \u043f\u043e\u0437\u0435 \u043e\u0440\u0443\u0436\u0438\u0435 \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f \u0432 \u0440\u0443\u043a\u0430\u0445. \u0412\u0435\u0441\u044c \u0446\u0438\u043a\u043b \u0441\u043b\u0435\u0434\u0443\u0435\u0442 weapon.switchSeconds."
+      Label: "\u041F\u043E\u0434\u044A\u0451\u043C \u0440\u0443\u043A \u043F\u0440\u0438
+        \u0441\u043C\u0435\u043D\u0435"
+      Description: "\u041F\u0440\u043E\u043C\u0435\u0436\u0443\u0442\u043E\u0447\u043D\u044B\u0439
+        \u043F\u043E \u0432\u044B\u0441\u043E\u0442\u0435 \u043F\u043E\u0434\u044A\u0451\u043C
+        \u043E\u0442 \u043D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u0445
+        \u043F\u043B\u0435\u0447 \u043F\u0435\u0440\u0435\u0434 \u043A\u0430\u043C\u0435\u0440\u043E\u0439;
+        \u0432 \u0432\u0435\u0440\u0445\u043D\u0435\u0439 \u043F\u043E\u0437\u0435
+        \u043E\u0440\u0443\u0436\u0438\u0435 \u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u0432 \u0440\u0443\u043A\u0430\u0445. \u0412\u0435\u0441\u044C \u0446\u0438\u043A\u043B
+        \u0441\u043B\u0435\u0434\u0443\u0435\u0442 weapon.switchSeconds."
       Unit: degrees
       Minimum: 0
       Maximum: 75
@@ -251,8 +259,14 @@ MonoBehaviour:
       DefaultValue: 60
     - Path: view.switchElbowDegrees
       Group: trooper-view
-      Label: "\u0421\u0433\u0438\u0431 \u043b\u043e\u043a\u0442\u0435\u0439 \u043f\u0440\u0438 \u0441\u043c\u0435\u043d\u0435"
-      Description: "\u041d\u0435\u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u0441\u0433\u0438\u0431 \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u0438\u0439 \u043f\u0440\u0438 \u0441\u043c\u0435\u043d\u0435; \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d, \u0447\u0442\u043e\u0431\u044b \u043a\u0438\u0441\u0442\u0438 \u043d\u0435 \u043f\u0440\u043e\u0445\u043e\u0434\u0438\u043b\u0438 \u0447\u0435\u0440\u0435\u0437 \u043a\u0430\u043c\u0435\u0440\u0443."
+      Label: "\u0421\u0433\u0438\u0431 \u043B\u043E\u043A\u0442\u0435\u0439 \u043F\u0440\u0438
+        \u0441\u043C\u0435\u043D\u0435"
+      Description: "\u041D\u0435\u0431\u043E\u043B\u044C\u0448\u043E\u0439 \u0441\u0433\u0438\u0431
+        \u043F\u0440\u0435\u0434\u043F\u043B\u0435\u0447\u0438\u0439 \u043F\u0440\u0438
+        \u0441\u043C\u0435\u043D\u0435; \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D,
+        \u0447\u0442\u043E\u0431\u044B \u043A\u0438\u0441\u0442\u0438 \u043D\u0435
+        \u043F\u0440\u043E\u0445\u043E\u0434\u0438\u043B\u0438 \u0447\u0435\u0440\u0435\u0437
+        \u043A\u0430\u043C\u0435\u0440\u0443."
       Unit: degrees
       Minimum: 0
       Maximum: 10
@@ -1760,7 +1774,7 @@ MonoBehaviour:
       Value: 0.35
   LifeProfile:
     id: unity-combat-state-v1
-    version: 5
+    version: 6
     descriptors:
     - Path: combat.maximumHealth
       Group: combat
@@ -1815,6 +1829,64 @@ MonoBehaviour:
       Maximum: 5
       Step: 0.05
       DefaultValue: 1.2
+    - Path: weaponPickup.respawnSeconds
+      Group: weapon-pickup
+      Label: "\u0412\u043E\u0437\u0432\u0440\u0430\u0442 \u043E\u0440\u0443\u0436\u0438\u044F"
+      Description: "\u041D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0435
+        \u0438\u0433\u0440\u043E\u0432\u043E\u0435 \u0432\u0440\u0435\u043C\u044F
+        \u043F\u043E\u0441\u043B\u0435 \u0443\u0441\u043F\u0435\u0448\u043D\u043E\u0433\u043E
+        \u043F\u043E\u0434\u0431\u043E\u0440\u0430."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 120
+      Step: 0.1
+      DefaultValue: 15
+    - Path: weaponPickup.radius
+      Group: weapon-pickup
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043E\u0440\u0443\u0436\u0438\u044F"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u044B\u0439
+        \u043A\u043E\u043D\u0442\u0430\u043A\u0442; support \u0438 \u043F\u0440\u0435\u0433\u0440\u0430\u0434\u044B
+        \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.2
+    - Path: weaponPickup.hoverMeters
+      Group: weapon-pickup
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043C\u043E\u0434\u0435\u043B\u0438"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0446\u0435\u043D\u0442\u0440\u0430
+        \u043F\u0430\u0440\u044F\u0449\u0435\u0433\u043E \u043E\u0440\u0443\u0436\u0438\u044F
+        \u043D\u0430\u0434 anchor \u043F\u043E\u043B\u0430."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.1
+    - Path: weaponPickup.rotationDegreesPerSecond
+      Group: weapon-pickup
+      Label: "\u0412\u0440\u0430\u0449\u0435\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0438"
+      Description: "\u0412\u0440\u0430\u0449\u0435\u043D\u0438\u0435 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0433\u043E
+        \u043E\u0440\u0443\u0436\u0438\u044F \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0432\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u0438 \u0438\u0433\u0440\u043E\u0432\u043E\u0433\u043E
+        \u0432\u0440\u0435\u043C\u0435\u043D\u0438."
+      Unit: degrees/second
+      Minimum: 0
+      Maximum: 360
+      Step: 1
+      DefaultValue: 45
+    - Path: weaponPickup.modelLengthMeters
+      Group: weapon-pickup
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043C\u043E\u0434\u0435\u043B\u0438"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0441\u0442\u043E\u0440\u043E\u043D\u0430 world-\u043C\u043E\u0434\u0435\u043B\u0438
+        \u0434\u043B\u044F \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0441\u0442\u0438
+        \u0438 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0445\u043E\u0434\u0430."
+      Unit: meters
+      Minimum: 0.2
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.4
     - Path: pickup.maximumHeightDifference
       Group: pickups
       Label: "\u0414\u043E\u043F\u0443\u0441\u043A \u0432\u044B\u0441\u043E\u0442\u044B
@@ -2083,6 +2155,16 @@ MonoBehaviour:
       Value: 30
     - Path: armor.pickupRadius
       Value: 1.2
+    - Path: weaponPickup.respawnSeconds
+      Value: 15
+    - Path: weaponPickup.radius
+      Value: 1.2
+    - Path: weaponPickup.hoverMeters
+      Value: 1.1
+    - Path: weaponPickup.rotationDegreesPerSecond
+      Value: 45
+    - Path: weaponPickup.modelLengthMeters
+      Value: 1.4
     - Path: pickup.maximumHeightDifference
       Value: 0.5
     - Path: damageBoost.multiplier
@@ -2737,7 +2819,7 @@ MonoBehaviour:
       Value: 1
   BotPerceptionProfile:
     id: unity-bot-perception-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: bots.easy.fieldOfViewDegrees
       Group: bots
@@ -2752,6 +2834,20 @@ MonoBehaviour:
       Maximum: 180
       Step: 1
       DefaultValue: 110
+    - Path: bots.easy.pickupDelaySeconds
+      Group: bots
+      Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u0417\u043D\u0430\u043D\u0438\u0435
+        \u043F\u043E\u0434\u0431\u043E\u0440\u043E\u0432"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u0433\u043B\u043E\u0431\u0430\u043B\u044C\u043D\u044B\u0445
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0439 \u043F\u043E\u044F\u0432\u043B\u0435\u043D\u0438\u044F
+        \u0438 \u0438\u0441\u0447\u0435\u0437\u043D\u043E\u0432\u0435\u043D\u0438\u044F
+        \u0431\u0435\u0437 \u0441\u0432\u0435\u0434\u0435\u043D\u0438\u0439 \u043E
+        \u0441\u043E\u0431\u0440\u0430\u0432\u0448\u0435\u043C \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0435."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 1.2
     - Path: bots.easy.memorySeconds
       Group: bots
       Label: "\u0421\u0430\u043B\u0430\u0433\u0430 \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
@@ -2776,6 +2872,20 @@ MonoBehaviour:
       Maximum: 180
       Step: 1
       DefaultValue: 130
+    - Path: bots.normal.pickupDelaySeconds
+      Group: bots
+      Label: "\u0411\u043E\u0435\u0446 \xB7 \u0417\u043D\u0430\u043D\u0438\u0435
+        \u043F\u043E\u0434\u0431\u043E\u0440\u043E\u0432"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u0433\u043B\u043E\u0431\u0430\u043B\u044C\u043D\u044B\u0445
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0439 \u043F\u043E\u044F\u0432\u043B\u0435\u043D\u0438\u044F
+        \u0438 \u0438\u0441\u0447\u0435\u0437\u043D\u043E\u0432\u0435\u043D\u0438\u044F
+        \u0431\u0435\u0437 \u0441\u0432\u0435\u0434\u0435\u043D\u0438\u0439 \u043E
+        \u0441\u043E\u0431\u0440\u0430\u0432\u0448\u0435\u043C \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0435."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 0.5
     - Path: bots.normal.memorySeconds
       Group: bots
       Label: "\u0411\u043E\u0435\u0446 \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
@@ -2801,6 +2911,20 @@ MonoBehaviour:
       Maximum: 180
       Step: 1
       DefaultValue: 150
+    - Path: bots.hard.pickupDelaySeconds
+      Group: bots
+      Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u0417\u043D\u0430\u043D\u0438\u0435
+        \u043F\u043E\u0434\u0431\u043E\u0440\u043E\u0432"
+      Description: "\u0417\u0430\u0434\u0435\u0440\u0436\u043A\u0430 \u0433\u043B\u043E\u0431\u0430\u043B\u044C\u043D\u044B\u0445
+        \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0439 \u043F\u043E\u044F\u0432\u043B\u0435\u043D\u0438\u044F
+        \u0438 \u0438\u0441\u0447\u0435\u0437\u043D\u043E\u0432\u0435\u043D\u0438\u044F
+        \u0431\u0435\u0437 \u0441\u0432\u0435\u0434\u0435\u043D\u0438\u0439 \u043E
+        \u0441\u043E\u0431\u0440\u0430\u0432\u0448\u0435\u043C \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0435."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 0.15
     - Path: bots.hard.memorySeconds
       Group: bots
       Label: "\u0412\u0435\u0442\u0435\u0440\u0430\u043D \xB7 \u041F\u0430\u043C\u044F\u0442\u044C"
@@ -2827,14 +2951,20 @@ MonoBehaviour:
     values:
     - Path: bots.easy.fieldOfViewDegrees
       Value: 110
+    - Path: bots.easy.pickupDelaySeconds
+      Value: 1.2
     - Path: bots.easy.memorySeconds
       Value: 2
     - Path: bots.normal.fieldOfViewDegrees
       Value: 130
+    - Path: bots.normal.pickupDelaySeconds
+      Value: 0.5
     - Path: bots.normal.memorySeconds
       Value: 4
     - Path: bots.hard.fieldOfViewDegrees
       Value: 150
+    - Path: bots.hard.pickupDelaySeconds
+      Value: 0.15
     - Path: bots.hard.memorySeconds
       Value: 6
     - Path: bots.cooperation.communicationSeconds
@@ -2967,7 +3097,7 @@ MonoBehaviour:
       Value: 1
   BotBehaviorProfile:
     id: unity-bot-behavior-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: bots.easy.reactionSeconds
       Group: bots
@@ -3538,6 +3668,282 @@ MonoBehaviour:
       Maximum: 8
       Step: 0.1
       DefaultValue: 3
+    - Path: bots.strategy.healUrgency
+      Group: bot-behavior
+      Label: "\u0421\u0440\u043E\u0447\u043D\u043E\u0441\u0442\u044C \u043B\u0435\u0447\u0435\u043D\u0438\u044F"
+      Description: "\u0412\u0435\u0441 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F
+        \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 2
+    - Path: bots.strategy.intentHoldSeconds
+      Group: bot-behavior
+      Label: "\u0423\u0441\u0442\u043E\u0439\u0447\u0438\u0432\u043E\u0441\u0442\u044C
+        \u0446\u0435\u043B\u0438"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043F\u043E\u043B\u0435\u0437\u043D\u043E\u0439
+        pickup \u0446\u0435\u043B\u0438 \u0434\u043E \u043E\u0431\u044B\u0447\u043D\u043E\u0433\u043E
+        \u043F\u0435\u0440\u0435\u0441\u043C\u043E\u0442\u0440\u0430."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 0.8
+    - Path: bots.strategy.pickupRetrySeconds
+      Group: bot-behavior
+      Label: "\u041F\u043E\u0432\u0442\u043E\u0440 \u043F\u0443\u0442\u0438"
+      Description: "\u041F\u0430\u0443\u0437\u0430 \u043F\u0435\u0440\u0435\u0434
+        \u043F\u043E\u0432\u0442\u043E\u0440\u043E\u043C \u043D\u0435\u0434\u043E\u0441\u0442\u0438\u0436\u0438\u043C\u043E\u0433\u043E
+        pickup."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 60
+      Step: 1
+      DefaultValue: 12
+    - Path: bots.strategy.pickupTimeoutSeconds
+      Group: bot-behavior
+      Label: "\u0412\u0440\u0435\u043C\u044F \u0437\u0430\u0434\u0430\u0447\u0438"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u0432\u0440\u0435\u043C\u044F \u043F\u043E\u0434\u0445\u043E\u0434\u0430
+        \u043A pickup \u043F\u0435\u0440\u0435\u0434 \u043E\u0442\u043A\u0430\u0437\u043E\u043C."
+      Unit: seconds
+      Minimum: 2
+      Maximum: 60
+      Step: 1
+      DefaultValue: 20
+    - Path: bots.strategy.routeCostPerMeter
+      Group: bot-behavior
+      Label: "\u0426\u0435\u043D\u0430 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430"
+      Description: "\u0421\u043D\u0438\u0436\u0435\u043D\u0438\u0435 utility \u0437\u0430
+        \u043C\u0435\u0442\u0440 \u0444\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E
+        \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430."
+      Unit: utility/m
+      Minimum: 0.01
+      Maximum: 10
+      Step: 0.01
+      DefaultValue: 0.6
+    - Path: bots.strategy.pickupBaseUtility
+      Group: bot-behavior
+      Label: "\u0421\u0431\u043E\u0440 \u0431\u043E\u043D\u0443\u0441\u0430"
+      Description: "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u0432\u0435\u0441
+        \u043F\u043E\u043B\u0435\u0437\u043D\u043E\u0433\u043E pickup."
+      Unit: utility
+      Minimum: 1
+      Maximum: 500
+      Step: 1
+      DefaultValue: 100
+    - Path: bots.strategy.combatUtility
+      Group: bot-behavior
+      Label: "\u0412\u0435\u0441 \u0431\u043E\u044F"
+      Description: "\u0421\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C \u0443\u0445\u043E\u0434\u0430
+        \u0438\u0437 \u0432\u0438\u0434\u0438\u043C\u043E\u0433\u043E \u0431\u043E\u044F
+        \u0440\u0430\u0434\u0438 pickup."
+      Unit: utility
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 75
+    - Path: bots.strategy.riskRadiusMeters
+      Group: bot-behavior
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0443\u0433\u0440\u043E\u0437\u044B"
+      Description: "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435
+        \u043E\u0442 \u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0433\u043E
+        \u0432\u0440\u0430\u0433\u0430 \u0434\u043E pickup \u0434\u043B\u044F \u0448\u0442\u0440\u0430\u0444\u0430
+        \u0440\u0438\u0441\u043A\u0430."
+      Unit: meters
+      Minimum: 1
+      Maximum: 50
+      Step: 0.5
+      DefaultValue: 12
+    - Path: bots.strategy.riskWeight
+      Group: bot-behavior
+      Label: "\u0428\u0442\u0440\u0430\u0444 \u0443\u0433\u0440\u043E\u0437\u044B"
+      Description: "\u0428\u0442\u0440\u0430\u0444 \u043E\u043F\u0430\u0441\u043D\u043E\u0433\u043E
+        \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430 \u043E\u0442 \u0434\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0439
+        \u043F\u0430\u043C\u044F\u0442\u0438."
+      Unit: utility
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 70
+    - Path: bots.strategy.vulnerableWeight
+      Group: bot-behavior
+      Label: "\u0423\u044F\u0437\u0432\u0438\u043C\u043E\u0441\u0442\u044C"
+      Description: "\u0423\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u0435
+        \u0441\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u0438 \u0432\u044B\u0431\u043E\u0440\u0430
+        \u0443\u044F\u0437\u0432\u0438\u043C\u043E\u0439 \u0446\u0435\u043B\u0438."
+      Unit: meters
+      Minimum: 0
+      Maximum: 100
+      Step: 0.5
+      DefaultValue: 15
+    - Path: bots.strategy.strongerRatio
+      Group: bot-behavior
+      Label: "\u041A\u0440\u0435\u043F\u043A\u0438\u0439 \u043F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A"
+      Description: "\u041E\u0442\u043D\u043E\u0448\u0435\u043D\u0438\u0435 \u0436\u0438\u0432\u0443\u0447\u0435\u0441\u0442\u0438
+        \u0434\u043B\u044F \u043E\u0442\u0445\u043E\u0434\u0430."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 1.6
+    - Path: bots.strategy.weaponHoldSeconds
+      Group: bot-behavior
+      Label: "\u0423\u0434\u0435\u0440\u0436\u0430\u043D\u0438\u0435 \u043E\u0440\u0443\u0436\u0438\u044F"
+      Description: "\u041F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443
+        \u043E\u0431\u044B\u0447\u043D\u044B\u043C\u0438 \u0441\u043C\u0435\u043D\u0430\u043C\u0438
+        \u043F\u043E\u0434\u0445\u043E\u0434\u044F\u0449\u0435\u0433\u043E \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 5
+      Step: 0.05
+      DefaultValue: 0.7
+    - Path: bots.strategy.weaponHysteresis
+      Group: bot-behavior
+      Label: "\u041F\u043E\u0440\u043E\u0433 \u0441\u043C\u0435\u043D\u044B"
+      Description: "\u041F\u0440\u0435\u0438\u043C\u0443\u0449\u0435\u0441\u0442\u0432\u043E
+        \u0430\u043B\u044C\u0442\u0435\u0440\u043D\u0430\u0442\u0438\u0432\u043D\u043E\u0433\u043E
+        \u043E\u0440\u0443\u0436\u0438\u044F \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.15
+    - Path: bots.strategy.switchPenalty
+      Group: bot-behavior
+      Label: "\u0426\u0435\u043D\u0430 \u0441\u043C\u0435\u043D\u044B"
+      Description: "\u0428\u0442\u0440\u0430\u0444 utility \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F
+        \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.15
+    - Path: bots.strategy.rocketCloseMeters
+      Group: bot-behavior
+      Label: "\u0411\u043B\u0438\u0437\u043A\u0438\u0439 Pulse"
+      Description: "\u0412\u0435\u0440\u0445\u043D\u044F\u044F \u0433\u0440\u0430\u043D\u0438\u0446\u0430
+        \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0433\u043E \u043F\u0440\u0438\u0446\u0435\u043B\u0430
+        \u0432 \u043A\u043E\u0440\u043F\u0443\u0441."
+      Unit: meters
+      Minimum: 1
+      Maximum: 30
+      Step: 0.5
+      DefaultValue: 10
+    - Path: bots.strategy.rocketLeadSeconds
+      Group: bot-behavior
+      Label: "\u041F\u0440\u0435\u0434\u0435\u043B \u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u044B\u0439
+        \u043F\u0440\u043E\u0433\u043D\u043E\u0437 \u0442\u043E\u043B\u044C\u043A\u043E
+        \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0435\u043C\u043E\u0433\u043E
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1
+    - Path: bots.strategy.surfaceProbeMeters
+      Group: bot-behavior
+      Label: "\u041F\u043E\u0438\u0441\u043A \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0432\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043F\u0440\u043E\u0431\u0430 \u043F\u043E\u0434 \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0435\u043C\u044B\u043C\u0438
+        \u043D\u043E\u0433\u0430\u043C\u0438."
+      Unit: meters
+      Minimum: 0.1
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 2
+    - Path: bots.strategy.impactToleranceMeters
+      Group: bot-behavior
+      Label: "\u0414\u043E\u043F\u0443\u0441\u043A \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u043A \u043F\u0435\u0440\u0432\u043E\u0433\u043E
+        \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430 \u043E\u043A\u043E\u043B\u043E
+        \u043F\u0440\u0435\u0434\u043F\u043E\u043B\u0430\u0433\u0430\u0435\u043C\u043E\u0439
+        \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: bots.strategy.bodySafetyMargin
+      Group: bot-behavior
+      Label: "\u0417\u0430\u043F\u0430\u0441 \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430"
+      Description: "\u0420\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0435
+        self/allied splash \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438."
+      Unit: meters
+      Minimum: 0
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: bots.strategy.lowAmmoRatio
+      Group: bot-behavior
+      Label: Refill
+      Description: "\u0414\u043E\u043B\u044F \u043E\u0441\u0442\u0430\u0432\u0448\u0435\u0433\u043E\u0441\u044F
+        \u0437\u0430\u043F\u0430\u0441\u0430 \u0434\u043B\u044F \u043F\u043E\u043B\u0435\u0437\u043D\u043E\u0433\u043E
+        refill."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.55
+    - Path: bots.strategy.allyNeedWeight
+      Group: bot-behavior
+      Label: "\u041F\u043E\u0442\u0440\u0435\u0431\u043D\u043E\u0441\u0442\u044C
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0430"
+      Description: "\u0423\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u0435
+        utility \u0431\u043E\u043D\u0443\u0441\u0430 \u0434\u043B\u044F \u0431\u043E\u043B\u0435\u0435
+        \u043D\u0443\u0436\u0434\u0430\u044E\u0449\u0435\u0433\u043E\u0441\u044F
+        \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.8
+    - Path: bots.strategy.weaponHorizonSeconds
+      Group: bot-behavior
+      Label: "\u041E\u043A\u043D\u043E \u0430\u0442\u0430\u043A\u0438"
+      Description: "\u0412\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0435 \u043E\u043A\u043D\u043E
+        \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u044F burst \u0438 \u043D\u0435\u043F\u0440\u0435\u0440\u044B\u0432\u043D\u043E\u0433\u043E
+        \u043E\u0433\u043D\u044F."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.25
+    - Path: bots.easy.leadQuality
+      Group: bot-behavior
+      Label: "easy \xB7 \u0423\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u0414\u043E\u043B\u044F \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0435\u043C\u043E\u0439
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u0434\u043B\u044F \u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: bots.normal.leadQuality
+      Group: bot-behavior
+      Label: "normal \xB7 \u0423\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u0414\u043E\u043B\u044F \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0435\u043C\u043E\u0439
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u0434\u043B\u044F \u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.7
+    - Path: bots.hard.leadQuality
+      Group: bot-behavior
+      Label: "hard \xB7 \u0423\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u0435"
+      Description: "\u0414\u043E\u043B\u044F \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0435\u043C\u043E\u0439
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u0434\u043B\u044F \u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 1
     values:
     - Path: bots.easy.reactionSeconds
       Value: 0.6
@@ -3641,6 +4047,421 @@ MonoBehaviour:
       Value: 128
     - Path: bots.tactics.coverDistance
       Value: 3
+    - Path: bots.strategy.healUrgency
+      Value: 2
+    - Path: bots.strategy.intentHoldSeconds
+      Value: 0.8
+    - Path: bots.strategy.pickupRetrySeconds
+      Value: 12
+    - Path: bots.strategy.pickupTimeoutSeconds
+      Value: 20
+    - Path: bots.strategy.routeCostPerMeter
+      Value: 0.6
+    - Path: bots.strategy.pickupBaseUtility
+      Value: 100
+    - Path: bots.strategy.combatUtility
+      Value: 75
+    - Path: bots.strategy.riskRadiusMeters
+      Value: 12
+    - Path: bots.strategy.riskWeight
+      Value: 70
+    - Path: bots.strategy.vulnerableWeight
+      Value: 15
+    - Path: bots.strategy.strongerRatio
+      Value: 1.6
+    - Path: bots.strategy.weaponHoldSeconds
+      Value: 0.7
+    - Path: bots.strategy.weaponHysteresis
+      Value: 1.15
+    - Path: bots.strategy.switchPenalty
+      Value: 0.15
+    - Path: bots.strategy.rocketCloseMeters
+      Value: 10
+    - Path: bots.strategy.rocketLeadSeconds
+      Value: 1
+    - Path: bots.strategy.surfaceProbeMeters
+      Value: 2
+    - Path: bots.strategy.impactToleranceMeters
+      Value: 0.35
+    - Path: bots.strategy.bodySafetyMargin
+      Value: 0.5
+    - Path: bots.strategy.lowAmmoRatio
+      Value: 0.55
+    - Path: bots.strategy.allyNeedWeight
+      Value: 0.8
+    - Path: bots.strategy.weaponHorizonSeconds
+      Value: 0.25
+    - Path: bots.easy.leadQuality
+      Value: 0.35
+    - Path: bots.normal.leadQuality
+      Value: 0.7
+    - Path: bots.hard.leadQuality
+      Value: 1
+  ParticipantPaletteProfile:
+    id: unity-participant-presentation-v1
+    version: 1
+    descriptors:
+    - Path: participant.color.blue.r
+      Group: participant-colors
+      Label: "\u0421\u0438\u043D\u0438\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 69
+    - Path: participant.color.blue.g
+      Group: participant-colors
+      Label: "\u0421\u0438\u043D\u0438\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 158
+    - Path: participant.color.blue.b
+      Group: participant-colors
+      Label: "\u0421\u0438\u043D\u0438\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    - Path: participant.color.magenta.r
+      Group: participant-colors
+      Label: "\u041C\u0430\u0434\u0436\u0435\u043D\u0442\u0430 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 238
+    - Path: participant.color.magenta.g
+      Group: participant-colors
+      Label: "\u041C\u0430\u0434\u0436\u0435\u043D\u0442\u0430 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 107
+    - Path: participant.color.magenta.b
+      Group: participant-colors
+      Label: "\u041C\u0430\u0434\u0436\u0435\u043D\u0442\u0430 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    - Path: participant.color.yellow.r
+      Group: participant-colors
+      Label: "\u0416\u0451\u043B\u0442\u044B\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    - Path: participant.color.yellow.g
+      Group: participant-colors
+      Label: "\u0416\u0451\u043B\u0442\u044B\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 230
+    - Path: participant.color.yellow.b
+      Group: participant-colors
+      Label: "\u0416\u0451\u043B\u0442\u044B\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 65
+    - Path: participant.color.orange.r
+      Group: participant-colors
+      Label: "\u041E\u0440\u0430\u043D\u0436\u0435\u0432\u044B\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    - Path: participant.color.orange.g
+      Group: participant-colors
+      Label: "\u041E\u0440\u0430\u043D\u0436\u0435\u0432\u044B\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 173
+    - Path: participant.color.orange.b
+      Group: participant-colors
+      Label: "\u041E\u0440\u0430\u043D\u0436\u0435\u0432\u044B\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 53
+    - Path: participant.color.cyan.r
+      Group: participant-colors
+      Label: "\u0413\u043E\u043B\u0443\u0431\u043E\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 56
+    - Path: participant.color.cyan.g
+      Group: participant-colors
+      Label: "\u0413\u043E\u043B\u0443\u0431\u043E\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 213
+    - Path: participant.color.cyan.b
+      Group: participant-colors
+      Label: "\u0413\u043E\u043B\u0443\u0431\u043E\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    - Path: participant.color.green.r
+      Group: participant-colors
+      Label: "\u0417\u0435\u043B\u0451\u043D\u044B\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 64
+    - Path: participant.color.green.g
+      Group: participant-colors
+      Label: "\u0417\u0435\u043B\u0451\u043D\u044B\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 232
+    - Path: participant.color.green.b
+      Group: participant-colors
+      Label: "\u0417\u0435\u043B\u0451\u043D\u044B\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 120
+    - Path: participant.color.red.r
+      Group: participant-colors
+      Label: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    - Path: participant.color.red.g
+      Group: participant-colors
+      Label: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 86
+    - Path: participant.color.red.b
+      Group: participant-colors
+      Label: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 86
+    - Path: participant.color.white.r
+      Group: participant-colors
+      Label: "\u0411\u0435\u043B\u044B\u0439 \xB7 R"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 244
+    - Path: participant.color.white.g
+      Group: participant-colors
+      Label: "\u0411\u0435\u043B\u044B\u0439 \xB7 G"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 247
+    - Path: participant.color.white.b
+      Group: participant-colors
+      Label: "\u0411\u0435\u043B\u044B\u0439 \xB7 B"
+      Description: "\u041A\u0430\u043D\u0430\u043B \u0446\u0432\u0435\u0442\u0430
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430; \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u043F\u0440\u0438 \u043D\u043E\u0432\u043E\u043C \u043C\u0430\u0442\u0447\u0435.
+        Frozen composition \u0438 Repeat \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u0440\u0435\u0436\u043D\u0438\u0439 \u0446\u0432\u0435\u0442."
+      Unit: 8-bit channel
+      Minimum: 0
+      Maximum: 255
+      Step: 1
+      DefaultValue: 255
+    values:
+    - Path: participant.color.blue.r
+      Value: 69
+    - Path: participant.color.blue.g
+      Value: 158
+    - Path: participant.color.blue.b
+      Value: 255
+    - Path: participant.color.magenta.r
+      Value: 238
+    - Path: participant.color.magenta.g
+      Value: 107
+    - Path: participant.color.magenta.b
+      Value: 255
+    - Path: participant.color.yellow.r
+      Value: 255
+    - Path: participant.color.yellow.g
+      Value: 230
+    - Path: participant.color.yellow.b
+      Value: 65
+    - Path: participant.color.orange.r
+      Value: 255
+    - Path: participant.color.orange.g
+      Value: 173
+    - Path: participant.color.orange.b
+      Value: 53
+    - Path: participant.color.cyan.r
+      Value: 56
+    - Path: participant.color.cyan.g
+      Value: 213
+    - Path: participant.color.cyan.b
+      Value: 255
+    - Path: participant.color.green.r
+      Value: 64
+    - Path: participant.color.green.g
+      Value: 232
+    - Path: participant.color.green.b
+      Value: 120
+    - Path: participant.color.red.r
+      Value: 255
+    - Path: participant.color.red.g
+      Value: 86
+    - Path: participant.color.red.b
+      Value: 86
+    - Path: participant.color.white.r
+      Value: 244
+    - Path: participant.color.white.g
+      Value: 247
+    - Path: participant.color.white.b
+      Value: 255
   RosterProfile:
     id: unity-native-roster-v1
     version: 1
@@ -7692,7 +8513,7 @@ MonoBehaviour:
       Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
-    version: 9
+    version: 10
     descriptors:
     - Path: foundation-north.position.x
       Group: geometry
@@ -48344,6 +49165,186 @@ MonoBehaviour:
       Maximum: 100
       Step: 0.01
       DefaultValue: -28
+    - Path: shotgun-west.anchor.x
+      Group: bonuses
+      Label: shotgun-west.anchor / x
+      Description: Authored R7 shotgun-west.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -33
+    - Path: shotgun-west.anchor.y
+      Group: bonuses
+      Label: shotgun-west.anchor / y
+      Description: Authored R7 shotgun-west.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: shotgun-west.anchor.z
+      Group: bonuses
+      Label: shotgun-west.anchor / z
+      Description: Authored R7 shotgun-west.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: shotgun-east.anchor.x
+      Group: bonuses
+      Label: shotgun-east.anchor / x
+      Description: Authored R7 shotgun-east.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 33
+    - Path: shotgun-east.anchor.y
+      Group: bonuses
+      Label: shotgun-east.anchor / y
+      Description: Authored R7 shotgun-east.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: shotgun-east.anchor.z
+      Group: bonuses
+      Label: shotgun-east.anchor / z
+      Description: Authored R7 shotgun-east.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: pulse-north.anchor.x
+      Group: bonuses
+      Label: pulse-north.anchor / x
+      Description: Authored R7 pulse-north.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 12
+    - Path: pulse-north.anchor.y
+      Group: bonuses
+      Label: pulse-north.anchor / y
+      Description: Authored R7 pulse-north.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4
+    - Path: pulse-north.anchor.z
+      Group: bonuses
+      Label: pulse-north.anchor / z
+      Description: Authored R7 pulse-north.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 21
+    - Path: pulse-south.anchor.x
+      Group: bonuses
+      Label: pulse-south.anchor / x
+      Description: Authored R7 pulse-south.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -12
+    - Path: pulse-south.anchor.y
+      Group: bonuses
+      Label: pulse-south.anchor / y
+      Description: Authored R7 pulse-south.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4
+    - Path: pulse-south.anchor.z
+      Group: bonuses
+      Label: pulse-south.anchor / z
+      Description: Authored R7 pulse-south.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -21
+    - Path: cutter-north.anchor.x
+      Group: bonuses
+      Label: cutter-north.anchor / x
+      Description: Authored R7 cutter-north.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -8
+    - Path: cutter-north.anchor.y
+      Group: bonuses
+      Label: cutter-north.anchor / y
+      Description: Authored R7 cutter-north.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: cutter-north.anchor.z
+      Group: bonuses
+      Label: cutter-north.anchor / z
+      Description: Authored R7 cutter-north.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 28
+    - Path: cutter-south.anchor.x
+      Group: bonuses
+      Label: cutter-south.anchor / x
+      Description: Authored R7 cutter-south.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 8
+    - Path: cutter-south.anchor.y
+      Group: bonuses
+      Label: cutter-south.anchor / y
+      Description: Authored R7 cutter-south.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: cutter-south.anchor.z
+      Group: bonuses
+      Label: cutter-south.anchor / z
+      Description: Authored R7 cutter-south.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -28
     - Path: damage-hall.anchor.x
       Group: bonuses
       Label: damage-hall.anchor / x
@@ -56505,19 +57506,55 @@ MonoBehaviour:
       Value: 4
     - Path: speed-se.anchor.z
       Value: -28
+    - Path: shotgun-west.anchor.x
+      Value: -33
+    - Path: shotgun-west.anchor.y
+      Value: 0
+    - Path: shotgun-west.anchor.z
+      Value: 0
+    - Path: shotgun-east.anchor.x
+      Value: 33
+    - Path: shotgun-east.anchor.y
+      Value: 0
+    - Path: shotgun-east.anchor.z
+      Value: 0
+    - Path: pulse-north.anchor.x
+      Value: 12
+    - Path: pulse-north.anchor.y
+      Value: 4
+    - Path: pulse-north.anchor.z
+      Value: 21
+    - Path: pulse-south.anchor.x
+      Value: -12
+    - Path: pulse-south.anchor.y
+      Value: 4
+    - Path: pulse-south.anchor.z
+      Value: -21
+    - Path: cutter-north.anchor.x
+      Value: -8
+    - Path: cutter-north.anchor.y
+      Value: 0
+    - Path: cutter-north.anchor.z
+      Value: 28
+    - Path: cutter-south.anchor.x
+      Value: 8
+    - Path: cutter-south.anchor.y
+      Value: 0
+    - Path: cutter-south.anchor.z
+      Value: -28
     - Path: damage-hall.anchor.x
       Value: 0
     - Path: damage-hall.anchor.y
       Value: 4
     - Path: damage-hall.anchor.z
       Value: 0
---- !u!4 &1377238139
+--- !u!4 &1520040217
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377238137}
+  m_GameObject: {fileID: 1520040215}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -56530,4 +57567,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1377238139}
+  - {fileID: 1520040217}

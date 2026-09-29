@@ -11,9 +11,13 @@ namespace StarTournament.ProvingGround
     [Serializable] public struct NativeBotSighting
     {
         public int Participant, Life;
-        public Vector3 Position;
+        public Vector3 Position, Velocity;
+        public float Health, Armor;
+        public bool HasVitals;
         public NativeBotSighting(int participant, int life, Vector3 position)
-        { Participant = participant; Life = life; Position = position; }
+        { Participant = participant; Life = life; Position = position; Velocity=Vector3.zero; Health=Armor=0; HasVitals=false; }
+        public NativeBotSighting(int participant,int life,Vector3 position,float health,float armor):this(participant,life,position)
+        {Health=health;Armor=armor;HasVitals=true;}
     }
     public sealed class NativeBotObservationFrame
     {
@@ -42,7 +46,7 @@ namespace StarTournament.ProvingGround
     }
     [Serializable] public sealed class NativeBotPerceptionSnapshot
     {
-        public int Version = 1;
+        public int Version = 2;
         public string Configuration;
         public double Time = -1;
         public NativeBotKnowledge[] Observers;
@@ -70,7 +74,7 @@ namespace StarTournament.ProvingGround
             this.roster = roster ?? throw new ArgumentNullException(nameof(roster));
             if (difficulties == null || difficulties.Length != Count || difficulties.Any(d => !Enum.IsDefined(typeof(NativeBotDifficulty), d)))
                 throw new ArgumentException("Invalid observer difficulties");
-            if (profile == null || profile.Id != "unity-bot-perception-v1" || profile.Version != 1 || profile.Validate().Count != 0)
+            if (profile == null || profile.Id != "unity-bot-perception-v1" || profile.Version != 2 || profile.Validate().Count != 0)
                 throw new ArgumentException("Invalid perception profile");
             var canonical = ProvingProfile.CreateBotPerceptionDefault();
             // Metadata cannot be widened to smuggle invalid runtime tuning through a restored profile.
@@ -128,7 +132,7 @@ namespace StarTournament.ProvingGround
                         if (!roster.AreAllies(source, receiver) || !observers[receiver].Alive) continue;
                         if (pending.Any(p => p.Receiver == receiver && p.Source == source && p.Sighting.Participant == sighting.Participant)) continue;
                         pending.Add(new NativeBotPendingReport { Receiver = receiver, ReceiverLife = observers[receiver].OwnLife,
-                            Source = source, Sighting = sighting, ObservedAt = time, DeliverAt = time + delay });
+                            Source = source, Sighting = observers[source].Enemies.Single(e=>e.Sighting.Participant==sighting.Participant).Sighting, ObservedAt = time, DeliverAt = time + delay });
                     }
                 }
             }
@@ -139,20 +143,23 @@ namespace StarTournament.ProvingGround
             var list = observers[receiver].Enemies.ToList();
             int index = list.FindIndex(e => e.Sighting.Participant == sighting.Participant);
             if (index >= 0 && (list[index].ObservedAt > observed || (list[index].ObservedAt == observed && !visible))) return;
+            // Estimate movement only between dated direct observations of the same life.
+            if(visible && index>=0 && list[index].Sighting.Life==sighting.Life && source==receiver && list[index].Source==receiver && observed>list[index].ObservedAt)
+                sighting.Velocity=(sighting.Position-list[index].Sighting.Position)/(float)(observed-list[index].ObservedAt);
             var entry = new NativeBotMemoryEntry { Sighting = sighting, ObservedAt = observed, Source = source, Visible = visible };
             if (index < 0) list.Add(entry); else list[index] = entry;
             observers[receiver].Enemies = list.OrderBy(e => e.Sighting.Participant).ToArray();
         }
         bool ValidSighting(int observer, NativeBotSighting s) => s.Participant >= 0 && s.Participant < Count && s.Participant != observer &&
-            !roster.AreAllies(observer, s.Participant) && s.Life > 0 && Finite(s.Position.x) && Finite(s.Position.y) && Finite(s.Position.z);
+            !roster.AreAllies(observer, s.Participant) && s.Life > 0 && Finite(s.Position.x) && Finite(s.Position.y) && Finite(s.Position.z) && Finite(s.Velocity.x) && Finite(s.Velocity.y) && Finite(s.Velocity.z) && Finite(s.Health) && Finite(s.Armor) && s.Health>=0 && s.Armor>=0;
         static bool Finite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
         bool ValidSource(int receiver, int source) => source >= 0 && source < Count && (source == receiver || roster.AreAllies(receiver, source));
         public NativeBotPerceptionSnapshot Capture() => new NativeBotPerceptionSnapshot
         { Configuration = configuration, Time = Time, Observers = observers.Select(Copy).ToArray(), Pending = pending.ToArray() };
 
-        public void Restore(NativeBotPerceptionSnapshot snapshot)
+        public void ValidateSnapshot(NativeBotPerceptionSnapshot snapshot)
         {
-            if (snapshot == null || snapshot.Version != 1 || snapshot.Configuration != configuration || !Finite(snapshot.Time) ||
+            if (snapshot == null || snapshot.Version != 2 || snapshot.Configuration != configuration || !Finite(snapshot.Time) ||
                 (snapshot.Time < 0 && snapshot.Time != -1) || snapshot.Observers == null || snapshot.Observers.Length != Count || snapshot.Pending == null)
                 throw new ArgumentException("Invalid perception snapshot identity");
             for (int i = 0; i < Count; i++)
@@ -177,6 +184,10 @@ namespace StarTournament.ProvingGround
             }
             if (snapshot.Time < 0 && (snapshot.Pending.Length != 0 || snapshot.Observers.Any(o => o.Alive || o.OwnLife != 0 || o.Enemies.Length != 0)))
                 throw new ArgumentException("Invalid initial snapshot");
+        }
+        public void Restore(NativeBotPerceptionSnapshot snapshot)
+        {
+            ValidateSnapshot(snapshot);
             Time = snapshot.Time; observers = snapshot.Observers.Select(Copy).ToArray(); pending.Clear(); pending.AddRange(snapshot.Pending);
         }
     }
