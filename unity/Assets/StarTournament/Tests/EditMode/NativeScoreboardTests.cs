@@ -46,6 +46,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var p=ProvingProfile.CreateMatchDefault();var s=Make(false,false,p);p.Set("score.friendlyOrSelfKillPenalty",600);
             s.BeginTick();Hit(s,3,2,25);Hit(s,1,0,100,true);Hit(s,0,0,100,true);s.EndTick();
             var snapshot=JsonUtility.FromJson<NativeMatchSnapshot>(JsonUtility.ToJson(s.Read()));var restored=Make(false);restored.Restore(snapshot);
+            Assert.That(restored.Phase,Is.EqualTo(NativeMatchPhase.Running));Assert.That(restored.Read().Trigger,Is.Null);
             var mismatched=Make(false,false,p);Assert.Throws<ArgumentException>(()=>mismatched.Restore(snapshot));
             restored.BeginTick();Hit(restored,3,1,75,true);restored.EndTick();Assert.That(Row(restored,2).Assists,Is.EqualTo(1));Assert.That(Row(restored,0).AccumulatedPenalty,Is.EqualTo(200));
             for(int guard=0;guard<60&&restored.Read().Tick<60;guard++){restored.BeginTick();restored.EndTick();}

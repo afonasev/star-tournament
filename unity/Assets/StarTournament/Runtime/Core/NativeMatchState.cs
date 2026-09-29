@@ -175,7 +175,8 @@ namespace StarTournament.ProvingGround
         public void Restore(NativeMatchSnapshot snapshot)
         {
             ValidateSnapshot(snapshot);
-            tick=snapshot.Tick;Phase=snapshot.Phase;trigger=snapshot.Trigger;winner=snapshot.Winner;winnerTeam=snapshot.WinnerTeam;
+            // JsonUtility round-trips a null string as empty; both mean no finish trigger.
+            tick=snapshot.Tick;Phase=snapshot.Phase;trigger=string.IsNullOrEmpty(snapshot.Trigger)?null:snapshot.Trigger;winner=snapshot.Winner;winnerTeam=snapshot.WinnerTeam;
             enteredOvertime=snapshot.RemainingTicks==0 && trigger!=null;
             foreach(var row in snapshot.Standings)rows[row.Seat]=row;
             Array.Copy(snapshot.KillChains,chains,rows.Length);Array.Copy(snapshot.ChainAwards,chainAwards,rows.Length);
