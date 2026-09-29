@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 8;
+        public const int DefaultVersion = 9;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -89,7 +89,7 @@ namespace StarTournament.ProvingGround
         {
             if(id!=DefaultId||Descriptor(GamepadLookSettings.HorizontalPath)==null)return this;
             var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
-            if(old.version==8)old.version=7;
+            if(old.version==9)old.version=8;else if(old.version==8)old.version=7;
             bool NewLookPath(string path)=>path==GamepadLookSettings.HorizontalPath||path==GamepadLookSettings.VerticalPath||path.StartsWith("input.gamepadReturn",StringComparison.Ordinal);
             old.descriptors.RemoveAll(d=>NewLookPath(d.Path));old.values.RemoveAll(v=>NewLookPath(v.Path));return old;
         }
@@ -101,7 +101,7 @@ namespace StarTournament.ProvingGround
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
-            if(copy.version==8)copy.version=7;
+            if(copy.version==9)copy.version=8;else if(copy.version==8)copy.version=7;
             return copy;
         }
         public void EnsureNativeCombatDescriptors()
