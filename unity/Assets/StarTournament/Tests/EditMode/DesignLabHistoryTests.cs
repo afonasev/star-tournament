@@ -48,7 +48,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void GamepadUpgradePreservesAudioOnlyRevisionHash()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
-            var prior=current.BeforeGamepadLook();
+            var prior=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current,null);
             Assert.That(prior.Version,Is.EqualTo(9));
             old.Profiles[old.Profiles.IndexOf(current)]=prior;
             var history=new DesignLabHistory(path,old);history.Create("Звук до отдельных осей");
