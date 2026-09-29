@@ -95,7 +95,9 @@ namespace StarTournament.ProvingGround
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
             if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=6||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
-            if(snapshot.Match!=null){if(Match==null)throw new ArgumentException("Missing match reducer");Match.ValidateSnapshot(snapshot.Match);}
+            // JsonUtility materializes a null nested Match as an empty object after round-trip.
+            bool omittedMatch=Match==null && snapshot.Match!=null && string.IsNullOrEmpty(snapshot.Match.TuningIdentity) && (snapshot.Match.Standings==null || snapshot.Match.Standings.Length==0);
+            if(snapshot.Match!=null && !omittedMatch){if(Match==null)throw new ArgumentException("Missing match reducer");Match.ValidateSnapshot(snapshot.Match);}
             if(snapshot.ArmorPickups==null||snapshot.SpeedPickups==null||snapshot.ArmorPickups.Length!=armorPickups.Length||snapshot.SpeedPickups.Length!=speedPickups.Length||snapshot.ArmorPickups.Select(x=>x.InstanceId).Distinct().Count()!=armorPickups.Length||snapshot.SpeedPickups.Select(x=>x.InstanceId).Distinct().Count()!=speedPickups.Length)throw new ArgumentException("Invalid pickup instance set");
             if(snapshot.WeaponPickups==null||snapshot.WeaponPickups.Length!=weaponPickups.Length||snapshot.WeaponPickups.Select(x=>x.InstanceId).Distinct().Count()!=weaponPickups.Length)throw new ArgumentException("Invalid weapon pickup set");
             foreach(var item in weaponPickups)item.ValidateSnapshot(snapshot.WeaponPickups.SingleOrDefault(x=>x.InstanceId==item.Read().InstanceId));
@@ -126,7 +128,7 @@ namespace StarTournament.ProvingGround
             if(snapshot.Beams!=null){if(snapshot.Beams.Length!=beams.Length)throw new ArgumentException("Invalid beams");for(int i=0;i<beams.Length;i++)beams[i].Restore(snapshot.Beams[i]);}
             else foreach(var beam in beams)beam.Reset();
             if(snapshot.BeamReleaseRequired!=null)Array.Copy(snapshot.BeamReleaseRequired,releaseRequired,beams.Length);
-            if(snapshot.Match!=null)Match.Restore(snapshot.Match);
+            if(snapshot.Match!=null && !omittedMatch)Match.Restore(snapshot.Match);
             rockets.Clear();rockets.AddRange(snapshot.Rockets);StateRestored?.Invoke();
             ResetPickupContacts();
             for(int i=0;i<lives.Length;i++){motors[i].SetAlive(!Life(i).Dead);motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);}

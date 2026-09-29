@@ -59,7 +59,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // Live/results use the same composition; every name keeps identity even below the score leader.
             var table=new NativeStandingsView(ground.transform,names[0].font,20,"color-table",Vector2.zero,Vector2.one);
             table.Show(true,ground.Session.Match.Read(),false,ground.Composition);
-            for(int p=0;p<8;p++)Assert.That(table.Root.GetComponentsInChildren<Text>().Any(t=>t.text==ground.Composition.Participant(p).Label&&t.color==ground.Composition.Participant(p).Color),Is.True);
+            for(int p=0;p<8;p++)
+            {
+                var info=ground.Composition.Participant(p);
+                var name=table.Root.GetComponentsInChildren<Text>().Single(t=>t.name=="cell-0"&&t.text==info.Name&&t.color==info.Color);
+                var row=name.transform.parent;
+                Assert.That(info.Name+" · "+row.Find("detail").GetComponent<Text>().text,Is.EqualTo(info.Label),"identity label for seat "+p);
+                var expected=info.Kind==NativeParticipantKind.Bot?StandingsIcon.Symbol.Bot:info.Kind==NativeParticipantKind.LocalHuman?StandingsIcon.Symbol.Human:StandingsIcon.Symbol.Fixture;
+                Assert.That(row.Find("kind").GetComponent<StandingsIcon>().Kind,Is.EqualTo(expected),"identity icon for seat "+p);
+            }
             Object.Destroy(table.Root);
             ground.SendMessage("Pause","repeat");B("Повторить матч").onClick.Invoke();yield return null;
             Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));for(int p=0;p<8;p++)AssertBody(p);

@@ -29,7 +29,9 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(s.HealPickups.Single().Remaining,Is.EqualTo(30));Assert.That(s.ShotCount,Is.Zero);
             motors[0].Initialize(movement,new Vector3(-2,-1.2f,-4));motors[1].Initialize(movement,new Vector3(2,-1.2f,-4));
             Advance(s,1450);var cooldown=s.Capture();Advance(s,50);Assert.That(s.HealPickups.Single().Available,Is.True);
-            s.Restore(JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(cooldown)));Assert.That(s.HealPickups.Single().Available,Is.False);Advance(s,50);Assert.That(s.HealPickups.Single().Available,Is.True);
+            var restored=JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(cooldown));s.Restore(restored);
+            Assert.That(s.HealPickups.Single().Available,Is.False);Advance(s,50);Assert.That(s.HealPickups.Single().Available,Is.True);
+            restored.Match=new NativeMatchSnapshot{TuningIdentity="foreign"};Assert.Throws<System.ArgumentException>(()=>s.Restore(restored),"A real match snapshot still requires a match reducer");
             var repeat=Session();Assert.That(repeat.HealPickups.Single().Remaining,Is.EqualTo(20));Assert.That(repeat.ArmorPickups.Length,Is.EqualTo(2));
         }
         [UnityTest] public IEnumerator UpperHallAndDeadParticipantDoNotCollectThroughSlab()

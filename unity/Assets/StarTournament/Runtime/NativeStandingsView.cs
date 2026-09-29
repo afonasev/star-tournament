@@ -104,7 +104,7 @@ namespace StarTournament.ProvingGround
                     Rect(ranks[i].rectTransform,Vector2.zero,new Vector2(.035f,1));ranks[i].text=(teams?state.Standings.Where(p=>state.Roster.Teams[p.Seat]==entry.team).ToList().FindIndex(p=>p.Seat==s.Seat)+1:i+1).ToString("00");ranks[i].color=Muted;ranks[i].fontSize=Mathf.RoundToInt(title.fontSize*.65f);
                     var kind=info?.Kind??(diagnostic?NativeParticipantKind.DiagnosticFixture:NativeParticipantKind.LocalHuman);
                     kindIcons[i].Kind=kind==NativeParticipantKind.LocalHuman?StandingsIcon.Symbol.Human:kind==NativeParticipantKind.Bot?StandingsIcon.Symbol.Bot:StandingsIcon.Symbol.Fixture;kindIcons[i].color=Muted;Place(kindIcons[i].rectTransform,.095f,.2f,.55f);
-                    Rect(details[i].rectTransform,new Vector2(.112f,0),new Vector2(Columns[1],.4f));details[i].fontSize=Mathf.RoundToInt(title.fontSize*.6f);details[i].color=Muted;details[i].text=kind==NativeParticipantKind.Bot?new[]{"Новичок","Боец","Ветеран"}[info.Value.Difficulty]:kind==NativeParticipantKind.DiagnosticFixture?"FIXTURE":"";
+                    Rect(details[i].rectTransform,new Vector2(.112f,0),new Vector2(Columns[1],.4f));details[i].fontSize=Mathf.RoundToInt(title.fontSize*.6f);details[i].color=Muted;details[i].text=kind==NativeParticipantKind.Bot?new[]{"Салага","Боец","Ветеран"}[info.Value.Difficulty]:kind==NativeParticipantKind.DiagnosticFixture?"FIXTURE":"ИГРОК";
                     if(dead){float opacity=tuning.Get("ui.standingsDeadOpacity");cells[r,0].color=Color.Lerp(Base,identity,opacity);for(int c=1;c<7;c++)cells[r,c].color=Color.Lerp(Base,Ink,opacity);}
                 }
                 // Measure the complete rich-text group. One font size for main and suffix retains its exact center.
