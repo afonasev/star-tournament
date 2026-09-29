@@ -17,3 +17,11 @@ Change: `improve-gamepad-camera-and-settings`.
 5. Проверить pause, потерю/возврат фокуса, отключение и возвращение контроллера: матч не движется в паузе, не переносится накопленный look delta. Проверить четыре настоящих устройства и читаемость личных настроек/справки на TV.
 
 Решение о human acceptance записывается для точного кандидата отдельно. Внешняя публикация не выполнена и не разрешена этим change.
+
+## Технический checkpoint 2026-09-29
+
+Код находится в `codex/improve-gamepad-camera-and-settings`, исходная ревизия `e536d34`. В main он ещё не интегрирован. Полные suites до объединения: EditMode204/204 и PlayMode139/139; после объединения профиля v9 — migration7/7 и focused Play9/9 на `6f6ada2`. Последующие изменения касаются QA roster, завершения QA, текста справки и отображения галочки. Сборка `2cde8c9` успешна; Player в обычном focused окне подтвердил экраны и наследование/сохранение профиля.
+
+`attempt-01-incomplete/` содержит точно привязанные PNG/JSON/log: сценарий остановился до матча, потому что одно локальное место осталось AI. Это исправлено явным human roster в development fixture. Финальные native camera и four-seat gates ещё открыты. Повторный build и два последовательных muted Player прохода ждут разрешения shared-host launch coordination: pending Star Racing task не имеет actual thread ID, подтверждённого запуска или отмены. Runtime lease освобождена; активных собственных процессов нет. Этот checkpoint не означает human acceptance или завершённую поставку.
+
+Полученные кадры (кандидат `2cde8c9`, до последних изменений справки/компактной галочки): [управление](attempt-01-incomplete/02-camera-sliders.png), [справка](attempt-01-incomplete/03-controls-help.png), [личный профиль](attempt-01-incomplete/04b-named-profile-sliders.png). Полный repeat сценарий остаётся в разделе приёмки выше.

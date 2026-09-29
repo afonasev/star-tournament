@@ -23,16 +23,64 @@
       "failed": 0,
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/camera-settings-focused.xml",
       "duration_seconds": 56.9738771
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode migration cases and GamepadLookSettingsTests",
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "duration_seconds": 58.2286516,
+      "source_revision": "6f6ada2",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-integration-editmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests",
+      "exit_code": 0,
+      "passed": 9,
+      "failed": 0,
+      "duration_seconds": 60.6805073,
+      "source_revision": "6f6ada2",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-integration-playmode.xml"
     }
   ],
   "source_revision": "c75f91a8780d92381a7ab0e373c06219299005b3",
-  "build": "pending",
-  "native_player": "pending",
+  "build": {
+    "command": "unity/tools.sh build",
+    "exit_code": 0,
+    "source_revision": "6f6ada2",
+    "prepared_scene_revision": "2cde8c9",
+    "evidence": "docs/evidence/improve-gamepad-camera-and-settings/build.log",
+    "pass_marker": "STAR_PROVING_BUILD_PASS 471125991"
+  },
+  "native_player": {
+    "status": "blocked_pending_shared_host_launch_coordination",
+    "attempts": [
+      {
+        "candidate_source": "2cde8c9",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-01-incomplete/result.json",
+        "result": "settings/profile checks passed; camera fixture setup failed before game began",
+        "fix": "4a829e8 explicit human seats before join"
+      }
+    ],
+    "remaining": [
+      "rebuild latest source",
+      "camera flat/stairs/across/ramp/jump/landing/manual/off/pause/reconnect",
+      "four-seat settings/help top/bottom visual QA"
+    ],
+    "coordination_blocker": {
+      "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
+      "pending_client_id": "client-new-thread:6b68cfec-865f-4e8a-b840-42bc48a2a5ce",
+      "reason": "actual thread ID unavailable; no lookup/cancel capability; future launch not confirmed/cancelled",
+      "own_runtime_lease": "released",
+      "own_active_processes": []
+    }
+  },
   "human_acceptance": "pending",
-  "candidate_source_revision": "a143600",
+  "candidate_source_revision": "e536d34",
   "post_suite_changes": [
     "New profiles inherit general gamepad axes and auto-level through all creation paths; native QA asserts persistence",
     "Integrated main 0f4d16c with damage vignette; combined default profile v9; post-integration migration checks pending",
-    "Cache identical exact gamepad predecessors instead of repeatedly serializing them; migration assertions pending"
+    "Cache identical exact gamepad predecessors instead of repeatedly serializing them; migration assertions pending",
+    "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending"
   ]
 }
