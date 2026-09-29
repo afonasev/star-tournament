@@ -73,8 +73,8 @@ namespace StarTournament.ProvingGround
                 seatPauseSettingButtons[seat,2]=NumericSetting(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-2","Геймпад: вертикаль",new Vector2(.08f,.27f),new Vector2(.92f,.43f),Profile.Descriptor(GamepadLookSettings.VerticalPath),v=>SetSeatLookAxis(localSeat,1,v),18);
                 seatPauseSettingButtons[seat,3]=BooleanSetting(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-3","Выравнивать взгляд",new Vector2(.08f,.20f),new Vector2(.92f,.26f),v=>{var look=PersonalGamepadLook(localSeat);look.AutoLevel=v;SavePersonalGamepad(localSeat,look);},18);
                 seatPauseSettingButtons[seat,4]=BooleanSetting(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-4","Показывать FPS",new Vector2(.08f,.13f),new Vector2(.92f,.19f),v=>{if(v!=PersonalFps(localSeat))TogglePersonalFps(localSeat);},18);
-                seatPauseSettingButtons[seat,5]=PauseButton(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-5","Справка по кнопкам",new Vector2(.08f,.07f),new Vector2(.92f,.12f),()=>RunSeatPauseAction(localSeat,5),seat,5);
-                seatPauseSettingButtons[seat,6]=PauseButton(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-6","‹ Назад",new Vector2(.08f,.01f),new Vector2(.92f,.06f),()=>RunSeatPauseAction(localSeat,6),seat,6);
+                seatPauseSettingButtons[seat,5]=PauseButton(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-5","Справка по кнопкам",new Vector2(.08f,.065f),new Vector2(.92f,.125f),()=>RunSeatPauseAction(localSeat,5),seat,5);
+                seatPauseSettingButtons[seat,6]=PauseButton(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-6","‹ Назад",new Vector2(.08f,0),new Vector2(.92f,.06f),()=>RunSeatPauseAction(localSeat,6),seat,6);
                 seatPauseHelp[seat]=PausePage(card.transform,"help");
                 var helpViewport=Panel(seatPauseHelp[seat].transform,"help-viewport",new Vector2(.04f,.24f),new Vector2(.96f,.97f),Color.clear);
                 helpViewport.AddComponent<RectMask2D>();var scroll=helpViewport.AddComponent<ScrollRect>();seatPauseHelpScroll[seat]=scroll;
