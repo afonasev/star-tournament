@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 6;
+        public const int DefaultVersion = 7;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;

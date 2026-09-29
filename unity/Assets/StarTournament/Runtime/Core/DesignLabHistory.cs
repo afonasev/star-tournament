@@ -139,7 +139,11 @@ namespace StarTournament.ProvingGround
                     copy.Profiles.Add(this.shipped.Profiles.Single(p=>p.Id==ProvingProfile.ParticipantPaletteId));
                 return copy;
             }
-            predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))}).GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))).Select(g=>g.First()).ToArray();
+            // Keep both exact historical registries and additive schema combinations; version tuples
+            // alone cannot distinguish a new descriptor on an otherwise unchanged profile.
+            predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))})
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
+                .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First()).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;
             try
@@ -176,7 +180,8 @@ namespace StarTournament.ProvingGround
             if(!predecessors.Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
         }
-        static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version));
+        static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version))
+            && registry.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(bundle.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal));
         bool Current(LabBundle bundle)=>RegistryMatches(shipped,bundle);
         public bool Compatible(LabRevision revision)=>Current(revision.Snapshot);
         void MigrateCompatibility(LabHistoryFile file)

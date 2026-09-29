@@ -224,6 +224,7 @@ namespace StarTournament.ProvingGround
                 if(reviewType==null) throw new InvalidOperationException("Development navigation review is not packaged");
                 gameObject.AddComponent(reviewType); Debug.Log("NATIVE_BOT_NAVIGATION_REVIEW_BOOTSTRAPPED");
             }
+            if (args.Contains("-shotOriginReview")) gameObject.AddComponent<NativeShotOriginReview>();
             if (args.Contains("-vectorReview")) gameObject.AddComponent<VectorVisualReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();

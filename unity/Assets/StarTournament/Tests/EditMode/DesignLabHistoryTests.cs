@@ -13,6 +13,24 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
+        {
+            var old=Shipped();var profile=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var json=JsonUtility.ToJson(profile);
+            // Exact v6 predecessor: remove only the new additive descriptor/value.
+            var serialized=JsonUtility.FromJson<LegacyProfile>(json);serialized.version=6;
+            serialized.descriptors=serialized.descriptors.Where(d=>d.Path!="presentation.rocketMuzzleBlendDistance").ToArray();
+            serialized.values=serialized.values.Where(v=>v.Path!="presentation.rocketMuzzleBlendDistance").ToArray();
+            old.Profiles[old.Profiles.IndexOf(profile)]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(serialized));
+            var history=new DesignLabHistory(path,old);history.Create("Existing");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            var hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("presentation.rocketMuzzleBlendDistance"),Is.EqualTo(3));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(v=>v.Hash==hash),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.IsEditable("presentation.rocketMuzzleBlendDistance"),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.Validate(),Is.Empty);
+        }
+        [System.Serializable]sealed class LegacyProfile{public string id;public int version;public NumericDescriptor[] descriptors;public ProvingProfileValue[] values;}
         [Test]public void SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts()
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Первый");string id=history.SelectedProfile.Id;var v1=history.Selected;

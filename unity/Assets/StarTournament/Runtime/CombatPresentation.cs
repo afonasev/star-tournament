@@ -9,7 +9,8 @@ namespace StarTournament.ProvingGround
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
         GameObject rifle,pulse,cutter;
-        Transform rifleMuzzle,cutterMuzzle;
+        Transform rifleMuzzle,cutterMuzzle,pulseMuzzle;
+        public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
         public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null)
@@ -35,6 +36,7 @@ namespace StarTournament.ProvingGround
                 pulse=Object.Instantiate(pulsePrefab,mount);pulse.name="pulse-launcher";
                 pulse.transform.localPosition=Vector3.zero;pulse.transform.localRotation=Quaternion.identity;
                 pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale");
+                pulseMuzzle=pulse.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="pulse-muzzle");
                 foreach(var t in pulse.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var r in pulse.GetComponentsInChildren<Renderer>(true))
                 { if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off; }
@@ -143,22 +145,27 @@ namespace StarTournament.ProvingGround
         }
         void OnShotResolved(ShotNotice notice)
         {
-            // A shot can occur on the completion tick before LateUpdate; reset the muzzle pose first.
-            int view=ViewOf(notice.Shooter);
-            if(view>=0)weaponSwitches[view]?.Apply(session.Life(notice.Shooter),session.WeaponSwitchSeconds);
+            // FixedUpdate can run several times before LateUpdate. Sample this shot's pose now,
+            // before freezing its world-space muzzle; never use the previous rendered camera.
+            PrepareShotPose(notice.Shooter);
+            if(notice.Weapon==WeaponId.RocketLauncher)
+                rocketPresentation.Launch(notice.Sequence,Muzzle(notice.Shooter,0,notice.Weapon)-notice.Origin);
             int capacity=(int)movement.Get("presentation.shotMaxEffects");
-            foreach(var pellet in notice.Pellets)
+            for(int pelletIndex=0;pelletIndex<notice.Pellets.Length;pelletIndex++)
             {
+                var pellet=notice.Pellets[pelletIndex];
                 if(pellets.Count>=capacity) break;
                 var root=new GameObject("shot-pellet-"+notice.Sequence+"-"+pellets.Count);root.transform.SetParent(owner,false);
                 var trace=GameObject.CreatePrimitive(PrimitiveType.Capsule);trace.name="pellet-streak";trace.transform.SetParent(root.transform,false);
-                var collider=trace.GetComponent<Collider>();if(collider)Object.Destroy(collider);
+                // Destroy is deferred; disable now so another fixed tick cannot collide with a visual.
+                var collider=trace.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
                 trace.GetComponent<Renderer>().material=TraceMaterial(notice.Weapon);
-                var muzzle=Muzzle(notice.Shooter,pellets.Count,notice.Weapon);
+                var muzzle=Muzzle(notice.Shooter,pelletIndex,notice.Weapon);
+                var direction=(pellet.Endpoint-muzzle).normalized;
                 var clearance=Mathf.Min(movement.Get("presentation.shotMuzzleClearance"),Vector3.Distance(muzzle,pellet.Endpoint)*.5f);
-                var start=muzzle+pellet.Direction*clearance;
+                var start=muzzle+direction*clearance;
                 trace.transform.position=start;
-                var traceEnd=notice.Weapon==WeaponId.Rifle?start+pellet.Direction*Mathf.Min(movement.Get("presentation.rifleTracerLength"),Vector3.Distance(start,pellet.Endpoint)):pellet.Endpoint;
+                var traceEnd=notice.Weapon==WeaponId.Rifle?start+direction*Mathf.Min(movement.Get("presentation.rifleTracerLength"),Vector3.Distance(start,pellet.Endpoint)):pellet.Endpoint;
                 // Rifle presentation is tracer only: no green sphere at muzzle or endpoint.
                 bool contact=notice.Weapon!=WeaponId.Rifle && pellet.Contact!=PelletContact.Miss;
                 // Multiple hitscan pellets commonly share one small hit volume: render one readable contact flash,
@@ -196,13 +203,28 @@ namespace StarTournament.ProvingGround
             if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(1f,.55f,.15f,1f));}
             return traceMaterial;
         }
+        void PrepareShotPose(int participant)
+        {
+            var life=session.Life(participant);var pose=session.Pose(participant);
+            int view=ViewOf(participant);
+            var source=view>=0?views[view]:bodies[participant];
+            if(view>=0)cameras[view].transform.SetPositionAndRotation(
+                pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
+            // Fired is dispatched after ShotResolved. Seed the same recoil clock before sampling
+            // so an automatic follow-up cannot freeze the previous shot's animated barrel.
+            var visual=source.GetComponent<TrooperVisual>();
+            visual?.Fire(session.Time);
+            visual?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+            if(view>=0)weaponSwitches[view]?.Apply(life,session.WeaponSwitchSeconds);
+            else source.GetComponent<WeaponModelPresentation>()?.Show(life.SelectedWeapon);
+        }
         Vector3 Muzzle(int participant,int pellet,WeaponId weapon)
         {
             int view=ViewOf(participant);
-            if(weapon==WeaponId.Rifle)
+            if(weapon==WeaponId.Rifle||weapon==WeaponId.RocketLauncher)
             {
-                var rifle=(view>=0?views[view]:bodies[participant]).GetComponent<WeaponModelPresentation>();
-                if(rifle)return rifle.RifleMuzzle;
+                var model=(view>=0?views[view]:bodies[participant]).GetComponent<WeaponModelPresentation>();
+                if(model)return weapon==WeaponId.Rifle?model.RifleMuzzle:model.PulseMuzzle;
             }
             var visual=(view>=0?views[view]:bodies[participant]).GetComponent<VectorShotPresentation>();
             return visual!=null && visual.MuzzleCount==2?visual.Muzzle(pellet):bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
@@ -229,7 +251,7 @@ namespace StarTournament.ProvingGround
         {
             var impact=GameObject.CreatePrimitive(PrimitiveType.Sphere);impact.name="shot-impact";impact.transform.SetParent(effect.Root.transform,false);
             impact.transform.position=effect.End+effect.Normal*.01f;impact.transform.localScale=Vector3.one*movement.Get("presentation.shotImpactSize");
-            var collider=impact.GetComponent<Collider>();if(collider)Object.Destroy(collider);
+            var collider=impact.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
             var renderer=impact.GetComponent<Renderer>();renderer.material=effect.Weapon==WeaponId.Rifle?TraceMaterial(WeaponId.Rifle):ShotMaterial();
         }
         void OnRespawn(int seat)
