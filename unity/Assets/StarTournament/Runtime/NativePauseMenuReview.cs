@@ -68,6 +68,8 @@ namespace StarTournament.ProvingGround
             Button("main-action-0").onClick.Invoke();
             if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in match setup");
             while(ground.LocalSeatCount>count)Button("seats-minus").onClick.Invoke();
+            while(ground.LocalSeatCount<count)Button("seats-plus").onClick.Invoke();
+            for(int seat=0;seat<count;seat++)ground.SetSeatAi(seat,false);
             if(count==1)Button("bot-add").onClick.Invoke();
             pads=new Gamepad[count];
             for(int seat=0;seat<count;seat++)

@@ -49,6 +49,8 @@ namespace StarTournament.ProvingGround
             if(new PlayerProfileCatalog(args[profilesAt+1]).Find("qa-camera-profile").GamepadHorizontal!=123||GamepadLookSettings.General(ground.Profile).Horizontal!=general.Horizontal)throw new InvalidOperationException("Named profile settings did not persist in isolation");
             Button("profiles-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();
             while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
+            while(ground.LocalSeatCount<2)Button("seats-plus").onClick.Invoke();
+            for(int i=0;i<2;i++)ground.SetSeatAi(i,false);
             pads=new Gamepad[2];for(int i=0;i<2;i++){pads[i]=InputSystem.AddDevice<Gamepad>();yield return Press(pads[i],GamepadButton.North);Button("identity-guest").onClick.Invoke();}
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);
             if(!Application.isFocused||!ground.Running)throw new InvalidOperationException("NATIVE_CAMERA_QA_REQUIRES_FOCUSED_PLAYER");
