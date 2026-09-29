@@ -23,7 +23,8 @@ namespace StarTournament.ProvingGround
         double firedAt=double.NegativeInfinity, hitAt=double.NegativeInfinity;
         bool firstPerson, corpse;
         public ProvingProfile Tuning => profile;
-        public string State => active<0?"uninitialized":ClipNames[active];
+        public DeathRagdoll Ragdoll {get;internal set;}
+        public string State => Ragdoll!=null?"ragdoll":active<0?"uninitialized":ClipNames[active];
         public double SampleTime { get; private set; }
         public bool GraphValid => graph.IsValid();
         public int PoseRevision { get; private set; }

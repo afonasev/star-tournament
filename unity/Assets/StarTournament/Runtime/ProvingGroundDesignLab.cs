@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
             labSavedIdentity=labHistory.SelectedProfileName+" · "+revision.Label+"\n"+labHistory.SelectedProfileId+"\nSHA256 "+revision.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault()}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile}};
         void InitializeDesignLab()
         {
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
@@ -84,7 +84,7 @@ namespace StarTournament.ProvingGround
         }
         static readonly Dictionary<string,string> GroupDisplayNames=new Dictionary<string,string>{
             {"surfaces","Оформление → Поверхности"},{"details","Оформление → Детали"},{"lighting","Оформление → Свет"},{"broadcast","Оформление → Экраны"},{"palette","Оформление → Палитра"},{"atmosphere","Оформление → Атмосфера"},{"player-capsule","Игрок → Капсула"},{"player-movement","Игрок → Движение"},{"navigation","Арена → Навигация"},
-            {"scoring","Матч → Очки"},{"trooper-animation","Оформление → Анимация"},{"trooper-grip","Оформление → Хват оружия"},
+            {"death-impulse","Оформление → Отбрасывание тела"},{"death-ragdoll","Оформление → Физика тела"},{"scoring","Матч → Очки"},{"trooper-animation","Оформление → Анимация"},{"trooper-grip","Оформление → Хват оружия"},
             {"participant-colors","Оформление → Цвета участников"},{"trooper-view","Оформление → Модель игрока"},{"damage-vignette","Оформление → Получение урона"},{"ui","Оформление → HUD"},{"world-query","Арена → Проверки мира"},
             {"ring","Оформление → Станция"},{"ring-layout","Оформление → Детали станции"},{"space","Оформление → Космос"},
             {"windows","Оформление → Иллюминаторы"},{"geometry","Карта → Геометрия"},{"transitions","Карта → Переходы"},

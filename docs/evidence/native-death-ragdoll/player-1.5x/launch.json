@@ -1,0 +1,11 @@
+{
+  "pid": 84793,
+  "artifact": "local-macos-player-candidate/881dcacccd0c8179007441f38c4b6948d65e8d8f/20260929T172646Z",
+  "app_tree_sha256": "96c66504810b4083d4ef788284a123c972527e5849a44df08af71a4abbe64ec3",
+  "source_revision": "881dcacccd0c8179007441f38c4b6948d65e8d8f",
+  "start": "2026-09-29T17:28:17.094514+00:00",
+  "output": "/Users/eaafonasev/Projects/star-tournament/.local/qa/native-death-ragdoll/881dcacc-20260929T172817Z",
+  "hard_bound_seconds": 120,
+  "muted_review_flag": "-deathRagdollReview",
+  "fresh_lab_history": "/Users/eaafonasev/Projects/star-tournament/.local/qa/native-death-ragdoll/881dcacc-20260929T172817Z/fresh-lab-history.json"
+}

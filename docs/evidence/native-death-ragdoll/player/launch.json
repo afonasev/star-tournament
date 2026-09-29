@@ -1,0 +1,8 @@
+{
+  "pid": 73665,
+  "artifact": "local-macos-player-candidate/262518ea2ec8ac6e81f76e40ae1bc82d0e535810/20260929T134231Z",
+  "app_tree_sha256": "88700019da34d6ae871309806544bac90eb370e2a93c69c08b4879c396de6243",
+  "start": "2026-09-29T14:49:14.422473+00:00",
+  "output": "/Users/eaafonasev/Projects/star-tournament/.local/qa/native-death-ragdoll/262518e-20260929T1448",
+  "hard_bound_seconds": 120
+}

@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
@@ -31,6 +31,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
+        {
+            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
+            var history=new DesignLabHistory(path,old);history.Create("До ragdoll");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("corpse.shotgunSpeed"),Is.EqualTo(9));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.shotgunSpeed"),Is.True);
+        }
+        [Test]public void DeathImpulseUpgradeKeepsCustomValuesAndOldHashes()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeDeathImpulseIncrease()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой импульс");var draft=history.Selected.Snapshot;draft.Set("corpse.rifleSpeed",4.3f);history.Save(draft);
+            string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("corpse.rifleSpeed"),Is.EqualTo(4.3f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.Profile("corpse.rifleSpeed").Version,Is.EqualTo(2));
+            Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.rifleSpeed"),Is.True);
+        }
         [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);

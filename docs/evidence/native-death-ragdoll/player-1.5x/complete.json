@@ -1,0 +1,94 @@
+{
+    "classification": "AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",
+    "arena": "combat-bowl-v1@16",
+    "profile": "5fb48228e2cb941949a1c4d9d1dd50096d489cab66f908e812a86f1944b5f394",
+    "diagnosticTickMeanMs": 0.38970833333333346,
+    "diagnosticTickMaxMs": 1.4784000000000002,
+    "muted": true,
+    "measurements": [
+        {
+            "weapon": "Rifle",
+            "direction": {
+                "x": 0.00913676805794239,
+                "y": -0.0074423328042030338,
+                "z": 0.9999305605888367
+            },
+            "impulse": {
+                "x": 0.03426288068294525,
+                "y": -0.027908748015761377,
+                "z": 3.749739646911621
+            },
+            "travel": {
+                "x": 0.04570960998535156,
+                "y": -0.7349814772605896,
+                "z": 1.9203211069107056
+            },
+            "finalSegmentSpeed": 0.01049046590924263,
+            "handSeparation": 1.0659018754959107,
+            "sleeping": false
+        },
+        {
+            "weapon": "Shotgun",
+            "direction": {
+                "x": 0.013072091154754162,
+                "y": -0.05657103657722473,
+                "z": 0.9983130097389221
+            },
+            "impulse": {
+                "x": 0.11764881759881973,
+                "y": -0.5091392993927002,
+                "z": 8.984817504882813
+            },
+            "travel": {
+                "x": 0.6302337646484375,
+                "y": -0.7344217300415039,
+                "z": 4.655823230743408
+            },
+            "finalSegmentSpeed": 0.022829728201031686,
+            "handSeparation": 0.6242469549179077,
+            "sleeping": false
+        },
+        {
+            "weapon": "RocketLauncher",
+            "direction": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.0
+            },
+            "impulse": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 13.5
+            },
+            "travel": {
+                "x": 1.1859855651855469,
+                "y": -0.7351673245429993,
+                "z": 9.292526245117188
+            },
+            "finalSegmentSpeed": 2.4639830589294435,
+            "handSeparation": 0.38509002327919009,
+            "sleeping": false
+        },
+        {
+            "weapon": "Cutter",
+            "direction": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.0
+            },
+            "impulse": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.375
+            },
+            "travel": {
+                "x": 0.7504539489746094,
+                "y": -0.7354456782341003,
+                "z": 0.6531720161437988
+            },
+            "finalSegmentSpeed": 0.013573985546827317,
+            "handSeparation": 0.22452668845653535,
+            "sleeping": false
+        }
+    ]
+}
