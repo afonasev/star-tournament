@@ -20,7 +20,7 @@ Change: `improve-gamepad-camera-and-settings`.
 
 ## Технический checkpoint 2026-09-29
 
-Код находится в чистой ветке `codex/improve-gamepad-camera-and-settings` на `a18b311`. Эта ревизия включает текущий main `4a98c4e` и исправления development Player fixture для проверки обычных личных меню паузы. В main она ещё не интегрирована. Полные suites до объединения: EditMode204/204 и PlayMode139/139; после объединения профиля v9 — migration7/7 и focused Play9/9 на `6f6ada2`. После последнего объединения с main целевые тесты ещё не повторены.
+Код находится в ветке `codex/improve-gamepad-camera-and-settings`; проверенная исходная ревизия `74eb958` включает текущий main `4a98c4e` и исправления development Player fixture для проверки обычных личных меню паузы. В main она ещё не интегрирована. Полные suites до объединения: EditMode204/204 и PlayMode139/139; после последнего объединения с main целевые EditMode7/7 и PlayMode9/9 прошли на `74eb958`. XML и логи сохранены в `tests/post-ragdoll-*`.
 
 Сборка `260e54f` прошла, но её Player уже устарел относительно `a18b311`. В `attempt-01-incomplete/`…`attempt-05-incomplete/` сохранены диагностические PNG/JSON/log. Настройки и наследование профиля проверены; последний сценарий дошёл до лестницы, но не завершил camera/four-seat gate из-за поведения focus/паузы в автоматическом прогоне. Fixture теперь фиксирует focus и явно отделяет fallback от проверки настоящего контроллера. Финальные muted Player проходы ждут общего слота Mac Unity; чужой Editor также учитывается координатором. Этот checkpoint не означает human acceptance или завершённую поставку.
 

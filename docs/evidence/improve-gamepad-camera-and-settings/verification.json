@@ -41,9 +41,25 @@
       "duration_seconds": 60.6805073,
       "source_revision": "6f6ada2",
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-integration-playmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity;ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues;LabUpgradePreservesPriorHashValuesAndProvidesValidatedFields;GamepadLookSettingsTests",
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-ragdoll-editmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode -testFilter GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests",
+      "exit_code": 0,
+      "passed": 9,
+      "failed": 0,
+      "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-ragdoll-playmode.xml"
     }
   ],
-  "source_revision": "c75f91a8780d92381a7ab0e373c06219299005b3",
+  "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
   "build": {
     "command": "unity/tools.sh build",
     "exit_code": 0,
@@ -53,7 +69,7 @@
     "pass_marker": "STAR_PROVING_BUILD_PASS 471125991"
   },
   "native_player": {
-    "status": "blocked_pending_shared_host_launch_coordination",
+    "status": "pending_fresh_build_and_shared_host_player_slot",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -63,7 +79,7 @@
       }
     ],
     "remaining": [
-      "rebuild latest source",
+      "rebuild exact post-main source",
       "camera flat/stairs/across/ramp/jump/landing/manual/off/pause/reconnect",
       "four-seat settings/help top/bottom visual QA"
     ],
