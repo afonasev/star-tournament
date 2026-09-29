@@ -34,6 +34,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(WeaponSwitchPose.Read(life.Read(),life.SwitchSeconds).Weapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(WeaponSwitchPose.Read(life.Read(),life.SwitchSeconds).Lift,Is.Zero);
         }
+        [TestCase(.1d)][TestCase(1d)][TestCase(3d)]
+        public void VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(double duration)
+        {
+            foreach(WeaponId from in Enum.GetValues(typeof(WeaponId)))foreach(WeaponId to in Enum.GetValues(typeof(WeaponId)))
+            {
+                if(from==to)continue;
+                var state=new CombatLifeState{SelectedWeapon=from,PendingWeapon=to};
+                foreach(double remaining in new[]{duration,duration*.75,duration*.500001})
+                {state.SwitchRemaining=remaining;Assert.That(WeaponSwitchPose.Read(state,duration).Weapon,Is.EqualTo(from));}
+                state.SwitchRemaining=duration*.5;
+                var apex=WeaponSwitchPose.Read(state,duration);Assert.That(apex.Weapon,Is.EqualTo(to));Assert.That(apex.Lift,Is.EqualTo(1));
+                state.SwitchRemaining=duration*.499999;Assert.That(WeaponSwitchPose.Read(state,duration).Weapon,Is.EqualTo(to));
+                Assert.That(state.SelectedWeapon,Is.EqualTo(from));
+            }
+        }
         [Test]
         public void AllWeaponPairsShareTheSamePhaseWithoutMutatingState()
         {

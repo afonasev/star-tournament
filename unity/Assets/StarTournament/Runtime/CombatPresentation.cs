@@ -51,8 +51,10 @@ namespace StarTournament.ProvingGround
             }
             Show(WeaponId.Rifle);
         }
+        public WeaponId ShownWeapon { get; private set; }
         public void Show(WeaponId weapon)
         {
+            ShownWeapon=weapon;
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
             if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
@@ -341,8 +343,13 @@ namespace StarTournament.ProvingGround
                 if(session.Time>=corpses[c].Expires) { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }
                 else corpses[c].Visual?.Render(session.Time,Vector3.zero,0,0);
             }
-            for(int p=0;p<session.ParticipantCount;p++)if(!session.Life(p).Dead)
-                bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,session.Life(p).Health,session.Life(p).Life);
+            for(int p=0;p<session.ParticipantCount;p++)
+            {
+                var life=session.Life(p);
+                if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life);
+                // Both representations use the same simulation phase: the model changes only at the lift apex.
+                bodies[p].GetComponent<WeaponModelPresentation>()?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
+            }
             for(int v=0;v<cameras.Length;v++)
             {
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);

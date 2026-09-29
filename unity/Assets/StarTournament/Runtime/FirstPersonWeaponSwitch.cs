@@ -17,7 +17,9 @@ namespace StarTournament.ProvingGround
             // Equal halves and smoothstep endpoints are the shared animation shape, not a second gameplay duration.
             float half=(float)(progress<.5?progress*2:(1-progress)*2);
             float lift=half*half*(3-2*half);
-            return new WeaponSwitchPose(progress<.5?state.SelectedWeapon:state.PendingWeapon,lift);
+            // Compare the authoritative timer directly so subtraction rounding cannot swap just before the apex.
+            bool rising=state.SwitchRemaining>duration*.5;
+            return new WeaponSwitchPose(rising?state.SelectedWeapon:state.PendingWeapon,lift);
         }
     }
 

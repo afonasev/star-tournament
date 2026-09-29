@@ -20,9 +20,19 @@ namespace StarTournament.ProvingGround
         void TickTo(double remaining)
         {
             int budget=1000;
-            while(ground.Session.Life(0).SwitchRemaining>remaining+1e-8&&budget-->0)
+            while(ground.Session.Life(0).SwitchRemaining>remaining&&budget-->0)
                 ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],(float)Math.Min(.02,ground.Session.Life(0).SwitchRemaining-remaining));
             Require(budget>0,"Switch failed to advance");Render();
+        }
+        void RequireModel(int seat,WeaponId expected)
+        {
+            var view=View(seat);var model=view.GetComponent<WeaponModelPresentation>();
+            Require(model.ShownWeapon==expected,"Rendered weapon changed outside apex: "+expected+" / "+model.ShownWeapon);
+            foreach(var pair in new[]{("automatic-rifle",WeaponId.Rifle),("pulse-launcher",WeaponId.RocketLauncher),("cutter",WeaponId.Cutter)})
+                Require(view.GetComponentsInChildren<Transform>(true).Single(t=>t.name==pair.Item1).gameObject.activeSelf==(expected==pair.Item2),"Wrong active model: "+pair.Item1);
+            Require(view.GetComponentsInChildren<Renderer>(true).Single(t=>t.name=="weapon:joined").enabled==(expected==WeaponId.Shotgun),"Wrong shotgun visibility");
+            var body=ground.GetComponentsInChildren<WeaponModelPresentation>().Single(m=>m.gameObject.name=="trooper-presentation"&&m.transform.parent.name=="player-"+(seat+1));
+            Require(body.ShownWeapon==expected,"World/view swap mismatch");
         }
         void Select(WeaponSelection selection)
         {
@@ -61,19 +71,21 @@ namespace StarTournament.ProvingGround
                 foreach(var target in new[]{WeaponSelection.Shotgun,WeaponSelection.Rifle,WeaponSelection.RocketLauncher,WeaponSelection.Rifle,WeaponSelection.Cutter,WeaponSelection.Shotgun,WeaponSelection.RocketLauncher,WeaponSelection.Cutter,WeaponSelection.RocketLauncher,WeaponSelection.Shotgun,WeaponSelection.Cutter,WeaponSelection.Rifle})
                 {
                     var from=ground.Session.Life(0).SelectedWeapon;Select(target);
-                    var pending=ground.Session.Life(0).PendingWeapon;int shots=ground.Session.ShotCount;
+                    var pending=ground.Session.Life(0).PendingWeapon;int shots=ground.Session.ShotCount;RequireModel(0,from);
                     var shoulderLocal=Bone(0,"RightUpperArm").localPosition;
                     TickTo(duration*.75);Require(View(0).transform.localPosition==rest,"View root detached from body");
                     Require(Bone(0,"RightUpperArm").localPosition==shoulderLocal,"Shoulder joint translated");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("02-old-weapon-rising");
-                    TickTo(duration*.5);
+                    TickTo(duration*.5001);RequireModel(0,from);
+                    if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("02b-old-model-before-apex");
+                    TickTo(duration*.5);RequireModel(0,pending);
                     var camera=View(0).transform.parent;
                     float near=camera.GetComponent<Camera>().nearClipPlane;
                     foreach(var handName in new[]{"LeftHand","RightHand"})
                         Require(camera.InverseTransformPoint(Bone(0,handName).position).z>near,"Hand crossed the camera: "+handName);
                     Require(View(0).transform.localPosition==rest,"Midpoint root moved");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("03-model-swap-in-raised-hands");
-                    TickTo(duration*.25);Require(ground.Session.Life(0).SelectedWeapon==from,"Authoritative slot changed early");
+                    TickTo(duration*.25);RequireModel(0,pending);Require(ground.Session.Life(0).SelectedWeapon==from,"Authoritative slot changed early");
                     var phase=WeaponSwitchPose.Read(ground.Session.Life(0),duration);Require(phase.Weapon==pending,"Pending model missing on descent");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)
                     {

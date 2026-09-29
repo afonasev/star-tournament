@@ -458,7 +458,6 @@ namespace StarTournament.ProvingGround
             RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();RenderHealPickup();RenderWeaponPickups();
             for(int p=0;p<Composition.ParticipantCount;p++)
             {
-                bodies[p].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
                 bool boosted=Session.DamageBoostRemaining(p)>0;if(damageTinted[p]==boosted)continue;damageTinted[p]=boosted;
                 var color=Composition.Participant(p).Color;
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Tint(color,boosted);
