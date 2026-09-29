@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AI;
@@ -45,6 +46,36 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             if(owner) Object.Destroy(owner);
             if(scene.IsValid()) yield return SceneManager.UnloadSceneAsync(scene);
+        }
+        [UnityTest]
+        public IEnumerator DamageNoticeAndViewportPulseFollowActualLossAndLifecycle()
+        {
+            Setup();yield return null;
+            var go=new GameObject("test-vignette",typeof(RectTransform),typeof(CanvasRenderer));
+            go.transform.SetParent(owner.transform);var effect=go.AddComponent<DamageVignette>();effect.Bind(session,1,movement);
+            var other=new GameObject("other-vignette",typeof(RectTransform));other.transform.SetParent(owner.transform);
+            var untouched=other.AddComponent<DamageVignette>();untouched.Bind(session,2,movement);
+            int notices=0;DamageNotice received=default;session.Damaged+=n=>{notices++;received=n;};
+            var saved=session.Capture();var state=saved.Lives[1];state.Armor=20;saved.Lives[1]=state;session.Restore(saved);
+            session.ApplyDamage(1,state.Life,10);session.Tick(new LocalAction[4],.04f);effect.Render(true);untouched.Render(true);
+            Assert.That(received.ArmorLost,Is.EqualTo(10));Assert.That(received.HealthLost,Is.Zero);
+            Assert.That(effect.HealthHit,Is.False);Assert.That(effect.Opacity,Is.GreaterThan(0));Assert.That(untouched.Opacity,Is.Zero);
+            float frozen=effect.Opacity;yield return new WaitForSecondsRealtime(.1f);effect.Render(true);Assert.That(effect.Opacity,Is.EqualTo(frozen));
+            session.ApplyDamage(1,state.Life-1,10);session.ApplyDamage(1,state.Life,0);Assert.That(notices,Is.EqualTo(1));
+            session.ApplyDamage(1,state.Life,15);session.Tick(new LocalAction[4],.04f);effect.Render(true);
+            Assert.That(received.ArmorLost,Is.EqualTo(10));Assert.That(received.HealthLost,Is.EqualTo(5));Assert.That(effect.HealthHit,Is.True);
+            var mesh=new UnityEngine.UI.VertexHelper();effect.rectTransform.sizeDelta=new Vector2(960,540);
+            typeof(DamageVignette).GetMethod("OnPopulateMesh",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic,null,new[]{typeof(UnityEngine.UI.VertexHelper)},null).Invoke(effect,new object[]{mesh});
+            var vertices=new System.Collections.Generic.List<UnityEngine.UIVertex>();mesh.GetUIVertexStream(vertices);
+            Assert.That(vertices.Count,Is.GreaterThan(0));
+            Assert.That(vertices.All(v=>Mathf.Abs(v.position.x)>=960*(.5f-movement.Get("ui.damageVignette.width"))-.01f||Mathf.Abs(v.position.y)>=540*(.5f-movement.Get("ui.damageVignette.width"))-.01f),Is.True,"No mesh reaches the protected center");
+            Assert.That(vertices.Max(v=>v.color.a)/255f,Is.LessThanOrEqualTo(movement.Get("ui.damageVignette.opacity")+.004f));mesh.Dispose();
+            effect.Render(false);Assert.That(effect.Opacity,Is.Zero);effect.Render(true);Assert.That(effect.Opacity,Is.GreaterThan(0));
+            session.Restore(saved);effect.Render(true);Assert.That(effect.Opacity,Is.Zero,"Restore is not a hit");
+            session.ApplyDamage(1,session.Life(1).Life,200);effect.Render(true);Assert.That(effect.Opacity,Is.Zero,"Death clears the first-person overlay");
+            for(int i=0;i<15;i++)session.Tick(new LocalAction[4],.02f);
+            effect.Render(true);Assert.That(session.Life(1).Dead,Is.False);Assert.That(effect.Opacity,Is.Zero,"Respawn clears the overlay");
+            effect.Bind(null,-1,movement);session.ApplyDamage(1,session.Life(1).Life,5);effect.Render(true);Assert.That(effect.Opacity,Is.Zero);
         }
         [UnityTest]
         public IEnumerator RealShotKillsDisablesCapsuleAndRespawnsFullLife()
