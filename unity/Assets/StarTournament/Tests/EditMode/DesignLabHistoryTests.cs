@@ -25,7 +25,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
         {
-            var old=Shipped();var profile=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            // The historical v6 registry predates damage-vignette descriptors as well.
+            var profile=current.BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
             var json=JsonUtility.ToJson(profile);
             // Exact v6 predecessor: remove only the new additive descriptor/value.
             var serialized=JsonUtility.FromJson<LegacyProfile>(json);serialized.version=6;

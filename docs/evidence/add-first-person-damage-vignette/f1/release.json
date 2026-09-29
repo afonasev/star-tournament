@@ -1,0 +1,11 @@
+{
+  "identity": "local-macos-player-candidate/dfa39efaf5fe1bd6afb1b006357eee44f7f07105/f1-20260929T133000Z",
+  "commit": "dfa39efaf5fe1bd6afb1b006357eee44f7f07105",
+  "build_marker": "f1-20260929T133000Z",
+  "path": "/Users/eaafonasev/Projects/star-tournament/.local/releases/damage-vignette-dfa39ef-f1-20260929T133000Z/StarTournamentProvingGround.app",
+  "executable": "/Users/eaafonasev/Projects/star-tournament/.local/releases/damage-vignette-dfa39ef-f1-20260929T133000Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+  "executable_sha256": "0cabe78b2cc7811660f7bc4c9068cfadce2696cc3ed9bb920cf2d6d68344fc95",
+  "build_command": "unity/tools.sh build",
+  "build_result": "STAR_PROVING_BUILD_PASS",
+  "created_utc": "2026-09-29T13:30:01.647339+00:00"
+}

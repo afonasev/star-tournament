@@ -13,6 +13,15 @@ namespace StarTournament.ProvingGround
         public readonly FatalImpact Impact;
         public DeathNotice(int seat, CombatLifeState life, ParticipantState pose,FatalImpact impact=default) { Seat=seat; Life=life; Pose=pose; Impact=impact; }
     }
+    /// <summary>Actual post-policy losses; presentation cannot infer armor hits from health alone.</summary>
+    public readonly struct DamageNotice
+    {
+        public readonly int Participant, Life;
+        public readonly float HealthLost, ArmorLost;
+        public readonly double Time;
+        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time)
+        { Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time; }
+    }
     public enum PelletContact { Miss, World, Participant }
     public readonly struct PelletNotice
     {
@@ -122,6 +131,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<lives.Length;i++){motors[i].SetAlive(!Life(i).Dead);motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);}
 
         }
+        public event Action<DamageNotice> Damaged;
         public event Action<DeathNotice> Died;
         public event Action<int> Respawned;
         public event Action<int, float> Fired;
@@ -389,7 +399,11 @@ namespace StarTournament.ProvingGround
         {
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return default;
             if(!rocket && killer >= 0 && Allied(killer,seat)) return default;
+            var before=Life(seat);
             var result = lives[seat].Damage(life, damage, killer < 0 ? null : Life(killer).ParticipantId, killerLife);
+            var after=Life(seat);
+            float healthLost=before.Health-after.Health,armorLost=before.Armor-after.Armor;
+            if(healthLost>0||armorLost>0)Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time));
             // Friendly splash can kill, but cannot earn enemy kill/assist rewards.
             int scorer=killer>=0&&killer!=seat&&Allied(killer,seat)?-1:killer;
             Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife));
