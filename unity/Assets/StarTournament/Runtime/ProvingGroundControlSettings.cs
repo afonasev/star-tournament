@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
             RefreshSettingsUi();
         }
         void SetPersonalMouse(int seat,float value)
-        {var id=identities.ProfileId(seat);if(id!=null){var r=playerProfiles.Find(id);playerProfiles.SetPersonal(id,value,r.ShowFps);}else if(identities.GuestAt(seat)!=null)identities.GuestAt(seat).MouseDegreesPerPixel=value;}
+        {var id=identities.ProfileId(seat);if(id!=null){var r=playerProfiles.Find(id);playerProfiles.SetPersonal(id,value,r.ShowFps);}else if(identities.GuestAt(seat)!=null)identities.GuestAt(seat).MouseDegreesPerPixel=value;RefreshSeatPauseUi();}
         float MenuMouseSensitivity()=>settingsProfileId!=null?playerProfiles.Find(settingsProfileId).MouseDegreesPerPixel:
             settingsSeat<0?MouseSensitivityPreference.Resolve(Profile):PersonalSensitivity(settingsSeat);
         bool MenuFps()=>settingsProfileId!=null?playerProfiles.Find(settingsProfileId).ShowFps:settingsSeat<0?fps.Visible:PersonalFps(settingsSeat);

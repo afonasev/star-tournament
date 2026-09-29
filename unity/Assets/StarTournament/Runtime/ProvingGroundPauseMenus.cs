@@ -304,7 +304,7 @@ namespace StarTournament.ProvingGround
             RefreshSeatPauseUi();
         }
         void SetSeatLookAxis(int seat,int axis,float value)
-        {var look=PersonalGamepadLook(seat);if(axis==0)look.Horizontal=value;else look.Vertical=value;SavePersonalGamepad(seat,look);}
+        {var look=PersonalGamepadLook(seat);if(axis==0)look.Horizontal=value;else look.Vertical=value;SavePersonalGamepad(seat,look);RefreshSeatPauseUi();}
         void StepSeatPauseSlider(int seat,int direction)
         {
             // A quarter-page is a UI navigation increment, independent of gameplay tuning.
