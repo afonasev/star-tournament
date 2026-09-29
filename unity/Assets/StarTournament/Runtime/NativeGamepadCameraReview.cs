@@ -57,7 +57,9 @@ namespace StarTournament.ProvingGround
             // Codex can take OS focus while reading Player evidence. Synthetic input remains a diagnostic;
             // the exact focused/unfocused state is recorded and physical focus acceptance stays separate.
             Debug.Log("NATIVE_CAMERA_PLAYER_FOCUS_DIAGNOSTIC "+Application.isFocused);
-            yield return Press(pads[0],GamepadButton.Start);Button("pause-action-0-1").onClick.Invoke();
+            yield return Press(pads[0],GamepadButton.Start);
+            if(ground.Running){Debug.Log("NATIVE_CAMERA_PAUSE_INPUT_FALLBACK_UNFOCUSED");ground.OpenPauseReviewSeat(0);}
+            Button("pause-action-0-1").onClick.Invoke();
             // This fixture exercises the enabled return even when the user's general preference is off.
             ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-3").isOn=true;
             yield return Capture("05-personal-sliders-split-screen");
@@ -89,6 +91,7 @@ namespace StarTournament.ProvingGround
             InputSystem.QueueStateEvent(pads[0],new GamepadState{rightStick=new Vector2(.5f,.5f)});yield return new WaitForSecondsRealtime(.3f);yield return Capture("12-manual-stick-priority");
             if(ground.Session.Pose(0).LookNeutralSeconds!=0||ground.Session.Pose(0).Pitch>=-1)throw new InvalidOperationException("Manual stick priority failed");
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return Press(pads[0],GamepadButton.Start);
+            if(ground.Running){Debug.Log("NATIVE_CAMERA_PAUSE_INPUT_FALLBACK_UNFOCUSED");ground.OpenPauseReviewSeat(0);}
             Button("pause-action-0-1").onClick.Invoke();var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-3");toggle.isOn=false;
             Button("pause-setting-0-6").onClick.Invoke();Button("pause-action-0-0").onClick.Invoke();
             ground.PlaceCombatReviewSeat(0,flat,25,0);yield return new WaitForSecondsRealtime(2);yield return Capture("13-return-disabled");

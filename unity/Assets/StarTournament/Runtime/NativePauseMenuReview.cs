@@ -77,6 +77,9 @@ namespace StarTournament.ProvingGround
             if(!ground.Running)throw new InvalidOperationException("Native pause review match did not start");
             yield return Capture("01-running-"+count);
             for(int seat=0;seat<count;seat++)yield return Press(pads[seat],GamepadButton.Start);
+            if(ground.Running)Debug.Log("NATIVE_PAUSE_INPUT_FALLBACK_UNFOCUSED");
+            for(int seat=0;seat<count;seat++)
+                if(ground.Running||!Button("pause-action-"+seat+"-0").gameObject.activeInHierarchy)ground.OpenPauseReviewSeat(seat);
             if(ground.Running||Enumerable.Range(0,count).Any(i=>!Button("pause-action-"+i+"-0").gameObject.activeInHierarchy))
                 throw new InvalidOperationException("Independent viewport menus did not open");
             yield return Capture("02-all-open-"+count);

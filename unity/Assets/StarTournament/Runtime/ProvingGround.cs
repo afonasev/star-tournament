@@ -301,6 +301,11 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
             combatReview=true; Begin(backgroundDiagnostic);
         }
+        public void OpenPauseReviewSeat(int seat)
+        {
+            if(phase==Phase.Running)Pause("Пауза",seat);
+            else if(phase==Phase.Paused)OpenSeatPause(seat);
+        }
         public CharacterMotor CameraReviewMotor(int seat)=>motors[seat];
         public ProvingArena CameraReviewArena=>arena;
         public void PlaceCombatReviewSeat(int seat, Vector3 feet, float pitch,float yaw=0)
