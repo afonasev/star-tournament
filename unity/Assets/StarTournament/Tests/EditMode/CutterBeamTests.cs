@@ -56,10 +56,10 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void FourthSlotKeepsEnergyAndRespawnRestoresIt()
         {
             var p=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p",p);
-            life.Select(WeaponSelection.Previous);life.Advance(1);Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter));
+            life.CollectWeapon(WeaponId.Cutter);life.Select(WeaponSelection.Previous);life.Advance(1);Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter));
             life.ConsumeCutter(.05);life.Select(WeaponSelection.Next);life.Advance(1);Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             life.Select(WeaponSelection.Cutter);life.Advance(1);Assert.That(life.Read().CutterEnergy,Is.EqualTo(29.95));
-            life.Damage(1,100);life.Advance(10);life.Respawn(1);Assert.That(life.Read().CutterEnergy,Is.EqualTo(30));
+            life.Damage(1,100);life.Advance(10);life.Respawn(1);Assert.That(life.Read().CutterEnergy,Is.Zero);
         }
     }
 }

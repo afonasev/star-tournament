@@ -25,6 +25,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var profile=ProvingProfile.CreateMatchDefault();var config=NativeMatchConfiguration.Default(profile);
             var match=teams?new NativeMatchState(new NativeMatchRoster(NativeMatchMode.Teams,new[]{NativeTeam.TeamA,NativeTeam.TeamA,NativeTeam.TeamB,NativeTeam.TeamB}),config,profile,50):new NativeMatchState(4,config,profile,50);
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat,match);
+            EquippedCombatFixture.Equip(session);
             var actions=new LocalAction[4];actions[0].SelectWeapon=WeaponSelection.RocketLauncher;
             session.Tick(actions,.02f);for(int i=0;i<51;i++)session.Tick(new LocalAction[4],.02f);
         }
@@ -90,7 +91,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             int count=0;session.RocketExploded+=_=>count++;session.ApplyDamage(0,1,100);Ticks(12);
             Assert.That(count,Is.EqualTo(1));Assert.That(session.Life(1).KillerLife,Is.EqualTo(1));
             session.Restore(snap);session.ClearInput();Ticks(12);Assert.That(count,Is.EqualTo(2),"Replayed flight produces exactly one new event");
-            var repeated=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat);Assert.That(repeated.Rockets,Is.Empty);Assert.That(repeated.Life(0).RocketAmmo,Is.EqualTo(20));
+            var repeated=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat);Assert.That(repeated.Rockets,Is.Empty);Assert.That(repeated.Life(0).RocketAmmo,Is.Zero);
         }
     }
 }

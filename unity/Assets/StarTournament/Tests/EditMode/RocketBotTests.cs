@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var move=ProvingProfile.CreateDefault();var combat=ProvingProfile.CreateNativeCombatDefault();
             var bot=new NativeBotPlanner(NativeBotDifficulty.Normal,7,ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateNavigationDefault(),new Route(),new Tactics(),new NativeShotgunPolicy(move,combat),100);
-            var state=new CombatLife("p",ProvingProfile.CreateCombatDefault());state.Select(WeaponSelection.Cutter);state.Advance(1);
+            var state=new CombatLife("p",ProvingProfile.CreateCombatDefault());state.CollectWeapon(WeaponId.Cutter);state.Select(WeaponSelection.Cutter);state.Advance(1);
             var frame=new NativeBotFrame{Pose=new ParticipantState{Grounded=true},Life=state.Read(),Knowledge=new NativeBotKnowledge{OwnLife=1,Alive=true,Enemies=new[]{new NativeBotMemoryEntry{Sighting=new NativeBotSighting(1,1,Vector3.forward*10),Visible=true,ObservedAt=0}}},Allies=Array.Empty<NativeBotAlly>()};
             bool held=false;
             for(int i=0;i<100;i++){var a=bot.Tick(i*.02,.02f,frame);held|=a.FireHeld;Assert.That(a.Fire,Is.False,"Cutter holds rather than pulsing edges");}
@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var bot=new NativeBotPlanner(NativeBotDifficulty.Normal,7,ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateNavigationDefault(),new Route(),new Tactics{Clear=clear},new NativeShotgunPolicy(move,combat),100);
             var frame=new NativeBotFrame{Pose=new ParticipantState{Grounded=true},Life=new CombatLife("p",ProvingProfile.CreateCombatDefault()).Read(),Knowledge=new NativeBotKnowledge{OwnLife=1,Alive=true,Enemies=new[]{new NativeBotMemoryEntry{Sighting=new NativeBotSighting(1,1,Vector3.forward*distance),Visible=true,ObservedAt=0}}},Allies=ally?new[]{new NativeBotAlly{Participant=2,Position=Vector3.forward*distance}}:Array.Empty<NativeBotAlly>()};
             // This fixture isolates rocket fallback when Cutter is exhausted.
-            frame.Life.CutterEnergy=0;
+            frame.Life.CutterEnergy=0;frame.Life.RocketOwned=frame.Life.ShotgunOwned=true;frame.Life.RocketAmmo=frame.Life.ShotgunAmmo=20;
             Assert.That(bot.Tick(0,.02f,frame).SelectWeapon,Is.EqualTo(expected));
         }
     }

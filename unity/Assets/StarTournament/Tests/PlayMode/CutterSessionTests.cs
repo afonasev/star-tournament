@@ -46,6 +46,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<4;i++){var o=new GameObject("p"+i);o.transform.SetParent(owner.transform);o.layer=ProvingArena.ParticipantLayer;motors[i]=o.AddComponent<CharacterMotor>();motors[i].Initialize(move,new Vector3(0,20,i*3));}
                 var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);wall.transform.SetParent(owner.transform);wall.layer=ProvingArena.WorldLayer;wall.transform.position=new Vector3(0,20,7.5f);wall.transform.localScale=new Vector3(5,20,.2f);
                 var session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat);
+            EquippedCombatFixture.Equip(session);
                 var a=new LocalAction[4];a[0].SelectWeapon=WeaponSelection.Cutter;session.Tick(a,.02f);session.Tick(new LocalAction[4],1);
                 // Reset fixture poses after switch time so contacts start at known geometry.
                 for(int i=0;i<4;i++)motors[i].Initialize(move,new Vector3(0,20,i*3));Physics.SyncTransforms();

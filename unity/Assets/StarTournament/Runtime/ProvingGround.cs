@@ -196,6 +196,7 @@ namespace StarTournament.ProvingGround
             CreateSpeedPickupVisual();
             CreateDamagePickupVisual();
             CreateHealPickupVisual();
+            CreateWeaponPickupVisuals();
             presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views);
             Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
             int countFlag=Array.IndexOf(args,"-probeCameras");
@@ -238,6 +239,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
+            if (args.Contains("-weaponPickupReview")) gameObject.AddComponent<NativeWeaponPickupReview>();
             if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
             if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
@@ -453,7 +455,7 @@ namespace StarTournament.ProvingGround
         void LateUpdate()
         {
             if(Session == null) return;
-            RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();RenderHealPickup();
+            RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();RenderHealPickup();RenderWeaponPickups();
             for(int p=0;p<Composition.ParticipantCount;p++)
             {
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Show(Session.Life(p).SelectedWeapon);
@@ -749,7 +751,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Button button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose(); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void CreateHealPickupVisual()
         {

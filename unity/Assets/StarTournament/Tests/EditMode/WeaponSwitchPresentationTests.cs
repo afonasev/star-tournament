@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public void AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(float seconds)
         {
             var profile=ProvingProfile.CreateCombatDefault();profile.Set("weapon.switchSeconds",seconds);
-            var life=new CombatLife("p",profile);life.Select(WeaponSelection.Shotgun);
+            var life=new CombatLife("p",profile);life.CollectWeapon(WeaponId.Shotgun);life.Select(WeaponSelection.Shotgun);
             Assert.That(WeaponSwitchPose.Read(life.Read(),life.SwitchSeconds).Lift,Is.Zero);
             life.Advance(life.SwitchSeconds*.25);
             var before=life.Read();var raised=WeaponSwitchPose.Read(before,life.SwitchSeconds);

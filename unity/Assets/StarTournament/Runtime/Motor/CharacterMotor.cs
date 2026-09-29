@@ -68,7 +68,10 @@ namespace StarTournament.ProvingGround
             var desiredDirection = (transform.right * moveInput.x) + (transform.forward * moveInput.y);
             desiredDirection.y = 0f;
             var desiredHorizontalVelocity = desiredDirection * profile.Get("player.movement.maximumGroundSpeed")*horizontalSpeedMultiplier;
-            var horizontalVelocity = new Vector3(state.Velocity.x, 0f, state.Velocity.z);
+            // Native penetration resolution may displace a capsule faster than its movement limit.
+            // Do not feed that correction back as locomotion momentum on subsequent ticks.
+            var horizontalVelocity = Vector3.ClampMagnitude(new Vector3(state.Velocity.x, 0f, state.Velocity.z),
+                profile.Get("player.movement.maximumGroundSpeed")*horizontalSpeedMultiplier);
             var acceleration = groundedBeforeMove
                 ? (moveInput.sqrMagnitude > 0f ? profile.Get("player.movement.groundAcceleration") : profile.Get("player.movement.groundDeceleration"))
                 : profile.Get("player.movement.airAcceleration");

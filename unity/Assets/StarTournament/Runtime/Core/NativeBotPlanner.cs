@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
     {
         public ParticipantState Pose;
         public CombatLifeState Life;
+        public WeaponPickupState[] WeaponObjectives = Array.Empty<WeaponPickupState>();
         public NativeBotKnowledge Knowledge;
         public NativeBotAlly[] Allies = Array.Empty<NativeBotAlly>();
     }
@@ -199,8 +200,9 @@ namespace StarTournament.ProvingGround
                 state.Intent=NativeBotIntent.Search;
                 if(decision&&!navigation.InTransition&&(!state.HasGoal||navigation.Status==NativeNavigationStatus.Idle||navigation.Status==NativeNavigationStatus.Arrived||navigation.Status==NativeNavigationStatus.Blocked))
                 {
-                    var anchors=tactics.Anchors;
-                    if(anchors.Length>0){state.Anchor=(state.Anchor+1)%anchors.Length;state.Goal=anchors[state.Anchor];state.HasGoal=true;navigation.SetStaticGoal(state.Goal);}
+                    var objectives=f.WeaponObjectives.Where(x=>x.Available).ToArray();
+                    if(objectives.Length>0){state.Goal=objectives.OrderBy(x=>Vector3.Distance(f.Pose.Position,x.Anchor)).First().Anchor;state.HasGoal=true;navigation.SetStaticGoal(state.Goal);}
+                    else {var anchors=tactics.Anchors;if(anchors.Length>0){state.Anchor=(state.Anchor+1)%anchors.Length;state.Goal=anchors[state.Anchor];state.HasGoal=true;navigation.SetStaticGoal(state.Goal);}}
                 }
             }
             // Stored tactical goals live in navigation, separate from currently observed target position.
@@ -241,16 +243,16 @@ namespace StarTournament.ProvingGround
             bool closeShotgun=targetDistance<=P("preferredDistanceMeters")*state.Personality;
             var desired=f.Life.SelectedWeapon;
             bool rocketSafe=false;
-            if(visible&&memory.HasValue&&weapon is NativeShotgunPolicy loadout&&tactics is INativeRocketTactics rocketTactics&&f.Life.RocketAmmo>0&&targetDistance>=Mathf.Max(loadout.RocketMinimumDistance,loadout.RocketSafety)&&targetDistance<=loadout.RangeFor(WeaponId.RocketLauncher))
+            if(visible&&memory.HasValue&&weapon is NativeShotgunPolicy loadout&&tactics is INativeRocketTactics rocketTactics&&CombatLife.Owned(f.Life,WeaponId.RocketLauncher)&&f.Life.RocketAmmo>0&&targetDistance>=Mathf.Max(loadout.RocketMinimumDistance,loadout.RocketSafety)&&targetDistance<=loadout.RangeFor(WeaponId.RocketLauncher))
             {
                 var origin=f.Pose.Position+Vector3.up*loadout.EyeHeight;
                 var direction=Quaternion.Euler(f.Pose.Pitch-action.LookDegrees.y,f.Pose.Yaw+action.LookDegrees.x,0)*Vector3.forward;
                 rocketSafe=rocketTactics.ClearRocketShot(origin,direction,targetDistance,out var endpoint)&&Vector3.Distance(endpoint,f.Pose.Position)>loadout.RocketSafety;
                 foreach(var ally in f.Allies)if(Vector3.Distance(endpoint,ally.Position)<=loadout.RocketSafety+loadout.TargetHeight)rocketSafe=false;
             }
-            if(visible&&f.Life.CutterEnergy>0&&weapon is NativeShotgunPolicy beamPolicy&&targetDistance>=beamPolicy.CutterMinimum&&targetDistance<=beamPolicy.CutterPreferredRange)desired=WeaponId.Cutter;
+            if(visible&&CombatLife.Owned(f.Life,WeaponId.Cutter)&&f.Life.CutterEnergy>0&&weapon is NativeShotgunPolicy beamPolicy&&targetDistance>=beamPolicy.CutterMinimum&&targetDistance<=beamPolicy.CutterPreferredRange)desired=WeaponId.Cutter;
             else if(rocketSafe)desired=WeaponId.RocketLauncher;
-            else if(f.Life.ShotgunAmmo>0 && (f.Life.RifleAmmo==0||closeShotgun))desired=WeaponId.Shotgun;
+            else if(CombatLife.Owned(f.Life,WeaponId.Shotgun)&&f.Life.ShotgunAmmo>0 && (f.Life.RifleAmmo==0||closeShotgun))desired=WeaponId.Shotgun;
             else if(f.Life.RifleAmmo>0)desired=WeaponId.Rifle;
             else if(desired==WeaponId.RocketLauncher)desired=WeaponId.Rifle; // Never use unsafe rockets as an empty fallback.
             if(desired!=f.Life.SelectedWeapon)action.SelectWeapon=desired==WeaponId.Cutter?WeaponSelection.Cutter:desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;

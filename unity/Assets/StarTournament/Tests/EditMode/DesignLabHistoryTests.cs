@@ -138,6 +138,15 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(current.Selected.Hash,Is.EqualTo(Shipped().Hash()));
             Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
         }
+        [Test]public void WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory()
+        {
+            var priorBundle=Shipped();priorBundle.Profiles=priorBundle.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponPickups",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
+            var old=new DesignLabHistory(path,priorBundle);old.Create("До подбора");var draft=old.Selected.Snapshot;draft.Set("rifle.head",31);old.Save(draft);var prior=old.Selected;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));Assert.That(upgraded.Selected.Snapshot.Get("weaponPickup.respawnSeconds"),Is.EqualTo(15));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [Test]public void PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning()
         {
             var before=Shipped();before.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);

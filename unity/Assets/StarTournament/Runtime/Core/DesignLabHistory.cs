@@ -131,6 +131,15 @@ namespace StarTournament.ProvingGround
             var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
             var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
             predecessors=new[]{this.shipped,beforePalette,medium,mediumBeforePalette,new LabBundle{Profiles=mediumBeforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=mediumBeforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
+            // Accept exact prior registries across additive palette and weapon-pickup schema upgrades.
+            LabBundle WithoutPickups(LabBundle b)=>new LabBundle{Profiles=b.Profiles.Select(p=>p.Id=="unity-combat-state-v1"||p.Id=="combat-bowl-ring-r7-authoring-v1"?p.BeforeWeaponPickups():p).ToList()};
+            LabBundle WithPalette(LabBundle b)
+            {
+                var copy=new LabBundle{Profiles=b.Profiles.ToList()};if(this.shipped.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId)&&!copy.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId))
+                    copy.Profiles.Add(this.shipped.Profiles.Single(p=>p.Id==ProvingProfile.ParticipantPaletteId));
+                return copy;
+            }
+            predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))}).GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))).Select(g=>g.First()).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;
             try

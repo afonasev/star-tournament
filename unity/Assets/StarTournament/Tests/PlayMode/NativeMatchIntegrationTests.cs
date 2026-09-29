@@ -43,6 +43,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var match=new NativeMatchState(4,config,profile,50);
             for(int i=0;i<2999;i++){match.BeginTick();match.EndTick();}
             var session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat,match);
+            EquippedCombatFixture.Equip(session);
             var equipped=session.Capture();
             for(int i=0;i<2;i++){equipped.Lives[i].SelectedWeapon=WeaponId.Shotgun;equipped.Lives[i].Ammo=equipped.Lives[i].ShotgunAmmo;}
             session.Restore(equipped); // Set up the scoring order directly; switching timing is covered separately.

@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
-            version=5;
+            version=6;
             var current=CreateCombatDefault();
             var cadence=FindDescriptor("rifle.cooldownSeconds");
             if(cadence!=null)
@@ -220,12 +220,17 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 5 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 6 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
             profile.Add("armor.respawnSeconds", "armor-pickup", "Возврат бонуса", "Simulation-время до возвращения щита после подбора.", "seconds", 1, 120, 1, 30);
             profile.Add("armor.pickupRadius", "armor-pickup", "Радиус подбора", "Горизонтальный радиус authoritative подбора щита.", "meters", .1f, 5, .05f, 1.2f);
+            profile.Add("weaponPickup.respawnSeconds", "weapon-pickup", "Возврат оружия", "Независимое игровое время после успешного подбора.", "seconds", .1f, 120, .1f, 15);
+            profile.Add("weaponPickup.radius", "weapon-pickup", "Радиус оружия", "Горизонтальный контакт; support и преграды проверяются отдельно.", "meters", .1f, 3, .05f, 1.2f);
+            profile.Add("weaponPickup.hoverMeters", "weapon-pickup", "Высота модели", "Высота центра парящего оружия над anchor пола.", "meters", .1f, 3, .05f, 1.1f);
+            profile.Add("weaponPickup.rotationDegreesPerSecond", "weapon-pickup", "Вращение модели", "Вращение доступного оружия вокруг вертикали игрового времени.", "degrees/second", 0, 360, 1, 45);
+            profile.Add("weaponPickup.modelLengthMeters", "weapon-pickup", "Размер модели", "Максимальная сторона world-модели для читаемости и свободного прохода.", "meters", .2f, 3, .05f, 1.4f);
             profile.Add("pickup.maximumHeightDifference", "pickups", "Допуск высоты подбора", "Максимальная разница высот стоп и anchor; исключает подбор с другого этажа.", "meters", .05f, 1, .05f, .5f);
             profile.Add("damageBoost.multiplier", "damage-boost", "Множитель урона", "Множитель урона оружия до поглощения бронёй.", "ratio", 1, 4, .1f, 2);
             profile.Add("damageBoost.durationSeconds", "damage-boost", "Длительность усиления", "Время усиления; смерть сразу снимает эффект.", "seconds", .1f, 60, .1f, 10);

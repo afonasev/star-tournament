@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ThirdSlotCyclesIndependentlyNeedsReleaseAndRestoresExactly()
         {
             var p=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p",p);
-            life.Select(WeaponSelection.RocketLauncher);life.Advance(1);
+            life.CollectWeapon(WeaponId.RocketLauncher);life.CollectWeapon(WeaponId.Cutter);life.CollectWeapon(WeaponId.Shotgun);life.Select(WeaponSelection.RocketLauncher);life.Advance(1);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.RocketLauncher));
             Assert.That(life.Read().Ammo,Is.EqualTo(20));Assert.That(life.Fire(true),Is.True);
             life.Advance(p.Get("rocket.cooldownSeconds"));Assert.That(life.Fire(true),Is.False,"Holding does not auto-fire Pulse");
@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Read().RifleAmmo,Is.EqualTo(100));Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(20));
             life.Restore(snapshot);Assert.That(life.Read().RocketAmmo,Is.EqualTo(18));
             life.Damage(1,100);life.Advance(p.Get("combat.killcamSeconds"));Assert.That(life.Respawn(1),Is.True);
-            Assert.That(life.Read().RocketAmmo,Is.EqualTo(20));Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
+            Assert.That(life.Read().RocketAmmo,Is.Zero);Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
         }
         [Test] public void DamageIsOneCappedValueAndArmorPrecedesHealth()
         {

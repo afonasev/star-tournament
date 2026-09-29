@@ -26,6 +26,16 @@ namespace StarTournament.ProvingGround
         }
         void Select(WeaponSelection selection)
         {
+            // This pose diagnostic authors an equipped fixture; physical acquisition is covered by weaponPickupReview.
+            var weapon=selection==WeaponSelection.Shotgun?WeaponId.Shotgun:selection==WeaponSelection.RocketLauncher?WeaponId.RocketLauncher:selection==WeaponSelection.Cutter?WeaponId.Cutter:WeaponId.Rifle;
+            if(!CombatLife.Owned(ground.Session.Life(0),weapon))
+            {
+                var fixture=ground.Session.Capture();var life=fixture.Lives[0];
+                if(weapon==WeaponId.Shotgun){life.ShotgunOwned=true;life.ShotgunAmmo=(int)ground.LifeProfile.Get("combat.startingAmmo");}
+                else if(weapon==WeaponId.RocketLauncher){life.RocketOwned=true;life.RocketAmmo=(int)ground.LifeProfile.Get("rocket.startingAmmo");}
+                else {life.CutterOwned=true;life.CutterEnergy=ground.CutterProfile.Get("cutter.energyCapacity");}
+                fixture.Lives[0]=life;ground.Session.Restore(fixture);
+            }
             var a=new LocalAction[ground.Session.ParticipantCount];a[0].SelectWeapon=selection;ground.Session.Tick(a,.02f);Render();
         }
         IEnumerator Capture(string name)

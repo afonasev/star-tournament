@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Read().RifleAmmo, Is.Zero);
             life.Advance(10);
             Assert.That(life.Fire(true), Is.False);
-            life.Select(WeaponSelection.Shotgun);
+            life.CollectWeapon(WeaponId.Shotgun);life.Select(WeaponSelection.Shotgun);
             Assert.That(life.Fire(true),Is.False,"Holding the rifle trigger does not edge-fire the shotgun");
             life.Advance(profile.Get("weapon.switchSeconds"));
             Assert.That(life.Fire(false), Is.False);
@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             life.Damage(1,100);life.Advance(profile.Get("combat.killcamSeconds"));life.Respawn(1);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(life.Read().RifleAmmo,Is.EqualTo(1));
-            Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(1));
+            Assert.That(life.Read().ShotgunAmmo,Is.Zero);
         }
         [Test] public void CooldownBoundaryAndExplicitInputReset()
         {
@@ -47,7 +47,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var profile=ProvingProfile.CreateCombatDefault();var life=new CombatLife("p1",profile);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(life.Fire(true),Is.True);
-            life.Select(WeaponSelection.Next);
+            life.CollectWeapon(WeaponId.Shotgun);life.Select(WeaponSelection.Next);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(life.Read().SwitchRemaining,Is.EqualTo(1).Within(.00001));
             Assert.That(life.Fire(true),Is.False);
@@ -71,7 +71,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var profile=ProvingProfile.CreateCombatDefault();
             var life=new CombatLife("p1",profile);
-            life.Select(WeaponSelection.Shotgun);
+            life.CollectWeapon(WeaponId.Shotgun);life.Select(WeaponSelection.Shotgun);
             life.Select(WeaponSelection.Rifle);
             Assert.That(life.Read().PendingWeapon,Is.EqualTo(WeaponId.Shotgun),"Second command cannot replace the pending switch");
             Assert.That(life.Fire(true),Is.False);
@@ -112,7 +112,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Read().Life, Is.EqualTo(2));
             Assert.That(life.Read().Health, Is.EqualTo(profile.Get("combat.maximumHealth")));
             Assert.That(life.Read().Ammo, Is.EqualTo(profile.Get("rifle.startingAmmo")));
-            Assert.That(life.Read().ShotgunAmmo,Is.EqualTo(profile.Get("combat.startingAmmo")));
+            Assert.That(life.Read().ShotgunAmmo,Is.Zero);
             Assert.That(life.Read().KillerId, Is.Null);
             Assert.That(life.Read().FireHeld, Is.False);
             Assert.That(life.Damage(1, 1000).Applied, Is.Zero);

@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="15", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="16", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -235,6 +235,12 @@ namespace StarTournament.ProvingGround
                 new ArenaPickupDefinition{Id="armor-ne",Kind=ArenaPickupKind.Armor,Support=hall,Anchor=new Vector3(32,4,28)},
                 new ArenaPickupDefinition{Id="speed-nw",Kind=ArenaPickupKind.Speed,Support=hall,Anchor=new Vector3(-32,4,28)},
                 new ArenaPickupDefinition{Id="speed-se",Kind=ArenaPickupKind.Speed,Support=hall,Anchor=new Vector3(32,4,-28)},
+                new ArenaPickupDefinition{Id="shotgun-west",Kind=ArenaPickupKind.Shotgun,Support=loop,Anchor=new Vector3(-33,0,0)},
+                new ArenaPickupDefinition{Id="shotgun-east",Kind=ArenaPickupKind.Shotgun,Support=loop,Anchor=new Vector3(33,0,0)},
+                new ArenaPickupDefinition{Id="pulse-north",Kind=ArenaPickupKind.Pulse,Support=hall,Anchor=new Vector3(12,4,21)},
+                new ArenaPickupDefinition{Id="pulse-south",Kind=ArenaPickupKind.Pulse,Support=hall,Anchor=new Vector3(-12,4,-21)},
+                new ArenaPickupDefinition{Id="cutter-north",Kind=ArenaPickupKind.Cutter,Support=loop,Anchor=new Vector3(-8,0,28)},
+                new ArenaPickupDefinition{Id="cutter-south",Kind=ArenaPickupKind.Cutter,Support=loop,Anchor=new Vector3(8,0,-28)},
                 new ArenaPickupDefinition{Id="damage-hall",Kind=ArenaPickupKind.Damage,Support=hall,Anchor=new Vector3(0,4,0)}},Solids=solids.ToArray(),Spawns=spawns.ToArray(),SpawnRegions=regions.ToArray(),Transitions=transitions.ToArray(),RouteAnchors=new[]{new Vector3(0,-1.2f,0),new Vector3(0,4,0)}};
         }
     }

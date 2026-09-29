@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround
         }
         internal ProvingProfile BeforeMediumWeaponSwitch()
         {
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=BeforeWeaponPickups();
             if(p.id=="unity-trooper-presentation-v1"&&p.FindDescriptor("view.switchShoulderDegrees")!=null)
             {
                 p.version=5;

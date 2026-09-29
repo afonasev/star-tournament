@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 motors[i]=go.AddComponent<CharacterMotor>(); motors[i].Initialize(movement,new Vector3(i*3,0,0));
             }
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            EquippedCombatFixture.Equip(session);
         }
         void SelectShotgun()
         {
@@ -62,7 +63,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Time,Is.EqualTo(paused)); Assert.That(session.Life(1).RespawnRemaining,Is.EqualTo(remaining).Within(.00001));
             for(int i=0;i<15;i++) session.Tick(actions,.02f);
             Assert.That(session.Life(1).Dead,Is.False); Assert.That(session.Life(1).Life,Is.EqualTo(2));
-            Assert.That(session.Life(1).Health,Is.EqualTo(100)); Assert.That(session.Life(1).RifleAmmo,Is.EqualTo(100)); Assert.That(session.Life(1).ShotgunAmmo,Is.EqualTo(20));
+            Assert.That(session.Life(1).Health,Is.EqualTo(100)); Assert.That(session.Life(1).RifleAmmo,Is.EqualTo(100)); Assert.That(session.Life(1).ShotgunAmmo,Is.Zero);
             Assert.That(motors[1].GetComponent<CharacterController>().enabled,Is.True);
             Assert.That(session.ShotCount,Is.EqualTo(1),"Held trigger cannot shoot again through pause or cooldown");
             Assert.That(session.ApplyDamage(1,1,100,0,1).Applied,Is.Zero,"Old-life damage cannot hit respawn");
@@ -122,6 +123,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Setup(); yield return null;
             combat.Set("shot.spread",7);
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            EquippedCombatFixture.Equip(session);
             motors[1].Initialize(movement,new Vector3(0,0,4));
             SelectShotgun();
             var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true;
@@ -135,6 +137,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         public IEnumerator ShotNoticeCapturesEveryResolvedEndpointWithoutChangingDamage()
         {
             Setup();yield return null;combat.Set("shot.spread",0);session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            EquippedCombatFixture.Equip(session);
             motors[1].Initialize(movement,new Vector3(0,0,4));ShotNotice notice=default;int count=0;session.ShotResolved+=n=>{notice=n;count++;};
             SelectShotgun();
             session.Tick(new[]{new LocalAction{SelectWeapon=WeaponSelection.Shotgun,Fire=true},default,default,default},.02f);
@@ -148,6 +151,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Setup();yield return null;
             combat.Set("rifle.spread",0);
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            EquippedCombatFixture.Equip(session);
             motors[1].Initialize(movement,new Vector3(0,0,4));
             ShotNotice notice=default;session.ShotResolved+=n=>notice=n;
             var actions=new LocalAction[4];actions[0].FireHeld=true;

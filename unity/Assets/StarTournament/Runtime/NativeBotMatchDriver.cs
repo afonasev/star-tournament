@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround
                 var allies=Enumerable.Range(0,planners.Length).Where(i=>i!=p&&composition.Roster.AreAllies(p,i)&&!session.Life(i).Dead)
                     .Select(i=>new NativeBotAlly{Participant=i,Position=session.Pose(i).Position}).ToArray();
                 tactics[p].ResetQueries();
-                actions[p]=planners[p].Tick(session.Time,seconds,new NativeBotFrame{Pose=session.Pose(p),Life=session.Life(p),Knowledge=Perception.Read(p),Allies=allies});
+                actions[p]=planners[p].Tick(session.Time,seconds,new NativeBotFrame{Pose=session.Pose(p),Life=session.Life(p),Knowledge=Perception.Read(p),Allies=allies,WeaponObjectives=session.WeaponObjectives(p)});
                 LastQueries+=tactics[p].Queries;
             }
             Ticks++;LastMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-start)*1000.0/System.Diagnostics.Stopwatch.Frequency;
