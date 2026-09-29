@@ -33,7 +33,15 @@ namespace StarTournament.ProvingGround
             if(!reviewCamera){var go=new GameObject("ragdoll-review-camera");go.transform.SetParent(transform);reviewCamera=go.AddComponent<Camera>();reviewCamera.depth=100;reviewCamera.fieldOfView=55;reviewCamera.nearClipPlane=.05f;
                 // First-person layers 15–18 are the existing viewport routing invariant.
                 reviewCamera.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18));}
-            reviewCamera.transform.position=center+new Vector3(4,2.5f,-4);reviewCamera.transform.LookAt(center+Vector3.up*.5f);
+            var aim=center+Vector3.up*.3f;var best=Vector3.zero;float clearance=-1;
+            // Diagnostic camera candidates avoid authored supports; these are QA framing constants.
+            foreach(var offset in new[]{new Vector3(4,2.5f,-4),new Vector3(-4,2.5f,-4),new Vector3(4,2.5f,4),new Vector3(-4,2.5f,4),new Vector3(0,6,-1)})
+            {
+                float distance=offset.magnitude;
+                if(Physics.SphereCast(aim,.1f,offset.normalized,out var hit,distance,(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore))distance=Mathf.Max(.2f,hit.distance-.2f);
+                if(distance>clearance){clearance=distance;best=offset.normalized*distance;}
+            }
+            reviewCamera.transform.position=aim+best;reviewCamera.transform.LookAt(aim);
         }
         IEnumerator Capture(string path)
         {Render();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(path);yield return new WaitForSecondsRealtime(.03f);}
@@ -55,10 +63,12 @@ namespace StarTournament.ProvingGround
                 ground.Session.Died-=onDeath;Check(died&&fatal.Impact.Valid&&fatal.Impact.Weapon==weapon,"Missing real fatal context: "+weapon);
                 var body=Body();var start=body.Ragdoll.Center;Spectate(start);var frames=Path.Combine(directory,weapon.ToString());Directory.CreateDirectory(frames);
                 for(int frame=0;frame<=30;frame++){yield return Capture(Path.Combine(frames,frame.ToString("D3")+".png"));if(frame<30)Step(5);}
+                Step(150);Spectate(body.Ragdoll.Center);yield return Capture(Path.Combine(frames,"settled.png"));
+                var resting=body.Ragdoll.Center;Step(25);Check(Vector3.Distance(resting,body.Ragdoll.Center)<.3f,"Final corpse pose did not settle: "+weapon);
                 var hand=body.GetComponentsInChildren<Transform>().Single(t=>t.name=="LeftHand");var frozen=hand.position;double clock=ground.Session.Time;
                 yield return new WaitForSecondsRealtime(.2f);Render();Check(hand.position==frozen&&ground.Session.Time==clock,"Pause drift");
                 Check(body.GetComponentsInChildren<Collider>(),"Corpse collider leaked into gameplay");
-                measurements.Add(new Measurement{weapon=weapon.ToString(),direction=fatal.Impact.Direction,impulse=fatal.Impact.Velocity(ground.DeathProfile),travel=body.Ragdoll.Center-start,maxSpeed=body.Ragdoll.MaximumSegmentSpeed,handSeparation=Vector3.Distance(hand.position,body.GetComponentsInChildren<Transform>().Single(t=>t.name=="RightHand").position),sleeping=body.Ragdoll.Sleeping});
+                measurements.Add(new Measurement{weapon=weapon.ToString(),direction=fatal.Impact.Direction,impulse=fatal.Impact.Velocity(ground.DeathProfile),travel=body.Ragdoll.Center-start,finalSegmentSpeed=body.Ragdoll.MaximumSegmentSpeed,handSeparation=Vector3.Distance(hand.position,body.GetComponentsInChildren<Transform>().Single(t=>t.name=="RightHand").position),sleeping=body.Ragdoll.Sleeping});
             }
             // Airborne death: initial pose must be retained instead of being projected onto support.
             ground.StartCombatReview(new[]{pads[0]},backgroundDiagnostic:true,ensureOpponent:true);Check(ground.Running,"QA did not start a match");ground.PlaceCombatReviewSeat(1,new Vector3(-20,2,0),0,180);
@@ -75,7 +85,7 @@ namespace StarTournament.ProvingGround
                 var support=contour=="steps"?supports.First(c=>c.name.Contains("-step-")):contour=="edge"?supports.First(c=>c.name=="balcony-west"):supports.First(c=>c.bounds.size.y>3&&c.bounds.size.x<2);
                 var feet=contour=="steps"?new Vector3(support.bounds.center.x,support.bounds.max.y+.2f,support.bounds.center.z):contour=="edge"?new Vector3(support.bounds.max.x+.5f,support.bounds.max.y+.2f,0):new Vector3(support.bounds.max.x+.6f,0,support.bounds.center.z);
                 ground.PlaceCombatReviewSeat(1,feet,0);Render();ground.Session.ApplyDamage(1,ground.Session.Life(1).Life,500);var contact=Body();Spectate(feet);
-                for(int frame=0;frame<=20;frame++){yield return Capture(Path.Combine(directory,contour+"-"+frame.ToString("D3")+".png"));if(frame<20)Step(5);}
+                for(int frame=0;frame<=20;frame++){Spectate(contact.Ragdoll.Center);yield return Capture(Path.Combine(directory,contour+"-"+frame.ToString("D3")+".png"));if(frame<20)Step(5);}
                 Check(contact.Ragdoll.MaximumSegmentSpeed<ground.DeathProfile.Get("corpse.maximumSpeed"),"Unstable "+contour+" contact");
                 if(contour=="edge")Check(contact.Ragdoll.Center.y<feet.y-1,"Body did not fall from platform edge");
             }
@@ -90,7 +100,7 @@ namespace StarTournament.ProvingGround
         }
         void Check(Collider[] colliders,string message)=>Check(colliders.Length==0,message);
         void OnDestroy(){if(pads!=null)foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);}
-        [Serializable]sealed class Measurement{public string weapon;public Vector3 direction,impulse,travel;public float maxSpeed,handSeparation;public bool sleeping;}
+        [Serializable]sealed class Measurement{public string weapon;public Vector3 direction,impulse,travel;public float finalSegmentSpeed,handSeparation;public bool sleeping;}
         [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public double diagnosticTickMeanMs,diagnosticTickMaxMs;public bool muted;public Measurement[] measurements;}
     }
 }
