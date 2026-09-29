@@ -170,6 +170,54 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             action=planner.Tick(.4,.01f,frame);Assert.That(action.Fire,Is.False);
         }
 
+        [Test] public void PickupRetainsThreatFacingThroughVisibilityLossAndMemoryExpiry()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame(health:10);
+            frame.Pickups=new[]{new NativeBotPickupEvent{Id="heal-behind",Kind=NativeBotPickupKind.Heal,Available=true,Position=Vector3.back*2}};
+            planner.Tick(0,.01f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Pickup),"Healing replaces the retreat intention in this regression");
+            frame.Knowledge.Enemies[0].Visible=false;
+            var action=planner.Tick(.2,.01f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Pickup));
+            Assert.That(action.LookDegrees,Is.EqualTo(new Vector2(7,-3)),"A pickup route must not take facing away from the known threat");
+            var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+            Assert.That(world.z,Is.LessThan(0),"Healing still makes route progress backwards");
+            Assert.That(action.Fire||action.FireHeld,Is.False);
+            var restored=Make(NativeBotDifficulty.Hard);restored.Restore(planner.Capture());
+            Same(planner.Tick(.3,.01f,frame),restored.Tick(.3,.01f,frame));
+            frame.Knowledge.Enemies=Array.Empty<NativeBotMemoryEntry>();
+            action=planner.Tick(.4,.01f,frame);
+            Assert.That(Mathf.Abs(action.LookDegrees.x),Is.EqualTo(180).Within(.001),"After memory expiry navigation may face the pickup route again");
+            Assert.That(action.Fire||action.FireHeld,Is.False);
+        }
+
+        [Test] public void ExpiredRetreatDoesNotGiveFacingBackToAnIndirectPursuitRoute()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame(health:10);
+            planner.Tick(0,.01f,frame);
+            frame.Knowledge.Enemies[0].Visible=false;
+            var action=planner.Tick(1.5,.01f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Pursue));
+            Assert.That(action.LookDegrees,Is.EqualTo(new Vector2(7,-3)),"Retreat timer expiration must not drop remembered threat tracking");
+            Assert.That(action.Fire||action.FireHeld,Is.False);
+        }
+
+        [Test] public void ActualAimPolicyFacesThreatWhileMovingBackwardsToHeal()
+        {
+            var planner=new NativeBotPlanner(NativeBotDifficulty.Hard,7,ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateNavigationDefault(),new Route(),new Tactics(),
+                new NativeShotgunPolicy(ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()),100);
+            var frame=Frame(health:10);
+            frame.Pickups=new[]{new NativeBotPickupEvent{Id="heal-behind",Kind=NativeBotPickupKind.Heal,Available=true,Position=Vector3.back*2}};
+            planner.Tick(0,.02f,frame);frame.Knowledge.Enemies[0].Visible=false;
+            var action=planner.Tick(.2,.02f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Pickup));
+            Assert.That(Mathf.Abs(action.LookDegrees.x),Is.LessThan(90),"Actual aim must retain front-facing threat rather than snap 180 degrees towards healing");
+            var forward=Quaternion.Euler(0,action.LookDegrees.x,0)*Vector3.forward;
+            var movement=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+            Assert.That(Vector3.Dot(forward,Vector3.forward),Is.GreaterThan(0));
+            Assert.That(movement.z,Is.LessThan(0));Assert.That(action.Fire||action.FireHeld,Is.False);
+        }
+
         [Test] public void WorkingRangeStrafeUsesDifficultyProfileAndOnlyLocalClearance()
         {
             float previous=0;

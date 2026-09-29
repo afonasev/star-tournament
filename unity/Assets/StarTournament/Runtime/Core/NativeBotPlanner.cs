@@ -262,9 +262,10 @@ namespace StarTournament.ProvingGround
             WeaponId desired=ChooseWeapon(time,f,memory);
             Vector3 aimPoint=memory.HasValue?memory.Value.Sighting.Position:Vector3.zero;
             bool rocketSafe=false;
-            // During retreat keep facing the dated threat even through a short LOS gap.
-            // Fire below still requires a current visible observation, never memory alone.
-            bool trackThreat=visible||(memory.HasValue&&state.Intent==NativeBotIntent.Retreat);
+            // Facing belongs to the known threat, independently of route/intent ownership.
+            // Pickup selection and retreat expiry must not turn our back during an LOS gap.
+            // The perception module bounds memory lifetime; fire still requires visibility.
+            bool trackThreat=memory.HasValue;
             if(trackThreat&&weapon is NativeShotgunPolicy lp)
             {
                 aimPoint+=Vector3.up*lp.TargetHeight;
