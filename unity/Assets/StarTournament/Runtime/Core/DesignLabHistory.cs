@@ -149,12 +149,19 @@ namespace StarTournament.ProvingGround
                 {previous=profile.BeforeDamageVignette();vignettePredecessors.Add(profile,previous);}
                 return previous;
             }
+            var gamepadPredecessors=new Dictionary<ProvingProfile,ProvingProfile>();
+            ProvingProfile WithoutGamepadLook(ProvingProfile profile)
+            {
+                if(!gamepadPredecessors.TryGetValue(profile,out var previous))
+                {previous=profile.BeforeGamepadLook();gamepadPredecessors.Add(profile,previous);}
+                return previous;
+            }
             predecessors=predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeCutterDamage()).ToList()}})
-                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeGamepadLook()).ToList()}})
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutGamepadLook).ToList()}})
                 .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First()).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;
