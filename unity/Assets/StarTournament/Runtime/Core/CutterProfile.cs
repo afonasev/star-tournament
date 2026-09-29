@@ -9,20 +9,33 @@ namespace StarTournament.ProvingGround
             if(p.id=="cutter-beam-v1")
             {
                 p.version=1;
+                p.Set("cutter.referenceDamage",100f);
+                p.descriptors.Find(d=>d.Path=="cutter.referenceDamage").DefaultValue=100f;
                 p.Set("cutter.width",0.012f);
                 p.descriptors.Find(d=>d.Path=="cutter.width").DefaultValue=0.012f;
             }
             return p;
         }
+        // Exact v2 balance registry: historical snapshots retain their original hashes and values.
+        internal ProvingProfile BeforeCutterDamage()
+        {
+            // Only the changed registry needs an isolated predecessor; all other entries are read-only.
+            if(id!="cutter-beam-v1"||version!=3)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            p.version=2;
+            p.Set("cutter.referenceDamage",100f);
+            p.descriptors.Find(d=>d.Path=="cutter.referenceDamage").DefaultValue=100f;
+            return p;
+        }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=2 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=3 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
             p.Add("cutter.extensionSeconds","cutter","Рост","Время линейного роста от дула.","s",0f,3f,0.01f,0.15f);
             p.Add("cutter.contactTickSeconds","cutter","Контактный тик","Непрерывный контакт до очередного урона.","s",0.01f,1f,0.01f,0.1f);
-            p.Add("cutter.referenceDamage","cutter","Эталонный урон","Урон за эталонное время контакта.","HP",0f,1000f,1f,100f);
+            p.Add("cutter.referenceDamage","cutter","Эталонный урон","Урон за эталонное время контакта.","HP",0f,1000f,1f,300f);
             p.Add("cutter.referenceContactSeconds","cutter","Эталонное время","Время контакта для эталонного урона.","s",0.1f,30f,0.1f,3f);
             p.Add("cutter.hitRadius","cutter","Радиус луча","Расширение gameplay капсулы при запросе.","m",0f,0.5f,0.01f,0.02f);
             p.Add("cutter.botMinimumDistance","cutter-bots","Бот: минимум","Ближняя граница выбора Резака.","m",0f,30f,0.1f,3f);

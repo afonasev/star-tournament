@@ -130,10 +130,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
             Assert.That(current.Selected.Number,Is.GreaterThan(prior.Number));
         }
+        [TestCase(false)] [TestCase(true)]
+        public void CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(bool custom)
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterDamage",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
+            var first=new DesignLabHistory(path,old);
+            // NewFile is lazy: persist the old release before simulating an application upgrade.
+            first.Create("Сохранить старый опубликованный профиль");first.DeleteSelected();
+            if(custom){first.Create("Мой баланс");var draft=first.Selected.Snapshot;draft.Set("cutter.referenceDamage",150);first.Save(draft);}
+            var prior=first.Selected;var current=new DesignLabHistory(path,Shipped());
+            Assert.That(current.StorageError,Is.Null);
+            Assert.That(current.Selected.Snapshot.Get("cutter.referenceDamage"),Is.EqualTo(custom?150:300));
+            Assert.That(current.Selected.Snapshot.Get("cutter.referenceContactSeconds"),Is.EqualTo(3));
+            Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            Assert.That(current.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Snapshot.Get("cutter.referenceDamage"),Is.EqualTo(custom?150:100));
+            if(custom)current.DeleteSelected();
+            Assert.That(current.Selected.Hash,Is.EqualTo(Shipped().Hash()));
+        }
         static LabBundle FirstCutterRelease()
         {
             var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);int index=old.Profiles.FindIndex(p=>p.Id=="cutter-beam-v1");
-            old.Profiles[index]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(old.Profiles[index]).Replace("\"version\":2","\"version\":1"));
+            old.Profiles[index]=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterThickness",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(old.Profiles[index],null);
             old.Set("cutter.width",0.012f);return old;
         }
         [Test]public void CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease()

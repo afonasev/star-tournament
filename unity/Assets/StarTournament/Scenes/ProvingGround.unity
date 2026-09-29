@@ -1411,7 +1411,7 @@ MonoBehaviour:
       Value: 0.04
   CutterProfile:
     id: cutter-beam-v1
-    version: 2
+    version: 3
     descriptors:
     - Path: cutter.energyCapacity
       Group: cutter
@@ -1474,7 +1474,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 1000
       Step: 1
-      DefaultValue: 100
+      DefaultValue: 300
     - Path: cutter.referenceContactSeconds
       Group: cutter
       Label: "\u042D\u0442\u0430\u043B\u043E\u043D\u043D\u043E\u0435 \u0432\u0440\u0435\u043C\u044F"
@@ -1725,7 +1725,7 @@ MonoBehaviour:
     - Path: cutter.contactTickSeconds
       Value: 0.1
     - Path: cutter.referenceDamage
-      Value: 100
+      Value: 300
     - Path: cutter.referenceContactSeconds
       Value: 3
     - Path: cutter.hitRadius
