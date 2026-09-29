@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround
     {
-        enum SeatPausePage { Closed, Actions, Settings, ConfirmRepeat, ConfirmExit }
+        enum SeatPausePage { Closed, Actions, Settings, Audio, ConfirmRepeat, ConfirmExit }
         readonly SeatPausePage[] seatPausePages = new SeatPausePage[SeatInputCoordinator.SeatCount];
         readonly int[] seatPauseCursor = new int[SeatInputCoordinator.SeatCount];
         readonly GameObject[] seatPauseRoots = new GameObject[SeatInputCoordinator.SeatCount];
@@ -16,13 +16,16 @@ namespace StarTournament.ProvingGround
         readonly GameObject[] seatPauseWaiting = new GameObject[SeatInputCoordinator.SeatCount];
         readonly GameObject[] seatPauseActions = new GameObject[SeatInputCoordinator.SeatCount];
         readonly GameObject[] seatPauseSettings = new GameObject[SeatInputCoordinator.SeatCount];
+        readonly GameObject[] seatPauseAudio = new GameObject[SeatInputCoordinator.SeatCount];
         readonly GameObject[] seatPauseRepeat = new GameObject[SeatInputCoordinator.SeatCount];
         readonly GameObject[] seatPauseExit = new GameObject[SeatInputCoordinator.SeatCount];
         readonly Text[] seatPauseSettingsValue = new Text[SeatInputCoordinator.SeatCount];
+        readonly Text[] seatPauseAudioValue = new Text[SeatInputCoordinator.SeatCount];
         readonly Text[] seatPauseReason = new Text[SeatInputCoordinator.SeatCount];
         readonly Text[] seatPauseFps = new Text[SeatInputCoordinator.SeatCount];
         readonly Button[,] seatPauseActionButtons = new Button[SeatInputCoordinator.SeatCount,4];
-        readonly Button[,] seatPauseSettingButtons = new Button[SeatInputCoordinator.SeatCount,4];
+        readonly Button[,] seatPauseSettingButtons = new Button[SeatInputCoordinator.SeatCount,5];
+        readonly Button[,] seatPauseAudioButtons = new Button[SeatInputCoordinator.SeatCount,5];
         readonly Button[,] seatPauseRepeatButtons = new Button[SeatInputCoordinator.SeatCount,2];
         readonly Button[,] seatPauseExitButtons = new Button[SeatInputCoordinator.SeatCount,2];
 
@@ -61,13 +64,23 @@ namespace StarTournament.ProvingGround
                 seatPauseSettings[seat]=PausePage(card.transform,"settings");
                 Label(seatPauseSettings[seat].transform,"title","НАСТРОЙКИ",30,new Vector2(.08f,.84f),new Vector2(.92f,.97f),TextAnchor.MiddleLeft,MenuGold);
                 seatPauseSettingsValue[seat]=Label(seatPauseSettings[seat].transform,"values","",19,new Vector2(.08f,.66f),new Vector2(.92f,.85f),TextAnchor.MiddleLeft,Color.white);
-                string[] settingLabels={"Чувствительность мыши −","Чувствительность мыши +","Показывать FPS","‹ Назад"};
-                for(int item=0;item<4;item++)
+                string[] settingLabels={"Чувствительность мыши −","Чувствительность мыши +","Показывать FPS","Звук ›","‹ Назад"};
+                for(int item=0;item<settingLabels.Length;item++)
                 {
                     int localItem=item;
-                    float top=.63f-item*.145f;
+                    float top=.64f-item*.12f;
                     seatPauseSettingButtons[seat,item]=PauseButton(seatPauseSettings[seat].transform,"pause-setting-"+seat+"-"+item,settingLabels[item],
-                        new Vector2(.08f,top-.105f),new Vector2(.92f,top),()=>RunSeatPauseAction(localSeat,localItem),seat,item);
+                        new Vector2(.08f,top-.095f),new Vector2(.92f,top),()=>RunSeatPauseAction(localSeat,localItem),seat,item);
+                }
+                seatPauseAudio[seat]=PausePage(card.transform,"audio");
+                Label(seatPauseAudio[seat].transform,"title","ЗВУК",30,new Vector2(.08f,.84f),new Vector2(.92f,.97f),TextAnchor.MiddleLeft,MenuGold);
+                seatPauseAudioValue[seat]=Label(seatPauseAudio[seat].transform,"values","",19,new Vector2(.08f,.69f),new Vector2(.92f,.85f),TextAnchor.MiddleLeft,Color.white);
+                string[] audioLabels={"Музыка −","Музыка +","Эффекты −","Эффекты +","‹ Назад"};
+                for(int item=0;item<audioLabels.Length;item++)
+                {
+                    int localItem=item;float top=.67f-item*.12f;
+                    seatPauseAudioButtons[seat,item]=PauseButton(seatPauseAudio[seat].transform,"pause-audio-"+seat+"-"+item,audioLabels[item],
+                        new Vector2(.08f,top-.095f),new Vector2(.92f,top),()=>RunSeatPauseAction(localSeat,localItem),seat,item);
                 }
                 seatPauseRepeat[seat]=ConfirmationPage(card.transform,seat,"repeat","НАЧАТЬ ЗАНОВО?",out var repeatYes,out var repeatNo);
                 seatPauseRepeatButtons[seat,0]=repeatYes;seatPauseRepeatButtons[seat,1]=repeatNo;
@@ -103,9 +116,9 @@ namespace StarTournament.ProvingGround
         {
             var button=MenuButton(parent,name,value,min,max,action);
             button.transition=Selectable.Transition.None;
-            var trigger=button.gameObject.AddComponent<EventTrigger>();
+            var trigger=button.GetComponent<EventTrigger>()??button.gameObject.AddComponent<EventTrigger>();
             var entry=new EventTrigger.Entry { eventID=EventTriggerType.PointerEnter };
-            entry.callback.AddListener(_=>{seatPauseCursor[seat]=index;RefreshSeatPauseUi();});
+            entry.callback.AddListener(_=>{if(seatPauseCursor[seat]!=index)gameAudio?.MenuMove();seatPauseCursor[seat]=index;RefreshSeatPauseUi();});
             trigger.triggers.Add(entry);
             return button;
         }
@@ -166,21 +179,24 @@ namespace StarTournament.ProvingGround
                 if(up)MoveSeatPauseCursor(seat,-1);
                 if(down)MoveSeatPauseCursor(seat,1);
                 if(back)BackSeatPause(seat);
-                else if(submit)RunSeatPauseAction(seat,seatPauseCursor[seat]);
+                else if(submit){if((seatPausePages[seat]==SeatPausePage.Audio||seatPausePages[seat]==SeatPausePage.Settings)&&seatPauseCursor[seat]==4)gameAudio?.MenuBack();else gameAudio?.MenuConfirm();RunSeatPauseAction(seat,seatPauseCursor[seat]);}
             }
         }
 
-        int SeatPauseChoiceCount(int seat) => seatPausePages[seat]==SeatPausePage.Actions||seatPausePages[seat]==SeatPausePage.Settings?4:2;
+        int SeatPauseChoiceCount(int seat) => seatPausePages[seat]==SeatPausePage.Audio||seatPausePages[seat]==SeatPausePage.Settings?5:
+            seatPausePages[seat]==SeatPausePage.Actions?4:2;
         void MoveSeatPauseCursor(int seat,int direction)
         {
             int count=SeatPauseChoiceCount(seat);
             seatPauseCursor[seat]=(seatPauseCursor[seat]+direction+count)%count;
+            gameAudio?.MenuMove();
             RefreshSeatPauseUi();
         }
         void BackSeatPause(int seat)
         {
+            gameAudio?.MenuBack();
             if(seatPausePages[seat]==SeatPausePage.Actions)CloseSeatPause(seat);
-            else {seatPausePages[seat]=SeatPausePage.Actions;seatPauseCursor[seat]=0;RefreshSeatPauseUi();}
+            else {seatPausePages[seat]=seatPausePages[seat]==SeatPausePage.Audio?SeatPausePage.Settings:SeatPausePage.Actions;seatPauseCursor[seat]=0;RefreshSeatPauseUi();}
         }
         void CloseSeatPause(int seat)
         {
@@ -220,7 +236,15 @@ namespace StarTournament.ProvingGround
                     if(item==0)StepPersonalSensitivity(seat,-1);
                     else if(item==1)StepPersonalSensitivity(seat,1);
                     else if(item==2)TogglePersonalFps(seat);
-                    else if(item==3)SetSeatPausePage(seat,SeatPausePage.Actions);
+                    else if(item==3)SetSeatPausePage(seat,SeatPausePage.Audio);
+                    else SetSeatPausePage(seat,SeatPausePage.Actions);
+                    break;
+                case SeatPausePage.Audio:
+                    if(item==0)NativeAudioPreferences.SetMusic(NativeAudioPreferences.Music(Profile)-5);
+                    else if(item==1)NativeAudioPreferences.SetMusic(NativeAudioPreferences.Music(Profile)+5);
+                    else if(item==2)NativeAudioPreferences.SetEffects(NativeAudioPreferences.Effects(Profile)-5);
+                    else if(item==3)NativeAudioPreferences.SetEffects(NativeAudioPreferences.Effects(Profile)+5);
+                    else SetSeatPausePage(seat,SeatPausePage.Settings);
                     break;
                 case SeatPausePage.ConfirmRepeat:
                     if(item==0)
@@ -256,12 +280,14 @@ namespace StarTournament.ProvingGround
                 seatPauseWaiting[seat].SetActive(active&&(!human||page==SeatPausePage.Closed));
                 seatPauseActions[seat].SetActive(human&&page==SeatPausePage.Actions);
                 seatPauseSettings[seat].SetActive(human&&page==SeatPausePage.Settings);
+                seatPauseAudio[seat].SetActive(human&&page==SeatPausePage.Audio);
                 seatPauseRepeat[seat].SetActive(human&&page==SeatPausePage.ConfirmRepeat);
                 seatPauseExit[seat].SetActive(human&&page==SeatPausePage.ConfirmExit);
                 if(human)
                 {
                     seatPauseReason[seat].text=pauseReason;
                     seatPauseSettingsValue[seat].text=IdentityLabel(seat)+"\nМышь: "+PersonalSensitivity(seat).ToString("0.00")+"°/px · FPS: "+(PersonalFps(seat)?"вкл":"выкл");
+                    seatPauseAudioValue[seat].text="Музыка: "+NativeAudioPreferences.Music(Profile)+" %\nЭффекты: "+NativeAudioPreferences.Effects(Profile)+" %";
                     seatPauseActionButtons[seat,0].interactable=input.Ready&&FocusAllowsResume;
                     PaintSeatButtons(seat,page);
                 }
@@ -277,6 +303,7 @@ namespace StarTournament.ProvingGround
             {
                 Button button=page==SeatPausePage.Actions?seatPauseActionButtons[seat,item]:
                     page==SeatPausePage.Settings?seatPauseSettingButtons[seat,item]:
+                    page==SeatPausePage.Audio?seatPauseAudioButtons[seat,item]:
                     page==SeatPausePage.ConfirmRepeat?seatPauseRepeatButtons[seat,item]:seatPauseExitButtons[seat,item];
                 button.GetComponent<Image>().color=!button.interactable?new Color32(46,57,63,255):
                     item==seatPauseCursor[seat]?MenuGold:MenuCard;

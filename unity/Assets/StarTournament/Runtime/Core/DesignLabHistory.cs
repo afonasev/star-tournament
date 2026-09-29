@@ -191,6 +191,10 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutCutterDamage).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()}}));
+                // Preserve old immutable Lab hashes when the presentation-only audio descriptors
+                // are added to the default profile; every earlier registry remains a valid source.
+                var withoutAudio=Cached(p=>p.BeforeAudio());
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutAudio).ToList()}}));
                 if(historicalCache.Count>=2)historicalCache.Clear();
                 historicalCache.Add(key,predecessors);
                 return predecessors;
