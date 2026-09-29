@@ -140,7 +140,13 @@ namespace StarTournament.ProvingGround
             version=current.version;
             foreach(var descriptor in current.descriptors)
             {
-                if(FindDescriptor(descriptor.Path)!=null)continue;
+                var old=FindDescriptor(descriptor.Path);
+                if(old!=null)
+                {
+                    float value=SafeSwitchUpgrade(old,descriptor,Get(descriptor.Path));
+                    descriptors[descriptors.IndexOf(old)]=JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor));
+                    Set(descriptor.Path,value);continue;
+                }
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }

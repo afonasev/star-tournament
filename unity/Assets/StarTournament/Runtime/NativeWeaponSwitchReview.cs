@@ -58,10 +58,11 @@ namespace StarTournament.ProvingGround
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("02-old-weapon-rising");
                     TickTo(duration*.5);
                     var camera=View(0).transform.parent;
-                    var hand=camera.InverseTransformPoint(Bone(0,"RightHand").position);
-                    Require(hand.z<0,"Weapon hand did not reach behind the head");
+                    float near=camera.GetComponent<Camera>().nearClipPlane;
+                    foreach(var handName in new[]{"LeftHand","RightHand"})
+                        Require(camera.InverseTransformPoint(Bone(0,handName).position).z>near,"Hand crossed the camera: "+handName);
                     Require(View(0).transform.localPosition==rest,"Midpoint root moved");
-                    if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("03-model-swap-above-frame");
+                    if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("03-model-swap-in-raised-hands");
                     TickTo(duration*.25);Require(ground.Session.Life(0).SelectedWeapon==from,"Authoritative slot changed early");
                     var phase=WeaponSwitchPose.Read(ground.Session.Life(0),duration);Require(phase.Weapon==pending,"Pending model missing on descent");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)

@@ -123,8 +123,9 @@ namespace StarTournament.ProvingGround
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
         {
             this.path=path;this.shipped=shipped.Clone();preSwitch=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};preCutterThickness=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};preCutter=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};this.atomicPublish=atomicPublish??Publish;
+            var low=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
             var shoulder=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
-            predecessors=new[]{this.shipped,preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
+            predecessors=new[]{this.shipped,low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
             data=NewFile();
             if(!File.Exists(path))return;
             try
@@ -171,7 +172,7 @@ namespace StarTournament.ProvingGround
             foreach(var p in file.Profiles)
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
-                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,old.Snapshot.Get(d.Path));
+                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path)));
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==next.Hash());
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
