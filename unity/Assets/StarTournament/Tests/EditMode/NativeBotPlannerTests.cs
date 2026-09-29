@@ -25,9 +25,10 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         sealed class Tactics : INativeBotTactics
         {
             public Vector3 HiddenEnemyPosition;
+            public bool BlockLongApproach, JumpAllowed=true;
             public Vector3[] Anchors { get; set; } = { Vector3.forward * 20 };
-            public bool CanMove(Vector3 feet, Vector3 direction, float distance) => true;
-            public bool CanJump(ParticipantState pose, Vector3 direction) => true;
+            public bool CanMove(Vector3 feet, Vector3 direction, float distance) => !BlockLongApproach||distance<=3;
+            public bool CanJump(ParticipantState pose, Vector3 direction) => JumpAllowed;
             public bool Covered(Vector3 feet, Vector3 observedEnemyFeet) => true;
         }
         sealed class Weapon : INativeBotWeaponPolicy
@@ -148,6 +149,50 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             support.Tick(0,.01f,Frame(allies:allies)); Assert.That(support.Intent, Is.EqualTo(NativeBotIntent.Support));
             support.Tick(3.1f,.01f,Frame(allies:allies)); Assert.That(support.Intent, Is.EqualTo(NativeBotIntent.Engage));
             support.Tick(7.9f,.01f,Frame(allies:allies)); Assert.That(support.Intent, Is.EqualTo(NativeBotIntent.Engage));
+        }
+
+        [Test] public void RetreatFiresWhileMovingAwayAndTracksDatedThreatWithoutBlindFire()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame(health:10);
+            planner.Tick(0,.01f,frame);
+            var action=planner.Tick(.2,.01f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Retreat));
+            Assert.That(action.Fire,Is.True,"Retreat must keep the normal ready/visible fire opportunity");
+            var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+            Assert.That(world.z,Is.LessThan(0),"Cover progress must remain away from this threat");
+            Assert.That(Mathf.Abs(world.x),Is.GreaterThan(0),"Retreat also evades laterally");
+            var saved=planner.Capture();var restored=Make(NativeBotDifficulty.Hard);restored.Restore(saved);
+            frame.Knowledge.Enemies[0].Visible=false;
+            action=planner.Tick(.3,.01f,frame);Same(action,restored.Tick(.3,.01f,frame));
+            Assert.That(action.LookDegrees,Is.EqualTo(new Vector2(7,-3)),"Keep aiming from the dated memory rather than turn down the escape route");
+            Assert.That(action.Fire||action.FireHeld,Is.False,"A remembered position cannot authorize a shot");
+            frame.Knowledge.Enemies=Array.Empty<NativeBotMemoryEntry>();
+            action=planner.Tick(.4,.01f,frame);Assert.That(action.Fire,Is.False);
+        }
+
+        [Test] public void WorkingRangeStrafeUsesDifficultyProfileAndOnlyLocalClearance()
+        {
+            float previous=0;
+            foreach(var difficulty in new[]{NativeBotDifficulty.Easy,NativeBotDifficulty.Normal,NativeBotDifficulty.Hard})
+            {
+                var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.cooperation.personalitySpread",0);
+                var planner=Make(difficulty,behavior:profile,tactics:new Tactics{BlockLongApproach=true});
+                var action=planner.Tick(0,.01f,Frame());
+                var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+                float lateral=Mathf.Abs(world.x);
+                Assert.That(lateral,Is.GreaterThan(previous),"Higher difficulty has a stronger configured lateral component at range");previous=lateral;
+                Assert.That(world.z,Is.GreaterThan(0),"Closing on the target still makes progress");
+            }
+        }
+
+        [TestCase(true)] [TestCase(false)]
+        public void WorkingRangeJumpRequiresSafeTrajectoryAndRespectsGroundedCooldown(bool safe)
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.cooperation.personalitySpread",0);profile.Set("bots.hard.jumpChance",1);
+            var planner=Make(NativeBotDifficulty.Hard,behavior:profile,tactics:new Tactics{JumpAllowed=safe});var frame=Frame();
+            planner.Tick(0,.01f,frame);var action=planner.Tick(3.1,.01f,frame);
+            Assert.That(action.Jump,Is.EqualTo(safe));
+            Assert.That(planner.Tick(3.8,.01f,frame).Jump,Is.False,"A new grounded manoeuvre cannot skip the jump cooldown");
         }
 
         [Test] public void DeathAndNewLifeClearPlannerTargetNavigationAndPressedState()
