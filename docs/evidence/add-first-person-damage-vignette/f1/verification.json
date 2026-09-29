@@ -1,0 +1,109 @@
+{
+  "source_commit": "dfa39efaf5fe1bd6afb1b006357eee44f7f07105",
+  "candidate": {
+    "identity": "local-macos-player-candidate/dfa39efaf5fe1bd6afb1b006357eee44f7f07105/f1-20260929T133000Z",
+    "commit": "dfa39efaf5fe1bd6afb1b006357eee44f7f07105",
+    "build_marker": "f1-20260929T133000Z",
+    "path": "/Users/eaafonasev/Projects/star-tournament/.local/releases/damage-vignette-dfa39ef-f1-20260929T133000Z/StarTournamentProvingGround.app",
+    "executable": "/Users/eaafonasev/Projects/star-tournament/.local/releases/damage-vignette-dfa39ef-f1-20260929T133000Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+    "executable_sha256": "0cabe78b2cc7811660f7bc4c9068cfadce2696cc3ed9bb920cf2d6d68344fc95",
+    "build_command": "unity/tools.sh build",
+    "build_result": "STAR_PROVING_BUILD_PASS",
+    "created_utc": "2026-09-29T13:30:01.647339+00:00"
+  },
+  "profile": "unity-proving-ground-v1@8",
+  "checks": [
+    {
+      "command": "unity/tools.sh test-edit",
+      "passed": 203,
+      "failed": 0,
+      "exit_code": 0,
+      "receipt": "editmode.xml",
+      "revision": "e081de4",
+      "equivalence": "Final dfa39ef differs only by PlayMode reflection overload lookup; runtime/editor/EditMode trees unchanged.",
+      "equivalent_tree_hashes": {
+        "runtime": "a2528778354ceb2de007ce4e61e148b28f568aad",
+        "editor": "8cad5d3774c4e4c30d2254659e50dc271b9a7d79",
+        "editmode": "7be7f6d886e50806fba764cd22523ce68a827d73"
+      }
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "passed": 137,
+      "failed": 0,
+      "exit_code": 0,
+      "receipt": "playmode.xml",
+      "revision": "dfa39efaf5fe1bd6afb1b006357eee44f7f07105"
+    },
+    {
+      "command": "unity/tools.sh build",
+      "result": "STAR_PROVING_BUILD_PASS",
+      "exit_code": 0,
+      "receipt": "build.log",
+      "revision": "dfa39efaf5fe1bd6afb1b006357eee44f7f07105"
+    }
+  ],
+  "retry": {
+    "initial_playmode_failed": 1,
+    "cause": "Ambiguous reflection overload in newly added test; fixed explicit VertexHelper overload. Full suite passed on rerun."
+  },
+  "native_review": {
+    "status": "passed",
+    "exit_code": 0,
+    "owned_pid": 48958,
+    "owned_pid_absent": true,
+    "receipt": {
+      "classification": "AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",
+      "muted": true,
+      "width": 1920,
+      "height": 1080,
+      "checks": [
+        "active match: 01-clean",
+        "armor-only blue",
+        "active match: 02-shield-blue",
+        "session pause freezes pulse",
+        "armor penetration red",
+        "active match: 03-penetration-red",
+        "series opacity capped 0",
+        "series opacity capped 1",
+        "series opacity capped 2",
+        "series opacity capped 3",
+        "series opacity capped 4",
+        "active match: 04-series-red",
+        "pulse fades completely",
+        "active match: 05-faded",
+        "restore clears impulse",
+        "independent blue and red 2 views",
+        "under HUD without input interception 2",
+        "active match: 06-2-views",
+        "independent blue and red 3 views",
+        "untouched viewport 2 of 3",
+        "under HUD without input interception 3",
+        "active match: 07-3-views",
+        "independent blue and red 4 views",
+        "untouched viewport 2 of 4",
+        "untouched viewport 3 of 4",
+        "under HUD without input interception 4",
+        "active match: 08-4-views",
+        "killcam hides pulse",
+        "respawn clears impulse",
+        "Repeat clears impulse",
+        "menu clears impulse"
+      ]
+    },
+    "receipt_path": "player/complete.json",
+    "images": [
+      "01-clean.png",
+      "02-shield-blue.png",
+      "03-penetration-red.png",
+      "04-series-red.png",
+      "05-faded.png",
+      "06-2-views.png",
+      "07-3-views.png",
+      "08-4-views.png"
+    ],
+    "visual_inspection": "Blue/red soft edges, clear centers and readable HUD; quad seats 3/4 clean. 1920x1080 native Metal Player. Scripted fixtures, not human acceptance.",
+    "candidate_executable_hash_verified": true
+  },
+  "human_acceptance": "pending"
+}
