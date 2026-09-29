@@ -71,6 +71,8 @@ namespace StarTournament.ProvingGround
             foreach(var palette in Profiles.Where(p=>p.Id==ProvingProfile.ParticipantPaletteId))
                 try { NativeParticipantColors.Read(palette); }
                 catch(ArgumentException e) { issues.Add(new ProfileValidationIssue{Path="participant.color.blue.r",Message=e.Message}); }
+            CheckOrder(issues,"corpse.cutterSpeed","corpse.rifleSpeed",1);
+            CheckOrder(issues,"corpse.rifleSpeed","corpse.shotgunSpeed",1);
             CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
             CheckOrder(issues,"zone.armBottom","zone.armTop",1);
             CheckOrder(issues,"zone.legBottom","zone.legTop",1);
@@ -145,6 +147,9 @@ namespace StarTournament.ProvingGround
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(p=>p.BeforeBotTactics()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeShotOrigins()).ToList()}})
                 .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.BeforeCutterDamage()).ToList()}})
+                // Preserve exact registries with and without the additive death profile.
+                // The current registry remains first, avoiding a historical scan on ordinary loads.
+                .SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()}})
                 .GroupBy(b=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path))).Select(g=>g.First()).ToArray();
             data=NewFile();
             if(!File.Exists(path))return;

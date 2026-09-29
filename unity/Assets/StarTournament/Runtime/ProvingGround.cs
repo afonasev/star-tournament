@@ -15,6 +15,7 @@ namespace StarTournament.ProvingGround
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab, HealPickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab, PulsePrefab, CutterPrefab;
         public AnimationClip[] TrooperClips;
+        public ProvingProfile DeathProfile = ProvingProfile.CreateDeathDefault();
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
         public ProvingProfile Profile = ProvingProfile.CreateDefault();
         readonly SeatInputCoordinator input = new SeatInputCoordinator();
@@ -52,7 +53,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile TeamProfile = ProvingProfile.CreateTeamDefault();
         public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
         public NativeMatchConfiguration Configuration { get; private set; }
-        ProvingProfile frozenCutter, frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper;
+        ProvingProfile frozenCutter, frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper, frozenDeath;
         ProvingProfile previewMovement,previewLife,previewCombat,previewTrooper;
         NativeMatchConfiguration frozenConfiguration;
         NativeMatchRoster frozenRoster;
@@ -197,7 +198,7 @@ namespace StarTournament.ProvingGround
             CreateDamagePickupVisual();
             CreateHealPickupVisual();
             CreateWeaponPickupVisuals();
-            presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views);
+            presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views,deathProfile:DeathProfile);
             Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
             int countFlag=Array.IndexOf(args,"-probeCameras");
             if(args.Contains("-diagnostic") && countFlag>=0 && countFlag+1<args.Length && int.TryParse(args[countFlag+1],out int count) && (count==1||count==2||count==4))
@@ -242,6 +243,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
             if (args.Contains("-weaponPickupReview")) gameObject.AddComponent<NativeWeaponPickupReview>();
+            if (args.Contains("-deathRagdollReview")) gameObject.AddComponent<NativeDeathRagdollReview>();
             if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
             if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
@@ -293,7 +295,7 @@ namespace StarTournament.ProvingGround
         {
             if(phase!=Phase.Setup) Menu();
             SetSeatCount(pads.Length);
-            if(ensureOpponent && pads.Length==1)AddBot();
+            if(ensureOpponent && pads.Length==1 && LocalSeatCount+botSetup.Count<2)AddBot();
             input.Reset();
             for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
             combatReview=true; Begin(backgroundDiagnostic);
@@ -564,7 +566,7 @@ namespace StarTournament.ProvingGround
         void CreateMatch(bool repeating)
         {
             if(!repeating)
-                foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,ParticipantPaletteProfile,CutterProfile})
+                foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,ParticipantPaletteProfile,CutterProfile,DeathProfile})
                 {
                     if(profile==null||profile.Validate().Count!=0)throw new ArgumentException("Invalid match profile");
                     foreach(var descriptor in profile.Descriptors)NativeMatchConfiguration.ValidateValue(profile,descriptor.Path,profile.Get(descriptor.Path));
@@ -587,7 +589,7 @@ namespace StarTournament.ProvingGround
                 foreach(var descriptor in RosterProfile.Descriptors)NativeMatchConfiguration.ValidateValue(RosterProfile,descriptor.Path,RosterProfile.Get(descriptor.Path));
                 frozenRosterProfile=Copy(RosterProfile);
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
-                frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile);
+                frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile);
                 FrozenLabIdentity=LabSavedIdentity;
                 frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:labHistory.Selected.Number,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
@@ -622,7 +624,7 @@ namespace StarTournament.ProvingGround
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
-            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition);
+            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath);
             Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
             Session.Died+=OnMatchDeath;
             Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
@@ -651,7 +653,7 @@ namespace StarTournament.ProvingGround
             var safeMovement=frozenMovement??previewMovement;var safeLife=frozenLife??previewLife;var safeCombat=frozenCombat??previewCombat;
             RebuildActors(Composition,safeMovement,frozenTrooper??previewTrooper);
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat,cutterProfile:CutterProfile);
-            presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition);
+            presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile);
             actions=new LocalAction[Composition.ParticipantCount];ApplyLayout(LocalSeatCount);
             setupStep=setupMaxStep=2;
             input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(input.Ready?start:rebind);
