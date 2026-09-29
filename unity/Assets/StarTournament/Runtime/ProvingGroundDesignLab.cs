@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
             labSavedIdentity=labHistory.SelectedProfileName+" · "+revision.Label+"\n"+labHistory.SelectedProfileId+"\nSHA256 "+revision.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault()}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile}};
         void InitializeDesignLab()
         {
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
@@ -77,14 +77,14 @@ namespace StarTournament.ProvingGround
                 case "death":return "Смерть → Тело";case "spawn":return "Смерть → Возрождение";case "killcam":return "Камера → Killcam";
                 case "bot-evaluation":return "Боты → Контрольная оценка (read-only)";case "bots":return "Боты → Восприятие";case "bot-navigation":return "Боты → Навигация";case "bot-behavior":return "Боты → Поведение";
                 case "match":return "Матч → Правила";case "score":return "Матч → Очки";case "teams":return "Матч → Команды";
-                case "hit-zones":return "Игрок → Зоны попадания";case "presentation":return "Оформление → Сцена";case "shot-feedback":return "Оформление → Выстрел";
+                case "hit-zones":return "Игрок → Зоны попадания";case "presentation":return "Оформление → Сцена";case "shot-feedback":return "Оформление → Выстрел";case "audio":return "Оформление → Звук";
                 case "vector-shot-feedback":return "Оформление → Vector";case "simulation":return "Матч → Симуляция";
                 default:return GroupDisplayNames.TryGetValue(group,out var label)?label:"Оформление → "+group;
             }
         }
         static readonly Dictionary<string,string> GroupDisplayNames=new Dictionary<string,string>{
             {"surfaces","Оформление → Поверхности"},{"details","Оформление → Детали"},{"lighting","Оформление → Свет"},{"broadcast","Оформление → Экраны"},{"palette","Оформление → Палитра"},{"atmosphere","Оформление → Атмосфера"},{"player-capsule","Игрок → Капсула"},{"player-movement","Игрок → Движение"},{"navigation","Арена → Навигация"},
-            {"scoring","Матч → Очки"},{"trooper-animation","Оформление → Анимация"},{"trooper-grip","Оформление → Хват оружия"},
+            {"death-impulse","Оформление → Отбрасывание тела"},{"death-ragdoll","Оформление → Физика тела"},{"scoring","Матч → Очки"},{"trooper-animation","Оформление → Анимация"},{"trooper-grip","Оформление → Хват оружия"},
             {"participant-colors","Оформление → Цвета участников"},{"trooper-view","Оформление → Модель игрока"},{"standings","Интерфейс → Таблица результатов"},{"damage-vignette","Оформление → Получение урона"},{"ui","Оформление → HUD"},{"world-query","Арена → Проверки мира"},
             {"ring","Оформление → Станция"},{"ring-layout","Оформление → Детали станции"},{"space","Оформление → Космос"},
             {"windows","Оформление → Иллюминаторы"},{"geometry","Карта → Геометрия"},{"transitions","Карта → Переходы"},

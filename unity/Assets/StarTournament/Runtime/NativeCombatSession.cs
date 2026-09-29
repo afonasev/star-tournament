@@ -10,7 +10,8 @@ namespace StarTournament.ProvingGround
         public readonly int Seat;
         public readonly CombatLifeState Life;
         public readonly ParticipantState Pose;
-        public DeathNotice(int seat, CombatLifeState life, ParticipantState pose) { Seat=seat; Life=life; Pose=pose; }
+        public readonly FatalImpact Impact;
+        public DeathNotice(int seat, CombatLifeState life, ParticipantState pose,FatalImpact impact=default) { Seat=seat; Life=life; Pose=pose; Impact=impact; }
     }
     /// <summary>Actual post-policy losses; presentation cannot infer armor hits from health alone.</summary>
     public readonly struct DamageNotice
@@ -277,7 +278,7 @@ namespace StarTournament.ProvingGround
             {
                 float applied=0;
                 for(int t=0;t<targets.Length;t++) if(shot.damage[t]>0)
-                    applied+=ApplyDamage(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.ProjectileCount(shot.notice.Weapon), shot.shooter, shot.life).Applied;
+                    applied+=ApplyDamagePolicy(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.ProjectileCount(shot.notice.Weapon), shot.shooter, shot.life,false,FatalImpact.FromShot(shot.notice,targets[t].Seat,targets[t].Life)).Applied;
                 ShotResolved?.Invoke(shot.notice);
                 Fired?.Invoke(shot.shooter,applied);
             }
@@ -314,7 +315,7 @@ namespace StarTournament.ProvingGround
             bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;
             if(began){ShotCount++;shotSequence++;ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Cutter));}
             double spent=beams[shooter].Advance(seconds,Life(shooter).CutterEnergy,origin,direction,limit,distances,identities,
-                damageRemaining[shooter]>0?damagePickup.Multiplier:1,(target,amount)=>applied+=ApplyDamage(target,identities[target],amount,shooter,Life(shooter).Life).Applied);
+                damageRemaining[shooter]>0?damagePickup.Multiplier:1,(target,amount)=>applied+=ApplyDamagePolicy(target,identities[target],amount,shooter,Life(shooter).Life,false,new FatalImpact(WeaponId.Cutter,shotSequence,direction,origin+direction*Mathf.Max(0,distances[target]))).Applied);
             lives[shooter].ConsumeCutter(spent);
             if(began||applied>0)Fired?.Invoke(shooter,applied);
             if(Life(shooter).CutterEnergy<=0)beams[shooter].Stop();
@@ -350,7 +351,7 @@ namespace StarTournament.ProvingGround
                         var point=rocketResolver.ClosestPoint(center,target.Pose.Position);var delta=point-center;
                         if(!directTarget&&(delta.magnitude>=rocketResolver.Radius||delta.sqrMagnitude>0&&physics.Raycast(center,delta.normalized,out _,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore)))continue;
                         float damage=rocketResolver.Damage(delta.magnitude,directTarget,r.DamageMultiplier);
-                        ApplyDamagePolicy(target.Seat,target.Life,damage,r.Owner,r.OwnerLife,true);
+                        ApplyDamagePolicy(target.Seat,target.Life,damage,r.Owner,r.OwnerLife,true,new FatalImpact(WeaponId.RocketLauncher,r.Id,(target.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight")-center).normalized,center,Mathf.Clamp01(delta.magnitude/rocketResolver.Radius)));
                     }
                     RocketExploded?.Invoke(new RocketExplosion(r,center,Time,directSeat));
                 }
@@ -399,7 +400,7 @@ namespace StarTournament.ProvingGround
         }
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
             => ApplyDamagePolicy(seat,life,damage,killer,killerLife,false);
-        DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket)
+        DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket,FatalImpact impact=default)
         {
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return default;
             if(!rocket && killer >= 0 && Allied(killer,seat)) return default;
@@ -413,11 +414,12 @@ namespace StarTournament.ProvingGround
             Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer);
             if (result.Killed)
             {
+                var deathPose=Pose(seat); // Capture momentum before SetAlive clears motor velocity.
                 beams[seat].Stop();
                 damageRemaining[seat]=0;speedRemaining[seat]=0;motors[seat].SetHorizontalSpeedMultiplier(1);
                 motors[seat].SetAlive(false);
                 releaseRequired[seat] = true;
-                Died?.Invoke(new DeathNotice(seat, Life(seat), Pose(seat)));
+                Died?.Invoke(new DeathNotice(seat, Life(seat), deathPose,impact));
             }
             return result;
         }

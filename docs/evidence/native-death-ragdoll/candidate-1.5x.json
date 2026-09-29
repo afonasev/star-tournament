@@ -1,0 +1,11 @@
+{
+  "release_identity": "local-macos-player-candidate/881dcacccd0c8179007441f38c4b6948d65e8d8f/20260929T172646Z",
+  "runtime_revision": "881dcacccd0c8179007441f38c4b6948d65e8d8f",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/releases/native-death-ragdoll/881dcacccd0c8179007441f38c4b6948d65e8d8f/20260929T172646Z/StarTournamentProvingGround.app",
+  "build_exit_code": 0,
+  "build_marker": "STAR_PROVING_BUILD_PASS 471124036",
+  "assembly_sha256": "ae44d0ed2fcc4322d7da0579fb6405a86ffbe340ea595c3b4a61e2583f4987aa",
+  "app_tree_sha256": "96c66504810b4083d4ef788284a123c972527e5849a44df08af71a4abbe64ec3",
+  "app_files": 281,
+  "tree_hash_algorithm": "sha256 over sorted relative path, NUL, sha256(file bytes)"
+}

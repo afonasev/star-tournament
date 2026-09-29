@@ -71,6 +71,8 @@ namespace StarTournament.ProvingGround
             foreach(var palette in Profiles.Where(p=>p.Id==ProvingProfile.ParticipantPaletteId))
                 try { NativeParticipantColors.Read(palette); }
                 catch(ArgumentException e) { issues.Add(new ProfileValidationIssue{Path="participant.color.blue.r",Message=e.Message}); }
+            CheckOrder(issues,"corpse.cutterSpeed","corpse.rifleSpeed",1);
+            CheckOrder(issues,"corpse.rifleSpeed","corpse.shotgunSpeed",1);
             CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
             CheckOrder(issues,"zone.armBottom","zone.armTop",1);
             CheckOrder(issues,"zone.legBottom","zone.legTop",1);
@@ -114,7 +116,7 @@ namespace StarTournament.ProvingGround
     public sealed class DesignLabHistory
     {
         public const string ReleaseId="unity-shipped-release";
-        static readonly object historicalCacheLock=new object();
+        static readonly object historicalLock=new object();
         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
         readonly string path; readonly LabBundle shipped; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
@@ -137,13 +139,14 @@ namespace StarTournament.ProvingGround
             }
             catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
         }
-        // Most sessions and tests only contain the current registry. Historical alternatives are
-        // needed solely when a saved revision/release actually predates the shipped schema.
+        // Most matches use the current registry. Generate historical combinations only when
+        // a saved revision actually needs one, then share the exact immutable registry set.
         LabBundle[] HistoricalPredecessors()
         {
             if(predecessors!=null)return predecessors;
-            string key=shipped.Hash();
-            lock(historicalCacheLock)
+            // Hash covers gameplay values; metadata is also trusted during migration.
+            string key=shipped.Hash()+"|"+JsonUtility.ToJson(shipped);
+            lock(historicalLock)
             {
                 if(historicalCache.TryGetValue(key,out var cached))return predecessors=cached;
                 var beforePalette=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
@@ -169,11 +172,9 @@ namespace StarTournament.ProvingGround
                     {previous=profile.BeforeDamageVignette();vignettePredecessors.Add(profile,previous);}
                     return previous;
                 }
-                // Each additive transform is a function of a registry. Collapse identical registries after
-                // each branch, using the same identity as the final historical registry lookup. This keeps
-                // all historical schemas while avoiding repeated JSON copies of the Cartesian product.
+                var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
                 string RegistryKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path));
-                LabBundle[] DistinctRegistries(System.Collections.Generic.IEnumerable<LabBundle> bundles)=>bundles.GroupBy(RegistryKey).Select(g=>g.First()).ToArray();
+                LabBundle[] DistinctRegistries(IEnumerable<LabBundle> bundles)=>bundles.GroupBy(RegistryKey).Select(g=>g.First()).ToArray();
                 // Historical combinations share immutable profiles. Memoize each pure schema transform
                 // within this migration so equivalent branches do not repeat native JSON serialization.
                 Func<ProvingProfile,ProvingProfile> Cached(Func<ProvingProfile,ProvingProfile> transform)
@@ -183,12 +184,20 @@ namespace StarTournament.ProvingGround
                 }
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());var withoutScoreboard=Cached(p=>p.BeforeScoreboard());
+                // Collapse exact duplicate registries after each additive branch. Delaying this to
+                // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutOrigins).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutCutterDamage).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutScoreboard).ToList()}}));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p).ToList()}}));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()}}));
+                // Preserve old immutable Lab hashes when the presentation-only audio descriptors
+                // are added to the default profile; every earlier registry remains a valid source.
+                var withoutAudio=Cached(p=>p.BeforeAudio());
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutAudio).ToList()}}));
                 // A bounded cache avoids retaining every custom historical registry in long Lab sessions.
                 if(historicalCache.Count>=2)historicalCache.Clear();
                 historicalCache.Add(key,predecessors);
