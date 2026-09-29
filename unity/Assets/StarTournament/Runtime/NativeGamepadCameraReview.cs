@@ -51,9 +51,9 @@ namespace StarTournament.ProvingGround
             while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
             while(ground.LocalSeatCount<2)Button("seats-plus").onClick.Invoke();
             for(int i=0;i<2;i++)ground.SetSeatAi(i,false);
-            pads=new Gamepad[2];for(int i=0;i<2;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
+            pads=new Gamepad[2];for(int i=0;i<2;i++){pads[i]=InputSystem.AddDevice<Gamepad>();if(!pads[i].enabled)InputSystem.EnableDevice(pads[i]);}
             ground.StartCombatReview(pads);yield return new WaitForSecondsRealtime(.5f);
-            if(!ground.Running)throw new InvalidOperationException("NATIVE_CAMERA_QA_MATCH_DID_NOT_START");
+            if(!ground.Running)throw new InvalidOperationException("NATIVE_CAMERA_QA_MATCH_DID_NOT_START "+ground.CombatReviewDiagnostic());
             // Codex can take OS focus while reading Player evidence. Synthetic input remains a diagnostic;
             // the exact focused/unfocused state is recorded and physical focus acceptance stays separate.
             Debug.Log("NATIVE_CAMERA_PLAYER_FOCUS_DIAGNOSTIC "+Application.isFocused);

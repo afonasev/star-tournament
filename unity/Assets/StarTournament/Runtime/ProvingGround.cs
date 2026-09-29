@@ -298,9 +298,11 @@ namespace StarTournament.ProvingGround
             SetSeatCount(pads.Length);
             if(ensureOpponent && pads.Length==1)AddBot();
             input.Reset();
-            for(int i=0;i<pads.Length;i++) input.Assign(i,pads[i]);
+            for(int i=0;i<pads.Length;i++)
+                if(!input.Assign(i,pads[i]))throw new InvalidOperationException("Combat review could not assign pad "+i+": added="+pads[i].added+", enabled="+pads[i].enabled+", human="+input.IsHumanSeat(i));
             combatReview=true; Begin(backgroundDiagnostic);
         }
+        public string CombatReviewDiagnostic() => "phase="+phase+", ready="+input.Ready+", validSetup="+ValidSetup()+", seats="+LocalSeatCount+", error="+setupError;
         public void OpenPauseReviewSeat(int seat)
         {
             if(phase==Phase.Running)Pause("Пауза",seat);
