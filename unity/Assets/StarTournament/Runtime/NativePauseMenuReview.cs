@@ -114,6 +114,7 @@ namespace StarTournament.ProvingGround
             }
             File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: muted native Player, "+count+" viewport pause menus; synthetic devices, no physical-controller or human acceptance.");
             Debug.Log("NATIVE_PAUSE_REVIEW_COMPLETE "+count+" "+directory);
+            if(count==4)Application.Quit();
         }
         void OnDestroy()
         {
