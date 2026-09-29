@@ -51,8 +51,8 @@ namespace StarTournament.ProvingGround
             while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
             while(ground.LocalSeatCount<2)Button("seats-plus").onClick.Invoke();
             for(int i=0;i<2;i++)ground.SetSeatAi(i,false);
-            pads=new Gamepad[2];for(int i=0;i<2;i++){pads[i]=InputSystem.AddDevice<Gamepad>();yield return Press(pads[i],GamepadButton.North);Button("identity-guest").onClick.Invoke();}
-            Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);
+            pads=new Gamepad[2];for(int i=0;i<2;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
+            ground.StartCombatReview(pads);yield return new WaitForSecondsRealtime(.5f);
             if(!Application.isFocused||!ground.Running)throw new InvalidOperationException("NATIVE_CAMERA_QA_REQUIRES_FOCUSED_PLAYER");
             yield return Press(pads[0],GamepadButton.Start);Button("pause-action-0-1").onClick.Invoke();
             // This fixture exercises the enabled return even when the user's general preference is off.

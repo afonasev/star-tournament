@@ -72,12 +72,8 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<count;seat++)ground.SetSeatAi(seat,false);
             if(count==1)Button("bot-add").onClick.Invoke();
             pads=new Gamepad[count];
-            for(int seat=0;seat<count;seat++)
-            {
-                pads[seat]=InputSystem.AddDevice<Gamepad>();yield return Press(pads[seat],GamepadButton.North);
-                Button("identity-guest").onClick.Invoke();
-            }
-            Button("Начать — четыре игрока").onClick.Invoke();yield return null;
+            for(int seat=0;seat<count;seat++)pads[seat]=InputSystem.AddDevice<Gamepad>();
+            ground.StartCombatReview(pads);yield return null;
             if(!ground.Running)throw new InvalidOperationException("Native pause review match did not start");
             yield return Capture("01-running-"+count);
             for(int seat=0;seat<count;seat++)yield return Press(pads[seat],GamepadButton.Start);
