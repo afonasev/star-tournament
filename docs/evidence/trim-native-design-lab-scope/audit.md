@@ -1,19 +1,23 @@
-# Аудит Balance Lab · 2026-09-29
+# Balance Lab: завершённая очистка аудита · 2026-09-29
 
-## Выполнено по решению пользователя
-Исключены из native Lab: authored геометрия/повороты/размеры solids; spawn positions/regions; ordered transition feet; route anchors; pickup anchors. Из оформления исключены layout coordinates, spawn-mark coordinates, wayfinding placement/yaw и размеры указателей, размеры деталей и решёток/рам, размещение и размеры светильников, экранов/вентиляторов, размеры/позиции космического backdrop. Это authoring уровня; значения и metadata сохраняются в runtime profiles и immutable histories. Новая UI-политика не меняет hash сама по себе.
+По решению пользователя «давай по аудиту лишнее все уберем» из UI, поиска, дерева и diff дополнительно исключены все 25 оставшихся полей (пункты 1–9 исходного аудита).
 
-## Остальные кандидаты (сейчас оставлены)
+| Пункт | Исключённые stable paths |
+| --- | --- |
+| 1. Fixture navigation | `navigation.sampleDistance` |
+| 2–3. World bounds / authoring validation | `world.maximumTransitionSegment`, `world.minimumSupportHeight` |
+| 4. Engine tick rate | `simulation.fixedTickHz` |
+| 5. Shadow engineering | `light.shadowResolution`, `light.shadowBias`, `light.shadowNormalBias`, `light.shadowCasters` |
+| 6. Technical bot navigation | `bots.navigation.heightTolerance`, `bots.navigation.sampleDistance` |
+| 7. Old weapon mounts | `presentation.viewWeaponX`, `presentation.viewWeaponY`, `presentation.viewWeaponZ`, `presentation.worldWeaponMountY` |
+| 8. Unused stair camera fields | `camera.stairSmoothingSeconds`, `camera.stairMaximumOffsetMeters` |
+| 9. Fixed model placement | `view.x`, `view.y`, `view.z`, `cutter.modelX`, `cutter.modelY`, `cutter.modelZ`, `cutter.modelPitch`, `cutter.modelYaw`, `cutter.modelRoll` |
 
-1. `navigation.sampleDistance` — fixture diagnostic projection radius. Поиск runtime потребителей дал только объявление descriptor; реальная навигация использует `bots.navigation.sampleDistance`. Самый явный кандидат на удаление из Lab.
-2. `world.maximumTransitionSegment` — граница длины authored transition segment; используется `ArenaDefinitionValidator`, то есть валидатором карт. Относится к техническим authoring проверкам.
-3. `world.minimumSupportHeight` — нижняя граница world support query для тела; используется `CombatPresentation`, поэтому удаление из runtime недопустимо. UI можно скрыть как технический world bound.
-4. `simulation.fixedTickHz` — частота native gameplay/motor ticks, влияет на точность и нагрузку. Это инженерный режим исполнения; изменение может повлиять на матч и физику. Предлагается убрать из обычной Lab при отдельном решении.
-5. `light.shadowResolution`, `light.shadowBias`, `light.shadowNormalBias`, `light.shadowCasters` — технический rendering/performance набор. Разрешение/смещения теней логичнее в техническом конфиге. Контраст, интенсивность, дальность света и цвет оставлены как читаемость сцены.
-6. `bots.navigation.heightTolerance`, `bots.navigation.sampleDistance` — допуски native navigation provider; осторожно отделить от игровых параметров AI (реакции, точности, stuck/recovery/repath). Они действуют в runtime; одного названия недостаточно для удаления.
+Геометрия уровней, спавны, маршруты, точки бонусов, координаты/повороты оформления и размеры деталей станции уже исключены предыдущим этапом и остаются скрытыми.
 
-## Полезные параметры, которые оставлены
-Урон/боезапас/cooldown, здоровье/броня/бонусы, движение/capsule, чувствительность/камера/killcam, правила матча/очки, реакция/прицел/поведение ботов. Presentation параметры оружия/хвата/анимации/длительности эффектов оставлены: это настройка читаемости действия. `view.switchClearance` параллельной change animate-weapon-switch также остаётся: относится к анимации оружия, а не уровню. Светлота материалов, палитра зон, прозрачность стекла, яркость света/экранов и скорость декоративного движения остаются.
+## Сохранённые контракты
+Runtime значения, descriptor metadata, defaults и schema/profile revisions не меняются. Прежние snapshots и hashes остаются неизменными, включая ранее сохранённые custom overrides скрытых полей. Новое сохранение может переносить старые значения, но не может редактировать скрытые поля. Пустые группы автоматически исчезают через общий filtered registry.
 
-## Пределы
-Аудит — статический поиск actual runtime consumers и metadata. Остальные кандидаты не скрыты автоматически: исходный запрос однозначно исключает только геометрию и координаты уровней. Player review является автоматизированной QA, human acceptance отдельно.
+Урон/боезапас/cooldown, здоровье/броня/бонусы, движение и hit zones, чувствительность/камера/killcam, правила/очки, игровые реакции/прицел/поведение AI остаются. Сохраняются читаемость света и палитра, прозрачность стекла, эффекты оружия, скорость декоративного движения, dynamic shoulder/elbow weapon switch animation. User concept approval не означает human acceptance Player.
+
+Точный source/candidate, native screenshots и checks: `trim-native-design-lab-scope/delivery.json` в shared planning home; обновлённые evidence — `docs/evidence/trim-native-design-lab-scope/audit-cleanup/`.

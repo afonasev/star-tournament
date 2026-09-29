@@ -42,7 +42,18 @@ namespace StarTournament.ProvingGround
             "broadcast.ventRadius","broadcast.spawnMarkHeight","broadcast.servicePanelHeight",
             "ring.spaceHalfExtent","ring.spaceCenterY","ring.planetRadius","ring.secondPlanetRadius","ring.sunRadius",
             "ring.celestialElevation","ring.celestialHorizontal"};
-        public bool IsVisible(string path)=>!IsDiagnostic(path)&&!IsLevelAuthoring(path);
+        // Approved audit: engine/query controls, obsolete fields and fixed asset placement stay in
+        // snapshots for compatibility, but are never exposed as designer balance controls.
+        static readonly HashSet<string> AuditedExclusions=new HashSet<string>{
+            "navigation.sampleDistance","world.maximumTransitionSegment","world.minimumSupportHeight","simulation.fixedTickHz",
+            "light.shadowResolution","light.shadowBias","light.shadowNormalBias","light.shadowCasters",
+            "bots.navigation.heightTolerance","bots.navigation.sampleDistance",
+            "presentation.viewWeaponX","presentation.viewWeaponY","presentation.viewWeaponZ","presentation.worldWeaponMountY",
+            "camera.stairSmoothingSeconds","camera.stairMaximumOffsetMeters",
+            "view.x","view.y","view.z","cutter.modelX","cutter.modelY","cutter.modelZ",
+            "cutter.modelPitch","cutter.modelYaw","cutter.modelRoll"};
+        public static IEnumerable<string> AuditedExcludedPaths=>AuditedExclusions.OrderBy(path=>path,StringComparer.Ordinal);
+        public bool IsVisible(string path)=>!IsDiagnostic(path)&&!AuditedExclusions.Contains(path)&&!IsLevelAuthoring(path);
         public bool IsEditable(string path)=>IsVisible(path)&&!IsAuthoring(path);
         public string Domain(string path)=>IsAuthoring(path)?"Authored map":Profile(path).Descriptor(path).Group=="cutter-effects"||Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
         public List<ProfileValidationIssue> Validate()

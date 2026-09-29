@@ -71,6 +71,31 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(restarted.SelectedProfile.Revisions.First().Hash,Is.EqualTo(oldHash));
             draft=restarted.Selected.Snapshot;draft.Set("layout.fill-0.x",2);Assert.Throws<ArgumentException>(()=>restarted.Save(draft));
         }
+        [Test]public void AuditCleanupPreservesOldTechnicalAndModelOverridesAndBlocksNewChanges()
+        {
+            var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
+            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(25));
+            foreach(var key in LabBundle.AuditedExcludedPaths)
+            {
+                var d=old.Snapshot.Profile(key).Descriptor(key);float value=old.Snapshot.Get(key);
+                old.Snapshot.Set(key,value+d.Step<=d.Maximum?value+d.Step:value-d.Step);
+                Assert.That(old.Snapshot.IsVisible(key),Is.False,key);
+            }
+            old.Hash=old.Snapshot.Hash();string priorHash=old.Hash;File.WriteAllText(path,JsonUtility.ToJson(file,true));
+            var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Null);
+            var draft=restored.Selected.Snapshot;draft.Set("rifle.head",31);restored.Save(draft);
+            var restarted=new DesignLabHistory(path,Shipped());Assert.That(restarted.StorageError,Is.Null);
+            Assert.That(restarted.SelectedProfile.Revisions.First().Hash,Is.EqualTo(priorHash));
+            foreach(var key in LabBundle.AuditedExcludedPaths)
+            {
+                Assert.That(restarted.Selected.Snapshot.Get(key),Is.EqualTo(old.Snapshot.Get(key)),key);
+                draft=restarted.Selected.Snapshot;draft.Set(key,Shipped().Get(key));
+                Assert.Throws<ArgumentException>(()=>restarted.Save(draft),key);
+            }
+            foreach(var key in new[]{"rifle.head","player.movement.jumpSpeed","bots.navigation.stuckSeconds","light.intensity","view.switchShoulderDegrees","view.switchElbowDegrees","cutter.width"})
+                Assert.That(restarted.Selected.Snapshot.IsEditable(key),Is.True,key);
+        }
         [Test]public void DescriptorMigrationRefreshesPreviouslyUsedValueIndex()
         {
             var profile=ProvingProfile.CreateCombatBowlRingPresentationDefault();string key="broadcast.screenValue";float expected=profile.Get(key);

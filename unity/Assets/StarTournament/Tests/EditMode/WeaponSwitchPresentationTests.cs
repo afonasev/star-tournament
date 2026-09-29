@@ -86,8 +86,13 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                         string method=predecessor=="BeforeCutterSwitch"?"BeforeWeaponSwitch":predecessor=="BeforeCutterThicknessSwitch"?"BeforeCutterThickness":predecessor;
                         return (ProvingProfile)typeof(ProvingProfile).GetMethod(method,BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null);
                     }).ToList()};
-                    var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.head",31);draft.Set("view.y",-1.5f);if(draft.Descriptors.Any(d=>d.Path=="cutter.width"))draft.Set("cutter.width",.021f);old.Save(draft);
-                    var before=old.Selected;string id=old.SelectedProfileId;
+                    var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.head",31);if(draft.Descriptors.Any(d=>d.Path=="cutter.width"))draft.Set("cutter.width",.021f);old.Save(draft);
+                    // Historical policy allowed this placement override. Write the authentic old
+                    // snapshot/hash directly: current Save intentionally forbids new placement edits.
+                    var file=UnityEngine.JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+                    var before=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+                    before.Snapshot.Set("view.y",-1.5f);before.Hash=before.Snapshot.Hash();File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file,true));
+                    string id=old.SelectedProfileId;
                     var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
                     Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(before.Number));
                     Assert.That(upgraded.Selected.Snapshot.Get("view.y"),Is.EqualTo(-1.5f));Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));

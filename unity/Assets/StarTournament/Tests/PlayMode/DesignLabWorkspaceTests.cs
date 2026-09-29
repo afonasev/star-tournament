@@ -26,8 +26,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
             Click("main-action-2");yield return null;
-            Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("group-map-")||b.name=="group-layout"||b.name=="group-ring-layout"||b.name=="group-details"||b.name=="group-ring"),Is.False);
-            foreach(var hidden in new[]{"layout.fill-0.x","wayfinding.sign-0.yaw","broadcast.screenWidth","ring.spaceCenterY"})
+            Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("group-map-")||b.name=="group-layout"||b.name=="group-ring-layout"||b.name=="group-details"||b.name=="group-ring"||b.name=="group-world-query"||b.name=="group-navigation"||b.name=="group-simulation"),Is.False);
+            foreach(var hidden in new[]{"layout.fill-0.x","wayfinding.sign-0.yaw","broadcast.screenWidth","ring.spaceCenterY"}.Concat(LabBundle.AuditedExcludedPaths))
             {Input("lab-search").text=hidden;yield return null;Assert.That(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-"+hidden),Is.False);}
             Input("lab-search").text="";yield return null;
             float original=ground.CombatProfile.Get("rifle.head");int seats=ground.LocalSeatCount;

@@ -172,6 +172,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 ## 6. Game Design Lab
 
 - 2026-09-29: по решению пользователя из native Lab убраны level geometry и object placement; прежнее read-only отображение authored geometry заменено исключением из интерфейса.
+- 2026-09-29, аудит: из Lab также исключены technical ticks/query/navigation tolerances, shadow engineering controls, unused stair/mount fields и координаты/повороты рук и оружия. Runtime values/metadata и старые immutable revisions сохранены; новые edits скрытых полей запрещены. Игровой баланс, читаемость света/эффектов и динамическая анимация оружия остаются настраиваемыми.
 
 - Резак расширяет Lab полным набором параметров `cutter-beam-v1@2`; новые поля получают совместимые defaults, не изменяя старые immutable revisions и hashes.
 
