@@ -145,6 +145,29 @@
       "start_time_utc": "2026-09-30T14:10:17Z",
       "end_time_utc": "2026-09-30T14:16:58Z",
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-clean-playmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "69deb39",
+      "exit_code": 2,
+      "passed": 223,
+      "failed": 1,
+      "result": "diagnostic_only_timeout_and_foreign_Player_overlap",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-overlap-editmode.xml",
+      "failed_test": "CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease",
+      "fix_revision": "2873cf18685cb369bc258df16b857475ec3f008b"
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+      "exit_code": 0,
+      "passed": 224,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "duration_seconds": 164.7769202,
+      "start_time_utc": "2026-09-30T16:04:06Z",
+      "end_time_utc": "2026-09-30T16:06:51Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-clean-editmode.xml"
     }
   ],
   "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
@@ -214,14 +237,14 @@
     "build_log": "docs/evidence/improve-gamepad-camera-and-settings/build-post-main.log"
   },
   "post_rifle_merge": {
-    "source_revision": "69deb39",
+    "source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
     "merged_from_main": "1c86286",
     "snapshot_resolution": "Version 7 retains both optional camera Poses and required RifleBullets",
-    "required_clean_editmode": "pending",
+    "required_clean_editmode": "passed_224_of_224",
     "required_playmode": "pending",
     "required_build": "pending",
     "required_player_qa": "pending",
-    "host_status": "foreign F2 Player PID 72476 active at merge; own runtime lease released",
+    "host_status": "EditMode completed; runtime lease released; no own Unity or Player process",
     "prior_candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
     "prior_candidate_classification": "built and hashed for pre-rifle merge; not final integrated source"
   }
