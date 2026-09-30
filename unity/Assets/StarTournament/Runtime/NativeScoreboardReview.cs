@@ -70,14 +70,20 @@ namespace StarTournament.ProvingGround
             Hit(1,0,500);Step(1);yield return Held(true);yield return Capture("02-ffa-live-leader");Hit(0,-1,500);yield return Capture("03-ffa-dead-leader");Step(450);yield return Capture("04-ffa-respawn");yield return Held(false);yield return Finish("05-ffa-final");
             yield return Configure(2,8,false);Hit(7,0,500);Hit(0,0,500);Step(1);yield return Held(true);yield return Capture("06-ffa-eight-negative-suffix");yield return Held(false);
             yield return Configure(3,8,true);yield return Capture("07-three-views-eight-uneven-teams-tie");
-            // An equipped, positioned diagnostic fixture fires a real native rocket: source + two allies.
-            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,0),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-8,0,2),0,0);ground.PlaceCombatReviewSeat(2,new Vector3(-7,0,2),0,0);
-            for(int i=3;i<8;i++)ground.PlaceCombatReviewSeat(i,new Vector3(8,0,i),0,0);
+            // The open west loop avoids the solid central plinth in the native Combat Bowl.
+            // An equipped, positioned diagnostic fixture fires a real rocket: source + two allies.
+            ground.PlaceCombatReviewSeat(0,new Vector3(-20,0,0),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(-20,0,2),0,0);ground.PlaceCombatReviewSeat(2,new Vector3(-19,0,2),0,0);
+            for(int i=3;i<8;i++)ground.PlaceCombatReviewSeat(i,new Vector3(20,0,i),0,0);
+            Physics.SyncTransforms();
             var rocket=ground.Session.Capture();rocket.Lives[0].RocketOwned=true;rocket.Lives[0].RocketAmmo=20;
             for(int i=0;i<3;i++)rocket.Lives[i].Health=1;ground.Session.Restore(rocket);
             var select=new LocalAction[8];select[0].SelectWeapon=WeaponSelection.RocketLauncher;ground.Session.Tick(select,.02f);Step(51);
-            var fire=new LocalAction[8];fire[0].Fire=true;ground.Session.Tick(fire,.02f);Step(8);
-            var shooter=ground.Session.Match.Read().Standings.Single(r=>r.Seat==0);Check(shooter.SelfKills==1&&shooter.AllyKills==2&&shooter.AccumulatedPenalty==600,"multi-victim rocket penalty");
+            Check(ground.Session.Life(0).SelectedWeapon==WeaponId.RocketLauncher,"rocket selected");
+            int shotsBefore=ground.Session.ShotCount;
+            var fire=new LocalAction[8];fire[0].Fire=true;ground.Session.Tick(fire,.02f);Check(ground.Session.ShotCount==shotsBefore+1,"rocket fired");Step(8);
+            var shooter=ground.Session.Match.Read().Standings.Single(r=>r.Seat==0);
+            Check(shooter.SelfKills==1&&shooter.AllyKills==2&&shooter.AccumulatedPenalty==600,
+                $"multi-victim rocket penalty self={shooter.SelfKills} ally={shooter.AllyKills} penalty={shooter.AccumulatedPenalty}");
             yield return Capture("07a-real-rocket-self-and-two-allies");
             // Reset the controlled fixture so the V4 table examples have independent evidence.
             yield return Configure(3,8,true);
