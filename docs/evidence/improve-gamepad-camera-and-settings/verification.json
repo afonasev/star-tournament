@@ -168,6 +168,19 @@
       "start_time_utc": "2026-09-30T16:04:06Z",
       "end_time_utc": "2026-09-30T16:06:51Z",
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-clean-editmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "source_revision": "460e965c42880685daed9fba30222582853f8d4f",
+      "compiled_csharp_source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+      "exit_code": 0,
+      "passed": 151,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "duration_seconds": 387.3944697,
+      "start_time_utc": "2026-09-30T16:10:30Z",
+      "end_time_utc": "2026-09-30T16:16:57Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-clean-playmode.xml"
     }
   ],
   "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
@@ -241,7 +254,7 @@
     "merged_from_main": "1c86286",
     "snapshot_resolution": "Version 7 retains both optional camera Poses and required RifleBullets",
     "required_clean_editmode": "passed_224_of_224",
-    "required_playmode": "pending",
+    "required_playmode": "passed_151_of_151",
     "required_build": "pending",
     "required_player_qa": "pending",
     "host_status": "EditMode completed; runtime lease released; no own Unity or Player process",
