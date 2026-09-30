@@ -85,6 +85,15 @@
       "failed": 0,
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-retry2-editmode.xml",
       "duration_seconds": 39.2779806
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode -testFilter GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests;NativeAudioRoutingTests",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": 11,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-focused-playmode.xml",
+      "duration_seconds": 25.0981226
     }
   ],
   "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
@@ -97,7 +106,7 @@
     "pass_marker": "STAR_PROVING_BUILD_PASS 471125991"
   },
   "native_player": {
-    "status": "pending_exact_source_playmode_full_suites_build_and_native_qa",
+    "status": "pending_exact_source_full_suites_build_and_native_qa",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -113,7 +122,7 @@
     ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
-      "reason": "Shared Unity host is queued across independent changes. Focused EditMode has passed on the exact source; subsequent invocations require separate host ACKs.",
+      "reason": "Shared Unity host is queued across independent changes. Focused EditMode and PlayMode have passed on the exact source; subsequent invocations require separate host ACKs.",
       "own_runtime_lease": "released",
       "own_active_processes": []
     }
@@ -127,6 +136,6 @@
     "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending",
     "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
     "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
-    "Exact-source focused EditMode10/10 passed on 8cc0ee5; focused PlayMode, full Unity suites, build, and Player remain pending shared host slots"
+    "Exact-source focused EditMode10/10 and PlayMode11/11 passed on 8cc0ee5; full Unity suites, build, and Player remain pending shared host slots"
   ]
 }
