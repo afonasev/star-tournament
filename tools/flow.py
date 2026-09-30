@@ -277,6 +277,8 @@ class Flow:
         return result
 
     def lease(self,action,name,owner,reason=None):
+        if name == 'unity-runtime' and action != 'release':
+            raise ValueError('Unity runtime leases were replaced: use ~/.local/bin/unity-run --shared|--exclusive -- COMMAND; no coordinator ACK required')
         if not re.fullmatch('[a-z][a-z0-9-]*',name): raise ValueError('Invalid lease name')
         p=self.root/'.flow-leases.json'; data=json.loads(p.read_text()) if p.exists() else {}
         current=data.get(name)
