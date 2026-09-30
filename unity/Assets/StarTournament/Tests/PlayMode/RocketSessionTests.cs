@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene; GameObject owner; ProvingArena arena; CharacterMotor[] motors;
         ProvingProfile move,combat,life; NativeCombatSession session;
-        void Setup(bool teams=false)
+        void Setup(bool teams=false,bool threeAllies=false)
         {
             scene=SceneManager.CreateScene("rocket-"+Guid.NewGuid(),new CreateSceneParameters(LocalPhysicsMode.Physics3D));
             owner=new GameObject("rocket owner");SceneManager.MoveGameObjectToScene(owner,scene);
@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             motors=new CharacterMotor[4];Vector3[] positions={new Vector3(-8,0,0),new Vector3(-8,0,6),new Vector3(-6,0,6),new Vector3(8,0,0)};
             for(int i=0;i<4;i++){var o=new GameObject("p"+i);o.transform.SetParent(owner.transform);o.layer=ProvingArena.ParticipantLayer;motors[i]=o.AddComponent<CharacterMotor>();motors[i].Initialize(move,positions[i]);}
             var profile=ProvingProfile.CreateMatchDefault();var config=NativeMatchConfiguration.Default(profile);
-            var match=teams?new NativeMatchState(new NativeMatchRoster(NativeMatchMode.Teams,new[]{NativeTeam.TeamA,NativeTeam.TeamA,NativeTeam.TeamB,NativeTeam.TeamB}),config,profile,50):new NativeMatchState(4,config,profile,50);
+            var match=teams?new NativeMatchState(new NativeMatchRoster(NativeMatchMode.Teams,new[]{NativeTeam.TeamA,NativeTeam.TeamA,threeAllies?NativeTeam.TeamA:NativeTeam.TeamB,NativeTeam.TeamB}),config,profile,50):new NativeMatchState(4,config,profile,50);
             session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat,match);
             EquippedCombatFixture.Equip(session);
             var actions=new LocalAction[4];actions[0].SelectWeapon=WeaponSelection.RocketLauncher;
@@ -73,6 +73,25 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var snapshot=session.Capture();snapshot.Lives[1].Health=40;session.Restore(snapshot);
             Fire();Ticks(4);Assert.That(session.Life(1).Dead,Is.True);Assert.That(session.Life(0).Health,Is.LessThan(100));
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Kills,Is.Zero);
+            Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AllyKills,Is.EqualTo(1));
+            Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AccumulatedPenalty,Is.EqualTo(200));
+        }
+        [UnityTest] public IEnumerator MultiVictimFriendlySplashAttributesAppliedDamageAndPenaltyOnceThroughRestoreAndRespawn()
+        {
+            Setup(true,true);yield return null;
+            motors[1].Initialize(move,new Vector3(-8,0,2));motors[2].Initialize(move,new Vector3(-7,0,2));
+            var state=session.Capture();state.Lives[0].Health=1;state.Lives[1].Health=1;state.Lives[1].Armor=10;state.Lives[2].Health=1;session.Restore(state);
+            Assert.That(session.ApplyDamage(1,session.Life(1).Life,500,0,session.Life(0).Life).Applied,Is.Zero);
+            Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AllyDamageDealt,Is.Zero);
+            Fire();Ticks(8);var row=session.Match.Read().Standings.Single(r=>r.Seat==0);
+            Assert.That((row.SelfKills,row.AllyKills,row.Kills,row.AccumulatedPenalty,row.Score),Is.EqualTo((1,2,0,600,-600)));
+            Assert.That(row.DamageDealt,Is.Zero);Assert.That(row.AllyDamageDealt,Is.EqualTo(2),"Current DamageResult.Applied counts HP after armor; shield accounting belongs to the separately authorized damage policy change");
+            Ticks(10);Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AccumulatedPenalty,Is.EqualTo(600));
+            var saved=JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(session.Capture()));session.Restore(saved);
+            Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Score,Is.EqualTo(-600));
+            Ticks(400);Assert.That(session.Life(0).Dead,Is.False);Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AccumulatedPenalty,Is.EqualTo(600));
+            session.ApplyDamage(3,session.Life(3).Life,500,0,session.Life(0).Life);session.Tick(new LocalAction[4],.02f);
+            Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Score,Is.EqualTo(-500));
         }
         [UnityTest] public IEnumerator ThinWallAndFloorSweepExplodeOnceAndOccludeSplash()
         {

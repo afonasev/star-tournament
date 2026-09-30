@@ -9,20 +9,22 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround
     {
-        enum SettingsSection { Image, Control, Interface }
+        enum SettingsSection { Image, Control, Interface, Audio }
         const string DisplayWidthKey="StarTournament.Graphics.Width";
         const string DisplayHeightKey="StarTournament.Graphics.Height";
         const string DisplayModeKey="StarTournament.Graphics.Fullscreen";
         const string ShadowsKey="StarTournament.Graphics.Shadows";
         const float DisplayConfirmationSeconds=12f;
         SettingsSection settingsSection;
-        readonly Button[] settingsSectionButtons=new Button[3];
+        readonly Button[] settingsSectionButtons=new Button[4];
         Button settingsBackButton,settingsModeButton,settingsResolutionButton,settingsShadowsButton;
         Button settingsSensitivityMinus,settingsSensitivityPlus,settingsFpsButton;
+        Button musicMinus,musicPlus,effectsMinus,effectsPlus;
         Button resolutionCancelButton,settingsRevertButton;
         Button displayReturnButton;
         readonly Dictionary<Button,GameObject> settingsFocusBorders=new Dictionary<Button,GameObject>();
-        GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsConfirmation,resolutionPicker;
+        GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsAudioPage,settingsConfirmation,resolutionPicker;
+        Text musicValue,effectsValue;
         Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsSensitivity,settingsFps,settingsConfirmationText;
         Button settingsConfirmButton;
         readonly Button[] resolutionChoices=new Button[5];
@@ -43,7 +45,7 @@ namespace StarTournament.ProvingGround
             Label(settingsScreen.transform,"settings-brand","STAR TOURNAMENT  /  НАСТРОЙКИ",35,new Vector2(.05f,.90f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
             var navigation=Panel(settingsScreen.transform,"settings-navigation",new Vector2(.05f,.11f),new Vector2(.25f,.87f),MenuCard);
             var content=Panel(settingsScreen.transform,"settings-content",new Vector2(.27f,.11f),new Vector2(.95f,.87f),new Color32(20,39,53,255));
-            string[] names={"ИЗОБРАЖЕНИЕ","УПРАВЛЕНИЕ","ИНТЕРФЕЙС"};
+            string[] names={"ИЗОБРАЖЕНИЕ","УПРАВЛЕНИЕ","ИНТЕРФЕЙС","ЗВУК"};
             for(int i=0;i<names.Length;i++)
             {
                 int section=i;
@@ -77,6 +79,16 @@ namespace StarTournament.ProvingGround
             settingsFps=Label(settingsInterfacePage.transform,"fps-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
             Label(settingsInterfacePage.transform,"fps-help","Индикатор частоты кадров без изменения правил матча.",20,new Vector2(.04f,.50f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
             settingsFpsButton=MenuButton(settingsInterfacePage.transform,"settings-fps","ВКЛ / ВЫКЛ",new Vector2(.55f,.28f),new Vector2(.96f,.47f),ToggleMenuFps);
+
+            settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
+            Panel(settingsAudioPage.transform,"music-card",new Vector2(.02f,.54f),new Vector2(.98f,.95f),MenuCard);
+            musicValue=Label(settingsAudioPage.transform,"music-value","",27,new Vector2(.05f,.74f),new Vector2(.95f,.93f),TextAnchor.MiddleLeft,Color.white);
+            musicMinus=MenuButton(settingsAudioPage.transform,"music-minus","−",new Vector2(.05f,.57f),new Vector2(.43f,.73f),()=>StepAudio(false,-1));
+            musicPlus=MenuButton(settingsAudioPage.transform,"music-plus","+",new Vector2(.57f,.57f),new Vector2(.95f,.73f),()=>StepAudio(false,1));
+            Panel(settingsAudioPage.transform,"effects-card",new Vector2(.02f,.07f),new Vector2(.98f,.48f),MenuCard);
+            effectsValue=Label(settingsAudioPage.transform,"effects-value","",27,new Vector2(.05f,.27f),new Vector2(.95f,.46f),TextAnchor.MiddleLeft,Color.white);
+            effectsMinus=MenuButton(settingsAudioPage.transform,"effects-minus","−",new Vector2(.05f,.10f),new Vector2(.43f,.26f),()=>StepAudio(true,-1));
+            effectsPlus=MenuButton(settingsAudioPage.transform,"effects-plus","+",new Vector2(.57f,.10f),new Vector2(.95f,.26f),()=>StepAudio(true,1));
 
             resolutionPicker=Panel(settingsScreen.transform,"resolution-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
             var pickerCard=Panel(resolutionPicker.transform,"resolution-card",new Vector2(.26f,.15f),new Vector2(.74f,.85f),MenuCard);
@@ -139,14 +151,15 @@ namespace StarTournament.ProvingGround
                 selectOnLeft=left,selectOnRight=right };
         }
         Button FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
-            settingsSection==SettingsSection.Control?settingsSensitivityMinus:settingsFpsButton;
+            settingsSection==SettingsSection.Control?settingsSensitivityMinus:settingsSection==SettingsSection.Interface?settingsFpsButton:musicMinus;
         void ConfigureSettingsNavigation()
         {
             Link(settingsSectionButtons[0],settingsBackButton,settingsSectionButtons[1],null,settingsModeButton);
             Link(settingsSectionButtons[1],settingsSeat<0?settingsSectionButtons[0]:settingsBackButton,
                 settingsSectionButtons[2],null,settingsSensitivityMinus);
-            Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsBackButton,null,settingsFpsButton);
-            Link(settingsBackButton,settingsSectionButtons[2],settingsSeat<0?settingsSectionButtons[0]:settingsSectionButtons[1],
+            Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsSectionButtons[3],null,settingsFpsButton);
+            Link(settingsSectionButtons[3],settingsSectionButtons[2],settingsBackButton,null,musicMinus);
+            Link(settingsBackButton,settingsSectionButtons[3],settingsSeat<0?settingsSectionButtons[0]:settingsSectionButtons[1],
                 null,FirstSettingsAction());
             Link(settingsModeButton,settingsShadowsButton,settingsResolutionButton,settingsSectionButtons[0]);
             Link(settingsResolutionButton,settingsModeButton,settingsShadowsButton,settingsSectionButtons[0]);
@@ -154,6 +167,10 @@ namespace StarTournament.ProvingGround
             Link(settingsSensitivityMinus,settingsSectionButtons[1],settingsBackButton,settingsSectionButtons[1],settingsSensitivityPlus);
             Link(settingsSensitivityPlus,settingsSectionButtons[1],settingsBackButton,settingsSensitivityMinus);
             Link(settingsFpsButton,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);
+            Link(musicMinus,settingsSectionButtons[3],effectsMinus,settingsSectionButtons[3],musicPlus);
+            Link(musicPlus,settingsSectionButtons[3],effectsPlus,musicMinus);
+            Link(effectsMinus,musicMinus,settingsBackButton,settingsSectionButtons[3],effectsPlus);
+            Link(effectsPlus,musicPlus,settingsBackButton,effectsMinus);
             for(int i=0;i<resolutionChoices.Length;i++)
                 Link(resolutionChoices[i],i==0?resolutionCancelButton:resolutionChoices[i-1],
                     i==resolutionChoices.Length-1?resolutionPagePrevious:resolutionChoices[i+1]);
@@ -176,18 +193,22 @@ namespace StarTournament.ProvingGround
             settingsImagePage.SetActive(settingsSection==SettingsSection.Image && settingsSeat<0);
             settingsControlPage.SetActive(settingsSection==SettingsSection.Control);
             settingsInterfacePage.SetActive(settingsSection==SettingsSection.Interface);
+            settingsAudioPage.SetActive(settingsSection==SettingsSection.Audio);
             resolutionPicker.SetActive(resolutionPickerOpen && !displayConfirmationActive);
             settingsConfirmation.SetActive(displayConfirmationActive);
             for(int i=0;i<settingsSectionButtons.Length;i++)
             {
                 bool selected=i==(int)settingsSection;
                 settingsSectionButtons[i].GetComponentInChildren<Text>().text=(selected?"› ":"")+
-                    (i==0?"ИЗОБРАЖЕНИЕ":i==1?"УПРАВЛЕНИЕ":"ИНТЕРФЕЙС");
+                    (i==0?"ИЗОБРАЖЕНИЕ":i==1?"УПРАВЛЕНИЕ":i==2?"ИНТЕРФЕЙС":"ЗВУК");
             }
             settingsHeading.text=settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat);
             settingsDescription.text=settingsSection==SettingsSection.Image?"Режим вывода и тени применяются ко всем игровым экранам":
                 settingsSection==SettingsSection.Control?"Личная чувствительность сохраняется в профиле; общая служит начальным значением":
-                "Индикатор FPS можно настроить отдельно для каждого игрока";
+                settingsSection==SettingsSection.Interface?"Индикатор FPS можно настроить отдельно для каждого игрока":
+                "Общая громкость для всех игроков. Музыкальная дорожка появится позже";
+            musicValue.text="МУЗЫКА  "+NativeAudioPreferences.Music(Profile)+" %";
+            effectsValue.text="ЭФФЕКТЫ  "+NativeAudioPreferences.Effects(Profile)+" %";
             settingsDisplayMode.text="РЕЖИМ ЭКРАНА\n"+(EffectiveDisplayMode()==FullScreenMode.Windowed?"Окно":"Полный экран");
             settingsResolution.text="РАЗРЕШЕНИЕ\n"+Screen.width+" × "+Screen.height;
             settingsShadows.text="ТЕНИ\n"+(shadowsEnabled?"Вкл":"Выкл");
@@ -203,6 +224,12 @@ namespace StarTournament.ProvingGround
             RefreshSettingsFocus();
         }
         static FullScreenMode EffectiveDisplayMode() => Screen.fullScreenMode==FullScreenMode.Windowed?FullScreenMode.Windowed:FullScreenMode.FullScreenWindow;
+        void StepAudio(bool effects,int direction)
+        {
+            if(effects)NativeAudioPreferences.SetEffects(NativeAudioPreferences.Effects(Profile)+direction*5);
+            else NativeAudioPreferences.SetMusic(NativeAudioPreferences.Music(Profile)+direction*5);
+            RefreshSettingsUi();
+        }
         static List<Vector2Int> SupportedResolutions()
         {
             var result=new List<Vector2Int>();
@@ -326,9 +353,11 @@ namespace StarTournament.ProvingGround
             }
             else foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
             if(!back)return;
+            gameAudio?.MenuBack();
             if(displayConfirmationActive)RollbackDisplay();
             else if(resolutionPickerOpen)CloseResolutionPicker();
             else CloseSettings();
+            lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
         }
         void InitializeGraphicsPreferences()
         {

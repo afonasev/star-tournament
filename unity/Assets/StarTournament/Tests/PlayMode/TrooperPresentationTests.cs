@@ -98,7 +98,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;
             Assert.That(view.gameObject.activeSelf,Is.False);
             var corpse=ground.GetComponentsInChildren<TrooperVisual>().Single(v=>v.name.StartsWith("corpse-"));
-            Assert.That(corpse.State,Is.EqualTo("death"));Assert.That(corpse.GetComponentsInChildren<Collider>(),Is.Empty);
+            Assert.That(corpse.State,Is.EqualTo("ragdoll"));Assert.That(corpse.Ragdoll,Is.Not.Null);Assert.That(corpse.GetComponentsInChildren<Collider>(),Is.Empty,"Physics proxies must stay outside the gameplay scene");
             for(int i=0;i<200;i++)ground.Session.Tick(new LocalAction[3],.02f);
             yield return null;
             Assert.That(view.gameObject.activeSelf,Is.True);Assert.That(view.GetComponent<TrooperVisual>().State,Is.EqualTo("aim"));

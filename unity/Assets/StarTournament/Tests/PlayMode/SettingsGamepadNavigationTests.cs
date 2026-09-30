@@ -76,5 +76,33 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.False);
             Assert.That(Focus,Is.EqualTo("settings-display-mode"));
         }
+        [UnityTest] public IEnumerator AudioSettingsPersistAndRemainGamepadNavigable()
+        {
+            const string musicKey="StarTournament.Audio.MusicPercent",effectsKey="StarTournament.Audio.EffectsPercent";
+            bool hadMusic=PlayerPrefs.HasKey(musicKey),hadEffects=PlayerPrefs.HasKey(effectsKey);
+            int oldMusic=PlayerPrefs.GetInt(musicKey),oldEffects=PlayerPrefs.GetInt(effectsKey);
+            try
+            {
+                yield return Load();
+                yield return Press(GamepadButton.DpadDown);
+                yield return Press(GamepadButton.DpadDown);
+                yield return Press(GamepadButton.DpadDown);
+                Assert.That(Focus,Is.EqualTo("settings-section-3"));
+                yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("music-minus"));
+                int music=NativeAudioPreferences.Music(ground.Profile),effects=NativeAudioPreferences.Effects(ground.Profile);
+                yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("music-plus"));
+                yield return Press(GamepadButton.South);
+                Assert.That(NativeAudioPreferences.Music(ground.Profile),Is.EqualTo(Mathf.Min(100,music+5)));
+                yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("effects-plus"));
+                yield return Press(GamepadButton.South);
+                Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(Mathf.Min(100,effects+5)));
+            }
+            finally
+            {
+                if(hadMusic)PlayerPrefs.SetInt(musicKey,oldMusic);else PlayerPrefs.DeleteKey(musicKey);
+                if(hadEffects)PlayerPrefs.SetInt(effectsKey,oldEffects);else PlayerPrefs.DeleteKey(effectsKey);
+                PlayerPrefs.Save();
+            }
+        }
     }
 }

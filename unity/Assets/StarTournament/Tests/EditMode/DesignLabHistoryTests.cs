@@ -8,16 +8,49 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void AudioUpgradePreservesOldRevisionHashAndCustomCombatValues()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeAudio();
+            var history=new DesignLabHistory(path,old);history.Create("До звука");
+            var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
+        [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
+        {
+            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
+            var history=new DesignLabHistory(path,old);history.Create("До ragdoll");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("corpse.shotgunSpeed"),Is.EqualTo(9));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.shotgunSpeed"),Is.True);
+        }
+        [Test]public void DeathImpulseUpgradeKeepsCustomValuesAndOldHashes()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeDeathImpulseIncrease()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой импульс");var draft=history.Selected.Snapshot;draft.Set("corpse.rifleSpeed",4.3f);history.Save(draft);
+            string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("corpse.rifleSpeed"),Is.EqualTo(4.3f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.Profile("corpse.rifleSpeed").Version,Is.EqualTo(2));
+            Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.rifleSpeed"),Is.True);
+        }
         [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             // The historical v6 registry predates damage-vignette descriptors as well.
-            var profile=current.BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
+            var profile=current.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
             var json=JsonUtility.ToJson(profile);
             // Exact v6 predecessor: remove only the new additive descriptor/value.
             var serialized=JsonUtility.FromJson<LegacyProfile>(json);serialized.version=6;
@@ -31,6 +64,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.SelectedProfile.Revisions.Any(v=>v.Hash==hash),Is.True);
             Assert.That(upgraded.Selected.Snapshot.IsEditable("presentation.rocketMuzzleBlendDistance"),Is.True);
             Assert.That(upgraded.Selected.Snapshot.Validate(),Is.Empty);
+        }
+        [Test]public void ScoreboardUpgradePreservesOldValuesAndHashes()
+        {
+            var old=Shipped();
+            foreach(var profile in old.Profiles.Where(p=>p.Id==ProvingProfile.DefaultId||p.Id=="unity-native-match-v1").ToArray())
+            {
+                var serialized=JsonUtility.FromJson<LegacyProfile>(JsonUtility.ToJson(profile));
+                if(profile.Id=="unity-native-match-v1")serialized.version=1;
+                serialized.descriptors=serialized.descriptors.Where(d=>d.Path!="score.friendlyOrSelfKillPenalty"&&!d.Path.StartsWith("ui.standings")).ToArray();
+                serialized.values=serialized.values.Where(d=>d.Path!="score.friendlyOrSelfKillPenalty"&&!d.Path.StartsWith("ui.standings")).ToArray();
+                old.Profiles[old.Profiles.IndexOf(profile)]=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(serialized));
+            }
+            var history=new DesignLabHistory(path,old);history.Create("Сохранённый");var draft=history.Selected.Snapshot;draft.Set("score.assistPoints",63);history.Save(draft);
+            var hash=history.Selected.Hash;var revision=history.Selected.Number;var releaseHash=history.Profiles.Single(p=>p.Protected).Revisions[0].Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("score.assistPoints"),Is.EqualTo(63));Assert.That(upgraded.Selected.Snapshot.Get("score.friendlyOrSelfKillPenalty"),Is.EqualTo(200));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==revision).Hash,Is.EqualTo(hash));
+            Assert.That(upgraded.Profiles.Single(p=>p.Protected).Revisions[0].Hash,Is.EqualTo(releaseHash));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [System.Serializable]sealed class LegacyProfile{public string id;public int version;public NumericDescriptor[] descriptors;public ProvingProfileValue[] values;}
         [Test]public void SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts()

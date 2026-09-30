@@ -23,7 +23,8 @@ namespace StarTournament.ProvingGround
         {
             public string state,classification="SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE";
             public int width,height;
-            public bool muted,setupMap,setupRules,setupPlayers,settingsImage,confirmation,shadows;
+            public bool muted,setupMap,setupRules,setupPlayers,settingsImage,settingsAudio,confirmation,shadows;
+            public int musicPercent,effectsPercent;
         }
         IEnumerator Capture(string name)
         {
@@ -33,6 +34,8 @@ namespace StarTournament.ProvingGround
                 state=name,width=Screen.width,height=Screen.height,muted=AudioListener.volume==0,
                 setupMap=Object("setup-map").activeInHierarchy,setupRules=Object("setup-rules").activeInHierarchy,
                 setupPlayers=Object("setup-players").activeInHierarchy,settingsImage=Object("settings-image").activeInHierarchy,
+                settingsAudio=Object("settings-audio").activeInHierarchy,
+                musicPercent=NativeAudioPreferences.Music(ground.Profile),effectsPercent=NativeAudioPreferences.Effects(ground.Profile),
                 confirmation=Object("display-confirmation").activeInHierarchy,
                 shadows=QualitySettings.shadows!=ShadowQuality.Disable},true));
             yield return new WaitForSecondsRealtime(.5f);
@@ -93,8 +96,10 @@ namespace StarTournament.ProvingGround
             if(!oldShadows)Button("settings-shadows").onClick.Invoke();
             Button("settings-section-1").onClick.Invoke();yield return Capture("09-control-settings");
             Button("settings-section-2").onClick.Invoke();yield return Capture("10-interface-settings");
+            Button("settings-section-3").onClick.Invoke();Check(Object("settings-audio").activeInHierarchy,"Audio settings are unavailable");
+            yield return Capture("11-audio-settings");
             InputSystem.RemoveDevice(pad);
-            File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: map → rules → players, back navigation, native settings sections, supported resolution picker, display rollback, shadows toggle. Muted synthetic Player journey; physical gamepad and human acceptance pending.");
+            File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: map → rules → players, back navigation, native settings sections including audio, supported resolution picker, display rollback, shadows toggle. Muted synthetic Player journey; physical gamepad and human acceptance pending.");
             Debug.Log("NATIVE_SETUP_SETTINGS_REVIEW_COMPLETE "+directory);
         }
     }
