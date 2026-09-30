@@ -19,22 +19,20 @@ namespace StarTournament.ProvingGround
         void Render(){ground.SendMessage("RefreshInterface");ground.SendMessage("LateUpdate");}
         Vector3 Muzzle(int seat,WeaponId weapon,int index=0)=>weapon==WeaponId.Shotgun?View(seat).GetComponent<VectorShotPresentation>().Muzzle(index):
             weapon==WeaponId.Rifle?View(seat).GetComponent<WeaponModelPresentation>().RifleMuzzle:View(seat).GetComponent<WeaponModelPresentation>().PulseMuzzle;
-        void RequireRenderedRifleCenter(int seat,Transform trace,Vector3 endpoint)
+        void RequireRifleFlight(int seat,uint sequence)
         {
-            // Independent reference: actual bore mesh, rather than the muzzle getter under test.
-            var bore=View(seat).GetComponentsInChildren<MeshFilter>(true).Single(m=>m.name=="dark muzzle bore");
-            var center=bore.transform.TransformPoint(bore.sharedMesh.bounds.center);
-            var bounds=trace.GetComponent<MeshFilter>().sharedMesh.bounds;
-            var tail=trace.TransformPoint(bounds.center+Vector3.down*bounds.extents.y);
-            var head=trace.TransformPoint(bounds.center+Vector3.up*bounds.extents.y);
-            var camera=View(seat).parent.GetComponent<Camera>();
-            Vector2 a=camera.WorldToScreenPoint(tail),b=camera.WorldToScreenPoint(head),c=camera.WorldToScreenPoint(center);
-            var line=b-a;Require(line.magnitude>1,"First visible rifle trace has no readable segment");
-            float pixels=Mathf.Abs(line.x*(c-a).y-line.y*(c-a).x)/line.magnitude;
-            riflePixelErrors.Add(pixels);
-            Require(pixels<=.5f,"First visible rifle trace misses rendered bore center by "+pixels+" pixels");
-            var expected=center+(endpoint-center).normalized*Mathf.Min(ground.Profile.Get("presentation.shotMuzzleClearance"),Vector3.Distance(center,endpoint)*.5f);
-            Require(Vector3.Distance(tail,expected)<.0001f,"First visible rifle tail did not start at current bore clearance");
+            var bullet=ground.Session.RifleBullets.Single(b=>b.Id==sequence);
+            var line=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+sequence);
+            Require(line.GetComponents<Collider>().All(c=>!c.enabled),"Rifle presentation has a physics collider");
+            if(bullet.Distance==0)
+            {
+                var bore=View(seat).GetComponentsInChildren<MeshFilter>(true).Single(m=>m.name=="dark muzzle bore");
+                var muzzle=bore.transform.TransformPoint(bore.sharedMesh.bounds.center);
+                float error=Vector3.Distance(line.GetPosition(0),muzzle);riflePixelErrors.Add(error);
+                Require(error<.0001f,"New rifle flight did not originate at the final rendered muzzle");
+            }
+            else if(bullet.Distance>=ground.Profile.Get("presentation.rifleTracerLength"))
+                Require(Vector3.Distance(line.GetPosition(0),bullet.Position)<.0001f,"Rifle visual head disagrees with authoritative bullet");
         }
         IEnumerator Start()
         {
@@ -70,7 +68,7 @@ namespace StarTournament.ProvingGround
                     var eye=ground.Session.Pose(0).Position+Vector3.up*ground.Profile.Get("camera.eyeHeight");
                     Require(Vector3.Distance(View(0).parent.position,eye)<.0001f,"Shot sampled stale camera: "+weapon+" "+side);
                     if(side!=0)Require(Vector3.Distance(oldEye,eye)>.01f,"Strafe fixture did not move");
-                    if(weapon!=WeaponId.RocketLauncher)
+                    if(weapon==WeaponId.Shotgun)
                     {
                         Require(notice.Pellets!=null&&notice.Pellets.Length>0,"No authoritative pellets");
                         var traces=ground.GetComponentsInChildren<Transform>().Where(t=>t.name=="pellet-streak").OrderBy(t=>t.parent.GetSiblingIndex()).ToArray();
@@ -90,7 +88,7 @@ namespace StarTournament.ProvingGround
                     Render();
                     Require(JsonUtility.ToJson(ground.Session.Capture())==stateBeforeRender,"Render changed combat snapshot");
                     if(weapon==WeaponId.Rifle)
-                        RequireRenderedRifleCenter(0,ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="pellet-streak"),notice.Pellets[0].Endpoint);
+                        RequireRifleFlight(0,notice.Sequence);
                     if(weapon==WeaponId.RocketLauncher)
                     {
                         var rocket=ground.Session.Rockets.Single();var visual=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id);
@@ -115,19 +113,27 @@ namespace StarTournament.ProvingGround
                     checks.Add(weapon+" "+(side==0?"stationary":side<0?"left + yaw/pitch":"right + yaw/pitch")+": current muzzle, authoritative flight unchanged");
                     if(directory!=null&&weapon!=WeaponId.RocketLauncher)
                     {
+                        if(weapon==WeaponId.Rifle)
+                        {
+                            ground.Session.Tick(new LocalAction[2],.02f);Render();
+                            var flight=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+notice.Sequence);
+                            Require(Vector3.Distance(flight.GetPosition(0),flight.GetPosition(1))>.01f,"Rifle screenshot has no visible flight segment");
+                        }
                         yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,(++capture).ToString("D2")+"-"+weapon+"-"+side+".png"));
                         yield return new WaitForSecondsRealtime(.1f);
                     }
                     if(weapon==WeaponId.Rifle)
                     {
-                        var trace=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="pellet-streak");
-                        var bounds=trace.GetComponent<MeshFilter>().sharedMesh.bounds;
-                        var tail=trace.TransformPoint(bounds.center+Vector3.down*bounds.extents.y);
-                        var axis=trace.TransformDirection(Vector3.up).normalized;
+                        var previousBullet=ground.Session.RifleBullets.Single(b=>b.Id==notice.Sequence);
+                        var previousHead=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+notice.Sequence).GetPosition(0);
+                        var blend=1-Mathf.Clamp01(previousBullet.Distance/ground.Profile.Get("presentation.rifleTracerLength"));
+                        var offset=blend>0?(previousHead-previousBullet.Position)/blend:Vector3.zero;
                         var later=new LocalAction[2];later[0].Move=Vector2.right;later[0].LookDegrees=new Vector2(10,0);
                         ground.Session.Tick(later,.02f);Render();
-                        var laterTail=trace.TransformPoint(bounds.center+Vector3.down*bounds.extents.y);
-                        Require(Vector3.Cross(laterTail-tail,axis).magnitude<.0001f,"Already visible rifle trace moved with the later camera/weapon pose");
+                        var bullet=ground.Session.RifleBullets.Single(b=>b.Id==notice.Sequence);
+                        var line=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+notice.Sequence);
+                        var expected=bullet.Position+offset*(1-Mathf.Clamp01(bullet.Distance/ground.Profile.Get("presentation.rifleTracerLength")));
+                        Require(Vector3.Distance(line.GetPosition(0),expected)<.0001f,"Visible rifle flight dragged with later camera pose");
                     }
                 }
             ground.StartCombatReview(pads,backgroundDiagnostic:true);
@@ -147,19 +153,18 @@ namespace StarTournament.ProvingGround
             {
                 int previousShots=ground.Session.ShotCount;ground.Session.Tick(held,.02f);Render();
                 if(ground.Session.ShotCount==previousShots)continue;
-                var trace=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="pellet-streak"&&t.parent.name.StartsWith("shot-pellet-"+automatic.Sequence+"-"));
-                RequireRenderedRifleCenter(0,trace,automatic.Pellets[0].Endpoint);followUps++;
+                RequireRifleFlight(0,automatic.Sequence);followUps++;
             }
             Require(followUps>=2,"Automatic fixture did not produce consecutive rifle shots");
             checks.Add("automatic rifle: consecutive shots agree with the rendered recoil pose");
             if(directory!=null)
             {
                 yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,"10-four-seats.png"));yield return new WaitForSecondsRealtime(.1f);
-                File.WriteAllText(Path.Combine(directory,"complete.json"),JsonUtility.ToJson(new Result{checks=checks.ToArray(),arena=ground.Session.ArenaIdentity,profile=ground.Session.DesignProfile.Hash,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,rifleBoreLineErrorsPixels=riflePixelErrors.ToArray()},true));
+                File.WriteAllText(Path.Combine(directory,"complete.json"),JsonUtility.ToJson(new Result{checks=checks.ToArray(),arena=ground.Session.ArenaIdentity,profile=ground.Session.DesignProfile.Hash,muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,rifleLaunchErrorsMeters=riflePixelErrors.ToArray()},true));
             }
         }
         void OnDestroy(){if(pads!=null)foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);}
-        [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public bool muted;public int width,height;public string[] checks;public float[] rifleBoreLineErrorsPixels;}
+        [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public bool muted;public int width,height;public string[] checks;public float[] rifleLaunchErrorsMeters;}
     }
 }
 #endif

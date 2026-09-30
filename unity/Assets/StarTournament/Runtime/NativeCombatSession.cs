@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround
         public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets,WeaponId weapon=WeaponId.Shotgun)
         { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets;Weapon=weapon; }
     }
-    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=6; public WeaponPickupState[] WeaponPickups; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=7; public RifleBulletState[] RifleBullets; public WeaponPickupState[] WeaponPickups; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -56,6 +56,10 @@ namespace StarTournament.ProvingGround
         readonly RocketResolver rocketResolver;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
+        readonly List<RifleBulletState> rifleBullets=new List<RifleBulletState>();
+        readonly float rifleSpeed;
+        public RifleBulletState[] RifleBullets=>rifleBullets.ToArray();
+        public event Action<RifleBulletContact> RifleBulletHit;
         public event Action<RocketExplosion> RocketExploded;
         public event Action StateRestored;
         readonly ProvingProfile movement;
@@ -92,15 +96,21 @@ namespace StarTournament.ProvingGround
         public int ShotCount { get; private set; }
         public ArmorPickupState ArmorPickup => armorPickup.Read();
         public SpeedPickupState SpeedPickup => speedPickup.Read();
-        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { WeaponPickups=WeaponPickups, BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
+        public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { RifleBullets=RifleBullets,WeaponPickups=WeaponPickups, BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
-            if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=6||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
+            if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=7||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
             if(snapshot.ArmorPickups==null||snapshot.SpeedPickups==null||snapshot.ArmorPickups.Length!=armorPickups.Length||snapshot.SpeedPickups.Length!=speedPickups.Length||snapshot.ArmorPickups.Select(x=>x.InstanceId).Distinct().Count()!=armorPickups.Length||snapshot.SpeedPickups.Select(x=>x.InstanceId).Distinct().Count()!=speedPickups.Length)throw new ArgumentException("Invalid pickup instance set");
             if(snapshot.WeaponPickups==null||snapshot.WeaponPickups.Length!=weaponPickups.Length||snapshot.WeaponPickups.Select(x=>x.InstanceId).Distinct().Count()!=weaponPickups.Length)throw new ArgumentException("Invalid weapon pickup set");
             foreach(var item in weaponPickups)item.ValidateSnapshot(snapshot.WeaponPickups.SingleOrDefault(x=>x.InstanceId==item.Read().InstanceId));
             foreach(var item in armorPickups){var state=item.Read();var next=snapshot.ArmorPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.RespawnRemaining)||double.IsInfinity(next.RespawnRemaining)||next.RespawnRemaining<0)throw new ArgumentException("Invalid armor instance");}
             foreach(var item in speedPickups){var state=item.Read();var next=snapshot.SpeedPickups.SingleOrDefault(x=>x.InstanceId==state.InstanceId);if(next.InstanceId!=state.InstanceId||next.Anchor!=state.Anchor||double.IsNaN(next.Remaining)||double.IsInfinity(next.Remaining)||next.Remaining<0||(!next.Available&&next.Remaining==0))throw new ArgumentException("Invalid speed instance");}
+            if(snapshot.RifleBullets==null||snapshot.RifleBullets.Select(x=>x.Id).Distinct().Count()!=snapshot.RifleBullets.Length)throw new ArgumentException("Invalid rifle bullet set");
+            foreach(var b in snapshot.RifleBullets)
+            {
+                b.Validate(lives.Length,snapshot.ShotSequence);
+                if(b.OwnerLife>snapshot.Lives[b.Owner].Life)throw new ArgumentException("Rifle owner life is in the future");
+            }
             if(snapshot.Rockets==null||snapshot.Rockets.Select(x=>x.Id).Distinct().Count()!=snapshot.Rockets.Length)throw new ArgumentException("Invalid rocket set");
             if(snapshot.Beams!=null){if(snapshot.Beams.Length!=beams.Length)throw new ArgumentException("Invalid beams");for(int i=0;i<beams.Length;i++)beams[i].ValidateSnapshot(snapshot.Beams[i]);}
             if(snapshot.BeamReleaseRequired!=null&&snapshot.BeamReleaseRequired.Length!=beams.Length)throw new ArgumentException("Invalid beam release state");
@@ -126,7 +136,7 @@ namespace StarTournament.ProvingGround
             if(snapshot.Beams!=null){if(snapshot.Beams.Length!=beams.Length)throw new ArgumentException("Invalid beams");for(int i=0;i<beams.Length;i++)beams[i].Restore(snapshot.Beams[i]);}
             else foreach(var beam in beams)beam.Reset();
             if(snapshot.BeamReleaseRequired!=null)Array.Copy(snapshot.BeamReleaseRequired,releaseRequired,beams.Length);
-            rockets.Clear();rockets.AddRange(snapshot.Rockets);StateRestored?.Invoke();
+            rifleBullets.Clear();rifleBullets.AddRange(snapshot.RifleBullets);rockets.Clear();rockets.AddRange(snapshot.Rockets);StateRestored?.Invoke();
             ResetPickupContacts();
             for(int i=0;i<lives.Length;i++){motors[i].SetAlive(!Life(i).Dead);motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);}
 
@@ -150,7 +160,7 @@ namespace StarTournament.ProvingGround
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
             tuning.EnsureNativeCombatDescriptors();
             resolver = new ShotgunResolver(tuning, movement.Get("player.capsule.height"));
-            rocketResolver = new RocketResolver(tuning,this.movement);
+            rocketResolver = new RocketResolver(tuning,this.movement);rifleSpeed=tuning.Get("rifle.speed");
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
             lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];speedRemaining=new double[motors.Length];
             for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle,cutter);
@@ -240,6 +250,7 @@ namespace StarTournament.ProvingGround
                 }
 
             }
+            AdvanceRifleBullets(seconds);
             var targets=LiveTargets();
             var shots=new List<(int shooter, int life, ShotNotice notice, float[] damage)>();
             for (int i = 0; i < lives.Length; i++)
@@ -265,6 +276,8 @@ namespace StarTournament.ProvingGround
                 {
                     if(Life(i).SelectedWeapon==WeaponId.RocketLauncher)
                     { LaunchRocket(i); continue; }
+                    if(Life(i).SelectedWeapon==WeaponId.Rifle)
+                    { LaunchRifleBullet(i); continue; }
                     var result=ResolveShot(i,targets);
                     shots.Add((i,Life(i).Life,result.notice,result.damage));
                 }
@@ -292,6 +305,45 @@ namespace StarTournament.ProvingGround
                     Physics.SyncTransforms(); // Reserve this live capsule before the next participant chooses.
                     Respawned?.Invoke(i);
                 }
+            }
+        }
+        void LaunchRifleBullet(int shooter)
+        {
+            ShotCount++;shotSequence++;
+            var pose=Pose(shooter);
+            var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
+            var direction=resolver.Direction(Quaternion.Euler(pose.Pitch,pose.Yaw,0),0,shotSequence,WeaponId.Rifle);
+            rifleBullets.Add(new RifleBulletState{Id=shotSequence,Owner=shooter,OwnerLife=Life(shooter).Life,Position=origin,Direction=direction,DamageMultiplier=damageRemaining[shooter]>0?damagePickup.Multiplier:1});
+            // Launch has no target or damage; only later swept contact can determine either.
+            ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Rifle));
+            Fired?.Invoke(shooter,0);
+        }
+        void AdvanceRifleBullets(float seconds)
+        {
+            float travel=rifleSpeed*seconds;
+            var targets=LiveTargets();
+            for(int index=0;index<rifleBullets.Count;)
+            {
+                var b=rifleBullets[index];
+                bool world=physics.Raycast(b.Position,b.Direction,out var wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                var hit=resolver.ResolveSegment(b.Position,b.Direction,targets,b.Owner,b.OwnerLife,world?wall.distance:travel);
+                if(hit.TargetIndex<0&&!world)
+                { b.Position+=b.Direction*travel;b.Distance+=travel;rifleBullets[index]=b;index++;continue; }
+                float distance=hit.TargetIndex>=0?hit.Distance:wall.distance;
+                b.Position+=b.Direction*distance;b.Distance+=distance;
+                // Remove before damage callbacks: a snapshot must never retain a spent bullet.
+                rifleBullets.RemoveAt(index);
+                PelletNotice contact;float applied=0;
+                if(hit.TargetIndex>=0)
+                {
+                    var target=targets[hit.TargetIndex];
+                    contact=new PelletNotice(b.Direction,b.Position,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
+                    if(target.Seat!=b.Owner&&!Allied(b.Owner,target.Seat))
+                        applied=ApplyDamagePolicy(target.Seat,target.Life,resolver.FullDamage(hit.Zone,WeaponId.Rifle)*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Rifle,b.Id,b.Direction,b.Position)).Applied;
+                }
+                else contact=new PelletNotice(b.Direction,b.Position,wall.normal,PelletContact.World);
+                if(applied>0)targets=LiveTargets();
+                RifleBulletHit?.Invoke(new RifleBulletContact(b,contact,applied,Time));
             }
         }
         void AdvanceBeam(int shooter,float seconds)

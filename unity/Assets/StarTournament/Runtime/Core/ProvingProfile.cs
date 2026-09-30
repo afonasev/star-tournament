@@ -108,11 +108,25 @@ namespace StarTournament.ProvingGround
             copy.version=Math.Min(copy.version,predecessor);
             return copy;
         }
+        /// <summary>Exact trusted registry for immutable pre-projectile Lab revisions.</summary>
+        public ProvingProfile BeforeTravelingRifle()
+        {
+            if(id!="unity-native-combat-v1"||FindDescriptor("rifle.speed")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            int index=copy.descriptors.FindIndex(d=>d.Path=="rifle.speed");
+            copy.descriptors.RemoveAt(index);copy.values.RemoveAll(v=>v.Path=="rifle.speed");
+            copy.version=Math.Min(copy.version,4);
+            copy.Add("rifle.range","rifle","Дальность винтовки","Дальность одиночной пули.","meters",1,200,.5f,80);
+            var descriptor=copy.descriptors[copy.descriptors.Count-1];copy.descriptors.RemoveAt(copy.descriptors.Count-1);copy.descriptors.Insert(index,descriptor);
+            return copy;
+        }
         public void EnsureNativeCombatDescriptors()
         {
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
-            version=4;
+            version=5;
+            // Obsolete hitscan range must not become a speed or remain an editable no-op.
+            descriptors.RemoveAll(d=>d.Path=="rifle.range");values.RemoveAll(v=>v.Path=="rifle.range");
             var current=CreateNativeCombatDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -353,7 +367,7 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.shotFlightSeconds", "shot-feedback", "Длительность дроби", "Время видимого полёта дробины до authoritative конечной точки.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .01f);
             profile.Add("presentation.rifleTracerWidth", "rifle", "Толщина трассера", "Ширина короткого трассера винтовки.", "meters", .002f, .1f, .001f, .006f);
-            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Максимальная видимая длина следа от дульной точки.", "meters", .1f, 10f, .1f, 3f);
+            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Длина видимого следа за летящей пулей и участка совмещения с дульной точкой.", "meters", .1f, 10f, .1f, 3f);
             profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .65f);
             profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, 1f);
             profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .08f);
