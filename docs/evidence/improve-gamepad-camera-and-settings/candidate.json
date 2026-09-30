@@ -10,5 +10,7 @@
   "assembly": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/ba80c88fdbe024c3b3f0abbf0f5ea14355801116/20260930T142102Z/StarTournamentProvingGround.app/Contents/Resources/Data/Managed/StarTournament.ProvingGround.dll",
   "assembly_sha256": "4553a75670f276588d4b34f34dacaa938b7833bd4825d72931e992158e45dea4",
   "muted": true,
-  "external_publication": false
+  "external_publication": false,
+  "superseded_by_source_revision": "69deb39",
+  "final_integrated_candidate": false
 }

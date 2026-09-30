@@ -179,6 +179,7 @@
       }
     ],
     "remaining": [
+      "native Player camera and four-seat QA for 69deb39 or later integrated source",
       "physical-controller and TV human acceptance"
     ],
     "coordination_blocker": {
@@ -211,5 +212,17 @@
     "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
     "build_pass_marker": "STAR_PROVING_BUILD_PASS 471256588",
     "build_log": "docs/evidence/improve-gamepad-camera-and-settings/build-post-main.log"
+  },
+  "post_rifle_merge": {
+    "source_revision": "69deb39",
+    "merged_from_main": "1c86286",
+    "snapshot_resolution": "Version 7 retains both optional camera Poses and required RifleBullets",
+    "required_clean_editmode": "pending",
+    "required_playmode": "pending",
+    "required_build": "pending",
+    "required_player_qa": "pending",
+    "host_status": "foreign F2 Player PID 72476 active at merge; own runtime lease released",
+    "prior_candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
+    "prior_candidate_classification": "built and hashed for pre-rifle merge; not final integrated source"
   }
 }
