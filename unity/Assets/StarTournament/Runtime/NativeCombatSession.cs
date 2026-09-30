@@ -387,6 +387,8 @@ namespace StarTournament.ProvingGround
             {
                 var r=rockets[index];float travel=Mathf.Min(rocketResolver.Speed*seconds,rocketResolver.Range-r.Distance);
                 bool wallHit=physics.Raycast(r.Position,r.Direction,out var wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                if(arena.RaycastRocketGrating(r.Position,r.Direction,wallHit?wall.distance:travel,out var grate))
+                {wall=grate;wallHit=true;}
                 var targets=LiveTargets();
                 var contact=rocketResolver.Contact(r.Position,r.Direction,wallHit?wall.distance:travel+Mathf.Epsilon,targets,r.Owner,r.OwnerLife);
                 bool direct=contact.TargetIndex>=0;

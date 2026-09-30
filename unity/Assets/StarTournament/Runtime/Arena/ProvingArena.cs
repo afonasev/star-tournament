@@ -21,6 +21,7 @@ namespace StarTournament.ProvingGround
         public NavMeshSurface Surface { get; private set; }
         public ArenaDefinition Definition { get; private set; }
         public ArenaFreezeSnapshot FrozenSnapshot { get; private set; }
+        readonly List<Collider> rocketGrating=new List<Collider>();
         readonly Dictionary<Collider,string> supports=new Dictionary<Collider,string>();
         NativeNavigationTransition[] navigationTransitions;
         public float SupportPitch(Collider support,Vector3 normal,Vector3 forward)
@@ -55,13 +56,23 @@ namespace StarTournament.ProvingGround
         {
             return collider && collider.transform.IsChildOf(transform) && supports.TryGetValue(collider,out var support) ? support : null;
         }
+        // Canonical full-volume supports, independent of presentation bars/gaps. Other
+        // movement-only surfaces stay shot-transparent; this query is exclusive to Pulse.
+        public bool RaycastRocketGrating(Vector3 origin, Vector3 direction, float distance, out RaycastHit hit)
+        {
+            hit=default;bool found=false;var ray=new Ray(origin,direction);
+            foreach(var collider in rocketGrating)
+                if(collider && collider.enabled && collider.Raycast(ray,out var contact,distance))
+                {hit=contact;distance=contact.distance;found=true;}
+            return found;
+        }
         Material floor, wall, accent;
         public void ClearProjection()
         {
             if (Surface) { Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
             for(int i=transform.childCount-1;i>=0;i--) DestroyImmediate(transform.GetChild(i).gameObject);
             if(floor)DestroyImmediate(floor);if(wall)DestroyImmediate(wall);if(accent)DestroyImmediate(accent);
-            supports.Clear(); navigationTransitions=System.Array.Empty<NativeNavigationTransition>(); Spawns=System.Array.Empty<Vector3>();
+            supports.Clear(); rocketGrating.Clear(); navigationTransitions=System.Array.Empty<NativeNavigationTransition>(); Spawns=System.Array.Empty<Vector3>();
         }
         public void Build(ProvingProfile profile)
         {
@@ -75,7 +86,7 @@ namespace StarTournament.ProvingGround
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
-            foreach(var solid in Definition.Solids){var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;if(!string.IsNullOrEmpty(solid.Support))supports[go.GetComponent<Collider>()]=solid.Support;}
+            foreach(var solid in Definition.Solids){var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
             Physics.SyncTransforms();
             Surface = gameObject.AddComponent<NavMeshSurface>();

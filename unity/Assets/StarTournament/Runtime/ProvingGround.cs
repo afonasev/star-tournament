@@ -238,6 +238,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent(reviewType); Debug.Log("NATIVE_BOT_NAVIGATION_REVIEW_BOOTSTRAPPED");
             }
             if (args.Contains("-shotOriginReview")) gameObject.AddComponent<NativeShotOriginReview>();
+            if (args.Contains("-rocketGratingReview")) gameObject.AddComponent<NativeRocketGratingReview>();
             if (args.Contains("-vectorReview")) gameObject.AddComponent<VectorVisualReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
