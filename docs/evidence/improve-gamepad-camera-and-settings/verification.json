@@ -126,7 +126,7 @@
     "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json"
   },
   "native_player": {
-    "status": "camera_qa_passed_four_seat_qa_pending",
+    "status": "synthetic_native_camera_and_four_seat_qa_passed",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -138,14 +138,17 @@
         "candidate_source": "fd035bca431098c6be690419319a752998405e0b",
         "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-06-native-camera/result.json",
         "result": "synthetic muted native camera QA passed with 20 PNG and matching state JSON files; exit 0 and completion marker"
+      },
+      {
+        "candidate_source": "fd035bca431098c6be690419319a752998405e0b",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-07-native-four-seat/result.json",
+        "result": "synthetic muted four-seat pause/settings/help QA passed with 6 PNG and matching state JSON files; exit 0 and completion marker"
       }
     ],
-    "remaining": [
-      "four-seat settings/help top/bottom visual QA"
-    ],
+    "remaining": ["physical-controller and TV human acceptance"],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
-      "reason": "Camera native Player QA passed on the immutable candidate. Four-seat native Player QA requires a separate shared-host ACK and fresh broad guard.",
+      "reason": "Camera and four-seat synthetic native Player QA passed on the immutable candidate. Physical-controller and TV human acceptance remain separate; integration awaits latest main refresh.",
       "own_runtime_lease": "released",
       "own_active_processes": []
     }
@@ -159,6 +162,6 @@
     "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending",
     "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
     "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
-    "Exact-source focused EditMode10/10 and PlayMode11/11 plus full EditMode214/214 and PlayMode144/144 passed on 8cc0ee5; BuildMac passed on fd035bc and immutable candidate copied; native camera QA passed with 20 PNG+JSON captures; four-seat QA remains pending shared host slot"
+    "Exact-source focused EditMode10/10 and PlayMode11/11 plus full EditMode214/214 and PlayMode144/144 passed on 8cc0ee5; BuildMac passed on fd035bc and immutable candidate copied; native camera QA passed with 20 PNG+JSON captures and four-seat pause/settings/help QA passed with 6; physical-controller and TV human acceptance pending"
   ]
 }
