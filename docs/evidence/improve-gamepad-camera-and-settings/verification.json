@@ -112,6 +112,17 @@
       "failed": 0,
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-full-playmode.xml",
       "duration_seconds": 391.9429636
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+      "exit_code": 0,
+      "passed": 221,
+      "failed": 0,
+      "result": "diagnostic_only_foreign_Player_PID_13994_overlapped_Unity_PID_13872",
+      "start_time_utc": "2026-09-30T13:40:59Z",
+      "end_time_utc": "2026-09-30T13:48:23Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-overlap-editmode.xml"
     }
   ],
   "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
@@ -145,7 +156,9 @@
         "result": "synthetic muted four-seat pause/settings/help QA passed with 6 PNG and matching state JSON files; exit 0 and completion marker"
       }
     ],
-    "remaining": ["physical-controller and TV human acceptance"],
+    "remaining": [
+      "physical-controller and TV human acceptance"
+    ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
       "reason": "Camera and four-seat synthetic native Player QA passed on the immutable candidate. Physical-controller and TV human acceptance remain separate; integration awaits latest main refresh.",
@@ -163,5 +176,14 @@
     "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
     "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
     "Exact-source focused EditMode10/10 and PlayMode11/11 plus full EditMode214/214 and PlayMode144/144 passed on 8cc0ee5; BuildMac passed on fd035bc and immutable candidate copied; native camera QA passed with 20 PNG+JSON captures and four-seat pause/settings/help QA passed with 6; physical-controller and TV human acceptance pending"
-  ]
+  ],
+  "post_main_merge": {
+    "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+    "merged_from_main": "eea4f8efd9d20e0fac670e69626f1aede496533e",
+    "required_clean_editmode": "pending",
+    "required_playmode": "pending",
+    "required_build": "pending",
+    "required_player_qa": "pending",
+    "reason": "First full EditMode passed 221/221 but overlapped foreign F2 Player, so it is diagnostic only."
+  }
 }
