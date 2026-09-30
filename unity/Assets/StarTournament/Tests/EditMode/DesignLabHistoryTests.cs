@@ -18,20 +18,20 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeAudio();
             var history=new DesignLabHistory(path,old);history.Create("До звука");
-            var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);
             string oldHash=history.Selected.Hash;
             var upgraded=new DesignLabHistory(path,Shipped());
             Assert.That(upgraded.StorageError,Is.Null);
-            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
             Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }
         [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
         {
             var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
-            var history=new DesignLabHistory(path,old);history.Create("До ragdoll");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            var history=new DesignLabHistory(path,old);history.Create("До ragdoll");var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);
             string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
-            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
             Assert.That(upgraded.Selected.Snapshot.Get("corpse.shotgunSpeed"),Is.EqualTo(9));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
             Assert.That(upgraded.Selected.Snapshot.IsEditable("corpse.shotgunSpeed"),Is.True);
