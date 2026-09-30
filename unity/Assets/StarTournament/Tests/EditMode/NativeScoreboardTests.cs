@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var s=Make();s.BeginTick();Hit(s,2,3,25);Hit(s,2,0,25);s.RecordDamage(2,-1,new DamageResult(50,true),originalSource:3);s.EndTick();
             Assert.That(Row(s,3).AllyDamageDealt,Is.EqualTo(75));Assert.That(Row(s,3).AllyKills,Is.EqualTo(1));Assert.That(Row(s,3).Score,Is.EqualTo(-200));
-            Assert.That(Row(s,3).Assists,Is.Zero);Assert.That(Row(s,0).Assists,Is.EqualTo(1));
+            Assert.That(Row(s,3).Assists,Is.Zero);Assert.That(Row(s,0).Assists,Is.Zero,"Friendly lethal cannot award an enemy assist");
             var ffa=Make(false);ffa.BeginTick();Hit(ffa,1,0,100,true);Hit(ffa,0,0,40,true);ffa.EndTick();
             Assert.That(NativeStandingsView.Values(Row(ffa,0),false)[4],Is.EqualTo("100"));Assert.That(Row(ffa,0).Score,Is.EqualTo(-100));
         }

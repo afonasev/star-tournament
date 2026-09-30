@@ -394,12 +394,6 @@ namespace StarTournament.ProvingGround
         }
 
         bool Allied(int a,int b) => Match != null && Match.Roster.AreAllies(a,b);
-        CombatTarget[] EnemiesOf(int participant)
-        {
-            var enemies=new List<CombatTarget>();
-            foreach(var target in LiveTargets()) if(!Allied(participant,target.Seat)) enemies.Add(target);
-            return enemies.ToArray();
-        }
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
             => ApplyDamagePolicy(seat,life,damage,killer,killerLife,false);
         DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket,FatalImpact impact=default)
