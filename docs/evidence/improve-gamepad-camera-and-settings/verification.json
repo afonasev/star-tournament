@@ -126,22 +126,26 @@
     "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json"
   },
   "native_player": {
-    "status": "pending_shared_host_ack_for_exact_candidate_native_qa",
+    "status": "camera_qa_passed_four_seat_qa_pending",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
         "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-01-incomplete/result.json",
         "result": "settings/profile checks passed; camera fixture setup failed before game began",
         "fix": "4a829e8 explicit human seats before join"
+      },
+      {
+        "candidate_source": "fd035bca431098c6be690419319a752998405e0b",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-06-native-camera/result.json",
+        "result": "synthetic muted native camera QA passed with 20 PNG and matching state JSON files; exit 0 and completion marker"
       }
     ],
     "remaining": [
-      "camera flat/stairs/across/ramp/jump/landing/manual/off/pause/reconnect",
       "four-seat settings/help top/bottom visual QA"
     ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
-      "reason": "BuildMac passed and the immutable candidate is ready. Native Player scenarios require separate shared-host ACKs and fresh broad guards.",
+      "reason": "Camera native Player QA passed on the immutable candidate. Four-seat native Player QA requires a separate shared-host ACK and fresh broad guard.",
       "own_runtime_lease": "released",
       "own_active_processes": []
     }
@@ -155,6 +159,6 @@
     "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending",
     "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
     "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
-    "Exact-source focused EditMode10/10 and PlayMode11/11 plus full EditMode214/214 and PlayMode144/144 passed on 8cc0ee5; BuildMac passed on fd035bc and immutable candidate copied; native Player scenarios remain pending shared host slots"
+    "Exact-source focused EditMode10/10 and PlayMode11/11 plus full EditMode214/214 and PlayMode144/144 passed on 8cc0ee5; BuildMac passed on fd035bc and immutable candidate copied; native camera QA passed with 20 PNG+JSON captures; four-seat QA remains pending shared host slot"
   ]
 }
