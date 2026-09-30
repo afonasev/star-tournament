@@ -262,21 +262,27 @@ namespace StarTournament.ProvingGround
             WeaponId desired=ChooseWeapon(time,f,memory);
             Vector3 aimPoint=memory.HasValue?memory.Value.Sighting.Position:Vector3.zero;
             bool rocketSafe=false;
-            if(visible&&weapon is NativeShotgunPolicy lp)
+            // Facing belongs to the known threat, independently of route/intent ownership.
+            // Pickup selection and retreat expiry must not turn our back during an LOS gap.
+            // The perception module bounds memory lifetime; fire still requires visibility.
+            bool trackThreat=memory.HasValue;
+            if(trackThreat&&weapon is NativeShotgunPolicy lp)
             {
                 aimPoint+=Vector3.up*lp.TargetHeight;
-                if(desired==WeaponId.RocketLauncher)rocketSafe=RocketPlan(f,memory.Value.Sighting,out aimPoint);
+                if(visible&&desired==WeaponId.RocketLauncher)rocketSafe=RocketPlan(f,memory.Value.Sighting,out aimPoint);
                 aim=lp.AimPoint(f.Pose,aimPoint,time,seconds,state.AimPhase,P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),out residual);
             }
-            else if(visible)aim=weapon.Aim(f.Pose,memory.Value.Sighting.Position,time,seconds,state.AimPhase,P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),out residual);
+            else if(trackThreat)aim=weapon.Aim(f.Pose,memory.Value.Sighting.Position,time,seconds,state.AimPhase,P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),out residual);
             float nextYaw=f.Pose.Yaw+aim.LookDegrees.x;
-            bool close=visible&&Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position)<=P("preferredDistanceMeters")*state.Personality+T("probeDistance");
-            bool localFight=close&&routes.TryLocate(f.Pose.Position,out var ownSupport)&&routes.TryLocate(memory.Value.Sighting.Position,out var enemySupport)&&
-                ownSupport.Support==enemySupport.Support&&!ownSupport.Support.StartsWith("transition:")&&
-                tactics.CanMove(f.Pose.Position,(memory.Value.Sighting.Position-f.Pose.Position).normalized,Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position));
+            float weaponRange=weapon is NativeShotgunPolicy policy?policy.RangeFor(desired):weapon.Range;
+            bool localFight=visible&&Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position)<=weaponRange&&
+                routes.TryLocate(f.Pose.Position,out var ownSupport)&&routes.TryLocate(memory.Value.Sighting.Position,out var enemySupport)&&
+                ownSupport.Support==enemySupport.Support&&!ownSupport.Support.StartsWith("transition:");
+            // Probe the actual short manoeuvre below, not the entire straight approach to a
+            // distant opponent: an obstruction along that approach need not block a local strafe.
             bool tactical=(localFight&&state.Intent==NativeBotIntent.Engage&&time>=state.LocalRecoveryUntil)||state.JumpActive;
-            var action=navigation.Tick(time,f.Pose,f.Knowledge,visible?nextYaw:(float?)null,tactical);
-            if(visible)action.LookDegrees=aim.LookDegrees;
+            var action=navigation.Tick(time,f.Pose,f.Knowledge,trackThreat?nextYaw:(float?)null,tactical);
+            if(trackThreat)action.LookDegrees=aim.LookDegrees;
             bool navigationOwns=navigation.InTransition||navigation.Status==NativeNavigationStatus.Recovering;
             bool maneuver=false;
             if(time>=state.NextStrafe){state.NextStrafe=time+P("strafeSeconds")*state.Personality;state.StrafeSign=Random()<.5f?-1:1;maneuver=true;}
@@ -298,8 +304,21 @@ namespace StarTournament.ProvingGround
                     if(direction.sqrMagnitude==0){state.LocalRecoveryUntil=time+navigationProfile.Get("bots.navigation.recoverySeconds");}
                 }
                 var local=Quaternion.Euler(0,-nextYaw,0)*direction;action.Move=new Vector2(local.x,local.z);
-                if(maneuver&&f.Pose.Grounded&&time>=state.NextJump&&Random()<P("jumpChance")&&tactics.CanJump(f.Pose,direction))
-                {action.Jump=true;state.JumpActive=true;state.JumpDirection=direction;state.NextJump=time+P("jumpCooldownSeconds")*state.Personality;Jumps++;}
+                TryCombatJump(time,f,ref action,direction,maneuver);
+            }
+            else if(localFight&&state.Intent==NativeBotIntent.Retreat&&!navigationOwns&&action.Move.sqrMagnitude>0)
+            {
+                var routeDirection=Quaternion.Euler(0,nextYaw,0)*new Vector3(action.Move.x,0,action.Move.y);
+                routeDirection.Normalize();
+                var side=Vector3.Cross(Vector3.up,routeDirection)*state.StrafeSign;
+                var direction=(routeDirection+side*P("strafeWeight")).normalized;
+                if(!tactics.CanMove(f.Pose.Position,direction,T("probeDistance")))
+                    direction=(routeDirection-side*P("strafeWeight")).normalized;
+                if(!tactics.CanMove(f.Pose.Position,direction,T("probeDistance")))direction=routeDirection;
+                // A perpendicular offset keeps positive route progress towards cover; navigation
+                // retains its goal and stuck/recovery timers throughout the retreat.
+                var local=Quaternion.Euler(0,-nextYaw,0)*direction;action.Move=new Vector2(local.x,local.z)*action.Move.magnitude;
+                TryCombatJump(time,f,ref action,direction,maneuver);
             }
             // Use only observed target information and allowlisted allied poses. No hidden enemy query.
             float targetDistance=memory.HasValue?Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position):float.PositiveInfinity;
@@ -314,7 +333,6 @@ namespace StarTournament.ProvingGround
                 action.SelectWeapon=desired==WeaponId.Cutter?WeaponSelection.Cutter:desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;
             int readyAmmo=CombatLife.AmmoFor(f.Life,desired);
             double readyCooldown=CombatLife.CooldownFor(f.Life,desired);
-            float weaponRange=weapon is NativeShotgunPolicy policy?policy.RangeFor(desired):weapon.Range;
             // Older isolated planner fixtures have no loadout; keep their supplied ammo/cooldown.
             if(f.Life.SelectedWeapon==0){readyAmmo=f.Life.Ammo;readyCooldown=f.Life.CooldownRemaining;action.SelectWeapon=WeaponSelection.None;}
             // A shotgun press must be followed by a complete false tick.
@@ -323,6 +341,11 @@ namespace StarTournament.ProvingGround
                 readyAmmo>0&&readyCooldown<=0&&f.Life.SwitchRemaining<=0&&action.SelectWeapon==WeaponSelection.None&&targetDistance<=weaponRange&&(desired!=WeaponId.RocketLauncher||rocketSafe)&&!AllyInLine(f,memory.Value.Sighting.Position))
             {if(desired==WeaponId.Cutter)action.FireHeld=true;else {action.Fire=true;state.Pressed=true;}FireAttempts++;}
             return action;
+        }
+        void TryCombatJump(double time,NativeBotFrame f,ref LocalAction action,Vector3 direction,bool maneuver)
+        {
+            if(maneuver&&direction.sqrMagnitude>0&&f.Pose.Grounded&&time>=state.NextJump&&Random()<P("jumpChance")&&tactics.CanJump(f.Pose,direction))
+            {action.Jump=true;state.JumpActive=true;state.JumpDirection=direction;state.NextJump=time+P("jumpCooldownSeconds")*state.Personality;Jumps++;}
         }
         float OwnStrength(NativeBotFrame f)=>(f.Life.Health+f.Life.Armor)*(f.DamageRemaining>0&&weapon is NativeShotgunPolicy lp?lp.DamageMultiplier:1);
         float PickupNeed(NativeBotFrame f,NativeBotPickupEvent p)
