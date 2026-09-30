@@ -111,8 +111,12 @@ namespace StarTournament.ProvingGround
                 rows[source].AccumulatedPenalty+=penalty; rows[source].Score-=penalty;
                 if(source!=victim && chainEligible) chains[source]=chainAwards[source]=0;
             }
-            if(enemy)for(int i=0;i<rows.Length;i++) if(i!=attacker && i!=victim && !Roster.AreAllies(i,victim) && ledger[victim,i]>=0 && tick-ledger[victim,i]<=assistTicks)
-            { rows[i].Assists++; rows[i].Score+=assistPoints; }
+            // Environmental deaths retain the existing assist rule; self and allied kills award none.
+            if(source<0 || (source!=victim && !Roster.AreAllies(source,victim)))
+            {
+                for(int i=0;i<rows.Length;i++) if(i!=attacker && i!=victim && !Roster.AreAllies(i,victim) && ledger[victim,i]>=0 && tick-ledger[victim,i]<=assistTicks)
+                { rows[i].Assists++; rows[i].Score+=assistPoints; }
+            }
             if(enemy)
             {
                 int length=chainEligible?chains[attacker]+1:1;
