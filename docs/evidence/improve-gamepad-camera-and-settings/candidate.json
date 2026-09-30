@@ -1,16 +1,15 @@
 {
-  "identity": "local-macos-player-candidate/ba80c88fdbe024c3b3f0abbf0f5ea14355801116/20260930T142102Z",
-  "source_commit": "ba80c88fdbe024c3b3f0abbf0f5ea14355801116",
-  "compiled_csharp_source_commit": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
-  "build_marker": "20260930T142102Z",
-  "unity_build_pass_marker": "STAR_PROVING_BUILD_PASS 471256588",
-  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/ba80c88fdbe024c3b3f0abbf0f5ea14355801116/20260930T142102Z/StarTournamentProvingGround.app",
-  "executable": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/ba80c88fdbe024c3b3f0abbf0f5ea14355801116/20260930T142102Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
-  "executable_sha256": "17385ba93e80ef84736bb0e6509dc87c98db082d4eacb09134cf92cd7ad98d0d",
-  "assembly": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/ba80c88fdbe024c3b3f0abbf0f5ea14355801116/20260930T142102Z/StarTournamentProvingGround.app/Contents/Resources/Data/Managed/StarTournament.ProvingGround.dll",
-  "assembly_sha256": "4553a75670f276588d4b34f34dacaa938b7833bd4825d72931e992158e45dea4",
+  "identity": "local-macos-player-candidate/57b71a69bc992a8a98bcc4b830e693346553fa87/20260930T162027Z",
+  "source_commit": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+  "compiled_csharp_source_commit": "2873cf18685cb369bc258df16b857475ec3f008b",
+  "build_marker": "20260930T162027Z",
+  "unity_build_pass_marker": "STAR_PROVING_BUILD_PASS 471273724",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/57b71a69bc992a8a98bcc4b830e693346553fa87/20260930T162027Z/StarTournamentProvingGround.app",
+  "executable": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/57b71a69bc992a8a98bcc4b830e693346553fa87/20260930T162027Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+  "executable_sha256": "8aa659a8e698577f698461c8945f1c06fd0aaa0949178d81a6e85739aae6fd92",
+  "assembly": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/57b71a69bc992a8a98bcc4b830e693346553fa87/20260930T162027Z/StarTournamentProvingGround.app/Contents/Resources/Data/Managed/StarTournament.ProvingGround.dll",
+  "assembly_sha256": "1f6d7f3331fc7b17e7157c142d039287294830f11e33a023f5f83ea2682362b0",
   "muted": true,
   "external_publication": false,
-  "superseded_by_source_revision": "69deb39",
-  "final_integrated_candidate": false
+  "final_integrated_candidate": true
 }
