@@ -124,7 +124,7 @@
     "pass_marker": "STAR_PROVING_BUILD_PASS 471125991"
   },
   "native_player": {
-    "status": "blocked_by_foreign_player_before_exact_source_build_and_native_qa",
+    "status": "pending_shared_host_ack_for_exact_source_build_and_native_qa",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -140,7 +140,7 @@
     ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
-      "reason": "Foreign Star Tournament Player PID 65329 from F2 worktree 19a5 remains active after its QA run. Its owner has asked the user to close the old Player. Build and Player require natural exit, fresh broad host guard, and separate ACKs.",
+      "reason": "Foreign Player PID 65329 has exited. Coordinator has placed the first Star Racing diagnostic Player gate before this build; BuildMac and Player require separate host ACKs after that gate and fresh broad guards.",
       "own_runtime_lease": "released",
       "own_active_processes": []
     }
