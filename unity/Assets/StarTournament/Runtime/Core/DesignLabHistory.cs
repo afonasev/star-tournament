@@ -182,10 +182,12 @@ namespace StarTournament.ProvingGround
                 }
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
+                var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()}}));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutFootstepMix).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutOrigins).ToList()}}));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutCutterDamage).ToList()}}));
@@ -238,7 +240,15 @@ namespace StarTournament.ProvingGround
             foreach(var p in file.Profiles)
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
-                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path)));
+                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))
+                    {
+                        float value=ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path));
+                        // Interpret the untouched v9 step interval as the new shipped default.
+                        // Historical snapshots remain byte-for-byte intact with their original hash.
+                        if(d.Path=="audio.footstepDistanceMeters"&&old.Snapshot.Profile(d.Path).Version==9&&Mathf.Approximately(value,1.7f))
+                            value=next.Profile(d.Path).Descriptor(d.Path).DefaultValue;
+                        next.Set(d.Path,value);
+                    }
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==next.Hash());
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;

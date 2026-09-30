@@ -26,6 +26,44 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }
+        [Test]public void FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
+            var history=new DesignLabHistory(path,old);history.Create("Старые шаги");
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(2.1f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.5f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
+        [Test]public void FootstepMixUpgradeKeepsCustomOldInterval()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
+            var history=new DesignLabHistory(path,old);history.Create("Свои шаги");
+            var draft=history.Selected.Snapshot;draft.Set("audio.footstepDistanceMeters",3.4f);history.Save(draft);
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(3.4f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.5f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
+        [Test]public void SerializedV9ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval()
+        {
+            var shipped=ProvingProfile.CreateDefault().BeforeFootstepMix();
+            shipped.EnsureDefaultDescriptors();
+            Assert.That(shipped.Version,Is.EqualTo(ProvingProfile.DefaultVersion));
+            Assert.That(shipped.Get("audio.footstepDistanceMeters"),Is.EqualTo(2.1f));
+            Assert.That(shipped.Descriptor("audio.footstepDistanceMeters").DefaultValue,Is.EqualTo(2.1f));
+            Assert.That(shipped.Get("audio.footstepGain"),Is.EqualTo(.5f));
+            var custom=ProvingProfile.CreateDefault().BeforeFootstepMix();
+            custom.Set("audio.footstepDistanceMeters",3.4f);
+            custom.EnsureDefaultDescriptors();
+            Assert.That(custom.Get("audio.footstepDistanceMeters"),Is.EqualTo(3.4f));
+        }
         [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
         {
             var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
