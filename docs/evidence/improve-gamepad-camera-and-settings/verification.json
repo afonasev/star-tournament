@@ -67,9 +67,27 @@
       "result": "compiler_error_before_test_execution",
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/compile-failure-50839aa.log",
       "fix_revision": "29bd468f878e565a70ed4b066f48820813a50cdf"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter affected migration and profile cases -quit",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": null,
+      "failed": null,
+      "result": "empty_invocation_no_test_xml",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/empty-run-quit-8cc0ee5.log"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter affected migration and profile cases",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": 10,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-retry2-editmode.xml",
+      "duration_seconds": 39.2779806
     }
   ],
-  "source_revision": "29bd468f878e565a70ed4b066f48820813a50cdf",
+  "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
   "build": {
     "command": "unity/tools.sh build",
     "exit_code": 0,
@@ -79,7 +97,7 @@
     "pass_marker": "STAR_PROVING_BUILD_PASS 471125991"
   },
   "native_player": {
-    "status": "blocked_pending_shared_host_release_and_exact_source_checks",
+    "status": "pending_exact_source_playmode_full_suites_build_and_native_qa",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -95,7 +113,7 @@
     ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
-      "reason": "Unowned Star Tournament Player PID 74287 in bot worktree remains active; coordinator is checking whether the user launched it. Exact-source Unity retry requires natural process exit, fresh host guard, and a separate ACK.",
+      "reason": "Shared Unity host is queued across independent changes. Focused EditMode has passed on the exact source; subsequent invocations require separate host ACKs.",
       "own_runtime_lease": "released",
       "own_active_processes": []
     }
@@ -109,6 +127,6 @@
     "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending",
     "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
     "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
-    "Final exact-source affected/full Unity suites, build, and Player remain pending shared host release"
+    "Exact-source focused EditMode10/10 passed on 8cc0ee5; focused PlayMode, full Unity suites, build, and Player remain pending shared host slots"
   ]
 }
