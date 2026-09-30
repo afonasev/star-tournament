@@ -31,6 +31,30 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeTravelingRifle()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Hitscan");
+            var draft=history.Selected.Snapshot;draft.Set("rifle.range",120);draft.Set("rifle.head",31);history.Save(draft);
+            var before=history.Selected;string hash=before.Hash;int revision=before.Number;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.speed"),Is.EqualTo(100));
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Descriptors.Any(d=>d.Path=="rifle.range"),Is.False);
+            var preserved=upgraded.Profiles.Single(p=>p.Id==upgraded.SelectedProfile.Id).Revisions.Single(r=>r.Number==revision);
+            Assert.That(preserved.Hash,Is.EqualTo(hash));Assert.That(preserved.Snapshot.Get("rifle.range"),Is.EqualTo(120));
+            var reopened=new DesignLabHistory(path,Shipped());Assert.That(reopened.StorageError,Is.Null);
+            Assert.That(reopened.Selected.Number,Is.EqualTo(upgraded.Selected.Number));Assert.That(reopened.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));
+        }
+        [Test]public void TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory()
+        {
+            var beforePulse=typeof(ProvingProfile).GetMethod("BeforePulse",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId && p.Id!="cutter-beam-v1").Select(p=>(ProvingProfile)beforePulse.Invoke(p.BeforeTravelingRifle(),null)).ToList();
+            Assert.That(old.Profiles.Single(p=>p.Id=="unity-native-combat-v1").Version,Is.EqualTo(3));
+            Assert.That(old.Descriptors.Any(d=>d.Path=="rifle.range"),Is.True);
+            var history=new DesignLabHistory(path,old);history.Create("До Pulse");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));Assert.That(upgraded.Selected.Snapshot.Get("rifle.speed"),Is.EqualTo(100));
+        }
         [Test]public void AudioUpgradePreservesOldRevisionHashAndCustomCombatValues()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);

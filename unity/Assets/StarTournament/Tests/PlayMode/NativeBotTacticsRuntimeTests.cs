@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
             ground.StartBotReview(NativeBotTacticsReview.Composition(false,NativeBotDifficulty.Hard,NativeBotDifficulty.Normal,0),271001);ground.enabled=false;
             var session=ground.Session;var driver=ground.BotDriver;float dt=1/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[4];int weapons=0,bonuses=0,damage=0;
-            session.PickupCollected+=(p,id,kind)=>{if(kind==NativeBotPickupKind.Weapon)weapons++;else bonuses++;};session.Fired+=(p,d)=>{if(d>0)damage++;};
+            session.PickupCollected+=(p,id,kind)=>{if(kind==NativeBotPickupKind.Weapon)weapons++;else bonuses++;};session.Fired+=(p,d)=>{if(d>0)damage++;};session.RifleBulletHit+=e=>{if(e.AppliedDamage>0)damage++;};
             driver.ProduceActions(actions,dt);for(int p=0;p<4;p++)Assert.That(driver.Pickups.Read(p),Is.Empty,"Bootstrap obeys delay");session.Tick(actions,dt);
             var saved=driver.Capture();var corrupt=driver.Capture();corrupt.Pickups.Pending[0].DeliverAt=0;string before=JsonUtility.ToJson(driver.Capture());Assert.Throws<ArgumentException>(()=>driver.Restore(corrupt));Assert.That(JsonUtility.ToJson(driver.Capture()),Is.EqualTo(before));driver.Restore(saved);
             int ticks=0;while(session.Time<90&&session.Match.Phase!=NativeMatchPhase.Finished)

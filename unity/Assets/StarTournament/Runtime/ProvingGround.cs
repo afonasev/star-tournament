@@ -210,7 +210,7 @@ namespace StarTournament.ProvingGround
             CreateHealPickupVisual();
             CreateWeaponPickupVisuals();
             presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views,deathProfile:DeathProfile);
-            Session.Fired += (seat, damage) => hit[seat] = damage > 0 ? "Попадание · " + Mathf.RoundToInt(damage) : "Выстрел · мимо";
+            BindShotFeedback();
             int countFlag=Array.IndexOf(args,"-probeCameras");
             if(args.Contains("-diagnostic") && countFlag>=0 && countFlag+1<args.Length && int.TryParse(args[countFlag+1],out int count) && (count==1||count==2||count==4))
             {
@@ -561,6 +561,12 @@ namespace StarTournament.ProvingGround
             for(int p=0;p<Session.ParticipantCount;p++)if(Session.Life(p).ParticipantId==id)return p;
             return -1;
         }
+        void BindShotFeedback()
+        {
+            var lastContact=Enumerable.Repeat(double.NegativeInfinity,Session.ParticipantCount).ToArray();
+            Session.Fired+=(seat,damage)=>{if(lastContact[seat]==Session.Time)return;hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):Session.Life(seat).SelectedWeapon==WeaponId.Rifle?"Выстрел":"Выстрел · мимо";};
+            Session.RifleBulletHit+=e=>{lastContact[e.Bullet.Owner]=e.Time;hit[e.Bullet.Owner]=e.AppliedDamage>0?"Попадание · "+Mathf.RoundToInt(e.AppliedDamage):"Контакт · без урона";};
+        }
         string DeathNoticeText(int participant,NativeMatchSnapshot snapshot)
         {
             if(snapshot==null)return presentation.DeathMessage(participant);
@@ -674,7 +680,7 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<damageVignettes.Length;seat++)
                 damageVignettes[seat]?.Bind(seat<frozenSeatCount?Session:null,seat<frozenSeatCount?Composition.ParticipantAt(seat):-1,frozenMovement);
             Session.Died+=OnMatchDeath;
-            Session.Fired+=(seat,damage)=>hit[seat]=damage>0?"Попадание · "+Mathf.RoundToInt(damage):"Выстрел · мимо";
+            BindShotFeedback();
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
             persistentStandings.SwapTeamColors=results.SwapTeamColors=frozenSwappedColors;
             input.Clear(); Session.ClearInput();

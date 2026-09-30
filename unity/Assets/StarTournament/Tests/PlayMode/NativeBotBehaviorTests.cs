@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Stats Drive(float maximumSeconds)
         {
             var stats=new Stats();var session=ground.Session;var driver=ground.BotDriver;float dt=1f/ground.Profile.Get("simulation.fixedTickHz");
-            session.Fired+=(participant,damage)=>{stats.Shots++;if(damage>0)stats.Damaged++;};session.Died+=_=>stats.Deaths++;session.Respawned+=_=>stats.Respawns++;
+            session.Fired+=(participant,damage)=>{stats.Shots++;if(damage>0)stats.Damaged++;};session.RifleBulletHit+=e=>{if(e.AppliedDamage>0)stats.Damaged++;};session.Died+=_=>stats.Deaths++;session.Respawned+=_=>stats.Respawns++;
             var watch=Stopwatch.StartNew();var actions=new LocalAction[session.ParticipantCount];
             while(session.Time<maximumSeconds && (stats.Shots==0||stats.Damaged==0||stats.Deaths==0||stats.Respawns==0))
             {
@@ -70,7 +70,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         IEnumerator NaturalTerminalSmoke(bool teams)
         {
             yield return Load(BotsAndHuman(teams),teams?157u:151u);var stats=new Stats();var session=ground.Session;var driver=ground.BotDriver;float dt=1f/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[session.ParticipantCount];
-            session.Fired+=(p,d)=>{stats.Shots++;if(d>0)stats.Damaged++;};session.Died+=_=>stats.Deaths++;session.Respawned+=_=>stats.Respawns++;
+            session.Fired+=(p,d)=>{stats.Shots++;if(d>0)stats.Damaged++;};session.RifleBulletHit+=e=>{if(e.AppliedDamage>0)stats.Damaged++;};session.Died+=_=>stats.Deaths++;session.Respawned+=_=>stats.Respawns++;
             var watch=Stopwatch.StartNew();int ticks=0;while(session.Time<600&&session.Match.Phase!=NativeMatchPhase.Finished)
             {
                 Array.Clear(actions,0,actions.Length);driver.ProduceActions(actions,dt);stats.MaxDriverMilliseconds=Math.Max(stats.MaxDriverMilliseconds,driver.LastMilliseconds);stats.MaxQueries=Math.Max(stats.MaxQueries,driver.LastQueries);session.Tick(actions,dt);ticks++;
@@ -111,7 +111,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // This scenario verifies discrete shot press/release lifecycle; continuous Cutter is covered separately.
             var discrete=session.Capture();discrete.Lives[0].CutterEnergy=0;session.Restore(discrete);
             var actions=new LocalAction[2];float dt=1f/ground.Profile.Get("simulation.fixedTickHz");bool pressed=false,released=false,damaged=false;
-            session.Fired+=(p,d)=>damaged|=d>0;
+            session.Fired+=(p,d)=>damaged|=d>0;session.RifleBulletHit+=e=>damaged|=e.AppliedDamage>0;
             for(int i=0;i<500&&!(damaged&&released);i++)
             {
                 Array.Clear(actions,0,actions.Length);driver.ProduceActions(actions,dt);

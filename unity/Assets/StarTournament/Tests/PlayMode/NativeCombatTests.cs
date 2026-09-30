@@ -188,10 +188,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var actions=new LocalAction[4];actions[0].FireHeld=true;
             session.Tick(actions,.02f);
             Assert.That(notice.Weapon,Is.EqualTo(WeaponId.Rifle));
-            Assert.That(notice.Pellets.Length,Is.EqualTo(1));
+            Assert.That(notice.Pellets,Is.Empty,"Launch does not resolve a future endpoint");
             Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(99));
-            Assert.That(session.Life(1).Health,Is.LessThan(100));
+            Assert.That(session.Life(1).Health,Is.EqualTo(100),"No launch damage");
             for(int tick=0;tick<7;tick++)session.Tick(actions,.02f);
+            Assert.That(session.Life(1).Health,Is.LessThan(100),"Arriving bullets apply damage");
             Assert.That(session.ShotCount,Is.GreaterThan(1),"Held rifle fire repeats on its own cadence");
             int before=session.ShotCount;
             actions[0].SelectWeapon=WeaponSelection.Shotgun;session.Tick(actions,.02f);

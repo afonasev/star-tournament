@@ -198,6 +198,8 @@ namespace StarTournament.ProvingGround
                 // are added to the default profile; every earlier registry remains a valid source.
                 var withoutAudio=Cached(p=>p.BeforeAudio());
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutAudio).ToList()}}));
+                var beforeTravelingRifle=Cached(p=>p.BeforeTravelingRifle());
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(beforeTravelingRifle).ToList()}}));
                 if(historicalCache.Count>=2)historicalCache.Clear();
                 historicalCache.Add(key,predecessors);
                 return predecessors;
