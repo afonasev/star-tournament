@@ -239,7 +239,6 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-shotOriginReview")) gameObject.AddComponent<NativeShotOriginReview>();
             if (args.Contains("-vectorReview")) gameObject.AddComponent<VectorVisualReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
-            if (args.Contains("-unifiedDamageReview")) gameObject.AddComponent<NativeUnifiedDamageReview>();
             if (args.Contains("-teamReview")) gameObject.AddComponent<NativeTeamsReview>();
             if (args.Contains("-layoutReview")) gameObject.AddComponent<NativeLayoutReview>();
             if (args.Contains("-matchReview")) gameObject.AddComponent<NativeMatchReview>();
@@ -250,6 +249,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent<NativeBonusVisualReview>();
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-unifiedDamageReview")) gameObject.AddComponent<NativeUnifiedDamageReview>();
             if (args.Contains("-scoreboardReview")) gameObject.AddComponent<NativeScoreboardReview>();
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
