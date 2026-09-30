@@ -1,0 +1,39 @@
+{
+  "source_revision": "4596eafd1c3f77c67fe8c3339f92db040ec72689",
+  "attempt": "affected EditMode DesignLabHistoryTests;FatalImpactTests;DamageVignetteTests",
+  "launch": {
+    "pid": 95261,
+    "mode": "edit",
+    "source_revision": "4596eafd1c3f77c67fe8c3339f92db040ec72689",
+    "command": [
+      "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+      "-batchmode",
+      "-nographics",
+      "-projectPath",
+      "/Users/eaafonasev/.codex/worktrees/death-ragdoll/star-tournament/unity",
+      "-runTests",
+      "-testPlatform",
+      "EditMode",
+      "-testFilter",
+      "DesignLabHistoryTests;FatalImpactTests;DamageVignetteTests",
+      "-testResults",
+      "/Users/eaafonasev/.codex/worktrees/death-ragdoll/star-tournament/.local/ragdoll-final-checks/4596eafd1c3f77c67fe8c3339f92db040ec72689/edit/results.xml",
+      "-logFile",
+      "/Users/eaafonasev/.codex/worktrees/death-ragdoll/star-tournament/.local/ragdoll-final-checks/4596eafd1c3f77c67fe8c3339f92db040ec72689/edit/editor.log"
+    ],
+    "start": "2026-09-29T16:41:05.779845+00:00",
+    "hard_bound_seconds": 355
+  },
+  "exit": {
+    "pid": 95261,
+    "exit_code": -15,
+    "natural_exit": false,
+    "end": "2026-09-29T16:46:51.044172+00:00"
+  },
+  "xml_created": false,
+  "last_phase": "Unity.PerformanceTesting.Editor.TestRunBuilder IPrebuildSetup; Editor CPU ~100%, no result",
+  "owned_pid_absent": true,
+  "runtime_lease_released": true,
+  "correction_revision": "48c4968",
+  "correction": "Lazy cached predecessor generation; no acceptance inferred from timed-out attempt."
+}

@@ -70,13 +70,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
             Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
-            var before0=Object("seat-pause-0").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
-            var before1=Object("seat-pause-1").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
+            var before0=Object("seat-pause-0").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values"&&t.transform.parent.name=="settings").text;
+            var before1=Object("seat-pause-1").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values"&&t.transform.parent.name=="settings").text;
             Button("pause-setting-0-0").onClick.Invoke();
-            var after0=Object("seat-pause-0").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
-            var after1=Object("seat-pause-1").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values").text;
+            var after0=Object("seat-pause-0").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values"&&t.transform.parent.name=="settings").text;
+            var after1=Object("seat-pause-1").GetComponentsInChildren<Text>(true).Single(t=>t.name=="values"&&t.transform.parent.name=="settings").text;
             Assert.That(after0,Is.Not.EqualTo(before0));Assert.That(after1,Is.EqualTo(before1));
-            Button("pause-setting-0-3").onClick.Invoke();Button("pause-setting-1-3").onClick.Invoke();
+            Button("pause-setting-0-3").onClick.Invoke();Button("pause-audio-0-4").onClick.Invoke();Button("pause-setting-0-4").onClick.Invoke();
+            Button("pause-setting-1-3").onClick.Invoke();Button("pause-audio-1-4").onClick.Invoke();Button("pause-setting-1-4").onClick.Invoke();
             Button("pause-action-1-3").onClick.Invoke();
             Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
             Button("pause-exit-no-1").onClick.Invoke();

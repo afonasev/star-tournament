@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 8;
+        public const int DefaultVersion = 9;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -92,7 +92,20 @@ namespace StarTournament.ProvingGround
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
-            if(copy.version==8)copy.version=7;
+            if(copy.version==9)copy.version=8;
+            else if(copy.version==8)copy.version=7;
+            return copy;
+        }
+        public ProvingProfile BeforeAudio()
+        {
+            if(id!=DefaultId||FindDescriptor("audio.effectsDefaultPercent")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path.StartsWith("audio.",StringComparison.Ordinal));
+            copy.values.RemoveAll(v=>v.Path.StartsWith("audio.",StringComparison.Ordinal));
+            // The v6 registry also predates rocket muzzle origins; retain its exact hash.
+            int predecessor=copy.FindDescriptor("ui.damageVignette.width")!=null?8:
+                copy.FindDescriptor("presentation.rocketMuzzleBlendDistance")!=null?7:6;
+            copy.version=Math.Min(copy.version,predecessor);
             return copy;
         }
         public void EnsureNativeCombatDescriptors()
@@ -270,6 +283,14 @@ namespace StarTournament.ProvingGround
         public static ProvingProfile CreateDefault()
         {
             var profile = new ProvingProfile();
+            profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения; трек пока отсутствует.", "percent", 0f, 100f, 5f, 70f);
+            profile.Add("audio.effectsDefaultPercent", "audio", "Эффекты по умолчанию", "Начальная общая громкость звуков меню и боя до пользовательского изменения.", "percent", 0f, 100f, 5f, 80f);
+            profile.Add("audio.maxVoices", "audio", "Короткие голоса", "Предел одновременных коротких эффектов в общем выходе split-screen; длительные лучи и меню имеют отдельные ограниченные источники.", "count", 4f, 32f, 1f, 16f);
+            profile.Add("audio.footstepDistanceMeters", "audio", "Интервал шагов", "Горизонтальная дистанция между шагами живого участника на опоре.", "meters", .5f, 5f, .1f, 1.7f);
+            profile.Add("audio.maxDistanceMeters", "audio", "Дальность слышимости", "Расстояние, на котором удалённые боевые и двигательные эффекты затухают.", "meters", 5f, 100f, 1f, 28f);
+            profile.Add("audio.localGain", "audio", "Свои события", "Относительный уровень важного звука своего local participant до общей пользовательской громкости.", "ratio", 0f, 1f, .05f, .65f);
+            profile.Add("audio.remoteGain", "audio", "Другие участники", "Относительный уровень событий остальных участников до затухания по расстоянию.", "ratio", 0f, 1f, .05f, .40f);
+            profile.Add("audio.hitIntervalSeconds", "audio", "Разделение попаданий", "Минимальный интервал повторного звука урона одной цели при частых контактных событиях.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("simulation.fixedTickHz", "simulation", "Fixed tick frequency", "Frequency of native movement and gameplay ticks, independent of rendered FPS.", "Hz", 30f, 120f, 1f, 50f);
             profile.Add("player.capsule.radius", "player-capsule", "Capsule radius", "Collision radius of a participant capsule.", "meters", .2f, 1f, .01f, .55f);
             profile.Add("player.capsule.height", "player-capsule", "Capsule height", "Full CharacterController capsule height.", "meters", 1f, 4f, .01f, 1.8f);

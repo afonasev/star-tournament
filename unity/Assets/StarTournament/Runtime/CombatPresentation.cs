@@ -53,6 +53,11 @@ namespace StarTournament.ProvingGround
             }
             Show(WeaponId.Rifle);
         }
+        public void HideForCorpse()
+        {
+            foreach(var renderer in GetComponentsInChildren<Renderer>(true))
+                if(renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"))renderer.enabled=false;
+        }
         public WeaponId ShownWeapon { get; private set; }
         public void Show(WeaponId weapon)
         {
@@ -94,12 +99,13 @@ namespace StarTournament.ProvingGround
     /// <summary>Reads combat state; never changes movement, hit zones, damage or spawn choice.</summary>
     public sealed class CombatPresentation : System.IDisposable
     {
-        sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; }
+        sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; public DeathRagdoll Ragdoll; }
         sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly RocketPresentation rocketPresentation;
         readonly CutterPresentation cutterPresentation;
-        readonly ProvingProfile movement, tuning;
+        readonly ProvingProfile movement, tuning, deathProfile;
+        DeathPhysicsWorld deathPhysics;
         readonly Transform owner;
         readonly PhysicsScene physics;
         readonly Camera[] cameras;
@@ -117,11 +123,12 @@ namespace StarTournament.ProvingGround
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
         public int ActiveShotEffectCount => pellets.Count;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
-            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null)
+            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null)
         {
             if(bodies.Length!=session.ParticipantCount || views.Length!=cameras.Length ||
                 (composition==null?cameras.Length!=session.ParticipantCount:composition.ParticipantCount!=session.ParticipantCount || composition.LocalCount!=cameras.Length))
                 throw new System.ArgumentException("Presentation ownership mismatch");
+            this.deathProfile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(deathProfile??ProvingProfile.CreateDeathDefault()));
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
@@ -132,6 +139,7 @@ namespace StarTournament.ProvingGround
             rocketPresentation=new RocketPresentation(session,movement,owner);
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
+            session.StateRestored+=OnStateRestored;
             session.Died += OnDeath;
             session.Respawned += OnRespawn;
             session.Fired += OnFire;
@@ -273,6 +281,18 @@ namespace StarTournament.ProvingGround
             var collider=impact.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
             var renderer=impact.GetComponent<Renderer>();renderer.material=effect.Weapon==WeaponId.Rifle?TraceMaterial(WeaponId.Rifle):ShotMaterial();
         }
+        void OnStateRestored()
+        {
+            foreach(var corpse in corpses)if(corpse.Root){corpse.Root.SetActive(false);Object.Destroy(corpse.Root);}
+            corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
+            System.Array.Clear(tracking,0,tracking.Length);
+            for(int p=0;p<session.ParticipantCount;p++)
+            {
+                bodies[p].SetActive(true);bodies[p].GetComponent<TrooperVisual>()?.ResetPose(session.Time);
+                int v=ViewOf(p);if(v>=0){views[v].SetActive(true);views[v].GetComponent<TrooperVisual>()?.ResetPose(session.Time);}
+                if(session.Life(p).Dead)OnDeath(new DeathNotice(p,session.Life(p),session.Pose(p)));
+            }
+        }
         void OnRespawn(int seat)
         {
             foreach(var corpse in corpses)if(corpse.Participant==seat&&corpse.Root)
@@ -285,9 +305,9 @@ namespace StarTournament.ProvingGround
         {
             if(disposed)return;disposed=true;
             rocketPresentation.Dispose();cutterPresentation.Dispose();
-            session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
+            session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
-            corpses.Clear();
+            corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
             foreach(var pellet in pellets)if(pellet.Root)Object.Destroy(pellet.Root);
             pellets.Clear();if(shotMaterial)Object.Destroy(shotMaterial);if(traceMaterial)Object.Destroy(traceMaterial);if(rifleTraceMaterial)Object.Destroy(rifleTraceMaterial);
             foreach(var body in bodies)if(body)body.SetActive(true);
@@ -319,31 +339,28 @@ namespace StarTournament.ProvingGround
             int corpseLayer=notice.Life.KillerId!=null&&ViewOf(seat)>=0?11+ViewOf(seat):0;
             foreach(var t in corpse.GetComponentsInChildren<Transform>(true)) t.gameObject.layer=corpseLayer;
             foreach(var collider in corpse.GetComponentsInChildren<Collider>(true)) { collider.enabled=false; Object.Destroy(collider); }
-            var source=bodies[seat].GetComponent<TrooperVisual>();
+            corpse.transform.SetPositionAndRotation(notice.Pose.Position,Quaternion.Euler(0,notice.Pose.Yaw,0));
             var visual=corpse.GetComponent<TrooperVisual>();
+            DeathRagdoll ragdoll=null;
             if(visual)
             {
-                visual.Initialize(source.Clips,source.Tuning); visual.BeginDeath(session.Time);
-                corpse.transform.SetPositionAndRotation(notice.Pose.Position,Quaternion.Euler(0,notice.Pose.Yaw,0));
+                if(deathPhysics==null)deathPhysics=new DeathPhysicsWorld(owner.gameObject.scene,deathProfile,1/movement.Get("simulation.fixedTickHz"),session.Time);
+                ragdoll=deathPhysics.Add(corpse,notice.Pose,notice.Impact,session.Time);
             }
-            else corpse.transform.SetPositionAndRotation(notice.Pose.Position+Vector3.up*tuning.Get("death.bodyHeight"),Quaternion.Euler(90,notice.Pose.Yaw,0));
-            // Presentation-only support projection also handles airborne deaths; it never moves the motor.
-            Vector3 supportOrigin=notice.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
-            float supportRange=Mathf.Max(movement.Get("player.capsule.height"),supportOrigin.y-movement.Get("world.minimumSupportHeight")+movement.Get("player.capsule.height"));
-            if(physics.Raycast(supportOrigin,Vector3.down,out var support,supportRange,
-                (1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore))
+            else
             {
-                var renderers=corpse.GetComponentsInChildren<Renderer>();
-                if(visual) corpse.transform.position=support.point;
-                else if(renderers.Length>0)
+                // Unskinned diagnostic fixtures retain their existing floor-projected placeholder.
+                // Shipping troopers always take the physical path above, including airborne deaths.
+                corpse.transform.rotation=Quaternion.Euler(90,notice.Pose.Yaw,0);
+                Vector3 origin=notice.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
+                float range=Mathf.Max(movement.Get("player.capsule.height"),origin.y-movement.Get("world.minimumSupportHeight")+movement.Get("player.capsule.height"));
+                if(physics.Raycast(origin,Vector3.down,out var support,range,(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore))
                 {
-                    var bounds=renderers[0].bounds;
-                    foreach(var renderer in renderers) bounds.Encapsulate(renderer.bounds);
-                    corpse.transform.position+=Vector3.up*(support.point.y-bounds.min.y);
+                    var renderers=corpse.GetComponentsInChildren<Renderer>();
+                    if(renderers.Length>0){var bounds=renderers[0].bounds;foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);corpse.transform.position+=Vector3.up*(support.point.y-bounds.min.y);}
                 }
-                deathFeet[seat]=support.point;
             }
-            corpses.Add(new Corpse { Participant=seat, Root=corpse, Visual=visual, Expires=session.Time+tuning.Get("death.corpseSeconds") });
+            corpses.Add(new Corpse { Participant=seat, Root=corpse, Visual=visual, Ragdoll=ragdoll, Expires=session.Time+tuning.Get("death.corpseSeconds") });
             bodies[seat].SetActive(false);int view=ViewOf(seat);if(view>=0)views[view].SetActive(false);
             UpdateKiller(seat); // Capture killer life immediately, even if it dies later in this tick.
             orbitStart[seat]=deathEye[seat]-killerPoint[seat];orbitStart[seat].y=0;
@@ -381,9 +398,10 @@ namespace StarTournament.ProvingGround
             foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             for(int c=corpses.Count-1;c>=0;c--)
             {
-                if(session.Time>=corpses[c].Expires) { Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }
-                else corpses[c].Visual?.Render(session.Time,Vector3.zero,0,0);
+                if(session.Time>=corpses[c].Expires) { deathPhysics?.Remove(corpses[c].Ragdoll); Object.Destroy(corpses[c].Root); corpses.RemoveAt(c); }
+
             }
+            deathPhysics?.Advance(session.Time);
             for(int p=0;p<session.ParticipantCount;p++)
             {
                 var life=session.Life(p);
