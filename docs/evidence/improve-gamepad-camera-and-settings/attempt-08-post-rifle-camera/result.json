@@ -1,0 +1,12 @@
+{
+  "classification": "INCONCLUSIVE_NATIVE_PLAYER_QA",
+  "candidate": "local-macos-player-candidate/57b71a69bc992a8a98bcc4b830e693346553fa87/20260930T162027Z",
+  "source_revision": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+  "compiled_csharp_source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+  "player_pid": 36521,
+  "player_exit_code": 143,
+  "png_count": 0,
+  "completion_marker": null,
+  "observed": "Metal 3456x2160 surface initialized; sample in GfxDeviceMetal WaitForLastPresentationAndGetTimestamp; external SIGTERM source unknown",
+  "human_acceptance": "pending"
+}

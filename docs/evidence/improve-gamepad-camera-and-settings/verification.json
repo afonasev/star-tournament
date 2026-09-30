@@ -212,11 +212,22 @@
         "candidate_source": "fd035bca431098c6be690419319a752998405e0b",
         "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-07-native-four-seat/result.json",
         "result": "synthetic muted four-seat pause/settings/help QA passed with 6 PNG and matching state JSON files; exit 0 and completion marker"
+      },
+      {
+        "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-08-post-rifle-camera/result.json",
+        "result": "inconclusive: Metal 3456x2160 presentation wait; no PNG or completion marker; exit 143 SIGTERM source unknown"
+      },
+      {
+        "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-09-windowed-camera/result.json",
+        "result": "synthetic muted native camera QA passed at windowed 1920x1080 with 20 PNG/state JSON captures; exit 0 and completion marker"
       }
     ],
     "remaining": [
-      "native Player camera and four-seat QA for immutable 57b71a6 candidate",
-      "physical-controller and TV human acceptance"
+      "native four-seat pause/settings/help QA for immutable 57b71a6 candidate",
+      "physical-controller and TV human acceptance",
+      "diagnose original large-Metal-surface startup stall if reproducible"
     ],
     "coordination_blocker": {
       "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
@@ -256,7 +267,7 @@
     "required_clean_editmode": "passed_224_of_224",
     "required_playmode": "passed_151_of_151",
     "required_build": "passed_STAR_PROVING_BUILD_PASS_471273724",
-    "required_player_qa": "pending",
+    "required_player_qa": "camera_passed_windowed_20_png_four_seat_pending",
     "host_status": "EditMode completed; runtime lease released; no own Unity or Player process",
     "prior_candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
     "prior_candidate_classification": "built and hashed for pre-rifle merge; not final integrated source",
