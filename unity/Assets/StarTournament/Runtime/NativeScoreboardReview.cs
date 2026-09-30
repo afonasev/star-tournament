@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround
         DamageResult Hit(int victim,int source,float damage,bool rocket=false)
         {
             if(!rocket)return ground.Session.ApplyDamage(victim,ground.Session.Life(victim).Life,damage,source,source<0?0:ground.Session.Life(source).Life);
-            return (DamageResult)typeof(NativeCombatSession).GetMethod("ApplyDamagePolicy",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground.Session,new object[]{victim,ground.Session.Life(victim).Life,damage,source,source<0?0:ground.Session.Life(source).Life,true});
+            return (DamageResult)typeof(NativeCombatSession).GetMethod("ApplyDamagePolicy",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground.Session,new object[]{victim,ground.Session.Life(victim).Life,damage,source,source<0?0:ground.Session.Life(source).Life,true,default(FatalImpact)});
         }
         void Step(int count){for(int i=0;i<count;i++)ground.Session.Tick(new LocalAction[ground.Composition.ParticipantCount],.02f);}
         IEnumerator Capture(string label)
