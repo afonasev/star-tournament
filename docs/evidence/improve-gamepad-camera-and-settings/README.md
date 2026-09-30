@@ -8,7 +8,7 @@ Change: `improve-gamepad-camera-and-settings`.
 
 ## Приёмка на настоящем геймпаде
 
-Точный source revision и immutable Player candidate будут указаны в `candidate.json`; автоматические результаты — в `verification.json`. PNG и соседние JSON относятся к synthetic native Player QA, а не физическому контроллеру или human acceptance.
+Точный source revision и immutable Player candidate указаны в `candidate.json`; автоматические результаты — в `verification.json`. PNG и соседние JSON относятся к synthetic native Player QA, а не физическому контроллеру или human acceptance.
 
 1. Открыть «Настройки игры» → «Управление». Изменить мышь, горизонталь и вертикаль мышью и D-pad/стиком; убедиться, что значения и видимый фокус обновляются. Проверить A/×, B/○, стрелки/Enter и возврат из справки. В изображении проверить чекбокс теней и отмену смены режима/разрешения; в интерфейсе — FPS.
 2. В матче открыть личную паузу. У двух игроков задать разные значения осей и автовыравнивания; настройки и фокус второго игрока не должны изменяться вслед за первым. Для постоянного профиля проверить восстановление после перезапуска; гость действует по прежнему session contract.
@@ -18,10 +18,8 @@ Change: `improve-gamepad-camera-and-settings`.
 
 Решение о human acceptance записывается для точного кандидата отдельно. Внешняя публикация не выполнена и не разрешена этим change.
 
-## Технический checkpoint 2026-09-29
+## Технический checkpoint 2026-09-30
 
-Код находится в ветке `codex/improve-gamepad-camera-and-settings`; исходная ревизия `8cc0ee5` включает main `c9f737b`, общие и личные слайдеры громкости, профиль Balance Lab v10 и исправление нового теста миграции. В main она ещё не интегрирована. На точном коде `8cc0ee5` focused EditMode прошёл 10/10 (`tests/post-audio-retry2-editmode.xml`), PlayMode — 11/11 (`tests/post-audio-focused-playmode.xml`); полный EditMode — 214/214 (`tests/post-audio-full-editmode.xml`), полный PlayMode — 144/144 (`tests/post-audio-full-playmode.xml`). Предыдущий запуск EditMode с `-quit` завершился до TestRunner без XML, поэтому не считается проверкой (`tests/empty-run-quit-8cc0ee5.log`). BuildMac на `fd035bc` завершился успешно (`build-post-audio.log`); неизменяемая копия macOS Player и хэши записаны в `candidate.json`. На этом кандидате muted native camera QA завершился с exit 0 и marker, сохранил 20 PNG и соответствующих JSON (`attempt-06-native-camera/result.json`); четырёхместный pause/settings/help QA тоже прошёл с 6 кадрами (`attempt-07-native-four-seat/result.json`). Проверка физического геймпада и читаемости на TV остаётся человеческой приёмкой.
+Ветка `codex/improve-gamepad-camera-and-settings` сведена с `main` в `55152bc` и ещё не интегрирована обратно. На объединённом исходнике чисто прошли полный EditMode 221/221 (`tests/post-main-clean-editmode.xml`) и PlayMode 145/145 (`tests/post-main-clean-playmode.xml`). Первый EditMode 221/221 пересекался с чужим Player и сохранён только как диагностический (`tests/post-main-overlap-editmode.xml`). BuildMac прошёл с маркером `STAR_PROVING_BUILD_PASS 471256588` (`build-post-main.log`); новая immutable копия и SHA указаны в `candidate.json`. Её muted native Player QA ещё не выполнялся.
 
-Сборка `260e54f` прошла, но её Player уже устарел относительно `a18b311`. В `attempt-01-incomplete/`…`attempt-05-incomplete/` сохранены диагностические PNG/JSON/log. Настройки и наследование профиля проверены; последний сценарий дошёл до лестницы, но не завершил camera/four-seat gate из-за поведения focus/паузы в автоматическом прогоне. Fixture теперь фиксирует focus и явно отделяет fallback от проверки настоящего контроллера. Финальные muted Player проходы ждут общего слота Mac Unity; чужой Editor также учитывается координатором. Этот checkpoint не означает human acceptance или завершённую поставку.
-
-Предварительные кадры (кандидат `2cde8c9`): [управление](attempt-01-incomplete/02-camera-sliders.png), [справка](attempt-01-incomplete/03-controls-help.png), [личный профиль](attempt-01-incomplete/04b-named-profile-sliders.png). Точный свежий кандидат и окончательные кадры появятся после повторных gates.
+На предыдущем кандидате `fd035bc` (`candidate-pre-main.json`) muted native camera QA прошёл с 20 PNG/JSON (`attempt-06-native-camera/result.json`), а four-seat pause/settings/help — с 6 PNG/JSON (`attempt-07-native-four-seat/result.json`). После нового Player smoke отдельной проверкой остаются физический контроллер и читаемость на TV. Внешняя публикация и human acceptance не объявлены.
