@@ -134,6 +134,17 @@
       "start_time_utc": "2026-09-30T13:52:31Z",
       "end_time_utc": "2026-09-30T13:59:21Z",
       "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-clean-editmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+      "exit_code": 0,
+      "passed": 145,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "start_time_utc": "2026-09-30T14:10:17Z",
+      "end_time_utc": "2026-09-30T14:16:58Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-clean-playmode.xml"
     }
   ],
   "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
@@ -192,7 +203,7 @@
     "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
     "merged_from_main": "eea4f8efd9d20e0fac670e69626f1aede496533e",
     "required_clean_editmode": "passed_221_of_221",
-    "required_playmode": "pending",
+    "required_playmode": "passed_145_of_145",
     "required_build": "pending",
     "required_player_qa": "pending",
     "reason": "First full EditMode passed 221/221 but overlapped foreign F2 Player, so it is diagnostic only."
