@@ -195,7 +195,7 @@
     "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate-pre-main.json"
   },
   "native_player": {
-    "status": "synthetic_native_camera_and_four_seat_qa_passed",
+    "status": "synthetic_native_camera_and_four_seat_qa_passed_on_57b71a6_candidate",
     "attempts": [
       {
         "candidate_source": "2cde8c9",
@@ -222,10 +222,14 @@
         "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
         "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-09-windowed-camera/result.json",
         "result": "synthetic muted native camera QA passed at windowed 1920x1080 with 20 PNG/state JSON captures; exit 0 and completion marker"
+      },
+      {
+        "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-10-windowed-four-seat/result.json",
+        "result": "synthetic muted native four-seat pause/settings/help QA passed at windowed 1920x1080 with 6 PNG/state JSON captures; exit 0 and completion marker"
       }
     ],
     "remaining": [
-      "native four-seat pause/settings/help QA for immutable 57b71a6 candidate",
       "physical-controller and TV human acceptance",
       "diagnose original large-Metal-surface startup stall if reproducible"
     ],
@@ -267,7 +271,7 @@
     "required_clean_editmode": "passed_224_of_224",
     "required_playmode": "passed_151_of_151",
     "required_build": "passed_STAR_PROVING_BUILD_PASS_471273724",
-    "required_player_qa": "camera_passed_windowed_20_png_four_seat_pending",
+    "required_player_qa": "camera_20_png_and_four_seat_6_png_passed_windowed_1920x1080",
     "host_status": "EditMode completed; runtime lease released; no own Unity or Player process",
     "prior_candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
     "prior_candidate_classification": "built and hashed for pre-rifle merge; not final integrated source",
