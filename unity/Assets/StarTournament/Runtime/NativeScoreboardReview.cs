@@ -81,9 +81,9 @@ namespace StarTournament.ProvingGround
             yield return Capture("07a-real-rocket-self-and-two-allies");
             // Reset the controlled fixture so the V4 table examples have independent evidence.
             yield return Configure(3,8,true);
-            // Native policy: blocked friendly shot, capped enemy damage with armor, applied friendly rocket damage.
-            Check(Hit(1,0,50).Applied==0,"blocked friendly");var state=ground.Session.Capture();state.Lives[7].Armor=50;ground.Session.Restore(state);
-            Check(Hit(7,0,500).Applied==100,"current applied HP after armor/overkill");Hit(6,0,500);Hit(5,0,500);Hit(1,0,30,true);Hit(2,0,500,true);Step(1);
+            // Unified policy: half friendly damage before armor, then actual shield plus HP.
+            Check(Hit(1,0,50).Applied==25,"half friendly damage");var state=ground.Session.Capture();state.Lives[7].Armor=50;ground.Session.Restore(state);
+            Check(Hit(7,0,500).Applied==150,"actual shield and HP without overkill");Hit(6,0,500);Hit(5,0,500);Hit(1,0,30,true);Hit(2,0,500,true);Step(1);
             yield return Capture("08-teams-red-suffix-live-leader");Hit(0,-1,500);yield return Capture("09-teams-dead-row-and-team-leader");Step(450);yield return Capture("10-teams-respawn");
             var before=JsonUtility.ToJson(ground.Session.Match.Read());ground.SendMessage("Pause","Scoreboard QA");yield return Capture("11-pause");Check(JsonUtility.ToJson(ground.Session.Match.Read())==before,"pause changed state");B("Продолжить").onClick.Invoke();Time.timeScale=0;yield return Capture("12-resumed");
             // Restore through the actual native session; retain immutable net counters and composition.

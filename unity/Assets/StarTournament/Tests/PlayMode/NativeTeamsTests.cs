@@ -42,7 +42,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             go.AddComponent<CharacterMotor>().Initialize(move,initial[0]);Physics.SyncTransforms();
             Assert.That(selector.Valid(initial[0],out _),Is.False,"Allied capsule still occupies the slot");
         }
-        [UnityTest] public IEnumerator AlliedBodyBlocksActualShotAndDirectDamageButFfaStillDamages()
+        [UnityTest] public IEnumerator AlliedBodyTakesReducedShotAndBlocksEnemyBehind()
         {
             var owner=Owner();var move=ProvingProfile.CreateDefault();var combat=ProvingProfile.CreateNativeCombatDefault();combat.Set("shot.spread",0);
             var arena=owner.AddComponent<ProvingArena>();arena.Build(AuthoredPhysicsFixture.Freeze(),move);var motors=new CharacterMotor[4];

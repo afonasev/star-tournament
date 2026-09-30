@@ -81,11 +81,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Setup(true,true);yield return null;
             motors[1].Initialize(move,new Vector3(-8,0,2));motors[2].Initialize(move,new Vector3(-7,0,2));
             var state=session.Capture();state.Lives[0].Health=1;state.Lives[1].Health=1;state.Lives[1].Armor=10;state.Lives[2].Health=1;session.Restore(state);
-            Assert.That(session.ApplyDamage(1,session.Life(1).Life,500,0,session.Life(0).Life).Applied,Is.Zero);
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AllyDamageDealt,Is.Zero);
             Fire();Ticks(8);var row=session.Match.Read().Standings.Single(r=>r.Seat==0);
             Assert.That((row.SelfKills,row.AllyKills,row.Kills,row.AccumulatedPenalty,row.Score),Is.EqualTo((1,2,0,600,-600)));
-            Assert.That(row.DamageDealt,Is.Zero);Assert.That(row.AllyDamageDealt,Is.EqualTo(2),"Current DamageResult.Applied counts HP after armor; shield accounting belongs to the separately authorized damage policy change");
+            Assert.That(row.DamageDealt,Is.Zero);Assert.That(row.AllyDamageDealt,Is.EqualTo(12),"Actual allied shield and HP loss is counted without overkill");
             Ticks(10);Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AccumulatedPenalty,Is.EqualTo(600));
             var saved=JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(session.Capture()));session.Restore(saved);
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Score,Is.EqualTo(-600));
