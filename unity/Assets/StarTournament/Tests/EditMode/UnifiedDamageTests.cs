@@ -54,6 +54,12 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var json=JsonUtility.FromJson<NativeMatchSnapshot>(JsonUtility.ToJson(s.Read()));Assert.That(json.Standings.Single(r=>r.Seat==0).AllyDamageDealt,Is.EqualTo(100));
             Assert.That(Teams().Read().Standings.All(r=>r.DamageDealt==0&&r.AllyDamageDealt==0&&r.DamageReceived==0),Is.True);
         }
+        [Test] public void EnvironmentalLethalKeepsPriorEnemyAssist()
+        {
+            var s=Teams();s.BeginTick();s.RecordDamage(1,2,new DamageResult(10,false));
+            s.RecordDamage(1,-1,new DamageResult(90,true));s.EndTick();
+            Assert.That(Row(s,2).Assists,Is.EqualTo(1));Assert.That(Row(s,2).Kills,Is.Zero);
+        }
         [Test] public void HistoricalZonalValuesAndHashesSurviveMigrationToTorsoDamage()
         {
             var directory=Path.Combine(Path.GetTempPath(),"unified-damage-"+Guid.NewGuid());var path=Path.Combine(directory,"history.json");
