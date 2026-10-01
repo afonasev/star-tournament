@@ -41,6 +41,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<51;tick++)session.Tick(new LocalAction[4],.02f);
             Assert.That(session.Life(0).SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
         }
+        void LethalShotgun()
+        {
+            combat.Set("shot.damage",100);
+            session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            EquippedCombatFixture.Equip(session);
+        }
         [UnityTearDown]
         public IEnumerator Cleanup()
         {
@@ -81,6 +87,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         public IEnumerator RealShotKillsDisablesCapsuleAndRespawnsFullLife()
         {
             Setup(); yield return null;
+            LethalShotgun();
             motors[1].Initialize(movement,new Vector3(0,0,4));
             SelectShotgun();
             int deaths=0; session.Died+=_=>deaths++;
@@ -120,6 +127,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         public IEnumerator ScenePhysicsWallBlocksShotAndDeadParticipantDoesNot()
         {
             Setup(); yield return null;
+            LethalShotgun();
             motors[1].Initialize(movement,new Vector3(0,0,4));
             var wall=GameObject.CreatePrimitive(PrimitiveType.Cube); wall.transform.SetParent(owner.transform);
             wall.layer=ProvingArena.WorldLayer; wall.transform.position=new Vector3(0,1,2); wall.transform.localScale=new Vector3(2,2,.3f); Physics.SyncTransforms();
@@ -167,7 +175,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest]
         public IEnumerator ShotNoticeCapturesEveryResolvedEndpointWithoutChangingDamage()
         {
-            Setup();yield return null;combat.Set("shot.spread",0);session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
+            Setup();yield return null;combat.Set("shot.spread",0);combat.Set("shot.damage",100);session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),movement,lifecycle,combat);
             EquippedCombatFixture.Equip(session);
             motors[1].Initialize(movement,new Vector3(0,0,4));ShotNotice notice=default;int count=0;session.ShotResolved+=n=>{notice=n;count++;};
             SelectShotgun();
