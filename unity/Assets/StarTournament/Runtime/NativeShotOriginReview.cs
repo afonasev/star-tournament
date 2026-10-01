@@ -34,6 +34,11 @@ namespace StarTournament.ProvingGround
             else if(bullet.Distance>=ground.Profile.Get("presentation.rifleTracerLength"))
                 Require(Vector3.Distance(line.GetPosition(0),bullet.Position)<.0001f,"Rifle visual head disagrees with authoritative bullet");
         }
+        void Awake()
+        {
+            // Direct autonomous Player launches must progress before their first focused frame.
+            if(Environment.GetCommandLineArgs().Contains("-shotOriginReview"))Application.runInBackground=true;
+        }
         IEnumerator Start()
         {
             var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-shotOriginReview");if(flag<0)yield break;
