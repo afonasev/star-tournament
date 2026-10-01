@@ -371,6 +371,9 @@ namespace StarTournament.ProvingGround
             profile.Add("ui.standingsLeaderAccent", "standings", "Таблица · лидер", "Доля цвета лидера в фоне строки.", "ratio", 0, 1, .01f, .14f);
             profile.Add("ui.fontSize", "ui", "Body font size", "Base font size for four-seat HUD labels.", "points", 12f, 48f, 1f, 20f);
             profile.Add("ui.headingFontSize", "ui", "Heading font size", "Heading font size for setup and pause UI.", "points", 16f, 64f, 1f, 28f);
+            profile.Add("ui.matchMenuButtonHeight", "ui", "Высота кнопок меню матча", "Высота кнопок общей паузы и итогового экрана без растяжения на свободную область.", "points", 32f, 80f, 1f, 44f);
+            profile.Add("ui.matchMenuWidth", "ui", "Ширина меню матча", "Ширина компактной колонки действий общей паузы и результатов.", "points", 320f, 800f, 10f, 480f);
+            profile.Add("ui.matchMenuSpacing", "ui", "Промежутки меню матча", "Расстояние между соседними действиями общей паузы и результатов.", "points", 0f, 24f, 1f, 8f);
             profile.Add("ui.indicatorVisualHeight", "ui", "HUD indicator height", "Visible height shared by health, armor and ammo icons and their numbers.", "points", 20f, 64f, 1f, 32f);
             profile.Add("ui.nameFontSize", "ui", "Player name size", "Font size of the bottom-centered per-seat name.", "points", 10f, 32f, 1f, 16f);
             profile.Add("ui.killNoticeFontSize", "ui", "Kill notice size", "Font size of the per-seat kill and death notice.", "points", 12f, 48f, 1f, 26f);
