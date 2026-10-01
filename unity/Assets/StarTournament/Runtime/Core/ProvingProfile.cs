@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 9;
+        public const int DefaultVersion = 10;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -81,8 +81,17 @@ namespace StarTournament.ProvingGround
             {
                 if(FindDescriptor(descriptor.Path)!=null)continue;
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
-                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
+                values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=(descriptor.Path==GamepadLookSettings.HorizontalPath||descriptor.Path==GamepadLookSettings.VerticalPath)?Get("input.gamepadDegreesPerSecond"):current.Get(descriptor.Path)});
             }
+            valueIndex=null;
+        }
+        internal ProvingProfile BeforeGamepadLook()
+        {
+            if(id!=DefaultId||Descriptor(GamepadLookSettings.HorizontalPath)==null)return this;
+            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            bool NewLookPath(string path)=>path==GamepadLookSettings.HorizontalPath||path==GamepadLookSettings.VerticalPath||path.StartsWith("input.gamepadReturn",StringComparison.Ordinal);
+            old.descriptors.RemoveAll(d=>NewLookPath(d.Path));old.values.RemoveAll(v=>NewLookPath(v.Path));
+            old.version=Math.Max(6,old.version-1);return old;
         }
         public ProvingProfile BeforeDamageVignette()
         {
@@ -92,8 +101,7 @@ namespace StarTournament.ProvingGround
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
-            if(copy.version==9)copy.version=8;
-            else if(copy.version==8)copy.version=7;
+            copy.version=Math.Max(6,copy.version-1);
             return copy;
         }
         public ProvingProfile BeforeAudio()
@@ -102,10 +110,19 @@ namespace StarTournament.ProvingGround
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("audio.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("audio.",StringComparison.Ordinal));
-            // The v6 registry also predates rocket muzzle origins; retain its exact hash.
-            int predecessor=copy.FindDescriptor("ui.damageVignette.width")!=null?8:
-                copy.FindDescriptor("presentation.rocketMuzzleBlendDistance")!=null?7:6;
-            copy.version=Math.Min(copy.version,predecessor);
+            copy.version=Math.Max(6,copy.version-1);
+            return copy;
+        }
+        /// <summary>Exact trusted registry for immutable pre-projectile Lab revisions.</summary>
+        public ProvingProfile BeforeTravelingRifle()
+        {
+            if(id!="unity-native-combat-v1"||FindDescriptor("rifle.speed")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            int index=copy.descriptors.FindIndex(d=>d.Path=="rifle.speed");
+            copy.descriptors.RemoveAt(index);copy.values.RemoveAll(v=>v.Path=="rifle.speed");
+            copy.version=copy.FindDescriptor("rifle.damage")!=null?5:4;
+            copy.Add("rifle.range","rifle","Дальность винтовки","Дальность одиночной пули.","meters",1,200,.5f,80);
+            var descriptor=copy.descriptors[copy.descriptors.Count-1];copy.descriptors.RemoveAt(copy.descriptors.Count-1);copy.descriptors.Insert(index,descriptor);
             return copy;
         }
         public void EnsureNativeCombatDescriptors()
@@ -113,6 +130,8 @@ namespace StarTournament.ProvingGround
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
             UpgradeBodyDamage();
+            // Obsolete hitscan range must not become a speed or remain an editable no-op.
+            descriptors.RemoveAll(d=>d.Path=="rifle.range");values.RemoveAll(v=>v.Path=="rifle.range");
             var current=CreateNativeCombatDefault();
             foreach(var descriptor in current.descriptors)
             {
@@ -120,6 +139,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
+            version=6;
         }
         public void EnsureMatchDescriptors()
         {
@@ -309,6 +329,11 @@ namespace StarTournament.ProvingGround
             profile.Add("player.movement.slopeLimitDegrees", "player-movement", "Slope limit", "Maximum climbable CharacterController slope angle.", "degrees", 0f, 89f, 1f, 45f);
             profile.Add("input.mouseDegreesPerPixel", "input", "Mouse degrees per pixel", "Look rotation created by one mouse pixel.", "degrees-per-pixel", .01f, 2f, .01f, .12f);
             profile.Add("input.gamepadDegreesPerSecond", "input", "Gamepad degrees per second", "Maximum analog-stick look rotation rate.", "degrees-per-second", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadHorizontalDegreesPerSecond", "input", "Геймпад: горизонталь", "Скорость поворота при полном отклонении правого стика по горизонтали.", "°/с", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadVerticalDegreesPerSecond", "input", "Геймпад: вертикаль", "Скорость наклона при полном отклонении правого стика по вертикали.", "°/с", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadReturnDelay", "input", "Задержка выравнивания", "Пауза после отпускания правого стика перед возвратом взгляда.", "с", 0f, 3f, .05f, .35f);
+            profile.Add("input.gamepadReturnDegreesPerSecond", "input", "Скорость выравнивания", "Максимальная скорость плавного возврата наклона к уклону пола.", "°/с", 1f, 180f, 1f, 45f);
+            profile.Add("input.gamepadReturnSmoothingSeconds", "input", "Плавность выравнивания", "Время плавного приближения наклона к целевому уклону без скачка.", "с", .01f, 2f, .01f, .3f);
             profile.Add("input.deadzone", "input", "Input deadzone", "Radial deadzone applied before creating LocalAction.", "ratio", 0f, .95f, .01f, .15f);
             profile.Add("camera.eyeHeight", "camera", "Eye height", "Camera height above the participant feet anchor.", "meters", .1f, 2.5f, .01f, 1.55f);
             profile.Add("camera.maximumPitchDegrees", "camera", "Maximum pitch", "Symmetric vertical aim clamp.", "degrees", 30f, 89f, 1f, 85f);
@@ -362,7 +387,7 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.shotFlightSeconds", "shot-feedback", "Длительность дроби", "Время видимого полёта дробины до authoritative конечной точки.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .01f);
             profile.Add("presentation.rifleTracerWidth", "rifle", "Толщина трассера", "Ширина короткого трассера винтовки.", "meters", .002f, .1f, .001f, .006f);
-            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Максимальная видимая длина следа от дульной точки.", "meters", .1f, 10f, .1f, 3f);
+            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Длина видимого следа за летящей пулей и участка совмещения с дульной точкой.", "meters", .1f, 10f, .1f, 3f);
             profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .65f);
             profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, 1f);
             profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .08f);

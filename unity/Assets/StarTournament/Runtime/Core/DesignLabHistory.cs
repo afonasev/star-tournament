@@ -45,6 +45,7 @@ namespace StarTournament.ProvingGround
         // Approved audit: engine/query controls, obsolete fields and fixed asset placement stay in
         // snapshots for compatibility, but are never exposed as designer balance controls.
         static readonly HashSet<string> AuditedExclusions=new HashSet<string>{
+            "input.gamepadDegreesPerSecond", // Legacy shared-axis value retained only for revision migration.
             "navigation.sampleDistance","world.maximumTransitionSegment","world.minimumSupportHeight","simulation.fixedTickHz",
             "light.shadowResolution","light.shadowBias","light.shadowNormalBias","light.shadowCasters",
             "bots.navigation.heightTolerance","bots.navigation.sampleDistance",
@@ -141,14 +142,15 @@ namespace StarTournament.ProvingGround
         }
         // Most matches use the current registry. Generate historical combinations only when
         // a saved revision actually needs one, then share the exact immutable registry set.
-        LabBundle[] HistoricalPredecessors()
+        LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
-            if(predecessors!=null)return predecessors;
             // Hash covers gameplay values; metadata is also trusted during migration.
-            string key=shipped.Hash()+"|"+JsonUtility.ToJson(shipped);
+            string key=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)+"|"+
+                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
+                string.Join("|",sought.Descriptors.Select(d=>d.Path));
             lock(historicalLock)
             {
-                if(historicalCache.TryGetValue(key,out var cached))return predecessors=cached;
+                if(historicalCache.TryGetValue(key,out var cached))return cached;
                 var beforePalette=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
                 var medium=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
                 var mediumBeforePalette=new LabBundle{Profiles=medium.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};
@@ -175,32 +177,49 @@ namespace StarTournament.ProvingGround
                 var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
                 string RegistryKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path));
                 LabBundle[] DistinctRegistries(IEnumerable<LabBundle> bundles)=>bundles.GroupBy(RegistryKey).Select(g=>g.First()).ToArray();
-                // Historical combinations share immutable profiles. Memoize each pure schema transform
-                // within this migration so equivalent branches do not repeat native JSON serialization.
+                var targetPaths=new HashSet<string>(sought.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);
+                var targetIds=new HashSet<string>(sought.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
+                int SchemaDistance(LabBundle bundle)
+                {
+                    var paths=new HashSet<string>(bundle.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);
+                    var ids=new HashSet<string>(bundle.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
+                    paths.SymmetricExceptWith(targetPaths);ids.SymmetricExceptWith(targetIds);
+                    return paths.Count+ids.Count;
+                }
+                IEnumerable<LabBundle> Closest(params LabBundle[] alternatives)
+                {
+                    var distances=alternatives.Select(SchemaDistance).ToArray();int minimum=distances.Min();
+                    for(int i=0;i<alternatives.Length;i++)if(distances[i]==minimum)yield return alternatives[i];
+                }
+                LabBundle Change(LabBundle b,Func<ProvingProfile,ProvingProfile> transform)=>new LabBundle{Profiles=b.Profiles.Select(transform).ToList()};
                 Func<ProvingProfile,ProvingProfile> Cached(Func<ProvingProfile,ProvingProfile> transform)
                 {
                     var cache=new Dictionary<ProvingProfile,ProvingProfile>();
                     return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
                 }
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
-                var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());var withoutScoreboard=Cached(p=>p.BeforeScoreboard());
+                var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
+                var withoutScoreboard=Cached(p=>p.BeforeScoreboard());
+                var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b))}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(WithoutVignette).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutOrigins).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutCutterDamage).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutScoreboard).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutUnifiedDamage).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p).ToList()}}));
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()}}));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,WithoutVignette))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutOrigins))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCutterDamage))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutScoreboard))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadLook))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()})));
                 // Preserve old immutable Lab hashes when the presentation-only audio descriptors
                 // are added to the default profile; every earlier registry remains a valid source.
                 var withoutAudio=Cached(p=>p.BeforeAudio());
-                predecessors=DistinctRegistries(predecessors.SelectMany(b=>new[]{b,new LabBundle{Profiles=b.Profiles.Select(withoutAudio).ToList()}}));
-                // A bounded cache avoids retaining every custom historical registry in long Lab sessions.
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutAudio))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutUnifiedDamage))));
+                var beforeTravelingRifle=Cached(p=>p.BeforeTravelingRifle());
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeTravelingRifle))));
                 if(historicalCache.Count>=2)historicalCache.Clear();
                 historicalCache.Add(key,predecessors);
                 return predecessors;
@@ -220,7 +239,7 @@ namespace StarTournament.ProvingGround
                 if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
                 foreach(var r in p.Revisions)
                 {
-                    var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors().FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
+                    var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
                     var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
                     if(r.Number<1||r.Snapshot==null||!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
                     // Metadata is trusted only from the shipped registry, never from the file.
@@ -230,7 +249,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
-            if(release.Hash!=shipped.Hash()&&!HistoricalPredecessors().Where(b=>RegistryMatches(b,release.Snapshot)).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
+            if(release.Hash!=shipped.Hash()&&!HistoricalPredecessors(release.Snapshot).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
         }
         static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version))
@@ -246,7 +265,13 @@ namespace StarTournament.ProvingGround
                 {
                     var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path)));
                     foreach(var weapon in new[]{"rifle","shot"})
-                        if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&next.Descriptors.Any(d=>d.Path==weapon+".damage"))next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));
+                        if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&next.Descriptors.Any(d=>d.Path==weapon+".damage"))
+                            next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));
+                    if(!old.Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath))
+                    {
+                        var legacy=old.Snapshot.Get("input.gamepadDegreesPerSecond");
+                        next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);
+                    }
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==next.Hash());
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;

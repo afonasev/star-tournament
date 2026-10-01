@@ -42,6 +42,7 @@ namespace StarTournament.ProvingGround
             ground.StartBotReview(Mixed(humans,teams,count),Seed,devices);Check(ground.Running&&ground.BotDriver!=null,"start failed");
             run=new Run{name=name,seed=Seed};runs.Add(run);lastTick=-1;
             ground.Session.Fired+=(p,damage)=>{run.damage+=damage;if(damage>0&&run.firstDamage<0)run.firstDamage=ground.Session.Time;};
+            ground.Session.RifleBulletHit+=e=>{run.damage+=e.AppliedDamage;if(e.AppliedDamage>0&&run.firstDamage<0)run.firstDamage=e.Time;};
             var activeRun=run;var local=Enumerable.Range(0,ground.Composition.LocalCount).Select(ground.Composition.ParticipantAt).ToArray();
             ground.Session.Died+=notice=>{activeRun.deaths++;if(collect&&local.Contains(notice.Seat)&&lifecycleCaptures.Add(name+"-local-death"))StartCoroutine(Capture(name+"-local-death"));};
             ground.Session.Respawned+=p=>{activeRun.respawns++;if(collect&&local.Contains(p)&&lifecycleCaptures.Add(name+"-local-respawn"))StartCoroutine(Capture(name+"-local-respawn"));};

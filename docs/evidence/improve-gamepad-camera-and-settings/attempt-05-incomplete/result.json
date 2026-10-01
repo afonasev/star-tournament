@@ -1,0 +1,10 @@
+{
+  "classification": "INCOMPLETE_NATIVE_QA_VISUAL_PAUSE",
+  "source_revision": "260e54f0a4b9df5d1f4d5355c7c275638fd5cd60",
+  "build_marker": "STAR_PROVING_BUILD_PASS 471128620",
+  "candidate": "local-macos-player-candidate/260e54f0a4b9df5d1f4d5355c7c275638fd5cd60/20260929T1734Z",
+  "camera": "match started; stairs manual frame captured; normal focus resume gate kept match paused",
+  "four_seat": "match started; combat-review mode intentionally suppresses personal pause menus",
+  "fix": "QA-only normal pause UI review and explicitly logged unfocused resume fallback",
+  "physical_controller_acceptance": "not_performed"
+}

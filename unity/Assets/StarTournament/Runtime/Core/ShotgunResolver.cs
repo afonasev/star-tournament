@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
         public int PelletCount => (int)profile.Get("shot.pellets");
         public float Range => profile.Get("shot.range");
         public int ProjectileCount(WeaponId weapon) => weapon==WeaponId.Rifle?1:PelletCount;
-        public float RangeFor(WeaponId weapon) => profile.Get(weapon==WeaponId.Rifle?"rifle.range":"shot.range");
+        public float RangeFor(WeaponId weapon) => weapon==WeaponId.Rifle?float.PositiveInfinity:profile.Get("shot.range");
         public ShotgunResolver(ProvingProfile profile, float height)
         {
             if (profile.Validate().Count != 0 || profile.Id != "unity-native-combat-v1") throw new ArgumentException("Invalid native combat profile");
@@ -49,11 +49,16 @@ namespace StarTournament.ProvingGround
             => Resolve(origin,direction,targets,shooter,worldDistance,WeaponId.Shotgun);
         public PelletHit Resolve(Vector3 origin, Vector3 direction, CombatTarget[] targets, int shooter, float worldDistance,WeaponId weapon)
         {
-            float nearest = Mathf.Min(RangeFor(weapon), worldDistance);
+            return ResolveSegment(origin,direction,targets,shooter,0,Mathf.Min(RangeFor(weapon),worldDistance));
+        }
+        /// <summary>Swept point bullet against current authoritative zones; no distance cutoff.</summary>
+        public PelletHit ResolveSegment(Vector3 origin,Vector3 direction,CombatTarget[] targets,int shooter,int shooterLife,float limit)
+        {
+            float nearest = limit;
             int targetIndex = -1; HitZone selected = default;
             for (int i = 0; i < targets.Length; i++)
             {
-                if (targets[i].Seat == shooter) continue;
+                if (targets[i].Seat == shooter && (shooterLife==0 || targets[i].Life==shooterLife)) continue;
                 var inverse = Quaternion.Euler(0, -targets[i].Pose.Yaw, 0);
                 Vector3 o = inverse * (origin - targets[i].Pose.Position), d = inverse * direction;
                 void Consider(float distance, HitZone zone)
@@ -63,7 +68,8 @@ namespace StarTournament.ProvingGround
                 }
                 Consider(Sphere(o, d, Vector3.up * Z("headY"), Z("headRadius")), HitZone.Head);
                 var bounds = new Bounds(Vector3.up * Z("torsoY"), new Vector3(Z("torsoX"), Z("torsoHeight"), Z("torsoZ")) * 2);
-                if (bounds.IntersectRay(new Ray(o, d), out float torso)) Consider(torso, HitZone.Torso);
+                if(bounds.Contains(o))Consider(0,HitZone.Torso);
+                else if (bounds.IntersectRay(new Ray(o, d), out float torso)) Consider(torso, HitZone.Torso);
                 for (int side = -1; side <= 1; side += 2)
                 {
                     Consider(Capsule(o, d, side * Z("armX"), Z("armBottom"), Z("armTop"), Z("armRadius")), HitZone.Limb);
@@ -89,10 +95,12 @@ namespace StarTournament.ProvingGround
             Add(Sphere(o, d, new Vector3(x, bottom, 0), radius));
             Add(Sphere(o, d, new Vector3(x, top, 0), radius));
             float ox = o.x - x, a = d.x*d.x + d.z*d.z;
+            float c = ox*ox + o.z*o.z - radius*radius;
+            if(c<=0 && o.y>=bottom && o.y<=top)return 0;
             // Numeric epsilon only avoids division by zero for axis-parallel rays.
             if (a > 1e-8f)
             {
-                float b = ox*d.x + o.z*d.z, c = ox*ox + o.z*o.z - radius*radius;
+                float b = ox*d.x + o.z*d.z;
                 float disc = b*b - a*c;
                 if (disc >= 0)
                 {
