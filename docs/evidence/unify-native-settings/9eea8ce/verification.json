@@ -1,0 +1,33 @@
+{
+  "sourceRevision": "9eea8ce6df4459f58ad33f959d55f97915586f10",
+  "checks": [
+    {
+      "name": "editmode",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "name": "playmode",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "name": "settings",
+      "passed": 7,
+      "failed": 0
+    }
+  ],
+  "passed": 20,
+  "failed": 0,
+  "commands": [
+    "make check-ui",
+    "unity/tools.sh test-play-filter SettingsGamepadNavigationTests",
+    "unity/tools.sh build"
+  ],
+  "exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "durable_directory": "docs/evidence/unify-native-settings/9eea8ce"
+}

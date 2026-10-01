@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "9eea8ce6df4459f58ad33f959d55f97915586f10",
+  "dirty": "",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/settings-auto-preview/star-tournament/unity/../.local/unity-evidence/focused-editmode.TxMQFU/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/settings-auto-preview/star-tournament/unity/../.local/unity-evidence/focused-playmode.nMHpwd/playmode.xml",
+      "passed": 10
+    }
+  ]
+}

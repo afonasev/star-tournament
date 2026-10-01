@@ -1,0 +1,15 @@
+{
+  "sourceRevision": "9eea8ce6df4459f58ad33f959d55f97915586f10",
+  "candidate": "/Users/eaafonasev/Projects/star-tournament/.local/releases/unify-native-settings/9eea8ce/StarTournamentProvingGround.app",
+  "exit_codes": [
+    0,
+    0
+  ],
+  "seats": [
+    1,
+    4
+  ],
+  "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+  "observed": "D-pad Down shows control parameters without A while section remains focused; 1/4 viewport; remainder settings/help/modal review completed",
+  "durable_directory": "docs/evidence/unify-native-settings/9eea8ce"
+}

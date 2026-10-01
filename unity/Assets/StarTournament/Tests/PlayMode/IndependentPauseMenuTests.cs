@@ -139,6 +139,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Object("seat-settings-1-settings-help-page").activeInHierarchy,Is.True,"back only changes its own viewport");
             Assert.That(ground.Running,Is.False);
         }
+        [UnityTest] public IEnumerator SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            yield return Press(0,GamepadButton.DpadDown);
+            Assert.That(Object("seat-settings-0-settings-control").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.False);
+            Assert.That(Object("seat-settings-1-settings-image").activeInHierarchy,Is.True);
+            yield return Press(0,GamepadButton.DpadRight);
+            Assert.That(Object("seat-settings-0-settings-control").activeInHierarchy,Is.True);
+            Assert.That(ground.Running,Is.False);
+        }
         [UnityTest] public IEnumerator MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose()
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);

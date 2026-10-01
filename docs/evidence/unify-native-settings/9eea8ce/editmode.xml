@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.0742049">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="255" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.074205" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1312" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/settings-auto-preview/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="255" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.069197" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="89101" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1313" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="255" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.067619" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1314" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="255" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.066166" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1315" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="255" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.064767" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1052" name="LocalSeatLayoutTests" fullname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests" classname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.062253" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1053" name="ApprovedViewportsCoverScreenWithoutOverlapping" fullname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests.ApprovedViewportsCoverScreenWithoutOverlapping" methodname="ApprovedViewportsCoverScreenWithoutOverlapping" classname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests" runstate="Runnable" seed="1387000554" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.009266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="RemovingKeyboardSeatReleasesMouseOwnership" fullname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests.RemovingKeyboardSeatReleasesMouseOwnership" methodname="RemovingKeyboardSeatReleasesMouseOwnership" classname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests" runstate="Runnable" seed="1615342940" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.045112" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1055" name="ShrinkReleasesOnlyRemovedDevicesAndGrowRequiresFreshJoins" fullname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests.ShrinkReleasesOnlyRemovedDevicesAndGrowRequiresFreshJoins" methodname="ShrinkReleasesOnlyRemovedDevicesAndGrowRequiresFreshJoins" classname="StarTournament.ProvingGround.Tests.LocalSeatLayoutTests" runstate="Runnable" seed="1207343691" result="Passed" start-time="2026-10-01 20:20:13Z" end-time="2026-10-01 20:20:13Z" duration="0.002018" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

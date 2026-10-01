@@ -1,0 +1,16 @@
+{
+    "state": "05-match-keyboard-help-1",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "localSeats": 1,
+    "openMenus": 1,
+    "visibleFps": 1,
+    "buildLabels": 1,
+    "width": 3456,
+    "height": 2160,
+    "sourceRevision": "9eea8ce6df4459f58ad33f959d55f97915586f10",
+    "running": false,
+    "focused": true,
+    "muted": true,
+    "unityDeveloperWatermark": false,
+    "matchTime": 0.6799997314810753
+}
