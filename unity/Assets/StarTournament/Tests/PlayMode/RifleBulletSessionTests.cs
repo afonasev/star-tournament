@@ -40,6 +40,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var muzzle=new Vector3(-7.8f,1.5f,.4f);
                 using(var visual=new RifleBulletPresentation(session,move,owner.transform,_=>muzzle))
                 {
+                    session.ShotResolved+=shot=>visual.Launch(shot.Sequence,shot.Shooter);
                     Fire();visual.Render();
                     var line=owner.GetComponentsInChildren<LineRenderer>().Single();
                     Assert.That(Vector3.Distance(line.GetPosition(0),line.GetPosition(1)),Is.EqualTo(0));
