@@ -148,6 +148,8 @@ namespace StarTournament.ProvingGround
                     else if(pad.dpad.up.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Shotgun;
                     else if(pad.dpad.down.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Cutter;
                     else if(pad.dpad.right.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.RocketLauncher;
+                    else if(pad.leftShoulder.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Previous;
+                    else if(pad.rightShoulder.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Next;
                     a.ShowRoster = pad.selectButton.isPressed;
                     pauseRequested |= pad.startButton.wasPressedThisFrame;
                 }
