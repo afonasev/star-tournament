@@ -54,7 +54,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             session.Tick(action,.02f);session.Tick(new LocalAction[4],.02f);
             Assert.That(session.Life(0).Ammo,Is.EqualTo(ammo-1));Assert.That(session.Life(1).Health,Is.EqualTo(90));Assert.That(session.Life(2).Health,Is.EqualTo(100));
             Assert.That(session.ApplyDamage(1,1,500,0,1).Applied,Is.EqualTo(90));Assert.That(match.Read().Standings.Sum(r=>r.DamageDealt),Is.Zero);
-            motors[1].Initialize(move,new Vector3(8,0,0));session.Tick(new LocalAction[4],1);session.Tick(action,.02f);session.Tick(new LocalAction[4],.02f);
+            motors[1].Initialize(move,new Vector3(8,0,0));session.Tick(new LocalAction[4],1);session.Tick(action,.02f);session.Tick(new LocalAction[4],.02f);session.Tick(new LocalAction[4],.02f);
             Assert.That(session.Life(2).Health,Is.LessThan(100),"Opponent behind moved ally is hittable");
             var ffa=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,ProvingProfile.CreateCombatDefault(),combat,new NativeMatchState(4,config,p,50));
             Assert.That(ffa.ApplyDamage(1,1,10,0,1).Applied,Is.EqualTo(10));
