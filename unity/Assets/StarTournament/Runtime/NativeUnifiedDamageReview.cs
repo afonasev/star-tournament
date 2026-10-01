@@ -12,6 +12,7 @@ namespace StarTournament.ProvingGround
     {
         ProvingGround ground;string directory;
         Button B(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
+        InputField Search()=>ground.GetComponentsInChildren<InputField>(true).Single(f=>f.name=="lab-search");
         void Click(string name)=>B(name).onClick.Invoke();
         [Serializable] sealed class Evidence
         { public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",state,labIdentity;public bool muted,focused;public NativeMatchSnapshot match;public CombatLifeState[] lives; }
@@ -28,9 +29,11 @@ namespace StarTournament.ProvingGround
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-unifiedDamageReview");if(flag<0||flag+1>=args.Length||!Path.IsPathFullyQualified(args[flag+1]))throw new ArgumentException("Absolute unified damage evidence directory required");directory=args[flag+1];Directory.CreateDirectory(directory);
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             Require(AudioListener.volume==0,"audio must be muted");
-            Click("main-action-2");yield return null;Click("group-rifle");yield return null;yield return Capture("01-lab-rifle-damage");
+            Click("main-action-2");yield return null;Click("group-rifle");yield return null;Search().text="rifle.damage";yield return null;yield return Capture("01-lab-rifle-damage");
             Require(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-rifle.damage"),"single rifle damage field absent");
-            Click("group-shotgun");yield return null;yield return Capture("02-lab-shotgun-damage");Click("group-damage-policy");yield return null;yield return Capture("03-lab-friendly-self");
+            Search().text="";yield return null;Click("group-shotgun");yield return null;Search().text="shot.damage";yield return null;yield return Capture("02-lab-shotgun-damage");
+            Require(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-shot.damage"),"single shotgun damage field absent");
+            Search().text="";yield return null;Click("group-damage-policy");yield return null;yield return Capture("03-lab-friendly-self");
             Require(ground.GetComponentsInChildren<InputField>().Count(f=>f.name=="input-damage.friendlyMultiplier"||f.name=="input-damage.selfMultiplier")==2,"coefficient inputs absent");Click("lab-back");yield return null;
             foreach(bool teams in new[]{false,true})foreach(int views in new[]{1,3,4})
             {
