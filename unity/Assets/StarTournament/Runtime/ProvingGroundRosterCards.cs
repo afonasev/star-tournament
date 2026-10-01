@@ -271,7 +271,7 @@ namespace StarTournament.ProvingGround
                     AddRosterChoice("roster-choice-profile-"+id,profile.Name+(busy?" · занят":""),()=>ChooseRosterProfile(p,id),!busy);
                 }
                 AddRosterChoice("roster-choice-guest","Гость",()=>{identities.ChooseGuest(p,input.DeviceAt(p)?.deviceId??(-100-p),MouseSensitivityPreference.Resolve(Profile),fps.Visible);setupError=null;});
-                AddRosterChoice("roster-choice-create-profile","+ Создать профиль",()=>{var profile=playerProfiles.Create("Игрок "+(playerProfiles.Profiles.Count+1),MouseSensitivityPreference.Resolve(Profile),fps.Visible);ChooseRosterProfile(p,profile.Id);});
+                AddRosterChoice("roster-choice-create-profile","+ Создать профиль",()=>{var profile=CreateProfileWithGeneralSettings("Игрок "+(playerProfiles.Profiles.Count+1));ChooseRosterProfile(p,profile.Id);});
             }
             FinishRosterPicker();
         }

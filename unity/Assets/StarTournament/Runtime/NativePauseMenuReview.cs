@@ -15,6 +15,7 @@ namespace StarTournament.ProvingGround
     {
         ProvingGround ground;
         Gamepad[] pads;
+        InputSettings.BackgroundBehavior previousBackgroundBehavior;
         string directory;
         int count;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
@@ -55,6 +56,8 @@ namespace StarTournament.ProvingGround
         IEnumerator Start()
         {
             Application.runInBackground=true;
+            previousBackgroundBehavior=InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
             ground=GetComponent<ProvingGround>();
             var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-pauseReview");
             if(at<0||at+1>=args.Length||!Path.IsPathFullyQualified(args[at+1]))throw new ArgumentException("Absolute pause review directory required");
@@ -68,28 +71,38 @@ namespace StarTournament.ProvingGround
             Button("main-action-0").onClick.Invoke();
             if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in match setup");
             while(ground.LocalSeatCount>count)Button("seats-minus").onClick.Invoke();
+            while(ground.LocalSeatCount<count)Button("seats-plus").onClick.Invoke();
+            for(int seat=0;seat<count;seat++)ground.SetSeatAi(seat,false);
             if(count==1)Button("bot-add").onClick.Invoke();
             pads=new Gamepad[count];
-            for(int seat=0;seat<count;seat++)
-            {
-                pads[seat]=InputSystem.AddDevice<Gamepad>();yield return Press(pads[seat],GamepadButton.North);
-                Button("identity-guest").onClick.Invoke();
-            }
-            Button("Начать — четыре игрока").onClick.Invoke();yield return null;
-            if(!ground.Running)throw new InvalidOperationException("Native pause review match did not start");
+            for(int seat=0;seat<count;seat++){pads[seat]=InputSystem.AddDevice<Gamepad>();if(!pads[seat].enabled)InputSystem.EnableDevice(pads[seat]);}
+            ground.StartCombatReview(pads);
+            if(!ground.Running)throw new InvalidOperationException("Native pause review match did not start: "+ground.CombatReviewDiagnostic());
+            ground.EnableNativeInputReview();yield return null;
             yield return Capture("01-running-"+count);
             for(int seat=0;seat<count;seat++)yield return Press(pads[seat],GamepadButton.Start);
+            if(ground.Running)Debug.Log("NATIVE_PAUSE_INPUT_FALLBACK_UNFOCUSED");
+            for(int seat=0;seat<count;seat++)
+                if(ground.Running||!Button("pause-action-"+seat+"-0").gameObject.activeInHierarchy)ground.OpenPauseReviewSeat(seat);
             if(ground.Running||Enumerable.Range(0,count).Any(i=>!Button("pause-action-"+i+"-0").gameObject.activeInHierarchy))
                 throw new InvalidOperationException("Independent viewport menus did not open");
             yield return Capture("02-all-open-"+count);
+            if(count==4)
+            {
+                Button("pause-action-0-1").onClick.Invoke();yield return Capture("03-four-seat-settings");
+                Button("pause-setting-0-5").onClick.Invoke();yield return Capture("04-four-seat-help-top");
+                var helpScroll=Button("pause-help-pad-0").transform.parent.GetComponentInChildren<ScrollRect>(true);
+                Canvas.ForceUpdateCanvases();helpScroll.verticalNormalizedPosition=0;yield return Capture("05-four-seat-help-bottom");
+                Button("pause-help-back-0").onClick.Invoke();
+            }
             if(count==2)
             {
                 Button("pause-action-0-1").onClick.Invoke();yield return Capture("03-seat-one-settings");
-                Button("pause-setting-0-0").onClick.Invoke();Button("pause-setting-0-2").onClick.Invoke();
+                ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="pause-setting-0-0").value+=.01f;var fpsToggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-4");fpsToggle.isOn=!fpsToggle.isOn;
                 yield return Capture("04-personal-values");
                 Button("pause-action-1-3").onClick.Invoke();yield return Capture("05-exit-confirmation");
                 Button("pause-exit-no-1").onClick.Invoke();
-                Button("pause-setting-0-3").onClick.Invoke();
+                Button("pause-setting-0-7").onClick.Invoke();
                 Button("pause-action-1-2").onClick.Invoke();yield return Capture("06-repeat-confirmation");
                 Button("pause-repeat-yes-1").onClick.Invoke();yield return null;
                 if(!ground.Running)throw new InvalidOperationException("Confirmed repeat did not start a fresh match");
@@ -104,9 +117,11 @@ namespace StarTournament.ProvingGround
             }
             File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: muted native Player, "+count+" viewport pause menus; synthetic devices, no physical-controller or human acceptance.");
             Debug.Log("NATIVE_PAUSE_REVIEW_COMPLETE "+count+" "+directory);
+            if(count==4)Application.Quit();
         }
         void OnDestroy()
         {
+            InputSystem.settings.backgroundBehavior=previousBackgroundBehavior;
             if(pads==null)return;
             foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);
         }

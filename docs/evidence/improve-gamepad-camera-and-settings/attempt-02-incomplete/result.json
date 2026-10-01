@@ -1,0 +1,11 @@
+{
+  "classification": "INCOMPLETE_NATIVE_QA_FIXTURE",
+  "source_revision": "d37efbfd1708b6352686b6f50a96b8d3600a08ae",
+  "build_marker": "STAR_PROVING_BUILD_PASS 471126644",
+  "candidate": "local-macos-player-candidate/d37efbfd1708b6352686b6f50a96b8d3600a08ae/20260929T1648Z",
+  "settings_and_profile_checks": "passed",
+  "camera_match": "not_started",
+  "failure": "NativeGamepadCameraReview line 54 expected legacy identity-guest UI while setup wizard remained on map step",
+  "fix": "Use existing StartCombatReview developer fixture to assign synthetic devices and enter match",
+  "physical_controller_acceptance": "not_performed"
+}

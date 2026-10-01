@@ -1,0 +1,282 @@
+{
+  "checks": [
+    {
+      "command": "unity/tools.sh test-edit",
+      "exit_code": 0,
+      "passed": 204,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/editmode.xml",
+      "duration_seconds": 356.2098626
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "exit_code": 0,
+      "passed": 139,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/playmode.xml",
+      "duration_seconds": 672.0826911
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode -testFilter GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests",
+      "exit_code": 0,
+      "passed": 9,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/camera-settings-focused.xml",
+      "duration_seconds": 56.9738771
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode migration cases and GamepadLookSettingsTests",
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "duration_seconds": 58.2286516,
+      "source_revision": "6f6ada2",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-integration-editmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests",
+      "exit_code": 0,
+      "passed": 9,
+      "failed": 0,
+      "duration_seconds": 60.6805073,
+      "source_revision": "6f6ada2",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-integration-playmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity;ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues;LabUpgradePreservesPriorHashValuesAndProvidesValidatedFields;GamepadLookSettingsTests",
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-ragdoll-editmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode -testFilter GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests",
+      "exit_code": 0,
+      "passed": 9,
+      "failed": 0,
+      "source_revision": "74eb958f46ae0a2e347790418ccc12132d19c8e3",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-ragdoll-playmode.xml"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter affected migration and profile cases",
+      "source_revision": "50839aab13b1761ac8eed4a8dd341903addd1006",
+      "exit_code": 1,
+      "passed": null,
+      "failed": null,
+      "result": "compiler_error_before_test_execution",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/compile-failure-50839aa.log",
+      "fix_revision": "29bd468f878e565a70ed4b066f48820813a50cdf"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter affected migration and profile cases -quit",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": null,
+      "failed": null,
+      "result": "empty_invocation_no_test_xml",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/empty-run-quit-8cc0ee5.log"
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode -testFilter affected migration and profile cases",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": 10,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-retry2-editmode.xml",
+      "duration_seconds": 39.2779806
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode -testFilter GamepadLookAssistanceTests;SettingsGamepadNavigationTests;IndependentPauseMenuTests;NativeAudioRoutingTests",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": 11,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-focused-playmode.xml",
+      "duration_seconds": 25.0981226
+    },
+    {
+      "command": "Unity -runTests -testPlatform EditMode",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": 214,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-full-editmode.xml",
+      "duration_seconds": 416.3803704
+    },
+    {
+      "command": "Unity -runTests -testPlatform PlayMode",
+      "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+      "exit_code": 0,
+      "passed": 144,
+      "failed": 0,
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-audio-full-playmode.xml",
+      "duration_seconds": 391.9429636
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+      "exit_code": 0,
+      "passed": 221,
+      "failed": 0,
+      "result": "diagnostic_only_foreign_Player_PID_13994_overlapped_Unity_PID_13872",
+      "start_time_utc": "2026-09-30T13:40:59Z",
+      "end_time_utc": "2026-09-30T13:48:23Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-overlap-editmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+      "exit_code": 0,
+      "passed": 221,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "start_time_utc": "2026-09-30T13:52:31Z",
+      "end_time_utc": "2026-09-30T13:59:21Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-clean-editmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+      "exit_code": 0,
+      "passed": 145,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "start_time_utc": "2026-09-30T14:10:17Z",
+      "end_time_utc": "2026-09-30T14:16:58Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-main-clean-playmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "69deb39",
+      "exit_code": 2,
+      "passed": 223,
+      "failed": 1,
+      "result": "diagnostic_only_timeout_and_foreign_Player_overlap",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-overlap-editmode.xml",
+      "failed_test": "CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease",
+      "fix_revision": "2873cf18685cb369bc258df16b857475ec3f008b"
+    },
+    {
+      "command": "unity/tools.sh test-edit",
+      "source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+      "exit_code": 0,
+      "passed": 224,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "duration_seconds": 164.7769202,
+      "start_time_utc": "2026-09-30T16:04:06Z",
+      "end_time_utc": "2026-09-30T16:06:51Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-clean-editmode.xml"
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "source_revision": "460e965c42880685daed9fba30222582853f8d4f",
+      "compiled_csharp_source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+      "exit_code": 0,
+      "passed": 151,
+      "failed": 0,
+      "result": "clean_full_suite",
+      "duration_seconds": 387.3944697,
+      "start_time_utc": "2026-09-30T16:10:30Z",
+      "end_time_utc": "2026-09-30T16:16:57Z",
+      "evidence": "docs/evidence/improve-gamepad-camera-and-settings/tests/post-rifle-clean-playmode.xml"
+    }
+  ],
+  "source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+  "build": {
+    "command": "unity/tools.sh build",
+    "exit_code": 0,
+    "source_revision": "fd035bca431098c6be690419319a752998405e0b",
+    "compiled_csharp_source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+    "prepared_scene": "regenerated by BuildMac and restored after copying the Player",
+    "evidence": "docs/evidence/improve-gamepad-camera-and-settings/build-post-audio.log",
+    "pass_marker": "STAR_PROVING_BUILD_PASS 471255862",
+    "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate-pre-main.json"
+  },
+  "native_player": {
+    "status": "synthetic_native_camera_and_four_seat_qa_passed_on_57b71a6_candidate",
+    "attempts": [
+      {
+        "candidate_source": "2cde8c9",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-01-incomplete/result.json",
+        "result": "settings/profile checks passed; camera fixture setup failed before game began",
+        "fix": "4a829e8 explicit human seats before join"
+      },
+      {
+        "candidate_source": "fd035bca431098c6be690419319a752998405e0b",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-06-native-camera/result.json",
+        "result": "synthetic muted native camera QA passed with 20 PNG and matching state JSON files; exit 0 and completion marker"
+      },
+      {
+        "candidate_source": "fd035bca431098c6be690419319a752998405e0b",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-07-native-four-seat/result.json",
+        "result": "synthetic muted four-seat pause/settings/help QA passed with 6 PNG and matching state JSON files; exit 0 and completion marker"
+      },
+      {
+        "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-08-post-rifle-camera/result.json",
+        "result": "inconclusive: Metal 3456x2160 presentation wait; no PNG or completion marker; exit 143 SIGTERM source unknown"
+      },
+      {
+        "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-09-windowed-camera/result.json",
+        "result": "synthetic muted native camera QA passed at windowed 1920x1080 with 20 PNG/state JSON captures; exit 0 and completion marker"
+      },
+      {
+        "candidate_source": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+        "evidence": "docs/evidence/improve-gamepad-camera-and-settings/attempt-10-windowed-four-seat/result.json",
+        "result": "synthetic muted native four-seat pause/settings/help QA passed at windowed 1920x1080 with 6 PNG/state JSON captures; exit 0 and completion marker"
+      }
+    ],
+    "remaining": [
+      "physical-controller and TV human acceptance",
+      "diagnose original large-Metal-surface startup stall if reproducible"
+    ],
+    "coordination_blocker": {
+      "source_thread": "01a0e695-9fa1-7972-9f02-e912b653b508",
+      "reason": "Camera and four-seat synthetic native Player QA passed on the immutable candidate. Physical-controller and TV human acceptance remain separate; integration awaits latest main refresh.",
+      "own_runtime_lease": "released",
+      "own_active_processes": []
+    }
+  },
+  "human_acceptance": "pending",
+  "candidate_source_revision": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+  "post_suite_changes": [
+    "New profiles inherit general gamepad axes and auto-level through all creation paths; native QA asserts persistence",
+    "Integrated main 0f4d16c with damage vignette; combined default profile v9; post-integration migration checks pending",
+    "Cache identical exact gamepad predecessors instead of repeatedly serializing them; migration assertions pending",
+    "Increase lower personal-settings button height for four-seat text; verified in focused Play9/9, native visibility pending",
+    "Merged current main c9f737b audio settings into profile v10 and converted common/personal audio volume to sliders on f5c2dea",
+    "Updated personal slider labels immediately on 50839aa; test-only inaccessible internal method fixed on 29bd468",
+    "Exact-source focused EditMode10/10 and PlayMode11/11 plus full EditMode214/214 and PlayMode144/144 passed on 8cc0ee5; BuildMac passed on fd035bc and immutable candidate copied; native camera QA passed with 20 PNG+JSON captures and four-seat pause/settings/help QA passed with 6; physical-controller and TV human acceptance pending"
+  ],
+  "post_main_merge": {
+    "source_revision": "55152bc70f65675681d82c0ff99f3ed29edb72c5",
+    "merged_from_main": "eea4f8efd9d20e0fac670e69626f1aede496533e",
+    "required_clean_editmode": "passed_221_of_221",
+    "required_playmode": "passed_145_of_145",
+    "required_build": "passed_STAR_PROVING_BUILD_PASS_471256588",
+    "required_player_qa": "pending",
+    "reason": "First full EditMode passed 221/221 but overlapped foreign F2 Player, so it is diagnostic only.",
+    "build_source_revision": "ba80c88fdbe024c3b3f0abbf0f5ea14355801116",
+    "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
+    "build_pass_marker": "STAR_PROVING_BUILD_PASS 471256588",
+    "build_log": "docs/evidence/improve-gamepad-camera-and-settings/build-post-main.log"
+  },
+  "post_rifle_merge": {
+    "source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+    "merged_from_main": "1c86286",
+    "snapshot_resolution": "Version 7 retains both optional camera Poses and required RifleBullets",
+    "required_clean_editmode": "passed_224_of_224",
+    "required_playmode": "passed_151_of_151",
+    "required_build": "passed_STAR_PROVING_BUILD_PASS_471273724",
+    "required_player_qa": "camera_20_png_and_four_seat_6_png_passed_windowed_1920x1080",
+    "host_status": "EditMode completed; runtime lease released; no own Unity or Player process",
+    "prior_candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
+    "prior_candidate_classification": "built and hashed for pre-rifle merge; not final integrated source",
+    "build_source_revision": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+    "candidate": "docs/evidence/improve-gamepad-camera-and-settings/candidate.json",
+    "build_log": "docs/evidence/improve-gamepad-camera-and-settings/build-post-rifle.log"
+  }
+}

@@ -80,9 +80,7 @@ namespace StarTournament.ProvingGround
             profileDetail=Label(detailCard.transform,"profile-detail","Выберите профиль",27,new Vector2(.08f,.77f),new Vector2(.95f,.97f),TextAnchor.MiddleLeft,MenuGold);
             profileNameInput=CreateNameInput(detailCard.transform);
             MenuButton(detailCard.transform,"profile-rename","Переименовать",new Vector2(.08f,.57f),new Vector2(.92f,.64f),RenameSelectedProfile);
-            MenuButton(detailCard.transform,"profile-sensitivity-down","Чувствительность мыши −",new Vector2(.08f,.45f),new Vector2(.92f,.54f),()=>StepSelectedProfile(-1));
-            MenuButton(detailCard.transform,"profile-sensitivity-up","Чувствительность мыши +",new Vector2(.08f,.34f),new Vector2(.92f,.43f),()=>StepSelectedProfile(1));
-            MenuButton(detailCard.transform,"profile-fps","Показывать FPS · переключить",new Vector2(.08f,.23f),new Vector2(.92f,.32f),ToggleSelectedProfileFps);
+            MenuButton(detailCard.transform,"profile-settings","Личные настройки",new Vector2(.08f,.28f),new Vector2(.92f,.48f),OpenProfileSettings);
             MenuButton(detailCard.transform,"profile-delete","Удалить профиль",new Vector2(.08f,.06f),new Vector2(.92f,.16f),DeleteSelectedProfile);
 
             CreateSettingsUi(parent);
@@ -268,13 +266,14 @@ namespace StarTournament.ProvingGround
         void OpenLab() { OpenDesignLab(); }
         void OpenSettings(int seat)
         {
-            settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
+            settingsProfileId=null;settingsHelpOpen=false;settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
             phase=Phase.Settings;RefreshInterface();ConfigureSettingsNavigation();Select(settingsSectionButtons[(int)settingsSection]);
         }
         void CloseSettings()
         {
             if(displayConfirmationActive)RollbackDisplay();
-            int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;RefreshInterface();
+            int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;settingsProfileId=null;settingsHelpOpen=false;RefreshInterface();
+            if(phase==Phase.Profiles){RefreshProfileDetail();Select(profilesBackButton);}
             if(phase==Phase.MainMenu)Select(mainMenuScreen.transform.Find("actions/main-action-4").GetComponent<Button>());
             else if(phase==Phase.Setup && seat>=0 && seat<seatIdentityButtons.Length)FocusRosterCard(seat);
         }
@@ -321,7 +320,7 @@ namespace StarTournament.ProvingGround
         }
         void CreateAndChooseProfile()
         {
-            var profile=playerProfiles.Create("Игрок "+(playerProfiles.Profiles.Count+1),MouseSensitivityPreference.Resolve(Profile),fps.Visible);
+            var profile=CreateProfileWithGeneralSettings("Игрок "+(playerProfiles.Profiles.Count+1));
             ChooseIdentity(profile.Id);
         }
         void ChooseGuest()
@@ -378,7 +377,7 @@ namespace StarTournament.ProvingGround
         {
             var name=(profileNameInput.text??"").Trim();
             if(name.Length==0||playerProfiles.Find(selectedProfileId)!=null&&name==playerProfiles.Find(selectedProfileId).Name)name="Игрок "+(playerProfiles.Profiles.Count+1);
-            var selected=playerProfiles.Create(name,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
+            var selected=CreateProfileWithGeneralSettings(name);
             selectedProfileId=selected.Id;RefreshProfilesUi();
         }
         void RenameSelectedProfile()

@@ -1,0 +1,25 @@
+{
+    "Version": 1,
+    "Profiles": [
+        {
+            "Id": "qa-camera-profile",
+            "Name": "QA Камера",
+            "MouseDegreesPerPixel": 0.11999999731779099,
+            "ShowFps": false,
+            "GamepadLookVersion": 1,
+            "GamepadHorizontal": 123.0,
+            "GamepadVertical": 240.0,
+            "GamepadAutoLevel": false
+        },
+        {
+            "Id": "396cdbdd8e3d4b858b21e56667981bd2",
+            "Name": "QA Новый",
+            "MouseDegreesPerPixel": 0.25,
+            "ShowFps": true,
+            "GamepadLookVersion": 1,
+            "GamepadHorizontal": 180.0,
+            "GamepadVertical": 180.0,
+            "GamepadAutoLevel": true
+        }
+    ]
+}
