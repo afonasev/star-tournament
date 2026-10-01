@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround
         static readonly Color32 MenuGold = new Color32(255,189,98,255);
         GameObject oldMenuColumn, mainMenuScreen, setupScreen, setupMapPage, setupRulesPage, setupPlayersPage, profilesScreen, settingsScreen, labScreen, identityScreen;
         Transform profileList, identityList;
-        Text profileDetail, identityHeading, settingsHeading, labDetail, setupSummary, setupMessage, setupLabIdentity;
+        Text profileDetail, identityHeading, labDetail, setupSummary, setupMessage, setupLabIdentity;
         InputField profileNameInput;
         Button mainBattleButton, profilesBackButton, setupNext, setupPrevious;
         readonly Button[] setupSteps = new Button[3];
@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround
         InputSystemUIInputModule menuInputModule;
         InputAction menuSubmitAction,menuMoveAction,menuClickAction;
         InputDevice menuDevice;
-        Button identitySettingsButton;
+        Button identitySettingsButton,operatorSettingsButton;
         Button[] seatIdentityButtons = new Button[SeatInputCoordinator.SeatCount];
         string selectedProfileId;
         int pendingSeat = -1, settingsSeat = -1;
@@ -266,17 +266,19 @@ namespace StarTournament.ProvingGround
         void OpenLab() { OpenDesignLab(); }
         void OpenSettings(int seat)
         {
-            settingsProfileId=null;settingsHelpOpen=false;settingsDevicesOpen=false;settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
-            phase=Phase.Settings;RefreshInterface();ConfigureSettingsNavigation();Select(settingsSectionButtons[(int)settingsSection]);
+            settingsReturn=phase;settingsSeat=seat;
+            phase=Phase.Settings;RefreshInterface();settingsView.Open(seat);
         }
         void CloseSettings()
         {
-            if(displayConfirmationActive)RollbackDisplay();
-            int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;settingsProfileId=null;settingsHelpOpen=false;settingsDevicesOpen=false;RefreshInterface();
+            if(displayConfirmationActive&&displayOwner==settingsView)RollbackDisplay();
+            int seat=settingsSeat;phase=settingsReturn;settingsSeat=-1;RefreshInterface();
             if(phase==Phase.Profiles){RefreshProfileDetail();Select(profilesBackButton);}
             if(phase==Phase.MainMenu)Select(mainMenuScreen.transform.Find("actions/main-action-4").GetComponent<Button>());
-            else if(phase==Phase.Setup && seat>=0 && seat<seatIdentityButtons.Length)FocusRosterCard(seat);
+            else if(phase==Phase.Setup&&seat>=0&&seat<seatIdentityButtons.Length)FocusRosterCard(seat);
+            else if(phase==Phase.Paused)Select(operatorSettingsButton);
         }
+
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;

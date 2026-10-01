@@ -74,6 +74,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="settings-auto-level");var checkedBefore=toggle.isOn;
             yield return Press(GamepadButton.South);Assert.That(toggle.isOn,Is.EqualTo(!checkedBefore));
             yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-help-back"));
+            var scroll=ground.GetComponentsInChildren<ScrollRect>(true).Single(x=>x.name=="help-viewport");
+            // Exercise overflow navigation at a compact viewport size even when the shell text fits.
+            scroll.viewport.offsetMin+=new Vector2(0,scroll.viewport.rect.height*.65f);Canvas.ForceUpdateCanvases();
+            Assert.That(scroll.content.rect.height,Is.GreaterThan(scroll.viewport.rect.height));
+            scroll.verticalNormalizedPosition=1;
+            Assert.That(scroll.verticalNormalizedPosition,Is.EqualTo(1).Within(.001));
+            yield return Press(GamepadButton.DpadRight);Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(1));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-controls-help"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
@@ -101,6 +108,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             seats.Capture(profile,.016f);
             Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.Next));
         }
+        [UnityTest] public IEnumerator AllAiOperatorOpensTheSameSettingsAndReturnsToPause()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();
+            for(int seat=0;seat<ground.LocalSeatCount;seat++)ground.SetSeatAi(seat,true);
+            Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
+            Assert.That(ground.Running,Is.True);
+            yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
+            Button("fallback-settings").onClick.Invoke();yield return null;
+            Assert.That(Button("settings-section-0").gameObject.activeInHierarchy,Is.True);
+            Assert.That(Focus,Is.EqualTo("settings-section-0"));
+            Button("settings-section-1").onClick.Invoke();Button("settings-controls-help").onClick.Invoke();
+            Assert.That(Button("settings-help-back").gameObject.activeInHierarchy,Is.True);
+            yield return Press(GamepadButton.East);yield return Press(GamepadButton.East);
+            Assert.That(Focus,Is.EqualTo("settings-section-1"));yield return Press(GamepadButton.East);
+            Assert.That(Focus,Is.EqualTo("fallback-settings"));Assert.That(ground.Running,Is.False);
+            Button("Продолжить").onClick.Invoke();yield return new WaitForFixedUpdate();Assert.That(ground.Running,Is.True);
+        }
         [UnityTest] public IEnumerator DevicePageShowsSupportedAndUnsupportedControllers()
         {
             yield return Load();unsupported=InputSystem.AddDevice<Joystick>();
@@ -122,8 +146,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("settings-controls-devices").onClick.Invoke();Assert.That(Focus,Is.EqualTo("devices-back"));
             yield return Press(GamepadButton.East);
             Assert.That(Focus,Is.EqualTo("settings-controls-devices"));
-            yield return Press(GamepadButton.East);
-            Assert.That(Focus,Is.EqualTo("settings-section-1"));
+            yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-1"));
         }
 
         [UnityTest] public IEnumerator GamepadCanCancelDisplayConfirmation()

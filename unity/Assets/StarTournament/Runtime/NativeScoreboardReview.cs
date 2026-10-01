@@ -104,9 +104,9 @@ namespace StarTournament.ProvingGround
                 Check(pauseActions.SequenceEqual(new[]{"Продолжить","fallback-settings","Повторить матч","В главное меню"}),"pause actions: "+string.Join(",",pauseActions));
                 yield return Capture("pause-four-actions");
                 B("fallback-settings").onClick.Invoke();yield return null;
-                Check(B("fps-setting").gameObject.activeInHierarchy && B("mouse-sensitivity-minus").gameObject.activeInHierarchy && !B("Продолжить").gameObject.activeInHierarchy,"pause settings page");
+                Check(B("settings-section-0").gameObject.activeInHierarchy && !B("fps-setting").gameObject.activeInHierarchy && !B("Продолжить").gameObject.activeInHierarchy,"unified pause settings page");
                 yield return Capture("pause-settings");
-                B("fallback-settings-back").onClick.Invoke();yield return null;
+                B("settings-back").onClick.Invoke();yield return null;
                 Check(B("Продолжить").gameObject.activeInHierarchy && !B("fps-setting").gameObject.activeInHierarchy,"pause settings back");
                 B("В главное меню").onClick.Invoke();yield return null;Check(!ground.Running,"main menu");
                 yield return Capture("main-menu");
