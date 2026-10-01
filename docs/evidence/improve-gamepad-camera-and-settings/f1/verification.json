@@ -1,0 +1,42 @@
+{
+  "feedback": "F1",
+  "source_revision": "0f23780ceb9db0d78a2c8cc168083e6fb0db773f",
+  "scope": "8BitDo SN30 Pro Bluetooth HID X-input layout 045e:02e0",
+  "tests": {
+    "editmode": {
+      "result": "Passed",
+      "total": "245",
+      "passed": "245",
+      "failed": "0",
+      "skipped": "0"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "161",
+      "passed": "161",
+      "failed": "0",
+      "skipped": "0"
+    }
+  },
+  "build_marker": "STAR_PROVING_BUILD_PASS 471339647",
+  "candidate_identity": "local-macos-player-candidate/0f23780ceb9db0d78a2c8cc168083e6fb0db773f/20261001T152939Z",
+  "candidate_app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-gamepad-camera-and-settings/0f23780ceb9db0d78a2c8cc168083e6fb0db773f/20261001T152939Z/StarTournamentProvingGround.app",
+  "executable_sha256": "8764f99c6572e5b87f43b5b2238507214f0acacd4ecc27212f41a4f847ba8721",
+  "assembly_sha256": "8a47e5a8bfe3d0c0467ce08510cc1f3ae0d62724d90e21addb0d3503c65bf578",
+  "smoke": {
+    "kind": "synthetic muted native Player camera/settings regression",
+    "exit_code": 0,
+    "completion_marker": "NATIVE_GAMEPAD_CAMERA_REVIEW_COMPLETE",
+    "screenshots": 20,
+    "complete": {
+      "classification": "SYNTHETIC_NATIVE_PLAYER_NOT_PHYSICAL_ACCEPTANCE",
+      "muted": true,
+      "focusedAtCompletion": true
+    }
+  },
+  "hardware": {
+    "macos_bluetooth": "8Bitdo SN30 Pro connected",
+    "hid": "VID 045e PID 02e0, report ID 1, 16-byte report",
+    "physical_buttons_and_dpad": "not yet accepted by user"
+  }
+}
