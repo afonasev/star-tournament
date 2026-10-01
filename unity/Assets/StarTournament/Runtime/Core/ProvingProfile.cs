@@ -102,6 +102,15 @@ namespace StarTournament.ProvingGround
             copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
             copy.version=Math.Min(copy.version,11);return copy;
         }
+        public ProvingProfile BeforeCompactMatchMenu()
+        {
+            if(id!=DefaultId||FindDescriptor("ui.matchMenuWidth")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            bool Added(string path)=>path=="ui.matchMenuWidth"||path=="ui.matchMenuButtonHeight"||path=="ui.matchMenuSpacing";
+            copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
+            // The earlier UI change appended these descriptors without changing its registry version.
+            return copy;
+        }
         public ProvingProfile BeforeFootstepMix()
         {
             if(id!=DefaultId||FindDescriptor("audio.footstepGain")==null)return this;

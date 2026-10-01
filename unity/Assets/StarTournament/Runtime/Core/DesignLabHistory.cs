@@ -228,6 +228,7 @@ namespace StarTournament.ProvingGround
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
                 var withoutScoreboard=Cached(p=>p.BeforeScoreboard());
                 var withoutMovementAudio=Cached(p=>p.BeforeMovementAudio());
+                var withoutCompactMatchMenu=Cached(p=>p.BeforeCompactMatchMenu());
                 var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
@@ -236,6 +237,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutMovementAudio))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCompactMatchMenu))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutFootstepMix))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,WithoutVignette))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutOrigins))));
