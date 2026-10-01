@@ -1,0 +1,10 @@
+{
+  "platform": "macOS",
+  "channel": "local-candidate",
+  "path": "/Users/eaafonasev/Projects/star-tournament/.local/releases/unify-native-settings/93fda15/StarTournamentProvingGround.app",
+  "sourceRevision": "93fda15096fdef54f2e1fdd714b9cffcb9684e53",
+  "executable_sha256": "99f5a1d3b4f26e5ae2f610baf2dc0c883dcd97360966b6b78e35be4d769e7611",
+  "manifest": "/Users/eaafonasev/Projects/star-tournament/.local/releases/unify-native-settings/93fda15/sha256-files.json",
+  "manifest_sha256": "8606bad8e260fa3ebdbfd9a96939fb82db65989e785b6d4766fc2a3bc05350a6",
+  "external_publication": false
+}

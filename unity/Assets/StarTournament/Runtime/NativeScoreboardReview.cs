@@ -71,13 +71,47 @@ namespace StarTournament.ProvingGround
         IEnumerator Finish(string label)
         {
             int guard=20000;while(ground.Session.Match.Phase!=NativeMatchPhase.Finished&&guard-->0){Step(1);if(guard%500==0)yield return null;}
-            Check(ground.Session.Match.Phase==NativeMatchPhase.Finished,"finish");Time.timeScale=1;yield return new WaitForFixedUpdate();Time.timeScale=0;yield return Capture(label);
+            Check(ground.Session.Match.Phase==NativeMatchPhase.Finished,"finish");Time.timeScale=1;yield return new WaitForFixedUpdate();Time.timeScale=0;
+            var actions=ground.transform.Find("native-ui/setup-pause/menu").GetComponentsInChildren<Button>().Select(b=>b.name).ToArray();
+            Check(actions.SequenceEqual(new[]{"Повторить матч","В главное меню"}),"results actions: "+string.Join(",",actions));
+            yield return Capture(label);
         }
         IEnumerator Start()
         {
+            Application.runInBackground=true;
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-scoreboardEvidence");directory=at>=0&&at+1<args.Length?args[at+1]:Path.Combine(Application.persistentDataPath,"scoreboard-review");Directory.CreateDirectory(directory);AudioListener.volume=0;
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();
+            if(args.Contains("-resultsActionsOnly"))
+            {
+                var roster=NativeMatchRoster.Ffa(4);
+                var info=Enumerable.Range(0,4).Select(i=>new NativeParticipantInfo(NativeParticipantKind.Bot,new[]{"Orion","Vega","Nova","Atlas"}[i],NativeStandingsView.Identity(roster.Read(),i,false),1)).ToArray();
+                var resultComposition=new NativeMatchComposition(roster,info,new[]{0});
+                var config=NativeMatchConfiguration.Default(ground.MatchProfile);config.DurationMinutes=1;config.TargetEnabled=true;config.TargetPoints=1000;ground.ConfigureBotTacticsReview(config);
+                ground.StartBotReview(resultComposition,17029);
+                yield return null;Time.timeScale=0;
+                Check(ground.Running,"results fixture: "+ground.CombatReviewDiagnostic());
+                Debug.Log("RESULTS_ACTIONS_STARTED");
+                ground.Session.Match.BeginTick();
+                for(int i=0;i<20;i++)ground.Session.Match.RecordDamage(1,0,new DamageResult(100,true));
+                ground.Session.Match.EndTick();
+                Debug.Log("RESULTS_ACTIONS_FINISHED "+ground.Session.Match.Phase);
+                yield return Finish("results-two-actions");
+                B("Повторить матч").onClick.Invoke();yield return null;Time.timeScale=0;Check(ground.Running,"repeat");
+                yield return Capture("repeat");
+                ground.SendMessage("Pause","Results actions review");yield return null;
+                var pauseActions=ground.transform.Find("native-ui/setup-pause/menu").GetComponentsInChildren<Button>().Select(b=>b.name).ToArray();
+                Check(pauseActions.SequenceEqual(new[]{"Продолжить","fallback-settings","Повторить матч","В главное меню"}),"pause actions: "+string.Join(",",pauseActions));
+                yield return Capture("pause-four-actions");
+                B("fallback-settings").onClick.Invoke();yield return null;
+                Check(B("settings-section-0").gameObject.activeInHierarchy && !B("fps-setting").gameObject.activeInHierarchy && !B("Продолжить").gameObject.activeInHierarchy,"unified pause settings page");
+                yield return Capture("pause-settings");
+                B("settings-back").onClick.Invoke();yield return null;
+                Check(B("Продолжить").gameObject.activeInHierarchy && !B("fps-setting").gameObject.activeInHierarchy,"pause settings back");
+                B("В главное меню").onClick.Invoke();yield return null;Check(!ground.Running,"main menu");
+                yield return Capture("main-menu");
+                Debug.Log("NATIVE_SCOREBOARD_REVIEW_COMPLETE "+directory);yield break;
+            }
             yield return Configure(1,2,false);yield return Held(true);yield return Capture("01-ffa-two-tie");yield return Held(false);
             Hit(1,0,500);Step(1);yield return Held(true);yield return Capture("02-ffa-live-leader");Hit(0,-1,500);yield return Capture("03-ffa-dead-leader");Step(450);yield return Capture("04-ffa-respawn");yield return Held(false);yield return Finish("05-ffa-final");
             yield return Configure(2,8,false);Hit(7,0,500);Hit(0,0,500);Step(1);yield return Held(true);yield return Capture("06-ffa-eight-negative-suffix");yield return Held(false);

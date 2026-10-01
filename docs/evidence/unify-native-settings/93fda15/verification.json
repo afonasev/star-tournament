@@ -1,0 +1,45 @@
+{
+  "sourceRevision": "93fda15096fdef54f2e1fdd714b9cffcb9684e53",
+  "checks": [
+    {
+      "command": "make check-ui",
+      "passed": 12,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "unity/tools.sh test-play-filter SettingsGamepadNavigationTests;NativeScoreboardLayoutTests",
+      "passed": 7,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "unity/tools.sh build",
+      "exit_code": 0
+    }
+  ],
+  "artifacts": [
+    "docs/evidence/unify-native-settings/93fda15/editmode.xml",
+    "docs/evidence/unify-native-settings/93fda15/playmode.xml",
+    "docs/evidence/unify-native-settings/93fda15/settings-scoreboard.xml",
+    "docs/evidence/unify-native-settings/93fda15/ui-gate.json",
+    "docs/evidence/unify-native-settings/93fda15/build.log"
+  ],
+  "native_qa": {
+    "seats": [
+      1,
+      4
+    ],
+    "resolution": [
+      3456,
+      2160
+    ],
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "durable_directory": "docs/evidence/unify-native-settings/93fda15",
+    "visual_review": "main menu, control/help, 1/4 viewport, dark button parity and display confirmation inspected"
+  }
+}

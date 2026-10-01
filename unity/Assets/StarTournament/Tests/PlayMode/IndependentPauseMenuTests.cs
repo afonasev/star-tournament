@@ -70,27 +70,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
             Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
-            var slider0=Object("pause-setting-0-0").GetComponent<Slider>();var slider1=Object("pause-setting-1-0").GetComponent<Slider>();
+            Button("seat-settings-0-settings-section-1").onClick.Invoke();Button("seat-settings-1-settings-section-1").onClick.Invoke();
+            var slider0=Object("seat-settings-0-settings-mouse-sensitivity").GetComponent<Slider>();var slider1=Object("seat-settings-1-settings-mouse-sensitivity").GetComponent<Slider>();
             var before0=slider0.value;var before1=slider1.value;
             slider0.value+=.01f;
             var after0=slider0.value;
             var after1=slider1.value;
             Assert.That(after0,Is.Not.EqualTo(before0));Assert.That(after1,Is.EqualTo(before1));
-            var x0=Object("pause-setting-0-1").GetComponent<Slider>();var x1=Object("pause-setting-1-1").GetComponent<Slider>();
+            var x0=Object("seat-settings-0-settings-gamepad-horizontal").GetComponent<Slider>();var x1=Object("seat-settings-1-settings-gamepad-horizontal").GetComponent<Slider>();
             var otherX=x1.value;x0.value=x0.value==120?121:120;yield return null;
             Assert.That(x1.value,Is.EqualTo(otherX),"gamepad axis belongs to its seat");
-            var level0=Object("pause-setting-0-3").GetComponent<Toggle>();var level1=Object("pause-setting-1-3").GetComponent<Toggle>();
+            var level0=Object("seat-settings-0-settings-auto-level").GetComponent<Toggle>();var level1=Object("seat-settings-1-settings-auto-level").GetComponent<Toggle>();
             var otherLevel=level1.isOn;level0.isOn=!level0.isOn;yield return null;
             Assert.That(level1.isOn,Is.EqualTo(otherLevel),"auto-level preference belongs to its seat");
             int priorEffects=NativeAudioPreferences.Effects(ground.Profile);
-            Button("pause-setting-0-6").onClick.Invoke();Button("pause-setting-1-6").onClick.Invoke();
-            var effects0=Object("pause-audio-0-1").GetComponent<Slider>();var effects1=Object("pause-audio-1-1").GetComponent<Slider>();
+            Button("seat-settings-0-settings-section-3").onClick.Invoke();Button("seat-settings-1-settings-section-3").onClick.Invoke();
+            var effects0=Object("seat-settings-0-settings-effects").GetComponent<Slider>();var effects1=Object("seat-settings-1-settings-effects").GetComponent<Slider>();
             effects0.value=50;yield return null;
             Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(50));
             Assert.That(effects1.value,Is.EqualTo(50),"audio volume is shared across local seats");
             NativeAudioPreferences.SetEffects(priorEffects);
-            Button("pause-audio-0-2").onClick.Invoke();Button("pause-audio-1-2").onClick.Invoke();
-            Button("pause-setting-0-7").onClick.Invoke();Button("pause-setting-1-7").onClick.Invoke();
+            Button("seat-settings-0-settings-section-1").onClick.Invoke();Button("seat-settings-1-settings-section-1").onClick.Invoke();
+            Button("seat-settings-0-settings-back").onClick.Invoke();Button("seat-settings-1-settings-back").onClick.Invoke();
             Button("pause-action-1-3").onClick.Invoke();
             Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
             Button("pause-exit-no-1").onClick.Invoke();
@@ -105,13 +106,60 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
             yield return Press(0,GamepadButton.DpadDown);yield return Press(0,GamepadButton.South);
-            Assert.That(Object("pause-setting-0-0").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
             Assert.That(Object("pause-action-1-0").activeInHierarchy,Is.True);
             yield return Press(1,GamepadButton.DpadDown);yield return Press(1,GamepadButton.DpadDown);
             yield return Press(1,GamepadButton.South);
             Assert.That(Object("pause-repeat-yes-1").activeInHierarchy,Is.True);
-            Assert.That(Object("pause-setting-0-0").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
             Assert.That(ground.Running,Is.False);
+        }
+        [UnityTest] public IEnumerator SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            var shell=Object("settings-screen");
+            var expected=shell.GetComponentsInChildren<Selectable>(true).Select(x=>x.name+":"+x.GetType().Name).OrderBy(x=>x).ToArray();
+            for(int seat=0;seat<2;seat++)
+            {
+                string prefix="seat-settings-"+seat+"-";
+                var view=Object(prefix+"settings-screen");
+                var actual=view.GetComponentsInChildren<Selectable>(true).Select(x=>x.name.Substring(prefix.Length)+":"+x.GetType().Name).OrderBy(x=>x).ToArray();
+                Assert.That(actual,Is.EqualTo(expected),"same complete control set as main menu");
+                foreach(int section in new[]{0,1,2,3})Assert.That(Button(prefix+"settings-section-"+section).interactable,Is.True);
+                Assert.That(Object(prefix+"settings-image").activeInHierarchy,Is.True);
+                Button(prefix+"settings-section-1").onClick.Invoke();Button(prefix+"settings-controls-help").onClick.Invoke();
+                var text=Object(prefix+"keyboard-help").GetComponent<Text>();
+                Assert.That(text.text,Does.Contain("W A S D"));
+                Button(prefix+"settings-help-gamepad").onClick.Invoke();Assert.That(text.text,Does.Contain("Правый триггер"));
+                Assert.That(Object(prefix+"help-viewport").GetComponent<ScrollRect>(),Is.Not.Null);
+            }
+            yield return Press(0,GamepadButton.East);
+            Assert.That(Object("seat-settings-0-settings-control").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-1-settings-help-page").activeInHierarchy,Is.True,"back only changes its own viewport");
+            Assert.That(ground.Running,Is.False);
+        }
+        [UnityTest] public IEnumerator MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            var before=Screen.fullScreenMode;
+            Button("seat-settings-0-settings-display-mode").onClick.Invoke();yield return null;
+            Assert.That(Object("seat-settings-0-display-confirmation").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-1-display-confirmation").activeInHierarchy,Is.False);
+            Assert.That(Button("seat-settings-1-settings-display-mode").interactable,Is.False);
+            Button("seat-settings-1-settings-display-mode").onClick.Invoke();
+            Assert.That(Object("seat-settings-1-display-confirmation").activeInHierarchy,Is.False,"direct callback cannot replace owner");
+            yield return Press(0,GamepadButton.Start);yield return null;
+            Assert.That(Object("seat-settings-0-display-confirmation").activeInHierarchy,Is.False);
+            Assert.That(Screen.fullScreenMode,Is.EqualTo(before));
+            Assert.That(Button("seat-settings-1-settings-display-mode").interactable,Is.True);
+            Assert.That(ground.Running,Is.False,"other menu still holds the pause");
+            Button("seat-settings-1-settings-display-mode").onClick.Invoke();yield return null;
+            Assert.That(Object("seat-settings-1-display-confirmation").activeInHierarchy,Is.True);
+            yield return Press(1,GamepadButton.East);
+            Assert.That(Object("seat-settings-1-display-confirmation").activeInHierarchy,Is.False);
+            Assert.That(Screen.fullScreenMode,Is.EqualTo(before));
         }
         [UnityTest] public IEnumerator DisconnectedSeatCannotResumeThroughTheOtherMenu()
         {

@@ -31,7 +31,7 @@ namespace StarTournament.ProvingGround
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));
             File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(new ReviewState
             {
-                state=name,localSeats=count,running=ground.Running,matchTime=ground.Session.Time,
+                state=name,localSeats=count,width=Screen.width,height=Screen.height,sourceRevision=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_SOURCE_REVISION"),running=ground.Running,matchTime=ground.Session.Time,
                 visibleFps=VisibleFpsCount(),
                 buildLabels=BuildLabels().Length,unityDeveloperWatermark=UnityEngine.Rendering.Watermark.showDeveloperWatermark,
                 openMenus=Enumerable.Range(0,count).Count(i=>Button("pause-action-"+i+"-0").transform.parent.parent.gameObject.activeInHierarchy),
@@ -42,7 +42,8 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class ReviewState
         {
             public string state,classification="SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE";
-            public int localSeats,openMenus,visibleFps,buildLabels;
+            public int localSeats,openMenus,visibleFps,buildLabels,width,height;
+            public string sourceRevision;
             public bool running,focused,muted,unityDeveloperWatermark;
             public double matchTime;
         }
@@ -68,6 +69,13 @@ namespace StarTournament.ProvingGround
             yield return new WaitForSecondsRealtime(1);
             if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in the main menu");
             yield return Capture("00-main-menu");
+            Button("main-action-4").onClick.Invoke();yield return Capture("00-menu-image");
+            Button("settings-section-1").onClick.Invoke();yield return Capture("00-menu-control");
+            Button("settings-controls-help").onClick.Invoke();yield return Capture("00-menu-keyboard-help");
+            Button("settings-help-gamepad").onClick.Invoke();yield return Capture("00-menu-gamepad-help");
+            Button("settings-help-back").onClick.Invoke();Button("settings-section-2").onClick.Invoke();yield return Capture("00-menu-interface");
+            Button("settings-section-3").onClick.Invoke();yield return Capture("00-menu-audio");
+            Button("settings-back").onClick.Invoke();
             Button("main-action-0").onClick.Invoke();
             if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in match setup");
             while(ground.LocalSeatCount>count)Button("seats-minus").onClick.Invoke();
@@ -87,22 +95,40 @@ namespace StarTournament.ProvingGround
             if(ground.Running||Enumerable.Range(0,count).Any(i=>!Button("pause-action-"+i+"-0").gameObject.activeInHierarchy))
                 throw new InvalidOperationException("Independent viewport menus did not open");
             yield return Capture("02-all-open-"+count);
-            if(count==4)
+            if(count==1||count==4)
             {
-                Button("pause-action-0-1").onClick.Invoke();yield return Capture("03-four-seat-settings");
-                Button("pause-setting-0-5").onClick.Invoke();yield return Capture("04-four-seat-help-top");
-                var helpScroll=Button("pause-help-pad-0").transform.parent.GetComponentInChildren<ScrollRect>(true);
-                Canvas.ForceUpdateCanvases();helpScroll.verticalNormalizedPosition=0;yield return Capture("05-four-seat-help-bottom");
-                Button("pause-help-back-0").onClick.Invoke();
+                for(int seat=0;seat<count;seat++)Button("pause-action-"+seat+"-1").onClick.Invoke();
+                yield return Capture("03-match-image-"+count);
+                for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-section-1").onClick.Invoke();
+                yield return Capture("04-match-control-"+count);
+                for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-controls-help").onClick.Invoke();
+                yield return Capture("05-match-keyboard-help-"+count);
+                for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-help-gamepad").onClick.Invoke();
+                yield return Capture("06-match-gamepad-help-"+count);
+                for(int seat=0;seat<count;seat++)
+                {var scroll=Button("seat-settings-"+seat+"-settings-help-back").transform.parent.GetComponentInChildren<ScrollRect>(true);Canvas.ForceUpdateCanvases();scroll.verticalNormalizedPosition=0;}
+                yield return Capture("07-match-help-bottom-"+count);
+                for(int seat=0;seat<count;seat++){Button("seat-settings-"+seat+"-settings-help-back").onClick.Invoke();Button("seat-settings-"+seat+"-settings-controls-devices").onClick.Invoke();}
+                yield return Capture("08-match-devices-"+count);
+                for(int seat=0;seat<count;seat++){Button("seat-settings-"+seat+"-devices-back").onClick.Invoke();Button("seat-settings-"+seat+"-settings-section-2").onClick.Invoke();}
+                yield return Capture("09-match-interface-"+count);
+                for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-section-3").onClick.Invoke();
+                yield return Capture("10-match-audio-"+count);
+                Button("seat-settings-0-settings-section-0").onClick.Invoke();Button("seat-settings-0-settings-resolution").onClick.Invoke();
+                yield return Capture("11-match-resolution-"+count);Button("seat-settings-0-resolution-cancel").onClick.Invoke();
+                Button("seat-settings-0-settings-display-mode").onClick.Invoke();yield return new WaitForSecondsRealtime(.3f);
+                yield return Capture("12-match-display-confirmation-"+count);Button("seat-settings-0-settings-revert").onClick.Invoke();yield return new WaitForSecondsRealtime(.3f);
+                for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-back").onClick.Invoke();
+                yield return Capture("13-match-back-"+count);
             }
             if(count==2)
             {
-                Button("pause-action-0-1").onClick.Invoke();yield return Capture("03-seat-one-settings");
-                ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="pause-setting-0-0").value+=.01f;var fpsToggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="pause-setting-0-4");fpsToggle.isOn=!fpsToggle.isOn;
+                Button("pause-action-0-1").onClick.Invoke();Button("seat-settings-0-settings-section-1").onClick.Invoke();yield return Capture("03-seat-one-settings");
+                ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="seat-settings-0-settings-mouse-sensitivity").value+=.01f;var fpsToggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="seat-settings-0-settings-fps");fpsToggle.isOn=!fpsToggle.isOn;
                 yield return Capture("04-personal-values");
                 Button("pause-action-1-3").onClick.Invoke();yield return Capture("05-exit-confirmation");
                 Button("pause-exit-no-1").onClick.Invoke();
-                Button("pause-setting-0-7").onClick.Invoke();
+                Button("seat-settings-0-settings-back").onClick.Invoke();
                 Button("pause-action-1-2").onClick.Invoke();yield return Capture("06-repeat-confirmation");
                 Button("pause-repeat-yes-1").onClick.Invoke();yield return null;
                 if(!ground.Running)throw new InvalidOperationException("Confirmed repeat did not start a fresh match");
@@ -114,10 +140,18 @@ namespace StarTournament.ProvingGround
                 Button("pause-exit-yes-0").onClick.Invoke();
                 if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS remains visible after exiting a match");
                 yield return Capture("08-return-main-menu");
+                Button("main-action-0").onClick.Invoke();
+                for(int seat=0;seat<ground.LocalSeatCount;seat++)ground.SetSeatAi(seat,true);
+                Button("Начать — четыре игрока").onClick.Invoke();yield return null;
+                if(!ground.Running)throw new InvalidOperationException("All-AI settings review did not start");
+                ground.OpenPauseReviewSeat(0);yield return Capture("14-operator-pause");
+                Button("fallback-settings").onClick.Invoke();yield return Capture("15-operator-settings");
+                Button("settings-section-1").onClick.Invoke();Button("settings-controls-help").onClick.Invoke();yield return Capture("16-operator-help");
+                Button("settings-help-back").onClick.Invoke();Button("settings-back").onClick.Invoke();yield return Capture("17-operator-return-pause");
             }
             File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: muted native Player, "+count+" viewport pause menus; synthetic devices, no physical-controller or human acceptance.");
             Debug.Log("NATIVE_PAUSE_REVIEW_COMPLETE "+count+" "+directory);
-            if(count==4)Application.Quit();
+            Application.Quit();
         }
         void OnDestroy()
         {
