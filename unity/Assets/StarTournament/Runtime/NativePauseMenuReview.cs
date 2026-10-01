@@ -70,6 +70,11 @@ namespace StarTournament.ProvingGround
             if(VisibleFpsCount()!=0)throw new InvalidOperationException("FPS is visible in the main menu");
             yield return Capture("00-main-menu");
             Button("main-action-4").onClick.Invoke();yield return Capture("00-menu-image");
+            var previewPad=InputSystem.AddDevice<Gamepad>();
+            yield return Press(previewPad,GamepadButton.DpadDown);
+            if(!Button("settings-controls-help").gameObject.activeInHierarchy)throw new InvalidOperationException("Section focus did not preview menu parameters without A");
+            yield return Capture("00-menu-auto-control");
+            InputSystem.RemoveDevice(previewPad);
             Button("settings-section-1").onClick.Invoke();yield return Capture("00-menu-control");
             Button("settings-controls-help").onClick.Invoke();yield return Capture("00-menu-keyboard-help");
             Button("settings-help-gamepad").onClick.Invoke();yield return Capture("00-menu-gamepad-help");
@@ -99,6 +104,10 @@ namespace StarTournament.ProvingGround
             {
                 for(int seat=0;seat<count;seat++)Button("pause-action-"+seat+"-1").onClick.Invoke();
                 yield return Capture("03-match-image-"+count);
+                for(int seat=0;seat<count;seat++)yield return Press(pads[seat],GamepadButton.DpadDown);
+                if(Enumerable.Range(0,count).Any(seat=>!Button("seat-settings-"+seat+"-settings-controls-help").gameObject.activeInHierarchy))
+                    throw new InvalidOperationException("Section focus did not preview viewport parameters without A");
+                yield return Capture("04-match-auto-control-"+count);
                 for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-section-1").onClick.Invoke();
                 yield return Capture("04-match-control-"+count);
                 for(int seat=0;seat<count;seat++)Button("seat-settings-"+seat+"-settings-controls-help").onClick.Invoke();

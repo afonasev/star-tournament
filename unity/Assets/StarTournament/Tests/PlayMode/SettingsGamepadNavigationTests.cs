@@ -159,6 +159,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.False);
             Assert.That(Focus,Is.EqualTo("settings-display-mode"));
         }
+        [UnityTest] public IEnumerator SectionFocusShowsParametersWithoutSubmit()
+        {
+            yield return Load();
+            string[] pages={"settings-image","settings-control","settings-interface","settings-audio"};
+            for(int section=1;section<4;section++)
+            {
+                yield return Press(GamepadButton.DpadDown);
+                Assert.That(Focus,Is.EqualTo("settings-section-"+section));
+                for(int page=0;page<4;page++)
+                    Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(x=>x.name==pages[page]).gameObject.activeInHierarchy,Is.EqualTo(page==section));
+            }
+            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-music"));
+            yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-3"));
+            yield return MoveStick(Vector2.up);Assert.That(Focus,Is.EqualTo("settings-section-2"));
+            Assert.That(ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="settings-fps").gameObject.activeInHierarchy,Is.True);
+        }
         [UnityTest] public IEnumerator AudioSettingsPersistAndRemainGamepadNavigable()
         {
             const string musicKey="StarTournament.Audio.MusicPercent",effectsKey="StarTournament.Audio.EffectsPercent";

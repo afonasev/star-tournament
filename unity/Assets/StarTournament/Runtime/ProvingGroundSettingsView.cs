@@ -73,7 +73,7 @@ namespace StarTournament.ProvingGround
             PlayerProfileCatalog playerProfiles=>owner.playerProfiles;
             string IdentityLabel(int seat)=>owner.IdentityLabel(seat);
             void Select(Selectable control)
-            {Selected=control;if(!InMatch)ProvingGround.Select(control);RefreshSettingsFocus();}
+            {Selected=control;for(int i=0;i<settingsSectionButtons.Length;i++)if(control==settingsSectionButtons[i])PreviewSettingsSection((SettingsSection)i);if(!InMatch)ProvingGround.Select(control);RefreshSettingsFocus();}
             public void Navigate(int x,int y,bool submit,bool back)
             {
                 if(back){Back();return;}
@@ -167,6 +167,7 @@ namespace StarTournament.ProvingGround
                     int section=i;
                     float top=.88f-i*.14f;
                     settingsSectionButtons[i]=MenuButton(navigation.transform,"settings-section-"+i,names[i],new Vector2(.06f,top-.10f),new Vector2(.94f,top),()=>SelectSettingsSection((SettingsSection)section));
+                    settingsSectionButtons[i].gameObject.AddComponent<SettingsSectionFocus>().Focused=()=>PreviewSettingsSection((SettingsSection)section);
                 }
                 settingsBackButton=MenuButton(navigation.transform,"settings-back","‹ НАЗАД",new Vector2(.06f,.05f),new Vector2(.94f,.15f),CloseSettings);
                 settingsHeading=Label(content.transform,"settings-heading","НАСТРОЙКИ ИГРЫ",35,new Vector2(.05f,.85f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
@@ -344,9 +345,16 @@ namespace StarTournament.ProvingGround
                 Link(settingsConfirmButton,null,null,null,settingsRevertButton);
                 Link(settingsRevertButton,null,null,settingsConfirmButton);
             }
+            void PreviewSettingsSection(SettingsSection section)
+            {
+                if(displayConfirmationActive||resolutionPickerOpen)return;
+                if(settingsSection==section&&!settingsHelpOpen&&!settingsDevicesOpen)return;
+                settingsHelpOpen=false;settingsDevicesOpen=false;settingsSection=section;
+                RefreshSettingsUi();ConfigureSettingsNavigation();
+            }
             public void SelectSettingsSection(SettingsSection section)
             {
-                settingsHelpOpen=false;settingsDevicesOpen=false;settingsSection=section;RefreshSettingsUi();ConfigureSettingsNavigation();Select(FirstSettingsAction());
+                PreviewSettingsSection(section);Select(FirstSettingsAction());
             }
             public void RefreshSettingsUi()
             {
@@ -465,6 +473,12 @@ namespace StarTournament.ProvingGround
                 BeginDisplayChange(size.x,size.y,EffectiveDisplayMode());
             }
         }
+    }
+    // Shell focus is owned by EventSystem; seat views invoke the same preview directly.
+    sealed class SettingsSectionFocus : MonoBehaviour, ISelectHandler
+    {
+        public Action Focused;
+        public void OnSelect(BaseEventData data)=>Focused?.Invoke();
     }
     // A quarter-page is a UI scrolling increment; it does not tune gameplay.
     sealed class SettingsHelpScrollNavigation : MonoBehaviour, IMoveHandler
