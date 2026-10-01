@@ -1079,11 +1079,6 @@ namespace StarTournament.ProvingGround
             var go=new GameObject(title,typeof(RectTransform),typeof(Image),typeof(Button)); go.transform.SetParent(parent,false);
             go.GetComponent<Image>().color=new Color32(32,75,92,255);
             var button=go.GetComponent<Button>(); button.onClick.AddListener(()=>{if(go.name.Contains("back")||go.name.Contains("cancel")||title.StartsWith("‹"))gameAudio?.MenuBack();else gameAudio?.MenuConfirm();action();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;});
-            var hover=go.AddComponent<EventTrigger>();var enter=new EventTrigger.Entry{eventID=EventTriggerType.PointerEnter};
-            enter.callback.AddListener(_=>{if(!go.name.StartsWith("pause-action-",StringComparison.Ordinal)&&
-                !go.name.StartsWith("pause-setting-",StringComparison.Ordinal)&&!go.name.StartsWith("pause-audio-",StringComparison.Ordinal)&&
-                !go.name.StartsWith("pause-help-",StringComparison.Ordinal)&&!go.name.StartsWith("pause-repeat-",StringComparison.Ordinal)&&
-                !go.name.StartsWith("pause-exit-",StringComparison.Ordinal))gameAudio?.MenuMove();});hover.triggers.Add(enter);
             var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter; return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }

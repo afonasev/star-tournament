@@ -144,7 +144,7 @@ namespace StarTournament.ProvingGround
             button.transition=Selectable.Transition.None;
             var trigger=button.GetComponent<EventTrigger>()??button.gameObject.AddComponent<EventTrigger>();
             var entry=new EventTrigger.Entry { eventID=EventTriggerType.PointerEnter };
-            entry.callback.AddListener(_=>{if(seatPauseCursor[seat]!=index)gameAudio?.MenuMove();seatPauseCursor[seat]=index;RefreshSeatPauseUi();});
+            entry.callback.AddListener(_=>{seatPauseCursor[seat]=index;RefreshSeatPauseUi();});
             trigger.triggers.Add(entry);
             return button;
         }
