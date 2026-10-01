@@ -10,6 +10,21 @@ mode=${UNITY_RUN_MODE:-shared}
 [ "$mode" = shared ] || [ "$mode" = exclusive ] || exit 2
 mkdir -p "$evidence_dir"
 case "${1:-}" in
+  test-edit-filter|test-play-filter)
+    [ "$#" -eq 2 ] && [ -n "$2" ] || { echo "Usage: unity/tools.sh $1 '<testFilter>'" >&2; exit 2; }
+    case "$1" in test-edit-filter) platform=EditMode; stem=editmode ;; test-play-filter) platform=PlayMode; stem=playmode ;; esac
+    focused_dir=$(mktemp -d "$evidence_dir/focused-$stem.XXXXXX")
+    {
+      echo "scope=focused (iteration only; NOT a full delivery gate)"
+      printf 'platform=%s\nfilter=%s\n' "$platform" "$2"
+      printf 'revision=%s\n' "$(git -C "$project_dir" rev-parse HEAD)"
+      git -C "$project_dir" status --short
+    } > "$focused_dir/scope.txt"
+    echo "FOCUSED $platform: $2 — iteration only, NOT a full gate"
+    echo "Evidence: $focused_dir"
+    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform "$platform" -testFilter "$2" -testResults "$focused_dir/$stem.xml" -logFile "$focused_dir/$stem.log"
+    ;;
+
   prepare) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.ProvingGroundBuild.Prepare -logFile "$evidence_dir/prepare.log" ;;
   test-edit) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform EditMode -testResults "$evidence_dir/editmode.xml" -logFile "$evidence_dir/editmode.log" ;;
   test-play) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform PlayMode -testResults "$evidence_dir/playmode.xml" -logFile "$evidence_dir/playmode.log" ;;
@@ -21,5 +36,5 @@ case "${1:-}" in
     executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$player_app/Contents/Info.plist")
     shift
     exec "$runner" "--$mode" -- "$player_app/Contents/MacOS/$executable" "$@" ;;
-  *) echo "Usage: unity/tools.sh prepare|test-edit|test-play|build|editor|run" >&2; exit 2 ;;
+  *) echo "Usage: unity/tools.sh prepare|test-edit|test-play|test-edit-filter FILTER|test-play-filter FILTER|build|editor|run" >&2; exit 2 ;;
 esac

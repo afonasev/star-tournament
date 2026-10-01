@@ -1,0 +1,39 @@
+{
+  "baseline": "11576afa6929d411568bb75bbf57dd3b94fd64ef",
+  "mode": "exclusive diagnostic with temporary instrumentation; timings include instrumentation overhead",
+  "lab_generations": 16,
+  "lab_totals_ms": {
+    "ms": 53596.695,
+    "distanceMs": 20136.453,
+    "registryMs": 6506.603,
+    "transformMs": 5521.619
+  },
+  "lab_detail": [
+    "LAB_DETAIL validateMs=415.957 revisions=2 registryMs=14.423 hashMs=132.547 validationMs=243.056 releaseMs=25.317",
+    "LAB_DETAIL validateMs=457.614 revisions=3 registryMs=18.841 hashMs=174.202 validationMs=254.916 releaseMs=9.638",
+    "LAB_DETAIL validateMs=5580.403 revisions=3 registryMs=4634.194 hashMs=181.902 validationMs=254.870 releaseMs=509.419",
+    "LAB_DETAIL migrationMs=2374.116",
+    "LAB_DETAIL validateMs=1473.865 revisions=7 registryMs=114.493 hashMs=400.581 validationMs=610.717 releaseMs=348.051",
+    "LAB_DETAIL validateMs=836.797 revisions=3 registryMs=41.857 hashMs=172.839 validationMs=265.920 releaseMs=356.170",
+    "LAB_DETAIL validateMs=844.290 revisions=3 registryMs=44.356 hashMs=178.317 validationMs=270.355 releaseMs=351.249",
+    "LAB_DETAIL validateMs=306.694 revisions=2 registryMs=12.070 hashMs=114.463 validationMs=170.082 releaseMs=10.064",
+    "LAB_DETAIL validateMs=457.640 revisions=3 registryMs=18.555 hashMs=173.737 validationMs=255.385 releaseMs=9.941",
+    "LAB_DETAIL validateMs=5180.046 revisions=3 registryMs=4708.549 hashMs=172.391 validationMs=255.149 releaseMs=43.934",
+    "LAB_DETAIL migrationMs=2520.367",
+    "LAB_DETAIL validateMs=1020.168 revisions=6 registryMs=108.923 hashMs=343.466 validationMs=512.369 releaseMs=55.390",
+    "LAB_DETAIL validateMs=1067.129 revisions=6 registryMs=107.933 hashMs=345.914 validationMs=506.539 releaseMs=106.720",
+    "LAB_DETAIL validateMs=308.315 revisions=2 registryMs=12.736 hashMs=115.529 validationMs=170.103 releaseMs=9.930",
+    "LAB_DETAIL validateMs=461.420 revisions=3 registryMs=18.531 hashMs=175.085 validationMs=257.766 releaseMs=10.020",
+    "LAB_DETAIL validateMs=5214.556 revisions=3 registryMs=4739.034 hashMs=180.191 validationMs=252.565 releaseMs=42.748",
+    "LAB_DETAIL migrationMs=2466.660",
+    "LAB_DETAIL validateMs=1041.769 revisions=6 registryMs=133.985 hashMs=343.863 validationMs=511.432 releaseMs=52.470",
+    "LAB_DETAIL validateMs=1020.162 revisions=6 registryMs=107.047 hashMs=359.620 validationMs=510.168 releaseMs=43.303"
+  ],
+  "bot_detail": [
+    "BOT_PROFILE ticks=15000 driverMs=6965.082 sessionMs=15207.430 assertionMs=477.763 observeMs=467.346 perceptionMs=241.318 pickupMs=413.125 plannerMs=5839.601 motorMs=595.098 syncMs=516.157 collectionMs=105.536 bulletMs=8045.494 weaponsMs=3930.858 rocketMs=1827.872 respawnMs=181.755",
+    "BOT_PROFILE ticks=15000 driverMs=6742.525 sessionMs=11001.573 assertionMs=467.996 observeMs=350.403 perceptionMs=274.907 pickupMs=411.882 plannerMs=5702.214 motorMs=611.944 syncMs=463.604 collectionMs=107.470 bulletMs=7426.501 weaponsMs=1552.549 rocketMs=709.710 respawnMs=127.390"
+  ],
+  "resolver_detail": [
+    "RESOLVER_PROFILE zoneCalls=3539250 zoneMs=695.961 resolveCalls=25963 resolveMs=861.637"
+  ]
+}

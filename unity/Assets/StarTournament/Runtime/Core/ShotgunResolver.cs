@@ -21,7 +21,8 @@ namespace StarTournament.ProvingGround
     public sealed class ShotgunResolver
     {
         readonly ProvingProfile profile;
-        readonly float height;
+        readonly float headY,headRadius,torsoY,torsoX,torsoHeight,torsoZ;
+        readonly float armX,armBottom,armTop,armRadius,legX,legBottom,legTop,legRadius;
         public int PelletCount => (int)profile.Get("shot.pellets");
         public float Range => profile.Get("shot.range");
         public int ProjectileCount(WeaponId weapon) => weapon==WeaponId.Rifle?1:PelletCount;
@@ -29,9 +30,15 @@ namespace StarTournament.ProvingGround
         public ShotgunResolver(ProvingProfile profile, float height)
         {
             if (profile.Validate().Count != 0 || profile.Id != "unity-native-combat-v1") throw new ArgumentException("Invalid native combat profile");
-            this.profile = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile)); this.profile.EnsureNativeCombatDescriptors(); this.height = height;
+            this.profile = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile)); this.profile.EnsureNativeCombatDescriptors();
+            // Dimensions come from this resolver's private frozen profile. Resolve never changes
+            // them; calculate the same products once instead of allocating zone keys per target/ray.
+            float Z(string key)=>this.profile.Get("zone."+key)*height;
+            headY=Z("headY");headRadius=Z("headRadius");
+            torsoY=Z("torsoY");torsoX=Z("torsoX");torsoHeight=Z("torsoHeight");torsoZ=Z("torsoZ");
+            armX=Z("armX");armBottom=Z("armBottom");armTop=Z("armTop");armRadius=Z("armRadius");
+            legX=Z("legX");legBottom=Z("legBottom");legTop=Z("legTop");legRadius=Z("legRadius");
         }
-        float Z(string key) => profile.Get("zone." + key) * height;
         public float FullDamage(HitZone zone) => profile.Get("shot.damage");
         public float FullDamage(HitZone zone,WeaponId weapon) => profile.Get(weapon==WeaponId.Rifle?"rifle.damage":"shot.damage");
         public Vector3 Direction(Quaternion aim, int pellet, uint shotSeed)
@@ -66,14 +73,14 @@ namespace StarTournament.ProvingGround
                     // Strict comparison makes world occlusion win exact ties; roster order breaks target ties.
                     if (distance >= 0 && distance < nearest) { nearest = distance; targetIndex = i; selected = zone; }
                 }
-                Consider(Sphere(o, d, Vector3.up * Z("headY"), Z("headRadius")), HitZone.Head);
-                var bounds = new Bounds(Vector3.up * Z("torsoY"), new Vector3(Z("torsoX"), Z("torsoHeight"), Z("torsoZ")) * 2);
+                Consider(Sphere(o, d, Vector3.up * headY, headRadius), HitZone.Head);
+                var bounds = new Bounds(Vector3.up * torsoY, new Vector3(torsoX, torsoHeight, torsoZ) * 2);
                 if(bounds.Contains(o))Consider(0,HitZone.Torso);
                 else if (bounds.IntersectRay(new Ray(o, d), out float torso)) Consider(torso, HitZone.Torso);
                 for (int side = -1; side <= 1; side += 2)
                 {
-                    Consider(Capsule(o, d, side * Z("armX"), Z("armBottom"), Z("armTop"), Z("armRadius")), HitZone.Limb);
-                    Consider(Capsule(o, d, side * Z("legX"), Z("legBottom"), Z("legTop"), Z("legRadius")), HitZone.Limb);
+                    Consider(Capsule(o, d, side * armX, armBottom, armTop, armRadius), HitZone.Limb);
+                    Consider(Capsule(o, d, side * legX, legBottom, legTop, legRadius), HitZone.Limb);
                 }
             }
             return new PelletHit(targetIndex, selected, nearest);

@@ -1,0 +1,12 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots;ShotgunResolverTests
+revision=ded7d5b6aa545633ea0589a69e00cc86feffd8a5
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ShotgunResolver.cs
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs
+ M README.md
+ M tools.sh
+?? ../docs/evidence/speed-up-unity-checks/
+?? ../tools/test_unity_tools.py

@@ -29,6 +29,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath),Is.False);
         }
+        [Test]public void MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();
+            var original=new DesignLabHistory(path,old);original.Create("Immutable");
+            string sourceFile=File.ReadAllText(path),originalHash=original.Selected.Hash;
+            var metadataVariants=new[]{"First trusted label","Second trusted label","Third trusted label","First trusted label"};
+            foreach(string label in metadataVariants)
+            {
+                File.WriteAllText(path,sourceFile);var shipped=Shipped();shipped.Profile("zone.headY").Descriptor("zone.headY").Label=label;
+                var upgraded=new DesignLabHistory(path,shipped);Assert.That(upgraded.StorageError,Is.Null);
+                var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Hash==originalHash);
+                Assert.That(preserved.Snapshot.Profile("zone.headY").Descriptor("zone.headY").Label,Is.EqualTo(label));
+                string immutableJson=JsonUtility.ToJson(preserved.Snapshot);
+                var detached=upgraded.Selected.Snapshot;detached.Set("rifle.damage",99);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);
+                Assert.That(JsonUtility.ToJson(reopened.SelectedProfile.Revisions.Single(r=>r.Hash==originalHash).Snapshot),Is.EqualTo(immutableJson));
+                Assert.That(reopened.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(20));
+            }
+        }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
         [Test]public void TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning()

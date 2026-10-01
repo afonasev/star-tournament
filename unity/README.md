@@ -19,6 +19,19 @@ make unity-run
 build; `make build` выполняет только build. Низкоуровневые эквиваленты остаются
 `unity/tools.sh prepare|test-edit|test-play|build|editor|run`.
 
+Для быстрой итерации можно выбрать fixture, метод или regex Unity Test Framework:
+
+```sh
+unity/tools.sh test-edit-filter 'DesignLabHistoryTests'
+unity/tools.sh test-play-filter 'NativeBotBehaviorTests.NaturalDefaultEight'
+```
+
+Аргумент обязателен; несколько фильтров разделяются `;` внутри одного quoted
+аргумента. Каждый запуск создаёт собственный `.local/unity-evidence/focused-<platform>.*`
+с XML, log и `scope.txt` (filter, revision и dirty state). Это только focused check:
+перед интеграцией обязателен полный `make check`. Проверяйте число реально
+выполненных тестов в XML: фильтр без совпадений ничего не проверяет.
+
 Не запускайте два Unity-процесса для одного проекта одновременно. `UNITY_EDITOR` переопределяет путь редактора. Логи/XML сохраняются в `.local/unity-evidence/`; Mac Player — `unity/Builds/StarTournamentProvingGround.app`. Сборка Development, не production installer и не notarized release. Deploy/distribution command отсутствует намеренно.
 
 Для обычного запуска выберите 1–4 места кнопками «Экранов − / Экраны +», выберите «Человек» или «AI» и назначьте устройство только человеку: `Space` присоединяет единственную keyboard/mouse пару, `Start` — конкретный gamepad. Поддержаны уникальные gamepads либо одна keyboard/mouse пара с остальными gamepads. AI-места не требуют устройств, включая состав целиком из AI. Escape и Start доступны оператору для паузы даже без назначения игрового устройства. После заполнения human slots кнопка старта получает UI focus. WASD/LS — движение, мышь/RS — взгляд, Space/A — прыжок, mouse button/RT — выстрел, Tab/View — список, Esc/Start — общая пауза. LB свободен. Disconnect/focus loss останавливает gameplay; reconnect не запускает игру автоматически. Поменять назначение можно через setup.

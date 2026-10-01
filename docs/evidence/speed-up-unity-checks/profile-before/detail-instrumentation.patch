@@ -1,0 +1,307 @@
+diff --git a/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs b/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+index c261715..19b9fdc 100644
+--- a/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
++++ b/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+@@ -117,6 +117,7 @@ namespace StarTournament.ProvingGround
+     public sealed class DesignLabHistory
+     {
+         public const string ReleaseId="unity-shipped-release";
++        [Serializable] sealed class LabFingerprint { public LabBundle[] Bundles; }
+         static readonly object historicalLock=new object();
+         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
+         readonly string path; readonly LabBundle shipped; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
+@@ -144,19 +145,23 @@ namespace StarTournament.ProvingGround
+         // a saved revision actually needs one, then share the exact immutable registry set.
+         LabBundle[] HistoricalPredecessors(LabBundle sought)
+         {
++            var profileWatch=System.Diagnostics.Stopwatch.StartNew();
++            long distanceTicks=0, registryTicks=0, transformTicks=0;int distanceCalls=0,registryCalls=0,transformCalls=0;
++            void Stamp(string phase)=>Debug.Log($"LAB_PROFILE phase={phase} ms={profileWatch.Elapsed.TotalMilliseconds:F3} candidates={predecessors?.Length??0} distanceMs={distanceTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} distanceCalls={distanceCalls} registryMs={registryTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} registryCalls={registryCalls} transformMs={transformTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} transformCalls={transformCalls}");
+             // Hash covers gameplay values; metadata is also trusted during migration.
+             string key=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)+"|"+
+                 string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
+                 string.Join("|",sought.Descriptors.Select(d=>d.Path));
+             lock(historicalLock)
+             {
+-                if(historicalCache.TryGetValue(key,out var cached))return cached;
++                if(historicalCache.TryGetValue(key,out var cached)){Stamp("cache-hit");return cached;}
+                 var beforePalette=new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
+                 var medium=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
+                 var mediumBeforePalette=new LabBundle{Profiles=medium.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};
+                 var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
+                 var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
+                 predecessors=new[]{this.shipped,beforePalette,medium,mediumBeforePalette,new LabBundle{Profiles=mediumBeforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=mediumBeforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
++                Stamp("stage-1");
+                 // Accept exact prior registries across additive palette and weapon-pickup schema upgrades.
+                 LabBundle WithoutPickups(LabBundle b)=>new LabBundle{Profiles=b.Profiles.Select(p=>p.Id=="unity-combat-state-v1"||p.Id=="combat-bowl-ring-r7-authoring-v1"?p.BeforeWeaponPickups():p).ToList()};
+                 LabBundle WithPalette(LabBundle b)
+@@ -175,7 +180,7 @@ namespace StarTournament.ProvingGround
+                     return previous;
+                 }
+                 var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
+-                string RegistryKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path));
++                string RegistryKey(LabBundle b){long t=System.Diagnostics.Stopwatch.GetTimestamp();var result=string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path));registryCalls++;registryTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-t;return result;}
+                 LabBundle[] DistinctRegistries(IEnumerable<LabBundle> bundles)=>bundles.GroupBy(RegistryKey).Select(g=>g.First()).ToArray();
+                 // Historical combinations share immutable profiles. Memoize each pure schema transform
+                 // within this migration so equivalent branches do not repeat native JSON serialization.
+@@ -183,10 +188,11 @@ namespace StarTournament.ProvingGround
+                 var targetIds=new HashSet<string>(sought.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
+                 int SchemaDistance(LabBundle bundle)
+                 {
++                    long t=System.Diagnostics.Stopwatch.GetTimestamp();
+                     var paths=new HashSet<string>(bundle.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);
+                     var ids=new HashSet<string>(bundle.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
+                     paths.SymmetricExceptWith(targetPaths);ids.SymmetricExceptWith(targetIds);
+-                    return paths.Count+ids.Count;
++                    distanceCalls++;distanceTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-t;return paths.Count+ids.Count;
+                 }
+                 IEnumerable<LabBundle> Closest(params LabBundle[] alternatives)
+                 {
+@@ -197,7 +203,7 @@ namespace StarTournament.ProvingGround
+                 Func<ProvingProfile,ProvingProfile> Cached(Func<ProvingProfile,ProvingProfile> transform)
+                 {
+                     var cache=new Dictionary<ProvingProfile,ProvingProfile>();
+-                    return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
++                    return profile=>{if(!cache.TryGetValue(profile,out var previous)){long t=System.Diagnostics.Stopwatch.GetTimestamp();previous=transform(profile);transformCalls++;transformTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-t;cache.Add(profile,previous);}return previous;};
+                 }
+                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
+                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
+@@ -208,23 +214,41 @@ namespace StarTournament.ProvingGround
+                 // Collapse exact duplicate registries after each additive branch. Delaying this to
+                 // the end serializes the same historical profile thousands of times on Lab open.
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
++                Stamp("stage-2");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
++                Stamp("stage-3");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutFootstepMix))));
++                Stamp("stage-4");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,WithoutVignette))));
++                Stamp("stage-5");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutOrigins))));
++                Stamp("stage-6");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCutterDamage))));
++                Stamp("stage-7");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutScoreboard))));
++                Stamp("stage-8");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadLook))));
++                Stamp("stage-9");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p))));
++                Stamp("stage-10");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()})));
++                Stamp("stage-11");
+                 // Preserve old immutable Lab hashes when the presentation-only audio descriptors
+                 // are added to the default profile; every earlier registry remains a valid source.
+                 var withoutAudio=Cached(p=>p.BeforeAudio());
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutAudio))));
++                Stamp("stage-12");
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutUnifiedDamage))));
++                Stamp("stage-13");
+                 var beforeTravelingRifle=Cached(p=>p.BeforeTravelingRifle());
+                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeTravelingRifle))));
++                Stamp("stage-14");
+                 if(historicalCache.Count>=2)historicalCache.Clear();
++                using(var digest=System.Security.Cryptography.SHA256.Create())
++                {
++                    string Fingerprint(string text)=>BitConverter.ToString(digest.ComputeHash(System.Text.Encoding.UTF8.GetBytes(text))).Replace("-","");
++                    Debug.Log($"LAB_FINGERPRINT key={Fingerprint(key)} json={Fingerprint(JsonUtility.ToJson(new LabFingerprint{Bundles=predecessors}))}");
++                }
+                 historicalCache.Add(key,predecessors);
+                 return predecessors;
+             }
+@@ -234,6 +258,7 @@ namespace StarTournament.ProvingGround
+         static LabRevision Revision(LabBundle bundle,int number,string date)=>new LabRevision{Number=number,Date=date,Hash=bundle.Hash(),Snapshot=bundle.Clone()};
+         void ValidateFile(LabHistoryFile file)
+         {
++            var detailWatch=System.Diagnostics.Stopwatch.StartNew();double registryMs=0,hashMs=0,validationMs=0;int revisions=0;
+             if(file==null||file.Schema!=1||file.Profiles==null||file.Profiles.Count==0)throw new InvalidDataException("Неподдерживаемая схема");
+ 
+             if(file.Profiles.Select(p=>p.Id).Distinct().Count()!=file.Profiles.Count)throw new InvalidDataException("Повтор ID");
+@@ -243,18 +268,20 @@ namespace StarTournament.ProvingGround
+                 if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
+                 foreach(var r in p.Revisions)
+                 {
+-                    var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
+-                    var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
++                    double section=detailWatch.Elapsed.TotalMilliseconds;var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
++                    registryMs+=detailWatch.Elapsed.TotalMilliseconds-section;section=detailWatch.Elapsed.TotalMilliseconds;var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
+                     if(r.Number<1||r.Snapshot==null||!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
++                    hashMs+=detailWatch.Elapsed.TotalMilliseconds-section;section=detailWatch.Elapsed.TotalMilliseconds;
+                     // Metadata is trusted only from the shipped registry, never from the file.
+                     var trusted=registry.Clone();foreach(var d in trusted.Descriptors)trusted.Set(d.Path,r.Snapshot.Get(d.Path));
+                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
+-                    if(trusted.Validate().Count!=0)throw new InvalidDataException("Невалидный снимок");r.Snapshot=trusted;
++                    if(trusted.Validate().Count!=0)throw new InvalidDataException("Невалидный снимок");r.Snapshot=trusted;revisions++;validationMs+=detailWatch.Elapsed.TotalMilliseconds-section;
+                 }
+             }
+-            var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
++            double releaseStart=detailWatch.Elapsed.TotalMilliseconds;var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
+             if(release.Hash!=shipped.Hash()&&!HistoricalPredecessors(release.Snapshot).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
+             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
++            Debug.Log($"LAB_DETAIL validateMs={detailWatch.Elapsed.TotalMilliseconds:F3} revisions={revisions} registryMs={registryMs:F3} hashMs={hashMs:F3} validationMs={validationMs:F3} releaseMs={detailWatch.Elapsed.TotalMilliseconds-releaseStart:F3}");
+         }
+         static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version))
+             && registry.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(bundle.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal));
+@@ -262,7 +289,7 @@ namespace StarTournament.ProvingGround
+         public bool Compatible(LabRevision revision)=>Current(revision.Snapshot);
+         void MigrateCompatibility(LabHistoryFile file)
+         {
+-            bool selectedRelease=file.SelectedId==ReleaseId;
++            var migrationWatch=System.Diagnostics.Stopwatch.StartNew();bool selectedRelease=file.SelectedId==ReleaseId;
+             // Append current-schema counterparts; keep every old revision number, value and hash intact.
+             foreach(var p in file.Profiles)
+                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
+@@ -293,7 +320,7 @@ namespace StarTournament.ProvingGround
+             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
+             var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash());
+             if(latest==null){latest=Revision(shipped,release.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));release.Revisions.Add(latest);}
+-            if(selectedRelease)file.SelectedRevision=latest.Number;
++            if(selectedRelease)file.SelectedRevision=latest.Number;Debug.Log($"LAB_DETAIL migrationMs={migrationWatch.Elapsed.TotalMilliseconds:F3}");
+         }
+         void Commit(Action<LabHistoryFile> mutation)
+         {
+diff --git a/unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs b/unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs
+index 0150a15..62e8ce8 100644
+--- a/unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs
++++ b/unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs
+@@ -31,7 +31,8 @@ namespace StarTournament.ProvingGround
+             if (profile.Validate().Count != 0 || profile.Id != "unity-native-combat-v1") throw new ArgumentException("Invalid native combat profile");
+             this.profile = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile)); this.profile.EnsureNativeCombatDescriptors(); this.height = height;
+         }
+-        float Z(string key) => profile.Get("zone." + key) * height;
++        public static long ZoneTicks,ZoneCalls,ResolveTicks,ResolveCalls;
++        float Z(string key){long t=System.Diagnostics.Stopwatch.GetTimestamp();float value=profile.Get("zone."+key)*height;ZoneTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-t;ZoneCalls++;return value;}
+         public float FullDamage(HitZone zone) => profile.Get("shot.damage");
+         public float FullDamage(HitZone zone,WeaponId weapon) => profile.Get(weapon==WeaponId.Rifle?"rifle.damage":"shot.damage");
+         public Vector3 Direction(Quaternion aim, int pellet, uint shotSeed)
+@@ -54,7 +55,7 @@ namespace StarTournament.ProvingGround
+         /// <summary>Swept point bullet against current authoritative zones; no distance cutoff.</summary>
+         public PelletHit ResolveSegment(Vector3 origin,Vector3 direction,CombatTarget[] targets,int shooter,int shooterLife,float limit)
+         {
+-            float nearest = limit;
++            long started=System.Diagnostics.Stopwatch.GetTimestamp();float nearest = limit;
+             int targetIndex = -1; HitZone selected = default;
+             for (int i = 0; i < targets.Length; i++)
+             {
+@@ -76,7 +77,7 @@ namespace StarTournament.ProvingGround
+                     Consider(Capsule(o, d, side * Z("legX"), Z("legBottom"), Z("legTop"), Z("legRadius")), HitZone.Limb);
+                 }
+             }
+-            return new PelletHit(targetIndex, selected, nearest);
++            ResolveTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-started;ResolveCalls++;return new PelletHit(targetIndex, selected, nearest);
+         }
+         static float Sphere(Vector3 o, Vector3 d, Vector3 center, float radius)
+         {
+diff --git a/unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs b/unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs
+index bf69e54..d05e2ae 100644
+--- a/unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs
++++ b/unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs
+@@ -20,6 +20,8 @@ namespace StarTournament.ProvingGround
+         public int Ticks {get;private set;}
+         public double LastMilliseconds {get;private set;}
+         public int LastQueries {get;private set;}
++        public long ObserveTicks,PerceptionTicks,PickupTicks,PlannerTicks;
++        public string ProfileSummary=>$"observeMs={ObserveTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} perceptionMs={PerceptionTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} pickupMs={PickupTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} plannerMs={PlannerTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3}";
+         public NativeBotPlanner Planner(int participant)=>planners[participant];
+         public NativeBotMatchDriver(NativeCombatSession session,NativeMatchComposition composition,ProvingArena arena,PhysicsScene physics,
+             ProvingProfile movement,ProvingProfile life,ProvingProfile combat,ProvingProfile perception,ProvingProfile navigation,ProvingProfile behavior,uint seed)
+@@ -66,10 +68,10 @@ namespace StarTournament.ProvingGround
+         {
+             if(actions==null||actions.Length!=planners.Length)throw new ArgumentException("Invalid action roster");
+             long start=System.Diagnostics.Stopwatch.GetTimestamp();
+-            var frames=observations.Observe(Perception);
++            var frames=observations.Observe(Perception);ObserveTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-start;long section=System.Diagnostics.Stopwatch.GetTimestamp();
+             // Humans do not become artificial bot-FOV sensors for team reports.
+             for(int i=0;i<frames.Length;i++)if(planners[i]==null)frames[i].Direct=Array.Empty<NativeBotSighting>();
+-            Perception.Sample(session.Time,frames);Pickups.Sample(session.Time,frames,ReadPickupCatalogue());LastQueries=0;
++            Perception.Sample(session.Time,frames);PerceptionTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();Pickups.Sample(session.Time,frames,ReadPickupCatalogue());PickupTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();LastQueries=0;
+             var pickupIntents=planners.Select(p=>p?.PickupId).ToArray();
+             for(int p=0;p<planners.Length;p++)if(planners[p]!=null)
+             {
+@@ -79,7 +81,7 @@ namespace StarTournament.ProvingGround
+                 actions[p]=planners[p].Tick(session.Time,seconds,new NativeBotFrame{Pose=session.Pose(p),Life=session.Life(p),Knowledge=Perception.Read(p),Allies=allies,Pickups=Pickups.Read(p),SpeedRemaining=session.SpeedBoostRemaining(p),DamageRemaining=session.DamageBoostRemaining(p)});
+                 LastQueries+=tactics[p].Queries;
+             }
+-            Ticks++;LastMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-start)*1000.0/System.Diagnostics.Stopwatch.Frequency;
++            PlannerTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;Ticks++;LastMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-start)*1000.0/System.Diagnostics.Stopwatch.Frequency;
+         }
+     }
+     public sealed class NativeBotTactics : INativeBotTactics, INativeRocketTactics, INativeRocketSurfaceTactics
+diff --git a/unity/Assets/StarTournament/Runtime/NativeCombatSession.cs b/unity/Assets/StarTournament/Runtime/NativeCombatSession.cs
+index 6e7cb2e..c7c565f 100644
+--- a/unity/Assets/StarTournament/Runtime/NativeCombatSession.cs
++++ b/unity/Assets/StarTournament/Runtime/NativeCombatSession.cs
+@@ -219,11 +219,13 @@ namespace StarTournament.ProvingGround
+         {
+             for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); beams[i].Stop(); releaseRequired[i] = true; }
+         }
++        public long MotorTicks,SyncTicks,CollectionTicks,BulletTicks,WeaponsTicks,RocketTicks,RespawnTicks;
++        public string ProfileSummary=>$"motorMs={MotorTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} syncMs={SyncTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} collectionMs={CollectionTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} bulletMs={BulletTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} weaponsMs={WeaponsTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} rocketMs={RocketTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3} respawnMs={RespawnTicks*1000.0/System.Diagnostics.Stopwatch.Frequency:F3}";
+         public void Tick(LocalAction[] actions, float seconds)
+         {
+             if (actions.Length != motors.Length || seconds <= 0 || (float.IsNaN(seconds) || float.IsInfinity(seconds))) throw new ArgumentException("Invalid tick");
+             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return;
+-            Match?.BeginTick();
++            long section=System.Diagnostics.Stopwatch.GetTimestamp();Match?.BeginTick();
+             Time += seconds;
+             foreach(var item in weaponPickups)item.Advance(seconds);
+             foreach(var item in healPickups)item.Advance(seconds);
+@@ -236,7 +238,7 @@ namespace StarTournament.ProvingGround
+                 speedRemaining[i]=Math.Max(0,speedRemaining[i]-seconds); motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);
+                 if (!Life(i).Dead) motors[i].Tick(actions[i], seconds);
+             }
+-            Physics.SyncTransforms();
++            MotorTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();Physics.SyncTransforms();SyncTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();
+             for(int i=0;i<lives.Length;i++)
+             {
+                 foreach(var item in weaponPickups)
+@@ -260,7 +262,7 @@ namespace StarTournament.ProvingGround
+                 }
+ 
+             }
+-            AdvanceRifleBullets(seconds);
++            CollectionTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();AdvanceRifleBullets(seconds);BulletTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();
+             var targets=LiveTargets();
+             var shots=new List<(int shooter, int life, ShotNotice notice, float[] damage)>();
+             for (int i = 0; i < lives.Length; i++)
+@@ -300,7 +302,7 @@ namespace StarTournament.ProvingGround
+                 ShotResolved?.Invoke(shot.notice);
+                 Fired?.Invoke(shot.shooter,applied);
+             }
+-            AdvanceRockets(seconds);
++            WeaponsTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();AdvanceRockets(seconds);RocketTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;section=System.Diagnostics.Stopwatch.GetTimestamp();
+             Match?.EndTick();
+             if(Match?.Phase==NativeMatchPhase.Finished) return;
+             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
+@@ -316,6 +318,7 @@ namespace StarTournament.ProvingGround
+                     Respawned?.Invoke(i);
+                 }
+             }
++            RespawnTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-section;
+         }
+         void LaunchRifleBullet(int shooter)
+         {
+diff --git a/unity/Assets/StarTournament/Tests/PlayMode/NativeBotBehaviorTests.cs b/unity/Assets/StarTournament/Tests/PlayMode/NativeBotBehaviorTests.cs
+index 319f8f8..a3606bf 100644
+--- a/unity/Assets/StarTournament/Tests/PlayMode/NativeBotBehaviorTests.cs
++++ b/unity/Assets/StarTournament/Tests/PlayMode/NativeBotBehaviorTests.cs
+@@ -69,15 +69,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
+         }
+         IEnumerator NaturalTerminalSmoke(bool teams)
+         {
+-            yield return Load(BotsAndHuman(teams),teams?157u:151u);var stats=new Stats();var session=ground.Session;var driver=ground.BotDriver;float dt=1f/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[session.ParticipantCount];
++            ShotgunResolver.ZoneTicks=ShotgunResolver.ZoneCalls=ShotgunResolver.ResolveTicks=ShotgunResolver.ResolveCalls=0;yield return Load(BotsAndHuman(teams),teams?157u:151u);var stats=new Stats();var session=ground.Session;var driver=ground.BotDriver;float dt=1f/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[session.ParticipantCount];
+             session.Fired+=(p,d)=>{stats.Shots++;if(d>0)stats.Damaged++;};session.RifleBulletHit+=e=>{if(e.AppliedDamage>0)stats.Damaged++;};session.Died+=_=>stats.Deaths++;session.Respawned+=_=>stats.Respawns++;
+-            var watch=Stopwatch.StartNew();int ticks=0;while(session.Time<600&&session.Match.Phase!=NativeMatchPhase.Finished)
++            long driverTicks=0,sessionTicks=0,assertTicks=0;var watch=Stopwatch.StartNew();int ticks=0;while(session.Time<600&&session.Match.Phase!=NativeMatchPhase.Finished)
+             {
+-                Array.Clear(actions,0,actions.Length);driver.ProduceActions(actions,dt);stats.MaxDriverMilliseconds=Math.Max(stats.MaxDriverMilliseconds,driver.LastMilliseconds);stats.MaxQueries=Math.Max(stats.MaxQueries,driver.LastQueries);session.Tick(actions,dt);ticks++;
++                long section=Stopwatch.GetTimestamp();Array.Clear(actions,0,actions.Length);driver.ProduceActions(actions,dt);driverTicks+=Stopwatch.GetTimestamp()-section;section=Stopwatch.GetTimestamp();stats.MaxDriverMilliseconds=Math.Max(stats.MaxDriverMilliseconds,driver.LastMilliseconds);stats.MaxQueries=Math.Max(stats.MaxQueries,driver.LastQueries);session.Tick(actions,dt);ticks++;sessionTicks+=Stopwatch.GetTimestamp()-section;section=Stopwatch.GetTimestamp();
+                 for(int participant=0;participant<session.ParticipantCount;participant++)Assert.That(session.Pose(participant).Position.y,Is.GreaterThan(-2),$"Participant {participant} fell through authored support at tick {ticks}: {session.Pose(participant).Position}");
+-                if(ticks%500==0)yield return null;
++                assertTicks+=Stopwatch.GetTimestamp()-section;if(ticks%500==0)yield return null;
+             }
+-            watch.Stop();var bounds=ground.GetComponentInChildren<ProvingArena>().Definition.Solids;float w=bounds.Max(x=>Mathf.Abs(x.Position.x)+x.Size.x/2)*2,d=bounds.Max(x=>Mathf.Abs(x.Position.z)+x.Size.z/2)*2,h=bounds.Max(x=>x.Position.y+x.Size.y/2);
++            UnityEngine.Debug.Log($"BOT_PROFILE ticks={ticks} driverMs={driverTicks*1000.0/Stopwatch.Frequency:F3} sessionMs={sessionTicks*1000.0/Stopwatch.Frequency:F3} assertionMs={assertTicks*1000.0/Stopwatch.Frequency:F3} {driver.ProfileSummary} {session.ProfileSummary}");UnityEngine.Debug.Log($"RESOLVER_PROFILE zoneCalls={ShotgunResolver.ZoneCalls} zoneMs={ShotgunResolver.ZoneTicks*1000.0/Stopwatch.Frequency:F3} resolveCalls={ShotgunResolver.ResolveCalls} resolveMs={ShotgunResolver.ResolveTicks*1000.0/Stopwatch.Frequency:F3}");watch.Stop();var bounds=ground.GetComponentInChildren<ProvingArena>().Definition.Solids;float w=bounds.Max(x=>Mathf.Abs(x.Position.x)+x.Size.x/2)*2,d=bounds.Max(x=>Mathf.Abs(x.Position.z)+x.Size.z/2)*2,h=bounds.Max(x=>x.Position.y+x.Size.y/2);
+             for(int p=0;p<session.ParticipantCount;p++){var pose=session.Pose(p).Position;Assert.That(float.IsNaN(pose.x)||float.IsNaN(pose.y)||float.IsNaN(pose.z),Is.False);Assert.That(Mathf.Abs(pose.x),Is.LessThanOrEqualTo(w/2+1));Assert.That(Mathf.Abs(pose.z),Is.LessThanOrEqualTo(d/2+1));Assert.That(pose.y,Is.InRange(-1.3f,h+1));}
+             UnityEngine.Debug.Log($"BOT_NATURAL_SMOKE mode={session.Match.Roster.Mode} sim={session.Time:F2} wallMs={watch.Elapsed.TotalMilliseconds:F2} shots={stats.Shots} damage={stats.Damaged} deaths={stats.Deaths} respawns={stats.Respawns} maxDriverMs={stats.MaxDriverMilliseconds:F3} maxQueries={stats.MaxQueries}");
+             Assert.That(session.Match.Phase,Is.EqualTo(NativeMatchPhase.Finished));Assert.That(stats.Damaged,Is.GreaterThan(0));Assert.That(stats.Deaths,Is.GreaterThan(0));Assert.That(stats.Respawns,Is.GreaterThan(0));

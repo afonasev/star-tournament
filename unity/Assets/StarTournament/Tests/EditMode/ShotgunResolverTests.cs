@@ -5,6 +5,23 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class ShotgunResolverTests
     {
+        [TestCase(1.2f)][TestCase(1.8f)][TestCase(2.4f)]
+        public void TunedZoneDimensionsStayFrozenAndKeepExactBoundaryAndTieRules(float height)
+        {
+            var profile=ProvingProfile.CreateNativeCombatDefault();profile.Set("zone.headY",.8f);profile.Set("zone.headRadius",.2f);
+            var resolver=new ShotgunResolver(profile,height);
+            var targets=new[]{new CombatTarget(1,1,new ParticipantState{Position=Vector3.forward*4}),new CombatTarget(2,1,new ParticipantState{Position=Vector3.forward*4})};
+            var origin=Vector3.up*(.8f*height);
+            var hit=resolver.ResolveSegment(origin,Vector3.forward,targets,0,1,10);
+            Assert.That(hit.TargetIndex,Is.EqualTo(0));Assert.That(hit.Zone,Is.EqualTo(HitZone.Head));
+            Assert.That(hit.Distance,Is.EqualTo(4-.2f*height).Within(.00001f));
+            Assert.That(resolver.ResolveSegment(origin,Vector3.forward,targets,0,1,hit.Distance).TargetIndex,Is.EqualTo(-1),"World wins the exact distance tie");
+            profile.Set("zone.headY",1.1f);profile.Set("zone.headRadius",.01f);
+            var frozen=resolver.ResolveSegment(origin,Vector3.forward,targets,0,1,10);
+            Assert.That(frozen.TargetIndex,Is.EqualTo(hit.TargetIndex));Assert.That(frozen.Zone,Is.EqualTo(hit.Zone));Assert.That(frozen.Distance,Is.EqualTo(hit.Distance));
+            Assert.That(resolver.ResolveSegment(origin,Vector3.forward,targets,1,1,10).TargetIndex,Is.EqualTo(1));
+            Assert.That(resolver.ResolveSegment(origin,Vector3.forward,targets,1,2,10).TargetIndex,Is.EqualTo(0),"A different owner life can hit the respawned body");
+        }
         [Test]public void TravelingSegmentHitsFromInsideLimbAndHasNoLegacyRangeClamp()
         {
             var p=ProvingProfile.CreateNativeCombatDefault();var resolver=new ShotgunResolver(p,1.8f);

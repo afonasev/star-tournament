@@ -119,7 +119,7 @@ namespace StarTournament.ProvingGround
         public const string ReleaseId="unity-shipped-release";
         static readonly object historicalLock=new object();
         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
-        readonly string path; readonly LabBundle shipped; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
+        readonly string path; readonly LabBundle shipped; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
         public IReadOnlyList<LabHistoryProfile> Profiles=>JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data)).Profiles;
@@ -145,7 +145,7 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
             // Hash covers gameplay values; metadata is also trusted during migration.
-            string key=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)+"|"+
+            string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
                 string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
                 string.Join("|",sought.Descriptors.Select(d=>d.Path));
             lock(historicalLock)
@@ -158,7 +158,15 @@ namespace StarTournament.ProvingGround
                 var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
                 predecessors=new[]{this.shipped,beforePalette,medium,mediumBeforePalette,new LabBundle{Profiles=mediumBeforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=mediumBeforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
                 // Accept exact prior registries across additive palette and weapon-pickup schema upgrades.
-                LabBundle WithoutPickups(LabBundle b)=>new LabBundle{Profiles=b.Profiles.Select(p=>p.Id=="unity-combat-state-v1"||p.Id=="combat-bowl-ring-r7-authoring-v1"?p.BeforeWeaponPickups():p).ToList()};
+                var pickupPredecessors=new Dictionary<ProvingProfile,ProvingProfile>();
+                ProvingProfile WithoutPickupProfile(ProvingProfile profile)
+                {
+                    if(profile.Id!="unity-combat-state-v1"&&profile.Id!="combat-bowl-ring-r7-authoring-v1")return profile;
+                    if(!pickupPredecessors.TryGetValue(profile,out var previous))
+                    {previous=profile.BeforeWeaponPickups();pickupPredecessors.Add(profile,previous);}
+                    return previous;
+                }
+                LabBundle WithoutPickups(LabBundle b)=>new LabBundle{Profiles=b.Profiles.Select(WithoutPickupProfile).ToList()};
                 LabBundle WithPalette(LabBundle b)
                 {
                     var copy=new LabBundle{Profiles=b.Profiles.ToList()};if(this.shipped.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId)&&!copy.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId))
@@ -175,19 +183,36 @@ namespace StarTournament.ProvingGround
                     return previous;
                 }
                 var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
-                string RegistryKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path));
+                // These profiles are immutable trusted candidates, not the file's mutable metadata.
+                // Reuse their schema fragments across branches, preserving the exact flattened key.
+                var profilePaths=new Dictionary<ProvingProfile,string>();
+                string ProfilePaths(ProvingProfile profile)
+                {
+                    if(!profilePaths.TryGetValue(profile,out var paths))
+                    {paths=string.Join("|",profile.Descriptors.Select(d=>d.Path));profilePaths.Add(profile,paths);}
+                    return paths;
+                }
+                string RegistryKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
+                    string.Join("|",b.Profiles.Select(ProfilePaths).Where(paths=>paths.Length!=0));
                 LabBundle[] DistinctRegistries(IEnumerable<LabBundle> bundles)=>bundles.GroupBy(RegistryKey).Select(g=>g.First()).ToArray();
                 // Historical combinations share immutable profiles. Memoize each pure schema transform
                 // within this migration so equivalent branches do not repeat native JSON serialization.
                 var targetPaths=new HashSet<string>(sought.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);
                 var targetIds=new HashSet<string>(sought.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
-                int SchemaDistance(LabBundle bundle)
+                var profileDistances=new Dictionary<ProvingProfile,int>();
+                int ProfileDistance(ProvingProfile profile)
                 {
-                    var paths=new HashSet<string>(bundle.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);
-                    var ids=new HashSet<string>(bundle.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
-                    paths.SymmetricExceptWith(targetPaths);ids.SymmetricExceptWith(targetIds);
-                    return paths.Count+ids.Count;
+                    if(!profileDistances.TryGetValue(profile,out int distance))
+                    {
+                        // Trusted registries have disjoint unique paths and IDs. Symmetric difference
+                        // is |target| + sum(|profile| - 2 * intersection); only target depends on the file.
+                        distance=profile.Descriptors.Sum(d=>targetPaths.Contains(d.Path)?-1:1)+
+                            (targetIds.Contains(profile.Id)?-1:1);
+                        profileDistances.Add(profile,distance);
+                    }
+                    return distance;
                 }
+                int SchemaDistance(LabBundle bundle)=>targetPaths.Count+targetIds.Count+bundle.Profiles.Sum(ProfileDistance);
                 IEnumerable<LabBundle> Closest(params LabBundle[] alternatives)
                 {
                     var distances=alternatives.Select(SchemaDistance).ToArray();int minimum=distances.Min();
@@ -263,35 +288,40 @@ namespace StarTournament.ProvingGround
         void MigrateCompatibility(LabHistoryFile file)
         {
             bool selectedRelease=file.SelectedId==ReleaseId;
+            // Registry metadata is frozen for this migration. Index once instead of scanning the
+            // whole (including authored-map) registry for every value in every old revision.
+            var currentDescriptors=shipped.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal);
+            string shippedHash=shipped.Hash();
             // Append current-schema counterparts; keep every old revision number, value and hash intact.
             foreach(var p in file.Profiles)
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
-                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))
+                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(currentDescriptors.TryGetValue(d.Path,out var currentDescriptor))
                     {
-                        float value=ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path));
+                        float value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,old.Snapshot.Get(d.Path));
                         // Interpret the untouched v9/v10 step interval as the new shipped default.
                         // Historical snapshots remain byte-for-byte intact with their original hash.
                         if(d.Path=="audio.footstepDistanceMeters"&&old.Snapshot.Profile(d.Path).Version>=9&&old.Snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
-                            value=next.Profile(d.Path).Descriptor(d.Path).DefaultValue;
+                            value=currentDescriptor.DefaultValue;
                         next.Set(d.Path,value);
                     }
                     foreach(var weapon in new[]{"rifle","shot"})
-                        if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&next.Descriptors.Any(d=>d.Path==weapon+".damage"))
+                        if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&currentDescriptors.ContainsKey(weapon+".damage"))
                             next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));
                     if(!old.Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath)
                         &&old.Snapshot.Descriptors.Any(d=>d.Path=="input.gamepadDegreesPerSecond")
-                        &&next.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath))
+                        &&currentDescriptors.ContainsKey(GamepadLookSettings.HorizontalPath))
                     {
                         var legacy=old.Snapshot.Get("input.gamepadDegreesPerSecond");
                         next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);
                     }
-                    var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==next.Hash());
+                    string nextHash=next.Hash();
+                    var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash);
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
                 }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
-            var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash());
+            var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shippedHash);
             if(latest==null){latest=Revision(shipped,release.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));release.Revisions.Add(latest);}
             if(selectedRelease)file.SelectedRevision=latest.Number;
         }

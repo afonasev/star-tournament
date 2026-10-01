@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="33" result="Passed" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.6560246">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="240" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.656025" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1293" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/unity-checks/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="240" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.652500" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28324" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1294" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="240" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.652034" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1295" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="240" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.651644" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1296" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="240" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.651240" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1297" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="170" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.629766" total="32" passed="32" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1133" name="DesignLabHistoryTests" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="32" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 10:01:15Z" duration="133.626612" total="32" passed="32" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1140" name="AudioUpgradePreservesOldRevisionHashAndCustomCombatValues" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.AudioUpgradePreservesOldRevisionHashAndCustomCombatValues" methodname="AudioUpgradePreservesOldRevisionHashAndCustomCombatValues" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1149616989" result="Passed" start-time="2026-10-01 09:59:01Z" end-time="2026-10-01 09:59:08Z" duration="6.599020" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=324.709 revisions=2 registryMs=13.040 hashMs=117.366 validationMs=183.074 releaseMs=10.574
+LAB_DETAIL validateMs=471.439 revisions=3 registryMs=19.676 hashMs=176.025 validationMs=265.695 releaseMs=10.029
+LAB_PROFILE phase=stage-1 ms=341.333 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=648.571 candidates=19 distanceMs=16.429 distanceCalls=76 registryMs=16.661 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1073.304 candidates=19 distanceMs=25.305 distanceCalls=114 registryMs=40.853 registryCalls=56 transformMs=389.238 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1083.116 candidates=19 distanceMs=25.524 distanceCalls=152 registryMs=42.271 registryCalls=75 transformMs=395.357 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1091.987 candidates=19 distanceMs=25.725 distanceCalls=190 registryMs=43.342 registryCalls=94 transformMs=395.357 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1100.610 candidates=19 distanceMs=25.906 distanceCalls=228 registryMs=44.665 registryCalls=115 transformMs=400.321 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1119.989 candidates=26 distanceMs=25.972 distanceCalls=266 registryMs=58.687 registryCalls=153 transformMs=401.121 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1141.726 candidates=26 distanceMs=26.265 distanceCalls=318 registryMs=60.030 registryCalls=179 transformMs=408.896 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1151.810 candidates=26 distanceMs=26.503 distanceCalls=370 registryMs=61.524 registryCalls=205 transformMs=414.769 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1169.856 candidates=52 distanceMs=26.564 distanceCalls=422 registryMs=75.247 registryCalls=257 transformMs=414.769 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1177.713 candidates=52 distanceMs=26.675 distanceCalls=526 registryMs=78.413 registryCalls=309 transformMs=414.769 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1191.181 candidates=52 distanceMs=26.960 distanceCalls=630 registryMs=81.429 registryCalls=361 transformMs=420.544 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1212.162 candidates=52 distanceMs=27.175 distanceCalls=734 registryMs=94.042 registryCalls=413 transformMs=424.282 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1221.708 candidates=52 distanceMs=27.355 distanceCalls=838 registryMs=96.455 registryCalls=465 transformMs=426.928 transformCalls=1540
+LAB_FINGERPRINT key=02905DA9B5686B74E997BABF62486F098B151283BA9423B262734E96A3E42D8A json=6831CF22DF32E9CE547ABB65471B1633751558CDF715833A35C2CD2F12708514
+LAB_PROFILE phase=cache-hit ms=3.417 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.475 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.467 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3342.251 revisions=3 registryMs=2871.633 hashMs=180.257 validationMs=266.033 releaseMs=24.309
+LAB_DETAIL migrationMs=368.314
+LAB_PROFILE phase=cache-hit ms=10.926 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.579 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.632 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.564 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=982.580 revisions=6 registryMs=58.536 hashMs=357.292 validationMs=542.434 releaseMs=24.300
+]]></output>
+                </test-case>
+                <test-case id="1157" name="AuditCleanupPreservesOldTechnicalAndModelOverridesAndBlocksNewChanges" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.AuditCleanupPreservesOldTechnicalAndModelOverridesAndBlocksNewChanges" methodname="AuditCleanupPreservesOldTechnicalAndModelOverridesAndBlocksNewChanges" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="23471497" result="Passed" start-time="2026-10-01 09:59:08Z" end-time="2026-10-01 09:59:13Z" duration="4.837443" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=338.749 revisions=2 registryMs=13.084 hashMs=121.474 validationMs=194.021 releaseMs=10.153
+LAB_DETAIL validateMs=319.894 revisions=2 registryMs=12.705 hashMs=119.210 validationMs=177.706 releaseMs=10.254
+LAB_DETAIL validateMs=470.024 revisions=3 registryMs=18.902 hashMs=178.770 validationMs=262.100 releaseMs=10.234
+LAB_DETAIL validateMs=472.746 revisions=3 registryMs=19.205 hashMs=178.853 validationMs=264.600 releaseMs=10.070
+]]></output>
+                </test-case>
+                <test-case id="1154" name="AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning" methodname="AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="435146307" result="Passed" start-time="2026-10-01 09:59:13Z" end-time="2026-10-01 09:59:13Z" duration="0.145586" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1137" name="CompleteRegistryHasUniquePathsAndValidDefaults" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CompleteRegistryHasUniquePathsAndValidDefaults" methodname="CompleteRegistryHasUniquePathsAndValidDefaults" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1693321114" result="Passed" start-time="2026-10-01 09:59:13Z" end-time="2026-10-01 09:59:13Z" duration="0.126481" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1150" name="CorruptionIsPreservedAndCannotBeOverwritten" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CorruptionIsPreservedAndCannotBeOverwritten" methodname="CorruptionIsPreservedAndCannotBeOverwritten" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1812047233" result="Passed" start-time="2026-10-01 09:59:13Z" end-time="2026-10-01 09:59:13Z" duration="0.084443" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1162" name="CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 09:59:13Z" end-time="2026-10-01 09:59:24Z" duration="10.548964" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1160" name="CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(False)" methodname="CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1903135814" result="Passed" start-time="2026-10-01 09:59:13Z" end-time="2026-10-01 09:59:18Z" duration="4.987258" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[LAB_DETAIL validateMs=334.708 revisions=2 registryMs=12.457 hashMs=119.961 validationMs=192.157 releaseMs=10.119
+LAB_DETAIL validateMs=164.741 revisions=1 registryMs=6.235 hashMs=60.310 validationMs=88.007 releaseMs=10.182
+LAB_PROFILE phase=stage-1 ms=325.246 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=757.538 candidates=19 distanceMs=15.936 distanceCalls=76 registryMs=56.124 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1054.897 candidates=19 distanceMs=24.568 distanceCalls=114 registryMs=60.401 registryCalls=56 transformMs=282.410 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1064.222 candidates=19 distanceMs=24.790 distanceCalls=152 registryMs=61.312 registryCalls=75 transformMs=288.694 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1084.671 candidates=19 distanceMs=25.012 distanceCalls=190 registryMs=70.239 registryCalls=94 transformMs=288.694 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1092.989 candidates=19 distanceMs=25.206 distanceCalls=228 registryMs=71.188 registryCalls=115 transformMs=293.688 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1100.191 candidates=26 distanceMs=25.269 distanceCalls=266 registryMs=72.950 registryCalls=153 transformMs=294.391 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1111.077 candidates=26 distanceMs=25.519 distanceCalls=318 registryMs=74.233 registryCalls=179 transformMs=301.421 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1120.495 candidates=26 distanceMs=25.739 distanceCalls=370 registryMs=75.410 registryCalls=205 transformMs=307.144 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1136.489 candidates=52 distanceMs=25.805 distanceCalls=422 registryMs=84.355 registryCalls=257 transformMs=307.144 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1143.354 candidates=52 distanceMs=25.910 distanceCalls=526 registryMs=86.761 registryCalls=309 transformMs=307.144 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1165.122 candidates=52 distanceMs=26.205 distanceCalls=630 registryMs=97.984 registryCalls=361 transformMs=313.140 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1175.072 candidates=52 distanceMs=26.402 distanceCalls=734 registryMs=100.330 registryCalls=413 transformMs=316.271 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1184.227 candidates=52 distanceMs=26.584 distanceCalls=838 registryMs=102.677 registryCalls=465 transformMs=318.674 transformCalls=1540
+LAB_FINGERPRINT key=56E6F8B151AE09D5F1AAB7F08BC3A4D0419BE9F3AC631438B0A1EC9EB64230BA json=3B740F3016449D9D331635DDC0A64E692C8B66094A68514D4CB4B6FC376342DF
+LAB_PROFILE phase=cache-hit ms=3.816 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3012.921 revisions=1 registryMs=2819.800 hashMs=59.884 validationMs=88.459 releaseMs=44.767
+LAB_DETAIL migrationMs=121.625
+LAB_PROFILE phase=cache-hit ms=3.774 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.947 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=519.723 revisions=3 registryMs=23.086 hashMs=178.101 validationMs=264.346 releaseMs=54.181
+]]></output>
+                  </test-case>
+                  <test-case id="1161" name="CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(True)" methodname="CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1382713088" result="Passed" start-time="2026-10-01 09:59:18Z" end-time="2026-10-01 09:59:24Z" duration="5.560311" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[LAB_DETAIL validateMs=319.264 revisions=2 registryMs=12.551 hashMs=119.192 validationMs=177.353 releaseMs=10.154
+LAB_DETAIL validateMs=163.692 revisions=1 registryMs=6.237 hashMs=59.635 validationMs=87.661 releaseMs=10.152
+LAB_DETAIL validateMs=318.105 revisions=2 registryMs=12.864 hashMs=118.779 validationMs=176.278 releaseMs=10.169
+LAB_DETAIL validateMs=476.681 revisions=3 registryMs=19.595 hashMs=181.439 validationMs=265.553 releaseMs=10.080
+LAB_PROFILE phase=cache-hit ms=24.068 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.508 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=13.135 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.659 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=556.010 revisions=3 registryMs=61.551 hashMs=179.680 validationMs=269.888 releaseMs=44.874
+LAB_DETAIL migrationMs=293.935
+LAB_PROFILE phase=cache-hit ms=3.583 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.567 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.490 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.575 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1153.611 revisions=7 registryMs=56.574 hashMs=415.039 validationMs=618.387 releaseMs=63.593
+LAB_PROFILE phase=cache-hit ms=3.526 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.503 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=509.200 revisions=3 registryMs=23.082 hashMs=178.445 validationMs=263.402 releaseMs=44.263
+]]></output>
+                  </test-case>
+                </test-suite>
+                <test-case id="1163" name="CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease" methodname="CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="2079367063" result="Passed" start-time="2026-10-01 09:59:24Z" end-time="2026-10-01 09:59:33Z" duration="9.580029" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=318.009 revisions=2 registryMs=12.714 hashMs=119.241 validationMs=176.000 releaseMs=10.039
+LAB_DETAIL validateMs=472.473 revisions=3 registryMs=18.946 hashMs=179.905 validationMs=263.560 releaseMs=10.048
+LAB_PROFILE phase=stage-1 ms=338.324 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=775.471 candidates=19 distanceMs=15.555 distanceCalls=76 registryMs=61.655 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1076.932 candidates=19 distanceMs=23.987 distanceCalls=114 registryMs=62.612 registryCalls=56 transformMs=290.045 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1085.969 candidates=19 distanceMs=24.195 distanceCalls=152 registryMs=63.508 registryCalls=75 transformMs=296.133 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1094.613 candidates=19 distanceMs=24.398 distanceCalls=190 registryMs=64.436 registryCalls=94 transformMs=296.133 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1102.808 candidates=19 distanceMs=24.585 distanceCalls=228 registryMs=65.406 registryCalls=115 transformMs=301.064 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1109.921 candidates=26 distanceMs=24.652 distanceCalls=266 registryMs=67.218 registryCalls=153 transformMs=301.729 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1120.790 candidates=26 distanceMs=24.899 distanceCalls=318 registryMs=68.445 registryCalls=179 transformMs=308.801 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1141.231 candidates=26 distanceMs=25.143 distanceCalls=370 registryMs=80.353 registryCalls=205 transformMs=314.806 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1147.816 candidates=52 distanceMs=25.197 distanceCalls=422 registryMs=82.694 registryCalls=257 transformMs=314.806 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1154.535 candidates=52 distanceMs=25.299 distanceCalls=526 registryMs=85.077 registryCalls=309 transformMs=314.806 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1177.008 candidates=52 distanceMs=25.577 distanceCalls=630 registryMs=97.133 registryCalls=361 transformMs=320.743 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1187.297 candidates=52 distanceMs=25.774 distanceCalls=734 registryMs=99.621 registryCalls=413 transformMs=323.940 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1197.026 candidates=52 distanceMs=25.964 distanceCalls=838 registryMs=102.107 registryCalls=465 transformMs=326.505 transformCalls=1540
+LAB_FINGERPRINT key=BB7B3DBE7BA4196B84575C118FBCE1CD1AE0D9CDEFD56E556976D3BDEDDC53D0 json=FDE1C3BF3B1349FAFCE4584F8EDA86BAD6C98ED450F212837EF315516767EE1E
+LAB_PROFILE phase=cache-hit ms=3.465 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.430 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.557 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3828.598 revisions=3 registryMs=2897.396 hashMs=178.297 validationMs=264.187 releaseMs=488.699
+LAB_DETAIL migrationMs=273.409
+LAB_PROFILE phase=cache-hit ms=3.517 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.696 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.564 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.571 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1471.731 revisions=7 registryMs=57.443 hashMs=419.249 validationMs=635.915 releaseMs=359.103
+LAB_PROFILE phase=cache-hit ms=3.444 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.474 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=817.582 revisions=3 registryMs=22.752 hashMs=178.291 validationMs=275.824 releaseMs=340.705
+LAB_PROFILE phase=cache-hit ms=23.699 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.463 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=866.208 revisions=3 registryMs=43.742 hashMs=179.352 validationMs=276.769 releaseMs=366.327
+]]></output>
+                </test-case>
+                <test-case id="1164" name="CutterThicknessUpgradeSelectsNewShippedRevision" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CutterThicknessUpgradeSelectsNewShippedRevision" methodname="CutterThicknessUpgradeSelectsNewShippedRevision" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1751003203" result="Passed" start-time="2026-10-01 09:59:33Z" end-time="2026-10-01 09:59:36Z" duration="2.606049" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=318.849 revisions=2 registryMs=12.688 hashMs=119.186 validationMs=176.524 releaseMs=10.434
+LAB_DETAIL validateMs=165.839 revisions=1 registryMs=6.345 hashMs=60.601 validationMs=88.800 releaseMs=10.085
+LAB_PROFILE phase=cache-hit ms=24.154 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.490 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=534.881 revisions=1 registryMs=31.065 hashMs=59.925 validationMs=101.558 releaseMs=342.323
+LAB_DETAIL migrationMs=134.662
+LAB_PROFILE phase=cache-hit ms=3.484 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.566 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=820.170 revisions=3 registryMs=23.018 hashMs=177.777 validationMs=263.358 releaseMs=356.007
+]]></output>
+                </test-case>
+                <test-case id="1146" name="DeathImpulseUpgradeKeepsCustomValuesAndOldHashes" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.DeathImpulseUpgradeKeepsCustomValuesAndOldHashes" methodname="DeathImpulseUpgradeKeepsCustomValuesAndOldHashes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1297978350" result="Passed" start-time="2026-10-01 09:59:36Z" end-time="2026-10-01 09:59:43Z" duration="6.768948" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=317.973 revisions=2 registryMs=12.778 hashMs=119.099 validationMs=175.951 releaseMs=10.129
+LAB_DETAIL validateMs=476.054 revisions=3 registryMs=19.379 hashMs=180.053 validationMs=266.422 releaseMs=10.187
+LAB_PROFILE phase=stage-1 ms=336.075 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=777.037 candidates=19 distanceMs=16.041 distanceCalls=76 registryMs=56.777 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1078.241 candidates=19 distanceMs=24.638 distanceCalls=114 registryMs=60.841 registryCalls=56 transformMs=286.476 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1087.491 candidates=19 distanceMs=24.856 distanceCalls=152 registryMs=61.757 registryCalls=75 transformMs=292.663 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1096.199 candidates=19 distanceMs=25.074 distanceCalls=190 registryMs=62.624 registryCalls=94 transformMs=292.663 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1104.424 candidates=19 distanceMs=25.267 distanceCalls=228 registryMs=63.566 registryCalls=115 transformMs=297.619 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1111.380 candidates=26 distanceMs=25.329 distanceCalls=266 registryMs=65.291 registryCalls=153 transformMs=298.280 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1133.494 candidates=26 distanceMs=25.596 distanceCalls=318 registryMs=77.669 registryCalls=179 transformMs=305.410 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1143.084 candidates=26 distanceMs=25.826 distanceCalls=370 registryMs=78.824 registryCalls=205 transformMs=311.244 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1149.652 candidates=52 distanceMs=25.884 distanceCalls=422 registryMs=81.169 registryCalls=257 transformMs=311.244 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1166.262 candidates=52 distanceMs=25.993 distanceCalls=526 registryMs=93.394 registryCalls=309 transformMs=311.244 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1178.871 candidates=52 distanceMs=26.273 distanceCalls=630 registryMs=95.673 registryCalls=361 transformMs=317.074 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1188.840 candidates=52 distanceMs=26.464 distanceCalls=734 registryMs=97.994 registryCalls=413 transformMs=320.241 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1207.858 candidates=52 distanceMs=26.654 distanceCalls=838 registryMs=110.111 registryCalls=465 transformMs=322.730 transformCalls=1540
+LAB_FINGERPRINT key=BE99CBB93298712BA6DD98997BA5259713D797D897FDE933089A93B2220F7991 json=3B740F3016449D9D331635DDC0A64E692C8B66094A68514D4CB4B6FC376342DF
+LAB_PROFILE phase=cache-hit ms=3.530 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.453 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.428 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3389.996 revisions=3 registryMs=2911.755 hashMs=179.016 validationMs=264.922 releaseMs=34.284
+LAB_DETAIL migrationMs=422.218
+LAB_PROFILE phase=cache-hit ms=3.413 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.491 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.495 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.532 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1132.412 revisions=7 registryMs=56.522 hashMs=413.745 validationMs=621.205 releaseMs=40.921
+]]></output>
+                </test-case>
+                <test-case id="1145" name="DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues" methodname="DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1778506394" result="Passed" start-time="2026-10-01 09:59:43Z" end-time="2026-10-01 09:59:48Z" duration="5.301789" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=311.513 revisions=2 registryMs=12.427 hashMs=115.769 validationMs=173.225 releaseMs=10.078
+LAB_DETAIL validateMs=469.128 revisions=3 registryMs=19.071 hashMs=174.346 validationMs=265.151 releaseMs=10.543
+LAB_PROFILE phase=stage-1 ms=337.897 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=780.966 candidates=19 distanceMs=16.141 distanceCalls=76 registryMs=61.022 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1083.583 candidates=19 distanceMs=24.763 distanceCalls=114 registryMs=73.881 registryCalls=56 transformMs=279.146 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1092.742 candidates=19 distanceMs=24.980 distanceCalls=152 registryMs=74.732 registryCalls=75 transformMs=285.352 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1101.596 candidates=19 distanceMs=25.201 distanceCalls=190 registryMs=75.603 registryCalls=94 transformMs=285.352 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1109.912 candidates=19 distanceMs=25.388 distanceCalls=228 registryMs=76.556 registryCalls=115 transformMs=290.352 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1116.987 candidates=26 distanceMs=25.451 distanceCalls=266 registryMs=78.316 registryCalls=153 transformMs=291.030 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1127.688 candidates=26 distanceMs=25.701 distanceCalls=318 registryMs=79.485 registryCalls=179 transformMs=298.012 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1148.569 candidates=26 distanceMs=25.932 distanceCalls=370 registryMs=88.723 registryCalls=205 transformMs=307.115 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1155.258 candidates=52 distanceMs=25.989 distanceCalls=422 registryMs=91.133 registryCalls=257 transformMs=307.115 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1165.456 candidates=22 distanceMs=26.097 distanceCalls=526 registryMs=93.445 registryCalls=309 transformMs=307.115 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1174.684 candidates=22 distanceMs=26.305 distanceCalls=570 registryMs=94.431 registryCalls=331 transformMs=313.107 transformCalls=1179
+LAB_PROFILE phase=stage-13 ms=1192.686 candidates=22 distanceMs=26.434 distanceCalls=614 registryMs=106.973 registryCalls=353 transformMs=316.431 transformCalls=1340
+LAB_PROFILE phase=stage-14 ms=1198.484 candidates=22 distanceMs=26.563 distanceCalls=658 registryMs=108.083 registryCalls=375 transformMs=318.952 transformCalls=1501
+LAB_FINGERPRINT key=5241FD80B6F5197A743CB5C40E017261F0B160BB049EBB716B3F37978FA09EA0 json=B46E8D8BFEDD2AB88DFA898D406612D9502CD2581A37C59ADB7355476B3C7DCB
+LAB_PROFILE phase=cache-hit ms=3.599 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.516 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.490 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=2303.969 revisions=3 registryMs=1841.498 hashMs=175.514 validationMs=262.463 releaseMs=24.474
+LAB_DETAIL migrationMs=255.669
+LAB_PROFILE phase=cache-hit ms=3.534 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.486 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.434 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.535 candidates=22 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=946.640 revisions=6 registryMs=49.101 hashMs=349.028 validationMs=524.225 releaseMs=24.271
+]]></output>
+                </test-case>
+                <test-case id="1158" name="DescriptorMigrationRefreshesPreviouslyUsedValueIndex" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.DescriptorMigrationRefreshesPreviouslyUsedValueIndex" methodname="DescriptorMigrationRefreshesPreviouslyUsedValueIndex" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1666872831" result="Passed" start-time="2026-10-01 09:59:48Z" end-time="2026-10-01 09:59:48Z" duration="0.002478" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1142" name="FootstepMixUpgradeKeepsCustomOldInterval" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.FootstepMixUpgradeKeepsCustomOldInterval" methodname="FootstepMixUpgradeKeepsCustomOldInterval" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1797516860" result="Passed" start-time="2026-10-01 09:59:48Z" end-time="2026-10-01 09:59:55Z" duration="6.645937" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=318.527 revisions=2 registryMs=12.830 hashMs=119.456 validationMs=176.130 releaseMs=10.095
+LAB_DETAIL validateMs=473.512 revisions=3 registryMs=19.196 hashMs=178.607 validationMs=265.429 releaseMs=10.266
+LAB_PROFILE phase=stage-1 ms=340.213 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=647.124 candidates=19 distanceMs=15.957 distanceCalls=76 registryMs=22.509 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=943.227 candidates=19 distanceMs=24.479 distanceCalls=114 registryMs=23.455 registryCalls=56 transformMs=284.631 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=952.509 candidates=19 distanceMs=24.692 distanceCalls=152 registryMs=24.534 registryCalls=75 transformMs=290.720 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=961.155 candidates=19 distanceMs=24.901 distanceCalls=190 registryMs=25.404 registryCalls=94 transformMs=290.720 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1033.589 candidates=19 distanceMs=25.103 distanceCalls=228 registryMs=87.452 registryCalls=115 transformMs=298.727 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1116.638 candidates=26 distanceMs=25.178 distanceCalls=266 registryMs=164.436 registryCalls=153 transformMs=299.956 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1127.470 candidates=26 distanceMs=25.432 distanceCalls=318 registryMs=165.619 registryCalls=179 transformMs=306.926 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1137.196 candidates=26 distanceMs=25.662 distanceCalls=370 registryMs=166.820 registryCalls=205 transformMs=312.891 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1143.859 candidates=52 distanceMs=25.717 distanceCalls=422 registryMs=169.203 registryCalls=257 transformMs=312.891 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1160.267 candidates=52 distanceMs=25.819 distanceCalls=526 registryMs=181.332 registryCalls=309 transformMs=312.891 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1173.066 candidates=52 distanceMs=26.095 distanceCalls=630 registryMs=183.714 registryCalls=361 transformMs=318.726 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1194.781 candidates=52 distanceMs=26.284 distanceCalls=734 registryMs=194.864 registryCalls=413 transformMs=324.937 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1204.106 candidates=52 distanceMs=26.461 distanceCalls=838 registryMs=197.270 registryCalls=465 transformMs=327.410 transformCalls=1540
+LAB_FINGERPRINT key=0AA6CE2546A57E84F4926478356A6B02D8F842AE8C1AC456F96A42E915A06FB9 json=A949B9F37C16BACF735D6350409ED1D75C72B0195AD044938A25DC8D83DA75D6
+LAB_PROFILE phase=cache-hit ms=3.819 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.882 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.831 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3387.309 revisions=3 registryMs=2917.853 hashMs=179.196 validationMs=265.720 releaseMs=24.519
+LAB_DETAIL migrationMs=331.753
+LAB_PROFILE phase=cache-hit ms=25.044 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.579 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.587 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.558 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1024.651 revisions=6 registryMs=74.237 hashMs=374.185 validationMs=551.964 releaseMs=24.222
+]]></output>
+                </test-case>
+                <test-case id="1141" name="FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory" methodname="FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="281390143" result="Passed" start-time="2026-10-01 09:59:55Z" end-time="2026-10-01 09:59:57Z" duration="2.058665" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=323.651 revisions=2 registryMs=12.548 hashMs=119.328 validationMs=176.972 releaseMs=14.790
+LAB_PROFILE phase=cache-hit ms=24.222 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.478 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.503 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=376.066 revisions=2 registryMs=41.219 hashMs=119.677 validationMs=190.474 releaseMs=24.675
+LAB_DETAIL migrationMs=165.646
+LAB_PROFILE phase=cache-hit ms=3.627 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=11.931 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.618 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=663.972 revisions=4 registryMs=41.947 hashMs=237.405 validationMs=360.051 releaseMs=24.553
+]]></output>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1136" name="GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 09:59:57Z" end-time="2026-10-01 10:00:07Z" duration="10.365988" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1134" name="GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(False)" methodname="GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="417577367" result="Passed" start-time="2026-10-01 09:59:57Z" end-time="2026-10-01 10:00:02Z" duration="5.185563" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[LAB_DETAIL validateMs=313.386 revisions=2 registryMs=12.383 hashMs=115.583 validationMs=175.193 releaseMs=10.211
+LAB_PROFILE phase=stage-1 ms=477.527 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=787.652 candidates=19 distanceMs=15.559 distanceCalls=76 registryMs=30.368 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1085.690 candidates=19 distanceMs=23.846 distanceCalls=114 registryMs=31.388 registryCalls=56 transformMs=286.660 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1095.079 candidates=19 distanceMs=24.056 distanceCalls=152 registryMs=32.458 registryCalls=75 transformMs=292.811 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1103.780 candidates=19 distanceMs=24.260 distanceCalls=190 registryMs=33.360 registryCalls=94 transformMs=292.811 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1112.119 candidates=19 distanceMs=24.446 distanceCalls=228 registryMs=34.368 registryCalls=115 transformMs=297.746 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1119.288 candidates=26 distanceMs=24.508 distanceCalls=266 registryMs=36.212 registryCalls=153 transformMs=298.421 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1141.792 candidates=26 distanceMs=24.769 distanceCalls=318 registryMs=48.246 registryCalls=179 transformMs=306.180 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1151.713 candidates=26 distanceMs=24.994 distanceCalls=370 registryMs=49.614 registryCalls=205 transformMs=312.080 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1158.410 candidates=52 distanceMs=25.052 distanceCalls=422 registryMs=52.074 registryCalls=257 transformMs=312.080 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1165.226 candidates=52 distanceMs=25.152 distanceCalls=526 registryMs=54.508 registryCalls=309 transformMs=312.080 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1188.491 candidates=52 distanceMs=25.427 distanceCalls=630 registryMs=67.657 registryCalls=361 transformMs=317.674 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1198.610 candidates=52 distanceMs=25.613 distanceCalls=734 registryMs=70.106 registryCalls=413 transformMs=320.780 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1218.531 candidates=52 distanceMs=25.802 distanceCalls=838 registryMs=83.057 registryCalls=465 transformMs=323.288 transformCalls=1540
+LAB_FINGERPRINT key=02905DA9B5686B74E997BABF62486F098B151283BA9423B262734E96A3E42D8A json=6831CF22DF32E9CE547ABB65471B1633751558CDF715833A35C2CD2F12708514
+LAB_PROFILE phase=cache-hit ms=24.468 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.525 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3355.326 revisions=2 registryMs=2919.803 hashMs=157.010 validationMs=253.709 releaseMs=24.787
+LAB_DETAIL migrationMs=165.783
+LAB_PROFILE phase=cache-hit ms=3.514 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=16.572 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.502 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=661.310 revisions=4 registryMs=46.401 hashMs=233.464 validationMs=357.219 releaseMs=24.211
+]]></output>
+                  </test-case>
+                  <test-case id="1135" name="GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(True)" methodname="GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="930034457" result="Passed" start-time="2026-10-01 10:00:02Z" end-time="2026-10-01 10:00:07Z" duration="5.151716" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[LAB_DETAIL validateMs=312.390 revisions=2 registryMs=12.277 hashMs=115.009 validationMs=175.095 releaseMs=9.996
+LAB_PROFILE phase=stage-1 ms=321.574 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=628.261 candidates=19 distanceMs=15.071 distanceCalls=76 registryMs=15.924 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1061.544 candidates=19 distanceMs=23.810 distanceCalls=114 registryMs=40.956 registryCalls=56 transformMs=397.411 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1070.913 candidates=19 distanceMs=24.023 distanceCalls=152 registryMs=42.021 registryCalls=75 transformMs=403.575 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1079.742 candidates=19 distanceMs=24.224 distanceCalls=190 registryMs=43.049 registryCalls=94 transformMs=403.575 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1091.954 candidates=19 distanceMs=24.406 distanceCalls=228 registryMs=48.180 registryCalls=115 transformMs=408.301 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1109.490 candidates=26 distanceMs=24.475 distanceCalls=266 registryMs=59.687 registryCalls=153 transformMs=409.329 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1120.064 candidates=26 distanceMs=24.719 distanceCalls=318 registryMs=60.855 registryCalls=179 transformMs=416.092 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1129.637 candidates=26 distanceMs=24.938 distanceCalls=370 registryMs=62.202 registryCalls=205 transformMs=421.755 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1147.241 candidates=52 distanceMs=24.998 distanceCalls=422 registryMs=75.559 registryCalls=257 transformMs=421.755 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1154.050 candidates=52 distanceMs=25.102 distanceCalls=526 registryMs=77.990 registryCalls=309 transformMs=421.755 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1166.628 candidates=52 distanceMs=25.373 distanceCalls=630 registryMs=80.580 registryCalls=361 transformMs=427.133 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1189.169 candidates=52 distanceMs=25.580 distanceCalls=734 registryMs=95.087 registryCalls=413 transformMs=430.531 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1198.826 candidates=52 distanceMs=25.771 distanceCalls=838 registryMs=97.552 registryCalls=465 transformMs=433.047 transformCalls=1540
+LAB_FINGERPRINT key=B341F55ED56D440170967C9D906E7A9AFA417C0C13A59377566B06171DB86CEE json=FACE0D303D1212EBECF903C3873F460283CF89CA9983E32345A5FCE15987C863
+LAB_PROFILE phase=cache-hit ms=3.497 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.570 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3203.482 revisions=2 registryMs=2879.269 hashMs=122.182 validationMs=177.222 releaseMs=24.789
+LAB_DETAIL migrationMs=162.462
+LAB_PROFILE phase=cache-hit ms=3.494 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=23.367 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.491 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=789.643 revisions=4 registryMs=56.005 hashMs=273.491 validationMs=435.592 releaseMs=24.539
+]]></output>
+                  </test-case>
+                </test-suite>
+                <test-case id="1144" name="GamepadUpgradePreservesAudioOnlyRevisionHash" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.GamepadUpgradePreservesAudioOnlyRevisionHash" methodname="GamepadUpgradePreservesAudioOnlyRevisionHash" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="756244660" result="Passed" start-time="2026-10-01 10:00:07Z" end-time="2026-10-01 10:00:12Z" duration="4.904598" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=319.223 revisions=2 registryMs=12.844 hashMs=119.650 validationMs=176.310 releaseMs=10.406
+LAB_PROFILE phase=stage-1 ms=345.295 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=652.129 candidates=19 distanceMs=15.670 distanceCalls=76 registryMs=20.068 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=934.540 candidates=19 distanceMs=24.206 distanceCalls=114 registryMs=20.984 registryCalls=56 transformMs=270.948 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=943.853 candidates=19 distanceMs=24.423 distanceCalls=152 registryMs=22.046 registryCalls=75 transformMs=277.107 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1036.273 candidates=19 distanceMs=24.678 distanceCalls=190 registryMs=99.497 registryCalls=94 transformMs=277.107 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1111.824 candidates=19 distanceMs=24.921 distanceCalls=228 registryMs=161.960 registryCalls=115 transformMs=287.353 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1119.048 candidates=26 distanceMs=24.990 distanceCalls=266 registryMs=163.697 registryCalls=153 transformMs=288.060 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1130.031 candidates=26 distanceMs=25.242 distanceCalls=318 registryMs=164.896 registryCalls=179 transformMs=295.246 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1139.923 candidates=26 distanceMs=25.472 distanceCalls=370 registryMs=166.257 registryCalls=205 transformMs=301.223 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1158.899 candidates=52 distanceMs=25.531 distanceCalls=422 registryMs=180.915 registryCalls=257 transformMs=301.223 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1165.505 candidates=52 distanceMs=25.637 distanceCalls=526 registryMs=183.237 registryCalls=309 transformMs=301.223 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1178.175 candidates=52 distanceMs=25.916 distanceCalls=630 registryMs=185.596 registryCalls=361 transformMs=306.919 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1202.015 candidates=52 distanceMs=26.113 distanceCalls=734 registryMs=201.654 registryCalls=413 transformMs=310.216 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1211.341 candidates=52 distanceMs=26.302 distanceCalls=838 registryMs=204.012 registryCalls=465 transformMs=312.700 transformCalls=1540
+LAB_FINGERPRINT key=3B81D1119F2A51DDCB38CE6118B6181A903085030D56C51C4FDC068328C52D12 json=7A4D2B51EA90223BECF7FAC988325366EDDA95F03B57E098BB68DE5581C3713E
+LAB_PROFILE phase=cache-hit ms=3.610 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.560 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3201.662 revisions=2 registryMs=2877.755 hashMs=119.647 validationMs=179.650 releaseMs=24.596
+LAB_DETAIL migrationMs=161.568
+LAB_PROFILE phase=cache-hit ms=3.490 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=14.573 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.494 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=662.715 revisions=4 registryMs=44.190 hashMs=236.094 validationMs=358.114 releaseMs=24.302
+]]></output>
+                </test-case>
+                <test-case id="1152" name="InvalidRangeStepAndCrossFieldDraftCannotSave" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.InvalidRangeStepAndCrossFieldDraftCannotSave" methodname="InvalidRangeStepAndCrossFieldDraftCannotSave" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="71790182" result="Passed" start-time="2026-10-01 10:00:12Z" end-time="2026-10-01 10:00:12Z" duration="0.609937" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1156" name="LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision" methodname="LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="128947822" result="Passed" start-time="2026-10-01 10:00:12Z" end-time="2026-10-01 10:00:15Z" duration="2.719013" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=320.068 revisions=2 registryMs=12.662 hashMs=119.736 validationMs=177.598 releaseMs=10.057
+LAB_DETAIL validateMs=318.619 revisions=2 registryMs=13.018 hashMs=119.466 validationMs=175.955 releaseMs=10.161
+LAB_DETAIL validateMs=489.052 revisions=3 registryMs=19.214 hashMs=178.656 validationMs=281.016 releaseMs=10.147
+LAB_DETAIL validateMs=571.169 revisions=3 registryMs=23.826 hashMs=222.199 validationMs=314.938 releaseMs=10.190
+]]></output>
+                </test-case>
+                <test-case id="1155" name="LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible" methodname="LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1462494605" result="Passed" start-time="2026-10-01 10:00:15Z" end-time="2026-10-01 10:00:15Z" duration="0.009169" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1166" name="PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning" methodname="PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1621983780" result="Passed" start-time="2026-10-01 10:00:15Z" end-time="2026-10-01 10:00:23Z" duration="7.568829" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=340.789 revisions=2 registryMs=13.089 hashMs=123.327 validationMs=194.002 releaseMs=10.353
+LAB_PROFILE phase=stage-1 ms=338.584 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=647.553 candidates=19 distanceMs=15.280 distanceCalls=76 registryMs=25.207 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=946.463 candidates=19 distanceMs=23.605 distanceCalls=114 registryMs=38.229 registryCalls=56 transformMs=275.574 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=955.670 candidates=19 distanceMs=23.821 distanceCalls=152 registryMs=39.120 registryCalls=75 transformMs=281.798 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=964.319 candidates=19 distanceMs=24.026 distanceCalls=190 registryMs=39.972 registryCalls=94 transformMs=281.798 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=972.566 candidates=19 distanceMs=24.212 distanceCalls=228 registryMs=40.930 registryCalls=115 transformMs=286.758 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1028.922 candidates=26 distanceMs=24.275 distanceCalls=266 registryMs=91.733 registryCalls=153 transformMs=287.680 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1136.535 candidates=26 distanceMs=24.572 distanceCalls=318 registryMs=182.689 registryCalls=179 transformMs=301.389 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1146.448 candidates=26 distanceMs=24.795 distanceCalls=370 registryMs=183.877 registryCalls=205 transformMs=307.481 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1153.117 candidates=52 distanceMs=24.852 distanceCalls=422 registryMs=186.265 registryCalls=257 transformMs=307.481 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1159.851 candidates=52 distanceMs=24.954 distanceCalls=526 registryMs=188.691 registryCalls=309 transformMs=307.481 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1183.658 candidates=52 distanceMs=25.260 distanceCalls=630 registryMs=198.909 registryCalls=361 transformMs=313.528 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1193.762 candidates=52 distanceMs=25.446 distanceCalls=734 registryMs=201.249 registryCalls=413 transformMs=316.733 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1214.710 candidates=52 distanceMs=25.632 distanceCalls=838 registryMs=215.118 registryCalls=465 transformMs=319.288 transformCalls=1540
+LAB_FINGERPRINT key=DA58028C5C70064642A3E365F1A004465F87E43E383685AA3200AA9535B83BF6 json=FDE1C3BF3B1349FAFCE4584F8EDA86BAD6C98ED450F212837EF315516767EE1E
+LAB_PROFILE phase=cache-hit ms=3.493 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.547 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3263.242 revisions=2 registryMs=2900.328 hashMs=119.482 validationMs=177.291 releaseMs=66.126
+LAB_DETAIL migrationMs=162.015
+LAB_PROFILE phase=cache-hit ms=3.485 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=25.203 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.589 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=839.087 revisions=4 registryMs=57.233 hashMs=258.040 validationMs=457.782 releaseMs=66.016
+LAB_PROFILE phase=cache-hit ms=3.581 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.682 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.524 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=879.565 revisions=5 registryMs=41.042 hashMs=304.646 validationMs=452.811 releaseMs=81.045
+LAB_PROFILE phase=cache-hit ms=24.918 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.535 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.509 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=887.305 revisions=5 registryMs=64.026 hashMs=309.088 validationMs=448.976 releaseMs=65.190
+]]></output>
+                </test-case>
+                <test-case id="1159" name="PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash" methodname="PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1279539597" result="Passed" start-time="2026-10-01 10:00:23Z" end-time="2026-10-01 10:00:29Z" duration="5.814757" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=324.624 revisions=2 registryMs=12.975 hashMs=120.884 validationMs=180.365 releaseMs=10.383
+LAB_PROFILE phase=stage-1 ms=346.432 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=654.894 candidates=19 distanceMs=15.938 distanceCalls=76 registryMs=24.544 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=937.498 candidates=19 distanceMs=24.854 distanceCalls=114 registryMs=25.482 registryCalls=56 transformMs=270.725 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=946.624 candidates=19 distanceMs=25.069 distanceCalls=152 registryMs=26.368 registryCalls=75 transformMs=276.842 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=970.812 candidates=19 distanceMs=25.297 distanceCalls=190 registryMs=38.250 registryCalls=94 transformMs=276.842 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=979.430 candidates=19 distanceMs=25.492 distanceCalls=228 registryMs=39.189 registryCalls=115 transformMs=282.039 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=986.595 candidates=26 distanceMs=25.548 distanceCalls=266 registryMs=40.942 registryCalls=153 transformMs=282.706 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=997.346 candidates=26 distanceMs=25.793 distanceCalls=318 registryMs=42.106 registryCalls=179 transformMs=289.744 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1007.043 candidates=26 distanceMs=26.019 distanceCalls=370 registryMs=43.269 registryCalls=205 transformMs=295.761 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1055.470 candidates=52 distanceMs=26.078 distanceCalls=422 registryMs=87.430 registryCalls=257 transformMs=295.761 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1169.276 candidates=52 distanceMs=26.224 distanceCalls=526 registryMs=196.273 registryCalls=309 transformMs=295.761 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1182.347 candidates=52 distanceMs=26.521 distanceCalls=630 registryMs=198.548 registryCalls=361 transformMs=301.845 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1192.380 candidates=52 distanceMs=26.713 distanceCalls=734 registryMs=200.897 registryCalls=413 transformMs=305.022 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1213.745 candidates=52 distanceMs=26.900 distanceCalls=838 registryMs=215.223 registryCalls=465 transformMs=307.569 transformCalls=1540
+LAB_FINGERPRINT key=9DAFB5C00C4835014FE048BA8EB826E79F7500C215601394DDAFE52C0082DB71 json=FDE1C3BF3B1349FAFCE4584F8EDA86BAD6C98ED450F212837EF315516767EE1E
+LAB_PROFILE phase=cache-hit ms=3.516 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.488 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3618.149 revisions=2 registryMs=2904.177 hashMs=117.181 validationMs=176.359 releaseMs=420.415
+LAB_DETAIL migrationMs=160.892
+LAB_PROFILE phase=cache-hit ms=3.475 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.587 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.576 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1021.096 revisions=4 registryMs=33.578 hashMs=235.393 validationMs=352.686 releaseMs=399.425
+]]></output>
+                </test-case>
+                <test-case id="1151" name="ProtectedReleaseCannotBeDeletedAndLocalProfileDeletionReturnsToRelease" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.ProtectedReleaseCannotBeDeletedAndLocalProfileDeletionReturnsToRelease" methodname="ProtectedReleaseCannotBeDeletedAndLocalProfileDeletionReturnsToRelease" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="494088737" result="Passed" start-time="2026-10-01 10:00:29Z" end-time="2026-10-01 10:00:29Z" duration="0.805902" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=317.884 revisions=2 registryMs=12.840 hashMs=119.574 validationMs=175.382 releaseMs=10.072
+LAB_DETAIL validateMs=178.711 revisions=1 registryMs=6.695 hashMs=73.173 validationMs=88.569 releaseMs=10.266
+]]></output>
+                </test-case>
+                <test-case id="1149" name="SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts" methodname="SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="967826932" result="Passed" start-time="2026-10-01 10:00:29Z" end-time="2026-10-01 10:00:34Z" duration="5.114876" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=319.888 revisions=2 registryMs=13.077 hashMs=119.979 validationMs=176.613 releaseMs=10.206
+LAB_DETAIL validateMs=472.391 revisions=3 registryMs=19.300 hashMs=179.246 validationMs=263.514 releaseMs=10.316
+LAB_DETAIL validateMs=473.646 revisions=3 registryMs=19.443 hashMs=179.221 validationMs=264.835 releaseMs=10.136
+LAB_DETAIL validateMs=783.348 revisions=4 registryMs=29.485 hashMs=282.244 validationMs=460.285 releaseMs=11.320
+LAB_DETAIL validateMs=664.535 revisions=4 registryMs=26.647 hashMs=243.867 validationMs=383.387 releaseMs=10.617
+LAB_DETAIL validateMs=645.210 revisions=4 registryMs=27.395 hashMs=243.910 validationMs=363.651 releaseMs=10.224
+]]></output>
+                </test-case>
+                <test-case id="1148" name="ScoreboardUpgradePreservesOldValuesAndHashes" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.ScoreboardUpgradePreservesOldValuesAndHashes" methodname="ScoreboardUpgradePreservesOldValuesAndHashes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1603390972" result="Passed" start-time="2026-10-01 10:00:34Z" end-time="2026-10-01 10:00:42Z" duration="7.949197" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=337.785 revisions=2 registryMs=12.862 hashMs=136.353 validationMs=178.096 releaseMs=10.460
+LAB_DETAIL validateMs=473.398 revisions=3 registryMs=19.354 hashMs=178.580 validationMs=265.106 releaseMs=10.345
+LAB_PROFILE phase=stage-1 ms=477.663 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=790.792 candidates=19 distanceMs=15.665 distanceCalls=76 registryMs=26.477 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=1074.036 candidates=19 distanceMs=23.912 distanceCalls=114 registryMs=27.501 registryCalls=56 transformMs=271.966 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1099.698 candidates=19 distanceMs=24.138 distanceCalls=152 registryMs=41.100 registryCalls=75 transformMs=281.850 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1108.581 candidates=19 distanceMs=24.346 distanceCalls=190 registryMs=41.971 registryCalls=94 transformMs=281.850 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1117.420 candidates=19 distanceMs=24.537 distanceCalls=228 registryMs=43.505 registryCalls=115 transformMs=286.805 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1125.423 candidates=26 distanceMs=24.602 distanceCalls=266 registryMs=46.087 registryCalls=153 transformMs=287.488 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1136.877 candidates=26 distanceMs=24.854 distanceCalls=318 registryMs=47.896 registryCalls=179 transformMs=294.556 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1146.220 candidates=26 distanceMs=25.075 distanceCalls=370 registryMs=49.143 registryCalls=205 transformMs=300.129 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1165.554 candidates=52 distanceMs=25.135 distanceCalls=422 registryMs=64.232 registryCalls=257 transformMs=300.129 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1172.671 candidates=52 distanceMs=25.237 distanceCalls=526 registryMs=66.893 registryCalls=309 transformMs=300.129 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1185.312 candidates=52 distanceMs=25.516 distanceCalls=630 registryMs=69.295 registryCalls=361 transformMs=305.826 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1207.607 candidates=52 distanceMs=25.715 distanceCalls=734 registryMs=83.740 registryCalls=413 transformMs=309.141 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1216.949 candidates=52 distanceMs=25.894 distanceCalls=838 registryMs=86.173 registryCalls=465 transformMs=311.579 transformCalls=1540
+LAB_FINGERPRINT key=5E2A9A721132F0053B25C618B1C3A8225EDCFE787CC04EA1B54D0E06C8394CFC json=9F40B48324B43166D409BF3ABF4153A4DC702755550B42603FE2ADEBD479BDE6
+LAB_PROFILE phase=cache-hit ms=3.561 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.546 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.535 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3360.087 revisions=3 registryMs=2884.225 hashMs=186.118 validationMs=265.643 releaseMs=24.081
+LAB_DETAIL migrationMs=268.489
+LAB_PROFILE phase=cache-hit ms=23.777 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.489 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.550 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.502 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1087.560 revisions=6 registryMs=74.575 hashMs=391.924 validationMs=596.835 releaseMs=24.209
+LAB_PROFILE phase=cache-hit ms=24.115 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.587 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.444 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.606 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=999.798 revisions=6 registryMs=71.390 hashMs=356.530 validationMs=547.254 releaseMs=24.604
+]]></output>
+                </test-case>
+                <test-case id="1143" name="SerializedV10ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.SerializedV10ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval" methodname="SerializedV10ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1116755144" result="Passed" start-time="2026-10-01 10:00:42Z" end-time="2026-10-01 10:00:42Z" duration="0.002294" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1147" name="ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues" methodname="ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="901967609" result="Passed" start-time="2026-10-01 10:00:42Z" end-time="2026-10-01 10:00:49Z" duration="6.698685" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=313.664 revisions=2 registryMs=12.506 hashMs=114.448 validationMs=176.763 releaseMs=9.928
+LAB_DETAIL validateMs=477.059 revisions=3 registryMs=20.004 hashMs=175.528 validationMs=271.266 releaseMs=10.245
+LAB_PROFILE phase=stage-1 ms=343.651 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=639.759 candidates=19 distanceMs=15.999 distanceCalls=76 registryMs=14.498 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=941.061 candidates=19 distanceMs=24.802 distanceCalls=114 registryMs=15.430 registryCalls=56 transformMs=289.437 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=950.357 candidates=19 distanceMs=25.010 distanceCalls=152 registryMs=16.491 registryCalls=75 transformMs=295.568 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=959.197 candidates=19 distanceMs=25.214 distanceCalls=190 registryMs=17.544 registryCalls=94 transformMs=295.568 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1003.247 candidates=19 distanceMs=25.431 distanceCalls=228 registryMs=53.104 registryCalls=115 transformMs=301.641 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1127.522 candidates=26 distanceMs=25.511 distanceCalls=266 registryMs=170.822 registryCalls=153 transformMs=303.183 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1138.230 candidates=26 distanceMs=25.764 distanceCalls=318 registryMs=172.003 registryCalls=179 transformMs=309.995 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1147.633 candidates=26 distanceMs=25.980 distanceCalls=370 registryMs=173.330 registryCalls=205 transformMs=315.516 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1154.167 candidates=52 distanceMs=26.042 distanceCalls=422 registryMs=175.679 registryCalls=257 transformMs=315.516 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1160.865 candidates=52 distanceMs=26.145 distanceCalls=526 registryMs=178.074 registryCalls=309 transformMs=315.516 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1186.346 candidates=52 distanceMs=26.411 distanceCalls=630 registryMs=193.704 registryCalls=361 transformMs=320.811 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1196.503 candidates=52 distanceMs=26.603 distanceCalls=734 registryMs=196.089 registryCalls=413 transformMs=324.015 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1205.826 candidates=52 distanceMs=26.786 distanceCalls=838 registryMs=198.479 registryCalls=465 transformMs=326.465 transformCalls=1540
+LAB_FINGERPRINT key=25C687EE5B9F10874316B71E552058B62009981C7B63E3B6531B0DDFAB9C3AC8 json=1189B85C08A66F0B36A72A2CBAE1BFF1C7CC301C4C34CACFFC5F116441B33D92
+LAB_PROFILE phase=cache-hit ms=3.511 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.607 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.553 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3311.933 revisions=3 registryMs=2842.487 hashMs=180.573 validationMs=264.740 releaseMs=24.115
+LAB_DETAIL migrationMs=241.372
+LAB_PROFILE phase=cache-hit ms=3.692 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=23.951 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.414 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.600 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1109.721 revisions=6 registryMs=75.437 hashMs=390.011 validationMs=619.236 releaseMs=25.018
+]]></output>
+                </test-case>
+                <test-case id="1167" name="TamperedSnapshotHashFailsWithoutDestroyingFile" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.TamperedSnapshotHashFailsWithoutDestroyingFile" methodname="TamperedSnapshotHashFailsWithoutDestroyingFile" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1952054076" result="Passed" start-time="2026-10-01 10:00:49Z" end-time="2026-10-01 10:00:50Z" duration="0.726305" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=320.905 revisions=2 registryMs=13.106 hashMs=119.294 validationMs=177.767 releaseMs=10.723
+]]></output>
+                </test-case>
+                <test-case id="1138" name="TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning" methodname="TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1051532760" result="Passed" start-time="2026-10-01 10:00:50Z" end-time="2026-10-01 10:00:58Z" duration="8.124540" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=319.812 revisions=2 registryMs=12.986 hashMs=118.977 validationMs=177.604 releaseMs=10.231
+LAB_DETAIL validateMs=491.149 revisions=3 registryMs=19.024 hashMs=177.812 validationMs=283.918 releaseMs=10.381
+LAB_PROFILE phase=stage-1 ms=322.873 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=637.853 candidates=19 distanceMs=15.296 distanceCalls=76 registryMs=17.364 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=969.941 candidates=19 distanceMs=23.664 distanceCalls=114 registryMs=26.536 registryCalls=56 transformMs=312.490 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=1069.263 candidates=19 distanceMs=23.983 distanceCalls=152 registryMs=108.227 registryCalls=75 transformMs=327.523 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=1094.611 candidates=19 distanceMs=24.208 distanceCalls=190 registryMs=120.880 registryCalls=94 transformMs=327.523 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1103.121 candidates=19 distanceMs=24.401 distanceCalls=228 registryMs=121.820 registryCalls=115 transformMs=332.655 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1110.305 candidates=26 distanceMs=24.468 distanceCalls=266 registryMs=123.590 registryCalls=153 transformMs=333.380 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1121.766 candidates=26 distanceMs=24.747 distanceCalls=318 registryMs=124.836 registryCalls=179 transformMs=340.877 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1131.809 candidates=26 distanceMs=24.987 distanceCalls=370 registryMs=126.017 registryCalls=205 transformMs=347.101 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1153.376 candidates=52 distanceMs=25.053 distanceCalls=422 registryMs=143.253 registryCalls=257 transformMs=347.101 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1160.105 candidates=52 distanceMs=25.157 distanceCalls=526 registryMs=145.586 registryCalls=309 transformMs=347.101 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1173.189 candidates=52 distanceMs=25.444 distanceCalls=630 registryMs=147.911 registryCalls=361 transformMs=353.230 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1183.315 candidates=52 distanceMs=25.633 distanceCalls=734 registryMs=150.408 registryCalls=413 transformMs=356.417 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1205.892 candidates=52 distanceMs=25.836 distanceCalls=838 registryMs=165.839 registryCalls=465 transformMs=359.152 transformCalls=1540
+LAB_FINGERPRINT key=6DFF16C8335E69332F5CF7E9CFA91A72B8B867AD86FF63AF591AC38B388F50F4 json=85ACEB81CD655CE0D063694AE3B3D9C4A55A57BF8BE439D0544967F8B3BDE8DF
+LAB_PROFILE phase=cache-hit ms=3.569 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.704 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.717 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3382.837 revisions=3 registryMs=2912.237 hashMs=178.814 validationMs=267.400 releaseMs=24.367
+LAB_DETAIL migrationMs=236.035
+LAB_PROFILE phase=cache-hit ms=3.555 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.490 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.521 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.521 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=982.359 revisions=6 registryMs=53.002 hashMs=372.862 validationMs=532.275 releaseMs=24.207
+LAB_PROFILE phase=cache-hit ms=24.287 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.825 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.834 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.612 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1153.211 revisions=6 registryMs=96.422 hashMs=399.703 validationMs=631.786 releaseMs=25.275
+]]></output>
+                </test-case>
+                <test-case id="1139" name="TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory" methodname="TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="275339190" result="Passed" start-time="2026-10-01 10:00:58Z" end-time="2026-10-01 10:01:05Z" duration="7.253485" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=316.052 revisions=2 registryMs=12.693 hashMs=116.374 validationMs=176.526 releaseMs=10.447
+LAB_DETAIL validateMs=472.536 revisions=3 registryMs=19.648 hashMs=176.679 validationMs=265.950 releaseMs=10.226
+LAB_PROFILE phase=stage-1 ms=330.797 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=647.678 candidates=19 distanceMs=15.936 distanceCalls=76 registryMs=18.295 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=958.373 candidates=19 distanceMs=25.334 distanceCalls=114 registryMs=23.003 registryCalls=56 transformMs=294.529 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=967.511 candidates=19 distanceMs=25.549 distanceCalls=152 registryMs=23.863 registryCalls=75 transformMs=300.688 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=976.062 candidates=19 distanceMs=25.753 distanceCalls=190 registryMs=24.694 registryCalls=94 transformMs=300.688 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=984.574 candidates=19 distanceMs=25.938 distanceCalls=228 registryMs=25.795 registryCalls=115 transformMs=305.746 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=991.685 candidates=26 distanceMs=25.997 distanceCalls=266 registryMs=27.561 registryCalls=153 transformMs=306.436 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1002.381 candidates=26 distanceMs=26.241 distanceCalls=318 registryMs=28.715 registryCalls=179 transformMs=313.413 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1041.792 candidates=26 distanceMs=26.477 distanceCalls=370 registryMs=57.923 registryCalls=205 transformMs=321.078 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1171.624 candidates=52 distanceMs=26.555 distanceCalls=422 registryMs=183.205 registryCalls=257 transformMs=321.078 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1178.383 candidates=52 distanceMs=26.658 distanceCalls=526 registryMs=185.582 registryCalls=309 transformMs=321.078 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1191.307 candidates=52 distanceMs=26.944 distanceCalls=630 registryMs=187.876 registryCalls=361 transformMs=327.172 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1201.538 candidates=52 distanceMs=27.128 distanceCalls=734 registryMs=190.342 registryCalls=413 transformMs=330.440 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1225.156 candidates=52 distanceMs=27.317 distanceCalls=838 registryMs=203.722 registryCalls=465 transformMs=333.142 transformCalls=1540
+LAB_FINGERPRINT key=8468747E6E659163D1D45ECF9423CC254EA1EEAF71E5B0CD84CF7A9BE5C9F2F5 json=7ACF20C794792503A7AFD0B3E6E836C5EDDC2E98BF8B8DF40E74EC9F147C7B4B
+LAB_PROFILE phase=cache-hit ms=3.830 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.601 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.586 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3844.666 revisions=3 registryMs=2937.711 hashMs=175.304 validationMs=265.347 releaseMs=466.282
+LAB_DETAIL migrationMs=234.966
+LAB_PROFILE phase=cache-hit ms=3.521 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.540 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.523 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.552 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=1373.580 revisions=6 registryMs=53.515 hashMs=366.558 validationMs=530.490 releaseMs=423.001
+]]></output>
+                </test-case>
+                <test-case id="1165" name="WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory" methodname="WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1273902976" result="Passed" start-time="2026-10-01 10:01:05Z" end-time="2026-10-01 10:01:13Z" duration="7.665709" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=315.500 revisions=2 registryMs=12.703 hashMs=116.412 validationMs=176.089 releaseMs=10.281
+LAB_DETAIL validateMs=466.787 revisions=3 registryMs=18.872 hashMs=175.162 validationMs=262.846 releaseMs=9.892
+LAB_PROFILE phase=stage-1 ms=325.887 candidates=19 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-2 ms=641.230 candidates=19 distanceMs=15.118 distanceCalls=76 registryMs=19.608 registryCalls=37 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=stage-3 ms=926.987 candidates=19 distanceMs=23.337 distanceCalls=114 registryMs=21.079 registryCalls=56 transformMs=274.072 transformCalls=168
+LAB_PROFILE phase=stage-4 ms=937.259 candidates=19 distanceMs=23.561 distanceCalls=152 registryMs=22.879 registryCalls=75 transformMs=280.390 transformCalls=336
+LAB_PROFILE phase=stage-5 ms=955.999 candidates=19 distanceMs=23.770 distanceCalls=190 registryMs=33.584 registryCalls=94 transformMs=280.390 transformCalls=336
+LAB_PROFILE phase=stage-6 ms=1062.826 candidates=19 distanceMs=24.033 distanceCalls=228 registryMs=125.663 registryCalls=115 transformMs=292.097 transformCalls=504
+LAB_PROFILE phase=stage-7 ms=1129.384 candidates=26 distanceMs=24.115 distanceCalls=266 registryMs=186.074 registryCalls=153 transformMs=293.173 transformCalls=672
+LAB_PROFILE phase=stage-8 ms=1140.657 candidates=26 distanceMs=24.387 distanceCalls=318 registryMs=187.350 registryCalls=179 transformMs=300.446 transformCalls=845
+LAB_PROFILE phase=stage-9 ms=1150.855 candidates=26 distanceMs=24.634 distanceCalls=370 registryMs=188.749 registryCalls=205 transformMs=306.631 transformCalls=1018
+LAB_PROFILE phase=stage-10 ms=1157.934 candidates=52 distanceMs=24.700 distanceCalls=422 registryMs=191.585 registryCalls=257 transformMs=306.631 transformCalls=1018
+LAB_PROFILE phase=stage-11 ms=1179.283 candidates=52 distanceMs=24.815 distanceCalls=526 registryMs=208.506 registryCalls=309 transformMs=306.631 transformCalls=1018
+LAB_PROFILE phase=stage-12 ms=1192.626 candidates=52 distanceMs=25.098 distanceCalls=630 registryMs=210.972 registryCalls=361 transformMs=312.863 transformCalls=1192
+LAB_PROFILE phase=stage-13 ms=1202.774 candidates=52 distanceMs=25.292 distanceCalls=734 registryMs=213.408 registryCalls=413 transformMs=316.050 transformCalls=1366
+LAB_PROFILE phase=stage-14 ms=1212.266 candidates=52 distanceMs=25.479 distanceCalls=838 registryMs=215.898 registryCalls=465 transformMs=318.576 transformCalls=1540
+LAB_FINGERPRINT key=B4587145DCBC6632FAD277CF0E0CE0705F80FEB60CB23F94A8365FF781F3D9D4 json=19A7F61C89DF9270A546A3E5935F0A6E300E35E791FECD615D813E3FE50537BE
+LAB_PROFILE phase=cache-hit ms=3.956 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.692 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.731 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=3410.893 revisions=3 registryMs=2921.160 hashMs=190.356 validationMs=274.098 releaseMs=25.258
+LAB_DETAIL migrationMs=243.730
+LAB_PROFILE phase=cache-hit ms=3.702 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.673 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.612 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.559 candidates=52 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=990.387 revisions=6 registryMs=52.852 hashMs=355.364 validationMs=557.603 releaseMs=24.551
+LAB_PROFILE phase=cache-hit ms=24.477 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.511 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.566 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_PROFILE phase=cache-hit ms=3.641 candidates=0 distanceMs=0.000 distanceCalls=0 registryMs=0.000 registryCalls=0 transformMs=0.000 transformCalls=0
+LAB_DETAIL validateMs=975.021 revisions=6 registryMs=70.758 hashMs=352.725 validationMs=527.284 releaseMs=24.232
+]]></output>
+                </test-case>
+                <test-case id="1153" name="WriteFailureLeavesSelectionAndExistingFileIntact" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.WriteFailureLeavesSelectionAndExistingFileIntact" methodname="WriteFailureLeavesSelectionAndExistingFileIntact" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1823962863" result="Passed" start-time="2026-10-01 10:01:13Z" end-time="2026-10-01 10:01:15Z" duration="1.978563" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_DETAIL validateMs=316.687 revisions=2 registryMs=13.045 hashMs=118.388 validationMs=175.143 releaseMs=10.094
+LAB_DETAIL validateMs=423.907 revisions=2 registryMs=14.947 hashMs=138.947 validationMs=246.375 releaseMs=23.621
+LAB_DETAIL validateMs=473.337 revisions=3 registryMs=19.451 hashMs=179.961 validationMs=263.849 releaseMs=10.063
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1078" name="ShotgunResolverTests" fullname="StarTournament.ProvingGround.Tests.ShotgunResolverTests" classname="StarTournament.ProvingGround.Tests.ShotgunResolverTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 10:01:15Z" end-time="2026-10-01 10:01:15Z" duration="0.019489" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1079" name="DiagnosticBaselineHitTranscript" fullname="StarTournament.ProvingGround.Tests.ShotgunResolverTests.DiagnosticBaselineHitTranscript" methodname="DiagnosticBaselineHitTranscript" classname="StarTournament.ProvingGround.Tests.ShotgunResolverTests" runstate="Runnable" seed="1533972159" result="Passed" start-time="2026-10-01 10:01:15Z" end-time="2026-10-01 10:01:15Z" duration="0.018403" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[HIT_FINGERPRINT rays=6000 sha=09269811C669F77B426B774A188C4D3E990FD0D3D5E126203B1DCE9D7D36C3DA
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

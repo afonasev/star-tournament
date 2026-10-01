@@ -1,0 +1,31 @@
+diff --git a/unity/Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs b/unity/Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs
+index 9d536ca..caa1988 100644
+--- a/unity/Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs
++++ b/unity/Assets/StarTournament/Tests/EditMode/ShotgunResolverTests.cs
+@@ -5,6 +5,26 @@ namespace StarTournament.ProvingGround.Tests
+ {
+     public sealed class ShotgunResolverTests
+     {
++        [Test]public void DiagnosticBaselineHitTranscript()
++        {
++            var transcript=new System.Text.StringBuilder();
++            foreach(float height in new[]{1.2f,1.8f,2.4f})foreach(bool tuned in new[]{false,true})
++            {
++                var profile=ProvingProfile.CreateNativeCombatDefault();
++                if(tuned){profile.Set("zone.headY",.8f);profile.Set("zone.headRadius",.2f);profile.Set("zone.armX",.32f);profile.Set("zone.legRadius",.1f);}
++                var resolver=new ShotgunResolver(profile,height);var random=new System.Random(1234);
++                var targets=new[]{new CombatTarget(1,1,new ParticipantState{Position=new Vector3(0,0,4),Yaw=37}),new CombatTarget(2,3,new ParticipantState{Position=new Vector3(1,0,8),Yaw=90}),new CombatTarget(3,2,new ParticipantState{Position=new Vector3(-1,1,6),Yaw=163})};
++                for(int ray=0;ray<1000;ray++)
++                {
++                    var origin=new Vector3((float)(random.NextDouble()*4-2),(float)(random.NextDouble()*height),ray%4==0?4:0);
++                    var direction=new Vector3((float)(random.NextDouble()-.5), (float)(random.NextDouble()*.4-.2),1).normalized;
++                    var hit=resolver.ResolveSegment(origin,direction,targets,ray%5,ray%4,ray%7==0?2:20);
++                    transcript.Append(hit.TargetIndex).Append(':').Append((int)hit.Zone).Append(':').Append(hit.Distance.ToString("R",System.Globalization.CultureInfo.InvariantCulture)).Append('\n');
++                }
++            }
++            using(var sha=System.Security.Cryptography.SHA256.Create())
++                Debug.Log("HIT_FINGERPRINT rays=6000 sha="+System.BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(transcript.ToString()))).Replace("-",""));
++        }
+         [Test]public void TravelingSegmentHitsFromInsideLimbAndHasNoLegacyRangeClamp()
+         {
+             var p=ProvingProfile.CreateNativeCombatDefault();var resolver=new ShotgunResolver(p,1.8f);
