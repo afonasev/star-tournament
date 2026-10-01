@@ -9,6 +9,7 @@ namespace StarTournament.ProvingGround
     public sealed class RifleBulletPresentation : IDisposable
     {
         sealed class Impact { public GameObject Root; public double Time; }
+        struct LaunchOffset { public Vector3 Value; public float BlendDistance; }
         readonly NativeCombatSession session;
         readonly ProvingProfile profile;
         readonly Transform owner;
@@ -16,7 +17,7 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<uint,int> pendingLaunches=new Dictionary<uint,int>();
         readonly Material material;
         readonly Dictionary<uint,LineRenderer> flights=new Dictionary<uint,LineRenderer>();
-        readonly Dictionary<uint,Vector3> offsets=new Dictionary<uint,Vector3>();
+        readonly Dictionary<uint,LaunchOffset> offsets=new Dictionary<uint,LaunchOffset>();
         readonly List<Impact> impacts=new List<Impact>();
         public int ActiveCount=>flights.Count+impacts.Count;
         public RifleBulletPresentation(NativeCombatSession session,ProvingProfile profile,Transform owner,Func<int,Vector3> muzzle=null)
@@ -30,7 +31,7 @@ namespace StarTournament.ProvingGround
         float P(string key)=>profile.Get("presentation."+key);
         public void Launch(uint id,int shooter)=>pendingLaunches[id]=shooter;
         public Vector3 VisualPoint(RifleBulletState b,float distance)=>b.Position-b.Direction*(b.Distance-distance)+Offset(b.Id,distance);
-        Vector3 Offset(uint id,float distance)=>offsets.TryGetValue(id,out var offset)?offset*(1-Mathf.Clamp01(distance/P("rifleTracerLength"))):Vector3.zero;
+        Vector3 Offset(uint id,float distance)=>offsets.TryGetValue(id,out var offset)?offset.Value*(1-Mathf.Clamp01(distance/offset.BlendDistance)):Vector3.zero;
         void Contact(RifleBulletContact e)
         {
             if(flights.TryGetValue(e.Bullet.Id,out var line)){line.gameObject.SetActive(false);UnityEngine.Object.Destroy(line.gameObject);flights.Remove(e.Bullet.Id);}
@@ -51,7 +52,9 @@ namespace StarTournament.ProvingGround
             {
                 if(pendingLaunches.TryGetValue(b.Id,out var shooter))
                 {
-                    if(muzzle!=null)offsets[b.Id]=muzzle(shooter)-(b.Position-b.Direction*b.Distance);
+                    // The first rendered segment must be linear back to the barrel even when
+                    // several fixed ticks carry the head beyond the normal tracer length.
+                    if(muzzle!=null)offsets[b.Id]=new LaunchOffset{Value=muzzle(shooter)-(b.Position-b.Direction*b.Distance),BlendDistance=Mathf.Max(P("rifleTracerLength"),b.Distance)};
                     // At distance zero the segment is invisible. Freeze its launch origin only
                     // on the first visible frame: a strafe/recoil tick can move the barrel first.
                     if(b.Distance>0)pendingLaunches.Remove(b.Id);

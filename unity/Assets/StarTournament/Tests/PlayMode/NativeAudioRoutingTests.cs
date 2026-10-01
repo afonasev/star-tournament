@@ -3,7 +3,9 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -49,6 +51,39 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             finally
             {
+                if(hadEffects)PlayerPrefs.SetInt(effectsKey,previousEffects);else PlayerPrefs.DeleteKey(effectsKey);
+                PlayerPrefs.Save();
+            }
+        }
+        [UnityTest] public IEnumerator MouseHoverIsSilentButGamepadNavigationStillSounds()
+        {
+            const string effectsKey="StarTournament.Audio.EffectsPercent";
+            bool hadEffects=PlayerPrefs.HasKey(effectsKey);int previousEffects=PlayerPrefs.GetInt(effectsKey);
+            float previousListenerVolume=AudioListener.volume;
+            NativeAudioPreferences.SetEffects(80);
+            AudioListener.volume=0;
+            try
+            {
+                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+                var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
+                var audio=(NativeGameAudio)typeof(ProvingGround).GetField("gameAudio",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+                audio.SetDiagnosticMute(false);
+                var source=ground.transform.Find("native-game-audio/menu-ui").GetComponent<AudioSource>();
+                source.Stop();source.clip=null;
+                var battle=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="main-action-0");
+                ExecuteEvents.Execute(battle.gameObject,new PointerEventData(EventSystem.current),ExecuteEvents.pointerEnterHandler);
+                yield return null;
+                Assert.That(source.clip,Is.Null,"Hovering a menu button must not trigger navigation audio");
+                pad=InputSystem.AddDevice<Gamepad>();
+                InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadDown));
+                yield return null;yield return null;
+                InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+                Assert.That(source.clip?.name,Is.EqualTo("menu_move"));
+            }
+            finally
+            {
+                AudioListener.volume=previousListenerVolume;
                 if(hadEffects)PlayerPrefs.SetInt(effectsKey,previousEffects);else PlayerPrefs.DeleteKey(effectsKey);
                 PlayerPrefs.Save();
             }

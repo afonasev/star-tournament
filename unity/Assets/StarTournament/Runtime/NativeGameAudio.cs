@@ -177,7 +177,7 @@ namespace StarTournament.ProvingGround
                     var delta=now.Position-old.Position;delta.y=0;
                     if(delta.sqrMagnitude<.25f)stepDistance[i]+=delta.magnitude;else stepDistance[i]=0;
                     if(stepDistance[i]>=profile.Get("audio.footstepDistanceMeters"))
-                    {stepDistance[i]=0;Play("step",.65f,i);}
+                    {stepDistance[i]=0;Play("step",profile.Get("audio.footstepGain"),i);}
                 }
                 else stepDistance[i]=0;
                 var beam=beams[i];bool active=session.Beam(i).Active&&EffectsVolume>0;

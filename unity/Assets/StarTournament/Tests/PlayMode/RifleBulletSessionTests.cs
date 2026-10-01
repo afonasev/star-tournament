@@ -35,6 +35,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest]public IEnumerator FirstVisibleFlightUsesStrafedMuzzleThenFreezesLaunchOffset()
         {
             foreach(int side in new[]{-1,1})
+            foreach(int firstTicks in new[]{1,4})
             {
                 Setup(speed:50);yield return null;
                 var muzzle=new Vector3(-7.8f,1.5f,.4f);
@@ -44,12 +45,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Fire();visual.Render();
                     var line=owner.GetComponentsInChildren<LineRenderer>().Single();
                     Assert.That(Vector3.Distance(line.GetPosition(0),line.GetPosition(1)),Is.EqualTo(0));
-                    muzzle+=Vector3.right*(side*.25f);Ticks(1);visual.Render();
+                    muzzle+=Vector3.right*(side*.25f);Ticks(firstTicks);visual.Render();
                     var bullet=session.RifleBullets.Single();
-                    Assert.That(Vector3.Distance(visual.VisualPoint(bullet,0),muzzle),Is.LessThan(.0001f),"First visible launch was frozen before strafe");
+                    float length=move.Get("presentation.rifleTracerLength");
+                    float tail=Mathf.Min(bullet.Distance,Mathf.Max(move.Get("presentation.shotMuzzleClearance"),bullet.Distance-length));
+                    var launch=line.GetPosition(1)-(line.GetPosition(0)-line.GetPosition(1))*tail/(bullet.Distance-tail);
+                    Assert.That(Vector3.Distance(launch,muzzle),Is.LessThan(.0001f),"First visible line missed the strafed muzzle after "+firstTicks+" ticks");
+                    float blendDistance=Mathf.Max(length,bullet.Distance);
                     var offset=muzzle-(bullet.Position-bullet.Direction*bullet.Distance);
                     muzzle+=Vector3.right*(side*.25f);Ticks(1);visual.Render();bullet=session.RifleBullets.Single();
-                    var expected=bullet.Position+offset*(1-Mathf.Clamp01(bullet.Distance/move.Get("presentation.rifleTracerLength")));
+                    var expected=bullet.Position+offset*(1-Mathf.Clamp01(bullet.Distance/blendDistance));
                     Assert.That(Vector3.Distance(line.GetPosition(0),expected),Is.LessThan(.0001f),"Already visible flight followed a later muzzle");
                 }
                 yield return SceneManager.UnloadSceneAsync(scene);scene=default;

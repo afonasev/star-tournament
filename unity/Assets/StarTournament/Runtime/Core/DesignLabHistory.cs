@@ -177,6 +177,8 @@ namespace StarTournament.ProvingGround
                 var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
                 string RegistryKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+string.Join("|",b.Descriptors.Select(d=>d.Path));
                 LabBundle[] DistinctRegistries(IEnumerable<LabBundle> bundles)=>bundles.GroupBy(RegistryKey).Select(g=>g.First()).ToArray();
+                // Historical combinations share immutable profiles. Memoize each pure schema transform
+                // within this migration so equivalent branches do not repeat native JSON serialization.
                 var targetPaths=new HashSet<string>(sought.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);
                 var targetIds=new HashSet<string>(sought.Profiles.Select(p=>p.Id),StringComparer.Ordinal);
                 int SchemaDistance(LabBundle bundle)
@@ -200,12 +202,14 @@ namespace StarTournament.ProvingGround
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
                 var withoutScoreboard=Cached(p=>p.BeforeScoreboard());
+                var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutFootstepMix))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,WithoutVignette))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutOrigins))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCutterDamage))));
@@ -263,7 +267,15 @@ namespace StarTournament.ProvingGround
             foreach(var p in file.Profiles)
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
-                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))next.Set(d.Path,ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path)));
+                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(next.Descriptors.Any(n=>n.Path==d.Path))
+                    {
+                        float value=ProvingProfile.SafeSwitchUpgrade(d,next.Profile(d.Path).Descriptor(d.Path),old.Snapshot.Get(d.Path));
+                        // Interpret the untouched v9/v10 step interval as the new shipped default.
+                        // Historical snapshots remain byte-for-byte intact with their original hash.
+                        if(d.Path=="audio.footstepDistanceMeters"&&old.Snapshot.Profile(d.Path).Version>=9&&old.Snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
+                            value=next.Profile(d.Path).Descriptor(d.Path).DefaultValue;
+                        next.Set(d.Path,value);
+                    }
                     foreach(var weapon in new[]{"rifle","shot"})
                         if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&next.Descriptors.Any(d=>d.Path==weapon+".damage"))
                             next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));

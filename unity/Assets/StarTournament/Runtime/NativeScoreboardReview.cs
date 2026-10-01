@@ -43,18 +43,30 @@ namespace StarTournament.ProvingGround
         void Step(int count){for(int i=0;i<count;i++)ground.Session.Tick(new LocalAction[ground.Composition.ParticipantCount],.02f);}
         IEnumerator Capture(string label)
         {
-            while(!Application.isFocused)yield return null;
-            yield return null;yield return new WaitForEndOfFrame();
+            do
+            {
+                while(!Application.isFocused)yield return null;
+                yield return null;yield return new WaitForEndOfFrame();
+            }while(!Application.isFocused);
             Check(AudioListener.volume==0,"unmuted");
             File.WriteAllText(Path.Combine(directory,label+".json"),JsonUtility.ToJson(new Evidence{state=label,focused=Application.isFocused,muted=AudioListener.volume==0,running=ground.Running,width=Screen.width,height=Screen.height,composition=ground.Composition.Read(),session=ground.Session.Capture()},true));
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,label+".png"));yield return new WaitForSecondsRealtime(.2f);
         }
         IEnumerator Held(bool held)
         {
-            if(keyboardView)InputSystem.QueueStateEvent(keyboard,held?new KeyboardState(Key.Tab):new KeyboardState());
-            else InputSystem.QueueStateEvent(pads[0],held?new GamepadState().WithButton(GamepadButton.Select):new GamepadState());
-            Time.timeScale=1;yield return new WaitForSecondsRealtime(.06f);Time.timeScale=0;yield return null;
-            Check(ground.transform.Find("native-ui/standings-0").gameObject.activeSelf==held,"View held projection");
+            // Focus loss can reset a synthetic device before the queued state is processed.
+            // Requeue only after focus returns; the projection assertion remains mandatory.
+            for(int attempt=0;attempt<3;attempt++)
+            {
+                Time.timeScale=0;
+                while(!Application.isFocused)yield return null;
+                if(keyboardView)InputSystem.QueueStateEvent(keyboard,held?new KeyboardState(Key.Tab):new KeyboardState());
+                else InputSystem.QueueStateEvent(pads[0],held?new GamepadState().WithButton(GamepadButton.Select):new GamepadState());
+                Time.timeScale=1;yield return new WaitForSecondsRealtime(.06f);Time.timeScale=0;yield return null;
+                if(Application.isFocused&&ground.transform.Find("native-ui/standings-0").gameObject.activeSelf==held)
+                    yield break;
+            }
+            throw new InvalidOperationException("SCOREBOARD_REVIEW View held projection after focused input retries");
         }
         IEnumerator Finish(string label)
         {
