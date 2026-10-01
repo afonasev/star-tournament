@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace StarTournament.ProvingGround
@@ -6,13 +8,19 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingGround
     {
         const string KeyboardHelp="КЛАВИАТУРА / МЫШЬ\n\nW A S D — движение\nМышь — взгляд\nПробел — прыжок\nЛКМ — огонь (удержание для Резака)\n1 / 2 / 3 / 4 — винтовка / дробовик / Pulse / Резак\nQ / E, колесо — предыдущее / следующее оружие\nTab (удерживать) — таблица результатов\nEsc — пауза / назад\nПробел в подготовке — присоединиться\n\nМЕНЮ\nСтрелки — выбор; Enter — подтвердить\n← / → — значение слайдера\nМышь — выбор, перетаскивание слайдера\nВ личной паузе Backspace — назад";
-        const string GamepadHelp="ГЕЙМПАД  ·  XBOX / PLAYSTATION\n\nЛевый стик — движение\nПравый стик — взгляд\nA / × (нижняя кнопка) — прыжок\nRT / R2 — огонь (удержание для Резака)\nD-pad ← / ↑ / → / ↓ — винтовка / дробовик / Pulse / Резак\nView / Share / Create (удерживать) — таблица результатов\nMenu / Start / Options — пауза\nY / △ — присоединиться в подготовке матча\n\nМЕНЮ\nD-pad / левый стик — выбор\n← / → — значение слайдера\nA / × — выбрать / изменить чекбокс\nB / ○ — назад / отменить";
+        const string GamepadHelp="ГЕЙМПАД  ·  XBOX / PLAYSTATION / SWITCH\n\nЛевый стик — движение\nПравый стик — взгляд\nНижняя кнопка (A / × / B) — прыжок\nПравый триггер (RT / R2 / ZR) — огонь\nD-pad ← / ↑ / → / ↓ — винтовка / дробовик / Pulse / Резак\nView / Share / − (удерживать) — таблица\nMenu / Options / + — пауза\nВерхняя кнопка (Y / △ / X) — присоединиться\n\nМЕНЮ\nD-pad / левый стик — выбор\n← / → — значение слайдера\nНижняя кнопка — выбрать / чекбокс\nПравая кнопка — назад / отменить";
         string settingsProfileId;
         Slider settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider;
         Toggle settingsAutoLevelToggle,settingsFpsToggle,settingsShadowsToggle;
         GameObject settingsHelpPage;
         Button settingsHelpButton,settingsHelpBack;
         bool settingsHelpOpen;
+        GameObject settingsDevicesPage;
+        Button settingsDevicesButton,settingsDevicesBack,settingsDevicesPrevious,settingsDevicesNext;
+        readonly Text[] settingsDeviceRows=new Text[5];
+        Text settingsDevicesPageLabel;
+        bool settingsDevicesOpen;
+        int settingsDevicesPageIndex;
 
         Slider NumericSetting(Transform parent,string name,string title,Vector2 min,Vector2 max,NumericDescriptor d,UnityEngine.Events.UnityAction<float> changed,int font=22)
         {
@@ -86,5 +94,31 @@ namespace StarTournament.ProvingGround
         }
         void SetHelp(bool open)
         {settingsHelpOpen=open;RefreshSettingsUi();Select(open?settingsHelpBack:settingsHelpButton);}
+        void SetDevices(bool open)
+        {settingsDevicesOpen=open;settingsDevicesPageIndex=0;RefreshSettingsUi();Select(open?settingsDevicesBack:settingsDevicesButton);}
+        void ChangeDevicesPage(int direction)
+        {settingsDevicesPageIndex+=direction;RefreshSettingsUi();Select(direction<0?settingsDevicesPrevious:settingsDevicesNext);}
+        void RefreshConnectedDevices()
+        {
+            if(settingsDevicesPage==null || !settingsDevicesOpen)return;
+            var devices=new List<InputDevice>(GamepadCompatibility.ListedDevices());
+            int pages=Mathf.Max(1,(devices.Count+settingsDeviceRows.Length-1)/settingsDeviceRows.Length);
+            settingsDevicesPageIndex=Mathf.Clamp(settingsDevicesPageIndex,0,pages-1);
+            int offset=settingsDevicesPageIndex*settingsDeviceRows.Length;
+            for(int i=0;i<settingsDeviceRows.Length;i++)
+            {
+                int index=offset+i;
+                settingsDeviceRows[i].gameObject.SetActive(index<devices.Count);
+                if(index<devices.Count)
+                {
+                    var device=devices[index];
+                    settingsDeviceRows[i].text=GamepadCompatibility.Name(device)+" #"+device.deviceId+"\n"+GamepadCompatibility.Status(device);
+                }
+            }
+            settingsDevicesPageLabel.text=devices.Count==0?"Контроллеры не обнаружены":
+                "Устройства "+(settingsDevicesPageIndex+1)+" / "+pages;
+            settingsDevicesPrevious.interactable=settingsDevicesPageIndex>0;
+            settingsDevicesNext.interactable=settingsDevicesPageIndex<pages-1;
+        }
     }
 }

@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
         public bool Replace(int slot, InputDevice device)
         {
             if(slot<0 || slot>=ActiveSeatCount || !humanSeats[slot] || device==null || !device.added || !device.enabled ||
-                !(device is Keyboard || device is Gamepad) || (device is Keyboard && Mouse.current==null))return false;
+                !GamepadCompatibility.CanAssign(device))return false;
             for(int i=0;i<ActiveSeatCount;i++)if(i!=slot && devices[i]==device)return false;
             ReleaseSeat(slot);
             if(!HasKeyboard)pairedMouse=null;
@@ -64,7 +64,7 @@ namespace StarTournament.ProvingGround
         }
         public bool Assign(int slot, InputDevice device)
         {
-            if (slot < 0 || slot >= ActiveSeatCount || !humanSeats[slot] || device == null || !device.added || !device.enabled || !(device is Keyboard || device is Gamepad)) return false;
+            if (slot < 0 || slot >= ActiveSeatCount || !humanSeats[slot] || !GamepadCompatibility.CanAssign(device)) return false;
             for (int i = 0; i < SeatCount; i++) if (devices[i] == device) return false;
             if (device is Keyboard)
             {

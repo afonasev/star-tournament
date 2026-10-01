@@ -33,6 +33,22 @@ namespace StarTournament.ProvingGround
             directory=args[at+1];Directory.CreateDirectory(directory);yield return new WaitForSecondsRealtime(1);
             Button("main-action-4").onClick.Invoke();yield return Capture("01-image-checkbox");
             Button("settings-section-1").onClick.Invoke();yield return Capture("02-camera-sliders");
+            var compatibilityPad=InputSystem.AddDevice<Gamepad>();
+            var unsupportedJoystick=InputSystem.AddDevice<Joystick>();
+            Button("settings-controls-devices").onClick.Invoke();yield return Capture("02a-controller-status");
+            bool foundPad=false,foundUnsupported=false;
+            do
+            {
+                var deviceRows=ground.GetComponentsInChildren<Text>(true).Where(t=>t.name.StartsWith("device-row-")&&t.gameObject.activeInHierarchy).Select(t=>t.text).ToArray();
+                foundPad|=deviceRows.Any(t=>t.Contains(compatibilityPad.deviceId.ToString())&&t.Contains("Готов к игре"));
+                foundUnsupported|=deviceRows.Any(t=>t.Contains(unsupportedJoystick.deviceId.ToString())&&t.Contains("XInput"));
+                if(!Button("devices-next").interactable)break;
+                Button("devices-next").onClick.Invoke();yield return null;
+            }while(true);
+            if(!foundPad||!foundUnsupported)
+                throw new InvalidOperationException("Controller compatibility list missed a known gamepad or unsupported joystick");
+            Button("devices-back").onClick.Invoke();
+            InputSystem.RemoveDevice(compatibilityPad);InputSystem.RemoveDevice(unsupportedJoystick);
             Button("settings-controls-help").onClick.Invoke();yield return Capture("03-controls-help");
             Button("settings-help-back").onClick.Invoke();Button("settings-section-2").onClick.Invoke();yield return Capture("04-interface-checkbox");
             Button("settings-back").onClick.Invoke();

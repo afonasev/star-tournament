@@ -266,13 +266,13 @@ namespace StarTournament.ProvingGround
         void OpenLab() { OpenDesignLab(); }
         void OpenSettings(int seat)
         {
-            settingsProfileId=null;settingsHelpOpen=false;settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
+            settingsProfileId=null;settingsHelpOpen=false;settingsDevicesOpen=false;settingsReturn=phase;settingsSeat=seat;resolutionPickerOpen=false;settingsSection=seat<0?SettingsSection.Image:SettingsSection.Control;
             phase=Phase.Settings;RefreshInterface();ConfigureSettingsNavigation();Select(settingsSectionButtons[(int)settingsSection]);
         }
         void CloseSettings()
         {
             if(displayConfirmationActive)RollbackDisplay();
-            int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;settingsProfileId=null;settingsHelpOpen=false;RefreshInterface();
+            int seat=settingsSeat;resolutionPickerOpen=false;phase=settingsReturn;settingsSeat=-1;settingsProfileId=null;settingsHelpOpen=false;settingsDevicesOpen=false;RefreshInterface();
             if(phase==Phase.Profiles){RefreshProfileDetail();Select(profilesBackButton);}
             if(phase==Phase.MainMenu)Select(mainMenuScreen.transform.Find("actions/main-action-4").GetComponent<Button>());
             else if(phase==Phase.Setup && seat>=0 && seat<seatIdentityButtons.Length)FocusRosterCard(seat);

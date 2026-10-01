@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class RosterCardsTests
     {
-        Scene scene;ProvingGround ground;Gamepad pad,secondPad;string profilesPath;
+        Scene scene;ProvingGround ground;Gamepad pad,secondPad;Joystick unsupported;string profilesPath;
         T Field<T>(string name)=>(T)typeof(ProvingGround).GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
         Button B(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         void Click(string name){Assert.That(B(name).interactable,Is.True,name);B(name).onClick.Invoke();}
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
             Click("main-action-0");NativeSetupFixture.UnboundHumans(ground);Click("setup-next");Click("setup-next");
         }
-        [UnityTearDown] public IEnumerator Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(secondPad!=null&&secondPad.added)InputSystem.RemoveDevice(secondPad);if(profilesPath!=null&&File.Exists(profilesPath))File.Delete(profilesPath);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
+        [UnityTearDown] public IEnumerator Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(secondPad!=null&&secondPad.added)InputSystem.RemoveDevice(secondPad);if(unsupported!=null&&unsupported.added)InputSystem.RemoveDevice(unsupported);if(profilesPath!=null&&File.Exists(profilesPath))File.Delete(profilesPath);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
         IEnumerator Press(GamepadButton b)
         {
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(b));yield return null;yield return null;
@@ -41,6 +41,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.LocalSeatCount,Is.EqualTo(3));Assert.That(ground.SetupComposition().ParticipantCount,Is.EqualTo(4));Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));
             var view=B("roster-card-3").GetComponentsInChildren<Text>(true).Single(t=>t.name=="participant-view");Assert.That(view.gameObject.activeSelf,Is.False);
             Click("setup-previous");Click("setup-previous");Click("setup-step-2");Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));
+        }
+        [UnityTest] public IEnumerator GenericJoystickAppearsInPickerButCannotBeAssigned()
+        {
+            yield return Load();unsupported=InputSystem.AddDevice<Joystick>();
+            Click("roster-card-0");Click("roster-device");
+            var choice=B("roster-choice-device-"+unsupported.deviceId);
+            Assert.That(choice.interactable,Is.False);
+            StringAssert.Contains("XInput",choice.GetComponentInChildren<Text>().text);
+            Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.Not.SameAs(unsupported));
         }
         [UnityTest] public IEnumerator GamepadCanEditDifficultyCancelAndReturnToCard()
         {

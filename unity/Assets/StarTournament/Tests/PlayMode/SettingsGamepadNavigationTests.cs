@@ -15,6 +15,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;
         Gamepad pad;
+        Joystick unsupported;
         ProvingGround ground;
         GamepadLookSettings originalGamepad;
         float originalMouse;
@@ -48,6 +49,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             if(preferencesCaptured){GamepadLookSettings.SaveGeneral(originalGamepad);MouseSensitivityPreference.Set(ground.Profile,originalMouse);preferencesCaptured=false;}
             if(pad!=null && pad.added)InputSystem.RemoveDevice(pad);
+            if(unsupported!=null && unsupported.added)InputSystem.RemoveDevice(unsupported);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
 
@@ -77,6 +79,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-fps"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("main-action-4"));
+        }
+        [UnityTest] public IEnumerator DevicePageShowsSupportedAndUnsupportedControllers()
+        {
+            yield return Load();unsupported=InputSystem.AddDevice<Joystick>();
+            Button("settings-section-1").onClick.Invoke();
+            Button("settings-controls-devices").onClick.Invoke();yield return null;
+            bool foundPad=false,foundUnsupported=false;
+            do
+            {
+                var rows=ground.GetComponentsInChildren<Text>(true).Where(t=>t.name.StartsWith("device-row-")&&t.gameObject.activeInHierarchy).Select(t=>t.text).ToArray();
+                foundPad|=rows.Any(t=>t.Contains(pad.deviceId.ToString())&&t.Contains("Готов к игре"));
+                foundUnsupported|=rows.Any(t=>t.Contains(unsupported.deviceId.ToString())&&t.Contains("XInput"));
+                if(!Button("devices-next").interactable)break;
+                Button("devices-next").onClick.Invoke();yield return null;
+            }while(true);
+            Assert.That(foundPad,Is.True);
+            Assert.That(foundUnsupported,Is.True);
+            Button("devices-back").onClick.Invoke();
+            Assert.That(Focus,Is.EqualTo("settings-controls-devices"));
+            Button("settings-controls-devices").onClick.Invoke();Assert.That(Focus,Is.EqualTo("devices-back"));
+            yield return Press(GamepadButton.East);
+            Assert.That(Focus,Is.EqualTo("settings-controls-devices"));
         }
 
         [UnityTest] public IEnumerator GamepadCanCancelDisplayConfirmation()

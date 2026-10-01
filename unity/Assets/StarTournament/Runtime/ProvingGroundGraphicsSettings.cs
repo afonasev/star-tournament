@@ -71,7 +71,8 @@ namespace StarTournament.ProvingGround
             settingsHorizontalSlider=NumericSetting(settingsControlPage.transform,"settings-gamepad-horizontal","Геймпад: горизонталь",new Vector2(.02f,.54f),new Vector2(.98f,.76f),Profile.Descriptor(GamepadLookSettings.HorizontalPath),v=>SetMenuGamepad(0,v));
             settingsVerticalSlider=NumericSetting(settingsControlPage.transform,"settings-gamepad-vertical","Геймпад: вертикаль",new Vector2(.02f,.31f),new Vector2(.98f,.53f),Profile.Descriptor(GamepadLookSettings.VerticalPath),v=>SetMenuGamepad(1,v));
             settingsAutoLevelToggle=BooleanSetting(settingsControlPage.transform,"settings-auto-level","Выравнивать взгляд по полу / лестнице",new Vector2(.02f,.16f),new Vector2(.98f,.29f),v=>SetMenuGamepad(2,0,v));
-            settingsHelpButton=MenuButton(settingsControlPage.transform,"settings-controls-help","СПРАВКА ПО КНОПКАМ",new Vector2(.02f,.01f),new Vector2(.98f,.14f),()=>SetHelp(true));
+            settingsHelpButton=MenuButton(settingsControlPage.transform,"settings-controls-help","СПРАВКА ПО КНОПКАМ",new Vector2(.02f,.01f),new Vector2(.49f,.14f),()=>SetHelp(true));
+            settingsDevicesButton=MenuButton(settingsControlPage.transform,"settings-controls-devices","УСТРОЙСТВА",new Vector2(.51f,.01f),new Vector2(.98f,.14f),()=>SetDevices(true));
             settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
             Panel(settingsInterfacePage.transform,"fps-card",new Vector2(.02f,.25f),new Vector2(.98f,.94f),MenuCard);
             settingsFps=Label(settingsInterfacePage.transform,"fps-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
@@ -86,6 +87,17 @@ namespace StarTournament.ProvingGround
             Label(settingsHelpPage.transform,"keyboard-help",KeyboardHelp,20,new Vector2(.02f,.17f),new Vector2(.49f,.98f),TextAnchor.UpperLeft,Color.white);
             Label(settingsHelpPage.transform,"gamepad-help",GamepadHelp,20,new Vector2(.52f,.17f),new Vector2(.98f,.98f),TextAnchor.UpperLeft,Color.white);
             settingsHelpBack=MenuButton(settingsHelpPage.transform,"settings-help-back","‹ К НАСТРОЙКАМ",new Vector2(.02f,.02f),new Vector2(.98f,.13f),()=>SetHelp(false));
+            settingsDevicesPage=Panel(content.transform,"settings-devices-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,39,53,255));
+            Label(settingsDevicesPage.transform,"devices-title","ПОДКЛЮЧЁННЫЕ УСТРОЙСТВА",27,new Vector2(.03f,.88f),new Vector2(.97f,.98f),TextAnchor.MiddleLeft,MenuGold);
+            for(int i=0;i<settingsDeviceRows.Length;i++)
+            {
+                float top=.86f-i*.13f;
+                settingsDeviceRows[i]=Label(settingsDevicesPage.transform,"device-row-"+i,"",19,new Vector2(.04f,top-.12f),new Vector2(.96f,top),TextAnchor.MiddleLeft,Color.white);
+            }
+            settingsDevicesPageLabel=Label(settingsDevicesPage.transform,"devices-page-label","",19,new Vector2(.25f,.14f),new Vector2(.75f,.21f),TextAnchor.MiddleCenter,Color.white);
+            settingsDevicesPrevious=MenuButton(settingsDevicesPage.transform,"devices-previous","‹",new Vector2(.04f,.14f),new Vector2(.23f,.22f),()=>ChangeDevicesPage(-1));
+            settingsDevicesNext=MenuButton(settingsDevicesPage.transform,"devices-next","›",new Vector2(.77f,.14f),new Vector2(.96f,.22f),()=>ChangeDevicesPage(1));
+            settingsDevicesBack=MenuButton(settingsDevicesPage.transform,"devices-back","‹ К НАСТРОЙКАМ",new Vector2(.02f,.02f),new Vector2(.98f,.12f),()=>SetDevices(false));
             resolutionPicker=Panel(settingsScreen.transform,"resolution-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
             var pickerCard=Panel(resolutionPicker.transform,"resolution-card",new Vector2(.26f,.15f),new Vector2(.74f,.85f),MenuCard);
             Label(pickerCard.transform,"resolution-title","ВЫБЕРИТЕ РАЗРЕШЕНИЕ",30,new Vector2(.06f,.84f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
@@ -164,8 +176,12 @@ namespace StarTournament.ProvingGround
             Link(settingsHorizontalSlider,settingsMouseSlider,settingsVerticalSlider);
             Link(settingsVerticalSlider,settingsHorizontalSlider,settingsAutoLevelToggle);
             Link(settingsAutoLevelToggle,settingsVerticalSlider,settingsHelpButton,settingsSectionButtons[1]);
-            Link(settingsHelpButton,settingsAutoLevelToggle,settingsSectionButtons[1],settingsSectionButtons[1]);
+            Link(settingsHelpButton,settingsAutoLevelToggle,settingsSectionButtons[1],settingsSectionButtons[1],settingsDevicesButton);
+            Link(settingsDevicesButton,settingsAutoLevelToggle,settingsSectionButtons[1],settingsHelpButton);
             Link(settingsHelpBack);
+            Link(settingsDevicesPrevious,settingsDevicesBack,settingsDevicesBack,null,settingsDevicesNext);
+            Link(settingsDevicesNext,settingsDevicesBack,settingsDevicesBack,settingsDevicesPrevious);
+            Link(settingsDevicesBack,settingsDevicesPrevious,settingsDevicesPrevious);
             Link(settingsFpsToggle,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);
             Link(settingsMusicSlider,settingsSectionButtons[3],settingsEffectsSlider);
             Link(settingsEffectsSlider,settingsMusicSlider,settingsBackButton);
@@ -181,7 +197,7 @@ namespace StarTournament.ProvingGround
         void SelectSettingsSection(SettingsSection section)
         {
             if((settingsSeat>=0||settingsProfileId!=null) && section==SettingsSection.Image)return;
-            settingsHelpOpen=false;settingsSection=section;RefreshSettingsUi();ConfigureSettingsNavigation();Select(FirstSettingsAction());
+            settingsHelpOpen=false;settingsDevicesOpen=false;settingsSection=section;RefreshSettingsUi();ConfigureSettingsNavigation();Select(FirstSettingsAction());
         }
         void RefreshSettingsUi()
         {
@@ -189,8 +205,9 @@ namespace StarTournament.ProvingGround
             settingsSectionButtons[0].interactable=settingsSeat<0 && settingsProfileId==null && !displayConfirmationActive && !resolutionPickerOpen;
             for(int i=1;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!displayConfirmationActive && !resolutionPickerOpen;
             settingsImagePage.SetActive(settingsSection==SettingsSection.Image && settingsSeat<0 && settingsProfileId==null);
-            settingsControlPage.SetActive(settingsSection==SettingsSection.Control && !settingsHelpOpen);
+            settingsControlPage.SetActive(settingsSection==SettingsSection.Control && !settingsHelpOpen && !settingsDevicesOpen);
             settingsHelpPage.SetActive(settingsHelpOpen);
+            settingsDevicesPage.SetActive(settingsDevicesOpen);
             settingsInterfacePage.SetActive(settingsSection==SettingsSection.Interface);
             settingsAudioPage.SetActive(settingsSection==SettingsSection.Audio);
             resolutionPicker.SetActive(resolutionPickerOpen && !displayConfirmationActive);
@@ -202,8 +219,9 @@ namespace StarTournament.ProvingGround
                     (i==0?"ИЗОБРАЖЕНИЕ":i==1?"УПРАВЛЕНИЕ":i==2?"ИНТЕРФЕЙС":"ЗВУК");
             }
             settingsHeading.text=settingsProfileId!=null?"НАСТРОЙКИ · "+playerProfiles.Find(settingsProfileId).Name:settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat);
-            settingsDescription.gameObject.SetActive(!settingsHelpOpen);
+            settingsDescription.gameObject.SetActive(!settingsHelpOpen && !settingsDevicesOpen);
             if(settingsHelpOpen)settingsHeading.text="УПРАВЛЕНИЕ · СПРАВКА";
+            if(settingsDevicesOpen)settingsHeading.text="УПРАВЛЕНИЕ · УСТРОЙСТВА";
             settingsDescription.text=settingsSection==SettingsSection.Image?"Режим вывода и тени применяются ко всем игровым экранам":
                 settingsSection==SettingsSection.Control?"Личная чувствительность сохраняется в профиле; общая служит начальным значением":
                 settingsSection==SettingsSection.Interface?"Индикатор FPS можно настроить отдельно для каждого игрока":
@@ -220,6 +238,7 @@ namespace StarTournament.ProvingGround
             RefreshNumericSetting(settingsMusicSlider,"Музыка",NativeAudioPreferences.Music(Profile),"%");
             RefreshNumericSetting(settingsEffectsSlider,"Эффекты",NativeAudioPreferences.Effects(Profile),"%");
             settingsFps.text="ПОКАЗЫВАТЬ FPS";
+            RefreshConnectedDevices();
             if(displayConfirmationActive)
                 settingsConfirmationText.text="Подтвердить режим?\n"+pendingDisplayWidth+" × "+pendingDisplayHeight+" · "+
                     (pendingDisplayMode==FullScreenMode.Windowed?"Окно":"Полный экран")+"\nВозврат через "+
@@ -356,6 +375,7 @@ namespace StarTournament.ProvingGround
             if(displayConfirmationActive)RollbackDisplay();
             else if(resolutionPickerOpen)CloseResolutionPicker();
             else if(settingsHelpOpen)SetHelp(false);
+            else if(settingsDevicesOpen)SetDevices(false);
             else CloseSettings();
             lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
         }

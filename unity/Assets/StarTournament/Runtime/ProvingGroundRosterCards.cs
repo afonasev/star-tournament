@@ -293,12 +293,14 @@ namespace StarTournament.ProvingGround
             }
             else
             {
-                foreach(var device in InputSystem.devices.Where(d=>d is Keyboard||d is Gamepad))
+                foreach(var device in GamepadCompatibility.ListedDevices())
                 {
                     var choice=device;bool busy=Enumerable.Range(0,LocalSeatCount).Any(s=>s!=p&&input.DeviceAt(s)==device);
-                    bool usable=device.enabled&&!busy&&(!(device is Keyboard)||Mouse.current!=null);
-                    string label=device is Keyboard?"Клавиатура + мышь":device.displayName+" #"+device.deviceId;
-                    AddRosterChoice("roster-choice-device-"+device.deviceId,label+(busy?" · занято":""),()=>{if(input.Replace(p,choice)){identities.RememberBinding(p,choice.deviceId);setupError=null;}},usable);
+                    bool usable=GamepadCompatibility.CanAssign(device)&&!busy;
+                    string label=GamepadCompatibility.Name(device)+" #"+device.deviceId;
+                    string status=busy?"Занято":device is Joystick && !(device is Gamepad)?"Нужен XInput или профиль":GamepadCompatibility.Status(device);
+                    AddRosterChoice("roster-choice-device-"+device.deviceId,label+"\n"+status,()=>{if(input.Replace(p,choice)){identities.RememberBinding(p,choice.deviceId);setupError=null;}},usable);
+                    var caption=rosterChoices[rosterChoices.Count-1].GetComponentInChildren<Text>();caption.fontSize=19;caption.horizontalOverflow=HorizontalWrapMode.Wrap;
                 }
                 if(rosterChoices.Count==0)AddRosterChoice("roster-choice-no-device","Подключите клавиатуру или геймпад",()=>{},false);
             }
