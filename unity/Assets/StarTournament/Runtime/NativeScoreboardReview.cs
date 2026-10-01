@@ -78,6 +78,7 @@ namespace StarTournament.ProvingGround
         }
         IEnumerator Start()
         {
+            Application.runInBackground=true;
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-scoreboardEvidence");directory=at>=0&&at+1<args.Length?args[at+1]:Path.Combine(Application.persistentDataPath,"scoreboard-review");Directory.CreateDirectory(directory);AudioListener.volume=0;
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();
@@ -99,6 +100,14 @@ namespace StarTournament.ProvingGround
                 B("Повторить матч").onClick.Invoke();yield return null;Time.timeScale=0;Check(ground.Running,"repeat");
                 yield return Capture("repeat");
                 ground.SendMessage("Pause","Results actions review");yield return null;
+                var pauseActions=ground.transform.Find("native-ui/setup-pause/menu").GetComponentsInChildren<Button>().Select(b=>b.name).ToArray();
+                Check(pauseActions.SequenceEqual(new[]{"Продолжить","fallback-settings","Повторить матч","В главное меню"}),"pause actions: "+string.Join(",",pauseActions));
+                yield return Capture("pause-four-actions");
+                B("fallback-settings").onClick.Invoke();yield return null;
+                Check(B("fps-setting").gameObject.activeInHierarchy && B("mouse-sensitivity-minus").gameObject.activeInHierarchy && !B("Продолжить").gameObject.activeInHierarchy,"pause settings page");
+                yield return Capture("pause-settings");
+                B("fallback-settings-back").onClick.Invoke();yield return null;
+                Check(B("Продолжить").gameObject.activeInHierarchy && !B("fps-setting").gameObject.activeInHierarchy,"pause settings back");
                 B("В главное меню").onClick.Invoke();yield return null;Check(!ground.Running,"main menu");
                 yield return Capture("main-menu");
                 Debug.Log("NATIVE_SCOREBOARD_REVIEW_COMPLETE "+directory);yield break;

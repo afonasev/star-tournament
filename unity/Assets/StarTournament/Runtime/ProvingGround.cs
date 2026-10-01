@@ -118,6 +118,8 @@ namespace StarTournament.ProvingGround
         readonly DamageVignette[] damageVignettes=new DamageVignette[SeatInputCoordinator.SeatCount];
         readonly RectTransform[] viewportRoots=new RectTransform[SeatInputCoordinator.SeatCount];
         Button seatsMinus, seatsPlus;
+        Button fallbackSettings, fallbackSettingsBack;
+        bool fallbackSettingsOpen;
         int frozenSeatCount=SeatInputCoordinator.SeatCount;
         int probeCameraCount;
         public int LocalSeatCount => input.ActiveSeatCount;
@@ -800,6 +802,7 @@ namespace StarTournament.ProvingGround
         void Pause(string reason) => Pause(reason,-1);
         void Pause(string reason,int seat)
         {
+            fallbackSettingsOpen=false;
             BotDriver?.Release(); phase = Phase.Paused; pauseReason = reason; input.Clear(); Session.ClearInput(); gameAudio?.StopEffects(); Array.Clear(actions,0,actions.Length); SetCursor(false);
             if(UseSeatPauseMenus)
             {
@@ -970,8 +973,12 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }
             colorButton=ButtonElement(column.transform,"Поменять цвета команд",()=>{if(phase!=Phase.Setup)return;swappedTeamColors=!swappedTeamColors;RefreshInterface();});colorButton.gameObject.name="team-colors";
             resume=ButtonElement(column.transform,"Продолжить",Resume);
+            fallbackSettings=ButtonElement(column.transform,"Настройки",()=>{fallbackSettingsOpen=true;RefreshInterface();Select(fallbackSettingsBack);});
+            fallbackSettings.gameObject.name="fallback-settings";
             repeat=ButtonElement(column.transform,"Повторить матч",Repeat);
             menu=ButtonElement(column.transform,"В главное меню",ToMainMenu);
+            fallbackSettingsBack=ButtonElement(column.transform,"‹ Назад",()=>{fallbackSettingsOpen=false;RefreshInterface();Select(fallbackSettings);});
+            fallbackSettingsBack.gameObject.name="fallback-settings-back";
             rebind=ButtonElement(column.transform,"Назначить устройства заново",ResetSetup);
             diagnosticButton=ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
             durationButton=ButtonElement(column.transform,"Длительность",()=>StepConfiguration("match.durationMinutes",1));
@@ -1103,9 +1110,14 @@ namespace StarTournament.ProvingGround
             seatsPlus.gameObject.SetActive(phase==Phase.Setup); seatsPlus.interactable=LocalSeatCount<SeatInputCoordinator.SeatCount && LocalSeatCount+botSetup.Count<NativeMatchRoster.MaximumParticipants;
             seatsMinus.GetComponentInChildren<Text>().text="Экранов: "+LocalSeatCount+"   −";
             diagnosticButton.GetComponentInChildren<Text>().text="Диагностика: "+LocalSeatCount+" камеры · без управления";
-            resume.gameObject.SetActive(phase==Phase.Paused); resume.interactable=diagnostic||input.Ready;
-            repeat.gameObject.SetActive(phase==Phase.Paused||phase==Phase.Results); repeat.interactable=diagnostic||input.Ready;
-            menu.gameObject.SetActive(phase==Phase.Paused||phase==Phase.Results);
+            bool settingsPage=phase==Phase.Paused&&fallbackSettingsOpen;
+            fallbackSettings.gameObject.SetActive(phase==Phase.Paused&&!settingsPage);
+            fallbackSettingsBack.gameObject.SetActive(settingsPage);
+            repeat.GetComponentInChildren<Text>().text=phase==Phase.Paused?"Начать заново":"Повторить матч";
+            menu.GetComponentInChildren<Text>().text=phase==Phase.Paused?"Выйти в главное меню":"В главное меню";
+            resume.gameObject.SetActive(phase==Phase.Paused&&!settingsPage); resume.interactable=diagnostic||input.Ready;
+            repeat.gameObject.SetActive((phase==Phase.Paused&&!settingsPage)||phase==Phase.Results); repeat.interactable=diagnostic||input.Ready;
+            menu.gameObject.SetActive((phase==Phase.Paused&&!settingsPage)||phase==Phase.Results);
             modeButton.gameObject.SetActive(phase==Phase.Setup);
             modeButton.GetComponentInChildren<Text>().text="Режим: "+(SetupMode==NativeMatchMode.Teams?"Team A / Team B":"Каждый сам за себя");
             arenaButton.gameObject.SetActive(phase==Phase.Setup);
@@ -1127,7 +1139,7 @@ namespace StarTournament.ProvingGround
             targetMinus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
             targetPlus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
             var sensitivityDescriptor=MouseSensitivityPreference.Descriptor(Profile);var sensitivity=MouseSensitivityPreference.Resolve(Profile);
-            bool showMatchSettings=phase==Phase.Setup||phase==Phase.Paused;
+            bool showMatchSettings=phase==Phase.Setup||settingsPage;
             mouseSensitivityMinus.gameObject.SetActive(showMatchSettings);mouseSensitivityPlus.gameObject.SetActive(showMatchSettings);
             status.transform.parent.Find("fps-setting").gameObject.SetActive(showMatchSettings);
             mouseSensitivityMinus.interactable=sensitivity>sensitivityDescriptor.Minimum;
@@ -1166,6 +1178,7 @@ namespace StarTournament.ProvingGround
                 string.Join("  |  ",Enumerable.Range(0,LocalSeatCount).Select(i=>"P"+(i+1)+": "+(!input.IsHumanSeat(i)?"AI":input.IsConnected(i)?IdentityLabel(i):"ожидает")));
             if(phase==Phase.Setup && !ValidSetup()) status.text+=LocalSeatCount+botSetup.Count<2?"\nДобавьте бота или второго игрока":"\nНужны обе команды: Team A и Team B";
             if(phase==Phase.Setup && setupError!=null) status.text+="\n"+setupError;
+            if(settingsPage)status.text="НАСТРОЙКИ";
             if(phase==Phase.Results)
             {
                 var result=Session.Match.Read();
