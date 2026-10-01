@@ -347,8 +347,7 @@ namespace StarTournament.ProvingGround
                 {
                     var target=targets[hit.TargetIndex];
                     contact=new PelletNotice(b.Direction,b.Position,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
-                    if(target.Seat!=b.Owner&&!Allied(b.Owner,target.Seat))
-                        applied=ApplyDamagePolicy(target.Seat,target.Life,resolver.FullDamage(hit.Zone,WeaponId.Rifle)*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Rifle,b.Id,b.Direction,b.Position)).Applied;
+                    applied=ApplyDamagePolicy(target.Seat,target.Life,resolver.FullDamage(hit.Zone,WeaponId.Rifle)*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Rifle,b.Id,b.Direction,b.Position)).Applied;
                 }
                 else contact=new PelletNotice(b.Direction,b.Position,wall.normal,PelletContact.World);
                 if(applied>0)targets=LiveTargets();

@@ -120,7 +120,7 @@ namespace StarTournament.ProvingGround
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             int index=copy.descriptors.FindIndex(d=>d.Path=="rifle.speed");
             copy.descriptors.RemoveAt(index);copy.values.RemoveAll(v=>v.Path=="rifle.speed");
-            copy.version=copy.FindDescriptor("rifle.damage")!=null?5:4;
+            copy.version=Math.Min(copy.version,copy.FindDescriptor("rifle.damage")!=null?5:4);
             copy.Add("rifle.range","rifle","Дальность винтовки","Дальность одиночной пули.","meters",1,200,.5f,80);
             var descriptor=copy.descriptors[copy.descriptors.Count-1];copy.descriptors.RemoveAt(copy.descriptors.Count-1);copy.descriptors.Insert(index,descriptor);
             return copy;

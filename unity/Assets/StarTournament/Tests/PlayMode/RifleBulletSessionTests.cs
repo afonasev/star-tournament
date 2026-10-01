@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             owner=new GameObject("rifle owner");SceneManager.MoveGameObjectToScene(owner,scene);
             move=ProvingProfile.CreateDefault();combat=ProvingProfile.CreateNativeCombatDefault();life=ProvingProfile.CreateCombatDefault();
             combat.Set("rifle.spread",0);combat.Set("rifle.speed",speed);
-            foreach(var zone in new[]{"head","torso","limb"})combat.Set("rifle."+zone,20);
+            combat.Set("rifle.damage",20);
             arena=owner.AddComponent<ProvingArena>();arena.Build(AuthoredPhysicsFixture.Freeze(),move);
             motors=new CharacterMotor[4];
             for(int i=0;i<4;i++){var go=new GameObject("p"+i);go.transform.SetParent(owner.transform);go.layer=ProvingArena.ParticipantLayer;motors[i]=go.AddComponent<CharacterMotor>();motors[i].Initialize(move,new Vector3(-8+i*3,0,0));}
@@ -55,11 +55,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             motors[2].Initialize(move,new Vector3(-8,0,6));Ticks(25);
             Assert.That(session.Life(1).Health,Is.EqualTo(100));Assert.That(session.Life(2).Health,Is.EqualTo(80));
         }
-        [UnityTest]public IEnumerator ThinWallAndAllyStopHighSpeedBulletWithoutEnemyDamage()
+        [UnityTest]public IEnumerator ThinWallAndAllyStopHighSpeedBulletWithHalfFriendlyDamage()
         {
             Setup(1000,true);yield return null;motors[2].Initialize(move,new Vector3(-8,0,8));
-            int contacts=0;session.RifleBulletHit+=e=>{contacts++;Assert.That(e.AppliedDamage,Is.Zero);};
-            Fire();Ticks(1);Assert.That(contacts,Is.EqualTo(1));Assert.That(session.Life(1).Health,Is.EqualTo(100));Assert.That(session.Life(2).Health,Is.EqualTo(100));
+            int contacts=0;session.RifleBulletHit+=e=>{contacts++;Assert.That(e.AppliedDamage,Is.EqualTo(contacts==1?10:0));};
+            Fire();Ticks(1);Assert.That(contacts,Is.EqualTo(1));Assert.That(session.Life(1).Health,Is.EqualTo(90));Assert.That(session.Life(2).Health,Is.EqualTo(100));
             Ticks(10);Wall(new Vector3(-8,1,3),new Vector3(2,4,.01f));Fire();Ticks(1);
             Assert.That(contacts,Is.EqualTo(2));Assert.That(session.RifleBullets,Is.Empty);Assert.That(session.Life(2).Health,Is.EqualTo(100));
         }

@@ -267,7 +267,9 @@ namespace StarTournament.ProvingGround
                     foreach(var weapon in new[]{"rifle","shot"})
                         if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&next.Descriptors.Any(d=>d.Path==weapon+".damage"))
                             next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));
-                    if(!old.Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath))
+                    if(!old.Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath)
+                        &&old.Snapshot.Descriptors.Any(d=>d.Path=="input.gamepadDegreesPerSecond")
+                        &&next.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath))
                     {
                         var legacy=old.Snapshot.Get("input.gamepadDegreesPerSecond");
                         next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);

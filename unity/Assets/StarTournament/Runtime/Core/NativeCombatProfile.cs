@@ -33,7 +33,7 @@ namespace StarTournament.ProvingGround
             foreach(var d in legacy.descriptors)
                 if((d.Path=="rifle.head"||d.Path=="rifle.torso"||d.Path=="rifle.limb"||d.Path=="shot.head"||d.Path=="shot.torso"||d.Path=="shot.limb")&&copy.FindDescriptor(d.Path)==null)
                 {copy.descriptors.Add(UnityEngine.JsonUtility.FromJson<NumericDescriptor>(UnityEngine.JsonUtility.ToJson(d)));copy.values.Add(new ProvingProfileValue{Path=d.Path,Value=legacy.Get(d.Path)});}
-            copy.version=copy.FindDescriptor("rifle.speed")!=null?5:4;copy.valueIndex=null;return copy;
+            copy.version=System.Math.Min(copy.version,copy.FindDescriptor("rifle.speed")!=null?5:4);copy.valueIndex=null;return copy;
         }
         static ProvingProfile CreateLegacyNativeCombatDefault()
         {
