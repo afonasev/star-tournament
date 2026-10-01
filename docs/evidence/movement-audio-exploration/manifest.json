@@ -1,0 +1,313 @@
+{
+  "classification": "OFFLINE_AUDIO_DIRECTION_SKETCH_NOT_PLAYER_ACCEPTANCE",
+  "baseline_revision": "50656793e7537484623e6e41554b56fd66fd6496",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "source_license": "CC0",
+  "source_zip_sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
+  "timing": "0.3–2.8 s slow steps, 4–6.64 s full speed, 8/10.2/12.4 s jump with approximate flat-ground landing +0.70 s",
+  "effects_percent": 80,
+  "local_gain": 0.65,
+  "new_preview_gains": {
+    "step": 0.5,
+    "jump": 0.38,
+    "land": 0.6
+  },
+  "variants": 5,
+  "random_seed": 101,
+  "files": [
+    {
+      "file": "00-current.wav",
+      "seconds": 15.0,
+      "peak": 0.36968750000000006,
+      "sha256": "b78456ad2673b7746c7f4ca36723abc6a96213086355e7647f96f8218a5d5432"
+    },
+    {
+      "file": "01-concrete/step-0.wav",
+      "seconds": 0.10303125,
+      "peak": 0.4416701876489555,
+      "sha256": "7dca61323b74583175ef6252f57817016be8c8d0dee3b6b015c7d799c7b837aa"
+    },
+    {
+      "file": "01-concrete/jump-0.wav",
+      "seconds": 0.093625,
+      "peak": 0.27961872487631534,
+      "sha256": "c82559227c0bf4b15858f471c036a3332e80b02c8c27331ecd5fa8e419108d1b"
+    },
+    {
+      "file": "01-concrete/land-0.wav",
+      "seconds": 0.13175,
+      "peak": 0.5840241239017249,
+      "sha256": "a30c444b2b25213d2b996b3ff1ecf94982304e2f9e1938f79b495252d6bf2ac0"
+    },
+    {
+      "file": "01-concrete/step-1.wav",
+      "seconds": 0.10475,
+      "peak": 0.3111002416821137,
+      "sha256": "aefce29b6bc9ea6fedd4f67e1c5755fb1ab3d6dbdb390571d24e556e19b97de2"
+    },
+    {
+      "file": "01-concrete/jump-1.wav",
+      "seconds": 0.0951875,
+      "peak": 0.19251928741900193,
+      "sha256": "d4a328a8926eef01cdf768610e35828f38f79cb4cf1ed962312ac11f4f6fdfa9"
+    },
+    {
+      "file": "01-concrete/land-1.wav",
+      "seconds": 0.13990625,
+      "peak": 0.38109812152278166,
+      "sha256": "e7c2a97d53bfe21022880743e0f86ac0505a5d0d491b7b9badb6a99c24ba8606"
+    },
+    {
+      "file": "01-concrete/step-2.wav",
+      "seconds": 0.10990625,
+      "peak": 0.2867156469554052,
+      "sha256": "505ee35f133a86babe8cd3a0140d0a90ea2765a047c031e2f479bd280a36b99f"
+    },
+    {
+      "file": "01-concrete/jump-2.wav",
+      "seconds": 0.099875,
+      "peak": 0.18503375155298335,
+      "sha256": "3c9cd1a331b529e7708f6d3d7b6dc1b220efef443a60c89ff92b8564acda7a7b"
+    },
+    {
+      "file": "01-concrete/land-2.wav",
+      "seconds": 0.140625,
+      "peak": 0.39702742154832293,
+      "sha256": "de22fef03fe18d6f7e92b1d6d4aee94afa4aca410c8b4f2346f1179225f71448"
+    },
+    {
+      "file": "01-concrete/step-3.wav",
+      "seconds": 0.107625,
+      "peak": 0.33025015509443145,
+      "sha256": "b34db3c45cf6b04e4ea9aaacff99c5d6af769a1eda4dc267fdf70fb7eabe7de9"
+    },
+    {
+      "file": "01-concrete/jump-3.wav",
+      "seconds": 0.09778125,
+      "peak": 0.19391034434141036,
+      "sha256": "d3a38b75a1f9044e3894b833702a9825e176c88dfdb62733b74ebd44bef8b477"
+    },
+    {
+      "file": "01-concrete/land-3.wav",
+      "seconds": 0.14746875,
+      "peak": 0.40514490967586997,
+      "sha256": "4153c654ed2caf5654471df72060c8332332452d43fdddd2c8ded33503ba087f"
+    },
+    {
+      "file": "01-concrete/step-4.wav",
+      "seconds": 0.11146875,
+      "peak": 0.44634782483831376,
+      "sha256": "69e61522b5e84a798cb7a765490adf9087c0373053b3bd08fc91f8868386ea5d"
+    },
+    {
+      "file": "01-concrete/jump-4.wav",
+      "seconds": 0.10128125,
+      "peak": 0.2716969053956305,
+      "sha256": "bf0a9f7507e753c00106f7cc1f602e21d290e7c59575e523324e83e24a3162e3"
+    },
+    {
+      "file": "01-concrete/land-4.wav",
+      "seconds": 0.14203125,
+      "peak": 0.567381371478754,
+      "sha256": "eb1a5c9aaa8a19a89f5006fe1d63bc129f8a65ce7cec577a49ef7524dc04e4c5"
+    },
+    {
+      "file": "01-concrete-queue.wav",
+      "seconds": 15.0,
+      "peak": 0.16881023759236177,
+      "sha256": "0b3d77f10fefc4b9b9878932a98a35557289c803d0f6e958ef7c226203aa272c"
+    },
+    {
+      "file": "02-soft-sole/step-0.wav",
+      "seconds": 0.16690625,
+      "peak": 0.6248581985978828,
+      "sha256": "defef32b8015fdcc86bf956173af0c484e3499929b605155aef1623697d5eb2e"
+    },
+    {
+      "file": "02-soft-sole/jump-0.wav",
+      "seconds": 0.1516875,
+      "peak": 0.42,
+      "sha256": "4505d44fcf9ad6a1c58cfcc8d45acea7f2caab6a64b06714b9382a1bfc69efd6"
+    },
+    {
+      "file": "02-soft-sole/land-0.wav",
+      "seconds": 0.1775,
+      "peak": 0.75,
+      "sha256": "1d55cfb9967c9db7fe18bc6568676e99a7c06828dca3c8aba9d305e6a89494a3"
+    },
+    {
+      "file": "02-soft-sole/step-1.wav",
+      "seconds": 0.14190625,
+      "peak": 0.4622940530337021,
+      "sha256": "f466a27df4d5e589340ebca0826a7658cf7bd6018226186f1bb6bff932a9291d"
+    },
+    {
+      "file": "02-soft-sole/jump-1.wav",
+      "seconds": 0.12896875,
+      "peak": 0.36011366865367406,
+      "sha256": "465625cf863a887bdbd8a728a9d30d1a9800f637f7956f0e071f744cd270c060"
+    },
+    {
+      "file": "02-soft-sole/land-1.wav",
+      "seconds": 0.17190625,
+      "peak": 0.6507106661446515,
+      "sha256": "abb42ed74d3803cf9ee94362b58d6cbd42005bde67e57122342e9db813cc0aad"
+    },
+    {
+      "file": "02-soft-sole/step-2.wav",
+      "seconds": 0.14190625,
+      "peak": 0.46187227011076626,
+      "sha256": "3b3d232f3fe61c775caa43ea53285fd4d04384ba67824527db94256e457bb1d6"
+    },
+    {
+      "file": "02-soft-sole/jump-2.wav",
+      "seconds": 0.12896875,
+      "peak": 0.3605210185898102,
+      "sha256": "67772da15cd1ebac079de6a32acffeb5ec770c151ed1c72bd1e52f32be9d56ed"
+    },
+    {
+      "file": "02-soft-sole/land-2.wav",
+      "seconds": 0.17490625,
+      "peak": 0.6658277508060881,
+      "sha256": "1e821273ff6a27fe2e836547f9d1c663e05eb71b99241e92f2f7ff2ebf1ab2e8"
+    },
+    {
+      "file": "02-soft-sole/step-3.wav",
+      "seconds": 0.14190625,
+      "peak": 0.6220133136825512,
+      "sha256": "17e434b56d5a1ba5dab8c1777613f98dcecbadd81728c29c6d526311e4a6dcef"
+    },
+    {
+      "file": "02-soft-sole/jump-3.wav",
+      "seconds": 0.12896875,
+      "peak": 0.42,
+      "sha256": "79cc6a10afb883fef218c8422b8214ed035d9052b367bf524126b0712a979ef1"
+    },
+    {
+      "file": "02-soft-sole/land-3.wav",
+      "seconds": 0.17790625,
+      "peak": 0.75,
+      "sha256": "102839d5bea34c4b7ebbb212937dfeb825b64b495cc95e816f203ef182368d25"
+    },
+    {
+      "file": "02-soft-sole/step-4.wav",
+      "seconds": 0.14190625,
+      "peak": 0.6470352119711218,
+      "sha256": "bfb787fa356bc2eda6f436218b63630c97d93ad478f3184d7442e4435939b48b"
+    },
+    {
+      "file": "02-soft-sole/jump-4.wav",
+      "seconds": 0.12896875,
+      "peak": 0.42,
+      "sha256": "f862068475c6c8708ade560b7e7932ffa33314fea3600023f73d120792ee4965"
+    },
+    {
+      "file": "02-soft-sole/land-4.wav",
+      "seconds": 0.20590625,
+      "peak": 0.75,
+      "sha256": "203b191c014c8ed1f8199f0a188d893681533e41101b27f21fb8448470167f44"
+    },
+    {
+      "file": "02-soft-sole-queue.wav",
+      "seconds": 15.0,
+      "peak": 0.2363073756595724,
+      "sha256": "59591922add89253ea444c31839531107f48ac5a84ce5b477d5f66633e03802b"
+    },
+    {
+      "file": "03-weighted-boot/step-0.wav",
+      "seconds": 0.2575,
+      "peak": 0.4550860450047368,
+      "sha256": "d2ea2f794eb215d72616d81c037b54d5155cf3ebfc059b2187d619cb2eddd6f1"
+    },
+    {
+      "file": "03-weighted-boot/jump-0.wav",
+      "seconds": 0.23403125,
+      "peak": 0.28030403570183016,
+      "sha256": "ec0bd19c6091a1174b54b8c827abecfc00a0dc80e77e2c155b81aeff9597e128"
+    },
+    {
+      "file": "03-weighted-boot/land-0.wav",
+      "seconds": 0.273875,
+      "peak": 0.5857248169331492,
+      "sha256": "ff8f03d6b8b2072aa9370e21514a11c6a5629f2afd09e4ef36b9617e10f8e52e"
+    },
+    {
+      "file": "03-weighted-boot/step-1.wav",
+      "seconds": 0.257625,
+      "peak": 0.31331779853659314,
+      "sha256": "3e67ac5697648646677f67a099f35acbfda5b60810b54371406d14d85b0dec15"
+    },
+    {
+      "file": "03-weighted-boot/jump-1.wav",
+      "seconds": 0.23415625,
+      "peak": 0.19294642499991163,
+      "sha256": "7332ebc4346cf973c8630bb86ec0aae2d433c1999a76e6adde3f3cb4a818e75e"
+    },
+    {
+      "file": "03-weighted-boot/land-1.wav",
+      "seconds": 0.27403125,
+      "peak": 0.3844191598332129,
+      "sha256": "5e2f33569e0474f754d28bb3bee1dfa472ed2e6b2e3affe1c5754f4c9bcf8ddf"
+    },
+    {
+      "file": "03-weighted-boot/step-2.wav",
+      "seconds": 0.25403125,
+      "peak": 0.28954217414878103,
+      "sha256": "760e0768d5b86539ad228365bd4825e817006d52a94035f1c680dd2abd0585fe"
+    },
+    {
+      "file": "03-weighted-boot/jump-2.wav",
+      "seconds": 0.23090625,
+      "peak": 0.18512604270761482,
+      "sha256": "b29b743c7cf5c14c211991434f9b4a0e1961209bc96e3357a22c0ace708ba5b1"
+    },
+    {
+      "file": "03-weighted-boot/land-2.wav",
+      "seconds": 0.2701875,
+      "peak": 0.3890436536889116,
+      "sha256": "2e726cb493fd9aa533c2b548cb0a448c80f8476dfccf410cc662555248233831"
+    },
+    {
+      "file": "03-weighted-boot/step-3.wav",
+      "seconds": 0.28040625,
+      "peak": 0.3312394985100227,
+      "sha256": "ed907f19e6629a893b2cf0c79d16c99441857fd0c9ff643b6557d900e64e23e5"
+    },
+    {
+      "file": "03-weighted-boot/jump-3.wav",
+      "seconds": 0.254875,
+      "peak": 0.19470756680790233,
+      "sha256": "fb5bd558b6096f73e4fa92ae3b676c7ce73e1ed2c5a7b81a684bb58108f38c6c"
+    },
+    {
+      "file": "03-weighted-boot/land-3.wav",
+      "seconds": 0.29825,
+      "peak": 0.4062762314261545,
+      "sha256": "445c632f0e6cd7a3dc8162f70398b28c80aa5185515546b8958811dca70f9ea1"
+    },
+    {
+      "file": "03-weighted-boot/step-4.wav",
+      "seconds": 0.2576875,
+      "peak": 0.45506427662928445,
+      "sha256": "2f47b84c7d480e5f934ffa8d994dd6b5989a5a251ee607aefec232921ed2049c"
+    },
+    {
+      "file": "03-weighted-boot/jump-4.wav",
+      "seconds": 0.23421875,
+      "peak": 0.27209529594055964,
+      "sha256": "357ffe578791d2b814ce96969994d14b11b9bd0fc54628c8eb33284866395954"
+    },
+    {
+      "file": "03-weighted-boot/land-4.wav",
+      "seconds": 0.27409375,
+      "peak": 0.5692063525835932,
+      "sha256": "70847769549feb2b7c6ae1d84d26e508a566a33f449d598af0e64f814012c9a5"
+    },
+    {
+      "file": "03-weighted-boot-queue.wav",
+      "seconds": 15.0,
+      "peak": 0.1693431965967344,
+      "sha256": "b18c6a6d2a11f867aa36262dfd73f16484fe8b0134fa1b895c1300930b6cccae"
+    }
+  ]
+}
