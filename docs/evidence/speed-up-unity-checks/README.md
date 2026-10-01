@@ -30,3 +30,26 @@ unity/tools.sh test-play-filter 'NativeBotBehaviorTests.NaturalDefaultEight'
 ## Ограничения
 
 Значительное ускорение bot матчей заранее не обещано: оптимизация lookup относится к меньшей части их стоимости. Не убирались physical queries, presentation или assertions ради времени теста. Приёмка человеком и physical controller / TV / target hardware gates не выводятся из автоматизированных результатов.
+
+## Итоговые полные gates без instrumentation
+
+| Suite | Исходный runtime 11576af | Готовый runtime b42da2c | Результат |
+| --- | --- | --- | --- |
+| EditMode | 239/239, 210.12 с | 243/243, 132.59 с | На 36.9% быстрее с дополнительными regressions |
+| PlayMode | 161/161, 410.50 с | 161/161, 426.03 с | В этом прогоне на 3.8% дольше; ускорение не подтверждено |
+| NativeBotBehaviorTests | 96.84 с | 100.47 с | Контракт и outcome counters сохранены; wall-time выигрыш не подтвержден |
+
+Старые 32 Lab cases: 199.96 → 108.38 с (−45.8%); новый metadata/cache isolation case добавляет 15.30 с, весь новый Lab fixture — 123.69 с. Новые boundary/frozen-dimensions cases также вошли в полный EditMode.
+Отдельный diagnostic transcript 6000 rays: 76.844 → 18.403 мс с одинаковым fingerprint. Это короткий micro-scenario, не оценка всего матча.
+Один полный run на вариант, без статистического claim. Test duration исключает startup/import/queue; полный пользовательский wall time будет больше.
+
+Exact code commit: `b42da2c64ac2a54512f3f7f7192b1161aede04be`; Unity Assets source tree `0d98f0babcad416e72b942c8e88de066d7206b2f`. Последующие evidence-only commits не меняют tested runtime.
+
+## Native build / smoke / retained candidate
+
+Build exit 0, `STAR_PROVING_BUILD_PASS 471333920`. Exact retained identity: `local-macos-player-candidate/b42da2c64ac2a54512f3f7f7192b1161aede04be/81be58ec11b14715`.
+App: `/Users/eaafonasev/Projects/star-tournament/.local/native-candidates/speed-up-unity-checks/b42da2c64ac2a54512f3f7f7192b1161aede04be/StarTournamentProvingGround.app`. `full-final/player-manifest.json` содержит checksums всех файлов, исходный revision и digest generated-assets.patch. BuildMac регенерирует canonical scene/imported presentation assets; эти output-only изменения сохранены как provenance patch и не интегрированы в исходники.
+Muted native Lab journey прошёл сохранение, ветвление v3 от старой базы, local range errors, discard/delete guards, hidden controls и restart. После restart selection/hash совпали; `history.json` byte-identical. Screenshots просмотрены: `06-history.png` и `11-restarted-revisions.png`, viewport 1440×900. Два Player запуска exit 0. Это automated native evidence, не human/physical acceptance.
+Чужие main ProjectSettings сохранены. Временный implementation worktree удаляется после интеграции; pending acceptance app остаётся в постоянном каталоге.
+
+QA history сохранена lossless как `full-final/player-lab/history.json.gz`; duplicate pre-restart payload удалён после byte equality/hash проверки. SHA uncompressed history сохранён в smoke.json.

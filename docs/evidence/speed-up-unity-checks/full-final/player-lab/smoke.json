@@ -1,0 +1,20 @@
+{
+  "classification": "AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",
+  "source_revision": "b42da2c64ac2a54512f3f7f7192b1161aede04be",
+  "muted": true,
+  "player_exit_codes": [
+    0,
+    0
+  ],
+  "selection_and_hash_preserved": true,
+  "history_bytes_unchanged_on_restart": true,
+  "history_sha256": "071b236329440a5fddc7ee4a5c72c0ad32a7a3ec6988b9a38fa6d58c3e58ab0a",
+  "selected": "QA \u043f\u0440\u043e\u0444\u0438\u043b\u044c \u00b7 \u043f\u0435\u0440\u0435\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d \u00b7 v3-20261001\nbd818e4b6ca74fa78a489c009a37d8ab\nSHA256 108bc8fdf5bb5575d3f6070e9e2d79d1ba65f94db86a8f0a7df7df9be6eacbb8",
+  "viewport": [
+    1440,
+    900
+  ],
+  "history_archive": "history.json.gz",
+  "history_archive_sha256": "7e8fb69cece0dc5d0da4964c5f4615f03bfd3ab3ec1ae388bf8c422b56e44fad",
+  "history_archive_lossless_verified": true
+}

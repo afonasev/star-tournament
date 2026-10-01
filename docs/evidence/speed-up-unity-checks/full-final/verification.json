@@ -1,0 +1,54 @@
+{
+  "tested_revision": "b42da2c64ac2a54512f3f7f7192b1161aede04be",
+  "source_tree": "0d98f0babcad416e72b942c8e88de066d7206b2f",
+  "baseline_revision": "11576afa6929d411568bb75bbf57dd3b94fd64ef",
+  "baseline_editmode": {
+    "total": 239,
+    "passed": 239,
+    "result": "Passed",
+    "duration_seconds": 210.1216682
+  },
+  "final_editmode": {
+    "total": 243,
+    "passed": 243,
+    "result": "Passed",
+    "duration_seconds": 132.5888972
+  },
+  "editmode_duration_reduction_percent": 36.89898888781048,
+  "iteration_wrapper_tests": {
+    "command": "python3 -m unittest discover -s tools -p test_unity_tools.py -q",
+    "passed": 3,
+    "exit_code": 0
+  },
+  "final_playmode": {
+    "total": 161,
+    "passed": 161,
+    "result": "Passed",
+    "duration_seconds": 426.0324287
+  },
+  "baseline_playmode": {
+    "total": 161,
+    "passed": 161,
+    "result": "Passed",
+    "duration_seconds": 410.5035523
+  },
+  "playmode_duration_change_percent": 3.7828847796794074,
+  "timing_limit": "One local exclusive run per full variant; no statistical or target-hardware claim. PlayMode speedup not established.",
+  "build": {
+    "command": "UNITY_RUN_MODE=exclusive unity/tools.sh build",
+    "exit_code": 0,
+    "marker": "STAR_PROVING_BUILD_PASS 471333920",
+    "log": "full-final/build.log",
+    "candidate_identity": "local-macos-player-candidate/b42da2c64ac2a54512f3f7f7192b1161aede04be/81be58ec11b14715",
+    "manifest": "full-final/player-manifest.json"
+  },
+  "native_smoke": {
+    "commands": "unity/tools.sh run -labReview <fresh evidence dir> -profilesPath <fresh profiles file> -screen-width 1440 -screen-height 900 -screen-fullscreen 0; repeated with same files",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "evidence": "full-final/player-lab/smoke.json",
+    "human_acceptance": false
+  }
+}
