@@ -1,0 +1,14 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=LocalSeatLayoutTests
+revision=9743b12ef3982c58b91276fe9421f50f667c8c8e
+ M ../.agents/references/delivery-workflow.md
+ M ../.agents/references/flow/efficiency.md
+ M ../.agents/references/game-qa.md
+ M ../Makefile
+ M ../docs/GAME_SPEC.md
+ M README.md
+?? ../.agents/references/qa-scope.md
+?? ../tools/__pycache__/
+?? ../tools/check_ui.py
+?? ../tools/test_check_ui.py

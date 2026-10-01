@@ -2,6 +2,10 @@
 
 Прочитай этот файл перед нетривиальным изменением, OpenSpec change, работой в worktree, интеграцией, архивированием или deploy.
 
+## Проверки
+
+Перед выбором integration gate прочитай `qa-scope.md`; полный bot-прогон не обязателен для доказанно локальной UI правки. Scope и дополнительные проверки фиксируются в change.
+
 ## Нетривиальные изменения
 
 - Unity-only changes проверяются native Player workflow из `game-qa.md` и `GAME_SPEC`; browser deploy команды не публикуют Unity. До отдельного решения о native distribution не заменять browser release Unity-сборкой. Физические и performance gates сохраняются явно открытыми при отсутствии устройств/эталона.

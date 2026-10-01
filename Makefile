@@ -2,7 +2,7 @@
 
 UNITY_TOOLS := ./unity/tools.sh
 
-.PHONY: help prepare test-edit test-play test check build unity-editor unity-run trooper-help trooper-pipeline trooper-unity-shipping
+.PHONY: help prepare test-edit test-play test check check-ui build unity-editor unity-run trooper-help trooper-pipeline trooper-unity-shipping
 
 help: ## Show the supported local Unity workflow.
 	@awk 'BEGIN {FS = ":.*##"; printf "Star Tournament (Unity-only)\n\nUsage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -17,6 +17,9 @@ test-play: ## Run Unity PlayMode tests.
 	$(UNITY_TOOLS) test-play
 
 test: test-edit test-play ## Run both Unity test suites.
+
+check-ui: ## Run the minimal UI-only automatic gate (no natural bot matches).
+	python3 tools/check_ui.py
 
 check: test build ## Run the canonical Unity tests and local development build.
 

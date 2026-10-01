@@ -538,3 +538,7 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 ### Локальные запуски Unity (2026-09-30)
 
 Тесты, сборки и автономные диагностики запускаются через общий unity-run: до четырёх shared процессов в отдельных worktree. Performance и проверки UI/focus/physical input требуют одного exclusive процесса. Файловая блокировка вне репозиториев действует на время команды; project-local runtime leases и ручные ACK координатора отменены. Planning/integration leases по-прежнему защищают Git и specs, отдельно от Unity.
+
+### Проверки по области изменения (2026-10-01)
+
+По решению пользователя локальные UI правки проходят минимальный UI smoke, tests затронутого экрана и native Player visual QA без полного bot-прогона. Бой, AI, физика, gameplay state и неясное влияние требуют full gate. Точная матрица и команды — `.agents/references/qa-scope.md`. Это изменение QA-процедуры, игровой контракт сохраняется.

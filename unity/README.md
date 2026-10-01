@@ -29,7 +29,9 @@ unity/tools.sh test-play-filter 'NativeBotBehaviorTests.NaturalDefaultEight'
 Аргумент обязателен; несколько фильтров разделяются `;` внутри одного quoted
 аргумента. Каждый запуск создаёт собственный `.local/unity-evidence/focused-<platform>.*`
 с XML, log и `scope.txt` (filter, revision и dirty state). Это только focused check:
-перед интеграцией обязателен полный `make check`. Проверяйте число реально
+integration gate выбирается по [qa-scope.md](../.agents/references/qa-scope.md):
+для UI-only — `make check-ui` + tests экрана и native Player QA; для gameplay/
+общих зависимостей и неясного влияния — полный `make check`. Проверяйте число реально
 выполненных тестов в XML: фильтр без совпадений ничего не проверяет.
 
 Не запускайте два Unity-процесса для одного проекта одновременно. `UNITY_EDITOR` переопределяет путь редактора. Логи/XML сохраняются в `.local/unity-evidence/`; Mac Player — `unity/Builds/StarTournamentProvingGround.app`. Сборка Development, не production installer и не notarized release. Deploy/distribution command отсутствует намеренно.
@@ -65,3 +67,11 @@ Development review обычного UI: `-botSetupReview -botSetupEvidence /abso
 Блок «ЭКРАНЫ · ЧЕЛОВЕК / AI» переключает источник управления каждого экрана; кнопка рядом выбирает сложность AI. Можно оставить одного человека и 1/2/3 AI-экрана либо сделать все экраны AI. Отображаемые боты входят в общий лимит восьми участников; дополнительные боты не получают экранов. Для all-AI не нужно назначать игровые устройства: Escape с клавиатуры или Start геймпада открывает обычную паузу, откуда доступны продолжение, Repeat и меню. В матче с людьми Start принимается только от назначенных геймпадов. Потеря focus по-прежнему ставит матч на паузу.
 
 Focused Development review: `-botSeatsReview -botSeatsEvidence /absolute/output` с FHD/4K аргументами выше. Он проходит mixed/all-AI 2/3/4 views через ordinary setup, снимает PNG/JSON и автоматически выходит. Клавиатура и геймпад в этом review синтетические; lifecycle fallback, если нужен, явно помечен в имени evidence. Performance-цифры диагностические. Финальную пользовательскую приёмку, physical/art/TV и target performance этот прогон не закрывает.
+
+## Минимальный UI gate
+
+`make check-ui` запускает layout/menu/pause smoke без natural bot matches.
+`python3 tools/check_ui.py --plan` показывает точный набор без запуска Unity.
+Это допустимый UI-only integration gate; build и screenshots изменённых
+экранов остаются обязательными для видимой правки. Scope выбирается по diff
+и фиксируется в change, не определяется расширением/именем файла.

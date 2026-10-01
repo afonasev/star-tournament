@@ -1,0 +1,36 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "9743b12ef3982c58b91276fe9421f50f667c8c8e",
+  "dirty": " M .agents/references/delivery-workflow.md\n M .agents/references/flow/efficiency.md\n M .agents/references/game-qa.md\n M Makefile\n M docs/GAME_SPEC.md\n M unity/README.md\n?? .agents/references/qa-scope.md\n?? tools/__pycache__/\n?? tools/check_ui.py\n?? tools/test_check_ui.py\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "docs/evidence/scope-unity-qa/editmode/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "docs/evidence/scope-unity-qa/playmode/playmode.xml",
+      "passed": 7
+    }
+  ],
+  "source_files_sha256": {
+    "tools/check_ui.py": "57cad7b7ebe39cff43aa0c63ef0710286a11de3b80f64d68abe02e35b4cb3c34",
+    "tools/test_check_ui.py": "631cf0bbf3d843bc60e434fe8694f6c8772a6e82f64d4bc6fdc2f605d09709cd",
+    "unity/tools.sh": "65047d0204dfbd97f1f08637e704b96c116ad2081e3e905e3e7b8b299478b0ea"
+  },
+  "final_validator_recheck": "3 EditMode and 7 PlayMode pass against retained XML; minimum fixture case counts added after Unity run"
+}
