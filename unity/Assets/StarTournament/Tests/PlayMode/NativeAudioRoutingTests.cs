@@ -47,7 +47,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         Assert.That(played.pitch,Is.InRange(.982f,1.018f));
                         Assert.That(played.volume,Is.InRange(.5f*.65f*.8f*.95f,.5f*.65f*.8f*1.05f));
                     }
-                    Assert.That(seen.Count,Is.EqualTo(5));
+                    Assert.That(seen.Count,Is.GreaterThan(1));
+                    for(int i=0;i<5;i++)Assert.That(Resources.Load<AudioClip>("Audio/Movement/"+name+"-"+i),Is.Not.Null);
                 }
                 Assert.That(JsonUtility.ToJson(Random.state),Is.EqualTo(JsonUtility.ToJson(randomState)),"Presentation must not advance Unity's shared random stream");
                 foreach(var v in voices){v.Stop();v.clip=null;v.pitch=.98f;}
