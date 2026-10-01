@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 10;
+        public const int DefaultVersion = 11;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -72,6 +72,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Append-only migration for serialized proving-ground fixtures when a descriptor is introduced.</summary>
         public void EnsureDefaultDescriptors()
         {
+            int previousVersion=version;
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path.StartsWith("fixture.",StringComparison.Ordinal));values.RemoveAll(v=>v.Path.StartsWith("fixture.",StringComparison.Ordinal));
             descriptors.RemoveAll(d=>d.Path=="presentation.rifleMuzzleSize");values.RemoveAll(v=>v.Path=="presentation.rifleMuzzleSize");
@@ -83,7 +84,26 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=(descriptor.Path==GamepadLookSettings.HorizontalPath||descriptor.Path==GamepadLookSettings.VerticalPath)?Get("input.gamepadDegreesPerSecond"):current.Get(descriptor.Path)});
             }
+            // The shipped v9/v10 cadence was 1.7 m. Retune only that old value;
+            // update descriptor metadata even when a custom interval is retained.
+            if(id==DefaultId&&previousVersion>=9&&previousVersion<=10)
+            {
+                FindDescriptor("audio.footstepDistanceMeters").DefaultValue=current.Descriptor("audio.footstepDistanceMeters").DefaultValue;
+                if(Mathf.Approximately(Get("audio.footstepDistanceMeters"),1.7f))
+                    Set("audio.footstepDistanceMeters",current.Get("audio.footstepDistanceMeters"));
+            }
             valueIndex=null;
+        }
+        public ProvingProfile BeforeFootstepMix()
+        {
+            if(id!=DefaultId||FindDescriptor("audio.footstepGain")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path=="audio.footstepGain");
+            copy.values.RemoveAll(v=>v.Path=="audio.footstepGain");
+            copy.version=Math.Max(6,copy.version-1);
+            copy.FindDescriptor("audio.footstepDistanceMeters").DefaultValue=1.7f;
+            if(Mathf.Approximately(copy.Get("audio.footstepDistanceMeters"),2.1f))copy.Set("audio.footstepDistanceMeters",1.7f);
+            return copy;
         }
         internal ProvingProfile BeforeGamepadLook()
         {
@@ -305,7 +325,8 @@ namespace StarTournament.ProvingGround
             profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения; трек пока отсутствует.", "percent", 0f, 100f, 5f, 70f);
             profile.Add("audio.effectsDefaultPercent", "audio", "Эффекты по умолчанию", "Начальная общая громкость звуков меню и боя до пользовательского изменения.", "percent", 0f, 100f, 5f, 80f);
             profile.Add("audio.maxVoices", "audio", "Короткие голоса", "Предел одновременных коротких эффектов в общем выходе split-screen; длительные лучи и меню имеют отдельные ограниченные источники.", "count", 4f, 32f, 1f, 16f);
-            profile.Add("audio.footstepDistanceMeters", "audio", "Интервал шагов", "Горизонтальная дистанция между шагами живого участника на опоре.", "meters", .5f, 5f, .1f, 1.7f);
+            profile.Add("audio.footstepDistanceMeters", "audio", "Интервал шагов", "Горизонтальная дистанция между шагами живого участника на опоре.", "meters", .5f, 5f, .1f, 2.1f);
+            profile.Add("audio.footstepGain", "audio", "Уровень шагов", "Относительная громкость одного шага до общей громкости эффектов и позиции участника.", "ratio", 0f, 1f, .05f, .5f);
             profile.Add("audio.maxDistanceMeters", "audio", "Дальность слышимости", "Расстояние, на котором удалённые боевые и двигательные эффекты затухают.", "meters", 5f, 100f, 1f, 28f);
             profile.Add("audio.localGain", "audio", "Свои события", "Относительный уровень важного звука своего local participant до общей пользовательской громкости.", "ratio", 0f, 1f, .05f, .65f);
             profile.Add("audio.remoteGain", "audio", "Другие участники", "Относительный уровень событий остальных участников до затухания по расстоянию.", "ratio", 0f, 1f, .05f, .40f);

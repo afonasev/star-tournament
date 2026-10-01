@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).Select(p=>p.BeforeAudio()).ToList();
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null)).Select(p=>p.BeforeAudio()).ToList();
             if(beforeVignette)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageVignette()).ToList();
             Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(beforeVignette?7:8));
             var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
@@ -58,8 +58,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void AudioUpgradePreservesOldRevisionHashAndCustomCombatValues()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
-            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeAudio();
-            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(9));
+            var beforeLook=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
+            old.Profiles[old.Profiles.IndexOf(current)]=beforeLook.BeforeAudio();
+            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(8));
             var history=new DesignLabHistory(path,old);history.Create("До звука");
             var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
             string oldHash=history.Selected.Hash;
@@ -69,10 +70,48 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }
+        [Test]public void FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
+            var history=new DesignLabHistory(path,old);history.Create("Старые шаги");
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(2.1f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.5f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
+        [Test]public void FootstepMixUpgradeKeepsCustomOldInterval()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
+            var history=new DesignLabHistory(path,old);history.Create("Свои шаги");
+            var draft=history.Selected.Snapshot;draft.Set("audio.footstepDistanceMeters",3.4f);history.Save(draft);
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(3.4f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.5f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
+        }
+        [Test]public void SerializedV10ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval()
+        {
+            var shipped=ProvingProfile.CreateDefault().BeforeFootstepMix();
+            shipped.EnsureDefaultDescriptors();
+            Assert.That(shipped.Version,Is.EqualTo(ProvingProfile.DefaultVersion));
+            Assert.That(shipped.Get("audio.footstepDistanceMeters"),Is.EqualTo(2.1f));
+            Assert.That(shipped.Descriptor("audio.footstepDistanceMeters").DefaultValue,Is.EqualTo(2.1f));
+            Assert.That(shipped.Get("audio.footstepGain"),Is.EqualTo(.5f));
+            var custom=ProvingProfile.CreateDefault().BeforeFootstepMix();
+            custom.Set("audio.footstepDistanceMeters",3.4f);
+            custom.EnsureDefaultDescriptors();
+            Assert.That(custom.Get("audio.footstepDistanceMeters"),Is.EqualTo(3.4f));
+        }
         [Test]public void GamepadUpgradePreservesAudioOnlyRevisionHash()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
-            var prior=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current,null);
+            var prior=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
             Assert.That(prior.Version,Is.EqualTo(9));
             old.Profiles[old.Profiles.IndexOf(current)]=prior;
             var history=new DesignLabHistory(path,old);history.Create("Звук до отдельных осей");
@@ -107,7 +146,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             // The historical v6 registry predates damage-vignette descriptors as well.
-            var profile=current.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
+            var beforeLook=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
+            var profile=beforeLook.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
             var json=JsonUtility.ToJson(profile);
             // Exact v6 predecessor: remove only the new additive descriptor/value.
             var serialized=JsonUtility.FromJson<LegacyProfile>(json);serialized.version=6;
