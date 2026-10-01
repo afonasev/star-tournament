@@ -78,7 +78,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-fps"));
+            yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-2"));
+            yield return Press(GamepadButton.DpadUp);Assert.That(Focus,Is.EqualTo("settings-section-1"));
+            yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-mouse-sensitivity"));
+            yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("main-action-4"));
+        }
+        [UnityTest] public IEnumerator ShoulderButtonsCycleOnlyAssignedWeaponOnPress()
+        {
+            pad=InputSystem.AddDevice<Gamepad>();yield return null;
+            var seats=new SeatInputCoordinator();
+            Assert.That(seats.Assign(0,pad),Is.True);
+            var profile=ProvingProfile.CreateDefault();
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.LeftShoulder));yield return null;
+            seats.Capture(profile,.016f);
+            Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.Previous));
+            Assert.That(seats.Consume(1).SelectWeapon,Is.EqualTo(WeaponSelection.None));
+            yield return null;seats.Capture(profile,.016f);
+            Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.None),"Holding LB must not repeat");
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.RightShoulder));yield return null;
+            seats.Capture(profile,.016f);
+            Assert.That(seats.Consume(0).SelectWeapon,Is.EqualTo(WeaponSelection.Next));
         }
         [UnityTest] public IEnumerator DevicePageShowsSupportedAndUnsupportedControllers()
         {
@@ -101,6 +122,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("settings-controls-devices").onClick.Invoke();Assert.That(Focus,Is.EqualTo("devices-back"));
             yield return Press(GamepadButton.East);
             Assert.That(Focus,Is.EqualTo("settings-controls-devices"));
+            yield return Press(GamepadButton.East);
+            Assert.That(Focus,Is.EqualTo("settings-section-1"));
         }
 
         [UnityTest] public IEnumerator GamepadCanCancelDisplayConfirmation()

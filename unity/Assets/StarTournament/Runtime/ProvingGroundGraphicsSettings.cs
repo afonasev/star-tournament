@@ -376,7 +376,14 @@ namespace StarTournament.ProvingGround
             else if(resolutionPickerOpen)CloseResolutionPicker();
             else if(settingsHelpOpen)SetHelp(false);
             else if(settingsDevicesOpen)SetDevices(false);
-            else CloseSettings();
+            else
+            {
+                var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
+                bool inSectionNavigation=settingsBackButton && selected==settingsBackButton.gameObject;
+                foreach(var button in settingsSectionButtons)inSectionNavigation|=button && selected==button.gameObject;
+                if(inSectionNavigation)CloseSettings();
+                else Select(settingsSectionButtons[(int)settingsSection]);
+            }
             lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
         }
         void InitializeGraphicsPreferences()
