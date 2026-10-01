@@ -1,0 +1,25 @@
+{
+  "classification": "SYNTHETIC_NATIVE_PLAYER_QA_PASS_NOT_PHYSICAL_ACCEPTANCE",
+  "candidate": "local-macos-player-candidate/fd035bca431098c6be690419319a752998405e0b/20260930T123956Z",
+  "source_revision": "fd035bca431098c6be690419319a752998405e0b",
+  "compiled_csharp_source_revision": "8cc0ee577f7a4fff6c88ed6a9dadc396c0cbddea",
+  "player_exit_code": 0,
+  "completion_marker": "NATIVE_GAMEPAD_CAMERA_REVIEW_COMPLETE",
+  "muted": true,
+  "focused_at_completion": true,
+  "png_count": 20,
+  "pitch_degrees": {
+    "08-stairs-return-up": -21.037261962890625,
+    "09-stairs-return-down": 21.03592300415039,
+    "11-flat-return": 4.248995173838921e-05,
+    "11a-airborne": 30.0,
+    "11b-landing-return": 0.0005799336940981448,
+    "11c-continuous-ramp": -14.999588012695312,
+    "12-manual-stick-priority": -27.778156280517578,
+    "13-return-disabled": 25.0,
+    "14-disconnected-pause": 25.0,
+    "15-reconnected": 25.0
+  },
+  "physical_controller_acceptance": "pending",
+  "human_acceptance": "pending"
+}

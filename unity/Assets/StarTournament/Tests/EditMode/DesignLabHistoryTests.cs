@@ -11,12 +11,56 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null)).Select(p=>p.BeforeAudio()).ToList();
+            if(beforeVignette)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageVignette()).ToList();
+            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(beforeVignette?7:8));
+            var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
+            // Construct the file written by the former runtime: its shared axis was editable.
+            // The current Save contract correctly refuses edits to that obsolete field.
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var prior=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+            prior.Snapshot.Set("input.gamepadDegreesPerSecond",90);prior.Hash=prior.Snapshot.Hash();
+            File.WriteAllText(path,JsonUtility.ToJson(file,true));
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.HorizontalPath),Is.EqualTo(90));
+            Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.VerticalPath),Is.EqualTo(90));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath),Is.False);
+        }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        [Test]public void TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeTravelingRifle()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Hitscan");
+            var draft=history.Selected.Snapshot;draft.Set("rifle.range",120);draft.Set("rifle.head",31);history.Save(draft);
+            var before=history.Selected;string hash=before.Hash;int revision=before.Number;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.speed"),Is.EqualTo(100));
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Descriptors.Any(d=>d.Path=="rifle.range"),Is.False);
+            var preserved=upgraded.Profiles.Single(p=>p.Id==upgraded.SelectedProfile.Id).Revisions.Single(r=>r.Number==revision);
+            Assert.That(preserved.Hash,Is.EqualTo(hash));Assert.That(preserved.Snapshot.Get("rifle.range"),Is.EqualTo(120));
+            var reopened=new DesignLabHistory(path,Shipped());Assert.That(reopened.StorageError,Is.Null);
+            Assert.That(reopened.Selected.Number,Is.EqualTo(upgraded.Selected.Number));Assert.That(reopened.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));
+        }
+        [Test]public void TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory()
+        {
+            var beforePulse=typeof(ProvingProfile).GetMethod("BeforePulse",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId && p.Id!="cutter-beam-v1").Select(p=>(ProvingProfile)beforePulse.Invoke(p.BeforeTravelingRifle(),null)).ToList();
+            Assert.That(old.Profiles.Single(p=>p.Id=="unity-native-combat-v1").Version,Is.EqualTo(3));
+            Assert.That(old.Descriptors.Any(d=>d.Path=="rifle.range"),Is.True);
+            var history=new DesignLabHistory(path,old);history.Create("До Pulse");var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.head"),Is.EqualTo(31));Assert.That(upgraded.Selected.Snapshot.Get("rifle.speed"),Is.EqualTo(100));
+        }
         [Test]public void AudioUpgradePreservesOldRevisionHashAndCustomCombatValues()
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
-            old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeAudio();
+            var beforeLook=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
+            old.Profiles[old.Profiles.IndexOf(current)]=beforeLook.BeforeAudio();
+            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(8));
             var history=new DesignLabHistory(path,old);history.Create("До звука");
             var draft=history.Selected.Snapshot;draft.Set("rifle.head",31);history.Save(draft);
             string oldHash=history.Selected.Hash;
@@ -51,7 +95,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.5f));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }
-        [Test]public void SerializedV9ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval()
+        [Test]public void SerializedV10ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval()
         {
             var shipped=ProvingProfile.CreateDefault().BeforeFootstepMix();
             shipped.EnsureDefaultDescriptors();
@@ -63,6 +107,20 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             custom.Set("audio.footstepDistanceMeters",3.4f);
             custom.EnsureDefaultDescriptors();
             Assert.That(custom.Get("audio.footstepDistanceMeters"),Is.EqualTo(3.4f));
+        }
+        [Test]public void GamepadUpgradePreservesAudioOnlyRevisionHash()
+        {
+            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var prior=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
+            Assert.That(prior.Version,Is.EqualTo(9));
+            old.Profiles[old.Profiles.IndexOf(current)]=prior;
+            var history=new DesignLabHistory(path,old);history.Create("Звук до отдельных осей");
+            string oldHash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());
+            Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
+            Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.HorizontalPath),Is.EqualTo(180));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }
         [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
         {
@@ -88,7 +146,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             // The historical v6 registry predates damage-vignette descriptors as well.
-            var profile=current.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
+            var beforeLook=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
+            var profile=beforeLook.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
             var json=JsonUtility.ToJson(profile);
             // Exact v6 predecessor: remove only the new additive descriptor/value.
             var serialized=JsonUtility.FromJson<LegacyProfile>(json);serialized.version=6;
@@ -166,7 +225,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
             var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
-            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(25));
+            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(26));
             foreach(var key in LabBundle.AuditedExcludedPaths)
             {
                 var d=old.Snapshot.Profile(key).Descriptor(key);float value=old.Snapshot.Get(key);

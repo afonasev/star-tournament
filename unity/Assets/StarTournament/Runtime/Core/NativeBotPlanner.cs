@@ -44,6 +44,7 @@ namespace StarTournament.ProvingGround
         readonly float eye, target, maxPitch;
         public float CapsuleRadius {get;} public float CapsuleHeight {get;}
         readonly ProvingProfile combat,cutter,life;
+        public float RifleSpeed=>combat.Get("rifle.speed");
         public float RocketSpeed=>combat.Get("rocket.speed");
         public float RocketRadius=>combat.Get("rocket.radius");
         public float Capacity(WeaponId id)=>id==WeaponId.Cutter?cutter.Get("cutter.energyCapacity"):life.Get(id==WeaponId.Rifle?"rifle.startingAmmo":id==WeaponId.Shotgun?"combat.startingAmmo":"rocket.startingAmmo");
@@ -62,7 +63,7 @@ namespace StarTournament.ProvingGround
         public float EyeHeight=>eye; public float TargetHeight=>target;
         public float RocketMinimumDistance=>combat.Get("rocket.botMinimumDistance");
         public float RocketSafety=>combat.Get("rocket.radius")+combat.Get("rocket.botSafetyMargin");
-        public float RangeFor(WeaponId id)=>id==WeaponId.Cutter?cutter.Get("cutter.maxRangeMeters"):combat.Get(id==WeaponId.RocketLauncher?"rocket.range":id==WeaponId.Rifle?"rifle.range":"shot.range");
+        public float RangeFor(WeaponId id)=>id==WeaponId.Rifle?float.PositiveInfinity:id==WeaponId.Cutter?cutter.Get("cutter.maxRangeMeters"):combat.Get(id==WeaponId.RocketLauncher?"rocket.range":"shot.range");
         public float Range { get; }
         public string Identity { get; }
         public NativeShotgunPolicy(ProvingProfile movement, ProvingProfile combat, ProvingProfile cutter=null,ProvingProfile lifecycle=null)
@@ -269,6 +270,8 @@ namespace StarTournament.ProvingGround
             if(trackThreat&&weapon is NativeShotgunPolicy lp)
             {
                 aimPoint+=Vector3.up*lp.TargetHeight;
+                if(visible&&desired==WeaponId.Rifle)
+                    aimPoint+=memory.Value.Sighting.Velocity*(Vector3.Distance(f.Pose.Position,aimPoint)/lp.RifleSpeed)*P("leadQuality");
                 if(visible&&desired==WeaponId.RocketLauncher)rocketSafe=RocketPlan(f,memory.Value.Sighting,out aimPoint);
                 aim=lp.AimPoint(f.Pose,aimPoint,time,seconds,state.AimPhase,P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),out residual);
             }

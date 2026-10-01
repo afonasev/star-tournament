@@ -1,0 +1,12 @@
+{
+  "candidate": "local-macos-player-candidate/2cde8c900c52dc75f66d7c8641e972dab065ec1f/20260929T150816Z",
+  "result": "INCOMPLETE_QA_FIXTURE_FAILED",
+  "completed_checks": [
+    "general settings image/control/help/interface",
+    "new profile inherits general gamepad settings",
+    "named profile gamepad horizontal persists123 with general preference unchanged"
+  ],
+  "failure": "Native QA tried to join two virtual gamepads while a local seat was configured as AI; camera and personal split-screen gates remain open",
+  "fix_commit": "4a829e8",
+  "physical_acceptance": false
+}

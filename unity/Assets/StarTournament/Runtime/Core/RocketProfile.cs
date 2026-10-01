@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
             p.descriptors.RemoveAll(d=>d.Path=="presentation.rocketMuzzleBlendDistance");
             p.values.RemoveAll(v=>v.Path=="presentation.rocketMuzzleBlendDistance");
-            if(p.id==DefaultId&&p.version==7)p.version=6;
+            if(p.id==DefaultId&&p.version>=7)p.version=6;
             return p;
         }
         static void AddRocketPresentation(ProvingProfile p)

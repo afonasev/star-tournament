@@ -13,6 +13,9 @@ namespace StarTournament.ProvingGround
         public string Name;
         public float MouseDegreesPerPixel;
         public bool ShowFps;
+        public int GamepadLookVersion;
+        public float GamepadHorizontal, GamepadVertical;
+        public bool GamepadAutoLevel;
     }
 
     [Serializable]
@@ -60,6 +63,12 @@ namespace StarTournament.ProvingGround
             var profile = Find(id) ?? throw new ArgumentException("Unknown profile", nameof(id));
             profile.MouseDegreesPerPixel = mouseSensitivity; profile.ShowFps = showFps; Save();
         }
+        public void SetGamepad(string id, GamepadLookSettings settings)
+        {
+            var record=Find(id) ?? throw new ArgumentException("Unknown profile", nameof(id));
+            record.GamepadLookVersion=1;record.GamepadHorizontal=settings.Horizontal;
+            record.GamepadVertical=settings.Vertical;record.GamepadAutoLevel=settings.AutoLevel;Save();
+        }
         static string CleanName(string name)
         {
             name = (name ?? "").Trim();
@@ -87,6 +96,7 @@ namespace StarTournament.ProvingGround
             public readonly string Id = Guid.NewGuid().ToString("N");
             public float MouseDegreesPerPixel;
             public bool ShowFps;
+            public GamepadLookSettings? GamepadLook;
         }
         readonly string[] seatProfile = new string[SeatInputCoordinator.SeatCount];
         readonly Guest[] seatGuest = new Guest[SeatInputCoordinator.SeatCount];
