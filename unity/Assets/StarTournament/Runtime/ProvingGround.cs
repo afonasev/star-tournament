@@ -251,6 +251,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent<NativeBonusVisualReview>();
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-movementAudioReview")) gameObject.AddComponent<NativeMovementAudioReview>();
             if (args.Contains("-unifiedDamageReview")) gameObject.AddComponent<NativeUnifiedDamageReview>();
             if (args.Contains("-scoreboardReview")) gameObject.AddComponent<NativeScoreboardReview>();
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();

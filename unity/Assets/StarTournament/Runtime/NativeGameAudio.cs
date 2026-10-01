@@ -20,6 +20,11 @@ namespace StarTournament.ProvingGround
     public sealed class NativeGameAudio : IDisposable
     {
         readonly Dictionary<string,AudioClip> clips=new Dictionary<string,AudioClip>();
+        readonly Dictionary<string,AudioClip[]> movementClips=new Dictionary<string,AudioClip[]>();
+        // Content cardinality, not a tunable mix value: all five approved recordings ship together.
+        const int MovementVariantCount=5;
+        readonly int[,] lastMovement=new int[NativeMatchRoster.MaximumParticipants,3];
+        readonly System.Random movementRandom=new System.Random();
         AudioSource[] voices;
         float[] voiceGain;
         readonly AudioSource[] beams;
@@ -40,11 +45,21 @@ namespace StarTournament.ProvingGround
         {
             this.profile=profile;muted=mute;
             var holder=new GameObject("native-game-audio");holder.transform.SetParent(parent,false);root=holder.transform;
-            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","step","jump","land","hit","death","pickup"})
+            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup"})
             {
                 var clip=Resources.Load<AudioClip>("Audio/"+name);
                 if(clip==null)Debug.LogError("Missing native audio clip: "+name);
                 clips[name]=clip;
+            }
+            foreach(var name in new[]{"step","jump","land"})
+            {
+                var bank=new AudioClip[MovementVariantCount];
+                for(int i=0;i<bank.Length;i++)
+                {
+                    bank[i]=Resources.Load<AudioClip>("Audio/Movement/"+name+"-"+i);
+                    if(bank[i]==null)Debug.LogError("Missing movement audio clip: "+name+"-"+i);
+                }
+                movementClips[name]=bank;
             }
             BuildVoicePool();
             uiSource=Source("menu-ui");
@@ -112,7 +127,11 @@ namespace StarTournament.ProvingGround
         }
         void Play(string name,float gain,int participant=-1)
         {
-            if(!clips.TryGetValue(name,out var clip)||clip==null||EffectsVolume<=0)return;
+            if(clips.TryGetValue(name,out var clip))PlayClip(clip,gain,participant,1);
+        }
+        void PlayClip(AudioClip clip,float gain,int participant,float pitch)
+        {
+            if(clip==null||EffectsVolume<=0)return;
             if(participant>=0)gain*=ParticipantGain(participant);
             if(gain<=.005f)return;
             float level=Mathf.Clamp01(gain*EffectsVolume);
@@ -130,7 +149,18 @@ namespace StarTournament.ProvingGround
                 // Keep a louder event audible when 1–4 viewports all produce events at once.
                 if(voiceGain[weakest]>gain)return;
             }
-            source.Stop();source.clip=clip;voiceGain[Array.IndexOf(voices,source)]=gain;source.volume=level;source.Play();UpdateVolume();
+            source.Stop();source.clip=clip;source.pitch=pitch;voiceGain[Array.IndexOf(voices,source)]=gain;source.volume=level;source.Play();UpdateVolume();
+        }
+        void PlayMovement(string name,float gain,int participant)
+        {
+            var bank=movementClips[name];int kind=name=="step"?0:name=="jump"?1:2;
+            int prior=lastMovement[participant,kind]-1;
+            int selected=movementRandom.Next(prior<0?bank.Length:bank.Length-1);
+            if(prior>=0&&selected>=prior)selected++;
+            lastMovement[participant,kind]=selected+1;
+            float pitch=1+((float)movementRandom.NextDouble()*2-1)*profile.Get("audio.movementPitchVariation");
+            float gainScale=1+((float)movementRandom.NextDouble()*2-1)*profile.Get("audio.movementGainVariation");
+            PlayClip(bank[selected],gain*gainScale,participant,pitch);
         }
         float ParticipantGain(int participant)
         {
@@ -170,14 +200,14 @@ namespace StarTournament.ProvingGround
             {
                 var now=session.Pose(i);var old=lastPose[i];lastPose[i]=now;
                 if(!running||session.Life(i).Dead){stepDistance[i]=0;beams[i].Stop();beamGain[i]=0;continue;}
-                if(old.Grounded&&!now.Grounded&&now.Velocity.y>0.1f)Play("jump",.9f,i);
-                if(!old.Grounded&&now.Grounded&&old.Velocity.y<-.1f)Play("land",.8f,i);
+                if(old.Grounded&&!now.Grounded&&now.Velocity.y>0.1f)PlayMovement("jump",profile.Get("audio.jumpGain"),i);
+                if(!old.Grounded&&now.Grounded&&old.Velocity.y<-.1f)PlayMovement("land",profile.Get("audio.landGain"),i);
                 if(now.Grounded)
                 {
                     var delta=now.Position-old.Position;delta.y=0;
                     if(delta.sqrMagnitude<.25f)stepDistance[i]+=delta.magnitude;else stepDistance[i]=0;
                     if(stepDistance[i]>=profile.Get("audio.footstepDistanceMeters"))
-                    {stepDistance[i]=0;Play("step",profile.Get("audio.footstepGain"),i);}
+                    {stepDistance[i]=0;PlayMovement("step",profile.Get("audio.footstepGain"),i);}
                 }
                 else stepDistance[i]=0;
                 var beam=beams[i];bool active=session.Beam(i).Active&&EffectsVolume>0;

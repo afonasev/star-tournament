@@ -11,6 +11,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test]public void MovementAudioUpgradePreservesV11HistoryAndCustomMix()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeMovementAudio()).ToList();
+            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(11));
+            var history=new DesignLabHistory(path,old);history.Create("Мой микс");
+            var draft=history.Selected.Snapshot;draft.Set("audio.footstepGain",.3f);draft.Set("audio.footstepDistanceMeters",3.4f);history.Save(draft);
+            string hash=history.Selected.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.3f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(3.4f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.jumpGain"),Is.EqualTo(.38f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.landGain"),Is.EqualTo(.6f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==hash),Is.True);
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
         {
             var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null)).Select(p=>p.BeforeAudio()).ToList();

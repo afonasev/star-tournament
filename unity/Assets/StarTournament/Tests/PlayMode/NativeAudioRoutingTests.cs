@@ -16,6 +16,50 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;
         Gamepad pad;
+        [UnityTest] public IEnumerator MovementBanksVaryWithoutRepeatingAndWeaponReuseResetsPitch()
+        {
+            const string key="StarTournament.Audio.EffectsPercent";
+            bool had=PlayerPrefs.HasKey(key);int prior=PlayerPrefs.GetInt(key);
+            float listener=AudioListener.volume;AudioListener.volume=0;NativeAudioPreferences.SetEffects(80);
+            try
+            {
+                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+                pad=InputSystem.AddDevice<Gamepad>();ground.StartCombatReview(new[]{pad},ensureOpponent:true);
+                var audio=(NativeGameAudio)typeof(ProvingGround).GetField("gameAudio",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+                audio.SetDiagnosticMute(false);
+                var method=typeof(NativeGameAudio).GetMethod("PlayMovement",BindingFlags.Instance|BindingFlags.NonPublic);
+                var indices=(int[,])typeof(NativeGameAudio).GetField("lastMovement",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(audio);
+                var voices=ground.transform.Find("native-game-audio").GetComponentsInChildren<AudioSource>().Where(s=>s.name.StartsWith("voice-")).ToArray();
+                var randomState=Random.state;
+                foreach(var name in new[]{"step","jump","land"})
+                {
+                    int kind=name=="step"?0:name=="jump"?1:2,last=-1;
+                    var seen=new System.Collections.Generic.HashSet<int>();
+                    for(int i=0;i<50;i++)
+                    {
+                        foreach(var v in voices){v.Stop();v.clip=null;}
+                        method.Invoke(audio,new object[]{name,.5f,0});
+                        int selected=indices[0,kind]-1;Assert.That(selected,Is.Not.EqualTo(last));last=selected;seen.Add(selected);
+                        var played=voices.Single(v=>v.clip!=null);
+                        Assert.That(played.clip.name,Is.EqualTo(name+"-"+selected));
+                        Assert.That(played.pitch,Is.InRange(.982f,1.018f));
+                        Assert.That(played.volume,Is.InRange(.5f*.65f*.8f*.95f,.5f*.65f*.8f*1.05f));
+                    }
+                    Assert.That(seen.Count,Is.EqualTo(5));
+                }
+                Assert.That(JsonUtility.ToJson(Random.state),Is.EqualTo(JsonUtility.ToJson(randomState)),"Presentation must not advance Unity's shared random stream");
+                foreach(var v in voices){v.Stop();v.clip=null;v.pitch=.98f;}
+                typeof(NativeGameAudio).GetMethod("Play",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(audio,new object[]{"rifle",1f,0});
+                Assert.That(voices.Single(v=>v.clip!=null).pitch,Is.EqualTo(1));
+            }
+            finally
+            {
+                AudioListener.volume=listener;
+                if(had)PlayerPrefs.SetInt(key,prior);else PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();
+            }
+        }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);

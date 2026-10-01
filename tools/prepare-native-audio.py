@@ -7,6 +7,7 @@ Usage: python3 tools/prepare-native-audio.py --source PATH_TO_AUDIO_EXPLORATION_
 import argparse
 import json
 import struct
+import shutil
 import wave
 from pathlib import Path
 
@@ -51,16 +52,14 @@ def seamless(values, start, end, crossfade=0.06):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--movement-source", type=Path, default=Path(__file__).resolve().parents[1] / "docs/evidence/movement-audio-exploration/03-weighted-boot")
     args = parser.parse_args()
     manifest = json.loads((args.source / "selection.json").read_text())
     DEST.mkdir(parents=True, exist_ok=True)
     for event, chosen in manifest["files"].items():
         samples = read(args.source / chosen["name"])
-        if event == "steps":
-            write("step", cut(samples, 0, .30))
-        elif event == "jump":
-            write("jump", cut(samples, 0, .37))
-            write("land", cut(samples, .55, .84))
+        if event in ("steps", "jump"):
+            continue  # Superseded by the separately approved weighted-boot bank.
         elif event == "cutter":
             # The chosen A timbre is sustained in its approved hold preview.
             write("cutter-start", cut(samples, 0, .28))
@@ -68,6 +67,13 @@ def main():
             write("cutter-loop", seamless(held, .40, 1.40))
         else:
             write(event, samples)
+    movement = DEST / "Movement"
+    movement.mkdir(exist_ok=True)
+    for event in ("step", "jump", "land"):
+        for index in range(5):
+            name = f"{event}-{index}.wav"
+            read(args.movement_source / name)  # Enforce the runtime PCM contract.
+            shutil.copy2(args.movement_source / name, movement / name)
     print("prepared", len(list(DEST.glob("*.wav"))), "short Unity audio clips in", DEST)
 
 

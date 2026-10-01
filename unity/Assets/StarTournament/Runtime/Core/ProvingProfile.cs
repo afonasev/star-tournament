@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 11;
+        public const int DefaultVersion = 12;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -94,10 +94,18 @@ namespace StarTournament.ProvingGround
             }
             valueIndex=null;
         }
+        public ProvingProfile BeforeMovementAudio()
+        {
+            if(id!=DefaultId||FindDescriptor("audio.jumpGain")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            bool Added(string path)=>path=="audio.jumpGain"||path=="audio.landGain"||path=="audio.movementPitchVariation"||path=="audio.movementGainVariation";
+            copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
+            copy.version=Math.Min(copy.version,11);return copy;
+        }
         public ProvingProfile BeforeFootstepMix()
         {
             if(id!=DefaultId||FindDescriptor("audio.footstepGain")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(BeforeMovementAudio()));
             copy.descriptors.RemoveAll(d=>d.Path=="audio.footstepGain");
             copy.values.RemoveAll(v=>v.Path=="audio.footstepGain");
             copy.version=Math.Max(6,copy.version-1);
@@ -332,6 +340,10 @@ namespace StarTournament.ProvingGround
             profile.Add("audio.maxVoices", "audio", "Короткие голоса", "Предел одновременных коротких эффектов в общем выходе split-screen; длительные лучи и меню имеют отдельные ограниченные источники.", "count", 4f, 32f, 1f, 16f);
             profile.Add("audio.footstepDistanceMeters", "audio", "Интервал шагов", "Горизонтальная дистанция между шагами живого участника на опоре.", "meters", .5f, 5f, .1f, 2.1f);
             profile.Add("audio.footstepGain", "audio", "Уровень шагов", "Относительная громкость одного шага до общей громкости эффектов и позиции участника.", "ratio", 0f, 1f, .05f, .5f);
+            profile.Add("audio.jumpGain", "audio", "Уровень толчка", "Громкость отрыва при прыжке до общей громкости и позиции участника.", "ratio", 0f, 1f, .01f, .38f);
+            profile.Add("audio.landGain", "audio", "Уровень приземления", "Громкость контакта после прыжка до общей громкости и позиции участника.", "ratio", 0f, 1f, .01f, .6f);
+            profile.Add("audio.movementPitchVariation", "audio", "Разброс тона движения", "Максимальное отклонение скорости звучания шагов, толчков и приземлений от исходной записи.", "ratio", 0f, .1f, .001f, .018f);
+            profile.Add("audio.movementGainVariation", "audio", "Разброс уровня движения", "Максимальное относительное отклонение громкости отдельного контакта для естественной вариативности.", "ratio", 0f, .2f, .01f, .05f);
             profile.Add("audio.maxDistanceMeters", "audio", "Дальность слышимости", "Расстояние, на котором удалённые боевые и двигательные эффекты затухают.", "meters", 5f, 100f, 1f, 28f);
             profile.Add("audio.localGain", "audio", "Свои события", "Относительный уровень важного звука своего local participant до общей пользовательской громкости.", "ratio", 0f, 1f, .05f, .65f);
             profile.Add("audio.remoteGain", "audio", "Другие участники", "Относительный уровень событий остальных участников до затухания по расстоянию.", "ratio", 0f, 1f, .05f, .40f);
