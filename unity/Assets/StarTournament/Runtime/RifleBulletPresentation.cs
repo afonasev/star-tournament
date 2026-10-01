@@ -50,7 +50,12 @@ namespace StarTournament.ProvingGround
             foreach(var b in bullets)
             {
                 if(pendingLaunches.TryGetValue(b.Id,out var shooter))
-                { if(muzzle!=null)offsets[b.Id]=muzzle(shooter)-(b.Position-b.Direction*b.Distance);pendingLaunches.Remove(b.Id); }
+                {
+                    if(muzzle!=null)offsets[b.Id]=muzzle(shooter)-(b.Position-b.Direction*b.Distance);
+                    // At distance zero the segment is invisible. Freeze its launch origin only
+                    // on the first visible frame: a strafe/recoil tick can move the barrel first.
+                    if(b.Distance>0)pendingLaunches.Remove(b.Id);
+                }
                 if(!flights.TryGetValue(b.Id,out var line))
                 {
                     var root=new GameObject("Rifle flight "+b.Id);root.transform.SetParent(owner);
