@@ -1097,6 +1097,26 @@ namespace StarTournament.ProvingGround
             divider.SetActive(false);
             return (RectTransform)divider.transform;
         }
+        void CompactMatchMenu(RectTransform menuRect)
+        {
+            if(phase!=Phase.Paused && phase!=Phase.Results)return;
+            float width=Profile.Get("ui.matchMenuWidth"),height=Profile.Get("ui.matchMenuButtonHeight"),spacing=Profile.Get("ui.matchMenuSpacing");
+            var group=menuRect.GetComponent<VerticalLayoutGroup>();
+            group.childForceExpandHeight=false;group.spacing=spacing;
+            int buttons=0;
+            foreach(var button in menuRect.GetComponentsInChildren<Button>())
+            {
+                var element=button.GetComponent<LayoutElement>()??button.gameObject.AddComponent<LayoutElement>();
+                element.minHeight=element.preferredHeight=height;element.flexibleHeight=0;buttons++;
+            }
+            status.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,width);
+            float statusHeight=status.preferredHeight;
+            var title=status.GetComponent<LayoutElement>()??status.gameObject.AddComponent<LayoutElement>();
+            title.minHeight=title.preferredHeight=statusHeight;title.flexibleHeight=0;
+            // The title uses its measured wrapped text height; action sizes come from the UI profile.
+            Layout(menuRect,new Vector2(.5f,phase==Phase.Results?.23f:.5f),new Vector2(.5f,phase==Phase.Results?.23f:.5f));
+            menuRect.sizeDelta=new Vector2(width,statusHeight+buttons*(height+spacing));
+        }
         void RefreshInterface()
         {
             if (!overlay) return;
@@ -1179,6 +1199,7 @@ namespace StarTournament.ProvingGround
                 var result=Session.Match.Read();
                 status.text=(result.Roster.Mode==NativeMatchMode.Teams ? "ПОБЕДИЛА "+NativeStandingsView.TeamName(result.WinnerTeam) : "ПОБЕДИЛ "+Composition.Participant(result.Winner).Name)+" · "+(result.Trigger=="score-limit"?"ЦЕЛЬ ПО ОЧКАМ":"ВРЕМЯ")+(input.Ready||diagnostic?"":"\nПодключите устройства для повтора или вернитесь в меню");
             }
+            CompactMatchMenu(menuRect);
             RefreshModernMenuUi();
             RefreshSeatPauseUi();
         }
