@@ -1,0 +1,16 @@
+{
+    "state": "01-running-4",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "localSeats": 4,
+    "openMenus": 0,
+    "visibleFps": 4,
+    "buildLabels": 1,
+    "width": 3456,
+    "height": 2160,
+    "sourceRevision": "9eea8ce6df4459f58ad33f959d55f97915586f10",
+    "running": true,
+    "focused": true,
+    "muted": true,
+    "unityDeveloperWatermark": false,
+    "matchTime": 0.33999986574053767
+}
