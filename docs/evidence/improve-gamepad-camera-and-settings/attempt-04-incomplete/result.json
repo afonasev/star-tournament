@@ -1,0 +1,11 @@
+{
+  "classification": "INCOMPLETE_NATIVE_QA_BACKGROUND_DEVICE",
+  "source_revision": "2f8ef59e0a9b445ebb2c249039d0455ab3ca7212",
+  "build_marker": "STAR_PROVING_BUILD_PASS 471127319",
+  "candidate": "local-macos-player-candidate/2f8ef59e0a9b445ebb2c249039d0455ab3ca7212/20260929T1719Z",
+  "settings_and_profile_checks": "passed",
+  "camera_match": "not_started",
+  "failure": "StartCombatReview did not enter match with synthetic pads after OS focus loss; explicit CUA activation also did not resolve",
+  "next_diagnostic": "Dev-only InputSystem IgnoreFocus plus exact assign/phase/ready/setupError logging",
+  "physical_controller_acceptance": "not_performed"
+}

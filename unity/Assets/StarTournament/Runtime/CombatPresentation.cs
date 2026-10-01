@@ -103,6 +103,7 @@ namespace StarTournament.ProvingGround
         sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly RocketPresentation rocketPresentation;
+        readonly RifleBulletPresentation riflePresentation;
         readonly CutterPresentation cutterPresentation;
         readonly ProvingProfile movement, tuning, deathProfile;
         DeathPhysicsWorld deathPhysics;
@@ -121,7 +122,7 @@ namespace StarTournament.ProvingGround
         readonly List<Corpse> corpses = new List<Corpse>();
         readonly List<PelletEffect> pellets = new List<PelletEffect>();
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
-        public int ActiveShotEffectCount => pellets.Count;
+        public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null)
         {
@@ -137,6 +138,7 @@ namespace StarTournament.ProvingGround
                 if(views[v].GetComponent<TrooperVisual>())weaponSwitches[v]=new FirstPersonWeaponSwitch(views[v],cameras[v]);
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner);
+            riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
             session.StateRestored+=OnStateRestored;
@@ -156,6 +158,11 @@ namespace StarTournament.ProvingGround
             // FixedUpdate can run several times before LateUpdate. Sample this shot's pose now,
             // before freezing its world-space muzzle; never use the previous rendered camera.
             PrepareShotPose(notice.Shooter);
+            if(notice.Weapon==WeaponId.Rifle)
+            {
+                riflePresentation.Launch(notice.Sequence,notice.Shooter);
+                return;
+            }
             if(notice.Weapon==WeaponId.RocketLauncher)
                 rocketPresentation.Launch(notice.Sequence,Muzzle(notice.Shooter,0,notice.Weapon)-notice.Origin);
             int capacity=(int)movement.Get("presentation.shotMaxEffects");
@@ -304,7 +311,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            rocketPresentation.Dispose();cutterPresentation.Dispose();
+            rocketPresentation.Dispose();riflePresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -451,7 +458,7 @@ namespace StarTournament.ProvingGround
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
             // Capture a new trace only after all cameras, animation and weapon-switch joints are final for this frame.
-            RenderPellets();cutterPresentation.Render();
+            RenderPellets();riflePresentation.Render();cutterPresentation.Render();
         }
     }
 }

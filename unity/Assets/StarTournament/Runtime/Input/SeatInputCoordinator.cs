@@ -102,7 +102,7 @@ namespace StarTournament.ProvingGround
         public void Clear() { Array.Clear(queued, 0, queued.Length); pauseRequested = false; for(int i=0;i<SeatCount;i++) fireReleaseRequired[i]=true; }
         public bool ConsumePause() { bool value = pauseRequested; pauseRequested = false; return value; }
         // Capture once per rendered frame; consume edges/delta once per simulation tick.
-        public void Capture(ProvingProfile profile, float deltaTime, float? mouseDegreesPerPixelOverride=null)
+        public void Capture(ProvingProfile profile, float deltaTime, float? mouseDegreesPerPixelOverride=null, System.Func<int,GamepadLookSettings> gamepadSettings=null)
         {
             // The operator can always pause, including all-AI matches with no gameplay ownership.
             foreach(var device in InputSystem.devices)
@@ -137,7 +137,11 @@ namespace StarTournament.ProvingGround
                 else if (devices[i] is Gamepad pad)
                 {
                     a.Move = Deadzone(pad.leftStick.ReadValue(), profile.Get("input.deadzone"));
-                    a.LookDegrees += Deadzone(pad.rightStick.ReadValue(), profile.Get("input.deadzone")) * profile.Get("input.gamepadDegreesPerSecond") * deltaTime;
+                    var look=Deadzone(pad.rightStick.ReadValue(),profile.Get("input.deadzone"));
+                    var settings=gamepadSettings!=null?gamepadSettings(i):GamepadLookSettings.Default(profile);
+                    a.LookDegrees += Vector2.Scale(look,new Vector2(settings.Horizontal,settings.Vertical))*deltaTime;
+                    a.ManualLook=look.sqrMagnitude>0;
+                    a.GamepadLookAssistance=settings.AutoLevel;
                     a.Jump |= pad.buttonSouth.wasPressedThisFrame;
                     CaptureFire(i, ref a, pad.rightTrigger.isPressed, pad.rightTrigger.wasPressedThisFrame);
                     if(pad.dpad.left.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;

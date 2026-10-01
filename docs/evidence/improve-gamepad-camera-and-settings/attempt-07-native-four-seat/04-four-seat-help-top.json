@@ -1,0 +1,13 @@
+{
+    "state": "04-four-seat-help-top",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "localSeats": 4,
+    "openMenus": 4,
+    "visibleFps": 5,
+    "buildLabels": 1,
+    "running": false,
+    "focused": true,
+    "muted": true,
+    "unityDeveloperWatermark": false,
+    "matchTime": 0.7199997156858444
+}

@@ -1,0 +1,68 @@
+{
+  "classification": "SYNTHETIC_NATIVE_PLAYER_QA_PASS_NOT_PHYSICAL_ACCEPTANCE",
+  "candidate": "local-macos-player-candidate/57b71a69bc992a8a98bcc4b830e693346553fa87/20260930T162027Z",
+  "source_revision": "57b71a69bc992a8a98bcc4b830e693346553fa87",
+  "compiled_csharp_source_revision": "2873cf18685cb369bc258df16b857475ec3f008b",
+  "display_mode": "windowed_1920x1080",
+  "player_exit_code": 0,
+  "completion_marker": "NATIVE_PAUSE_REVIEW_COMPLETE 4",
+  "png_count": 6,
+  "local_seats": 4,
+  "muted": true,
+  "states": {
+    "02-all-open-4": {
+      "state": "02-all-open-4",
+      "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+      "localSeats": 4,
+      "openMenus": 4,
+      "visibleFps": 5,
+      "buildLabels": 1,
+      "running": false,
+      "focused": true,
+      "muted": true,
+      "unityDeveloperWatermark": false,
+      "matchTime": 0.7599996998906136
+    },
+    "03-four-seat-settings": {
+      "state": "03-four-seat-settings",
+      "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+      "localSeats": 4,
+      "openMenus": 4,
+      "visibleFps": 5,
+      "buildLabels": 1,
+      "running": false,
+      "focused": true,
+      "muted": true,
+      "unityDeveloperWatermark": false,
+      "matchTime": 0.7599996998906136
+    },
+    "04-four-seat-help-top": {
+      "state": "04-four-seat-help-top",
+      "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+      "localSeats": 4,
+      "openMenus": 4,
+      "visibleFps": 5,
+      "buildLabels": 1,
+      "running": false,
+      "focused": true,
+      "muted": true,
+      "unityDeveloperWatermark": false,
+      "matchTime": 0.7599996998906136
+    },
+    "05-four-seat-help-bottom": {
+      "state": "05-four-seat-help-bottom",
+      "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+      "localSeats": 4,
+      "openMenus": 4,
+      "visibleFps": 5,
+      "buildLabels": 1,
+      "running": false,
+      "focused": true,
+      "muted": true,
+      "unityDeveloperWatermark": false,
+      "matchTime": 0.7599996998906136
+    }
+  },
+  "physical_controller_acceptance": "pending",
+  "human_acceptance": "pending"
+}

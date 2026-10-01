@@ -47,6 +47,7 @@ namespace StarTournament.ProvingGround
                     var session=ground.Session;var driver=ground.BotDriver;float dt=1/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[4];
                     var rows=Enumerable.Range(0,4).Select(p=>new BotRow{participant=p,difficulty=ground.Composition.Participant(p).Difficulty}).ToArray();
                     session.Fired+=(p,d)=>{if(d>0)rows[p].damagingShots++;};
+                    session.RifleBulletHit+=e=>{if(e.AppliedDamage>0)rows[e.Bullet.Owner].damagingShots++;};
                     session.ShotResolved+=shot=>{var r=rows[shot.Shooter];r.shots++;switch(shot.Weapon){case WeaponId.Rifle:r.rifleShots++;break;case WeaponId.Shotgun:r.shotgunShots++;break;case WeaponId.RocketLauncher:r.pulseShots++;break;case WeaponId.Cutter:r.beamStarts++;break;}};
                     session.PickupCollected+=(p,id,kind)=>{var r=rows[p];r.collections++;if(driver.Planner(p).PickupId!=id)r.incidentalCollections++;switch(kind){case NativeBotPickupKind.Heal:r.heal++;break;case NativeBotPickupKind.Armor:r.armor++;break;case NativeBotPickupKind.Speed:r.speed++;break;case NativeBotPickupKind.Damage:r.boost++;break;case NativeBotPickupKind.Weapon:r.weapons++;break;}};
                     double cpu=0,maxCpu=0;int maxQueries=0,ticks=0;double limit=ProvingProfile.CreateBotEvaluationDefault().Get("bots.evaluation.seconds");
