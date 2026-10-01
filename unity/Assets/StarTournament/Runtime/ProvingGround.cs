@@ -1127,7 +1127,9 @@ namespace StarTournament.ProvingGround
             targetMinus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
             targetPlus.gameObject.SetActive(phase==Phase.Setup && Configuration.TargetEnabled);
             var sensitivityDescriptor=MouseSensitivityPreference.Descriptor(Profile);var sensitivity=MouseSensitivityPreference.Resolve(Profile);
-            mouseSensitivityMinus.gameObject.SetActive(phase!=Phase.Running);mouseSensitivityPlus.gameObject.SetActive(phase!=Phase.Running);
+            bool showMatchSettings=phase==Phase.Setup||phase==Phase.Paused;
+            mouseSensitivityMinus.gameObject.SetActive(showMatchSettings);mouseSensitivityPlus.gameObject.SetActive(showMatchSettings);
+            status.transform.parent.Find("fps-setting").gameObject.SetActive(showMatchSettings);
             mouseSensitivityMinus.interactable=sensitivity>sensitivityDescriptor.Minimum;
             mouseSensitivityPlus.interactable=sensitivity<sensitivityDescriptor.Maximum;
             mouseSensitivityMinus.GetComponentInChildren<Text>().text=sensitivityDescriptor.Label+": "+sensitivity.ToString("0.00")+" "+sensitivityDescriptor.Unit+"   −";
