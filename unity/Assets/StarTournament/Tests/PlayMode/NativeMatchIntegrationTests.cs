@@ -120,6 +120,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));yield return null;yield return null;
+            Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(Button("fallback-settings").gameObject));
+            InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
+            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));yield return null;yield return null;
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(Button("Продолжить").gameObject));
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
             Assert.That(ground.Running,Is.True);
