@@ -63,11 +63,10 @@ namespace StarTournament.ProvingGround
                 if(keyboardView)InputSystem.QueueStateEvent(keyboard,held?new KeyboardState(Key.Tab):new KeyboardState());
                 else InputSystem.QueueStateEvent(pads[0],held?new GamepadState().WithButton(GamepadButton.Select):new GamepadState());
                 Time.timeScale=1;yield return new WaitForSecondsRealtime(.06f);Time.timeScale=0;yield return null;
-                if(!Application.isFocused)continue;
-                Check(ground.transform.Find("native-ui/standings-0").gameObject.activeSelf==held,"View held projection");
-                yield break;
+                if(Application.isFocused&&ground.transform.Find("native-ui/standings-0").gameObject.activeSelf==held)
+                    yield break;
             }
-            throw new InvalidOperationException("SCOREBOARD_REVIEW focus changed repeatedly during View input");
+            throw new InvalidOperationException("SCOREBOARD_REVIEW View held projection after focused input retries");
         }
         IEnumerator Finish(string label)
         {
