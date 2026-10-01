@@ -32,6 +32,29 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         GameObject Wall(Vector3 center,Vector3 size)
         {var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.transform.SetParent(owner.transform);go.layer=ProvingArena.WorldLayer;go.transform.position=center;go.transform.localScale=size;Physics.SyncTransforms();return go;}
         [UnityTearDown]public IEnumerator Cleanup(){if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
+        [UnityTest]public IEnumerator FirstVisibleFlightUsesStrafedMuzzleThenFreezesLaunchOffset()
+        {
+            foreach(int side in new[]{-1,1})
+            {
+                Setup(speed:50);yield return null;
+                var muzzle=new Vector3(-7.8f,1.5f,.4f);
+                using(var visual=new RifleBulletPresentation(session,move,owner.transform,_=>muzzle))
+                {
+                    session.ShotResolved+=shot=>visual.Launch(shot.Sequence,shot.Shooter);
+                    Fire();visual.Render();
+                    var line=owner.GetComponentsInChildren<LineRenderer>().Single();
+                    Assert.That(Vector3.Distance(line.GetPosition(0),line.GetPosition(1)),Is.EqualTo(0));
+                    muzzle+=Vector3.right*(side*.25f);Ticks(1);visual.Render();
+                    var bullet=session.RifleBullets.Single();
+                    Assert.That(Vector3.Distance(visual.VisualPoint(bullet,0),muzzle),Is.LessThan(.0001f),"First visible launch was frozen before strafe");
+                    var offset=muzzle-(bullet.Position-bullet.Direction*bullet.Distance);
+                    muzzle+=Vector3.right*(side*.25f);Ticks(1);visual.Render();bullet=session.RifleBullets.Single();
+                    var expected=bullet.Position+offset*(1-Mathf.Clamp01(bullet.Distance/move.Get("presentation.rifleTracerLength")));
+                    Assert.That(Vector3.Distance(line.GetPosition(0),expected),Is.LessThan(.0001f),"Already visible flight followed a later muzzle");
+                }
+                yield return SceneManager.UnloadSceneAsync(scene);scene=default;
+            }
+        }
         [UnityTest]public IEnumerator LaunchDoesNoDamageThenContactAndVisualAreOnceAndSynchronous()
         {
             Setup();yield return null;int launch=0,contacts=0;double damageTime=-1,contactTime=-2;

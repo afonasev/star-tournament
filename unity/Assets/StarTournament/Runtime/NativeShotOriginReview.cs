@@ -34,6 +34,11 @@ namespace StarTournament.ProvingGround
             else if(bullet.Distance>=ground.Profile.Get("presentation.rifleTracerLength"))
                 Require(Vector3.Distance(line.GetPosition(0),bullet.Position)<.0001f,"Rifle visual head disagrees with authoritative bullet");
         }
+        void Awake()
+        {
+            // Direct autonomous Player launches must progress before their first focused frame.
+            if(Environment.GetCommandLineArgs().Contains("-shotOriginReview"))Application.runInBackground=true;
+        }
         IEnumerator Start()
         {
             var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-shotOriginReview");if(flag<0)yield break;
@@ -88,7 +93,20 @@ namespace StarTournament.ProvingGround
                     Render();
                     Require(JsonUtility.ToJson(ground.Session.Capture())==stateBeforeRender,"Render changed combat snapshot");
                     if(weapon==WeaponId.Rifle)
+                    {
                         RequireRifleFlight(0,notice.Sequence);
+                        // The zero-length birth frame is invisible. Strafe again before the
+                        // first visible segment and check its extrapolated origin independently.
+                        var firstFlight=new LocalAction[2];firstFlight[0].Move=new Vector2(side,0);
+                        ground.Session.Tick(firstFlight,.02f);Render();
+                        var bullet=ground.Session.RifleBullets.Single(b=>b.Id==notice.Sequence);
+                        var flight=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+notice.Sequence);
+                        float tail=Mathf.Min(bullet.Distance,Mathf.Max(ground.Profile.Get("presentation.shotMuzzleClearance"),bullet.Distance-ground.Profile.Get("presentation.rifleTracerLength")));
+                        var launch=flight.GetPosition(1)-(flight.GetPosition(0)-flight.GetPosition(1))*tail/(bullet.Distance-tail);
+                        var bore=View(0).GetComponentsInChildren<MeshFilter>(true).Single(m=>m.name=="dark muzzle bore");
+                        Require(Vector3.Distance(launch,bore.transform.TransformPoint(bore.sharedMesh.bounds.center))<.0001f,
+                            "First visible rifle segment missed the current muzzle during strafe "+side);
+                    }
                     if(weapon==WeaponId.RocketLauncher)
                     {
                         var rocket=ground.Session.Rockets.Single();var visual=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id);
@@ -115,7 +133,6 @@ namespace StarTournament.ProvingGround
                     {
                         if(weapon==WeaponId.Rifle)
                         {
-                            ground.Session.Tick(new LocalAction[2],.02f);Render();
                             var flight=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+notice.Sequence);
                             Require(Vector3.Distance(flight.GetPosition(0),flight.GetPosition(1))>.01f,"Rifle screenshot has no visible flight segment");
                         }
