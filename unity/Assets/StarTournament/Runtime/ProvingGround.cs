@@ -273,6 +273,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-damageBonusReview")) gameObject.AddComponent<NativeDamageBonusReview>();
             if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
             if (args.Contains("-colorSurfaceReview")) gameObject.AddComponent<NativeColorSurfaceReview>();
+            if (args.Contains("-weaponColorReview")) gameObject.AddComponent<NativeWeaponColorReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
