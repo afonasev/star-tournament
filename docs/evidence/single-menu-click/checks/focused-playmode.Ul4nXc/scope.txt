@@ -1,0 +1,8 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=NativeAudioRoutingTests
+revision=b6f98a8551fa511760378c9acaec48d1429c6060
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/single-menu-click/asset-verification.json
+?? ../docs/evidence/single-menu-click/preview-three-clicks.wav

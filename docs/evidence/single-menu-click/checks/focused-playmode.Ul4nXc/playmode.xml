@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.2421047">
+  <test-suite type="TestSuite" id="1228" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="179" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.242105" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1220" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/single-menu-click/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="179" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.237419" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1995" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1221" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="179" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.236636" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1222" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="179" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.235975" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1223" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="179" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.235323" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1224" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="133" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.234455" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1092" name="NativeAudioRoutingTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:38Z" duration="10.231856" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1094" name="ConfirmedRifleShotSelectsTheChosenRuntimeClip" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.ConfirmedRifleShotSelectsTheChosenRuntimeClip" methodname="ConfirmedRifleShotSelectsTheChosenRuntimeClip" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests" runstate="Runnable" seed="1801860480" result="Passed" start-time="2026-10-02 11:26:27Z" end-time="2026-10-02 11:26:32Z" duration="4.407207" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1095" name="MouseHoverIsSilentButGamepadNavigationStillSounds" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.MouseHoverIsSilentButGamepadNavigationStillSounds" methodname="MouseHoverIsSilentButGamepadNavigationStillSounds" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests" runstate="Runnable" seed="158216782" result="Passed" start-time="2026-10-02 11:26:32Z" end-time="2026-10-02 11:26:34Z" duration="2.024862" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1093" name="MovementBanksVaryWithoutRepeatingAndWeaponReuseResetsPitch" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.MovementBanksVaryWithoutRepeatingAndWeaponReuseResetsPitch" methodname="MovementBanksVaryWithoutRepeatingAndWeaponReuseResetsPitch" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests" runstate="Runnable" seed="1053426458" result="Passed" start-time="2026-10-02 11:26:34Z" end-time="2026-10-02 11:26:38Z" duration="3.793891" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

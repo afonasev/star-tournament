@@ -45,10 +45,25 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator SurfaceMeshStaysOnActualWallAndClipsAtItsEdge()
         {
-            Setup();var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.transform.SetParent(root.transform);go.layer=ProvingArena.WorldLayer;go.transform.position=new Vector3(40,1,0);go.transform.localScale=new Vector3(1,2,.1f);yield return null;Physics.SyncTransforms();
-            Assert.That(scene.GetPhysicsScene().Raycast(new Vector3(40.49f,1,-1),Vector3.forward,out var hit,2,1<<ProvingArena.WorldLayer),Is.True);
-            var mesh=BloodPresentation.BuildSurfaceMark(hit,.3f,27);Assert.That(mesh,Is.Not.Null);Assert.That(mesh.vertices.All(v=>v.x<=40.5001f&&v.x>=39.4999f),Is.True);
-            Assert.That(mesh.vertices.All(v=>Mathf.Abs(v.z-(-.052f))<.001f),Is.True);Assert.That(mesh.triangles.Length,Is.LessThan(32*3));Object.Destroy(mesh);
+            Setup();var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.transform.SetParent(root.transform);go.layer=ProvingArena.WorldLayer;go.transform.position=new Vector3(40,1,0);go.transform.localScale=new Vector3(4,4,.1f);yield return null;Physics.SyncTransforms();
+            Assert.That(scene.GetPhysicsScene().Raycast(new Vector3(41.99f,1,-1),Vector3.forward,out var hit,2,1<<ProvingArena.WorldLayer),Is.True);
+            var mesh=BloodPresentation.BuildSurfaceMark(hit,.3f,27,Vector3.right);Assert.That(mesh,Is.Not.Null);Assert.That(mesh.vertices.All(v=>v.x<=42.0001f&&v.x>=37.9999f),Is.True);
+            Assert.That(mesh.vertices.All(v=>Mathf.Abs(v.z-(-.052f))<.001f),Is.True);Assert.That(scene.GetPhysicsScene().Raycast(new Vector3(40,1,-1),Vector3.forward,out var centre,2,1<<ProvingArena.WorldLayer),Is.True);
+            var full=BloodPresentation.BuildSurfaceMark(centre,.3f,27,Vector3.right);Assert.That(mesh.triangles.Length,Is.LessThan(full.triangles.Length));Object.Destroy(mesh);Object.Destroy(full);
+        }
+        [UnityTest] public IEnumerator MarksHaveVariedSilhouettesAndTailsFollowSurfaceVelocity()
+        {
+            Setup();var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.transform.SetParent(root.transform);go.layer=ProvingArena.WorldLayer;go.transform.position=new Vector3(40,1,0);go.transform.localScale=new Vector3(4,4,.1f);yield return null;Physics.SyncTransforms();
+            Assert.That(scene.GetPhysicsScene().Raycast(new Vector3(40,1,-1),Vector3.forward,out var hit,2,1<<ProvingArena.WorldLayer),Is.True);
+            var shapes=new System.Collections.Generic.HashSet<string>();var topology=new System.Collections.Generic.HashSet<int>();
+            for(uint seed=1;seed<=12;seed++)
+            {
+                var mesh=BloodPresentation.BuildSurfaceMark(hit,.3f,seed,Vector3.right,.45f);Assert.That(mesh,Is.Not.Null);
+                Assert.That(mesh.vertices.All(v=>Mathf.Abs(v.z+.052f)<.001f),Is.True);
+                Assert.That(mesh.bounds.max.x-hit.point.x,Is.GreaterThan(hit.point.x-mesh.bounds.min.x));
+                shapes.Add(string.Join(";",mesh.vertices.Select(v=>v.ToString("F4"))));topology.Add(mesh.triangles.Length);Object.Destroy(mesh);
+            }
+            Assert.That(shapes.Count,Is.EqualTo(12),"Seed varies the silhouette, not just stamp orientation");Assert.That(topology.Count,Is.GreaterThan(1),"Different tail/satellite patterns");
         }
     }
 }
