@@ -102,6 +102,7 @@ namespace StarTournament.ProvingGround
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; public DeathRagdoll Ragdoll; }
         sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
         readonly NativeCombatSession session;
+        readonly BloodPresentation bloodPresentation;
         readonly RocketPresentation rocketPresentation;
         readonly RifleBulletPresentation riflePresentation;
         readonly CutterPresentation cutterPresentation;
@@ -124,7 +125,7 @@ namespace StarTournament.ProvingGround
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
         public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
-            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null)
+            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null)
         {
             if(bodies.Length!=session.ParticipantCount || views.Length!=cameras.Length ||
                 (composition==null?cameras.Length!=session.ParticipantCount:composition.ParticipantCount!=session.ParticipantCount || composition.LocalCount!=cameras.Length))
@@ -136,6 +137,7 @@ namespace StarTournament.ProvingGround
             weaponSwitches=new FirstPersonWeaponSwitch[views.Length];
             for(int v=0;v<views.Length;v++)
                 if(views[v].GetComponent<TrooperVisual>())weaponSwitches[v]=new FirstPersonWeaponSwitch(views[v],cameras[v]);
+            bloodPresentation=new BloodPresentation(session,bloodProfile??ProvingProfile.CreateBloodDefault(),owner,physics);
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner);
             riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
@@ -311,7 +313,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            rocketPresentation.Dispose();riflePresentation.Dispose();cutterPresentation.Dispose();
+            bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -400,6 +402,7 @@ namespace StarTournament.ProvingGround
         }
         public void Render()
         {
+            bloodPresentation.Render();
             rocketPresentation.Render();
             foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Render(session.Time);
