@@ -109,6 +109,8 @@ namespace StarTournament.ProvingGround
             state.HasGoal = false; state.Enemy = -1; state.EnemyLife = 0; state.ObservedAt = -1;
             state.Route = Array.Empty<NativeNavigationPoint>(); state.Cursor = 0; state.Status = NativeNavigationStatus.Idle;
             state.Recoveries = 0; state.Failure = null; routeDirty = false;
+            // A cleared route has no pending repath throttle; the next goal must plan immediately.
+            state.NextRepath = 0;
             state.ActiveTransition = null; state.ExitSupport = null;
         }
         public void Restore(NativeNavigationState snapshot)

@@ -27,6 +27,18 @@ namespace StarTournament.ProvingGround.Tests
             p.Set("bots.navigation.maximumRecoveries", 1.5f);
             Assert.Throws<ArgumentException>(() => new NativeBotNavigation(new Route(), p));
         }
+        [Test] public void ClearAllowsImmediateReverseGoalBeforeOldRepathDeadlineAndAfterRestore()
+        {
+            var profile=ProvingProfile.CreateNavigationDefault();var route=new Route();var bot=new NativeBotNavigation(route,profile);
+            bot.SetStaticGoal(Vector3.forward*10);var pose=new ParticipantState{Grounded=true};bot.Tick(0,pose,Alive());
+            var clone=new NativeBotNavigation(new Route(),profile);clone.Restore(bot.Capture());
+            bot.Clear();clone.Clear();bot.SetStaticGoal(Vector3.back*10);clone.SetStaticGoal(Vector3.back*10);
+            double next=profile.Get("bots.navigation.repathSeconds")/2;
+            var actual=bot.Tick(next,pose,Alive());var restored=clone.Tick(next,pose,Alive());
+            Assert.That(route.LastGoal,Is.EqualTo(Vector3.back*10));Assert.That(actual.Move.y,Is.GreaterThan(0),"Local movement follows the new backwards-facing route");
+            Assert.That(actual.Move,Is.EqualTo(restored.Move));Assert.That(actual.LookDegrees,Is.EqualTo(restored.LookDegrees));
+        }
+
         [Test] public void Knowledge_UsesOriginalPositionAndExpiresWithoutRawWorld()
         {
             var route = new Route(); var bot = new NativeBotNavigation(route, ProvingProfile.CreateNavigationDefault());

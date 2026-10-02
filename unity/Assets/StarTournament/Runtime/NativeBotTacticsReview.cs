@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround
         [Serializable] public sealed class Run
         {public string mode,pair,set;public uint seed;public int permutation;public int maxQueries;public double seconds,cpuMilliseconds,maxDriverMilliseconds;public BotRow[] bots;public string arena,behavior,perception,evaluation;}
         [Serializable] sealed class State
-        {public string label;public uint seed;public bool muted,focused,running;public int width,height;public double time;public NativeCompositionSnapshot composition;public ParticipantState[] poses;public CombatLifeState[] lives;public NativeBotPlannerState[] planners;public NativeBotPerceptionSnapshot perception;public NativeBotPickupSnapshot pickups;}
+        {public string label;public uint seed;public bool muted,focused,running;public int width,height;public double time;public NativeCompositionSnapshot composition;public ParticipantState[] poses;public CombatLifeState[] lives;public NativeBotPlannerState[] planners;public double[] damageRemaining;public NativeBotPerceptionSnapshot perception;public NativeBotPickupSnapshot pickups;}
         ProvingGround ground;string directory; readonly List<double> frameMs=new List<double>();double previous; bool ordinary;
         public static readonly uint[] ControlSeeds={931001,931019,931037,931051,931069,931087,931109,931127};
         public static readonly uint[] TuningSeeds={271001,271019,271037,271051};
@@ -34,6 +34,8 @@ namespace StarTournament.ProvingGround
             directory=args[flag+1];Directory.CreateDirectory(directory);
             // Batch evaluation has no rendered splash/focus cycle. Ordinary PNG capture still requires focus.
             if(!Application.isBatchMode)while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
+            if(args.Contains("-damageBoostAggressionReview"))
+            {yield return DamageBoostAggression();Application.Quit(0);yield break;}
             if(args.Contains("-botTacticsEvaluation"))
             {
                 bool control=args.Contains("-botTacticsControl");var seeds=control?ControlSeeds:TuningSeeds;
@@ -83,11 +85,55 @@ namespace StarTournament.ProvingGround
             File.WriteAllLines(Path.Combine(directory,"frames-ms.txt"),frameMs.Select(f=>f.ToString("R",System.Globalization.CultureInfo.InvariantCulture)));
             File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"NATIVE_TACTICS_REVIEW_PASS\",\"muted\":true,\"physical_controller_acceptance\":false,\"target_hardware_performance_acceptance\":false}");Application.Quit(0);
         }
+        IEnumerator DamageBoostAggression()
+        {
+            // Labelled state/placement fixture exercises the actual driver, FOV/LOS and native motor.
+            // Natural match completion is covered separately by the full PlayMode gate.
+            AudioListener.volume=0;
+            foreach(var difficulty in new[]{NativeBotDifficulty.Easy,NativeBotDifficulty.Normal,NativeBotDifficulty.Hard})
+            {
+                ground.StartBotReview(Composition(false,difficulty,difficulty,0),TuningSeeds[1]);
+                ground.FullHealReviewManualTick=true;
+                var floorSolid=ground.GetComponentsInChildren<ProvingArena>().Single().Definition.Solids.Single(s=>s.Id=="foundation-north");
+                float floor=floorSolid.Position.y+floorSolid.Size.y/2;
+                ground.PlaceCombatReviewSeat(0,new Vector3(-8,floor,26),0,0);
+                ground.PlaceCombatReviewSeat(1,new Vector3(-8,floor,30),0,180);
+                ground.PlaceCombatReviewSeat(2,new Vector3(-30,floor,-30),0);
+                ground.PlaceCombatReviewSeat(3,new Vector3(30,floor,-30),0);
+                var session=ground.Session;var driver=ground.BotDriver;var snapshot=session.Capture();
+                snapshot.Lives[0].Health=10;snapshot.DamageRemaining[0]=ground.LifeProfile.Get("damageBoost.durationSeconds");session.Restore(snapshot);
+                var actions=new LocalAction[4];float dt=1/ground.Profile.Get("simulation.fixedTickHz");
+                void Step()
+                {
+                    Array.Clear(actions,0,actions.Length);driver.ProduceActions(actions,dt);
+                    // Opponents are stationary in this fixture so the intended strength remains reviewable.
+                    for(int p=1;p<actions.Length;p++)actions[p]=default;
+                    session.Tick(actions,dt);
+                }
+                Step();Step();yield return null;
+                var expected=difficulty==NativeBotDifficulty.Hard?NativeBotIntent.Retreat:NativeBotIntent.Engage;
+                if(driver.Planner(0).Intent!=expected)throw new InvalidOperationException("Boosted "+difficulty+" expected "+expected+" but got "+driver.Planner(0).Intent);
+                yield return Capture("boost-"+difficulty+"-outmatched-placement-fixture",TuningSeeds[1]);
+                if(difficulty==NativeBotDifficulty.Hard)
+                {
+                    snapshot=session.Capture();snapshot.Lives[1].Health=5;session.Restore(snapshot);
+                    // Direct knowledge still obeys the difficulty's sampling cadence.
+                    for(int i=0;i<30&&driver.Planner(0).Intent!=NativeBotIntent.Engage;i++)Step();yield return null;
+                    if(driver.Planner(0).Intent!=NativeBotIntent.Engage)throw new InvalidOperationException("Veteran did not resume favorable boosted fight");
+                    yield return Capture("boost-Hard-favorable-placement-fixture",TuningSeeds[1]);
+                }
+                snapshot=session.Capture();snapshot.DamageRemaining[0]=0;snapshot.Lives[1].Health=100;session.Restore(snapshot);Step();yield return null;
+                if(driver.Planner(0).Capture().DamageBoostActive||difficulty!=NativeBotDifficulty.Hard&&driver.Planner(0).Intent!=NativeBotIntent.Retreat)
+                    throw new InvalidOperationException("Normal low-health tactics did not return at boost expiry");
+                yield return Capture("boost-"+difficulty+"-expired-placement-fixture",TuningSeeds[1]);
+            }
+            File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"DAMAGE_BOOST_AGGRESSION_PLAYER_PASS\",\"muted\":true,\"fixture\":\"placement-and-state\",\"humanAcceptance\":false}");
+        }
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Capture(string label,uint seed)
         {
             while(!Application.isFocused)yield return null;yield return new WaitForEndOfFrame();
-            var data=new State{label=label,seed=seed,muted=AudioListener.volume==0,focused=Application.isFocused,running=ground.Running,width=Screen.width,height=Screen.height,time=ground.Session.Time,composition=ground.Composition.Read(),poses=Enumerable.Range(0,ground.Session.ParticipantCount).Select(ground.Session.Pose).ToArray(),lives=Enumerable.Range(0,ground.Session.ParticipantCount).Select(ground.Session.Life).ToArray(),planners=Enumerable.Range(0,ground.Session.ParticipantCount).Select(p=>ground.BotDriver.Planner(p)?.Capture()).ToArray(),perception=ground.BotDriver.Perception.Capture(),pickups=ground.BotDriver.Pickups.Capture()};
+            var data=new State{label=label,seed=seed,muted=AudioListener.volume==0,focused=Application.isFocused,running=ground.Running,width=Screen.width,height=Screen.height,time=ground.Session.Time,composition=ground.Composition.Read(),poses=Enumerable.Range(0,ground.Session.ParticipantCount).Select(ground.Session.Pose).ToArray(),lives=Enumerable.Range(0,ground.Session.ParticipantCount).Select(ground.Session.Life).ToArray(),damageRemaining=Enumerable.Range(0,ground.Session.ParticipantCount).Select(ground.Session.DamageBoostRemaining).ToArray(),planners=Enumerable.Range(0,ground.Session.ParticipantCount).Select(p=>ground.BotDriver.Planner(p)?.Capture()).ToArray(),perception=ground.BotDriver.Perception.Capture(),pickups=ground.BotDriver.Pickups.Capture()};
             File.WriteAllText(Path.Combine(directory,label+".json"),JsonUtility.ToJson(data,true));ScreenCapture.CaptureScreenshot(Path.Combine(directory,label+".png"));yield return null;
         }
     }

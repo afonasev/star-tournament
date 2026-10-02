@@ -103,7 +103,7 @@ namespace StarTournament.ProvingGround
         public NativeBotIntent Intent;
         public double Time=-1, NextDecision, Noticed, NextStrafe, NextJump, RetreatUntil, RetreatReady, SupportUntil, SupportReady, RouteRetryAt;
         public Vector3 Goal, JumpDirection;
-        public bool HasGoal, Pressed, JumpActive;
+        public bool HasGoal, Pressed, JumpActive, DamageBoostActive;
         public float Personality, AimPhase;
         public NativeNavigationState Navigation;
         public string PickupId, RejectedPickup;
@@ -120,7 +120,8 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile navigationProfile;
         readonly INativeBotTactics tactics;
         readonly INativeBotWeaponPolicy weapon;
-        readonly float maxHealth;
+        readonly float maxHealth, damageMultiplier;
+        readonly NativeBotDifficulty difficulty;
         NativeBotNavigation navigation;
         NativeBotPlannerState state;
         public NativeBotIntent Intent=>state.Intent;
@@ -148,9 +149,10 @@ namespace StarTournament.ProvingGround
             if(behavior.Get("bots.tactics.jumpSamples")%1!=0)throw new ArgumentException("Integral jump samples required");
             this.routes=routes??throw new ArgumentNullException(nameof(routes));this.tactics=tactics??throw new ArgumentNullException(nameof(tactics));
             this.weapon=weapon??throw new ArgumentNullException(nameof(weapon));maxHealth=maximumHealth;
+            this.difficulty=difficulty;damageMultiplier=weapon is NativeShotgunPolicy loadout?loadout.DamageMultiplier:ProvingProfile.CreateCombatDefault().Get("damageBoost.multiplier");
             profile=CopyProfile(behavior);this.navigationProfile=CopyProfile(navigationProfile);prefix="bots."+difficulty.ToString().ToLowerInvariant()+".";
             navigation=new NativeBotNavigation(routes,this.navigationProfile);
-            configuration=difficulty+"|"+seed+"|"+routes.Identity+"|"+JsonUtility.ToJson(profile)+"|"+JsonUtility.ToJson(this.navigationProfile)+"|"+maximumHealth+"|"+weapon.Identity;
+            configuration="boost-aggression-v1|"+difficulty+"|"+seed+"|"+routes.Identity+"|"+JsonUtility.ToJson(profile)+"|"+JsonUtility.ToJson(this.navigationProfile)+"|"+maximumHealth+"|"+weapon.Identity;
             state=new NativeBotPlannerState{Configuration=configuration,Random=seed};
             state.Anchor=tactics.Anchors.Length==0?-1:(int)(Random()*tactics.Anchors.Length);
             state.Personality=1+(Random()*2-1)*C("personalitySpread");state.AimPhase=Random()*Mathf.PI*2;
@@ -199,9 +201,22 @@ namespace StarTournament.ProvingGround
                 navigation.Clear();state.OwnLife=f.Life.Life;state.Target=-1;state.TargetLife=0;state.HasGoal=false;state.Pressed=false;
                 state.PickupId=state.RejectedPickup=null;state.PickupUntil=state.PickupStarted=state.PickupRetryAt=state.WeaponUntil=0;state.DesiredWeapon=0;state.RejectedTarget=-1;state.RejectedTargetLife=0;state.TargetRetryAt=state.LocalRecoveryUntil=0;
                 state.NextDecision=time;state.RetreatUntil=state.SupportUntil=0;state.RetreatReady=state.SupportReady=time;
-                state.JumpActive=false;state.RouteRetryAt=0;state.NextStrafe=time;state.NextJump=time+P("jumpCooldownSeconds");state.Intent=NativeBotIntent.Search;
+                state.DamageBoostActive=false;state.JumpActive=false;state.RouteRetryAt=0;state.NextStrafe=time;state.NextJump=time+P("jumpCooldownSeconds");state.Intent=NativeBotIntent.Search;
             }
             if(f.Life.Dead)return default;
+            bool boosted=f.DamageRemaining>0;
+            if(boosted!=state.DamageBoostActive)
+            {
+                state.DamageBoostActive=boosted;state.NextDecision=time;
+                // Replan on either policy transition; otherwise a throttled old chase route
+                // can keep moving forward after expiry selects retreat. Preserve floor transitions.
+                navigation.ForgetEnemy();state.HasGoal=navigation.InTransition;
+                if(boosted)
+                {
+                    state.RetreatUntil=state.SupportUntil=0;state.RetreatReady=time;
+                    state.PickupId=null;state.PickupUntil=0;
+                }
+            }
             if(navigation.Status==NativeNavigationStatus.Blocked&&!navigation.InTransition&&state.Target>=0&&state.PickupId==null)
             {state.RejectedTarget=state.Target;state.RejectedTargetLife=state.TargetLife;state.TargetRetryAt=time+S("pickupRetrySeconds");state.Target=-1;state.TargetLife=0;state.HasGoal=false;navigation.ForgetEnemy();state.NextDecision=time;}
             var known=f.Knowledge.Enemies;
@@ -213,8 +228,10 @@ namespace StarTournament.ProvingGround
                 foreach(var k in known)
                 {
                     if(k.Sighting.Participant==state.RejectedTarget&&k.Sighting.Life==state.RejectedTargetLife&&time<state.TargetRetryAt)continue;
-                    // Visibility wins; observed vulnerability is discounted as knowledge ages.
-                    float d=Vector3.Distance(f.Pose.Position,k.Sighting.Position)-S("vulnerableWeight")*Mathf.Clamp01(1-(k.Sighting.HasVitals?k.Sighting.Health+k.Sighting.Armor:maxHealth)/maxHealth)/(1+(float)(time-k.ObservedAt));
+                    // Boosted pursuit must not repeatedly pick a nearer but unreachable enemy.
+                    if(boosted&&(!routes.TryRoute(f.Pose.Position,k.Sighting.Position,out var path,out _)||path.Length==0))continue;
+                    // Visibility wins; ordinary vulnerability scoring is discounted as knowledge ages.
+                    float d=Vector3.Distance(f.Pose.Position,k.Sighting.Position)-(boosted?0:S("vulnerableWeight"))*Mathf.Clamp01(1-(k.Sighting.HasVitals?k.Sighting.Health+k.Sighting.Armor:maxHealth)/maxHealth)/(1+(float)(time-k.ObservedAt));
                     if(!best.HasValue||(k.Visible&&!best.Value.Visible)||(k.Visible==best.Value.Visible&&d<distance)){best=k;distance=d;}
                 }
                 int target=best?.Sighting.Participant??-1,life=best?.Sighting.Life??0;
@@ -239,12 +256,15 @@ namespace StarTournament.ProvingGround
             {
                 state.Intent=visible?NativeBotIntent.Engage:NativeBotIntent.Pursue;
                 state.Goal=memory.Value.Sighting.Position;state.HasGoal=true;
+                bool stronger=memory.Value.Sighting.HasVitals&&memory.Value.Sighting.Health+memory.Value.Sighting.Armor>OwnStrength(f)*S("strongerRatio");
+                bool mayRetreat=!boosted||difficulty==NativeBotDifficulty.Hard&&visible&&stronger;
+                if(boosted&&!mayRetreat)state.RetreatUntil=0;
                 if(time<state.RetreatUntil){state.Intent=NativeBotIntent.Retreat;}
                 else if(time<state.SupportUntil){state.Intent=NativeBotIntent.Support;}
                 else if(decision&&visible)
                 {
-                    if(time>=state.RetreatReady&&(f.Life.Health/maxHealth<P("retreatHealthRatio")||(memory.Value.Sighting.HasVitals&&memory.Value.Sighting.Health+memory.Value.Sighting.Armor>OwnStrength(f)*S("strongerRatio"))))TryRetreat(time,f,memory.Value.Sighting.Position);
-                    if(state.Intent==NativeBotIntent.Engage&&time>=state.SupportReady&&Random()<P("supportChance"))TrySupport(time,f,memory.Value.Sighting.Position);
+                    if(mayRetreat&&time>=state.RetreatReady&&(stronger||!boosted&&f.Life.Health/maxHealth<P("retreatHealthRatio")))TryRetreat(time,f,memory.Value.Sighting.Position);
+                    if(!boosted&&state.Intent==NativeBotIntent.Engage&&time>=state.SupportReady&&Random()<P("supportChance"))TrySupport(time,f,memory.Value.Sighting.Position);
                 }
             }
             else
@@ -298,6 +318,7 @@ namespace StarTournament.ProvingGround
                 var delta=memory.Value.Sighting.Position-f.Pose.Position;delta.y=0;
                 var forward=delta.normalized;var side=Vector3.Cross(Vector3.up,forward)*state.StrafeSign;
                 float approach=Mathf.Clamp((delta.magnitude-P("preferredDistanceMeters")*state.Personality)/T("probeDistance"),-1,1);
+                if(boosted)approach=Mathf.Max(0,approach);
                 var direction=forward*approach+side*P("strafeWeight");
                 foreach(var ally in f.Allies){var away=f.Pose.Position-ally.Position;away.y=0;if(away.magnitude<C("separationMeters"))direction+=away.normalized*(1-away.magnitude/C("separationMeters"));}
                 direction=direction.normalized;
@@ -350,7 +371,9 @@ namespace StarTournament.ProvingGround
             if(maneuver&&direction.sqrMagnitude>0&&f.Pose.Grounded&&time>=state.NextJump&&Random()<P("jumpChance")&&tactics.CanJump(f.Pose,direction))
             {action.Jump=true;state.JumpActive=true;state.JumpDirection=direction;state.NextJump=time+P("jumpCooldownSeconds")*state.Personality;Jumps++;}
         }
-        float OwnStrength(NativeBotFrame f)=>(f.Life.Health+f.Life.Armor)*(f.DamageRemaining>0&&weapon is NativeShotgunPolicy lp?lp.DamageMultiplier:1);
+        float OwnStrength(NativeBotFrame f)=>(f.Life.Health+f.Life.Armor)*(f.DamageRemaining>0?damageMultiplier:1);
+        bool Armed(NativeBotFrame f)=>f.Life.RifleAmmo>0||f.Life.ShotgunOwned&&f.Life.ShotgunAmmo>0||
+            f.Life.RocketOwned&&f.Life.RocketAmmo>0||f.Life.CutterOwned&&f.Life.CutterEnergy>0;
         float PickupNeed(NativeBotFrame f,NativeBotPickupEvent p)
         {
             var loadout=weapon as NativeShotgunPolicy;
@@ -377,15 +400,24 @@ namespace StarTournament.ProvingGround
         }
         void ChoosePickup(double time,NativeBotFrame f,bool decision,bool visible)
         {
+            bool attackPriority=f.DamageRemaining>0&&state.Intent!=NativeBotIntent.Retreat;
+            bool armed=Armed(f);
+            if(attackPriority&&(armed||state.PickupId!=null&&f.Pickups.Any(p=>p.Id==state.PickupId&&p.Kind!=NativeBotPickupKind.Weapon)))
+            {
+                bool hadPickup=state.PickupId!=null;state.PickupId=null;state.PickupUntil=0;
+                if(hadPickup){navigation.ForgetEnemy();state.HasGoal=navigation.InTransition;state.NextDecision=time;}
+                if(armed)return;
+            }
             if(state.PickupId!=null&&(time-state.PickupStarted>S("pickupTimeoutSeconds")||navigation.Status==NativeNavigationStatus.Blocked))
             {state.RejectedPickup=state.PickupId;state.PickupRetryAt=time+S("pickupRetrySeconds");state.PickupId=null;state.PickupUntil=0;}
             var held=f.Pickups.FirstOrDefault(p=>p.Id==state.PickupId&&p.Available);
             if(held.Id==null||PickupNeed(f,held)<=0){state.PickupId=null;state.PickupUntil=0;}
             if(!decision){if(state.PickupId!=null){state.Intent=NativeBotIntent.Pickup;state.Goal=held.Position;state.HasGoal=true;}return;}
             NativeBotPickupEvent? best=null;float bestScore=visible?S("combatUtility"):0;
-            if(state.Intent==NativeBotIntent.Retreat||f.Life.Health/maxHealth<P("retreatHealthRatio")||!new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter}.Any(w=>CombatLife.Owned(f.Life,w)&&CombatLife.AmmoFor(f.Life,w)>0))bestScore=0;
+            if(state.Intent==NativeBotIntent.Retreat||f.Life.Health/maxHealth<P("retreatHealthRatio")||!armed)bestScore=0;
             foreach(var p in f.Pickups)
             {
+                if(attackPriority&&p.Kind!=NativeBotPickupKind.Weapon)continue;
                 if(!p.Available||(p.Id==state.RejectedPickup&&time<state.PickupRetryAt))continue;
                 float need=PickupNeed(f,p);if(need<=0)continue;
                 if(!routes.TryRoute(f.Pose.Position,p.Position,out var route,out _)||route.Length==0)continue;

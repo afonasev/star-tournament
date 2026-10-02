@@ -15,6 +15,14 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             public bool TryRoute(Vector3 from, Vector3 goal, out NativeNavigationPoint[] points, out string failure)
             { points = new[] { new NativeNavigationPoint(goal, "floor:lower") }; failure = null; return true; }
         }
+        sealed class UnreachableNearRoute : INativeNavigation
+        {
+            public string Identity=>"blocked-near-map";
+            public bool TryLocate(Vector3 feet,out NativeNavigationPoint point){point=new NativeNavigationPoint(feet,"floor:lower");return true;}
+            public bool ValidTransition(string transition,string exit)=>false;
+            public bool TryRoute(Vector3 from,Vector3 goal,out NativeNavigationPoint[] points,out string failure)
+            {bool blocked=goal==Vector3.forward*10;points=blocked?Array.Empty<NativeNavigationPoint>():new[]{new NativeNavigationPoint(goal,"floor:lower")};failure=blocked?"unreachable":null;return !blocked;}
+        }
         sealed class TransitionRoute : INativeNavigation
         {
             public int Calls; public string Identity=>"transition-retry-map";
@@ -42,8 +50,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
 
         static NativeBotPlanner Make(NativeBotDifficulty difficulty = NativeBotDifficulty.Easy, uint seed = 7,
-            ProvingProfile behavior = null, Tactics tactics = null, Weapon weapon = null) => new NativeBotPlanner(difficulty, seed,
-                behavior ?? ProvingProfile.CreateBotBehaviorDefault(), ProvingProfile.CreateNavigationDefault(), new Route(),
+            ProvingProfile behavior = null, Tactics tactics = null, INativeBotWeaponPolicy weapon = null, INativeNavigation routes = null) => new NativeBotPlanner(difficulty, seed,
+                behavior ?? ProvingProfile.CreateBotBehaviorDefault(), ProvingProfile.CreateNavigationDefault(), routes ?? new Route(),
                 tactics ?? new Tactics(), weapon ?? new Weapon(), 100);
         static NativeBotFrame Frame(int ownLife = 1, bool dead = false, int target = 2, int targetLife = 1,
             bool visible = true, float health = 100, NativeBotAlly[] allies = null) => new NativeBotFrame
@@ -72,7 +80,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(actual.RetreatUntil, Is.EqualTo(expected.RetreatUntil)); Assert.That(actual.RetreatReady, Is.EqualTo(expected.RetreatReady));
             Assert.That(actual.SupportUntil, Is.EqualTo(expected.SupportUntil)); Assert.That(actual.SupportReady, Is.EqualTo(expected.SupportReady));
             Assert.That(actual.Goal, Is.EqualTo(expected.Goal)); Assert.That(actual.HasGoal, Is.EqualTo(expected.HasGoal));
-            Assert.That(actual.Pressed, Is.EqualTo(expected.Pressed)); Assert.That(actual.Personality, Is.EqualTo(expected.Personality)); Assert.That(actual.AimPhase, Is.EqualTo(expected.AimPhase));
+            Assert.That(actual.DamageBoostActive, Is.EqualTo(expected.DamageBoostActive)); Assert.That(actual.Pressed, Is.EqualTo(expected.Pressed)); Assert.That(actual.Personality, Is.EqualTo(expected.Personality)); Assert.That(actual.AimPhase, Is.EqualTo(expected.AimPhase));
             Assert.That(actual.Navigation.Goal, Is.EqualTo(expected.Navigation.Goal)); Assert.That(actual.Navigation.Cursor, Is.EqualTo(expected.Navigation.Cursor));
             Assert.That(actual.Navigation.Enemy, Is.EqualTo(expected.Navigation.Enemy)); Assert.That(actual.Navigation.EnemyLife, Is.EqualTo(expected.Navigation.EnemyLife));
         }
@@ -93,6 +101,94 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(planner.Tick(expected[i][0]-.01f,.01f,Frame()).Fire, Is.False);
                 Assert.That(planner.Tick(expected[i][0]+.01f,.01f,Frame()).Fire, Is.True);
             }
+        }
+
+        static NativeBotFrame Boosted(float health=100, float enemyHealth=100)
+        {
+            var frame=Frame(health:health);frame.DamageRemaining=10;frame.Life.RifleAmmo=20;
+            frame.Knowledge.Enemies[0].Sighting=new NativeBotSighting(2,1,Vector3.forward*10,enemyHealth,0);
+            return frame;
+        }
+
+        [TestCase(NativeBotDifficulty.Easy)] [TestCase(NativeBotDifficulty.Normal)] [TestCase(NativeBotDifficulty.Hard)]
+        public void BoostCancelsPreviousRetreatAndHealingWithoutWaitingForDecision(NativeBotDifficulty difficulty)
+        {
+            var planner=Make(difficulty);var frame=Frame(health:10);frame.Life.RifleAmmo=20;
+            frame.Pickups=new[]{new NativeBotPickupEvent{Id="heal",Kind=NativeBotPickupKind.Heal,Available=true,Position=Vector3.back}};
+            planner.Tick(0,.01f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Pickup));
+            frame.DamageRemaining=10;frame.Knowledge.Enemies[0].Sighting=new NativeBotSighting(2,1,Vector3.forward*10,5,0);
+            planner.Tick(.01,.01f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Engage));Assert.That(planner.PickupId,Is.Null);
+            Assert.That(planner.Capture().RetreatUntil,Is.Zero);Assert.That(planner.Capture().Navigation.Enemy,Is.EqualTo(2));
+        }
+
+        [TestCase(NativeBotDifficulty.Easy)] [TestCase(NativeBotDifficulty.Normal)]
+        public void BoostedNonVeteranFightsEvenWhenOutmatchedAndCriticallyWounded(NativeBotDifficulty difficulty)
+        {
+            var planner=Make(difficulty);var frame=Boosted(1,100);
+            frame.Pickups=new[]{new NativeBotPickupEvent{Id="heal",Kind=NativeBotPickupKind.Heal,Available=true,Position=Vector3.back}};
+            planner.Tick(0,.01f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Engage));Assert.That(planner.PickupId,Is.Null);
+        }
+
+        [Test] public void VeteranRetreatUsesBoostMultiplierAndStopsWhenFightBecomesFavorable()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Boosted(10,100);
+            planner.Tick(0,.01f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Retreat));
+            frame.Knowledge.Enemies[0].Sighting=new NativeBotSighting(2,1,Vector3.forward*10,5,0);
+            planner.Tick(.01,.01f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Engage));
+            var profile=ProvingProfile.CreateBotBehaviorDefault();float ratio=profile.Get("bots.strategy.strongerRatio");
+            frame=Boosted(50,50*ratio*1.5f);planner=Make(NativeBotDifficulty.Hard);
+            planner.Tick(0,.01f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Engage),"The same enemy would exceed unboosted strength, but not doubled strength.");
+        }
+
+        [Test] public void BoostChoosesNearestRatherThanMoreVulnerableTargetThenMovesToNextEnemy()
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();float gap=profile.Get("bots.strategy.vulnerableWeight")/2;
+            var frame=Boosted();frame.Knowledge.Enemies=new[]{
+                new NativeBotMemoryEntry{Visible=true,Sighting=new NativeBotSighting(2,1,Vector3.forward*10,100,0)},
+                new NativeBotMemoryEntry{Visible=true,Sighting=new NativeBotSighting(3,1,Vector3.forward*(10+gap),1,0)}};
+            var planner=Make();planner.Tick(0,.01f,frame);Assert.That(planner.Capture().Target,Is.EqualTo(2));
+            frame.Knowledge.Enemies=new[]{frame.Knowledge.Enemies[1]};planner.Tick(.01,.01f,frame);Assert.That(planner.Capture().Target,Is.EqualTo(3));
+            frame.Knowledge.Enemies[0].Visible=false;var action=planner.Tick(.7,.01f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Pursue));Assert.That(action.Fire||action.FireHeld,Is.False);
+        }
+
+        [Test] public void BoostSkipsUnreachableNearTargetAndDoesNotChooseSupport()
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.easy.supportChance",1);
+            var planner=Make(behavior:profile,routes:new UnreachableNearRoute());var frame=Boosted();
+            frame.Allies=new[]{new NativeBotAlly{Participant=4,Position=Vector3.forward*19}};
+            frame.Knowledge.Enemies=new[]{frame.Knowledge.Enemies[0],new NativeBotMemoryEntry{Visible=true,Sighting=new NativeBotSighting(3,1,Vector3.forward*20,100,0)}};
+            planner.Tick(0,.01f,frame);Assert.That(planner.Capture().Target,Is.EqualTo(3));Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Engage));
+        }
+
+        [Test] public void BoostExpiryReevaluatesLowHealthImmediatelyAndRestorePreservesBoostTransition()
+        {
+            var planner=Make();var frame=Boosted(1,100);planner.Tick(0,.01f,frame);
+            var restored=Make();restored.Restore(planner.Capture());
+            frame.DamageRemaining=0;Same(planner.Tick(.01,.01f,frame),restored.Tick(.01,.01f,frame));
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Retreat));Assert.That(restored.Intent,Is.EqualTo(planner.Intent));
+            Assert.That(restored.Capture().DamageBoostActive,Is.False);
+        }
+
+        [Test] public void BoostedBotWithoutAmmoOnlyCollectsWeaponThenResumesPursuit()
+        {
+            var planner=Make();var frame=Boosted(1,100);frame.Life.RifleAmmo=0;
+            frame.Pickups=new[]{
+                new NativeBotPickupEvent{Id="heal",Kind=NativeBotPickupKind.Heal,Available=true,Position=Vector3.back},
+                new NativeBotPickupEvent{Id="shotgun",Kind=NativeBotPickupKind.Weapon,Weapon=WeaponId.Shotgun,Available=true,Position=Vector3.right}};
+            planner.Tick(0,.01f,frame);Assert.That(planner.PickupId,Is.EqualTo("shotgun"));
+            frame.Life.RifleAmmo=20;planner.Tick(.01,.01f,frame);
+            Assert.That(planner.PickupId,Is.Null);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Engage));
+            Assert.That(planner.Capture().Navigation.Enemy,Is.EqualTo(2));
+        }
+
+        [Test] public void BoostKeepsSearchingWithoutKnownEnemyInsteadOfCollectingOptionalPickup()
+        {
+            var planner=Make();var frame=Boosted();frame.Knowledge.Enemies=Array.Empty<NativeBotMemoryEntry>();
+            frame.Pickups=new[]{new NativeBotPickupEvent{Id="armor",Kind=NativeBotPickupKind.Armor,Available=true,Position=Vector3.back}};
+            var action=planner.Tick(0,.01f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Search));
+            Assert.That(planner.PickupId,Is.Null);Assert.That(action.Move.sqrMagnitude,Is.GreaterThan(0));
         }
 
         [Test] public void SnapshotIsCopiedRestoresIdenticalFutureAndInvalidRestoreIsAtomic()
