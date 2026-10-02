@@ -125,7 +125,7 @@ namespace StarTournament.ProvingGround
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
         public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
-            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null)
+            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null,GameObject rocketPrefab=null,ProvingProfile rocketEffects=null)
         {
             if(bodies.Length!=session.ParticipantCount || views.Length!=cameras.Length ||
                 (composition==null?cameras.Length!=session.ParticipantCount:composition.ParticipantCount!=session.ParticipantCount || composition.LocalCount!=cameras.Length))
@@ -139,7 +139,7 @@ namespace StarTournament.ProvingGround
                 if(views[v].GetComponent<TrooperVisual>())weaponSwitches[v]=new FirstPersonWeaponSwitch(views[v],cameras[v]);
             bloodPresentation=new BloodPresentation(session,bloodProfile??ProvingProfile.CreateBloodDefault(),owner,physics);
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
-            rocketPresentation=new RocketPresentation(session,movement,owner);
+            rocketPresentation=new RocketPresentation(session,movement,owner,rocketPrefab,rocketEffects);
             riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];

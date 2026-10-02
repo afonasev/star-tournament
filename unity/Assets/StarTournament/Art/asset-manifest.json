@@ -144,6 +144,16 @@
       "pivot": "cutter-grip",
       "lod": 1,
       "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+    },
+    {
+      "key": "pulse-projectile",
+      "path": "Assets/StarTournament/Art/pulse-projectile.glb",
+      "sha256": "01d29994ac3e9b61d83fe840e958cab6fb4477128a82d783f04b8e5effc688b0",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "center",
+      "source": "Original build_pulse_projectile.py; hot impulse concept 1 selected 2026-10-02; no collision proxy, no gameplay LOD. Shared four-material mesh."
     }
   ]
 }

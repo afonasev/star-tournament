@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [Test]public void IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors()
@@ -78,6 +78,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(JsonUtility.ToJson(reopened.SelectedProfile.Revisions.Single(r=>r.Hash==originalHash).Snapshot),Is.EqualTo(immutableJson));
                 Assert.That(reopened.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(20));
             }
+        }
+        [Test]public void PulseEffectsAppendCompatibleRevisionAndKeepHistoricalHashAndRocketTuning()
+        {
+            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.RocketEffectsId);
+            var history=new DesignLabHistory(path,old);history.Create("Мой Pulse");
+            var draft=history.Selected.Snapshot;draft.Set("presentation.rocketExplosionSize",2.4f);history.Save(draft);
+            var prior=history.Selected;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireCount"),Is.EqualTo(9));
+            foreach(var d in ProvingProfile.CreateRocketEffectsDefault().Descriptors)Assert.That(upgraded.Selected.Snapshot.Domain(d.Path),Is.EqualTo("Presentation"));
+            Assert.That(upgraded.Selected.Snapshot.Get("presentation.rocketExplosionSize"),Is.EqualTo(2.4f));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(prior.Hash));
+            Assert.That(preserved.Snapshot.Profiles.Any(p=>p.Id==ProvingProfile.RocketEffectsId),Is.False);
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}

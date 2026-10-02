@@ -47,6 +47,7 @@ namespace StarTournament.ProvingGround.Editor
             TrooperPreparation.Prepare(root,Required("player-body"),Required("player-hands"));
             root.RiflePrefab=Required("rifle-lod0");
             root.PulsePrefab=Required("pulse-lod0");
+            root.RocketProjectilePrefab=Required("pulse-projectile");
             root.CutterPrefab=Required("cutter-lod0");
             root.ArmorPickupPrefab=Required("armor-pickup");
             root.SpeedPickupPrefab=Required("speed-pickup");
@@ -100,7 +101,7 @@ namespace StarTournament.ProvingGround.Editor
             EditorGUILayout.HelpBox("Профиль полигона. Диапазоны и validation используют один registry. Перезапустите Play после изменения.",MessageType.Info);
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
             showBowl=EditorGUILayout.Foldout(showBowl,"Combat Bowl authoring metadata (published revision remains frozen)");
-            foreach(var profile in new[]{ground.Profile,ground.OrbitalLeagueProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.DeathProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile,ground.CutterProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
+            foreach(var profile in new[]{ground.Profile,ground.OrbitalLeagueProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.DeathProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile,ground.CutterProfile,ground.RocketEffectsProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
             {
             EditorGUILayout.LabelField(profile.Id+" / v"+profile.Version,EditorStyles.boldLabel);
             foreach(var descriptor in profile.Descriptors)

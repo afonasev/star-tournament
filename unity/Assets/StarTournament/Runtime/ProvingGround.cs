@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingGround : MonoBehaviour
     {
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab, HealPickupPrefab;
-        public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab, PulsePrefab, CutterPrefab;
+        public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab, PulsePrefab, CutterPrefab, RocketProjectilePrefab;
         public AnimationClip[] TrooperClips;
         public ProvingProfile BloodProfile = ProvingProfile.CreateBloodDefault();
         public ProvingProfile DeathProfile = ProvingProfile.CreateDeathDefault();
@@ -23,6 +23,7 @@ namespace StarTournament.ProvingGround
         CharacterMotor[] motors = Array.Empty<CharacterMotor>();
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
         readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount], names = new Text[SeatInputCoordinator.SeatCount];
+        public ProvingProfile RocketEffectsProfile = ProvingProfile.CreateRocketEffectsDefault();
         public ProvingProfile CutterProfile = ProvingProfile.CreateCutterDefault();
         public ProvingProfile LifeProfile = ProvingProfile.CreateCombatDefault();
         public ProvingProfile CombatProfile = ProvingProfile.CreateNativeCombatDefault();
@@ -54,7 +55,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile TeamProfile = ProvingProfile.CreateTeamDefault();
         public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
         public NativeMatchConfiguration Configuration { get; private set; }
-        ProvingProfile frozenCutter, frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper, frozenDeath, frozenBlood;
+        ProvingProfile frozenRocketEffects, frozenCutter, frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper, frozenDeath, frozenBlood;
         ProvingProfile previewMovement,previewLife,previewCombat,previewTrooper;
         NativeMatchConfiguration frozenConfiguration;
         NativeMatchRoster frozenRoster;
@@ -212,7 +213,7 @@ namespace StarTournament.ProvingGround
             CreateDamagePickupVisual();
             CreateHealPickupVisual();
             CreateWeaponPickupVisuals();
-            presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views,deathProfile:DeathProfile,bloodProfile:BloodProfile);
+            presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views,deathProfile:DeathProfile,bloodProfile:BloodProfile,rocketPrefab:RocketProjectilePrefab,rocketEffects:RocketEffectsProfile);
             BindShotFeedback();
             int countFlag=Array.IndexOf(args,"-probeCameras");
             if(args.Contains("-diagnostic") && countFlag>=0 && countFlag+1<args.Length && int.TryParse(args[countFlag+1],out int count) && (count==1||count==2||count==4))
@@ -241,6 +242,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent(reviewType); Debug.Log("NATIVE_BOT_NAVIGATION_REVIEW_BOOTSTRAPPED");
             }
             if (args.Contains("-shotOriginReview")) gameObject.AddComponent<NativeShotOriginReview>();
+            if (args.Contains("-rocketEffectsReview")) gameObject.AddComponent<NativeRocketEffectsReview>();
             if (args.Contains("-rocketGratingReview")) gameObject.AddComponent<NativeRocketGratingReview>();
             if (args.Contains("-vectorReview")) gameObject.AddComponent<VectorVisualReview>();
             if (args.Contains("-trooperReview")) gameObject.AddComponent<TrooperReview>();
@@ -629,7 +631,7 @@ namespace StarTournament.ProvingGround
         void CreateMatch(bool repeating)
         {
             if(!repeating)
-                foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,ParticipantPaletteProfile,CutterProfile,DeathProfile})
+                foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,ParticipantPaletteProfile,CutterProfile,DeathProfile,RocketEffectsProfile})
                 {
                     if(profile==null||profile.Validate().Count!=0)throw new ArgumentException("Invalid match profile");
                     foreach(var descriptor in profile.Descriptors)NativeMatchConfiguration.ValidateValue(profile,descriptor.Path,profile.Get(descriptor.Path));
@@ -652,7 +654,7 @@ namespace StarTournament.ProvingGround
                 foreach(var descriptor in RosterProfile.Descriptors)NativeMatchConfiguration.ValidateValue(RosterProfile,descriptor.Path,RosterProfile.Get(descriptor.Path));
                 frozenRosterProfile=Copy(RosterProfile);
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
-                frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);
+                frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);
                 FrozenLabIdentity=LabSavedIdentity;
                 frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:labHistory.Selected.Number,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
@@ -688,7 +690,7 @@ namespace StarTournament.ProvingGround
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
-            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath,bloodProfile:frozenBlood);
+            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath,bloodProfile:frozenBlood,rocketPrefab:RocketProjectilePrefab,rocketEffects:frozenRocketEffects);
             Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
             for(int seat=0;seat<damageVignettes.Length;seat++)
                 damageVignettes[seat]?.Bind(seat<frozenSeatCount?Session:null,seat<frozenSeatCount?Composition.ParticipantAt(seat):-1,frozenMovement);
@@ -721,7 +723,7 @@ namespace StarTournament.ProvingGround
             RebuildActors(Composition,safeMovement,frozenTrooper??previewTrooper);
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat,cutterProfile:CutterProfile);
             gameAudio?.Bind(Session,Composition);BindDamageBonusAlerts();
-            presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile,bloodProfile:BloodProfile);
+            presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile,bloodProfile:BloodProfile,rocketPrefab:RocketProjectilePrefab,rocketEffects:RocketEffectsProfile);
             actions=new LocalAction[Composition.ParticipantCount];ApplyLayout(LocalSeatCount);
             setupStep=setupMaxStep=2;
             input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(input.Ready?start:rebind);
