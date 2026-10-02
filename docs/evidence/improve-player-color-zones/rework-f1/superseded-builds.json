@@ -1,0 +1,11 @@
+{
+  "path": "/Users/eaafonasev/Projects/star-tournament-builds/player-color-panels-2a034b0",
+  "owner": "improve-player-color-zones/F1",
+  "platform": "macOS",
+  "revision": "2a034b0189685c36e01819295f059733bb2cce6a",
+  "sha256": "b58d4388c2d5441b88a5514cfe4498390888df6df3525b2a06e8877393890343",
+  "replacement": "local-macos-player-candidate/4416d93b6d7a4d8c1c989bd2596ef71e7a684882/player-color-panels-f1",
+  "reason": "temporary coverage preview superseded by verified 4416d93 graphite helmet panels; no dependencies or live Player",
+  "evidence": "coverage-preview-2a034b0",
+  "removed": true
+}

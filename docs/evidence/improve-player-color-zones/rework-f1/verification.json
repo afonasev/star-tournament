@@ -1,0 +1,51 @@
+{
+  "result": "Passed",
+  "tested_revision": "4416d93b6d7a4d8c1c989bd2596ef71e7a684882",
+  "scope": "F1 material presentation",
+  "checks": [
+    {
+      "command": "ParticipantColorIdentityTests",
+      "passed": 2,
+      "evidence": "checks/color.xml"
+    },
+    {
+      "command": "focused palette/history migrations",
+      "passed": 8,
+      "evidence": "checks/palette-history.xml"
+    },
+    {
+      "command": "make check-ui",
+      "passed": 14,
+      "evidence": "checks/ui-gate.json"
+    },
+    {
+      "command": "unity/tools.sh build",
+      "exit_code": 0,
+      "build_marker": "STAR_PROVING_BUILD_PASS 471646891",
+      "evidence": "checks/build.log"
+    }
+  ],
+  "native": {
+    "mode": "unity-run --shared autonomous rendering diagnostic",
+    "exit_code": 0,
+    "muted": true,
+    "resolution": "1920x1080",
+    "release": "local-macos-player-candidate/4416d93b6d7a4d8c1c989bd2596ef71e7a684882/player-color-panels-f1",
+    "tree_sha256": "7e46e5a8a201a3ae697a17db1b8c998edb38b39119056d3c9af8293b6c4f3195",
+    "evidence": "player",
+    "visual_result": "graphite pants and lower-leg armor; distinct armor panels; graphite helmet shell with stripe and temple zones. Eight colors, front/side/rear and four viewports inspected",
+    "human_acceptance": false,
+    "performance_acceptance": false,
+    "physical_controller_acceptance": false
+  },
+  "integration": {
+    "revision": "0709f87a4299901f7bea8e41061f72a8a3b39234",
+    "status": "Passed",
+    "passed": 2,
+    "evidence": "checks/integration-color.xml",
+    "incoming_main": "5c2575c",
+    "binding": "Candidate visual remains bound to 4416d93; integration tests bind to 0709f87, which adds independently delivered menu/blood changes."
+  },
+  "remaining": "explicit human visual acceptance of exact new Player",
+  "spec_sync": "star-tournament-planning 60d130d"
+}
