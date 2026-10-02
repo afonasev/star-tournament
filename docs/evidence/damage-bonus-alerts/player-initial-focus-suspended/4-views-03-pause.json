@@ -1,0 +1,769 @@
+{
+    "Version": 8,
+    "Match": {
+        "Version": 2,
+        "TuningIdentity": "50|15000|250|50|400|0|200|100,300,500,800,1200",
+        "AssistLedger": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ],
+        "ChainAwards": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "DiedThisTick": [
+            false,
+            false,
+            false,
+            false,
+            false
+        ],
+        "Tick": 2,
+        "RemainingTicks": 14998,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 3,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 4,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0
+            }
+        ],
+        "Teams": [],
+        "DirectKillsByPair": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "KillChains": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Poses": [
+        {
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": -6.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 8.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": -9.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 8.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": -12.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 8.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": -15.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 8.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": 0.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 8.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        }
+    ],
+    "RifleBullets": [],
+    "WeaponPickups": [
+        {
+            "InstanceId": "shotgun-west",
+            "Support": "support:lower-loop",
+            "Weapon": 2,
+            "Anchor": {
+                "x": -33.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "shotgun-east",
+            "Support": "support:lower-loop",
+            "Weapon": 2,
+            "Anchor": {
+                "x": 33.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "pulse-north",
+            "Support": "support:central",
+            "Weapon": 3,
+            "Anchor": {
+                "x": 12.0,
+                "y": 4.0,
+                "z": 21.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "pulse-south",
+            "Support": "support:central",
+            "Weapon": 3,
+            "Anchor": {
+                "x": -12.0,
+                "y": 4.0,
+                "z": -21.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "cutter-north",
+            "Support": "support:lower-loop",
+            "Weapon": 4,
+            "Anchor": {
+                "x": -8.0,
+                "y": 0.0,
+                "z": 28.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "cutter-south",
+            "Support": "support:lower-loop",
+            "Weapon": 4,
+            "Anchor": {
+                "x": 8.0,
+                "y": 0.0,
+                "z": -28.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        }
+    ],
+    "Beams": [
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        }
+    ],
+    "BeamReleaseRequired": [
+        true,
+        true,
+        true,
+        true,
+        true
+    ],
+    "Rockets": [],
+    "HealPickups": [
+        {
+            "InstanceId": "heal-basement",
+            "Anchor": {
+                "x": 0.0,
+                "y": -1.2000000476837159,
+                "z": 0.0
+            },
+            "Available": false,
+            "Remaining": 19.96000000089407
+        }
+    ],
+    "ArenaIdentity": "combat-bowl-v1@16",
+    "DesignProfile": {
+        "ProfileId": "diagnostic-fixture",
+        "Revision": 0,
+        "Hash": "476630f555250813656be9bca94f82b4dfd709f2541af0bafcc72d3e8ec05998"
+    },
+    "Time": 0.03999999910593033,
+    "ShotSequence": 0,
+    "ShotCount": 0,
+    "Lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-5",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 100,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 100,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "ArmorPickups": [
+        {
+            "InstanceId": "armor-sw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        },
+        {
+            "InstanceId": "armor-ne",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        }
+    ],
+    "SpeedPickups": [
+        {
+            "InstanceId": "speed-nw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": false,
+            "Remaining": 9.96000000089407
+        },
+        {
+            "InstanceId": "speed-se",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": false,
+            "Remaining": 9.96000000089407
+        }
+    ],
+    "SpeedRemaining": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "DamagePickup": {
+        "InstanceId": "damage-hall",
+        "Anchor": {
+            "x": 0.0,
+            "y": 4.0,
+            "z": 0.0
+        },
+        "Available": false,
+        "Remaining": 45.0
+    },
+    "DamageRemaining": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        10.0
+    ]
+}

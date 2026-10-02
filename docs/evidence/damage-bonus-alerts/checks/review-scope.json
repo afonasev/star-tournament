@@ -1,0 +1,22 @@
+{
+  "qa_scope": "full",
+  "source_commit": "f70d1cd",
+  "automatic_native_visual_run": {
+    "flag": "-damageBonusReview",
+    "output_flag": "-damageBonusEvidence",
+    "resolution": "CLI requested 1920x1080; Player preferences produced native 3456x2160 in first captures; record final actual PNG dimensions",
+    "states": [
+      "1 viewport spawn",
+      "1 viewport pickup by bot fixture",
+      "4 viewports spawn",
+      "4 viewports pickup by remote participant",
+      "pause",
+      "expiry",
+      "restore without fabricated spawn"
+    ],
+    "fixture": "shortened pickup countdown to 0.01s and explicit participant placement; actual authoritative tick and actual native UI",
+    "audio": "muted"
+  },
+  "human_acceptance": "pending; includes audible Player feedback and readability",
+  "sound_selection": "Working pair 1; human acceptance pending"
+}

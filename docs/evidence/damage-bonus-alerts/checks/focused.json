@@ -1,0 +1,16 @@
+{
+  "source_commit": "f70d1cd",
+  "tests": [
+    {
+      "fixture": "NativeAudioRoutingTests",
+      "result": "Passed",
+      "evidence": "focused-playmode.ugPTFO/playmode.xml"
+    },
+    {
+      "fixture": "DamageBonusAlertTests",
+      "result": "Passed",
+      "evidence": "focused-playmode.GMNoMf/playmode.xml"
+    }
+  ],
+  "note": "Executed on implementation sources before committing unchanged source bytes; candidate audio variant 1 pending human choice Q2"
+}

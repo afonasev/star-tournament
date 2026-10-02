@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "135fa0684e2ea3512603f134b6b4532514feedcc",
+  "dirty": " M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/damage-bonus-alerts/checks/\n?? docs/evidence/damage-bonus-alerts/player-initial-focus-suspended/\n?? docs/evidence/damage-bonus-alerts/player-synthetic-disconnect/\n?? docs/evidence/damage-bonus-alerts/preview-release.json\n?? docs/evidence/damage-bonus-alerts/superseded-preview-release-2.json\n?? docs/evidence/damage-bonus-alerts/superseded-preview-release.json\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/damage-bonus-alerts/star-tournament/unity/../.local/unity-evidence/focused-editmode.Nugm7L/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/damage-bonus-alerts/star-tournament/unity/../.local/unity-evidence/focused-playmode.0OEPfM/playmode.xml",
+      "passed": 11
+    }
+  ]
+}

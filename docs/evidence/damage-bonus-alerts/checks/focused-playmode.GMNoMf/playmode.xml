@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.2714907">
+  <test-suite type="TestSuite" id="1219" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="172" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.271491" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1211" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/damage-bonus-alerts/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="172" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.267359" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="91034" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1212" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="172" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.266801" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1213" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="172" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.266351" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1214" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="172" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.265885" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1215" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="126" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.265260" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1060" name="DamageBonusAlertTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.DamageBonusAlertTests" classname="StarTournament.ProvingGround.Tests.PlayMode.DamageBonusAlertTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.262995" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1061" name="GlobalAlertsFollowLifecycleOnceAndRestoreDoesNotReplay" fullname="StarTournament.ProvingGround.Tests.PlayMode.DamageBonusAlertTests.GlobalAlertsFollowLifecycleOnceAndRestoreDoesNotReplay" methodname="GlobalAlertsFollowLifecycleOnceAndRestoreDoesNotReplay" classname="StarTournament.ProvingGround.Tests.PlayMode.DamageBonusAlertTests" runstate="Runnable" seed="189788499" result="Passed" start-time="2026-10-02 08:12:08Z" end-time="2026-10-02 08:12:12Z" duration="4.258060" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

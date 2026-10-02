@@ -1,0 +1,12 @@
+{
+  "source_commit": "f70d1cd96d70b7271bfda36934c045796d36c009",
+  "app": "/Users/eaafonasev/Projects/star-tournament-builds/damage-bonus-alerts-f70d1cd-preview1/StarTournamentProvingGround.app",
+  "build_marker": "fd84209453dd402ab4d1d9eb62587633",
+  "tree_sha256": "1a0cc5efcc983ba8f57fd7d35c8d18140772aba77dff59ed66dfc54029bd2f27",
+  "files": 282,
+  "identity": "local-macos-player-preview/f70d1cd/fd84209453dd402ab4d1d9eb62587633",
+  "audio_variant": 1,
+  "audio_selection": "provisional, Q2 pending; not a selected final candidate",
+  "generated_build_diff": "checks/generated-build.diff",
+  "human_acceptance": false
+}
