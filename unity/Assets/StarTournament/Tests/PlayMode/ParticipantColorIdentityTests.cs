@@ -39,6 +39,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
             Assert.That(slots,Is.GreaterThan(3));
             Assert.That(helmets,Is.GreaterThan(0));Assert.That(thighs,Is.GreaterThan(0));
+            foreach(var renderer in root.GetComponentsInChildren<Renderer>(true).Where(r=>r.name=="weapon:joined"||r.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter")))
+                foreach(var material in renderer.sharedMaterials)
+                    Assert.That(material.shader.name,Is.Not.EqualTo("StarTournament/TrooperIdentity"),"equipment keeps its authored shader through start/boost/respawn/repeat");
         }
         void AssertView(int seat)
         {

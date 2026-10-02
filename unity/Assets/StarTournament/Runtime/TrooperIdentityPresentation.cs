@@ -25,7 +25,9 @@ namespace StarTournament.ProvingGround
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
                 // The shotgun shares ceramic/status materials with the skin but has independent boost state.
-                if(renderer.name=="weapon:joined"||renderer.GetComponentInParent<WeaponModelPresentation>()!=null&&
+                // Begin applies identity before activating world actors; equipment ownership
+                // must remain visible while their ancestors are inactive.
+                if(renderer.name=="weapon:joined"||renderer.GetComponentInParent<WeaponModelPresentation>(true)!=null&&
                     (HasAncestor(renderer.transform,"automatic-rifle")||HasAncestor(renderer.transform,"pulse-launcher")||HasAncestor(renderer.transform,"cutter")))continue;
                 var materials=renderer.sharedMaterials;
                 for(int i=0;i<materials.Length;i++)if(materials[i]&&!IsStatus(materials[i]))materials[i]=surfaces.Resolve(materials[i],renderer);
