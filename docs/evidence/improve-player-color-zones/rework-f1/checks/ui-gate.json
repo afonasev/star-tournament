@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "91b5c0f3dfc6d03dd3bec0a31af839cb5c85100e",
+  "dirty": " M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Settings/ProvingURP.asset\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/Assets/UniversalRenderPipelineGlobalSettings.asset\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/improve-player-color-zones/rework-f1/\n?? scripts/presentation/__pycache__/\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/player-color-panels/star-tournament/unity/../.local/unity-evidence/focused-editmode.zGXvJR/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/player-color-panels/star-tournament/unity/../.local/unity-evidence/focused-playmode.8Ikl0t/playmode.xml",
+      "passed": 11
+    }
+  ]
+}

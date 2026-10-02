@@ -48,16 +48,27 @@ function.update(m_Type='UnityEditor.ShaderGraph.CustomFunctionNode', m_ObjectId=
 // Peak reflectance removes the source hue while retaining authored seams/detail.
 // This is a color-space invariant; artistic thresholds are supplied by Balance Lab.
 $precision detail = max(Source.r, max(Source.g, Source.b));
-$precision mask = Mode > 1 ? 1 : smoothstep(Tuning.y, Tuning.y + Tuning.z, detail) * Mode;
+$precision mask = Mode > 1 ? 1 : (Mode > 0 ? smoothstep(Panels.x + Tuning.y, Panels.x + Tuning.y + Panels.y + Tuning.z, detail) : 0);
+// UV coordinates identify authored helmet atlas islands, not gameplay tuning.
+// Their stripe width is a named presentation-profile parameter.
+$precision halfStripe = Panels.w * 0.5;
+$precision crown = step(abs(UV.x - 0.66), halfStripe);
+$precision brow = step(UV.x, 0.30) * step(abs(UV.y - 0.71), halfStripe);
+$precision temples = max(step(distance(UV.xy, $precision2(0.49, 0.60)), halfStripe),
+                          step(distance(UV.xy, $precision2(0.68, 0.61)), halfStripe));
+if (Mode > 2) mask = saturate(crown + brow + temples);
+$precision neutral = Mode < 0 ? detail * Panels.z : detail;
 $precision panel = max(Tuning.w, saturate(detail * Tuning.x));
-Out = lerp(detail.xxx, Tint.rgb * panel, saturate(mask));
+Out = lerp(neutral.xxx, Tint.rgb * panel, saturate(mask));
 ''')
 function.pop('m_Property')
 function['m_Slots'] = [slot('Source', 'Vector3', 0), slot('Tint', 'Vector4', 1),
                        slot('Tuning', 'Vector4', 2), slot('Mode', 'Vector1', 3),
-                       slot('Out', 'Vector3', 4, True)]
+                       slot('Out', 'Vector3', 4, True), slot('Panels', 'Vector4', 5), slot('UV', 'Vector4', 6)]
 objects.append(function)
 graph['m_Nodes'].append({'m_Id': function['m_ObjectId']})
+uv = next(o for o in objects if o.get('m_Type', '').endswith('UVNode') and o['m_OutputChannel'] == 0)
+edge(uv['m_ObjectId'], 0, function['m_ObjectId'], 6)
 base = next(o['m_ObjectId'] for o in objects if o.get('m_Name') == 'SurfaceDescription.BaseColor')
 connection = next(e for e in graph['m_Edges'] if e['m_InputSlot']['m_Node']['m_Id'] == base)
 connection['m_InputSlot'] = {'m_Node': {'m_Id': function['m_ObjectId']}, 'm_SlotId': 0}
@@ -65,7 +76,8 @@ edge(function['m_ObjectId'], 4, base, 0)
 
 for name, kind, value, number in [('_IdentityColor', 'Color', {'r': 1, 'g': 1, 'b': 1, 'a': 1}, 1),
                                   ('_IdentitySurface', 'Vector4', {'x': 1, 'y': 0, 'z': 1, 'w': 0}, 2),
-                                  ('_IdentityMode', 'Vector1', 0, 3)]:
+                                  ('_IdentityMode', 'Vector1', 0, 3),
+                                  ('_IdentityPanels', 'Vector4', {'x': .025, 'y': .015, 'z': .15, 'w': 0}, 5)]:
     prop = template(kind + 'ShaderProperty')
     prop.update(m_ObjectId=identity(name + '-property'), m_Name=name,
                 m_DefaultReferenceName=name, m_OverrideReferenceName=name,
