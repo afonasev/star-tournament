@@ -1,0 +1,39 @@
+{
+  "source_commit": "f70d1cd",
+  "gate": "make check",
+  "build": "Passed (initial full and final follow-up)",
+  "audio_choice": "working implementation default 1; human acceptance pending",
+  "suites": [
+    {
+      "suite": "editmode",
+      "result": "Passed",
+      "total": "257",
+      "passed": "257",
+      "failed": "0",
+      "skipped": "0"
+    },
+    {
+      "suite": "playmode",
+      "result": "Passed",
+      "total": "172",
+      "passed": "172",
+      "failed": "0",
+      "skipped": "0"
+    }
+  ],
+  "focused_compile_repair": "One initial focused test compilation failed due inaccessible internal QA helpers; test uses reflection consistently with existing native audio tests; subsequent focused and full suites passed.",
+  "build_marker_log": "STAR_PROVING_BUILD_PASS 471413011",
+  "final_source_commit": "135fa0684e2ea3512603f134b6b4532514feedcc",
+  "followup": {
+    "changed": "UI Lab notice font/layout binding and diagnostic visual harness only",
+    "focused": "DamageBonusAlertTests Passed",
+    "ui_gate": {
+      "result": "Passed",
+      "edit_passed": 3,
+      "play_passed": 11
+    },
+    "build": "Passed",
+    "audio_variant": 1,
+    "human_selection": false
+  }
+}

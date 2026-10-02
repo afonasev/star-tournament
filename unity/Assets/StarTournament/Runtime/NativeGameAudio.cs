@@ -30,6 +30,8 @@ namespace StarTournament.ProvingGround
         readonly AudioSource[] beams;
         readonly float[] beamGain;
         readonly AudioSource uiSource;
+        readonly AudioSource damageBonusSource;
+        float damageBonusGain;
         float uiGain;
         readonly Transform root;
         readonly ProvingProfile profile;
@@ -45,7 +47,7 @@ namespace StarTournament.ProvingGround
         {
             this.profile=profile;muted=mute;
             var holder=new GameObject("native-game-audio");holder.transform.SetParent(parent,false);root=holder.transform;
-            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup"})
+            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","damage-bonus-spawn","damage-bonus-pickup"})
             {
                 var clip=Resources.Load<AudioClip>("Audio/"+name);
                 if(clip==null)Debug.LogError("Missing native audio clip: "+name);
@@ -62,7 +64,7 @@ namespace StarTournament.ProvingGround
                 movementClips[name]=bank;
             }
             BuildVoicePool();
-            uiSource=Source("menu-ui");
+            uiSource=Source("menu-ui");damageBonusSource=Source("damage-bonus-alert");
             beams=new AudioSource[NativeMatchRoster.MaximumParticipants];
             beamGain=new float[beams.Length];
             for(int i=0;i<beams.Length;i++){beams[i]=Source("cutter-"+i);beams[i].clip=clips["cutter-loop"];beams[i].loop=true;}
@@ -86,35 +88,37 @@ namespace StarTournament.ProvingGround
             if(session==null)return;
             lastPose=new ParticipantState[session.ParticipantCount];stepDistance=new float[session.ParticipantCount];lastHit=new double[session.ParticipantCount];
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastHit[i]=double.NegativeInfinity;}
-            session.ShotResolved+=Shot;session.Damaged+=Damage;session.Died+=Death;session.PickupCollected+=Pickup;session.StateRestored+=ResetMotion;
+            session.DamageBonusAppeared+=DamageBonusSpawn;session.ShotResolved+=Shot;session.Damaged+=Damage;session.Died+=Death;session.PickupCollected+=Pickup;session.StateRestored+=ResetMotion;
         }
         void Unbind()
         {
-            if(session!=null){session.ShotResolved-=Shot;session.Damaged-=Damage;session.Died-=Death;session.PickupCollected-=Pickup;session.StateRestored-=ResetMotion;}
+            if(session!=null){session.DamageBonusAppeared-=DamageBonusSpawn;session.ShotResolved-=Shot;session.Damaged-=Damage;session.Died-=Death;session.PickupCollected-=Pickup;session.StateRestored-=ResetMotion;}
             session=null;composition=null;
             StopEffects();
         }
         void ResetMotion()
         {
             if(session==null)return;
+            damageBonusSource.Stop();
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);stepDistance[i]=0;}
             for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}
         }
         public void SetDiagnosticMute(bool value){muted=value;if(value)StopEffects();}
-        public void StopEffects(){foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}}
+        public void StopEffects(){damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}}
         public void UpdateVolume()
         {
             float volume=EffectsVolume;
             if(volume==0){StopEffects();uiSource.Stop();return;}
             float sum=0;
             if(uiSource.isPlaying)sum+=uiGain;
+            if(damageBonusSource.isPlaying)sum+=damageBonusGain;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying)sum+=voiceGain[i];
             for(int i=0;i<beams.Length;i++)if(beams[i].isPlaying)sum+=beamGain[i];
             // Conservative peak budget keeps concurrent 1–4 viewport sounds below full scale.
             float scale=volume*Mathf.Min(1,1/Mathf.Max(1,sum));
             for(int i=0;i<voices.Length;i++)voices[i].volume=voiceGain[i]*scale;
             for(int i=0;i<beams.Length;i++)beams[i].volume=beamGain[i]*scale;
-            uiSource.volume=uiGain*scale;
+            uiSource.volume=uiGain*scale;damageBonusSource.volume=damageBonusGain*scale;
         }
         public void MenuMove()=>PlayMenu("menu_move",.40f);
         public void MenuConfirm()=>PlayMenu("menu_confirm",.65f);
@@ -192,7 +196,17 @@ namespace StarTournament.ProvingGround
             lastHit[damage.Participant]=damage.Time;Play("hit",.85f,damage.Participant);
         }
         void Death(DeathNotice death){Play("death",1,death.Seat);beams[death.Seat].Stop();beamGain[death.Seat]=0;}
-        void Pickup(int participant,string id,NativeBotPickupKind kind)=>Play("pickup",.9f,participant);
+        void DamageBonusSpawn()=>PlayDamageBonus("damage-bonus-spawn",profile.Get("audio.damageBonusSpawnGain"));
+        void PlayDamageBonus(string name,float gain)
+        {
+            if(!clips.TryGetValue(name,out var clip)||clip==null||EffectsVolume<=0||gain<=0)return;
+            damageBonusSource.Stop();damageBonusSource.clip=clip;damageBonusGain=gain;damageBonusSource.Play();UpdateVolume();
+        }
+        void Pickup(int participant,string id,NativeBotPickupKind kind)
+        {
+            if(kind==NativeBotPickupKind.Damage)PlayDamageBonus("damage-bonus-pickup",profile.Get("audio.damageBonusPickupGain"));
+            else Play("pickup",.9f,participant);
+        }
         public void Tick(bool running)
         {
             if(session==null)return;

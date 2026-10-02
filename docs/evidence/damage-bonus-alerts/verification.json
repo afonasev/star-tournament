@@ -1,0 +1,79 @@
+{
+  "source_commit": "135fa0684e2ea3512603f134b6b4532514feedcc",
+  "release_identity": "local-macos-player-candidate/135fa0684e2ea3512603f134b6b4532514feedcc/b32b370ea9f14bf5b26689827da56ba3",
+  "full_gate": {
+    "source": "f70d1cd",
+    "command": "make check",
+    "result": "Passed",
+    "editmode": 257,
+    "playmode": 172,
+    "skipped": 0
+  },
+  "followup": {
+    "scope": "UI Lab settings binding and development diagnostic tooling",
+    "source": "135fa0684e2ea3512603f134b6b4532514feedcc",
+    "focused": "DamageBonusAlertTests Passed (1)",
+    "gate": "make check-ui Passed (3 EditMode, 11 PlayMode)",
+    "build": "Passed",
+    "why_not_repeat_full": "Post-full changes only refresh HUD font/layout on binding and fix the development visual harness. Core session/audio/gameplay unchanged; full result is retained at its exact original source, not relabelled as the final full run."
+  },
+  "native_visual": {
+    "result": "Passed",
+    "complete": "player/complete.json",
+    "muted": true,
+    "fixtures": "shortened pickup countdown and explicit placement; actual session and renderer",
+    "captures": [
+      {
+        "file": "player/1-views-01-spawn-countdown-fixture.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "abc16000af9567dd8d46c0feaaf75482786c2aed915ac15a30f70d271f962ebe"
+      },
+      {
+        "file": "player/1-views-02-pickup-position-fixture.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "dbb1ea5b2ea17bffa3560008011eb55147487574212a8cefd9779592ef35a3f6"
+      },
+      {
+        "file": "player/1-views-03-pause.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "d3fc18c7edc5195d73e609f3b708091236da8090d86cc5aacfb6a8eed919510a"
+      },
+      {
+        "file": "player/1-views-04-expired.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "41a2d429cd649e303756f1983d705d0fe2b01fb6926f048b6ddf4d8ea223bf43"
+      },
+      {
+        "file": "player/4-views-01-spawn-countdown-fixture.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "73cc3f9fca6ecb511596e4424abb6de4cec330ec56a65552c8e7898ea699ed4b"
+      },
+      {
+        "file": "player/4-views-02-pickup-position-fixture.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "a0d6879ce46d1401d00d3034e2d0affb5e677d5db1e67349aa2c5477bf116d99"
+      },
+      {
+        "file": "player/4-views-03-pause.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "c097f24b540612930a34cec44521762ccabc91fe6436911c5575a288fb0b0707"
+      },
+      {
+        "file": "player/4-views-04-expired.png",
+        "width": 3456,
+        "height": 2160,
+        "sha256": "8afecb5ee640ba2a2d4dc41635c601111d679a3f82f1756059f11ca5404b347c"
+      }
+    ],
+    "seed": "not fixed; state snapshots retained; not a performance or physical-input claim"
+  },
+  "human_acceptance": false,
+  "working_audio_pair": 1
+}

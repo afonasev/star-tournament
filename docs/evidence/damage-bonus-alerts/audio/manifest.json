@@ -1,0 +1,74 @@
+{
+  "kind": "authored procedural sketches, static PCM assets",
+  "generator": "tools/prepare-damage-bonus-audio.py",
+  "selection": {
+    "variant": 1,
+    "decision": "Assistant implementation default within user-authorized scope; no human sound choice or acceptance yet",
+    "alternatives": "Variants 2 and 3 retained for human review feedback"
+  },
+  "recordings": [
+    {
+      "file": "1-pair.wav",
+      "seconds": 2.28,
+      "rate": 32000,
+      "peak": 0.537567138671875,
+      "rms": 0.16747024456232315
+    },
+    {
+      "file": "1-pickup.wav",
+      "seconds": 0.76,
+      "rate": 32000,
+      "peak": 0.537353515625,
+      "rms": 0.2235122321346887
+    },
+    {
+      "file": "1-spawn.wav",
+      "seconds": 0.52,
+      "rate": 32000,
+      "peak": 0.537567138671875,
+      "rms": 0.22351070874737114
+    },
+    {
+      "file": "2-pair.wav",
+      "seconds": 2.48,
+      "rate": 32000,
+      "peak": 0.537567138671875,
+      "rms": 0.17266689604801447
+    },
+    {
+      "file": "2-pickup.wav",
+      "seconds": 0.86,
+      "rate": 32000,
+      "peak": 0.53741455078125,
+      "rms": 0.22351443400790164
+    },
+    {
+      "file": "2-spawn.wav",
+      "seconds": 0.62,
+      "rate": 32000,
+      "peak": 0.537567138671875,
+      "rms": 0.22351257970238037
+    },
+    {
+      "file": "3-pair.wav",
+      "seconds": 2.6,
+      "rate": 32000,
+      "peak": 0.53753662109375,
+      "rms": 0.1753389373158489
+    },
+    {
+      "file": "3-pickup.wav",
+      "seconds": 0.92,
+      "rate": 32000,
+      "peak": 0.537445068359375,
+      "rms": 0.22351361696813166
+    },
+    {
+      "file": "3-spawn.wav",
+      "seconds": 0.68,
+      "rate": 32000,
+      "peak": 0.53753662109375,
+      "rms": 0.22351490813869845
+    }
+  ]
+}

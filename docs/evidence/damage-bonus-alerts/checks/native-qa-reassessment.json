@@ -1,0 +1,16 @@
+{
+  "attempts": [
+    {
+      "source": "f70d1cd",
+      "outcome": "focus suspension before captures",
+      "repair": "QA harness runInBackground=true"
+    },
+    {
+      "source": "fa74bd3",
+      "outcome": "single view passed; four view synthetic device disconnection paused ordinary input guard",
+      "evidence": "player-synthetic-disconnect/Player.log"
+    }
+  ],
+  "reassessment": "Use existing StartCombatReview backgroundDiagnostic path as NativeFullHealReview does, since this task verifies presentation rather than physical input; production disconnect guard and all assertions remain intact",
+  "required_next": "Build and run actual native visual path; full gameplay/UI/audio implementation unchanged"
+}

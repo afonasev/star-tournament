@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 12;
+        public const int DefaultVersion = 13;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -346,6 +346,8 @@ namespace StarTournament.ProvingGround
             var profile = new ProvingProfile();
             profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения; трек пока отсутствует.", "percent", 0f, 100f, 5f, 70f);
             profile.Add("audio.effectsDefaultPercent", "audio", "Эффекты по умолчанию", "Начальная общая громкость звуков меню и боя до пользовательского изменения.", "percent", 0f, 100f, 5f, 80f);
+            profile.Add("audio.damageBonusSpawnGain", "audio", "Сигнал появления бонуса урона", "Громкость общего сигнала независимо от расстояния до бонуса.", "ratio", 0f, 1f, .05f, .8f);
+            profile.Add("audio.damageBonusPickupGain", "audio", "Тревога подбора бонуса урона", "Громкость общего тревожного сигнала без раскрытия собравшего.", "ratio", 0f, 1f, .05f, 1f);
             profile.Add("audio.maxVoices", "audio", "Короткие голоса", "Предел одновременных коротких эффектов в общем выходе split-screen; длительные лучи и меню имеют отдельные ограниченные источники.", "count", 4f, 32f, 1f, 16f);
             profile.Add("audio.footstepDistanceMeters", "audio", "Интервал шагов", "Горизонтальная дистанция между шагами живого участника на опоре.", "meters", .5f, 5f, .1f, 2.1f);
             profile.Add("audio.footstepGain", "audio", "Уровень шагов", "Относительная громкость одного шага до общей громкости эффектов и позиции участника.", "ratio", 0f, 1f, .05f, .5f);
@@ -397,6 +399,10 @@ namespace StarTournament.ProvingGround
             profile.Add("ui.matchMenuSpacing", "ui", "Промежутки меню матча", "Расстояние между соседними действиями общей паузы и результатов.", "points", 0f, 24f, 1f, 8f);
             profile.Add("ui.indicatorVisualHeight", "ui", "HUD indicator height", "Visible height shared by health, armor and ammo icons and their numbers.", "points", 20f, 64f, 1f, 32f);
             profile.Add("ui.nameFontSize", "ui", "Player name size", "Font size of the bottom-centered per-seat name.", "points", 10f, 32f, 1f, 16f);
+            profile.Add("ui.damageBonusFontSize", "ui", "Размер предупреждения бонуса урона", "Размер красной надписи в верхней части каждого игрового viewport.", "points", 12f, 48f, 1f, 26f);
+            profile.Add("ui.damageBonusSeconds", "ui", "Время предупреждения бонуса урона", "Время видимости в simulation time; пауза не расходует его.", "seconds", .5f, 8f, .1f, 3f);
+            profile.Add("ui.damageBonusTopInset", "ui", "Отступ предупреждения сверху", "Отступ от верхнего края viewport, чтобы не перекрывать таймер матча.", "ratio", .05f, .25f, .01f, .1f);
+            profile.Add("ui.damageBonusHeight", "ui", "Высота предупреждения", "Высота области надписи как доля viewport.", "ratio", .06f, .2f, .01f, .12f);
             profile.Add("ui.killNoticeFontSize", "ui", "Kill notice size", "Font size of the per-seat kill and death notice.", "points", 12f, 48f, 1f, 26f);
             profile.Add("ui.killNoticeSeconds", "ui", "Kill notice lifetime", "Simulation-time visibility after a direct kill.", "seconds", .5f, 8f, .1f, 2.5f);
             profile.Add("ui.killNoticeBottom", "ui", "Kill notice bottom", "Bottom of the notice as a viewport-height fraction.", "ratio", .1f, .45f, .01f, .27f);

@@ -1,0 +1,17 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=NativeAudioRoutingTests
+revision=a988bdfdb111e56ebc143cb620c9f401e3276bb4
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/NativeCombatSession.cs
+ M Assets/StarTournament/Runtime/NativeGameAudio.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+?? ../docs/evidence/damage-bonus-alerts/
+?? ../tools/prepare-damage-bonus-audio.py
+?? Assets/StarTournament/Resources/Audio/damage-bonus-pickup.wav
+?? Assets/StarTournament/Resources/Audio/damage-bonus-pickup.wav.meta
+?? Assets/StarTournament/Resources/Audio/damage-bonus-spawn.wav
+?? Assets/StarTournament/Resources/Audio/damage-bonus-spawn.wav.meta
+?? Assets/StarTournament/Runtime/ProvingGroundDamageBonusAlerts.cs
+?? Assets/StarTournament/Runtime/ProvingGroundDamageBonusAlerts.cs.meta
