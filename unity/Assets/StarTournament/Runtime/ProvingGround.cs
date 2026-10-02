@@ -204,7 +204,7 @@ namespace StarTournament.ProvingGround
             Composition=HumanComposition(SetupRoster(),false);
             RebuildActors(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile,cutterProfile:CutterProfile);
-            gameAudio.Bind(Session,Composition);
+            gameAudio.Bind(Session,Composition);BindDamageBonusAlerts();
             CreateArmorPickupVisual();
             CreateSpeedPickupVisual();
             CreateDamagePickupVisual();
@@ -263,6 +263,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-damageVignetteReview")) gameObject.AddComponent<NativeDamageVignetteReview>();
             if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
+            if (args.Contains("-damageBonusReview")) gameObject.AddComponent<NativeDamageBonusReview>();
             if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
@@ -532,6 +533,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<Composition.LocalCount;i++) if(hud[i])
             {
                 int participant=Composition.ParticipantAt(i);var life=Session.Life(participant);
+                if(damageBonusNotice[i])damageBonusNotice[i].text=phase==Phase.Running&&Session.Time<damageBonusUntil?damageBonusText:"";
                 damageVignettes[i]?.Render(phase==Phase.Running&&!life.Dead);
                 health[i].text=Mathf.CeilToInt(life.Health).ToString();
                 armorGroups[i].SetActive(life.Armor>0); if(life.Armor>0) armor[i].text=Mathf.CeilToInt(life.Armor).ToString();
@@ -678,7 +680,7 @@ namespace StarTournament.ProvingGround
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match,frozenLabReference,frozenCutter);
-            gameAudio?.Bind(Session,Composition);
+            gameAudio?.Bind(Session,Composition);BindDamageBonusAlerts();
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
@@ -714,7 +716,7 @@ namespace StarTournament.ProvingGround
             var safeMovement=frozenMovement??previewMovement;var safeLife=frozenLife??previewLife;var safeCombat=frozenCombat??previewCombat;
             RebuildActors(Composition,safeMovement,frozenTrooper??previewTrooper);
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat,cutterProfile:CutterProfile);
-            gameAudio?.Bind(Session,Composition);
+            gameAudio?.Bind(Session,Composition);BindDamageBonusAlerts();
             presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile);
             actions=new LocalAction[Composition.ParticipantCount];ApplyLayout(LocalSeatCount);
             setupStep=setupMaxStep=2;
@@ -817,7 +819,7 @@ namespace StarTournament.ProvingGround
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); Select(rebind); }
         static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
         static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { UnbindDamageBonusAlerts(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void CreateHealPickupVisual()
         {
@@ -922,6 +924,7 @@ namespace StarTournament.ProvingGround
                 float padding=Profile.Get("ui.fontSize");
                 hud[i].rectTransform.offsetMin=Vector2.one*padding;hud[i].rectTransform.offsetMax=-Vector2.one*padding;
                 hud[i].alignment = TextAnchor.UpperLeft;
+                CreateDamageBonusNotice(i);
                 int indicatorHeight=(int)Profile.Get("ui.indicatorVisualHeight");
                 health[i]=CreateHudIndicator(viewportRoots[i],"health-"+i,HudIndicatorIcon.IconKind.Heart,new Color32(255,72,72,255),false,padding,indicatorHeight,out _);
                 armor[i]=CreateHudIndicator(viewportRoots[i],"armor-"+i,HudIndicatorIcon.IconKind.Shield,new Color32(55,234,255,255),false,padding*2+indicatorHeight,indicatorHeight,out _);

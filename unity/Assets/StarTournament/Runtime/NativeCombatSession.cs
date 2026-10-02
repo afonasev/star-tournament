@@ -154,6 +154,7 @@ namespace StarTournament.ProvingGround
         public event Action<int> Respawned;
         public event Action<int, float> Fired;
         public event Action<int,string,NativeBotPickupKind> PickupCollected;
+        public event Action DamageBonusAppeared;
         public event Action<ShotNotice> ShotResolved;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null)
@@ -228,7 +229,13 @@ namespace StarTournament.ProvingGround
             foreach(var item in weaponPickups)item.Advance(seconds);
             foreach(var item in healPickups)item.Advance(seconds);
             foreach(var item in armorPickups)item.Advance(seconds);
-            if(HasSpeedPickup)foreach(var item in speedPickups)item.Advance(seconds);if(HasDamagePickup)damagePickup.Advance(seconds);
+            if(HasSpeedPickup)foreach(var item in speedPickups)item.Advance(seconds);
+            if(HasDamagePickup)
+            {
+                bool wasAvailable=damagePickup.Read().Available;
+                damagePickup.Advance(seconds);
+                if(!wasAvailable&&damagePickup.Read().Available)DamageBonusAppeared?.Invoke();
+            }
             for (int i = 0; i < lives.Length; i++)
             {
                 lives[i].Advance(seconds);
