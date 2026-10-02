@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Fire(true),Is.True);
             life.CollectWeapon(WeaponId.Shotgun);life.Select(WeaponSelection.Next);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
-            Assert.That(life.Read().SwitchRemaining,Is.EqualTo(1).Within(.00001));
+            Assert.That(life.Read().SwitchRemaining,Is.EqualTo(.5).Within(.00001));
             Assert.That(life.Fire(true),Is.False);
             life.Advance(profile.Get("weapon.switchSeconds"));
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
@@ -75,15 +75,15 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             life.Select(WeaponSelection.Rifle);
             Assert.That(life.Read().PendingWeapon,Is.EqualTo(WeaponId.Shotgun),"Second command cannot replace the pending switch");
             Assert.That(life.Fire(true),Is.False);
-            life.Advance(.4);
+            life.Advance(.2);
             var snapshot=JsonUtility.FromJson<CombatLifeState>(JsonUtility.ToJson(life.Read()));
-            Assert.That(snapshot.SwitchRemaining,Is.EqualTo(.6).Within(.00001));
-            life.Advance(.6);
+            Assert.That(snapshot.SwitchRemaining,Is.EqualTo(.3).Within(.00001));
+            life.Advance(.3);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
             life.Restore(snapshot);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(life.Read().PendingWeapon,Is.EqualTo(WeaponId.Shotgun));
-            life.Advance(.6);
+            life.Advance(.3);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Shotgun));
             life.Select(WeaponSelection.Rifle);
             life.Damage(1,100);

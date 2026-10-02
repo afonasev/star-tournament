@@ -262,6 +262,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-scoreboardReview")) gameObject.AddComponent<NativeScoreboardReview>();
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
+            if (args.Contains("-weaponBalanceReview")) gameObject.AddComponent<NativeWeaponBalanceReview>();
             if (args.Contains("-bloodReview")) gameObject.AddComponent<NativeBloodReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
             if (args.Contains("-weaponPickupReview")) gameObject.AddComponent<NativeWeaponPickupReview>();

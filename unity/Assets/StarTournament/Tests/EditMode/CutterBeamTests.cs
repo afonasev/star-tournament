@@ -12,27 +12,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var p=ProvingProfile.CreateCutterDefault();p.Set("cutter.referenceDamage",referenceDamage);var b=new CutterBeam(p,1);float total=0;
             for(int i=0;i<System.Math.Round(3/dt);i++)Step(b,dt,30,0,(_,d)=>total+=d);
-            Assert.That(total,Is.EqualTo(referenceDamage));
+            Assert.That(total,Is.EqualTo(referenceDamage).Within(.001));
         }
         [Test] public void GrowthClipsAndDoesNotCreditUndeliveredContact()
         {
             var b=new CutterBeam(ProvingProfile.CreateCutterDefault(),1);float total=0;
             Step(b,.075,30,15,(_,d)=>total+=d);Assert.That(b.Read().Endpoint.z,Is.EqualTo(10).Within(.0001));Assert.That(total,Is.Zero);
-            Step(b,.075,30,15,(_,d)=>total+=d);Assert.That(b.Read().Contacts[0].Seconds,Is.EqualTo(.0375).Within(.0001));
-            Step(b,.1,30,15,(_,d)=>total+=d,12);Assert.That(total,Is.Zero);Assert.That(b.Read().Endpoint.z,Is.EqualTo(12));
+            Step(b,.075,30,15,(_,d)=>total+=d);Assert.That(total,Is.EqualTo(3.75f).Within(.0001));
+            Step(b,.1,30,15,(_,d)=>total+=d,12);Assert.That(total,Is.EqualTo(3.75f).Within(.0001));Assert.That(b.Read().Endpoint.z,Is.EqualTo(12));
         }
         [Test] public void ShortBurstsConsumeFractionalEnergyAndContactRestarts()
         {
             var b=new CutterBeam(ProvingProfile.CreateCutterDefault(),1);double energy=30;float total=0;
             for(int i=0;i<100;i++){energy-=Step(b,.01,energy,0,(_,d)=>total+=d);b.Stop();}
-            Assert.That(energy,Is.EqualTo(29).Within(1e-9));Assert.That(total,Is.Zero);
+            Assert.That(energy,Is.EqualTo(29).Within(1e-9));Assert.That(total,Is.EqualTo(100).Within(.001));
             energy-=Step(b,40,energy,-1,(_,d)=>total+=d);Assert.That(energy,Is.Zero.Within(1e-9));
         }
         [TestCase(100)] [TestCase(300)] public void RestorePreservesPartialTimeAndFractionalDamage(float referenceDamage)
         {
             var p=ProvingProfile.CreateCutterDefault();p.Set("cutter.referenceDamage",referenceDamage);var a=new CutterBeam(p,1);float total=0;
             Step(a,.16,30,0,(_,d)=>total+=d);var b=new CutterBeam(p,1);b.Restore(a.Read());
-            Step(b,2.84,30,0,(_,d)=>total+=d);Assert.That(total,Is.EqualTo(referenceDamage));
+            Step(b,2.84,30,0,(_,d)=>total+=d);Assert.That(total,Is.EqualTo(referenceDamage).Within(.001));
         }
         [Test] public void TargetsAreIndependentAndWallBlocksThird()
         {
@@ -46,14 +46,14 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             for(int i=0;i<30;i++)b.Advance(.1,30,Vector3.zero,Vector3.forward,20,new[]{0f},new[]{1},2,(_,d)=>life.Damage(1,d));
             Assert.That(life.Read().Armor,Is.Zero);Assert.That(life.Read().Health,Is.Zero);Assert.That(life.Read().Dead,Is.True);
         }
-        [Test] public void ContactGapDropsOnlyIncompleteTimeAndNewLifeDropsOldRemainder()
+        [Test] public void ContactGapPreservesAppliedFractionsWithoutDebtAcrossNewLife()
         {
             var p=ProvingProfile.CreateCutterDefault();p.Set("cutter.referenceDamage",100);
             var b=new CutterBeam(p,1);float total=0;
             Step(b,.06,30,0,(_,d)=>total+=d);Step(b,.02,30,-1,(_,d)=>total+=d);Step(b,.06,30,0,(_,d)=>total+=d);
-            Assert.That(total,Is.Zero);Step(b,.04,30,0,(_,d)=>total+=d);Assert.That(total,Is.EqualTo(3));
+            Assert.That(total,Is.EqualTo(4).Within(.0001));Step(b,.04,30,0,(_,d)=>total+=d);Assert.That(total,Is.EqualTo(16f/3).Within(.0001));
             b.Advance(.1,30,Vector3.zero,Vector3.forward,20,new[]{0f},new[]{2},1,(_,d)=>total+=d);
-            Assert.That(total,Is.EqualTo(6));
+            Assert.That(total,Is.EqualTo(26f/3).Within(.0001));
         }
         [Test] public void FourthSlotKeepsEnergyAndRespawnRestoresIt()
         {

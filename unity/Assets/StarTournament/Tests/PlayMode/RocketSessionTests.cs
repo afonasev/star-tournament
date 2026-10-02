@@ -58,11 +58,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             finally {InputSystem.RemoveDevice(k);InputSystem.RemoveDevice(m);InputSystem.RemoveDevice(pad);InputSystem.settings.editorInputBehaviorInPlayMode=priorEditorInput;InputSystem.settings.backgroundBehavior=priorBackground;}
         }
         [UnityTearDown] public IEnumerator Cleanup(){if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
-        [UnityTest] public IEnumerator DirectAndSplashAreOnceCappedWithArmorAndDamageBoost()
+        [UnityTest] public IEnumerator DirectAndSplashUseUniformBoostOnceWithArmor()
         {
             Setup();yield return null;var s=session.Capture();s.Lives[1].Armor=50;s.DamageRemaining[0]=10;session.Restore(s);
             int explosions=0;session.RocketExploded+=_=>explosions++;Fire();Ticks(12);
-            Assert.That(explosions,Is.EqualTo(1));Assert.That(session.Life(1).Health,Is.EqualTo(50));Assert.That(session.Life(1).Armor,Is.Zero);
+            Assert.That(explosions,Is.EqualTo(1));Assert.That(session.Life(1).Health,Is.EqualTo(22.5f));Assert.That(session.Life(1).Armor,Is.Zero);
             Assert.That(session.Life(2).Health,Is.LessThan(100));Assert.That(session.Rockets,Is.Empty);
             float hp=session.Life(1).Health;Ticks(20);Assert.That(session.Life(1).Health,Is.EqualTo(hp));Assert.That(explosions,Is.EqualTo(1));
         }
@@ -107,7 +107,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Time,Is.EqualTo(time));Assert.That(session.Rockets[0].Position,Is.EqualTo(position));
             var invalid=JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(snap));invalid.Rockets=new[]{snap.Rockets[0],snap.Rockets[0]};
             Assert.Throws<ArgumentException>(()=>session.Restore(invalid));Assert.That(session.Rockets.Length,Is.EqualTo(1));
-            int count=0;session.RocketExploded+=_=>count++;session.ApplyDamage(0,1,100);Ticks(12);
+            int count=0;session.RocketExploded+=_=>count++;session.ApplyDamage(0,1,100);session.ApplyDamage(1,1,20);Ticks(12);
             Assert.That(count,Is.EqualTo(1));Assert.That(session.Life(1).KillerLife,Is.EqualTo(1));
             session.Restore(snap);session.ClearInput();Ticks(12);Assert.That(count,Is.EqualTo(2),"Replayed flight produces exactly one new event");
             var repeated=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat);Assert.That(repeated.Rockets,Is.Empty);Assert.That(repeated.Life(0).RocketAmmo,Is.Zero);
