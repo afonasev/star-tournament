@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
             string name=material.name;
             // Authored material roles: large limb plates, helmet, chest, thighs and rear jet pack.
             return IsStatus(material)||name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)||
-                name=="TECI_helmet"||name=="torso"||name=="jumpjet"||name=="pants";
+                name=="TECI_helmet"||name=="torso"||name=="jumpjet";
         }
         public static void ApplyBody(GameObject root,Color color,ProvingProfile profile=null)
         {
@@ -20,13 +20,15 @@ namespace StarTournament.ProvingGround
             var surfaces=root.GetComponent<TrooperIdentityMaterials>()??root.AddComponent<TrooperIdentityMaterials>();
             var tuning=new Vector4(profile.Get("participant.surface.detailGain"),profile.Get("participant.surface.maskStart"),
                 profile.Get("participant.surface.maskWidth"),profile.Get("participant.surface.panelFloor"));
+            var panels=new Vector4(profile.Get("participant.surface.shellStart"),profile.Get("participant.surface.shellWidth"),
+                profile.Get("participant.surface.neutralPlateGain"),0);
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
                 // The shotgun shares ceramic/status materials with the skin but has independent boost state.
                 if(renderer.name=="weapon:joined"||renderer.GetComponentInParent<WeaponModelPresentation>()!=null&&
                     (HasAncestor(renderer.transform,"automatic-rifle")||HasAncestor(renderer.transform,"pulse-launcher")||HasAncestor(renderer.transform,"cutter")))continue;
                 var materials=renderer.sharedMaterials;
-                for(int i=0;i<materials.Length;i++)if(materials[i]&&!IsStatus(materials[i]))materials[i]=surfaces.Resolve(materials[i]);
+                for(int i=0;i<materials.Length;i++)if(materials[i]&&!IsStatus(materials[i]))materials[i]=surfaces.Resolve(materials[i],renderer);
                 renderer.sharedMaterials=materials;
                 for(int i=0;i<materials.Length;i++)if(materials[i])
                 {
@@ -34,14 +36,15 @@ namespace StarTournament.ProvingGround
                     if(mat.HasProperty("_IdentityColor"))
                     {
                         var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
-                        block.SetColor("_IdentityColor",color);block.SetVector("_IdentitySurface",tuning);
-                        // Semantic authored roles, not numerical gameplay tuning: ceramic limb plates
-                        // are entire panels; textured shell/cloth use source reflectance for seams.
+                        block.SetColor("_IdentityColor",color);block.SetVector("_IdentitySurface",tuning);block.SetVector("_IdentityPanels",panels);
+                        // Authored mesh roles define plate coverage; source reflectance separates
+                        // helmet/chest shell panels from dark seams. Cloth and boots stay neutral.
                         float mode=!IsBodyZone(mat)?0:
-                            mat.name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)?2:1;
+                            mat.name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)?
+                                (renderer.name.Contains("UpperArm")||renderer.name.Contains("UpperLeg")?2:-1):1;
                         // These materials are owned per actor. Persist identity in their PBR
                         // constant buffer as well as the slot block (native skinned rendering).
-                        mat.SetColor("_IdentityColor",color);mat.SetVector("_IdentitySurface",tuning);mat.SetFloat("_IdentityMode",mode);
+                        mat.SetColor("_IdentityColor",color);mat.SetVector("_IdentitySurface",tuning);mat.SetFloat("_IdentityMode",mode);mat.SetVector("_IdentityPanels",panels);
                         block.SetFloat("_IdentityMode",mode);renderer.SetPropertyBlock(block,i);
                     }
                     else if(IsBodyZone(mat))Paint(renderer,i,color,IsStatus(mat));
@@ -64,12 +67,13 @@ namespace StarTournament.ProvingGround
     /// <summary>Per-actor material ownership. Source textures/maps remain shared and never mutate.</summary>
     public sealed class TrooperIdentityMaterials:MonoBehaviour
     {
-        readonly System.Collections.Generic.Dictionary<Material,Material> materials=new System.Collections.Generic.Dictionary<Material,Material>();
+        readonly System.Collections.Generic.Dictionary<Tuple<Renderer,Material>,Material> materials=new System.Collections.Generic.Dictionary<Tuple<Renderer,Material>,Material>();
         Shader shader;
-        public Material Resolve(Material source)
+        public Material Resolve(Material source,Renderer renderer)
         {
             if(source.HasProperty("_IdentityColor"))return source;
-            if(materials.TryGetValue(source,out var existing))return existing;
+            var key=Tuple.Create(renderer,source);
+            if(materials.TryGetValue(key,out var existing))return existing;
             shader=shader?shader:Resources.Load<Shader>("TrooperIdentity");
             if(!shader)throw new InvalidOperationException("Trooper identity shader missing");
             var clone=new Material(shader);
@@ -93,7 +97,7 @@ namespace StarTournament.ProvingGround
             clone.enableInstancing=source.enableInstancing;clone.doubleSidedGI=source.doubleSidedGI;clone.globalIlluminationFlags=source.globalIlluminationFlags;
             clone.name=source.name;
             if(!clone.HasProperty("_IdentityColor"))throw new InvalidOperationException("Identity material schema missing after authored property copy");
-            materials.Add(source,clone);return clone;
+            materials.Add(key,clone);return clone;
         }
         void OnDestroy(){foreach(var material in materials.Values)Destroy(material);materials.Clear();}
     }

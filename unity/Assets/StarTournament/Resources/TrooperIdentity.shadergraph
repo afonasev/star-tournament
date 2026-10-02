@@ -101,6 +101,9 @@
         },
         {
             "m_Id": "2c32ccef3a1dcba315e9f413bb51a6ba"
+        },
+        {
+            "m_Id": "e9874bccacbcab3cbb7f23b7e573b3ee"
         }
     ],
     "m_Keywords": [
@@ -276,6 +279,9 @@
         },
         {
             "m_Id": "7fbc03c58c6c58b4347bf9b2477b92df"
+        },
+        {
+            "m_Id": "f656fadf9a35698c6e06bcc65d2efe19"
         }
     ],
     "m_GroupDatas": [],
@@ -937,6 +943,20 @@
                     "m_Id": "ac2198b642743c97ea9bade47eb0ba0f"
                 },
                 "m_SlotId": 3
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "f656fadf9a35698c6e06bcc65d2efe19"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "ac2198b642743c97ea9bade47eb0ba0f"
+                },
+                "m_SlotId": 5
             }
         }
     ],
@@ -6354,6 +6374,31 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
+    "m_ObjectId": "0ed370d33af0cd56e3033bdb1b9fcccc",
+    "m_Id": 5,
+    "m_DisplayName": "Panels",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Panels",
+    "m_StageCapability": 2,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.CustomFunctionNode",
     "m_ObjectId": "ac2198b642743c97ea9bade47eb0ba0f",
     "m_Group": {
@@ -6385,6 +6430,9 @@
         },
         {
             "m_Id": "d62ad9e1960dd8e6af49a1c66ceab3f1"
+        },
+        {
+            "m_Id": "0ed370d33af0cd56e3033bdb1b9fcccc"
         }
     ],
     "synonyms": [],
@@ -6398,7 +6446,7 @@
     "m_SourceType": 1,
     "m_FunctionName": "TrooperIdentity",
     "m_FunctionSource": "",
-    "m_FunctionBody": "\n// Peak reflectance removes the source hue while retaining authored seams/detail.\n// This is a color-space invariant; artistic thresholds are supplied by Balance Lab.\n$precision detail = max(Source.r, max(Source.g, Source.b));\n$precision mask = Mode > 1 ? 1 : smoothstep(Tuning.y, Tuning.y + Tuning.z, detail) * Mode;\n$precision panel = max(Tuning.w, saturate(detail * Tuning.x));\nOut = lerp(detail.xxx, Tint.rgb * panel, saturate(mask));\n"
+    "m_FunctionBody": "\n// Peak reflectance removes the source hue while retaining authored seams/detail.\n// This is a color-space invariant; artistic thresholds are supplied by Balance Lab.\n$precision detail = max(Source.r, max(Source.g, Source.b));\n$precision mask = Mode > 1 ? 1 : (Mode > 0 ? smoothstep(Panels.x, Panels.x + Panels.y, detail) : 0);\n$precision neutral = Mode < 0 ? detail * Panels.z : detail;\n$precision panel = max(Tuning.w, saturate(detail * Tuning.x));\nOut = lerp(neutral.xxx, Tint.rgb * panel, saturate(mask));\n"
 }
 
 {
@@ -6686,5 +6734,99 @@
     },
     "m_Property": {
         "m_Id": "2c32ccef3a1dcba315e9f413bb51a6ba"
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector4ShaderProperty",
+    "m_ObjectId": "e9874bccacbcab3cbb7f23b7e573b3ee",
+    "m_Guid": {
+        "m_GuidSerialized": "e49088c0-15ce-c60a-a807-a9c5f1ad3b1a"
+    },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
+    "m_Name": "_IdentityPanels",
+    "m_DefaultRefNameVersion": 0,
+    "m_RefNameGeneratedByDisplayName": "",
+    "m_DefaultReferenceName": "_IdentityPanels",
+    "m_OverrideReferenceName": "_IdentityPanels",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
+    "m_Value": {
+        "x": 0.025,
+        "y": 0.015,
+        "z": 0.15,
+        "w": 0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
+    "m_ObjectId": "c87cd727a1aed9dbe5efb822f6a6e06c",
+    "m_Id": 0,
+    "m_DisplayName": "_IdentityPanels",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_IdentityPanels",
+    "m_StageCapability": 2,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "f656fadf9a35698c6e06bcc65d2efe19",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -116.00006103515625,
+            "y": 40.49998092651367,
+            "width": 210.49998474121094,
+            "height": 33.999996185302734
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "c87cd727a1aed9dbe5efb822f6a6e06c"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "e9874bccacbcab3cbb7f23b7e573b3ee"
     }
 }

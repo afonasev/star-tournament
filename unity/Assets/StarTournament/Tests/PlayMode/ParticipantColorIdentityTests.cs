@@ -18,21 +18,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true).Where(r=>r.name!="weapon:joined"&&!r.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter")))
                 for(int i=0;i<renderer.sharedMaterials.Length;i++)
                 {
-                    var mat=renderer.sharedMaterials[i];if(!mat||!TrooperIdentityPresentation.IsBodyZone(mat))continue;
+                    var mat=renderer.sharedMaterials[i];
+                    if(mat&&mat.name=="pants")Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"cloth stays neutral");
+                    if(!mat||!TrooperIdentityPresentation.IsBodyZone(mat))continue;
                     var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
                     foreach(string property in mat.HasProperty("_IdentityColor")?new[]{"_IdentityColor"}:new[]{"_BaseColor","baseColorFactor"})if(mat.HasProperty(property))Assert.That(block.GetColor(property),Is.EqualTo(ground.Composition.Participant(participant).Color),renderer.name+"/"+mat.name);
                     if(mat.HasProperty("_IdentityColor"))
                     {
                         Assert.That(mat.GetColor("_IdentityColor"),Is.EqualTo(ground.Composition.Participant(participant).Color),"owned material color "+participant+"/"+mat.name);
-                        Assert.That(mat.GetFloat("_IdentityMode"),Is.GreaterThan(0),"owned material mode "+mat.name);
+                        Assert.That(mat.GetFloat("_IdentityMode"),Is.EqualTo(renderer.name.Contains("LowerLeg")?-1:mat.name.StartsWith("vector-ceramic")?2:1),"owned material mode "+mat.name);
                         Assert.That(block.GetVector("_IdentitySurface").w,Is.EqualTo(ground.ParticipantPaletteProfile.Get("participant.surface.panelFloor")));
-                        Assert.That(block.GetFloat("_IdentityMode"),Is.GreaterThan(0));
+                        Assert.That(block.GetFloat("_IdentityMode"),Is.EqualTo(mat.GetFloat("_IdentityMode")));
                         var source=ground.TrooperBodyPrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).First(m=>m&&m.name==mat.name);
                         Assert.That(mat.GetColor("baseColorFactor"),Is.EqualTo(source.GetColor("baseColorFactor")),"source factor must not be multiplied by identity");
                         foreach(var property in new[]{"baseColorTexture","normalTexture","metallicRoughnessTexture"})
                             Assert.That(mat.GetTexture(property),Is.EqualTo(source.GetTexture(property)),"keep authored maps "+property);
                     }
-                    if(mat.name=="TECI_helmet")helmets++;if(mat.name=="pants")thighs++;
+                    if(mat.name=="TECI_helmet")helmets++;if(renderer.name.Contains("UpperLeg")&&mat.GetFloat("_IdentityMode")==2)thighs++;
                     slots++;
                 }
             Assert.That(slots,Is.GreaterThan(3));

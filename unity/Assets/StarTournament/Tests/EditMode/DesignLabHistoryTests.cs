@@ -26,6 +26,20 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(preserved.Snapshot.Descriptors.Any(d=>d.Path.StartsWith("participant.surface.")),Is.False);
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
+        [Test]public void DiscretePanelUpgradePreservesV2SurfaceTuningAndHistory()
+        {
+            var prior=typeof(ProvingProfile).GetMethod("BeforeDiscreteIdentityPanels",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мои панели");
+            var draft=history.Selected.Snapshot;draft.Set("participant.surface.detailGain",7);draft.Set("participant.color.blue.r",70);history.Save(draft);
+            var previous=history.Selected;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.detailGain"),Is.EqualTo(7));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.color.blue.r"),Is.EqualTo(70));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.shellStart"),Is.EqualTo(.025f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [TestCase(false)][TestCase(true)]public void MovementAudioUpgradePreservesV11HistoryAndCustomMix(bool beforeCompactMenu)
         {
             var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeMovementAudio()).ToList();
