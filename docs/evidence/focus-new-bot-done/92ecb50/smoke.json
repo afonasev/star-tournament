@@ -1,0 +1,8 @@
+{
+  "sourceRevision": "92ecb5017cb60deb5b17527c615ce15fae91ed21",
+  "candidate": "/Users/eaafonasev/Projects/star-tournament/.local/releases/focus-new-bot-done/92ecb50/StarTournamentProvingGround.app",
+  "exit_code": 0,
+  "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+  "observed": "two new bots with Done focused immediately, one-A confirm and Normal unchanged; existing card focuses difficulty",
+  "evidence_directory": "docs/evidence/focus-new-bot-done/92ecb50"
+}

@@ -1,0 +1,10 @@
+{
+  "path": "/Users/eaafonasev/Projects/star-tournament/.local/releases/focus-new-bot-done/92ecb50/StarTournamentProvingGround.app",
+  "platform": "macOS",
+  "channel": "local-candidate",
+  "sourceRevision": "92ecb5017cb60deb5b17527c615ce15fae91ed21",
+  "executable_sha256": "2558428e8fd4ffeec060bea153c4c742ed44c35c449e6848c30258bac156a39e",
+  "manifest": "/Users/eaafonasev/Projects/star-tournament/.local/releases/focus-new-bot-done/92ecb50/sha256-files.json",
+  "manifest_sha256": "6b04c7ba0ca21196eb66a891e011cf20e33a25e7b3cdde7fa6b27065a2bb4344",
+  "external_publication": false
+}

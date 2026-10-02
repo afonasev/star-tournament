@@ -1,0 +1,1 @@
+PASS: added two Normal bots with synthetic gamepad; initial Done focus and one-A confirmation; existing editor retains difficulty focus. Human physical-controller acceptance pending.

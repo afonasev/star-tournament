@@ -31,6 +31,35 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(seats.Consume(2).Fire,Is.False);
             seats.Clear();Assert.That(seats.Consume(2).Move,Is.EqualTo(Vector2.zero));
         }
+        IEnumerator PressBotMenu(Gamepad pad,GamepadButton button)
+        {
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(button));yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+        }
+        [UnityTest] public IEnumerator NewBotsConfirmDefaultDifficultyWithOneSubmit()
+        {
+            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
+            var pad=pads[0]=InputSystem.AddDevice<Gamepad>();
+            System.Func<string,UnityEngine.UI.Button> button=name=>ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name==name);
+            var events=UnityEngine.EventSystems.EventSystem.current;
+            events.SetSelectedGameObject(button("main-action-0").gameObject);yield return PressBotMenu(pad,GamepadButton.South);
+            button("setup-next").onClick.Invoke();button("setup-next").onClick.Invoke();
+            for(int i=0;i<2;i++)
+            {
+                int before=ground.SetupBotCount;
+                events.SetSelectedGameObject(button("roster-add-bot").gameObject);yield return PressBotMenu(pad,GamepadButton.South);
+                Assert.That(ground.SetupBotCount,Is.EqualTo(before+1));
+                Assert.That(events.currentSelectedGameObject.name,Is.EqualTo("roster-done"));
+                Assert.That(ground.SetupComposition().Read().Participants.Last().Difficulty,Is.EqualTo((int)NativeBotDifficulty.Normal));
+                yield return PressBotMenu(pad,GamepadButton.South);
+                Assert.That(button("roster-done").gameObject.activeInHierarchy,Is.False);
+                Assert.That(events.currentSelectedGameObject.name,Is.EqualTo("roster-card-"+(ground.LocalSeatCount+before)));
+            }
+            button("roster-card-"+(ground.LocalSeatCount+ground.SetupBotCount-1)).onClick.Invoke();
+            Assert.That(events.currentSelectedGameObject.name,Is.EqualTo("roster-identity"));
+        }
         [UnityTearDown]
         public IEnumerator Cleanup()
         {
