@@ -1,0 +1,36 @@
+{
+  "removed_preview_builds": [
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-builds/damage-bonus-alerts-f70d1cd-preview1",
+      "source_commit": "f70d1cd96d70b7271bfda36934c045796d36c009",
+      "build_marker": "fd84209453dd402ab4d1d9eb62587633",
+      "tree_sha256": "1a0cc5efcc983ba8f57fd7d35c8d18140772aba77dff59ed66dfc54029bd2f27",
+      "owner": "add-damage-bonus-alerts / 01a0fb9f-e822-70b3-9400-d7f5b7b31803",
+      "reason": "Temporary unaccepted QA helper attempt superseded by complete tested candidate; no active/pending acceptance depends on this preview",
+      "replacement": "local-macos-player-candidate/135fa0684e2ea3512603f134b6b4532514feedcc/b32b370ea9f14bf5b26689827da56ba3"
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-builds/damage-bonus-alerts-fa74bd3-preview1",
+      "source_commit": "fa74bd3e88e223be611950e811d4e0fe7342c663",
+      "build_marker": "4c045351e1a54ff6847723a1ffd330ab",
+      "tree_sha256": "cb19e5b4f9924807dc723fdf32bc1bdc80b1bac7351435c80819c6797dc6a11f",
+      "owner": "add-damage-bonus-alerts / 01a0fb9f-e822-70b3-9400-d7f5b7b31803",
+      "reason": "Temporary unaccepted QA helper attempt superseded by complete tested candidate; no active/pending acceptance depends on this preview",
+      "replacement": "local-macos-player-candidate/135fa0684e2ea3512603f134b6b4532514feedcc/b32b370ea9f14bf5b26689827da56ba3"
+    }
+  ],
+  "retained_candidate": {
+    "source_commit": "135fa0684e2ea3512603f134b6b4532514feedcc",
+    "app": "/Users/eaafonasev/Projects/star-tournament-builds/damage-bonus-alerts-135fa06/StarTournamentProvingGround.app",
+    "build_marker": "b32b370ea9f14bf5b26689827da56ba3",
+    "tree_sha256": "2a0746fbe208321583c165e3fadc0e2dc1dd9fa47dce0fc288d6ba7868bc1a4e",
+    "files": 282,
+    "identity": "local-macos-player-candidate/135fa0684e2ea3512603f134b6b4532514feedcc/b32b370ea9f14bf5b26689827da56ba3",
+    "audio_variant": 1,
+    "audio_selection": "working default chosen by implementer; human feedback and acceptance pending",
+    "human_acceptance": false
+  },
+  "runtime_process_check": "No owned Player/Editor process uses recorded paths",
+  "checksum_readback": "Current retained candidate matches recorded tree SHA256",
+  "worktree_cleanup": "Will be recorded through delivery helper after normal safe Git removal"
+}

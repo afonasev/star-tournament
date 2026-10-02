@@ -8,5 +8,7 @@
   "audio_variant": 1,
   "audio_selection": "provisional, Q2 pending; not a selected final candidate",
   "generated_build_diff": "checks/generated-build.diff",
-  "human_acceptance": false
+  "human_acceptance": false,
+  "artifact_status": "deliberately removed superseded temporary QA preview",
+  "replacement_identity": "local-macos-player-candidate/135fa0684e2ea3512603f134b6b4532514feedcc/b32b370ea9f14bf5b26689827da56ba3"
 }
