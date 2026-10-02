@@ -22,12 +22,13 @@ namespace StarTournament.ProvingGround
         public float Get(string path) => Profile(path).Get(path);
         public void Set(string path,float value) => Profile(path).Set(path,value);
         public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
-        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1";
+        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId;
         public bool IsDiagnostic(string path)=>path.StartsWith("bots.evaluation.")||path=="weapon.probeRange"||path=="weapon.probeCooldown";
         public bool IsLevelAuthoring(string path)
         {
             if(IsAuthoring(path))return true;
             var profile=Profile(path);
+            if(profile.Id==ProvingProfile.TunnelsArtId)return profile.Descriptor(path).Group=="tunnel-detail";
             if(profile.Id!="orbital-league-ring-v1"&&profile.Id!="orbital-league-v1")return false;
             // Scene placement and mesh dimensions belong to map authoring, not balance tuning.
             var group=profile.Descriptor(path).Group;
@@ -276,6 +277,8 @@ namespace StarTournament.ProvingGround
                 // Blood defaults can be retuned independently of the gameplay registry upgrade.
                 // Include that exact combination without rewriting historical snapshots.
                 predecessors=predecessors.Concat(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity)))).ToArray();
+                // Preserve distinct legacy defaults even when registry keys coincide.
+                predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.TunnelsArtId&&p.Id!=ProvingProfile.TunnelsAuthoringId).ToList()})).ToArray();
                 if(historicalCache.Count>=2)historicalCache.Clear();
                 historicalCache.Add(key,predecessors);
                 return predecessors;

@@ -98,7 +98,7 @@ namespace StarTournament.ProvingGround
         public double Time { get; private set; }
         public int ShotCount { get; private set; }
         public ArmorPickupState ArmorPickup => armorPickup.Read();
-        public SpeedPickupState SpeedPickup => speedPickup.Read();
+        public SpeedPickupState SpeedPickup => HasSpeedPickup?speedPickup.Read():throw new InvalidOperationException("This arena has no speed pickup");
         public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { Match=Match?.Read(), Poses=Array.ConvertAll(motors,m=>m.State),RifleBullets=RifleBullets,WeaponPickups=WeaponPickups, BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
@@ -130,7 +130,7 @@ namespace StarTournament.ProvingGround
             {
                 var next=snapshot.HealPickups.SingleOrDefault(x=>x.InstanceId==item.Read().InstanceId);item.ValidateSnapshot(next);
             }
-            for(int i=0;i<lives.Length;i++){if(double.IsNaN(snapshot.SpeedRemaining[i])||double.IsInfinity(snapshot.SpeedRemaining[i])||snapshot.SpeedRemaining[i]<0)throw new ArgumentException("Invalid speed snapshot",nameof(snapshot));lives[i].Restore(snapshot.Lives[i]);speedRemaining[i]=snapshot.SpeedRemaining[i];}
+            for(int i=0;i<lives.Length;i++){if(double.IsNaN(snapshot.SpeedRemaining[i])||double.IsInfinity(snapshot.SpeedRemaining[i])||snapshot.SpeedRemaining[i]<0||(!HasSpeedPickup&&snapshot.SpeedRemaining[i]>0))throw new ArgumentException("Invalid speed snapshot",nameof(snapshot));lives[i].Restore(snapshot.Lives[i]);speedRemaining[i]=snapshot.SpeedRemaining[i];}
             if(snapshot.DamageRemaining!=null)
             {
                 if(snapshot.DamageRemaining.Length!=lives.Length)throw new ArgumentException("Invalid damage snapshot");
