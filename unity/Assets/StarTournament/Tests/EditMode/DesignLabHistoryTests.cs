@@ -36,7 +36,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
             Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.detailGain"),Is.EqualTo(7));
             Assert.That(upgraded.Selected.Snapshot.Get("participant.color.blue.r"),Is.EqualTo(70));
-            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.shellStart"),Is.EqualTo(.025f));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.shellStart"),Is.EqualTo(.09f));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
