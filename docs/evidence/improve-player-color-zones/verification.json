@@ -44,5 +44,25 @@
     "performance_acceptance": false
   },
   "remaining": "explicit human visual acceptance of this exact Player",
-  "spec_sync": "star-tournament-planning f6ce9fd"
+  "spec_sync": "star-tournament-planning f6ce9fd",
+  "integration": {
+    "source_revision": "6d41b16631270e68b1e1debf4ba294a42a8d6a1e",
+    "incoming_main": "973cb84",
+    "result": "Passed",
+    "checks": [
+      {
+        "command": "focused ParticipantColorIdentityTests;BloodPresentationTests",
+        "exit_code": 0,
+        "passed": 5,
+        "evidence": "checks/integration-play.xml"
+      },
+      {
+        "command": "focused palette/history and BloodProfileTests",
+        "exit_code": 0,
+        "passed": 10,
+        "evidence": "checks/integration-edit.xml"
+      }
+    ],
+    "binding": "Player/native visual gates remain bound to e5cface; these are affected-contract integration checks, not a claim of another Player build"
+  }
 }

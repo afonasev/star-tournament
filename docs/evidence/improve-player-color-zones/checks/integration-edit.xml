@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="24.0114946">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="261" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="24.011495" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1321" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/player-color-zones/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="261" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="24.005920" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="80772" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1322" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="261" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="24.004106" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1323" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="261" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="24.002390" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1324" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="261" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="24.000675" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1325" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="177" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:51Z" duration="23.967106" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1123" name="BloodProfileTests" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:44Z" duration="17.385897" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1124" name="BloodFieldsAreEditablePresentationWithValidMetadataAndSteps" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests.BloodFieldsAreEditablePresentationWithValidMetadataAndSteps" methodname="BloodFieldsAreEditablePresentationWithValidMetadataAndSteps" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" seed="1446245814" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:27Z" duration="0.012067" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1127" name="PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests.PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:44Z" duration="17.367765" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1125" name="PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests.PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields(False)" methodname="PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" seed="966232129" result="Passed" start-time="2026-10-02 10:41:27Z" end-time="2026-10-02 10:41:36Z" duration="8.759093" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1126" name="PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests.PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields(True)" methodname="PreBloodHistoryKeepsItsImmutableHashAndMigratesToEditableBloodFields" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" seed="1733122114" result="Passed" start-time="2026-10-02 10:41:36Z" end-time="2026-10-02 10:41:44Z" duration="8.607041" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+              <test-suite type="TestFixture" id="1156" name="DesignLabHistoryTests" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-02 10:41:44Z" end-time="2026-10-02 10:41:51Z" duration="6.575065" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1157" name="IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors" methodname="IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="866824967" result="Passed" start-time="2026-10-02 10:41:44Z" end-time="2026-10-02 10:41:51Z" duration="6.568916" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1076" name="ParticipantColorAssignmentTests" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.028565" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1079" name="ApprovedPaletteIncludesBrightYellowAndEightDistinctColors" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests.ApprovedPaletteIncludesBrightYellowAndEightDistinctColors" methodname="ApprovedPaletteIncludesBrightYellowAndEightDistinctColors" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" seed="1527668882" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.001617" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1078" name="ControlledDrawsProveSlotIndependenceAndFullPaletteSampling" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests.ControlledDrawsProveSlotIndependenceAndFullPaletteSampling" methodname="ControlledDrawsProveSlotIndependenceAndFullPaletteSampling" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" seed="341527855" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.005318" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1081" name="PaletteRejectsOutOfRangeFractionalAndDuplicateColors" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests.PaletteRejectsOutOfRangeFractionalAndDuplicateColors" methodname="PaletteRejectsOutOfRangeFractionalAndDuplicateColors" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" seed="888012265" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.000430" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1080" name="PaletteTuningAppliesAtStartAndFrozenLegacyColorsRestoreWithoutCurrentPalette" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests.PaletteTuningAppliesAtStartAndFrozenLegacyColorsRestoreWithoutCurrentPalette" methodname="PaletteTuningAppliesAtStartAndFrozenLegacyColorsRestoreWithoutCurrentPalette" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" seed="934976058" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.002658" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1077" name="SeededAssignmentsAreUniqueSerializableAndDetachedForEveryRosterSize" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests.SeededAssignmentsAreUniqueSerializableAndDetachedForEveryRosterSize" methodname="SeededAssignmentsAreUniqueSerializableAndDetachedForEveryRosterSize" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" seed="2135798149" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.016625" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1082" name="TeamsNeverDrawAndAssignmentLeavesGameplayRandomUntouched" fullname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests.TeamsNeverDrawAndAssignmentLeavesGameplayRandomUntouched" methodname="TeamsNeverDrawAndAssignmentLeavesGameplayRandomUntouched" classname="StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests" runstate="Runnable" seed="735128511" result="Passed" start-time="2026-10-02 10:41:51Z" end-time="2026-10-02 10:41:51Z" duration="0.000700" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

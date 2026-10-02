@@ -1139,5 +1139,7 @@
   "license": {
     "path": "/Users/eaafonasev/Projects/star-tournament-builds/player-color-zones-e5cface/TrooperIdentity-LICENSE.md",
     "sha256": "cccf2d7a6c705ec991d5229a775e7fbd41fa6de57d4e3f33bbecb967c3055ef9"
-  }
+  },
+  "sha256": "1352bfd2bd79485a896b30b6482e100d543ce0ec02c69c0ed170bb39475fd6b5",
+  "revision": "e5cface32dfb246d86665bd9612361f505ebc6e5"
 }
