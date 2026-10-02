@@ -11,3 +11,7 @@ Evidence and exact scope: [weapon-color-diagnostic](../../evidence/weapon-color-
 Next step if correction is requested: include inactive ancestors in the weapon exclusion, verify authored material preservation and all bonus transitions, and select the appropriate integration gate. Existing source investigation and captures should be reused.
 
 Ownership: this worktree/branch and its ignored `unity/Builds/StarTournamentProvingGround.app` are retained for the follow-up. No foreign checkout or process was changed. Diagnostic completion does not establish human acceptance or release readiness.
+
+## Авторизованное исправление
+
+2026-10-02 пользователь поручил «давай исправим». Change `fix-world-weapon-colors`, source commit `2f19d2b`. Inactive ancestor lookup исправлен, добавлен regression; full make check и 24 native Player captures прошли. [Исправление, evidence и exact candidate](../../evidence/fix-world-weapon-colors/README.md). Human acceptance остаётся отдельной.

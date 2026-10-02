@@ -1,0 +1,30 @@
+{
+  "editmode": {
+    "result": "Passed",
+    "total": "289",
+    "passed": "289",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "251.4790543"
+  },
+  "playmode": {
+    "result": "Passed",
+    "total": "184",
+    "passed": "184",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "487.6407516"
+  },
+  "nativePlayer": {
+    "exitCode": 0,
+    "screenshots": 24,
+    "materialAssertions": "all 24 weapon/phase/view combinations passed",
+    "fixture": "frozen placement, snapshot damage timer 5->0; not natural pickup/expiry",
+    "runMode": "exclusive",
+    "startupRetry": "initial shared run stopped (exit 143) without captures; exclusive run complete"
+  },
+  "makeCheck": {
+    "exitCode": 0,
+    "sourceRevision": "2f19d2b107f07313d23f630b714bb4800517cf20"
+  }
+}

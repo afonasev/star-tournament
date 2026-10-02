@@ -1,0 +1,12 @@
+./unity/tools.sh test-edit
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/weapon-color-diagnostic/star-tournament/unity
+unity-run: started shared:3; guardian=96920 pid=96921
+unity-run: finished pid=96921 exit=0; capacity released
+./unity/tools.sh test-play
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/weapon-color-diagnostic/star-tournament/unity
+unity-run: started shared:2; guardian=98405 pid=98671
+unity-run: finished pid=98671 exit=0; capacity released
+./unity/tools.sh build
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/weapon-color-diagnostic/star-tournament/unity
+unity-run: started shared:2; guardian=1850 pid=1851
+unity-run: finished pid=1851 exit=0; capacity released
