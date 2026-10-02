@@ -19,8 +19,9 @@ namespace StarTournament.ProvingGround
         public readonly int Participant, Life;
         public readonly float HealthLost, ArmorLost;
         public readonly double Time;
-        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time)
-        { Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time; }
+        public readonly FatalImpact Impact;
+        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time,FatalImpact impact=default)
+        { Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time;Impact=impact; }
     }
     public enum PelletContact { Miss, World, Participant }
     public readonly struct PelletNotice
@@ -469,7 +470,12 @@ namespace StarTournament.ProvingGround
             var result = lives[seat].Damage(life, damage, killer < 0 ? null : Life(killer).ParticipantId, killerLife);
             var after=Life(seat);
             float healthLost=before.Health-after.Health,armorLost=before.Armor-after.Armor;
-            if(healthLost>0||armorLost>0)Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time));
+            if(healthLost>0||armorLost>0)
+            {
+                // Splash originates at the target capsule centre; lethal physics keeps the explosion centre.
+                var visualImpact=impact.Valid&&impact.Weapon==WeaponId.RocketLauncher?new FatalImpact(impact.Weapon,impact.Sequence,impact.Direction,Pose(seat).Position+Vector3.up*(movement.Get("player.capsule.height")*.5f),impact.ExplosionFraction):impact;
+                Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time,visualImpact));
+            }
             // Friendly splash can kill, but cannot earn enemy kill/assist rewards.
             int scorer=killer>=0&&killer!=seat&&Allied(killer,seat)?-1:killer;
             Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer);

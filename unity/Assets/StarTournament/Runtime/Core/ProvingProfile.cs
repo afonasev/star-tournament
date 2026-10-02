@@ -94,6 +94,15 @@ namespace StarTournament.ProvingGround
             }
             valueIndex=null;
         }
+        /// <summary>Exact trusted predecessor shared by pre-blood histories from before bonus alerts.</summary>
+        public ProvingProfile BeforeDamageBonusAlerts()
+        {
+            if(id!=DefaultId||FindDescriptor("audio.damageBonusSpawnGain")==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            bool Added(string path)=>path.StartsWith("audio.damageBonus",StringComparison.Ordinal)||path.StartsWith("ui.damageBonus",StringComparison.Ordinal);
+            copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
+            copy.version=Math.Min(copy.version,12);return copy;
+        }
         public ProvingProfile BeforeMovementAudio()
         {
             if(id!=DefaultId||FindDescriptor("audio.jumpGain")==null)return this;
