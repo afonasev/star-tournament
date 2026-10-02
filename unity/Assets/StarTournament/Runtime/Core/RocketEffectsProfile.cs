@@ -3,9 +3,16 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string RocketEffectsId="pulse-effects-v1";
+        public ProvingProfile BeforePulseRefinement()
+        {
+            if(id!=RocketEffectsId||version<2)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var added=new System.Collections.Generic.HashSet<string>{"pulseFx.fireFramesPerSecond","pulseFx.lightIntensity","pulseFx.lightSeconds","pulseFx.lightRangeScale","pulseFx.lightWarmth","pulseFx.lightOffsetScale","pulseFx.maxLights"};
+            p.descriptors.RemoveAll(d=>added.Contains(d.Path));p.values.RemoveAll(v=>added.Contains(v.Path));p.version=1;return p;
+        }
         public static ProvingProfile CreateRocketEffectsDefault()
         {
-            var p=new ProvingProfile{id=RocketEffectsId,version=1};
+            var p=new ProvingProfile{id=RocketEffectsId,version=2};
             p.Add("pulseFx.exhaustLength","rocket-effects","Пламя сопла · длина","Длина плотной горячей струи позади сопла.","meters",.05f,2,.01f,.46f);
             p.Add("pulseFx.exhaustWidth","rocket-effects","Пламя сопла · ширина","Ширина горячей струи у сопла.","meters",.01f,.5f,.01f,.12f);
             p.Add("pulseFx.trailSmokeSize","rocket-effects","Дым следа · размер","Диаметр лёгкого облачка позади ракеты.","meters",.02f,.6f,.01f,.13f);
@@ -35,6 +42,13 @@ namespace StarTournament.ProvingGround
             p.Add("pulseFx.smokeInitialScale","rocket-effects","Дым · начальный размер","Начальный диаметр облачка относительно его заданного размера.","ratio",.1f,1,.05f,.5f);
             p.Add("pulseFx.coreWarmth","rocket-effects","Ядро · теплота","Примесь оранжевого цвета Pulse в белом ядре.","ratio",0,1,.01f,.12f);
             p.Add("pulseFx.exhaustCoreRatio","rocket-effects","Сопло · длина ядра","Длина яркого ядра относительно пламени сопла.","ratio",.1f,1,.05f,.7f);
+            p.Add("pulseFx.fireFramesPerSecond","rocket-effects","Огонь · анимация","Частота смены деталей огня по часам матча.","frames-per-second",1,60,1,30);
+            p.Add("pulseFx.lightIntensity","rocket-effects","Свет · яркость","Пиковая интенсивность тёплой вспышки на поверхностях.","intensity",0,30,.1f,8);
+            p.Add("pulseFx.lightSeconds","rocket-effects","Свет · время","Время затухания света по часам матча.","seconds",.02f,1,.01f,.26f);
+            p.Add("pulseFx.lightRangeScale","rocket-effects","Свет · дальность","Дальность света относительно реального радиуса взрыва.","ratio",.1f,2,.05f,1.25f);
+            p.Add("pulseFx.lightWarmth","rocket-effects","Свет · теплота","Примесь оранжевого Pulse в белом свете.","ratio",0,1,.01f,.65f);
+            p.Add("pulseFx.lightOffsetScale","rocket-effects","Свет · отступ","Сдвиг обратно по траектории от контакта, относительно радиуса; улучшает освещение поверхности.","ratio",0,.4f,.01f,.15f);
+            p.Add("pulseFx.maxLights","rocket-effects","Свет · лимит","Максимум одновременно активных вспышек; приоритет свежим.","count",0,8,1,4);
             return p;
         }
     }

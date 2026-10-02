@@ -18,11 +18,13 @@ namespace StarTournament.ProvingGround
         void Failure(string message,string trace,LogType type){if(type==LogType.Exception)Application.Quit(1);}
         [Serializable]sealed class ContactEvidence{public string label;public int explosions,remainingRockets;public Vector3 contact;}
         [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena;public bool muted;public int width,height;public ContactEvidence[] contacts;}
+        [Serializable]sealed class VfxEvidence{public float gameplayRadius,flameEnvelope;public int activeLights;}
         IEnumerator Capture(string name)
         {
             ground.SendMessage("RefreshInterface");ground.SendMessage("LateUpdate");
             yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,(++captures).ToString("D2")+"-"+name+".png"));
             File.WriteAllText(Path.Combine(directory,captures.ToString("D2")+"-"+name+".json"),JsonUtility.ToJson(ground.Session.Capture(),true));
+            File.WriteAllText(Path.Combine(directory,captures.ToString("D2")+"-"+name+"-vfx.json"),JsonUtility.ToJson(new VfxEvidence{gameplayRadius=ground.Session.RocketBlastRadius,flameEnvelope=ground.RocketEffectsForReview.FlameEnvelope,activeLights=ground.RocketEffectsForReview.ActiveLights},true));
             yield return new WaitForSecondsRealtime(.15f);
         }
         void Tick(float seconds)
@@ -55,6 +57,8 @@ namespace StarTournament.ProvingGround
             Tick(.08f);yield return Capture(label+"-early");
             // Capture again without advancing session time: actual pause-freeze evidence.
             if(label=="floor")yield return Capture(label+"-paused");
+            if(label=="floor"||label=="wall")
+            {ground.RocketEffectsForReview.SetDiagnosticLights(false);yield return Capture(label+"-light-off");ground.RocketEffectsForReview.SetDiagnosticLights(true);yield return Capture(label+"-light-on");}
             Tick(.18f);yield return Capture(label+"-fire");Tick(.36f);yield return Capture(label+"-late");
             item.remainingRockets=ground.Session.Rockets.Length;if(item.remainingRockets!=0)throw new InvalidOperationException("Contact retained flight");
             ground.Session.RocketExploded-=observe;contacts.Add(item);
