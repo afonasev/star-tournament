@@ -166,6 +166,7 @@ namespace StarTournament.ProvingGround
         void PreviousSetupStep() { if(setupStep==0)ToMainMenu();else ShowSetupStep(setupStep-1); }
         string SetupBlockingReason()
         {
+            if(LocalSeatCount+botSetup.Count>AuthoredArenaCatalog.Maximum(SelectedMapId))return "Для этой карты нужно 2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участника";
             if(!ValidSetup())return LocalSeatCount+botSetup.Count<2?"Добавьте игрока или бота":"Для команд нужны обе команды";
             if(!input.Ready)return "Подключите устройства людей";
             if(!IdentitiesReady())return "Выберите профиль или гостя каждому человеку";
@@ -195,7 +196,7 @@ namespace StarTournament.ProvingGround
             seatsMinus.gameObject.SetActive(false);seatsPlus.gameObject.SetActive(false);rebind.gameObject.SetActive(false);setupBack.gameObject.SetActive(false);diagnosticButton.gameObject.SetActive(false);teamRow.SetActive(false);
             for(int i=0;i<seatIdentityButtons.Length;i++)seatIdentityButtons[i].gameObject.SetActive(
                 false);
-            setupSummary.text="КАРТА\nCombat Bowl · @"+CombatBowlCatalog.Revision+"\n\nПРАВИЛА\n"+
+            setupSummary.text="КАРТА\n"+AuthoredArenaCatalog.Name(SelectedMapId)+"\n\nПРАВИЛА\n"+
                 (SetupMode==NativeMatchMode.Teams?"Команды":"Каждый сам за себя")+" · "+Configuration.DurationMinutes+" мин"+
                 (Configuration.TargetEnabled?"\nЦель: "+Configuration.TargetPoints:"\nБез цели по очкам")+"\n\nСОСТАВ\n"+
                 botSetup.HumanCount(LocalSeatCount)+" человек · "+(LocalSeatCount-botSetup.HumanCount(LocalSeatCount)+botSetup.Count)+" AI";
@@ -208,7 +209,7 @@ namespace StarTournament.ProvingGround
             setupLabIdentity.gameObject.SetActive(!roster);
             Layout(setupSummary.rectTransform,roster?new Vector2(.02f,.38f):new Vector2(.07f,.53f),roster?new Vector2(.70f,.94f):new Vector2(.93f,.83f));
             setupSummary.fontSize=roster?24:20;
-            if(roster)setupSummary.text="COMBAT BOWL · @"+CombatBowlCatalog.Revision+"\n"+(SetupMode==NativeMatchMode.Teams?"Две команды":"Каждый за себя")+" · "+Configuration.DurationMinutes+" мин · "+(Configuration.TargetEnabled?"Цель: "+Configuration.TargetPoints:"Без цели по очкам");
+            if(roster)setupSummary.text=AuthoredArenaCatalog.Name(SelectedMapId)+"\n"+(SetupMode==NativeMatchMode.Teams?"Две команды":"Каждый за себя")+" · "+Configuration.DurationMinutes+" мин · "+(Configuration.TargetEnabled?"Цель: "+Configuration.TargetPoints:"Без цели по очкам");
             Layout(setupMessage.rectTransform,roster?new Vector2(.17f,.015f):new Vector2(.07f,.22f),roster?new Vector2(.70f,.36f):new Vector2(.93f,.34f));
             Layout((RectTransform)start.transform,roster?new Vector2(.74f,.16f):new Vector2(.07f,.02f),roster?new Vector2(.98f,.84f):new Vector2(.93f,.10f));
             Layout((RectTransform)setupPrevious.transform,roster?new Vector2(.02f,.015f):new Vector2(.07f,.12f),roster?new Vector2(.15f,.33f):new Vector2(.93f,.20f));
@@ -223,6 +224,9 @@ namespace StarTournament.ProvingGround
             setupScreen.transform.Find("setup-description").GetComponent<Text>().text=roster?"Выберите карточку, чтобы изменить участника. Свободный геймпад: Y — присоединиться.":"Выберите карту, задайте правила, соберите игроков и начните матч.";
             setupLabIdentity.text=LabSavedIdentity;
             RefreshRosterUi();
+            var mapCard=setupMapPage.transform.Find("selected-map");
+            mapCard.Find("map-name").GetComponent<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId).ToUpperInvariant();
+            mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
             setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"Значения сохраняются при переходе между шагами");
         }
         InputField CreateNameInput(Transform parent)

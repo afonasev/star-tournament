@@ -154,6 +154,16 @@
       "front": "+Z",
       "pivot": "center",
       "source": "Original build_pulse_projectile.py; hot impulse concept 1 selected 2026-10-02; no collision proxy, no gameplay LOD. Shared four-material mesh."
+    },
+    {
+      "key": "industrial-tunnel-panels",
+      "path": "Assets/StarTournament/Resources/IndustrialTunnels/steel-panels.png",
+      "sha256": "6f35b816ca385756caf67382cf9410727a34ee3d9315aefd633409c5ff1dc14c",
+      "source": "Built-in image_gen 2026-10-02; restrained worn graphite steel panel albedo",
+      "units": "UV repeat via tunnels.surface.tile",
+      "collision": "none",
+      "lighting": "albedo only; URP local lights",
+      "lod": "single repeating texture; Unity mipmaps"
     }
   ]
 }

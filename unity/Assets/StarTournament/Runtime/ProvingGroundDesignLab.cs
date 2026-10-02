@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
             labSavedIdentity=labHistory.SelectedProfileName+" · "+revision.Label+"\n"+labHistory.SelectedProfileId+"\nSHA256 "+revision.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring}};
         void InitializeDesignLab()
         {
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
@@ -69,6 +69,7 @@ namespace StarTournament.ProvingGround
         {
             switch(group)
             {
+                case "tunnel-light":return "Тоннели → Свет";case "tunnel-surface":return "Тоннели → Поверхности";
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
                 case "cutter-effects":return "Оружие → Резак · оформление";case "cutter-bots":return "Боты → Резак";case "cutter":return "Оружие → Резак";case "rocket-effects":return "Оружие → Pulse · оформление";case "rocket":return "Оружие → Pulse";case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
                 case "weapon-pickup":return "Бонусы → Оружие";case "full-heal":return "Бонусы → Полное исцеление";case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";

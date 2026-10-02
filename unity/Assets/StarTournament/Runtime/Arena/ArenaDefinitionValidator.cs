@@ -30,8 +30,9 @@ namespace StarTournament.ProvingGround
             if(definition.Solids==null || definition.Spawns==null || definition.RouteAnchors==null || definition.SpawnRegions==null || definition.Transitions==null)
                 return Reject("ARENA_INCOMPLETE_DEFINITION",family,null,"Canonical arena collections are required.");
 
-            if(definition.Pickups==null||definition.Pickups.Length==0||definition.Pickups.Any(x=>x==null)||!definition.Pickups.Any(x=>x.Kind==ArenaPickupKind.Armor)||!definition.Pickups.Any(x=>x.Kind==ArenaPickupKind.Speed))return Reject("ARENA_MISSING_PICKUPS",family,null,"Authored armor and speed definitions required.");
+            if(definition.Pickups==null||definition.Pickups.Length==0||definition.Pickups.Any(x=>x==null)||!definition.Pickups.Any(x=>x.Kind==ArenaPickupKind.Armor)||(definition.MapId==CombatBowlCatalog.Id&&!definition.Pickups.Any(x=>x.Kind==ArenaPickupKind.Speed)))return Reject("ARENA_MISSING_PICKUPS",family,null,"Authored armor and speed definitions required.");
             if(definition.ProfileFingerprint!="authored:"+definition.Identity)return Reject("ARENA_INVALID_PROFILE_IDENTITY",family,null,"Authored identity fingerprint required.");
+            if(definition.RouteAnchors.Length<2)return Reject("ARENA_MISSING_ROUTE_ANCHORS",family,null,"At least two route anchors required.");
             var ids=new HashSet<string>(StringComparer.Ordinal); var supports=new HashSet<string>(StringComparer.Ordinal);
             foreach(var solid in definition.Solids)
             {
@@ -49,7 +50,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<definition.Spawns.Length;i++) if(!OnNamedFloor(definition.Spawns[i],definition.Solids,supports)) return Reject("ARENA_INVALID_SPAWN",family,"spawn:"+i,"Spawn must resolve to a named floor support.");
             for(int i=0;i<definition.RouteAnchors.Length;i++) if(!OnNamedFloor(definition.RouteAnchors[i],definition.Solids,supports)) return Reject("ARENA_INVALID_ROUTE_ANCHOR",family,"route-anchor:"+i,"Route anchor must resolve to a named floor support.");
             if(!OnNamedFloor(definition.ArmorPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_ARMOR_PICKUP_ANCHOR",family,"armor-pickup","Armor pickup anchor must resolve to a named floor support.");
-            if(!OnNamedFloor(definition.SpeedPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_SPEED_PICKUP_ANCHOR",family,"speed-pickup","Speed pickup anchor must resolve to a named floor support.");
+            if(!definition.DisableSpeedPickup&&!OnNamedFloor(definition.SpeedPickupAnchor,definition.Solids,supports)) return Reject("ARENA_INVALID_SPEED_PICKUP_ANCHOR",family,"speed-pickup","Speed pickup anchor must resolve to a named floor support.");
 
             if(definition.HasDamagePickup&&!OnNamedFloor(definition.DamagePickupAnchor,definition.Solids,supports))return Reject("ARENA_INVALID_DAMAGE_PICKUP_ANCHOR",family,"damage-pickup","Damage anchor requires a named floor.");
             if(definition.Pickups==null||definition.Pickups.Length==0)return Reject("ARENA_MISSING_PICKUPS",family,null,"Authored pickup definitions required.");

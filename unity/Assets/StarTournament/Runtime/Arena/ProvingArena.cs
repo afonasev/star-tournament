@@ -108,6 +108,11 @@ namespace StarTournament.ProvingGround
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);
                 decoration.AddComponent<OrbitalLeaguePresentation>().Build(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
             }
+            else if(Definition.Identity==IndustrialTunnelsCatalog.Identity)
+            {
+                var decoration=new GameObject("Industrial tunnels presentation");decoration.transform.SetParent(transform,false);
+                decoration.AddComponent<IndustrialTunnelsPresentation>().Build(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
+            }
         }
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)
         {

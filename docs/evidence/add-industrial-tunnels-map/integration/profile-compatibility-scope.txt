@@ -1,0 +1,5 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=DesignLabHistoryTests|IndustrialTunnelsTests|RocketEffectsProfileTests
+revision=d366f43c736a0f0260721a1462f2d95721c18350
+?? ../docs/evidence/add-industrial-tunnels-map/player/
