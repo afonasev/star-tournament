@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround
         string Focus=>EventSystem.current.currentSelectedGameObject?.name;
         [Serializable] sealed class State
         {
-            public string classification="SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",state,focus,mapIdentity,labIdentity;
+            public string classification="SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",state,focus,mapIdentity,labIdentity,sourceRevision;
             public int width,height,participants,views,reviewSeed=20260928;
             public bool muted,editor;
         }
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
         {
             yield return null;yield return new WaitForEndOfFrame();
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));
-            File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(new State{state=name,focus=Focus,mapIdentity=CombatBowlCatalog.Identity,labIdentity=ground.LabSavedIdentity,width=Screen.width,height=Screen.height,participants=ground.LocalSeatCount+ground.SetupBotCount,views=ground.LocalSeatCount,muted=AudioListener.volume==0,editor=Object("roster-editor").activeInHierarchy},true));
+            File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(new State{state=name,focus=Focus,sourceRevision=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_SOURCE_REVISION"),mapIdentity=CombatBowlCatalog.Identity,labIdentity=ground.LabSavedIdentity,width=Screen.width,height=Screen.height,participants=ground.LocalSeatCount+ground.SetupBotCount,views=ground.LocalSeatCount,muted=AudioListener.volume==0,editor=Object("roster-editor").activeInHierarchy},true));
             yield return new WaitForSecondsRealtime(.3f);
         }
         IEnumerator Press(Gamepad pad,GamepadButton button)
@@ -72,6 +72,29 @@ namespace StarTournament.ProvingGround
             yield return Press(pad,GamepadButton.South);Click("setup-next");Click("setup-next");
             Check(ground.LocalSeatCount==1&&ground.SetupBotCount==1&&Input.DeviceAt(0)==pad&&Input.Ready,"Gamepad default roster invalid");
             yield return Capture("00-default-gamepad-one-human-one-bot");
+            if(args.Contains("-newBotFocusReview"))
+            {
+                for(int i=0;i<2;i++)
+                {
+                    int botCountBefore=ground.SetupBotCount;
+                    EventSystem.current.SetSelectedGameObject(Button("roster-add-bot").gameObject);
+                    yield return Press(pad,GamepadButton.South);
+                    Check(ground.SetupBotCount==botCountBefore+1&&Focus=="roster-done","New bot did not focus Done");
+                    Check(ground.SetupComposition().Read().Participants.Last().Difficulty==(int)NativeBotDifficulty.Normal,"New bot default changed");
+                    yield return Capture("01-new-bot-done-"+i);
+                    yield return Press(pad,GamepadButton.South);
+                    Check(!Object("roster-editor").activeInHierarchy&&Focus=="roster-card-"+(ground.LocalSeatCount+botCountBefore),"One A did not confirm bot");
+                    yield return Capture("02-confirmed-bot-"+i);
+                }
+                Click("roster-card-"+(ground.LocalSeatCount+ground.SetupBotCount-1));
+                Check(Focus=="roster-identity","Existing bot edit focus changed");
+                yield return Capture("03-existing-bot-difficulty");
+                InputSystem.RemoveDevice(pad);
+                File.WriteAllText(Path.Combine(directory,"complete.txt"),"PASS: added two Normal bots with synthetic gamepad; initial Done focus and one-A confirmation; existing editor retains difficulty focus. Human physical-controller acceptance pending.");
+                Debug.Log("NATIVE_NEW_BOT_FOCUS_REVIEW_COMPLETE "+directory);
+                Application.Quit();yield break;
+            }
+
             Invoke("ToMainMenu");
             Canvas.ForceUpdateCanvases();var entry=(RectTransform)Button("main-action-0").transform;
             var entryCenter=RectTransformUtility.WorldToScreenPoint(null,entry.TransformPoint(entry.rect.center));
