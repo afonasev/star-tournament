@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround
             return delta.sqrMagnitude<=capsuleRadius*capsuleRadius?point:axis+delta.normalized*capsuleRadius;
         }
         public float Damage(float distance,bool direct,float multiplier)
-            => direct?MaximumDamage:Mathf.Min(MaximumDamage,MaximumDamage*Mathf.Clamp01(1-distance/Radius)*multiplier);
+            => MaximumDamage*(direct?1:Mathf.Clamp01(1-distance/Radius))*multiplier;
         public PelletHit Contact(Vector3 origin,Vector3 direction,float limit,CombatTarget[] targets,int owner,int ownerLife)
         {
             int hit=-1;

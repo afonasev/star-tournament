@@ -31,7 +31,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var p=ProvingProfile.CreateNativeCombatDefault();var r=new ShotgunResolver(p,1.8f);
             foreach(HitZone zone in Enum.GetValues(typeof(HitZone)))
-            {Assert.That(r.FullDamage(zone,WeaponId.Rifle),Is.EqualTo(20));Assert.That(r.FullDamage(zone,WeaponId.Shotgun),Is.EqualTo(70));}
+            {Assert.That(r.FullDamage(zone,WeaponId.Rifle),Is.EqualTo(10));Assert.That(r.FullDamage(zone,WeaponId.Shotgun),Is.EqualTo(85));}
             foreach(var path in new[]{"rifle.damage","shot.damage","damage.friendlyMultiplier","damage.selfMultiplier"})Assert.That(p.Descriptor(path).Validate(out _),Is.True,path);
             p.Set("damage.friendlyMultiplier",.53f);Assert.That(p.Validate(),Is.Not.Empty);p.Set("damage.friendlyMultiplier",.5f);
             p.Set("damage.selfMultiplier",1.05f);Assert.That(p.Validate(),Is.Not.Empty);
@@ -66,7 +66,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             try
             {
                 var current=new LabBundle{Profiles=new System.Collections.Generic.List<ProvingProfile>{ProvingProfile.CreateNativeCombatDefault()}};
-                var old=current.Clone();old.Profiles[0]=old.Profiles[0].BeforeUnifiedBodyDamage();
+                var old=current.Clone();old.Profiles[0]=((ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(old.Profiles[0],null)).BeforeUnifiedBodyDamage();
                 var h=new DesignLabHistory(path,old);h.Create("История");var draft=h.Selected.Snapshot;draft.Set("rifle.head",44);draft.Set("rifle.torso",27);draft.Set("shot.torso",81);h.Save(draft);
                 var prior=h.Selected;string id=h.SelectedProfileId;
                 var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);

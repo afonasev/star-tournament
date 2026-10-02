@@ -66,24 +66,33 @@ namespace StarTournament.ProvingGround
             for (int i = 0; i < targets.Length; i++)
             {
                 if (targets[i].Seat == shooter && (shooterLife==0 || targets[i].Life==shooterLife)) continue;
-                var inverse = Quaternion.Euler(0, -targets[i].Pose.Yaw, 0);
-                Vector3 o = inverse * (origin - targets[i].Pose.Position), d = inverse * direction;
-                void Consider(float distance, HitZone zone)
-                {
-                    // Strict comparison makes world occlusion win exact ties; roster order breaks target ties.
-                    if (distance >= 0 && distance < nearest) { nearest = distance; targetIndex = i; selected = zone; }
-                }
-                Consider(Sphere(o, d, Vector3.up * headY, headRadius), HitZone.Head);
-                var bounds = new Bounds(Vector3.up * torsoY, new Vector3(torsoX, torsoHeight, torsoZ) * 2);
-                if(bounds.Contains(o))Consider(0,HitZone.Torso);
-                else if (bounds.IntersectRay(new Ray(o, d), out float torso)) Consider(torso, HitZone.Torso);
-                for (int side = -1; side <= 1; side += 2)
-                {
-                    Consider(Capsule(o, d, side * armX, armBottom, armTop, armRadius), HitZone.Limb);
-                    Consider(Capsule(o, d, side * legX, legBottom, legTop, legRadius), HitZone.Limb);
-                }
+                var hit=ResolveTarget(origin,direction,targets[i],nearest);
+                if(hit.TargetIndex>=0){nearest=hit.Distance;targetIndex=i;selected=hit.Zone;}
+
             }
             return new PelletHit(targetIndex, selected, nearest);
+        }
+        /// <summary>Same head/torso/limb intersection for every weapon; callers decide participant blocking.</summary>
+        public PelletHit ResolveTarget(Vector3 origin,Vector3 direction,CombatTarget target,float limit)
+        {
+            float nearest=limit;bool found=false;HitZone selected=default;
+            var inverse = Quaternion.Euler(0, -target.Pose.Yaw, 0);
+            Vector3 o = inverse * (origin - target.Pose.Position), d = inverse * direction;
+            void Consider(float distance, HitZone zone)
+            {
+                // Strict comparison makes world occlusion win exact ties; roster order breaks target ties.
+                if (distance >= 0 && distance < nearest) { nearest = distance; found = true; selected = zone; }
+            }
+            Consider(Sphere(o, d, Vector3.up * headY, headRadius), HitZone.Head);
+            var bounds = new Bounds(Vector3.up * torsoY, new Vector3(torsoX, torsoHeight, torsoZ) * 2);
+            if(bounds.Contains(o))Consider(0,HitZone.Torso);
+            else if (bounds.IntersectRay(new Ray(o, d), out float torso)) Consider(torso, HitZone.Torso);
+            for (int side = -1; side <= 1; side += 2)
+            {
+                Consider(Capsule(o, d, side * armX, armBottom, armTop, armRadius), HitZone.Limb);
+                Consider(Capsule(o, d, side * legX, legBottom, legTop, legRadius), HitZone.Limb);
+            }
+            return new PelletHit(found?0:-1,selected,nearest);
         }
         static float Sphere(Vector3 o, Vector3 d, Vector3 center, float radius)
         {
