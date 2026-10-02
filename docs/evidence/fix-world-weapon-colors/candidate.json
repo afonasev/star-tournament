@@ -1,0 +1,11 @@
+{
+  "sourceRevision": "2f19d2b107f07313d23f630b714bb4800517cf20",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/releases/fix-world-weapon-colors/2f19d2b107f07313d23f630b714bb4800517cf20/StarTournamentProvingGround.app",
+  "executableSha256": "82af15984f4b3b95c35045a94736382ddf31b13ca55f0b631e59c6bb04686bbb",
+  "releaseIdentity": "local-macos-player-candidate/2f19d2b107f07313d23f630b714bb4800517cf20/fix-world-weapon-colors",
+  "buildPass": [
+    "STAR_PROVING_BUILD_PASS 471688301"
+  ],
+  "mutedQa": true,
+  "humanAcceptance": false
+}

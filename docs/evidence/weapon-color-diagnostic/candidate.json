@@ -1,0 +1,20 @@
+{
+  "baseRevision": "706f7a849dfb6b60ee6db479da850ad13e7916b9",
+  "branch": "codex/weapon-color-diagnostic",
+  "diagnosticOnly": true,
+  "fixture": "frozen eight actors, local participant 7, remote participant 0; snapshot boost 5 seconds then reset to 0",
+  "muted": true,
+  "humanAcceptance": false,
+  "screen": "1920x1080",
+  "complete": {
+    "complete": true,
+    "muted": true,
+    "placementAndSnapshotFixture": true,
+    "humanAcceptance": false
+  },
+  "checksums": {
+    "unity/Builds/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground": "2074ac35bd003204b1e4fc01d8b3c9e4a7617b9ba15af70ab4f274deefeb3596",
+    "unity/Assets/StarTournament/Runtime/NativeWeaponColorReview.cs": "bb6fc223a1676207f208b3bc4e9f8e19b5ac4e92a3503a480478574aa125926e",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "598a702c041a47a9490f4e9e880941bb91b91523c825f3c999847fcf6f557440"
+  }
+}

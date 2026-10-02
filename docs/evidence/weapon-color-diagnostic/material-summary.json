@@ -1,0 +1,218 @@
+[
+  {
+    "weapon": "Rifle",
+    "phase": "normal",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Rifle",
+    "phase": "normal",
+    "view": "own",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Rifle",
+    "phase": "boost",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 35
+    },
+    "redOverrides": 35
+  },
+  {
+    "weapon": "Rifle",
+    "phase": "boost",
+    "view": "own",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 35
+  },
+  {
+    "weapon": "Rifle",
+    "phase": "restored",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Rifle",
+    "phase": "restored",
+    "view": "own",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Shotgun",
+    "phase": "normal",
+    "view": "remote",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Shotgun",
+    "phase": "normal",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Shotgun",
+    "phase": "boost",
+    "view": "remote",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 8
+  },
+  {
+    "weapon": "Shotgun",
+    "phase": "boost",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 8
+  },
+  {
+    "weapon": "Shotgun",
+    "phase": "restored",
+    "view": "remote",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Shotgun",
+    "phase": "restored",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "RocketLauncher",
+    "phase": "normal",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "RocketLauncher",
+    "phase": "normal",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "RocketLauncher",
+    "phase": "boost",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 6
+    },
+    "redOverrides": 6
+  },
+  {
+    "weapon": "RocketLauncher",
+    "phase": "boost",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 6
+  },
+  {
+    "weapon": "RocketLauncher",
+    "phase": "restored",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "RocketLauncher",
+    "phase": "restored",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Cutter",
+    "phase": "normal",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 4
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Cutter",
+    "phase": "normal",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Cutter",
+    "phase": "boost",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 4
+    },
+    "redOverrides": 4
+  },
+  {
+    "weapon": "Cutter",
+    "phase": "boost",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 4
+  },
+  {
+    "weapon": "Cutter",
+    "phase": "restored",
+    "view": "remote",
+    "shaderSlots": {
+      "StarTournament/TrooperIdentity": 4
+    },
+    "redOverrides": 0
+  },
+  {
+    "weapon": "Cutter",
+    "phase": "restored",
+    "view": "own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 0
+  }
+]
