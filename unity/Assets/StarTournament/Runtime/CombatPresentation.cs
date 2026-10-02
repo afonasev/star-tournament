@@ -104,6 +104,7 @@ namespace StarTournament.ProvingGround
         readonly NativeCombatSession session;
         readonly BloodPresentation bloodPresentation;
         readonly RocketPresentation rocketPresentation;
+        internal RocketPresentation RocketEffectsForReview=>rocketPresentation;
         readonly RifleBulletPresentation riflePresentation;
         readonly CutterPresentation cutterPresentation;
         readonly ProvingProfile movement, tuning, deathProfile;

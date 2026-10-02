@@ -23,6 +23,7 @@ namespace StarTournament.ProvingGround
         CharacterMotor[] motors = Array.Empty<CharacterMotor>();
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
         readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount], names = new Text[SeatInputCoordinator.SeatCount];
+        internal RocketPresentation RocketEffectsForReview=>presentation?.RocketEffectsForReview;
         public ProvingProfile RocketEffectsProfile = ProvingProfile.CreateRocketEffectsDefault();
         public ProvingProfile CutterProfile = ProvingProfile.CreateCutterDefault();
         public ProvingProfile LifeProfile = ProvingProfile.CreateCombatDefault();

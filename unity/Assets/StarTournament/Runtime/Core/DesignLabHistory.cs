@@ -45,6 +45,7 @@ namespace StarTournament.ProvingGround
         // Approved audit: engine/query controls, obsolete fields and fixed asset placement stay in
         // snapshots for compatibility, but are never exposed as designer balance controls.
         static readonly HashSet<string> AuditedExclusions=new HashSet<string>{
+            "presentation.rocketExplosionSize", // Obsolete independent VFX radius; preserved in immutable history.
             "input.gamepadDegreesPerSecond", // Legacy shared-axis value retained only for revision migration.
             "navigation.sampleDistance","world.maximumTransitionSegment","world.minimumSupportHeight","simulation.fixedTickHz",
             "light.shadowResolution","light.shadowBias","light.shadowNormalBias","light.shadowCasters",
@@ -234,9 +235,11 @@ namespace StarTournament.ProvingGround
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 var withoutDiscreteIdentityPanels=Cached(p=>p.BeforeDiscreteIdentityPanels());
+                var withoutPulseRefinement=Cached(p=>p.BeforePulseRefinement());
                 var withoutIdentitySurface=Cached(p=>p.BeforeIdentitySurface());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
