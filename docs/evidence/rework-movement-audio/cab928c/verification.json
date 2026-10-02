@@ -1,0 +1,38 @@
+{
+  "revision": "cab928c2fb246bb2b433be3e8908d5ec9b1903fb",
+  "build_marker": [
+    "STAR_PROVING_BUILD_PASS 471392649"
+  ],
+  "base_verification": "../805916e/verification.json",
+  "integration_delta": "Merged20bbf83 current main; only1-line new bot editor focus plus native QA/tests/docs. No movement/audio/defaults change.",
+  "affected_checks": {
+    "passed": 7,
+    "failed": 0,
+    "xml": "integration-tests/playmode.xml",
+    "scope": "FourPlayerMenuTests;NativeAudioRoutingTests"
+  },
+  "human_acceptance": "pending",
+  "smoke": {
+    "exit_code": 0,
+    "muted": true,
+    "synthetic_devices": true,
+    "viewports": [
+      1,
+      4
+    ],
+    "result": "player-smoke/result.txt",
+    "log": "player.log",
+    "event_counts": {
+      "1": {
+        "step": 13,
+        "jump": 3,
+        "land": 9
+      },
+      "4": {
+        "step": 31,
+        "jump": 11,
+        "land": 16
+      }
+    }
+  }
+}

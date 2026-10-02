@@ -1,0 +1,36 @@
+[
+  {
+    "directory": "/Users/eaafonasev/Projects/star-tournament/.local/candidates/movement-audio/805916e-f14a3d383387",
+    "source_revision": "805916e0d3ed26dbb2cbc2fd156e89d9a523b03c",
+    "app_path": "/Users/eaafonasev/Projects/star-tournament/.local/candidates/movement-audio/805916e-f14a3d383387/StarTournamentProvingGround.app",
+    "app_tree_sha256": "f14a3d383387dd1cd37f2e8688d14793d1162cd81522f55f8769a6e914fe0eaa",
+    "build_marker": [
+      "STAR_PROVING_BUILD_PASS 471390907"
+    ],
+    "owner": "rework-movement-audio",
+    "platform": "macOS",
+    "status": "retain until final cab928c Player verified; then superseded unaccepted iteration"
+  },
+  {
+    "directory": "/Users/eaafonasev/Projects/star-tournament/.local/candidates/movement-audio/fb7adc7-05b7d6392dbb",
+    "source_revision": "fb7adc7cf457e072730c7a3412444797e44eea59",
+    "app_path": "/Users/eaafonasev/Projects/star-tournament/.local/candidates/movement-audio/fb7adc7-05b7d6392dbb/StarTournamentProvingGround.app",
+    "app_tree_sha256": "05b7d6392dbb3ff4c324990513335585a233bb9178f0ba0d6757971337444ba4",
+    "build_marker": [
+      "STAR_PROVING_BUILD_PASS 471390358"
+    ],
+    "owner": "rework-movement-audio",
+    "platform": "macOS",
+    "status": "retain until final cab928c Player verified; then superseded unaccepted iteration"
+  },
+  {
+    "directory": "/Users/eaafonasev/Projects/star-tournament/.local/candidates/movement-audio/79614bc-1297a20f2baa",
+    "source_revision": "79614bcc718291293c8ac6a06795ceb721f5efcc",
+    "app_path": "/Users/eaafonasev/Projects/star-tournament/.local/candidates/movement-audio/79614bc-1297a20f2baa/StarTournamentProvingGround.app",
+    "app_tree_sha256": "1297a20f2baaee67e7beab5f8cca1f81f22d682b413d1afa39501cb08ddcb9a2",
+    "build_marker": "STAR_PROVING_BUILD_PASS 471388939",
+    "owner": "rework-movement-audio",
+    "platform": "macOS",
+    "status": "superseded unaccepted iteration after final cab928c verification"
+  }
+]

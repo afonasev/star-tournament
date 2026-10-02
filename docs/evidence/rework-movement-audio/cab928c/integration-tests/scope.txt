@@ -1,0 +1,4 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=FourPlayerMenuTests;NativeAudioRoutingTests
+revision=cab928c2fb246bb2b433be3e8908d5ec9b1903fb
