@@ -125,6 +125,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(preserved.Snapshot.Profiles.Any(p=>p.Id==ProvingProfile.RocketEffectsId),Is.False);
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
+        [TestCase(1)][TestCase(2)]public void SerializedPulseProfileUpgradesAtStartupAndPreservesTuning(int priorVersion)
+        {
+            var profile=ProvingProfile.CreateRocketEffectsDefault();profile=priorVersion==1?profile.BeforePulseRefinement():profile.BeforePulseVisibility();
+            profile.Set("pulseFx.fireSizeVariation",.7f);profile.EnsureRocketEffectsDescriptors();
+            Assert.That(profile.Version,Is.EqualTo(3));Assert.That(profile.Get("pulseFx.blastRadiusScale"),Is.EqualTo(.8f));
+            Assert.That(profile.Get("pulseFx.fireSizeVariation"),Is.EqualTo(.7f));
+            string json=JsonUtility.ToJson(profile);profile.EnsureRocketEffectsDescriptors();Assert.That(JsonUtility.ToJson(profile),Is.EqualTo(json));
+        }
+        [Test]public void PulseV2VisibilityUpgradePreservesHistoryAndUsesSelectedScale()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforePulseVisibility()).ToList();
+            Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.RocketEffectsId).Version,Is.EqualTo(2));
+            var history=new DesignLabHistory(path,old);history.Create("Pulse v2");var draft=history.Selected.Snapshot;
+            draft.Set("pulseFx.lightIntensity",6);history.Save(draft);var prior=history.Selected;string json=JsonUtility.ToJson(prior.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.blastRadiusScale"),Is.EqualTo(.8f));
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.lightIntensity"),Is.EqualTo(6));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(prior.Hash));Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(json));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         LabRevision SeedLegacyPulseSize(DesignLabHistory history,float value)
         {
             // Simulate a file saved by v1 when this control was editable. Current UI correctly hides it.

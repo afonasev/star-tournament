@@ -74,17 +74,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest]public IEnumerator FlameEnvelopeFollowsFrozenRadiusAndIgnoresLegacySizeAtExtremeShapeSettings()
         {
-            foreach(float radius in new[]{2f,8f})foreach(float legacy in new[]{.1f,8f})foreach(float variation in new[]{0f,.8f})
+            foreach(float radius in new[]{2f,8f})foreach(float legacy in new[]{.1f,8f})foreach(float variation in new[]{0f,.8f})foreach(float visualScale in new[]{.1f,.8f,1f})
             {
                 presentation.Dispose();yield return null;
                 profile.Set("presentation.rocketExplosionSize",legacy);
                 var combat=ProvingProfile.CreateNativeCombatDefault();combat.Set("rocket.radius",radius);
                 session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),profile,ProvingProfile.CreateCombatDefault(),combat);EquippedCombatFixture.Equip(session);
                 var a=new LocalAction[2];a[0].SelectWeapon=WeaponSelection.RocketLauncher;session.Tick(a,.02f);Advance(1.3f);
-                var fx=ProvingProfile.CreateRocketEffectsDefault();fx.Set("pulseFx.fireSizeVariation",variation);fx.Set("pulseFx.fireSpreadScale",variation==0?.1f:1.5f);fx.Set("pulseFx.fireLobeScale",variation==0?2:.1f);
+                var fx=ProvingProfile.CreateRocketEffectsDefault();fx.Set("pulseFx.blastRadiusScale",visualScale);fx.Set("pulseFx.fireSizeVariation",variation);fx.Set("pulseFx.fireSpreadScale",variation==0?.1f:1.5f);fx.Set("pulseFx.fireLobeScale",variation==0?2:.1f);
                 presentation=new RocketPresentation(session,profile,owner.transform,effects:fx);Contact(Flight());
-                Assert.That(presentation.FlameEnvelope,Is.LessThanOrEqualTo(radius+.001f));
-                if(variation==0)Assert.That(presentation.FlameEnvelope,Is.EqualTo(radius).Within(.001f));
+                Assert.That(presentation.FlameEnvelope,Is.LessThanOrEqualTo(radius*visualScale+.001f));
+                if(variation==0)Assert.That(presentation.FlameEnvelope,Is.EqualTo(radius*visualScale).Within(.001f));
                 var fire=owner.GetComponentsInChildren<ParticleSystem>().Single(p=>p.name=="Fire lobes");var particles=new ParticleSystem.Particle[24];int count=fire.GetParticles(particles);
                 Assert.That(particles.Take(count).All(p=>p.startSize>0&&!float.IsNaN(p.startSize)),Is.True);
             }

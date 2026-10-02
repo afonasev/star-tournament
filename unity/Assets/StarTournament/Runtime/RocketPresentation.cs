@@ -169,7 +169,7 @@ namespace StarTournament.ProvingGround
         void Set(ParticleSystem ps,int count){ps.SetParticles(particles,count);ps.Pause();}
         void DrawBurst(Burst b)
         {
-            float age=Mathf.Max(0,(float)(session.Time-b.Time)),life=P("rocketExplosionSeconds"),t=Mathf.Clamp01(age/life),radius=b.Radius;
+            float age=Mathf.Max(0,(float)(session.Time-b.Time)),life=P("rocketExplosionSeconds"),t=Mathf.Clamp01(age/life),radius=b.Radius*F("blastRadiusScale");
             // Authored eased expansion/fade shape. All absolute scales/counts/times have Lab metadata.
             int fire=t<1?(int)F("fireCount"):0;
             for(int i=0;i<fire;i++)
@@ -184,7 +184,7 @@ namespace StarTournament.ProvingGround
             }
             var sheet=b.Fire.textureSheetAnimation;sheet.frameOverTime=new ParticleSystem.MinMaxCurve((Mathf.Floor(age*F("fireFramesPerSecond"))%16)/16f);
             Set(b.Fire,fire);
-            float lightPhase=Mathf.Clamp01(age/F("lightSeconds"));b.Light.range=radius*F("lightRangeScale");
+            float lightPhase=Mathf.Clamp01(age/F("lightSeconds"));b.Light.range=b.Radius*F("lightRangeScale");
             b.Light.color=Color.Lerp(Color.white,Hot,F("lightWarmth"));b.Light.intensity=F("lightIntensity")*(1-lightPhase)*(1-lightPhase);
             float core=Mathf.Clamp01(age/F("coreSeconds"));
             Particle(0,b.Center,radius*F("coreScale")*(1+core),CoreColor((1-core)*(1-core)),Vector3.zero,b.Id);Set(b.Core,core<1?1:0);

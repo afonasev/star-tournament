@@ -3,16 +3,31 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string RocketEffectsId="pulse-effects-v1";
+        public ProvingProfile BeforePulseVisibility()
+        {
+            if(id!=RocketEffectsId||version<3)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            p.descriptors.RemoveAll(d=>d.Path=="pulseFx.blastRadiusScale");p.values.RemoveAll(v=>v.Path=="pulseFx.blastRadiusScale");p.version=2;return p;
+        }
         public ProvingProfile BeforePulseRefinement()
         {
             if(id!=RocketEffectsId||version<2)return this;
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
-            var added=new System.Collections.Generic.HashSet<string>{"pulseFx.fireFramesPerSecond","pulseFx.lightIntensity","pulseFx.lightSeconds","pulseFx.lightRangeScale","pulseFx.lightWarmth","pulseFx.lightOffsetScale","pulseFx.maxLights"};
+            var added=new System.Collections.Generic.HashSet<string>{"pulseFx.blastRadiusScale","pulseFx.fireFramesPerSecond","pulseFx.lightIntensity","pulseFx.lightSeconds","pulseFx.lightRangeScale","pulseFx.lightWarmth","pulseFx.lightOffsetScale","pulseFx.maxLights"};
             p.descriptors.RemoveAll(d=>added.Contains(d.Path));p.values.RemoveAll(v=>added.Contains(v.Path));p.version=1;return p;
+        }
+        public void EnsureRocketEffectsDescriptors()
+        {
+            valueIndex=null;
+            var current=CreateRocketEffectsDefault();
+            foreach(var descriptor in current.Descriptors)
+                if(FindDescriptor(descriptor.Path)==null)
+                {descriptors.Add(descriptor);values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});}
+            version=current.Version;
         }
         public static ProvingProfile CreateRocketEffectsDefault()
         {
-            var p=new ProvingProfile{id=RocketEffectsId,version=2};
+            var p=new ProvingProfile{id=RocketEffectsId,version=3};
             p.Add("pulseFx.exhaustLength","rocket-effects","Пламя сопла · длина","Длина плотной горячей струи позади сопла.","meters",.05f,2,.01f,.46f);
             p.Add("pulseFx.exhaustWidth","rocket-effects","Пламя сопла · ширина","Ширина горячей струи у сопла.","meters",.01f,.5f,.01f,.12f);
             p.Add("pulseFx.trailSmokeSize","rocket-effects","Дым следа · размер","Диаметр лёгкого облачка позади ракеты.","meters",.02f,.6f,.01f,.13f);
@@ -49,6 +64,7 @@ namespace StarTournament.ProvingGround
             p.Add("pulseFx.lightWarmth","rocket-effects","Свет · теплота","Примесь оранжевого Pulse в белом свете.","ratio",0,1,.01f,.65f);
             p.Add("pulseFx.lightOffsetScale","rocket-effects","Свет · отступ","Сдвиг обратно по траектории от контакта, относительно радиуса; улучшает освещение поверхности.","ratio",0,.4f,.01f,.15f);
             p.Add("pulseFx.maxLights","rocket-effects","Свет · лимит","Максимум одновременно активных вспышек; приоритет свежим.","count",0,8,1,4);
+            p.Add("pulseFx.blastRadiusScale","rocket-effects","Взрыв · визуальный радиус","Масштаб огня, ядра и дыма относительно игрового радиуса; меньший масштаб сохраняет обзор, не меняя урон и свет.","ratio",.1f,1,.05f,.8f);
             return p;
         }
     }

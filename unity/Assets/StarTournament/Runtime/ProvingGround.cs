@@ -171,6 +171,7 @@ namespace StarTournament.ProvingGround
             MatchProfile.EnsureMatchDescriptors();
             TrooperProfile.EnsureTrooperDescriptors();
             ParticipantPaletteProfile.EnsureIdentitySurfaceDescriptors();
+            RocketEffectsProfile.EnsureRocketEffectsDescriptors();
             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             InitializeDesignLab();

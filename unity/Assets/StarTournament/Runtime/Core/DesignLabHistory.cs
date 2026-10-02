@@ -237,11 +237,13 @@ namespace StarTournament.ProvingGround
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 var withoutDiscreteIdentityPanels=Cached(p=>p.BeforeDiscreteIdentityPanels());
+                var withoutPulseVisibility=Cached(p=>p.BeforePulseVisibility());
                 var withoutPulseRefinement=Cached(p=>p.BeforePulseRefinement());
                 var withoutIdentitySurface=Cached(p=>p.BeforeIdentitySurface());
                 var beforeBloodIntensity=Cached(p=>p.BeforeBloodIntensityIncrease());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseVisibility))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
@@ -270,7 +272,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeTravelingRifle))));
                 // Add the current gameplay registry only after historical transforms: identical
                 // legacy schema keys can otherwise discard the actual pre-rebalance defaults.
-                var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
                 // Blood defaults can be retuned independently of the gameplay registry upgrade.
                 // Include that exact combination without rewriting historical snapshots.
                 predecessors=predecessors.Concat(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity)))).ToArray();
