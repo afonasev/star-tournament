@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors()
         {
             var prior=typeof(ProvingProfile).GetMethod("BeforeIdentitySurface",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
             var history=new DesignLabHistory(path,old);history.Create("Мои цвета");
             var draft=history.Selected.Snapshot;draft.Set("participant.color.blue.r",70);history.Save(draft);
             var previous=history.Selected;
@@ -29,7 +29,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void DiscretePanelUpgradePreservesV2SurfaceTuningAndHistory()
         {
             var prior=typeof(ProvingProfile).GetMethod("BeforeDiscreteIdentityPanels",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
             var history=new DesignLabHistory(path,old);history.Create("Мои панели");
             var draft=history.Selected.Snapshot;draft.Set("participant.surface.detailGain",7);draft.Set("participant.color.blue.r",70);history.Save(draft);
             var previous=history.Selected;
@@ -40,9 +40,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
+        [Test]public void CombinedPulseV1AndPaletteV2UpgradePreservesCustomHistory()
+        {
+            var palette=typeof(ProvingProfile).GetMethod("BeforeDiscreteIdentityPanels",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)palette.Invoke(p.BeforePulseRefinement(),null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой Pulse и панели");
+            var draft=history.Selected.Snapshot;draft.Set("pulseFx.fireSizeVariation",.7f);draft.Set("participant.surface.detailGain",7);history.Save(draft);
+            var prior=SeedLegacyPulseSize(history,7);string json=JsonUtility.ToJson(prior.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireSizeVariation"),Is.EqualTo(.7f));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.detailGain"),Is.EqualTo(7));
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.lightSeconds"),Is.EqualTo(.26f));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.shellStart"),Is.EqualTo(.09f));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(prior.Hash));Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(json));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [TestCase(false)][TestCase(true)]public void MovementAudioUpgradePreservesV11HistoryAndCustomMix(bool beforeCompactMenu)
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeMovementAudio()).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>p.BeforeMovementAudio()).ToList();
             if(beforeCompactMenu)old.Profiles=old.Profiles.Select(p=>p.BeforeCompactMatchMenu()).ToList();
             Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(11));
             var history=new DesignLabHistory(path,old);history.Create("Мой микс");
@@ -58,7 +74,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null)).Select(p=>p.BeforeAudio()).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null)).Select(p=>p.BeforeAudio()).ToList();
             if(beforeVignette)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageVignette()).ToList();
             Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(beforeVignette?7:8));
             var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
@@ -74,9 +90,11 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath),Is.False);
         }
+        static LabBundle BeforeRebalance(LabBundle bundle)
+        {bundle.Profiles=bundle.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();return bundle;}
         [Test]public void MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots()
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();
             var original=new DesignLabHistory(path,old);original.Create("Immutable");
             string sourceFile=File.ReadAllText(path),originalHash=original.Selected.Hash;
             var metadataVariants=new[]{"First trusted label","Second trusted label","Third trusted label","First trusted label"};
@@ -97,8 +115,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.RocketEffectsId);
             var history=new DesignLabHistory(path,old);history.Create("Мой Pulse");
-            var draft=history.Selected.Snapshot;draft.Set("presentation.rocketExplosionSize",2.4f);history.Save(draft);
-            var prior=history.Selected;
+            var prior=SeedLegacyPulseSize(history,2.4f);
             var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
             Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireCount"),Is.EqualTo(9));
             foreach(var d in ProvingProfile.CreateRocketEffectsDefault().Descriptors)Assert.That(upgraded.Selected.Snapshot.Domain(d.Path),Is.EqualTo("Presentation"));
@@ -108,11 +125,32 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(preserved.Snapshot.Profiles.Any(p=>p.Id==ProvingProfile.RocketEffectsId),Is.False);
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
+        LabRevision SeedLegacyPulseSize(DesignLabHistory history,float value)
+        {
+            // Simulate a file saved by v1 when this control was editable. Current UI correctly hides it.
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var revision=file.Profiles.Single(p=>p.Id==history.SelectedProfileId).Revisions.Single(r=>r.Number==history.Selected.Number);
+            revision.Snapshot.Set("presentation.rocketExplosionSize",value);revision.Hash=revision.Snapshot.Hash();
+            File.WriteAllText(path,JsonUtility.ToJson(file));return revision;
+        }
+        [Test]public void PulseV1RevisionMigratesLightMetadataWithoutChangingItsHashOrCustomValues()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforePulseRefinement()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Pulse v1");var draft=history.Selected.Snapshot;
+            draft.Set("pulseFx.fireSizeVariation",.7f);history.Save(draft);
+            var seeded=SeedLegacyPulseSize(history,7);string hash=seeded.Hash,json=JsonUtility.ToJson(seeded.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.lightSeconds"),Is.EqualTo(.26f));
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireSizeVariation"),Is.EqualTo(.7f));
+            Assert.That(upgraded.Selected.Snapshot.IsVisible("presentation.rocketExplosionSize"),Is.False);
+            Assert.That(JsonUtility.ToJson(upgraded.SelectedProfile.Revisions.Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(json));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
         {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
         [Test]public void TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning()
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();
             var history=new DesignLabHistory(path,old);history.Create("Hitscan");
             var draft=history.Selected.Snapshot;draft.Set("rifle.range",120);draft.Set("rifle.head",44);draft.Set("rifle.torso",31);history.Save(draft);
             var before=history.Selected;string hash=before.Hash;int revision=before.Number;
@@ -128,7 +166,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory()
         {
             var beforePulse=typeof(ProvingProfile).GetMethod("BeforePulse",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
-            var old=Shipped();old.Profiles=old.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId && p.Id!="cutter-beam-v1").Select(p=>(ProvingProfile)beforePulse.Invoke(p.BeforeUnifiedBodyDamage().BeforeTravelingRifle(),null)).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId && p.Id!="cutter-beam-v1").Select(p=>(ProvingProfile)beforePulse.Invoke(p.BeforeUnifiedBodyDamage().BeforeTravelingRifle(),null)).ToList();
             Assert.That(old.Profiles.Single(p=>p.Id=="unity-native-combat-v1").Version,Is.EqualTo(3));
             Assert.That(old.Descriptors.Any(d=>d.Path=="rifle.range"),Is.True);
             var history=new DesignLabHistory(path,old);history.Create("До Pulse");var draft=history.Selected.Snapshot;draft.Set("rifle.head",44);draft.Set("rifle.torso",31);history.Save(draft);
@@ -136,7 +174,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void AudioUpgradePreservesOldRevisionHashAndCustomCombatValues()
         {
-            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var old=BeforeRebalance(Shipped());var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             var beforeLook=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
             old.Profiles[old.Profiles.IndexOf(current)]=beforeLook.BeforeAudio();
             Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(8));
@@ -151,7 +189,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory()
         {
-            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var old=BeforeRebalance(Shipped());var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
             var history=new DesignLabHistory(path,old);history.Create("Старые шаги");
             string oldHash=history.Selected.Hash;
@@ -163,7 +201,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void FootstepMixUpgradeKeepsCustomOldInterval()
         {
-            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var old=BeforeRebalance(Shipped());var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
             var history=new DesignLabHistory(path,old);history.Create("Свои шаги");
             var draft=history.Selected.Snapshot;draft.Set("audio.footstepDistanceMeters",3.4f);history.Save(draft);
@@ -189,7 +227,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void GamepadUpgradePreservesAudioOnlyRevisionHash()
         {
-            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var old=BeforeRebalance(Shipped());var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             var prior=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
             Assert.That(prior.Version,Is.EqualTo(9));
             old.Profiles[old.Profiles.IndexOf(current)]=prior;
@@ -203,7 +241,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues()
         {
-            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
+            var old=BeforeRebalance(Shipped());old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.DeathPresentationId);
             var history=new DesignLabHistory(path,old);history.Create("До ragdoll");var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);
             string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
             Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
@@ -213,7 +251,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void DeathImpulseUpgradeKeepsCustomValuesAndOldHashes()
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeDeathImpulseIncrease()).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>p.BeforeDeathImpulseIncrease()).ToList();
             var history=new DesignLabHistory(path,old);history.Create("Мой импульс");var draft=history.Selected.Snapshot;draft.Set("corpse.rifleSpeed",4.3f);history.Save(draft);
             string hash=history.Selected.Hash;var upgraded=new DesignLabHistory(path,Shipped());
             Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("corpse.rifleSpeed"),Is.EqualTo(4.3f));
@@ -223,7 +261,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues()
         {
-            var old=Shipped();var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
+            var old=BeforeRebalance(Shipped());var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             // The historical v6 registry predates damage-vignette descriptors as well.
             var beforeLook=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.BeforeFootstepMix(),null);
             var profile=beforeLook.BeforeAudio().BeforeDamageVignette();old.Profiles[old.Profiles.IndexOf(current)]=profile;
@@ -243,7 +281,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void ScoreboardUpgradePreservesOldValuesAndHashes()
         {
-            var old=Shipped();
+            var old=BeforeRebalance(Shipped());
             foreach(var profile in old.Profiles.Where(p=>p.Id==ProvingProfile.DefaultId||p.Id=="unity-native-match-v1").ToArray())
             {
                 var serialized=JsonUtility.FromJson<LegacyProfile>(JsonUtility.ToJson(profile));
@@ -323,7 +361,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
             var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
-            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(26));
+            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(29));
             foreach(var key in LabBundle.AuditedExcludedPaths)
             {
                 var d=old.Snapshot.Profile(key).Descriptor(key);float value=old.Snapshot.Get(key);
@@ -353,7 +391,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash()
         {
-            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id=="cutter-beam-v1"||p.Id==ProvingProfile.ParticipantPaletteId);
+            var old=BeforeRebalance(Shipped());old.Profiles.RemoveAll(p=>p.Id=="cutter-beam-v1"||p.Id==ProvingProfile.ParticipantPaletteId);
             var first=new DesignLabHistory(path,old);first.Create("Старый");var prior=first.Selected;
             var current=new DesignLabHistory(path,Shipped());Assert.That(current.StorageError,Is.Null);
             Assert.That(current.Selected.Snapshot.Get("cutter.energyCapacity"),Is.EqualTo(30));
@@ -363,7 +401,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TestCase(false)] [TestCase(true)]
         public void CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(bool custom)
         {
-            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterDamage",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterDamage",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
             var first=new DesignLabHistory(path,old);
             // NewFile is lazy: persist the old release before simulating an application upgrade.
             first.Create("Сохранить старый опубликованный профиль");first.DeleteSelected();
@@ -379,7 +417,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         static LabBundle FirstCutterRelease()
         {
-            var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);int index=old.Profiles.FindIndex(p=>p.Id=="cutter-beam-v1");
+            var old=BeforeRebalance(Shipped());old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);int index=old.Profiles.FindIndex(p=>p.Id=="cutter-beam-v1");
             old.Profiles[index]=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterThickness",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(old.Profiles[index],null);
             old.Set("cutter.width",0.012f);return old;
         }
@@ -405,7 +443,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory()
         {
-            var priorBundle=Shipped();priorBundle.Profiles=priorBundle.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponPickups",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
+            var priorBundle=BeforeRebalance(Shipped());priorBundle.Profiles=priorBundle.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponPickups",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();
             var old=new DesignLabHistory(path,priorBundle);old.Create("До подбора");var draft=old.Selected.Snapshot;draft.Set("rifle.damage",31);old.Save(draft);var prior=old.Selected;
             var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
@@ -414,7 +452,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning()
         {
-            var before=Shipped();before.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);
+            var before=BeforeRebalance(Shipped());before.Profiles.RemoveAll(p=>p.Id==ProvingProfile.ParticipantPaletteId);
             var old=new DesignLabHistory(path,before);old.Create("До новой палитры");
             var original=old.Selected;var upgraded=new DesignLabHistory(path,Shipped());
             Assert.That(upgraded.StorageError,Is.Null);

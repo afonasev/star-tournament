@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &794993074
+--- !u!1 &1920963855
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 794993076}
-  - component: {fileID: 794993075}
+  - component: {fileID: 1920963857}
+  - component: {fileID: 1920963856}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,17 +136,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &794993075
+--- !u!114 &1920963856
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794993074}
+  m_GameObject: {fileID: 1920963855}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: StarTournament.ProvingGround::StarTournament.ProvingGround.ProvingGround
   RobotPrefab: {fileID: 0}
   WorldWeaponPrefab: {fileID: 0}
@@ -160,6 +160,7 @@ MonoBehaviour:
   RiflePrefab: {fileID: 8771091787928289351, guid: 33e6bac6b2ca94f7da778d3c4e7dc40f, type: 3}
   PulsePrefab: {fileID: 8771091787928289351, guid: 6c03537e491940e2a99ea85b7f47e934, type: 3}
   CutterPrefab: {fileID: 8771091787928289351, guid: 1a1aec598ac8f43d3a538446134da03f, type: 3}
+  RocketProjectilePrefab: {fileID: 8771091787928289351, guid: 8f337dfaf075455b84600b7711182beb, type: 3}
   TrooperClips:
   - {fileID: 7400000, guid: fc6e3cae87e53499e8f2ae83f8fc3127, type: 2}
   - {fileID: 7400000, guid: 5cb3b159d01f84925ae4d3431763eb27, type: 2}
@@ -168,6 +169,649 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 38e3446d9feb74199b6bb2d583161bf6, type: 2}
   - {fileID: 7400000, guid: 4f19644510c5f43a79228c1ecd7f096a, type: 2}
   - {fileID: 7400000, guid: 9f27516f7c4934364811b75d489893b2, type: 2}
+  BloodProfile:
+    id: unity-blood-presentation-v1
+    version: 1
+    descriptors:
+    - Path: blood.enabled
+      Group: blood-drops
+      Label: "\u0412\u043A\u043B\u044E\u0447\u0435\u043D\u043E"
+      Description: "\u0412\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u043A\u0440\u043E\u0432\u044C
+        \u0438 \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435 \u0441\u043B\u0435\u0434\u044B."
+      Unit: boolean
+      Minimum: 0
+      Maximum: 1
+      Step: 1
+      DefaultValue: 1
+    - Path: blood.drops
+      Group: blood-drops
+      Label: "\u041A\u0430\u043F\u043B\u0438 \u0437\u0430 \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0435"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u043A\u0430\u043F\u0435\u043B\u044C
+        \u0432 \u043E\u0434\u043D\u043E\u043C \u0432\u0441\u043F\u043B\u0435\u0441\u043A\u0435."
+      Unit: count
+      Minimum: 1
+      Maximum: 24
+      Step: 1
+      DefaultValue: 10
+    - Path: blood.dropSize
+      Group: blood-drops
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043A\u0430\u043F\u043B\u0438"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u043A\u0440\u0443\u043F\u043D\u044B\u0445
+        \u043A\u0430\u043F\u0435\u043B\u044C; \u043C\u0435\u043B\u043A\u0438\u0435
+        \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u044E\u0442 \u0434\u043E\u043B\u044E
+        \u044D\u0442\u043E\u0433\u043E \u0440\u0430\u0437\u043C\u0435\u0440\u0430."
+      Unit: meters
+      Minimum: 0.005
+      Maximum: 0.08
+      Step: 0.001
+      DefaultValue: 0.025
+    - Path: blood.speed
+      Group: blood-drops
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0440\u0430\u0437\u043B\u0451\u0442\u0430"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C
+        \u043A\u0430\u043F\u0435\u043B\u044C \u0432\u0434\u043E\u043B\u044C \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u044F."
+      Unit: meters-per-second
+      Minimum: 1
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 7
+    - Path: blood.spreadDegrees
+      Group: blood-drops
+      Label: "\u0423\u0433\u043E\u043B \u0440\u0430\u0437\u043B\u0451\u0442\u0430"
+      Description: "\u0423\u0433\u043E\u043B \u043A\u043E\u043D\u0443\u0441\u0430
+        \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u044B\u0445
+        \u0431\u0440\u044B\u0437\u0433."
+      Unit: degrees
+      Minimum: 0
+      Maximum: 60
+      Step: 1
+      DefaultValue: 22
+    - Path: blood.speedVariation
+      Group: blood-drops
+      Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438"
+      Description: "\u0414\u043E\u043B\u044F \u0443\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445
+        \u043A\u0430\u043F\u0435\u043B\u044C."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.8
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: blood.dropVariation
+      Group: blood-drops
+      Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432"
+      Description: "\u0414\u043E\u043B\u044F \u0443\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u044F
+        \u0440\u0430\u0437\u043C\u0435\u0440\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445
+        \u043A\u0430\u043F\u0435\u043B\u044C."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.8
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: blood.dropElongation
+      Group: blood-drops
+      Label: "\u0412\u044B\u0442\u044F\u043D\u0443\u0442\u043E\u0441\u0442\u044C
+        \u043A\u0430\u043F\u0435\u043B\u044C"
+      Description: "\u0414\u043B\u0438\u043D\u0430 \u043A\u0430\u043F\u043B\u0438
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0435\u0451 \u0434\u0438\u0430\u043C\u0435\u0442\u0440\u0430."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 4
+      Step: 0.1
+      DefaultValue: 2
+    - Path: blood.lift
+      Group: blood-drops
+      Label: "\u041F\u043E\u0434\u0431\u0440\u043E\u0441"
+      Description: "\u0412\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u043E\u0431\u0430\u0432\u043A\u0430 \u043D\u0430\u0447\u0430\u043B\u044C\u043D\u043E\u0439
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u043A\u0430\u043F\u0435\u043B\u044C."
+      Unit: meters-per-second
+      Minimum: 0
+      Maximum: 4
+      Step: 0.1
+      DefaultValue: 0.6
+    - Path: blood.gravity
+      Group: blood-drops
+      Label: "\u0413\u0440\u0430\u0432\u0438\u0442\u0430\u0446\u0438\u044F \u043A\u0430\u043F\u0435\u043B\u044C"
+      Description: "\u0423\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u0435 \u043F\u0430\u0434\u0435\u043D\u0438\u044F
+        \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u044B\u0445 \u043A\u0430\u043F\u0435\u043B\u044C."
+      Unit: meters-per-second-squared
+      Minimum: 1
+      Maximum: 25
+      Step: 0.1
+      DefaultValue: 9.8
+    - Path: blood.flightSeconds
+      Group: blood-drops
+      Label: "\u0412\u0440\u0435\u043C\u044F \u043F\u043E\u043B\u0451\u0442\u0430"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B \u0432\u0440\u0435\u043C\u0435\u043D\u0438
+        \u043F\u043E\u043B\u0451\u0442\u0430 \u0431\u0435\u0437 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0441 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u044C\u044E."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.2
+    - Path: blood.shotgunScale
+      Group: blood-drops
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u0434\u0440\u043E\u0431\u043E\u0432\u0438\u043A\u0430"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432
+        \u043A\u0430\u043F\u0435\u043B\u044C \u0438 \u0441\u043B\u0435\u0434\u043E\u0432
+        \u0434\u0440\u043E\u0431\u043E\u0432\u0438\u043A\u0430."
+      Unit: ratio
+      Minimum: 0.5
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 1.35
+    - Path: blood.rifleScale
+      Group: blood-drops
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0430"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432
+        \u043A\u0430\u043F\u0435\u043B\u044C \u0438 \u0441\u043B\u0435\u0434\u043E\u0432
+        \u043F\u0443\u043B\u0438."
+      Unit: ratio
+      Minimum: 0.25
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 0.75
+    - Path: blood.rocketScale
+      Group: blood-drops
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u0432\u0437\u0440\u044B\u0432\u0430"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432
+        \u043A\u0430\u043F\u0435\u043B\u044C \u0438 \u0441\u043B\u0435\u0434\u043E\u0432
+        \u0432\u0437\u0440\u044B\u0432\u0430."
+      Unit: ratio
+      Minimum: 0.5
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 1.4
+    - Path: blood.cutterScale
+      Group: blood-drops
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u0440\u0435\u0437\u0430\u043A\u0430"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432
+        \u043A\u0430\u043F\u0435\u043B\u044C \u0438 \u0441\u043B\u0435\u0434\u043E\u0432
+        \u043B\u0443\u0447\u0430."
+      Unit: ratio
+      Minimum: 0.25
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 0.55
+    - Path: blood.cutterInterval
+      Group: blood-drops
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0440\u0435\u0437\u0430\u043A\u0430"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
+        \u043F\u0440\u043E\u043C\u0435\u0436\u0443\u0442\u043E\u043A \u043C\u0435\u0436\u0434\u0443
+        \u0432\u0441\u043F\u043B\u0435\u0441\u043A\u0430\u043C\u0438 \u043B\u0443\u0447\u0430
+        \u043D\u0430 \u043E\u0434\u043D\u043E\u0439 \u0446\u0435\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: blood.maxDrops
+      Group: blood-drops
+      Label: "\u041F\u0440\u0435\u0434\u0435\u043B \u043A\u0430\u043F\u0435\u043B\u044C"
+      Description: "\u041E\u0431\u0449\u0438\u0439 \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C
+        \u043B\u0435\u0442\u044F\u0449\u0438\u0445 \u043A\u0430\u043F\u0435\u043B\u044C
+        \u0434\u043B\u044F \u0432\u0441\u0435\u0445 \u043A\u0430\u043C\u0435\u0440."
+      Unit: count
+      Minimum: 24
+      Maximum: 384
+      Step: 8
+      DefaultValue: 128
+    - Path: blood.markSize
+      Group: blood-marks
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0441\u043B\u0435\u0434\u0430"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0433\u043E
+        \u043F\u044F\u0442\u043D\u0430 \u043E\u0442 \u043A\u0430\u043F\u043B\u0438."
+      Unit: meters
+      Minimum: 0.02
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.18
+    - Path: blood.markVariation
+      Group: blood-marks
+      Label: "\u0412\u0430\u0440\u0438\u0430\u0446\u0438\u044F \u0441\u043B\u0435\u0434\u043E\u0432"
+      Description: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432
+        \u043F\u044F\u0442\u0435\u043D \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0433\u043E."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.8
+      Step: 0.05
+      DefaultValue: 0.45
+    - Path: blood.markSeconds
+      Group: blood-marks
+      Label: "\u0412\u0440\u0435\u043C\u044F \u0436\u0438\u0437\u043D\u0438 \u0441\u043B\u0435\u0434\u0430"
+      Description: "\u041F\u043E\u043B\u043D\u0430\u044F \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u0441\u043B\u0435\u0434\u0430 \u0434\u043E \u0438\u0441\u0447\u0435\u0437\u043D\u043E\u0432\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 1
+      Maximum: 120
+      Step: 1
+      DefaultValue: 30
+    - Path: blood.fadeFraction
+      Group: blood-marks
+      Label: "\u0414\u043E\u043B\u044F \u0437\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u044F"
+      Description: "\u0414\u043E\u043B\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u0438
+        \u0436\u0438\u0437\u043D\u0438, \u043E\u0442\u0432\u0435\u0434\u0451\u043D\u043D\u0430\u044F
+        \u043F\u043B\u0430\u0432\u043D\u043E\u043C\u0443 \u0438\u0441\u0447\u0435\u0437\u043D\u043E\u0432\u0435\u043D\u0438\u044E."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: blood.maxMarks
+      Group: blood-marks
+      Label: "\u041F\u0440\u0435\u0434\u0435\u043B \u0441\u043B\u0435\u0434\u043E\u0432"
+      Description: "\u041E\u0431\u0449\u0438\u0439 \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C
+        \u043F\u044F\u0442\u0435\u043D; \u043D\u043E\u0432\u044B\u0435 \u0437\u0430\u043C\u0435\u043D\u044F\u044E\u0442
+        \u0441\u0430\u043C\u044B\u0435 \u0441\u0442\u0430\u0440\u044B\u0435."
+      Unit: count
+      Minimum: 16
+      Maximum: 512
+      Step: 8
+      DefaultValue: 192
+    - Path: blood.red
+      Group: blood-color
+      Label: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439"
+      Description: "\u041A\u0440\u0430\u0441\u043D\u0430\u044F \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u044E\u0449\u0430\u044F
+        \u0441\u0432\u0435\u0436\u0435\u0439 \u0441\u0442\u0438\u043B\u0438\u0437\u043E\u0432\u0430\u043D\u043D\u043E\u0439
+        \u043A\u0440\u043E\u0432\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.36
+    - Path: blood.green
+      Group: blood-color
+      Label: "\u0417\u0435\u043B\u0451\u043D\u044B\u0439"
+      Description: "\u0417\u0435\u043B\u0451\u043D\u0430\u044F \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u044E\u0449\u0430\u044F
+        \u0441\u0432\u0435\u0436\u0435\u0439 \u0441\u0442\u0438\u043B\u0438\u0437\u043E\u0432\u0430\u043D\u043D\u043E\u0439
+        \u043A\u0440\u043E\u0432\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.025
+    - Path: blood.blue
+      Group: blood-color
+      Label: "\u0421\u0438\u043D\u0438\u0439"
+      Description: "\u0421\u0438\u043D\u044F\u044F \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u044E\u0449\u0430\u044F
+        \u0441\u0432\u0435\u0436\u0435\u0439 \u0441\u0442\u0438\u043B\u0438\u0437\u043E\u0432\u0430\u043D\u043D\u043E\u0439
+        \u043A\u0440\u043E\u0432\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.005
+      DefaultValue: 0.035
+    - Path: blood.opacity
+      Group: blood-color
+      Label: "\u041D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
+        \u043A\u0430\u043F\u0435\u043B\u044C \u0438 \u0441\u043B\u0435\u0434\u043E\u0432."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.9
+    - Path: blood.dryDarkening
+      Group: blood-color
+      Label: "\u041F\u043E\u0442\u0435\u043C\u043D\u0435\u043D\u0438\u0435"
+      Description: "\u041D\u0430\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0442\u0435\u043C\u043D\u0435\u0435\u0442
+        \u0441\u043B\u0435\u0434 \u043A \u043A\u043E\u043D\u0446\u0443 \u0436\u0438\u0437\u043D\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.8
+      Step: 0.05
+      DefaultValue: 0.3
+    values:
+    - Path: blood.enabled
+      Value: 1
+    - Path: blood.drops
+      Value: 10
+    - Path: blood.dropSize
+      Value: 0.025
+    - Path: blood.speed
+      Value: 7
+    - Path: blood.spreadDegrees
+      Value: 22
+    - Path: blood.speedVariation
+      Value: 0.35
+    - Path: blood.dropVariation
+      Value: 0.5
+    - Path: blood.dropElongation
+      Value: 2
+    - Path: blood.lift
+      Value: 0.6
+    - Path: blood.gravity
+      Value: 9.8
+    - Path: blood.flightSeconds
+      Value: 1.2
+    - Path: blood.shotgunScale
+      Value: 1.35
+    - Path: blood.rifleScale
+      Value: 0.75
+    - Path: blood.rocketScale
+      Value: 1.4
+    - Path: blood.cutterScale
+      Value: 0.55
+    - Path: blood.cutterInterval
+      Value: 0.2
+    - Path: blood.maxDrops
+      Value: 128
+    - Path: blood.markSize
+      Value: 0.18
+    - Path: blood.markVariation
+      Value: 0.45
+    - Path: blood.markSeconds
+      Value: 30
+    - Path: blood.fadeFraction
+      Value: 0.35
+    - Path: blood.maxMarks
+      Value: 192
+    - Path: blood.red
+      Value: 0.36
+    - Path: blood.green
+      Value: 0.025
+    - Path: blood.blue
+      Value: 0.035
+    - Path: blood.opacity
+      Value: 0.9
+    - Path: blood.dryDarkening
+      Value: 0.3
+  DeathProfile:
+    id: unity-death-presentation-v1
+    version: 2
+    descriptors:
+    - Path: corpse.shotgunSpeed
+      Group: death-impulse
+      Label: "\u0414\u0440\u043E\u0431\u043E\u0432\u0438\u043A"
+      Description: "\u0414\u043E\u0431\u0430\u0432\u043E\u0447\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0435\u043B\u044C\u043D\u043E\u0439
+        \u0434\u0440\u043E\u0431\u0438."
+      Unit: meters-per-second
+      Minimum: 0
+      Maximum: 15
+      Step: 0.1
+      DefaultValue: 9
+    - Path: corpse.rifleSpeed
+      Group: death-impulse
+      Label: "\u0410\u0432\u0442\u043E\u043C\u0430\u0442"
+      Description: "\u0414\u043E\u0431\u0430\u0432\u043E\u0447\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0435\u043B\u044C\u043D\u043E\u0439
+        \u043F\u0443\u043B\u0438."
+      Unit: meters-per-second
+      Minimum: 0
+      Maximum: 10
+      Step: 0.05
+      DefaultValue: 3.75
+    - Path: corpse.cutterSpeed
+      Group: death-impulse
+      Label: "\u0420\u0435\u0437\u0430\u043A"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0438\u043C\u043F\u0443\u043B\u044C\u0441 \u0432 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0438
+        \u043B\u0443\u0447\u0430."
+      Unit: meters-per-second
+      Minimum: 0
+      Maximum: 3
+      Step: 0.025
+      DefaultValue: 0.375
+    - Path: corpse.rocketSpeed
+      Group: death-impulse
+      Label: "\u0420\u0430\u043A\u0435\u0442\u0430"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u043E\u0431\u0430\u0432\u043E\u0447\u043D\u0430\u044F \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C
+        \u043E\u0442 \u044D\u043F\u0438\u0446\u0435\u043D\u0442\u0440\u0430."
+      Unit: meters-per-second
+      Minimum: 0
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 13.5
+    - Path: corpse.rocketFalloff
+      Group: death-impulse
+      Label: "\u0421\u043F\u0430\u0434 \u0432\u0437\u0440\u044B\u0432\u0430"
+      Description: "\u0421\u0442\u0435\u043F\u0435\u043D\u044C \u0443\u043C\u0435\u043D\u044C\u0448\u0435\u043D\u0438\u044F
+        \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430 \u043F\u043E \u043D\u043E\u0440\u043C\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u043E\u0439
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u0438 \u0432\u0437\u0440\u044B\u0432\u0430."
+      Unit: exponent
+      Minimum: 0.5
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 1
+    - Path: corpse.mass
+      Group: death-ragdoll
+      Label: "\u041C\u0430\u0441\u0441\u0430 \u0441\u0435\u0433\u043C\u0435\u043D\u0442\u0430"
+      Description: "\u0411\u0430\u0437\u043E\u0432\u0430\u044F \u043C\u0430\u0441\u0441\u0430
+        \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E \u0441\u0435\u0433\u043C\u0435\u043D\u0442\u0430
+        \u0442\u0435\u043B\u0430."
+      Unit: kilograms
+      Minimum: 1
+      Maximum: 15
+      Step: 0.5
+      DefaultValue: 3
+    - Path: corpse.torsoMassRatio
+      Group: death-ragdoll
+      Label: "\u041C\u0430\u0441\u0441\u0430 \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u043C\u0430\u0441\u0441\u044B
+        \u0442\u0430\u0437\u0430 \u0438 \u0433\u0440\u0443\u0434\u0438 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 3
+    - Path: corpse.radiusRatio
+      Group: death-ragdoll
+      Label: "\u0422\u043E\u043B\u0449\u0438\u043D\u0430 \u043F\u0440\u043E\u043A\u0441\u0438"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043A\u043E\u043B\u043B\u0438\u0437\u0438\u043E\u043D\u043D\u043E\u0439
+        \u043A\u0430\u043F\u0441\u0443\u043B\u044B \u043A\u0430\u043A \u0434\u043E\u043B\u044F
+        \u0434\u043B\u0438\u043D\u044B \u0441\u0435\u0433\u043C\u0435\u043D\u0442\u0430."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 0.35
+      Step: 0.01
+      DefaultValue: 0.2
+    - Path: corpse.linearDamping
+      Group: death-ragdoll
+      Label: "\u0417\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u0435 \u0441\u0434\u0432\u0438\u0433\u0430"
+      Description: "\u0421\u043E\u043F\u0440\u043E\u0442\u0438\u0432\u043B\u0435\u043D\u0438\u0435
+        \u043F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u044E \u0442\u0435\u043B\u0430
+        \u043F\u043E\u0441\u043B\u0435 \u0438\u043C\u043F\u0443\u043B\u044C\u0441\u0430."
+      Unit: per-second
+      Minimum: 0
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.4
+    - Path: corpse.angularDamping
+      Group: death-ragdoll
+      Label: "\u0417\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u0435 \u0432\u0440\u0430\u0449\u0435\u043D\u0438\u044F"
+      Description: "\u0421\u043E\u043F\u0440\u043E\u0442\u0438\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0432\u0440\u0430\u0449\u0435\u043D\u0438\u044E \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439."
+      Unit: per-second
+      Minimum: 0
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 4
+    - Path: corpse.swingDegrees
+      Group: death-ragdoll
+      Label: "\u0421\u0432\u043E\u0431\u043E\u0434\u0430 \u0441\u0443\u0441\u0442\u0430\u0432\u043E\u0432"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439
+        \u043E\u0442 \u043F\u043E\u0437\u044B \u0441\u043C\u0435\u0440\u0442\u0438."
+      Unit: degrees
+      Minimum: 60
+      Maximum: 140
+      Step: 5
+      DefaultValue: 115
+    - Path: corpse.twistDegrees
+      Group: death-ragdoll
+      Label: "\u0421\u043A\u0440\u0443\u0447\u0438\u0432\u0430\u043D\u0438\u0435"
+      Description: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u043E\u0435
+        \u043E\u0441\u0435\u0432\u043E\u0435 \u0441\u043A\u0440\u0443\u0447\u0438\u0432\u0430\u043D\u0438\u0435
+        \u0441\u0443\u0441\u0442\u0430\u0432\u043E\u0432."
+      Unit: degrees
+      Minimum: 5
+      Maximum: 80
+      Step: 5
+      DefaultValue: 35
+    - Path: corpse.torsoSwingDegrees
+      Group: death-ragdoll
+      Label: "\u0421\u0433\u0438\u0431 \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u0433\u0440\u0443\u0434\u0438 \u0438 \u0433\u043E\u043B\u043E\u0432\u044B."
+      Unit: degrees
+      Minimum: 10
+      Maximum: 60
+      Step: 5
+      DefaultValue: 35
+    - Path: corpse.maximumSpeed
+      Group: death-ragdoll
+      Label: "\u041F\u0440\u0435\u0434\u0435\u043B \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438"
+      Description: "\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0432\u0430\u0435\u0442
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0441\u0435\u0433\u043C\u0435\u043D\u0442\u043E\u0432
+        \u043F\u0440\u0438 \u0441\u0442\u043E\u043B\u043A\u043D\u043E\u0432\u0435\u043D\u0438\u044F\u0445."
+      Unit: meters-per-second
+      Minimum: 10
+      Maximum: 50
+      Step: 1
+      DefaultValue: 25
+    - Path: corpse.maximumAngularSpeed
+      Group: death-ragdoll
+      Label: "\u041F\u0440\u0435\u0434\u0435\u043B \u0432\u0440\u0430\u0449\u0435\u043D\u0438\u044F"
+      Description: "\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0432\u0430\u0435\u0442
+        \u0431\u044B\u0441\u0442\u0440\u043E\u0435 \u0432\u0440\u0430\u0449\u0435\u043D\u0438\u0435
+        \u0441\u0435\u0433\u043C\u0435\u043D\u0442\u043E\u0432."
+      Unit: radians-per-second
+      Minimum: 2
+      Maximum: 30
+      Step: 1
+      DefaultValue: 12
+    - Path: corpse.sleepThreshold
+      Group: death-ragdoll
+      Label: "\u041F\u043E\u0440\u043E\u0433 \u043F\u043E\u043A\u043E\u044F"
+      Description: "\u041F\u043E\u0440\u043E\u0433 \u0443\u0434\u0435\u043B\u044C\u043D\u043E\u0439
+        \u044D\u043D\u0435\u0440\u0433\u0438\u0438 \u0434\u043B\u044F \u0448\u0442\u0430\u0442\u043D\u043E\u0433\u043E
+        \u0441\u043D\u0430 Rigidbody."
+      Unit: meters-squared-per-second-squared
+      Minimum: 0.001
+      Maximum: 0.05
+      Step: 0.001
+      DefaultValue: 0.005
+    - Path: corpse.friction
+      Group: death-ragdoll
+      Label: "\u0422\u0440\u0435\u043D\u0438\u0435 \u0442\u0435\u043B\u0430"
+      Description: "\u0422\u0440\u0435\u043D\u0438\u0435 \u043E \u043F\u043E\u043B
+        \u0438 \u0441\u0442\u0435\u043D\u044B \u0434\u043B\u044F \u0437\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u044F
+        \u0441\u043A\u043E\u043B\u044C\u0436\u0435\u043D\u0438\u044F."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.8
+    - Path: corpse.projectionDistance
+      Group: death-ragdoll
+      Label: "\u0414\u043E\u043F\u0443\u0441\u043A \u0441\u0443\u0441\u0442\u0430\u0432\u043E\u0432"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0440\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435 \u043F\u0435\u0440\u0435\u0434
+        \u043A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u0435\u0439 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u044F."
+      Unit: meters
+      Minimum: 0.005
+      Maximum: 0.1
+      Step: 0.005
+      DefaultValue: 0.025
+    - Path: corpse.depenetrationSpeed
+      Group: death-ragdoll
+      Label: "\u0412\u044B\u0445\u043E\u0434 \u0438\u0437 \u043F\u0435\u0440\u0435\u0441\u0435\u0447\u0435\u043D\u0438\u044F"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0443\u0441\u0442\u0440\u0430\u043D\u0435\u043D\u0438\u044F
+        \u0441\u0442\u0430\u0440\u0442\u043E\u0432\u043E\u0433\u043E \u043F\u0435\u0440\u0435\u0441\u0435\u0447\u0435\u043D\u0438\u044F
+        \u0441 \u0430\u0440\u0435\u043D\u043E\u0439."
+      Unit: meters-per-second
+      Minimum: 0.5
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 2
+    - Path: corpse.gravity
+      Group: death-ragdoll
+      Label: "\u0413\u0440\u0430\u0432\u0438\u0442\u0430\u0446\u0438\u044F \u0442\u0435\u043B\u0430"
+      Description: "\u0423\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u0435 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u0433\u043E
+        \u043F\u0430\u0434\u0435\u043D\u0438\u044F \u0442\u0435\u043B\u0430 \u0432
+        \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0439 physics scene."
+      Unit: meters-per-second-squared
+      Minimum: 1
+      Maximum: 25
+      Step: 0.1
+      DefaultValue: 9.8
+    - Path: corpse.headRadiusScale
+      Group: death-ragdoll
+      Label: "\u041E\u0431\u044A\u0451\u043C \u0433\u043E\u043B\u043E\u0432\u044B"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0440\u0430\u0434\u0438\u0443\u0441\u0430
+        \u043F\u0440\u043E\u043A\u0441\u0438 \u0433\u043E\u043B\u043E\u0432\u044B
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0434\u043B\u0438\u043D\u044B \u0448\u0435\u0439\u043D\u043E\u0439 \u043A\u043E\u0441\u0442\u0438."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 4
+      Step: 0.1
+      DefaultValue: 3
+    - Path: corpse.torsoRadiusScale
+      Group: death-ragdoll
+      Label: "\u041E\u0431\u044A\u0451\u043C \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
+      Description: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0440\u0430\u0434\u0438\u0443\u0441\u0430
+        \u043F\u0440\u043E\u043A\u0441\u0438 \u0442\u0430\u0437\u0430 \u0438 \u0433\u0440\u0443\u0434\u0438
+        \u0434\u043B\u044F \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430 \u0431\u0440\u043E\u043D\u0438
+        \u0441 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u044C\u044E."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 1.4
+    values:
+    - Path: corpse.shotgunSpeed
+      Value: 9
+    - Path: corpse.rifleSpeed
+      Value: 3.75
+    - Path: corpse.cutterSpeed
+      Value: 0.375
+    - Path: corpse.rocketSpeed
+      Value: 13.5
+    - Path: corpse.rocketFalloff
+      Value: 1
+    - Path: corpse.mass
+      Value: 3
+    - Path: corpse.torsoMassRatio
+      Value: 3
+    - Path: corpse.radiusRatio
+      Value: 0.2
+    - Path: corpse.linearDamping
+      Value: 0.4
+    - Path: corpse.angularDamping
+      Value: 4
+    - Path: corpse.swingDegrees
+      Value: 115
+    - Path: corpse.twistDegrees
+      Value: 35
+    - Path: corpse.torsoSwingDegrees
+      Value: 35
+    - Path: corpse.maximumSpeed
+      Value: 25
+    - Path: corpse.maximumAngularSpeed
+      Value: 12
+    - Path: corpse.sleepThreshold
+      Value: 0.005
+    - Path: corpse.friction
+      Value: 0.8
+    - Path: corpse.projectionDistance
+      Value: 0.025
+    - Path: corpse.depenetrationSpeed
+      Value: 2
+    - Path: corpse.gravity
+      Value: 9.8
+    - Path: corpse.headRadiusScale
+      Value: 3
+    - Path: corpse.torsoRadiusScale
+      Value: 1.4
   TrooperProfile:
     id: unity-trooper-presentation-v1
     version: 6
@@ -437,8 +1081,203 @@ MonoBehaviour:
       Value: 2
   Profile:
     id: unity-proving-ground-v1
-    version: 9
+    version: 13
     descriptors:
+    - Path: audio.musicDefaultPercent
+      Group: audio
+      Label: "\u041C\u0443\u0437\u044B\u043A\u0430 \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C
+        \u043C\u0443\u0437\u044B\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u043A\u0430\u043D\u0430\u043B\u0430 \u0434\u043E \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0433\u043E
+        \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F; \u0442\u0440\u0435\u043A
+        \u043F\u043E\u043A\u0430 \u043E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442."
+      Unit: percent
+      Minimum: 0
+      Maximum: 100
+      Step: 5
+      DefaultValue: 70
+    - Path: audio.effectsDefaultPercent
+      Group: audio
+      Label: "\u042D\u0444\u0444\u0435\u043A\u0442\u044B \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u043E\u0431\u0449\u0430\u044F
+        \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u0437\u0432\u0443\u043A\u043E\u0432
+        \u043C\u0435\u043D\u044E \u0438 \u0431\u043E\u044F \u0434\u043E \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0433\u043E
+        \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F."
+      Unit: percent
+      Minimum: 0
+      Maximum: 100
+      Step: 5
+      DefaultValue: 80
+    - Path: audio.damageBonusSpawnGain
+      Group: audio
+      Label: "\u0421\u0438\u0433\u043D\u0430\u043B \u043F\u043E\u044F\u0432\u043B\u0435\u043D\u0438\u044F
+        \u0431\u043E\u043D\u0443\u0441\u0430 \u0443\u0440\u043E\u043D\u0430"
+      Description: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043E\u0431\u0449\u0435\u0433\u043E
+        \u0441\u0438\u0433\u043D\u0430\u043B\u0430 \u043D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E
+        \u043E\u0442 \u0440\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u044F
+        \u0434\u043E \u0431\u043E\u043D\u0443\u0441\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.8
+    - Path: audio.damageBonusPickupGain
+      Group: audio
+      Label: "\u0422\u0440\u0435\u0432\u043E\u0433\u0430 \u043F\u043E\u0434\u0431\u043E\u0440\u0430
+        \u0431\u043E\u043D\u0443\u0441\u0430 \u0443\u0440\u043E\u043D\u0430"
+      Description: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043E\u0431\u0449\u0435\u0433\u043E
+        \u0442\u0440\u0435\u0432\u043E\u0436\u043D\u043E\u0433\u043E \u0441\u0438\u0433\u043D\u0430\u043B\u0430
+        \u0431\u0435\u0437 \u0440\u0430\u0441\u043A\u0440\u044B\u0442\u0438\u044F
+        \u0441\u043E\u0431\u0440\u0430\u0432\u0448\u0435\u0433\u043E."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 1
+    - Path: audio.maxVoices
+      Group: audio
+      Label: "\u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0435 \u0433\u043E\u043B\u043E\u0441\u0430"
+      Description: "\u041F\u0440\u0435\u0434\u0435\u043B \u043E\u0434\u043D\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445
+        \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u0445 \u044D\u0444\u0444\u0435\u043A\u0442\u043E\u0432
+        \u0432 \u043E\u0431\u0449\u0435\u043C \u0432\u044B\u0445\u043E\u0434\u0435
+        split-screen; \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0435
+        \u043B\u0443\u0447\u0438 \u0438 \u043C\u0435\u043D\u044E \u0438\u043C\u0435\u044E\u0442
+        \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0435 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u043D\u044B\u0435
+        \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438."
+      Unit: count
+      Minimum: 4
+      Maximum: 32
+      Step: 1
+      DefaultValue: 16
+    - Path: audio.footstepDistanceMeters
+      Group: audio
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0448\u0430\u0433\u043E\u0432"
+      Description: "\u0413\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043C\u0435\u0436\u0434\u0443
+        \u0448\u0430\u0433\u0430\u043C\u0438 \u0436\u0438\u0432\u043E\u0433\u043E
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430 \u043D\u0430 \u043E\u043F\u043E\u0440\u0435."
+      Unit: meters
+      Minimum: 0.5
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 2.1
+    - Path: audio.footstepGain
+      Group: audio
+      Label: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u0448\u0430\u0433\u043E\u0432"
+      Description: "\u041E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043E\u0434\u043D\u043E\u0433\u043E
+        \u0448\u0430\u0433\u0430 \u0434\u043E \u043E\u0431\u0449\u0435\u0439 \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u0438
+        \u044D\u0444\u0444\u0435\u043A\u0442\u043E\u0432 \u0438 \u043F\u043E\u0437\u0438\u0446\u0438\u0438
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: audio.jumpGain
+      Group: audio
+      Label: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u0442\u043E\u043B\u0447\u043A\u0430"
+      Description: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043E\u0442\u0440\u044B\u0432\u0430
+        \u043F\u0440\u0438 \u043F\u0440\u044B\u0436\u043A\u0435 \u0434\u043E \u043E\u0431\u0449\u0435\u0439
+        \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u0438 \u0438 \u043F\u043E\u0437\u0438\u0446\u0438\u0438
+        \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.38
+    - Path: audio.landGain
+      Group: audio
+      Label: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u044F"
+      Description: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043F\u043E\u0441\u043B\u0435 \u043F\u0440\u044B\u0436\u043A\u0430 \u0434\u043E
+        \u043E\u0431\u0449\u0435\u0439 \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u0438
+        \u0438 \u043F\u043E\u0437\u0438\u0446\u0438\u0438 \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.6
+    - Path: audio.movementPitchVariation
+      Group: audio
+      Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0442\u043E\u043D\u0430
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438
+        \u0437\u0432\u0443\u0447\u0430\u043D\u0438\u044F \u0448\u0430\u0433\u043E\u0432,
+        \u0442\u043E\u043B\u0447\u043A\u043E\u0432 \u0438 \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0439
+        \u043E\u0442 \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.1
+      Step: 0.001
+      DefaultValue: 0.018
+    - Path: audio.movementGainVariation
+      Group: audio
+      Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0443\u0440\u043E\u0432\u043D\u044F
+        \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0435
+        \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435 \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u0438
+        \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0433\u043E \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0434\u043B\u044F \u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u043E\u0439
+        \u0432\u0430\u0440\u0438\u0430\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.2
+      Step: 0.01
+      DefaultValue: 0.05
+    - Path: audio.maxDistanceMeters
+      Group: audio
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0441\u043B\u044B\u0448\u0438\u043C\u043E\u0441\u0442\u0438"
+      Description: "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435,
+        \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u043E\u043C \u0443\u0434\u0430\u043B\u0451\u043D\u043D\u044B\u0435
+        \u0431\u043E\u0435\u0432\u044B\u0435 \u0438 \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u0435
+        \u044D\u0444\u0444\u0435\u043A\u0442\u044B \u0437\u0430\u0442\u0443\u0445\u0430\u044E\u0442."
+      Unit: meters
+      Minimum: 5
+      Maximum: 100
+      Step: 1
+      DefaultValue: 28
+    - Path: audio.localGain
+      Group: audio
+      Label: "\u0421\u0432\u043E\u0438 \u0441\u043E\u0431\u044B\u0442\u0438\u044F"
+      Description: "\u041E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0432\u0430\u0436\u043D\u043E\u0433\u043E
+        \u0437\u0432\u0443\u043A\u0430 \u0441\u0432\u043E\u0435\u0433\u043E local
+        participant \u0434\u043E \u043E\u0431\u0449\u0435\u0439 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0439
+        \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: audio.remoteGain
+      Group: audio
+      Label: "\u0414\u0440\u0443\u0433\u0438\u0435 \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0438"
+      Description: "\u041E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0441\u043E\u0431\u044B\u0442\u0438\u0439
+        \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u0445 \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u043E\u0432
+        \u0434\u043E \u0437\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u044F \u043F\u043E
+        \u0440\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u044E."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.4
+    - Path: audio.hitIntervalSeconds
+      Group: audio
+      Label: "\u0420\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u0438\u0435 \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0439"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u043E\u0432\u0442\u043E\u0440\u043D\u043E\u0433\u043E
+        \u0437\u0432\u0443\u043A\u0430 \u0443\u0440\u043E\u043D\u0430 \u043E\u0434\u043D\u043E\u0439
+        \u0446\u0435\u043B\u0438 \u043F\u0440\u0438 \u0447\u0430\u0441\u0442\u044B\u0445
+        \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u043D\u044B\u0445 \u0441\u043E\u0431\u044B\u0442\u0438\u044F\u0445."
+      Unit: seconds
+      Minimum: 0.02
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.12
     - Path: simulation.fixedTickHz
       Group: simulation
       Label: Fixed tick frequency
@@ -699,6 +1538,62 @@ MonoBehaviour:
       Maximum: 1
       Step: 0.01
       DefaultValue: 0.2
+    - Path: ui.standingsFontSize
+      Group: standings
+      Label: "\u0422\u0430\u0431\u043B\u0438\u0446\u0430 \xB7 \u0446\u0438\u0444\u0440\u044B"
+      Description: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0446\u0438\u0444\u0440;
+        \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438
+        \u0443\u043C\u0435\u043D\u044C\u0448\u0430\u0435\u0442\u0441\u044F \u043F\u0440\u0438
+        \u043D\u0435\u0445\u0432\u0430\u0442\u043A\u0435 \u0448\u0438\u0440\u0438\u043D\u044B
+        \u0432\u0441\u0435\u0439 \u0433\u0440\u0443\u043F\u043F\u044B."
+      Unit: points
+      Minimum: 12
+      Maximum: 48
+      Step: 1
+      DefaultValue: 20
+    - Path: ui.standingsIconSize
+      Group: standings
+      Label: "\u0422\u0430\u0431\u043B\u0438\u0446\u0430 \xB7 \u0437\u043D\u0430\u0447\u043A\u0438"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u043E\u0432
+        \u0438 markers \u0432 \u043E\u0431\u0449\u0435\u0439 \u0441\u0435\u0442\u043A\u0435."
+      Unit: pixels
+      Minimum: 12
+      Maximum: 40
+      Step: 1
+      DefaultValue: 22
+    - Path: ui.standingsPadding
+      Group: standings
+      Label: "\u0422\u0430\u0431\u043B\u0438\u0446\u0430 \xB7 \u043E\u0442\u0441\u0442\u0443\u043F"
+      Description: "\u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u0438\u0439
+        \u043E\u0442\u0441\u0442\u0443\u043F \u0441\u0435\u0442\u043A\u0438 \u043E\u0442
+        \u043A\u0440\u0430\u044F \u0442\u0430\u0431\u043B\u0438\u0446\u044B."
+      Unit: pixels
+      Minimum: 0
+      Maximum: 40
+      Step: 1
+      DefaultValue: 16
+    - Path: ui.standingsDeadOpacity
+      Group: standings
+      Label: "\u0422\u0430\u0431\u043B\u0438\u0446\u0430 \xB7 \u043F\u043E\u0433\u0438\u0431\u0448\u0438\u0435"
+      Description: "\u042F\u0440\u043A\u043E\u0441\u0442\u044C \u043F\u043E\u0433\u0438\u0431\u0448\u0438\u0445
+        \u0441\u0442\u0440\u043E\u043A; \u043A\u0440\u0430\u0441\u043D\u044B\u0435
+        \u0441\u043E\u0431\u044B\u0442\u0438\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442
+        \u043F\u043E\u043B\u043D\u0443\u044E \u044F\u0440\u043A\u043E\u0441\u0442\u044C."
+      Unit: ratio
+      Minimum: 0.2
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.55
+    - Path: ui.standingsLeaderAccent
+      Group: standings
+      Label: "\u0422\u0430\u0431\u043B\u0438\u0446\u0430 \xB7 \u043B\u0438\u0434\u0435\u0440"
+      Description: "\u0414\u043E\u043B\u044F \u0446\u0432\u0435\u0442\u0430 \u043B\u0438\u0434\u0435\u0440\u0430
+        \u0432 \u0444\u043E\u043D\u0435 \u0441\u0442\u0440\u043E\u043A\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.14
     - Path: ui.fontSize
       Group: ui
       Label: Body font size
@@ -717,6 +1612,43 @@ MonoBehaviour:
       Maximum: 64
       Step: 1
       DefaultValue: 28
+    - Path: ui.matchMenuButtonHeight
+      Group: ui
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043A\u043D\u043E\u043F\u043E\u043A
+        \u043C\u0435\u043D\u044E \u043C\u0430\u0442\u0447\u0430"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043A\u043D\u043E\u043F\u043E\u043A
+        \u043E\u0431\u0449\u0435\u0439 \u043F\u0430\u0443\u0437\u044B \u0438 \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u0433\u043E
+        \u044D\u043A\u0440\u0430\u043D\u0430 \u0431\u0435\u0437 \u0440\u0430\u0441\u0442\u044F\u0436\u0435\u043D\u0438\u044F
+        \u043D\u0430 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u0443\u044E \u043E\u0431\u043B\u0430\u0441\u0442\u044C."
+      Unit: points
+      Minimum: 32
+      Maximum: 80
+      Step: 1
+      DefaultValue: 44
+    - Path: ui.matchMenuWidth
+      Group: ui
+      Label: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043C\u0435\u043D\u044E \u043C\u0430\u0442\u0447\u0430"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043A\u043E\u043C\u043F\u0430\u043A\u0442\u043D\u043E\u0439
+        \u043A\u043E\u043B\u043E\u043D\u043A\u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0439
+        \u043E\u0431\u0449\u0435\u0439 \u043F\u0430\u0443\u0437\u044B \u0438 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432."
+      Unit: points
+      Minimum: 320
+      Maximum: 800
+      Step: 10
+      DefaultValue: 480
+    - Path: ui.matchMenuSpacing
+      Group: ui
+      Label: "\u041F\u0440\u043E\u043C\u0435\u0436\u0443\u0442\u043A\u0438 \u043C\u0435\u043D\u044E
+        \u043C\u0430\u0442\u0447\u0430"
+      Description: "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435
+        \u043C\u0435\u0436\u0434\u0443 \u0441\u043E\u0441\u0435\u0434\u043D\u0438\u043C\u0438
+        \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F\u043C\u0438 \u043E\u0431\u0449\u0435\u0439
+        \u043F\u0430\u0443\u0437\u044B \u0438 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432."
+      Unit: points
+      Minimum: 0
+      Maximum: 24
+      Step: 1
+      DefaultValue: 8
     - Path: ui.indicatorVisualHeight
       Group: ui
       Label: HUD indicator height
@@ -736,6 +1668,55 @@ MonoBehaviour:
       Maximum: 32
       Step: 1
       DefaultValue: 16
+    - Path: ui.damageBonusFontSize
+      Group: ui
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F
+        \u0431\u043E\u043D\u0443\u0441\u0430 \u0443\u0440\u043E\u043D\u0430"
+      Description: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043A\u0440\u0430\u0441\u043D\u043E\u0439
+        \u043D\u0430\u0434\u043F\u0438\u0441\u0438 \u0432 \u0432\u0435\u0440\u0445\u043D\u0435\u0439
+        \u0447\u0430\u0441\u0442\u0438 \u043A\u0430\u0436\u0434\u043E\u0433\u043E
+        \u0438\u0433\u0440\u043E\u0432\u043E\u0433\u043E viewport."
+      Unit: points
+      Minimum: 12
+      Maximum: 48
+      Step: 1
+      DefaultValue: 26
+    - Path: ui.damageBonusSeconds
+      Group: ui
+      Label: "\u0412\u0440\u0435\u043C\u044F \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F
+        \u0431\u043E\u043D\u0443\u0441\u0430 \u0443\u0440\u043E\u043D\u0430"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u0438
+        \u0432 simulation time; \u043F\u0430\u0443\u0437\u0430 \u043D\u0435 \u0440\u0430\u0441\u0445\u043E\u0434\u0443\u0435\u0442
+        \u0435\u0433\u043E."
+      Unit: seconds
+      Minimum: 0.5
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3
+    - Path: ui.damageBonusTopInset
+      Group: ui
+      Label: "\u041E\u0442\u0441\u0442\u0443\u043F \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F
+        \u0441\u0432\u0435\u0440\u0445\u0443"
+      Description: "\u041E\u0442\u0441\u0442\u0443\u043F \u043E\u0442 \u0432\u0435\u0440\u0445\u043D\u0435\u0433\u043E
+        \u043A\u0440\u0430\u044F viewport, \u0447\u0442\u043E\u0431\u044B \u043D\u0435
+        \u043F\u0435\u0440\u0435\u043A\u0440\u044B\u0432\u0430\u0442\u044C \u0442\u0430\u0439\u043C\u0435\u0440
+        \u043C\u0430\u0442\u0447\u0430."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 0.25
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: ui.damageBonusHeight
+      Group: ui
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u044F"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043E\u0431\u043B\u0430\u0441\u0442\u0438
+        \u043D\u0430\u0434\u043F\u0438\u0441\u0438 \u043A\u0430\u043A \u0434\u043E\u043B\u044F
+        viewport."
+      Unit: ratio
+      Minimum: 0.06
+      Maximum: 0.2
+      Step: 0.01
+      DefaultValue: 0.12
     - Path: ui.killNoticeFontSize
       Group: ui
       Label: Kill notice size
@@ -1105,10 +2086,11 @@ MonoBehaviour:
     - Path: presentation.rifleTracerLength
       Group: rifle
       Label: "\u0414\u043B\u0438\u043D\u0430 \u0442\u0440\u0430\u0441\u0441\u0435\u0440\u0430"
-      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
-        \u0432\u0438\u0434\u0438\u043C\u0430\u044F \u0434\u043B\u0438\u043D\u0430
-        \u0441\u043B\u0435\u0434\u0430 \u043E\u0442 \u0434\u0443\u043B\u044C\u043D\u043E\u0439
-        \u0442\u043E\u0447\u043A\u0438."
+      Description: "\u0414\u043B\u0438\u043D\u0430 \u0432\u0438\u0434\u0438\u043C\u043E\u0433\u043E
+        \u0441\u043B\u0435\u0434\u0430 \u0437\u0430 \u043B\u0435\u0442\u044F\u0449\u0435\u0439
+        \u043F\u0443\u043B\u0435\u0439 \u0438 \u0443\u0447\u0430\u0441\u0442\u043A\u0430
+        \u0441\u043E\u0432\u043C\u0435\u0449\u0435\u043D\u0438\u044F \u0441 \u0434\u0443\u043B\u044C\u043D\u043E\u0439
+        \u0442\u043E\u0447\u043A\u043E\u0439."
       Unit: meters
       Minimum: 0.1
       Maximum: 10
@@ -1374,6 +2356,36 @@ MonoBehaviour:
       Step: 0.01
       DefaultValue: 0.04
     values:
+    - Path: audio.musicDefaultPercent
+      Value: 70
+    - Path: audio.effectsDefaultPercent
+      Value: 80
+    - Path: audio.damageBonusSpawnGain
+      Value: 0.8
+    - Path: audio.damageBonusPickupGain
+      Value: 1
+    - Path: audio.maxVoices
+      Value: 16
+    - Path: audio.footstepDistanceMeters
+      Value: 2.1
+    - Path: audio.footstepGain
+      Value: 0.5
+    - Path: audio.jumpGain
+      Value: 0.38
+    - Path: audio.landGain
+      Value: 0.6
+    - Path: audio.movementPitchVariation
+      Value: 0.018
+    - Path: audio.movementGainVariation
+      Value: 0.05
+    - Path: audio.maxDistanceMeters
+      Value: 28
+    - Path: audio.localGain
+      Value: 0.65
+    - Path: audio.remoteGain
+      Value: 0.4
+    - Path: audio.hitIntervalSeconds
+      Value: 0.12
     - Path: simulation.fixedTickHz
       Value: 50
     - Path: player.capsule.radius
@@ -1428,14 +2440,38 @@ MonoBehaviour:
       Value: 0.12
     - Path: camera.stairMaximumOffsetMeters
       Value: 0.2
+    - Path: ui.standingsFontSize
+      Value: 20
+    - Path: ui.standingsIconSize
+      Value: 22
+    - Path: ui.standingsPadding
+      Value: 16
+    - Path: ui.standingsDeadOpacity
+      Value: 0.55
+    - Path: ui.standingsLeaderAccent
+      Value: 0.14
     - Path: ui.fontSize
       Value: 20
     - Path: ui.headingFontSize
       Value: 28
+    - Path: ui.matchMenuButtonHeight
+      Value: 44
+    - Path: ui.matchMenuWidth
+      Value: 480
+    - Path: ui.matchMenuSpacing
+      Value: 8
     - Path: ui.indicatorVisualHeight
       Value: 32
     - Path: ui.nameFontSize
       Value: 16
+    - Path: ui.damageBonusFontSize
+      Value: 26
+    - Path: ui.damageBonusSeconds
+      Value: 3
+    - Path: ui.damageBonusTopInset
+      Value: 0.1
+    - Path: ui.damageBonusHeight
+      Value: 0.12
     - Path: ui.killNoticeFontSize
       Value: 26
     - Path: ui.killNoticeSeconds
@@ -1556,9 +2592,386 @@ MonoBehaviour:
       Value: 0.32
     - Path: presentation.rocketBlue
       Value: 0.04
+  RocketEffectsProfile:
+    id: pulse-effects-v1
+    version: 1
+    descriptors:
+    - Path: pulseFx.exhaustLength
+      Group: rocket-effects
+      Label: "\u041F\u043B\u0430\u043C\u044F \u0441\u043E\u043F\u043B\u0430 \xB7
+        \u0434\u043B\u0438\u043D\u0430"
+      Description: "\u0414\u043B\u0438\u043D\u0430 \u043F\u043B\u043E\u0442\u043D\u043E\u0439
+        \u0433\u043E\u0440\u044F\u0447\u0435\u0439 \u0441\u0442\u0440\u0443\u0438
+        \u043F\u043E\u0437\u0430\u0434\u0438 \u0441\u043E\u043F\u043B\u0430."
+      Unit: meters
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.46
+    - Path: pulseFx.exhaustWidth
+      Group: rocket-effects
+      Label: "\u041F\u043B\u0430\u043C\u044F \u0441\u043E\u043F\u043B\u0430 \xB7
+        \u0448\u0438\u0440\u0438\u043D\u0430"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u0433\u043E\u0440\u044F\u0447\u0435\u0439
+        \u0441\u0442\u0440\u0443\u0438 \u0443 \u0441\u043E\u043F\u043B\u0430."
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: pulseFx.trailSmokeSize
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \u0441\u043B\u0435\u0434\u0430 \xB7 \u0440\u0430\u0437\u043C\u0435\u0440"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u043B\u0451\u0433\u043A\u043E\u0433\u043E
+        \u043E\u0431\u043B\u0430\u0447\u043A\u0430 \u043F\u043E\u0437\u0430\u0434\u0438
+        \u0440\u0430\u043A\u0435\u0442\u044B."
+      Unit: meters
+      Minimum: 0.02
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.13
+    - Path: pulseFx.trailSmokeOpacity
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \u0441\u043B\u0435\u0434\u0430 \xB7 \u043F\u043B\u043E\u0442\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u041F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
+        \u043A\u043E\u0440\u043E\u0442\u043A\u043E\u0433\u043E \u0441\u043B\u0435\u0434\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.16
+    - Path: pulseFx.trailSmokeCount
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \u0441\u043B\u0435\u0434\u0430 \xB7 \u043E\u0431\u043B\u0430\u0447\u043A\u0430"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C \u043E\u0431\u043B\u0430\u0447\u043A\u043E\u0432
+        \u043D\u0430 \u043E\u0434\u043D\u0443 \u043B\u0435\u0442\u044F\u0449\u0443\u044E
+        \u0440\u0430\u043A\u0435\u0442\u0443."
+      Unit: count
+      Minimum: 0
+      Maximum: 24
+      Step: 1
+      DefaultValue: 7
+    - Path: pulseFx.fireCount
+      Group: rocket-effects
+      Label: "\u0412\u0437\u0440\u044B\u0432 \xB7 \u043B\u0435\u043F\u0435\u0441\u0442\u043A\u0438"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u043D\u0435\u0440\u043E\u0432\u043D\u044B\u0445
+        \u043E\u0433\u043D\u0435\u043D\u043D\u044B\u0445 \u043E\u0431\u044A\u0451\u043C\u043E\u0432."
+      Unit: count
+      Minimum: 3
+      Maximum: 24
+      Step: 1
+      DefaultValue: 9
+    - Path: pulseFx.fireLobeScale
+      Group: rocket-effects
+      Label: "\u0412\u0437\u0440\u044B\u0432 \xB7 \u043E\u0431\u044A\u0451\u043C
+        \u043B\u0435\u043F\u0435\u0441\u0442\u043A\u0430"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u043E\u0433\u043D\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043B\u0435\u043F\u0435\u0441\u0442\u043A\u0430 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.75
+    - Path: pulseFx.coreSeconds
+      Group: rocket-effects
+      Label: "\u042F\u0434\u0440\u043E \xB7 \u0432\u0440\u0435\u043C\u044F"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u043A\u043E\u0440\u043E\u0442\u043A\u043E\u0439
+        \u0431\u0435\u043B\u043E-\u0436\u0451\u043B\u0442\u043E\u0439 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: seconds
+      Minimum: 0.02
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: pulseFx.coreScale
+      Group: rocket-effects
+      Label: "\u042F\u0434\u0440\u043E \xB7 \u0440\u0430\u0437\u043C\u0435\u0440"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u044F\u0440\u043A\u043E\u0433\u043E
+        \u044F\u0434\u0440\u0430 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.45
+    - Path: pulseFx.sparkCount
+      Group: rocket-effects
+      Label: "\u0412\u0437\u0440\u044B\u0432 \xB7 \u0438\u0441\u043A\u0440\u044B"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u0440\u0435\u0434\u043A\u0438\u0445
+        \u0440\u0430\u0441\u0445\u043E\u0434\u044F\u0449\u0438\u0445\u0441\u044F
+        \u0438\u0441\u043A\u0440."
+      Unit: count
+      Minimum: 0
+      Maximum: 40
+      Step: 1
+      DefaultValue: 12
+    - Path: pulseFx.sparkSeconds
+      Group: rocket-effects
+      Label: "\u0418\u0441\u043A\u0440\u044B \xB7 \u0432\u0440\u0435\u043C\u044F"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0437\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u044F
+        \u0438\u0441\u043A\u0440 \u043F\u043E \u0447\u0430\u0441\u0430\u043C \u043C\u0430\u0442\u0447\u0430."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.55
+    - Path: pulseFx.sparkSpeed
+      Group: rocket-effects
+      Label: "\u0418\u0441\u043A\u0440\u044B \xB7 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C"
+      Description: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0440\u0430\u0437\u043B\u0451\u0442\u0430; \u043D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442
+        \u043D\u0430 damage."
+      Unit: meters-per-second
+      Minimum: 0.1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 5
+    - Path: pulseFx.sparkSize
+      Group: rocket-effects
+      Label: "\u0418\u0441\u043A\u0440\u044B \xB7 \u0442\u043E\u043B\u0449\u0438\u043D\u0430"
+      Description: "\u0420\u0430\u0437\u043C\u0435\u0440 \u0441\u0432\u0435\u0442\u044F\u0449\u0435\u0439\u0441\u044F
+        \u0438\u0441\u043A\u0440\u044B."
+      Unit: meters
+      Minimum: 0.005
+      Maximum: 0.15
+      Step: 0.005
+      DefaultValue: 0.035
+    - Path: pulseFx.sparkStretch
+      Group: rocket-effects
+      Label: "\u0418\u0441\u043A\u0440\u044B \xB7 \u0432\u044B\u0442\u044F\u0436\u043A\u0430"
+      Description: "\u0414\u043B\u0438\u043D\u0430 \u0441\u043B\u0435\u0434\u0430
+        \u043F\u043E \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u0440\u0430\u0437\u043B\u0451\u0442\u0430."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.08
+    - Path: pulseFx.smokeCount
+      Group: rocket-effects
+      Label: "\u0412\u0437\u0440\u044B\u0432 \xB7 \u0434\u044B\u043C"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u043F\u043E\u043B\u0443\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u044B\u0445
+        \u043E\u0431\u043B\u0430\u0447\u043A\u043E\u0432 \u043F\u043E\u0441\u043B\u0435
+        \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: count
+      Minimum: 0
+      Maximum: 20
+      Step: 1
+      DefaultValue: 5
+    - Path: pulseFx.smokeSeconds
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u0432\u0440\u0435\u043C\u044F"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0440\u0430\u0441\u0441\u0435\u0438\u0432\u0430\u043D\u0438\u044F
+        \u0434\u044B\u043C\u0430 \u043F\u043E\u0441\u043B\u0435 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.85
+    - Path: pulseFx.smokeDelay
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0430"
+      Description: "\u041C\u044F\u0433\u043A\u043E\u0435 \u043F\u043E\u044F\u0432\u043B\u0435\u043D\u0438\u0435
+        \u0434\u044B\u043C\u0430 \u0437\u0430 \u043E\u0433\u043D\u0451\u043C."
+      Unit: seconds
+      Minimum: 0
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.08
+    - Path: pulseFx.smokeScale
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u0440\u0430\u0437\u043C\u0435\u0440"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u043E\u0431\u043B\u0430\u0447\u043A\u0430
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 0.7
+    - Path: pulseFx.smokeOpacity
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u043F\u043B\u043E\u0442\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u041F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
+        \u0434\u044B\u043C\u0430; \u043C\u0435\u043D\u044C\u0448\u0438\u0435 \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442 \u043E\u0431\u0437\u043E\u0440."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.24
+    - Path: pulseFx.smokeRise
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u043F\u043E\u0434\u044A\u0451\u043C"
+      Description: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043C\u0435\u0434\u043B\u0435\u043D\u043D\u043E\u0433\u043E
+        \u043F\u043E\u0434\u044A\u0451\u043C\u0430 \u0434\u044B\u043C\u0430."
+      Unit: meters-per-second
+      Minimum: 0
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 0.4
+    - Path: pulseFx.smokeShade
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u0441\u0432\u0435\u0442\u043B\u043E\u0442\u0430"
+      Description: "\u041D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0441\u0435\u0440\u044B\u0439 \u043E\u0442\u0442\u0435\u043D\u043E\u043A
+        \u0434\u044B\u043C\u043E\u0432\u044B\u0445 \u043E\u0431\u043B\u0430\u0447\u043A\u043E\u0432."
+      Unit: ratio
+      Minimum: 0.05
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.52
+    - Path: pulseFx.maxBursts
+      Group: rocket-effects
+      Label: "\u0412\u0437\u0440\u044B\u0432\u044B \xB7 \u043B\u0438\u043C\u0438\u0442"
+      Description: "\u0427\u0438\u0441\u043B\u043E \u043E\u0434\u043D\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E
+        \u0445\u0440\u0430\u043D\u0438\u043C\u044B\u0445 VFX; \u043F\u0440\u0438
+        \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0438 \u0437\u0430\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F
+        \u0441\u0430\u043C\u044B\u0439 \u0441\u0442\u0430\u0440\u044B\u0439."
+      Unit: count
+      Minimum: 1
+      Maximum: 64
+      Step: 1
+      DefaultValue: 24
+    - Path: pulseFx.fireSpreadScale
+      Group: rocket-effects
+      Label: "\u041E\u0433\u043E\u043D\u044C \xB7 \u0440\u0430\u0437\u043B\u0451\u0442"
+      Description: "\u0420\u0430\u0437\u043B\u0451\u0442 \u043B\u0435\u043F\u0435\u0441\u0442\u043A\u043E\u0432
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 0.55
+    - Path: pulseFx.fireSizeVariation
+      Group: rocket-effects
+      Label: "\u041E\u0433\u043E\u043D\u044C \xB7 \u043D\u0435\u043E\u0434\u043D\u043E\u0440\u043E\u0434\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u0420\u0430\u0437\u043D\u0438\u0446\u0430 \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u0432
+        \u043E\u0433\u043D\u0435\u043D\u043D\u044B\u0445 \u043B\u0435\u043F\u0435\u0441\u0442\u043A\u043E\u0432."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.8
+      Step: 0.05
+      DefaultValue: 0.2
+    - Path: pulseFx.sparkSpeedVariation
+      Group: rocket-effects
+      Label: "\u0418\u0441\u043A\u0440\u044B \xB7 \u043D\u0435\u043E\u0434\u043D\u043E\u0440\u043E\u0434\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u0420\u0430\u0437\u043D\u0438\u0446\u0430 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0435\u0439
+        \u0440\u0430\u0437\u043B\u0451\u0442\u0430 \u0438\u0441\u043A\u0440."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.8
+      Step: 0.05
+      DefaultValue: 0.35
+    - Path: pulseFx.smokeSpreadScale
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u0440\u0430\u0437\u043B\u0451\u0442"
+      Description: "\u0420\u0430\u0437\u043B\u0451\u0442 \u043E\u0431\u043B\u0430\u0447\u043A\u043E\u0432
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430 \u0432\u0441\u043F\u044B\u0448\u043A\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: pulseFx.smokeInitialScale
+      Group: rocket-effects
+      Label: "\u0414\u044B\u043C \xB7 \u043D\u0430\u0447\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0440\u0430\u0437\u043C\u0435\u0440"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u044B\u0439 \u0434\u0438\u0430\u043C\u0435\u0442\u0440
+        \u043E\u0431\u043B\u0430\u0447\u043A\u0430 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0435\u0433\u043E \u0437\u0430\u0434\u0430\u043D\u043D\u043E\u0433\u043E
+        \u0440\u0430\u0437\u043C\u0435\u0440\u0430."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: pulseFx.coreWarmth
+      Group: rocket-effects
+      Label: "\u042F\u0434\u0440\u043E \xB7 \u0442\u0435\u043F\u043B\u043E\u0442\u0430"
+      Description: "\u041F\u0440\u0438\u043C\u0435\u0441\u044C \u043E\u0440\u0430\u043D\u0436\u0435\u0432\u043E\u0433\u043E
+        \u0446\u0432\u0435\u0442\u0430 Pulse \u0432 \u0431\u0435\u043B\u043E\u043C
+        \u044F\u0434\u0440\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: pulseFx.exhaustCoreRatio
+      Group: rocket-effects
+      Label: "\u0421\u043E\u043F\u043B\u043E \xB7 \u0434\u043B\u0438\u043D\u0430
+        \u044F\u0434\u0440\u0430"
+      Description: "\u0414\u043B\u0438\u043D\u0430 \u044F\u0440\u043A\u043E\u0433\u043E
+        \u044F\u0434\u0440\u0430 \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u043F\u043B\u0430\u043C\u0435\u043D\u0438 \u0441\u043E\u043F\u043B\u0430."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.7
+    values:
+    - Path: pulseFx.exhaustLength
+      Value: 0.46
+    - Path: pulseFx.exhaustWidth
+      Value: 0.12
+    - Path: pulseFx.trailSmokeSize
+      Value: 0.13
+    - Path: pulseFx.trailSmokeOpacity
+      Value: 0.16
+    - Path: pulseFx.trailSmokeCount
+      Value: 7
+    - Path: pulseFx.fireCount
+      Value: 9
+    - Path: pulseFx.fireLobeScale
+      Value: 0.75
+    - Path: pulseFx.coreSeconds
+      Value: 0.12
+    - Path: pulseFx.coreScale
+      Value: 0.45
+    - Path: pulseFx.sparkCount
+      Value: 12
+    - Path: pulseFx.sparkSeconds
+      Value: 0.55
+    - Path: pulseFx.sparkSpeed
+      Value: 5
+    - Path: pulseFx.sparkSize
+      Value: 0.035
+    - Path: pulseFx.sparkStretch
+      Value: 0.08
+    - Path: pulseFx.smokeCount
+      Value: 5
+    - Path: pulseFx.smokeSeconds
+      Value: 0.85
+    - Path: pulseFx.smokeDelay
+      Value: 0.08
+    - Path: pulseFx.smokeScale
+      Value: 0.7
+    - Path: pulseFx.smokeOpacity
+      Value: 0.24
+    - Path: pulseFx.smokeRise
+      Value: 0.4
+    - Path: pulseFx.smokeShade
+      Value: 0.52
+    - Path: pulseFx.maxBursts
+      Value: 24
+    - Path: pulseFx.fireSpreadScale
+      Value: 0.55
+    - Path: pulseFx.fireSizeVariation
+      Value: 0.2
+    - Path: pulseFx.sparkSpeedVariation
+      Value: 0.35
+    - Path: pulseFx.smokeSpreadScale
+      Value: 0.5
+    - Path: pulseFx.smokeInitialScale
+      Value: 0.5
+    - Path: pulseFx.coreWarmth
+      Value: 0.12
+    - Path: pulseFx.exhaustCoreRatio
+      Value: 0.7
   CutterProfile:
     id: cutter-beam-v1
-    version: 3
+    version: 4
     descriptors:
     - Path: cutter.energyCapacity
       Group: cutter
@@ -1921,7 +3334,7 @@ MonoBehaviour:
       Value: 0.35
   LifeProfile:
     id: unity-combat-state-v1
-    version: 6
+    version: 7
     descriptors:
     - Path: combat.maximumHealth
       Group: combat
@@ -2058,7 +3471,7 @@ MonoBehaviour:
       Minimum: 1
       Maximum: 4
       Step: 0.1
-      DefaultValue: 2
+      DefaultValue: 1.5
     - Path: damageBoost.durationSeconds
       Group: damage-boost
       Label: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
@@ -2222,7 +3635,7 @@ MonoBehaviour:
       Minimum: 1
       Maximum: 300
       Step: 1
-      DefaultValue: 100
+      DefaultValue: 200
     - Path: rifle.cooldownSeconds
       Group: rifle
       Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u0440\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
@@ -2236,7 +3649,7 @@ MonoBehaviour:
       Minimum: 0.02
       Maximum: 1
       Step: 0.01
-      DefaultValue: 0.12
+      DefaultValue: 0.1
     - Path: weapon.switchSeconds
       Group: weapon-switch
       Label: "\u0412\u0440\u0435\u043C\u044F \u0441\u043C\u0435\u043D\u044B \u043E\u0440\u0443\u0436\u0438\u044F"
@@ -2247,7 +3660,7 @@ MonoBehaviour:
       Minimum: 0.1
       Maximum: 3
       Step: 0.1
-      DefaultValue: 1
+      DefaultValue: 0.5
     - Path: combat.cooldownSeconds
       Group: shotgun
       Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432"
@@ -2315,7 +3728,7 @@ MonoBehaviour:
     - Path: pickup.maximumHeightDifference
       Value: 0.5
     - Path: damageBoost.multiplier
-      Value: 2
+      Value: 1.5
     - Path: damageBoost.durationSeconds
       Value: 10
     - Path: damageBoost.initialDelaySeconds
@@ -2345,11 +3758,11 @@ MonoBehaviour:
     - Path: combat.startingAmmo
       Value: 20
     - Path: rifle.startingAmmo
-      Value: 100
+      Value: 200
     - Path: rifle.cooldownSeconds
-      Value: 0.12
+      Value: 0.1
     - Path: weapon.switchSeconds
-      Value: 1
+      Value: 0.5
     - Path: combat.cooldownSeconds
       Value: 0.7
     - Path: combat.killcamSeconds
@@ -2360,7 +3773,7 @@ MonoBehaviour:
       Value: 1.2
   CombatProfile:
     id: unity-native-combat-v1
-    version: 4
+    version: 7
     descriptors:
     - Path: shot.pellets
       Group: shotgun
@@ -2372,7 +3785,7 @@ MonoBehaviour:
       Minimum: 1
       Maximum: 64
       Step: 1
-      DefaultValue: 12
+      DefaultValue: 18
     - Path: shot.spread
       Group: shotgun
       Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441"
@@ -2383,7 +3796,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 45
       Step: 0.1
-      DefaultValue: 7
+      DefaultValue: 6
     - Path: shot.range
       Group: shotgun
       Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
@@ -2395,39 +3808,6 @@ MonoBehaviour:
       Maximum: 200
       Step: 0.5
       DefaultValue: 35
-    - Path: shot.head
-      Group: shotgun
-      Label: "\u0423\u0440\u043E\u043D \u0433\u043E\u043B\u043E\u0432\u044B"
-      Description: "\u0423\u0440\u043E\u043D \u043F\u0440\u0438 \u043F\u043E\u043B\u043D\u043E\u043C
-        \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0438 \u0432\u0441\u0435\u0445
-        \u0434\u0440\u043E\u0431\u0438\u043D \u0432 \u0433\u043E\u043B\u043E\u0432\u0443."
-      Unit: health
-      Minimum: 0
-      Maximum: 500
-      Step: 1
-      DefaultValue: 100
-    - Path: shot.torso
-      Group: shotgun
-      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
-      Description: "\u0423\u0440\u043E\u043D \u043F\u0440\u0438 \u043F\u043E\u043B\u043D\u043E\u043C
-        \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0438 \u0432\u0441\u0435\u0445
-        \u0434\u0440\u043E\u0431\u0438\u043D \u0432 \u043A\u043E\u0440\u043F\u0443\u0441."
-      Unit: health
-      Minimum: 0
-      Maximum: 500
-      Step: 1
-      DefaultValue: 70
-    - Path: shot.limb
-      Group: shotgun
-      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439"
-      Description: "\u0423\u0440\u043E\u043D \u043F\u0440\u0438 \u043F\u043E\u043B\u043D\u043E\u043C
-        \u043F\u043E\u043F\u0430\u0434\u0430\u043D\u0438\u0438 \u0432\u0441\u0435\u0445
-        \u0434\u0440\u043E\u0431\u0438\u043D \u0432 \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0438."
-      Unit: health
-      Minimum: 0
-      Maximum: 500
-      Step: 1
-      DefaultValue: 30
     - Path: rifle.spread
       Group: rifle
       Label: "\u0420\u0430\u0437\u0431\u0440\u043E\u0441 \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438"
@@ -2437,47 +3817,19 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 10
       Step: 0.1
-      DefaultValue: 1.2
-    - Path: rifle.range
+      DefaultValue: 1.1
+    - Path: rifle.speed
       Group: rifle
-      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0438"
-      Description: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043E\u0434\u0438\u043D\u043E\u0447\u043D\u043E\u0439
-        \u043F\u0443\u043B\u0438."
-      Unit: meters
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0443\u043B\u0438"
+      Description: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0440\u044F\u043C\u043E\u043B\u0438\u043D\u0435\u0439\u043D\u043E\u0433\u043E
+        \u043F\u043E\u043B\u0451\u0442\u0430; \u0443\u0440\u043E\u043D \u0442\u043E\u043B\u044C\u043A\u043E
+        \u043F\u0440\u0438 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0435, \u0434\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043D\u0435 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0430."
+      Unit: meters-per-second
       Minimum: 1
-      Maximum: 200
-      Step: 0.5
-      DefaultValue: 80
-    - Path: rifle.head
-      Group: rifle
-      Label: "\u0423\u0440\u043E\u043D \u0433\u043E\u043B\u043E\u0432\u044B"
-      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
-        \u0432 \u0433\u043E\u043B\u043E\u0432\u0443."
-      Unit: health
-      Minimum: 0
-      Maximum: 200
+      Maximum: 1000
       Step: 1
-      DefaultValue: 30
-    - Path: rifle.torso
-      Group: rifle
-      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u0440\u043F\u0443\u0441\u0430"
-      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
-        \u0432 \u043A\u043E\u0440\u043F\u0443\u0441."
-      Unit: health
-      Minimum: 0
-      Maximum: 200
-      Step: 1
-      DefaultValue: 20
-    - Path: rifle.limb
-      Group: rifle
-      Label: "\u0423\u0440\u043E\u043D \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u0435\u0439"
-      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
-        \u0432 \u043A\u043E\u043D\u0435\u0447\u043D\u043E\u0441\u0442\u044C."
-      Unit: health
-      Minimum: 0
-      Maximum: 200
-      Step: 1
-      DefaultValue: 12
+      DefaultValue: 100
     - Path: zone.headY
       Group: hit-zones
       Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0433\u043E\u043B\u043E\u0432\u044B"
@@ -2821,15 +4173,14 @@ MonoBehaviour:
       Group: rocket
       Label: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439
         \u0443\u0440\u043E\u043D"
-      Description: "\u0415\u0434\u0438\u043D\u044B\u0439 \u043F\u0440\u0435\u0434\u0435\u043B
-        \u043F\u0440\u044F\u043C\u043E\u0433\u043E \u0438 \u0440\u0430\u0434\u0438\u0430\u043B\u044C\u043D\u043E\u0433\u043E
-        \u0443\u0440\u043E\u043D\u0430, \u0432\u043A\u043B\u044E\u0447\u0430\u044F
-        \u0443\u0441\u0438\u043B\u0435\u043D\u0438\u0435."
+      Description: "\u0411\u0430\u0437\u043E\u0432\u044B\u0439 \u043F\u0440\u044F\u043C\u043E\u0439
+        \u0443\u0440\u043E\u043D \u0438 splash \u0443 \u044D\u043F\u0438\u0446\u0435\u043D\u0442\u0440\u0430
+        \u0434\u043E \u0443\u0441\u0438\u043B\u0435\u043D\u0438\u044F."
       Unit: health
       Minimum: 0
       Maximum: 500
       Step: 1
-      DefaultValue: 100
+      DefaultValue: 85
     - Path: rocket.range
       Group: rocket
       Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043F\u043E\u043B\u0451\u0442\u0430"
@@ -2867,29 +4218,63 @@ MonoBehaviour:
       Maximum: 10
       Step: 0.1
       DefaultValue: 1
+    - Path: rifle.damage
+      Group: rifle
+      Label: "\u0423\u0440\u043E\u043D \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0430"
+      Description: "\u0423\u0440\u043E\u043D \u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u043B\u0438
+        \u043D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E \u043E\u0442
+        \u0447\u0430\u0441\u0442\u0438 \u0442\u0435\u043B\u0430."
+      Unit: health
+      Minimum: 0
+      Maximum: 200
+      Step: 1
+      DefaultValue: 10
+    - Path: shot.damage
+      Group: shotgun
+      Label: "\u0423\u0440\u043E\u043D \u0434\u0440\u043E\u0431\u043E\u0432\u0438\u043A\u0430"
+      Description: "\u0421\u0443\u043C\u043C\u0430\u0440\u043D\u044B\u0439 \u0443\u0440\u043E\u043D
+        \u0432\u0441\u0435\u0445 \u043F\u043E\u043F\u0430\u0432\u0448\u0438\u0445
+        \u0434\u0440\u043E\u0431\u0438\u043D \u043D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E
+        \u043E\u0442 \u0447\u0430\u0441\u0442\u0438 \u0442\u0435\u043B\u0430."
+      Unit: health
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 85
+    - Path: damage.friendlyMultiplier
+      Group: damage-policy
+      Label: "\u0423\u0440\u043E\u043D \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0430\u043C"
+      Description: "\u0414\u043E\u043B\u044F \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u043D\u043D\u043E\u0433\u043E
+        \u0443\u0440\u043E\u043D\u0430 \u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0443
+        \u0434\u043E \u043F\u043E\u0433\u043B\u043E\u0449\u0435\u043D\u0438\u044F
+        \u0449\u0438\u0442\u043E\u043C."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
+    - Path: damage.selfMultiplier
+      Group: damage-policy
+      Label: "\u0423\u0440\u043E\u043D \u0441\u0435\u0431\u0435"
+      Description: "\u0414\u043E\u043B\u044F \u0443\u0440\u043E\u043D\u0430 \u0441\u0435\u0431\u0435
+        \u0442\u0430\u043C, \u0433\u0434\u0435 \u0432\u043E\u0437\u043C\u043E\u0436\u0435\u043D
+        self contact, \u0434\u043E \u0449\u0438\u0442\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.5
     values:
     - Path: shot.pellets
-      Value: 12
+      Value: 18
     - Path: shot.spread
-      Value: 7
+      Value: 6
     - Path: shot.range
       Value: 35
-    - Path: shot.head
-      Value: 100
-    - Path: shot.torso
-      Value: 70
-    - Path: shot.limb
-      Value: 30
     - Path: rifle.spread
-      Value: 1.2
-    - Path: rifle.range
-      Value: 80
-    - Path: rifle.head
-      Value: 30
-    - Path: rifle.torso
-      Value: 20
-    - Path: rifle.limb
-      Value: 12
+      Value: 1.1
+    - Path: rifle.speed
+      Value: 100
     - Path: zone.headY
       Value: 0.9
     - Path: zone.headRadius
@@ -2957,13 +4342,21 @@ MonoBehaviour:
     - Path: rocket.radius
       Value: 4
     - Path: rocket.maximumDamage
-      Value: 100
+      Value: 85
     - Path: rocket.range
       Value: 200
     - Path: rocket.botMinimumDistance
       Value: 7
     - Path: rocket.botSafetyMargin
       Value: 1
+    - Path: rifle.damage
+      Value: 10
+    - Path: shot.damage
+      Value: 85
+    - Path: damage.friendlyMultiplier
+      Value: 0.5
+    - Path: damage.selfMultiplier
+      Value: 0.5
   BotPerceptionProfile:
     id: unity-bot-perception-v1
     version: 2
@@ -4246,7 +5639,7 @@ MonoBehaviour:
       Value: 1
   ParticipantPaletteProfile:
     id: unity-participant-presentation-v1
-    version: 1
+    version: 3
     descriptors:
     - Path: participant.color.blue.r
       Group: participant-colors
@@ -4560,6 +5953,108 @@ MonoBehaviour:
       Maximum: 255
       Step: 1
       DefaultValue: 255
+    - Path: participant.surface.detailGain
+      Group: participant-colors
+      Label: "\u041A\u043E\u043D\u0442\u0440\u0430\u0441\u0442 \u043F\u0430\u043D\u0435\u043B\u0435\u0439"
+      Description: "\u0423\u0441\u0438\u043B\u0435\u043D\u0438\u0435 \u044F\u0440\u043A\u043E\u0441\u0442\u0438
+        \u0438\u0441\u0445\u043E\u0434\u043D\u043E\u0439 \u0444\u0430\u043A\u0442\u0443\u0440\u044B
+        \u0446\u0432\u0435\u0442\u043D\u044B\u0445 \u043F\u0430\u043D\u0435\u043B\u0435\u0439;
+        \u043E\u0442\u0442\u0435\u043D\u043E\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430
+        \u0443\u0434\u0430\u043B\u044F\u0435\u0442\u0441\u044F."
+      Unit: ratio
+      Minimum: 1
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 6
+    - Path: participant.surface.maskStart
+      Group: participant-colors
+      Label: "\u041D\u0430\u0447\u0430\u043B\u043E \u0446\u0432\u0435\u0442\u043E\u0432\u043E\u0439
+        \u0437\u043E\u043D\u044B"
+      Description: "\u041D\u0438\u0436\u0435 \u044D\u0442\u043E\u0439 \u044F\u0440\u043A\u043E\u0441\u0442\u0438
+        \u0444\u0430\u043A\u0442\u0443\u0440\u044B \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u044C
+        \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u044B\u043C
+        \u0433\u0440\u0430\u0444\u0438\u0442\u043E\u043C."
+      Unit: linear reflectance
+      Minimum: 0
+      Maximum: 0.5
+      Step: 0.001
+      DefaultValue: 0.002
+    - Path: participant.surface.maskWidth
+      Group: participant-colors
+      Label: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u0446\u0432\u0435\u0442\u043E\u0432\u043E\u0439
+        \u0437\u043E\u043D\u044B"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043F\u043B\u0430\u0432\u043D\u043E\u0433\u043E
+        \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430 \u043E\u0442 \u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u044B\u0445
+        \u0448\u0432\u043E\u0432 \u043A \u043E\u043A\u0440\u0430\u0448\u0435\u043D\u043D\u043E\u0439
+        \u043F\u0430\u043D\u0435\u043B\u0438."
+      Unit: linear reflectance
+      Minimum: 0.001
+      Maximum: 0.5
+      Step: 0.001
+      DefaultValue: 0.006
+    - Path: participant.surface.panelFloor
+      Group: participant-colors
+      Label: "\u041C\u0438\u043D\u0438\u043C\u0443\u043C \u044F\u0440\u043A\u043E\u0441\u0442\u0438
+        \u043F\u0430\u043D\u0435\u043B\u0435\u0439"
+      Description: "\u041D\u0438\u0436\u043D\u044F\u044F \u044F\u0440\u043A\u043E\u0441\u0442\u044C
+        \u0446\u0432\u0435\u0442\u0430 \u043A\u0440\u0443\u043F\u043D\u043E\u0439
+        \u043F\u0430\u043D\u0435\u043B\u0438 \u0434\u043B\u044F \u0447\u0438\u0442\u0430\u0435\u043C\u043E\u0441\u0442\u0438
+        \u0432\u0441\u0435\u0445 \u0432\u043E\u0441\u044C\u043C\u0438 assigned \u0446\u0432\u0435\u0442\u043E\u0432."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: participant.surface.shellStart
+      Group: participant-colors
+      Label: "\u041C\u0430\u0441\u043A\u0430 \u0431\u0440\u043E\u043D\u0435\u043F\u0430\u043D\u0435\u043B\u0435\u0439"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u043F\u043E\u0440\u043E\u0433 \u0441\u0432\u0435\u0442\u043B\u044B\u0445
+        \u043F\u0430\u043D\u0435\u043B\u0435\u0439 \u043A\u043E\u0440\u043F\u0443\u0441\u0430
+        \u0438 \u0448\u043B\u0435\u043C\u0430; \u0442\u0451\u043C\u043D\u044B\u0435
+        \u0443\u0447\u0430\u0441\u0442\u043A\u0438 \u043E\u0441\u0442\u0430\u044E\u0442\u0441\u044F
+        \u0433\u0440\u0430\u0444\u0438\u0442\u043E\u043C."
+      Unit: linear reflectance
+      Minimum: 0
+      Maximum: 0.5
+      Step: 0.001
+      DefaultValue: 0.09
+    - Path: participant.surface.shellWidth
+      Group: participant-colors
+      Label: "\u041A\u0440\u0430\u0439 \u0431\u0440\u043E\u043D\u0435\u043F\u0430\u043D\u0435\u043B\u0438"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0448\u0438\u0440\u0438\u043D\u0430 \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430
+        assigned \u0446\u0432\u0435\u0442\u0430 \u043D\u0430 \u0431\u0440\u043E\u043D\u0435\u043F\u0430\u043D\u0435\u043B\u044F\u0445
+        \u043A\u043E\u0440\u043F\u0443\u0441\u0430 \u0438 \u0448\u043B\u0435\u043C\u0430."
+      Unit: linear reflectance
+      Minimum: 0.001
+      Maximum: 0.5
+      Step: 0.001
+      DefaultValue: 0.015
+    - Path: participant.surface.neutralPlateGain
+      Group: participant-colors
+      Label: "\u0413\u0440\u0430\u0444\u0438\u0442 \u0433\u043E\u043B\u0435\u043D\u0435\u0439"
+      Description: "\u042F\u0440\u043A\u043E\u0441\u0442\u044C \u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u044B\u0445
+        \u043A\u0435\u0440\u0430\u043C\u0438\u0447\u0435\u0441\u043A\u0438\u0445
+        \u043F\u043B\u0430\u0441\u0442\u0438\u043D \u043D\u0430 \u0433\u043E\u043B\u0435\u043D\u044F\u0445."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.15
+    - Path: participant.surface.helmetStripeWidth
+      Group: participant-colors
+      Label: "\u041F\u0430\u043D\u0435\u043B\u0438 \u0448\u043B\u0435\u043C\u0430"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u0446\u0432\u0435\u0442\u043D\u043E\u0439
+        \u043F\u043E\u043B\u043E\u0441\u044B \u0438 \u0431\u043E\u043A\u043E\u0432\u044B\u0445
+        \u0443\u0447\u0430\u0441\u0442\u043A\u043E\u0432 \u0432 UV \u0430\u0442\u043B\u0430\u0441\u0435
+        \u0448\u043B\u0435\u043C\u0430; \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u0430\u044F
+        \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0430 \u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u0430\u044F."
+      Unit: UV ratio
+      Minimum: 0.01
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.09
     values:
     - Path: participant.color.blue.r
       Value: 69
@@ -4609,6 +6104,22 @@ MonoBehaviour:
       Value: 247
     - Path: participant.color.white.b
       Value: 255
+    - Path: participant.surface.detailGain
+      Value: 6
+    - Path: participant.surface.maskStart
+      Value: 0.002
+    - Path: participant.surface.maskWidth
+      Value: 0.006
+    - Path: participant.surface.panelFloor
+      Value: 0.65
+    - Path: participant.surface.shellStart
+      Value: 0.09
+    - Path: participant.surface.shellWidth
+      Value: 0.015
+    - Path: participant.surface.neutralPlateGain
+      Value: 0.15
+    - Path: participant.surface.helmetStripeWidth
+      Value: 0.09
   RosterProfile:
     id: unity-native-roster-v1
     version: 1
@@ -4669,7 +6180,7 @@ MonoBehaviour:
       Value: 5
   MatchProfile:
     id: unity-native-match-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: match.durationMinutes
       Group: match
@@ -4780,6 +6291,20 @@ MonoBehaviour:
       Maximum: 20000
       Step: 1
       DefaultValue: 400
+    - Path: score.friendlyOrSelfKillPenalty
+      Group: scoring
+      Label: "\u0428\u0442\u0440\u0430\u0444 \u0437\u0430 \u0443\u0431\u0438\u0439\u0441\u0442\u0432\u043E
+        \u0441\u0435\u0431\u044F/\u0441\u043E\u044E\u0437\u043D\u0438\u043A\u0430"
+      Description: "\u0412\u044B\u0447\u0438\u0442\u0430\u043D\u0438\u0435 \u0438\u0437
+        \u043B\u0438\u0447\u043D\u043E\u0433\u043E \u0441\u0447\u0451\u0442\u0430
+        \u0437\u0430 \u043A\u0430\u0436\u0434\u0443\u044E \u0442\u0430\u043A\u0443\u044E
+        \u0441\u043C\u0435\u0440\u0442\u044C; \u043C\u0430\u0442\u0447 \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u0442
+        \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u0435 \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435."
+      Unit: points
+      Minimum: 0
+      Maximum: 20000
+      Step: 1
+      DefaultValue: 200
     values:
     - Path: match.durationMinutes
       Value: 5
@@ -4801,7 +6326,9 @@ MonoBehaviour:
       Value: 1200
     - Path: score.chainIncrement
       Value: 400
-  CombatBowlReviewDirectory: 
+    - Path: score.friendlyOrSelfKillPenalty
+      Value: 200
+  CombatBowlReviewDirectory:
   OrbitalLeagueProfile:
     id: orbital-league-ring-v1
     version: 8
@@ -57695,13 +59222,13 @@ MonoBehaviour:
       Value: 4
     - Path: damage-hall.anchor.z
       Value: 0
---- !u!4 &794993076
+--- !u!4 &1920963857
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794993074}
+  m_GameObject: {fileID: 1920963855}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -57714,4 +59241,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 794993076}
+  - {fileID: 1920963857}

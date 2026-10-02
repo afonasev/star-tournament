@@ -6,6 +6,7 @@ namespace StarTournament.ProvingGround
     [Serializable] public struct CutterContact
     {
         public int Life;
+        // New contract stores no delayed contact damage.
         public double Seconds, DamageRemainder;
     }
     [Serializable] public sealed class CutterBeamState
@@ -19,7 +20,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Serializable contact integrator. Queries supply distances; visuals never supply hits.</summary>
     public sealed class CutterBeam
     {
-        readonly double rate,extension,range,tick,damage;
+        readonly double rate,extension,range,damage;
         CutterBeamState state;
         public CutterBeamState Read()=>state.Clone();
         public float Range=>(float)range;
@@ -28,8 +29,8 @@ namespace StarTournament.ProvingGround
             if(p.Validate().Count!=0)throw new ArgumentException("Invalid cutter profile");
             rate=DecimalValue(p.Get("cutter.energyPerSecond"));range=p.Get("cutter.maxRangeMeters");
             // Profile values originate as decimal UI numbers. Remove float representation noise before clock arithmetic.
-            extension=DecimalValue(p.Get("cutter.extensionSeconds"));tick=DecimalValue(p.Get("cutter.contactTickSeconds"));
-            damage=DecimalValue(p.Get("cutter.referenceDamage"))/DecimalValue(p.Get("cutter.referenceContactSeconds"))*tick;
+            extension=DecimalValue(p.Get("cutter.extensionSeconds"));
+            damage=DecimalValue(p.Get("cutter.referenceDamage"))/DecimalValue(p.Get("cutter.referenceContactSeconds"));
             state=new CutterBeamState{Contacts=new CutterContact[participants]};
         }
         static double DecimalValue(float f)=>double.Parse(f.ToString("R",System.Globalization.CultureInfo.InvariantCulture),System.Globalization.CultureInfo.InvariantCulture);
@@ -39,7 +40,7 @@ namespace StarTournament.ProvingGround
         public void ValidateSnapshot(CutterBeamState s)
         {
             if(s==null||s.Contacts==null||s.Contacts.Length!=state.Contacts.Length||!Finite(s.EmissionSeconds)||s.EmissionSeconds<0||!Finite(s.Origin)||!Finite(s.Endpoint)||(!s.Active&&s.EmissionSeconds!=0))throw new ArgumentException("Invalid cutter snapshot");
-            foreach(var c in s.Contacts)if(c.Life<0||!Finite(c.Seconds)||c.Seconds<0||c.Seconds>=tick||!Finite(c.DamageRemainder)||c.DamageRemainder<0||c.DamageRemainder>=1)throw new ArgumentException("Invalid cutter contact");
+            foreach(var c in s.Contacts)if(c.Life<0||!Finite(c.Seconds)||c.Seconds!=0||!Finite(c.DamageRemainder)||c.DamageRemainder!=0)throw new ArgumentException("Invalid cutter contact");
         }
         public void Restore(CutterBeamState s)
         { ValidateSnapshot(s);state=s.Clone();
@@ -61,16 +62,9 @@ namespace StarTournament.ProvingGround
                 if(distance<0||distance>wallDistance||distance>length){c.Seconds=0;state.Contacts[i]=c;continue;}
                 double arrival=extension<=0?0:distance/range*extension;
                 double contact=Math.Max(0,duration-Math.Max(0,arrival-before));
-                c.Seconds+=contact;
-                // Epsilon only counters floating clock addition, never a gameplay tolerance.
-                int ticks=(int)Math.Floor((c.Seconds+1e-9)/tick);
-                c.Seconds=Math.Max(0,c.Seconds-ticks*tick);
-                if(ticks>0)
-                {
-                    double exact=c.DamageRemainder+ticks*damage*multiplier;
-                    float whole=(float)Math.Floor(exact+1e-9);c.DamageRemainder=Math.Max(0,exact-whole);
-                    if(whole>0)apply(i,whole);
-                }
+                // Apply every delivered fraction now; gaps and new lives never inherit deferred debt.
+                float amount=(float)(contact*damage*multiplier);
+                if(amount>0)apply(i,amount);
                 state.Contacts[i]=c;
             }
             return duration*rate;

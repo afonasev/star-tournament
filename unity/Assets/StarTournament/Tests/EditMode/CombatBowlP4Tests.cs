@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround.Tests
         [Test] public void DamageUsesApprovedDelayDurationMultiplierAndCooldownWithSnapshot()
         {
             var p=ProvingProfile.CreateCombatDefault();var pickup=new DamageBoostPickup(Vector3.zero,p);pickup.Advance(14);Assert.That(pickup.Read().Available,Is.False);pickup.Advance(1);Assert.That(pickup.Read().Available,Is.True);
-            Assert.That(pickup.Multiplier,Is.EqualTo(2));Assert.That(pickup.Duration,Is.EqualTo(10));pickup.TryCollect(Vector3.zero);pickup.Advance(44);Assert.That(pickup.Read().Available,Is.False);
+            Assert.That(pickup.Multiplier,Is.EqualTo(1.5f));Assert.That(pickup.Duration,Is.EqualTo(10));pickup.TryCollect(Vector3.zero);pickup.Advance(44);Assert.That(pickup.Read().Available,Is.False);
             var copy=new DamageBoostPickup(Vector3.zero,p);copy.Restore(JsonUtility.FromJson<DamageBoostPickupState>(JsonUtility.ToJson(pickup.Read())));copy.Advance(1);Assert.That(copy.Read().Available,Is.True);
         }
     }

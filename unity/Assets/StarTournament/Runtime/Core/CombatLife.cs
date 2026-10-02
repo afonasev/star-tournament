@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround
             if(profile==null) throw new ArgumentException("Valid unity-combat-state-v1 profile required",nameof(profile));
             profile=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(profile));
             profile.EnsureCombatDescriptors();
-            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 6 || profile.Validate().Count != 0)
+            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 7 || profile.Validate().Count != 0)
                 throw new ArgumentException("Valid unity-combat-state-v1 profile required", nameof(profile));
             cutterCapacity=(cutter??ProvingProfile.CreateCutterDefault()).Get("cutter.energyCapacity");
             maximumHealth = profile.Get("combat.maximumHealth");
@@ -90,16 +90,19 @@ namespace StarTournament.ProvingGround
             return (int)value;
         }
 
+        // Numerical tolerance only: float profile/tick conversion can leave nanoseconds after exact tick boundaries.
+        static double Countdown(double remaining,double elapsed)
+        {double next=remaining-elapsed;return next<=1e-7?0:next;}
         public void Advance(double seconds)
         {
             if (double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds < 0)
                 throw new ArgumentOutOfRangeException(nameof(seconds));
-            state.RifleCooldownRemaining = Math.Max(0, state.RifleCooldownRemaining - seconds);
-            state.ShotgunCooldownRemaining = Math.Max(0, state.ShotgunCooldownRemaining - seconds);
-            state.RocketCooldownRemaining = Math.Max(0, state.RocketCooldownRemaining - seconds);
+            state.RifleCooldownRemaining = Countdown(state.RifleCooldownRemaining, seconds);
+            state.ShotgunCooldownRemaining = Countdown(state.ShotgunCooldownRemaining, seconds);
+            state.RocketCooldownRemaining = Countdown(state.RocketCooldownRemaining, seconds);
             if (!state.Dead && state.SwitchRemaining > 0)
             {
-                state.SwitchRemaining = Math.Max(0, state.SwitchRemaining - seconds);
+                state.SwitchRemaining = Countdown(state.SwitchRemaining, seconds);
                 if (state.SwitchRemaining == 0)
                 {
                     state.SelectedWeapon = state.PendingWeapon;

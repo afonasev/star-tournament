@@ -41,7 +41,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Click("reset-rifle.damage");yield return null;Assert.That(Button("lab-save").interactable,Is.False);
             EventSystem.current.SetSelectedGameObject(Button("plus-rifle.damage").gameObject);
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-            Assert.That(Input("input-rifle.damage").text,Is.EqualTo("21"));Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-hint").text,Does.Contain("rifle.damage"));
+            Assert.That(Input("input-rifle.damage").text,Is.EqualTo("11"));Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-hint").text,Does.Contain("rifle.damage"));
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadRight));yield return null;yield return null;InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("reset-rifle.damage"));
             Input("input-rifle.damage").text="33";Click("lab-save");yield return null;Assert.That(ground.LabSavedIdentity,Does.Contain("v2-"));Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(original));

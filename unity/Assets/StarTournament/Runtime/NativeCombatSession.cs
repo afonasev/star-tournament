@@ -40,7 +40,7 @@ namespace StarTournament.ProvingGround
         public ShotNotice(uint sequence,int shooter,int shooterLife,double time,Vector3 origin,PelletNotice[] pellets,WeaponId weapon=WeaponId.Shotgun)
         { Sequence=sequence;Shooter=shooter;ShooterLife=shooterLife;Time=time;Origin=origin;Pellets=pellets;Weapon=weapon; }
     }
-    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=8; public NativeMatchSnapshot Match; public ParticipantState[] Poses; public RifleBulletState[] RifleBullets; public WeaponPickupState[] WeaponPickups; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
+    [Serializable] public sealed class NativeCombatSessionSnapshot { public int Version=9; public NativeMatchSnapshot Match; public ParticipantState[] Poses; public RifleBulletState[] RifleBullets; public WeaponPickupState[] WeaponPickups; public CutterBeamState[] Beams; public bool[] BeamReleaseRequired; public RocketState[] Rockets; public FullHealPickupState[] HealPickups; public string ArenaIdentity; public LabRevisionReference DesignProfile; public double Time; public uint ShotSequence; public int ShotCount; public CombatLifeState[] Lives; public ArmorPickupState[] ArmorPickups; public SpeedPickupState[] SpeedPickups; public double[] SpeedRemaining; public DamageBoostPickupState DamagePickup; public double[] DamageRemaining; }
     /// <summary>Scene adapter. Only the owner calls Tick while Running. Core remains renderer/device-free.</summary>
     public sealed class NativeCombatSession
     {
@@ -58,6 +58,7 @@ namespace StarTournament.ProvingGround
         readonly float friendlyMultiplier,selfMultiplier;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
+        public float RocketBlastRadius => rocketResolver.Radius; // Read-only frozen combat configuration, not presentation state.
         readonly List<RifleBulletState> rifleBullets=new List<RifleBulletState>();
         readonly float rifleSpeed;
         public RifleBulletState[] RifleBullets=>rifleBullets.ToArray();
@@ -101,7 +102,7 @@ namespace StarTournament.ProvingGround
         public NativeCombatSessionSnapshot Capture() => new NativeCombatSessionSnapshot { Match=Match?.Read(), Poses=Array.ConvertAll(motors,m=>m.State),RifleBullets=RifleBullets,WeaponPickups=WeaponPickups, BeamReleaseRequired=(bool[])releaseRequired.Clone(),Beams=Array.ConvertAll(beams,b=>b.Read()),DesignProfile=DesignProfile,Rockets=Rockets,HealPickups=HealPickups,ArenaIdentity=ArenaIdentity,ArmorPickups=ArmorPickups,SpeedPickups=SpeedPickups,Time=Time,ShotSequence=shotSequence,ShotCount=ShotCount,Lives=Array.ConvertAll(lives,life=>life.Read()),SpeedRemaining=(double[])speedRemaining.Clone(),DamagePickup=damagePickup.Read(),DamageRemaining=(double[])damageRemaining.Clone() };
         public void Restore(NativeCombatSessionSnapshot snapshot)
         {
-            if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=8||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
+            if(snapshot==null||(designProfile!=null&&!designProfile.Matches(snapshot.DesignProfile))||snapshot.Version!=9||(snapshot.ArenaIdentity!=null&&snapshot.ArenaIdentity!=ArenaIdentity)||double.IsNaN(snapshot.Time)||double.IsInfinity(snapshot.Time)||snapshot.Time<0||snapshot.ShotCount<0||snapshot.Lives==null||snapshot.Lives.Length!=lives.Length||snapshot.SpeedRemaining==null||snapshot.SpeedRemaining.Length!=lives.Length)throw new ArgumentException("Invalid native combat snapshot",nameof(snapshot));
             // Optional pose payload preserves the previously saved layout while recording camera state in new snapshots.
             if(snapshot.Poses!=null){if(snapshot.Poses.Length!=motors.Length)throw new ArgumentException("Invalid pose roster");for(int i=0;i<motors.Length;i++)motors[i].ValidateState(snapshot.Poses[i]);}
             // JsonUtility materializes a null nested Match as an empty object after round-trip.
@@ -370,11 +371,12 @@ namespace StarTournament.ProvingGround
             float limit=float.PositiveInfinity;
             if(physics.Raycast(origin,direction,out var wall,beams[shooter].Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))limit=wall.distance;
             var distances=new float[lives.Length];var identities=new int[lives.Length];
-            float radius=movement.Get("player.capsule.radius"),height=movement.Get("player.capsule.height");
             for(int i=0;i<lives.Length;i++)
             {
                 identities[i]=Life(i).Life;
-                distances[i]=i==shooter||Life(i).Dead?-1:RocketResolver.Capsule(origin-Pose(i).Position,direction,radius,height-radius,radius+cutter.Get("cutter.hitRadius"));
+                if(i==shooter||Life(i).Dead){distances[i]=-1;continue;}
+                var hit=resolver.ResolveTarget(origin,direction,new CombatTarget(i,identities[i],Pose(i)),limit);
+                distances[i]=hit.TargetIndex<0?-1:hit.Distance;
             }
             bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;
             if(began){ShotCount++;shotSequence++;ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Cutter));}

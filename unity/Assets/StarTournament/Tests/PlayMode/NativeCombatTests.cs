@@ -101,7 +101,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Time,Is.EqualTo(paused)); Assert.That(session.Life(1).RespawnRemaining,Is.EqualTo(remaining).Within(.00001));
             for(int i=0;i<15;i++) session.Tick(actions,.02f);
             Assert.That(session.Life(1).Dead,Is.False); Assert.That(session.Life(1).Life,Is.EqualTo(2));
-            Assert.That(session.Life(1).Health,Is.EqualTo(100)); Assert.That(session.Life(1).RifleAmmo,Is.EqualTo(100)); Assert.That(session.Life(1).ShotgunAmmo,Is.Zero);
+            Assert.That(session.Life(1).Health,Is.EqualTo(100)); Assert.That(session.Life(1).RifleAmmo,Is.EqualTo(200)); Assert.That(session.Life(1).ShotgunAmmo,Is.Zero);
             Assert.That(motors[1].GetComponent<CharacterController>().enabled,Is.True);
             Assert.That(session.ShotCount,Is.EqualTo(1),"Held trigger cannot shoot again through pause or cooldown");
             Assert.That(session.ApplyDamage(1,1,100,0,1).Applied,Is.Zero,"Old-life damage cannot hit respawn");
@@ -167,9 +167,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             SelectShotgun();
             var actions=new LocalAction[4]; actions[0].SelectWeapon=WeaponSelection.Shotgun; actions[0].Fire=true;
             session.Tick(actions,.02f);
-            // Fixed sampling identity 1: one head, four torso and one arm pellet; remaining rays miss.
-            // Expected damage = 6*70/12, independent of applied-damage implementation.
-            Assert.That(session.Life(1).Health,Is.EqualTo(100f-420f/12).Within(.01f));
+            // Fixed sampling identity1 with18 pellets and explicit7-degree fixture spread:10 rays hit body zones.
+            // Expected damage =10*85/18; misses contribute nothing.
+            Assert.That(session.Life(1).Health,Is.EqualTo(100f-850f/18).Within(.01f));
             Assert.That(session.Life(0).Ammo,Is.EqualTo(19));
         }
         [UnityTest]
@@ -197,7 +197,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             session.Tick(actions,.02f);
             Assert.That(notice.Weapon,Is.EqualTo(WeaponId.Rifle));
             Assert.That(notice.Pellets,Is.Empty,"Launch does not resolve a future endpoint");
-            Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(99));
+            Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(199));
             Assert.That(session.Life(1).Health,Is.EqualTo(100),"No launch damage");
             for(int tick=0;tick<7;tick++)session.Tick(actions,.02f);
             Assert.That(session.Life(1).Health,Is.LessThan(100),"Arriving bullets apply damage");

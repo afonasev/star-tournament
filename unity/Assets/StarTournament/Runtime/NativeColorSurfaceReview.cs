@@ -57,6 +57,13 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(ground.Composition.ParticipantAt(0),new Vector3(0,4,-3),0,0);
             for(int p=0;p<4;p++)ground.PlaceCombatReviewSeat(p,new Vector3((p-1.5f)*1.2f,4,0),0,180);
             yield return Capture("07-four-views");
+            Time.timeScale=1;ground.StartParticipantReview(NativeParticipantReview.Mixed(4,true));yield return null;Time.timeScale=0;
+            yield return Capture("08-team-first-person");
+            Time.timeScale=1;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,true));yield return null;Time.timeScale=0;
+            yield return Capture("09-team-single-view");
+            Time.timeScale=1;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,false));yield return null;Time.timeScale=0;
+            var boosted=ground.Session.Capture();boosted.DamageRemaining[ground.Composition.ParticipantAt(0)]=5;ground.Session.Restore(boosted);
+            yield return Capture("10-white-first-person-boost");
             File.WriteAllText(Path.Combine(directory,"profile.json"),JsonUtility.ToJson(ground.ParticipantPaletteProfile,true));
             File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"complete\":true,\"muted\":true,\"placementCameraFixture\":true,\"humanAcceptance\":false}");
             Time.timeScale=1;Debug.Log("COLOR_SURFACE_REVIEW_COMPLETE "+directory);Application.Quit();

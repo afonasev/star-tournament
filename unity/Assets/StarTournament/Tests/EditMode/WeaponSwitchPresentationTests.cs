@@ -127,7 +127,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 string path=Path.Combine(Path.GetTempPath(),"switch-history-"+Guid.NewGuid()+".json");
                 try
                 {
-                    var legacy=new LabBundle{Profiles=current.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId||predecessor=="BeforeMediumWeaponSwitch").Where(p=>predecessor=="BeforeMediumWeaponSwitch"||predecessor=="BeforeLowWeaponSwitch"||predecessor=="BeforeShoulderSwitch"||predecessor=="BeforeWeaponSwitch"||predecessor.StartsWith("BeforeCutterThickness")||p.Id!="cutter-beam-v1").Select(p=>
+                    var legacy=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null)).Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId||predecessor=="BeforeMediumWeaponSwitch").Where(p=>predecessor=="BeforeMediumWeaponSwitch"||predecessor=="BeforeLowWeaponSwitch"||predecessor=="BeforeShoulderSwitch"||predecessor=="BeforeWeaponSwitch"||predecessor.StartsWith("BeforeCutterThickness")||p.Id!="cutter-beam-v1").Select(p=>
                     {
                         if(predecessor=="BeforeCutterThicknessSwitch")p=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponSwitch",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null);
                         string method=predecessor=="BeforeCutterSwitch"?"BeforeWeaponSwitch":predecessor=="BeforeCutterThicknessSwitch"?"BeforeCutterThickness":predecessor;

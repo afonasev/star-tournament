@@ -40,6 +40,29 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(slots,Is.GreaterThan(3));
             Assert.That(helmets,Is.GreaterThan(0));Assert.That(thighs,Is.GreaterThan(0));
         }
+        void AssertView(int seat)
+        {
+            var root=ground.transform.Find("seat-camera-"+(seat+1)+"/trooper-view");Assert.That(root,Is.Not.Null);
+            var renderer=root.GetComponentsInChildren<Renderer>(true).Single(r=>r.name=="vector-armored-hands");
+            var expected=ground.Composition.Participant(ground.Composition.ParticipantAt(seat)).Color;
+            int panels=0,neutral=0;
+            foreach(var mat in renderer.sharedMaterials)
+            {
+                Assert.That(mat.HasProperty("_IdentityMode"),Is.True);
+                if(mat.name.StartsWith("vector-ceramic"))
+                {
+                    int slot=System.Array.IndexOf(renderer.sharedMaterials,mat);var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,slot);
+                    Assert.That(mat.GetFloat("_IdentityMode"),Is.EqualTo(2),"forearm panel");
+                    Assert.That(mat.GetColor("_IdentityColor"),Is.EqualTo(expected),"mapped participant material");
+                    Assert.That(block.GetColor("_IdentityColor"),Is.EqualTo(expected),"mapped participant slot");
+                    var source=ground.TrooperArmsPrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).First(m=>m&&m.name==mat.name);
+                    foreach(var map in new[]{"baseColorTexture","normalTexture","metallicRoughnessTexture"})Assert.That(mat.GetTexture(map),Is.EqualTo(source.GetTexture(map)),"keep view maps");
+                    panels++;
+                }
+                else{Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"neutral glove/fabric/mechanics "+mat.name);neutral++;}
+            }
+            Assert.That(panels,Is.EqualTo(1));Assert.That(neutral,Is.GreaterThanOrEqualTo(4));
+        }
         [UnityTest] public IEnumerator OrdinaryEightAiStartBoostPauseRespawnRepeatAndUiUseFrozenColors()
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
@@ -51,9 +74,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<5;i++)Assert.That(JsonUtility.ToJson(ground.SetupComposition().Read()),Is.EqualTo(preview));
             B("Начать — четыре игрока").onClick.Invoke();yield return null;
             Assert.That(ground.Running,Is.True);Assert.That(ground.Composition.Read().Participants.Select(p=>p.Color).Distinct().Count(),Is.EqualTo(8));
-            var frozen=JsonUtility.ToJson(ground.Composition.Read());for(int p=0;p<8;p++)AssertBody(p);
+            var frozen=JsonUtility.ToJson(ground.Composition.Read());for(int p=0;p<8;p++)AssertBody(p);for(int seat=0;seat<4;seat++)AssertView(seat);
             var snapshot=ground.Session.Capture();snapshot.DamageRemaining[0]=5;snapshot.DamageRemaining[1]=5;ground.Session.Restore(snapshot);yield return null;
-            AssertBody(0);AssertBody(1);
+            AssertBody(0);AssertBody(1);AssertView(0);AssertView(1);
             foreach(int p in new[]{0,1})
             {
                 var body=ground.transform.Find("player-"+(p+1)+"/trooper-presentation");
@@ -68,7 +91,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SendMessage("Pause","color test");yield return null;Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));
             B("Продолжить").onClick.Invoke();ground.Session.ApplyDamage(1,ground.Session.Life(1).Life,500,0,ground.Session.Life(0).Life);
             for(int i=0;i<300&&ground.Session.Life(1).Dead;i++)ground.Session.Tick(new LocalAction[8],.02f);
-            yield return null;AssertBody(1);Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));
+            yield return null;AssertBody(1);AssertView(1);Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));
             var names=ground.GetComponentsInChildren<Text>(true);
             for(int seat=0;seat<4;seat++)Assert.That(names.Any(t=>t.text==ground.Composition.Participant(seat).Name&&t.color==ground.Composition.Participant(seat).Color),Is.True,"viewport name "+seat);
             // Live/results use the same composition; every name keeps identity even below the score leader.
@@ -85,7 +108,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             Object.Destroy(table.Root);
             ground.SendMessage("Pause","repeat");B("Повторить матч").onClick.Invoke();yield return null;
-            Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));for(int p=0;p<8;p++)AssertBody(p);
+            Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));for(int p=0;p<8;p++)AssertBody(p);for(int seat=0;seat<4;seat++)AssertView(seat);
 
         }
         [UnityTest] public IEnumerator MixedReviewHasOwnedMaterialsForEveryParticipant()
@@ -93,7 +116,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
             scene=SceneManager.GetSceneByName("ProvingGround");ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             yield return null;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,false));yield return null;
-            for(int p=0;p<8;p++)AssertBody(p);
+            for(int p=0;p<8;p++)AssertBody(p);AssertView(0);
+            ground.StartParticipantReview(NativeParticipantReview.Mixed(4,true));yield return null;
+            for(int seat=0;seat<4;seat++)AssertView(seat);
         }
     }
 }

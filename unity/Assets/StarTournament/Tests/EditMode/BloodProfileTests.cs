@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             string path=Path.Combine(Path.GetTempPath(),"blood-history-"+Guid.NewGuid()+".json");
             try
             {
-                var old=DesignLabHistoryTests.Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.BloodPresentationId);if(beforeBonusAlerts)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageBonusAlerts()).ToList();var history=new DesignLabHistory(path,old);history.Create("Blood test");
+                var old=DesignLabHistoryTests.Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.BloodPresentationId);if(beforeBonusAlerts)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageBonusAlerts()).ToList();var history=new DesignLabHistory(path,old);history.Create("Blood test");
                 string id=history.SelectedProfileId;var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);string hash=history.Selected.Hash;int revision=history.Selected.Number;
                 var current=DesignLabHistoryTests.Shipped();var upgraded=new DesignLabHistory(path,current);
                 Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("blood.markSeconds"),Is.EqualTo(30));

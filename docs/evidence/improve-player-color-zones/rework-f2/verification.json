@@ -1,0 +1,46 @@
+{
+  "result": "Passed",
+  "tested_revision": "141bea79320d19fe39af1ab09d80a5e7f46bd0d8",
+  "scope": "F2 first-person forearm ceramic slot; F1 world modes preserved",
+  "checks": [
+    {
+      "command": "ParticipantColorIdentityTests",
+      "passed": 2,
+      "evidence": "checks/color-view-lifecycle.xml"
+    },
+    {
+      "command": "make check-ui",
+      "passed": 14,
+      "evidence": "checks/ui-gate.json"
+    },
+    {
+      "command": "unity/tools.sh build",
+      "exit_code": 0,
+      "build_marker": "STAR_PROVING_BUILD_PASS 471654930",
+      "evidence": "checks/build.log"
+    }
+  ],
+  "native": {
+    "mode": "unity-run --shared autonomous material diagnostic",
+    "exit_code": 0,
+    "muted": true,
+    "resolution": "1920x1080",
+    "release": "local-macos-player-candidate/141bea79320d19fe39af1ab09d80a5e7f46bd0d8/player-view-panels-f2",
+    "tree_sha256": "c0d7557034977cf10882937a66b714089a1422dbbf71646fc5b131ed1fb4fbe0",
+    "evidence": "player",
+    "visual_result": "partial ceramic forearm panels show per-seat FFA and team identity; gloves/fabric/mechanics neutral. White panels retain identity while weapon shows red boost. World/helmet reference views retained.",
+    "human_acceptance": false,
+    "physical_device_acceptance": false,
+    "performance_acceptance": false,
+    "artifact_name_correction": "09-red-first-person output renamed 09-team-single-view without changing PNG bytes; Teams B uses current palette (magenta). Corresponding diagnostic string corrected in source after QA; production material code unchanged."
+  },
+  "integration": {
+    "revision": "95e74d6dd4777e99afbbf577f263bd8a541d6a30",
+    "status": "Passed",
+    "passed": 2,
+    "evidence": "checks/integration-color-view.xml",
+    "incoming_main": "c9e70af",
+    "binding": "Native visual gates bind to 141bea7; affected color/view lifecycle binds to merged runtime sources 95e74d6. Only documentation conflict resolved before Editor start."
+  },
+  "remaining": "explicit human visual acceptance of F2 first-person result; F1 world readability accepted in history"
+}

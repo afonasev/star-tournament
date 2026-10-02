@@ -38,10 +38,11 @@ namespace StarTournament.ProvingGround
                         var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
                         block.SetColor("_IdentityColor",color);block.SetVector("_IdentitySurface",tuning);block.SetVector("_IdentityPanels",panels);
                         // Authored mesh roles define plate coverage; source reflectance separates
-                        // helmet/chest shell panels from dark seams. Cloth and boots stay neutral.
+                        // helmet/chest shell panels from dark seams. The combined first-person
+                        // mesh has a ceramic forearm slot; glove/fabric slots stay neutral.
                         float mode=!IsBodyZone(mat)?0:mat.name=="TECI_helmet"?3:
                             mat.name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)?
-                                (renderer.name.Contains("UpperArm")||renderer.name.Contains("UpperLeg")?2:-1):1;
+                                (renderer.name.Contains("UpperArm")||renderer.name.Contains("UpperLeg")||renderer.name=="vector-armored-hands"?2:-1):1;
                         // These materials are owned per actor. Persist identity in their PBR
                         // constant buffer as well as the slot block (native skinned rendering).
                         mat.SetColor("_IdentityColor",color);mat.SetVector("_IdentitySurface",tuning);mat.SetFloat("_IdentityMode",mode);mat.SetVector("_IdentityPanels",panels);

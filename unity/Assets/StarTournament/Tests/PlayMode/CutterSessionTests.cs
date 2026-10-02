@@ -51,10 +51,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 // Reset fixture poses after switch time so contacts start at known geometry.
                 for(int i=0;i<4;i++)motors[i].Initialize(move,new Vector3(0,20,i*3));Physics.SyncTransforms();
                 a=new LocalAction[4];a[0].FireHeld=true;
-                for(int n=0;n<20;n++)session.Tick(a,.02f);
+                for(int n=0;n<2;n++)session.Tick(a,.02f);
+                Assert.That(session.Life(1).Health,Is.LessThan(100).And.GreaterThan(98),"Contact below100ms applies its delivered fraction immediately");
+                for(int n=0;n<18;n++)session.Tick(a,.02f);
                 Assert.That(session.Life(1).Health,Is.LessThan(100));Assert.That(session.Life(2).Health,Is.LessThan(100));Assert.That(session.Life(3).Health,Is.EqualTo(100));
                 Assert.That(session.Beam(0).Active,Is.True);Assert.That(session.Beam(0).Endpoint.z,Is.LessThan(7.5f));
-                var snapshot=session.Capture();session.ClearInput();Assert.That(session.Beam(0).Active,Is.False);
+                var snapshot=session.Capture();var legacy=JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(snapshot));legacy.Version=8;
+                Assert.Throws<ArgumentException>(()=>session.Restore(legacy),"Legacy deferred-contact snapshot is explicitly unsupported");
+                session.ClearInput();Assert.That(session.Beam(0).Active,Is.False);
                 session.Tick(a,.02f);Assert.That(session.Beam(0).Active,Is.False,"Resume requires release");
                 session.Restore(snapshot);Assert.That(session.Life(0).CutterEnergy,Is.EqualTo(snapshot.Lives[0].CutterEnergy));
                 yield return null;

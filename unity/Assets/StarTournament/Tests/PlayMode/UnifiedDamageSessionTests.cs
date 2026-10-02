@@ -37,10 +37,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             Setup();yield return null;motors[0].Initialize(move,new Vector3(-8,0,0));motors[1].Initialize(move,new Vector3(-8,0,3));motors[2].Initialize(move,new Vector3(-8,0,6));Physics.SyncTransforms();
             var fire=new LocalAction[4];fire[0].Fire=true;Step(fire);Step();Step();
-            Assert.That(session.Life(1).Health,Is.EqualTo(90));Assert.That(session.Life(2).Health,Is.EqualTo(100));
-            Switch(WeaponSelection.Shotgun);Step(fire);Assert.That(session.Life(1).Health,Is.EqualTo(55).Within(.001));Assert.That(session.Life(2).Health,Is.EqualTo(100));
+            Assert.That(session.Life(1).Health,Is.EqualTo(95));Assert.That(session.Life(2).Health,Is.EqualTo(100));
+            Switch(WeaponSelection.Shotgun);Step(fire);Assert.That(session.Life(1).Health,Is.EqualTo(52.5f).Within(.001));Assert.That(session.Life(2).Health,Is.EqualTo(100));
             Switch(WeaponSelection.Cutter);fire[0].FireHeld=true;Step(fire);fire[0].Fire=false;for(int i=0;i<40;i++)Step(fire);
-            Assert.That(session.Life(1).Health,Is.LessThan(55));Assert.That(session.Life(2).Health,Is.LessThan(100));
+            Assert.That(session.Life(1).Health,Is.LessThan(52.5f));Assert.That(session.Life(2).Health,Is.LessThan(100));
             Assert.That(session.Life(0).Health,Is.EqualTo(100),"Beam does not add self contact");
         }
     }
