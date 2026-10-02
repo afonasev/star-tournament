@@ -3,11 +3,20 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string BloodPresentationId="unity-blood-presentation-v1";
+        public ProvingProfile BeforeBloodIntensityIncrease()
+        {
+            if(id!=BloodPresentationId||version<2)return this;
+            var copy=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            copy.version=1;
+            // Exact prior default registry is required to validate immutable Lab history hashes.
+            copy.Descriptor("blood.drops").DefaultValue=10f;copy.Set("blood.drops",10f);
+            return copy;
+        }
         public static ProvingProfile CreateBloodDefault()
         {
-            var p=new ProvingProfile{id=BloodPresentationId,version=1};
+            var p=new ProvingProfile{id=BloodPresentationId,version=2};
             p.Add("blood.enabled","blood-drops","Включено","Включает кровь и временные следы.","boolean",0f,1f,1f,1f);
-            p.Add("blood.drops","blood-drops","Капли за попадание","Число капель в одном всплеске.","count",1f,24f,1f,10f);
+            p.Add("blood.drops","blood-drops","Капли за попадание","Число капель в одном всплеске.","count",1f,24f,1f,15f);
             p.Add("blood.dropSize","blood-drops","Размер капли","Диаметр крупных капель; мелкие используют долю этого размера.","meters",0.005f,0.08f,0.001f,0.025f);
             p.Add("blood.speed","blood-drops","Скорость разлёта","Начальная скорость капель вдоль попадания.","meters-per-second",1f,15f,0.1f,7f);
             p.Add("blood.spreadDegrees","blood-drops","Угол разлёта","Угол конуса направленных брызг.","degrees",0f,60f,1f,22f);
