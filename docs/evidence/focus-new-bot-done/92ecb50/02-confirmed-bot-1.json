@@ -1,0 +1,15 @@
+{
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "state": "02-confirmed-bot-1",
+    "focus": "roster-card-3",
+    "mapIdentity": "combat-bowl-v1@16",
+    "labIdentity": "Опубликованный профиль · v1-без-даты\nunity-shipped-release\nSHA256 0a8551e54fa95683504551fb8884ef61fae7d9c876a9fbba190fb110873a4dcc",
+    "sourceRevision": "92ecb5017cb60deb5b17527c615ce15fae91ed21",
+    "width": 3456,
+    "height": 2160,
+    "participants": 4,
+    "views": 1,
+    "reviewSeed": 20260928,
+    "muted": true,
+    "editor": false
+}

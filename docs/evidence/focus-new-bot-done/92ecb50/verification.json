@@ -1,0 +1,27 @@
+{
+  "sourceRevision": "92ecb5017cb60deb5b17527c615ce15fae91ed21",
+  "commands": [
+    "make check-ui",
+    "unity/tools.sh build"
+  ],
+  "exit_codes": [
+    0,
+    0
+  ],
+  "checks": [
+    {
+      "name": "editmode",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "name": "playmode",
+      "passed": 11,
+      "failed": 0
+    }
+  ],
+  "passed": 14,
+  "failed": 0,
+  "durable_directory": "docs/evidence/focus-new-bot-done/92ecb50",
+  "initial_compile_error": "QA variable shadowing fixed before passing gates"
+}
