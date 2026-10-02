@@ -1,0 +1,16 @@
+{
+    "state": "10-match-audio-1",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "localSeats": 1,
+    "openMenus": 1,
+    "visibleFps": 1,
+    "buildLabels": 1,
+    "width": 3456,
+    "height": 2160,
+    "sourceRevision": "b6f98a8551fa511760378c9acaec48d1429c6060",
+    "running": false,
+    "focused": true,
+    "muted": true,
+    "unityDeveloperWatermark": false,
+    "matchTime": 0.6799997314810753
+}
