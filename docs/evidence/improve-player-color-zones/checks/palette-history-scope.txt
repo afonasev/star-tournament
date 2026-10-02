@@ -1,0 +1,20 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=DesignLabHistoryTests;ParticipantColorAssignmentTests
+revision=a988bdfdb111e56ebc143cb620c9f401e3276bb4
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ParticipantPaletteProfile.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Runtime/TrooperIdentityPresentation.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M Assets/StarTournament/Tests/PlayMode/ParticipantColorIdentityTests.cs
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../scripts/presentation/
+?? Assets/StarTournament/Resources/TrooperIdentity.shadergraph
+?? Assets/StarTournament/Resources/TrooperIdentity.shadergraph.meta

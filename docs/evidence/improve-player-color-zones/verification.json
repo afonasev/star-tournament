@@ -1,0 +1,48 @@
+{
+  "result": "Passed",
+  "tested_revision": "e5cface32dfb246d86665bd9612361f505ebc6e5",
+  "scope": "ui/presentation; no gameplay/input/audio rules modified",
+  "checks": [
+    {
+      "command": "make check-ui",
+      "exit_code": 0,
+      "passed": 14,
+      "evidence": "checks/ui-gate.json"
+    },
+    {
+      "command": "unity/tools.sh test-play-filter ParticipantColorIdentityTests",
+      "exit_code": 0,
+      "passed": 2,
+      "evidence": "checks/color-lifecycle.xml"
+    },
+    {
+      "command": "focused ParticipantColorAssignmentTests and identity history upgrade",
+      "exit_code": 0,
+      "passed": 7,
+      "evidence": "checks/palette-history-focused.xml"
+    },
+    {
+      "command": "unity/tools.sh build",
+      "exit_code": 0,
+      "build_marker": "STAR_PROVING_BUILD_PASS 471526275",
+      "evidence": "checks/build.log"
+    }
+  ],
+  "native": {
+    "mode": "unity-run --exclusive",
+    "exit_code": 0,
+    "muted": true,
+    "resolution": "1920x1080",
+    "source_revision": "e5cface32dfb246d86665bd9612361f505ebc6e5",
+    "release": "local-macos-player-candidate/e5cface32dfb246d86665bd9612361f505ebc6e5/player-color-zones",
+    "tree_sha256": "1352bfd2bd79485a896b30b6482e100d543ce0ec02c69c0ed170bb39475fd6b5",
+    "visual_result": "all eight colors distinct on large panels and helmet; front/side/rear and four viewport inspected",
+    "evidence": "player",
+    "fixture": "authored Combat Bowl, frozen mixed composition; camera/placement diagnostic",
+    "human_acceptance": false,
+    "physical_controller_acceptance": false,
+    "performance_acceptance": false
+  },
+  "remaining": "explicit human visual acceptance of this exact Player",
+  "spec_sync": "star-tournament-planning f6ce9fd"
+}

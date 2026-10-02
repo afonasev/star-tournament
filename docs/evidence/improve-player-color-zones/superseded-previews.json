@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-builds/player-color-zones-f420e9c-preview1",
+    "owner": "01a0fba7-0cc2-7823-9ede-cac2096211a4",
+    "change": "improve-player-color-zones",
+    "platform": "macOS",
+    "source_revision": "f420e9cd7ca6d0e973e9dce4c3b338f0db5efe7d",
+    "tree_sha256": "9486482fe5163c3c940adb1b2341b475c8f3cb6d42db422a38e34f1165c176fc",
+    "reason": "failed gray / aborted QA previews replaced by verified working e5cface candidate; no human acceptance",
+    "removal": "removed after no Player/dependent change check; useful failure screenshots/logs retained in this evidence directory"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-builds/player-color-zones-f29211f-preview2",
+    "owner": "01a0fba7-0cc2-7823-9ede-cac2096211a4",
+    "change": "improve-player-color-zones",
+    "platform": "macOS",
+    "source_revision": "f29211fd92886413d8ee1a4d36466b05c28fe29b",
+    "tree_sha256": "0fc52f496ad35b70304fc280fafdd33a0f00fe6c2fe32fa46666d038e7d06c8a",
+    "reason": "failed gray / aborted QA previews replaced by verified working e5cface candidate; no human acceptance",
+    "removal": "removed after no Player/dependent change check; useful failure screenshots/logs retained in this evidence directory"
+  }
+]
