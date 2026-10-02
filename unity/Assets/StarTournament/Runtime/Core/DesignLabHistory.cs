@@ -235,6 +235,7 @@ namespace StarTournament.ProvingGround
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 var withoutDiscreteIdentityPanels=Cached(p=>p.BeforeDiscreteIdentityPanels());
                 var withoutIdentitySurface=Cached(p=>p.BeforeIdentitySurface());
+                var beforeBloodIntensity=Cached(p=>p.BeforeBloodIntensityIncrease());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
@@ -255,6 +256,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.DeathPresentationId).ToList()})));
                 // Preserve old immutable Lab hashes when the presentation-only audio descriptors
                 // are added to the default profile; every earlier registry remains a valid source.
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.BloodPresentationId).ToList()})));
                 var withoutAudio=Cached(p=>p.BeforeAudio());
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutAudio))));
@@ -314,6 +316,10 @@ namespace StarTournament.ProvingGround
                         // Interpret the untouched v9/v10 step interval as the new shipped default.
                         // Historical snapshots remain byte-for-byte intact with their original hash.
                         if(d.Path=="audio.footstepDistanceMeters"&&old.Snapshot.Profile(d.Path).Version>=9&&old.Snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
+                            value=currentDescriptor.DefaultValue;
+                        // Only the old shipped intensity becomes the stronger default. Keep custom
+                        // values and the immutable source revision unchanged.
+                        if(d.Path=="blood.drops"&&old.Snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                             value=currentDescriptor.DefaultValue;
                         next.Set(d.Path,value);
                     }
