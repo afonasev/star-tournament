@@ -65,6 +65,9 @@ def main():
             write("cutter-start", cut(samples, 0, .28))
             held = read(args.source / manifest["queue_previews"]["cutter"])
             write("cutter-loop", seamless(held, .40, 1.40))
+        elif event == "menu_confirm":
+            # Offline asset edit: exclude the second impact at 80 ms.
+            write(event, cut(samples, 0, .08, fade_in=0, fade_out=.02))
         else:
             write(event, samples)
     movement = DEST / "Movement"

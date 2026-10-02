@@ -1,0 +1,10 @@
+{
+  "revision": "b6f98a8",
+  "format": "mono PCM16 32000 Hz",
+  "before_seconds": 0.35,
+  "after_seconds": 0.08,
+  "second_attack_at_seconds": 0.08,
+  "treatment": "retain first impact; fade last 20 ms to zero",
+  "sha256": "cf8c1ccbe8f9caecca02ec11d7f685400731dc3acc09b9df7be9213452c92103",
+  "review": "preview has three distinct activations spaced by 500 ms silence; listening acceptance pending"
+}

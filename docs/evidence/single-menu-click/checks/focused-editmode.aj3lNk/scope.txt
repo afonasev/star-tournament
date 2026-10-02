@@ -1,0 +1,4 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=LocalSeatLayoutTests
+revision=b6f98a8551fa511760378c9acaec48d1429c6060
