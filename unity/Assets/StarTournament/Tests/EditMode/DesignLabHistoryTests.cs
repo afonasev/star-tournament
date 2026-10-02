@@ -40,6 +40,22 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
+        [Test]public void CombinedPulseV1AndPaletteV2UpgradePreservesCustomHistory()
+        {
+            var palette=typeof(ProvingProfile).GetMethod("BeforeDiscreteIdentityPanels",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)palette.Invoke(p.BeforePulseRefinement(),null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой Pulse и панели");
+            var draft=history.Selected.Snapshot;draft.Set("pulseFx.fireSizeVariation",.7f);draft.Set("participant.surface.detailGain",7);history.Save(draft);
+            var prior=SeedLegacyPulseSize(history,7);string json=JsonUtility.ToJson(prior.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireSizeVariation"),Is.EqualTo(.7f));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.detailGain"),Is.EqualTo(7));
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.lightSeconds"),Is.EqualTo(.26f));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.shellStart"),Is.EqualTo(.09f));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(prior.Hash));Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(json));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [TestCase(false)][TestCase(true)]public void MovementAudioUpgradePreservesV11HistoryAndCustomMix(bool beforeCompactMenu)
         {
             var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeMovementAudio()).ToList();
@@ -97,8 +113,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var old=Shipped();old.Profiles.RemoveAll(p=>p.Id==ProvingProfile.RocketEffectsId);
             var history=new DesignLabHistory(path,old);history.Create("Мой Pulse");
-            var draft=history.Selected.Snapshot;draft.Set("presentation.rocketExplosionSize",2.4f);history.Save(draft);
-            var prior=history.Selected;
+            var prior=SeedLegacyPulseSize(history,2.4f);
             var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
             Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireCount"),Is.EqualTo(9));
             foreach(var d in ProvingProfile.CreateRocketEffectsDefault().Descriptors)Assert.That(upgraded.Selected.Snapshot.Domain(d.Path),Is.EqualTo("Presentation"));
@@ -106,6 +121,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number);
             Assert.That(preserved.Hash,Is.EqualTo(prior.Hash));
             Assert.That(preserved.Snapshot.Profiles.Any(p=>p.Id==ProvingProfile.RocketEffectsId),Is.False);
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
+        LabRevision SeedLegacyPulseSize(DesignLabHistory history,float value)
+        {
+            // Simulate a file saved by v1 when this control was editable. Current UI correctly hides it.
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var revision=file.Profiles.Single(p=>p.Id==history.SelectedProfileId).Revisions.Single(r=>r.Number==history.Selected.Number);
+            revision.Snapshot.Set("presentation.rocketExplosionSize",value);revision.Hash=revision.Snapshot.Hash();
+            File.WriteAllText(path,JsonUtility.ToJson(file));return revision;
+        }
+        [Test]public void PulseV1RevisionMigratesLightMetadataWithoutChangingItsHashOrCustomValues()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforePulseRefinement()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Pulse v1");var draft=history.Selected.Snapshot;
+            draft.Set("pulseFx.fireSizeVariation",.7f);history.Save(draft);
+            var seeded=SeedLegacyPulseSize(history,7);string hash=seeded.Hash,json=JsonUtility.ToJson(seeded.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.lightSeconds"),Is.EqualTo(.26f));
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.fireSizeVariation"),Is.EqualTo(.7f));
+            Assert.That(upgraded.Selected.Snapshot.IsVisible("presentation.rocketExplosionSize"),Is.False);
+            Assert.That(JsonUtility.ToJson(upgraded.SelectedProfile.Revisions.Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(json));
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
@@ -323,7 +359,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
             var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
-            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(26));
+            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(27));
             foreach(var key in LabBundle.AuditedExcludedPaths)
             {
                 var d=old.Snapshot.Profile(key).Descriptor(key);float value=old.Snapshot.Get(key);

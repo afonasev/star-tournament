@@ -58,6 +58,7 @@ namespace StarTournament.ProvingGround
         readonly float friendlyMultiplier,selfMultiplier;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
+        public float RocketBlastRadius => rocketResolver.Radius; // Read-only frozen combat configuration, not presentation state.
         readonly List<RifleBulletState> rifleBullets=new List<RifleBulletState>();
         readonly float rifleSpeed;
         public RifleBulletState[] RifleBullets=>rifleBullets.ToArray();
