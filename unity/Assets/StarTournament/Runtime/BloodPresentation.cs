@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround
         Material material;Mesh dropMesh;bool disposed;uint ordinal;
         public int ActiveDrops=>drops.Count;public int ActiveMarks=>marks.Count;public int Bursts {get;private set;}
         // Geometry tessellation/query tolerances are technical invariants, not artistic tuning.
-        const int Segments=32;const float SurfaceOffset=.002f,ProjectionDepth=.04f,FlightStep=.02f;
+        const int CurveSteps=4,SatelliteSegments=12;const float SurfaceOffset=.002f,ProjectionDepth=.04f,FlightStep=.02f;
         public BloodPresentation(NativeCombatSession session,ProvingProfile profile,Transform owner,PhysicsScene physics)
         {
             this.session=session;this.profile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile));this.owner=owner;this.physics=physics;
@@ -61,7 +61,7 @@ namespace StarTournament.ProvingGround
                     if(delta.sqrMagnitude>0&&physics.Raycast(start,delta.normalized,out var hit,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))
                     {
                         float variation=1+profile.Get("blood.markVariation")*(Next(ref drop.Seed)*2-1);
-                        AddMark(hit,profile.Get("blood.markSize")*.5f*drop.Scale*variation,next,drop.Seed);landed=true;break;
+                        AddMark(hit,profile.Get("blood.markSize")*.5f*drop.Scale*variation,next,drop.Seed,drop.Velocity+Vector3.down*profile.Get("blood.gravity")*(float)(next-drop.Born));landed=true;break;
                     }
                     drop.Sampled=next;
                 }
@@ -84,37 +84,68 @@ namespace StarTournament.ProvingGround
             if(material)return;var shader=Resources.Load<Shader>("BloodSurface");if(!shader)throw new InvalidOperationException("BloodSurface shader is missing");
             material=new Material(shader){name="stylized-oxblood"};material.SetColor("_BaseColor",Color(0));material.SetFloat("_Opacity",profile.Get("blood.opacity"));
         }
-        void AddMark(RaycastHit hit,float radius,double born,uint seed)
+        void AddMark(RaycastHit hit,float radius,double born,uint seed,Vector3 velocity)
         {
-            var mesh=BuildSurfaceMark(hit,radius,seed);if(!mesh)return;
+            var mesh=BuildSurfaceMark(hit,radius,seed,velocity,profile.Get("blood.markVariation"));if(!mesh)return;
             while(marks.Count>=(int)profile.Get("blood.maxMarks"))RemoveMark(0);
             var root=new GameObject("blood-surface-mark");root.transform.SetParent(owner,false);root.transform.SetPositionAndRotation(Vector3.zero,Quaternion.identity);
             root.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=root.AddComponent<MeshRenderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
             marks.Add(new Mark{Root=root,Mesh=mesh,Renderer=renderer,Born=born});
         }
         /// <summary>Each triangle is checked on the hit collider, including edges/centre: no projection across holes or corners.</summary>
-        public static Mesh BuildSurfaceMark(RaycastHit hit,float radius,uint seed)
+        public static Mesh BuildSurfaceMark(RaycastHit hit,float radius,uint seed,Vector3 velocity=default,float variation=0)
         {
             if(!hit.collider||radius<=0)return null;
-            var normal=hit.normal;var tangent=Vector3.Cross(Mathf.Abs(normal.y)>.9f?Vector3.right:Vector3.up,normal).normalized;var bitangent=Vector3.Cross(normal,tangent);
-            var vertices=new List<Vector3>();var triangles=new List<int>();
-            // Fixed normalized contour encodes the approved art shape; diameter/variation are profile-owned.
-            float phase=Next(ref seed)*Mathf.PI*2;
-            Vector3 Rim(int index)
+            // Avalanche nearby event seeds before choosing a shape; LCG first samples otherwise cluster.
+            seed^=seed>>16;seed*=0x7feb352d;seed^=seed>>15;seed*=0x846ca68b;seed^=seed>>16;
+            var normal=hit.normal;var tangent=Vector3.ProjectOnPlane(velocity,normal).normalized;
+            if(tangent.sqrMagnitude==0)
             {
-                float angle=index*Mathf.PI*2/Segments;float shape=.75f+.13f*Mathf.Sin(angle*5+phase)+.1f*Mathf.Sin(angle*11-phase);
-                return hit.point+(tangent*Mathf.Cos(angle)+bitangent*Mathf.Sin(angle))*radius*shape;
+                tangent=Vector3.Cross(Mathf.Abs(normal.y)>.9f?Vector3.right:Vector3.up,normal).normalized;
+                tangent=Quaternion.AngleAxis(Next(ref seed)*360,normal)*tangent;
             }
+            var bitangent=Vector3.Cross(normal,tangent);var vertices=new List<Vector3>();var triangles=new List<int>();
+            // Normalized authored geometry for the selected F1 #2 decal, like vertices of a mesh asset.
+            // These coordinates define silhouettes, not adjustable gameplay/readability values;
+            // world size, shape variation, colour, lifetime and limits come from the Blood profile.
+            var outline=new[]{new Vector2(.78f,.06f),new Vector2(.58f,.39f),new Vector2(.17f,.66f),new Vector2(-.28f,.57f),new Vector2(-.68f,.26f),new Vector2(-.61f,-.14f),new Vector2(-.39f,-.51f),new Vector2(.05f,-.58f),new Vector2(.49f,-.38f),new Vector2(.69f,-.17f)};
+            int variant=(int)(Next(ref seed)*3);
+            float stretch=1+variation*(Next(ref seed)*2-1);
+            for(int i=0;i<outline.Length;i++)outline[i]=new Vector2(outline[i].x*stretch,outline[i].y/stretch)*(1+variation*(Next(ref seed)*2-1));
+            Vector3 World(Vector2 p)=>hit.point+(tangent*p.x+bitangent*p.y)*radius;
             bool Project(Vector3 sample,out Vector3 point)
             {
                 if(hit.collider.Raycast(new Ray(sample+normal*ProjectionDepth,-normal),out var contact,ProjectionDepth*2)&&Vector3.Dot(contact.normal,normal)>.98f&&Vector3.Distance(contact.point,sample)<ProjectionDepth)
                 {point=contact.point+normal*SurfaceOffset;return true;}point=default;return false;
             }
-            for(int i=0;i<Segments;i++)
+            void Triangle(Vector2 x,Vector2 y,Vector2 z)
             {
-                var a=hit.point;var b=Rim(i);var c=Rim(i+1);
-                if(!Project(a,out var pa)||!Project(b,out var pb)||!Project(c,out var pc)||!Project((a+b+c)/3,out _)||!Project((a+b)/2,out _)||!Project((a+c)/2,out _)||!Project((b+c)/2,out _))continue;
+                var a=World(x);var b=World(y);var c=World(z);
+                if(!Project(a,out var pa)||!Project(b,out var pb)||!Project(c,out var pc)||!Project((a+b+c)/3,out _)||!Project((a+b)/2,out _)||!Project((a+c)/2,out _)||!Project((b+c)/2,out _))return;
                 int start=vertices.Count;vertices.Add(pa);vertices.Add(pb);vertices.Add(pc);triangles.Add(start);triangles.Add(start+1);triangles.Add(start+2);
+            }
+            // Catmull-Rom interpolation rounds the uneven blob; no periodic radial teeth.
+            Vector2 Curve(int segment,float t)
+            {
+                int n=outline.Length;var a=outline[(segment+n-1)%n];var b=outline[segment%n];var c=outline[(segment+1)%n];var d=outline[(segment+2)%n];
+                return .5f*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t);
+            }
+            for(int i=0;i<outline.Length;i++)for(int j=0;j<CurveSteps;j++)Triangle(Vector2.zero,Curve(i,j/(float)CurveSteps),Curve(i,(j+1)/(float)CurveSteps));
+            // Three authored stroke patterns: single tail, fork, or two unequal tails.
+            var tips=variant==0?new[]{new Vector2(2.25f,.12f)}:variant==1?new[]{new Vector2(1.8f,.58f),new Vector2(2.6f,-.27f)}:new[]{new Vector2(2.1f,.4f),new Vector2(1.35f,-.53f),new Vector2(1.6f,.02f)};
+            foreach(var authored in tips)
+            {
+                var tip=authored*(1+variation*(Next(ref seed)*2-1));var axis=tip.normalized;var side=new Vector2(-axis.y,axis.x);var basePoint=axis*.5f;var neck=tip*.72f;
+                Triangle(basePoint-side*.15f,basePoint+side*.15f,neck+side*.045f);
+                Triangle(basePoint-side*.15f,neck+side*.045f,neck-side*.045f);
+                Triangle(neck-side*.045f,neck+side*.045f,tip);
+            }
+            var satellites=variant==0?new[]{new Vector2(2.55f,.18f),new Vector2(1.6f,-.42f),new Vector2(-.5f,.86f)}:variant==1?new[]{new Vector2(2.95f,-.35f),new Vector2(2.12f,.66f),new Vector2(.1f,-.86f),new Vector2(-.86f,.07f)}:new[]{new Vector2(2.46f,.48f),new Vector2(1.67f,-.68f),new Vector2(1.88f,.13f),new Vector2(-.73f,-.59f),new Vector2(.53f,.9f)};
+            foreach(var authored in satellites)
+            {
+                var centre=authored*(1+variation*(Next(ref seed)*2-1));float size=.045f+.065f*Next(ref seed);
+                Vector2 Rim(int i){float angle=i*Mathf.PI*2/SatelliteSegments;return centre+new Vector2(Mathf.Cos(angle)*size,Mathf.Sin(angle)*size*.7f);}
+                for(int i=0;i<SatelliteSegments;i++)Triangle(centre,Rim(i),Rim(i+1));
             }
             if(triangles.Count==0)return null;
             var mesh=new Mesh{name="blood-surface-splat"};mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();return mesh;
