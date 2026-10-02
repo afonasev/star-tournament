@@ -17,8 +17,10 @@ namespace StarTournament.ProvingGround
         ProvingGround ground;string directory;AudioSource[] voices;
         const string EffectsKey="StarTournament.Audio.EffectsPercent";
         bool hadEffects,preferencesChanged;int priorEffects;
+        InputSettings.BackgroundBehavior priorBackground;bool backgroundChanged;
         void OnDestroy()
         {
+            if(backgroundChanged)InputSystem.settings.backgroundBehavior=priorBackground;
             if(!preferencesChanged)return;
             if(hadEffects)PlayerPrefs.SetInt(EffectsKey,priorEffects);else PlayerPrefs.DeleteKey(EffectsKey);
             PlayerPrefs.Save();
@@ -40,6 +42,9 @@ namespace StarTournament.ProvingGround
         IEnumerator Start()
         {
             Application.runInBackground=true;ground=GetComponent<ProvingGround>();
+            // Synthetic review devices must continue receiving queued events without OS focus.
+            priorBackground=InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;backgroundChanged=true;
             var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-movementAudioReview");
             if(at<0||at+1>=args.Length||!Path.IsPathFullyQualified(args[at+1]))throw new ArgumentException("Absolute movement audio review directory required");
             directory=args[at+1];Directory.CreateDirectory(directory);
