@@ -1,0 +1,170 @@
+[
+  {
+    "capture": "Rifle-normal-world",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Rifle-normal-own",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Rifle-boost-world",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 35
+  },
+  {
+    "capture": "Rifle-boost-own",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 35
+  },
+  {
+    "capture": "Rifle-restored-world",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Rifle-restored-own",
+    "shaderSlots": {
+      "Universal Render Pipeline/Lit": 35
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Shotgun-normal-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Shotgun-normal-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Shotgun-boost-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 8
+  },
+  {
+    "capture": "Shotgun-boost-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 8
+  },
+  {
+    "capture": "Shotgun-restored-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Shotgun-restored-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 8
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "RocketLauncher-normal-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "RocketLauncher-normal-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "RocketLauncher-boost-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 6
+  },
+  {
+    "capture": "RocketLauncher-boost-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 6
+  },
+  {
+    "capture": "RocketLauncher-restored-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "RocketLauncher-restored-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 6
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Cutter-normal-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Cutter-normal-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Cutter-boost-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 4
+  },
+  {
+    "capture": "Cutter-boost-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 4
+  },
+  {
+    "capture": "Cutter-restored-world",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 0
+  },
+  {
+    "capture": "Cutter-restored-own",
+    "shaderSlots": {
+      "Shader Graphs/glTF-pbrMetallicRoughness": 4
+    },
+    "redOverrides": 0
+  }
+]

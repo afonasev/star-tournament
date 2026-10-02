@@ -26,5 +26,31 @@
   "makeCheck": {
     "exitCode": 0,
     "sourceRevision": "2f19d2b107f07313d23f630b714bb4800517cf20"
+  },
+  "postIntegration": {
+    "sourceRevision": "550ec9cbbc3f2d4f8d452386d435144cb007d5cf",
+    "editmode": {
+      "result": "Passed",
+      "total": "43",
+      "passed": "43",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "215.4720434"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "9",
+      "passed": "9",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "15.4348136"
+    },
+    "nativePlayer": {
+      "exitCode": 0,
+      "captures": 24,
+      "materialAssertions": "24/24 passed",
+      "runMode": "exclusive",
+      "fixture": "frozen placement, snapshot damage timer 5->0"
+    }
   }
 }

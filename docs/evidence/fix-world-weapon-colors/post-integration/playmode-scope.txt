@@ -1,0 +1,5 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=WorldWeaponMaterialTests;ParticipantColorIdentityTests;RocketPresentationTests
+revision=550ec9cbbc3f2d4f8d452386d435144cb007d5cf
+ M ProjectSettings/ShaderGraphSettings.asset
