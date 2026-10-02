@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround
             foreach(int seats in new[]{1,4})
             {
                 ground.StartCombatReview(pads.Take(seats).ToArray(),backgroundDiagnostic:true,ensureOpponent:true);
-                for(int i=0;i<ground.Session.ParticipantCount;i++)ground.PlaceCombatReviewSeat(i,new Vector3(i<2?0:3,-1.2f,i==0?2:3+i*2),0,i==0?0:180);
+                for(int i=0;i<ground.Session.ParticipantCount;i++)ground.PlaceCombatReviewSeat(i,new Vector3(i<2?0:i==2?-.9f:.9f,-1.2f,i==0?2:i==1?5:1),0,i==1?180:0);
                 var snapshot=ground.Session.Capture();snapshot.Lives[1].Armor=0;ground.Session.Restore(snapshot);
                 ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f); // Restore requires an input release before a fresh shot.
                 DamageNotice notice=default;ground.Session.Damaged+=n=>notice=n;
