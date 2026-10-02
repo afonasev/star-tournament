@@ -15,6 +15,18 @@ namespace StarTournament.ProvingGround
         {
             yield return null;yield return new WaitForEndOfFrame();
             File.WriteAllText(Path.Combine(directory,label+".json"),JsonUtility.ToJson(ground.Composition.Read(),true));
+            var diagnostics=new System.Text.StringBuilder();
+            var identityShader=Resources.Load<Shader>("TrooperIdentity");
+            diagnostics.AppendLine("Shader properties: "+string.Join(",",Enumerable.Range(0,identityShader.GetPropertyCount()).Select(identityShader.GetPropertyName)));
+            foreach(var renderer in ground.GetComponentsInChildren<Renderer>(true))
+                for(int i=0;i<renderer.sharedMaterials.Length;i++)
+                {
+                    var mat=renderer.sharedMaterials[i];if(!mat)continue;
+                    if(!mat.HasProperty("_IdentityColor")){diagnostics.AppendLine(renderer.transform.parent.name+"/"+renderer.name+"/"+mat.name+" shader="+mat.shader.name+" NO_IDENTITY_PROPERTIES");continue;}
+                    var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
+                    diagnostics.AppendLine(renderer.transform.parent.name+"/"+renderer.name+"/"+mat.name+" id="+mat.GetInstanceID()+" shader="+mat.shader.name+" material="+mat.GetColor("_IdentityColor")+" mode="+mat.GetFloat("_IdentityMode")+" tuning="+mat.GetVector("_IdentitySurface")+" block="+block.GetColor("_IdentityColor")+" mode="+block.GetFloat("_IdentityMode"));
+                }
+            File.WriteAllText(Path.Combine(directory,label+"-materials.txt"),diagnostics.ToString());
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,label+".png"));yield return new WaitForSecondsRealtime(.4f);
         }
         void Line(float yaw)

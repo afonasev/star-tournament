@@ -23,6 +23,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     foreach(string property in mat.HasProperty("_IdentityColor")?new[]{"_IdentityColor"}:new[]{"_BaseColor","baseColorFactor"})if(mat.HasProperty(property))Assert.That(block.GetColor(property),Is.EqualTo(ground.Composition.Participant(participant).Color),renderer.name+"/"+mat.name);
                     if(mat.HasProperty("_IdentityColor"))
                     {
+                        Assert.That(mat.GetColor("_IdentityColor"),Is.EqualTo(ground.Composition.Participant(participant).Color),"owned material color "+participant+"/"+mat.name);
+                        Assert.That(mat.GetFloat("_IdentityMode"),Is.GreaterThan(0),"owned material mode "+mat.name);
                         Assert.That(block.GetVector("_IdentitySurface").w,Is.EqualTo(ground.ParticipantPaletteProfile.Get("participant.surface.panelFloor")));
                         Assert.That(block.GetFloat("_IdentityMode"),Is.GreaterThan(0));
                         var source=ground.TrooperBodyPrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).First(m=>m&&m.name==mat.name);
@@ -83,6 +85,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SendMessage("Pause","repeat");B("Повторить матч").onClick.Invoke();yield return null;
             Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(frozen));for(int p=0;p<8;p++)AssertBody(p);
 
+        }
+        [UnityTest] public IEnumerator MixedReviewHasOwnedMaterialsForEveryParticipant()
+        {
+            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByName("ProvingGround");ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return null;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,false));yield return null;
+            for(int p=0;p<8;p++)AssertBody(p);
         }
     }
 }

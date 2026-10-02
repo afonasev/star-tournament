@@ -72,7 +72,27 @@ namespace StarTournament.ProvingGround
             if(materials.TryGetValue(source,out var existing))return existing;
             shader=shader?shader:Resources.Load<Shader>("TrooperIdentity");
             if(!shader)throw new InvalidOperationException("Trooper identity shader missing");
-            var clone=new Material(shader);clone.CopyPropertiesFromMaterial(source);clone.name=source.name;
+            var clone=new Material(shader);
+            // CopyPropertiesFromMaterial replaces the native Player property sheet with
+            // the source shader's sheet and makes added identity uniforms unavailable.
+            // Copy only shared authored properties, retaining the new shader's schema.
+            for(int i=0;i<source.shader.GetPropertyCount();i++)
+            {
+                string property=source.shader.GetPropertyName(i);if(!clone.HasProperty(property))continue;
+                switch(source.shader.GetPropertyType(i))
+                {
+                    case UnityEngine.Rendering.ShaderPropertyType.Color:clone.SetColor(property,source.GetColor(property));break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Vector:clone.SetVector(property,source.GetVector(property));break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Texture:
+                        clone.SetTexture(property,source.GetTexture(property));clone.SetTextureOffset(property,source.GetTextureOffset(property));clone.SetTextureScale(property,source.GetTextureScale(property));break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Int:clone.SetInteger(property,source.GetInteger(property));break;
+                    default:clone.SetFloat(property,source.GetFloat(property));break;
+                }
+            }
+            clone.shaderKeywords=source.shaderKeywords;clone.renderQueue=source.renderQueue;
+            clone.enableInstancing=source.enableInstancing;clone.doubleSidedGI=source.doubleSidedGI;clone.globalIlluminationFlags=source.globalIlluminationFlags;
+            clone.name=source.name;
+            if(!clone.HasProperty("_IdentityColor"))throw new InvalidOperationException("Identity material schema missing after authored property copy");
             materials.Add(source,clone);return clone;
         }
         void OnDestroy(){foreach(var material in materials.Values)Destroy(material);materials.Clear();}
