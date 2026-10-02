@@ -1,0 +1,576 @@
+{
+    "Version": 9,
+    "Match": {
+        "Version": 2,
+        "TuningIdentity": "50|15000|250|50|400|0|200|100,300,500,800,1200",
+        "AssistLedger": [
+            -1,
+            14414,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            14767,
+            10993,
+            14036,
+            -1,
+            -1,
+            -1,
+            14794,
+            -1,
+            -1
+        ],
+        "ChainAwards": [
+            500,
+            0,
+            100,
+            100
+        ],
+        "DiedThisTick": [
+            false,
+            false,
+            false,
+            false
+        ],
+        "Tick": 15000,
+        "RemainingTicks": 0,
+        "Phase": 2,
+        "Trigger": "time-limit",
+        "Winner": 0,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 13,
+                "Assists": 2,
+                "Deaths": 9,
+                "Score": 2200,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 1187.7777843475342,
+                "DamageReceived": 1299.4444427490234,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 1,
+                "Kills": 14,
+                "Assists": 2,
+                "Deaths": 13,
+                "Score": 1900,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 1774.877145767212,
+                "DamageReceived": 1533.0555572509766,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 3,
+                "Kills": 10,
+                "Assists": 3,
+                "Deaths": 10,
+                "Score": 1450,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 1545.5393924713135,
+                "DamageReceived": 1345.6781463623047,
+                "AllyDamageDealt": 0.0
+            },
+            {
+                "Seat": 2,
+                "Kills": 7,
+                "Assists": 6,
+                "Deaths": 12,
+                "Score": 1100,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 991.6828289031982,
+                "DamageReceived": 1321.6990051269531,
+                "AllyDamageDealt": 0.0
+            }
+        ],
+        "Teams": [],
+        "DirectKillsByPair": [
+            0,
+            5,
+            6,
+            2,
+            3,
+            0,
+            4,
+            7,
+            4,
+            2,
+            0,
+            1,
+            2,
+            6,
+            2,
+            0
+        ],
+        "KillChains": [
+            3,
+            0,
+            1,
+            1
+        ]
+    },
+    "Poses": [
+        {
+            "Position": {
+                "x": -5.319223880767822,
+                "y": 0.00999993085861206,
+                "z": 10.397632598876954
+            },
+            "Velocity": {
+                "x": 2.7920007705688478,
+                "y": 0.0,
+                "z": -8.555984497070313
+            },
+            "Yaw": 161.9273681640625,
+            "Pitch": 81.93692016601563,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": 14.770967483520508,
+                "y": -0.0927419662475586,
+                "z": 14.303318977355957
+            },
+            "Velocity": {
+                "x": 8.272647857666016,
+                "y": -1.9200026988983155,
+                "z": 2.0380496978759767
+            },
+            "Yaw": 194.8225860595703,
+            "Pitch": -0.3868478834629059,
+            "Grounded": false,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": -14.711187362670899,
+                "y": -0.2002440094947815,
+                "z": -16.852258682250978
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 144.54530334472657,
+            "Pitch": 0.1300826072692871,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        },
+        {
+            "Position": {
+                "x": 0.909558892250061,
+                "y": 0.00999993085861206,
+                "z": -18.577028274536134
+            },
+            "Velocity": {
+                "x": -8.987772941589356,
+                "y": 0.0,
+                "z": 0.46901702880859377
+            },
+            "Yaw": 272.9872131347656,
+            "Pitch": 1.3765065670013428,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0
+        }
+    ],
+    "RifleBullets": [
+        {
+            "Id": 549,
+            "Owner": 1,
+            "OwnerLife": 13,
+            "Position": {
+                "x": -1198.2900390625,
+                "y": 157.7873077392578,
+                "z": 207.8175811767578
+            },
+            "Direction": {
+                "x": -0.9796848297119141,
+                "y": 0.12742817401885987,
+                "z": 0.15485359728336335
+            },
+            "Distance": 1226.0,
+            "DamageMultiplier": 1.0
+        }
+    ],
+    "WeaponPickups": [
+        {
+            "InstanceId": "tunnels-shotgun-nw",
+            "Support": "support:nw",
+            "Weapon": 2,
+            "Anchor": {
+                "x": -20.0,
+                "y": -0.6000000238418579,
+                "z": 16.0
+            },
+            "Available": false,
+            "Remaining": 11.4400000795722
+        },
+        {
+            "InstanceId": "tunnels-cutter-ne",
+            "Support": "support:ne",
+            "Weapon": 4,
+            "Anchor": {
+                "x": 20.0,
+                "y": -0.6000000238418579,
+                "z": 16.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "tunnels-pulse-south",
+            "Support": "support:tunnels",
+            "Weapon": 3,
+            "Anchor": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -19.0
+            },
+            "Available": false,
+            "Remaining": 14.000000022351742
+        }
+    ],
+    "Beams": [
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        }
+    ],
+    "BeamReleaseRequired": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "Rockets": [],
+    "HealPickups": [],
+    "ArenaIdentity": "industrial-tunnels-v1@1",
+    "DesignProfile": {
+        "ProfileId": "diagnostic-fixture",
+        "Revision": 0,
+        "Hash": "b1a9254edb3e4e0f00cd60caa48c1481336c49e48077971b92dec9a0e370a7e2"
+    },
+    "Time": 299.99999329447749,
+    "ShotSequence": 568,
+    "ShotCount": 568,
+    "Lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 10,
+            "Health": 100.0,
+            "Armor": 0.5555572509765625,
+            "Ammo": 20,
+            "SelectedWeapon": 2,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": true,
+            "RocketOwned": true,
+            "CutterOwned": true,
+            "RifleAmmo": 190,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 19,
+            "CutterEnergy": 30.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 14,
+            "Health": 66.94444274902344,
+            "Armor": 0.0,
+            "Ammo": 188,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 188,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-3",
+            "Life": 13,
+            "Health": 28.30099868774414,
+            "Armor": 0.0,
+            "Ammo": 16,
+            "SelectedWeapon": 2,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": true,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 200,
+            "ShotgunAmmo": 16,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-4",
+            "Life": 11,
+            "Health": 4.3218536376953129,
+            "Armor": 0.0,
+            "Ammo": 14,
+            "SelectedWeapon": 2,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": true,
+            "RocketOwned": true,
+            "CutterOwned": true,
+            "RifleAmmo": 194,
+            "ShotgunAmmo": 14,
+            "RocketAmmo": 20,
+            "CutterEnergy": 30.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "ArmorPickups": [
+        {
+            "InstanceId": "tunnels-armor-west",
+            "Anchor": {
+                "x": -23.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        },
+        {
+            "InstanceId": "tunnels-armor-east",
+            "Anchor": {
+                "x": 23.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Available": false,
+            "RespawnRemaining": 0.7200006544589996
+        }
+    ],
+    "SpeedPickups": [],
+    "SpeedRemaining": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "DamagePickup": {
+        "InstanceId": "tunnels-damage-central",
+        "Anchor": {
+            "x": 0.0,
+            "y": -0.6000000238418579,
+            "z": 0.0
+        },
+        "Available": true,
+        "Remaining": 0.0
+    },
+    "DamageRemaining": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ]
+}

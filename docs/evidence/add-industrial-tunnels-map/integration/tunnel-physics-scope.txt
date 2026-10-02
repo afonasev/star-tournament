@@ -1,0 +1,6 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=IndustrialTunnelsPhysicsTests
+revision=cbc658b83d7c7c463959bb092edec539105fd631
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/add-industrial-tunnels-map/player/

@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "71a0f0b9756e82102a47af89afe51e5f6e45c9f4",
+  "buildMarker": "20261002T201633Z",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-industrial-tunnels-map/71a0f0b9756e/20261002T201633Z/StarTournamentProvingGround.app",
+  "sha256Manifest": "82a297ee5b66e4981fb8df4303172721d74f81f4d2a0ce01513099102e40f2c7",
+  "distribution": "local macOS Development candidate",
+  "humanAcceptance": false,
+  "serializedBuildSceneSha256": "781ab8d069552ceffd2aefa0f288f33d369a9e63108e52ddfce1fecaab55e936"
+}

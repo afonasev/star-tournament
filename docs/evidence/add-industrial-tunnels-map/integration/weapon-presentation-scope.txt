@@ -1,0 +1,12 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=WorldWeaponMaterialTests|ParticipantColorIdentityTests|RocketPresentationTests
+revision=cbc658b83d7c7c463959bb092edec539105fd631
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Settings/ProvingURP.asset
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M Assets/UniversalRenderPipelineGlobalSettings.asset
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/add-industrial-tunnels-map/player/
