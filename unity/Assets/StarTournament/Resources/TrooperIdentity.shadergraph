@@ -6446,7 +6446,7 @@
     "m_SourceType": 1,
     "m_FunctionName": "TrooperIdentity",
     "m_FunctionSource": "",
-    "m_FunctionBody": "\n// Peak reflectance removes the source hue while retaining authored seams/detail.\n// This is a color-space invariant; artistic thresholds are supplied by Balance Lab.\n$precision detail = max(Source.r, max(Source.g, Source.b));\n$precision mask = Mode > 1 ? 1 : (Mode > 0 ? smoothstep(Panels.x, Panels.x + Panels.y, detail) : 0);\n$precision neutral = Mode < 0 ? detail * Panels.z : detail;\n$precision panel = max(Tuning.w, saturate(detail * Tuning.x));\nOut = lerp(neutral.xxx, Tint.rgb * panel, saturate(mask));\n"
+    "m_FunctionBody": "\n// Peak reflectance removes the source hue while retaining authored seams/detail.\n// This is a color-space invariant; artistic thresholds are supplied by Balance Lab.\n$precision detail = max(Source.r, max(Source.g, Source.b));\n$precision mask = Mode > 1 ? 1 : (Mode > 0 ? smoothstep(Panels.x + Tuning.y, Panels.x + Tuning.y + Panels.y + Tuning.z, detail) : 0);\n$precision neutral = Mode < 0 ? detail * Panels.z : detail;\n$precision panel = max(Tuning.w, saturate(detail * Tuning.x));\nOut = lerp(neutral.xxx, Tint.rgb * panel, saturate(mask));\n"
 }
 
 {

@@ -48,7 +48,7 @@ function.update(m_Type='UnityEditor.ShaderGraph.CustomFunctionNode', m_ObjectId=
 // Peak reflectance removes the source hue while retaining authored seams/detail.
 // This is a color-space invariant; artistic thresholds are supplied by Balance Lab.
 $precision detail = max(Source.r, max(Source.g, Source.b));
-$precision mask = Mode > 1 ? 1 : (Mode > 0 ? smoothstep(Panels.x, Panels.x + Panels.y, detail) : 0);
+$precision mask = Mode > 1 ? 1 : (Mode > 0 ? smoothstep(Panels.x + Tuning.y, Panels.x + Tuning.y + Panels.y + Tuning.z, detail) : 0);
 $precision neutral = Mode < 0 ? detail * Panels.z : detail;
 $precision panel = max(Tuning.w, saturate(detail * Tuning.x));
 Out = lerp(neutral.xxx, Tint.rgb * panel, saturate(mask));
