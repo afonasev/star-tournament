@@ -71,7 +71,8 @@ namespace StarTournament.ProvingGround
         Shader shader;
         public Material Resolve(Material source,Renderer renderer)
         {
-            if(source.HasProperty("_IdentityColor"))return source;
+            foreach(var owned in materials)
+                if(owned.Key.Item1==renderer&&owned.Value==source)return source;
             var key=Tuple.Create(renderer,source);
             if(materials.TryGetValue(key,out var existing))return existing;
             shader=shader?shader:Resources.Load<Shader>("TrooperIdentity");
