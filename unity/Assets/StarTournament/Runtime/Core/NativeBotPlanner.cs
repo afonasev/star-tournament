@@ -44,20 +44,13 @@ namespace StarTournament.ProvingGround
         readonly float eye, target, maxPitch;
         public float CapsuleRadius {get;} public float CapsuleHeight {get;}
         readonly ProvingProfile combat,cutter,life;
+        public NativeBotWeaponEstimate Estimate {get;}
         public float RifleSpeed=>combat.Get("rifle.speed");
         public float RocketSpeed=>combat.Get("rocket.speed");
         public float RocketRadius=>combat.Get("rocket.radius");
         public float Capacity(WeaponId id)=>id==WeaponId.Cutter?cutter.Get("cutter.energyCapacity"):life.Get(id==WeaponId.Rifle?"rifle.startingAmmo":id==WeaponId.Shotgun?"combat.startingAmmo":"rocket.startingAmmo");
         public float DamageMultiplier=>life.Get("damageBoost.multiplier");
         public float MaximumArmor=>life.Get("armor.maximum");
-        public float WeaponUtility(WeaponId id,float distance,Vector3 velocity,float horizon)
-        {
-            if(distance>RangeFor(id))return 0;
-            if(id==WeaponId.Cutter)return cutter.Get("cutter.referenceDamage")/cutter.Get("cutter.referenceContactSeconds")*horizon*Mathf.Clamp01(1-velocity.magnitude/RangeFor(id));
-            if(id==WeaponId.RocketLauncher)return combat.Get("rocket.maximumDamage")*Mathf.Clamp01(1-TargetHeight/RocketRadius);
-            if(id==WeaponId.Shotgun)return combat.Get("shot.damage")*Mathf.Max(1,horizon/life.Get("combat.cooldownSeconds"))*Mathf.Clamp01(TargetHeight/Mathf.Max(TargetHeight,distance*Mathf.Tan(combat.Get("shot.spread")*Mathf.Deg2Rad)));
-            return combat.Get("rifle.damage")*Mathf.Max(1,horizon/life.Get("rifle.cooldownSeconds"));
-        }
         public float CutterMinimum=>cutter.Get("cutter.botMinimumDistance");
         public float CutterPreferredRange=>cutter.Get("cutter.maxRangeMeters")*cutter.Get("cutter.botRangeFraction");
         public float EyeHeight=>eye; public float TargetHeight=>target;
@@ -75,6 +68,7 @@ namespace StarTournament.ProvingGround
             CapsuleRadius=movement.Get("player.capsule.radius");CapsuleHeight=movement.Get("player.capsule.height");
             maxPitch=movement.Get("camera.maximumPitchDegrees");eye=movement.Get("camera.eyeHeight");target=movement.Get("player.capsule.height")*combat.Get("zone.torsoY");
             Range=combat.Get("shot.range");
+            Estimate=new NativeBotWeaponEstimate(movement,this.combat,this.life,this.cutter,this);
         }
         public LocalAction Aim(ParticipantState own,Vector3 feet,double time,float seconds,float phase,
             float rate,float error,float period,out float residual)
@@ -146,7 +140,7 @@ namespace StarTournament.ProvingGround
                 behavior.Version!=canonical.Version||behavior.Validate().Count!=0||!Finite(maximumHealth)||maximumHealth<=0)
                 throw new ArgumentException("Invalid bot planner configuration");
             foreach(var d in canonical.Descriptors)if(!d.Contains(behavior.Get(d.Path)))throw new ArgumentException("Invalid behavior value: "+d.Path);
-            if(behavior.Get("bots.tactics.jumpSamples")%1!=0)throw new ArgumentException("Integral jump samples required");
+            if(behavior.Get("bots.tactics.jumpSamples")%1!=0||behavior.Get("bots.strategy.weaponTimeSamples")%1!=0||behavior.Get("bots.strategy.weaponSpreadSamples")%1!=0)throw new ArgumentException("Integral jump samples required");
             this.routes=routes??throw new ArgumentNullException(nameof(routes));this.tactics=tactics??throw new ArgumentNullException(nameof(tactics));
             this.weapon=weapon??throw new ArgumentNullException(nameof(weapon));maxHealth=maximumHealth;
             this.difficulty=difficulty;damageMultiplier=weapon is NativeShotgunPolicy loadout?loadout.DamageMultiplier:ProvingProfile.CreateCombatDefault().Get("damageBoost.multiplier");
@@ -280,7 +274,7 @@ namespace StarTournament.ProvingGround
             if(memory.HasValue&&state.Intent!=NativeBotIntent.Retreat&&state.Intent!=NativeBotIntent.Support&&state.Intent!=NativeBotIntent.Pickup&&navigation.FollowedEnemy!=state.Target)
                 navigation.FollowEnemy(state.Target);
             LocalAction aim=default;float residual=float.PositiveInfinity;
-            WeaponId desired=ChooseWeapon(time,f,memory);
+            WeaponId desired=ChooseWeapon(time,f,memory,decision);
             Vector3 aimPoint=memory.HasValue?memory.Value.Sighting.Position:Vector3.zero;
             bool rocketSafe=false;
             // Facing belongs to the known threat, independently of route/intent ownership.
@@ -441,9 +435,12 @@ namespace StarTournament.ProvingGround
             if(!navigation.InTransition){navigation.SetStaticGoal(best.Value.Position);state.Goal=best.Value.Position;state.HasGoal=true;}
             state.Intent=NativeBotIntent.Pickup;
         }
-        WeaponId ChooseWeapon(double time,NativeBotFrame f,NativeBotMemoryEntry? memory)
+        WeaponId ChooseWeapon(double time,NativeBotFrame f,NativeBotMemoryEntry? memory,bool decision)
         {
+            if(f.Life.SwitchRemaining>0)return f.Life.PendingWeapon;
             if(!(weapon is NativeShotgunPolicy lp)||!memory.HasValue||!memory.Value.Visible)return f.Life.SelectedWeapon;
+            if(!decision&&state.DesiredWeapon!=0&&CombatLife.Owned(f.Life,state.DesiredWeapon)&&
+                (state.DesiredWeapon==WeaponId.Cutter?f.Life.CutterEnergy>0:CombatLife.AmmoFor(f.Life,state.DesiredWeapon)>0))return state.DesiredWeapon;
             float distance=Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position);
             var best=f.Life.SelectedWeapon;float bestScore=-1,currentScore=-1;
             foreach(var id in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter})
@@ -451,8 +448,9 @@ namespace StarTournament.ProvingGround
                 if(!CombatLife.Owned(f.Life,id)||id==WeaponId.Cutter&&f.Life.CutterEnergy<=0||id!=WeaponId.Cutter&&CombatLife.AmmoFor(f.Life,id)<=0)continue;
                 if(id==WeaponId.Cutter&&(distance<lp.CutterMinimum||distance>lp.CutterPreferredRange))continue;
                 if(id==WeaponId.RocketLauncher&&!RocketPlan(f,memory.Value.Sighting,out _)){RocketRejected++;continue;}
-                float score=lp.WeaponUtility(id,distance,memory.Value.Sighting.Velocity,S("weaponHorizonSeconds"))/(1+(float)CombatLife.CooldownFor(f.Life,id));
-                if(id==f.Life.SelectedWeapon)currentScore=score;else score*=1-S("switchPenalty");
+                float score=lp.Estimate.Estimate(id,f,memory.Value,time,state.AimPhase,S("weaponHorizonSeconds"),
+                    (int)S("weaponTimeSamples"),(int)S("weaponSpreadSamples"),P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),P("leadQuality"));
+                if(id==f.Life.SelectedWeapon)currentScore=score;
                 if(score>bestScore){best=id;bestScore=score;}
             }
             if(currentScore>0&&(time<state.WeaponUntil||bestScore<currentScore*S("weaponHysteresis")))best=f.Life.SelectedWeapon;

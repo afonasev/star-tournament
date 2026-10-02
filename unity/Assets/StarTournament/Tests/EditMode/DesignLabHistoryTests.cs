@@ -382,7 +382,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
             var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
-            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(29));
+            Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(30));
             foreach(var key in LabBundle.AuditedExcludedPaths)
             {
                 var d=old.Snapshot.Profile(key).Descriptor(key);float value=old.Snapshot.Get(key);

@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class MatchResult
         {
             public uint seed;public string mode,arena,profile;public double seconds;public bool finished;
-            public int[] shots=new int[4],kills=new int[4];public float[] damage=new float[4];public int deaths,respawns,pickups;
+            public int[] shots=new int[4],kills=new int[4],ownedTicks=new int[4],selectedTicks=new int[4];public float[] damage=new float[4];public int deaths,respawns,pickups;
             public NativeMatchSnapshot standings;
         }
         void Require(bool ok,string message){if(!ok)throw new InvalidOperationException(message);}
@@ -39,7 +39,9 @@ namespace StarTournament.ProvingGround
                 float dt=1f/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[8];int tick=0;
                 while(session.Time<600&&session.Match.Phase!=NativeMatchPhase.Finished)
                 {
-                    Array.Clear(actions,0,actions.Length);ground.BotDriver.ProduceActions(actions,dt);session.Tick(actions,dt);
+                    Array.Clear(actions,0,actions.Length);
+                    for(int seat=0;seat<8;seat++){var state=session.Life(seat);if(state.Dead)continue;for(int slot=0;slot<4;slot++)if(CombatLife.Owned(state,(WeaponId)(slot+1)))result.ownedTicks[slot]++;result.selectedTicks[(int)state.SelectedWeapon-1]++;}
+                    ground.BotDriver.ProduceActions(actions,dt);session.Tick(actions,dt);
                     for(int i=0;i<8;i++)Require(session.Pose(i).Position.y>-2,"Bot fell outside authored arena");
                     if(++tick%500==0)yield return null;
                 }

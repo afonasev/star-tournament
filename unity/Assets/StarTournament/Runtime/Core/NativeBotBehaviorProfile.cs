@@ -4,7 +4,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateBotBehaviorDefault()
         {
-            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 2 };
+            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 3 };
             string[] ids = { "easy", "normal", "hard" }, labels = { "Салага", "Боец", "Ветеран" };
             float[] reaction = { .6f, .28f, .12f }, decision = { .35f, .2f, .1f };
             float[] aimSpeed = { 90, 160, 230 }, aimError = { 12, 5, 1.5f }, aimPeriod = { 1.4f, 1, .7f };
@@ -42,9 +42,17 @@ namespace StarTournament.ProvingGround
             AddBotTactics(p);
             return p;
         }
+        internal ProvingProfile BeforeBotWeaponEvaluation()
+        {
+            if(id!="unity-bot-behavior-v1"||version!=3)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=2;
+            p.descriptors.RemoveAll(d=>d.Path=="bots.strategy.weaponTimeSamples"||d.Path=="bots.strategy.weaponSpreadSamples");
+            p.values.RemoveAll(v=>v.Path=="bots.strategy.weaponTimeSamples"||v.Path=="bots.strategy.weaponSpreadSamples");
+            p.RebalanceDefault("bots.strategy.weaponHorizonSeconds",.25f);return p;
+        }
         internal ProvingProfile BeforeBotTactics()
         {
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeBotWeaponEvaluation()));
             if(p.id=="unity-bot-behavior-v1"){p.version=1;p.descriptors.RemoveAll(d=>d.Path.StartsWith("bots.strategy.")||d.Path.EndsWith(".leadQuality"));p.values.RemoveAll(v=>v.Path.StartsWith("bots.strategy.")||v.Path.EndsWith(".leadQuality"));}
             if(p.id=="unity-bot-perception-v1"){p.version=1;p.descriptors.RemoveAll(d=>d.Path.EndsWith(".pickupDelaySeconds"));p.values.RemoveAll(v=>v.Path.EndsWith(".pickupDelaySeconds"));}
             return p;
@@ -78,7 +86,9 @@ namespace StarTournament.ProvingGround
             p.Add("bots.strategy.bodySafetyMargin","bot-behavior","Запас участника","Расширение self/allied splash проверки.","meters",0f,3f,0.05f,0.5f);
             p.Add("bots.strategy.lowAmmoRatio","bot-behavior","Refill","Доля оставшегося запаса для полезного refill.","ratio",0f,1f,0.05f,0.55f);
             p.Add("bots.strategy.allyNeedWeight","bot-behavior","Потребность союзника","Уменьшение utility бонуса для более нуждающегося союзника.","ratio",0f,1f,0.05f,0.8f);
-            p.Add("bots.strategy.weaponHorizonSeconds","bot-behavior","Окно атаки","Временное окно сравнения burst и непрерывного огня.","seconds",.1f,3,.05f,.25f);
+            p.Add("bots.strategy.weaponHorizonSeconds","bot-behavior","Окно атаки","Временное окно сравнения burst и непрерывного огня.","seconds",.1f,3,.05f,1f);
+            p.Add("bots.strategy.weaponTimeSamples","bot-behavior","Прогноз контакта","Число временных проб наведения и контакта за окно оценки.","count",2,32,1,8);
+            p.Add("bots.strategy.weaponSpreadSamples","bot-behavior","Прогноз разброса","Число равномерных проб диска spread; не меняет фактические выстрелы.","count",4,64,1,16);
             string[] ids={"easy","normal","hard"};float[] quality={.35f,.7f,1f};
             for(int i=0;i<ids.Length;i++)p.Add("bots."+ids[i]+".leadQuality","bot-behavior",ids[i]+" · Упреждение","Доля наблюдаемой скорости для упреждения.","ratio",0,1,.05f,quality[i]);
         }
