@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1920963855
+--- !u!1 &1564687994
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1920963857}
-  - component: {fileID: 1920963856}
+  - component: {fileID: 1564687996}
+  - component: {fileID: 1564687995}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1920963856
+--- !u!114 &1564687995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1920963855}
+  m_GameObject: {fileID: 1564687994}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -2594,7 +2594,7 @@ MonoBehaviour:
       Value: 0.04
   RocketEffectsProfile:
     id: pulse-effects-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: pulseFx.exhaustLength
       Group: rocket-effects
@@ -2910,6 +2910,85 @@ MonoBehaviour:
       Maximum: 1
       Step: 0.05
       DefaultValue: 0.7
+    - Path: pulseFx.fireFramesPerSecond
+      Group: rocket-effects
+      Label: "\u041E\u0433\u043E\u043D\u044C \xB7 \u0430\u043D\u0438\u043C\u0430\u0446\u0438\u044F"
+      Description: "\u0427\u0430\u0441\u0442\u043E\u0442\u0430 \u0441\u043C\u0435\u043D\u044B
+        \u0434\u0435\u0442\u0430\u043B\u0435\u0439 \u043E\u0433\u043D\u044F \u043F\u043E
+        \u0447\u0430\u0441\u0430\u043C \u043C\u0430\u0442\u0447\u0430."
+      Unit: frames-per-second
+      Minimum: 1
+      Maximum: 60
+      Step: 1
+      DefaultValue: 30
+    - Path: pulseFx.lightIntensity
+      Group: rocket-effects
+      Label: "\u0421\u0432\u0435\u0442 \xB7 \u044F\u0440\u043A\u043E\u0441\u0442\u044C"
+      Description: "\u041F\u0438\u043A\u043E\u0432\u0430\u044F \u0438\u043D\u0442\u0435\u043D\u0441\u0438\u0432\u043D\u043E\u0441\u0442\u044C
+        \u0442\u0451\u043F\u043B\u043E\u0439 \u0432\u0441\u043F\u044B\u0448\u043A\u0438
+        \u043D\u0430 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u044F\u0445."
+      Unit: intensity
+      Minimum: 0
+      Maximum: 30
+      Step: 0.1
+      DefaultValue: 8
+    - Path: pulseFx.lightSeconds
+      Group: rocket-effects
+      Label: "\u0421\u0432\u0435\u0442 \xB7 \u0432\u0440\u0435\u043C\u044F"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0437\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u044F
+        \u0441\u0432\u0435\u0442\u0430 \u043F\u043E \u0447\u0430\u0441\u0430\u043C
+        \u043C\u0430\u0442\u0447\u0430."
+      Unit: seconds
+      Minimum: 0.02
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.26
+    - Path: pulseFx.lightRangeScale
+      Group: rocket-effects
+      Label: "\u0421\u0432\u0435\u0442 \xB7 \u0434\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
+      Description: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0441\u0432\u0435\u0442\u0430
+        \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0435\u0430\u043B\u044C\u043D\u043E\u0433\u043E \u0440\u0430\u0434\u0438\u0443\u0441\u0430
+        \u0432\u0437\u0440\u044B\u0432\u0430."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 2
+      Step: 0.05
+      DefaultValue: 1.25
+    - Path: pulseFx.lightWarmth
+      Group: rocket-effects
+      Label: "\u0421\u0432\u0435\u0442 \xB7 \u0442\u0435\u043F\u043B\u043E\u0442\u0430"
+      Description: "\u041F\u0440\u0438\u043C\u0435\u0441\u044C \u043E\u0440\u0430\u043D\u0436\u0435\u0432\u043E\u0433\u043E
+        Pulse \u0432 \u0431\u0435\u043B\u043E\u043C \u0441\u0432\u0435\u0442\u0435."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.65
+    - Path: pulseFx.lightOffsetScale
+      Group: rocket-effects
+      Label: "\u0421\u0432\u0435\u0442 \xB7 \u043E\u0442\u0441\u0442\u0443\u043F"
+      Description: "\u0421\u0434\u0432\u0438\u0433 \u043E\u0431\u0440\u0430\u0442\u043D\u043E
+        \u043F\u043E \u0442\u0440\u0430\u0435\u043A\u0442\u043E\u0440\u0438\u0438
+        \u043E\u0442 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430, \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430; \u0443\u043B\u0443\u0447\u0448\u0430\u0435\u0442
+        \u043E\u0441\u0432\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.4
+      Step: 0.01
+      DefaultValue: 0.15
+    - Path: pulseFx.maxLights
+      Group: rocket-effects
+      Label: "\u0421\u0432\u0435\u0442 \xB7 \u043B\u0438\u043C\u0438\u0442"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C \u043E\u0434\u043D\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E
+        \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u0432\u0441\u043F\u044B\u0448\u0435\u043A;
+        \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442 \u0441\u0432\u0435\u0436\u0438\u043C."
+      Unit: count
+      Minimum: 0
+      Maximum: 8
+      Step: 1
+      DefaultValue: 4
     values:
     - Path: pulseFx.exhaustLength
       Value: 0.46
@@ -2969,6 +3048,20 @@ MonoBehaviour:
       Value: 0.12
     - Path: pulseFx.exhaustCoreRatio
       Value: 0.7
+    - Path: pulseFx.fireFramesPerSecond
+      Value: 30
+    - Path: pulseFx.lightIntensity
+      Value: 8
+    - Path: pulseFx.lightSeconds
+      Value: 0.26
+    - Path: pulseFx.lightRangeScale
+      Value: 1.25
+    - Path: pulseFx.lightWarmth
+      Value: 0.65
+    - Path: pulseFx.lightOffsetScale
+      Value: 0.15
+    - Path: pulseFx.maxLights
+      Value: 4
   CutterProfile:
     id: cutter-beam-v1
     version: 4
@@ -59222,13 +59315,13 @@ MonoBehaviour:
       Value: 4
     - Path: damage-hall.anchor.z
       Value: 0
---- !u!4 &1920963857
+--- !u!4 &1564687996
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1920963855}
+  m_GameObject: {fileID: 1564687994}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -59241,4 +59334,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1920963857}
+  - {fileID: 1564687996}
