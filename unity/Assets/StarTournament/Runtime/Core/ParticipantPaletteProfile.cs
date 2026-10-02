@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
         public const string ParticipantPaletteId="unity-participant-presentation-v1";
         public static ProvingProfile CreateParticipantPaletteDefault()
         {
-            var p=new ProvingProfile{id=ParticipantPaletteId,version=1};
+            var p=new ProvingProfile{id=ParticipantPaletteId,version=2};
             p.Add("participant.color.blue.r","participant-colors","Синий · R","Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.","8-bit channel",0,255,1,69);
             p.Add("participant.color.blue.g","participant-colors","Синий · G","Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.","8-bit channel",0,255,1,158);
             p.Add("participant.color.blue.b","participant-colors","Синий · B","Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.","8-bit channel",0,255,1,255);
@@ -30,7 +30,26 @@ namespace StarTournament.ProvingGround
             p.Add("participant.color.white.r","participant-colors","Белый · R","Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.","8-bit channel",0,255,1,244);
             p.Add("participant.color.white.g","participant-colors","Белый · G","Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.","8-bit channel",0,255,1,247);
             p.Add("participant.color.white.b","participant-colors","Белый · B","Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.","8-bit channel",0,255,1,255);
+            p.Add("participant.surface.detailGain","participant-colors","Контраст панелей","Усиление яркости исходной фактуры цветных панелей; оттенок источника удаляется.","ratio",1,20,.1f,6);
+            p.Add("participant.surface.maskStart","participant-colors","Начало цветовой зоны","Ниже этой яркости фактуры поверхность остаётся нейтральным графитом.","linear reflectance",0,.5f,.001f,.002f);
+            p.Add("participant.surface.maskWidth","participant-colors","Переход цветовой зоны","Ширина плавного перехода от нейтральных швов к окрашенной панели.","linear reflectance",.001f,.5f,.001f,.006f);
+            p.Add("participant.surface.panelFloor","participant-colors","Минимум яркости панелей","Нижняя яркость цвета крупной панели для читаемости всех восьми assigned цветов.","ratio",0,1,.05f,.65f);
             return p;
+        }
+        internal ProvingProfile BeforeIdentitySurface()
+        {
+            if(Id!=ParticipantPaletteId)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=1;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("participant.surface."));
+            p.values.RemoveAll(v=>v.Path.StartsWith("participant.surface."));return p;
+        }
+        public void EnsureIdentitySurfaceDescriptors()
+        {
+            var current=CreateParticipantPaletteDefault();
+            foreach(var descriptor in current.Descriptors)
+                if(FindDescriptor(descriptor.Path)==null)
+                {descriptors.Add(descriptor);values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});}
+            version=current.Version;
         }
     }
 }

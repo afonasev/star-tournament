@@ -14,16 +14,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTearDown] public IEnumerator Cleanup(){if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
         void AssertBody(int participant)
         {
-            var root=ground.transform.Find("player-"+(participant+1)+"/trooper-presentation");int slots=0;
+            var root=ground.transform.Find("player-"+(participant+1)+"/trooper-presentation");int slots=0,helmets=0,thighs=0;
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true).Where(r=>r.name!="weapon:joined"&&!r.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter")))
                 for(int i=0;i<renderer.sharedMaterials.Length;i++)
                 {
                     var mat=renderer.sharedMaterials[i];if(!mat||!TrooperIdentityPresentation.IsBodyZone(mat))continue;
                     var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
-                    foreach(string property in new[]{"_BaseColor","baseColorFactor"})if(mat.HasProperty(property))Assert.That(block.GetColor(property),Is.EqualTo(ground.Composition.Participant(participant).Color),renderer.name+"/"+mat.name);
+                    foreach(string property in mat.HasProperty("_IdentityColor")?new[]{"_IdentityColor"}:new[]{"_BaseColor","baseColorFactor"})if(mat.HasProperty(property))Assert.That(block.GetColor(property),Is.EqualTo(ground.Composition.Participant(participant).Color),renderer.name+"/"+mat.name);
+                    if(mat.HasProperty("_IdentityColor"))
+                    {
+                        Assert.That(block.GetVector("_IdentitySurface").w,Is.EqualTo(ground.ParticipantPaletteProfile.Get("participant.surface.panelFloor")));
+                        Assert.That(block.GetFloat("_IdentityMode"),Is.GreaterThan(0));
+                        var source=ground.TrooperBodyPrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).First(m=>m&&m.name==mat.name);
+                        Assert.That(mat.GetColor("baseColorFactor"),Is.EqualTo(source.GetColor("baseColorFactor")),"source factor must not be multiplied by identity");
+                        foreach(var property in new[]{"baseColorTexture","normalTexture","metallicRoughnessTexture"})
+                            Assert.That(mat.GetTexture(property),Is.EqualTo(source.GetTexture(property)),"keep authored maps "+property);
+                    }
+                    if(mat.name=="TECI_helmet")helmets++;if(mat.name=="pants")thighs++;
                     slots++;
                 }
             Assert.That(slots,Is.GreaterThan(3));
+            Assert.That(helmets,Is.GreaterThan(0));Assert.That(thighs,Is.GreaterThan(0));
         }
         [UnityTest] public IEnumerator OrdinaryEightAiStartBoostPauseRespawnRepeatAndUiUseFrozenColors()
         {

@@ -11,6 +11,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test]public void IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors()
+        {
+            var prior=typeof(ProvingProfile).GetMethod("BeforeIdentitySurface",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мои цвета");
+            var draft=history.Selected.Snapshot;draft.Set("participant.color.blue.r",70);history.Save(draft);
+            var previous=history.Selected;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.color.blue.r"),Is.EqualTo(70));
+            Assert.That(upgraded.Selected.Snapshot.Get("participant.surface.panelFloor"),Is.EqualTo(.65f));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(previous.Hash));
+            Assert.That(preserved.Snapshot.Descriptors.Any(d=>d.Path.StartsWith("participant.surface.")),Is.False);
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
+        }
         [TestCase(false)][TestCase(true)]public void MovementAudioUpgradePreservesV11HistoryAndCustomMix(bool beforeCompactMenu)
         {
             var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforeMovementAudio()).ToList();

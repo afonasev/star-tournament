@@ -41,7 +41,8 @@ namespace StarTournament.ProvingGround
         public static Color[] Read(ProvingProfile profile=null)
         {
             if(profile==null)return (Color[])colors.Clone();
-            if(profile.Id!=ProvingProfile.ParticipantPaletteId||profile.Version!=1||profile.Validate().Count!=0)
+            // v2 adds presentation-only panel metadata; the palette/color contract is unchanged.
+            if(profile.Id!=ProvingProfile.ParticipantPaletteId||(profile.Version!=1&&profile.Version!=2)||profile.Validate().Count!=0)
                 throw new ArgumentException("Invalid participant palette profile");
             foreach(var d in profile.Descriptors)NativeMatchConfiguration.ValidateValue(profile,d.Path,profile.Get(d.Path));
             var palette=keys.Select(key=>new Color32((byte)profile.Get("participant.color."+key+".r"),

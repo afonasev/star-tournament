@@ -167,6 +167,7 @@ namespace StarTournament.ProvingGround
             };
             MatchProfile.EnsureMatchDescriptors();
             TrooperProfile.EnsureTrooperDescriptors();
+            ParticipantPaletteProfile.EnsureIdentitySurfaceDescriptors();
             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             InitializeDesignLab();
@@ -264,6 +265,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-weaponSwitchReview")) gameObject.AddComponent<NativeWeaponSwitchReview>();
             if (args.Contains("-pulseReview")) gameObject.AddComponent<NativePulseReview>();
             if (args.Contains("-colorIdentityReview")) gameObject.AddComponent<NativeColorIdentityReview>();
+            if (args.Contains("-colorSurfaceReview")) gameObject.AddComponent<NativeColorSurfaceReview>();
             if (args.Contains("-profilesReview")) gameObject.AddComponent<NativeProfilesReview>();
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
@@ -432,10 +434,10 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<composition.LocalCount;seat++)CreateView(seat,composition.ParticipantAt(seat),movement,trooper);
             if(activate)foreach(var motor in motors)motor.gameObject.SetActive(true);
         }
-        static void ApplyIdentity(GameObject root,int seat) => ApplyIdentity(root,NativeStandingsView.Palette[seat]);
-        static void ApplyIdentity(GameObject root,Color color)
+        void ApplyIdentity(GameObject root,int seat) => ApplyIdentity(root,NativeStandingsView.Palette[seat]);
+        void ApplyIdentity(GameObject root,Color color)
         {
-            TrooperIdentityPresentation.ApplyBody(root,color);
+            TrooperIdentityPresentation.ApplyBody(root,color,ParticipantPaletteProfile);
             root.GetComponent<WeaponModelPresentation>()?.Tint(color,false);
         }
         static void SetLayer(GameObject root, int layer) { foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer; }
