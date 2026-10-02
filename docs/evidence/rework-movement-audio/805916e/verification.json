@@ -1,0 +1,78 @@
+{
+  "source_revision": "805916e0d3ed26dbb2cbc2fd156e89d9a523b03c",
+  "gate": "full baseline plus affected regression checks after integration",
+  "full_editmode": {
+    "revision": "92acd5691be9b4cfd281ccc7824e4f2604668ff4",
+    "passed": 256,
+    "failed": 0,
+    "xml": "editmode.xml"
+  },
+  "initial_playmode": {
+    "revision": "92acd5691be9b4cfd281ccc7824e4f2604668ff4",
+    "passed": 167,
+    "failed": 1,
+    "xml": "92acd56/playmode.xml",
+    "failure": "Reconnect focus traversal did not account for added settings row"
+  },
+  "full_playmode": {
+    "revision": "3cb04df5fe6eeb3760b3f3b38fe87aa531b03a81",
+    "passed": 168,
+    "failed": 0,
+    "xml": "playmode.xml",
+    "natural_bot_matches": [
+      "NaturalDefaultEightFfaReachesTerminalWithoutInvalidRuntimeState",
+      "NaturalDefaultEightTeamsReachesTerminalWithoutInvalidRuntimeState"
+    ],
+    "correction": "Test asserts newly added settings row, performs an additional Up action, retains Resume focus and Running=true assertions. Product contract preserved."
+  },
+  "regression": [
+    {
+      "revision": "79614bc",
+      "scope": "Lab history migration",
+      "passed": 35,
+      "xml": "focused-editmode.IfT7qw/editmode.xml"
+    },
+    {
+      "revision": "79614bc",
+      "scope": "UI integration",
+      "passed": 12,
+      "result": "ui-gate.4hyzqb3p/result.json"
+    },
+    {
+      "revision": "fb7adc7",
+      "scope": "Audio routing, settings navigation, independent pause",
+      "passed": 17,
+      "xml": "focused-playmode.CGkZLp/playmode.xml"
+    }
+  ],
+  "final_delta": "805916e only fixes synthetic review device input in background and restores InputSystem setting on exit. Actual modified route passed in native Player. No product runtime changes after fb7adc7.",
+  "build": [
+    "STAR_PROVING_BUILD_PASS 471390907"
+  ],
+  "smoke": {
+    "revision": "805916e0d3ed26dbb2cbc2fd156e89d9a523b03c",
+    "exit_code": 0,
+    "result": "player-smoke/result.txt",
+    "muted": true,
+    "synthetic_devices": true,
+    "viewports": [
+      1,
+      4
+    ],
+    "event_counts": {
+      "1": {
+        "step": 12,
+        "jump": 3,
+        "land": 9
+      },
+      "4": {
+        "step": 39,
+        "jump": 12,
+        "land": 14
+      }
+    },
+    "screenshot_review": "1 and4 viewports rendered; camera reaches nearby wall during scripted movement. No visual change in scope.",
+    "prior_failure": "fb7adc7 review received no synthetic input in background; harness fixed, assertion preserved."
+  },
+  "human_audible_acceptance": "pending exact Player"
+}

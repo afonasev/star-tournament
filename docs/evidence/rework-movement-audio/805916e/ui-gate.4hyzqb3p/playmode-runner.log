@@ -1,0 +1,5 @@
+FOCUSED PlayMode: FourPlayerMenuTests;IndependentPauseMenuTests — iteration only, NOT a full gate
+Evidence: /Users/eaafonasev/.codex/worktrees/movement-audio/star-tournament/unity/../.local/unity-evidence/focused-playmode.VLfpKX
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/movement-audio/star-tournament/unity
+unity-run: started shared:1; guardian=99381 pid=6681
+unity-run: finished pid=6681 exit=0; capacity released
