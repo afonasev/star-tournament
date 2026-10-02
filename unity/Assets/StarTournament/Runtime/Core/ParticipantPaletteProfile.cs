@@ -37,13 +37,14 @@ namespace StarTournament.ProvingGround
             p.Add("participant.surface.shellStart","participant-colors","Маска бронепанелей","Дополнительный порог светлых панелей корпуса и шлема; тёмные участки остаются графитом.","linear reflectance",0,.5f,.001f,.025f);
             p.Add("participant.surface.shellWidth","participant-colors","Край бронепанели","Дополнительная ширина перехода assigned цвета на бронепанелях корпуса и шлема.","linear reflectance",.001f,.5f,.001f,.015f);
             p.Add("participant.surface.neutralPlateGain","participant-colors","Графит голеней","Яркость нейтральных керамических пластин на голенях.","ratio",0,1,.01f,.15f);
+            p.Add("participant.surface.helmetStripeWidth","participant-colors","Панели шлема","Ширина цветной полосы и боковых участков в UV атласе шлема; остальная оболочка нейтральная.","UV ratio",.01f,.3f,.01f,.09f);
             return p;
         }
         internal ProvingProfile BeforeDiscreteIdentityPanels()
         {
             if(Id!=ParticipantPaletteId)return this;
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=2;
-            string[] added={"participant.surface.shellStart","participant.surface.shellWidth","participant.surface.neutralPlateGain"};
+            string[] added={"participant.surface.shellStart","participant.surface.shellWidth","participant.surface.neutralPlateGain","participant.surface.helmetStripeWidth"};
             p.descriptors.RemoveAll(d=>System.Array.IndexOf(added,d.Path)>=0);
             p.values.RemoveAll(v=>System.Array.IndexOf(added,v.Path)>=0);return p;
         }

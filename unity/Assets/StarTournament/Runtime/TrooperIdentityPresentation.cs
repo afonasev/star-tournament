@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround
             var tuning=new Vector4(profile.Get("participant.surface.detailGain"),profile.Get("participant.surface.maskStart"),
                 profile.Get("participant.surface.maskWidth"),profile.Get("participant.surface.panelFloor"));
             var panels=new Vector4(profile.Get("participant.surface.shellStart"),profile.Get("participant.surface.shellWidth"),
-                profile.Get("participant.surface.neutralPlateGain"),0);
+                profile.Get("participant.surface.neutralPlateGain"),profile.Get("participant.surface.helmetStripeWidth"));
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
                 // The shotgun shares ceramic/status materials with the skin but has independent boost state.
@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround
                         block.SetColor("_IdentityColor",color);block.SetVector("_IdentitySurface",tuning);block.SetVector("_IdentityPanels",panels);
                         // Authored mesh roles define plate coverage; source reflectance separates
                         // helmet/chest shell panels from dark seams. Cloth and boots stay neutral.
-                        float mode=!IsBodyZone(mat)?0:
+                        float mode=!IsBodyZone(mat)?0:mat.name=="TECI_helmet"?3:
                             mat.name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)?
                                 (renderer.name.Contains("UpperArm")||renderer.name.Contains("UpperLeg")?2:-1):1;
                         // These materials are owned per actor. Persist identity in their PBR

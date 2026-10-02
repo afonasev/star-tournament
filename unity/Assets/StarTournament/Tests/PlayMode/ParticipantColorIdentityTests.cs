@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     if(mat.HasProperty("_IdentityColor"))
                     {
                         Assert.That(mat.GetColor("_IdentityColor"),Is.EqualTo(ground.Composition.Participant(participant).Color),"owned material color "+participant+"/"+mat.name);
-                        Assert.That(mat.GetFloat("_IdentityMode"),Is.EqualTo(mat.name.StartsWith("vector-ceramic")?(renderer.name.Contains("UpperArm")||renderer.name.Contains("UpperLeg")?2:-1):1),"owned material mode "+renderer.name+"/"+mat.name);
+                        Assert.That(mat.GetFloat("_IdentityMode"),Is.EqualTo(mat.name.StartsWith("vector-ceramic")?(renderer.name.Contains("UpperArm")||renderer.name.Contains("UpperLeg")?2:-1):mat.name=="TECI_helmet"?3:1),"owned material mode "+renderer.name+"/"+mat.name);
                         Assert.That(block.GetVector("_IdentitySurface").w,Is.EqualTo(ground.ParticipantPaletteProfile.Get("participant.surface.panelFloor")));
                         Assert.That(block.GetFloat("_IdentityMode"),Is.EqualTo(mat.GetFloat("_IdentityMode")));
                         var source=ground.TrooperBodyPrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).First(m=>m&&m.name==mat.name);
