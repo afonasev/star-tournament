@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround
             Time.timeScale=1;ground.StartParticipantReview(NativeParticipantReview.Mixed(4,true));yield return null;Time.timeScale=0;
             yield return Capture("08-team-first-person");
             Time.timeScale=1;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,true));yield return null;Time.timeScale=0;
-            yield return Capture("09-red-first-person");
+            yield return Capture("09-team-single-view");
             Time.timeScale=1;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,false));yield return null;Time.timeScale=0;
             var boosted=ground.Session.Capture();boosted.DamageRemaining[ground.Composition.ParticipantAt(0)]=5;ground.Session.Restore(boosted);
             yield return Capture("10-white-first-person-boost");

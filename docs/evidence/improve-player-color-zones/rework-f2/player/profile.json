@@ -1,0 +1,488 @@
+{
+    "id": "unity-participant-presentation-v1",
+    "version": 3,
+    "descriptors": [
+        {
+            "Path": "participant.color.blue.r",
+            "Group": "participant-colors",
+            "Label": "Синий · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 69.0
+        },
+        {
+            "Path": "participant.color.blue.g",
+            "Group": "participant-colors",
+            "Label": "Синий · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 158.0
+        },
+        {
+            "Path": "participant.color.blue.b",
+            "Group": "participant-colors",
+            "Label": "Синий · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.color.magenta.r",
+            "Group": "participant-colors",
+            "Label": "Маджента · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 238.0
+        },
+        {
+            "Path": "participant.color.magenta.g",
+            "Group": "participant-colors",
+            "Label": "Маджента · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 107.0
+        },
+        {
+            "Path": "participant.color.magenta.b",
+            "Group": "participant-colors",
+            "Label": "Маджента · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.color.yellow.r",
+            "Group": "participant-colors",
+            "Label": "Жёлтый · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.color.yellow.g",
+            "Group": "participant-colors",
+            "Label": "Жёлтый · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 230.0
+        },
+        {
+            "Path": "participant.color.yellow.b",
+            "Group": "participant-colors",
+            "Label": "Жёлтый · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 65.0
+        },
+        {
+            "Path": "participant.color.orange.r",
+            "Group": "participant-colors",
+            "Label": "Оранжевый · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.color.orange.g",
+            "Group": "participant-colors",
+            "Label": "Оранжевый · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 173.0
+        },
+        {
+            "Path": "participant.color.orange.b",
+            "Group": "participant-colors",
+            "Label": "Оранжевый · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 53.0
+        },
+        {
+            "Path": "participant.color.cyan.r",
+            "Group": "participant-colors",
+            "Label": "Голубой · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 56.0
+        },
+        {
+            "Path": "participant.color.cyan.g",
+            "Group": "participant-colors",
+            "Label": "Голубой · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 213.0
+        },
+        {
+            "Path": "participant.color.cyan.b",
+            "Group": "participant-colors",
+            "Label": "Голубой · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.color.green.r",
+            "Group": "participant-colors",
+            "Label": "Зелёный · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 64.0
+        },
+        {
+            "Path": "participant.color.green.g",
+            "Group": "participant-colors",
+            "Label": "Зелёный · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 232.0
+        },
+        {
+            "Path": "participant.color.green.b",
+            "Group": "participant-colors",
+            "Label": "Зелёный · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 120.0
+        },
+        {
+            "Path": "participant.color.red.r",
+            "Group": "participant-colors",
+            "Label": "Красный · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.color.red.g",
+            "Group": "participant-colors",
+            "Label": "Красный · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 86.0
+        },
+        {
+            "Path": "participant.color.red.b",
+            "Group": "participant-colors",
+            "Label": "Красный · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 86.0
+        },
+        {
+            "Path": "participant.color.white.r",
+            "Group": "participant-colors",
+            "Label": "Белый · R",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 244.0
+        },
+        {
+            "Path": "participant.color.white.g",
+            "Group": "participant-colors",
+            "Label": "Белый · G",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 247.0
+        },
+        {
+            "Path": "participant.color.white.b",
+            "Group": "participant-colors",
+            "Label": "Белый · B",
+            "Description": "Канал цвета участника; применяется при новом матче. Frozen composition и Repeat сохраняют прежний цвет.",
+            "Unit": "8-bit channel",
+            "Minimum": 0.0,
+            "Maximum": 255.0,
+            "Step": 1.0,
+            "DefaultValue": 255.0
+        },
+        {
+            "Path": "participant.surface.detailGain",
+            "Group": "participant-colors",
+            "Label": "Контраст панелей",
+            "Description": "Усиление яркости исходной фактуры цветных панелей; оттенок источника удаляется.",
+            "Unit": "ratio",
+            "Minimum": 1.0,
+            "Maximum": 20.0,
+            "Step": 0.10000000149011612,
+            "DefaultValue": 6.0
+        },
+        {
+            "Path": "participant.surface.maskStart",
+            "Group": "participant-colors",
+            "Label": "Начало цветовой зоны",
+            "Description": "Ниже этой яркости фактуры поверхность остаётся нейтральным графитом.",
+            "Unit": "linear reflectance",
+            "Minimum": 0.0,
+            "Maximum": 0.5,
+            "Step": 0.0010000000474974514,
+            "DefaultValue": 0.0020000000949949028
+        },
+        {
+            "Path": "participant.surface.maskWidth",
+            "Group": "participant-colors",
+            "Label": "Переход цветовой зоны",
+            "Description": "Ширина плавного перехода от нейтральных швов к окрашенной панели.",
+            "Unit": "linear reflectance",
+            "Minimum": 0.0010000000474974514,
+            "Maximum": 0.5,
+            "Step": 0.0010000000474974514,
+            "DefaultValue": 0.006000000052154064
+        },
+        {
+            "Path": "participant.surface.panelFloor",
+            "Group": "participant-colors",
+            "Label": "Минимум яркости панелей",
+            "Description": "Нижняя яркость цвета крупной панели для читаемости всех восьми assigned цветов.",
+            "Unit": "ratio",
+            "Minimum": 0.0,
+            "Maximum": 1.0,
+            "Step": 0.05000000074505806,
+            "DefaultValue": 0.6499999761581421
+        },
+        {
+            "Path": "participant.surface.shellStart",
+            "Group": "participant-colors",
+            "Label": "Маска бронепанелей",
+            "Description": "Дополнительный порог светлых панелей корпуса и шлема; тёмные участки остаются графитом.",
+            "Unit": "linear reflectance",
+            "Minimum": 0.0,
+            "Maximum": 0.5,
+            "Step": 0.0010000000474974514,
+            "DefaultValue": 0.09000000357627869
+        },
+        {
+            "Path": "participant.surface.shellWidth",
+            "Group": "participant-colors",
+            "Label": "Край бронепанели",
+            "Description": "Дополнительная ширина перехода assigned цвета на бронепанелях корпуса и шлема.",
+            "Unit": "linear reflectance",
+            "Minimum": 0.0010000000474974514,
+            "Maximum": 0.5,
+            "Step": 0.0010000000474974514,
+            "DefaultValue": 0.014999999664723874
+        },
+        {
+            "Path": "participant.surface.neutralPlateGain",
+            "Group": "participant-colors",
+            "Label": "Графит голеней",
+            "Description": "Яркость нейтральных керамических пластин на голенях.",
+            "Unit": "ratio",
+            "Minimum": 0.0,
+            "Maximum": 1.0,
+            "Step": 0.009999999776482582,
+            "DefaultValue": 0.15000000596046449
+        },
+        {
+            "Path": "participant.surface.helmetStripeWidth",
+            "Group": "participant-colors",
+            "Label": "Панели шлема",
+            "Description": "Ширина цветной полосы и боковых участков в UV атласе шлема; остальная оболочка нейтральная.",
+            "Unit": "UV ratio",
+            "Minimum": 0.009999999776482582,
+            "Maximum": 0.30000001192092898,
+            "Step": 0.009999999776482582,
+            "DefaultValue": 0.09000000357627869
+        }
+    ],
+    "values": [
+        {
+            "Path": "participant.color.blue.r",
+            "Value": 69.0
+        },
+        {
+            "Path": "participant.color.blue.g",
+            "Value": 158.0
+        },
+        {
+            "Path": "participant.color.blue.b",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.color.magenta.r",
+            "Value": 238.0
+        },
+        {
+            "Path": "participant.color.magenta.g",
+            "Value": 107.0
+        },
+        {
+            "Path": "participant.color.magenta.b",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.color.yellow.r",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.color.yellow.g",
+            "Value": 230.0
+        },
+        {
+            "Path": "participant.color.yellow.b",
+            "Value": 65.0
+        },
+        {
+            "Path": "participant.color.orange.r",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.color.orange.g",
+            "Value": 173.0
+        },
+        {
+            "Path": "participant.color.orange.b",
+            "Value": 53.0
+        },
+        {
+            "Path": "participant.color.cyan.r",
+            "Value": 56.0
+        },
+        {
+            "Path": "participant.color.cyan.g",
+            "Value": 213.0
+        },
+        {
+            "Path": "participant.color.cyan.b",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.color.green.r",
+            "Value": 64.0
+        },
+        {
+            "Path": "participant.color.green.g",
+            "Value": 232.0
+        },
+        {
+            "Path": "participant.color.green.b",
+            "Value": 120.0
+        },
+        {
+            "Path": "participant.color.red.r",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.color.red.g",
+            "Value": 86.0
+        },
+        {
+            "Path": "participant.color.red.b",
+            "Value": 86.0
+        },
+        {
+            "Path": "participant.color.white.r",
+            "Value": 244.0
+        },
+        {
+            "Path": "participant.color.white.g",
+            "Value": 247.0
+        },
+        {
+            "Path": "participant.color.white.b",
+            "Value": 255.0
+        },
+        {
+            "Path": "participant.surface.detailGain",
+            "Value": 6.0
+        },
+        {
+            "Path": "participant.surface.maskStart",
+            "Value": 0.0020000000949949028
+        },
+        {
+            "Path": "participant.surface.maskWidth",
+            "Value": 0.006000000052154064
+        },
+        {
+            "Path": "participant.surface.panelFloor",
+            "Value": 0.6499999761581421
+        },
+        {
+            "Path": "participant.surface.shellStart",
+            "Value": 0.09000000357627869
+        },
+        {
+            "Path": "participant.surface.shellWidth",
+            "Value": 0.014999999664723874
+        },
+        {
+            "Path": "participant.surface.neutralPlateGain",
+            "Value": 0.15000000596046449
+        },
+        {
+            "Path": "participant.surface.helmetStripeWidth",
+            "Value": 0.09000000357627869
+        }
+    ]
+}
