@@ -7,6 +7,51 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class LunarLaboratoryPhysicsTests
     {
+        [UnityTest] public IEnumerator EveryLabelIsCentredAndBackedByItsSurface()
+        {
+            var root=new GameObject("lunar-sign-audit");var movement=ProvingProfile.CreateDefault();var arena=root.AddComponent<ProvingArena>();
+            try
+            {
+                arena.Build(AuthoredArenaCatalog.Freeze(LunarLaboratoryCatalog.Id,movement),movement);yield return null;Physics.SyncTransforms();
+                var labels=root.GetComponentsInChildren<TextMesh>();Assert.That(labels.Length,Is.EqualTo(30),"Audit must cover every wall and pickup label");
+                foreach(var label in labels)
+                {
+                    var tr=label.transform;var bounds=label.GetComponent<MeshRenderer>().localBounds;var centre=tr.TransformPoint(bounds.center);var normal=-tr.forward;
+                    Assert.That(bounds.size.x*bounds.size.y,Is.GreaterThan(0),label.text);
+                    bool floor=normal.y>.9f;Vector3 expected;
+                    if(floor)
+                    {
+                        var pickup=arena.Definition.Pickups.Single(p=>p.Id==label.text);expected=pickup.Anchor+new Vector3(0,pickup.Anchor.y==0?.064f:.010f,-.9f);
+                    }
+                    else
+                    {
+                        string wallId;float offset=0;
+                        if(label.text.StartsWith("N 01"))wallId=centre.y<4.5f?"n-ground-left":"n-upper-cap-1";
+                        else if(label.text.StartsWith("S 02"))wallId=centre.y<4.5f?"s-ground-left":"s-upper-cap-0";
+                        else if(label.text.StartsWith("LUNA"))wallId="s-upper-cap-1";
+                        else if(label.text.StartsWith("A /"))wallId="lab-front-inner--1";
+                        else if(label.text.StartsWith("B /"))wallId="lab-front-inner-1";
+                        else if(label.text=="H +"||label.text=="V >>")wallId="divider-base";
+                        else
+                        {
+                            wallId=(label.text.StartsWith("W")?"w":"e")+"-annex-back";
+                            offset=label.text.Contains("\n")?(centre.y<4.5f?-1.125f:2.25f):-2.25f;
+                        }
+                        var wall=arena.Definition.Solids.Single(s=>s.Id==wallId);
+                        expected=wall.Position+Vector3.Scale(wall.Size,normal)*.5f+normal*.022f+Vector3.up*offset;
+                    }
+                    Assert.That(Vector3.Distance(centre,expected),Is.LessThan(.003f),"Glyph centre: "+label.text);
+                    // Actual physics under a 3x3 grid catches text hanging over doors and wall edges.
+                    foreach(int x in new[]{-1,0,1})foreach(int y in new[]{-1,0,1})
+                    {
+                        var point=tr.TransformPoint(bounds.center+new Vector3(x*bounds.extents.x,y*bounds.extents.y,0));
+                        Assert.That(Physics.Raycast(point+normal*.05f,-normal,out var hit,floor?.13f:.09f,(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer)),Is.True,"Unsupported glyph: "+label.text+" at "+point);
+                        Assert.That(Vector3.Dot(hit.normal,normal),Is.GreaterThan(.99f),"Wrong backing face: "+label.text);
+                    }
+                }
+            }
+            finally {Object.Destroy(root);}yield return null;
+        }
         [UnityTest] public IEnumerator RoutesStairsGlassAndSpawns()
         {
             var root=new GameObject("lunar-physics");var movement=ProvingProfile.CreateDefault();var nav=ProvingProfile.CreateNavigationDefault();var arena=root.AddComponent<ProvingArena>();

@@ -265,6 +265,7 @@ namespace StarTournament.ProvingGround
                 gameObject.AddComponent<NativeBonusVisualReview>();
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (args.Contains("-musicReview")) gameObject.AddComponent<NativeMusicReview>();
             if (args.Contains("-movementAudioReview")) gameObject.AddComponent<NativeMovementAudioReview>();
             if (args.Contains("-unifiedDamageReview")) gameObject.AddComponent<NativeUnifiedDamageReview>();
             if (args.Contains("-scoreboardReview")) gameObject.AddComponent<NativeScoreboardReview>();
@@ -495,7 +496,7 @@ namespace StarTournament.ProvingGround
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
             UpdateMenuSelectionAudio();
-            gameAudio?.UpdateVolume();
+            gameAudio?.TickMusic(phase==Phase.Running,Time.unscaledDeltaTime);
         }
         void UpdateMenuSelectionAudio()
         {
@@ -705,7 +706,7 @@ namespace StarTournament.ProvingGround
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match,frozenLabReference,frozenCutter);
             RebuildPickupVisuals();
-            gameAudio?.Bind(Session,Composition);BindDamageBonusAlerts();
+            gameAudio?.Bind(Session,Composition,frozenMovement);BindDamageBonusAlerts();
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;

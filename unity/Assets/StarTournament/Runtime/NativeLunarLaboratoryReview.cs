@@ -12,6 +12,7 @@ namespace StarTournament.ProvingGround
         IEnumerator Capture(string name)
         {
             ground.SendMessage("RefreshInterface");ground.SendMessage("LateUpdate");
+            if(name.StartsWith("sign-"))foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled))camera.fieldOfView=110;
             if(offscreen)
             {
                 // Autonomous Player render diagnostic: no UI/focus/device interaction, no frame-end wait in batch mode.
@@ -46,6 +47,19 @@ namespace StarTournament.ProvingGround
             var yaw=new[]{0f,325,0,0,130,300,90,200,160,0,130,0,180,0,270,90,0,318,180,327,35,18};
             var pitch=new[]{-20f,-10,0,0,0,5,0,0,0,0,-5,-5,-12,-12,-10,-10,0,12,0,-32,5,6};
             for(int q=0;q<poses.Length;q++){ground.PlaceCombatReviewSeat(0,poses[q],pitch[q],yaw[q]);yield return Capture(names[q]);}
+            if(args.Contains("-lunarSigns"))
+            {
+                int signIndex=0;
+                foreach(var sign in ground.CameraReviewArena.GetComponentInChildren<LunarLaboratoryPresentation>().GetComponentsInChildren<TextMesh>())
+                {
+                    var bounds=sign.GetComponent<MeshRenderer>().bounds;var normal=-sign.transform.forward;
+                    var eye=bounds.center+(normal.y>.9f?new Vector3(0,2,sign.text=="H"?1.6f:-1.6f):normal*2.3f);
+                    var direction=bounds.center-eye;float lookYaw=Mathf.Atan2(direction.x,direction.z)*Mathf.Rad2Deg;
+                    float lookPitch=-Mathf.Atan2(direction.y,new Vector2(direction.x,direction.z).magnitude)*Mathf.Rad2Deg;
+                    ground.PlaceCombatReviewSeat(0,eye-Vector3.up*ground.Profile.Get("camera.eyeHeight"),lookPitch,lookYaw);
+                    yield return Capture("sign-"+(++signIndex).ToString("00"));
+                }
+            }
             ground.SendMessage("Menu");ground.StartBotReview(Bots(8,true),20261003);ground.FullHealReviewManualTick=true;yield return Capture("17-four-views");
             if(args.Contains("-lunarVisualOnly")){File.WriteAllText(Path.Combine(directory,"visual-complete.json"),"{\"muted\":true,\"scriptedCameras\":true,\"humanAcceptance\":false}");Application.Quit(0);yield break;}
             ground.FullHealReviewManualTick=false;ground.enabled=false;int kills=0,collections=0,ticks=0;ground.Session.Died+=_=>kills++;ground.Session.PickupCollected+=(a,b,c)=>collections++;

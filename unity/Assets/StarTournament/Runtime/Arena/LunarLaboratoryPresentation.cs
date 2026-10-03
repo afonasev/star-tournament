@@ -10,11 +10,12 @@ namespace StarTournament.ProvingGround
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
         Mesh cube,cylinder,sphere;Material ivory,graphite,metal,grate,paving,ochre,sand,glass,white,blue,green,purple,fontMaterial;Font signFont;ProvingProfile p;
+        ArenaDefinition definition;
         AmbientMode oldMode;Color oldAmbient;public int LightCount{get;private set;}
         float P(string key)=>p.Get("lunar."+key);
         public void Build(ArenaDefinition d,ProvingProfile profile)
         {
-            p=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=new Color(.85f,.88f,1)*P("fill");
+            definition=d;p=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=new Color(.85f,.88f,1)*P("fill");
             cube=Primitive(PrimitiveType.Cube);cylinder=Primitive(PrimitiveType.Cylinder);sphere=Primitive(PrimitiveType.Sphere);
             var panels=Texture("Ivory ceramic panel / seams, bolts and wear",0);var dust=Texture("Lunar regolith / granular cratered basalt",1);
             ivory=Mat("Ivory ceramic panels",new Color(.88f,.86f,.76f),panels);graphite=Mat("Graphite floor",new Color(.22f,.25f,.27f),panels);metal=Mat("Brushed structural alloy",new Color(.31f,.36f,.39f),panels,.6f);ochre=Mat("Matte ochre",new Color(.61f,.43f,.19f));sand=Mat("Grey lunar regolith",new Color(.58f,.59f,.6f),dust);white=Mat("Neutral light diffuser",new Color(.95f,.95f,.87f),null,0,true);blue=Mat("N analysis blue grey",new Color(.39f,.57f,.63f));green=Mat("W communications sage",new Color(.42f,.51f,.4f));purple=Mat("E power grey lavender",new Color(.52f,.46f,.58f));
@@ -68,12 +69,27 @@ namespace StarTournament.ProvingGround
                 var f=fill.AddComponent<Light>();f.type=LightType.Point;f.color=new Color(.96f,.98f,1);f.intensity=P("officeFill");f.range=P("range");f.renderMode=LightRenderMode.ForcePixel;LightCount++;
             }
         }
-        void Label(string value,Vector3 pos,Quaternion rot,float size,Color color)
+        void Label(string value,Vector3 pos,Quaternion rot,float size,Color color,Vector2 area)
         {
             var go=new GameObject(value);go.transform.SetParent(transform,false);go.transform.localPosition=pos;go.transform.localRotation=rot;
             var t=go.AddComponent<TextMesh>();t.text=value;t.fontSize=64;t.characterSize=size*10/64*P("signScale");t.anchor=TextAnchor.MiddleCenter;t.alignment=TextAlignment.Center;t.color=color;
             if(!fontMaterial){signFont=t.font;fontMaterial=new Material(Shader.Find("StarTournament/LunarSign"));fontMaterial.mainTexture=signFont.material.mainTexture;owned.Add(fontMaterial);Font.textureRebuilt+=RefreshFont;}
-            t.GetComponent<MeshRenderer>().sharedMaterial=fontMaterial;
+            var renderer=t.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;
+            // Centre actual glyph bounds, including multiline baselines, and fit the backing.
+            var bounds=renderer.localBounds;
+            float fit=Mathf.Min(1,Mathf.Min(area.x/Mathf.Max(.001f,bounds.size.x),area.y/Mathf.Max(.001f,bounds.size.y)));
+            go.transform.localScale=Vector3.one*fit;
+            go.transform.localPosition=pos-rot*(bounds.center*fit);
+        }
+        void WallSign(string wallId,Vector3 normal,string text,Vector2 panel,float textSize,Material material,float verticalOffset=0)
+        {
+            var wall=Array.Find(definition.Solids,s=>s.Id==wallId);
+            var half=Vector3.Scale(wall.Size,normal)*.5f;
+            var surface=wall.Position+half+Vector3.up*verticalOffset;
+            var rotation=Quaternion.LookRotation(-normal,Vector3.up);
+            // Back of the panel touches the authored wall; lettering clears its front by 2 mm.
+            Box(material,surface+normal*.01f,new Vector3(panel.x,panel.y,.02f),rotation);
+            Label(text,surface+normal*.022f,rotation,textSize,Color.white,panel-new Vector2(.16f,.10f));
         }
         void RefreshFont(Font font){if(font==signFont&&fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;}
         void Grating(ArenaDefinition d)
@@ -172,7 +188,7 @@ namespace StarTournament.ProvingGround
             {var c=new Vector3(a*4,10.7f,-8);Pipe(metal,new Vector3(a*4,9,-8),c,.16f);Box(metal,c,new Vector3(4.3f,.14f,3),Quaternion.Euler(18,0,0));for(int x=-2;x<=2;x++)for(int z=-1;z<=1;z++)Box(solar,c+Quaternion.Euler(18,0,0)*new Vector3(x*.8f,.09f,z*.9f),new Vector3(.73f,.03f,.83f),Quaternion.Euler(18,0,0));}
             var dish=new Vector3(3.8f,12.1f,-8);var axis=new Vector3(.25f,.65f,1).normalized;
             Ring(ivory,dish,1.8f,axis,.12f);Ball(ivory,dish,new Vector3(3.3f,1.5f,.38f));Pipe(metal,new Vector3(3.8f,9,-8),dish,.2f);Pipe(metal,dish,dish+axis*1.5f,.07f);
-            Label("LUNA / 04",new Vector3(5,8.55f,-12.34f),Quaternion.identity,.52f,Color.white);
+            WallSign("s-upper-cap-1",Vector3.back,"LUNA / 04",new Vector2(3.6f,.65f),.52f,graphite);
         }
         void Zones()
         {
@@ -181,31 +197,42 @@ namespace StarTournament.ProvingGround
                 foreach(int a in new[]{-1,1})
                 {
                     // Two faces: exterior and interior lettering, paint never covers glass.
-                    var mat=a>0?blue:ochre;string text=a>0?"N 01 / АНАЛИЗ":"S 02 / ИСПЫТАНИЯ";float signY=y==0?2.1f:3.65f;float signH=y==0?1.2f:.65f;
-                    foreach(int face in new[]{-1,1}){Box(mat,new Vector3(-6,y+signY,a*12+face*.2f),new Vector3(6,signH,.035f));Label(text,new Vector3(-6,y+signY,a*12+face*.225f),Quaternion.Euler(0,face>0?180:0,0),y==0?.62f:.45f,Color.white);}
+                    var mat=a>0?blue:ochre;string text=a>0?"N 01 / АНАЛИЗ":"S 02 / ИСПЫТАНИЯ";
+                    string side=a>0?"n":"s",wall=y==0?side+"-ground-left":side+"-upper-cap-"+(a>0?1:0);
+                    foreach(int face in new[]{-1,1})WallSign(wall,Vector3.forward*face,text,new Vector2(6,y==0?1.2f:.65f),y==0?.62f:.45f,mat);
                     if(y==0){Box(mat,new Vector3(6,y+.55f,a*11.8f),new Vector3(7,.09f,.03f));Box(mat,new Vector3(6,y+.78f,a*11.8f),new Vector3(7,.09f,.03f));}
-                    var sm=a<0?green:purple;var loc=new Vector3(a*20.78f,y+(a<0?1.2f:3.1f),0);
-                    Box(sm,loc,new Vector3(.03f,1.3f,4));Label(a<0?"W 03\nКОММУНИКАЦИИ":"E 04\nЭНЕРГОБЛОК",loc+Vector3.right*(-a*.03f),Quaternion.Euler(0,a<0?-90:90,0),.44f,Color.white);
+                    // Lower annex face starts at the switchback landing; upper face spans 4.5–9 m.
+                    WallSign((a<0?"w":"e")+"-annex-back",Vector3.right*(-a),a<0?"W 03\nКОММУНИКАЦИИ":"E 04\nЭНЕРГОБЛОК",new Vector2(4,1.3f),.44f,a<0?green:purple,y==0?-1.125f:2.25f);
                 }
                 foreach(float z in new[]{-.8f,0,.8f})Pipe(green,new Vector3(-20.7f,y+.4f,z),new Vector3(-20.7f,y+.4f,z+2),.08f);
-                Ring(green,new Vector3(-20.6f,y+2.6f,0),.55f,Vector3.right,.09f);Pipe(green,new Vector3(-20.6f,y+2.05f,0),new Vector3(-20.6f,y+3.15f,0),.055f);
-                for(int i=-1;i<=1;i++){Box(purple,new Vector3(20.75f,y+1.4f,i*1.05f),new Vector3(.035f,1.8f,.72f));Box(graphite,new Vector3(20.71f,y+1.8f,i*1.05f),new Vector3(.025f,.35f,.52f));}
+                Ring(green,new Vector3(-20.6f,y+2.6f,-2.5f),.55f,Vector3.right,.09f);Pipe(green,new Vector3(-20.6f,y+2.05f,-2.5f),new Vector3(-20.6f,y+3.15f,-2.5f),.055f);
+                for(int i=-1;i<=1;i++){Box(purple,new Vector3(20.75f,y+.8f,i*1.05f),new Vector3(.035f,.7f,.72f));Box(graphite,new Vector3(20.71f,y+.8f,i*1.05f),new Vector3(.025f,.35f,.52f));}
             }
             foreach(int a in new[]{-1,1})
             {
-                var mat=a<0?green:purple;var c=new Vector3(a*21.2f,1.9f,0);Box(mat,c,new Vector3(.04f,1.35f,5));
-                Label(a<0?"W 03 / СВЯЗЬ":"E 04 / ЭНЕРГИЯ",c+Vector3.right*a*.03f,Quaternion.Euler(0,a<0?90:-90,0),.6f,Color.white);
+                WallSign((a<0?"w":"e")+"-annex-back",Vector3.right*a,a<0?"W 03 / СВЯЗЬ":"E 04 / ЭНЕРГИЯ",new Vector2(5,1.35f),.6f,a<0?green:purple,-2.25f);
                 foreach(int face in new[]{-1,1})for(int i=0;i<3;i++)
                 {var q=new Vector3(5+i*1.1f,2.1f,-12+face*.2f);Pipe(ochre,q+new Vector3(-.3f,-.35f,0),q+new Vector3(.15f,0,0),.055f);Pipe(ochre,q+new Vector3(.15f,0,0),q+new Vector3(-.3f,.35f,0),.055f);}
             }
             Ring(ochre,new Vector3(0,4.515f,-7),3,Vector3.up,.07f);
-            Label("A / СКАНЕР",new Vector3(-5,6,3.66f),Quaternion.Euler(0,180,0),.6f,blue.color);Label("B / ОБРАЗЦЫ",new Vector3(5,6,3.66f),Quaternion.Euler(0,180,0),.6f,blue.color);
-            Label("H +",new Vector3(0,.6f,.17f),Quaternion.Euler(0,180,0),.8f,blue.color);Label("V >>",new Vector3(0,.6f,-.17f),Quaternion.identity,.8f,ochre.color);
+            WallSign("lab-front-inner--1",Vector3.forward,"A / СКАНЕР",new Vector2(3.8f,1),.6f,blue);
+            WallSign("lab-front-inner-1",Vector3.forward,"B / ОБРАЗЦЫ",new Vector2(3.8f,1),.6f,blue);
+            WallSign("divider-base",Vector3.forward,"H +",new Vector2(2,.85f),.8f,blue);
+            WallSign("divider-base",Vector3.back,"V >>",new Vector2(2,.85f),.8f,ochre);
         }
         void PickupSigns(ArenaDefinition d)
         {
             foreach(var item in d.Pickups)
-            {var c=item.Anchor+Vector3.up*.025f;Ring(item.Kind==ArenaPickupKind.Cutter?ochre:white,c,.78f,Vector3.up,.045f);Label(item.Id,c+new Vector3(0,.01f,-.9f),Quaternion.Euler(90,0,0),.45f,Color.white);}
+            {
+                // Yard deposits reach 0.053 m; the plate extends down to the real floor.
+                float pavingLift=item.Anchor.y==0?.054f:0;
+                var c=item.Anchor+Vector3.up*(.004f+pavingLift);
+                Ring(item.Kind==ArenaPickupKind.Cutter?ochre:white,c,.78f,Vector3.up,.008f);
+                var centre=c+new Vector3(0,0,-.9f);
+                // A flush plate also supports the complete glyph on an open balcony grating.
+                Box(graphite,centre-Vector3.up*(pavingLift*.5f),new Vector3(1.2f,.008f+pavingLift,.48f));
+                Label(item.Id,centre+Vector3.up*.006f,Quaternion.Euler(90,0,0),.45f,Color.white,new Vector2(1,.36f));
+            }
         }
         void CourtyardDetail()
         {
@@ -217,6 +244,8 @@ namespace StarTournament.ProvingGround
             {
                 float x=-31+(float)random.NextDouble()*62,z=-31+(float)random.NextDouble()*62;
                 if(Mathf.Abs(x)<25&&Mathf.Abs(z)<16)continue;
+                bool marker=false;foreach(var pickup in definition.Pickups)if(pickup.Anchor.y==0&&(new Vector2(x-pickup.Anchor.x,z-pickup.Anchor.z+.9f)).sqrMagnitude<1.5f){marker=true;break;}
+                if(marker)continue;
                 float size=.07f+(float)random.NextDouble()*.19f;
                 Shape(sand,chips[i%3],new Vector3(x,.027f,z),new Vector3(size,.035f+size*.3f,size),Quaternion.Euler(0,i*43,0));
             }
