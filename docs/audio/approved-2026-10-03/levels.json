@@ -1,0 +1,72 @@
+[
+  {
+    "file": "variant-0-0.wav",
+    "source": "/Users/eaafonasev/Projects/star-tournament/unity/Assets/StarTournament/Resources/Audio/rifle.wav",
+    "onset_seconds": 0,
+    "peak": 0.1745,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-1-0.wav",
+    "source": "source/Prepared SFX Library/AR-15/D_32P.wav",
+    "onset_seconds": 0.70273,
+    "peak": 0.5274,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-1-1.wav",
+    "source": "source/Prepared SFX Library/AR-15/D_32P.wav",
+    "onset_seconds": 5.64642,
+    "peak": 0.5835,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-2-0.wav",
+    "source": "source/Prepared SFX Library/AK-47/C_28P.wav",
+    "onset_seconds": 0.61017,
+    "peak": 0.3768,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-2-1.wav",
+    "source": "source/Prepared SFX Library/AK-47/C_28P.wav",
+    "onset_seconds": 3.25637,
+    "peak": 0.4663,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-2-2.wav",
+    "source": "source/Prepared SFX Library/AK-47/C_28P.wav",
+    "onset_seconds": 6.01969,
+    "peak": 0.4642,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-2-3.wav",
+    "source": "source/Prepared SFX Library/AK-47/C_28P.wav",
+    "onset_seconds": 9.15521,
+    "peak": 0.4202,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-3-0.wav",
+    "source": "source/Prepared SFX Library/Carl Gustav M45/G_20P.wav",
+    "onset_seconds": 0.34671,
+    "peak": 0.6421,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-3-1.wav",
+    "source": "source/Prepared SFX Library/Carl Gustav M45/G_20P.wav",
+    "onset_seconds": 2.25833,
+    "peak": 0.6178,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-3-2.wav",
+    "source": "source/Prepared SFX Library/Carl Gustav M45/G_20P.wav",
+    "onset_seconds": 5.26585,
+    "peak": 0.6323,
+    "attack_rms": 0.05
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "sources": [
+    {
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0"
+    },
+    {
+      "author": "HaelDB",
+      "url": "https://opengameart.org/content/male-gruntyelling-sounds",
+      "license": "CC0 selected option",
+      "file": "2yell1.wav"
+    }
+  ],
+  "processing": "foley layering, filtered armor movement, body contact at .48s, secondary settling; variant 3 trimmed voice; current gain .5",
+  "note": "schematic collapse timing only, not game animation; chosen body hit precedes death by .25 seconds in combo",
+  "clips": [
+    {
+      "variant": 0,
+      "peak": 0.4443359375,
+      "duration": 1.18
+    },
+    {
+      "variant": 1,
+      "peak": 0.65,
+      "duration": 1.25
+    },
+    {
+      "variant": 2,
+      "peak": 0.65,
+      "duration": 1.25
+    },
+    {
+      "variant": 3,
+      "peak": 0.65,
+      "duration": 1.25
+    }
+  ]
+}

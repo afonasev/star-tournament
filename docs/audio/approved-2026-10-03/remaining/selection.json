@@ -1,0 +1,62 @@
+{
+  "damage-bonus-spawn": {
+    "event": "damage-bonus-spawn",
+    "selected_variant": 3,
+    "preview_version": "remaining",
+    "name": "Тревожный пульс",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed selected; browser summary read on this turn",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/spawn-3.wav",
+    "sha256": "7a34ffceefb6a84104ce556d84fa691d58720c97dd04bf45f35bea679d767498"
+  },
+  "jump": {
+    "event": "jump",
+    "selected_variant": 1,
+    "preview_version": "remaining",
+    "name": "Лёгкий толчок",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed selected; browser summary read on this turn",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/jump-1.wav",
+    "sha256": "c8e0f6532f034b345d4a2cce7a4a51249c51a9ef07c120dcd8df6b0e5b3b28ba"
+  },
+  "land": {
+    "event": "land",
+    "selected_variant": 1,
+    "preview_version": "remaining",
+    "name": "Мягкий удар",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed selected; browser summary read on this turn",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/land-1.wav",
+    "sha256": "64d0c6c5164df5e1a728817b6d75095a55a4f732f3f0d4f9483c413c9279d22e"
+  },
+  "menu-move": {
+    "event": "menu-move",
+    "selected_variant": 3,
+    "preview_version": "remaining",
+    "name": "Лёгкий тональный",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed selected; browser summary read on this turn",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/move-3.wav",
+    "sha256": "f67c645826433106a8e1557a8ff4340b86f71ca6ead61b0212ce15528b2ae7bd"
+  },
+  "menu-confirm": {
+    "event": "menu-confirm",
+    "selected_variant": 3,
+    "preview_version": "remaining",
+    "name": "Светлое подтверждение",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed selected; browser summary read on this turn",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/confirm-3.wav",
+    "sha256": "33289ee22860207b086ea5a151ba8e3c719c09589cedf9284e91e30dd24e9bfb"
+  },
+  "menu-back": {
+    "event": "menu-back",
+    "selected_variant": 3,
+    "preview_version": "remaining",
+    "name": "Мягкий спад",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed selected; browser summary read on this turn",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/back-3.wav",
+    "sha256": "d8854a155cbbfb4b90370231c60104e5c169b8dd6f1d442551f279deb3c4e4ee"
+  }
+}

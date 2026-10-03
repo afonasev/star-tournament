@@ -1,0 +1,13 @@
+{
+  "event": "rocket-launch",
+  "variant": 1,
+  "name": "Короткий старт",
+  "status": "selected-preview; game integration pending",
+  "user_feedback": "1",
+  "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/rocket/variant-1.wav",
+  "sha256": "4884444d60a09b36218f329391e522eb20fff0ebac17c0355597b55b16e560b9",
+  "source": "https://opengameart.org/content/4-projectile-launches",
+  "author": "Michel Baradari",
+  "license": "CC BY 3.0",
+  "modifications": "trim, speed, envelope and gain"
+}

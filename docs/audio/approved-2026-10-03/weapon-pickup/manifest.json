@@ -1,0 +1,43 @@
+{
+  "event": "weapon-pickup",
+  "reference": "../pickup/pickup-0.wav",
+  "sources": {
+    "url": "https://kenney.nl/assets/impact-sounds",
+    "author": "Kenney",
+    "license": "CC0",
+    "files": [
+      "impactPlate_light_000.ogg",
+      "impactPlate_light_001.ogg",
+      "impactSoft_heavy_000.ogg",
+      "footstep_carpet_000.ogg"
+    ]
+  },
+  "processing": "Layered recorded metal, soft impacts and cloth; pitch, lowpass, cut and fades; no energy tones",
+  "game_integration": false,
+  "clips": [
+    {
+      "variant": 0,
+      "duration": 0.6,
+      "peak": 0.888641357421875,
+      "sha256": "4e3a053d2e37d1e2770950306dade1af4c50ab09409f48b6247e5d3475b2ba8f"
+    },
+    {
+      "variant": 1,
+      "duration": 0.6,
+      "peak": 0.6,
+      "sha256": "4397ff5e3232a72208a23b21b134b445d6c5f9c92bd7a49879654b1b35dfcd04"
+    },
+    {
+      "variant": 2,
+      "duration": 0.6,
+      "peak": 0.6,
+      "sha256": "ef8f963a270ea077ccd61acbbf2ba346504253ba96cf403feb3e84990dc077e6"
+    },
+    {
+      "variant": 3,
+      "duration": 0.6,
+      "peak": 0.6,
+      "sha256": "be2a97a4cffcfa722b1be071f50da23de8fac47b577ef3d4c25c826e19ea2ccc"
+    }
+  ]
+}

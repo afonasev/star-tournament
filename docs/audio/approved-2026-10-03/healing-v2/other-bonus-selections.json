@@ -1,0 +1,40 @@
+{
+  "shield-pickup": {
+    "event": "shield-pickup",
+    "selected_variant": 2,
+    "preview_version": "shield-charge",
+    "name": "Плотное поле",
+    "status": "selected-preview; game integration pending",
+    "user_feedback": "2",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shield-charge/charge-2.wav",
+    "sha256": "03ae2e78e44a8cc37834e6facd900738867ee062b141eb7e3859d812c4aa983e",
+    "source_manifest": "shield-charge/manifest.json"
+  },
+  "weapon-pickup": {
+    "event": "weapon-pickup",
+    "selected_variant": 2,
+    "name": "Тяжёлый механизм",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed all except healing; browser summary: Оружие 2 · Урон 3 · Скорость 1 · Щит 2",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/weapon-pickup/pickup-2.wav",
+    "sha256": "ef8f963a270ea077ccd61acbbf2ba346504253ba96cf403feb3e84990dc077e6"
+  },
+  "damage-pickup": {
+    "event": "damage-pickup",
+    "selected_variant": 3,
+    "name": "Пульс силы",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed all except healing; browser summary: Оружие 2 · Урон 3 · Скорость 1 · Щит 2",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/bonus-review/damage-3.wav",
+    "sha256": "09bdd3a34a5c3194a06f4fd57c477f010c7cf1e8826f407eb3a4146a2ce529b5"
+  },
+  "speed-pickup": {
+    "event": "speed-pickup",
+    "selected_variant": 1,
+    "name": "Светлый разгон",
+    "status": "selected-preview; game integration pending",
+    "selection_evidence": "User confirmed all except healing; browser summary: Оружие 2 · Урон 3 · Скорость 1 · Щит 2",
+    "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/bonus-review/speed-1.wav",
+    "sha256": "2a7884cc2bc0c3e19e53c6b86d815987f71d44bc209088a1ff9e98620fa076fb"
+  }
+}

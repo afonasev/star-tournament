@@ -1,0 +1,32 @@
+{
+  "source": "../shotgun-v4/manifest.json",
+  "base": "v4 variant 3",
+  "recipe": "Two alternate recorded processed blasts, second at 55ms with 0.97 playback rate and 0.96 gain; common peak normalization. One game shot, two sound/flash pulses in prototype only.",
+  "cadence": 0.7,
+  "clips": [
+    {
+      "file": "variant-0-0.wav",
+      "peak": 0.89996337890625,
+      "duration": 0.95,
+      "second_barrel_delay": null
+    },
+    {
+      "file": "variant-0-1.wav",
+      "peak": 0.89996337890625,
+      "duration": 0.95,
+      "second_barrel_delay": null
+    },
+    {
+      "file": "variant-1-0.wav",
+      "peak": 0.9,
+      "duration": 1.0343541666666667,
+      "second_barrel_delay": 0.055
+    },
+    {
+      "file": "variant-1-1.wav",
+      "peak": 0.9,
+      "duration": 1.0343541666666667,
+      "second_barrel_delay": 0.055
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "sources": [
+    {
+      "url": "https://opengameart.org/content/explosions-4",
+      "author": "EZduzziteh",
+      "license": "CC0"
+    },
+    {
+      "url": "https://opengameart.org/content/muffled-distant-explosion",
+      "author": "NenadSimic",
+      "license": "CC0"
+    },
+    {
+      "url": "https://opengameart.org/content/4-projectile-launches",
+      "author": "Michel Baradari",
+      "license": "CC BY 3.0",
+      "use": "approved launch 1 in sequence previews"
+    }
+  ],
+  "processing": "trim, pitch, low-frequency layering, fade and gain; variant 3 blends distant and explosion3",
+  "visual_flight_seconds": 0.8,
+  "game_integration": false,
+  "clips": [
+    {
+      "variant": 1,
+      "duration": 0.8,
+      "peak": 0.7668316884522487,
+      "rms250": 0.13
+    },
+    {
+      "variant": 2,
+      "duration": 1.45,
+      "peak": 0.38819717044753393,
+      "rms250": 0.13
+    },
+    {
+      "variant": 3,
+      "duration": 1.7,
+      "peak": 0.7396619281765183,
+      "rms250": 0.13
+    }
+  ]
+}

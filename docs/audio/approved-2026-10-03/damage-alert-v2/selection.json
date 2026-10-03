@@ -1,0 +1,13 @@
+{
+  "event": "damage-powerup-other-player-alert",
+  "selected_variant": 3,
+  "preview_version": "damage-alert-v2",
+  "name": "Финальный акцент",
+  "status": "selected-preview; game integration pending",
+  "selection_evidence": "User confirmed selected; restored browser summary shows Чужое усиление 3",
+  "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/damage-alert-v2/alert-3.wav",
+  "sha256": "f29e64a33e7bb207089dc4494f8e2b7787fea00ccb0bde05231300bdab2eb68b",
+  "source_manifest": "damage-alert-v2/manifest.json",
+  "motif": "selected spawn-3 Тревожный пульс with brighter final accent",
+  "audience": "other players when someone collects damage power-up"
+}

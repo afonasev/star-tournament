@@ -1,0 +1,11 @@
+{
+  "event": "healing-pickup",
+  "selected_variant": 2,
+  "preview_version": "healing-v2",
+  "name": "Восстановление",
+  "status": "selected-preview; game integration pending",
+  "user_feedback": "выбрал 2",
+  "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/healing-v2/heal-2.wav",
+  "sha256": "20c02f461dd058e001cc2f7fa4c59bf73935d44fa8728ae920472aa3b1814106",
+  "source_manifest": "healing-v2/manifest.json"
+}

@@ -1,0 +1,27 @@
+{
+  "source": "https://opengameart.org/content/4-projectile-launches",
+  "author": "Michel Baradari",
+  "license": "CC BY 3.0",
+  "processing": "overlapping grains of rlaunch.wav; filtered layers, generated airflow and motor tones; shared peak and envelope",
+  "game_integration": false,
+  "clips": [
+    {
+      "variant": 1,
+      "peak": 0.6234924482951756,
+      "duration": 3,
+      "sha256": "28d2f20ee8996d1b3a64c185f084a0034ef4835b73a52094ddec1ae18ec38b19"
+    },
+    {
+      "variant": 2,
+      "peak": 0.5881376462440595,
+      "duration": 3,
+      "sha256": "c5cf1c1df100e904770e7c18505133ee318f55800c5e32283ace9525558ec349"
+    },
+    {
+      "variant": 3,
+      "peak": 0.65,
+      "duration": 3,
+      "sha256": "39f013b668a8d0262f9441ee04a14031e218ca937650a4e068ba9113a8acf0bd"
+    }
+  ]
+}

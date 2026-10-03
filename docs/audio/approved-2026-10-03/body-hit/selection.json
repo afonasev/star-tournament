@@ -1,0 +1,33 @@
+{
+  "shield": {
+    "event": "shield-hit",
+    "variant": 0,
+    "preview_version": "shield-v2",
+    "status": "provisional preferred pair; game integration pending",
+    "user_feedback": "кажется что 0 как щит и 2 без щита лучше всего пока подходят",
+    "files": [
+      {
+        "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shield-v2/hit-0-0.wav",
+        "sha256": "3eaa91a3a16145d035ae90e1dd4655c213d102009563251aaf190fce4a0b8efc"
+      }
+    ]
+  },
+  "body": {
+    "event": "body-hit",
+    "variant": 2,
+    "preview_version": "body-hit",
+    "status": "provisional preferred pair; game integration pending",
+    "user_feedback": "кажется что 0 как щит и 2 без щита лучше всего пока подходят",
+    "files": [
+      {
+        "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/body-hit/hit-2-0.wav",
+        "sha256": "b09e13eaa112098753cfeef4410af78549ccd7f64e61f7a7127e7f6463183875"
+      },
+      {
+        "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/body-hit/hit-2-1.wav",
+        "sha256": "325ae75d9a26f10307247f0f91f27c9d020b2a3f3b582b3c65e21197d18ffbae"
+      }
+    ]
+  },
+  "note": "Working preference, not final in-game listening acceptance. Previous shield candidate 3 retained as alternative."
+}

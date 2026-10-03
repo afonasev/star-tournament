@@ -1,0 +1,30 @@
+{
+  "event": "damage-powerup-other-player-alert",
+  "status": "not selected; preview only",
+  "base": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/remaining/spawn-3.wav",
+  "base_sha256": "7a34ffceefb6a84104ce556d84fa691d58720c97dd04bf45f35bea679d767498",
+  "processing": "Original pulse timing 0/.16/.32/.51 unchanged. Additive upper harmonics/attack/final layers. Match RMS to source for timbre comparison.",
+  "clips": [
+    {
+      "variant": 1,
+      "duration": 1.1,
+      "peak": 0.5781339387763238,
+      "rms": 0.13746964733941963,
+      "sha256": "ee7c14f30b6fa483af73ca90bea11bf24f906c559482ad9b74ce94901b623440"
+    },
+    {
+      "variant": 2,
+      "duration": 1.1,
+      "peak": 0.6496305970942239,
+      "rms": 0.13746964733941963,
+      "sha256": "eac9cc5912d2357f95279f2fb70b8ac94d5c5f572adfc8fa16e2b78e0650e149"
+    },
+    {
+      "variant": 3,
+      "duration": 1.1,
+      "peak": 0.5718729077158312,
+      "rms": 0.13746964733941963,
+      "sha256": "f29e64a33e7bb207089dc4494f8e2b7787fea00ccb0bde05231300bdab2eb68b"
+    }
+  ]
+}

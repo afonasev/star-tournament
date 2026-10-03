@@ -1,0 +1,59 @@
+{
+  "sources": [
+    "../shotgun/manifest.json",
+    "../shotgun-v2/manifest.json"
+  ],
+  "base": "v2 variant 3",
+  "recipe": "Original v2 cannon blast plus band-limited low-mid body, recorded double attack, short recorded crackle grains, parallel saturation. First 250ms RMS matched.",
+  "cadence": 0.7,
+  "clips": [
+    {
+      "file": "variant-0-0.wav",
+      "peak": 0.30475712606464544,
+      "rms_250ms": 0.12,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-0-1.wav",
+      "peak": 0.2982575010504775,
+      "rms_250ms": 0.12,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-1-0.wav",
+      "peak": 0.4974238134588961,
+      "rms_250ms": 0.12,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-1-1.wav",
+      "peak": 0.5164427705386097,
+      "rms_250ms": 0.11999999999999998,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-2-0.wav",
+      "peak": 0.5811529880303374,
+      "rms_250ms": 0.12,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-2-1.wav",
+      "peak": 0.618115302922864,
+      "rms_250ms": 0.11999999999999998,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-3-0.wav",
+      "peak": 0.5993526189099934,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-3-1.wav",
+      "peak": 0.6265772931112619,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.7
+    }
+  ]
+}

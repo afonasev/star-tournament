@@ -1,0 +1,51 @@
+[
+  {
+    "file": "variant-0-0.wav",
+    "source": "/Users/eaafonasev/Projects/star-tournament/unity/Assets/StarTournament/Resources/Audio/shotgun.wav",
+    "onset_seconds": 0,
+    "peak": 0.115,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-1-0.wav",
+    "source": "../source/Prepared SFX Library/Model 12/K_22P.wav",
+    "onset_seconds": 0.84117,
+    "peak": 0.4293,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-1-1.wav",
+    "source": "../source/Prepared SFX Library/Model 12/K_22P.wav",
+    "onset_seconds": 7.44444,
+    "peak": 0.4659,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-2-0.wav",
+    "source": "../source/Prepared SFX Library/Mossberg/N_30P.wav",
+    "onset_seconds": 1.69577,
+    "peak": 0.4695,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-2-1.wav",
+    "source": "../source/Prepared SFX Library/Mossberg/N_30P.wav",
+    "onset_seconds": 4.96027,
+    "peak": 0.435,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-3-0.wav",
+    "source": "../source/Prepared SFX Library/Nova/O_21P.wav",
+    "onset_seconds": 0.43015,
+    "peak": 0.4606,
+    "attack_rms": 0.05
+  },
+  {
+    "file": "variant-3-1.wav",
+    "source": "../source/Prepared SFX Library/Nova/O_21P.wav",
+    "onset_seconds": 3.46448,
+    "peak": 0.4824,
+    "attack_rms": 0.05
+  }
+]

@@ -1,0 +1,69 @@
+{
+  "status": "preview only; no runtime changes",
+  "sources": "Generated energy/air textures. Healing mechanism layers: Kenney Impact Sounds CC0. Weapon and shield: existing sibling manifests.",
+  "clips": [
+    {
+      "kind": "damage",
+      "variant": 1,
+      "sha256": "888d01b4555cc1d6528cd34494c4155e207e79f1814e2527e022b517a3fb9f9e",
+      "duration": 0.85,
+      "peak": 0.56
+    },
+    {
+      "kind": "damage",
+      "variant": 2,
+      "sha256": "0a05d4c80d77c74458cf3f871a221cfb74202451a7c6b0660bad9a00bf140cac",
+      "duration": 0.85,
+      "peak": 0.56
+    },
+    {
+      "kind": "damage",
+      "variant": 3,
+      "sha256": "09bdd3a34a5c3194a06f4fd57c477f010c7cf1e8826f407eb3a4146a2ce529b5",
+      "duration": 0.85,
+      "peak": 0.56
+    },
+    {
+      "kind": "speed",
+      "variant": 1,
+      "sha256": "2a7884cc2bc0c3e19e53c6b86d815987f71d44bc209088a1ff9e98620fa076fb",
+      "duration": 0.62,
+      "peak": 0.56
+    },
+    {
+      "kind": "speed",
+      "variant": 2,
+      "sha256": "80901e03cd1f3b21de5252b4da193925645e7d972ba7b5a68cb59a4d9acf701c",
+      "duration": 0.62,
+      "peak": 0.56
+    },
+    {
+      "kind": "speed",
+      "variant": 3,
+      "sha256": "e87d5d2f9b738515097c6f76b3c6ab3f79703f9826d61b31c4934bc7be441c35",
+      "duration": 0.62,
+      "peak": 0.56
+    },
+    {
+      "kind": "heal",
+      "variant": 1,
+      "sha256": "668a6925112b19e93bdc022784e6c01c900648fbb8982276ee1d480eda86ef92",
+      "duration": 0.62,
+      "peak": 0.56
+    },
+    {
+      "kind": "heal",
+      "variant": 2,
+      "sha256": "8dc64c119dbb3f312a175011f121dd1065e0e091d5a5fcf054cb060b1fdf6942",
+      "duration": 0.62,
+      "peak": 0.56
+    },
+    {
+      "kind": "heal",
+      "variant": 3,
+      "sha256": "b6d3e28079875f835acb03c8ff8f460c91fe51aed6ddcea666c46c616d7808db",
+      "duration": 0.62,
+      "peak": 0.56
+    }
+  ]
+}

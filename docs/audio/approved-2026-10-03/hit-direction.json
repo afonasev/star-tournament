@@ -1,0 +1,9 @@
+{
+  "actors": "humans in armor with energy shields, not robots",
+  "events": [
+    "shield hit",
+    "body hit"
+  ],
+  "user_correction": "нужен звук попадания по щиту, звук попадания по телу",
+  "status": "shield sound selection in progress"
+}

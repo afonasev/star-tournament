@@ -33,7 +33,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var indices=(int[,])typeof(NativeGameAudio).GetField("lastMovement",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(audio);
                 var voices=ground.transform.Find("native-game-audio").GetComponentsInChildren<AudioSource>().Where(s=>s.name.StartsWith("voice-")).ToArray();
                 var randomState=Random.state;
-                foreach(var name in new[]{"step","jump","land"})
+                foreach(var name in new[]{"step"})
                 {
                     int kind=name=="step"?0:name=="jump"?1:2,last=-1;
                     var seen=new System.Collections.Generic.HashSet<int>();
@@ -49,6 +49,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     }
                     Assert.That(seen.Count,Is.GreaterThan(1));
                     for(int i=0;i<5;i++)Assert.That(Resources.Load<AudioClip>("Audio/Movement/"+name+"-"+i),Is.Not.Null);
+                }
+                foreach(var name in new[]{"jump","land"})
+                {
+                    foreach(var v in voices){v.Stop();v.clip=null;}
+                    method.Invoke(audio,new object[]{name,.5f,0});
+                    var selected=voices.Single(v=>v.clip!=null);
+                    Assert.That(selected.clip.name,Is.EqualTo(name));Assert.That(selected.pitch,Is.EqualTo(1),"Approved jump/land timbres remain unchanged");
                 }
                 Assert.That(JsonUtility.ToJson(Random.state),Is.EqualTo(JsonUtility.ToJson(randomState)),"Presentation must not advance Unity's shared random stream");
                 foreach(var v in voices){v.Stop();v.clip=null;v.pitch=.98f;}
@@ -92,7 +99,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 ground.Session.Tick(actions,Time.fixedDeltaTime);
                 Assert.That(ground.Session.ShotCount,Is.GreaterThan(before));
                 Assert.That(fired,Is.True);
-                Assert.That(sourceRoot.GetComponentsInChildren<AudioSource>().Any(s=>s.name.StartsWith("voice-")&&s.clip!=null&&s.clip.name=="rifle"),Is.True);
+                Assert.That(sourceRoot.GetComponentsInChildren<AudioSource>().Any(s=>s.name.StartsWith("voice-")&&s.clip!=null&&s.clip.name.StartsWith("rifle-")),Is.True);
             }
             finally
             {

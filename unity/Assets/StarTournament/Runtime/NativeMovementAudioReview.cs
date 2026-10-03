@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
                 if(!voice||!voice.isPlaying)continue;
                 if(previous.TryGetValue(voice,out var clip)&&clip==voice.clip)continue;
                 previous[voice]=voice.clip;
-                if(voice.clip&&new[]{"step-","jump-","land-"}.Any(p=>voice.clip.name.StartsWith(p)))
+                if(voice.clip&&new[]{"step-","jump","land"}.Any(p=>voice.clip.name.StartsWith(p)))
                     events.Add(voice.clip.name+" pitch="+voice.pitch.ToString("F4",System.Globalization.CultureInfo.InvariantCulture));
             }
         }
@@ -74,7 +74,7 @@ namespace StarTournament.ProvingGround
                 }
                 var observed=events.Skip(beginning).ToArray();
                 File.WriteAllLines(Path.Combine(directory,seats+"-seats-events.txt"),observed);
-                foreach(var kind in new[]{"step-","jump-","land-"})
+                foreach(var kind in new[]{"step-","jump","land"})
                     if(!observed.Any(e=>e.StartsWith(kind)))throw new InvalidOperationException("Missing actual motion audio: "+seats+" seats "+kind);
                 yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,seats+"-seats.png"));
                 yield return new WaitForSecondsRealtime(.4f);

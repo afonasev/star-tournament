@@ -1,0 +1,31 @@
+{
+  "source": "../shield/hit-0-0.wav (level-adjusted current game hit)",
+  "processing": "preserved base and first 30ms; added short energy deflection, electrical reflection or resonant field response; no change to base gain",
+  "series_interval": 0.12,
+  "clips": [
+    {
+      "variant": 0,
+      "single_peak": 0.292510986328125,
+      "series_peak": 0.328857421875,
+      "first_30ms_unchanged": true
+    },
+    {
+      "variant": 1,
+      "single_peak": 0.32173187017780996,
+      "series_peak": 0.35883061110697917,
+      "first_30ms_unchanged": true
+    },
+    {
+      "variant": 2,
+      "single_peak": 0.5443638942340188,
+      "series_peak": 0.6491274942599918,
+      "first_30ms_unchanged": true
+    },
+    {
+      "variant": 3,
+      "single_peak": 0.292510986328125,
+      "series_peak": 0.3747830786782033,
+      "first_30ms_unchanged": true
+    }
+  ]
+}

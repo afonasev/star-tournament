@@ -1,0 +1,126 @@
+[
+  {
+    "file": "shotgun-v5/variant-1-0.wav",
+    "sha256": "bbdded9a6d326743b8cff365a3725684cbeaf866fc84a76a6dd716a1f99b4a83"
+  },
+  {
+    "file": "shotgun-v5/variant-1-1.wav",
+    "sha256": "22fcf19546d072ef5f09b1b015cb5ca9075da6c2ea4c782b2f40267cd597f32a"
+  },
+  {
+    "file": "rocket/variant-1.wav",
+    "sha256": "4884444d60a09b36218f329391e522eb20fff0ebac17c0355597b55b16e560b9"
+  },
+  {
+    "file": "explosion-short/explosion-1.wav",
+    "sha256": "2afd5ff85e8c204088edde045472ec1c3eec8f995e7bfe12ed10b44d381cdf16"
+  },
+  {
+    "file": "cutter-v2/preview-2-0.wav",
+    "sha256": "200e0940fae589de2783bb90afcb3b32e25aeed9d0a3b57c64528f3096011606"
+  },
+  {
+    "file": "cutter-v2/preview-2-1.wav",
+    "sha256": "6efe05ea344bd33b41729e48e7243f7aa6a00c3f82cc03c1b4794f29341ac82e"
+  },
+  {
+    "file": "cutter/loop-0.wav",
+    "sha256": "4dc2edc3a548d286f22523ef4505dc7b5647982acefdd66229d0fb375f806662"
+  },
+  {
+    "file": "cutter/loop-3.wav",
+    "sha256": "ef510019c6218114309de6170530b3b0315755198cd6db7692fd2e8a46aaa281"
+  },
+  {
+    "file": "shield-v2/hit-0-0.wav",
+    "sha256": "3eaa91a3a16145d035ae90e1dd4655c213d102009563251aaf190fce4a0b8efc"
+  },
+  {
+    "file": "body-hit/hit-2-0.wav",
+    "sha256": "b09e13eaa112098753cfeef4410af78549ccd7f64e61f7a7127e7f6463183875"
+  },
+  {
+    "file": "body-hit/hit-2-1.wav",
+    "sha256": "325ae75d9a26f10307247f0f91f27c9d020b2a3f3b582b3c65e21197d18ffbae"
+  },
+  {
+    "file": "death-v2/death-2.wav",
+    "sha256": "567c34983f727e175eb407fcf4cb2ead9e60eefc701ebafe6fe247eab1271a75"
+  },
+  {
+    "file": "death-v2/death-3.wav",
+    "sha256": "876c21384d63ac4193155a13933201202f047d3c5cd0fac192e13221e0d1ad8c"
+  },
+  {
+    "file": "death-v2/death-fall-only.wav",
+    "sha256": "56c427cc5e839f250a382e5d27684d69e8c4dc50c3c98aa8cddc2dd416538547"
+  },
+  {
+    "file": "rocket-flight/flight-2.wav",
+    "sha256": "c5cf1c1df100e904770e7c18505133ee318f55800c5e32283ace9525558ec349"
+  },
+  {
+    "file": "shield-charge/charge-2.wav",
+    "sha256": "03ae2e78e44a8cc37834e6facd900738867ee062b141eb7e3859d812c4aa983e"
+  },
+  {
+    "file": "weapon-pickup/pickup-2.wav",
+    "sha256": "ef8f963a270ea077ccd61acbbf2ba346504253ba96cf403feb3e84990dc077e6"
+  },
+  {
+    "file": "bonus-review/damage-3.wav",
+    "sha256": "09bdd3a34a5c3194a06f4fd57c477f010c7cf1e8826f407eb3a4146a2ce529b5"
+  },
+  {
+    "file": "bonus-review/speed-1.wav",
+    "sha256": "2a7884cc2bc0c3e19e53c6b86d815987f71d44bc209088a1ff9e98620fa076fb"
+  },
+  {
+    "file": "healing-v2/heal-2.wav",
+    "sha256": "20c02f461dd058e001cc2f7fa4c59bf73935d44fa8728ae920472aa3b1814106"
+  },
+  {
+    "file": "remaining/spawn-3.wav",
+    "sha256": "7a34ffceefb6a84104ce556d84fa691d58720c97dd04bf45f35bea679d767498"
+  },
+  {
+    "file": "remaining/jump-1.wav",
+    "sha256": "c8e0f6532f034b345d4a2cce7a4a51249c51a9ef07c120dcd8df6b0e5b3b28ba"
+  },
+  {
+    "file": "remaining/land-1.wav",
+    "sha256": "64d0c6c5164df5e1a728817b6d75095a55a4f732f3f0d4f9483c413c9279d22e"
+  },
+  {
+    "file": "remaining/move-3.wav",
+    "sha256": "f67c645826433106a8e1557a8ff4340b86f71ca6ead61b0212ce15528b2ae7bd"
+  },
+  {
+    "file": "remaining/confirm-3.wav",
+    "sha256": "33289ee22860207b086ea5a151ba8e3c719c09589cedf9284e91e30dd24e9bfb"
+  },
+  {
+    "file": "remaining/back-3.wav",
+    "sha256": "d8854a155cbbfb4b90370231c60104e5c169b8dd6f1d442551f279deb3c4e4ee"
+  },
+  {
+    "file": "damage-alert-v2/alert-3.wav",
+    "sha256": "f29e64a33e7bb207089dc4494f8e2b7787fea00ccb0bde05231300bdab2eb68b"
+  },
+  {
+    "file": "variant-2-0.wav",
+    "sha256": "699304790cad20e475301fe42e2f469e50142cf7eb57bcbc26f64112c0aa4682"
+  },
+  {
+    "file": "variant-2-1.wav",
+    "sha256": "6b35169520e99698318e963cdb9a10d3c95688fe8d3c795dc4c2210812aec22c"
+  },
+  {
+    "file": "variant-2-2.wav",
+    "sha256": "1398eebfbc384bf7fa0f65321ca8bfb39be44a5d23df1676a60c6f488a25cf69"
+  },
+  {
+    "file": "variant-2-3.wav",
+    "sha256": "31c9d46a19c45619eb562e520223b1a549dc0a25f02de99a6279659901638f67"
+  }
+]

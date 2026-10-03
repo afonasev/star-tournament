@@ -1,0 +1,50 @@
+{
+  "sources": "../shotgun/manifest.json",
+  "license": "CC0 source recordings; original layered edits",
+  "recipe": "Recorded double blast, pitch reduction, filtered body, recorded crackle grains, early reflections, saturation and tail shaping. No game audio copied.",
+  "cadence": 0.7,
+  "clips": [
+    {
+      "file": "variant-0-0.wav",
+      "peak": 0.33645875578646023,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.69
+    },
+    {
+      "file": "variant-1-0.wav",
+      "peak": 0.40005411100120264,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.4
+    },
+    {
+      "file": "variant-1-1.wav",
+      "peak": 0.40496452261749094,
+      "rms_250ms": 0.11999999999999998,
+      "duration": 0.4
+    },
+    {
+      "file": "variant-2-0.wav",
+      "peak": 0.31974471864216075,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.51
+    },
+    {
+      "file": "variant-2-1.wav",
+      "peak": 0.32328697542306084,
+      "rms_250ms": 0.12,
+      "duration": 0.51
+    },
+    {
+      "file": "variant-3-0.wav",
+      "peak": 0.30475203855283545,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.7
+    },
+    {
+      "file": "variant-3-1.wav",
+      "peak": 0.2982617051516365,
+      "rms_250ms": 0.12000000000000001,
+      "duration": 0.7
+    }
+  ]
+}

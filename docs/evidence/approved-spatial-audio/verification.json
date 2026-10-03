@@ -1,0 +1,44 @@
+{
+  "scope": "full",
+  "command": "make check",
+  "exit_code": 0,
+  "checks": {
+    "editmode": {
+      "total": "323",
+      "passed": "323",
+      "failed": "0",
+      "duration": "647.431891"
+    },
+    "playmode": {
+      "total": "197",
+      "passed": "197",
+      "failed": "0",
+      "duration": "549.5147479"
+    }
+  },
+  "source_binding": "full-gate-source.json, baseline9c13743+file SHA256; source unmodified throughout full gate",
+  "build_marker": "487324519",
+  "natural_matches": {
+    "Ffa": {
+      "seconds": 300,
+      "shots": 3281,
+      "damage_events": 1021,
+      "deaths": 93,
+      "respawns": 93
+    },
+    "Teams": {
+      "seconds": 300,
+      "shots": 2221,
+      "damage_events": 655,
+      "deaths": 64,
+      "respawns": 63
+    }
+  },
+  "iterations": [
+    "Initial main compilation lacked Snapshot.AreAllies; fixed identically by current main later",
+    "First full gate stopped after 8 minutes without progress evidence; progress logging subsequently proved old history tests need 15-18 seconds each",
+    "Progress helper duplicate assembly reference corrected; successful full gate recorded here"
+  ],
+  "human_listening": "pending exact final Player",
+  "integration": "pending refresh and affected checks"
+}

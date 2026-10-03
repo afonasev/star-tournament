@@ -1,0 +1,55 @@
+{
+  "sources": [
+    {
+      "author": "YCbCr",
+      "url": "https://opengameart.org/content/generator-loop",
+      "license": "CC0"
+    },
+    {
+      "author": "Hansj\u00f6rg Malthaner",
+      "attribution_url": "https://opengameart.org/users/varkalandar",
+      "url": "https://opengameart.org/content/force-field-electric-hum",
+      "license": "CC BY 4.0 (selected option)"
+    },
+    {
+      "author": "dklon",
+      "url": "https://opengameart.org/content/rocket-launch-pack",
+      "license": "CC BY 3.0"
+    }
+  ],
+  "processing": "steady excerpts, filters, blends, crossfade looping, variant 2 amplitude modulation; preview attack/release ramps; not native Player mix",
+  "preview_hold_seconds": [
+    1,
+    4
+  ],
+  "clips": [
+    {
+      "variant": 0,
+      "loop_seconds": 0.94,
+      "rms": 0.075,
+      "peak": 0.18257651278031092,
+      "seam_step": 0.00487869032639812
+    },
+    {
+      "variant": 1,
+      "loop_seconds": 2.0,
+      "rms": 0.075,
+      "peak": 0.19090651286520358,
+      "seam_step": 0.0001549457459172482
+    },
+    {
+      "variant": 2,
+      "loop_seconds": 2.0,
+      "rms": 0.075,
+      "peak": 0.19400894984509118,
+      "seam_step": 0.0011192039594134229
+    },
+    {
+      "variant": 3,
+      "loop_seconds": 2.0,
+      "rms": 0.075,
+      "peak": 0.30528729306581215,
+      "seam_step": 0.0372358591665739
+    }
+  ]
+}

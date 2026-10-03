@@ -1,0 +1,23 @@
+{
+  "byte_identical_copies": 28,
+  "loops": [
+    {
+      "clip": "cutter-loop",
+      "seconds": 3.97,
+      "seam_step": 0.0225830078125,
+      "head_rms": 0.07804499911009932,
+      "tail_rms": 0.05126424706140731,
+      "overall_rms": 0.07485977525281354,
+      "sha256": "2641f4234c3a8a01f8a0d345e4fa777dd776c8616bbab045e498b23296112db3"
+    },
+    {
+      "clip": "rocket-flight",
+      "seconds": 2.56,
+      "seam_step": 0.00274658203125,
+      "head_rms": 0.08132664607113983,
+      "tail_rms": 0.0586921098595227,
+      "overall_rms": 0.1093129714122656,
+      "sha256": "4cdb3f806dbe9b0f5b1f8755d00c2b14b59df69d0e070a603107978e6f00467e"
+    }
+  ]
+}
