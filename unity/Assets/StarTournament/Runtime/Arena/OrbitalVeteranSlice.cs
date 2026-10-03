@@ -5,100 +5,123 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class OrbitalLeaguePresentation
     {
-        // Fixed authored decorative layout and texture encoding. Gameplay dimensions live in the catalog.
+        // Authored mesh detailing: bolts, seams and repair patterns are fixed art topology,
+        // not gameplay tuning. Readability controls live in the veteran profile; solids in catalog.
         void VeteranSlice(ArenaDefinition definition)
         {
-            var paint=VeteranMaterial("Veteran / patched ivory",new Color(.53f,.57f,.55f),0);
-            var fresh=VeteranMaterial("Veteran / replacement enamel",new Color(.69f,.66f,.56f),0);
-            var steel=VeteranMaterial("Veteran / brushed steel",new Color(.25f,.29f,.3f),1);
-            var rubber=VeteranMaterial("Veteran / ribbed rubber",new Color(.105f,.13f,.145f),2);
-            var casePaint=VeteranMaterial("Veteran / league transport cases",new Color(.31f,.37f,.35f),0);
-            var orange=VeteranMaterial("Veteran / worn ochre markings",new Color(.65f,.37f,.1f),0);
-            var dark=VeteranMaterial("Veteran / service recess",new Color(.065f,.08f,.095f),2);
-            var warm=Flat("Veteran / service lamp",new Color(1,.67f,.31f));
-            warm.EnableKeyword("_EMISSION");warm.SetColor("_EmissionColor",new Color(1,.5f,.16f));
+            var paint=VeteranMaterial("Veteran / patched ivory",new Color(.58f,.6f,.55f),0);
+            var fresh=VeteranMaterial("Veteran / replacement enamel",new Color(.72f,.69f,.59f),0);
+            var steel=VeteranMaterial("Veteran / brushed steel",new Color(.26f,.3f,.32f),1);
+            var rubber=VeteranMaterial("Veteran / court rubber",Color.white*p.Get("veteran.hallFloorValue"),2);
+            var teal=VeteranMaterial("Veteran / league petrol enamel",new Color(.12f,.29f,.32f),0);
+            var orange=VeteranMaterial("Veteran / worn ochre markings",new Color(.69f,.42f,.16f),0);
+            var dark=VeteranMaterial("Veteran / service recess",new Color(.075f,.095f,.11f),2);
+            var warm=Flat("Veteran / service lamp",new Color(1,.76f,.43f));
+            warm.EnableKeyword("_EMISSION");warm.SetColor("_EmissionColor",new Color(1,.65f,.3f));
             void B(Material m,Vector3 pos,Vector3 size)=>Box(m,pos,size,Quaternion.identity);
-            // Repair panels are inset-looking assemblies on the opaque portal wings.
+            // All four walls receive the same large-scale material hierarchy. Panel seams and
+            // shallow cladding never supply an invisible obstacle or a new navigable surface.
+            foreach(var solid in definition.Solids)
+            {
+                if(!solid.Id.StartsWith("hall-") || solid.Id.Contains("roof") || solid.Id.Contains("rim") || solid.Id.Contains("lintel"))continue;
+                bool end=solid.Id.Contains("north-left")||solid.Id.Contains("north-right")||solid.Id.Contains("south-left")||solid.Id.Contains("south-right");
+                bool side=solid.Id.Contains("west-")||solid.Id.Contains("east-");if(!end&&!side)continue;
+                var normal=end?new Vector3(0,0,-Mathf.Sign(solid.Position.z)):new Vector3(-Mathf.Sign(solid.Position.x),0,0);
+                var along=end?Vector3.right:Vector3.forward;
+                float length=end?solid.Size.x:solid.Size.z;
+                var face=solid.Position+normal*(end?solid.Size.z:solid.Size.x)*.5f;
+                int count=Mathf.Max(1,Mathf.RoundToInt(length/1.25f));
+                for(int i=0;i<count;i++)
+                {
+                    var at=face+along*((i+.5f)*length/count-length*.5f);
+                    B(i%4==1?fresh:paint,new Vector3(at.x,6.25f,at.z)+normal*.026f,end?new Vector3(length/count-.045f,3.35f,.04f):new Vector3(.04f,3.35f,length/count-.045f));
+                    B(teal,new Vector3(at.x,4.52f,at.z)+normal*.035f,end?new Vector3(length/count-.03f,1.02f,.06f):new Vector3(.06f,1.02f,length/count-.03f));
+                    // Distinct access plate instead of uniform noisy tiling.
+                    if(i%3==0)B(steel,new Vector3(at.x,5.35f,at.z)+normal*.06f,end?new Vector3(.65f,.22f,.025f):new Vector3(.025f,.22f,.65f));
+                }
+                B(steel,new Vector3(face.x,4.13f,face.z)+normal*.075f,end?new Vector3(length,.22f,.1f):new Vector3(.1f,.22f,length));
+            }
+            // Tall paired portals: thin vertical trim emphasizes the full 3.5 m clear height.
+            foreach(int zsign in new[]{-1,1})
+            {
+                float z=zsign*7.965f;
+                foreach(int side in new[]{-1,1})
+                {
+                    B(steel,new Vector3(side*2.22f,5.75f,z),new Vector3(.12f,3.5f,.08f));
+                    B(warm,new Vector3(side*2.29f,5.75f,z-zsign*.05f),new Vector3(p.Get("veteran.portalLightWidth"),3.35f,.025f));
+                }
+                B(teal,new Vector3(0,7.75f,z),new Vector3(4.38f,.44f,.06f));
+                Label(zsign>0?"02 / NORTH":"04 / SOUTH",new Vector3(0,7.75f,z-zsign*.05f),Quaternion.Euler(0,zsign>0?180:0,0),.32f,HasWayfinding?Palette(zsign>0?"north":"south"):Palette("ink"));
+            }
+            // Columns become repaired arena infrastructure; their existing collision stays exact.
+            foreach(var solid in definition.Solids)
+            {
+                if(!solid.Id.StartsWith("column-",StringComparison.Ordinal))continue;
+                transform.parent.Find(solid.Id).GetComponent<Renderer>().sharedMaterial=paint;
+                float band=p.Get("veteran.columnBandHeight");
+                foreach(int face in new[]{-1,1})
+                {
+                    B(teal,new Vector3(solid.Position.x+face*.755f,4+band*.5f,solid.Position.z),new Vector3(.015f,band,1.51f));
+                    B(teal,new Vector3(solid.Position.x,4+band*.5f,solid.Position.z+face*.755f),new Vector3(1.51f,band,.015f));
+                    B(steel,new Vector3(solid.Position.x+face*.765f,7.7f,solid.Position.z),new Vector3(.025f,.42f,1.53f));
+                    B(steel,new Vector3(solid.Position.x,7.7f,solid.Position.z+face*.765f),new Vector3(1.53f,.42f,.025f));
+                    B(orange,new Vector3(solid.Position.x,4+band+.1f,solid.Position.z+face*.77f),new Vector3(1.54f,.1f,.02f));
+                    Label(solid.Position.z>0?"02":"04",new Vector3(solid.Position.x,6.45f,solid.Position.z+face*.78f),Quaternion.Euler(0,face<0?180:0,0),.65f,Palette("ink"));
+                }
+            }
+            // Flush court surface: large calm rubber fields, central pickup remains uncovered.
             foreach(int side in new[]{-1,1})
             {
-                float x=side*4.15f;
-                B(dark,new Vector3(x,6.04f,7.985f),new Vector3(3.55f,3.72f,.018f));
-                for(int row=0;row<3;row++)for(int col=0;col<3;col++)
-                {
-                    var pos=new Vector3(x+(col-1)*1.13f,4.68f+row*1.08f,7.955f);
-                    B(row==1&&col==0?fresh:(row+col)%4==0?steel:paint,pos,new Vector3(1.1f,1.035f,.05f));
-                    foreach(int a in new[]{-1,1})foreach(int b in new[]{-1,1})
-                        B(steel,pos+new Vector3(a*.46f,b*.42f,-.033f),new Vector3(.045f,.045f,.014f));
-                }
-                B(steel,new Vector3(x,4.17f,7.90f),new Vector3(3.55f,.3f,.16f));
-                B(orange,new Vector3(side*2.31f,5.9f,7.91f),new Vector3(.13f,3.65f,.12f));
-                // Flush mat overlays never create floor collision lips.
-                B(rubber,new Vector3(x,4.009f,6.2f),new Vector3(3.5f,.012f,3.4f));
-                for(int i=0;i<7;i++)B(orange,new Vector3(x-1.45f+i*.46f,4.02f,4.6f),new Vector3(.23f,.01f,.11f));
+                B(rubber,new Vector3(side*4.6f,4.007f,0),new Vector3(2.65f,.01f,15.8f));
+                B(rubber,new Vector3(0,4.007f,side*4.8f),new Vector3(3.35f,.01f,6.2f));
+                B(orange,new Vector3(side*1.74f,4.017f,0),new Vector3(.065f,.008f,15.7f));
+                for(int i=0;i<5;i++)B(paint,new Vector3(side*4.65f,4.017f,-5.8f+i*2.8f),new Vector3(.7f,.008f,.07f));
             }
+            // High services follow the long walls, leaving the door silhouette and centre open.
+            float serviceY=8-p.Get("veteran.ceilingServiceDepth");
             foreach(int side in new[]{-1,1})
             {
-                Box(steel,new Vector3(side*3.8f,4.85f,7.88f),new Vector3(.62f,.3f,.035f),Quaternion.Euler(0,0,side*5));
-                for(int i=0;i<6;i++)
+                for(int line=0;line<2;line++)VeteranPipe(steel,new Vector3(side*(5.35f-line*.3f),serviceY,-7.7f),new Vector3(side*(5.35f-line*.3f),serviceY,7.7f),.075f);
+                for(int i=0;i<11;i++)
                 {
-                    float x=side*(2.7f+(i%3)*.42f),y=5.05f+(i/3)*.22f;
-                    Box(dark,new Vector3(x,y,7.923f),new Vector3(.17f+i*.027f,.014f,.006f),Quaternion.Euler(0,0,side*(18+i*7)));
+                    float z=-7.3f+i*1.45f;
+                    B(steel,new Vector3(side*5.2f,serviceY+.04f,z),new Vector3(1.15f,.12f,.075f));
+                    B(orange,new Vector3(side*5.35f,serviceY,z),new Vector3(.18f,.19f,.08f));
                 }
             }
-            // Overhead exposed service pipes, clamped to the original north wall.
-            for(int line=0;line<2;line++)
+            // North service corner retains its real cabinet and edge-bound transport cover.
+            var cabinet=transform.parent.Find("veteran-service-cabinet");cabinet.GetComponent<Renderer>().sharedMaterial=steel;
+            B(paint,new Vector3(-4.65f,5.35f,7.655f),new Vector3(1.13f,1.59f,.025f));
+            B(dark,new Vector3(-4.65f,5.72f,7.63f),new Vector3(.6f,.25f,.025f));
+            B(warm,new Vector3(-4.88f,5.72f,7.61f),new Vector3(.055f,.055f,.018f));
+            B(steel,new Vector3(-4.28f,5.25f,7.62f),new Vector3(.045f,.24f,.03f));
+            for(int i=0;i<7;i++)B(dark,new Vector3(-4.65f,4.8f+i*.055f,7.62f),new Vector3(.68f,.018f,.012f));
+            B(steel,new Vector3(-4.65f,6.4f,7.72f),new Vector3(1.5f,.14f,.4f));
+            B(warm,new Vector3(-4.65f,6.32f,7.63f),new Vector3(1.23f,.035f,.2f));
+            Label("SERVICE / 07",new Vector3(-4.65f,6.08f,7.59f),Quaternion.Euler(0,180,0),.23f,Palette("ink"));
+            BasementVent(new Vector3(-4.65f,7.1f,7.89f),Quaternion.identity);
+            VeteranPipe(steel,new Vector3(-5.6f,6.25f,7.72f),new Vector3(-5.6f,7.84f,7.72f),.09f);
+            VeteranSteam(new Vector3(-5.6f,6.25f,7.72f));
+            // South equipment wall is distinct: flush dark cooling bank and patched enamel.
+            for(int side=-1;side<=1;side+=2)
             {
-                float y=7.35f+line*.32f,z=7.62f;
-                foreach(int side in new[]{-1,1})VeteranPipe(steel,new Vector3(side*2.65f,y,z),new Vector3(side*5.8f,y,z),.09f);
-                for(int i=0;i<8;i++)
-                {
-                    float x=-5.4f+i*1.55f;if(Mathf.Abs(x)<2.65f)continue;
-                    VeteranPipe(orange,new Vector3(x-.05f,y,z),new Vector3(x+.05f,y,z),.12f);
-                    B(steel,new Vector3(x,y,7.82f),new Vector3(.1f,.32f,.32f));
-                }
+                B(dark,new Vector3(side*4.2f,6.25f,-7.925f),new Vector3(2.65f,1.55f,.045f));
+                for(int i=0;i<12;i++)B(steel,new Vector3(side*4.2f,5.65f+i*.11f,-7.885f),new Vector3(2.5f,.045f,.03f));
+                Label(side<0?"AIR / 03":"POWER / 04",new Vector3(side*4.2f,7.23f,-7.9f),Quaternion.identity,.3f,Palette("ink"));
             }
-            VeteranPipe(steel,new Vector3(-5.55f,6.25f,7.64f),new Vector3(-5.55f,7.36f,7.64f),.09f);
-            // Open ladder cable tray above the portal; small cabling sits in the tray.
-            for(int i=0;i<18;i++)B(steel,new Vector3(-5.6f+i*.65f,7.91f,7.12f),new Vector3(.055f,.08f,.65f));
-            foreach(float z in new[]{6.82f,7.42f})B(steel,new Vector3(0,7.88f,z),new Vector3(11.4f,.15f,.06f));
-            for(int i=0;i<3;i++)VeteranPipe(rubber,new Vector3(-5.6f,7.92f,6.97f+i*.14f),new Vector3(5.6f,7.92f,6.97f+i*.14f),.035f);
-            // Wall-mounted service cabinet and a protected fan, both outside the portal.
-            transform.parent.Find("veteran-service-cabinet").GetComponent<Renderer>().sharedMaterial=steel;
-            B(dark,new Vector3(-4.65f,5.35f,7.655f),new Vector3(1.1f,1.56f,.04f));
-            B(paint,new Vector3(-4.65f,5.36f,7.62f),new Vector3(1.03f,1.49f,.03f));
-            B(steel,new Vector3(-4.3f,5.25f,7.585f),new Vector3(.045f,.24f,.04f));
-            for(int i=0;i<7;i++)B(dark,new Vector3(-4.65f,4.8f+i*.055f,7.597f),new Vector3(.68f,.018f,.012f));
-            B(dark,new Vector3(-4.65f,5.72f,7.59f),new Vector3(.61f,.24f,.015f));
-            B(warm,new Vector3(-4.88f,5.72f,7.575f),new Vector3(.06f,.06f,.018f));
-            B(steel,new Vector3(-4.65f,6.35f,7.64f),new Vector3(1.5f,.16f,.35f));
-            B(warm,new Vector3(-4.65f,6.26f,7.6f),new Vector3(1.24f,.035f,.22f));
-            BasementVent(new Vector3(-2.98f,6.58f,7.87f),Quaternion.identity);
-            fans[fans.Count-1].GetComponent<Renderer>().sharedMaterial=steel;
-            Label("SERVICE / 07",new Vector3(-4.65f,6.03f,7.56f),Quaternion.Euler(0,180,0),.22f,Palette("white"));
-            B(dark,new Vector3(4.15f,6.65f,7.86f),new Vector3(2.6f,.48f,.05f));
-            Label("NORTH / 02",new Vector3(4.15f,6.65f,7.825f),Quaternion.Euler(0,180,0),.42f,HasWayfinding?Palette("north"):Palette("ink"));
-            // Visible case bodies are exactly the canonical physical solids, with protective trim.
-            foreach(var s in definition.Solids)
+            foreach(var solid in definition.Solids)
             {
-                if(!s.Id.StartsWith("veteran-case-",StringComparison.Ordinal))continue;
-                var body=transform.parent.Find(s.Id);body.GetComponent<Renderer>().sharedMaterial=casePaint;
-                var c=s.Position;var h=s.Size*.5f;
-                foreach(int signX in new[]{-1,1})foreach(int signZ in new[]{-1,1})
-                    B(steel,c+new Vector3(signX*(h.x-.045f),0,signZ*(h.z-.045f)),new Vector3(.1f,s.Size.y+.018f,.1f));
-                foreach(float y in new[]{-h.y+.07f,h.y-.07f})
-                {
-                    B(steel,c+new Vector3(0,y,-h.z-.012f),new Vector3(s.Size.x,.11f,.035f));
-                    B(steel,c+new Vector3(0,y,h.z+.012f),new Vector3(s.Size.x,.11f,.035f));
-                }
-                for(int i=-1;i<=1;i++)B(steel,c+new Vector3(i*h.x*.65f,h.y+.012f,0),new Vector3(.07f,.025f,s.Size.z));
-                B(dark,c+new Vector3(0,0,-h.z-.014f),new Vector3(s.Size.x*.5f,.24f,.018f));
-                B(steel,c+new Vector3(0,.02f,-h.z-.03f),new Vector3(s.Size.x*.32f,.045f,.025f));
-                B(orange,c+new Vector3(-h.x*.6f,.28f,-h.z-.02f),new Vector3(.15f,.26f,.02f));
-                Label("OL / 07",c+new Vector3(.16f,-h.y*.45f,-h.z-.04f),Quaternion.Euler(0,180,0),.2f,Palette("white"));
+                if(!solid.Id.StartsWith("veteran-case-",StringComparison.Ordinal))continue;
+                transform.parent.Find(solid.Id).GetComponent<Renderer>().sharedMaterial=teal;
+                var c=solid.Position;var h=solid.Size*.5f;
+                foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})B(steel,c+new Vector3(sx*(h.x-.04f),0,sz*(h.z-.04f)),new Vector3(.085f,solid.Size.y+.015f,.085f));
+                foreach(float y in new[]{-h.y+.07f,h.y-.07f})foreach(int sz in new[]{-1,1})B(steel,c+new Vector3(0,y,sz*(h.z+.009f)),new Vector3(solid.Size.x,.09f,.025f));
+                B(dark,c+new Vector3(0,0,-h.z-.014f),new Vector3(solid.Size.x*.45f,.22f,.018f));
+                B(steel,c+new Vector3(0,.025f,-h.z-.03f),new Vector3(solid.Size.x*.3f,.04f,.025f));
+                Label("OL / 07",c+new Vector3(0,-h.y*.5f,-h.z-.04f),Quaternion.Euler(0,180,0),.2f,Palette("white"));
             }
             var lamp=new GameObject("Veteran service light");lamp.transform.SetParent(transform,false);lamp.transform.localPosition=new Vector3(-4.65f,6.25f,7.25f);
             var light=lamp.AddComponent<Light>();light.type=LightType.Spot;lamp.transform.localRotation=Quaternion.LookRotation(new Vector3(0,-1,.45f));light.spotAngle=p.Get("light.spotAngle");light.color=new Color(1,.64f,.3f);light.intensity=p.Get("veteran.lightIntensity");light.range=p.Get("veteran.lightRange");light.shadows=LightShadows.None;LocalLightCount++;
-            VeteranSteam(new Vector3(-5.55f,6.25f,7.62f));
         }
         Material VeteranMaterial(string name,Color color,int kind)
         {

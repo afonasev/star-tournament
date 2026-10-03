@@ -86,7 +86,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=9;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=10;
             p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
             var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
@@ -99,7 +99,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             Position("layout.label-0",new Vector3(0,7,7.985f));Position("layout.label-1",new Vector3(0,7,-7.985f));
-            Position("layout.broadcast-screen-0",new Vector3(0,7,7.98f));
+            Position("layout.broadcast-screen-0",new Vector3(-5.97f,6.55f,-2.6f));
             Position("layout.broadcast-screen-1",new Vector3(-27.78f,5.8f,9));
             Position("layout.broadcast-screen-2",new Vector3(-5,5.8f,23.78f));Position("layout.broadcast-screen-3",new Vector3(5,5.8f,23.78f));
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1})
@@ -163,6 +163,8 @@ namespace StarTournament.ProvingGround
                 for(int zone=6;zone<=7;zone++)if(Mathf.Approximately(Get("layout.fill-"+zone+".y"),7f))Set("layout.fill-"+zone+".y",3f);
             }
             var current=ring?CreateCombatBowlRingPresentationDefault():CreateOrbitalLeagueDefault();
+            if(ring && version<10 && Mathf.Approximately(Get("layout.broadcast-screen-0.x"),0) && Mathf.Approximately(Get("layout.broadcast-screen-0.y"),7) && Mathf.Approximately(Get("layout.broadcast-screen-0.z"),7.98f))
+                foreach(var axis in new[]{"x","y","z"})Set("layout.broadcast-screen-0."+axis,current.Get("layout.broadcast-screen-0."+axis));
             if(upgradeWindows)
             {
                 descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
@@ -188,7 +190,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=ring?9:10;
+            version=10;
             valueIndex=null; // Descriptor migration invalidates the runtime lookup cache.
         }
         static void BroadcastDescriptors(ProvingProfile p)
