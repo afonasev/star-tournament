@@ -1,0 +1,16 @@
+{
+  "source_commit": null,
+  "baseline": "06877122409c9535cfdf0eae43ffe6f6420862bb",
+  "map": "lunar-laboratory-v1@6",
+  "tested_path": "/Users/eaafonasev/Projects/star-tournament-lunar-f7/unity/Builds/StarTournamentProvingGround.app",
+  "tree_sha256": "ad248a7ff56986a11c70b6aaccf44bab94153bf246938157e79d4ee377b7d206",
+  "hash_method": "sorted relative filename + NUL + SHA256(file bytes) digest",
+  "build_utc": "20261003T193529Z",
+  "human_acceptance": false,
+  "binary_status": "removed_superseded_diagnostic_only",
+  "replacement_tree_sha256": "820563539c1e87d58bb5f1f2cf0b74d37efff5582060d3836acb8b05d768b5f0",
+  "replacement_retained_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/436b7cc/20261003T200043Z/StarTournamentProvingGround.app",
+  "source_note": "Baseline plus tested-source.json and diagnostic-v1.cs.txt; precommit intermediate, not a release source revision.",
+  "removed_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f7-pending/20261003T193529Z/StarTournamentProvingGround.app",
+  "reason": "v1 timing diagnostic superseded by v2; all v1 raw measurements/source/identity retained, no human acceptance depends on this intermediate binary."
+}

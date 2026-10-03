@@ -1,0 +1,137 @@
+[
+  {
+    "name": "yard-a",
+    "frames": 1702,
+    "frame_mean_ms": 3.525648648648648,
+    "fps_from_total_time": 283.6357503698764,
+    "gpu_samples": 1702,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.532291000000299
+  },
+  {
+    "name": "hall-a",
+    "frames": 1332,
+    "frame_mean_ms": 4.511641891891891,
+    "fps_from_total_time": 221.64879748039237,
+    "gpu_samples": 3,
+    "gpu_coverage": 0.0022522522522522522,
+    "frame_p95_ms": 14.964791000000588
+  },
+  {
+    "name": "upper-a",
+    "frames": 1507,
+    "frame_mean_ms": 3.981937237558063,
+    "fps_from_total_time": 251.13404364285097,
+    "gpu_samples": 0,
+    "gpu_coverage": 0.0,
+    "frame_p95_ms": 11.441208000000813
+  },
+  {
+    "name": "hall-b",
+    "frames": 1342,
+    "frame_mean_ms": 4.480578334575263,
+    "fps_from_total_time": 223.1854741347347,
+    "gpu_samples": 0,
+    "gpu_coverage": 0.0,
+    "frame_p95_ms": 14.773292000000993
+  },
+  {
+    "name": "yard-b",
+    "frames": 1692,
+    "frame_mean_ms": 3.5479227984633557,
+    "fps_from_total_time": 281.8550619063952,
+    "gpu_samples": 1692,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.560250000004373
+  },
+  {
+    "name": "hall-no-shadows",
+    "frames": 1414,
+    "frame_mean_ms": 4.245945721357852,
+    "fps_from_total_time": 235.51879030620302,
+    "gpu_samples": 0,
+    "gpu_coverage": 0.0,
+    "frame_p95_ms": 15.86799999999755
+  },
+  {
+    "name": "yard-no-shadows",
+    "frames": 1870,
+    "frame_mean_ms": 3.210082375401067,
+    "fps_from_total_time": 311.5184855264221,
+    "gpu_samples": 1870,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.085000000003447
+  },
+  {
+    "name": "hall-no-local-lights",
+    "frames": 1956,
+    "frame_mean_ms": 3.0676565480572635,
+    "fps_from_total_time": 325.98173372221106,
+    "gpu_samples": 1956,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 3.966417000000888
+  },
+  {
+    "name": "yard-no-local-lights",
+    "frames": 1681,
+    "frame_mean_ms": 3.5707761005353986,
+    "fps_from_total_time": 280.0511630650998,
+    "gpu_samples": 1681,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.485041999998884
+  },
+  {
+    "name": "hall-no-upper-lights",
+    "frames": 1948,
+    "frame_mean_ms": 3.081003229466117,
+    "fps_from_total_time": 324.5696046132617,
+    "gpu_samples": 1948,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.439083999997706
+  },
+  {
+    "name": "yard-no-upper-lights",
+    "frames": 1654,
+    "frame_mean_ms": 3.6283018186215155,
+    "fps_from_total_time": 275.61102961934006,
+    "gpu_samples": 1654,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.799708000007286
+  },
+  {
+    "name": "hall-half-render-scale",
+    "frames": 1977,
+    "frame_mean_ms": 3.035382734951945,
+    "fps_from_total_time": 329.447745908666,
+    "gpu_samples": 1977,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 3.9855419999952346
+  },
+  {
+    "name": "yard-half-render-scale",
+    "frames": 1684,
+    "frame_mean_ms": 3.5646009008313575,
+    "fps_from_total_time": 280.5363146732006,
+    "gpu_samples": 1684,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.405542000000651
+  },
+  {
+    "name": "hall-final",
+    "frames": 1197,
+    "frame_mean_ms": 5.015194410192149,
+    "fps_from_total_time": 199.39406495743137,
+    "gpu_samples": 1197,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 6.564709000002722
+  },
+  {
+    "name": "yard-final",
+    "frames": 1679,
+    "frame_mean_ms": 3.5755732328767076,
+    "fps_from_total_time": 279.67543520160416,
+    "gpu_samples": 1679,
+    "gpu_coverage": 1.0,
+    "frame_p95_ms": 4.549582999999302
+  }
+]

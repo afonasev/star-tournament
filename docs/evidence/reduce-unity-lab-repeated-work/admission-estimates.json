@@ -1,0 +1,37 @@
+[
+  {
+    "directory": "focused-editmode.Jm893z",
+    "scope_written_utc": "2026-10-03T18:51:38.301322+00:00",
+    "log_created_utc": "2026-10-03T18:51:47.407704+00:00",
+    "approx_admission_seconds": 9.1063814163208,
+    "note": "Filesystem timestamps; includes small wrapper/editor logging startup overhead, excludes XML case time"
+  },
+  {
+    "directory": "focused-editmode.Mzvtet",
+    "scope_written_utc": "2026-10-03T18:55:58.266678+00:00",
+    "log_created_utc": "2026-10-03T18:55:58.350223+00:00",
+    "approx_admission_seconds": 0.08354520797729492,
+    "note": "Filesystem timestamps; includes small wrapper/editor logging startup overhead, excludes XML case time"
+  },
+  {
+    "directory": "focused-playmode.EvjzyG",
+    "scope_written_utc": "2026-10-03T18:58:31.373780+00:00",
+    "log_created_utc": "2026-10-03T18:58:31.791956+00:00",
+    "approx_admission_seconds": 0.41817522048950195,
+    "note": "Filesystem timestamps; includes small wrapper/editor logging startup overhead, excludes XML case time"
+  },
+  {
+    "directory": "focused-editmode.iCCsvc",
+    "scope_written_utc": "2026-10-03T19:01:33.974395+00:00",
+    "log_created_utc": "2026-10-03T19:01:34.039181+00:00",
+    "approx_admission_seconds": 0.06478619575500488,
+    "note": "Filesystem timestamps; includes small wrapper/editor logging startup overhead, excludes XML case time"
+  },
+  {
+    "directory": "focused-editmode.YLRmtp",
+    "scope_written_utc": "2026-10-03T19:05:53.576352+00:00",
+    "log_created_utc": "2026-10-03T19:17:16.099220+00:00",
+    "approx_admission_seconds": 682.5228681564331,
+    "note": "Filesystem timestamps; includes small wrapper/editor logging startup overhead, excludes XML case time"
+  }
+]

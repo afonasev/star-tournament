@@ -1,0 +1,70 @@
+{
+  "source_commit": "436b7cc1d09ce452175d193484bec28904ae39c8",
+  "map": "lunar-laboratory-v1@6",
+  "tests": {
+    "editmode": {
+      "result": "Passed",
+      "total": "325",
+      "passed": "325",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "798.2376895"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "199",
+      "passed": "199",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "570.648485"
+    }
+  },
+  "focused_physics": {
+    "passed": 3,
+    "traversals": 36
+  },
+  "full_gate": {
+    "command": "make check",
+    "status": "PASS",
+    "exit_code": 0,
+    "log": "checks/full-check-command.log.gz",
+    "build_log": "checks/full-build.log.gz"
+  },
+  "candidate_build": {
+    "status": "PASS",
+    "log": "checks/vsync-build.log.gz"
+  },
+  "natural_match": {
+    "status": "PASS",
+    "map": "lunar-laboratory-v1@6",
+    "muted": true,
+    "seed": 20261003,
+    "kills": 149,
+    "collections": 136,
+    "humanAcceptance": false
+  },
+  "visual_agent_review": [
+    "visible/f7-west.png",
+    "visible/f7-east.png",
+    "visible/17-four-views.png"
+  ],
+  "human_acceptance": false,
+  "integration": {
+    "revision": "d7fde276238cb3151d405b4003ba4c3aaf58e15f",
+    "main_at_merge": "2e3e41cbd748c37ea6e8e70bed2597f45e6972df",
+    "command": "unity/tools.sh test-edit-filter StarTournament.ProvingGround.Tests.LunarLaboratoryTests",
+    "exit_code": 0,
+    "passed": 8,
+    "failed": 0,
+    "scope": "Recompile combined sources; verify Lunar map and history with current main profiles. Main changed another map; authored Lunar source is unchanged. Full gate above applies to the exact candidate source."
+  },
+  "integration_history": {
+    "revision": "8c3780e",
+    "main_at_merge": "be7b103bb89b45d9bad7b338cd8bb197f52a62fd",
+    "command": "unity/tools.sh test-edit-filter LunarLaboratoryTests;DesignLabHistoryTests;LabSnapshotCopyTests",
+    "exit_code": 0,
+    "passed": 57,
+    "failed": 0,
+    "scope": "Subsequent main update optimized shared Lab history. Recompiled combined tree and reran history, snapshot copy and Lunar fixtures. No Lunar geometry, presentation or diagnostic source change."
+  }
+}

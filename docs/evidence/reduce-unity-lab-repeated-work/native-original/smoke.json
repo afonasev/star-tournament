@@ -1,0 +1,47 @@
+{
+  "candidate": "local-macos-player-candidate/e13b72494a19996920c29aa02b90309fde7e9303/2366840912664b57",
+  "source_revision": "e13b72494a19996920c29aa02b90309fde7e9303",
+  "classification": "AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",
+  "muted": true,
+  "selection_preserved": true,
+  "history_bytes_unchanged_after_restart": true,
+  "history_sha256": "52ea62e0e6e19391bdadf5e8735be6e2fd4c9891e8c7e19666e2b4bb59e38673",
+  "runs": [
+    {
+      "command": [
+        "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab-copy-e13b7249/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+        "-labReview",
+        "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/native-lab",
+        "-profilesPath",
+        "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/native-lab/profiles.json",
+        "-screen-width",
+        "1440",
+        "-screen-height",
+        "900",
+        "-screen-fullscreen",
+        "0",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/native-lab/player-1.log"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab-copy-e13b7249/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+        "-labReview",
+        "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/native-lab",
+        "-profilesPath",
+        "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/native-lab/profiles.json",
+        "-screen-width",
+        "1440",
+        "-screen-height",
+        "900",
+        "-screen-fullscreen",
+        "0",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/native-lab/player-2.log"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=LunarLaboratoryPhysicsTests
+revision=06877122409c9535cfdf0eae43ffe6f6420862bb
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Arena/LunarLaboratoryCatalog.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs
+ M Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
+ M Assets/StarTournament/Tests/PlayMode/LunarLaboratoryPhysicsTests.cs

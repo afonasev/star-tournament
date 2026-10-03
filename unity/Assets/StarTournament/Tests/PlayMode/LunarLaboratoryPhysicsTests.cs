@@ -69,6 +69,16 @@ namespace StarTournament.ProvingGround.Tests
                 {
                     Assert.That(Physics.Raycast(new Vector3(side*11,1,-1.75f),Vector3.right*side,out var hit,2,ProvingArena.ShotMask),Is.True,"under upper march");
                     Assert.That(hit.collider.name,Does.Contain("infill"));
+                    var wall=arena.Definition.Solids.Single(s=>s.Id==(side<0?"w":"e")+"-ground--1");
+                    float plane=wall.Position.x-side*wall.Size.x*.5f;
+                    Assert.That(hit.point.x,Is.EqualTo(plane).Within(.001f),"enclosure must be flush with adjacent wall");
+                    // Cover the full neighbouring wall height and tread-side gaps; the slab edge above
+                    // is inset on every wall and is not part of the vertical wall plane.
+                    foreach(float z in new[]{-3.4f,-1.75f,-.12f})foreach(float y in new[]{.1f,2f,wall.Position.y+wall.Size.y*.5f-.02f})
+                    {
+                        Assert.That(Physics.Raycast(new Vector3(side*11,y,z),Vector3.right*side,out var face,2,ProvingArena.ShotMask),Is.True);
+                        Assert.That(face.point.x,Is.EqualTo(plane).Within(.001f),"continuous front plane");
+                    }
                 }
                 foreach(var header in arena.Definition.Solids.Where(s=>s.Id.Contains("header")&&!s.Id.Contains("open-header")))
                 {

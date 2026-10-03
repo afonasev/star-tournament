@@ -1,0 +1,2637 @@
+LAB_PROFILE phase=ctor-clone ms=2.832
+LAB_PROFILE phase=ctor-newfile ms=32.325
+LAB_PROFILE phase=commit-clone ms=2.189
+LAB_PROFILE phase=commit-mutation ms=30.269
+LAB_PROFILE phase=revision-registry-hash ms=153.256
+LAB_PROFILE phase=revision-clone ms=1.865
+LAB_PROFILE phase=revision-copy-readonly ms=10.691
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.301
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.037
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.051
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.160
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.947
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.271
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.862
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=26.149
+LAB_PROFILE phase=revision-registry-hash ms=154.270
+LAB_PROFILE phase=revision-clone ms=1.880
+LAB_PROFILE phase=revision-copy-readonly ms=11.977
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.103
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.029
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.178
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.299
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.015
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.076
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.855
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.034
+LAB_PROFILE phase=revision-validate ms=22.285
+LAB_PROFILE phase=commit-validate ms=412.667
+LAB_PROFILE phase=ctor-clone ms=2.084
+LAB_PROFILE phase=ctor-newfile ms=28.821
+LAB_PROFILE phase=ctor-read ms=261.009
+LAB_CACHE miss key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=generation ms=3683.986
+LAB_PROFILE phase=revision-registry-hash ms=3904.386
+LAB_PROFILE phase=revision-clone ms=1.766
+LAB_PROFILE phase=revision-copy-readonly ms=13.376
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.105
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.035
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.051
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.164
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.263
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.034
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.030
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.027
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.128
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.017
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.892
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.037
+LAB_PROFILE phase=revision-validate ms=22.466
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=200.214
+LAB_PROFILE phase=revision-clone ms=2.056
+LAB_PROFILE phase=revision-copy-readonly ms=13.682
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.128
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.042
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.051
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.211
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.165
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.030
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.018
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.225
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.936
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.045
+LAB_PROFILE phase=revision-validate ms=22.764
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=ctor-validate ms=4300.392
+LAB_PROFILE phase=commit-clone ms=3.671
+LAB_PROFILE phase=commit-mutation ms=199.835
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=218.447
+LAB_PROFILE phase=revision-clone ms=1.874
+LAB_PROFILE phase=revision-copy-readonly ms=13.064
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.104
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.031
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.042
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.023
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.014
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.013
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.062
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.186
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=8.715
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.024
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.177
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.948
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.041
+LAB_PROFILE phase=revision-validate ms=29.720
+LAB_PROFILE phase=revision-registry-hash ms=158.522
+LAB_PROFILE phase=revision-clone ms=1.854
+LAB_PROFILE phase=revision-copy-readonly ms=12.150
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.102
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.055
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.182
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.137
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.904
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.037
+LAB_PROFILE phase=revision-validate ms=21.756
+LAB_PROFILE phase=revision-registry-hash ms=156.323
+LAB_PROFILE phase=revision-clone ms=2.020
+LAB_PROFILE phase=revision-copy-readonly ms=12.177
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.086
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.059
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.008
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.015
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.112
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.218
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.503
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.029
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.025
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.025
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.027
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.072
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.913
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.058
+LAB_PROFILE phase=revision-validate ms=23.959
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=196.887
+LAB_PROFILE phase=revision-clone ms=2.228
+LAB_PROFILE phase=revision-copy-readonly ms=15.309
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.098
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.188
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.078
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.027
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.021
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.005
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.012
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.020
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.039
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.132
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.179
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.205
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.038
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.027
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.125
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.610
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.054
+LAB_PROFILE phase=revision-validate ms=43.120
+LAB_PROFILE phase=revision-registry-hash ms=153.900
+LAB_PROFILE phase=revision-clone ms=1.888
+LAB_PROFILE phase=revision-copy-readonly ms=12.771
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.099
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.042
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.052
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.019
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.013
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.056
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.173
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.024
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.296
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.919
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.042
+LAB_PROFILE phase=revision-validate ms=22.118
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=commit-validate ms=1203.575
+LAB_PROFILE phase=ctor-migrate-commit ms=1658.516
+LAB_PROFILE phase=ctor-clone ms=1.818
+LAB_PROFILE phase=ctor-newfile ms=27.469
+LAB_PROFILE phase=ctor-read ms=247.120
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=237.613
+LAB_PROFILE phase=revision-clone ms=1.950
+LAB_PROFILE phase=revision-copy-readonly ms=12.563
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.093
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.013
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.055
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.162
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.048
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.142
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.884
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.055
+LAB_PROFILE phase=revision-validate ms=20.887
+LAB_PROFILE phase=revision-registry-hash ms=157.340
+LAB_PROFILE phase=revision-clone ms=1.706
+LAB_PROFILE phase=revision-copy-readonly ms=11.828
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.108
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.045
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.014
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.066
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.198
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.235
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.036
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.161
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.932
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.039
+LAB_PROFILE phase=revision-validate ms=21.784
+LAB_PROFILE phase=revision-registry-hash ms=149.866
+LAB_PROFILE phase=revision-clone ms=1.942
+LAB_PROFILE phase=revision-copy-readonly ms=12.355
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.101
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.023
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.034
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.157
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.013
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.136
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.776
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+LAB_PROFILE phase=revision-validate ms=20.518
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=197.620
+LAB_PROFILE phase=revision-clone ms=1.898
+LAB_PROFILE phase=revision-copy-readonly ms=12.207
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.095
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.029
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.047
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.019
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.031
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.018
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.064
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.185
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.337
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.017
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.202
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.992
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=21.724
+LAB_PROFILE phase=revision-registry-hash ms=160.974
+LAB_PROFILE phase=revision-clone ms=9.910
+LAB_PROFILE phase=revision-copy-readonly ms=21.165
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.284
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.097
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.077
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.043
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.072
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.050
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.156
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.487
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=7.370
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.070
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.043
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.044
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.104
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.015
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=2.510
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.065
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=4.461
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.135
+LAB_PROFILE phase=revision-validate ms=43.431
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=ctor-validate ms=1343.231
+LAB_PROFILE phase=ctor-migrate-commit ms=43.087
+LAB_PROFILE phase=ctor-clone ms=1.844
+LAB_PROFILE phase=ctor-newfile ms=27.256
+LAB_PROFILE phase=ctor-read ms=108.905
+LAB_CACHE miss key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=generation ms=3353.854
+LAB_PROFILE phase=revision-registry-hash ms=3557.465
+LAB_PROFILE phase=revision-clone ms=1.815
+LAB_PROFILE phase=revision-copy-readonly ms=13.324
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.090
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.157
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.045
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.271
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.818
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+LAB_PROFILE phase=revision-validate ms=20.597
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=revision-registry-hash ms=199.703
+LAB_PROFILE phase=revision-clone ms=2.028
+LAB_PROFILE phase=revision-copy-readonly ms=13.321
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.108
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.032
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.050
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.013
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.060
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.163
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.156
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.025
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.257
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.853
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+LAB_PROFILE phase=revision-validate ms=21.644
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=ctor-validate ms=3925.956
+LAB_PROFILE phase=commit-clone ms=3.466
+LAB_PROFILE phase=commit-mutation ms=313.272
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=revision-registry-hash ms=254.695
+LAB_PROFILE phase=revision-clone ms=1.935
+LAB_PROFILE phase=revision-copy-readonly ms=10.780
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.100
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.036
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.071
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.187
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.221
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.208
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.723
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=21.392
+LAB_PROFILE phase=revision-registry-hash ms=149.851
+LAB_PROFILE phase=revision-clone ms=1.892
+LAB_PROFILE phase=revision-copy-readonly ms=12.007
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.114
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.041
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.045
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.169
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.933
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.025
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.027
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.038
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.151
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.016
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.765
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.048
+LAB_PROFILE phase=revision-validate ms=22.109
+LAB_PROFILE phase=revision-registry-hash ms=153.202
+LAB_PROFILE phase=revision-clone ms=1.891
+LAB_PROFILE phase=revision-copy-readonly ms=11.182
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.097
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.039
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.041
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.176
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.049
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.031
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.025
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.025
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.161
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.010
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.703
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+LAB_PROFILE phase=revision-validate ms=20.310
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=revision-registry-hash ms=192.850
+LAB_PROFILE phase=revision-clone ms=1.682
+LAB_PROFILE phase=revision-copy-readonly ms=10.679
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.097
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.030
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.035
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.019
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.012
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.050
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.154
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.926
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.052
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.037
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.153
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.010
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.847
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+LAB_PROFILE phase=revision-validate ms=20.560
+LAB_PROFILE phase=revision-registry-hash ms=153.858
+LAB_PROFILE phase=revision-clone ms=1.708
+LAB_PROFILE phase=revision-copy-readonly ms=11.960
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.104
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.042
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.158
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.001
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.016
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.105
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.033
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.979
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.032
+LAB_PROFILE phase=revision-validate ms=21.668
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=commit-validate ms=1177.663
+LAB_PROFILE phase=ctor-migrate-commit ms=1743.763
+LAB_PROFILE phase=ctor-clone ms=1.815
+LAB_PROFILE phase=ctor-newfile ms=27.351
+LAB_PROFILE phase=ctor-read ms=239.167
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=revision-registry-hash ms=240.939
+LAB_PROFILE phase=revision-clone ms=2.090
+LAB_PROFILE phase=revision-copy-readonly ms=12.975
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.103
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.023
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.017
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.019
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.061
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.188
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.196
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.036
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.213
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.761
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.034
+LAB_PROFILE phase=revision-validate ms=21.898
+LAB_PROFILE phase=revision-registry-hash ms=154.808
+LAB_PROFILE phase=revision-clone ms=1.953
+LAB_PROFILE phase=revision-copy-readonly ms=11.984
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.093
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.037
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.025
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.007
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.051
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.164
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.941
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.020
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.016
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.129
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.983
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.040
+LAB_PROFILE phase=revision-validate ms=20.789
+LAB_PROFILE phase=revision-registry-hash ms=152.246
+LAB_PROFILE phase=revision-clone ms=1.769
+LAB_PROFILE phase=revision-copy-readonly ms=12.371
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.139
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.158
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.004
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.214
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.716
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+LAB_PROFILE phase=revision-validate ms=20.268
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=revision-registry-hash ms=201.914
+LAB_PROFILE phase=revision-clone ms=1.750
+LAB_PROFILE phase=revision-copy-readonly ms=12.422
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.102
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.041
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.050
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.013
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.012
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.051
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.162
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.992
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.023
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.017
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.079
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.010
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=4.847
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=25.976
+LAB_PROFILE phase=revision-registry-hash ms=167.264
+LAB_PROFILE phase=revision-clone ms=1.906
+LAB_PROFILE phase=revision-copy-readonly ms=11.807
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.087
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.030
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.059
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.167
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.910
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.018
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.016
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.018
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.304
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.807
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+LAB_PROFILE phase=revision-validate ms=20.610
+LAB_CACHE global-hit key=4E6BA29F4FC0E1B1BC08693B70D138B9ED24461A72D80527270CF2E5424843A7
+LAB_PROFILE phase=ctor-validate ms=1196.732
+LAB_PROFILE phase=ctor-migrate-commit ms=43.010
+LAB_PROFILE phase=ctor-clone ms=2.012
+LAB_PROFILE phase=ctor-newfile ms=28.410
+LAB_PROFILE phase=ctor-read ms=159.451
+LAB_CACHE miss key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=generation ms=3312.813
+LAB_PROFILE phase=revision-registry-hash ms=3627.545
+LAB_PROFILE phase=revision-clone ms=1.900
+LAB_PROFILE phase=revision-copy-readonly ms=13.737
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.097
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.031
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.044
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.162
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.952
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.040
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.031
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.073
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.727
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.046
+LAB_PROFILE phase=revision-validate ms=21.491
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=revision-registry-hash ms=203.888
+LAB_PROFILE phase=revision-clone ms=1.786
+LAB_PROFILE phase=revision-copy-readonly ms=13.435
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.116
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.032
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.076
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.021
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.042
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.039
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.035
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.031
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.202
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.774
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=21.183
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=ctor-validate ms=4002.704
+LAB_PROFILE phase=commit-clone ms=3.810
+LAB_PROFILE phase=commit-mutation ms=389.723
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=revision-registry-hash ms=198.857
+LAB_PROFILE phase=revision-clone ms=2.286
+LAB_PROFILE phase=revision-copy-readonly ms=11.913
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.117
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.037
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.051
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.005
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.015
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.027
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.069
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.167
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.233
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.030
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.030
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.024
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.036
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.199
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.944
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+LAB_PROFILE phase=revision-validate ms=23.208
+LAB_PROFILE phase=revision-registry-hash ms=154.695
+LAB_PROFILE phase=revision-clone ms=2.069
+LAB_PROFILE phase=revision-copy-readonly ms=11.952
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.090
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.037
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.024
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.073
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.984
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.041
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.035
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.028
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.198
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.017
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.063
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.049
+LAB_PROFILE phase=revision-validate ms=24.038
+LAB_PROFILE phase=revision-registry-hash ms=154.423
+LAB_PROFILE phase=revision-clone ms=1.890
+LAB_PROFILE phase=revision-copy-readonly ms=12.071
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.114
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.013
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.054
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.201
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.082
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.027
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.074
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.922
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.036
+LAB_PROFILE phase=revision-validate ms=21.944
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=revision-registry-hash ms=196.964
+LAB_PROFILE phase=revision-clone ms=2.059
+LAB_PROFILE phase=revision-copy-readonly ms=11.468
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.093
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.046
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.062
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.157
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.866
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.029
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.024
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.151
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.972
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.031
+LAB_PROFILE phase=revision-validate ms=21.533
+LAB_PROFILE phase=revision-registry-hash ms=152.040
+LAB_PROFILE phase=revision-clone ms=1.755
+LAB_PROFILE phase=revision-copy-readonly ms=11.021
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.139
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.033
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.035
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.016
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.016
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.072
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.200
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.061
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.031
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.032
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.028
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.172
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.021
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.909
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.036
+LAB_PROFILE phase=revision-validate ms=22.292
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=commit-validate ms=1167.173
+LAB_PROFILE phase=ctor-migrate-commit ms=1820.333
+LAB_PROFILE phase=ctor-clone ms=1.845
+LAB_PROFILE phase=ctor-newfile ms=27.436
+LAB_PROFILE phase=ctor-read ms=264.029
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=revision-registry-hash ms=242.177
+LAB_PROFILE phase=revision-clone ms=1.837
+LAB_PROFILE phase=revision-copy-readonly ms=13.198
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.117
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.032
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.053
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.013
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.050
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.167
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.830
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.025
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.066
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.027
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.896
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.038
+LAB_PROFILE phase=revision-validate ms=22.102
+LAB_PROFILE phase=revision-registry-hash ms=156.640
+LAB_PROFILE phase=revision-clone ms=1.710
+LAB_PROFILE phase=revision-copy-readonly ms=13.197
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.098
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.031
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.023
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.017
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.072
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.187
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.031
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.036
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.027
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.067
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.722
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.047
+LAB_PROFILE phase=revision-validate ms=21.559
+LAB_PROFILE phase=revision-registry-hash ms=156.036
+LAB_PROFILE phase=revision-clone ms=1.753
+LAB_PROFILE phase=revision-copy-readonly ms=13.219
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.084
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.043
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.013
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.016
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.010
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.016
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.017
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.099
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.203
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.458
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.032
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.033
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.108
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.804
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.050
+LAB_PROFILE phase=revision-validate ms=22.838
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=revision-registry-hash ms=208.345
+LAB_PROFILE phase=revision-clone ms=9.495
+LAB_PROFILE phase=revision-copy-readonly ms=23.405
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.304
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.031
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.224
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.032
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.064
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.112
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.615
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=7.314
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.104
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.080
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.039
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.133
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.079
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=2.778
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=4.727
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.036
+LAB_PROFILE phase=revision-validate ms=44.810
+LAB_PROFILE phase=revision-registry-hash ms=207.683
+LAB_PROFILE phase=revision-clone ms=10.641
+LAB_PROFILE phase=revision-copy-readonly ms=22.500
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.288
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.065
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.097
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.043
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.053
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.038
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.261
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.751
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=7.949
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.062
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.064
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.067
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.057
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=2.744
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=4.025
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.084
+LAB_PROFILE phase=revision-validate ms=42.272
+LAB_CACHE global-hit key=D0DABC16D59EA97B9F499C28C09543CF308A49F6115760EFB6310F9C579B1A27
+LAB_PROFILE phase=ctor-validate ms=1386.096
+LAB_PROFILE phase=ctor-migrate-commit ms=42.816
+LAB_PROFILE phase=ctor-clone ms=1.781
+LAB_PROFILE phase=ctor-newfile ms=28.942
+LAB_PROFILE phase=ctor-read ms=115.231
+LAB_CACHE miss key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=generation ms=3427.688
+LAB_PROFILE phase=revision-registry-hash ms=3636.082
+LAB_PROFILE phase=revision-clone ms=1.809
+LAB_PROFILE phase=revision-copy-readonly ms=13.670
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.140
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.030
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.008
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.060
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.179
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.043
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.043
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.033
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.025
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.076
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.699
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.046
+LAB_PROFILE phase=revision-validate ms=22.242
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=204.312
+LAB_PROFILE phase=revision-clone ms=2.097
+LAB_PROFILE phase=revision-copy-readonly ms=12.715
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.103
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.041
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.012
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.419
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.085
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.747
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=21.158
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=ctor-validate ms=4011.985
+LAB_PROFILE phase=commit-clone ms=3.523
+LAB_PROFILE phase=commit-mutation ms=367.399
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=237.074
+LAB_PROFILE phase=revision-clone ms=1.996
+LAB_PROFILE phase=revision-copy-readonly ms=11.270
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.093
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.035
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.047
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.009
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.018
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.030
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.059
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.176
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.091
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.038
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.027
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.170
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.133
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.043
+LAB_PROFILE phase=revision-validate ms=23.129
+LAB_PROFILE phase=revision-registry-hash ms=155.288
+LAB_PROFILE phase=revision-clone ms=2.176
+LAB_PROFILE phase=revision-copy-readonly ms=11.688
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.099
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.035
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.060
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.182
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.034
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.139
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.732
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.034
+LAB_PROFILE phase=revision-validate ms=21.012
+LAB_PROFILE phase=revision-registry-hash ms=151.626
+LAB_PROFILE phase=revision-clone ms=1.833
+LAB_PROFILE phase=revision-copy-readonly ms=11.215
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.101
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.037
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.005
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.014
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.029
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.077
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.192
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.747
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.030
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.024
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.031
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.116
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.018
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.944
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+LAB_PROFILE phase=revision-validate ms=22.690
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=198.263
+LAB_PROFILE phase=revision-clone ms=2.007
+LAB_PROFILE phase=revision-copy-readonly ms=11.300
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.090
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.012
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.057
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.159
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.022
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.024
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.051
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.270
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.025
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.067
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.053
+LAB_PROFILE phase=revision-validate ms=23.349
+LAB_PROFILE phase=revision-registry-hash ms=154.081
+LAB_PROFILE phase=revision-clone ms=1.850
+LAB_PROFILE phase=revision-copy-readonly ms=11.495
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.094
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.032
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.048
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.156
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.089
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.061
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.024
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.254
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.017
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.785
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.037
+LAB_PROFILE phase=revision-validate ms=22.476
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=commit-validate ms=1177.711
+LAB_PROFILE phase=ctor-migrate-commit ms=1807.802
+LAB_PROFILE phase=ctor-clone ms=1.829
+LAB_PROFILE phase=ctor-newfile ms=26.500
+LAB_PROFILE phase=ctor-read ms=242.472
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=245.025
+LAB_PROFILE phase=revision-clone ms=2.065
+LAB_PROFILE phase=revision-copy-readonly ms=12.610
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.091
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.059
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.159
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.991
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.022
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.031
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.142
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.782
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.039
+LAB_PROFILE phase=revision-validate ms=20.937
+LAB_PROFILE phase=revision-registry-hash ms=154.241
+LAB_PROFILE phase=revision-clone ms=1.830
+LAB_PROFILE phase=revision-copy-readonly ms=13.235
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.131
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.039
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.041
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.019
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.019
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.187
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.964
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.040
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.034
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.018
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.222
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.016
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.965
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+LAB_PROFILE phase=revision-validate ms=22.132
+LAB_PROFILE phase=revision-registry-hash ms=153.860
+LAB_PROFILE phase=revision-clone ms=1.743
+LAB_PROFILE phase=revision-copy-readonly ms=13.280
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.111
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.071
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.044
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.005
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.007
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.014
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.014
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.075
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.211
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.198
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.024
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.101
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.024
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.109
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.032
+LAB_PROFILE phase=revision-validate ms=23.005
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=revision-registry-hash ms=200.025
+LAB_PROFILE phase=revision-clone ms=1.773
+LAB_PROFILE phase=revision-copy-readonly ms=12.949
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.099
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.037
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=48 ms=0.054
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.024
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.007
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.057
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.179
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.962
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.018
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.113
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=4.836
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.050
+LAB_PROFILE phase=revision-validate ms=25.774
+LAB_PROFILE phase=revision-registry-hash ms=177.698
+LAB_PROFILE phase=revision-clone ms=2.020
+LAB_PROFILE phase=revision-copy-readonly ms=12.211
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.118
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.037
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.017
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.067
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.206
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.034
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.016
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.031
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.081
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.746
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.040
+LAB_PROFILE phase=revision-validate ms=22.347
+LAB_CACHE global-hit key=84E354449AF288E63C05E9F0BBC822E201471045BEB9D6FE4D957DCD515AF890
+LAB_PROFILE phase=ctor-validate ms=1220.709
+LAB_PROFILE phase=ctor-migrate-commit ms=42.221
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=1 ms=0.007
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=1 ms=0.046
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=1 ms=0.008
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=1 ms=0.024
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=2 ms=0.013
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=2 ms=0.012
+LAB_PROFILE phase=ctor-clone ms=1.814
+LAB_PROFILE phase=ctor-newfile ms=35.741
+LAB_PROFILE phase=commit-clone ms=9.646
+LAB_PROFILE phase=commit-mutation ms=80.146
+LAB_PROFILE phase=revision-registry-hash ms=210.726
+LAB_PROFILE phase=revision-clone ms=8.161
+LAB_PROFILE phase=revision-copy-readonly ms=25.561
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.217
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.040
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.051
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.046
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.031
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.018
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.006
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.107
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.105
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.469
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=7.282
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.028
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.039
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.041
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.027
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.051
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=3.042
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=4.815
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=43.645
+LAB_PROFILE phase=revision-registry-hash ms=173.211
+LAB_PROFILE phase=revision-clone ms=2.260
+LAB_PROFILE phase=revision-copy-readonly ms=11.321
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.107
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.044
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.012
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.059
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.201
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.222
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.143
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.951
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.031
+LAB_PROFILE phase=revision-validate ms=21.963
+LAB_PROFILE phase=commit-validate ms=524.619
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.098
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.015
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.074
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.185
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.940
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.022
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.015
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.076
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.010
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.792
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.034
+LAB_PROFILE phase=commit-clone ms=3.555
+LAB_PROFILE phase=commit-mutation ms=26.712
+LAB_PROFILE phase=revision-registry-hash ms=152.469
+LAB_PROFILE phase=revision-clone ms=1.917
+LAB_PROFILE phase=revision-copy-readonly ms=11.796
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.101
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.041
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.043
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.015
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.014
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.060
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.163
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.997
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.030
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.027
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.185
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.901
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.044
+LAB_PROFILE phase=revision-validate ms=25.465
+LAB_PROFILE phase=revision-registry-hash ms=175.725
+LAB_PROFILE phase=revision-clone ms=2.060
+LAB_PROFILE phase=revision-copy-readonly ms=11.715
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.110
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.038
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.023
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.005
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.012
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.063
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.186
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.364
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.039
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.038
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.024
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.031
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.044
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.027
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.204
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.019
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.852
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.034
+LAB_PROFILE phase=revision-validate ms=22.934
+LAB_PROFILE phase=revision-registry-hash ms=153.888
+LAB_PROFILE phase=revision-clone ms=1.886
+LAB_PROFILE phase=revision-copy-readonly ms=12.394
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.107
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.047
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.021
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.019
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.012
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.014
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.072
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.183
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.038
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.114
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.763
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+LAB_PROFILE phase=revision-validate ms=21.782
+LAB_PROFILE phase=commit-validate ms=624.519
+LAB_PROFILE phase=ctor-clone ms=1.870
+LAB_PROFILE phase=ctor-newfile ms=46.183
+LAB_PROFILE phase=ctor-read ms=152.192
+LAB_CACHE miss key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=generation ms=3366.548
+LAB_PROFILE phase=revision-registry-hash ms=3626.433
+LAB_PROFILE phase=revision-clone ms=11.745
+LAB_PROFILE phase=revision-copy-readonly ms=44.885
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.111
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.031
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.049
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.163
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.923
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.022
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.032
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.275
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.821
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.042
+LAB_PROFILE phase=revision-validate ms=21.615
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=revision-registry-hash ms=211.253
+LAB_PROFILE phase=revision-clone ms=2.315
+LAB_PROFILE phase=revision-copy-readonly ms=12.414
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.095
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.163
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.973
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.030
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.097
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.999
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+LAB_PROFILE phase=revision-validate ms=20.926
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=revision-registry-hash ms=209.904
+LAB_PROFILE phase=revision-clone ms=2.184
+LAB_PROFILE phase=revision-copy-readonly ms=12.754
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.105
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.035
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.034
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.019
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.013
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.013
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.064
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.198
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.267
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.027
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.072
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.754
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.040
+LAB_PROFILE phase=revision-validate ms=22.000
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=ctor-validate ms=7020.757
+LAB_PROFILE phase=commit-clone ms=5.997
+LAB_PROFILE phase=commit-mutation ms=390.310
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=revision-registry-hash ms=205.794
+LAB_PROFILE phase=revision-clone ms=1.859
+LAB_PROFILE phase=revision-copy-readonly ms=11.280
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.121
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.032
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.025
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.014
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.014
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.057
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.196
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.223
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.023
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.023
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.137
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.796
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+LAB_PROFILE phase=revision-validate ms=22.218
+LAB_PROFILE phase=revision-registry-hash ms=153.412
+LAB_PROFILE phase=revision-clone ms=1.916
+LAB_PROFILE phase=revision-copy-readonly ms=10.655
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.089
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.037
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.019
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.063
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.165
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.926
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.029
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.027
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.107
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.722
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.039
+LAB_PROFILE phase=revision-validate ms=21.225
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=revision-registry-hash ms=203.088
+LAB_PROFILE phase=revision-clone ms=1.798
+LAB_PROFILE phase=revision-copy-readonly ms=10.643
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.088
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.029
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.013
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.057
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.177
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.952
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.027
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.119
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.737
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.036
+LAB_PROFILE phase=revision-validate ms=22.004
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=revision-registry-hash ms=211.102
+LAB_PROFILE phase=revision-clone ms=1.984
+LAB_PROFILE phase=revision-copy-readonly ms=11.706
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.097
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.007
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.056
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.164
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.004
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.023
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.079
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.929
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=21.339
+LAB_PROFILE phase=revision-registry-hash ms=153.142
+LAB_PROFILE phase=revision-clone ms=1.762
+LAB_PROFILE phase=revision-copy-readonly ms=11.958
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.110
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.040
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.026
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.013
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.071
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.178
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.292
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.020
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.031
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.095
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.820
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=22.323
+LAB_PROFILE phase=revision-registry-hash ms=154.930
+LAB_PROFILE phase=revision-clone ms=1.948
+LAB_PROFILE phase=revision-copy-readonly ms=11.881
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.078
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.023
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.031
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.048
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.160
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.820
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.055
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.047
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.260
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.026
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.123
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.036
+LAB_PROFILE phase=revision-validate ms=22.593
+LAB_CACHE global-hit key=7B0DE78BD3F81AEF15848DCE4923878D96DF75D67BF52B1D83BB6C8B3F31B365
+LAB_PROFILE phase=commit-validate ms=3945.418
+LAB_PROFILE phase=ctor-migrate-commit ms=4655.525
+LAB_PROFILE phase=ctor-clone ms=1.722
+LAB_PROFILE phase=ctor-newfile ms=26.614
+LAB_PROFILE phase=commit-clone ms=1.700
+LAB_PROFILE phase=commit-mutation ms=26.241
+LAB_PROFILE phase=revision-registry-hash ms=144.899
+LAB_PROFILE phase=revision-clone ms=1.692
+LAB_PROFILE phase=revision-copy-readonly ms=10.420
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.092
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.156
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.944
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.125
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.742
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+LAB_PROFILE phase=revision-validate ms=20.119
+LAB_PROFILE phase=revision-registry-hash ms=145.693
+LAB_PROFILE phase=revision-clone ms=1.807
+LAB_PROFILE phase=revision-copy-readonly ms=11.158
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.099
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.030
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.171
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.002
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.025
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.022
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.029
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.171
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.801
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=20.837
+LAB_PROFILE phase=commit-validate ms=382.897
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.091
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.054
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.035
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.015
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.083
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.841
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+LAB_PROFILE phase=commit-clone ms=3.542
+LAB_PROFILE phase=commit-mutation ms=27.356
+LAB_PROFILE phase=revision-registry-hash ms=170.568
+LAB_PROFILE phase=revision-clone ms=2.042
+LAB_PROFILE phase=revision-copy-readonly ms=11.857
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.092
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.034
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.179
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.998
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.102
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.818
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+LAB_PROFILE phase=revision-validate ms=20.462
+LAB_PROFILE phase=revision-registry-hash ms=145.319
+LAB_PROFILE phase=revision-clone ms=1.738
+LAB_PROFILE phase=revision-copy-readonly ms=10.605
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.102
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.016
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.159
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.914
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.030
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.075
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.758
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+LAB_PROFILE phase=revision-validate ms=20.270
+LAB_PROFILE phase=revision-registry-hash ms=149.199
+LAB_PROFILE phase=revision-clone ms=1.805
+LAB_PROFILE phase=revision-copy-readonly ms=10.575
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.095
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.054
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.013
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.221
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.817
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.033
+LAB_PROFILE phase=revision-validate ms=21.075
+LAB_PROFILE phase=commit-validate ms=593.502
+LAB_PROFILE phase=ctor-clone ms=1.797
+LAB_PROFILE phase=ctor-newfile ms=26.573
+LAB_PROFILE phase=ctor-read ms=155.534
+LAB_CACHE miss key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=generation ms=3488.766
+LAB_PROFILE phase=revision-registry-hash ms=3690.505
+LAB_PROFILE phase=revision-clone ms=1.703
+LAB_PROFILE phase=revision-copy-readonly ms=12.461
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.103
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.035
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.160
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.169
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.019
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.022
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.150
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.814
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=20.535
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=revision-registry-hash ms=191.136
+LAB_PROFILE phase=revision-clone ms=1.950
+LAB_PROFILE phase=revision-copy-readonly ms=11.958
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.111
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.041
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.013
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.068
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.169
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.000
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.031
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.028
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.112
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.825
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.045
+LAB_PROFILE phase=revision-validate ms=21.501
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=revision-registry-hash ms=214.225
+LAB_PROFILE phase=revision-clone ms=1.834
+LAB_PROFILE phase=revision-copy-readonly ms=11.977
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.093
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.008
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.012
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.159
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.973
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.022
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.032
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.133
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.770
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.043
+LAB_PROFILE phase=revision-validate ms=20.748
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=ctor-validate ms=6898.768
+LAB_PROFILE phase=commit-clone ms=5.269
+LAB_PROFILE phase=commit-mutation ms=231.590
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=revision-registry-hash ms=189.714
+LAB_PROFILE phase=revision-clone ms=1.852
+LAB_PROFILE phase=revision-copy-readonly ms=11.528
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.109
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.029
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.056
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.168
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.020
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.028
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.152
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.014
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.899
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.031
+LAB_PROFILE phase=revision-validate ms=21.434
+LAB_PROFILE phase=revision-registry-hash ms=155.129
+LAB_PROFILE phase=revision-clone ms=8.167
+LAB_PROFILE phase=revision-copy-readonly ms=23.394
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.100
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.056
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.169
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.971
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.137
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.712
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+LAB_PROFILE phase=revision-validate ms=20.727
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=revision-registry-hash ms=186.198
+LAB_PROFILE phase=revision-clone ms=1.767
+LAB_PROFILE phase=revision-copy-readonly ms=10.426
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.092
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.157
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.907
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.022
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.077
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.718
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+LAB_PROFILE phase=revision-validate ms=19.870
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=revision-registry-hash ms=185.880
+LAB_PROFILE phase=revision-clone ms=1.772
+LAB_PROFILE phase=revision-copy-readonly ms=10.786
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.088
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.160
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.940
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.027
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=36 ms=0.030
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.110
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.799
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=20.581
+LAB_PROFILE phase=revision-registry-hash ms=145.084
+LAB_PROFILE phase=revision-clone ms=1.786
+LAB_PROFILE phase=revision-copy-readonly ms=11.224
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.088
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.022
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.034
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.012
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.007
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.172
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.983
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.025
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.017
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.095
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.806
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+LAB_PROFILE phase=revision-validate ms=20.490
+LAB_PROFILE phase=revision-registry-hash ms=144.609
+LAB_PROFILE phase=revision-clone ms=1.717
+LAB_PROFILE phase=revision-copy-readonly ms=10.729
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.083
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.048
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.153
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.973
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.028
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.039
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.016
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.020
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.065
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.719
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.035
+LAB_PROFILE phase=revision-validate ms=20.808
+LAB_CACHE global-hit key=CB1A46B8B5714C2DF9D66835B04CDBEF803AFCBC306A765BC8333E4718CD7AAB
+LAB_PROFILE phase=commit-validate ms=3793.119
+LAB_PROFILE phase=ctor-migrate-commit ms=4312.683
+LAB_PROFILE phase=ctor-clone ms=1.855
+LAB_PROFILE phase=ctor-newfile ms=26.709
+LAB_PROFILE phase=commit-clone ms=1.728
+LAB_PROFILE phase=commit-mutation ms=27.125
+LAB_PROFILE phase=revision-registry-hash ms=148.374
+LAB_PROFILE phase=revision-clone ms=1.812
+LAB_PROFILE phase=revision-copy-readonly ms=11.011
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.095
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.034
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.014
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.013
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.006
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.060
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.167
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.905
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.021
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.151
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.796
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+LAB_PROFILE phase=revision-validate ms=20.491
+LAB_PROFILE phase=revision-registry-hash ms=147.551
+LAB_PROFILE phase=revision-clone ms=1.721
+LAB_PROFILE phase=revision-copy-readonly ms=10.739
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.092
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.031
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.158
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.890
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.018
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.095
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.697
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=20.193
+LAB_PROFILE phase=commit-validate ms=387.871
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.094
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.034
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.008
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.013
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.056
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.176
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.855
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.017
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.106
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.767
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=commit-clone ms=3.431
+LAB_PROFILE phase=commit-mutation ms=24.622
+LAB_PROFILE phase=revision-registry-hash ms=147.532
+LAB_PROFILE phase=revision-clone ms=1.843
+LAB_PROFILE phase=revision-copy-readonly ms=10.764
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.100
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.050
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.159
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.843
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.017
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.064
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.010
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.715
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.039
+LAB_PROFILE phase=revision-validate ms=20.818
+LAB_PROFILE phase=revision-registry-hash ms=149.283
+LAB_PROFILE phase=revision-clone ms=3.759
+LAB_PROFILE phase=revision-copy-readonly ms=11.895
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.107
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.023
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.036
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.025
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.048
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.164
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=4.126
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.036
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.071
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.032
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.040
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.052
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.043
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.941
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.026
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=3.601
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.039
+LAB_PROFILE phase=revision-validate ms=43.198
+LAB_PROFILE phase=revision-registry-hash ms=147.214
+LAB_PROFILE phase=revision-clone ms=1.776
+LAB_PROFILE phase=revision-copy-readonly ms=10.610
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.097
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.038
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.011
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.052
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.159
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.848
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.020
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.110
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.726
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.030
+LAB_PROFILE phase=revision-validate ms=20.270
+LAB_PROFILE phase=commit-validate ms=596.607
+LAB_PROFILE phase=ctor-clone ms=1.755
+LAB_PROFILE phase=ctor-newfile ms=26.789
+LAB_PROFILE phase=ctor-read ms=151.811
+LAB_CACHE miss key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=generation ms=3385.647
+LAB_PROFILE phase=revision-registry-hash ms=3588.343
+LAB_PROFILE phase=revision-clone ms=1.764
+LAB_PROFILE phase=revision-copy-readonly ms=12.573
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.098
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.035
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.011
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.060
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.169
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.125
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.030
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.016
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.136
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.802
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.032
+LAB_PROFILE phase=revision-validate ms=20.620
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=revision-registry-hash ms=195.044
+LAB_PROFILE phase=revision-clone ms=1.861
+LAB_PROFILE phase=revision-copy-readonly ms=11.804
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.098
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.026
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.041
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.014
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.012
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.005
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.016
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.012
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.058
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.160
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.010
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.033
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.024
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.017
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.249
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.038
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.352
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.045
+LAB_PROFILE phase=revision-validate ms=23.042
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=revision-registry-hash ms=214.455
+LAB_PROFILE phase=revision-clone ms=1.853
+LAB_PROFILE phase=revision-copy-readonly ms=11.925
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.113
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.032
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.043
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.017
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.013
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.014
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.056
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.175
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.054
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.026
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.029
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.020
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.025
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.191
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.908
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=21.644
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=ctor-validate ms=6908.996
+LAB_PROFILE phase=commit-clone ms=23.280
+LAB_PROFILE phase=commit-mutation ms=233.034
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=revision-registry-hash ms=185.626
+LAB_PROFILE phase=revision-clone ms=1.731
+LAB_PROFILE phase=revision-copy-readonly ms=10.329
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.093
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.027
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.033
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.015
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.008
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.008
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.049
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.169
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.906
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.022
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.020
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.101
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.010
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.811
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+LAB_PROFILE phase=revision-validate ms=20.037
+LAB_PROFILE phase=revision-registry-hash ms=147.465
+LAB_PROFILE phase=revision-clone ms=1.788
+LAB_PROFILE phase=revision-copy-readonly ms=10.664
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.091
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.035
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.008
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.002
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.010
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.009
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.163
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.008
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.024
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.019
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.132
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.011
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.802
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.023
+LAB_PROFILE phase=revision-validate ms=20.354
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=revision-registry-hash ms=191.326
+LAB_PROFILE phase=revision-clone ms=2.015
+LAB_PROFILE phase=revision-copy-readonly ms=15.408
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.477
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.111
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.254
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.040
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.065
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.004
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.030
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.013
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.126
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.502
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=17.084
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.032
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.026
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.018
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.021
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.022
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.197
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.022
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=2.078
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.037
+LAB_PROFILE phase=revision-validate ms=40.637
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=revision-registry-hash ms=192.175
+LAB_PROFILE phase=revision-clone ms=2.040
+LAB_PROFILE phase=revision-copy-readonly ms=11.082
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=118 ms=0.091
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.024
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.039
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.018
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.010
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.008
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.166
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.053
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.024
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.021
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.017
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.023
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=29 ms=0.021
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.016
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.076
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.012
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.769
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.027
+LAB_PROFILE phase=revision-validate ms=20.362
+LAB_PROFILE phase=revision-registry-hash ms=144.820
+LAB_PROFILE phase=revision-clone ms=1.873
+LAB_PROFILE phase=revision-copy-readonly ms=10.403
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.097
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.025
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.052
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.016
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.009
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.002
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.003
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.011
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.181
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=1.986
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.023
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.024
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.019
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.019
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.027
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.018
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.107
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.013
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.783
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.028
+LAB_PROFILE phase=revision-validate ms=20.936
+LAB_PROFILE phase=revision-registry-hash ms=151.981
+LAB_PROFILE phase=revision-clone ms=1.889
+LAB_PROFILE phase=revision-copy-readonly ms=11.546
+VALIDATE_PROFILE id=unity-proving-ground-v1 descriptors=123 ms=0.095
+VALIDATE_PROFILE id=unity-combat-state-v1 descriptors=33 ms=0.028
+VALIDATE_PROFILE id=unity-native-combat-v1 descriptors=46 ms=0.045
+VALIDATE_PROFILE id=unity-trooper-presentation-v1 descriptors=18 ms=0.020
+VALIDATE_PROFILE id=unity-native-match-v1 descriptors=11 ms=0.015
+VALIDATE_PROFILE id=unity-native-team-v1 descriptors=1 ms=0.003
+VALIDATE_PROFILE id=unity-native-roster-v1 descriptors=2 ms=0.004
+VALIDATE_PROFILE id=unity-bot-perception-v1 descriptors=10 ms=0.009
+VALIDATE_PROFILE id=unity-bot-navigation-v1 descriptors=9 ms=0.010
+VALIDATE_PROFILE id=unity-bot-behavior-v1 descriptors=78 ms=0.053
+VALIDATE_PROFILE id=orbital-league-ring-v1 descriptors=297 ms=0.181
+VALIDATE_PROFILE id=combat-bowl-ring-r7-authoring-v1 descriptors=4113 ms=2.082
+VALIDATE_PROFILE id=cutter-beam-v1 descriptors=29 ms=0.028
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.037
+VALIDATE_PROFILE id=unity-death-presentation-v1 descriptors=22 ms=0.023
+VALIDATE_PROFILE id=unity-blood-presentation-v1 descriptors=27 ms=0.027
+VALIDATE_PROFILE id=pulse-effects-v1 descriptors=37 ms=0.042
+VALIDATE_PROFILE id=industrial-tunnels-presentation-v1 descriptors=21 ms=0.026
+VALIDATE_PROFILE id=industrial-tunnels-authoring-v1 descriptors=1914 ms=1.356
+VALIDATE_PROFILE id=lunar-laboratory-presentation-v1 descriptors=14 ms=0.015
+VALIDATE_PROFILE id=lunar-laboratory-authoring-v1 descriptors=2883 ms=1.878
+VALIDATE_PROFILE id=unity-participant-presentation-v1 descriptors=32 ms=0.048
+LAB_PROFILE phase=revision-validate ms=23.259
+LAB_CACHE global-hit key=2E12A8776B386B65CBC19C061C7E2C368FBE34CC01411CECEE9EAA365D470DDE
+LAB_PROFILE phase=commit-validate ms=4008.915
+LAB_PROFILE phase=ctor-migrate-commit ms=4575.852

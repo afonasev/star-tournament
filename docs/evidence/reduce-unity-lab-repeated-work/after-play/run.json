@@ -1,0 +1,40 @@
+{
+  "command": [
+    "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+    "-batchmode",
+    "-nographics",
+    "-projectPath",
+    "/Users/eaafonasev/Projects/star-tournament-test-speed/unity",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "ShotOriginTests;NativeSeatLayoutTests.SharedTimerAndPerSeatHud;DesignLabWorkspaceTests",
+    "-testResults",
+    "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/diagnostics/remaining/after-play.xml",
+    "-logFile",
+    "/Users/eaafonasev/Projects/star-tournament-test-speed/.local/diagnostics/remaining/after-play.log"
+  ],
+  "exit_code": 0,
+  "root": {
+    "id": "2",
+    "testcasecount": "3",
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 19:28:44Z",
+    "end-time": "2026-10-03 19:29:28Z",
+    "duration": "43.2713349"
+  },
+  "count": 3,
+  "expected_count": 3,
+  "exclusive": true,
+  "instrumented": true,
+  "fingerprint_enabled": false
+}

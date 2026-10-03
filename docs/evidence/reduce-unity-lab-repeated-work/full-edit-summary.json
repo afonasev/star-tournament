@@ -1,0 +1,206 @@
+{
+  "source_commit": "e13b724",
+  "root": {
+    "id": "2",
+    "testcasecount": "330",
+    "result": "Passed",
+    "total": "330",
+    "passed": "330",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 19:33:48Z",
+    "end-time": "2026-10-03 19:42:43Z",
+    "duration": "535.4706611"
+  },
+  "fixtures": {
+    "StarTournament.ProvingGround.Tests.CombatBowlP4Tests": [
+      5,
+      0.075115
+    ],
+    "StarTournament.ProvingGround.Tests.DamageVignetteTests": [
+      3,
+      0.11146
+    ],
+    "StarTournament.ProvingGround.Tests.DevelopmentNavigationReviewHandoffTests": [
+      7,
+      0.000841
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.ArenaFoundationTests": [
+      9,
+      0.118796
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.ArmorPickupTests": [
+      3,
+      0.008288
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests": [
+      5,
+      55.075902
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.CombatLifeTests": [
+      10,
+      0.008435999999999999
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.CutterBeamTests": [
+      14,
+      0.003934
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests": [
+      43,
+      305.20024100000006
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.FatalImpactTests": [
+      2,
+      0.002423
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.FpsAverageTests": [
+      2,
+      0.000372
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests": [
+      6,
+      0.26506399999999997
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.MotorProfileTests": [
+      4,
+      0.0017469999999999999
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAudioSpatialTests": [
+      2,
+      0.000778
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeBotPerceptionTests": [
+      9,
+      0.013012
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeBotPlannerTests": [
+      29,
+      0.08357199999999998
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeBotTacticsTests": [
+      6,
+      0.040198
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeBotWeaponEstimateTests": [
+      9,
+      13.327344000000002
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeCompositionTests": [
+      6,
+      0.0045260000000000005
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests": [
+      8,
+      0.006663999999999999
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests": [
+      5,
+      39.494493000000006
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeScoreboardTests": [
+      5,
+      0.007062
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.NativeTeamMatchTests": [
+      10,
+      0.012656
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.RocketBotTests": [
+      11,
+      0.039114
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.RocketCombatTests": [
+      6,
+      0.67774
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests": [
+      6,
+      0.037235
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.WeaponPickupTests": [
+      5,
+      0.012176
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.WeaponRebalanceTests": [
+      5,
+      0.09896500000000001
+    ],
+    "StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests": [
+      12,
+      43.01173000000001
+    ],
+    "StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests": [
+      2,
+      0.035348
+    ],
+    "StarTournament.ProvingGround.Tests.FullHealPickupTests": [
+      10,
+      0.050365999999999994
+    ],
+    "StarTournament.ProvingGround.Tests.GamepadCompatibilityTests": [
+      10,
+      0.011588000000000001
+    ],
+    "StarTournament.ProvingGround.Tests.GamepadLookSettingsTests": [
+      3,
+      0.003487
+    ],
+    "StarTournament.ProvingGround.Tests.IndustrialTunnelsTests": [
+      6,
+      24.39058
+    ],
+    "StarTournament.ProvingGround.Tests.LocalSeatLayoutTests": [
+      3,
+      0.030841
+    ],
+    "StarTournament.ProvingGround.Tests.LunarLaboratoryTests": [
+      7,
+      52.892089999999996
+    ],
+    "StarTournament.ProvingGround.Tests.MouseSensitivityPreferenceTests": [
+      1,
+      0.005023
+    ],
+    "StarTournament.ProvingGround.Tests.NativeBotSetupTests": [
+      5,
+      0.005548
+    ],
+    "StarTournament.ProvingGround.Tests.NativeNavigationTests": [
+      12,
+      0.006648
+    ],
+    "StarTournament.ProvingGround.Tests.ParticipantColorAssignmentTests": [
+      6,
+      0.019639
+    ],
+    "StarTournament.ProvingGround.Tests.PlayerProfilesTests": [
+      1,
+      0.003236
+    ],
+    "StarTournament.ProvingGround.Tests.RosterCompactionTests": [
+      3,
+      0.004489
+    ],
+    "StarTournament.ProvingGround.Tests.SeatInputTests": [
+      3,
+      0.003409
+    ],
+    "StarTournament.ProvingGround.Tests.ShotgunResolverTests": [
+      6,
+      0.0056830000000000006
+    ],
+    "StarTournament.ProvingGround.Tests.SpeedPickupTests": [
+      2,
+      0.001508
+    ],
+    "StarTournament.ProvingGround.Tests.TrooperImportTests": [
+      3,
+      0.16283
+    ]
+  },
+  "snapshot_copy_tests_passed": 6
+}

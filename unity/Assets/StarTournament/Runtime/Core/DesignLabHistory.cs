@@ -12,7 +12,9 @@ namespace StarTournament.ProvingGround
     [Serializable] public sealed class LabBundle
     {
         public List<ProvingProfile> Profiles = new List<ProvingProfile>();
-        public LabBundle Clone() => JsonUtility.FromJson<LabBundle>(JsonUtility.ToJson(this));
+        public LabBundle Clone() => Profiles==null||Profiles.Any(p=>p==null)
+            ? JsonUtility.FromJson<LabBundle>(JsonUtility.ToJson(this))
+            : new LabBundle{Profiles=Profiles.Select(p=>p.DetachedCopy()).ToList()};
         [NonSerialized] Dictionary<string,ProvingProfile> owners;
         public ProvingProfile Profile(string path)
         {
@@ -107,17 +109,24 @@ namespace StarTournament.ProvingGround
     {
         public int Number; public string Date; public string Hash; public LabBundle Snapshot;
         public string Label => "v"+Number+"-"+(string.IsNullOrEmpty(Date)?"без-даты":Date);
-        public LabRevision Clone()=>JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this));
+        public LabRevision Clone()=>Snapshot==null?JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this))
+            :new LabRevision{Number=Number,Date=Date??"",Hash=Hash??"",Snapshot=Snapshot.Clone()};
     }
     [Serializable] public sealed class LabHistoryProfile
     {
         public string Id; public string Name; public bool Protected;
         public List<LabRevision> Revisions=new List<LabRevision>();
+        internal LabHistoryProfile Clone()=>Revisions==null||Revisions.Any(r=>r==null)
+            ?JsonUtility.FromJson<LabHistoryProfile>(JsonUtility.ToJson(this))
+            :new LabHistoryProfile{Id=Id??"",Name=Name??"",Protected=Protected,Revisions=Revisions.Select(r=>r.Clone()).ToList()};
     }
     [Serializable] public sealed class LabHistoryFile
     {
         public int Schema=1; public string SelectedId; public int SelectedRevision;
         public List<LabHistoryProfile> Profiles=new List<LabHistoryProfile>();
+        internal LabHistoryFile Clone()=>Profiles==null||Profiles.Any(p=>p==null)
+            ?JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(this))
+            :new LabHistoryFile{Schema=Schema,SelectedId=SelectedId??"",SelectedRevision=SelectedRevision,Profiles=Profiles.Select(p=>p.Clone()).ToList()};
     }
     public sealed class DesignLabHistory
     {
@@ -127,11 +136,11 @@ namespace StarTournament.ProvingGround
         readonly string path; readonly LabBundle shipped; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
-        public IReadOnlyList<LabHistoryProfile> Profiles=>JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data)).Profiles;
+        public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(p=>p.Clone()).ToList();
         public string SelectedProfileId=>data.SelectedId;
         public string SelectedProfileName=>data.Profiles.Single(p=>p.Id==data.SelectedId).Name;
         public bool SelectedProfileProtected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Protected;
-        public LabHistoryProfile SelectedProfile=>JsonUtility.FromJson<LabHistoryProfile>(JsonUtility.ToJson(data.Profiles.Single(p=>p.Id==data.SelectedId)));
+        public LabHistoryProfile SelectedProfile=>data.Profiles.Single(p=>p.Id==data.SelectedId).Clone();
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
         {
@@ -293,6 +302,8 @@ namespace StarTournament.ProvingGround
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeTunnelWayfinding))).ToArray();
                 // Preserve distinct legacy defaults even when registry keys coincide.
                 predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.TunnelsArtId&&p.Id!=ProvingProfile.TunnelsAuthoringId).ToList()})).ToArray();
+                var beforeLunarFlush=Cached(p=>p.BeforeLunarFlush());
+                predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarFlush))).ToArray();
                 var beforeLunarInterior=Cached(p=>p.BeforeLunarInterior());
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarInterior))).ToArray();
                 var beforeLunarOpenCentre=Cached(p=>p.BeforeLunarOpenCentre());
@@ -386,7 +397,7 @@ namespace StarTournament.ProvingGround
         void Commit(Action<LabHistoryFile> mutation)
         {
             if(!Writable)throw new IOException(StorageError);
-            var next=JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data));mutation(next);ValidateFile(next);
+            var next=data.Clone();mutation(next);ValidateFile(next);
             string temp=path+"."+Guid.NewGuid().ToString("N")+".tmp";
             try
             {

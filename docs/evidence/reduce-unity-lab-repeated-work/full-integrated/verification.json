@@ -1,0 +1,44 @@
+{
+  "source_commit": "7fb05975f902dfebd358a36fb9a74aee83b4dbcf",
+  "command": "make check",
+  "instrumented": false,
+  "scope": "full",
+  "suites": {
+    "editmode": {
+      "id": "2",
+      "testcasecount": "330",
+      "result": "Passed",
+      "total": "330",
+      "passed": "330",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-03 20:22:42Z",
+      "end-time": "2026-10-03 20:31:39Z",
+      "duration": "537.2298055"
+    },
+    "playmode": {
+      "id": "2",
+      "testcasecount": "199",
+      "result": "Passed",
+      "total": "199",
+      "passed": "199",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-03 20:32:02Z",
+      "end-time": "2026-10-03 20:40:39Z",
+      "duration": "516.9699181"
+    }
+  },
+  "build": {
+    "marker": "487367086",
+    "successful": true
+  }
+}
