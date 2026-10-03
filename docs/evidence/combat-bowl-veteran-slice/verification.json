@@ -1,0 +1,64 @@
+{
+  "source_revision": "8a17241598fa9da705ab6a62a21a2b6f09f49464",
+  "scope": "full",
+  "command": "make check",
+  "checks": [
+    {
+      "name": "editmode",
+      "result": "Passed",
+      "total": "321",
+      "passed": "321",
+      "failed": "0",
+      "skipped": "0",
+      "start-time": "2026-10-03 16:29:37Z",
+      "end-time": "2026-10-03 16:41:41Z",
+      "duration": "723.6176839"
+    },
+    {
+      "name": "playmode",
+      "result": "Passed",
+      "total": "192",
+      "passed": "192",
+      "failed": "0",
+      "skipped": "0",
+      "start-time": "2026-10-03 16:42:05Z",
+      "end-time": "2026-10-03 16:52:25Z",
+      "duration": "619.7629722"
+    }
+  ],
+  "editmode_compile_revision": "be6ee4a",
+  "later_delta": "8a17241 only moves the diagnostic overview camera; gameplay, profiles and tests unchanged. PlayMode/build compile 8a17241.",
+  "build": {
+    "command": "make check / unity/tools.sh build",
+    "exit_code": 0,
+    "release": "local-macos-player-candidate/8a17241/veteran-final-20261003",
+    "bundle_manifest_sha256": "93f11ec94088339c8227abc6a882cc7a374f61813c47f42bdf4c41eab63fa3ea",
+    "retained_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/combat-bowl-veteran-8a17241/StarTournamentProvingGround.app"
+  },
+  "human_acceptance": "pending",
+  "smoke": {
+    "arena": "combat-bowl-v1@17",
+    "authoring": "combat-bowl-ring-r7-authoring-v1@11",
+    "presentation": "orbital-league-ring-v1@9",
+    "release": "local-macos-player-candidate/8a17241/veteran-final-20261003",
+    "player": "native macOS Development Player",
+    "note": "Veteran sample, real Player renders; staged architectural views. Physical/human acceptance pending.",
+    "participants": 8,
+    "seed": 20260923,
+    "muted": true,
+    "repeat": true,
+    "width": 3456,
+    "height": 2160,
+    "exit_code": 0
+  },
+  "visual_review": {
+    "inspected": [
+      "veteran-02-player-height.png",
+      "veteran-03-overview.png",
+      "veteran-04-service.png",
+      "veteran-01-four-views.png"
+    ],
+    "result": "No mirrored new labels, sign occlusion or staged-camera collision; warm service pool visible. Human art/gameplay acceptance remains pending.",
+    "performance_limit": "Four-view startup capture displays 9 FPS; this immediate-start screenshot is not a warmed timing benchmark. Reference hardware / 60 FPS acceptance unproven."
+  }
+}

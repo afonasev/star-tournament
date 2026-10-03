@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=9};
+            var p=new ProvingProfile{id="orbital-league-v1",version=10};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
@@ -81,11 +81,12 @@ namespace StarTournament.ProvingGround
             p.Add("ring.gratingDepth","ring","Grating bar depth","Visible vertical bar depth; the actor support collider is unchanged.","meters",.01f,.2f,.01f,.05f);
             p.Add("ring.windowFramePitch","ring","Window span","Distance between hull window structural frames.","meters",4,12,.5f,8);
             p.Add("ring.windowFrameWidth","ring","Window frame width","Visible hull frame width within the canonical sealed boundary.","meters",.1f,1,.05f,.4f);
+            VeteranDescriptors(p);
             return p;
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=8;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=9;
             p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
             var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
@@ -187,7 +188,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=ring?8:9;
+            version=ring?9:10;
             valueIndex=null; // Descriptor migration invalidates the runtime lookup cache.
         }
         static void BroadcastDescriptors(ProvingProfile p)

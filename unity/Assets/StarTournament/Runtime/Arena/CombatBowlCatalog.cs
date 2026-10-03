@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="16", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="17", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -184,6 +184,11 @@ namespace StarTournament.ProvingGround
                 Wall(side+"-entry-lintel-right",12,sz*24,18,sz*24,2.6f,8);
                 Wall("hall-"+side+"-left",-6,sz*8.2f,-2.2f,sz*8.2f,4,8);Wall("hall-"+side+"-right",2.2f,sz*8.2f,6,sz*8.2f,4,8);
             }
+            // Veteran sample: authored physical cases at the edge, clear of the north portal.
+            // Dimensions are exported by CombatBowlAuthoringProfile, like every other solid.
+            Box("veteran-case-tall",new Vector3(4.85f,4.8f,6.65f),new Vector3(1.7f,1.6f,1.5f));
+            Box("veteran-case-low",new Vector3(3.25f,4.48f,6.9f),new Vector3(1.25f,.96f,1.2f));
+            Box("veteran-service-cabinet",new Vector3(-4.65f,5.35f,7.82f),new Vector3(1.28f,1.75f,.3f));
             // The station shell seals the atrium and roof junctions above the local lowered ceilings.
             Roof("interior-shell-roof",-36,36,-32,32,8.4f);
             // Opaque hull piers, sills and headers surround smaller glazed openings.
