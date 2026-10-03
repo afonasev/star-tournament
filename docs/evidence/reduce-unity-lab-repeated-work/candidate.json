@@ -1,8 +1,8 @@
 {
-  "identity": "local-macos-player-candidate/e13b72494a19996920c29aa02b90309fde7e9303/2366840912664b57",
-  "source_revision": "e13b72494a19996920c29aa02b90309fde7e9303",
-  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab-copy-e13b7249/StarTournamentProvingGround.app",
-  "manifest_sha256": "2366840912664b578abb7bdbb795537c9699594290e92aa2312a4a9a16d1c4f8",
-  "build_marker": "487362166",
+  "identity": "local-macos-player-candidate/7fb05975f902dfebd358a36fb9a74aee83b4dbcf/ac73844e05a07a57",
+  "source_revision": "7fb05975f902dfebd358a36fb9a74aee83b4dbcf",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab-copy-7fb05975/StarTournamentProvingGround.app",
+  "manifest_sha256": "ac73844e05a07a5752dd8d6845b2a099ec919e765923a892644f31e91909d7b6",
+  "build_marker": "487367086",
   "copy_checksums_verified": true
 }

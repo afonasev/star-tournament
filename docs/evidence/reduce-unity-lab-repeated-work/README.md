@@ -47,3 +47,16 @@ Player: `/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab
 Native Lab smoke исходного кандидата прошёл: save/branch/rename/delete/guards/restart; оба Player exit 0, selected revision сохранена и history.json byte-identical после restart. PNG 06-history и 11-restarted-revisions визуально проверены. Это автоматический native smoke, не human acceptance.
 
 До интеграции main продвинулся до 2e3e41c (Veteran League profiles/arena). Совместная ревизия требует повторного full gate и собственного кандидата; исходные A/B measurements остаются привязаны к прежней базе.
+
+
+## Совместная ревизия после обновления main
+
+Main `2e3e41c` объединён без конфликтов в `7fb05975f902dfebd358a36fb9a74aee83b4dbcf`; изменения Veteran League сохранены. Повторный `make check` exit 0: EditMode 330/330 (537.2298055 с), PlayMode 199/199 (516.9699181 с), failed/skipped/inconclusive = 0. Оба natural terminal matches Passed. Build marker `487367086`. Это корректность совместной версии, не новое A/B измерение.
+
+Финальный review candidate: `local-macos-player-candidate/7fb05975f902dfebd358a36fb9a74aee83b4dbcf/ac73844e05a07a57`. App: `/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab-copy-7fb05975/StarTournamentProvingGround.app`. Manifest SHA256 `ac73844e05a07a5752dd8d6845b2a099ec919e765923a892644f31e91909d7b6`, все bytes копии проверены.
+
+`native-integrated/smoke.json`: оба запуска exit 0, muted true, selected revision сохранена, history.json byte-identical после restart. PNG истории до/после визуально просмотрены. Классификация: AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE. Raw logs/XML и PNG сохранены в full-integrated/native-integrated; большие history JSON сохранены lossless gzip.
+
+Сборка ожидала общей admission-очереди после тестов; queue wall time не включён в XML duration и A/B выводы. Generated build assets/settings сохранены в integrated-build-generated.patch.gz и восстановлены в worktree; в source не интегрированы.
+
+Интеграция и фактический cleanup записываются в каноническом `star-tournament-planning/openspec/changes/reduce-unity-lab-repeated-work/delivery.json`. Exact кандидат сохранён для открытой human acceptance. Исходный e13b724 кандидат заменён этим совместным результатом; его manifest и smoke остаются историческими доказательствами.

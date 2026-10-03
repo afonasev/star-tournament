@@ -1,6 +1,6 @@
 {
-  "assets_source_tree": "ee5e6bff5e4f856f453af351a980822ea04fea79",
-  "build_marker": "487362166",
+  "assets_source_tree": "5a6fb7892bcc0e2b0a94956c4ff6776f9e065055",
+  "build_marker": "487367086",
   "files": [
     {
       "path": "Contents/Frameworks/UnityPlayer.dylib",
@@ -29,7 +29,7 @@
     },
     {
       "path": "Contents/MacOS/Star Tournament Unity Proving Ground",
-      "sha256": "fefd21bfc997c3c494766832c5632befadb3db64eaa0eb53c4427724883cf5a1",
+      "sha256": "0148dc174aeb9a11c0d64249929678f82ceccc9098b611f405deb2467cfa69a5",
       "size": 117202
     },
     {
@@ -134,13 +134,13 @@
     },
     {
       "path": "Contents/Resources/Data/Managed/StarTournament.ProvingGround.dll",
-      "sha256": "1cc00d6f530002ce8e626258627c05166817b661919c87224c2fac622fb64f50",
-      "size": 1274368
+      "sha256": "a33c51d6a5ad5c51464d7b55df19541e3956f0111f43dce7b132f659e944c169",
+      "size": 1277952
     },
     {
       "path": "Contents/Resources/Data/Managed/StarTournament.ProvingGround.pdb",
-      "sha256": "c6c8935855c2b6b04650830cce4e6507b383b12c431664159f327ab19da5fb99",
-      "size": 382680
+      "sha256": "75d8926e9143c5d71a33a56c56dba3076dc3d838933d1908faa0a9801c027311",
+      "size": 383084
     },
     {
       "path": "Contents/Resources/Data/Managed/System.ComponentModel.Composition.dll",
@@ -1339,12 +1339,12 @@
     },
     {
       "path": "Contents/Resources/Data/boot.config",
-      "sha256": "8d16a522ab69b8cbe7cf64d9dff3449a542cde95d06851d2d636199c1b157d74",
+      "sha256": "a7da37a41a40f10fd2c13bc9f8177e90c57849bcce3adcb489a491ffc72b8fba",
       "size": 358
     },
     {
       "path": "Contents/Resources/Data/globalgamemanagers",
-      "sha256": "1bbba5ed920faec818d622f4fc43802e37178e4ed2e27a94bb239ceea714343c",
+      "sha256": "c0cd3fdd6811e7612b0f0d1a9e545a1a9d1fdea706a00c8d5f968d8dcded9853",
       "size": 200116
     },
     {
@@ -1359,12 +1359,12 @@
     },
     {
       "path": "Contents/Resources/Data/level0",
-      "sha256": "5a05bedddf6573702aa3ca0c6485080a3f6feae71a54682d7b568082ea5d65ce",
-      "size": 1860808
+      "sha256": "738624b037a58fd1f7df4e0f50918fabe3e893488426f89ba25bd8e225751483",
+      "size": 1861740
     },
     {
       "path": "Contents/Resources/Data/resources.assets",
-      "sha256": "f877d221c4654e8bfab9fce2be952427d263593c24689e1f46a178378d0fcb71",
+      "sha256": "84431e79997899d7f52728c1ef2eb37c2c6f713c5d69a41b3175b4eec61b2508",
       "size": 655064
     },
     {
@@ -1409,9 +1409,9 @@
     },
     {
       "path": "Contents/_CodeSignature/CodeResources",
-      "sha256": "b13fdfd7a7bb99b3f8272aa1df210ff84bd91a7c58a854e28bf87222f390d3c2",
+      "sha256": "bb8018c65740411d13a524352be60d79dede803432270fb1c6d68fecd8205d3b",
       "size": 81645
     }
   ],
-  "source_revision": "e13b72494a19996920c29aa02b90309fde7e9303"
+  "source_revision": "7fb05975f902dfebd358a36fb9a74aee83b4dbcf"
 }
