@@ -17,6 +17,13 @@ namespace StarTournament.ProvingGround
         public float Step;
         public float DefaultValue;
 
+        internal NumericDescriptor DetachedCopy()
+        {
+            var copy=(NumericDescriptor)MemberwiseClone();
+            copy.Path=Path??"";copy.Group=Group??"";copy.Label=Label??"";copy.Description=Description??"";copy.Unit=Unit??"";
+            return copy;
+        }
+
         public bool Validate(out string reason)
         {
             if (string.IsNullOrWhiteSpace(Path)) { reason = "Path is required."; return false; }
@@ -69,6 +76,18 @@ namespace StarTournament.ProvingGround
         public int Version => version;
         public IReadOnlyList<NumericDescriptor> Descriptors => descriptors;
         public NumericDescriptor Descriptor(string path) => FindDescriptor(path);
+        // Copy serialized data without a JSON round trip. Cached lookup tables belong to the
+        // original mutable instance and must never be shared with a detached snapshot.
+        internal ProvingProfile DetachedCopy()
+        {
+            if(descriptors==null||values==null||descriptors.Exists(d=>d==null)||values.Exists(v=>v==null))
+                return JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=(ProvingProfile)MemberwiseClone();copy.id=id??"";
+            copy.descriptors=descriptors.ConvertAll(d=>d?.DetachedCopy());
+            copy.values=values.ConvertAll(v=>v==null?null:new ProvingProfileValue{Path=v.Path??"",Value=v.Value});
+            copy.valueIndex=null;
+            return copy;
+        }
         /// <summary>Append-only migration for serialized proving-ground fixtures when a descriptor is introduced.</summary>
         public void EnsureDefaultDescriptors()
         {
@@ -266,6 +285,10 @@ namespace StarTournament.ProvingGround
         {
             var issues = new List<ProfileValidationIssue>();
             var knownPaths = new HashSet<string>();
+            // Local to this validation: metadata can change between calls. Keep the first
+            // duplicate, matching FindDescriptor, and preserve null-path diagnostics.
+            var descriptorIndex = new Dictionary<string,NumericDescriptor>(StringComparer.Ordinal);
+            NumericDescriptor nullPathDescriptor=null;
             for (var index = 0; index < descriptors.Count; index++)
             {
                 var descriptor = descriptors[index];
@@ -276,6 +299,8 @@ namespace StarTournament.ProvingGround
                 }
                 if (!descriptor.Validate(out var reason))
                     issues.Add(new ProfileValidationIssue { Path = descriptor.Path, Message = reason });
+                if(descriptor.Path==null){if(nullPathDescriptor==null)nullPathDescriptor=descriptor;}
+                else if(!descriptorIndex.ContainsKey(descriptor.Path))descriptorIndex.Add(descriptor.Path,descriptor);
                 if (!knownPaths.Add(descriptor.Path))
                     issues.Add(new ProfileValidationIssue { Path = descriptor.Path, Message = "Descriptor path must be unique." });
             }
@@ -291,7 +316,9 @@ namespace StarTournament.ProvingGround
                 }
                 if (!valuePaths.Add(value.Path))
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Profile value path must be unique." });
-                var descriptor = FindDescriptor(value.Path);
+                NumericDescriptor descriptor;
+                if(value.Path==null)descriptor=nullPathDescriptor;
+                else descriptorIndex.TryGetValue(value.Path,out descriptor);
                 if (descriptor == null)
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Value has no descriptor." });
                 else if ((descriptor.Unit == "ammo" || descriptor.Unit == "count") && value.Value != Mathf.Round(value.Value))

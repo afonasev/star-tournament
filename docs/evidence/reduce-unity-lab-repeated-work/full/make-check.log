@@ -1,0 +1,12 @@
+./unity/tools.sh test-edit
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-test-speed/unity
+unity-run: started shared:1; guardian=31831 pid=31832
+unity-run: finished pid=31832 exit=0; capacity released
+./unity/tools.sh test-play
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-test-speed/unity
+unity-run: started shared:4; guardian=34770 pid=36093
+unity-run: finished pid=36093 exit=0; capacity released
+./unity/tools.sh build
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-test-speed/unity
+unity-run: started shared:3; guardian=39228 pid=39863
+unity-run: finished pid=39863 exit=0; capacity released

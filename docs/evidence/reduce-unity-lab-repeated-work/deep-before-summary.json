@@ -1,0 +1,116 @@
+{
+  "root": {
+    "id": "2",
+    "testcasecount": "3",
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 19:01:43Z",
+    "end-time": "2026-10-03 19:02:35Z",
+    "duration": "52.1469391"
+  },
+  "cases": [
+    {
+      "id": "1319",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(0)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(0)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "79332076",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:01:43Z",
+      "end-time": "2026-10-03 19:02:01Z",
+      "duration": "17.659205",
+      "asserts": "0"
+    },
+    {
+      "id": "1320",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(1)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(1)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "1476120395",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:02:01Z",
+      "end-time": "2026-10-03 19:02:18Z",
+      "duration": "17.133770",
+      "asserts": "0"
+    },
+    {
+      "id": "1321",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(2)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(2)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "1677850925",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:02:18Z",
+      "end-time": "2026-10-03 19:02:35Z",
+      "duration": "17.326443",
+      "asserts": "0"
+    }
+  ],
+  "phase_ms": {
+    "LAB_PROFILE.ctor-clone": [
+      6,
+      335.546
+    ],
+    "LAB_PROFILE.ctor-newfile": [
+      6,
+      597.853
+    ],
+    "LAB_PROFILE.commit-clone": [
+      9,
+      1063.93
+    ],
+    "LAB_PROFILE.commit-mutation": [
+      9,
+      2296.59
+    ],
+    "LAB_PROFILE.revision-registry-hash": [
+      42,
+      17483.901
+    ],
+    "LAB_PROFILE.revision-clone": [
+      42,
+      2353.8740000000007
+    ],
+    "LAB_PROFILE.revision-copy-readonly": [
+      42,
+      602.286
+    ],
+    "LAB_PROFILE.revision-validate": [
+      42,
+      4988.683999999999
+    ],
+    "LAB_PROFILE.commit-validate": [
+      9,
+      20478.703
+    ],
+    "LAB_PROFILE.ctor-read": [
+      3,
+      489.803
+    ],
+    "LAB_PROFILE.generation": [
+      3,
+      9895.297999999999
+    ],
+    "LAB_PROFILE.ctor-validate": [
+      3,
+      22068.031
+    ],
+    "LAB_PROFILE.ctor-migrate-commit": [
+      3,
+      18482.796000000002
+    ]
+  }
+}

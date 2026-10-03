@@ -1,0 +1,62 @@
+{
+  "root": {
+    "id": "2",
+    "testcasecount": "3",
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 19:28:44Z",
+    "end-time": "2026-10-03 19:29:28Z",
+    "duration": "43.2713349"
+  },
+  "cases": [
+    {
+      "id": "1090",
+      "name": "DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch",
+      "fullname": "StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests.DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch",
+      "methodname": "DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch",
+      "classname": "StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests",
+      "runstate": "Runnable",
+      "seed": "1540916630",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:28:44Z",
+      "end-time": "2026-10-03 19:28:59Z",
+      "duration": "14.149766",
+      "asserts": "0"
+    },
+    {
+      "id": "1170",
+      "name": "SharedTimerAndPerSeatHudFollowOneToFourViewportLayouts",
+      "fullname": "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests.SharedTimerAndPerSeatHudFollowOneToFourViewportLayouts",
+      "methodname": "SharedTimerAndPerSeatHudFollowOneToFourViewportLayouts",
+      "classname": "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests",
+      "runstate": "Runnable",
+      "seed": "1182236559",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:28:59Z",
+      "end-time": "2026-10-03 19:29:08Z",
+      "duration": "9.346353",
+      "asserts": "0"
+    },
+    {
+      "id": "1231",
+      "name": "WeaponsUseCurrentMuzzlesAcrossStrafeRotationAndBatchedTicks",
+      "fullname": "StarTournament.ProvingGround.Tests.PlayMode.ShotOriginTests.WeaponsUseCurrentMuzzlesAcrossStrafeRotationAndBatchedTicks",
+      "methodname": "WeaponsUseCurrentMuzzlesAcrossStrafeRotationAndBatchedTicks",
+      "classname": "StarTournament.ProvingGround.Tests.PlayMode.ShotOriginTests",
+      "runstate": "Runnable",
+      "seed": "112360181",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:29:08Z",
+      "end-time": "2026-10-03 19:29:28Z",
+      "duration": "19.749549",
+      "asserts": "0"
+    }
+  ]
+}

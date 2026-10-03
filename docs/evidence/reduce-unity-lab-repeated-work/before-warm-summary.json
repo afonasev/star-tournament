@@ -1,0 +1,209 @@
+{
+  "root": {
+    "id": "2",
+    "testcasecount": "4",
+    "result": "Passed",
+    "total": "4",
+    "passed": "4",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 18:56:10Z",
+    "end-time": "2026-10-03 18:57:50Z",
+    "duration": "99.2045437"
+  },
+  "cases": [
+    {
+      "id": "1186",
+      "name": "MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+      "methodname": "MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests",
+      "runstate": "Runnable",
+      "seed": "1508519080",
+      "result": "Passed",
+      "start-time": "2026-10-03 18:56:10Z",
+      "end-time": "2026-10-03 18:56:54Z",
+      "duration": "43.419627",
+      "asserts": "0"
+    },
+    {
+      "id": "1319",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(0)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(0)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "709032240",
+      "result": "Passed",
+      "start-time": "2026-10-03 18:56:54Z",
+      "end-time": "2026-10-03 18:57:12Z",
+      "duration": "17.661239",
+      "asserts": "0"
+    },
+    {
+      "id": "1320",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(1)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(1)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "1774093835",
+      "result": "Passed",
+      "start-time": "2026-10-03 18:57:12Z",
+      "end-time": "2026-10-03 18:57:29Z",
+      "duration": "17.500535",
+      "asserts": "0"
+    },
+    {
+      "id": "1321",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(2)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(2)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "1594275606",
+      "result": "Passed",
+      "start-time": "2026-10-03 18:57:29Z",
+      "end-time": "2026-10-03 18:57:50Z",
+      "duration": "20.588363",
+      "asserts": "0"
+    }
+  ],
+  "phases_ms": {
+    "ctor-clone": [
+      15,
+      823.3439999999999
+    ],
+    "ctor-newfile": [
+      15,
+      1267.6129999999998
+    ],
+    "ctor-read": [
+      11,
+      2354.0139999999997
+    ],
+    "generation": [
+      7,
+      25226.594
+    ],
+    "ctor-validate": [
+      11,
+      50116.654
+    ],
+    "ctor-migrate-commit": [
+      11,
+      31508.301
+    ]
+  },
+  "validate_ms": {
+    "unity-proving-ground-v1": [
+      95,
+      13.355,
+      123
+    ],
+    "unity-combat-state-v1": [
+      95,
+      2.917999999999999,
+      33
+    ],
+    "unity-native-combat-v1": [
+      95,
+      3.935,
+      46
+    ],
+    "unity-trooper-presentation-v1": [
+      95,
+      1.6279999999999986,
+      18
+    ],
+    "unity-native-match-v1": [
+      95,
+      1.131,
+      11
+    ],
+    "unity-native-team-v1": [
+      95,
+      0.2670000000000002,
+      1
+    ],
+    "unity-native-roster-v1": [
+      95,
+      0.35600000000000026,
+      2
+    ],
+    "unity-bot-perception-v1": [
+      95,
+      1.1050000000000006,
+      10
+    ],
+    "unity-bot-navigation-v1": [
+      95,
+      1.0640000000000007,
+      9
+    ],
+    "unity-bot-behavior-v1": [
+      95,
+      6.775,
+      78
+    ],
+    "orbital-league-ring-v1": [
+      95,
+      45.36600000000001,
+      297
+    ],
+    "combat-bowl-ring-r7-authoring-v1": [
+      95,
+      5464.744,
+      4113
+    ],
+    "cutter-beam-v1": [
+      95,
+      2.9559999999999995,
+      29
+    ],
+    "unity-participant-presentation-v1": [
+      191,
+      6.854999999999997,
+      32
+    ],
+    "unity-death-presentation-v1": [
+      95,
+      2.2169999999999996,
+      22
+    ],
+    "unity-blood-presentation-v1": [
+      95,
+      2.168,
+      27
+    ],
+    "pulse-effects-v1": [
+      95,
+      2.801999999999997,
+      37
+    ],
+    "industrial-tunnels-presentation-v1": [
+      95,
+      1.9249999999999983,
+      21
+    ],
+    "industrial-tunnels-authoring-v1": [
+      95,
+      1449.0300000000002,
+      1914
+    ],
+    "lunar-laboratory-presentation-v1": [
+      95,
+      1.6999999999999993,
+      14
+    ],
+    "lunar-laboratory-authoring-v1": [
+      95,
+      2675.85,
+      2883
+    ]
+  }
+}

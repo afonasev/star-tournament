@@ -1,0 +1,9 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=ShotOriginTests;NativeSeatLayoutTests.SharedTimerAndPerSeatHud;DesignLabWorkspaceTests
+revision=06877122409c9535cfdf0eae43ffe6f6420862bb
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/reduce-unity-lab-repeated-work/
