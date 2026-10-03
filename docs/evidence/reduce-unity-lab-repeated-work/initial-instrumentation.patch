@@ -1,0 +1,108 @@
+diff --git a/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs b/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+index bd52063..9738393 100644
+--- a/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
++++ b/unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+@@ -121,6 +121,11 @@ namespace StarTournament.ProvingGround
+     }
+     public sealed class DesignLabHistory
+     {
++        static bool Measure=>Environment.GetEnvironmentVariable("STAR_LAB_PROFILE")=="1";
++        static System.Diagnostics.Stopwatch Watch()=>System.Diagnostics.Stopwatch.StartNew();
++        static void Stamp(System.Diagnostics.Stopwatch watch,string phase){if(Measure)UnityEngine.Debug.Log($"LAB_PROFILE phase={phase} ms={watch.Elapsed.TotalMilliseconds:F3}");watch.Restart();}
++        static string Digest(string text){using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-","");}
++        static string Fingerprint(LabBundle[] bundles){using(var sha=SHA256.Create()){foreach(var b in bundles){var bytes=Encoding.UTF8.GetBytes(JsonUtility.ToJson(b)+"\n");sha.TransformBlock(bytes,0,bytes.Length,null,0);}sha.TransformFinalBlock(Array.Empty<byte>(),0,0);return BitConverter.ToString(sha.Hash).Replace("-","");}}
+         public const string ReleaseId="unity-shipped-release";
+         static readonly object historicalLock=new object();
+         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
+@@ -135,13 +140,13 @@ namespace StarTournament.ProvingGround
+         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
+         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
+         {
+-            this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;
+-            data=NewFile();
++            var ctorWatch=Watch();this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;Stamp(ctorWatch,"ctor-clone");
++            data=NewFile();Stamp(ctorWatch,"ctor-newfile");
+             if(!File.Exists(path))return;
+             try
+             {
+-                var loaded=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));ValidateFile(loaded);data=loaded;
+-                if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))Commit(MigrateCompatibility);
++                var loaded=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));Stamp(ctorWatch,"ctor-read");ValidateFile(loaded);Stamp(ctorWatch,"ctor-validate");data=loaded;
++                if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))Commit(MigrateCompatibility);Stamp(ctorWatch,"ctor-migrate-commit");
+             }
+             catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
+         }
+@@ -155,7 +160,8 @@ namespace StarTournament.ProvingGround
+                 string.Join("|",sought.Descriptors.Select(d=>d.Path));
+             lock(historicalLock)
+             {
+-                if(historicalCache.TryGetValue(key,out var cached))return cached;
++                if(historicalCache.TryGetValue(key,out var cached)){if(Measure)UnityEngine.Debug.Log("LAB_CACHE global-hit key="+Digest(key));return cached;}
++                var genWatch=Watch();if(Measure)UnityEngine.Debug.Log("LAB_CACHE miss key="+Digest(key));
+                 var preRebalance=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWeaponRebalance()).ToList()};
+                 var beforePalette=new LabBundle{Profiles=preRebalance.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
+                 var medium=new LabBundle{Profiles=preRebalance.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
+@@ -228,7 +234,7 @@ namespace StarTournament.ProvingGround
+                 Func<ProvingProfile,ProvingProfile> Cached(Func<ProvingProfile,ProvingProfile> transform)
+                 {
+                     var cache=new Dictionary<ProvingProfile,ProvingProfile>();
+-                    return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
++                    return profile=>{if(!cache.TryGetValue(profile,out var previous)){var transformWatch=Watch();previous=transform(profile);if(Measure)UnityEngine.Debug.Log($"LAB_TRANSFORM name={transform.Method.Name} id={profile.Id} ms={transformWatch.Elapsed.TotalMilliseconds:F3}");cache.Add(profile,previous);}return previous;};
+                 }
+                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
+                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
+@@ -301,7 +307,7 @@ namespace StarTournament.ProvingGround
+                 if(this.shipped.Profiles.Any(p=>p.Id=="lunar-laboratory-authoring-v1"))
+                     predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="lunar-laboratory-authoring-v1"&&p.Id!="lunar-laboratory-presentation-v1").ToList()})).ToArray();
+                 if(historicalCache.Count>=2)historicalCache.Clear();
+-                historicalCache.Add(key,predecessors);
++                Stamp(genWatch,"generation");if(Measure)UnityEngine.Debug.Log($"LAB_FINGERPRINT key={Digest(key)} count={predecessors.Length} json={Fingerprint(predecessors)}");historicalCache.Add(key,predecessors);
+                 return predecessors;
+             }
+         }
+diff --git a/unity/Assets/StarTournament/Runtime/ProvingGround.cs b/unity/Assets/StarTournament/Runtime/ProvingGround.cs
+index 6260e3b..1c44621 100644
+--- a/unity/Assets/StarTournament/Runtime/ProvingGround.cs
++++ b/unity/Assets/StarTournament/Runtime/ProvingGround.cs
+@@ -169,6 +169,8 @@ namespace StarTournament.ProvingGround
+         public bool Running => phase == Phase.Running;
+         void Start()
+         {
++            var startWatch=System.Diagnostics.Stopwatch.StartNew();
++            void StartStamp(string phase){if(Environment.GetEnvironmentVariable("STAR_LAB_PROFILE")=="1")Debug.Log($"SCENE_PROFILE phase={phase} ms={startWatch.Elapsed.TotalMilliseconds:F3}");startWatch.Restart();}
+             playerProfiles = new PlayerProfileCatalog(PlayerProfilesPath());
+             input.Joined += OnDeviceJoined;
+             input.JoinRejected += device => {
+@@ -185,8 +187,8 @@ namespace StarTournament.ProvingGround
+             RocketEffectsProfile.EnsureRocketEffectsDescriptors();
+             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
+             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
+-            InitializeDesignLab();
+-            previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
++            InitializeDesignLab();StartStamp("lab");
++            StartStamp("profiles-before");previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
+             Configuration=NativeMatchConfiguration.Default(MatchProfile);
+             previousFixedDelta = Time.fixedDeltaTime;
+             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
+@@ -215,10 +217,10 @@ namespace StarTournament.ProvingGround
+             }
+ #endif
+             arena = Owned("unity-arena").AddComponent<ProvingArena>();
+-            BuildSelectedArena();
++            BuildSelectedArena();StartStamp("arena");
+             InitializeGraphicsPreferences();
+             Composition=HumanComposition(SetupRoster(),false);
+-            RebuildActors(Composition);
++            RebuildActors(Composition);StartStamp("actors");
+             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile,cutterProfile:CutterProfile);
+             gameAudio.Bind(Session,Composition);BindDamageBonusAlerts();
+             RebuildPickupVisuals();
+@@ -230,7 +232,7 @@ namespace StarTournament.ProvingGround
+                 probeCameraCount=count;
+             }
+             CreateInterface();
+-            phase=Phase.MainMenu;RefreshInterface();Select(mainBattleButton);
++            phase=Phase.MainMenu;RefreshInterface();Select(mainBattleButton);StartStamp("ui");
+             if(!string.IsNullOrEmpty(CombatBowlReviewDirectory))gameObject.AddComponent<NativeCombatBowlReview>();
+             gameObject.AddComponent<ProvingTelemetry>();
+             if(args.Contains("-teamsDiagnostic")) SetMatchMode(NativeMatchMode.Teams);

@@ -1,0 +1,323 @@
+{
+  "root": {
+    "id": "2",
+    "testcasecount": "10",
+    "result": "Passed",
+    "total": "10",
+    "passed": "10",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 19:17:31Z",
+    "end-time": "2026-10-03 19:18:42Z",
+    "duration": "71.33907"
+  },
+  "cases": [
+    {
+      "id": "1186",
+      "name": "MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+      "methodname": "MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests",
+      "runstate": "Runnable",
+      "seed": "1799363154",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:17:31Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "31.662694",
+      "asserts": "0"
+    },
+    {
+      "id": "1233",
+      "name": "IncompleteProfileCopyKeepsTheExistingJsonFallback",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests.IncompleteProfileCopyKeepsTheExistingJsonFallback",
+      "methodname": "IncompleteProfileCopyKeepsTheExistingJsonFallback",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests",
+      "runstate": "Runnable",
+      "seed": "733685989",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "0.000397",
+      "asserts": "0"
+    },
+    {
+      "id": "1232",
+      "name": "RevisionCopyPreservesJsonNormalizationAndDetachesTheSnapshot",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests.RevisionCopyPreservesJsonNormalizationAndDetachesTheSnapshot",
+      "methodname": "RevisionCopyPreservesJsonNormalizationAndDetachesTheSnapshot",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests",
+      "runstate": "Runnable",
+      "seed": "2111512705",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "0.001640",
+      "asserts": "0"
+    },
+    {
+      "id": "1231",
+      "name": "ShippedBundleCopyMatchesJsonRoundTripAndOwnsItsMetadataAndValues",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests.ShippedBundleCopyMatchesJsonRoundTripAndOwnsItsMetadataAndValues",
+      "methodname": "ShippedBundleCopyMatchesJsonRoundTripAndOwnsItsMetadataAndValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests",
+      "runstate": "Runnable",
+      "seed": "785257951",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "0.251441",
+      "asserts": "0"
+    },
+    {
+      "id": "1235",
+      "name": "ValidationDoesNotReuseAnIndexAfterMetadataChanges",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests.ValidationDoesNotReuseAnIndexAfterMetadataChanges",
+      "methodname": "ValidationDoesNotReuseAnIndexAfterMetadataChanges",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests",
+      "runstate": "Runnable",
+      "seed": "590319243",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "0.003644",
+      "asserts": "0"
+    },
+    {
+      "id": "1234",
+      "name": "ValidationKeepsTheFirstDuplicateDescriptorAndDiagnosticOrder",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests.ValidationKeepsTheFirstDuplicateDescriptorAndDiagnosticOrder",
+      "methodname": "ValidationKeepsTheFirstDuplicateDescriptorAndDiagnosticOrder",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests",
+      "runstate": "Runnable",
+      "seed": "1960994358",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "0.000578",
+      "asserts": "0"
+    },
+    {
+      "id": "1236",
+      "name": "ValidationRetainsNullEntryDiagnostics",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests.ValidationRetainsNullEntryDiagnostics",
+      "methodname": "ValidationRetainsNullEntryDiagnostics",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.LabSnapshotCopyTests",
+      "runstate": "Runnable",
+      "seed": "307012955",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:03Z",
+      "duration": "0.000527",
+      "asserts": "0"
+    },
+    {
+      "id": "1326",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(0)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(0)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "903558643",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:03Z",
+      "end-time": "2026-10-03 19:18:17Z",
+      "duration": "13.534469",
+      "asserts": "0"
+    },
+    {
+      "id": "1327",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(1)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(1)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "2058217538",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:17Z",
+      "end-time": "2026-10-03 19:18:29Z",
+      "duration": "12.788541",
+      "asserts": "0"
+    },
+    {
+      "id": "1328",
+      "name": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(2)",
+      "fullname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests.PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(2)",
+      "methodname": "PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues",
+      "classname": "StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests",
+      "runstate": "Runnable",
+      "seed": "502470518",
+      "result": "Passed",
+      "start-time": "2026-10-03 19:18:29Z",
+      "end-time": "2026-10-03 19:18:42Z",
+      "duration": "13.062361",
+      "asserts": "0"
+    }
+  ],
+  "matched_case_seconds": 71.048065,
+  "baseline_matched_seconds": 99.169764,
+  "validate_ms": {
+    "unity-proving-ground-v1": [
+      101,
+      10.988000000000001,
+      123
+    ],
+    "unity-combat-state-v1": [
+      95,
+      3.134999999999998,
+      33
+    ],
+    "unity-native-combat-v1": [
+      95,
+      4.326999999999998,
+      46
+    ],
+    "unity-trooper-presentation-v1": [
+      95,
+      1.760999999999999,
+      18
+    ],
+    "unity-native-match-v1": [
+      95,
+      1.2739999999999996,
+      11
+    ],
+    "unity-native-team-v1": [
+      95,
+      0.3020000000000002,
+      1
+    ],
+    "unity-native-roster-v1": [
+      95,
+      0.35000000000000026,
+      2
+    ],
+    "unity-bot-perception-v1": [
+      95,
+      1.1470000000000002,
+      10
+    ],
+    "unity-bot-navigation-v1": [
+      95,
+      1.3099999999999987,
+      9
+    ],
+    "unity-bot-behavior-v1": [
+      95,
+      6.054,
+      78
+    ],
+    "orbital-league-ring-v1": [
+      95,
+      18.397000000000006,
+      297
+    ],
+    "combat-bowl-ring-r7-authoring-v1": [
+      95,
+      240.91600000000005,
+      4113
+    ],
+    "cutter-beam-v1": [
+      95,
+      2.7479999999999998,
+      29
+    ],
+    "unity-participant-presentation-v1": [
+      191,
+      6.088999999999991,
+      32
+    ],
+    "unity-death-presentation-v1": [
+      95,
+      2.0149999999999983,
+      22
+    ],
+    "unity-blood-presentation-v1": [
+      95,
+      2.2889999999999993,
+      27
+    ],
+    "pulse-effects-v1": [
+      95,
+      2.7409999999999966,
+      37
+    ],
+    "industrial-tunnels-presentation-v1": [
+      95,
+      2.0379999999999985,
+      21
+    ],
+    "industrial-tunnels-authoring-v1": [
+      95,
+      116.32899999999997,
+      1914
+    ],
+    "lunar-laboratory-presentation-v1": [
+      95,
+      1.406999999999999,
+      14
+    ],
+    "lunar-laboratory-authoring-v1": [
+      95,
+      194.81499999999994,
+      2883
+    ]
+  },
+  "phases_ms": {
+    "ctor-clone": [
+      15,
+      28.673000000000002
+    ],
+    "ctor-newfile": [
+      15,
+      443.11899999999997
+    ],
+    "commit-clone": [
+      14,
+      74.807
+    ],
+    "commit-mutation": [
+      14,
+      2367.634
+    ],
+    "revision-registry-hash": [
+      92,
+      40709.705
+    ],
+    "revision-clone": [
+      92,
+      222.78799999999998
+    ],
+    "revision-copy-readonly": [
+      92,
+      1189.695
+    ],
+    "revision-validate": [
+      92,
+      2157.3729999999996
+    ],
+    "commit-validate": [
+      14,
+      19996.256
+    ],
+    "ctor-read": [
+      11,
+      2096.9210000000003
+    ],
+    "generation": [
+      7,
+      24019.302
+    ],
+    "ctor-validate": [
+      11,
+      42216.326
+    ],
+    "ctor-migrate-commit": [
+      11,
+      20745.608
+    ]
+  }
+}

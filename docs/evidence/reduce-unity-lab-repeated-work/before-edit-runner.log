@@ -1,0 +1,5 @@
+FOCUSED EditMode: NativeMusicTests.PreviousLabRevision;DesignLabHistoryTests.MigrationCacheSeparates — iteration only, NOT a full gate
+Evidence: /Users/eaafonasev/Projects/star-tournament-test-speed/unity/../.local/unity-evidence/focused-editmode.Jm893z
+unity-run: waiting exclusive; project=/Users/eaafonasev/Projects/star-tournament-test-speed/unity
+unity-run: started exclusive; guardian=94438 pid=94446
+unity-run: finished pid=94446 exit=0; capacity released

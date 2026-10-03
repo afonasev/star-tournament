@@ -1,0 +1,27 @@
+[
+  {
+    "label": "before-cold",
+    "source": ".local/unity-evidence/focused-editmode.Jm893z",
+    "artifacts": "docs/evidence/reduce-unity-lab-repeated-work/before-cold"
+  },
+  {
+    "label": "before-warm",
+    "source": ".local/unity-evidence/focused-editmode.Mzvtet",
+    "artifacts": "docs/evidence/reduce-unity-lab-repeated-work/before-warm"
+  },
+  {
+    "label": "before-play",
+    "source": ".local/unity-evidence/focused-playmode.EvjzyG",
+    "artifacts": "docs/evidence/reduce-unity-lab-repeated-work/before-play"
+  },
+  {
+    "label": "deep-before",
+    "source": ".local/unity-evidence/focused-editmode.iCCsvc",
+    "artifacts": "docs/evidence/reduce-unity-lab-repeated-work/deep-before"
+  },
+  {
+    "label": "after-warm",
+    "source": ".local/unity-evidence/focused-editmode.YLRmtp",
+    "artifacts": "docs/evidence/reduce-unity-lab-repeated-work/after-warm"
+  }
+]
