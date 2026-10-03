@@ -48,5 +48,14 @@
     "visible/f7-east.png",
     "visible/17-four-views.png"
   ],
-  "human_acceptance": false
+  "human_acceptance": false,
+  "integration": {
+    "revision": "d7fde276238cb3151d405b4003ba4c3aaf58e15f",
+    "main_at_merge": "2e3e41cbd748c37ea6e8e70bed2597f45e6972df",
+    "command": "unity/tools.sh test-edit-filter StarTournament.ProvingGround.Tests.LunarLaboratoryTests",
+    "exit_code": 0,
+    "passed": 8,
+    "failed": 0,
+    "scope": "Recompile combined sources; verify Lunar map and history with current main profiles. Main changed another map; authored Lunar source is unchanged. Full gate above applies to the exact candidate source."
+  }
 }
