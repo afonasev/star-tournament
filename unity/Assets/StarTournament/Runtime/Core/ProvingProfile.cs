@@ -353,7 +353,8 @@ namespace StarTournament.ProvingGround
         public static ProvingProfile CreateDefault()
         {
             var profile = new ProvingProfile();
-            profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения; трек пока отсутствует.", "percent", 0f, 100f, 5f, 70f);
+            profile.AddRoundMusicDescriptors();
+            profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения.", "percent", 0f, 100f, 5f, 70f);
             profile.Add("audio.effectsDefaultPercent", "audio", "Эффекты по умолчанию", "Начальная общая громкость звуков меню и боя до пользовательского изменения.", "percent", 0f, 100f, 5f, 80f);
             profile.Add("audio.damageBonusSpawnGain", "audio", "Сигнал появления бонуса урона", "Громкость общего сигнала независимо от расстояния до бонуса.", "ratio", 0f, 1f, .05f, .8f);
             profile.Add("audio.damageBonusPickupGain", "audio", "Тревога подбора бонуса урона", "Громкость общего тревожного сигнала без раскрытия собравшего.", "ratio", 0f, 1f, .05f, 1f);
