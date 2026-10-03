@@ -1,0 +1,11 @@
+{
+    "samples": 180,
+    "unfocusedFrames": 0,
+    "width": 3456,
+    "height": 2160,
+    "localLights": 0,
+    "allocatedMemoryBytes": 0,
+    "medianMs": 9.325957298278809,
+    "p95Ms": 17.45063018798828,
+    "note": "Warmed four-camera current-Mac diagnostic; not reference hardware acceptance."
+}

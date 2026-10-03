@@ -56,7 +56,7 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(t.GetComponent<Renderer>().shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.Off),s.Id);
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();
-            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@9"));
+            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@10"));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Slow orbital emblem"),Is.EqualTo(5));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Enclosed slow fan"),Is.EqualTo(3));
             Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
@@ -151,11 +151,11 @@ namespace StarTournament.ProvingGround.Tests
         }
         [Test] public void RingV3GainsWayfindingWithoutResettingDesignerValues()
         {
-            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":9","\"version\":3");
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":10","\"version\":3");
             var old=JsonUtility.FromJson<ProvingProfile>(json);
             old.Set("light.intensity",9);old.Set("ring.glassOpacity",.08f);old.Set("color.north.r",.8f);
             old.EnsureOrbitalLeagueDescriptors();
-            Assert.That(old.Version,Is.EqualTo(9));Assert.That(old.Get("light.intensity"),Is.EqualTo(9));
+            Assert.That(old.Version,Is.EqualTo(10));Assert.That(old.Get("light.intensity"),Is.EqualTo(9));
             Assert.That(old.Get("ring.glassOpacity"),Is.EqualTo(.08f));Assert.That(old.Get("color.north.r"),Is.EqualTo(.8f));
             Assert.That(old.Descriptors.Where(d=>d.Group=="wayfinding").All(d=>d.Validate(out _)),Is.True);
             Assert.That(old.Validate(),Is.Empty);
@@ -214,23 +214,23 @@ namespace StarTournament.ProvingGround.Tests
         }
         [Test] public void SerializedRingV2GainsWindowsWithoutResettingLightingOrCustomFrame()
         {
-            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":9","\"version\":2");
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":10","\"version\":2");
             Assert.That(json,Does.Contain("\"version\":2"));var old=JsonUtility.FromJson<ProvingProfile>(json);
             old.Set("light.intensity",9);old.Set("ring.windowFrameWidth",.4f);old.Set("ring.spawn-mark-1.z",17);old.Set("ring.skyValue",.08f);
-            old.EnsureOrbitalLeagueDescriptors();Assert.That(old.Version,Is.EqualTo(9));
+            old.EnsureOrbitalLeagueDescriptors();Assert.That(old.Version,Is.EqualTo(10));
             Assert.That(old.Get("light.intensity"),Is.EqualTo(9));Assert.That(old.Get("ring.windowFrameWidth"),Is.EqualTo(.18f));Assert.That(old.Get("ring.spawn-mark-1.z"),Is.EqualTo(14));Assert.That(old.Get("ring.skyValue"),Is.EqualTo(.16f));
             var custom=JsonUtility.FromJson<ProvingProfile>(json);custom.Set("ring.windowFrameWidth",.8f);custom.EnsureOrbitalLeagueDescriptors();
             Assert.That(custom.Get("ring.windowFrameWidth"),Is.EqualTo(.8f));Assert.That(custom.Validate(),Is.Empty);
         }
         [Test] public void SerializedRingV1UpgradesLightingAndPreservesRingOverrides()
         {
-            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":9","\"version\":1");
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":10","\"version\":1");
             var old=JsonUtility.FromJson<ProvingProfile>(json);
             old.Set("light.fill",.65f);old.Set("light.intensity",8f);
             old.Set("light.shadowStrength",.65f);old.Descriptor("light.shadowStrength").Maximum=.7f;
             old.Set("surface.floorValue",.18f);old.Set("ring.gratingDepth",.08f);
             old.EnsureOrbitalLeagueDescriptors();
-            Assert.That(old.Version,Is.EqualTo(9));
+            Assert.That(old.Version,Is.EqualTo(10));
             Assert.That(old.Get("light.intensity"),Is.EqualTo(16f));
             Assert.That(old.Get("light.shadowStrength"),Is.EqualTo(1f));
             Assert.That(old.Get("surface.floorValue"),Is.EqualTo(.28f));
@@ -241,12 +241,12 @@ namespace StarTournament.ProvingGround.Tests
         }
         [Test] public void SerializedRingV4AddsDepthWithoutOverwritingDesignerLighting()
         {
-            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":9","\"version\":4");
+            var json=JsonUtility.ToJson(ProvingProfile.CreateCombatBowlRingPresentationDefault()).Replace("\"version\":10","\"version\":4");
             var old=JsonUtility.FromJson<ProvingProfile>(json);
             old.Set("light.fill",.45f);old.Set("light.intensity",11f);old.Set("light.studioKey",.4f);
             old.Set("light.range",12f);old.Set("light.spotAngle",100f);
             old.EnsureOrbitalLeagueDescriptors();
-            Assert.That(old.Version,Is.EqualTo(9));
+            Assert.That(old.Version,Is.EqualTo(10));
             Assert.That(old.Get("light.fill"),Is.EqualTo(.25f));
             Assert.That(old.Get("light.intensity"),Is.EqualTo(16f));
             Assert.That(old.Get("light.studioKey"),Is.EqualTo(.6f));

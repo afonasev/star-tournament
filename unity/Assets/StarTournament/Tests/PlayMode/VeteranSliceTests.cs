@@ -27,6 +27,19 @@ namespace StarTournament.ProvingGround.Tests
                 for(int i=0;i<75;i++){motor.Tick(new LocalAction{Move=Vector2.up*direction},1f/60);Physics.SyncTransforms();}
                 Assert.That(direction*motor.State.Position.z,Is.GreaterThan(direction>0?10:-6),"North portal lane "+x+" direction "+direction);
             }
+            // A projectile above the former 2.2 m lintel must now traverse both openings,
+            // while the retained upper lintel still supplies actual physical structure.
+            foreach(int direction in new[]{-1,1})
+            {
+                var lintel=arena.Definition.Solids.Single(s=>s.Id==(direction>0?"hall-north-lintel":"hall-south-lintel"));
+                Assert.That(lintel.Position.y-lintel.Size.y*.5f-4,Is.EqualTo(3.5f).Within(.001f));
+                Assert.That(Physics.Raycast(new Vector3(0,7,6*direction),Vector3.forward*direction,3,mask),Is.False);
+                Assert.That(Physics.Raycast(new Vector3(0,7.75f,6*direction),Vector3.forward*direction,out var lintelHit,3,mask),Is.True);
+                Assert.That(lintelHit.collider.name,Is.EqualTo(lintel.Id));
+                motor.Initialize(movement,new Vector3(0,4,-5*direction));
+                for(int i=0;i<75;i++){motor.Tick(new LocalAction{Move=Vector2.down*direction},1f/60);Physics.SyncTransforms();}
+                Assert.That(-direction*motor.State.Position.z,Is.GreaterThan(10),"South portal traversal");
+            }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
             Assert.That(art.GetComponentsInChildren<ParticleSystem>().Single().main.maxParticles,Is.EqualTo(8));
             Assert.That(art.GetComponentsInChildren<Light>().Single(l=>l.name=="Veteran service light").shadows,Is.EqualTo(LightShadows.None));

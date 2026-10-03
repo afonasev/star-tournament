@@ -330,7 +330,7 @@ namespace StarTournament.ProvingGround
         void Labels()
         {
             // The original hall title is now part of the large, wall-mounted scoreboard.
-            Label("01  /  UPPER ARENA",Position("layout.label-1"),Quaternion.identity,.7f);
+            // F2 portal headers are drawn by VeteranSlice; the old low label had no backing.
             Label("B1\nARMOR\nCORRIDOR",Position("layout.label-2"),Quaternion.Euler(0,90,0),.7f);
             Label("B1\nLOWER\nTRANSIT",Position("layout.label-3"),Quaternion.Euler(0,-90,0),.7f);
             // Spawn numbers use the large plaques below; avoid duplicate lettering behind them.
@@ -342,7 +342,7 @@ namespace StarTournament.ProvingGround
         void BroadcastDetails()
         {
             // All panels sit on continuous walls. They neither punch openings nor own gameplay state.
-            Screen("ORBITAL\nLEAGUE",Position("layout.broadcast-screen-0"),Quaternion.identity,0);
+            Screen("ORBITAL\nLEAGUE",Position("layout.broadcast-screen-0"),Quaternion.Euler(0,-90,0),0);
             Screen("WEST  /  03",Position("layout.broadcast-screen-1"),Quaternion.Euler(0,-90,0),1);
             Screen("NORTH  /  02",Position("layout.broadcast-screen-2"),Quaternion.identity,2);
             Screen("NORTH  /  02",Position("layout.broadcast-screen-3"),Quaternion.identity,3);

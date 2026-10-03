@@ -47,7 +47,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void CombatBowlContainsSixNamedWeaponAnchorsAndCompleteMetadata()
         {
             var d=CombatBowlCatalog.Build();var weapons=d.Pickups.Where(x=>WeaponPickup.IsWeapon(x.Kind)).ToArray();Assert.That(weapons.Length,Is.EqualTo(6));
-            Assert.That(d.Identity,Is.EqualTo("combat-bowl-v1@17"));Assert.That(weapons.Single(x=>x.Id=="shotgun-west").Anchor,Is.EqualTo(new Vector3(-33,0,0)));
+            Assert.That(d.Identity,Is.EqualTo("combat-bowl-v1@18"));Assert.That(weapons.Single(x=>x.Id=="shotgun-west").Anchor,Is.EqualTo(new Vector3(-33,0,0)));
             Assert.That(ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).IsValid,Is.True);
             foreach(var descriptor in ProvingProfile.CreateCombatDefault().Descriptors.Where(x=>x.Path.StartsWith("weaponPickup.")))
             {Assert.That(descriptor.Minimum,Is.LessThan(descriptor.Maximum));Assert.That(descriptor.Step,Is.GreaterThan(0));Assert.That(descriptor.Description,Is.Not.Empty);}
