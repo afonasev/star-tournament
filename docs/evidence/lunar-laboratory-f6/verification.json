@@ -1,0 +1,45 @@
+{
+  "feedback": "F6",
+  "revision": "f0f666bc08d567ac2dfa896e92cb7441da837cfd",
+  "baseline": "9c13743",
+  "scope": "physical geometry: full",
+  "full_gate": {
+    "command": "make check",
+    "exit": 0,
+    "EditMode": 322,
+    "PlayMode": 194,
+    "build": "PASS"
+  },
+  "focused": {
+    "LunarLaboratoryPhysicsTests": 3,
+    "stair_traversals": 36,
+    "labels": 30,
+    "spawn_and_pickup_routes": "all",
+    "lamp_capsules": "all 20 posts",
+    "understairs_collision": "both sides",
+    "window_and_balcony_jumps": "PASS"
+  },
+  "natural_match": {
+    "status": "PASS",
+    "map": "lunar-laboratory-v1@5",
+    "muted": true,
+    "seed": 20261003,
+    "kills": 153,
+    "collections": 136,
+    "humanAcceptance": false
+  },
+  "visible_smoke": {
+    "exit": 0,
+    "png_count": 63,
+    "reviewed": "9 F6 views, full-size W03/centre/stair view, 30 signs via contact sheets, menu and four viewports",
+    "muted": true
+  },
+  "source_binding": "tested-source.json; hashes checked unchanged through build and commit; build embeds no Git revision",
+  "iterations": [
+    "Initial 1 cm under-step infills invalid in registry: omitted because enclosed by ground slab",
+    "Restored S5/S6 optical occlusion using peripheral cover",
+    "Moved upper crates clear of window jump approach",
+    "Repaired newly integrated main compiler call: Session.Match.Roster.AreAllies"
+  ],
+  "human_acceptance": false
+}

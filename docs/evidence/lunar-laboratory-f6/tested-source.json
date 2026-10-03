@@ -1,0 +1,13 @@
+{
+  "base": "9c137431863a2b30f1b30475bf705c0231b60d91",
+  "files": {
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryCatalog.cs": "bfd5917f78052c9578de1bf407644c0b8d3ef5ab46b7d86bde46f7dcf1c72c9e",
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs": "162122ebf47de34897e9b859aa7099abf2d470f0b342bf77c025871d7f26bd15",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "47f82a8b39db8af8ef4c26865582a858435f3877298289a3f6db07c6de87d49e",
+    "unity/Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs": "55cb7f804da368ad1b84a7867badeff94d0f41e9fb7aae46f80f478f4d24973d",
+    "unity/Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs": "793dbd45e552a320781acdc133372f9082baf11cd9c21c1eb899f73f6a1de75e",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "c044dce4bfbb50d3dffb305da088a2be38f351a0a54100f02c8aa5f7e3987a4e",
+    "unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs": "7542abd992b5e920387aec81f2c04a38ba025d19ce6650826c67b34b75ec9a1e",
+    "unity/Assets/StarTournament/Tests/PlayMode/LunarLaboratoryPhysicsTests.cs": "905a609d2bf711ef5ef6aa0092551f6f5689189728a7b28b1dcc02e6d72d69f8"
+  }
+}
