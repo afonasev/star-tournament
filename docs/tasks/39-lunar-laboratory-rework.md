@@ -1,15 +1,9 @@
-# F1 — Лунная лаборатория
+# Лунная лаборатория — F1/F2
 
-Change: add-lunar-laboratory-map; spec planning commit 2851297. Owner 01a101c0-8615-7721-a7bd-bc88b276ac66, branch codex/lunar-laboratory-rework, baseline 1a1f993. User selected Astra/medium.
+Change: add-lunar-laboratory-map. Runtime commit 0c31718; evidence commit 795aa34; canonical spec sync cb07901.
 
-Согласованный scope: отдельный shot obstruction при сохранении optical sight; свободные от табличек двери; физические ящики/проходы внизу; стекло; Земля/фон/крыша/фасад; фонари по ограде и лампы в более тёмной среде. Human acceptance отдельно, внешний deploy запрещён.
+Реализованы optical sight / shot obstruction, свободные от табличек выходы, физические ящики и маршруты, стекло, Земля/фон/крыша/фасад. Последнее уточнение F2: яркое офисное освещение обоих этажей, ещё 12 ящиков внутри и 16 во дворе, четыре линии коммуникаций, ближние камни и крошка.
 
-Реализованы F1 изменения, focused EditMode 32/32 и PlayMode 6/6. Во время первой проверки исправлены восстановление legacy defaults Lab и тесный проход кладовой. После focused добавлена проверка движения по маршруту при ShotBlocked; финальный make check выполняется. Прежний immutable candidate сохранён.
+Проверено: make check exit 0, 314 EditMode + 188 PlayMode, build PASS; focused проходы/лестницы PASS; natural match восьми hard bots — 134 kills / 135 pickups; 23 offscreen и 24 visible PNG. Меню, single/four-view HUD и изменённые помещения/двор просмотрены. Q3 устранён после доступности Mac.
 
-Осталось: full gate, Player screenshots/natural match, визуальная оценка/исправления, commit, integration/spec sync, сохранение exact candidate, cleanup и finalization. До запуска повторно сверять место; пользователь чистит чужие старые сборки отдельно. Здесь чужие файлы/процессы не трогать.
-
-Final automatic evidence: docs/evidence/lunar-laboratory-f1. make check 313+188 PASS; renderer-only follow-up focused physics 1 PASS/build PASS; final Player natural match 146 kills/139 pickups and 21 PNG. Q3 locked Mac blocks visible menu/HUD smoke, verified stage, merge/spec sync and finalization. Worktree remains owned and must be retained.
-
-Checkpoint after first compaction: runtime commit c8e32a38b91dd372d07d8b945bc91f4f9291d2e1; exact retained candidate recorded in ../evidence/lunar-laboratory-f1/candidate.json. All autonomous checks complete; Mac lock freshly confirmed. Next action requires manual unlock, then exact candidate visible smoke and authorized integration/spec sync/cleanup. No owned processes running; preserve worktree and both candidates.
-
-F2 user follow-up: office-bright interior, more crates and exterior dressing. Planning b705cfb; same owned worktree. Added 12 interior/16 yard crates, four physical conduit runs and renderer-only gravel/near-fence rocks; separate office lighting metadata and legacy transforms. Focused traversal now PASS after moving a crate out of northeast approach/inside stair endpoint. Build/render inspection running, full gate pending. Q3 remains manual unlock.
+Точный локальный Player и checksum: ../evidence/lunar-laboratory-f2/candidate.json. Прежние кандидаты сохранены. Внешняя публикация не выполнялась. Human игровая/визуальная приёмка ожидается отдельно. Cleanup и актуальный lifecycle — в shared planning delivery.json.
