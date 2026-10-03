@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
             public NativeMatchConfiguration configuration;
             public NativeMatchSnapshot match;
             public CombatLifeState[] lives;
+            public string[] killNotices;
         }
         Button Button(string name) => ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Start()
@@ -34,6 +35,25 @@ namespace StarTournament.ProvingGround
             directory=index>=0 && index+1<args.Length?args[index+1]:Path.Combine(Application.persistentDataPath,"match-review");Directory.CreateDirectory(directory);
             while(!Application.isFocused)yield return null;
             yield return new WaitForSecondsRealtime(1);
+            if(args.Contains("-killNoticeReview"))
+            {
+                Button("main-action-0").onClick.Invoke();
+                while(ground.SetupBotCount>0)ground.RemoveBot(0);
+                while(ground.LocalSeatCount<4)Button("seats-plus").onClick.Invoke();
+                ground.SetMatchMode(NativeMatchMode.Teams);
+                ground.SetTeam(0,NativeTeam.TeamA);ground.SetTeam(1,NativeTeam.TeamA);
+                ground.SetTeam(2,NativeTeam.TeamB);ground.SetTeam(3,NativeTeam.TeamB);
+                for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
+                ground.StartCombatReview(pads);yield return new WaitForSeconds(.3f);
+                ground.Session.ApplyDamage(2,ground.Session.Life(2).Life,10000,0,ground.Session.Life(0).Life);
+                yield return null;yield return Capture("enemy-kill-red");
+                ground.Session.ApplyDamage(1,ground.Session.Life(1).Life,10000,0,ground.Session.Life(0).Life);
+                yield return null;yield return Capture("ally-kill-red");
+                ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,10000,0,ground.Session.Life(0).Life);
+                yield return null;yield return Capture("self-kill-red");
+                Debug.Log("KILL_NOTICE_REVIEW_COMPLETE "+directory);
+                Application.Quit();yield break;
+            }
             // Setup buttons use actual descriptor-backed constraints. No profile override.
             while(ground.Configuration.DurationMinutes>1)Button("duration-minus").onClick.Invoke();
             Button("target-toggle").onClick.Invoke();
@@ -98,6 +118,7 @@ namespace StarTournament.ProvingGround
             var state=new State { state=label,width=Screen.width,height=Screen.height,running=ground.Running,focused=Application.isFocused,
                 muted=AudioListener.volume==0,combatClock=ground.Session.Time,shots=ground.Session.ShotCount,
                 configuration=ground.Session.Match?.Configuration??ground.Configuration,match=ground.Session.Match?.Read(),lives=new CombatLifeState[4],
+                killNotices=Enumerable.Range(0,4).Select(i=>ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="kill-notice-"+i).text).ToArray(),
                 eventSystems=ground.GetComponentsInChildren<UnityEngine.EventSystems.EventSystem>(true).Length,
                 listeners=ground.GetComponentsInChildren<AudioListener>(true).Length,arenas=ground.GetComponentsInChildren<ProvingArena>(true).Length,
                 corpses=ground.GetComponentsInChildren<Transform>(true).Count(t=>t.name.StartsWith("corpse-")&&t.gameObject.activeSelf) };

@@ -58,11 +58,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.ApplyDamage(3,1,100,1,1).Applied,Is.Zero);session.Tick(actions,.02f);
             Assert.That(session.Time,Is.EqualTo(clock));Assert.That(JsonUtility.ToJson(match.Read()),Is.EqualTo(frozen));
         }
-        IEnumerator Load()
+        IEnumerator Load(bool teams=false)
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
+            if(teams){Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ground.SetMatchMode(NativeMatchMode.Teams);ground.SetTeam(0,NativeTeam.TeamA);ground.SetTeam(1,NativeTeam.TeamA);ground.SetTeam(2,NativeTeam.TeamB);ground.SetTeam(3,NativeTeam.TeamB);}
             ground.StartCombatReview(pads);yield return new WaitForFixedUpdate();
         }
         Button Button(string text) => ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==text);
@@ -76,6 +77,25 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();
                 ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="roster-choice-guest"&&b.gameObject.activeInHierarchy).onClick.Invoke();Button("roster-done").onClick.Invoke();
             }
+        }
+        Text Notice(int seat) => ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="kill-notice-"+seat);
+        [UnityTest] public IEnumerator SelfKillIsRedAndDoesNotNameSelfAsKiller()
+        {
+            yield return Load();var session=ground.Session;
+            session.ApplyDamage(0,session.Life(0).Life,10000,0,session.Life(0).Life);
+            yield return null;yield return null;
+            Assert.That(Notice(0).text,Does.StartWith("Ты убил себя\nВозрождение через "));
+            Assert.That(Notice(0).text,Does.Not.Contain("Вас убил"));
+            Assert.That(Notice(0).color,Is.EqualTo(Color.red));
+        }
+        [UnityTest] public IEnumerator TeamKillIsRedWithoutEnemyScoreOrStreak()
+        {
+            yield return Load(true);var session=ground.Session;
+            session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);
+            yield return null;yield return null;
+            Assert.That(Notice(0).text,Is.EqualTo("Ты убил союзника"));
+            Assert.That(Notice(0).color,Is.EqualTo(Color.red));
+            Assert.That(Notice(1).text,Does.StartWith("Вас убил "));
         }
         [UnityTest] public IEnumerator KillcamViewPauseRepeatAndMenuKeepOneSceneAndFreshLifecycle()
         {

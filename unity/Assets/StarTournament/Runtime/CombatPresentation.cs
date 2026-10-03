@@ -398,7 +398,7 @@ namespace StarTournament.ProvingGround
             string killer="Вы погибли";
             if(life.KillerId!=null)
                 for(int p=0;p<session.ParticipantCount;p++)if(session.Life(p).ParticipantId==life.KillerId)
-                    { killer="Вас убил "+(composition?.Participant(p).Name ?? ("Игрок "+(p+1)));break; }
+                    { killer=p==seat?"Ты убил себя":"Вас убил "+(composition?.Participant(p).Name ?? ("Игрок "+(p+1)));break; }
             return killer+"\nВозрождение через "+Mathf.CeilToInt((float)life.RespawnRemaining);
         }
         public void Render()

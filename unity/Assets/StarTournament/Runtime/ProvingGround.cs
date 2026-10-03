@@ -601,7 +601,7 @@ namespace StarTournament.ProvingGround
             if(snapshot==null)return presentation.DeathMessage(participant);
             var life=Session.Life(participant);
             int killer=life.KillerId==null?-1:ParticipantWithId(life.KillerId);
-            string message=killer<0?"Вы погибли":"Вас убил "+ColoredName(killer)+" · "+
+            string message=killer==participant?"Ты убил себя":killer<0?"Вы погибли":"Вас убил "+ColoredName(killer)+" · "+
                 snapshot.DirectKills(participant,killer)+":"+snapshot.DirectKills(killer,participant);
             return message+"\nВозрождение через "+Mathf.CeilToInt((float)life.RespawnRemaining);
         }
@@ -609,12 +609,12 @@ namespace StarTournament.ProvingGround
         {
             if(Session.Match==null || notice.Life.KillerId==null)return;
             int killer=ParticipantWithId(notice.Life.KillerId);
-            if(killer<0)return;
+            if(killer<0 || killer==notice.Seat)return;
             int view=Composition.SeatOf(killer);
             if(view<0)return;
             var snapshot=Session.Match.Read();
             int chain=snapshot.KillChain(killer);
-            killNoticeText[view]="Убит "+ColoredName(notice.Seat)+" · "+
+            killNoticeText[view]=snapshot.Roster.AreAllies(killer,notice.Seat)?"Ты убил союзника":"Убит "+ColoredName(notice.Seat)+" · "+
                 snapshot.DirectKills(killer,notice.Seat)+":"+snapshot.DirectKills(notice.Seat,killer)+
                 (chain==2?"\nDouble kill!":chain>2?"\n"+chain+" kills!":"");
             killNoticeUntil[view]=Session.Time+(frozenMovement??Profile).Get("ui.killNoticeSeconds");
@@ -975,7 +975,7 @@ namespace StarTournament.ProvingGround
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
                 var notice=TextElement(viewportRoots[i],"kill-notice-"+i,"",(int)Profile.Get("ui.killNoticeFontSize"));
                 Layout(notice.rectTransform,new Vector2(0,Profile.Get("ui.killNoticeBottom")),new Vector2(1,Profile.Get("ui.killNoticeTop")));
-                notice.alignment=TextAnchor.MiddleCenter;notice.supportRichText=true;killNotice[i]=notice;
+                notice.alignment=TextAnchor.MiddleCenter;notice.color=Color.red;notice.supportRichText=true;killNotice[i]=notice;
                 var outline=notice.gameObject.AddComponent<Outline>();outline.effectColor=new Color(0,0,0,.9f);
             }
             for(int i=0;i<standings.Length;i++)
