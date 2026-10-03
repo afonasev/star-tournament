@@ -9,3 +9,5 @@ Focused geometry/traversal PASS: all spawns/pickups connected, both storage port
 First render exposed excessive bright patches upstairs. Reduced office direct/fill intensities before final full gate. Final inspection covers interior walls/floors, crate passages, exterior cargo and conduits. Screenshots are actual offscreen native Player renders, seed 20261003, scripted camera positions. They do not establish visible menu/HUD, physical input, performance or human acceptance.
 
 EditMode 314/314 PASS, natural Player match PASS (134 kills / 135 pickups). PlayMode/full gate continues. Mac is now accessible; exclusive visible smoke queued. Both previous candidates remain intact.
+
+Final: make check exit 0 (314 EditMode, 188 PlayMode, build PASS). Exact tested Player visible exclusive smoke exit 0, 24 screenshots; menu, single/four-view HUD and changed interior/exterior inspected. Q3 can be resolved. Candidate identity/checksum: candidate.json. Human acceptance remains pending.

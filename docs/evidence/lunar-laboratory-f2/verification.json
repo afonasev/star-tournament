@@ -6,7 +6,9 @@
     "PlayMode": 188,
     "failed": 0,
     "skipped": 0,
-    "final_build": "queued, foreign music Player owns exclusive Unity capacity"
+    "final_build": "PASS exit 0",
+    "command": "make check",
+    "exit": 0
   },
   "focused_geometry": "PASS .local/unity-evidence/focused-playmode.xNtMOF/playmode.xml",
   "tested_player_build": "unity/tools.sh build exit 0 before full tests; same final runtime sources",
@@ -30,6 +32,18 @@
     "17-four-views",
     "23-service-pipes"
   ],
-  "visible_smoke": "queued exclusive after Mac became accessible",
-  "human_acceptance": false
+  "visible_smoke": {
+    "exit": 0,
+    "png_count": 24,
+    "reviewed": [
+      "00-map-selection",
+      "05-ground-analysis",
+      "08-lab-a",
+      "17-four-views",
+      "23-service-pipes"
+    ],
+    "exact_tree_sha256": "d2600fbdfd3ffdfb82596e94cc4f1b0afb80178030ddf42a6206d3566a1b5b48"
+  },
+  "human_acceptance": false,
+  "revision": "0c31718eb1bedf359f6cd6c614286230a83bd7eb"
 }
