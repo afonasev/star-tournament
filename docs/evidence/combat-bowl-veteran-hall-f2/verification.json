@@ -1,0 +1,95 @@
+{
+  "source_revision": "89595b8c392de9e66b6f1b230cd382ec4621ed71",
+  "scope": "full",
+  "checks": [
+    {
+      "name": "editmode",
+      "result": "Passed",
+      "total": "324",
+      "passed": "324",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "741.0161911",
+      "start-time": "2026-10-03 19:04:53Z",
+      "end-time": "2026-10-03 19:17:14Z"
+    },
+    {
+      "name": "playmode",
+      "result": "Passed",
+      "total": "199",
+      "passed": "199",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "570.7288475",
+      "start-time": "2026-10-03 19:59:00Z",
+      "end-time": "2026-10-03 20:08:31Z"
+    }
+  ],
+  "commands": [
+    {
+      "command": "make check",
+      "exit_code": 2,
+      "note": "EditMode passed; initial PlayMode 198/199: new NORTH/SOUTH labels violated established colors."
+    },
+    {
+      "command": "unity/tools.sh build",
+      "exit_code": 0,
+      "note": "After fixing colors without changing assertions; exact retained Player."
+    },
+    {
+      "command": "unity/tools.sh test-play",
+      "exit_code": 0,
+      "note": "Full rerun after color fix."
+    }
+  ],
+  "editmode_later_delta": "Only renderer label removal and correct established north/south label colors after EditMode. Gameplay, profiles and EditMode sources unchanged; final full PlayMode and build include both. Compare tested-sources.json and candidate-sources.json.",
+  "build": {
+    "retained_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/combat-bowl-veteran-hall-89595b8/StarTournamentProvingGround.app",
+    "release": "local-macos-player-candidate/89595b8/veteran-hall-f2-20261004",
+    "manifest_sha256": "78069a4eac607e1ce79731b451ca8cbe70a81f6379959cdd88e5d00f93e04359",
+    "files_verified_after_move": 282,
+    "generated_outputs": "build-generated.patch.gz records normal PrepareAuthored scene and URP derived shader-prefilter serialization; generated outputs restored after build."
+  },
+  "smoke": {
+    "arena": "combat-bowl-v1@18",
+    "authoring": "combat-bowl-ring-r7-authoring-v1@12",
+    "presentation": "orbital-league-ring-v1@10",
+    "release": "local-macos-player-candidate/89595b8/veteran-hall-f2-20261004",
+    "player": "native macOS Development Player",
+    "note": "Veteran F2 entire central hall, real Player renders; staged architectural views. Physical/human acceptance pending.",
+    "participants": 8,
+    "seed": 20260923,
+    "muted": true,
+    "repeat": true,
+    "width": 3456,
+    "height": 2160
+  },
+  "performance": {
+    "hardware": "Apple M2 Pro, 32 GiB",
+    "samples": 180,
+    "resolution": [
+      3456,
+      2160
+    ],
+    "median_ms": 9.325957298278809,
+    "p95_ms": 17.45063018798828,
+    "unfocused_frames": 0,
+    "acceptance": "diagnostic only; reference hardware/quality conditions not approved",
+    "not_measured": "localLights and allocatedMemoryBytes are default zero fields in this timing-only capture; not measurements"
+  },
+  "visual_review": {
+    "inspected": [
+      "veteran-01-four-views.png",
+      "veteran-02-player-height.png",
+      "veteran-03-overview.png",
+      "veteran-04-service.png",
+      "veteran-05-cover.png",
+      "veteran-06-repeat.png",
+      "veteran-07-south-player-height.png",
+      "veteran-08-west-broadcast-wall.png"
+    ],
+    "result": "Both tall portals visible, no old suspended label or over-door screen; entire hall wall/column/floor/service composition inspected. Red particles/decals in paused architecture frames are frozen combat effects.",
+    "state": "Architectural cameras paused/staged; no geometry hidden. Live four-view capture precedes staging."
+  },
+  "human_acceptance": "pending"
+}

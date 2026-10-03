@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="17", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="18", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
@@ -122,7 +122,7 @@ namespace StarTournament.ProvingGround
             // F3: R7 lower spawn anchors stay in the open flank; no extra cubbies or low soffits.
             Wall("hall-west-south",-6.2f,-8,-6.2f,1.8f,4,8);Wall("hall-west-north",-6.2f,6.2f,-6.2f,8,4,8);
             Wall("hall-east-south",6.2f,-8,6.2f,-6.2f,4,8);Wall("hall-east-north",6.2f,-1.8f,6.2f,8,4,8);
-            Wall("hall-north-lintel",-2.2f,8.2f,2.2f,8.2f,6.2f,8);Wall("hall-south-lintel",-2.2f,-8.2f,2.2f,-8.2f,6.2f,8);
+            Wall("hall-north-lintel",-2.2f,8.2f,2.2f,8.2f,7.5f,8);Wall("hall-south-lintel",-2.2f,-8.2f,2.2f,-8.2f,7.5f,8);
             foreach(int sx in new[]{-1,1})
             {
                 string side=sx<0?"west":"east",low=loop;

@@ -1,0 +1,14 @@
+{
+    "arena": "combat-bowl-v1@18",
+    "authoring": "combat-bowl-ring-r7-authoring-v1@12",
+    "presentation": "orbital-league-ring-v1@10",
+    "release": "local-macos-player-candidate/89595b8/veteran-hall-f2-20261004",
+    "player": "native macOS Development Player",
+    "note": "Veteran F2 entire central hall, real Player renders; staged architectural views. Physical/human acceptance pending.",
+    "participants": 8,
+    "seed": 20260923,
+    "muted": true,
+    "repeat": true,
+    "width": 3456,
+    "height": 2160
+}
