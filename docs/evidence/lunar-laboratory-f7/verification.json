@@ -1,0 +1,49 @@
+{
+  "source_commit": "436b7cc1d09ce452175d193484bec28904ae39c8",
+  "map": "lunar-laboratory-v1@6",
+  "tests": {
+    "editmode": {
+      "result": "Passed",
+      "total": "325",
+      "passed": "325",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "798.2376895"
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": "199",
+      "passed": "199",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "570.648485"
+    }
+  },
+  "focused_physics": {
+    "passed": 3,
+    "traversals": 36
+  },
+  "full_gate": {
+    "command": "make check",
+    "status": "tests_passed_final_build_pending"
+  },
+  "candidate_build": {
+    "status": "PASS",
+    "log": "checks/vsync-build.log.gz"
+  },
+  "natural_match": {
+    "status": "PASS",
+    "map": "lunar-laboratory-v1@6",
+    "muted": true,
+    "seed": 20261003,
+    "kills": 149,
+    "collections": 136,
+    "humanAcceptance": false
+  },
+  "visual_agent_review": [
+    "visible/f7-west.png",
+    "visible/f7-east.png",
+    "visible/17-four-views.png"
+  ],
+  "human_acceptance": false
+}

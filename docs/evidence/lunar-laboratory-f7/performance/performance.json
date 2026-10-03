@@ -1,0 +1,2548 @@
+{
+    "status": "DIAGNOSTIC_NOT_ACCEPTANCE",
+    "map": "lunar-laboratory-v1@6",
+    "unity": "6000.3.23f1",
+    "device": "Mac14,10",
+    "cpu": "Apple M2 Pro",
+    "gpu": "Apple M2 Pro",
+    "os": "Mac OS X 14.6.1",
+    "pipeline": "ProvingURP",
+    "protocol": "Frozen seed 20261003, 8 hard bots, one camera; identical yaw/pitch/FOV, quality and 1920x1080 for spatial baselines. 3s warmup + 6s samples; reverse repeat. Diagnostic light/shadow/render-scale toggles restored after each sample. Simulation timed separately, no rendering in timed section.",
+    "seed": 20261003,
+    "originalVsync": 1,
+    "originalTargetRate": -1,
+    "cpuThreads": 12,
+    "systemMemoryMB": 32768,
+    "renderScale": 1.0,
+    "frameTimingEnabled": true,
+    "lights": [
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 28.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 14.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": -14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -28.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": -28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -19.0,
+                "y": 7.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 0.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -14.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 19.0,
+                "y": 7.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": -28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 14.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": -14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -14.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "equipment-fill",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "range": 2.0,
+            "intensity": 0.05000000074505806
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 19.0,
+                "y": 7.550000190734863,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 28.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -19.0,
+                "y": 7.550000190734863,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "arena-light",
+            "type": "Directional",
+            "shadows": "Soft",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 0.30000001192092898
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 0.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -28.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        }
+    ],
+    "samples": [
+        {
+            "name": "yard-a",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1702,
+                "p50": 3.503000000000256,
+                "p95": 4.532291000000299,
+                "p99": 4.955625000000907
+            },
+            "cpuMs": {
+                "count": 1702,
+                "p50": 3.502292,
+                "p95": 4.497709,
+                "p99": 4.893917
+            },
+            "gpuMs": {
+                "count": 1702,
+                "p50": 1.9648750312626362,
+                "p95": 3.52920830482617,
+                "p99": 4.2852083570323888
+            },
+            "mainMs": {
+                "count": 1702,
+                "p50": 2.650584,
+                "p95": 3.368624,
+                "p99": 3.696125
+            },
+            "renderMs": {
+                "count": 1702,
+                "p50": 1.700709,
+                "p95": 2.099958,
+                "p99": 2.27325
+            },
+            "presentWaitMs": {
+                "count": 1702,
+                "p50": 0.784916,
+                "p95": 1.744458,
+                "p99": 1.991834
+            },
+            "drawCalls": {
+                "count": 1702,
+                "p50": 914.0,
+                "p95": 914.0,
+                "p99": 914.0
+            },
+            "setPass": {
+                "count": 1702,
+                "p50": 260.0,
+                "p95": 260.0,
+                "p99": 260.0
+            },
+            "triangles": {
+                "count": 1702,
+                "p50": 1462234.0,
+                "p95": 1462234.0,
+                "p99": 1462234.0
+            },
+            "vertices": {
+                "count": 1702,
+                "p50": 1226623.0,
+                "p95": 1226623.0,
+                "p99": 1226623.0
+            }
+        },
+        {
+            "name": "hall-a",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1332,
+                "p50": 2.9468749999992385,
+                "p95": 14.964791000000588,
+                "p99": 24.047249999998856
+            },
+            "cpuMs": {
+                "count": 1332,
+                "p50": 2.976542,
+                "p95": 14.817,
+                "p99": 23.68925
+            },
+            "gpuMs": {
+                "count": 3,
+                "p50": 29.172541690059007,
+                "p95": 30.187874974217267,
+                "p99": 30.187874974217267
+            },
+            "mainMs": {
+                "count": 1332,
+                "p50": 2.007084,
+                "p95": 2.692083,
+                "p99": 3.049833
+            },
+            "renderMs": {
+                "count": 1332,
+                "p50": 1.156875,
+                "p95": 1.533333,
+                "p99": 1.75625
+            },
+            "presentWaitMs": {
+                "count": 1332,
+                "p50": 0.969958,
+                "p95": 12.608791,
+                "p99": 21.557042
+            },
+            "drawCalls": {
+                "count": 1332,
+                "p50": 600.0,
+                "p95": 600.0,
+                "p99": 600.0
+            },
+            "setPass": {
+                "count": 1332,
+                "p50": 163.0,
+                "p95": 163.0,
+                "p99": 163.0
+            },
+            "triangles": {
+                "count": 1332,
+                "p50": 1176076.0,
+                "p95": 1176076.0,
+                "p99": 1176076.0
+            },
+            "vertices": {
+                "count": 1332,
+                "p50": 1027643.0,
+                "p95": 1027643.0,
+                "p99": 1027643.0
+            }
+        },
+        {
+            "name": "upper-a",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 4.5,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1507,
+                "p50": 2.951041000002874,
+                "p95": 11.441208000000814,
+                "p99": 17.177624999998643
+            },
+            "cpuMs": {
+                "count": 1507,
+                "p50": 2.982542,
+                "p95": 11.199,
+                "p99": 17.009084
+            },
+            "gpuMs": {
+                "count": 0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "mainMs": {
+                "count": 1507,
+                "p50": 2.04675,
+                "p95": 2.780957,
+                "p99": 3.131085
+            },
+            "renderMs": {
+                "count": 1507,
+                "p50": 1.161583,
+                "p95": 1.535,
+                "p99": 1.777584
+            },
+            "presentWaitMs": {
+                "count": 1507,
+                "p50": 0.944542,
+                "p95": 8.529209,
+                "p99": 14.435625
+            },
+            "drawCalls": {
+                "count": 1507,
+                "p50": 598.0,
+                "p95": 598.0,
+                "p99": 598.0
+            },
+            "setPass": {
+                "count": 1507,
+                "p50": 163.0,
+                "p95": 163.0,
+                "p99": 163.0
+            },
+            "triangles": {
+                "count": 1507,
+                "p50": 1176052.0,
+                "p95": 1176052.0,
+                "p99": 1176052.0
+            },
+            "vertices": {
+                "count": 1507,
+                "p50": 1027595.0,
+                "p95": 1027595.0,
+                "p99": 1027595.0
+            }
+        },
+        {
+            "name": "hall-b",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1342,
+                "p50": 2.9118329999988648,
+                "p95": 14.773292000000993,
+                "p99": 25.63512500000087
+            },
+            "cpuMs": {
+                "count": 1342,
+                "p50": 2.908542,
+                "p95": 14.299333,
+                "p99": 24.7295
+            },
+            "gpuMs": {
+                "count": 0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "mainMs": {
+                "count": 1342,
+                "p50": 2.080083,
+                "p95": 2.891166,
+                "p99": 3.468667
+            },
+            "renderMs": {
+                "count": 1342,
+                "p50": 1.140542,
+                "p95": 1.535209,
+                "p99": 1.90125
+            },
+            "presentWaitMs": {
+                "count": 1342,
+                "p50": 0.87325,
+                "p95": 11.926166,
+                "p99": 22.29725
+            },
+            "drawCalls": {
+                "count": 1342,
+                "p50": 600.0,
+                "p95": 600.0,
+                "p99": 600.0
+            },
+            "setPass": {
+                "count": 1342,
+                "p50": 163.0,
+                "p95": 163.0,
+                "p99": 163.0
+            },
+            "triangles": {
+                "count": 1342,
+                "p50": 1176076.0,
+                "p95": 1176076.0,
+                "p99": 1176076.0
+            },
+            "vertices": {
+                "count": 1342,
+                "p50": 1027643.0,
+                "p95": 1027643.0,
+                "p99": 1027643.0
+            }
+        },
+        {
+            "name": "yard-b",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1692,
+                "p50": 3.506958000002669,
+                "p95": 4.560250000004373,
+                "p99": 4.955000000002485
+            },
+            "cpuMs": {
+                "count": 1692,
+                "p50": 3.504708,
+                "p95": 4.50375,
+                "p99": 4.899458
+            },
+            "gpuMs": {
+                "count": 1692,
+                "p50": 1.9356249831616879,
+                "p95": 3.601333301048726,
+                "p99": 4.292249970603734
+            },
+            "mainMs": {
+                "count": 1692,
+                "p50": 2.600375,
+                "p95": 3.35375,
+                "p99": 3.608209
+            },
+            "renderMs": {
+                "count": 1692,
+                "p50": 1.678875,
+                "p95": 2.128875,
+                "p99": 2.325833
+            },
+            "presentWaitMs": {
+                "count": 1692,
+                "p50": 0.839584,
+                "p95": 1.79475,
+                "p99": 2.081376
+            },
+            "drawCalls": {
+                "count": 1692,
+                "p50": 914.0,
+                "p95": 914.0,
+                "p99": 914.0
+            },
+            "setPass": {
+                "count": 1692,
+                "p50": 260.0,
+                "p95": 260.0,
+                "p99": 260.0
+            },
+            "triangles": {
+                "count": 1692,
+                "p50": 1462234.0,
+                "p95": 1462234.0,
+                "p99": 1462234.0
+            },
+            "vertices": {
+                "count": 1692,
+                "p50": 1226623.0,
+                "p95": 1226623.0,
+                "p99": 1226623.0
+            }
+        },
+        {
+            "name": "hall-no-shadows",
+            "variant": "no-shadows",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 0,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1414,
+                "p50": 2.683375000003707,
+                "p95": 15.86799999999755,
+                "p99": 24.585209000001386
+            },
+            "cpuMs": {
+                "count": 1414,
+                "p50": 2.6945,
+                "p95": 15.603958,
+                "p99": 23.988042
+            },
+            "gpuMs": {
+                "count": 0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "mainMs": {
+                "count": 1414,
+                "p50": 1.76325,
+                "p95": 2.432957,
+                "p99": 2.80075
+            },
+            "renderMs": {
+                "count": 1414,
+                "p50": 0.892792,
+                "p95": 1.177167,
+                "p99": 1.374292
+            },
+            "presentWaitMs": {
+                "count": 1414,
+                "p50": 0.950583,
+                "p95": 13.585709,
+                "p99": 22.006166
+            },
+            "drawCalls": {
+                "count": 1414,
+                "p50": 276.0,
+                "p95": 276.0,
+                "p99": 552.0
+            },
+            "setPass": {
+                "count": 1414,
+                "p50": 73.0,
+                "p95": 73.0,
+                "p99": 146.0
+            },
+            "triangles": {
+                "count": 1414,
+                "p50": 786599.0,
+                "p95": 786599.0,
+                "p99": 1573198.0
+            },
+            "vertices": {
+                "count": 1414,
+                "p50": 666366.0,
+                "p95": 666366.0,
+                "p99": 1332732.0
+            }
+        },
+        {
+            "name": "yard-no-shadows",
+            "variant": "no-shadows",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 0,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1870,
+                "p50": 3.1742500000007114,
+                "p95": 4.085000000003447,
+                "p99": 4.597958000005065
+            },
+            "cpuMs": {
+                "count": 1870,
+                "p50": 3.195083,
+                "p95": 4.004416,
+                "p99": 4.402709
+            },
+            "gpuMs": {
+                "count": 1870,
+                "p50": 1.669333316385746,
+                "p95": 2.780625014565885,
+                "p99": 3.2709999941289427
+            },
+            "mainMs": {
+                "count": 1870,
+                "p50": 2.360625,
+                "p95": 2.864125,
+                "p99": 3.167499
+            },
+            "renderMs": {
+                "count": 1870,
+                "p50": 1.40225,
+                "p95": 1.779708,
+                "p99": 1.9715
+            },
+            "presentWaitMs": {
+                "count": 1870,
+                "p50": 0.754958,
+                "p95": 1.586375,
+                "p99": 1.938708
+            },
+            "drawCalls": {
+                "count": 1870,
+                "p50": 510.0,
+                "p95": 510.0,
+                "p99": 510.0
+            },
+            "setPass": {
+                "count": 1870,
+                "p50": 138.0,
+                "p95": 138.0,
+                "p99": 138.0
+            },
+            "triangles": {
+                "count": 1870,
+                "p50": 970591.0,
+                "p95": 970591.0,
+                "p99": 970591.0
+            },
+            "vertices": {
+                "count": 1870,
+                "p50": 799020.0,
+                "p95": 799020.0,
+                "p99": 799020.0
+            }
+        },
+        {
+            "name": "hall-no-local-lights",
+            "variant": "no-local-lights",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 1,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1956,
+                "p50": 3.006167000009441,
+                "p95": 3.966417000000888,
+                "p99": 4.473625000002812
+            },
+            "cpuMs": {
+                "count": 1956,
+                "p50": 3.003542,
+                "p95": 3.899708,
+                "p99": 4.397625
+            },
+            "gpuMs": {
+                "count": 1956,
+                "p50": 1.204625004902482,
+                "p95": 2.8808333445340397,
+                "p99": 3.4054166171699764
+            },
+            "mainMs": {
+                "count": 1956,
+                "p50": 2.032001,
+                "p95": 2.67375,
+                "p99": 3.214291
+            },
+            "renderMs": {
+                "count": 1956,
+                "p50": 1.177209,
+                "p95": 1.586541,
+                "p99": 1.830709
+            },
+            "presentWaitMs": {
+                "count": 1956,
+                "p50": 0.949417,
+                "p95": 1.638458,
+                "p99": 1.990958
+            },
+            "drawCalls": {
+                "count": 1956,
+                "p50": 600.0,
+                "p95": 600.0,
+                "p99": 600.0
+            },
+            "setPass": {
+                "count": 1956,
+                "p50": 163.0,
+                "p95": 163.0,
+                "p99": 163.0
+            },
+            "triangles": {
+                "count": 1956,
+                "p50": 1176076.0,
+                "p95": 1176076.0,
+                "p99": 1176076.0
+            },
+            "vertices": {
+                "count": 1956,
+                "p50": 1027643.0,
+                "p95": 1027643.0,
+                "p99": 1027643.0
+            }
+        },
+        {
+            "name": "yard-no-local-lights",
+            "variant": "no-local-lights",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 1,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1681,
+                "p50": 3.490166999995381,
+                "p95": 4.485041999998884,
+                "p99": 4.744916999996462
+            },
+            "cpuMs": {
+                "count": 1681,
+                "p50": 3.497375,
+                "p95": 4.406958,
+                "p99": 4.716417
+            },
+            "gpuMs": {
+                "count": 1681,
+                "p50": 1.2838750262744725,
+                "p95": 3.1422499450854959,
+                "p99": 3.640000009909272
+            },
+            "mainMs": {
+                "count": 1681,
+                "p50": 2.523751,
+                "p95": 3.183042,
+                "p99": 3.563417
+            },
+            "renderMs": {
+                "count": 1681,
+                "p50": 1.672375,
+                "p95": 2.163375,
+                "p99": 2.414375
+            },
+            "presentWaitMs": {
+                "count": 1681,
+                "p50": 0.943208,
+                "p95": 1.620292,
+                "p99": 1.950375
+            },
+            "drawCalls": {
+                "count": 1681,
+                "p50": 914.0,
+                "p95": 914.0,
+                "p99": 914.0
+            },
+            "setPass": {
+                "count": 1681,
+                "p50": 260.0,
+                "p95": 260.0,
+                "p99": 260.0
+            },
+            "triangles": {
+                "count": 1681,
+                "p50": 1462234.0,
+                "p95": 1462234.0,
+                "p99": 1462234.0
+            },
+            "vertices": {
+                "count": 1681,
+                "p50": 1226623.0,
+                "p95": 1226623.0,
+                "p99": 1226623.0
+            }
+        },
+        {
+            "name": "hall-no-upper-lights",
+            "variant": "no-upper-lights",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 54,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1948,
+                "p50": 3.047750000007454,
+                "p95": 4.439083999997706,
+                "p99": 5.035583000008614
+            },
+            "cpuMs": {
+                "count": 1948,
+                "p50": 3.0825,
+                "p95": 4.397208,
+                "p99": 4.940083
+            },
+            "gpuMs": {
+                "count": 1948,
+                "p50": 4.3706250144168738,
+                "p95": 5.590874992776662,
+                "p99": 6.4359999960288409
+            },
+            "mainMs": {
+                "count": 1948,
+                "p50": 2.114708,
+                "p95": 2.589959,
+                "p99": 2.956917
+            },
+            "renderMs": {
+                "count": 1948,
+                "p50": 1.153958,
+                "p95": 1.4665,
+                "p99": 1.682708
+            },
+            "presentWaitMs": {
+                "count": 1948,
+                "p50": 0.840333,
+                "p95": 2.181083,
+                "p99": 2.661041
+            },
+            "drawCalls": {
+                "count": 1948,
+                "p50": 600.0,
+                "p95": 600.0,
+                "p99": 1200.0
+            },
+            "setPass": {
+                "count": 1948,
+                "p50": 163.0,
+                "p95": 163.0,
+                "p99": 326.0
+            },
+            "triangles": {
+                "count": 1948,
+                "p50": 1176076.0,
+                "p95": 1176076.0,
+                "p99": 2352152.0
+            },
+            "vertices": {
+                "count": 1948,
+                "p50": 1027643.0,
+                "p95": 1027643.0,
+                "p99": 2055286.0
+            }
+        },
+        {
+            "name": "yard-no-upper-lights",
+            "variant": "no-upper-lights",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 54,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1654,
+                "p50": 3.484708999991426,
+                "p95": 4.799708000007286,
+                "p99": 7.012957999990022
+            },
+            "cpuMs": {
+                "count": 1654,
+                "p50": 3.49475,
+                "p95": 4.792584,
+                "p99": 6.821083
+            },
+            "gpuMs": {
+                "count": 1654,
+                "p50": 1.6023750067688525,
+                "p95": 3.612999978940934,
+                "p99": 4.047124995850027
+            },
+            "mainMs": {
+                "count": 1654,
+                "p50": 2.660125,
+                "p95": 3.835375,
+                "p99": 6.664501
+            },
+            "renderMs": {
+                "count": 1654,
+                "p50": 1.689208,
+                "p95": 2.309375,
+                "p99": 2.660333
+            },
+            "presentWaitMs": {
+                "count": 1654,
+                "p50": 0.764958,
+                "p95": 1.596542,
+                "p99": 1.926458
+            },
+            "drawCalls": {
+                "count": 1654,
+                "p50": 914.0,
+                "p95": 914.0,
+                "p99": 1828.0
+            },
+            "setPass": {
+                "count": 1654,
+                "p50": 260.0,
+                "p95": 260.0,
+                "p99": 520.0
+            },
+            "triangles": {
+                "count": 1654,
+                "p50": 1462234.0,
+                "p95": 1462234.0,
+                "p99": 2924468.0
+            },
+            "vertices": {
+                "count": 1654,
+                "p50": 1226623.0,
+                "p95": 1226623.0,
+                "p99": 2453246.0
+            }
+        },
+        {
+            "name": "hall-half-render-scale",
+            "variant": "half-render-scale",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 0.5,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1977,
+                "p50": 3.015249999990033,
+                "p95": 3.9855419999952348,
+                "p99": 4.40549999999007
+            },
+            "cpuMs": {
+                "count": 1977,
+                "p50": 3.002625,
+                "p95": 3.911791,
+                "p99": 4.223375
+            },
+            "gpuMs": {
+                "count": 1977,
+                "p50": 2.082000020891428,
+                "p95": 3.533291630446911,
+                "p99": 4.158916708547622
+            },
+            "mainMs": {
+                "count": 1977,
+                "p50": 2.146291,
+                "p95": 2.754458,
+                "p99": 3.038418
+            },
+            "renderMs": {
+                "count": 1977,
+                "p50": 1.166833,
+                "p95": 1.506292,
+                "p99": 1.678042
+            },
+            "presentWaitMs": {
+                "count": 1977,
+                "p50": 0.829375,
+                "p95": 1.633668,
+                "p99": 1.915668
+            },
+            "drawCalls": {
+                "count": 1977,
+                "p50": 600.0,
+                "p95": 600.0,
+                "p99": 600.0
+            },
+            "setPass": {
+                "count": 1977,
+                "p50": 163.0,
+                "p95": 163.0,
+                "p99": 163.0
+            },
+            "triangles": {
+                "count": 1977,
+                "p50": 1176076.0,
+                "p95": 1176076.0,
+                "p99": 1176076.0
+            },
+            "vertices": {
+                "count": 1977,
+                "p50": 1027643.0,
+                "p95": 1027643.0,
+                "p99": 1027643.0
+            }
+        },
+        {
+            "name": "yard-half-render-scale",
+            "variant": "half-render-scale",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 0.5,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1684,
+                "p50": 3.510667000000467,
+                "p95": 4.405542000000651,
+                "p99": 4.858458000001065
+            },
+            "cpuMs": {
+                "count": 1684,
+                "p50": 3.498667,
+                "p95": 4.406417,
+                "p99": 4.810917
+            },
+            "gpuMs": {
+                "count": 1684,
+                "p50": 1.3403749908320606,
+                "p95": 2.878250030335039,
+                "p99": 3.5532499896362426
+            },
+            "mainMs": {
+                "count": 1684,
+                "p50": 2.66125,
+                "p95": 3.416583,
+                "p99": 3.846126
+            },
+            "renderMs": {
+                "count": 1684,
+                "p50": 1.6895,
+                "p95": 2.195334,
+                "p99": 2.408666
+            },
+            "presentWaitMs": {
+                "count": 1684,
+                "p50": 0.802916,
+                "p95": 1.312166,
+                "p99": 1.680126
+            },
+            "drawCalls": {
+                "count": 1684,
+                "p50": 914.0,
+                "p95": 914.0,
+                "p99": 914.0
+            },
+            "setPass": {
+                "count": 1684,
+                "p50": 260.0,
+                "p95": 260.0,
+                "p99": 260.0
+            },
+            "triangles": {
+                "count": 1684,
+                "p50": 1462234.0,
+                "p95": 1462234.0,
+                "p99": 1462234.0
+            },
+            "vertices": {
+                "count": 1684,
+                "p50": 1226623.0,
+                "p95": 1226623.0,
+                "p99": 1226623.0
+            }
+        },
+        {
+            "name": "hall-final",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1197,
+                "p50": 5.093541000007917,
+                "p95": 6.564709000002722,
+                "p99": 6.976791999989018
+            },
+            "cpuMs": {
+                "count": 1197,
+                "p50": 5.117959,
+                "p95": 6.47125,
+                "p99": 6.950417
+            },
+            "gpuMs": {
+                "count": 1197,
+                "p50": 12.000208371318877,
+                "p95": 12.890374986454845,
+                "p99": 13.548249960877002
+            },
+            "mainMs": {
+                "count": 1197,
+                "p50": 2.041792,
+                "p95": 2.477709,
+                "p99": 2.834583
+            },
+            "renderMs": {
+                "count": 1197,
+                "p50": 1.048209,
+                "p95": 1.24075,
+                "p99": 1.361583
+            },
+            "presentWaitMs": {
+                "count": 1197,
+                "p50": 2.958583,
+                "p95": 4.429708,
+                "p99": 4.761333
+            },
+            "drawCalls": {
+                "count": 1197,
+                "p50": 600.0,
+                "p95": 1200.0,
+                "p99": 1200.0
+            },
+            "setPass": {
+                "count": 1197,
+                "p50": 163.0,
+                "p95": 326.0,
+                "p99": 326.0
+            },
+            "triangles": {
+                "count": 1197,
+                "p50": 1176076.0,
+                "p95": 2352152.0,
+                "p99": 2352152.0
+            },
+            "vertices": {
+                "count": 1197,
+                "p50": 1027643.0,
+                "p95": 2055286.0,
+                "p99": 2055286.0
+            }
+        },
+        {
+            "name": "yard-final",
+            "variant": "baseline",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -25.0
+            },
+            "yaw": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 1920,
+            "height": 1080,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "frameMs": {
+                "count": 1679,
+                "p50": 3.5339169999986099,
+                "p95": 4.549582999999302,
+                "p99": 5.094542000023239
+            },
+            "cpuMs": {
+                "count": 1679,
+                "p50": 3.522917,
+                "p95": 4.493583,
+                "p99": 5.097333
+            },
+            "gpuMs": {
+                "count": 1679,
+                "p50": 1.947999990079552,
+                "p95": 3.572583314962685,
+                "p99": 4.091249953489751
+            },
+            "mainMs": {
+                "count": 1679,
+                "p50": 2.634209,
+                "p95": 3.319584,
+                "p99": 3.767916
+            },
+            "renderMs": {
+                "count": 1679,
+                "p50": 1.699041,
+                "p95": 2.126333,
+                "p99": 2.326375
+            },
+            "presentWaitMs": {
+                "count": 1679,
+                "p50": 0.833458,
+                "p95": 1.787875,
+                "p99": 2.128333
+            },
+            "drawCalls": {
+                "count": 1679,
+                "p50": 914.0,
+                "p95": 914.0,
+                "p99": 914.0
+            },
+            "setPass": {
+                "count": 1679,
+                "p50": 260.0,
+                "p95": 260.0,
+                "p99": 260.0
+            },
+            "triangles": {
+                "count": 1679,
+                "p50": 1462234.0,
+                "p95": 1462234.0,
+                "p99": 1462234.0
+            },
+            "vertices": {
+                "count": 1679,
+                "p50": 1226623.0,
+                "p95": 1226623.0,
+                "p99": 1226623.0
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "s-armored-window-0",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "s-armored-window-1",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-0",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 4.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-1",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-2",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 4.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "divider-glass",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 16.0,
+                "y": 1.5,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "Acoustic ceiling / perforated panels",
+            "vertices": 40,
+            "triangles": 20,
+            "bounds": {
+                "x": 64.0,
+                "y": 9.000000953674317,
+                "z": 64.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "Grey lunar regolith",
+            "vertices": 21449,
+            "triangles": 11383,
+            "bounds": {
+                "x": 260.0,
+                "y": 28.196733474731447,
+                "z": 260.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "Graphite floor",
+            "vertices": 5448,
+            "triangles": 2706,
+            "bounds": {
+                "x": 60.540000915527347,
+                "y": 10.305000305175782,
+                "z": 56.47999954223633
+            },
+            "shadows": true
+        },
+        {
+            "name": "Ivory ceramic panels",
+            "vertices": 15075,
+            "triangles": 12188,
+            "bounds": {
+                "x": 60.900001525878909,
+                "y": 13.680864334106446,
+                "z": 50.37399673461914
+            },
+            "shadows": true
+        },
+        {
+            "name": "Brushed structural alloy",
+            "vertices": 25344,
+            "triangles": 13428,
+            "bounds": {
+                "x": 64.30000305175781,
+                "y": 13.310769081115723,
+                "z": 64.30000305175781
+            },
+            "shadows": true
+        },
+        {
+            "name": "N analysis blue grey",
+            "vertices": 7986,
+            "triangles": 8784,
+            "bounds": {
+                "x": 51.29999923706055,
+                "y": 8.479999542236329,
+                "z": 37.218997955322269
+            },
+            "shadows": true
+        },
+        {
+            "name": "Matte ochre",
+            "vertices": 86400,
+            "triangles": 77112,
+            "bounds": {
+                "x": 60.584999084472659,
+                "y": 9.51498794555664,
+                "z": 48.81999969482422
+            },
+            "shadows": true
+        },
+        {
+            "name": "Grating alloy without aliasing shadows",
+            "vertices": 23088,
+            "triangles": 11544,
+            "bounds": {
+                "x": 48.0,
+                "y": 0.10000038146972656,
+                "z": 30.0
+            },
+            "shadows": false
+        },
+        {
+            "name": "Neutral light diffuser",
+            "vertices": 282392,
+            "triangles": 397704,
+            "bounds": {
+                "x": 290.8785705566406,
+                "y": 147.01971435546876,
+                "z": 292.38592529296877
+            },
+            "shadows": false
+        },
+        {
+            "name": "Dust-grey paving",
+            "vertices": 2544,
+            "triangles": 1272,
+            "bounds": {
+                "x": 59.849998474121097,
+                "y": 0.017999999225139619,
+                "z": 59.849998474121097
+            },
+            "shadows": true
+        },
+        {
+            "name": "Blue photovoltaic cells",
+            "vertices": 720,
+            "triangles": 360,
+            "bounds": {
+                "x": 11.930000305175782,
+                "y": 0.8412456512451172,
+                "z": 2.5105485916137697
+            },
+            "shadows": true
+        },
+        {
+            "name": "W communications sage",
+            "vertices": 9224,
+            "triangles": 8356,
+            "bounds": {
+                "x": 0.6399993896484375,
+                "y": 7.334903717041016,
+                "z": 5.894904136657715
+            },
+            "shadows": true
+        },
+        {
+            "name": "E power grey lavender",
+            "vertices": 216,
+            "triangles": 108,
+            "bounds": {
+                "x": 0.46249961853027346,
+                "y": 6.950000286102295,
+                "z": 5.000000476837158
+            },
+            "shadows": true
+        },
+        {
+            "name": "Black lunar sky and stars",
+            "vertices": 515,
+            "triangles": 768,
+            "bounds": {
+                "x": 300.0,
+                "y": 300.0,
+                "z": 300.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "NASA Blue Marble / clouds and atmosphere",
+            "vertices": 515,
+            "triangles": 768,
+            "bounds": {
+                "x": 16.0,
+                "y": 16.0,
+                "z": 16.0
+            },
+            "shadows": true
+        }
+    ],
+    "botMs": {
+        "count": 600,
+        "p50": 0.2318,
+        "p95": 5.1398,
+        "p99": 15.894200000000002
+    },
+    "tickMs": {
+        "count": 600,
+        "p50": 0.2146,
+        "p95": 0.49250000000000007,
+        "p99": 4.1539
+    },
+    "frozenState": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":-4.0,\"y\":0.009999999776482582,\"z\":18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"39365163aacf11f4df049cbb39f171e3614e2039dd2d1af79aa659601f90189f\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}"
+}

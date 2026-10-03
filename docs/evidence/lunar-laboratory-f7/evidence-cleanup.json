@@ -1,0 +1,209 @@
+{
+  "owner": "01a10323-bed0-7fb3-85c5-294ea0d0bbce",
+  "removed": [
+    {
+      "path": "performance/hall-no-local-lights.png",
+      "bytes": 1574032,
+      "sha256": "8145a594e10c075f82870ffc3d4adb8322ed0b0c1c833586c36e0921da54d231",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/yard-half-render-scale.png",
+      "bytes": 1187676,
+      "sha256": "d131c6f6ba515e6390716ed0a61b26a6fd277b78874990d3cf795e53d11fce30",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/yard-b.png",
+      "bytes": 1444701,
+      "sha256": "526e29865b2fcbaba02d13e355aa248807024672ad66f587f477a8fa64491c54",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/yard-final.png",
+      "bytes": 1444580,
+      "sha256": "67a8710f113ac92e7424ca94e01bf73a72ead3abd92255cbb2a56bcf33d52ad7",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/yard-no-shadows.png",
+      "bytes": 1435336,
+      "sha256": "55826d2fe59f98ff778cc15a0426da3173b5d57fc14e32e4594eb0ecf8c55889",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/hall-no-shadows.png",
+      "bytes": 2277875,
+      "sha256": "18494661d79b7a7f6a174c2956c12744c3a7926415b354ebae576f57d33a85bf",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/hall-no-upper-lights.png",
+      "bytes": 2185801,
+      "sha256": "bfdc9af85a924a71a4acc686c005aa499b972fddfb1592cdff3c6382a8de7429",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/hall-final.png",
+      "bytes": 2240392,
+      "sha256": "d13acc5449679e7853da92c9c62f55b33803297367b467c69818297877d418c2",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/hall-b.png",
+      "bytes": 2240535,
+      "sha256": "399fab6f33f09a3861c16ca940bd156db887fa746c4e9989a7949a485a9a9ca5",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/yard-no-local-lights.png",
+      "bytes": 1388727,
+      "sha256": "2d4b97375b62679135f4eba9be8c146bb769418d07a740e2843a0d040cb751b6",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/yard-no-upper-lights.png",
+      "bytes": 1415075,
+      "sha256": "7c21a8f3c7d519c2b7ffc3d9881fd9505d844f333a023bb581f0b5127dc27b3f",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/upper-a.png",
+      "bytes": 2255236,
+      "sha256": "fc1a912fa66de5f5ac98a537c8a41b61d0ca095eeb69fddfc990ea830fd795c0",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance/hall-half-render-scale.png",
+      "bytes": 1719494,
+      "sha256": "77a8c1697b2537bcd586489f76c71efb5ebf04925a53e5b0e92ac32e97c91441",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/hall-no-local-lights.png",
+      "bytes": 1573738,
+      "sha256": "e0deb6449011ace6f6c77c0d6404cddd6c3270ec37b2a8c675ad8002922cf588",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/yard-half-render-scale.png",
+      "bytes": 1187405,
+      "sha256": "bbb629a8f17c5b351b10b875581db93e3f9d347f96a03deb031147afc97d3e5a",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/yard-b.png",
+      "bytes": 1444526,
+      "sha256": "2782ee0fe437cdc88b92e035792c75b87177b8ace89f88c6083856b8e027c250",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/yard-final.png",
+      "bytes": 1444526,
+      "sha256": "2782ee0fe437cdc88b92e035792c75b87177b8ace89f88c6083856b8e027c250",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/yard-no-shadows.png",
+      "bytes": 1435140,
+      "sha256": "b939759c9630f92a56f1b6199e29422080b3fe1839cd1e47501c00afd7d3dbb6",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/hall-no-shadows.png",
+      "bytes": 2277866,
+      "sha256": "2dd48d68d47c134defe9a12459d2c270c901826d33bc98bd1fa91b6c4c4c65e7",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/hall-no-upper-lights.png",
+      "bytes": 2185791,
+      "sha256": "68a25c783ca3aeaa8b116d5c7c3d1f099886030d21a01c099aa9b7bf3c8dc7f2",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/hall-final.png",
+      "bytes": 2240508,
+      "sha256": "1760415ae97aec76c2eb66ff9a19f401cccfb7434eb286fa410c5f27393a4313",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/hall-b.png",
+      "bytes": 2240508,
+      "sha256": "1760415ae97aec76c2eb66ff9a19f401cccfb7434eb286fa410c5f27393a4313",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/yard-no-local-lights.png",
+      "bytes": 1388687,
+      "sha256": "4eb97f59748cf0eafbee9e926d1c8744ff144493d0a0e071c515bf565da7ec44",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/yard-no-upper-lights.png",
+      "bytes": 1414968,
+      "sha256": "aff1f5f3ead8de11de01be840ea35948f0c4d8accb15d4a165ca1994377855eb",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/upper-a.png",
+      "bytes": 2254833,
+      "sha256": "3267e26e05492d8640929a0376242387b32e35b7a705609e02d68725151a5bd3",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-vsync/hall-half-render-scale.png",
+      "bytes": 1719561,
+      "sha256": "2bc612a391cf56f79568dcbf1db790a9e9d65c1c790888a807b32727444a2f9f",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/yard-half-render-scale.png",
+      "bytes": 3981643,
+      "sha256": "1e10fc0e96c1d38dcc15e0056826bcd0759cbbbcf7eb36f0c7d0acffadd38ea1",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/yard-b.png",
+      "bytes": 4760691,
+      "sha256": "192565326908548cc7523fd47fe4ae0236e13427a6a386aa39ed3bcb585c98ea",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/yard-final.png",
+      "bytes": 4760691,
+      "sha256": "192565326908548cc7523fd47fe4ae0236e13427a6a386aa39ed3bcb585c98ea",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/yard-no-shadows.png",
+      "bytes": 4741336,
+      "sha256": "0f4b1aa29d5d6357fd9e98aedad92be6ce9c8c96992ff92ffe708a297e72c576",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/hall-final.png",
+      "bytes": 7173408,
+      "sha256": "f4b735d1a23554431c28a812cdfe572baaeb9c6c69afedf75a8eb32714d24eca",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/hall-b.png",
+      "bytes": 7173148,
+      "sha256": "7d6a0f13960bfcfb2f7f0f5477285f50398145a772b7866f46a47e57df45d345",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/yard-no-local-lights.png",
+      "bytes": 4578329,
+      "sha256": "2cab5d0c3caf5edc00b7cd6dfa3fdd03b641018fea474569680005812314d41b",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    },
+    {
+      "path": "performance-saved-display/yard-no-upper-lights.png",
+      "bytes": 4656311,
+      "sha256": "dfdc77bec016d909afdc7b51cf70004114b261af9c4575184fde8779518d1d66",
+      "reason": "Redundant per-sample diagnostic screenshot; baseline and causal hall comparisons retained; all CSV/JSON preserved."
+    }
+  ]
+}

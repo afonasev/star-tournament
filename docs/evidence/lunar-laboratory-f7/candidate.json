@@ -1,0 +1,14 @@
+{
+  "source_commit": "436b7cc1d09ce452175d193484bec28904ae39c8",
+  "baseline": "06877122409c9535cfdf0eae43ffe6f6420862bb",
+  "map": "lunar-laboratory-v1@6",
+  "tested_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/436b7cc/20261003T200043Z/StarTournamentProvingGround.app",
+  "retained_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/436b7cc/20261003T200043Z/StarTournamentProvingGround.app",
+  "tree_sha256": "820563539c1e87d58bb5f1f2cf0b74d37efff5582060d3836acb8b05d768b5f0",
+  "hash_method": "sorted relative filename + NUL + SHA256(file bytes) digest",
+  "build_utc": "20261003T200043Z",
+  "human_acceptance": false,
+  "build_source_path": "/Users/eaafonasev/Projects/star-tournament-lunar-f7/unity/Builds/StarTournamentProvingGround.app",
+  "tested_path_at_measurement": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f7-pending/20261003T200043Z/StarTournamentProvingGround.app",
+  "retained_checksum_verified": true
+}

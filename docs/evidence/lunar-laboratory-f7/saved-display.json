@@ -1,0 +1,10 @@
+{
+  "source": "~/Library/Preferences/com.Afonasev.Star-Tournament-Unity-Proving-Ground.plist",
+  "observed_graphics_preferences": {
+    "Width": 3456,
+    "Height": 2160,
+    "Fullscreen": 1,
+    "Shadows": 1
+  },
+  "note": "Read-only preference inspection; user has not yet confirmed these are the reported scenario. Benchmark records effective resolution separately."
+}

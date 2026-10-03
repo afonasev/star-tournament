@@ -1,0 +1,15 @@
+{
+  "checked_before_full_build": true,
+  "candidate_source_deviations": [],
+  "generated_patch": "build-generated-v2.patch.gz",
+  "generated_files": [
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity",
+    "unity/Assets/StarTournament/Settings/ProvingURP.asset",
+    "unity/Assets/StarTournament/Trooper/TrooperArms.prefab",
+    "unity/Assets/StarTournament/Trooper/TrooperBody.prefab",
+    "unity/Assets/UniversalRenderPipelineGlobalSettings.asset",
+    "unity/ProjectSettings/ProjectSettings.asset",
+    "unity/ProjectSettings/ShaderGraphSettings.asset"
+  ],
+  "explanation": "Unity Prepare serializes current catalog defaults/scene references and shader prefilter caches, plus whitespace. Excluded from authored source commit; exact generated patch retained."
+}
