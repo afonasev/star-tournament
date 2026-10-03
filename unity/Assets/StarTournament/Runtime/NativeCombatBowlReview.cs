@@ -246,7 +246,7 @@ namespace StarTournament.ProvingGround
             foreach(var c in cameras)c.enabled=false;foreach(var c in canvases)c.enabled=false;
             var go=new GameObject("Veteran review camera");var camera=go.AddComponent<Camera>();camera.fieldOfView=72;camera.nearClipPlane=.05f;
             camera.transform.position=new Vector3(0,5.65f,2.5f);camera.transform.LookAt(new Vector3(0,5.9f,7.7f));yield return Capture("veteran-02-player-height");
-            camera.transform.position=new Vector3(-2.5f,6.7f,3);camera.transform.LookAt(new Vector3(1,5.8f,7.2f));yield return Capture("veteran-03-overview");
+            camera.transform.position=new Vector3(-1,6.7f,2);camera.transform.LookAt(new Vector3(1,5.8f,7.2f));yield return Capture("veteran-03-overview");
             camera.transform.position=new Vector3(-2.6f,5.6f,5.4f);camera.transform.LookAt(new Vector3(-4.4f,5.75f,7.8f));yield return Capture("veteran-04-service");
             camera.transform.position=new Vector3(1.3f,5.5f,4.4f);camera.transform.LookAt(new Vector3(4.5f,4.9f,6.8f));yield return Capture("veteran-05-cover");
             Time.timeScale=prior;Destroy(go);foreach(var c in cameras)c.enabled=true;foreach(var c in canvases)c.enabled=true;
