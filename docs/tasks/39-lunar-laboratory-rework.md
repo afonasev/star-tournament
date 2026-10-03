@@ -10,4 +10,4 @@ Change: add-lunar-laboratory-map. Runtime commit 0c31718; evidence commit 795aa3
 
 F4 in progress: remove exactly cargo-north-spine and cargo-north-low from pictured north lower room. Own worktree star-tournament-open-centre / codex/lunar-open-centre. Geometry focused PASS; build then exact visible/natural Player and full make check pending. Previous candidates retained.
 
-F5: surface-mounted centred signage; renderer-only. All 30 labels pass actual glyph-centre and 3x3 physical backing probes. UI gate/build/exact visible Player pending.
+F5: surface-mounted centred signage; renderer-only. All 30 labels pass actual glyph-centre and 3x3 physical backing probes. UI gate (14), focused sign test (30 labels / 270 probes), final build and exact visible Player (54 PNG) PASS. Renderer-only; human acceptance pending.

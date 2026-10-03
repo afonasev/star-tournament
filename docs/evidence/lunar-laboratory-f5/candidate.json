@@ -1,0 +1,12 @@
+{
+  "identity": "local-macos-player-candidate/b23d9da3e747a13edcc3dad5c2f0aea7b776d74f/20261003T154221Z",
+  "revision": "b23d9da3e747a13edcc3dad5c2f0aea7b776d74f",
+  "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/b23d9da3e747/20261003T154221Z/StarTournamentProvingGround.app",
+  "tree_sha256": "00bbf72db607916386bdef0bbe4beef56b1a1701cfd6fc389a80284c403d517c",
+  "manifest": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/b23d9da3e747/20261003T154221Z/manifest.json",
+  "kind": "local macOS Development candidate",
+  "external_publication": false,
+  "human_acceptance": false,
+  "visible_ui_smoke": "PASS 54 screenshots; exact source app",
+  "evidence": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f5"
+}

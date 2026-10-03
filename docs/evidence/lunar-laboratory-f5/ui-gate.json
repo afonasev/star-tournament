@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "b87d565402a4d8baa2ec1694623b2a1daf496501",
+  "dirty": " M docs/GAME_SPEC.md\n M docs/tasks/39-lunar-laboratory-rework.md\n M unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs\n M unity/Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs\n M unity/Assets/StarTournament/Tests/PlayMode/LunarLaboratoryPhysicsTests.cs\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-sign-centering/unity/../.local/unity-evidence/focused-editmode.qjWCrx/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-sign-centering/unity/../.local/unity-evidence/focused-playmode.ekEACV/playmode.xml",
+      "passed": 11
+    }
+  ]
+}
