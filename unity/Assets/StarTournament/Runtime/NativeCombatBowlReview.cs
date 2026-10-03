@@ -237,7 +237,11 @@ namespace StarTournament.ProvingGround
             ground.PlaceCombatReviewSeat(1,new Vector3(0,4,10),0,180);
             ground.PlaceCombatReviewSeat(2,new Vector3(-3.5f,4,5),0,0);
             ground.PlaceCombatReviewSeat(3,new Vector3(2,4,5),0,40);
+            yield return new WaitForSecondsRealtime(12);
             yield return Capture("veteran-01-four-views");
+            var samples=new System.Collections.Generic.List<float>();int unfocused=0;
+            for(int frame=0;frame<180;frame++){yield return null;samples.Add(Time.unscaledDeltaTime*1000);if(!Application.isFocused)unfocused++;}
+            samples.Sort();File.WriteAllText(Path.Combine(directory,"veteran-performance.json"),JsonUtility.ToJson(new Performance{samples=samples.Count,unfocusedFrames=unfocused,medianMs=samples[samples.Count/2],p95Ms=samples[(int)(samples.Count*.95f)],width=Screen.width,height=Screen.height,note="Warmed four-camera current-Mac diagnostic; not reference hardware acceptance."},true));
             float prior=Time.timeScale;Time.timeScale=0;
             // Keep the architectural sample visible; the earlier four-view capture is live staging.
             for(int seat=0;seat<ground.Session.ParticipantCount;seat++)ground.PlaceCombatReviewSeat(seat,new Vector3(-32,4,16+seat),0,0);
@@ -245,15 +249,17 @@ namespace StarTournament.ProvingGround
             var cameras=ground.GetComponentsInChildren<Camera>();var canvases=ground.GetComponentsInChildren<Canvas>();
             foreach(var c in cameras)c.enabled=false;foreach(var c in canvases)c.enabled=false;
             var go=new GameObject("Veteran review camera");var camera=go.AddComponent<Camera>();camera.fieldOfView=72;camera.nearClipPlane=.05f;
-            camera.transform.position=new Vector3(0,5.65f,2.5f);camera.transform.LookAt(new Vector3(0,5.9f,7.7f));yield return Capture("veteran-02-player-height");
-            camera.transform.position=new Vector3(-1,6.7f,2);camera.transform.LookAt(new Vector3(1,5.8f,7.2f));yield return Capture("veteran-03-overview");
+            camera.transform.position=new Vector3(0,5.65f,1);camera.transform.LookAt(new Vector3(0,5.9f,8));yield return Capture("veteran-02-player-height");
+            camera.transform.position=new Vector3(5.35f,7.1f,-7.1f);camera.transform.LookAt(new Vector3(-.5f,5.5f,2));yield return Capture("veteran-03-overview");
             camera.transform.position=new Vector3(-2.6f,5.6f,5.4f);camera.transform.LookAt(new Vector3(-4.4f,5.75f,7.8f));yield return Capture("veteran-04-service");
             camera.transform.position=new Vector3(1.3f,5.5f,4.4f);camera.transform.LookAt(new Vector3(4.5f,4.9f,6.8f));yield return Capture("veteran-05-cover");
+            camera.transform.position=new Vector3(0,5.65f,5.8f);camera.transform.LookAt(new Vector3(-.4f,5.8f,-7));yield return Capture("veteran-07-south-player-height");
+            camera.transform.position=new Vector3(4.8f,5.65f,.8f);camera.transform.LookAt(new Vector3(-5.9f,6.1f,-2.5f));yield return Capture("veteran-08-west-broadcast-wall");
             Time.timeScale=prior;Destroy(go);foreach(var c in cameras)c.enabled=true;foreach(var c in canvases)c.enabled=true;
             var previous=ground.Session;var repeat=ground.GetComponentsInChildren<Button>(true).Single(b=>b.GetComponentInChildren<Text>()?.text=="Повторить матч");repeat.onClick.Invoke();yield return null;
             if(previous==ground.Session||ground.Session.ArenaIdentity!=CombatBowlCatalog.Identity)throw new InvalidOperationException("Veteran Repeat identity mismatch");
             yield return Capture("veteran-06-repeat");
-            File.WriteAllText(Path.Combine(directory,"veteran-review.json"),JsonUtility.ToJson(new Result{arena=ground.Session.ArenaIdentity,authoring=ground.CombatBowlAuthoring.Id+"@"+ground.CombatBowlAuthoring.Version,presentation=ground.OrbitalLeagueProfile.Id+"@"+ground.OrbitalLeagueProfile.Version,participants=ground.Session.ParticipantCount,seed=20260923,release=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_ID"),muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,repeat=true,player="native macOS Development Player",note="Veteran sample, real Player renders; staged architectural views. Physical/human acceptance pending."},true));
+            File.WriteAllText(Path.Combine(directory,"veteran-review.json"),JsonUtility.ToJson(new Result{arena=ground.Session.ArenaIdentity,authoring=ground.CombatBowlAuthoring.Id+"@"+ground.CombatBowlAuthoring.Version,presentation=ground.OrbitalLeagueProfile.Id+"@"+ground.OrbitalLeagueProfile.Version,participants=ground.Session.ParticipantCount,seed=20260923,release=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_ID"),muted=AudioListener.volume==0,width=Screen.width,height=Screen.height,repeat=true,player="native macOS Development Player",note="Veteran F2 entire central hall, real Player renders; staged architectural views. Physical/human acceptance pending."},true));
             Debug.Log("VETERAN_REVIEW_COMPLETE");Application.Quit();
         }
         IEnumerator CaptureDirectDiagonalWalks(Camera camera)
