@@ -51,34 +51,42 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var matchProfile=ProvingProfile.CreateMatchDefault();
                 var config=NativeMatchConfiguration.Default(matchProfile);
                 NativeMatchState Match()=>new NativeMatchState(2,config,matchProfile,60);
-                audio.Music.Bind(Match(),profile);audio.TickMusic(true,.016f);yield return null;
+                var current=Match();
+                void Tick(bool running,float dt=.016f){audio.MusicScene.Tick(false,current,profile,!running,dt);audio.UpdateVolume();}
+                Tick(true);yield return null;
                 audio.UpdateVolume();
-                var sources=root.GetComponentsInChildren<AudioSource>().Where(s=>s.name.StartsWith("round-music-")).ToArray();
-                Assert.That(sources.Length,Is.EqualTo(2));Assert.That(sources.Sum(s=>s.volume),Is.GreaterThan(0));
+                var sources=root.GetComponentsInChildren<AudioSource>().Where(s=>s.name.Contains("-music-")).ToArray();
+                Assert.That(sources.Length,Is.EqualTo(4));Assert.That(sources.Sum(s=>s.volume),Is.GreaterThan(0));
                 Assert.That(sources.All(s=>s.pitch==1),Is.True,"Tempo is prepared offline without live pitch shift");
-                audio.TickMusic(false,.016f);Assert.That(audio.Music.Paused,Is.True);Assert.That(sources.Sum(s=>s.volume),Is.EqualTo(0));
-                audio.TickMusic(true,.016f);yield return null;Assert.That(audio.Music.Paused,Is.False);
+                Tick(false);Assert.That(audio.Music.Paused,Is.True);Assert.That(sources.Sum(s=>s.volume),Is.EqualTo(0));
+                Tick(true);yield return null;Assert.That(audio.Music.Paused,Is.False);
                 NativeAudioPreferences.SetEffects(100);
                 var play=typeof(NativeGameAudio).GetMethod("Play",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
                 for(int i=0;i<4;i++)play.Invoke(audio,new object[]{"rifle",1f,-1});
                 audio.UpdateVolume();
-                var effects=root.GetComponentsInChildren<AudioSource>().Where(s=>!s.name.StartsWith("round-music-")&&s.isPlaying).ToArray();
+                var effects=root.GetComponentsInChildren<AudioSource>().Where(s=>!s.name.Contains("-music-")&&s.isPlaying).ToArray();
                 Assert.That(effects.Length,Is.EqualTo(4));
                 Assert.That(sources.Sum(s=>s.volume),Is.GreaterThan(0),"Concurrent loud SFX must not completely erase the musical theme");
                 Assert.That(effects.Sum(s=>s.volume)+sources.Sum(s=>s.volume),Is.LessThanOrEqualTo(1.00001f));
                 NativeAudioPreferences.SetMusic(0);audio.UpdateVolume();
                 Assert.That(effects.All(s=>Mathf.Abs(s.volume-.25f)<.00001f),Is.True,"Music=0 preserves the previous SFX-only mix");
-                NativeAudioPreferences.SetMusic(100);audio.TickMusic(false,.016f);
+                NativeAudioPreferences.SetMusic(100);Tick(false);
                 Assert.That(effects.All(s=>Mathf.Abs(s.volume-.25f)<.00001f),Is.True,"Pause preserves the previous SFX-only mix");
-                audio.TickMusic(true,.016f);
+                Tick(true);
                 NativeAudioPreferences.SetMusic(0);NativeAudioPreferences.SetEffects(100);audio.UpdateVolume();
                 Assert.That(sources.Sum(s=>s.volume),Is.EqualTo(0));
                 NativeAudioPreferences.SetMusic(100);audio.SetDiagnosticMute(true);Assert.That(sources.Sum(s=>s.volume),Is.EqualTo(0));
                 audio.SetDiagnosticMute(false);audio.UpdateVolume();Assert.That(sources.Sum(s=>s.volume),Is.GreaterThan(0));
                 string prior=audio.Music.TrackId;var state=Random.state;
-                for(int i=0;i<12;i++){audio.Music.Bind(Match(),profile);Assert.That(audio.Music.TrackId,Is.Not.EqualTo(prior));prior=audio.Music.TrackId;}
+                for(int i=0;i<12;i++)
+                {
+                    current=Match();for(int step=0;step<65;step++)Tick(true,.25f);
+                    Assert.That(audio.Music.TrackId,Is.Not.EqualTo(prior));prior=audio.Music.TrackId;
+                }
                 Assert.That(JsonUtility.ToJson(Random.state),Is.EqualTo(JsonUtility.ToJson(state)));
-                audio.Music.Bind(null,profile);Assert.That(sources.All(s=>!s.isPlaying&&s.clip==null),Is.True);
+                audio.MusicScene.Tick(true,null,profile,false,4);audio.UpdateVolume();
+                Assert.That(sources.Where(s=>s.name.StartsWith("round-music-")).All(s=>!s.isPlaying&&s.clip==null),Is.True);
+                Assert.That(sources.Where(s=>s.name.StartsWith("menu-music-")).Sum(s=>s.volume),Is.GreaterThan(0));
             }
             finally
             {

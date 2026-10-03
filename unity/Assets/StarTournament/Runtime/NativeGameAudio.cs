@@ -47,6 +47,9 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile profile;
         readonly NativeRoundMusic music;
         public NativeRoundMusic Music=>music;
+        readonly NativeMusicCoordinator musicScene;
+        public NativeMusicCoordinator MusicScene=>musicScene;
+        ProvingProfile musicProfile;
         NativeCombatSession session;
         NativeMatchComposition composition;
         ParticipantState[] lastPose;
@@ -82,7 +85,7 @@ namespace StarTournament.ProvingGround
                 movementClips[name]=bank;
             }
             BuildVoicePool();
-            music=new NativeRoundMusic(root);
+            musicScene=new NativeMusicCoordinator(root,profile);music=musicScene.Round;musicProfile=profile;
             uiSource=Source("menu-ui");damageBonusSource=Source("damage-bonus-alert");
             beams=new AudioSource[NativeMatchRoster.MaximumParticipants];
             beamGain=new float[beams.Length];
@@ -107,7 +110,7 @@ namespace StarTournament.ProvingGround
         public void Bind(NativeCombatSession next,NativeMatchComposition roster,ProvingProfile musicTuning=null)
         {
             Unbind();BuildVoicePool();session=next;composition=roster;
-            music.Bind(session?.Match,musicTuning??profile);
+            musicProfile=musicTuning??profile;
             if(session==null)return;
             lastPose=new ParticipantState[session.ParticipantCount];stepDistance=new float[session.ParticipantCount];lastHit=new double[session.ParticipantCount];
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastHit[i]=double.NegativeInfinity;}
@@ -116,24 +119,25 @@ namespace StarTournament.ProvingGround
         void Unbind()
         {
             if(session!=null){session.DamageBonusAppeared-=DamageBonusSpawn;session.ShotResolved-=Shot;session.Damaged-=Damage;session.Died-=Death;session.PickupCollected-=Pickup;session.StateRestored-=ResetMotion;session.RocketExploded-=Explosion;}
-            session=null;composition=null;music.Stop();
+            session=null;composition=null;
             StopEffects();
         }
         void ResetMotion()
         {
             if(session==null)return;
-            music.Restore();
+            musicScene.Restore(session.Match);
             StopEffects();
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);stepDistance[i]=0;lastHit[i]=double.NegativeInfinity;}
             for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}
         }
         public void SetDiagnosticMute(bool value){muted=value;if(value)StopEffects();UpdateVolume();}
-        public void TickMusic(bool running,float dt){music.Tick(running,dt);UpdateVolume();}
+        public void TickMusic(bool inMenu,bool suspended,float dt){musicScene.Tick(inMenu,session?.Match,musicProfile,suspended,dt);UpdateVolume();}
+        public void SuspendMusic(){musicScene.SetSuspended(true);UpdateVolume();}
         public void StopEffects(){damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
         public void UpdateVolume()
         {
             float volume=EffectsVolume;
-            if(volume==0){StopEffects();uiSource.Stop();music.UpdateVolume(muted?0:NativeAudioPreferences.Music(profile)/100f,1);return;}
+            if(volume==0){StopEffects();uiSource.Stop();musicScene.UpdateVolume(muted?0:NativeAudioPreferences.Music(profile)/100f,1);return;}
             float sum=0;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying&&voiceParticipant[i]>=0)
             {var mix=Spatial(voicePosition[i],voiceParticipant[i]);voiceGain[i]=voiceBaseGain[i]*mix.Gain;voices[i].panStereo=mix.Pan;}
@@ -146,14 +150,14 @@ namespace StarTournament.ProvingGround
             // Foreground effects stay stronger under load without completely erasing the theme.
             float scale=volume*Mathf.Min(1,1/Mathf.Max(1,sum));
             float musicVolume=muted?0:NativeAudioPreferences.Music(profile)/100f;
-            float musicBudget=music.RequestedVolume(musicVolume);
+            float musicBudget=musicScene.RequestedVolume(musicVolume);
             float attenuation=musicBudget>0?1/Mathf.Max(1,sum*scale+musicBudget):1;
             scale*=attenuation;
             for(int i=0;i<voices.Length;i++)voices[i].volume=voiceGain[i]*scale;
             for(int i=0;i<beams.Length;i++)beams[i].volume=beamGain[i]*scale;
             for(int i=0;i<rocketSources.Length;i++)rocketSources[i].volume=rocketGain[i]*scale;
             uiSource.volume=uiGain*scale;damageBonusSource.volume=damageBonusGain*scale;
-            music.UpdateVolume(musicVolume,musicBudget*attenuation);
+            musicScene.UpdateVolume(musicVolume,musicBudget*attenuation);
         }
         public void MenuMove()=>PlayMenu("menu_move",.40f);
         public void MenuConfirm()=>PlayMenu("menu_confirm",.65f);
@@ -323,6 +327,6 @@ namespace StarTournament.ProvingGround
                 if(!source.isPlaying&&source.clip!=null)source.Play();
             }
         }
-        public void Dispose(){Unbind();music.Dispose();if(root)UnityEngine.Object.Destroy(root.gameObject);}
+        public void Dispose(){Unbind();musicScene.Dispose();if(root)UnityEngine.Object.Destroy(root.gameObject);}
     }
 }

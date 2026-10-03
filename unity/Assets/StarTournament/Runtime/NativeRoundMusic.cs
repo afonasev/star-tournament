@@ -54,14 +54,28 @@ namespace StarTournament.ProvingGround
             // Draw from the other tracks without consuming the gameplay random stream.
             int count=manifest.tracks.Length,index=count==1?0:random.Next(previous<0?count:count-1);
             if(previous>=0&&count>1&&index>=previous)index++;
-            previous=index;track=manifest.tracks[index];clips=new AudioClip[track.phases.Length];
+            previous=index;LoadTrack(index);
+            Restore();
+        }
+        void LoadTrack(int index)
+        {
+            foreach(var source in sources){source.Stop();source.clip=null;}
+            if(clips!=null)foreach(var clip in clips)if(clip!=null)Resources.UnloadAsset(clip);
+            track=manifest.tracks[index];clips=new AudioClip[track.phases.Length];
             for(int i=0;i<clips.Length;i++)
             {
                 clips[i]=Resources.Load<AudioClip>(track.phases[i].resource);
                 if(clips[i]==null)Debug.LogError("Missing round music phrase: "+track.phases[i].resource);
             }
-            Restore();
         }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // Diagnostic-only deterministic asset coverage. Ordinary matches always use the RNG above.
+        public void ReviewTrack(int index)
+        {
+            if(match==null||manifest?.tracks==null||index<0||index>=manifest.tracks.Length)throw new ArgumentException("Invalid bound review track");
+            previous=index;LoadTrack(index);Restore();
+        }
+#endif
         public void Restore()
         {
             if(match==null||clips==null)return;
@@ -122,6 +136,8 @@ namespace StarTournament.ProvingGround
             }
             if(!value&&!sources[active].isPlaying)sources[active].Play();
         }
+        // The coordinator freezes finished tails as well as running music on focus/pause.
+        public void SetSuspended(bool value){if(sources[0]!=null)SetPaused(value);}
         public float RequestedVolume(float userVolume)
         {
             if(paused||!HasOutput)return 0;

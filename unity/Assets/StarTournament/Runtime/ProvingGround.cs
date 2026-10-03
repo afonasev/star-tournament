@@ -160,6 +160,7 @@ namespace StarTournament.ProvingGround
 
         Font font;
         NativeGameAudio gameAudio;
+        bool musicFocused=true;
         GameObject lastAudioSelection;
         FpsDisplay fps;
         string pauseReason = "";
@@ -496,7 +497,11 @@ namespace StarTournament.ProvingGround
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
             UpdateMenuSelectionAudio();
-            gameAudio?.TickMusic(phase==Phase.Running,Time.unscaledDeltaTime);
+            bool musicMatch=phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results||
+                (phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused||settingsReturn==Phase.Results));
+            bool musicPaused=phase==Phase.Paused||(phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused));
+            bool musicBackgroundAllowed=diagnostic||combatReview||nativeInputReview||Application.isBatchMode;
+            gameAudio?.TickMusic(!musicMatch,musicPaused||(!musicFocused&&!musicBackgroundAllowed),Time.unscaledDeltaTime);
         }
         void UpdateMenuSelectionAudio()
         {
@@ -575,6 +580,8 @@ namespace StarTournament.ProvingGround
         }
         void OnApplicationFocus(bool focus)
         {
+            musicFocused=focus;
+            if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
         }

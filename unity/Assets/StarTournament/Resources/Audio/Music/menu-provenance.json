@@ -1,0 +1,20 @@
+{
+  "source_change": "add-main-menu-music",
+  "selected_source_sha256": "4c747c8051d76aa99a6e68feefecccd5d8f842a0900ae3f278282a2bc1cc9c19",
+  "prepared_sha256": "4e038f7c036db231d3edc32313ff476df129934e11445c0281ce7f1c9ef141c4",
+  "preparation_script_sha256": "d193925b365b2132071538488f6d87adc6587adc9f8cdd1436b55a3dcee81c6a",
+  "preparation_code_revision": "51b10ec7cea204258aa03a9a9e70bb977c78da85",
+  "content_markers": {
+    "id": "menu-arena",
+    "title": "Арена",
+    "resource": "Audio/Music/menu-arena",
+    "bpm": 110.05434782608695,
+    "loopStart": 3.0418140589569163,
+    "loopEnd": 29.210702947845807,
+    "loopFadeSeconds": 2.180748299319728
+  },
+  "transition_profile": "menu-music-v1",
+  "selected_transition_seconds": 4,
+  "selection_source": "user messages 3 да (2026-10-03), 2 (2026-10-04)",
+  "human_player_acceptance": "pending"
+}

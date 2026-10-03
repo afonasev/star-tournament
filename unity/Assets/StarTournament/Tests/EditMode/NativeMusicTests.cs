@@ -35,6 +35,18 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 }
             }
         }
+        [Test] public void SelectedMenuSourceHasStreamingBeatAlignedLoopAndFourSecondProfile()
+        {
+            var manifest=JsonUtility.FromJson<MenuMusicManifest>(Resources.Load<TextAsset>("Audio/Music/menu-manifest").text);
+            var clip=Resources.Load<AudioClip>(manifest.resource);
+            Assert.That(manifest.id,Is.EqualTo("menu-arena"));Assert.That(clip,Is.Not.Null);
+            Assert.That(clip.loadType,Is.EqualTo(AudioClipLoadType.Streaming));
+            Assert.That(manifest.loopStart,Is.GreaterThan(manifest.loopFadeSeconds));
+            Assert.That(manifest.loopEnd,Is.LessThan(clip.length));
+            Assert.That((manifest.loopEnd-manifest.loopStart)*manifest.bpm/60,Is.EqualTo(48).Within(.01));
+            var profile=ProvingProfile.CreateDefault();Assert.That(profile.Get("audio.music.menuTransitionSeconds"),Is.EqualTo(4));
+            Assert.That(profile.Descriptor("audio.music.menuTransitionSeconds").Group,Is.EqualTo("music"));
+        }
         [TestCase(0)] [TestCase(1)] [TestCase(2)] public void PreviousLabRevisionMigratesWithoutRewritingOriginalHashOrChosenValues(int pulseGeneration)
         {
             var shipped=DesignLabHistoryTests.Shipped();
@@ -50,6 +62,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
                 Assert.That(migrated.Selected.Snapshot.Get("audio.music.gain"),Is.EqualTo(.55f));
                 Assert.That(migrated.Selected.Snapshot.Get("pulseFx.fireCount"),Is.EqualTo(13));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+        [Test] public void RoundMusicPredecessorMigratesMenuSettingAndPreservesSavedMixAndHash()
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            var method=typeof(ProvingProfile).GetMethod("BeforeMenuMusic",BindingFlags.NonPublic|BindingFlags.Instance);
+            var before=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,before);history.Create("Saved round-only music");
+                var draft=history.Selected.Snapshot;draft.Set("audio.music.gain",.35f);draft.Set("audio.music.transitionBeats",6);history.Save(draft);
+                string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("audio.music.gain"),Is.EqualTo(.35f));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.music.transitionBeats"),Is.EqualTo(6));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.music.menuTransitionSeconds"),Is.EqualTo(4));
                 Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
             }
             finally{if(File.Exists(path))File.Delete(path);}
