@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Static renderer-only service kit. Canonical solids remain the sole physics/nav owner.</summary>
-    public sealed class IndustrialTunnelsPresentation:MonoBehaviour
+    public sealed partial class IndustrialTunnelsPresentation:MonoBehaviour
     {
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
@@ -24,6 +24,7 @@ namespace StarTournament.ProvingGround
             trim=Material("Tunnel frame / graphite",new Color(.12f,.135f,.14f));ochre=Material("Tunnel service ochre",new Color(.48f,.30f,.08f));upper=Material("Base upper clean alloy",new Color(.78f,.82f,.81f));
             warm=Emissive("Amber service lamp",new Color(1,.56f,.19f));white=Emissive("White base luminaire",new Color(.86f,.94f,1));
             mold=new Material(Shader.Find("StarTournament/TunnelGrime")){name="Lower wall damp / mold"};mold.SetFloat("_Opacity",P("surface.mold"));owned.Add(mold);
+            CreateSectorMaterials();
             foreach(var s in definition.Solids)
             {
                 var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
@@ -45,6 +46,7 @@ namespace StarTournament.ProvingGround
             foreach(float x in new[]{-10f,0,10f})foreach(int side in new[]{-1,1})Fixture(new Vector3(x,3.8f,side*19),false,false);
             foreach(float z in new[]{-6f,0,6f})foreach(int side in new[]{-1,1})Fixture(new Vector3(side*23,3.8f,z),false,false);
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1}){Fixture(new Vector3(sx*10,3.8f,sz*13),false,false);Fixture(new Vector3(sx*5,3.8f,sz*8),false,false);}
+            Wayfinding();
             foreach(var entry in batches)
             {
                 var go=new GameObject(entry.Key.name);go.transform.SetParent(transform,false);var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);
@@ -100,6 +102,7 @@ namespace StarTournament.ProvingGround
             Box(trim,new Vector3(face.x,3.8f,face.z)+normal*.22f,Size(.48f,.1f,length));
             for(int i=0;i<3;i++)
             {var c=new Vector3(face.x,3.88f,face.z)+normal*(.1f+i*.12f);Pipe(i==1?ochre:trim,c-along*length*.5f,c+along*length*.5f,.035f);}
+            SectorWall(face,along,normal,length);
             int count=Mathf.Max(1,Mathf.RoundToInt(length/P("detail.ribSpacing")));
             for(int i=0;i<count;i++)
             {
@@ -108,7 +111,8 @@ namespace StarTournament.ProvingGround
                 // Angled haunches and foot chamfers make an octagonal portal language.
                 Beam(trim,new Vector3(c.x,3.05f,c.z)+normal*.1f,new Vector3(c.x,4.55f,c.z)+normal*.85f,.22f,.24f);
                 Beam(trim,new Vector3(c.x,-.5f,c.z)+normal*.35f,new Vector3(c.x,.15f,c.z)+normal*.1f,.25f,.25f);
-                Box(ochre,new Vector3(c.x,.65f,c.z)+normal*.205f,Size(.03f,.8f,.19f));
+                int sector=SectorAt(c);
+                Box(sector>=0?sectors[sector]:ochre,new Vector3(c.x,.65f,c.z)+normal*.205f,Size(.03f,.8f,.19f));
                 for(int pipe=0;pipe<3;pipe++)Box(steel,new Vector3(c.x,2.6f+pipe*.38f,c.z)+normal*.2f,Size(.45f,.055f,.13f));
                 if(i%2==0)Box(steel,new Vector3(c.x,1.65f,c.z)+normal*.2f,Size(.3f,.55f,.44f));
             }

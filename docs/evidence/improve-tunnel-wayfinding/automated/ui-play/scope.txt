@@ -1,0 +1,14 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=FourPlayerMenuTests;IndependentPauseMenuTests
+revision=7910ab19aef94ffcabe0df6f70a80e5b64f5b7b1
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Arena/IndustrialTunnelsPresentation.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/IndustrialTunnelsProfile.cs
+ M Assets/StarTournament/Runtime/NativeIndustrialTunnelsReview.cs
+ M Assets/StarTournament/Tests/EditMode/IndustrialTunnelsTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/improve-tunnel-wayfinding/
+?? Assets/StarTournament/Runtime/Arena/IndustrialTunnelsWayfinding.cs
+?? Assets/StarTournament/Runtime/Arena/IndustrialTunnelsWayfinding.cs.meta

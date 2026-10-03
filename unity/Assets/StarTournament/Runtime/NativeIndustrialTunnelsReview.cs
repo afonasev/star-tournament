@@ -29,6 +29,28 @@ namespace StarTournament.ProvingGround
             Screen.SetResolution(1920,1080,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
             ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(IndustrialTunnelsCatalog.Id);ground.SendMessage("ShowSetupStep",(object)0);yield return Capture("00-map-selection");
             ground.StartBotReview(Bots(2),20261002);Require(ground.Session.ArenaIdentity==IndustrialTunnelsCatalog.Identity,ground.CombatReviewDiagnostic());
+            if(args.Contains("-wayfindingReview"))
+            {
+                ground.FullHealReviewManualTick=true;
+                for(int sector=0;sector<4;sector++)
+                {
+                    int sx=sector%2==0?-1:1,sz=sector<2?1:-1;
+                    ground.PlaceCombatReviewSeat(0,new Vector3(sx*16.5f,-.6f,sz*16),-5,sx<0?270:90);
+                    yield return Capture("room-0"+(sector+1));
+                    ground.PlaceCombatReviewSeat(0,new Vector3(sx*10,0,sz*19),0,sx<0?270:90);
+                    yield return Capture("approach-0"+(sector+1));
+                    ground.PlaceCombatReviewSeat(0,new Vector3(sx*21,-.6f,sz*16),-12,sx<0?90:270);
+                    yield return Capture("exits-0"+(sector+1));
+                }
+                ground.PlaceCombatReviewSeat(0,new Vector3(0,-.6f,5),-5,180);yield return Capture("room-05-centre");
+                ground.PlaceCombatReviewSeat(0,new Vector3(-4,0,-19),0,90);yield return Capture("south-rocket");
+                Require(ground.Session.SpeedPickups.Length==0&&ground.Session.WeaponPickups.Length==3,"pickup contract");
+                ground.SendMessage("Menu");ground.StartBotReview(Bots(4,true),20261003);ground.FullHealReviewManualTick=true;
+                for(int sector=0;sector<4;sector++){int sx=sector%2==0?-1:1,sz=sector<2?1:-1;ground.PlaceCombatReviewSeat(sector,new Vector3(sx*16.5f,-.6f,sz*16),-5,sx<0?270:90);}
+                yield return Capture("four-rooms");
+                File.WriteAllText(Path.Combine(directory,"complete.json"),"{\"status\":\"PASS\",\"muted\":true,\"scriptedCameras\":true,\"rooms\":5,\"humanAcceptance\":false}");
+                Application.Quit(0);yield break;
+            }
             ground.FullHealReviewManualTick=true;ground.PlaceCombatReviewSeat(0,new Vector3(-20,-.6f,19),-18,160);yield return Capture("01-junction");
             ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,19),0,90);yield return Capture("02-tunnel");
             ground.PlaceCombatReviewSeat(0,new Vector3(0,-.6f,3),0,180);yield return Capture("03-central");

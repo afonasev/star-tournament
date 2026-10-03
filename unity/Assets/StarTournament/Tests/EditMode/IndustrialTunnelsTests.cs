@@ -24,6 +24,24 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {System.IO.Directory.Delete(directory,true);}
         }
+        [Test] public void WayfindingUpgradePreservesOldHistoryAndCustomLight()
+        {
+            string directory=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"wayfinding-lab-"+System.Guid.NewGuid());System.IO.Directory.CreateDirectory(directory);
+            try
+            {
+                string path=System.IO.Path.Combine(directory,"history.json");var current=EditMode.DesignLabHistoryTests.Shipped();
+                var prior=typeof(ProvingProfile).GetMethod("BeforeTunnelWayfinding",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+                var history=new DesignLabHistory(path,old);history.Create("Custom tunnels");var draft=history.Selected.Snapshot;
+                draft.Set("tunnels.light.warm",8);history.Save(draft);var previous=history.Selected;
+                var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
+                Assert.That(upgraded.Selected.Snapshot.Get("tunnels.light.warm"),Is.EqualTo(8));
+                Assert.That(upgraded.Selected.Snapshot.Get("tunnels.wayfinding.numberHeight"),Is.EqualTo(1.8f));
+                Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
+                Assert.That(upgraded.Selected.Snapshot.Validate(),Is.Empty);
+            }
+            finally {System.IO.Directory.Delete(directory,true);}
+        }
         [Test] public void ApprovedTopologyAndPickupsValidateWithoutSpeed()
         {
             var d=IndustrialTunnelsCatalog.Build();var result=ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault());Assert.That(result.IsValid,Is.True,result.ToString());

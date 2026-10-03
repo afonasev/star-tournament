@@ -59363,7 +59363,7 @@ MonoBehaviour:
       Value: 0
   TunnelsPresentation:
     id: industrial-tunnels-presentation-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: tunnels.light.fill
       Group: tunnel-light
@@ -59561,6 +59561,94 @@ MonoBehaviour:
       Maximum: 0.6
       Step: 0.05
       DefaultValue: 0.3
+    - Path: tunnels.wayfinding.paint
+      Group: tunnel-wayfinding
+      Label: "\u0421\u0432\u0435\u0442\u043B\u043E\u0442\u0430 \u0441\u0435\u043A\u0442\u043E\u0440\u043D\u043E\u0439
+        \u043A\u0440\u0430\u0441\u043A\u0438"
+      Description: "\u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0438: \u0421\u0432\u0435\u0442\u043B\u043E\u0442\u0430
+        \u0441\u0435\u043A\u0442\u043E\u0440\u043D\u043E\u0439 \u043A\u0440\u0430\u0441\u043A\u0438.
+        \u0423\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435\u043C,
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 collision \u0438\u043B\u0438
+        \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B."
+      Unit: ratio
+      Minimum: 0.5
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 1
+    - Path: tunnels.wayfinding.bandHeight
+      Group: tunnel-wayfinding
+      Label: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043F\u043E\u043B\u043E\u0441\u044B
+        \u0441\u0442\u0435\u043D"
+      Description: "\u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0438: \u0428\u0438\u0440\u0438\u043D\u0430
+        \u043F\u043E\u043B\u043E\u0441\u044B \u0441\u0442\u0435\u043D. \u0423\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435\u043C, \u043D\u0435
+        \u043C\u0435\u043D\u044F\u0435\u0442 collision \u0438\u043B\u0438 \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B."
+      Unit: m
+      Minimum: 0.3
+      Maximum: 1.2
+      Step: 0.05
+      DefaultValue: 0.65
+    - Path: tunnels.wayfinding.numberHeight
+      Group: tunnel-wayfinding
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043D\u043E\u043C\u0435\u0440\u0430
+        \u0437\u0430\u043B\u0430"
+      Description: "\u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0438: \u0412\u044B\u0441\u043E\u0442\u0430
+        \u043D\u043E\u043C\u0435\u0440\u0430 \u0437\u0430\u043B\u0430. \u0423\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435\u043C, \u043D\u0435
+        \u043C\u0435\u043D\u044F\u0435\u0442 collision \u0438\u043B\u0438 \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B."
+      Unit: m
+      Minimum: 1
+      Maximum: 2.2
+      Step: 0.1
+      DefaultValue: 1.8
+    - Path: tunnels.wayfinding.signHeight
+      Group: tunnel-wayfinding
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F
+        \u0432\u044B\u0445\u043E\u0434\u0430"
+      Description: "\u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0438: \u0412\u044B\u0441\u043E\u0442\u0430
+        \u0443\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F \u0432\u044B\u0445\u043E\u0434\u0430.
+        \u0423\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435\u043C,
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 collision \u0438\u043B\u0438
+        \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B."
+      Unit: m
+      Minimum: 0.35
+      Maximum: 0.75
+      Step: 0.05
+      DefaultValue: 0.55
+    - Path: tunnels.wayfinding.approach
+      Group: tunnel-wayfinding
+      Label: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435
+        \u043A\u0440\u0430\u0441\u043A\u0438 \u0432 \u0442\u043E\u043D\u043D\u0435\u043B\u044C"
+      Description: "\u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0438: \u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435
+        \u043A\u0440\u0430\u0441\u043A\u0438 \u0432 \u0442\u043E\u043D\u043D\u0435\u043B\u044C.
+        \u0423\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435\u043C,
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 collision \u0438\u043B\u0438
+        \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B."
+      Unit: m
+      Minimum: 1
+      Maximum: 4
+      Step: 0.5
+      DefaultValue: 3
+    - Path: tunnels.wayfinding.ringRadius
+      Group: tunnel-wayfinding
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043C\u0430\u0440\u043A\u0438\u0440\u043E\u0432\u043A\u0438
+        \u0446\u0435\u043D\u0442\u0440\u0430"
+      Description: "\u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0438: \u0420\u0430\u0434\u0438\u0443\u0441
+        \u043C\u0430\u0440\u043A\u0438\u0440\u043E\u0432\u043A\u0438 \u0446\u0435\u043D\u0442\u0440\u0430.
+        \u0423\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435\u043C,
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 collision \u0438\u043B\u0438
+        \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B."
+      Unit: m
+      Minimum: 1.5
+      Maximum: 3
+      Step: 0.1
+      DefaultValue: 2.2
     values:
     - Path: tunnels.light.fill
       Value: 0.32
@@ -59592,6 +59680,18 @@ MonoBehaviour:
       Value: 0.16
     - Path: tunnels.detail.grilleSpacing
       Value: 0.3
+    - Path: tunnels.wayfinding.paint
+      Value: 1
+    - Path: tunnels.wayfinding.bandHeight
+      Value: 0.65
+    - Path: tunnels.wayfinding.numberHeight
+      Value: 1.8
+    - Path: tunnels.wayfinding.signHeight
+      Value: 0.55
+    - Path: tunnels.wayfinding.approach
+      Value: 3
+    - Path: tunnels.wayfinding.ringRadius
+      Value: 2.2
   TunnelsAuthoring:
     id: industrial-tunnels-authoring-v1
     version: 1

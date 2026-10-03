@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "7910ab19aef94ffcabe0df6f70a80e5b64f5b7b1",
+  "dirty": " M docs/GAME_SPEC.md\n M unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsPresentation.cs\n M unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs\n M unity/Assets/StarTournament/Runtime/Core/IndustrialTunnelsProfile.cs\n M unity/Assets/StarTournament/Runtime/NativeIndustrialTunnelsReview.cs\n M unity/Assets/StarTournament/Tests/EditMode/IndustrialTunnelsTests.cs\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/improve-tunnel-wayfinding/\n?? unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsWayfinding.cs\n?? unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsWayfinding.cs.meta\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/tunnel-wayfinding/star-tournament/unity/../.local/unity-evidence/focused-editmode.Bx0Ob0/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/tunnel-wayfinding/star-tournament/unity/../.local/unity-evidence/focused-playmode.2elsQk/playmode.xml",
+      "passed": 11
+    }
+  ]
+}
