@@ -44,4 +44,6 @@ Diagnostic raw XML/logs сохранены lossless gzip по подпапкам
 Exact retained identity: `local-macos-player-candidate/e13b72494a19996920c29aa02b90309fde7e9303/2366840912664b57`.
 Player: `/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/lab-copy-e13b7249/StarTournamentProvingGround.app`. Все file checksums копии сверены с `player-manifest.json`; manifest SHA256 `2366840912664b578abb7bdbb795537c9699594290e92aa2312a4a9a16d1c4f8`. Generated build/import settings и сцена сохранены как compressed provenance patches, не интегрированы в source.
 
-Native Lab smoke, интеграция и cleanup ещё выполняются. Полный технический результат будет записан после их фактического завершения; human acceptance не выводится из тестов.
+Native Lab smoke исходного кандидата прошёл: save/branch/rename/delete/guards/restart; оба Player exit 0, selected revision сохранена и history.json byte-identical после restart. PNG 06-history и 11-restarted-revisions визуально проверены. Это автоматический native smoke, не human acceptance.
+
+До интеграции main продвинулся до 2e3e41c (Veteran League profiles/arena). Совместная ревизия требует повторного full gate и собственного кандидата; исходные A/B measurements остаются привязаны к прежней базе.

@@ -1,0 +1,12 @@
+{
+  "event": "Planning lease acquire rejected while helper script continued on owned artifacts",
+  "commit": "f77d5b7fcb68e6179d7cc2b2672112ec188c1835",
+  "verified_paths": [
+    "openspec/changes/reduce-unity-lab-repeated-work/acceptance.md",
+    "openspec/changes/reduce-unity-lab-repeated-work/delivery.json",
+    "openspec/changes/reduce-unity-lab-repeated-work/tasks.md"
+  ],
+  "foreign_files_in_commit": false,
+  "foreign_lease_released_or_recovered": false,
+  "correction": "Subsequent acquire uses subprocess.run(check=True); mutations and commits are dependent on successful acquisition."
+}
