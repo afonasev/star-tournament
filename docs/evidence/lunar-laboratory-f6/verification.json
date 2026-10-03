@@ -41,5 +41,13 @@
     "Moved upper crates clear of window jump approach",
     "Repaired newly integrated main compiler call: Session.Match.Roster.AreAllies"
   ],
-  "human_acceptance": false
+  "human_acceptance": false,
+  "integration_check": {
+    "revision": "e984907856012d96393f0a2b4b84032e9f66e6a4",
+    "incoming_main": "6252a690cc56819daa617fa54306177829391aed",
+    "scope": "Independent Combat Bowl map changes; lunar runtime source unchanged",
+    "EditMode": 7,
+    "PlayMode": 3,
+    "candidate_note": "Candidate f0f666b predates independent Combat Bowl integration; exact Lunar code and shared movement/navigation unchanged. Full gate applies to candidate, focused contracts to merge."
+  }
 }

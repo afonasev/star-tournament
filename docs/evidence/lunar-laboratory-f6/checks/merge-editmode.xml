@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.9978503">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="322" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.997850" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1396" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament-lunar-f6/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="322" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.992161" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="67481" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1397" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="322" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.990257" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1398" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="322" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.988463" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1399" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="322" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.986614" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1063" name="LunarLaboratoryTests" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:07:28Z" duration="62.983693" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1071" name="ApprovedV4Contract" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ApprovedV4Contract" methodname="ApprovedV4Contract" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="1365858082" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:06:25Z" duration="0.053417" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="LandscapeContactMatchesRenderedTrianglesAndUnderlay" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.LandscapeContactMatchesRenderedTrianglesAndUnderlay" methodname="LandscapeContactMatchesRenderedTrianglesAndUnderlay" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="453431155" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:06:25Z" duration="0.002105" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1064" name="LunarRegistryUpgradePreservesPreviousLabHash" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.LunarRegistryUpgradePreservesPreviousLabHash" methodname="LunarRegistryUpgradePreservesPreviousLabHash" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="1877550578" result="Passed" start-time="2026-10-03 17:06:25Z" end-time="2026-10-03 17:06:35Z" duration="10.797846" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1069" name="ReworkRegistryPreservesExistingLunarLabHistory" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 17:06:35Z" end-time="2026-10-03 17:07:28Z" duration="52.123791" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1065" name="ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarInterior&quot;)" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarInterior&quot;)" methodname="ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="125934296" result="Passed" start-time="2026-10-03 17:06:35Z" end-time="2026-10-03 17:06:48Z" duration="12.539914" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1066" name="ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarOpenCentre&quot;)" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarOpenCentre&quot;)" methodname="ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="1299099468" result="Passed" start-time="2026-10-03 17:06:48Z" end-time="2026-10-03 17:07:01Z" duration="12.646968" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1067" name="ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarRework&quot;)" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarRework&quot;)" methodname="ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="1252215712" result="Passed" start-time="2026-10-03 17:07:01Z" end-time="2026-10-03 17:07:14Z" duration="13.591374" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1068" name="ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarOffice&quot;)" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarOffice&quot;)" methodname="ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="40943395" result="Passed" start-time="2026-10-03 17:07:14Z" end-time="2026-10-03 17:07:28Z" duration="13.343429" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
