@@ -25,7 +25,10 @@
   },
   "full_gate": {
     "command": "make check",
-    "status": "tests_passed_final_build_pending"
+    "status": "PASS",
+    "exit_code": 0,
+    "log": "checks/full-check-command.log.gz",
+    "build_log": "checks/full-build.log.gz"
   },
   "candidate_build": {
     "status": "PASS",
