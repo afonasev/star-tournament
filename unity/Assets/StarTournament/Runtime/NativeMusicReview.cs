@@ -105,11 +105,24 @@ namespace StarTournament.ProvingGround
                 try{observations.Add("PASS "+label+" viewports: "+capture.Save(Path.Combine(directory,label+"-native-mix.wav")));}
                 catch(Exception error){Check(false,error.Message);throw;}
                 AudioListener.volume=0;
+                Destroy(capture);yield return null;
+                // Cover return from an audible late phrase of this exact concept as well as
+                // Results/Repeat. Keep the old listener muted across camera replacement.
+                audio.Music.ReviewTrack(concept);
+                var repeated=ground.Session.Match;var late=repeated.Read();late.Phase=NativeMatchPhase.Overtime;
+                late.Tick=(long)(repeated.Configuration.DurationMinutes*60*hz);late.RemainingTicks=0;late.Trigger="time-limit";
+                for(int i=0;i<late.Standings.Length;i++)late.Standings[i].Score=0;
+                repeated.Restore(late);yield return new WaitForSecondsRealtime(4.5f);
+                Check(audio.Music.Phase==2&&audio.MusicScene.RoundWeight==1,label+": active late theme before return");
                 typeof(ProvingGround).GetMethod("Menu",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);
                 typeof(ProvingGround).GetField("nativeInputReview",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(ground,true);
-                yield return new WaitForSecondsRealtime(4.3f);
+                var returnCapture=ground.GetComponentInChildren<AudioListener>().gameObject.AddComponent<NativeMusicCapture>();
+                returnCapture.Begin();AudioListener.volume=1;yield return new WaitForSecondsRealtime(8);
                 Check(sources.Where(s=>s.name.StartsWith("round-music-")).All(s=>!s.isPlaying&&s.clip==null),seats+" viewports: outgoing round released after return");
                 Check(sources.Where(s=>s.name.StartsWith("menu-music-")).Sum(s=>s.volume)>0,seats+" viewports: menu Arena theme returns");
+                try{observations.Add("PASS "+returnCapture.Save(Path.Combine(directory,label+"-return-native.wav")));}
+                catch(Exception error){Check(false,error.Message);throw;}
+                AudioListener.volume=0;Destroy(returnCapture);yield return null;
                 yield return Capture(label+"-menu-return");
             }
             File.WriteAllLines(Path.Combine(directory,"result.txt"),observations.Concat(new[]{"DIAGNOSTIC: synthetic state progression/devices with bot driver disabled; human listening, physical devices, performance and broader waveform clipping acceptance pending."}));
