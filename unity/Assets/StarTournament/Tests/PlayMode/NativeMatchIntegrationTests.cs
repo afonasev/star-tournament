@@ -93,7 +93,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Load(true);var session=ground.Session;
             session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);
             yield return null;yield return null;
-            Assert.That(Notice(0).text,Is.EqualTo("Ты убил союзника"));
+            Assert.That(Notice(0).text,Is.EqualTo("Ты убил союзника "+ground.Composition.Participant(1).Name.Replace('<','‹').Replace('>','›')));
             Assert.That(Notice(0).color,Is.EqualTo(Color.red));
             Assert.That(Notice(1).text,Does.StartWith("Вас убил "));
         }
