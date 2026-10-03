@@ -17,6 +17,7 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }
+        [TestCase("BeforeLunarInterior")]
         [TestCase("BeforeLunarOpenCentre")]
         [TestCase("BeforeLunarRework")]
         [TestCase("BeforeLunarOffice")] public void ReworkRegistryPreservesExistingLunarLabHistory(string transform)

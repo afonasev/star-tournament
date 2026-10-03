@@ -12,6 +12,7 @@ namespace StarTournament.ProvingGround
             foreach(var a in p.descriptors){a.Path="lunar.map."+a.Path;a.Description="Лунная лаборатория v4; изменение требует новой проверенной immutable ревизии карты.";}
             foreach(var a in p.values)a.Path="lunar.map."+a.Path;return p;
         }
+        internal ProvingProfile BeforeLunarInterior()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeInteriorAuthoring():this;
         internal ProvingProfile BeforeLunarOpenCentre()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeOpenCentreAuthoring():this;
         internal ProvingProfile BeforeLunarOffice()
         {

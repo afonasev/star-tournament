@@ -52,6 +52,35 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {Object.Destroy(root);}yield return null;
         }
+        [UnityTest] public IEnumerator InteriorVolumesAndLampPostsBlockRealCapsules()
+        {
+            var root=new GameObject("lunar-f6-collision");var movement=ProvingProfile.CreateDefault();var arena=root.AddComponent<ProvingArena>();
+            try
+            {
+                arena.Build(AuthoredArenaCatalog.Freeze(LunarLaboratoryCatalog.Id,movement),movement);yield return null;Physics.SyncTransforms();
+                foreach(var post in arena.Definition.Solids.Where(s=>s.Id.StartsWith("lamp-")))
+                {
+                    var start=post.Position+new Vector3(-1,-2,0);var go=new GameObject("post-walker");go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,start,arena);
+                    var state=motor.State;state.Yaw=90;motor.RestoreState(state);
+                    for(int tick=0;tick<90;tick++){motor.Tick(new LocalAction{Move=Vector2.up},1/60f);Physics.SyncTransforms();}
+                    Assert.That(motor.State.Position.x,Is.LessThan(post.Position.x-.2f),post.Id);Object.DestroyImmediate(go);
+                }
+                foreach(int side in new[]{-1,1})
+                {
+                    Assert.That(Physics.Raycast(new Vector3(side*11,1,-1.75f),Vector3.right*side,out var hit,2,ProvingArena.ShotMask),Is.True,"under upper march");
+                    Assert.That(hit.collider.name,Does.Contain("infill"));
+                }
+                foreach(var header in arena.Definition.Solids.Where(s=>s.Id.Contains("header")&&!s.Id.Contains("open-header")))
+                {
+                    var c=header.Position;var across=header.Size.x>header.Size.z?Vector3.forward:Vector3.right;
+                    Assert.That(Physics.Raycast(c-across,across,2,ProvingArena.ShotMask),Is.True,header.Id);
+                }
+                // Main open areas must admit a capsule at floor level after the cargo reduction.
+                foreach(int side in new[]{-1,1})for(int x=-3;x<=3;x+=3)for(int z=5;z<=9;z+=2)
+                    Assert.That(Physics.CheckCapsule(new Vector3(x,.6f,side*z),new Vector3(x,1.4f,side*z),.35f,ProvingArena.ShotMask),Is.False,"open centre");
+            }
+            finally {Object.Destroy(root);}yield return null;
+        }
         [UnityTest] public IEnumerator RoutesStairsGlassAndSpawns()
         {
             var root=new GameObject("lunar-physics");var movement=ProvingProfile.CreateDefault();var nav=ProvingProfile.CreateNavigationDefault();var arena=root.AddComponent<ProvingArena>();

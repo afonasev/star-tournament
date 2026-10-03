@@ -614,7 +614,7 @@ namespace StarTournament.ProvingGround
             if(view<0)return;
             var snapshot=Session.Match.Read();
             int chain=snapshot.KillChain(killer);
-            killNoticeText[view]=snapshot.Roster.AreAllies(killer,notice.Seat)?"Ты убил союзника "+Composition.Participant(notice.Seat).Name.Replace('<','‹').Replace('>','›'):"Убит "+ColoredName(notice.Seat)+" · "+
+            killNoticeText[view]=Session.Match.Roster.AreAllies(killer,notice.Seat)?"Ты убил союзника "+Composition.Participant(notice.Seat).Name.Replace('<','‹').Replace('>','›'):"Убит "+ColoredName(notice.Seat)+" · "+
                 snapshot.DirectKills(killer,notice.Seat)+":"+snapshot.DirectKills(notice.Seat,killer)+
                 (chain==2?"\nDouble kill!":chain>2?"\n"+chain+" kills!":"");
             killNoticeUntil[view]=Session.Time+(frozenMovement??Profile).Get("ui.killNoticeSeconds");

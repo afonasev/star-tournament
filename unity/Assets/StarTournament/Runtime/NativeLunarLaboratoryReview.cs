@@ -47,6 +47,12 @@ namespace StarTournament.ProvingGround
             var yaw=new[]{0f,325,0,0,130,300,90,200,160,0,130,0,180,0,270,90,0,318,180,327,35,18};
             var pitch=new[]{-20f,-10,0,0,0,5,0,0,0,0,-5,-5,-12,-12,-10,-10,0,12,0,-32,5,6};
             for(int q=0;q<poses.Length;q++){ground.PlaceCombatReviewSeat(0,poses[q],pitch[q],yaw[q]);yield return Capture(names[q]);}
+            if(args.Contains("-lunarF6"))
+            {
+                var f6=new[]{new Vector3(-18.8f,2.25f,-1.8f),new Vector3(-11,.02f,-1.75f),new Vector3(0,.02f,10),new Vector3(0,.02f,-10),new Vector3(-8,4.5f,8),new Vector3(8,4.5f,-8),new Vector3(-3,4.5f,6.25f),new Vector3(0,4.5f,-1),new Vector3(27,0,29)};
+                var fy=new[]{270f,270,180,0,315,135,90,180,45};
+                for(int q=0;q<f6.Length;q++){ground.PlaceCombatReviewSeat(0,f6[q],q==0?0:5,fy[q]);yield return Capture("f6-"+(q+1).ToString("00"));}
+            }
             if(args.Contains("-lunarSigns"))
             {
                 int signIndex=0;

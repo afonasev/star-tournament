@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
     {
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
-        Mesh cube,cylinder,sphere;Material ivory,graphite,metal,grate,paving,ochre,sand,glass,white,blue,green,purple,fontMaterial;Font signFont;ProvingProfile p;
+        Mesh cube,cylinder,sphere;Material ivory,ceiling,graphite,metal,grate,paving,ochre,sand,glass,white,blue,green,purple,fontMaterial;Font signFont;ProvingProfile p;
         ArenaDefinition definition;
         AmbientMode oldMode;Color oldAmbient;public int LightCount{get;private set;}
         float P(string key)=>p.Get("lunar."+key);
@@ -18,17 +18,29 @@ namespace StarTournament.ProvingGround
             definition=d;p=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=new Color(.85f,.88f,1)*P("fill");
             cube=Primitive(PrimitiveType.Cube);cylinder=Primitive(PrimitiveType.Cylinder);sphere=Primitive(PrimitiveType.Sphere);
             var panels=Texture("Ivory ceramic panel / seams, bolts and wear",0);var dust=Texture("Lunar regolith / granular cratered basalt",1);
-            ivory=Mat("Ivory ceramic panels",new Color(.88f,.86f,.76f),panels);graphite=Mat("Graphite floor",new Color(.22f,.25f,.27f),panels);metal=Mat("Brushed structural alloy",new Color(.31f,.36f,.39f),panels,.6f);ochre=Mat("Matte ochre",new Color(.61f,.43f,.19f));sand=Mat("Grey lunar regolith",new Color(.58f,.59f,.6f),dust);white=Mat("Neutral light diffuser",new Color(.95f,.95f,.87f),null,0,true);blue=Mat("N analysis blue grey",new Color(.39f,.57f,.63f));green=Mat("W communications sage",new Color(.42f,.51f,.4f));purple=Mat("E power grey lavender",new Color(.52f,.46f,.58f));
+            ivory=Mat("Ivory ceramic panels",new Color(.88f,.86f,.76f),panels);graphite=Mat("Graphite floor",new Color(.36f,.39f,.4f),Texture("Resilient floor / fine aggregate and tile joints",2));metal=Mat("Brushed structural alloy",new Color(.31f,.36f,.39f),panels,.6f);ochre=Mat("Matte ochre",new Color(.61f,.43f,.19f));sand=Mat("Grey lunar regolith",new Color(.58f,.59f,.6f),dust);white=Mat("Neutral light diffuser",new Color(.95f,.95f,.87f),null,0,true);blue=Mat("N analysis blue grey",new Color(.39f,.57f,.63f));green=Mat("W communications sage",new Color(.42f,.51f,.4f));purple=Mat("E power grey lavender",new Color(.52f,.46f,.58f));
+            ceiling=Mat("Acoustic ceiling / perforated panels",new Color(.94f,.94f,.9f),Texture("Ceiling / perforations and narrow panel joints",3));
             grate=Mat("Grating alloy without aliasing shadows",new Color(.31f,.36f,.39f),panels,.6f);paving=Mat("Dust-grey paving",new Color(.51f,.52f,.5f),panels);
             glass=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Transparent projectile-proof armored glass"};owned.Add(glass);glass.color=new Color(.39f,.66f,.72f,P("glassOpacity"));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",(float)BlendMode.SrcAlpha);glass.SetFloat("_DstBlend",(float)BlendMode.OneMinusSrcAlpha);glass.SetFloat("_ZWrite",0);glass.SetFloat("_Smoothness",.7f);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
             foreach(var s in d.Solids)
             {
                 var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
-                renderer.sharedMaterial=s.Id.StartsWith("cargo-")?(s.Position.z>0?blue:ochre):s.Id.Contains("-bar-")?grate:s.Surface=="lunar-glass"?glass:s.Surface=="lunar-sand"?sand:s.Surface=="lunar-graphite"?graphite:s.Material=="metal"||s.Surface=="lunar-step"||s.Surface=="lunar-grate"||s.Id.StartsWith("fence-")||s.Id.StartsWith("rail-")?metal:ivory;
+                renderer.sharedMaterial=s.Id.StartsWith("cargo-")?(s.Position.z>0?blue:ochre):s.Id.Contains("-bar-")?grate:s.Surface=="lunar-glass"?glass:s.Surface=="lunar-sand"?sand:(s.Surface=="lunar-graphite"||s.Surface=="lunar-light")?graphite:s.Material=="metal"||s.Surface=="lunar-step"||s.Surface=="lunar-grate"||s.Id.StartsWith("fence-")||s.Id.StartsWith("rail-")?metal:ivory;
                 if(s.Surface=="lunar-grate") {renderer.enabled=false;continue;}
                 var mesh=Instantiate(target.GetComponent<MeshFilter>().sharedMesh);owned.Add(mesh);var v=mesh.vertices;var norms=mesh.normals;var uv=mesh.uv;
                 for(int i=0;i<v.Length;i++){var a=Vector3.Scale(v[i],s.Size);uv[i]=(Mathf.Abs(norms[i].y)>.5f?new Vector2(a.x,a.z):Mathf.Abs(norms[i].x)>.5f?new Vector2(a.z,a.y):new Vector2(a.x,a.y))/P("tile");}mesh.uv=uv;target.GetComponent<MeshFilter>().sharedMesh=mesh;
-                if(s.Surface!="lunar-glass"){renderer.enabled=false;Shape(renderer.sharedMaterial,mesh,s.Position,s.Size,s.Rotation);}
+                if(s.Surface!="lunar-glass")
+                {
+                    renderer.enabled=false;
+                    if(s.Material=="floor"&&s.Surface!="lunar-step")
+                    {
+                        var top=new List<int>();var bottom=new List<int>();var triangles=mesh.triangles;
+                        for(int t=0;t<triangles.Length;t+=3){var list=norms[triangles[t]].y<-.5f?bottom:top;list.Add(triangles[t]);list.Add(triangles[t+1]);list.Add(triangles[t+2]);}
+                        var underside=Instantiate(mesh);owned.Add(underside);underside.triangles=bottom.ToArray();mesh.triangles=top.ToArray();
+                        Shape(ceiling,underside,s.Position,s.Size,s.Rotation);
+                    }
+                    Shape(renderer.sharedMaterial,mesh,s.Position,s.Size,s.Rotation);
+                }
                 if(s.Material=="equipment")Equipment(s);
                 if(s.Surface=="lunar-glass")GlassFrame(s);
                 if(s.Surface=="lunar-step")Box(ochre,s.Position+Vector3.up*(s.Size.y*.5f+.006f),new Vector3(s.Size.x,.008f,.07f));
@@ -49,6 +61,8 @@ namespace StarTournament.ProvingGround
                 uint h=unchecked((uint)(x*73856093)^(uint)(y*19349663));h^=h>>13;float noise=(h%1000)/1000f;
                 float a=kind==0?.9f+noise*.08f:.58f+noise*.3f+Mathf.PerlinNoise(x*.045f,y*.045f)*.22f;
                 if(kind==0){int edge=Math.Min(Math.Min(x,n-1-x),Math.Min(y,n-1-y));if(edge<2)a=.42f;else if(edge<4)a=.73f;if((x<12||x>243)&&(y<12||y>243)&&((x%244)-7)*((x%244)-7)+((y%244)-7)*((y%244)-7)<5)a=.38f;if(h%1201<3)a*=.65f;}
+                if(kind==2){a=.83f+noise*.13f;if(x<2||y<2)a=.51f;}
+                if(kind==3){a=.95f+noise*.04f;if(x<2||y<2)a=.72f;else if(x%12<2&&y%12<2)a=.48f;}
                 c[y*n+x]=new Color(a,a,a);
             }
             t.SetPixels(c);t.Apply(true,true);return t;
@@ -138,7 +152,7 @@ namespace StarTournament.ProvingGround
                 foreach(float y in new[]{0f,4.5f})foreach(float x in y==0||sign<0?new[]{0f}:new[]{-6.5f,6.5f})
                 {float w=y==0||sign<0?4:3;foreach(int a in new[]{-1,1})Pipe(ivory,new Vector3(x+a*w*.5f,y,sign*12.25f),new Vector3(x+a*w*.5f,y+2.8f,sign*12.25f),.15f);Pipe(ivory,new Vector3(x-w*.5f,y+3,sign*12.25f),new Vector3(x+w*.5f,y+3,sign*12.25f),.15f);}
                 for(int q=-28;q<=28;q+=14)
-                {var a=new Vector3(q,0,sign*31);Pipe(metal,a,a+Vector3.up*4,.12f);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Pipe(metal,b,b+Vector3.up*4,.12f);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(b+Vector3.up*4);}
+                {var a=new Vector3(q,0,sign*31);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(b+Vector3.up*4);}
             }
             for(int x=-9;x<=9;x+=6)foreach(int z in new[]{-9,-3,3,9})foreach(float y in new[]{3.9f,8.4f})Light(new Vector3(x,y,z),true);
             foreach(int a in new[]{-1,1})Light(new Vector3(a*19,7.8f,0),true);
@@ -205,7 +219,10 @@ namespace StarTournament.ProvingGround
                     WallSign((a<0?"w":"e")+"-annex-back",Vector3.right*(-a),a<0?"W 03\nКОММУНИКАЦИИ":"E 04\nЭНЕРГОБЛОК",new Vector2(4,1.3f),.44f,a<0?green:purple,y==0?-1.125f:2.25f);
                 }
                 foreach(float z in new[]{-.8f,0,.8f})Pipe(green,new Vector3(-20.7f,y+.4f,z),new Vector3(-20.7f,y+.4f,z+2),.08f);
-                Ring(green,new Vector3(-20.6f,y+2.6f,-2.5f),.55f,Vector3.right,.09f);Pipe(green,new Vector3(-20.6f,y+2.05f,-2.5f),new Vector3(-20.6f,y+3.15f,-2.5f),.055f);
+                // The lower landing is at 2.25 m, not the ground floor. Both motifs clear it.
+                var landing=Array.Find(definition.Solids,v=>v.Id=="w-mid");
+                float ringY=y==0?landing.Position.y+landing.Size.y*.5f+1.1f:y+2.6f;
+                Ring(green,new Vector3(-20.6f,ringY,-2.5f),.55f,Vector3.right,.09f);Pipe(green,new Vector3(-20.6f,ringY-.55f,-2.5f),new Vector3(-20.6f,ringY+.55f,-2.5f),.055f);
                 for(int i=-1;i<=1;i++){Box(purple,new Vector3(20.75f,y+.8f,i*1.05f),new Vector3(.035f,.7f,.72f));Box(graphite,new Vector3(20.71f,y+.8f,i*1.05f),new Vector3(.025f,.35f,.52f));}
             }
             foreach(int a in new[]{-1,1})

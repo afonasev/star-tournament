@@ -6,12 +6,13 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="4", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="5", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
-        internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true));
-        static ArenaDefinition Draft(bool includeFormerCentre=false)
+        internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true,true));
+        internal static ProvingProfile BeforeInteriorAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,true));
+        static ArenaDefinition Draft(bool includeFormerCentre=false,bool beforeInterior=false)
         {
             var s=new List<ArenaSolid>();var ts=new List<NativeNavigationTransition>();
             void Box(string id,Vector3 c,Vector3 size,string mat="ivory",string support="",string surface=null,int layer=ProvingArena.WorldLayer)
@@ -178,6 +179,39 @@ namespace StarTournament.ProvingGround
             }
             Box("scanner",new Vector3(-8,Upper+.55f,7),new Vector3(2.2f,1.1f,2.2f),"equipment");
             Box("samples",new Vector3(10.8f,Upper+1.1f,7),new Vector3(.8f,2.2f,4),"equipment");
+            if(!beforeInterior)
+            {
+                // F6 retains perimeter cover, removing the dense centre on both halves.
+                var removed=new HashSet<string>{"cargo-north-west","cargo-south-spine","cargo-south-east","cargo-south-low","cargo-f2-north-entry-w","cargo-f2-north-entry-e","cargo-f2-north-inner","cargo-f2-north-east-stack","cargo-f2-south-entry-w","cargo-f2-south-entry-e","cargo-f2-south-inner"};
+                s.RemoveAll(v=>removed.Contains(v.Id)||(v.Id.StartsWith("equipment-")&&Mathf.Abs(v.Position.x)<8&&Mathf.Abs(v.Position.z)<12));
+                // Peripheral spawn cover retains the hidden S5/S6 contract through optical glass.
+                Box("cargo-ground-ne-cover",new Vector3(9,1.12f,8.3f),new Vector3(2.3f,2.2f,1.4f),"equipment");
+                Box("cargo-upper-nw",new Vector3(-8.8f,Upper+.7f,10.7f),new Vector3(1.4f,1.4f,1.4f),"equipment");
+                Box("cargo-upper-se",new Vector3(8.8f,Upper+.7f,-10.7f),new Vector3(1.4f,1.4f,1.4f),"equipment");
+                // Solid riser volumes close every underside without changing any tread top.
+                foreach(var step in s.ToArray())if(step.Id.Contains("-inside-")&&step.Surface=="lunar-step")
+                {
+                    float top=step.Position.y-step.Size.y*.5f;
+                    if(top<=.02f)continue; // First riser is already enclosed by the ground slab.
+                    Box(step.Id+"-infill",new Vector3(step.Position.x,top*.5f,step.Position.z),new Vector3(step.Size.x,top,step.Size.z));
+                }
+                foreach(int side in new[]{-1,1})
+                {
+                    Box((side<0?"w":"e")+"-landing-infill",new Vector3(side*19.5f,.975f,0),new Vector3(3,1.95f,7));
+                    Wall("store-header-long-"+side,side*7.25f,-side*6,2.5f,.25f,3,1.2f);
+                    Wall("store-header-short-"+side,side*6,-side*8,.25f,2,3,1.2f);
+                    Wall("stair-ground-header-"+side,side*12,1.75f,.35f,3.5f,3,1.2f);
+                    Wall("stair-upper-header-"+side,side*12,0,.35f,7,Upper+3,1.2f);
+                    Wall("lab-door-header-"+side,side*6.5f,3.5f,3,.25f,Upper+3,1.2f);
+                    for(int q=-28;q<=28;q+=14)
+                    {
+                        Box("lamp-x-"+side+"-"+q,new Vector3(side*31,2,q),new Vector3(.24f,4,.24f),"metal");
+                        Box("lamp-z-"+side+"-"+q,new Vector3(q,2,side*31),new Vector3(.24f,4,.24f),"metal");
+                    }
+                }
+                Wall("labs-common-header",0,6.25f,.25f,3.5f,Upper+3,1.2f);
+                Wall("hall-door-header",0,-3.5f,6,.25f,Upper+3,1.2f);
+            }
             var spawns=new[]{new Vector3(-4,0,18),new Vector3(4,0,-18),new Vector3(-26,0,0),new Vector3(26,0,0),new Vector3(10,.02f,10),new Vector3(-10,.02f,-10),new Vector3(-3,Upper,10),new Vector3(3,Upper,10)};
             var regions=new List<ArenaSpawnRegion>();for(int i=0;i<8;i++)regions.Add(new ArenaSpawnRegion{Id="S"+(i+1),Center=spawns[i],Size=new Vector3(1,0,1),Support=i<4?"support:ground":i<6?"support:ground":"support:upper"});
             var picks=new List<ArenaPickupDefinition>();
