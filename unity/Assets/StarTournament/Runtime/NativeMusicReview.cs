@@ -24,10 +24,25 @@ namespace StarTournament.ProvingGround
         {
             if(!success)
             {
-                File.WriteAllLines(Path.Combine(directory,"failure.txt"),observations.Concat(new[]{"FAIL "+message}));
+                File.WriteAllLines(Path.Combine(directory,"failure.txt"),observations.Concat(new[]{"FAIL "+message,MusicDiagnostic()}));
                 AudioListener.volume=0;Application.Quit(1);throw new InvalidOperationException(message);
             }
             observations.Add("PASS "+message);
+        }
+        string MusicDiagnostic()
+        {
+            if(audio==null)return "music not initialized";
+            var scene=audio.MusicScene;
+            return "STATE "+ground.CombatReviewDiagnostic()+" match="+ground.Session.Match?.Phase+
+                " boundCurrent="+(scene.BoundMatch==ground.Session.Match)+" menu="+scene.MenuWeight+
+                " round="+scene.RoundWeight+" progress="+scene.TransitionProgress+" suspended="+scene.Suspended+
+                " roundPaused="+audio.Music.Paused+" roundOutput="+audio.Music.HasOutput+" gainSum="+audio.Music.GainSum+" finishSeconds="+
+                typeof(NativeRoundMusic).GetField("finishSeconds",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio.Music)+
+                " finishing="+typeof(NativeRoundMusic).GetField("finishing",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio.Music)+
+                " menuPaused="+scene.Menu.Paused+" menuGainSum="+scene.Menu.GainSum+
+                " finishElapsed="+
+                typeof(NativeRoundMusic).GetField("finishElapsed",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio.Music)+
+                " voices="+string.Join(";",sources.Select(s=>s.name+":playing="+s.isPlaying+",volume="+s.volume+",clip="+(s.clip?s.clip.name:"null")+",time="+s.time));
         }
         IEnumerator Start()
         {
@@ -98,6 +113,7 @@ namespace StarTournament.ProvingGround
                 yield return new WaitForSecondsRealtime(.25f);
                 snapshot=match.Read();snapshot.Phase=NativeMatchPhase.Finished;snapshot.Winner=0;match.Restore(snapshot);
                 yield return new WaitForSecondsRealtime(2.5f);
+                observations.Add(MusicDiagnostic());
                 Check(sources.All(s=>!s.isPlaying&&s.volume==0),seats+" viewports: finish fades out");
                 string previous=audio.Music.TrackId;
                 typeof(ProvingGround).GetMethod("Repeat",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);yield return new WaitForSecondsRealtime(.3f);
