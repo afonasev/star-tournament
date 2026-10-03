@@ -228,7 +228,7 @@ namespace StarTournament.ProvingGround
                 for(int j=-3;j<=3;j+=3){Ring(ochre,c+new Vector3(0,.48f,j),.25f,Vector3.forward,.035f);Box(metal,c+new Vector3(0,-.42f,j),new Vector3(1.1f,.12f,.6f));}
                 Ring(ochre,c+new Vector3(-side*.5f,.1f,0),.28f,Vector3.right,.035f);
                 for(int j=0;j<10;j++)
-                {float x=side*(33+j%3*1.7f),z=row*(9+j*2.4f);Shape(sand,chips[j%3],new Vector3(x,-.1f,z),new Vector3(.7f+j%3*.5f,.4f+j%4*.35f,1.1f),Quaternion.Euler(0,j*31,0));}
+                {float x=side*(33+j%3*1.7f),z=row*(9+j*2.4f);GroundedRock(chips[j%3],new Vector3(x,0,z),new Vector3(.7f+j%3*.5f,.4f+j%4*.35f,1.1f),Quaternion.Euler(0,j*31,0));}
                 Drift(new Vector3(side*23,.045f,row*23),4,2.3f,side*77+row);
             }
         }
@@ -247,15 +247,55 @@ namespace StarTournament.ProvingGround
             const int segments=160;const int rings=9;
             for(int ring=0;ring<=rings;ring++)for(int i=0;i<=segments;i++)
             {
-                float a=i*Mathf.PI*2/segments;float r=40+ring*10;float h=ring<2?-.35f:(.25f+Mathf.PerlinNoise(Mathf.Cos(a)*5+17,Mathf.Sin(a)*5+33)*.65f+Mathf.Abs(Mathf.Sin(a*11+.6f)*.5f+Mathf.Sin(a*23)*.3f+Mathf.Sin(a*7)*.3f)*.55f)*P("mountainHeight")*Mathf.Pow(ring/(float)rings,3)-1;
-                v.Add(new Vector3(Mathf.Sin(a)*r,h,Mathf.Cos(a)*r));uv.Add(new Vector2(Mathf.Sin(a)*r,Mathf.Cos(a)*r)*.12f);
+                var point=LandscapeVertex(ring,i,P("mountainHeight"));
+                v.Add(point);uv.Add(new Vector2(point.x,point.z)*.12f);
                 if(ring<rings&&i<segments){int k=ring*(segments+1)+i;tris.AddRange(new[]{k,k+segments+1,k+1,k+1,k+segments+1,k+segments+2});}
             }
             var terrain=new Mesh{name="Unavailable lunar wastes and mountains"};terrain.SetVertices(v);terrain.SetUVs(0,uv);terrain.SetTriangles(tris,0);terrain.RecalculateNormals();owned.Add(terrain);Shape(sand,terrain,Vector3.zero,Vector3.one,Quaternion.identity);
             // Fill square-to-annulus gap beyond the fence, below the playable plane.
             Box(sand,new Vector3(0,-.45f,0),new Vector3(90,.2f,90));
             foreach(var c in new[]{new Vector3(-42,0,37),new Vector3(48,0,23),new Vector3(8,0,-55),new Vector3(35,0,49)})Crater(c,5);
-            for(int i=0;i<100;i++){float a=(float)random.NextDouble()*Mathf.PI*2,r=47+(float)random.NextDouble()*60;var c=new Vector3(Mathf.Sin(a)*r,.2f,Mathf.Cos(a)*r);Shape(sand,RockMesh(i),c,new Vector3(1+i%3,.6f+i%4,1.5f),Quaternion.Euler(0,i*37,0));}
+            for(int i=0;i<100;i++){float a=(float)random.NextDouble()*Mathf.PI*2,r=47+(float)random.NextDouble()*60;var c=new Vector3(Mathf.Sin(a)*r,.2f,Mathf.Cos(a)*r);GroundedRock(RockMesh(i),c,new Vector3(1+i%3,.6f+i%4,1.5f),Quaternion.Euler(0,i*37,0));}
+        }
+        // Fixed tessellation and contact inset are asset construction tolerances, not gameplay controls.
+        internal static Vector3 LandscapeVertex(int ring,int segment,float mountainHeight)
+        {
+            float a=segment*Mathf.PI*2/160,r=40+ring*10;
+            float h=ring<2?-.35f:(.25f+Mathf.PerlinNoise(Mathf.Cos(a)*5+17,Mathf.Sin(a)*5+33)*.65f+Mathf.Abs(Mathf.Sin(a*11+.6f)*.5f+Mathf.Sin(a*23)*.3f+Mathf.Sin(a*7)*.3f)*.55f)*mountainHeight*Mathf.Pow(ring/9f,3)-1;
+            return new Vector3(Mathf.Sin(a)*r,h,Mathf.Cos(a)*r);
+        }
+        internal static float LandscapeHeight(Vector3 point,float mountainHeight)
+        {
+            // Sample the rendered triangles, including the square underlay; polar interpolation
+            // alone disagrees with the polygonal mesh on sloped cells and can leave air gaps.
+            float height=Mathf.Abs(point.x)<=45&&Mathf.Abs(point.z)<=45?-.35f:float.NegativeInfinity;
+            float angle=Mathf.Atan2(point.x,point.z);if(angle<0)angle+=Mathf.PI*2;
+            int segment=Mathf.Min(159,Mathf.FloorToInt(angle*160/(Mathf.PI*2)));
+            for(int ring=0;ring<9;ring++)
+            {
+                var a=LandscapeVertex(ring,segment,mountainHeight);var b=LandscapeVertex(ring+1,segment,mountainHeight);
+                var c=LandscapeVertex(ring,segment+1,mountainHeight);var d=LandscapeVertex(ring+1,segment+1,mountainHeight);
+                Sample(a,b,c);Sample(c,b,d);
+            }
+            return float.IsNegativeInfinity(height)?-.35f:height;
+            void Sample(Vector3 a,Vector3 b,Vector3 c)
+            {
+                float det=(b.z-c.z)*(a.x-c.x)+(c.x-b.x)*(a.z-c.z);
+                float u=((b.z-c.z)*(point.x-c.x)+(c.x-b.x)*(point.z-c.z))/det;
+                float v=((c.z-a.z)*(point.x-c.x)+(a.x-c.x)*(point.z-c.z))/det;
+                if(u>=-.00001f&&v>=-.00001f&&u+v<=1.00001f)height=Mathf.Max(height,u*a.y+v*b.y+(1-u-v)*c.y);
+            }
+        }
+        void GroundedRock(Mesh source,Vector3 centre,Vector3 scale,Quaternion rotation)
+        {
+            var mesh=Instantiate(source);owned.Add(mesh);var vertices=mesh.vertices;
+            for(int i=0;i<vertices.Length;i++)
+            {
+                var q=rotation*Vector3.Scale(vertices[i],scale);q.x+=centre.x;q.z+=centre.z;
+                q.y+=LandscapeHeight(q,P("mountainHeight"))-.025f;vertices[i]=q;
+            }
+            mesh.vertices=vertices;mesh.RecalculateNormals();mesh.RecalculateBounds();
+            Shape(sand,mesh,Vector3.zero,Vector3.one,Quaternion.identity);
         }
         void Crater(Vector3 centre,float radius)
         {

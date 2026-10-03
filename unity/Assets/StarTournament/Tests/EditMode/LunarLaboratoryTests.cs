@@ -32,6 +32,25 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }
+        [Test] public void LandscapeContactMatchesRenderedTrianglesAndUnderlay()
+        {
+            var flags=System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic;
+            var sample=typeof(LunarLaboratoryPresentation).GetMethod("LandscapeHeight",flags);
+            var vertex=typeof(LunarLaboratoryPresentation).GetMethod("LandscapeVertex",flags);
+            float Height(Vector3 p)=>(float)sample.Invoke(null,new object[]{p,22f});
+            Vector3 Vertex(int ring,int segment)=>(Vector3)vertex.Invoke(null,new object[]{ring,segment,22f});
+            Assert.That(Height(new Vector3(34,0,20)),Is.EqualTo(-.35f).Within(.0001f),"near-fence underlay");
+            // Interior triangle points exercise the actual planar surface, including the polar seam.
+            for(int ring=0;ring<9;ring++)foreach(int segment in new[]{0,23,78,120,159})
+            {
+                var a=Vertex(ring,segment);var b=Vertex(ring+1,segment);var c=Vertex(ring,segment+1);var d=Vertex(ring+1,segment+1);
+                foreach(var p in new[]{a*.2f+b*.3f+c*.5f,c*.2f+b*.3f+d*.5f})
+                {
+                    float expected=Mathf.Abs(p.x)<=45&&Mathf.Abs(p.z)<=45?Mathf.Max(-.35f,p.y):p.y;
+                    Assert.That(Height(p),Is.EqualTo(expected).Within(.0001f),"rendered triangle "+ring+" / "+segment);
+                }
+            }
+        }
         [Test] public void ApprovedV4Contract()
         {
             var d=LunarLaboratoryCatalog.Build();var result=ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault());Assert.That(result.IsValid,Is.True,result.ToString());

@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "892b43a82b70f4d5843e04cd35d75a8a20fdddec",
+  "dirty": " M docs/GAME_SPEC.md\n M unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs\n M unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/lunar-laboratory-f3/\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-rock-grounding/unity/../.local/unity-evidence/focused-editmode.7mp7Ku/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-rock-grounding/unity/../.local/unity-evidence/focused-playmode.TH6srf/playmode.xml",
+      "passed": 11
+    }
+  ]
+}
