@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
                 if(s.Surface=="lunar-glass")GlassFrame(s);
                 if(s.Surface=="lunar-step")Box(ochre,s.Position+Vector3.up*(s.Size.y*.5f+.006f),new Vector3(s.Size.x,.008f,.07f));
             }
-            Architecture();RoofDetails();Zones();PickupSigns(d);Background();Flush();
+            Architecture();RoofDetails();Zones();PickupSigns(d);CourtyardDetail();Background();Flush();
         }
         Mesh Primitive(PrimitiveType t){var go=GameObject.CreatePrimitive(t);var m=Instantiate(go.GetComponent<MeshFilter>().sharedMesh);DestroyImmediate(go);owned.Add(m);return m;}
         Material Mat(string name,Color c,Texture t=null,float metallic=0,bool emissive=false)
@@ -59,8 +59,15 @@ namespace StarTournament.ProvingGround
         void Ball(Material m,Vector3 c,Vector3 scale)=>Shape(m,sphere,c,scale,Quaternion.identity);
         void Ring(Material m,Vector3 c,float radius,Vector3 normal,float width)
         {var right=Vector3.Cross(normal,Mathf.Abs(normal.y)>.5f?Vector3.forward:Vector3.up).normalized;var up=Vector3.Cross(normal,right);for(int i=0;i<48;i++){float a=i*Mathf.PI/24,b=(i+1)*Mathf.PI/24;Pipe(m,c+radius*(right*Mathf.Cos(a)+up*Mathf.Sin(a)),c+radius*(right*Mathf.Cos(b)+up*Mathf.Sin(b)),width);}}
-        void Light(Vector3 c)
-        {Box(metal,c,new Vector3(1.5f,.16f,.6f));Box(white,c-Vector3.up*.085f,new Vector3(1.3f,.02f,.43f));var go=new GameObject("Neutral lunar luminaire");go.transform.SetParent(transform,false);go.transform.localPosition=c-Vector3.up*.25f;var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=125;go.transform.localRotation=Quaternion.Euler(90,0,0);l.color=new Color(1,.97f,.89f);l.intensity=P("lamp");l.range=P("range");l.renderMode=LightRenderMode.ForcePixel;LightCount++;}
+        void Light(Vector3 c,bool office=false)
+        {Box(metal,c,new Vector3(1.5f,.16f,.6f));Box(white,c-Vector3.up*.085f,new Vector3(1.3f,.02f,.43f));var go=new GameObject("Neutral lunar luminaire");go.transform.SetParent(transform,false);go.transform.localPosition=c-Vector3.up*.25f;var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=125;go.transform.localRotation=Quaternion.Euler(90,0,0);l.color=new Color(1,.97f,.89f);l.intensity=P(office?"officeLamp":"lamp");l.range=P("range");l.renderMode=LightRenderMode.ForcePixel;LightCount++;
+            if(office)
+            {
+                // Diffuse ceiling bounce is represented by local point fill, kept out of exterior ambient.
+                var fill=new GameObject("Office diffuse ceiling bounce");fill.transform.SetParent(transform,false);fill.transform.localPosition=c-Vector3.up*.8f;
+                var f=fill.AddComponent<Light>();f.type=LightType.Point;f.color=new Color(.96f,.98f,1);f.intensity=P("officeFill");f.range=P("range");f.renderMode=LightRenderMode.ForcePixel;LightCount++;
+            }
+        }
         void Label(string value,Vector3 pos,Quaternion rot,float size,Color color)
         {
             var go=new GameObject(value);go.transform.SetParent(transform,false);go.transform.localPosition=pos;go.transform.localRotation=rot;
@@ -117,8 +124,8 @@ namespace StarTournament.ProvingGround
                 for(int q=-28;q<=28;q+=14)
                 {var a=new Vector3(q,0,sign*31);Pipe(metal,a,a+Vector3.up*4,.12f);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Pipe(metal,b,b+Vector3.up*4,.12f);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(b+Vector3.up*4);}
             }
-            for(int x=-8;x<=8;x+=8)foreach(int z in new[]{-8,0,8})foreach(float y in new[]{3.9f,8.4f})Light(new Vector3(x,y,z));
-            foreach(int a in new[]{-1,1})Light(new Vector3(a*19,7.8f,0));
+            for(int x=-9;x<=9;x+=6)foreach(int z in new[]{-9,-3,3,9})foreach(float y in new[]{3.9f,8.4f})Light(new Vector3(x,y,z),true);
+            foreach(int a in new[]{-1,1})Light(new Vector3(a*19,7.8f,0),true);
             // Paving leaves regolith visible; deterministic irregular sand drifts lay over it.
             for(int x=-28;x<=28;x+=4)for(int z=-28;z<=28;z+=4)
             {
@@ -199,6 +206,31 @@ namespace StarTournament.ProvingGround
         {
             foreach(var item in d.Pickups)
             {var c=item.Anchor+Vector3.up*.025f;Ring(item.Kind==ArenaPickupKind.Cutter?ochre:white,c,.78f,Vector3.up,.045f);Label(item.Id,c+new Vector3(0,.01f,-.9f),Quaternion.Euler(90,0,0),.45f,Color.white);}
+        }
+        void CourtyardDetail()
+        {
+            // Surface-scale gravel and dust are decorative kit detail, below a capsule step.
+            // Tall silhouettes live outside the fence; substantial yard obstacles are catalog solids.
+            var chips=new[]{RockMesh(70),RockMesh(71),RockMesh(72)};
+            var random=new System.Random(63026);
+            for(int i=0;i<550;i++)
+            {
+                float x=-31+(float)random.NextDouble()*62,z=-31+(float)random.NextDouble()*62;
+                if(Mathf.Abs(x)<25&&Mathf.Abs(z)<16)continue;
+                float size=.07f+(float)random.NextDouble()*.19f;
+                Shape(sand,chips[i%3],new Vector3(x,.027f,z),new Vector3(size,.035f+size*.3f,size),Quaternion.Euler(0,i*43,0));
+            }
+            foreach(int side in new[]{-1,1})foreach(int row in new[]{-1,1})
+            {
+                // Canonical insulated service conduit body carries visible pipe joints, valves and labels.
+                var c=new Vector3(side*30,.5f,row*15);
+                Pipe(metal,c+new Vector3(0,.48f,-4.5f),c+new Vector3(0,.48f,4.5f),.23f);
+                for(int j=-3;j<=3;j+=3){Ring(ochre,c+new Vector3(0,.48f,j),.25f,Vector3.forward,.035f);Box(metal,c+new Vector3(0,-.42f,j),new Vector3(1.1f,.12f,.6f));}
+                Ring(ochre,c+new Vector3(-side*.5f,.1f,0),.28f,Vector3.right,.035f);
+                for(int j=0;j<10;j++)
+                {float x=side*(33+j%3*1.7f),z=row*(9+j*2.4f);Shape(sand,chips[j%3],new Vector3(x,-.1f,z),new Vector3(.7f+j%3*.5f,.4f+j%4*.35f,1.1f),Quaternion.Euler(0,j*31,0));}
+                Drift(new Vector3(side*23,.045f,row*23),4,2.3f,side*77+row);
+            }
         }
         void Background()
         {

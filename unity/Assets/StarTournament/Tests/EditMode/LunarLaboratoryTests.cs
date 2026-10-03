@@ -17,13 +17,14 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }
-        [Test] public void ReworkRegistryPreservesExistingLunarLabHistory()
+        [TestCase("BeforeLunarRework")]
+        [TestCase("BeforeLunarOffice")] public void ReworkRegistryPreservesExistingLunarLabHistory(string transform)
         {
             var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"lunar-rework-"+System.Guid.NewGuid()+".json");
             try
             {
                 var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
-                var method=typeof(ProvingProfile).GetMethod("BeforeLunarRework",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var method=typeof(ProvingProfile).GetMethod(transform,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 var old=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
                 var prior=new DesignLabHistory(path,old);prior.Create("Previous lunar map");string hash=prior.Selected.Hash;int number=prior.Selected.Number;
                 var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);

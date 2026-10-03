@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="2", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="3", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
@@ -146,6 +146,30 @@ namespace StarTournament.ProvingGround
             Cargo("south-east",2.8f,-9,2,2.6f,1.6f);
             Cargo("south-low",-.2f,-5.6f,1.4f,.85f,1.5f);
             Cargo("south-west",-8.6f,-5.4f,2.5f,1.8f,1.2f);
+            // F2 adds distinct islands of cargo; centre line, storage doors and spawn pockets stay open.
+            Cargo("f2-north-entry-w",-2.8f,10.5f,1.2f,1.3f,1.4f);
+            Cargo("f2-north-entry-e",3.1f,10.5f,1.3f,1.1f,1.2f);
+            Cargo("f2-north-inner",-.8f,4.3f,1.1f,2.4f,1.2f);
+            Cargo("f2-north-east-wall",10.6f,7.1f,.8f,2.7f,1.2f);
+            Cargo("f2-north-west-store",-10.4f,10.8f,1.2f,2.3f,1.1f);
+            Cargo("f2-north-east-stack",5.2f,9.4f,1.1f,1.6f,1.4f);
+            Cargo("f2-south-entry-w",-2.5f,-10.5f,1.3f,1.2f,1.3f);
+            Cargo("f2-south-entry-e",.2f,-9.1f,1.2f,1.8f,1.1f);
+            Cargo("f2-south-inner",3.7f,-3.4f,1.6f,2.5f,1.3f);
+            Cargo("f2-south-west-stack",-7.3f,-9.4f,1.1f,2.6f,1.2f);
+            Cargo("f2-south-east-store",10.6f,-10.8f,1.1f,2.4f,1.1f);
+            Cargo("f2-south-west-wall",-10.5f,-3.8f,1.1f,1.7f,1.5f);
+            foreach(int side in new[]{-1,1})
+            {
+                foreach(int row in new[]{-1,1})
+                {
+                    Cargo("f2-yard-main-"+side+"-"+row,side*21,row*21,3.2f,2.8f,2.1f);
+                    Cargo("f2-yard-low-"+side+"-"+row,side*24.6f,row*21,2.1f,1.1f,1.7f);
+                    Cargo("f2-yard-end-"+side+"-"+row,side*21,row*24.4f,1.6f,1.8f,1.5f);
+                    Cargo("f2-yard-building-"+side+"-"+row,side*10,row*18,2.8f,1.5f,1.9f);
+                    Box("f2-service-duct-"+side+"-"+row,new Vector3(side*30,.5f,row*15),new Vector3(.9f,1,9),"equipment");
+                }
+            }
             Box("scanner",new Vector3(-8,Upper+.55f,7),new Vector3(2.2f,1.1f,2.2f),"equipment");
             Box("samples",new Vector3(10.8f,Upper+1.1f,7),new Vector3(.8f,2.2f,4),"equipment");
             var spawns=new[]{new Vector3(-4,0,18),new Vector3(4,0,-18),new Vector3(-26,0,0),new Vector3(26,0,0),new Vector3(10,.02f,10),new Vector3(-10,.02f,-10),new Vector3(-3,Upper,10),new Vector3(3,Upper,10)};

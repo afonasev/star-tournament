@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &2111033792
+--- !u!1 &1258644585
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2111033794}
-  - component: {fileID: 2111033793}
+  - component: {fileID: 1258644587}
+  - component: {fileID: 1258644586}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2111033793
+--- !u!114 &1258644586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2111033792}
+  m_GameObject: {fileID: 1258644585}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -59363,7 +59363,7 @@ MonoBehaviour:
       Value: 0
   LunarPresentation:
     id: lunar-laboratory-presentation-v1
-    version: 2
+    version: 3
     descriptors:
     - Path: lunar.navigationClearance
       Group: lunar-presentation
@@ -59430,6 +59430,34 @@ MonoBehaviour:
       Maximum: 30
       Step: 0.5
       DefaultValue: 10
+    - Path: lunar.officeLamp
+      Group: lunar-presentation
+      Label: "\u041F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0439 \u043E\u0444\u0438\u0441\u043D\u044B\u0439
+        \u0441\u0432\u0435\u0442"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u041F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0439 \u043E\u0444\u0438\u0441\u043D\u044B\u0439
+        \u0441\u0432\u0435\u0442; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: intensity
+      Minimum: 0
+      Maximum: 100
+      Step: 0.5
+      DefaultValue: 18
+    - Path: lunar.officeFill
+      Group: lunar-presentation
+      Label: "\u0417\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0449\u0438\u0439
+        \u043E\u0444\u0438\u0441\u043D\u044B\u0439 \u0441\u0432\u0435\u0442"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u0417\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0449\u0438\u0439 \u043E\u0444\u0438\u0441\u043D\u044B\u0439
+        \u0441\u0432\u0435\u0442; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: intensity
+      Minimum: 0
+      Maximum: 20
+      Step: 0.25
+      DefaultValue: 2.5
     - Path: lunar.glassOpacity
       Group: lunar-presentation
       Label: "\u041D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
@@ -59535,6 +59563,10 @@ MonoBehaviour:
       Value: 12
     - Path: lunar.range
       Value: 10
+    - Path: lunar.officeLamp
+      Value: 18
+    - Path: lunar.officeFill
+      Value: 2.5
     - Path: lunar.glassOpacity
       Value: 0.3
     - Path: lunar.signScale
@@ -86681,13 +86713,13 @@ MonoBehaviour:
       Value: 0
     - Path: tunnels.map.tunnels-pulse-south.anchor.z
       Value: -19
---- !u!4 &2111033794
+--- !u!4 &1258644587
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2111033792}
+  m_GameObject: {fileID: 1258644585}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -86700,4 +86732,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2111033794}
+  - {fileID: 1258644587}
