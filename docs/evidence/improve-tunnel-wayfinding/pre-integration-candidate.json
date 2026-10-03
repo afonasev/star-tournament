@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "6c26c27b86e586accc5499cfc91d65fe9c53a7b6",
+  "buildMarker": "20261003T060512Z",
+  "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-tunnel-wayfinding/6c26c27b86e5/20261003T060512Z/StarTournamentProvingGround.app",
+  "sha256Manifest": "b808515afc6d7001d602c51f3840979569c52faa99ca5b19ab0debd656e8da1d",
+  "distribution": "local macOS Development candidate",
+  "humanAcceptance": false,
+  "serializedBuildSceneSha256": "9b6ab7b56202cf1002f65fde9a7a7c78095e839acb036b29e0d3ffa9afe3459b",
+  "status": "superseded; binary removed after successful smoke of a5c738c0ffe84ad0677090069575d509b0a4271e",
+  "replacement": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/improve-tunnel-wayfinding/a5c738c0ffe8/20261003T062119Z/StarTournamentProvingGround.app"
+}

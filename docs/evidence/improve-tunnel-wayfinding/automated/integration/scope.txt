@@ -1,0 +1,4 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=IndustrialTunnelsTests;DesignLabHistoryTests;NativeBotWeaponEstimateTests
+revision=a5c738c0ffe84ad0677090069575d509b0a4271e
