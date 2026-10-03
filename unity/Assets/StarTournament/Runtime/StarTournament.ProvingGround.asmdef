@@ -3,6 +3,7 @@
   "references": [
     "Unity.InputSystem",
     "Unity.AI.Navigation",
-    "Unity.ugui"
+    "Unity.ugui",
+    "Unity.RenderPipelines.Universal.Runtime"
   ]
 }

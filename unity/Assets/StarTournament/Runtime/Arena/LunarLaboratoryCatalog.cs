@@ -6,13 +6,14 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="5", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="6", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
         internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true,true));
         internal static ProvingProfile BeforeInteriorAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,true));
-        static ArenaDefinition Draft(bool includeFormerCentre=false,bool beforeInterior=false)
+        internal static ProvingProfile BeforeFlushAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,false,true));
+        static ArenaDefinition Draft(bool includeFormerCentre=false,bool beforeInterior=false,bool beforeFlush=false)
         {
             var s=new List<ArenaSolid>();var ts=new List<NativeNavigationTransition>();
             void Box(string id,Vector3 c,Vector3 size,string mat="ivory",string support="",string surface=null,int layer=ProvingArena.WorldLayer)
@@ -197,6 +198,19 @@ namespace StarTournament.ProvingGround
                 }
                 foreach(int side in new[]{-1,1})
                 {
+                    if(!beforeFlush)
+                    {
+                        // Derive the front closure from adjoining canonical bounds, not a visual offset.
+                        // Its top meets the slab underside, avoiding coplanar overlap with the upper floor.
+                        string prefix=side<0?"w":"e";
+                        var wall=s.Find(v=>v.Id==prefix+"-ground--1");
+                        var spine=s.Find(v=>v.Id==prefix+"-stair-spine");
+                        var slab=s.Find(v=>v.Id=="upper");
+                        float lowZ=wall.Position.z+wall.Size.z*.5f;
+                        float highZ=spine.Position.z;
+                        float top=slab.Position.y-slab.Size.y*.5f;
+                        Box(prefix+"-front-infill",new Vector3(wall.Position.x,top*.5f,(lowZ+highZ)*.5f),new Vector3(wall.Size.x,top,highZ-lowZ));
+                    }
                     Box((side<0?"w":"e")+"-landing-infill",new Vector3(side*19.5f,.975f,0),new Vector3(3,1.95f,7));
                     Wall("store-header-long-"+side,side*7.25f,-side*6,2.5f,.25f,3,1.2f);
                     Wall("store-header-short-"+side,side*6,-side*8,.25f,2,3,1.2f);

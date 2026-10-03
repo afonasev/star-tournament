@@ -274,6 +274,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-weaponBalanceReview")) gameObject.AddComponent<NativeWeaponBalanceReview>();
             if (args.Contains("-bloodReview")) gameObject.AddComponent<NativeBloodReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
+            if (args.Contains("-lunarPerformance")) gameObject.AddComponent<NativeLunarPerformanceReview>();
             if (args.Contains("-lunarReview")) gameObject.AddComponent<NativeLunarLaboratoryReview>();
             if (args.Contains("-industrialTunnelsReview")) gameObject.AddComponent<NativeIndustrialTunnelsReview>();
             if (args.Contains("-weaponPickupReview")) gameObject.AddComponent<NativeWeaponPickupReview>();
