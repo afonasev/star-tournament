@@ -164,6 +164,17 @@
       "collision": "none",
       "lighting": "albedo only; URP local lights",
       "lod": "single repeating texture; Unity mipmaps"
+    },
+    {
+      "key": "lunar-earth",
+      "path": "Assets/StarTournament/Resources/LunarEarth.jpg",
+      "sha256": "dc059529b8ed1cfcdd59747a7c3f259c93c1322bf88ca1ec8bab1dd71fcc57f5",
+      "source": "NASA Earth Observatory, Blue Marble Next Generation, June 2004; Reto Stockli",
+      "sourceUrl": "https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-base/june/world.200406.3x5400x2700.jpg",
+      "usage": "Public NASA Earth imagery; renderer-only globe, no collision or navigation; runtime clouds/terminator/rim in LunarEarth.shader",
+      "units": "sphere scaled in meters",
+      "pivot": "planet center",
+      "lod": "single distant sphere, 2048 texture import with mipmaps"
     }
   ]
 }

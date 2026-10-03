@@ -1,0 +1,80 @@
+{
+  "feedback": "F4",
+  "scope": "physical geometry and Lab registry history",
+  "full_gate": {
+    "command": "make check",
+    "exit": 0,
+    "results": {
+      "editmode": {
+        "id": "2",
+        "testcasecount": "316",
+        "result": "Passed",
+        "total": "316",
+        "passed": "316",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-03 14:33:55Z",
+        "end-time": "2026-10-03 14:44:22Z",
+        "duration": "626.8257297"
+      },
+      "playmode": {
+        "id": "2",
+        "testcasecount": "188",
+        "result": "Passed",
+        "total": "188",
+        "passed": "188",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-03 14:45:17Z",
+        "end-time": "2026-10-03 14:54:23Z",
+        "duration": "546.1760794"
+      }
+    }
+  },
+  "focused_geometry": {
+    "id": "2",
+    "testcasecount": "1",
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-03 14:30:14Z",
+    "end-time": "2026-10-03 14:30:18Z",
+    "duration": "3.235658"
+  },
+  "natural_match": {
+    "status": "PASS",
+    "map": "lunar-laboratory-v1@4",
+    "muted": true,
+    "seed": 20261003,
+    "kills": 134,
+    "collections": 135,
+    "humanAcceptance": false
+  },
+  "build_exit": 0,
+  "offscreen_png": 23,
+  "visible_smoke": {
+    "exit": 0,
+    "png_count": 24,
+    "reviewed": [
+      "00-map-selection",
+      "04-ground-divider",
+      "05-ground-analysis",
+      "17-four-views"
+    ]
+  },
+  "human_acceptance": false
+}

@@ -1,0 +1,49 @@
+{
+  "map": "lunar-laboratory-v1@3",
+  "feedback": "F2",
+  "gate": {
+    "EditMode": 314,
+    "PlayMode": 188,
+    "failed": 0,
+    "skipped": 0,
+    "final_build": "PASS exit 0",
+    "command": "make check",
+    "exit": 0
+  },
+  "focused_geometry": "PASS .local/unity-evidence/focused-playmode.xNtMOF/playmode.xml",
+  "tested_player_build": "unity/tools.sh build exit 0 before full tests; same final runtime sources",
+  "tested_player_tree_sha256": "d2600fbdfd3ffdfb82596e94cc4f1b0afb80178030ddf42a6206d3566a1b5b48",
+  "natural_match": {
+    "status": "PASS",
+    "map": "lunar-laboratory-v1@3",
+    "muted": true,
+    "seed": 20261003,
+    "kills": 134,
+    "collections": 135,
+    "humanAcceptance": false
+  },
+  "offscreen_png_count": 23,
+  "visual_review": [
+    "04-ground-divider",
+    "05-ground-analysis",
+    "08-lab-a",
+    "09-lab-b",
+    "10-upper-hall",
+    "17-four-views",
+    "23-service-pipes"
+  ],
+  "visible_smoke": {
+    "exit": 0,
+    "png_count": 24,
+    "reviewed": [
+      "00-map-selection",
+      "05-ground-analysis",
+      "08-lab-a",
+      "17-four-views",
+      "23-service-pipes"
+    ],
+    "exact_tree_sha256": "d2600fbdfd3ffdfb82596e94cc4f1b0afb80178030ddf42a6206d3566a1b5b48"
+  },
+  "human_acceptance": false,
+  "revision": "0c31718eb1bedf359f6cd6c614286230a83bd7eb"
+}

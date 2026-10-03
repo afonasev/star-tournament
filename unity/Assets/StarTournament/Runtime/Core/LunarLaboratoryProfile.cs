@@ -12,13 +12,36 @@ namespace StarTournament.ProvingGround
             foreach(var a in p.descriptors){a.Path="lunar.map."+a.Path;a.Description="Лунная лаборатория v4; изменение требует новой проверенной immutable ревизии карты.";}
             foreach(var a in p.values)a.Path="lunar.map."+a.Path;return p;
         }
+        internal ProvingProfile BeforeLunarOpenCentre()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeOpenCentreAuthoring():this;
+        internal ProvingProfile BeforeLunarOffice()
+        {
+            if(Id!="lunar-laboratory-authoring-v1"&&Id!="lunar-laboratory-presentation-v1")return this;
+            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            bool Added(string path)=>path.StartsWith("lunar.map.cargo-f2-",System.StringComparison.Ordinal)||path.StartsWith("lunar.map.f2-service-",System.StringComparison.Ordinal)||path=="lunar.officeLamp"||path=="lunar.officeFill";
+            old.descriptors.RemoveAll(d=>Added(d.Path));old.values.RemoveAll(v=>Added(v.Path));
+            if(Id=="lunar-laboratory-presentation-v1")old.version=2;
+            return old;
+        }
+        internal ProvingProfile BeforeLunarRework()
+        {
+            if(Id!="lunar-laboratory-authoring-v1"&&Id!="lunar-laboratory-presentation-v1")return this;
+            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeLunarOffice()));
+            old.descriptors.RemoveAll(d=>d.Path.StartsWith("lunar.map.cargo-",System.StringComparison.Ordinal)||d.Path=="lunar.glassOpacity");
+            old.values.RemoveAll(v=>v.Path.StartsWith("lunar.map.cargo-",System.StringComparison.Ordinal)||v.Path=="lunar.glassOpacity");
+            if(Id=="lunar-laboratory-presentation-v1")
+            {old.version=1;old.Set("lunar.fill",.4f);old.Set("lunar.sun",.8f);old.Set("lunar.lamp",6);foreach(var d in old.descriptors)d.DefaultValue=old.Get(d.Path);}
+            return old;
+        }
         public static ProvingProfile CreateLunarPresentation()
         {
-            var p=new ProvingProfile{id="lunar-laboratory-presentation-v1",version=1};
+            var p=new ProvingProfile{id="lunar-laboratory-presentation-v1",version=3};
             void V(string key,string label,string unit,float min,float max,float step,float value)=>p.Add("lunar."+key,"lunar-presentation",label,"Лунная лаборатория: "+label+"; оформление не меняет физические контракты.",unit,min,max,step,value);
             V("navigationClearance","Запас маршрута от стен","m",.05f,.4f,.01f,.15f);
-            V("fill","Рассеянный свет","ratio",.05f,1,.01f,.4f);V("sun","Солнечный свет","intensity",0,3,.05f,.8f);
-            V("lamp","Светильники","intensity",0,30,.5f,6);V("range","Дальность света","m",2,30,.5f,10);
+            V("fill","Рассеянный свет","ratio",.05f,1,.01f,.17f);V("sun","Солнечный свет","intensity",0,3,.05f,.3f);
+            V("lamp","Светильники","intensity",0,30,.5f,12);V("range","Дальность света","m",2,30,.5f,10);
+            V("officeLamp","Потолочный офисный свет","intensity",0,100,.5f,18);
+            V("officeFill","Заполняющий офисный свет","intensity",0,20,.25f,2.5f);
+            V("glassOpacity","Непрозрачность бронестекла","ratio",.1f,.6f,.01f,.3f);
             V("signScale","Масштаб маркировки","ratio",.5f,2,.1f,1);
             V("tile","Размер панели","m",.5f,8,.1f,2);V("skyDistance","Глубина фона","m",80,180,1,150);
             V("mountainHeight","Высота дальних гор","m",5,50,1,22);V("earthRadius","Видимый радиус Земли","m",2,15,.5f,8);

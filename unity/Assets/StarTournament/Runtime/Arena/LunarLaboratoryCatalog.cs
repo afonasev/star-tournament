@@ -6,11 +6,12 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="1", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="4", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
-        static ArenaDefinition Draft()
+        internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true));
+        static ArenaDefinition Draft(bool includeFormerCentre=false)
         {
             var s=new List<ArenaSolid>();var ts=new List<NativeNavigationTransition>();
             void Box(string id,Vector3 c,Vector3 size,string mat="ivory",string support="",string surface=null,int layer=ProvingArena.WorldLayer)
@@ -134,6 +135,47 @@ namespace StarTournament.ProvingGround
             // Explicit equipment solids: presentation adds no unannounced obstacles.
             foreach(var c in new[]{new Vector3(-3,0,7),new Vector3(7,0,7),new Vector3(-3,0,-7),new Vector3(3,0,-6),new Vector3(-25,0,10),new Vector3(25,0,-10),new Vector3(-7,0,24),new Vector3(7,0,-24)})
                 Box("equipment-"+s.Count,c+Vector3.up*(c.x==7&&c.z==7?1.1f:.65f),new Vector3(2.3f,c.x==7&&c.z==7?2.2f:1.3f,1.4f),"equipment");
+            // F1 cargo walls: authored colliders also feed navigation and Balance Lab geometry.
+            // Keep the centre pickup strip, storage portals and corner spawns clear.
+            void Cargo(string id,float x,float z,float w,float h,float d)
+                =>Box("cargo-"+id,new Vector3(x,.02f+h*.5f,z),new Vector3(w,h,d),"equipment");
+            // F4 removes these two solids from the live map. Retain the prior registry only
+            // to read existing Balance Lab snapshots without rewriting their hashes.
+            if(includeFormerCentre)
+            {
+                Cargo("north-spine",2.8f,6.4f,1.6f,2.8f,4.2f);
+                Cargo("north-low",-.7f,8.7f,2.2f,.85f,1.5f);
+            }
+            Cargo("north-west",-4.4f,4.3f,2.8f,2.5f,1.3f);
+            Cargo("north-east",7.8f,4.6f,2.5f,1.7f,1.4f);
+            Cargo("south-spine",-4.5f,-6.6f,1.5f,2.9f,4.6f);
+            Cargo("south-east",2.8f,-9,2,2.6f,1.6f);
+            Cargo("south-low",-.2f,-5.6f,1.4f,.85f,1.5f);
+            Cargo("south-west",-8.6f,-5.4f,2.5f,1.8f,1.2f);
+            // F2 adds distinct islands of cargo; centre line, storage doors and spawn pockets stay open.
+            Cargo("f2-north-entry-w",-2.8f,10.5f,1.2f,1.3f,1.4f);
+            Cargo("f2-north-entry-e",3.1f,10.5f,1.3f,1.1f,1.2f);
+            Cargo("f2-north-inner",-.8f,4.3f,1.1f,2.4f,1.2f);
+            Cargo("f2-north-east-wall",10.6f,7.1f,.8f,2.7f,1.2f);
+            Cargo("f2-north-west-store",-10.4f,10.8f,1.2f,2.3f,1.1f);
+            Cargo("f2-north-east-stack",5.2f,9.4f,1.1f,1.6f,1.4f);
+            Cargo("f2-south-entry-w",-2.5f,-10.5f,1.3f,1.2f,1.3f);
+            Cargo("f2-south-entry-e",.2f,-9.1f,1.2f,1.8f,1.1f);
+            Cargo("f2-south-inner",3.7f,-3.4f,1.6f,2.5f,1.3f);
+            Cargo("f2-south-west-stack",-7.3f,-9.4f,1.1f,2.6f,1.2f);
+            Cargo("f2-south-east-store",10.6f,-10.8f,1.1f,2.4f,1.1f);
+            Cargo("f2-south-west-wall",-10.5f,-3.8f,1.1f,1.7f,1.5f);
+            foreach(int side in new[]{-1,1})
+            {
+                foreach(int row in new[]{-1,1})
+                {
+                    Cargo("f2-yard-main-"+side+"-"+row,side*21,row*21,3.2f,2.8f,2.1f);
+                    Cargo("f2-yard-low-"+side+"-"+row,side*24.6f,row*21,2.1f,1.1f,1.7f);
+                    Cargo("f2-yard-end-"+side+"-"+row,side*21,row*24.4f,1.6f,1.8f,1.5f);
+                    Cargo("f2-yard-building-"+side+"-"+row,side*10,row*18,2.8f,1.5f,1.9f);
+                    Box("f2-service-duct-"+side+"-"+row,new Vector3(side*30,.5f,row*15),new Vector3(.9f,1,9),"equipment");
+                }
+            }
             Box("scanner",new Vector3(-8,Upper+.55f,7),new Vector3(2.2f,1.1f,2.2f),"equipment");
             Box("samples",new Vector3(10.8f,Upper+1.1f,7),new Vector3(.8f,2.2f,4),"equipment");
             var spawns=new[]{new Vector3(-4,0,18),new Vector3(4,0,-18),new Vector3(-26,0,0),new Vector3(26,0,0),new Vector3(10,.02f,10),new Vector3(-10,.02f,-10),new Vector3(-3,Upper,10),new Vector3(3,Upper,10)};

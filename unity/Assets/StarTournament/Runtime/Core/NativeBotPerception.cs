@@ -13,9 +13,10 @@ namespace StarTournament.ProvingGround
         public int Participant, Life;
         public Vector3 Position, Velocity;
         public float Health, Armor;
-        public bool HasVitals;
+        // Observer-specific direct shot obstruction; optical visibility remains independent.
+        public bool HasVitals, ShotBlocked;
         public NativeBotSighting(int participant, int life, Vector3 position)
-        { Participant = participant; Life = life; Position = position; Velocity=Vector3.zero; Health=Armor=0; HasVitals=false; }
+        { Participant = participant; Life = life; Position = position; Velocity=Vector3.zero; Health=Armor=0; HasVitals=false; ShotBlocked=false; }
         public NativeBotSighting(int participant,int life,Vector3 position,float health,float armor):this(participant,life,position)
         {Health=health;Armor=armor;HasVitals=true;}
     }

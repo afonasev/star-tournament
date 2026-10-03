@@ -292,7 +292,8 @@ namespace StarTournament.ProvingGround
             else if(trackThreat)aim=weapon.Aim(f.Pose,memory.Value.Sighting.Position,time,seconds,state.AimPhase,P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),out residual);
             float nextYaw=f.Pose.Yaw+aim.LookDegrees.x;
             float weaponRange=weapon is NativeShotgunPolicy policy?policy.RangeFor(desired):weapon.Range;
-            bool localFight=visible&&Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position)<=weaponRange&&
+            // A protected target requires a route around cover, not in-place combat strafing.
+            bool localFight=visible&&!memory.Value.Sighting.ShotBlocked&&Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position)<=weaponRange&&
                 routes.TryLocate(f.Pose.Position,out var ownSupport)&&routes.TryLocate(memory.Value.Sighting.Position,out var enemySupport)&&
                 ownSupport.Support==enemySupport.Support&&!ownSupport.Support.StartsWith("transition:");
             // Probe the actual short manoeuvre below, not the entire straight approach to a
@@ -355,7 +356,7 @@ namespace StarTournament.ProvingGround
             if(f.Life.SelectedWeapon==0){readyAmmo=f.Life.Ammo;readyCooldown=f.Life.CooldownRemaining;action.SelectWeapon=WeaponSelection.None;}
             // A shotgun press must be followed by a complete false tick.
             bool release=state.Pressed;state.Pressed=false;
-            if((!release||desired==WeaponId.Cutter)&&visible&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
+            if((!release||desired==WeaponId.Cutter)&&visible&&!memory.Value.Sighting.ShotBlocked&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
                 readyAmmo>0&&readyCooldown<=0&&f.Life.SwitchRemaining<=0&&action.SelectWeapon==WeaponSelection.None&&targetDistance<=weaponRange&&(desired!=WeaponId.RocketLauncher||rocketSafe)&&!AllyInLine(f,memory.Value.Sighting.Position))
             {if(desired==WeaponId.Cutter)action.FireHeld=true;else {action.Fire=true;state.Pressed=true;}FireAttempts++;}
             return action;

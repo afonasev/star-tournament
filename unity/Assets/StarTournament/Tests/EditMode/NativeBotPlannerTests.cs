@@ -85,6 +85,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(actual.Navigation.Enemy, Is.EqualTo(expected.Navigation.Enemy)); Assert.That(actual.Navigation.EnemyLife, Is.EqualTo(expected.Navigation.EnemyLife));
         }
 
+        [TestCase(WeaponId.Rifle)] [TestCase(WeaponId.Shotgun)] [TestCase(WeaponId.Cutter)]
+        public void VisibleArmoredTargetIsTrackedWithoutFiringUntilShotPathClears(WeaponId selected)
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame();
+            frame.Life.SelectedWeapon=selected;frame.Life.RifleAmmo=20;frame.Life.ShotgunOwned=true;frame.Life.ShotgunAmmo=20;frame.Life.CutterOwned=true;frame.Life.CutterEnergy=20;
+            frame.Knowledge.Enemies[0].Sighting.ShotBlocked=true;
+            for(int i=0;i<60;i++)
+            {
+                var action=planner.Tick(i*.02,.02f,frame);
+                Assert.That(action.Fire||action.FireHeld,Is.False);Assert.That(action.LookDegrees,Is.Not.EqualTo(Vector2.zero));
+                var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+                Assert.That(world.z,Is.GreaterThan(0));Assert.That(world.x,Is.EqualTo(0).Within(.01f),"Follow the route around protection instead of local strafing");
+            }
+            Assert.That(planner.Capture().Target,Is.EqualTo(2));Assert.That(planner.FireAttempts,Is.Zero);
+            frame.Knowledge.Enemies[0].Sighting.ShotBlocked=false;
+            var open=planner.Tick(1.2,.02f,frame);Assert.That(open.Fire||open.FireHeld,Is.True);
+            frame.Knowledge.Enemies[0].Visible=false;
+            var memory=planner.Tick(1.22,.02f,frame);Assert.That(memory.Fire||memory.FireHeld,Is.False);
+        }
+
         [Test] public void ProfileCopiesAllBehaviorTuningAndDifficultyDefaultsReachWeaponPolicy()
         {
             var profile=ProvingProfile.CreateBotBehaviorDefault(); Assert.That(profile.Validate(), Is.Empty);

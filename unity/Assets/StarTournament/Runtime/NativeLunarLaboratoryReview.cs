@@ -37,13 +37,14 @@ namespace StarTournament.ProvingGround
             ground.StartBotReview(Bots(8),20261003);ground.FullHealReviewManualTick=true;
             var poses=new[]{
                 new Vector3(0,0,-28),new Vector3(25,0,-25),new Vector3(0,0,-22),
-                new Vector3(2,.02f,-10),new Vector3(-6,.02f,10),new Vector3(10,.02f,-9),
+                new Vector3(-.6f,.02f,-11.3f),new Vector3(-6,.02f,10),new Vector3(10,.02f,-9),
                 new Vector3(-10,4.5f,0),new Vector3(-4,4.5f,10),new Vector3(4,4.5f,10),new Vector3(0,4.5f,-10),
                 new Vector3(-13.5f,4.5f,13.5f),new Vector3(22.5f,4.5f,-5),new Vector3(-18,0,18),new Vector3(18,0,-18),
-                new Vector3(-12.7f,4.5f,1.5f),new Vector3(12.7f,4.5f,1.5f)};
-            var names=new[]{"01-yard-earth-sun","02-yard-east","03-south-testing","04-ground-divider","05-ground-analysis","06-store-shotgun","07-upper-corridor","08-lab-a","09-lab-b","10-upper-hall","11-balcony-nw","12-balcony-east","13-west-stair","14-east-stair","15-west-comms","16-east-power"};
-            var yaw=new[]{0f,325,0,0,130,300,90,200,160,0,130,0,180,0,270,90};
-            var pitch=new[]{-20f,-10,0,0,0,5,0,0,0,0,-5,-5,-12,-12,-10,-10};
+                new Vector3(-12.7f,4.5f,1.5f),new Vector3(12.7f,4.5f,1.5f),
+                new Vector3(-6.5f,4.5f,10.4f),new Vector3(23,13,-26),new Vector3(0,.02f,-3.2f),new Vector3(-24,0,18),new Vector3(17,0,-26),new Vector3(27.5f,0,8)};
+            var names=new[]{"01-yard-earth-sun","02-yard-east","03-south-testing","04-ground-divider","05-ground-analysis","06-store-shotgun","07-upper-corridor","08-lab-a","09-lab-b","10-upper-hall","11-balcony-nw","12-balcony-east","13-west-stair","14-east-stair","15-west-comms","16-east-power","18-north-balcony-exit","19-roof-overview","20-cargo-passages","21-earth-and-fence","22-yard-cargo","23-service-pipes"};
+            var yaw=new[]{0f,325,0,0,130,300,90,200,160,0,130,0,180,0,270,90,0,318,180,327,35,18};
+            var pitch=new[]{-20f,-10,0,0,0,5,0,0,0,0,-5,-5,-12,-12,-10,-10,0,12,0,-32,5,6};
             for(int q=0;q<poses.Length;q++){ground.PlaceCombatReviewSeat(0,poses[q],pitch[q],yaw[q]);yield return Capture(names[q]);}
             ground.SendMessage("Menu");ground.StartBotReview(Bots(8,true),20261003);ground.FullHealReviewManualTick=true;yield return Capture("17-four-views");
             if(args.Contains("-lunarVisualOnly")){File.WriteAllText(Path.Combine(directory,"visual-complete.json"),"{\"muted\":true,\"scriptedCameras\":true,\"humanAcceptance\":false}");Application.Quit(0);yield break;}

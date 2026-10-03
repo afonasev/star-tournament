@@ -46,7 +46,10 @@ namespace StarTournament.ProvingGround
                     // Horizontal FOV preserves the approved bot contract; vertical LOS still tests slabs.
                     if (Vector3.Angle(forward, horizontal) > knowledge.FieldOfView(observer) * .5f) continue;
                     if (visibility.Query(origin,delta)!=NativeVisibilityResult.Clear) continue;
-                    seen.Add(new NativeBotSighting(target, life.Life, feet, life.Health, life.Armor));
+                    // Same origin and world mask as combat. Transparent armor remains a shot blocker.
+                    bool blocked=physics.Raycast(origin,delta.normalized,out _,delta.magnitude,
+                        1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                    seen.Add(new NativeBotSighting(target, life.Life, feet, life.Health, life.Armor){ShotBlocked=blocked});
                 }
                 frame.Direct = seen.ToArray();
             }

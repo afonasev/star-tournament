@@ -1,0 +1,27 @@
+{
+  "feedback": "F3",
+  "scope": "renderer-only",
+  "grounding_test": {
+    "passed": 1,
+    "failed": 0
+  },
+  "ui_gate": {
+    "command": "make check-ui",
+    "exit": 0,
+    "EditMode": 3,
+    "PlayMode": 11
+  },
+  "build_exit": 0,
+  "visible_smoke": {
+    "exit": 0,
+    "png_count": 24,
+    "reviewed": [
+      "23-service-pipes",
+      "21-earth-and-fence",
+      "22-yard-cargo"
+    ]
+  },
+  "full_gameplay_rerun": false,
+  "reason": "No change to gameplay, physical geometry, AI, navigation, lighting or profile defaults",
+  "human_acceptance": false
+}
