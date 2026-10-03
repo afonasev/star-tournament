@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="1", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="2", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
@@ -134,6 +134,18 @@ namespace StarTournament.ProvingGround
             // Explicit equipment solids: presentation adds no unannounced obstacles.
             foreach(var c in new[]{new Vector3(-3,0,7),new Vector3(7,0,7),new Vector3(-3,0,-7),new Vector3(3,0,-6),new Vector3(-25,0,10),new Vector3(25,0,-10),new Vector3(-7,0,24),new Vector3(7,0,-24)})
                 Box("equipment-"+s.Count,c+Vector3.up*(c.x==7&&c.z==7?1.1f:.65f),new Vector3(2.3f,c.x==7&&c.z==7?2.2f:1.3f,1.4f),"equipment");
+            // F1 cargo walls: authored colliders also feed navigation and Balance Lab geometry.
+            // Keep the centre pickup strip, storage portals and corner spawns clear.
+            void Cargo(string id,float x,float z,float w,float h,float d)
+                =>Box("cargo-"+id,new Vector3(x,.02f+h*.5f,z),new Vector3(w,h,d),"equipment");
+            Cargo("north-spine",2.8f,6.4f,1.6f,2.8f,4.2f);
+            Cargo("north-low",-.7f,8.7f,2.2f,.85f,1.5f);
+            Cargo("north-west",-4.4f,4.3f,2.8f,2.5f,1.3f);
+            Cargo("north-east",7.8f,4.6f,2.5f,1.7f,1.4f);
+            Cargo("south-spine",-4.5f,-6.6f,1.5f,2.9f,4.6f);
+            Cargo("south-east",2.8f,-9,2,2.6f,1.6f);
+            Cargo("south-low",-.2f,-5.6f,1.4f,.85f,1.5f);
+            Cargo("south-west",-8.6f,-5.4f,2.5f,1.8f,1.2f);
             Box("scanner",new Vector3(-8,Upper+.55f,7),new Vector3(2.2f,1.1f,2.2f),"equipment");
             Box("samples",new Vector3(10.8f,Upper+1.1f,7),new Vector3(.8f,2.2f,4),"equipment");
             var spawns=new[]{new Vector3(-4,0,18),new Vector3(4,0,-18),new Vector3(-26,0,0),new Vector3(26,0,0),new Vector3(10,.02f,10),new Vector3(-10,.02f,-10),new Vector3(-3,Upper,10),new Vector3(3,Upper,10)};

@@ -36,6 +36,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTearDown] public IEnumerator Cleanup(){if(root)Object.Destroy(root);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
 
+        [UnityTest] public IEnumerator ArmoredGlassSeparatesSightFromShotAndKeepsTracking()
+        {
+            Setup();yield return null;Place(0,new Vector3(-8,0,2));Place(2,new Vector3(-8,0,6));
+            var glass=Block(new Vector3(-8,1.5f,4),new Vector3(4,3,.12f),ProvingArena.WorldLayer);glass.AddComponent<NativeSightTransparent>();
+            Sample(0);Assert.That(Enemy(0,2).Visible,Is.True);Assert.That(Enemy(0,2).Sighting.ShotBlocked,Is.True);
+            Place(2,new Vector3(-7,0,6));Sample(.1);Assert.That(Enemy(0,2).Sighting.Position.x,Is.EqualTo(-7));
+            var saved=JsonUtility.FromJson<NativeBotPerceptionSnapshot>(JsonUtility.ToJson(knowledge.Capture()));
+            Assert.That(saved.Observers[0].Enemies.Single(e=>e.Sighting.Participant==2).Sighting.ShotBlocked,Is.True);
+            glass.GetComponent<BoxCollider>().isTrigger=true;Physics.SyncTransforms();Sample(.2);Assert.That(Enemy(0,2).Sighting.ShotBlocked,Is.False);
+            glass.GetComponent<BoxCollider>().isTrigger=false;glass.layer=ProvingArena.MovementOnlyLayer;Physics.SyncTransforms();Sample(.3);Assert.That(Enemy(0,2).Sighting.ShotBlocked,Is.False);
+            Object.Destroy(glass);yield return null;Sample(.4);Assert.That(Enemy(0,2).Visible,Is.True);Assert.That(Enemy(0,2).Sighting.ShotBlocked,Is.False);
+        }
+
         [UnityTest] public IEnumerator ActualWallHiddenMovementDeathAndExpiryDoNotLeak()
         {
             Setup();yield return null;Place(0,new Vector3(-8,0,2));Place(2,new Vector3(-8,0,6));Sample(0);

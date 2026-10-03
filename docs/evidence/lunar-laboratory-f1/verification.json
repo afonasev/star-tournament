@@ -1,0 +1,47 @@
+{
+  "map": "lunar-laboratory-v1@2",
+  "feedback": "F1",
+  "full_gate": {
+    "command": "make check",
+    "exit": 0,
+    "EditMode": 313,
+    "PlayMode": 188,
+    "failed": 0,
+    "skipped": 0
+  },
+  "final_presentation_followup": {
+    "command": "unity/tools.sh test-play-filter LunarLaboratoryPhysicsTests + unity/tools.sh build",
+    "passed": 1,
+    "build_exit": 0,
+    "scope": "renderer-only roof/facade/crate detail and diagnostic cameras; no physics, AI, profiles or gameplay changes after full gate"
+  },
+  "player": {
+    "command": "UNITY_RUN_MODE=shared unity/tools.sh run -batchmode -lunarReview -lunarOffscreen -lunarEvidence <player-final>",
+    "seed": 20261003,
+    "participants": "8 hard bots FFA",
+    "termination": "natural time-limit",
+    "kills": 146,
+    "collections": 139,
+    "exit": 0,
+    "muted": true,
+    "png_count": 21,
+    "offscreen": true
+  },
+  "visual_review": [
+    "01-yard-earth-sun",
+    "04-ground-divider",
+    "05-ground-analysis",
+    "08-lab-a",
+    "09-lab-b",
+    "10-upper-hall",
+    "17-four-views",
+    "18-north-balcony-exit",
+    "19-roof-overview",
+    "20-cargo-passages",
+    "21-earth-and-fence"
+  ],
+  "visible_ui_smoke": "BLOCKED Q3: locked Mac, CUA checked twice",
+  "human_acceptance": false,
+  "integration": "pending visible UI gate",
+  "generated_settings": "Unity whitespace and derived shader-prefilter cache changes excluded; generated scene profile changes retained"
+}

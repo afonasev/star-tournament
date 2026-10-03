@@ -19,19 +19,20 @@ namespace StarTournament.ProvingGround
             var panels=Texture("Ivory ceramic panel / seams, bolts and wear",0);var dust=Texture("Lunar regolith / granular cratered basalt",1);
             ivory=Mat("Ivory ceramic panels",new Color(.88f,.86f,.76f),panels);graphite=Mat("Graphite floor",new Color(.22f,.25f,.27f),panels);metal=Mat("Brushed structural alloy",new Color(.31f,.36f,.39f),panels,.6f);ochre=Mat("Matte ochre",new Color(.61f,.43f,.19f));sand=Mat("Grey lunar regolith",new Color(.58f,.59f,.6f),dust);white=Mat("Neutral light diffuser",new Color(.95f,.95f,.87f),null,0,true);blue=Mat("N analysis blue grey",new Color(.39f,.57f,.63f));green=Mat("W communications sage",new Color(.42f,.51f,.4f));purple=Mat("E power grey lavender",new Color(.52f,.46f,.58f));
             grate=Mat("Grating alloy without aliasing shadows",new Color(.31f,.36f,.39f),panels,.6f);paving=Mat("Dust-grey paving",new Color(.51f,.52f,.5f),panels);
-            glass=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Transparent projectile-proof armored glass"};owned.Add(glass);glass.color=new Color(.49f,.73f,.77f,.18f);glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",(float)BlendMode.SrcAlpha);glass.SetFloat("_DstBlend",(float)BlendMode.OneMinusSrcAlpha);glass.SetFloat("_ZWrite",0);glass.SetFloat("_Smoothness",.7f);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
+            glass=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Transparent projectile-proof armored glass"};owned.Add(glass);glass.color=new Color(.39f,.66f,.72f,P("glassOpacity"));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",(float)BlendMode.SrcAlpha);glass.SetFloat("_DstBlend",(float)BlendMode.OneMinusSrcAlpha);glass.SetFloat("_ZWrite",0);glass.SetFloat("_Smoothness",.7f);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
             foreach(var s in d.Solids)
             {
                 var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
-                renderer.sharedMaterial=s.Id.Contains("-bar-")?grate:s.Surface=="lunar-glass"?glass:s.Surface=="lunar-sand"?sand:s.Surface=="lunar-graphite"?graphite:s.Material=="metal"||s.Surface=="lunar-step"||s.Surface=="lunar-grate"||s.Id.StartsWith("fence-")||s.Id.StartsWith("rail-")?metal:ivory;
+                renderer.sharedMaterial=s.Id.StartsWith("cargo-")?(s.Position.z>0?blue:ochre):s.Id.Contains("-bar-")?grate:s.Surface=="lunar-glass"?glass:s.Surface=="lunar-sand"?sand:s.Surface=="lunar-graphite"?graphite:s.Material=="metal"||s.Surface=="lunar-step"||s.Surface=="lunar-grate"||s.Id.StartsWith("fence-")||s.Id.StartsWith("rail-")?metal:ivory;
                 if(s.Surface=="lunar-grate") {renderer.enabled=false;continue;}
                 var mesh=Instantiate(target.GetComponent<MeshFilter>().sharedMesh);owned.Add(mesh);var v=mesh.vertices;var norms=mesh.normals;var uv=mesh.uv;
                 for(int i=0;i<v.Length;i++){var a=Vector3.Scale(v[i],s.Size);uv[i]=(Mathf.Abs(norms[i].y)>.5f?new Vector2(a.x,a.z):Mathf.Abs(norms[i].x)>.5f?new Vector2(a.z,a.y):new Vector2(a.x,a.y))/P("tile");}mesh.uv=uv;target.GetComponent<MeshFilter>().sharedMesh=mesh;
                 if(s.Surface!="lunar-glass"){renderer.enabled=false;Shape(renderer.sharedMaterial,mesh,s.Position,s.Size,s.Rotation);}
                 if(s.Material=="equipment")Equipment(s);
+                if(s.Surface=="lunar-glass")GlassFrame(s);
                 if(s.Surface=="lunar-step")Box(ochre,s.Position+Vector3.up*(s.Size.y*.5f+.006f),new Vector3(s.Size.x,.008f,.07f));
             }
-            Architecture();Zones();PickupSigns(d);Background();Flush();
+            Architecture();RoofDetails();Zones();PickupSigns(d);Background();Flush();
         }
         Mesh Primitive(PrimitiveType t){var go=GameObject.CreatePrimitive(t);var m=Instantiate(go.GetComponent<MeshFilter>().sharedMesh);DestroyImmediate(go);owned.Add(m);return m;}
         Material Mat(string name,Color c,Texture t=null,float metallic=0,bool emissive=false)
@@ -59,7 +60,7 @@ namespace StarTournament.ProvingGround
         void Ring(Material m,Vector3 c,float radius,Vector3 normal,float width)
         {var right=Vector3.Cross(normal,Mathf.Abs(normal.y)>.5f?Vector3.forward:Vector3.up).normalized;var up=Vector3.Cross(normal,right);for(int i=0;i<48;i++){float a=i*Mathf.PI/24,b=(i+1)*Mathf.PI/24;Pipe(m,c+radius*(right*Mathf.Cos(a)+up*Mathf.Sin(a)),c+radius*(right*Mathf.Cos(b)+up*Mathf.Sin(b)),width);}}
         void Light(Vector3 c)
-        {Box(metal,c,new Vector3(1.5f,.16f,.6f));Box(white,c-Vector3.up*.085f,new Vector3(1.3f,.02f,.43f));var go=new GameObject("Neutral lunar luminaire");go.transform.SetParent(transform,false);go.transform.localPosition=c-Vector3.up*.25f;var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=125;go.transform.localRotation=Quaternion.Euler(90,0,0);l.color=new Color(1,.97f,.89f);l.intensity=P("lamp");l.range=P("range");LightCount++;}
+        {Box(metal,c,new Vector3(1.5f,.16f,.6f));Box(white,c-Vector3.up*.085f,new Vector3(1.3f,.02f,.43f));var go=new GameObject("Neutral lunar luminaire");go.transform.SetParent(transform,false);go.transform.localPosition=c-Vector3.up*.25f;var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=125;go.transform.localRotation=Quaternion.Euler(90,0,0);l.color=new Color(1,.97f,.89f);l.intensity=P("lamp");l.range=P("range");l.renderMode=LightRenderMode.ForcePixel;LightCount++;}
         void Label(string value,Vector3 pos,Quaternion rot,float size,Color color)
         {
             var go=new GameObject(value);go.transform.SetParent(transform,false);go.transform.localPosition=pos;go.transform.localRotation=rot;
@@ -80,6 +81,18 @@ namespace StarTournament.ProvingGround
             foreach(int a in new[]{-1,1})Box(metal,c+new Vector3(a*(sz.x*.5f-.12f),0,0),new Vector3(.12f,sz.y+.025f,sz.z+.025f));
             Box(ochre,c+new Vector3(0,0,-sz.z*.5f-.015f),new Vector3(sz.x*.65f,.12f,.02f));
             Box(graphite,c+new Vector3(0,.15f,sz.z*.5f+.015f),new Vector3(sz.x*.6f,.3f,.02f));
+            if(s.Id.StartsWith("cargo-"))
+            {
+                // Flush crate kit: corner straps, lid seal, hinges and recessed carry handles.
+                foreach(int face in new[]{-1,1})
+                {
+                    Box(metal,c+new Vector3(0,sz.y*.5f-.09f,face*(sz.z*.5f+.02f)),new Vector3(sz.x,.12f,.05f));
+                    foreach(int side in new[]{-1,1})
+                    {var q=c+new Vector3(side*sz.x*.3f,0,face*(sz.z*.5f+.035f));Box(graphite,q,new Vector3(.28f,.32f,.035f));Box(metal,q+Vector3.up*.03f,new Vector3(.18f,.07f,.06f));}
+                    Box(ivory,c+new Vector3(sz.x*.25f,-sz.y*.3f,face*(sz.z*.5f+.022f)),new Vector3(.32f,.16f,.03f));
+                }
+                for(int j=0;j<3;j++)Box(metal,c+new Vector3(-sz.x*.25f+j*sz.x*.25f,sz.y*.5f+.018f,0),new Vector3(.045f,.04f,sz.z*.8f));
+            }
             if(s.Id=="scanner"){Ring(blue,c+Vector3.up*1.7f,1.2f,Vector3.forward,.13f);Ball(white,c+Vector3.up*.65f,Vector3.one*.35f);}
             if(s.Id=="samples")for(int j=-1;j<=1;j++)for(int a=0;a<2;a++){var q=c+new Vector3(-.46f,a*.6f-.3f,j*1.05f);Ball(blue,q,new Vector3(.28f,.45f,.28f));}
         }
@@ -102,7 +115,7 @@ namespace StarTournament.ProvingGround
                 foreach(float y in new[]{0f,4.5f})foreach(float x in y==0||sign<0?new[]{0f}:new[]{-6.5f,6.5f})
                 {float w=y==0||sign<0?4:3;foreach(int a in new[]{-1,1})Pipe(ivory,new Vector3(x+a*w*.5f,y,sign*12.25f),new Vector3(x+a*w*.5f,y+2.8f,sign*12.25f),.15f);Pipe(ivory,new Vector3(x-w*.5f,y+3,sign*12.25f),new Vector3(x+w*.5f,y+3,sign*12.25f),.15f);}
                 for(int q=-28;q<=28;q+=14)
-                {var a=new Vector3(q,0,sign*31);Pipe(metal,a,a+Vector3.up*4,.12f);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Pipe(metal,b,b+Vector3.up*4,.12f);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));}
+                {var a=new Vector3(q,0,sign*31);Pipe(metal,a,a+Vector3.up*4,.12f);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Pipe(metal,b,b+Vector3.up*4,.12f);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(b+Vector3.up*4);}
             }
             for(int x=-8;x<=8;x+=8)foreach(int z in new[]{-8,0,8})foreach(float y in new[]{3.9f,8.4f})Light(new Vector3(x,y,z));
             foreach(int a in new[]{-1,1})Light(new Vector3(a*19,7.8f,0));
@@ -117,6 +130,43 @@ namespace StarTournament.ProvingGround
             Box(ivory,new Vector3(-4,9.4f,2),new Vector3(3,.8f,4));Box(metal,new Vector3(-4,9.85f,2),new Vector3(2.8f,.1f,3.8f));
             Pipe(metal,new Vector3(4,9,0),new Vector3(4,13,0),.12f);Ring(ivory,new Vector3(4,12,0),1.4f,new Vector3(0,.6f,1).normalized,.22f);
         }
+        void GlassFrame(ArenaSolid s)
+        {
+            // Flush glazing beads do not extend beyond the canonical glass boundary.
+            var c=s.Position;float w=s.Size.x,h=s.Size.y;
+            foreach(int a in new[]{-1,1})
+            {Box(metal,c+new Vector3(0,a*(h*.5f-.035f),0),new Vector3(w,.07f,.14f));Box(metal,c+new Vector3(a*(w*.5f-.035f),0,0),new Vector3(.07f,h,.14f));}
+            // A narrow pale edge reflection makes the thick pane readable without painted symbols.
+            Box(blue,c+new Vector3(0,h*.5f-.11f,-.065f),new Vector3(w,.025f,.008f));
+        }
+        void RoofDetails()
+        {
+            // Fixed mesh-kit detailing, renderer-only; all sits on inaccessible roofs or flush to walls.
+            for(int a=-1;a<=1;a+=2)
+            {
+                for(int z=-8;z<=8;z+=8)
+                {
+                    var c=new Vector3(a*7,9.45f,z);Box(metal,c,new Vector3(3,.85f,2.3f));
+                    Box(ivory,c+Vector3.up*.47f,new Vector3(3.2f,.1f,2.5f));
+                    for(int j=-4;j<=4;j++)Box(graphite,c+new Vector3(j*.3f,.535f,0),new Vector3(.12f,.04f,1.9f));
+                    Pipe(ochre,c+new Vector3(0,0,1.2f),new Vector3(a*10,9.4f,z+1.2f),.17f);
+                }
+                for(int z=-9;z<=9;z+=3)
+                {Box(metal,new Vector3(a*11.8f,9.16f,z),new Vector3(.18f,.32f,2.7f));}
+                // Opaque lower facade ribs and upper header band, never across a door or glass.
+                for(int x=-10;x<=10;x+=4)
+                {if(Mathf.Abs(x)<3||x==-6)continue;Box(ivory,new Vector3(x,1.5f,a*12.22f),new Vector3(.18f,2.8f,.15f));}
+                for(int x=-8;x<=8;x+=8)
+                {Box(graphite,new Vector3(x,8.55f,a*12.22f),new Vector3(2.6f,.36f,.08f));for(int j=-4;j<=4;j++)Box(metal,new Vector3(x+j*.26f,8.55f,a*12.28f),new Vector3(.07f,.3f,.07f));}
+            }
+            // Angled solar wings and a dish give the roof an identifiable scientific silhouette.
+            var solar=Mat("Blue photovoltaic cells",new Color(.055f,.15f,.24f),Texture("Solar cell grid",0),.65f);
+            foreach(int a in new[]{-1,1})
+            {var c=new Vector3(a*4,10.7f,-8);Pipe(metal,new Vector3(a*4,9,-8),c,.16f);Box(metal,c,new Vector3(4.3f,.14f,3),Quaternion.Euler(18,0,0));for(int x=-2;x<=2;x++)for(int z=-1;z<=1;z++)Box(solar,c+Quaternion.Euler(18,0,0)*new Vector3(x*.8f,.09f,z*.9f),new Vector3(.73f,.03f,.83f),Quaternion.Euler(18,0,0));}
+            var dish=new Vector3(3.8f,12.1f,-8);var axis=new Vector3(.25f,.65f,1).normalized;
+            Ring(ivory,dish,1.8f,axis,.12f);Ball(ivory,dish,new Vector3(3.3f,1.5f,.38f));Pipe(metal,new Vector3(3.8f,9,-8),dish,.2f);Pipe(metal,dish,dish+axis*1.5f,.07f);
+            Label("LUNA / 04",new Vector3(5,8.55f,-12.34f),Quaternion.identity,.52f,Color.white);
+        }
         void Zones()
         {
             foreach(float y in new[]{0f,4.5f})
@@ -124,9 +174,9 @@ namespace StarTournament.ProvingGround
                 foreach(int a in new[]{-1,1})
                 {
                     // Two faces: exterior and interior lettering, paint never covers glass.
-                    var mat=a>0?blue:ochre;string text=a>0?"N 01 / АНАЛИЗ":"S 02 / ИСПЫТАНИЯ";float signY=y==0?2.1f:.42f;float signH=y==0?1.2f:.65f;
+                    var mat=a>0?blue:ochre;string text=a>0?"N 01 / АНАЛИЗ":"S 02 / ИСПЫТАНИЯ";float signY=y==0?2.1f:3.65f;float signH=y==0?1.2f:.65f;
                     foreach(int face in new[]{-1,1}){Box(mat,new Vector3(-6,y+signY,a*12+face*.2f),new Vector3(6,signH,.035f));Label(text,new Vector3(-6,y+signY,a*12+face*.225f),Quaternion.Euler(0,face>0?180:0,0),y==0?.62f:.45f,Color.white);}
-                    Box(mat,new Vector3(6,y+.55f,a*11.8f),new Vector3(7,.09f,.03f));Box(mat,new Vector3(6,y+.78f,a*11.8f),new Vector3(7,.09f,.03f));
+                    if(y==0){Box(mat,new Vector3(6,y+.55f,a*11.8f),new Vector3(7,.09f,.03f));Box(mat,new Vector3(6,y+.78f,a*11.8f),new Vector3(7,.09f,.03f));}
                     var sm=a<0?green:purple;var loc=new Vector3(a*20.78f,y+(a<0?1.2f:3.1f),0);
                     Box(sm,loc,new Vector3(.03f,1.3f,4));Label(a<0?"W 03\nКОММУНИКАЦИИ":"E 04\nЭНЕРГОБЛОК",loc+Vector3.right*(-a*.03f),Quaternion.Euler(0,a<0?-90:90,0),.44f,Color.white);
                 }
@@ -156,7 +206,7 @@ namespace StarTournament.ProvingGround
             float radius=P("skyDistance");var sky=Mat("Black lunar sky and stars",new Color(.006f,.009f,.016f),null,0,true);
             // Inward sphere, reversed winding. No collider and never a navigation source.
             var dome=Instantiate(sphere);owned.Add(dome);var triangles=dome.triangles;Array.Reverse(triangles);dome.triangles=triangles;dome.RecalculateNormals();Shape(sky,dome,Vector3.zero,Vector3.one*radius*2,Quaternion.identity);
-            var earth=Mat("Earth oceans and cloud belts",Color.white,EarthTexture(),0,true);
+            var earth=new Material(Shader.Find("StarTournament/LunarEarth")){name="NASA Blue Marble / clouds and atmosphere"};earth.SetTexture("_BaseMap",Resources.Load<Texture2D>("LunarEarth"));owned.Add(earth);
             Ball(earth,new Vector3(-70,63,90),Vector3.one*P("earthRadius")*2);Ball(white,new Vector3(60,84,75),Vector3.one*P("sunRadius")*2);
             var random=new System.Random(42026);
             for(int i=0;i<450;i++){var dir=new Vector3((float)random.NextDouble()*2-1,(float)random.NextDouble(),(float)random.NextDouble()*2-1).normalized;Ball(white,dir*(radius-3),Vector3.one*(i%4==0?.14f:.07f));}
@@ -172,13 +222,26 @@ namespace StarTournament.ProvingGround
             var terrain=new Mesh{name="Unavailable lunar wastes and mountains"};terrain.SetVertices(v);terrain.SetUVs(0,uv);terrain.SetTriangles(tris,0);terrain.RecalculateNormals();owned.Add(terrain);Shape(sand,terrain,Vector3.zero,Vector3.one,Quaternion.identity);
             // Fill square-to-annulus gap beyond the fence, below the playable plane.
             Box(sand,new Vector3(0,-.45f,0),new Vector3(90,.2f,90));
-            for(int i=0;i<100;i++){float a=(float)random.NextDouble()*Mathf.PI*2,r=47+(float)random.NextDouble()*60;Ball(sand,new Vector3(Mathf.Sin(a)*r,.2f,Mathf.Cos(a)*r),new Vector3(1+i%3,.6f+i%4,1.5f));}
+            foreach(var c in new[]{new Vector3(-42,0,37),new Vector3(48,0,23),new Vector3(8,0,-55),new Vector3(35,0,49)})Crater(c,5);
+            for(int i=0;i<100;i++){float a=(float)random.NextDouble()*Mathf.PI*2,r=47+(float)random.NextDouble()*60;var c=new Vector3(Mathf.Sin(a)*r,.2f,Mathf.Cos(a)*r);Shape(sand,RockMesh(i),c,new Vector3(1+i%3,.6f+i%4,1.5f),Quaternion.Euler(0,i*37,0));}
         }
-        Texture2D EarthTexture()
+        void Crater(Vector3 centre,float radius)
         {
-            const int w=512,h=256;var tex=new Texture2D(w,h,TextureFormat.RGB24,true){name="Earth equirectangular ocean land and clouds"};owned.Add(tex);var c=new Color[w*h];
-            for(int y=0;y<h;y++)for(int x=0;x<w;x++){float u=x/(float)w,v=y/(float)h;float land=Mathf.PerlinNoise(u*7+3,v*6+11);float cloud=Mathf.PerlinNoise(u*19+31,v*22+7);Color a=land>.56f?new Color(.23f,.34f,.22f):new Color(.055f,.22f,.49f);a=Color.Lerp(a,new Color(.93f,.95f,1),Mathf.Clamp01((cloud-.55f)*4));if(v<.08f||v>.92f)a=new Color(.8f,.87f,.92f);a*=.3f+.7f*Mathf.Clamp01(Mathf.Sin(u*Mathf.PI));c[y*w+x]=a;}
-            tex.SetPixels(c);tex.Apply(true,true);return tex;
+            var v=new List<Vector3>();var uv=new List<Vector2>();var t=new List<int>();
+            // Raised impact lip merges into the existing distant regolith. No playable collision.
+            var radii=new[]{0f,.52f,.76f,.86f,1.2f};var heights=new[]{-.4f,-.25f,.7f,.48f,-.3f};
+            for(int ring=0;ring<5;ring++)for(int i=0;i<=48;i++)
+            {float a=i*Mathf.PI/24;var q=centre+new Vector3(Mathf.Sin(a)*radii[ring]*radius,heights[ring]+.12f*Mathf.Sin(a*7)*radii[ring],Mathf.Cos(a)*radii[ring]*radius);v.Add(q);uv.Add(new Vector2(q.x,q.z)*.12f);if(ring<4&&i<48){int k=ring*49+i;t.AddRange(new[]{k,k+49,k+1,k+1,k+49,k+50});}}
+            var mesh=new Mesh{name="Lunar impact crater rim"};mesh.SetVertices(v);mesh.SetUVs(0,uv);mesh.SetTriangles(t,0);mesh.RecalculateNormals();owned.Add(mesh);Shape(sand,mesh,Vector3.zero,Vector3.one,Quaternion.identity);
+        }
+        Mesh RockMesh(int seed)
+        {
+            var rng=new System.Random(seed);var v=new Vector3[10];
+            for(int i=0;i<5;i++){float a=i*Mathf.PI*2/5;float r=.75f+(float)rng.NextDouble()*.25f;v[i]=new Vector3(Mathf.Cos(a)*r,0,Mathf.Sin(a)*r);v[i+5]=new Vector3(Mathf.Cos(a)*r*.6f,.6f+(float)rng.NextDouble()*.4f,Mathf.Sin(a)*r*.6f);}
+            var t=new List<int>();for(int i=0;i<5;i++){int j=(i+1)%5;t.AddRange(new[]{i,i+5,j,j,i+5,j+5});}t.AddRange(new[]{5,6,7,5,7,8,5,8,9});
+            // Duplicate vertices for hard faceted normals, retaining the deterministic rock silhouette.
+            var points=new List<Vector3>();var uv=new List<Vector2>();var indices=new List<int>();foreach(int i in t){indices.Add(points.Count);points.Add(v[i]);uv.Add(new Vector2(v[i].x,v[i].y));}
+            var m=new Mesh{name="Angular lunar basalt"};m.SetVertices(points);m.SetUVs(0,uv);m.SetTriangles(indices,0);m.RecalculateNormals();owned.Add(m);return m;
         }
         void Flush()
         {

@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &701681882
+--- !u!1 &2111033792
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 701681884}
-  - component: {fileID: 701681883}
+  - component: {fileID: 2111033794}
+  - component: {fileID: 2111033793}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &701681883
+--- !u!114 &2111033793
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 701681882}
+  m_GameObject: {fileID: 2111033792}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -59363,7 +59363,7 @@ MonoBehaviour:
       Value: 0
   LunarPresentation:
     id: lunar-laboratory-presentation-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: lunar.navigationClearance
       Group: lunar-presentation
@@ -59391,7 +59391,7 @@ MonoBehaviour:
       Minimum: 0.05
       Maximum: 1
       Step: 0.01
-      DefaultValue: 0.4
+      DefaultValue: 0.17
     - Path: lunar.sun
       Group: lunar-presentation
       Label: "\u0421\u043E\u043B\u043D\u0435\u0447\u043D\u044B\u0439 \u0441\u0432\u0435\u0442"
@@ -59404,7 +59404,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 3
       Step: 0.05
-      DefaultValue: 0.8
+      DefaultValue: 0.3
     - Path: lunar.lamp
       Group: lunar-presentation
       Label: "\u0421\u0432\u0435\u0442\u0438\u043B\u044C\u043D\u0438\u043A\u0438"
@@ -59416,7 +59416,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 30
       Step: 0.5
-      DefaultValue: 6
+      DefaultValue: 12
     - Path: lunar.range
       Group: lunar-presentation
       Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0441\u0432\u0435\u0442\u0430"
@@ -59430,6 +59430,20 @@ MonoBehaviour:
       Maximum: 30
       Step: 0.5
       DefaultValue: 10
+    - Path: lunar.glassOpacity
+      Group: lunar-presentation
+      Label: "\u041D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
+        \u0431\u0440\u043E\u043D\u0435\u0441\u0442\u0435\u043A\u043B\u0430"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u041D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
+        \u0431\u0440\u043E\u043D\u0435\u0441\u0442\u0435\u043A\u043B\u0430; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.3
     - Path: lunar.signScale
       Group: lunar-presentation
       Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u043C\u0430\u0440\u043A\u0438\u0440\u043E\u0432\u043A\u0438"
@@ -59514,13 +59528,15 @@ MonoBehaviour:
     - Path: lunar.navigationClearance
       Value: 0.15
     - Path: lunar.fill
-      Value: 0.4
+      Value: 0.17
     - Path: lunar.sun
-      Value: 0.8
+      Value: 0.3
     - Path: lunar.lamp
-      Value: 6
+      Value: 12
     - Path: lunar.range
       Value: 10
+    - Path: lunar.glassOpacity
+      Value: 0.3
     - Path: lunar.signScale
       Value: 1
     - Path: lunar.tile
@@ -86665,13 +86681,13 @@ MonoBehaviour:
       Value: 0
     - Path: tunnels.map.tunnels-pulse-south.anchor.z
       Value: -19
---- !u!4 &701681884
+--- !u!4 &2111033794
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 701681882}
+  m_GameObject: {fileID: 2111033792}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -86684,4 +86700,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 701681884}
+  - {fileID: 2111033794}
