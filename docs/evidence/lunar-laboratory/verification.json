@@ -36,8 +36,17 @@
     "ui_overlay_captured": false
   },
   "visible_ui_smoke": {
-    "status": "blocked",
-    "reason": "Mac locked, reported by cua.listApps; ordinary Player waited without frames. Owned process terminated; no foreign processes touched."
+    "status": "PASS",
+    "candidate_revision": "34b898d61c3f8b7ad2ed618706b7f3d9fabfc530",
+    "exit_code": 0,
+    "muted": true,
+    "screenshots": 18,
+    "inspected": [
+      "00-map-selection.png",
+      "04-ground-divider.png",
+      "17-four-views.png"
+    ],
+    "result": "Third map name and 2–8 caption, single-view HUD, four-view HUD visible; scripted capture is not physical input or performance acceptance."
   },
   "human_acceptance": false,
   "natural_match": {
