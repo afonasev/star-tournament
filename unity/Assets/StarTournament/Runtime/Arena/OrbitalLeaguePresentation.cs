@@ -77,13 +77,13 @@ namespace StarTournament.ProvingGround
                 // Ceiling panels are below the roof. The roof must not shadow the arena-wide key light.
                 if(roof){target.GetComponent<Renderer>().shadowCastingMode=ShadowCastingMode.Off;Roof(s);}
                 else if(ground)Floor(s);
-                else Walls(s);
+                else if(!s.Id.StartsWith("veteran-",StringComparison.Ordinal))Walls(s);
             }
             // Central hall slab is also the basement ceiling: dress its underside only inside the corridor.
             CeilingFixture(new Vector3(0,3.58f,-4),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
-            PickupMarkings(definition);Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();
+            PickupMarkings(definition);Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();VeteranSlice(definition);
             // Shared ceiling zones retain the accepted F2 light and two bounded local shadow maps.
             var poweredFixtures=new HashSet<int>();
             for(int zone=0;zone<16;zone++)
@@ -321,10 +321,10 @@ namespace StarTournament.ProvingGround
                 }
             }
         }
-        void Label(string text,Vector3 position,Quaternion rotation,float scale=1)
+        void Label(string text,Vector3 position,Quaternion rotation,float scale=1,Color? color=null)
         {
             var go=new GameObject("Sector / "+text);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation*Quaternion.Euler(0,180,0);
-            var label=go.AddComponent<TextMesh>();label.text=text;label.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=64;label.characterSize=p.Get("detail.labelSize")*scale;label.anchor=TextAnchor.MiddleCenter;label.alignment=TextAlignment.Center;label.color=HasWayfinding?RouteColor(position):Palette("ink");
+            var label=go.AddComponent<TextMesh>();label.text=text;label.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=64;label.characterSize=p.Get("detail.labelSize")*scale;label.anchor=TextAnchor.MiddleCenter;label.alignment=TextAlignment.Center;label.color=color??(HasWayfinding?RouteColor(position):Palette("ink"));
             var r=go.GetComponent<MeshRenderer>();r.sharedMaterial=sign;r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=false;
         }
         void Labels()
