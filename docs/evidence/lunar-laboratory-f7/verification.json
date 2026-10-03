@@ -57,5 +57,14 @@
     "passed": 8,
     "failed": 0,
     "scope": "Recompile combined sources; verify Lunar map and history with current main profiles. Main changed another map; authored Lunar source is unchanged. Full gate above applies to the exact candidate source."
+  },
+  "integration_history": {
+    "revision": "8c3780e",
+    "main_at_merge": "be7b103bb89b45d9bad7b338cd8bb197f52a62fd",
+    "command": "unity/tools.sh test-edit-filter LunarLaboratoryTests;DesignLabHistoryTests;LabSnapshotCopyTests",
+    "exit_code": 0,
+    "passed": 57,
+    "failed": 0,
+    "scope": "Subsequent main update optimized shared Lab history. Recompiled combined tree and reran history, snapshot copy and Lunar fixtures. No Lunar geometry, presentation or diagnostic source change."
   }
 }
