@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
         readonly NativeCombatSession session;
         readonly NativeMatchRoster roster;
         readonly PhysicsScene physics;
+        readonly NativeVisibilityQuery visibility;
         readonly float eyeHeight, targetHeight;
         public NativeBotObservationProvider(NativeCombatSession session, NativeMatchRoster roster, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile combat)
@@ -17,7 +18,7 @@ namespace StarTournament.ProvingGround
             this.session = session ?? throw new ArgumentNullException(nameof(session));
             this.roster = roster ?? throw new ArgumentNullException(nameof(roster));
             if (session.ParticipantCount != roster.Count || !physics.IsValid()) throw new ArgumentException("Invalid observation world");
-            this.physics = physics;
+            this.physics = physics;visibility=new NativeVisibilityQuery(physics);
             eyeHeight = movement.Get("camera.eyeHeight");
             targetHeight = movement.Get("player.capsule.height") * combat.Get("zone.torsoY");
         }
@@ -44,7 +45,7 @@ namespace StarTournament.ProvingGround
                     Vector3 horizontal = new Vector3(delta.x, 0, delta.z);
                     // Horizontal FOV preserves the approved bot contract; vertical LOS still tests slabs.
                     if (Vector3.Angle(forward, horizontal) > knowledge.FieldOfView(observer) * .5f) continue;
-                    if (physics.Raycast(origin, delta.normalized, out _, delta.magnitude, 1 << ProvingArena.WorldLayer, QueryTriggerInteraction.Ignore)) continue;
+                    if (visibility.Query(origin,delta)!=NativeVisibilityResult.Clear) continue;
                     seen.Add(new NativeBotSighting(target, life.Life, feet, life.Health, life.Armor));
                 }
                 frame.Direct = seen.ToArray();

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.9364765">
+  <test-suite type="TestSuite" id="1240" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="187" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.936477" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1232" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament-moon-lab/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="187" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.932486" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="75183" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1233" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="187" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.932046" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1234" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="187" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.931675" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1235" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="187" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.931292" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1031" name="LunarLaboratoryPhysicsTests" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.925742" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1032" name="RoutesStairsGlassAndSpawns" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests.RoutesStairsGlassAndSpawns" methodname="RoutesStairsGlassAndSpawns" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests" runstate="Runnable" seed="1998520187" result="Passed" start-time="2026-10-03 11:39:36Z" end-time="2026-10-03 11:39:38Z" duration="1.921209" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1044" name="NativeVisibilityQueryTests" fullname="StarTournament.ProvingGround.Tests.NativeVisibilityQueryTests" classname="StarTournament.ProvingGround.Tests.NativeVisibilityQueryTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 11:39:38Z" end-time="2026-10-03 11:39:38Z" duration="0.003027" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1045" name="GlassWallAndSaturationInOwnedPhysicsScene" fullname="StarTournament.ProvingGround.Tests.NativeVisibilityQueryTests.GlassWallAndSaturationInOwnedPhysicsScene" methodname="GlassWallAndSaturationInOwnedPhysicsScene" classname="StarTournament.ProvingGround.Tests.NativeVisibilityQueryTests" runstate="Runnable" seed="832711949" result="Passed" start-time="2026-10-03 11:39:38Z" end-time="2026-10-03 11:39:38Z" duration="0.002614" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

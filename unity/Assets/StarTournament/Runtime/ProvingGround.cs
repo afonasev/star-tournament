@@ -145,6 +145,8 @@ namespace StarTournament.ProvingGround
         public string CombatBowlReviewDirectory;
         public ProvingProfile OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
         public ProvingProfile CombatBowlAuthoring=CombatBowlCatalog.AuthoringProfile();
+        public ProvingProfile LunarPresentation=ProvingProfile.CreateLunarPresentation();
+        [NonSerialized] public ProvingProfile LunarAuthoring=LunarLaboratoryCatalog.AuthoringProfile();
         public ProvingProfile TunnelsPresentation=ProvingProfile.CreateIndustrialTunnelsPresentation();
         public ProvingProfile TunnelsAuthoring=IndustrialTunnelsCatalog.AuthoringProfile();
         public string SelectedMapId {get;private set;}=CombatBowlCatalog.Id;
@@ -271,6 +273,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-weaponBalanceReview")) gameObject.AddComponent<NativeWeaponBalanceReview>();
             if (args.Contains("-bloodReview")) gameObject.AddComponent<NativeBloodReview>();
             if (args.Contains("-cutterReview")) gameObject.AddComponent<NativeCutterReview>();
+            if (args.Contains("-lunarReview")) gameObject.AddComponent<NativeLunarLaboratoryReview>();
             if (args.Contains("-industrialTunnelsReview")) gameObject.AddComponent<NativeIndustrialTunnelsReview>();
             if (args.Contains("-weaponPickupReview")) gameObject.AddComponent<NativeWeaponPickupReview>();
             if (args.Contains("-deathRagdollReview")) gameObject.AddComponent<NativeDeathRagdollReview>();
@@ -636,7 +639,9 @@ namespace StarTournament.ProvingGround
             var frozen=AuthoredArenaCatalog.Freeze(SelectedMapId,Profile);
             bool tunnels=SelectedMapId==IndustrialTunnelsCatalog.Id;
             if(tunnels)studioLight.intensity=TunnelsPresentation.Get("tunnels.light.key");
-            arena.Build(frozen,Profile,tunnels?TunnelsPresentation:OrbitalLeagueProfile);
+            bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
+            if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
+            arena.Build(frozen,Profile,lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile);
             ApplyShadowPreference();
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
@@ -1001,7 +1006,7 @@ namespace StarTournament.ProvingGround
             seatsMinus=ButtonElement(column.transform,"Игроки −",()=>SetSeatCount(LocalSeatCount-1)); seatsMinus.gameObject.name="seats-minus";
             seatsPlus=ButtonElement(column.transform,"Экраны +",()=>SetSeatCount(LocalSeatCount+1)); seatsPlus.gameObject.name="seats-plus";
             modeButton=ButtonElement(column.transform,"Режим",()=>SetMatchMode(SetupMode==NativeMatchMode.Ffa?NativeMatchMode.Teams:NativeMatchMode.Ffa));modeButton.gameObject.name="match-mode";
-            arenaButton=ButtonElement(column.transform,"Арена",()=>SelectAuthoredMap(SelectedMapId==CombatBowlCatalog.Id?IndustrialTunnelsCatalog.Id:CombatBowlCatalog.Id));arenaButton.gameObject.name="authored-map";
+            arenaButton=ButtonElement(column.transform,"Арена",()=>SelectAuthoredMap(AuthoredArenaCatalog.Next(SelectedMapId)));arenaButton.gameObject.name="authored-map";
             teamRow=new GameObject("team-assignments",typeof(RectTransform),typeof(HorizontalLayoutGroup));teamRow.transform.SetParent(column.transform,false);
             var teamLayout=teamRow.GetComponent<HorizontalLayoutGroup>();teamLayout.childControlWidth=teamLayout.childControlHeight=true;teamLayout.childForceExpandWidth=teamLayout.childForceExpandHeight=true;
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }

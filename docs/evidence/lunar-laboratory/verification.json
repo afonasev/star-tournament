@@ -1,0 +1,52 @@
+{
+  "full_gate": {
+    "command": "make check",
+    "exit_code": 0,
+    "results": {
+      "editmode": {
+        "result": "Passed",
+        "total": "309",
+        "passed": "309",
+        "failed": "0",
+        "skipped": "0",
+        "duration": "496.1025861"
+      },
+      "playmode": {
+        "result": "Passed",
+        "total": "187",
+        "passed": "187",
+        "failed": "0",
+        "skipped": "0",
+        "duration": "511.0966491"
+      }
+    },
+    "stage_note": "Depth-tested font material and capture poses were refined while EditMode ran; final PlayMode/build compiled those changes. EditMode contracts do not cover rendering. Subsequent presentation-only placement changes received focused checks, build and native rendering."
+  },
+  "supplemental": {
+    "reason": "After full gate, adjusted only sign size/placement and one scripted camera pose; no collision, gameplay, profile or menu changes.",
+    "command": "unity/tools.sh test-play-filter 'LunarLaboratoryPhysicsTests|NativeVisibilityQueryTests' && unity/tools.sh build",
+    "result": "2/2 tests passed; build exit 0"
+  },
+  "source_manifest": "source-files.json",
+  "native_render": {
+    "command": "UNITY_RUN_MODE=shared unity/tools.sh run -batchmode -lunarReview -lunarOffscreen -lunarEvidence ...",
+    "screenshots": 17,
+    "muted": true,
+    "agent_review": "All states inspected across final render and subsequent placement correction; through-wall font issue and E sign occlusion corrected.",
+    "ui_overlay_captured": false
+  },
+  "visible_ui_smoke": {
+    "status": "blocked",
+    "reason": "Mac locked, reported by cua.listApps; ordinary Player waited without frames. Owned process terminated; no foreign processes touched."
+  },
+  "human_acceptance": false,
+  "natural_match": {
+    "status": "PASS",
+    "map": "lunar-laboratory-v1@1",
+    "muted": true,
+    "seed": 20261003,
+    "kills": 157,
+    "collections": 140,
+    "humanAcceptance": false
+  }
+}

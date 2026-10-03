@@ -1,0 +1,39 @@
+{
+  "map": "lunar-laboratory-v1@1",
+  "units": "metres; north +Z, up +Y; world origin at central divider",
+  "renderer": "LunarLaboratoryPresentation; fixed procedural raster assets generated in Player and disposed with map",
+  "assets": [
+    {
+      "key": "lunar/ivory-panels",
+      "recipe": "Texture(kind=0)",
+      "resolution": "256x256 RGB24 mipmapped",
+      "use": "ceramic panels, graphite floor, brushed alloy"
+    },
+    {
+      "key": "lunar/regolith",
+      "recipe": "Texture(kind=1)",
+      "resolution": "256x256 RGB24 mipmapped",
+      "use": "yard, sand deposits and external landscape"
+    },
+    {
+      "key": "lunar/earth",
+      "recipe": "EarthTexture",
+      "resolution": "512x256 RGB24 mipmapped",
+      "use": "distant Earth sphere"
+    },
+    {
+      "key": "lunar/kit",
+      "recipe": "batched boxes, cylinders, spheres, rings, text, triangulated landscape",
+      "use": "rounded frames, pipes, valves, fixtures, samples, scanner, zone and pickup markings"
+    },
+    {
+      "key": "lunar/signs",
+      "recipe": "LunarSign.shader, depth-tested front-facing font atlas, dynamic atlas refresh",
+      "use": "readable Russian zone lettering and persistent item identifiers; no through-wall labels"
+    }
+  ],
+  "collision": "ArenaDefinition solids exclusively; presentation has zero colliders. Grating movement proxy plus visible physical shot-blocking bars.",
+  "lod": "single static arena kit, merged by material; external landscape is inaccessible renderer-only scenery",
+  "lighting": "neutral local luminaires plus directional sunlight and profile-controlled ambient fill",
+  "sources": "Approved references with SHA256 retained in canonical change artifacts/"
+}

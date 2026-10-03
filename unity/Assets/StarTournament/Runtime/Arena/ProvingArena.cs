@@ -86,7 +86,7 @@ namespace StarTournament.ProvingGround
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
-            foreach(var solid in Definition.Solids){var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
+            foreach(var solid in Definition.Solids){var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
             Physics.SyncTransforms();
             Surface = gameObject.AddComponent<NavMeshSurface>();
@@ -97,6 +97,13 @@ namespace StarTournament.ProvingGround
             // Required for stacked floors/stairs: corner interpolation alone is not the physical height field.
             settings.buildHeightMesh=true;
             settings.agentRadius=profile.Get("player.capsule.radius"); settings.agentHeight=profile.Get("player.capsule.height");
+            // This map has many sharp corridor corners: a named clearance margin keeps baked corners outside the physical capsule.
+            if(Definition.MapId==LunarLaboratoryCatalog.Id)
+            {
+                settings.agentRadius+=(artProfile??ProvingProfile.CreateLunarPresentation()).Get("lunar.navigationClearance");
+                // Eight voxels per physical capsule radius prevent stair/window quantization from inventing shortcuts.
+                settings.overrideVoxelSize=true;settings.voxelSize=profile.Get("player.capsule.radius")/8;
+            }
             settings.agentClimb=profile.Get("player.movement.stepOffset"); settings.agentSlope=profile.Get("player.movement.slopeLimitDegrees");
             var sources=new List<NavMeshBuildSource>();
             NavMeshBuilder.CollectSources(transform,(1<<WorldLayer)|(1<<MovementOnlyLayer),NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>(),sources);
@@ -107,6 +114,11 @@ namespace StarTournament.ProvingGround
             {
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);
                 decoration.AddComponent<OrbitalLeaguePresentation>().Build(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
+            }
+            else if(Definition.Identity==LunarLaboratoryCatalog.Identity)
+            {
+                var decoration=new GameObject("Lunar laboratory presentation");decoration.transform.SetParent(transform,false);
+                decoration.AddComponent<LunarLaboratoryPresentation>().Build(Definition,artProfile??ProvingProfile.CreateLunarPresentation());
             }
             else if(Definition.Identity==IndustrialTunnelsCatalog.Identity)
             {

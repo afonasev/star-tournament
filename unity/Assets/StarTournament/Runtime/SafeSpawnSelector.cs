@@ -9,6 +9,7 @@ namespace StarTournament.ProvingGround
     public sealed class SafeSpawnSelector
     {
         readonly PhysicsScene physics;
+        readonly NativeVisibilityQuery visibility;
         readonly ProvingArena arena;
         readonly ProvingProfile motor, combat;
         readonly Collider[] overlap = new Collider[1]; // Any overlap rejects the candidate; enumeration is unnecessary.
@@ -16,7 +17,7 @@ namespace StarTournament.ProvingGround
         public IReadOnlyList<Vector3> Slots => slots;
         public SafeSpawnSelector(PhysicsScene physics, ProvingArena arena, ProvingProfile motor, ProvingProfile combat)
         {
-            this.physics = physics; this.arena = arena; this.motor = motor; this.combat = combat;
+            this.physics = physics;visibility=new NativeVisibilityQuery(physics); this.arena = arena; this.motor = motor; this.combat = combat;
             slots.AddRange(arena.Spawns);
         }
         public bool Valid(Vector3 authored, out Vector3 position)
@@ -98,7 +99,7 @@ namespace StarTournament.ProvingGround
                 foreach(Vector3 offset in new[]{Vector3.zero,Vector3.right*radius,Vector3.left*radius,Vector3.forward*radius,Vector3.back*radius})
                 {
                     var delta=targetFeet+Vector3.up*(height*fraction)+offset-eye;
-                    if(!physics.Raycast(eye,delta.normalized,out _,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))return true;
+                    if(visibility.Query(eye,delta)!=NativeVisibilityResult.Occluded)return true;
                 }
             return false;
         }
