@@ -37,8 +37,58 @@
   "iterations": [
     "Initial main compilation lacked Snapshot.AreAllies; fixed identically by current main later",
     "First full gate stopped after 8 minutes without progress evidence; progress logging subsequently proved old history tests need 15-18 seconds each",
-    "Progress helper duplicate assembly reference corrected; successful full gate recorded here"
+    "Progress helper duplicate assembly reference corrected; successful full gate recorded here",
+    "Default native launch stalled in Metal presentation wait and was terminated by owner. Second launch with documented -force-gfx-direct completed motion smoke successfully. No candidate byte changes."
   ],
   "human_listening": "pending exact final Player",
-  "integration": "pending refresh and affected checks"
+  "integration": {
+    "revision": "d50f44e96147c2381b2278f11e04b4d61db13186",
+    "main_baseline": "53af60a5c44947f8cb0e924f35e2e696ef8e85c4",
+    "checks": {
+      "editmode": {
+        "passed": 20,
+        "total": 20,
+        "artifact": "integration-editmode.xml"
+      },
+      "playmode": {
+        "passed": 14,
+        "total": 14,
+        "artifact": "integration-playmode.xml"
+      }
+    },
+    "audio_source": "Runtime audio and WAV hashes match full-gate-source.json after rebase. Full suite passed before rebase; affected audio, music, Lunar and Veteran map contracts rerun after rebase.",
+    "natural_matches": {
+      "Ffa": {
+        "seconds": 300,
+        "shots": 3062,
+        "damage_events": 994,
+        "deaths": 95,
+        "respawns": 93
+      },
+      "Teams": {
+        "seconds": 300,
+        "shots": 2237,
+        "damage_events": 660,
+        "deaths": 64,
+        "respawns": 63
+      }
+    }
+  },
+  "final_player": {
+    "source_revision": "d50f44e96147c2381b2278f11e04b4d61db13186",
+    "build_marker": "487357754",
+    "bundle_tree_sha256": "acc48d359beb7fd300e7c764f659e5efb6508b5e3c71ae8dbd6990d3d11bc3f5",
+    "manifest": "candidate.json",
+    "smoke": {
+      "exit_code": 0,
+      "command": "unity/tools.sh run -force-gfx-direct -movementAudioReview <absolute player-smoke directory> -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <owned log>",
+      "actual_resolution": "3456x2160 (saved display preference)",
+      "result": "player-smoke/result.txt",
+      "screenshots": [
+        "player-smoke/1-seats.png",
+        "player-smoke/4-seats.png"
+      ],
+      "review": "Inspected regular PNGs: one and four rendered viewports and HUD; motion-routing evidence PASS. Diagnostic placements may face wall. No audio quality, physical gamepad, TV or performance acceptance claimed."
+    }
+  }
 }
