@@ -1,0 +1,28 @@
+{
+  "feedback": "F5",
+  "scope": "renderer-only lettering and backing placement",
+  "ui_gate": {
+    "command": "make check-ui",
+    "exit": 0,
+    "EditMode": 3,
+    "PlayMode": 11
+  },
+  "surface_test": {
+    "passed": 1,
+    "labels": 30,
+    "physical_probes": 270,
+    "centering_tolerance_m": 0.003,
+    "xml": "sign-surface-test.xml"
+  },
+  "build_exit": 0,
+  "visible_smoke": {
+    "exit": 0,
+    "png_count": 54,
+    "sign_closeups": 30,
+    "reviewed": "all sign contacts via contact sheets plus full-size lab and yard labels"
+  },
+  "full_gameplay_rerun": false,
+  "reason": "No gameplay geometry, AI, navigation or profile changes",
+  "human_acceptance": false,
+  "iterations": "Initial compile mask typo fixed; visual review found yard labels occluded by pavers and deposits, corrected with solid backing from ground. Final focused/build/Player rerun passed."
+}
