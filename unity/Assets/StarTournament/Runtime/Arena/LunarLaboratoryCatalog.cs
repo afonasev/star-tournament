@@ -6,11 +6,12 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="3", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="4", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
-        static ArenaDefinition Draft()
+        internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true));
+        static ArenaDefinition Draft(bool includeFormerCentre=false)
         {
             var s=new List<ArenaSolid>();var ts=new List<NativeNavigationTransition>();
             void Box(string id,Vector3 c,Vector3 size,string mat="ivory",string support="",string surface=null,int layer=ProvingArena.WorldLayer)
@@ -138,8 +139,13 @@ namespace StarTournament.ProvingGround
             // Keep the centre pickup strip, storage portals and corner spawns clear.
             void Cargo(string id,float x,float z,float w,float h,float d)
                 =>Box("cargo-"+id,new Vector3(x,.02f+h*.5f,z),new Vector3(w,h,d),"equipment");
-            Cargo("north-spine",2.8f,6.4f,1.6f,2.8f,4.2f);
-            Cargo("north-low",-.7f,8.7f,2.2f,.85f,1.5f);
+            // F4 removes these two solids from the live map. Retain the prior registry only
+            // to read existing Balance Lab snapshots without rewriting their hashes.
+            if(includeFormerCentre)
+            {
+                Cargo("north-spine",2.8f,6.4f,1.6f,2.8f,4.2f);
+                Cargo("north-low",-.7f,8.7f,2.2f,.85f,1.5f);
+            }
             Cargo("north-west",-4.4f,4.3f,2.8f,2.5f,1.3f);
             Cargo("north-east",7.8f,4.6f,2.5f,1.7f,1.4f);
             Cargo("south-spine",-4.5f,-6.6f,1.5f,2.9f,4.6f);
