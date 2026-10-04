@@ -1,0 +1,1820 @@
+{
+  "revision": "f3776259fdef1ac05590055fb9f45859de7e7bd0",
+  "status_before": "",
+  "utc": "2026-10-04T09:48:16.601048+00:00",
+  "files": [
+    {
+      "path": "unity/Assets/StarTournament/Editor/IdentityShaderAudit.cs",
+      "sha256": "74825dd959f53443edf0e4a28ee9e99ee52411b504e294dc99c4e8a088c0ec90",
+      "size": 1087
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/IdentityShaderAudit.cs.meta",
+      "sha256": "2552f28a03a25e663b1138d07e6364d4ca666a6c2b2c96c8fae9139fd2b08c50",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/ProvingGroundBuild.cs",
+      "sha256": "1cab051cecf94ddb98f679d239d43c3a99be6cd7be35df31c0c83baf21ac2c1c",
+      "size": 8056
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/ProvingGroundBuild.cs.meta",
+      "sha256": "891edaaf452809b27bcf95134dc780f2f8bae5d02d235e0168f8558a8c8aa727",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/StarTournament.ProvingGround.Editor.asmdef",
+      "sha256": "1ea337d64859a61930879d76a08573032e8542b2acc96c8a6a31bb8c4553687e",
+      "size": 241
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/StarTournament.ProvingGround.Editor.asmdef.meta",
+      "sha256": "c9706aa2e2dc705f8201ee4579e4d223e243be5889039cbe306afaeb563e760c",
+      "size": 163
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/TrooperPreparation.cs",
+      "sha256": "7af94f9d246b6502abaf6c19dd6cc4eca54aad972d648fabd17c7936d884fa8c",
+      "size": 5884
+    },
+    {
+      "path": "unity/Assets/StarTournament/Editor/TrooperPreparation.cs.meta",
+      "sha256": "e564584dc0a8aa1400875a5909d1b7ac49f405c1fcb910a9b8bbb9dd8ad8614d",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena.meta",
+      "sha256": "6f22f135b5afb0062cc7935399c4ce0256f3bc9b35fc06509f20f59a9683b2c8",
+      "size": 169
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/ArenaDefinition.cs",
+      "sha256": "15d72326eee63eaa320b61d6f59e092560559d494a28c293e70dcba0504bbd9e",
+      "size": 4135
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/ArenaDefinition.cs.meta",
+      "sha256": "30c0d84655928d1b3a50d9a3f3a1d3a488f4a5733fb400958f3f5300fd01e5a5",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/ArenaDefinitionValidator.cs",
+      "sha256": "f1a06bf75dbf7b959325f97e92ec1a8015f03d9ef091ad4159201ea665000564",
+      "size": 10624
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/ArenaDefinitionValidator.cs.meta",
+      "sha256": "1bb2c1f30f6aa906c7eb8c3a959da7f58efb89376c9c50793f97081ac9ae31c3",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/AuthoredArenaCatalog.cs",
+      "sha256": "bb98ae8889b21b72c7254b2c5b27ffacac7a5c7f1b4e188b06144822851a5c44",
+      "size": 1565
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/AuthoredArenaCatalog.cs.meta",
+      "sha256": "5901b2b6a1a912378ec38f6af62e8959be893fa520aeee5f0bf2650893824092",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/CombatBowlCatalog.cs",
+      "sha256": "29139651f4fb7a293c3d066b86be6a8a5a2d571252b348aaa3266eadf1002f49",
+      "size": 21051
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/CombatBowlCatalog.cs.meta",
+      "sha256": "9b2220ae0a5f7b091f5971ffc6d0cdb5fb8855faca6f2110932290238ae8a0ff",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/CombatBowlRules.cs",
+      "sha256": "8e4adfa2f6acea380d33e00d4ace2b889122d96a776b154ed846d131382e2a19",
+      "size": 673
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/CombatBowlRules.cs.meta",
+      "sha256": "43cc0f160b1d04b506de56a6592cb252554211016c429f94b4496a1077c7b787",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsCatalog.cs",
+      "sha256": "83b7e1fbfe9f22312e6e441350eade73b32fc07ab87019d66002bc504ca5e06d",
+      "size": 8869
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsCatalog.cs.meta",
+      "sha256": "c95783275c3438646df379c7e73e801d5af8eb935b16bd746c524df211acc59c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsPresentation.cs",
+      "sha256": "c786000689013a557ba6bd4376b112e67e8cc7ea2d462ade43ecc4d7685dde09",
+      "size": 12150
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsPresentation.cs.meta",
+      "sha256": "615e6054f51b62262ae395796928da46012ee466bc3df993467e71780fabad4b",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsWayfinding.cs",
+      "sha256": "adff3690b4a20467b45c0ffb294dc19ba28658dcb9e1cd3cf40cbd220c1f9a64",
+      "size": 10246
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/IndustrialTunnelsWayfinding.cs.meta",
+      "sha256": "cbba6bc5f787cb9e5a8288a788477909f0847fefba91f74c642ba8f8ae6729da",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryCatalog.cs",
+      "sha256": "86e5980c6984fd24af9b81541e1fdfa28f921aa00d36d7aae0ac7163b0a8587d",
+      "size": 19763
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryCatalog.cs.meta",
+      "sha256": "3d20424d6e296fb0fc951e18a9046d6c71f696db47116ae07b30e7e4908fac63",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs",
+      "sha256": "b835b036f42aa076ae9b88f133df23a9aa90f258a8d8c53d00c5960107be73df",
+      "size": 32561
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs.meta",
+      "sha256": "210e78fc8e27f705e0416a976bf8342e27dfbedec808f0b99cef2939e3e58017",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalLeaguePresentation.cs",
+      "sha256": "4224383c695b340f317f929a1572ee650bfd9592ed6c0ba326ce887ea3b8af00",
+      "size": 38795
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalLeaguePresentation.cs.meta",
+      "sha256": "1a9dc56810b04f4b4f58f080554cc7e52915cba6edc7635d50c6ce9e5c9049fc",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalSpaceBackdrop.cs",
+      "sha256": "4fc6ca3de48ded5ac1468ee5faeb17649caae88c371da8f346ae168f6db190b6",
+      "size": 4843
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalSpaceBackdrop.cs.meta",
+      "sha256": "4c01f51fdb95ad14f7abfca733eed18cd41fb24d6abcd3e3ca36fc1d2d005713",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalVeteranSlice.cs",
+      "sha256": "47d604c31087505462e9f97b0c16c7c2ff4b84fe7d3aa6c89cfe1d2ca3b342af",
+      "size": 14191
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalVeteranSlice.cs.meta",
+      "sha256": "15a6a16648e6a0bfde7ed687d57fb87d3236752c5959d9fe8afc8b8d050c1563",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalWayfinding.cs",
+      "sha256": "ab735e4c31d9e5808c45f47b4bc02de935cf3ef09d85f1219b650ce700ffeed3",
+      "size": 7713
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/OrbitalWayfinding.cs.meta",
+      "sha256": "721f65c926f2b8ea3a2ef856af73eed9b1480df5518e75fb92e4d07f1c7a1a20",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/ProvingArena.cs",
+      "sha256": "12da1d4a87e79e8c5f1e5926762359c07adcdd1ede5ab0b6c1d23d3b78da3fbf",
+      "size": 10151
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/ProvingArena.cs.meta",
+      "sha256": "a2bec8179a2febbeff41de2a385dddff52ca6eeea82fbbdb043015bead5583a5",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/BloodPresentation.cs",
+      "sha256": "e7c20e9064ef58239c30537de755b8303224977e4616ee3bebb260c9d0051a22",
+      "size": 14278
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/BloodPresentation.cs.meta",
+      "sha256": "12713b964d3d2202f53e21bc9f24bf041069653caed75596ea4b53e2e11cba51",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/CombatPresentation.cs",
+      "sha256": "c200d1f1c670f1f6af781b82e4b14ac3b03c5919fc0064c500e834bee225633f",
+      "size": 33217
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/CombatPresentation.cs.meta",
+      "sha256": "55d7201b988c712e07b1d59e9ef786c353c4076acbcad54db943b83a2cbb5bbd",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core.meta",
+      "sha256": "bfdf8e6952fbc9a3b549c478787a0166b1dfcdcd588bd51cc4d76d935c89cde8",
+      "size": 169
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ArmorPickup.cs",
+      "sha256": "5862e387d31700d5526bc598fc32b53613a2a3dff9727433616bb28d44cbbca8",
+      "size": 2595
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ArmorPickup.cs.meta",
+      "sha256": "d002b0d996a88619c40cb9b04896d81ab8746fb79a757998693c79a5866c9f82",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/BloodProfile.cs",
+      "sha256": "0b5b933e1da07bde396b1188f3d98b7cb9a2bdf1cc46b873713512fbd0b401fb",
+      "size": 6051
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/BloodProfile.cs.meta",
+      "sha256": "3eadb2a4e50fa638faf4ca7be3826f9f162b9c7280c81e95083328ce9bd2d6d3",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CombatBowlAuthoringProfile.cs",
+      "sha256": "598aeaca85ddd352fe79e0541b1cf126a3cd37c44f7f067b50f011c9068a2cd7",
+      "size": 1499
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CombatBowlAuthoringProfile.cs.meta",
+      "sha256": "51505dd87689fe94705c10cbc204cc9d32cdbd1ade90731d26671a14fa047351",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CombatLife.cs",
+      "sha256": "7c1e4dce27519129fd17540db28122a9e68fd83f7d88fdfed070259c51ca99fe",
+      "size": 14399
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CombatLife.cs.meta",
+      "sha256": "b3d9680c95d575f838fc0a39d5e5e760e31c405cd90339287b2e05ae73bdd8eb",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CutterBeam.cs",
+      "sha256": "4f9219968272e93beef209b0451d69426e6ab836533406aadb1dbc1a9e7a229a",
+      "size": 4470
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CutterBeam.cs.meta",
+      "sha256": "a64e5be4418535d04d4b96b91d4a8a1fd795fc8beca5d8ac9d8cf266b86844d4",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CutterProfile.cs",
+      "sha256": "cd742c030ca315bf5e9ff358863f744c6c2449d88398a601baae7515760f03b6",
+      "size": 6209
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/CutterProfile.cs.meta",
+      "sha256": "a827d7b220dfe285d05844cfed46d1003e26ef0f48a09d7f97e347a0f5bfe851",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DamageBoostPickup.cs",
+      "sha256": "c6333e03e5b1900b22fc92127b0a761a3993c519584dd570cb45be3def38ccc5",
+      "size": 2674
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DamageBoostPickup.cs.meta",
+      "sha256": "7e748c002f36ec85d7610df0e81cf9191a774f8a2dd8efbd4032554efb67c7fd",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DeathProfile.cs",
+      "sha256": "ebd23a23f9de171ca23de5397f6d96e35bacbd60f3ff7ec1f85c32000437b6dd",
+      "size": 5719
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DeathProfile.cs.meta",
+      "sha256": "6974c6b54ee07a464a4af8dfe6f93eff62fae812162bd1199c363de31b6cd593",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs",
+      "sha256": "fb01c6241451439d21086db2c3fdd8abf3e77ab72e4a08b4cd8ca178c2e85ea3",
+      "size": 39509
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs.meta",
+      "sha256": "5fa8bce57a107d501a5bb6c7abcabd1f0e0d05b3ef3df0a96db13081e4fae892",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/FullHealPickup.cs",
+      "sha256": "dc687aca6647de0ae84a853d088789bb715d52a30108b8578dae822d60c3d520",
+      "size": 2853
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/FullHealPickup.cs.meta",
+      "sha256": "8e8e7ffe6b2485fa3db0d06ede65a87db3816d6962f7cbeb854ab730b9b8735c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/IndustrialTunnelsProfile.cs",
+      "sha256": "d4ccefb6ec3165a803088d066fe326366cde4b7f3f4d522a6c4a8ffeb97ad8be",
+      "size": 4095
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/IndustrialTunnelsProfile.cs.meta",
+      "sha256": "d612c5acfa8389172f7fa3c819f93bb09d26d6dc14ad1860002106c50db5d504",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LocalAction.cs",
+      "sha256": "5626a72010cd8f1933292a3a9262cff6879daf189cc8988aca8d4fa700e90bad",
+      "size": 992
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LocalAction.cs.meta",
+      "sha256": "9e9fac6bac5f359205994668db356d2bc579efd30a236ceb8cf2700be12869da",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs",
+      "sha256": "a0008490f8ea2c82a0b5c18231a5381f4c9d0ccdbc6d8b532314729655b1e8c9",
+      "size": 6079
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs.meta",
+      "sha256": "a23da56d99ceeb9b12746992c73adfe3754fb8f9dd9dc62ddb7b44729fdf22ee",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotBehaviorProfile.cs",
+      "sha256": "424677596c430e6b4223b9f420e2a78c1d6a7b24465646c9d77ba68665b8a1e4",
+      "size": 13382
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotBehaviorProfile.cs.meta",
+      "sha256": "36bf587170f6cc3a13af782c6895917b7fbeded81e01dd9f554414cd296587a7",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotEvaluationProfile.cs",
+      "sha256": "5da171b6c14c7a8823d4307217c0e56b1d432c1177d88abd640809d27491b771",
+      "size": 1987
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotEvaluationProfile.cs.meta",
+      "sha256": "57a094f25586118b2664bc662a88f96fd665fd2b5ee6f62bbd7475704fd47589",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotNavigation.cs",
+      "sha256": "f30b7a4b109535bcc58b14649da78be49aeff6069d76010dc928552b55b3c1f6",
+      "size": 15006
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotNavigation.cs.meta",
+      "sha256": "a8be7b0d9c6efb7a98e55f1c49b7d028b745024749ab915677214c23595a5e64",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotPerception.cs",
+      "sha256": "4e2b77b426ccebb429db3171e49b29d52d2e15ff7c4fec70a050786cb0d6ae07",
+      "size": 12398
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotPerception.cs.meta",
+      "sha256": "eeaf018c4acfcdac0f7807122d3fa3795fb50f9451ac16cab557580b380494f2",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotPickupKnowledge.cs",
+      "sha256": "7a782b15fbe64825dfe8005a84b92bb6ce1a6c239078598fd51ea8659c4df7cc",
+      "size": 7471
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotPickupKnowledge.cs.meta",
+      "sha256": "3d98dccd7d072a844e6178c4241b8582bbaf8acf7b22dc640f74f77f0133b202",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotPlanner.cs",
+      "sha256": "ee5e2492e70b4fe6dce37a567bdc5debea7b4e234b72ce11577419b32914b9e1",
+      "size": 42755
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotPlanner.cs.meta",
+      "sha256": "5a2096a6561c914faf67afa802a3db5f438cae6b42d3f6759e19023115a28cc4",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotProfile.cs",
+      "sha256": "3dbac04085958ca7fcbad8508030f90cf24e87fb8debfa56809f6a61f838ba3d",
+      "size": 1613
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotProfile.cs.meta",
+      "sha256": "486680108e3422def05c96cf9d0ba144d3fef0eebdc53441dcc81cb8a16f5a3c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotSetup.cs",
+      "sha256": "4dcdd204a3de7c6cdb28056a3194174e2bf06cdcd112158ac728bfc9a50792a3",
+      "size": 4846
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotSetup.cs.meta",
+      "sha256": "e5c42f6e625b7894fa41f9ba74184e8a5b0661d3903f3638030ae5653650adac",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotWeaponEstimate.cs",
+      "sha256": "1e478b2019be32b746b4b129d255aa98a78afa7c02db23234ad7794da1bf9251",
+      "size": 7725
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotWeaponEstimate.cs.meta",
+      "sha256": "e9cfa8bd4cdd4bd7cc72e9f0a017c2ba3ad7ccde9b84e82c1126649bd65f75e5",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeCombatProfile.cs",
+      "sha256": "20559492a6bf3c0dc72be3ad714c671c228ebf7d1cb2e98ffa30a38245bb7ff0",
+      "size": 11482
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeCombatProfile.cs.meta",
+      "sha256": "73c1e9c8011fc62c11fc0d7ae173b7e06ce6b2aa4c8bcab7cb859664ab1f49bc",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchComposition.cs",
+      "sha256": "0fd25923aea7584f1c104e787c75a306581ddcecd56acd2d0948081cc72a77ed",
+      "size": 6206
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchComposition.cs.meta",
+      "sha256": "1e5bb3aa13c9182536c003a7b55a88100efb895995437950f00007ca39d6d50b",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchProfile.cs",
+      "sha256": "6ba9ec0dbf21c0611b586d5f1ddfe2bcbb60021c62c64db5b3a67a7458c08954",
+      "size": 2968
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchProfile.cs.meta",
+      "sha256": "ac4720c8d52324fd01fcf5868b4f6a5134f8881718d97367a6638ae558a7aae8",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchRoster.cs",
+      "sha256": "6b81e6c80c2b757fcf08a7ceed0e5781b8c1d5d14f87b7bef94322789a67c4c0",
+      "size": 2609
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchRoster.cs.meta",
+      "sha256": "ded86b0ea25fd50c9f0016a9ab3a60f6b46a0d64fe0d7d4bb2fd67dea3cd0699",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchState.cs",
+      "sha256": "3eca4afb74d2ecf7c6a2b507e738870b8505c3771ea15b80b510786daa0d2c79",
+      "size": 12351
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchState.cs.meta",
+      "sha256": "9fb6078a453b359fb7a87d835f372cf61a68cb63396fb776477bf0cf73cbe142",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeNavigationProfile.cs",
+      "sha256": "3b0654ef571cc86e5698cd4cddb50a07d15df8513f30e34be5d096d78881c10e",
+      "size": 2358
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeNavigationProfile.cs.meta",
+      "sha256": "34bea41b199050c309275036b37ca91789c408361dab2905420bddbc3f6891e4",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeParticipantColors.cs",
+      "sha256": "a9978c7f29d65aa148de8dfef25c007b37bcbe8a41c6061f7277747b119a497a",
+      "size": 3178
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeParticipantColors.cs.meta",
+      "sha256": "eeb36a965f57867e04c9b62da45797b193c66bb77823b3db8ea3dfd5b49b9c53",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeRosterProfile.cs",
+      "sha256": "380ee56afd0215b7b8bb7db95290fe068336061a2af372e61ccae3b3e828392c",
+      "size": 913
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeRosterProfile.cs.meta",
+      "sha256": "b389bda0fbc46951e75713518e0b3d63af14498e231883c437791eb6bb3c908e",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeTeamProfile.cs",
+      "sha256": "393244e560761d2eaa83d3288cd56cfe84d97180c1c350e58e8591d37c005f89",
+      "size": 659
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeTeamProfile.cs.meta",
+      "sha256": "44d62388b874fe2f091318125ba9d0f6b6bb7195c44bf78174738efe4b1800d9",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/OrbitalLeagueProfile.cs",
+      "sha256": "631da47f45eb5ff28346130a745b42a5b0a1d945b711df3001da7c601ab76050",
+      "size": 23752
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/OrbitalLeagueProfile.cs.meta",
+      "sha256": "2d2daf47507e7ef9316f176254b95a100df7dcda04af9ec975f7a569626e13e8",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ParticipantPaletteProfile.cs",
+      "sha256": "cec7ed38ff4493a1b0bacb9c45dcda9f7e189a4c9f71a42b0123a983edd86b7f",
+      "size": 11003
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ParticipantPaletteProfile.cs.meta",
+      "sha256": "5a6d8c18524e2bf9a687582c484b114389f203519d0c524d7d473d603f15baaa",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ParticipantState.cs",
+      "sha256": "74bb03eea6c42bd4317cd2d5f58564b66cc08f42588fd5deb4589794375f6d58",
+      "size": 529
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ParticipantState.cs.meta",
+      "sha256": "ad2a572d6e226397bdbed69b64e956b6b8d59472b74ae5676a1adfa1e2ff3a4c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs",
+      "sha256": "0a890022d95975093bbafe6db0226d3c0d2a4a58727564a5d10847fccf955c09",
+      "size": 51305
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs.meta",
+      "sha256": "59c497d44988261eb63cc17ee5796e254d6b2d8ca68d2f162cb21be9de46d8d0",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RifleBullet.cs",
+      "sha256": "80088e9f978d5f2450e2767f794d6ee17a7c2fa4afba3314385e6a4dfa89faf6",
+      "size": 1356
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RifleBullet.cs.meta",
+      "sha256": "e26481944e650196bbca6e4cb4c44cad4d3c3e34cb9c03cd7f87fbcda9787a17",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RocketEffectsProfile.cs",
+      "sha256": "88b7c349242097caada0a78f30190038c65fcd8eef36689c5b872b04f88d0fb6",
+      "size": 9376
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RocketEffectsProfile.cs.meta",
+      "sha256": "7c5a250e865bffe2981bdda9a4f5d5728363d901138aeaf06d982061fc799553",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RocketProfile.cs",
+      "sha256": "bc2e0616efead4ae04063bb3dac77142b4e3591fa8531a268bf0aaad9573b9c4",
+      "size": 5995
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RocketProfile.cs.meta",
+      "sha256": "a6f4f7160758cb07db467b9f17cf8d39b78188266d81a433f4bbe47f8818c13a",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RocketResolver.cs",
+      "sha256": "34de1373934c4d0a0356f7659fc5cd6d31b61a3693c32e8819d4c64cfb18742a",
+      "size": 4450
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RocketResolver.cs.meta",
+      "sha256": "71323a8447841d51171bb035f74c6cdabdb80c1c9f2bb5b94c04f5ba0f865818",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs",
+      "sha256": "ae78120b8665826a492255b2f96f5b95a9b240342bc214b15c68f6930262386f",
+      "size": 3277
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs.meta",
+      "sha256": "b927263d98b0795c802d2dacc399928270b9b5c651848b2f54fe9b1945a99479",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ScoreboardProfile.cs",
+      "sha256": "9a277f4b50a341052bc6402204632f80f8b8fa214f48f767d32db782ba98ba66",
+      "size": 676
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ScoreboardProfile.cs.meta",
+      "sha256": "8948be2752fa38b2efcf6655f06854b054b1be4f4b446528319bbd2210aeb7b6",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs",
+      "sha256": "ee54b28e3ae4c4146cd2ab68e6554cc92835fb0eeb5913e18c620d320b550ef4",
+      "size": 7689
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ShotgunResolver.cs.meta",
+      "sha256": "6bbf156663cc93140cb52e860e1a20fafcac72431ff88535d2f9187adc71756d",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/SpeedPickup.cs",
+      "sha256": "3f4147442632c2cf851036c9ebad3620cb651098fbadcb05660812b3358215f8",
+      "size": 2588
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/SpeedPickup.cs.meta",
+      "sha256": "655e77bd1c1a1533842ff6c9c7bb599492265f9affd506bfacb02d7e07ea20a2",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs",
+      "sha256": "36a4cad5c00ec442f34d91479bae4e2248538f2f3d5b59a646fea2b1c9356d3b",
+      "size": 8015
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs.meta",
+      "sha256": "afdfd80fa8e5f0fd0163afe5cf67f2784aa0b23465f277d5a5e75354e214d58d",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/VeteranLeagueProfile.cs",
+      "sha256": "32f565634a0d2615ff84803d471d4f26bab8429a582d50decba33b7eee8419a6",
+      "size": 2628
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/VeteranLeagueProfile.cs.meta",
+      "sha256": "f3b16ae3bf4057a6d0513a21a786c551685f4ae277aadcdc9453fa325f7ce476",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WeaponPickup.cs",
+      "sha256": "57647d23804aec719cf6a6b22a416a0509009efaedbd533651afbad082b2b690",
+      "size": 3174
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WeaponPickup.cs.meta",
+      "sha256": "4daadf7358e370471a7819673c6e6f9704e9ffea08cd5ab4bc6fba54d8b6bf8e",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WeaponPickupProfile.cs",
+      "sha256": "986d6923db3a35f592af45f61ddb624f7cdac26df41da86d0b77767f4ed97641",
+      "size": 915
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WeaponPickupProfile.cs.meta",
+      "sha256": "6b20e603b799776fe649e66001ef12a0377e909aae1fbf7b5ae15f02ca8068e2",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WeaponRebalanceProfile.cs",
+      "sha256": "0dd04c51fab426d7a82f62c4048ea3d085329f1d6b1bdb3fb390fd592322adca",
+      "size": 1432
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WeaponRebalanceProfile.cs.meta",
+      "sha256": "092b1970460334e1f9a123d1a62842bd7d106e026ce5e8dd0557b8595e313b6d",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/CutterPresentation.cs",
+      "sha256": "e5b147373436f62ae4d6ab512e2ae5f2a8ee5a072fe60374b7b12c43b0f16bb8",
+      "size": 4549
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/CutterPresentation.cs.meta",
+      "sha256": "dab18e4c25495609032cda8b3940f703571a6db10f8a76d549e6164470082bdc",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/DamageVignette.cs",
+      "sha256": "b94975f29c1ceb3bc89d0d2db8322c154d21d84bdfa8450d574261bf7635585e",
+      "size": 4524
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/DamageVignette.cs.meta",
+      "sha256": "3983d6b9d21e1026b2ccf02bfb401083593582548d3b7cbe9bc246308ccd1c54",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/DeathRagdoll.cs",
+      "sha256": "cf05dede2276502760b484233e8626f32d8ff77de2b160899c43cc03637ee51a",
+      "size": 10523
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/DeathRagdoll.cs.meta",
+      "sha256": "c25f36d61ae66206fc56b19acaa5a710effc6cd3453cae18830baf54c0696090",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/DevelopmentNavigationReviewHandoff.cs",
+      "sha256": "8ba33283e9f4c1a9697b8d7c88c9cddb1decca132b33ddc444cdbb31ea57a880",
+      "size": 866
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/DevelopmentNavigationReviewHandoff.cs.meta",
+      "sha256": "a73c6e55f3402f98f67d277a187b0a28cdd4bacd7cfac7766f1c9ccb31e5b6d6",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FatalImpact.cs",
+      "sha256": "5a5fd37874c43c5b6e03bed42f9a6be56432480278ad6eb2dca1255a97f2e174",
+      "size": 1716
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FatalImpact.cs.meta",
+      "sha256": "99852c2b36dd6decd983be06b501cbc1f1e934d150e66cfcee585ec243fc458a",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FirstPersonWeaponSwitch.cs",
+      "sha256": "1cfedd611e656e77b50b4e955a01a5a26de6bfac666d7481a8e2dc9b351f6b93",
+      "size": 3487
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FirstPersonWeaponSwitch.cs.meta",
+      "sha256": "cac733195990086a9ba21d1cccb14c1114821bd83c8f8c26a921f34b899b4847",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FpsDisplay.cs",
+      "sha256": "797269a7af1f46475d2d4e01567468d6333ed0fd4ef20da225e59dd08f068b61",
+      "size": 3819
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FpsDisplay.cs.meta",
+      "sha256": "06afbc069a3f904a2ff61a3d898ec6ca98dd59e59424ae4d38854d6955bdf1f2",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/GamepadLookSettings.cs",
+      "sha256": "4e86cecf182331962955c359105f0f629ab3a25c3c5a2d64f7e18ce22a743fea",
+      "size": 2395
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/GamepadLookSettings.cs.meta",
+      "sha256": "d5fb3109ac66d737272585859e59d8109ff469957f80e49024498281e0b9d543",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/HudIndicatorIcon.cs",
+      "sha256": "6af27eb7f4bfb63547e17e39a8615379e24fe6415aa4fdd067adbb0d3245ed06",
+      "size": 5359
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/HudIndicatorIcon.cs.meta",
+      "sha256": "5d735ca0bf9a7ec206c26fce875a66769c8639db74698e90a2e61b2d242e2cbf",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input.meta",
+      "sha256": "294a9d994d2e71ed68ade70cdcbad093b864894625b9fc1cc5387399c700de7e",
+      "size": 169
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input/EightBitDoSn30ProGamepad.cs",
+      "sha256": "a81ad226dd02ed92ea42f6a03efba51c7b7820ed81bf3cbdf9082e1576854d75",
+      "size": 4511
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input/EightBitDoSn30ProGamepad.cs.meta",
+      "sha256": "f5a919fa68da11e075768ec9898600ab58ab8a6921c099fb4b8a2cd97d747069",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input/GamepadCompatibility.cs",
+      "sha256": "130ba9674dcbf4e29b53a07bab743d69448369a62ccc134aa65088d855e9bd77",
+      "size": 1784
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input/GamepadCompatibility.cs.meta",
+      "sha256": "97f6fc61b4a4e65e43038377c4aab1d550850d665e03a7f79cff16d039fb2691",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input/SeatInputCoordinator.cs",
+      "sha256": "133cd2661b752b2a4cd8a878e539d4502c4cf0046f878518fbc05e361ad9e5b2",
+      "size": 10939
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Input/SeatInputCoordinator.cs.meta",
+      "sha256": "53d11a7bab30bf9e6ea30c6c6365ab0eb33899a4f0b516f1eb1bc445aabb8a1f",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/LabFocusHint.cs",
+      "sha256": "a2f426a1734bb8508cb0bd8e1777955789edc95fb7fd95a5ee123bfc03899371",
+      "size": 392
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/LabFocusHint.cs.meta",
+      "sha256": "4f4380deeaf8f6095e6b56ee17bceb78fb994859212bbdc22e7e49643efb7cd9",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/LocalSeatLayout.cs",
+      "sha256": "ff5ecfbc1bb2f74e7d505bfee247b3dbdeb2bca5ea4f2388242f2f6701df63c8",
+      "size": 755
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/LocalSeatLayout.cs.meta",
+      "sha256": "293f585f33db368af26805fc82c51ec9ac9a166d194d8144ceefcee0ae6d6f63",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Motor.meta",
+      "sha256": "6bc35b0d8be8877627c918a3a08f073dd9e25a5a980d91c20ca7e8ab2b36215b",
+      "size": 169
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Motor/CharacterMotor.cs",
+      "sha256": "8166432e3b0e5c48af1da2d61229241be292d434a2a1cc1e16b54f893835371d",
+      "size": 8402
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Motor/CharacterMotor.cs.meta",
+      "sha256": "94ede4016ef17667222e0f600369bef439bac626736e4619593c433ba037d546",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/MouseSensitivityPreference.cs",
+      "sha256": "c1a6c2f29f962ab0175bbf840a5c3e8fee8b6b468e49888c4b9898dba62684f3",
+      "size": 1679
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/MouseSensitivityPreference.cs.meta",
+      "sha256": "e7cbe7d418897117166a53d10d87e33ea366d69d76f0a57a676567a6d14c2b08",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeAudioSpatial.cs",
+      "sha256": "6cd9bab23b568445abf36d1961d8ac8c466ae474f5f38923e1b66bc2c89e1607",
+      "size": 1175
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeAudioSpatial.cs.meta",
+      "sha256": "4fdb481abbd0e194e538001b89b7a8c726901df8cd5712fb80ce970a6ffa0553",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBloodReview.cs",
+      "sha256": "3151b7d3396cffbe3213517b4bbcc26f17328f43afd45e72460658d42722cadc",
+      "size": 5456
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBloodReview.cs.meta",
+      "sha256": "711ee5b65a120789b9184d5756c165abeea37127385bb0ceccc568ace3221a6b",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBonusVisualReview.cs",
+      "sha256": "d659dd57e1ae5ac7a4bdb0612b7430d38e4b8c6d8e2917981afcaf0739cf7b9c",
+      "size": 3507
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBonusVisualReview.cs.meta",
+      "sha256": "f10402b09c29a47fbe7ec8c71b7c26f378f2f3afe62e5eeb454548e7788cf848",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotBehaviorReview.cs",
+      "sha256": "12a4d9a3785df1f00e2579c954c52a051f6055fe77c8336744bc4a7c97926ded",
+      "size": 10992
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotBehaviorReview.cs.meta",
+      "sha256": "b35e0c2d70bc5085aa1190d79c93a54ee48765ba0e447df136483b84649f6c19",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs",
+      "sha256": "fbdf1417df7130b29bdec8c89fc3468b9a35ed84c646d27cfcdafe7b2f609a6d",
+      "size": 13330
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotMatchDriver.cs.meta",
+      "sha256": "fd25cfb7e647126e77d617c34f45d637395c87dae0b753de94a75e3f2bf1ceb4",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotNavigationReview.cs",
+      "sha256": "b1e3aa080b8c2d43bf9ea399239e6301e02447486f763e9feb3e7e923cbca809",
+      "size": 12408
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotNavigationReview.cs.meta",
+      "sha256": "23b4441365708fe4a3c850021c5e6febe61e8a5305950999dda738608aeb7066",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotObservationProvider.cs",
+      "sha256": "44f7b5088c545eb3eee8eb103379370059dbaf64388c7b67bdb9916b68229620",
+      "size": 3489
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotObservationProvider.cs.meta",
+      "sha256": "91eb2b88c323b9a6b8c7de25185109fb6c41b95ce2117a780563a77e791ad048",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotPerceptionReview.cs",
+      "sha256": "9e7ba83c21e1dc1428f1521853c2c5003316c3e3fed1dbfc4884365f5ad0b566",
+      "size": 10724
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotPerceptionReview.cs.meta",
+      "sha256": "1081da3300f293bd6546f6ba0e710e2c9569883893bcf1e331c049b61f5c6e7c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotSeatsReview.cs",
+      "sha256": "fb7e78d6ad379397d38cd2d09b40663949c49067c048943eef5ead1105895fa2",
+      "size": 14409
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotSeatsReview.cs.meta",
+      "sha256": "07b07a65156539a4e541809d55a790f4c3775615eb1fae931c2da972891f190a",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotSetupReview.cs",
+      "sha256": "796d6a8d999a25bd8a4389d10ec153d5a2f87e8e4a1a7a971a7a60c3264b03fd",
+      "size": 6699
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotSetupReview.cs.meta",
+      "sha256": "319b8fc6bbdc033fb238c3853e50392e5425fe5edf79693628506d1734bed399",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotTacticsReview.cs",
+      "sha256": "1b67ddbe73ceb5580b33d87bd16ac3feb8ff786b2033ec914793f46c352c6140",
+      "size": 15091
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotTacticsReview.cs.meta",
+      "sha256": "8ba358d03245d1cb9e6d984108c0e2340bf2ce705a758d16bebf48bf76ce0172",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeColorIdentityReview.cs",
+      "sha256": "636e556c0f1560fecc482dfd609cd41804cd80bbe94ea48053eb378ea6c68723",
+      "size": 10788
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeColorIdentityReview.cs.meta",
+      "sha256": "b79a101a0a6d2fd26412c4f84dc563ad396dbec34cb2d5fb1369b4f90a823217",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeColorSurfaceReview.cs",
+      "sha256": "5bb25759f42296f734cb597321c2169ae0461ab1c66ae9d78f363b3e4c5f7df2",
+      "size": 5825
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeColorSurfaceReview.cs.meta",
+      "sha256": "b9a7f8f85f7eb6e83b13deaff21f381e1c3479417f6a47ac6b1ce44b6b03e225",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatBowlReview.cs",
+      "sha256": "b6edd2b28eece22a255fa69cbf61bdfb547636193302841c5130ce77c9dfed74",
+      "size": 30926
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatBowlReview.cs.meta",
+      "sha256": "55dba7c045afb19d6f2b6e7e1a60fee62b84bd67f9b0e5a1c0e19bcc2d608cc0",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatReview.cs",
+      "sha256": "c84def21d99419e2068fd8233c2f87008605adfce805b6e8508b765f8705a3c6",
+      "size": 11431
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatReview.cs.meta",
+      "sha256": "089f7464a20ec78d65a3bc92a9664f059bc0eaa80416598e49589ad716104033",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatSession.cs",
+      "sha256": "c711828fb12d450fc4de5d9412abb2fec87aeed8734187666a5fde59e92ce228",
+      "size": 38607
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatSession.cs.meta",
+      "sha256": "63c9db8acb28489b7f3fb177e6766ac106fd0620e1045ce5482c991910244875",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCutterReview.cs",
+      "sha256": "c481acefd1516eb88d2407a4167dbb60bfa7e3c1c2bc57de7ccf7f93ee3d3faa",
+      "size": 4905
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCutterReview.cs.meta",
+      "sha256": "64c0dd531b7544ff76f29418ab253ceecbe5b7ea70c423e3f8019deaa9b37ff9",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDamageBonusReview.cs",
+      "sha256": "c3d1e79a3611486f8c47b3285b761ef3a27b606a63e9c8ec2af7dc27a20446f1",
+      "size": 4670
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDamageBonusReview.cs.meta",
+      "sha256": "d40bbf32b78bfee320e2e24145afe72f7137eae51033463aded54da69688f26c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDamageVignetteReview.cs",
+      "sha256": "144463e8eaf94e05a0d109f0078c288a5caa640d502f49f10e7b344ce62ce189",
+      "size": 5459
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDamageVignetteReview.cs.meta",
+      "sha256": "1911c3becc28b7adcd1cdb8343622cc987673bfca3b6a61a6ce94d7b2ceaa9aa",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDeathRagdollReview.cs",
+      "sha256": "47aa71b0191855587268a2c060d5404c3cc1c8679d81569e75a5bfc5bdfb9fe1",
+      "size": 11096
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDeathRagdollReview.cs.meta",
+      "sha256": "e89a267ecbb718d040ca07bb942739ae80917728bf34660d5206281fc2fe2809",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDesignLabReview.cs",
+      "sha256": "8de1bf23ee1ecbcdbb52a6921c19a13ed49a1f7d4a5b67a8b1b01d6609104436",
+      "size": 6776
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeDesignLabReview.cs.meta",
+      "sha256": "f81d066dc7aeb25b2e777f79b7215817ed0f4232e60e759ef6e43c2c92a7b302",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeFullHealReview.cs",
+      "sha256": "f4891e7105124a5835092ab2d00b03dd48770aa2ae0fea967c668c3f3df4ea77",
+      "size": 8887
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeFullHealReview.cs.meta",
+      "sha256": "20f8292b99d786f6ee46b72c04c3602129fae68ab7ce9baedf6bbca84acb8496",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeGameAudio.cs",
+      "sha256": "401d36dd2f8b0151ee293f56a4c7b07ac334322371c2dadd354001747a546447",
+      "size": 20151
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeGameAudio.cs.meta",
+      "sha256": "52e5d2e6f1a447602d79c484c2f52612890f0a75bcd25b11f5d23954d14c6b74",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeGamepadCameraReview.cs",
+      "sha256": "ae50a01a0648a2c82c1dff1390b9fa8d600221b7aceb2637fad3485b2f677870",
+      "size": 13431
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeGamepadCameraReview.cs.meta",
+      "sha256": "c72dea2abbbddce1a85756e430888561b21865146ace98f46f4dde747e85658a",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeIndustrialTunnelsReview.cs",
+      "sha256": "ae401130aca367fea38188cdc1d5e45c833adca9d910db323984267d99fa1b30",
+      "size": 6067
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeIndustrialTunnelsReview.cs.meta",
+      "sha256": "4029aa68c2446b89e023975a0cc596212f3285e9cd8a2e79c98a779ad5f24e19",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLayoutReview.cs",
+      "sha256": "96d5144ff9cfaa32898c3c27b57537feef3ba65e230f6f058d93706a1516c55b",
+      "size": 8158
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLayoutReview.cs.meta",
+      "sha256": "6d428ed6d21777caa4386ef8f83af4215b11e8b540fb891deacbde56b9a66e4d",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs",
+      "sha256": "6bacbb3e21c22b4f4af6aa92fb4c851dbf25f813e1bb45c60a2a251c8a419a09",
+      "size": 7621
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs.meta",
+      "sha256": "d6d55b982c0c5e46d451ab05b6a2c8fa4ca99bef1201d1e232378bfc358d5c1d",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLunarPerformanceReview.cs",
+      "sha256": "52e568d3578929b09ac16b1e1caf1c2c55e605cdff7340543ce18fa4d0fdda9e",
+      "size": 16021
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLunarPerformanceReview.cs.meta",
+      "sha256": "4ba1aa4dc22cb926de5a747ee9f628b367c8d21b960fa7074c243c5112358838",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMatchReview.cs",
+      "sha256": "1d66bec3b2e53de512f399f8e4b5c91535cb562c4b5a3f9d3bfd60b90f436f69",
+      "size": 8857
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMatchReview.cs.meta",
+      "sha256": "90ed63501410ae6836f2af8dbeef80ddce88b7e8817d6b0a3848deb6c619fa9f",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMenuMusic.cs",
+      "sha256": "8b78f3a52e8edd5acfcc30d953c19d0963530b15a69efe810dcc96e846f6a09f",
+      "size": 3783
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMenuMusic.cs.meta",
+      "sha256": "acfb4f19e18e73ee9e01e166a4e045c0250dce53d27e2f0bcb0975f5b6fe470c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMovementAudioReview.cs",
+      "sha256": "5f8b098b9e9e3805d4ac3b485018b74964c977582d2a39e49665fb2b92b5d5ee",
+      "size": 5316
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMovementAudioReview.cs.meta",
+      "sha256": "475006f0b642684cfbf8c9ff7436577736554f7dbb454ba4cda88914767a1fc6",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMusicCapture.cs",
+      "sha256": "b0c5539428abe262e573dd182081d74e08764803fe64b84bcd7cd068155ac0d8",
+      "size": 2927
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMusicCapture.cs.meta",
+      "sha256": "c87ce7729521633e39e8404923600d7a5e054f7610ed6e84b663ee87d3988c15",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMusicCoordinator.cs",
+      "sha256": "74a2a7e29bc3f0435fbd769e3b9c1ea67bc16ac33ff557771256460c85ea3858",
+      "size": 4114
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMusicCoordinator.cs.meta",
+      "sha256": "a53d9761cb8253c5717c10d4380d708c04ad39e25d015d32284906b84d1b181a",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMusicReview.cs",
+      "sha256": "3817c620aab4becd7bc48d5f0087e64f1b2f3e8176d1b94226adbe32f77f0b2e",
+      "size": 13642
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeMusicReview.cs.meta",
+      "sha256": "908e04a5083f177e1e9eff2f12e45ef2c3513b061082ef10421d5c564dd57b1e",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeNavigationDriver.cs",
+      "sha256": "fa5f8586671ec80ca2afedd8f5b21b79518c4a77aa845c640023c2b1dff084b9",
+      "size": 1907
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeNavigationDriver.cs.meta",
+      "sha256": "0cf76c30959070faf89408e6086cc4a31e367a428a11657d14203ce4337d46b2",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeNavigationProvider.cs",
+      "sha256": "b2f1b3098ed1f5c4edc73c7ab81fdd779d3aa4ac10e8b991a14a0bab56e7e64f",
+      "size": 13362
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeNavigationProvider.cs.meta",
+      "sha256": "db01d26910176da10d66b3db9cc730f59c3e6c669248d43c896915ed3d748db7",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeParticipantReview.cs",
+      "sha256": "b1444f8dbe43a0fca54b1ee56cf760c3d5dece5afee3c93d458f2af1a656fa39",
+      "size": 10893
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeParticipantReview.cs.meta",
+      "sha256": "f029f24a5619aa81a643277ff0e41dde45df759f2cc2c62552d17a0743d8b9d9",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativePauseMenuReview.cs",
+      "sha256": "6d7143b9673e0d1b08f0b784a4d5adea2ce457e69450cbd1a7aed1e0c3e0c8fe",
+      "size": 13014
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativePauseMenuReview.cs.meta",
+      "sha256": "2ac5ef877498b300086d2a87830a70232485cf463a60f4892f6f156ff16d95e8",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeProfilesReview.cs",
+      "sha256": "38c68dd90e69a1648c46b4186136506ab4719fc9ab5ae6a9e380163e1d817e0a",
+      "size": 4996
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeProfilesReview.cs.meta",
+      "sha256": "a0a7fd5b09d69d15fe72af13084b049e76dd5606d10298a4ba8d60423e6ea04d",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativePulseReview.cs",
+      "sha256": "4da9facdd20f50a68ded3e0b37d99bdfc5b7df9933098e186e41bb48e6443763",
+      "size": 5256
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativePulseReview.cs.meta",
+      "sha256": "9e344cb7ca495e72c8827aa9fc97b8e7f48a24c57c1c9549b4ab2472b8a7aa80",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRocketEffectsReview.cs",
+      "sha256": "d8641c44ce51cf1807f48e10d8537a13d203a35eea01a4048e892b8b73544dae",
+      "size": 8799
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRocketEffectsReview.cs.meta",
+      "sha256": "9a898562a0a99dc1473882f02ea6ca0893f82e1ae50fc66ee3d9b2a429ac5309",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRocketGratingReview.cs",
+      "sha256": "04be44cfd8505e022e405cee4cf29698c4498ec17b19e9e1ae793650f76b3aec",
+      "size": 5224
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRocketGratingReview.cs.meta",
+      "sha256": "de86a07645a71ef358880de21f11a83a61e66890d0c189676c792661059ef4b3",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRosterCardsReview.cs",
+      "sha256": "6aee027e97b268d05920b70bc1570f2650524989c18738d9ee7f4e33680b20b9",
+      "size": 16766
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRosterCardsReview.cs.meta",
+      "sha256": "606711102e55e2b7fe75c04af8ea7158726706afa6b6833ac5127b2d8b289b37",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRoundMusic.cs",
+      "sha256": "68ab3e6e7f44885dc5ad68b5c2c580d6d2cfdb82f1a5c2c06fb56c2f9a33f263",
+      "size": 8706
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeRoundMusic.cs.meta",
+      "sha256": "2f456fb0eed394b17af8bd88a57f39fc0f12b9aa38c61c76b1047a24aaad536c",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeScoreboardReview.cs",
+      "sha256": "1b7ec2a6596af20aa5a1272ee2392d5f738b1af0952960dd9bcf3c60925755d6",
+      "size": 14273
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeScoreboardReview.cs.meta",
+      "sha256": "3fed9cb05be8535f55f2e01b3ec99e2ffb083edba9f6aa9150f5d20564e47003",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeSetupSettingsReview.cs",
+      "sha256": "76bcee98cc8de863c8b7090e6eaa483bf2d9ae00c88cdb895b6b49f2d16de61e",
+      "size": 7824
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeSetupSettingsReview.cs.meta",
+      "sha256": "2411d602ea62563b47d6c2f616e1b6cdd85b8ad9531ba4b2912a20ae94cb3749",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeShotOriginReview.cs",
+      "sha256": "47900eaff8e9d7050401608d7beda6111633bd3a7587dcf15c3bc5f012897452",
+      "size": 16042
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeShotOriginReview.cs.meta",
+      "sha256": "4e5bcc633314a3c2316114c309ceb7d7fe00848b03dde046b2008233868fd87b",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeSightTransparent.cs",
+      "sha256": "6efa43af35baa7c571c78d755c904a1a970477a9de0a36993984682886c50886",
+      "size": 1304
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeSightTransparent.cs.meta",
+      "sha256": "74a2fa76d81dbd11fd6b8237c898a093045bb43ca98158d51c00e1bdc3bbf32b",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeStandingsView.cs",
+      "sha256": "06e7608ebca85138cd726dd8f93041145f67d07dd88b6092e364ee33e5acb192",
+      "size": 12878
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeStandingsView.cs.meta",
+      "sha256": "353b79e95734458426a18f67d3361b04223143a1d5729d05ab3ec2b36bf9a1b7",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeTeamsReview.cs",
+      "sha256": "b14a768ece88f4dd6f648e14535b676eb67056d9163c72eef141fd03f2a2335b",
+      "size": 6299
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeTeamsReview.cs.meta",
+      "sha256": "4e40f832bf0d166e95923cd32acda88dd6e1c61d1dd62c91e467169d01b40886",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeUnifiedDamageReview.cs",
+      "sha256": "5d4deb86125570aa7072696d4ad89d373740ea1eb7ac1956d2f53220ab9d1612",
+      "size": 5753
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeUnifiedDamageReview.cs.meta",
+      "sha256": "cbeb79f8d57b99ada5afcc7bd396f210a1f6418188a72c803107b94a92b804f6",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponBalanceReview.cs",
+      "sha256": "6440e2dff694636d2007d0c5a112be732e5d2b60ce50f45dcdb5ca49b90a7a53",
+      "size": 9254
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponBalanceReview.cs.meta",
+      "sha256": "9db0ac29ff58d33dde9ef49e0f1d06d4c43e0a34aea58a46471ec352ef8b96a8",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponColorReview.cs",
+      "sha256": "bb6fc223a1676207f208b3bc4e9f8e19b5ac4e92a3503a480478574aa125926e",
+      "size": 5721
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponColorReview.cs.meta",
+      "sha256": "07f368c3e876731a8bd3d59a06e33db6d4791255936f538abe8ca1186b5e77e0",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponPickupReview.cs",
+      "sha256": "ebe3c8f516bce4abf88d59c309ea31c4e56dd48ab88796d2c18a7e8107111503",
+      "size": 13727
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponPickupReview.cs.meta",
+      "sha256": "57e6ef8a43c575387436be9b2d2dfe260162ccb46ccbec36a38e2ab20c040331",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponSwitchReview.cs",
+      "sha256": "8806ee907ed21ff45c1a244b2f09c8be776ae1e147e29ced8d53c2bff2b37265",
+      "size": 13404
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeWeaponSwitchReview.cs.meta",
+      "sha256": "0b08232c7bfcd05d096274cccc448136eb243001e0f0c775d0b968c4458d8294",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/OrbitalGripPose.cs",
+      "sha256": "2f4b198be17fdc8263e4a3b5a2ea84b489e63781fa0570bab22d230e160cf062",
+      "size": 2763
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/OrbitalGripPose.cs.meta",
+      "sha256": "13910a6388360d26ce9f52f893a619a54d08abcb334ef7b02828a794ce2eafe0",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/PlayerProfiles.cs",
+      "sha256": "5ecd7dbb0ec670a257cf537be0edd27fc87f89304be3f2579b018f01fcfecf8e",
+      "size": 7152
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/PlayerProfiles.cs.meta",
+      "sha256": "0f5bd4beaea91e6f247309b27438af206ac5342088157edecc109eff30b30d5f",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGround.cs",
+      "sha256": "08f6c90ab4c04f65bd628e40899dc78a33a62d877cd263fa565a987ef37ec531",
+      "size": 98044
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGround.cs.meta",
+      "sha256": "b6d8edf8e38c7640e3c1394c6c6e3f24c3cfe5f9788256a55a23b7fee216491d",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundControlSettings.cs",
+      "sha256": "a77aecd99d9431c4e7ef40afa60fe4e4c1dce1a18a0238dd22857e78fa7c56a7",
+      "size": 6597
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundControlSettings.cs.meta",
+      "sha256": "a697d03dacd028fc6f14aeb0cff4f5878c8f125e172060486ab34b8fdc482d2f",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundDamageBonusAlerts.cs",
+      "sha256": "c2f6b7c38cf3d20d6924c18a360e23af82d9e995cdbf2c0f9aad67cc6d5e2620",
+      "size": 2896
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundDamageBonusAlerts.cs.meta",
+      "sha256": "08b53c6b1eebd1e8041f7812884486ddb8e464f2dd3ffcf67bc1e7abb83fbb10",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs",
+      "sha256": "bc8f1d771d7b2380ccf652565c936eb2526af748fd44b019e1da095bed1fedbd",
+      "size": 34285
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs.meta",
+      "sha256": "79bb0e5828f9f029beabe71c4fc6b30172debae9b79117a618635392505b5855",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs",
+      "sha256": "f4db5f77a0482deead78e06c0cf991d7730434fa379ec50488d82fbc6185ce91",
+      "size": 6182
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs.meta",
+      "sha256": "a26fff9c95452182bfe92f86b5c33a2fb2b78ea1b008eade3b0da74c12f191f6",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs",
+      "sha256": "fd1825ab23dd9aa4a2dcd5429175a71373f6e6f9a0ccac46a6ae621b616a9c88",
+      "size": 36716
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs.meta",
+      "sha256": "0840c71a87738ec89d052de5d3d13a434651996eb72648f4b63d93e8e80d162b",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs",
+      "sha256": "37ae2e62446ae1d02dc0c9038d7e4f8cfa588cfeefa40b6513d992240e32669e",
+      "size": 17189
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs.meta",
+      "sha256": "317b4709fae8a711162837d3c9174fae91b456281e3fc97fa1be2487e81cfef7",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundRosterCards.cs",
+      "sha256": "3be801919d2fc7ac2dcdae62f630f8a693c79ca0abafd0c18abe1c4b0fdb0c00",
+      "size": 34907
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundRosterCards.cs.meta",
+      "sha256": "44639c49219ba04963c4ef44a62d6b72e7fffa16667e3a5ead6ac62cc2e7e418",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs",
+      "sha256": "97446e514beb59b4f92449ac67677fc2bee03f3725bd3c94eb644abe950a4273",
+      "size": 42592
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs.meta",
+      "sha256": "ffb7ccbdb563721a809e5dd2ac45c3be8faa600b261de8be4b811274815148e2",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundWeaponPickups.cs",
+      "sha256": "e876703652351f95ef449b5574028531de5e0e56c36686694b5e682f11db8f4f",
+      "size": 3035
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundWeaponPickups.cs.meta",
+      "sha256": "5265386d7474ecb7827af162fc1b6fd44fe907c3449698a1b60a58f0a480bbd5",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingTelemetry.cs",
+      "sha256": "aa5111d15bd7c086deaa7ebaf8831624b1f33b5ead9a2097ec38b42b29dc74db",
+      "size": 6285
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingTelemetry.cs.meta",
+      "sha256": "f89292c8eb680195ba2617b327e07c5ee4156b9a52094178303baffc8a0d09e5",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/RifleBulletPresentation.cs",
+      "sha256": "eaed0e4cebb601776eb8a373b6513e20cf0e068369304a83d3de17e59a054f29",
+      "size": 5765
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/RifleBulletPresentation.cs.meta",
+      "sha256": "02a4b203c77a1cd30414f7c467e36910568456951358b41bdf4e2655516a7e61",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/RocketPresentation.cs",
+      "sha256": "c78d00ef43e707cfd7458e26306fe016c09b7d403af4cd020ea3fa5b63321581",
+      "size": 19615
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/RocketPresentation.cs.meta",
+      "sha256": "a3930b7c46091176bdb925293639e58262d74bcc3eeef8c427a2596b1b1a5a3c",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/SafeSpawnSelector.cs",
+      "sha256": "05480733645df775330648ddc853a573a3eb9a61bb367766d8eda128e31b688f",
+      "size": 8800
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/SafeSpawnSelector.cs.meta",
+      "sha256": "c49db7b006aa71b93b218ce362002f8798d988138fa2d0db156010e2b2218fc8",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/SettingsSlider.cs",
+      "sha256": "a9c9014d5ffc1f93d52be6ca06e537296014e2178e10b04f88f4a899563277ea",
+      "size": 514
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/SettingsSlider.cs.meta",
+      "sha256": "981ff59419398dfddffd34591d0baf036299fe766f69a81f233b1c21bcfbc798",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/StandingsIcon.cs",
+      "sha256": "929685728236dfffaced811430b4a501a5b7adce7ec2748bd8a59958055ca764",
+      "size": 5388
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/StandingsIcon.cs.meta",
+      "sha256": "2efd720ac11fe5967fa64c9def797efca8988da53459f21fea3d5d990dc3ecb7",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/StarTournament.ProvingGround.asmdef",
+      "sha256": "7350e9bfb3b2c2d103c42c444619a43a1b08a3f2189ead0d5132b003ba0ffbd7",
+      "size": 184
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/StarTournament.ProvingGround.asmdef.meta",
+      "sha256": "fddf20242ae6d1f0838d2a7a6754236d8210f62c5b41e04bbd301999c13129ee",
+      "size": 163
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperIdentityPresentation.cs",
+      "sha256": "5cd917069c9b301dee68887de06e3cb26185952f8f47208a029966c818042a91",
+      "size": 7810
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperIdentityPresentation.cs.meta",
+      "sha256": "7b18adf39f7a565fc353fdb8dded8df2651bc2f459fb09f950d162561778c0f4",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperReview.cs",
+      "sha256": "14f6e22d68053a74bb7f8ace9dd6c4d270d436c5ec91612849ac219213720bcf",
+      "size": 6327
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperReview.cs.meta",
+      "sha256": "cd054a3a7efdc74ebd03dc0edbfbd8f1a52fc4bfd5739d8cdcfee87dcd70614b",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperVisual.cs",
+      "sha256": "4c166b1b526c318fc372a5ba97654690f41ff00a83017eab39ffe4c958ab88de",
+      "size": 6005
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/TrooperVisual.cs.meta",
+      "sha256": "0b1b7749f0aec2591dc5eac1e2f951cc1c0a859879af85fe453cf3d06df017d6",
+      "size": 60
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/VectorShotPresentation.cs",
+      "sha256": "ae11b7272e00cd662d11dfbd50f7b08ec41460517a893dad046311a62161e2ac",
+      "size": 5517
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/VectorShotPresentation.cs.meta",
+      "sha256": "a9a8e025ccd8742e97bdcc79c262e68f9ba3fcecdbf305d3825a11dba3248f5b",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/VectorVisualReview.cs",
+      "sha256": "fa0e8164a7b52c553e1cdecc5bdf82f266b7929e04b1f7a9ed766f5b7b350946",
+      "size": 3764
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/VectorVisualReview.cs.meta",
+      "sha256": "b5c2aca96a9f8a2c524e2af8f217fe0944ae57fb1f06c5bf8261cb8a4585511a",
+      "size": 59
+    },
+    {
+      "path": "unity/Assets/StarTournament/Scenes/ProvingGround.unity",
+      "sha256": "2420e760a40bbd941fb9e17c928c5b9e5eb1c3b405494789b2a2f476a472fe3b",
+      "size": 3384459
+    },
+    {
+      "path": "unity/Assets/StarTournament/Scenes/ProvingGround.unity.meta",
+      "sha256": "00e8ec6cc30f6b0ecd29a8397f9ec74ebd6653ca5c643b54454b01b4eb385816",
+      "size": 152
+    },
+    {
+      "path": "unity/Assets/StarTournament/Settings/ProvingRenderer.asset",
+      "sha256": "78014948399a7a2a4938b6f1a86b1aa59fa2c52c51bbb6f748f5833e590fea28",
+      "size": 1891
+    },
+    {
+      "path": "unity/Assets/StarTournament/Settings/ProvingRenderer.asset.meta",
+      "sha256": "cfd9cad5add7aeeb05e9e69dae68733a65865a0c8508f15bfa2f0b8812eb9999",
+      "size": 186
+    },
+    {
+      "path": "unity/Assets/StarTournament/Settings/ProvingURP.asset",
+      "sha256": "d080fecf08fc088ae0a01b7ede5a0a93b0fd11337ff67d35eb5dacf0f77c8f12",
+      "size": 4687
+    },
+    {
+      "path": "unity/Assets/StarTournament/Settings/ProvingURP.asset.meta",
+      "sha256": "cde85b38004c831b59c4f3a0c1c86590ac986ff5c2e184c87e3ed01081ed11f5",
+      "size": 186
+    },
+    {
+      "path": "unity/Packages/manifest.json",
+      "sha256": "a875658bef6729ae230a088ddd6213312c5e70c4808893f0544e90f8173e1a2e",
+      "size": 1817
+    },
+    {
+      "path": "unity/Packages/packages-lock.json",
+      "sha256": "0a7e1fca8d44abdce5240285977165ebd9d9657c6218c70e915dd37659c46fa8",
+      "size": 11497
+    },
+    {
+      "path": "unity/ProjectSettings/AudioManager.asset",
+      "sha256": "18f06b605aa312b62ee54ba915c716831a7b05b155312013b43729540078f7db",
+      "size": 521
+    },
+    {
+      "path": "unity/ProjectSettings/ClusterInputManager.asset",
+      "sha256": "40e65dd214bf254955d2c8829ca8ce2130fd3510485560ce012e9a1ddd93e623",
+      "size": 114
+    },
+    {
+      "path": "unity/ProjectSettings/DynamicsManager.asset",
+      "sha256": "d102dd312ef330f5e5ca255c070fb34f68f59ec633d1e9fd67e2f2f6f88f66c8",
+      "size": 1574
+    },
+    {
+      "path": "unity/ProjectSettings/EditorBuildSettings.asset",
+      "sha256": "6f70485cac6d3b920351dd0638675e87dfb0417d86321c94fa5e3ae05a707c40",
+      "size": 304
+    },
+    {
+      "path": "unity/ProjectSettings/EditorSettings.asset",
+      "sha256": "552fbe61936b0a6267e95045eab3a27a228c2a7747c8f67f031e0581b5c42e6b",
+      "size": 1601
+    },
+    {
+      "path": "unity/ProjectSettings/GraphicsSettings.asset",
+      "sha256": "55743859a3fc2279132da6116b3800df429ee422fa172d35e71e27bd0123567d",
+      "size": 2615
+    },
+    {
+      "path": "unity/ProjectSettings/InputManager.asset",
+      "sha256": "29dd30472a0f6de3329c3bea384527cd21f8a8b92288eb133e5a9c88d11cd44d",
+      "size": 9623
+    },
+    {
+      "path": "unity/ProjectSettings/MemorySettings.asset",
+      "sha256": "2c9e2339b4fa50f4782840d37dde021508d411b99278614cba335d206edb1738",
+      "size": 1226
+    },
+    {
+      "path": "unity/ProjectSettings/MultiplayerManager.asset",
+      "sha256": "ce4075d7a7dd8ac7ffe55de2427692c63f90dae398208bd80cec0f27cbe09f4b",
+      "size": 232
+    },
+    {
+      "path": "unity/ProjectSettings/NavMeshAreas.asset",
+      "sha256": "d3eb7e72cf17be039780311b8a361cd5ee8408da828ece4551f8a0de446985da",
+      "size": 1332
+    },
+    {
+      "path": "unity/ProjectSettings/Physics2DSettings.asset",
+      "sha256": "1cfc0c8fbceec604fd7cd2a06c04ff05dddee6335b75c92b0f5715ad80ba9490",
+      "size": 1862
+    },
+    {
+      "path": "unity/ProjectSettings/PresetManager.asset",
+      "sha256": "29c125923fe6e29f90190d4fce1c82d660e7051546e2c9d02908d18c9cf2436c",
+      "size": 146
+    },
+    {
+      "path": "unity/ProjectSettings/ProjectSettings.asset",
+      "sha256": "45cd41a307e678b95dcfc67438c5e8640985034317d5840bc5737e4d90806f9e",
+      "size": 20531
+    },
+    {
+      "path": "unity/ProjectSettings/ProjectVersion.txt",
+      "sha256": "ccbded48add235cebc157983154aaa49ed9035f56398fcb5e2b41bae3ebd2b66",
+      "size": 85
+    },
+    {
+      "path": "unity/ProjectSettings/QualitySettings.asset",
+      "sha256": "176cdf4d902ee22449f47266de27cc856b54932d848b01a68bdde66194f71689",
+      "size": 9858
+    },
+    {
+      "path": "unity/ProjectSettings/SceneTemplateSettings.json",
+      "sha256": "bb9098b3bfcde78d93e264b96f7b77b5430e64e8c57a7aad7f5a5d9c3945e16a",
+      "size": 3535
+    },
+    {
+      "path": "unity/ProjectSettings/ShaderGraphSettings.asset",
+      "sha256": "ced4c296ca9ee31667185c2a98ef8fbec98d958df3edbde5d6f2a50d1f0ebb32",
+      "size": 632
+    },
+    {
+      "path": "unity/ProjectSettings/TagManager.asset",
+      "sha256": "ac8f4edf784922a2451934a6449bc451b75b0fb126ad5ccc2ac2c4d7ebdc58ae",
+      "size": 465
+    },
+    {
+      "path": "unity/ProjectSettings/TimeManager.asset",
+      "sha256": "3396f52fdc16d445024e01d7a2d99db6f0a37569d1d73c0302e9ffb857d90287",
+      "size": 305
+    },
+    {
+      "path": "unity/ProjectSettings/UnityConnectSettings.asset",
+      "sha256": "190c680da9dc83806ec3b11332f980515bf9746b977cd928c1f8ea115c332e76",
+      "size": 1060
+    },
+    {
+      "path": "unity/ProjectSettings/VFXManager.asset",
+      "sha256": "93d301bf8a59b5e07eff03c1c110e8c7ec278891ee9c879765fd010fc425e694",
+      "size": 524
+    },
+    {
+      "path": "unity/ProjectSettings/VersionControlSettings.asset",
+      "sha256": "e199cdfa6a8f2bf33cfd47e549198f13e3eb2a5099e908fdb4e0f14d939ccc6b",
+      "size": 172
+    }
+  ],
+  "owner": "01a1064a-a440-7283-bf7e-dcf057361c10",
+  "command": "UNITY_RUN_MODE=exclusive unity/tools.sh build",
+  "default_resolution": "1920x1080; QA overrides at Player launch"
+}

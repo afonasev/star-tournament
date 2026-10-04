@@ -1,0 +1,154 @@
+{
+  "steps": [
+    {
+      "name": "upper-baseline",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "upper-candidate",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "lab-a-baseline",
+      "feet": {
+        "x": -4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 200,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "lab-a-candidate",
+      "feet": {
+        "x": -4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 200,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "lab-b-baseline",
+      "feet": {
+        "x": 4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 160,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    }
+  ]
+}

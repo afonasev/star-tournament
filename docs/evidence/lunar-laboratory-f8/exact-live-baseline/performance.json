@@ -1,0 +1,1764 @@
+{
+    "status": "DIAGNOSTIC_NOT_ACCEPTANCE",
+    "map": "lunar-laboratory-v1@6",
+    "unity": "6000.3.23f1",
+    "device": "Mac14,10",
+    "cpu": "Apple M2 Pro",
+    "gpu": "Apple M2 Pro",
+    "os": "Mac OS X 14.6.1",
+    "pipeline": "ProvingURP",
+    "protocol": "Explicit lighting study plan: {\n  \"steps\": [\n    {\n      \"name\": \"live-baseline\",\n      \"variant\": \"baseline\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 0.02,\n        \"z\": -9\n      },\n      \"yaw\": 0,\n      \"pitch\": 0,\n      \"live\": true,\n      \"warmup\": 5,\n      \"duration\": 60,\n      \"lighting\": [\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 10,\n          \"intensity\": 18,\n          \"innerAngle\": 21.8020801544\n        },\n        {\n          \"group\": \"lower-point\",\n          \"range\": 10,\n          \"intensity\": 2.5,\n          \"innerAngle\": 0\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 10,\n          \"intensity\": 18,\n          \"innerAngle\": 21.8020801544\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 10,\n          \"intensity\": 2.5,\n          \"innerAngle\": 0\n        }\n      ]\n    }\n  ]\n}",
+    "seed": 20261003,
+    "originalVsync": 1,
+    "originalTargetRate": -1,
+    "cpuThreads": 12,
+    "systemMemoryMB": 32768,
+    "vsync": 1,
+    "refreshHz": 120.0,
+    "renderScale": 1.0,
+    "frameTimingEnabled": true,
+    "lights": [
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "stairs-point",
+            "position": {
+                "x": -19.0,
+                "y": 7.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 2.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": -28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 28.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -28.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "arena-light",
+            "type": "Directional",
+            "shadows": "Soft",
+            "group": "directional",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 0.30000001192092898,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "stairs-point",
+            "position": {
+                "x": 19.0,
+                "y": 7.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 2.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -14.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": -28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -28.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "equipment-fill",
+            "type": "Point",
+            "shadows": "None",
+            "group": "equipment",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "range": 2.0,
+            "intensity": 0.05000000074505806,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 0.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -14.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 14.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": -14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 28.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 14.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "stairs-spot",
+            "position": {
+                "x": 19.0,
+                "y": 7.550000190734863,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 18.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": -14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "stairs-spot",
+            "position": {
+                "x": -19.0,
+                "y": 7.550000190734863,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 18.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 7.0,
+            "intensity": 20.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 65.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 6.5,
+            "intensity": 3.5,
+            "spotAngle": 30.0,
+            "innerSpotAngle": 21.802080154418947
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 0.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0,
+            "spotAngle": 125.0,
+            "innerSpotAngle": 21.802080154418947
+        }
+    ],
+    "samples": [
+        {
+            "name": "live-baseline",
+            "variant": "baseline",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,151,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,241,210,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,139,-1],\"ChainAwards\":[100,0,0,0,0,0,0,100],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":265,\"RemainingTicks\":14735,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":1,\"Assists\":0,\"Deaths\":0,\"Score\":100,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":50.0,\"DamageReceived\":60.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":1,\"Assists\":0,\"Deaths\":0,\"Score\":100,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":100.0,\"DamageReceived\":20.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":1,\"Deaths\":0,\"Score\":50,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":70.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":20.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":1,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":60.0,\"DamageReceived\":100.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":1,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":20.0,\"DamageReceived\":100.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],\"KillChains\":[1,0,0,0,0,0,0,1]},\"Poses\":[{\"Position\":{\"x\":8.981528282165528,\"y\":0.009999889880418778,\"z\":-15.4136323928833},\"Velocity\":{\"x\":8.560375213623047,\"y\":-0.0000029802333756379086,\"z\":-2.778531312942505},\"Yaw\":269.9512939453125,\"Pitch\":-0.4363027513027191,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":18.597368240356447,\"y\":0.009999940171837807,\"z\":-21.70875358581543},\"Velocity\":{\"x\":-0.821399986743927,\"y\":0.0,\"z\":8.962444305419922},\"Yaw\":281.98785400390627,\"Pitch\":-0.35479405522346499,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-23.291872024536134,\"y\":0.009999940171837807,\"z\":-16.57081413269043},\"Velocity\":{\"x\":6.610395908355713,\"y\":0.0,\"z\":6.107618808746338},\"Yaw\":90.76614379882813,\"Pitch\":1.2126455307006837,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":21.831615447998048,\"y\":0.009999880567193032,\"z\":19.19074249267578},\"Velocity\":{\"x\":-8.999923706054688,\"y\":0.0,\"z\":-0.033950820565223697},\"Yaw\":185.64468383789063,\"Pitch\":1.1096043586730958,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-11.131569862365723,\"y\":0.009999955072999,\"z\":16.1157169342041},\"Velocity\":{\"x\":-8.590225219726563,\"y\":0.0,\"z\":2.684689521789551},\"Yaw\":157.87767028808595,\"Pitch\":-0.08566254377365112,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-9.258700370788575,\"y\":0.009999895468354226,\"z\":-20.155733108520509},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":50.6181526184082,\"Pitch\":1.0288958549499512,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-13.922489166259766,\"y\":4.509999752044678,\"z\":7.124724864959717},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":117.36322021484375,\"Pitch\":4.9349541664123539,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":1.1433390378952027,\"y\":4.509999752044678,\"z\":-10.616711616516114},\"Velocity\":{\"x\":0.5219818949699402,\"y\":0.0,\"z\":-8.984855651855469},\"Yaw\":320.96124267578127,\"Pitch\":-0.2867611348628998,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[{\"Id\":18,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-364.96661376953127,\"y\":1.5468165874481202,\"z\":55.113990783691409},\"Direction\":{\"x\":-0.9803387522697449,\"y\":-0.00003449644646025263,\"z\":0.1973220258951187},\"Distance\":381.9999694824219,\"DamageMultiplier\":1.0},{\"Id\":30,\"Owner\":7,\"OwnerLife\":1,\"Position\":{\"x\":-261.0023498535156,\"y\":-15.789027214050293,\"z\":171.6875762939453},\"Direction\":{\"x\":-0.8384879231452942,\"y\":-0.07187189906835556,\"z\":0.5401595830917358},\"Distance\":303.9999694824219,\"DamageMultiplier\":1.0},{\"Id\":35,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-257.5337219238281,\"y\":1.0987440347671509,\"z\":55.35216522216797},\"Direction\":{\"x\":-0.9603887796401978,\"y\":-0.0016127548879012466,\"z\":0.27865901589393618},\"Distance\":285.9999694824219,\"DamageMultiplier\":1.0},{\"Id\":38,\"Owner\":0,\"OwnerLife\":1,\"Position\":{\"x\":-203.33157348632813,\"y\":0.3732411861419678,\"z\":-188.80995178222657},\"Direction\":{\"x\":-0.7560609579086304,\"y\":-0.0043723247945308689,\"z\":-0.654486358165741},\"Distance\":275.9999694824219,\"DamageMultiplier\":1.0},{\"Id\":49,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-226.62567138671876,\"y\":3.9117605686187746,\"z\":15.03390121459961},\"Direction\":{\"x\":-0.9864760637283325,\"y\":0.009407036006450653,\"z\":0.16363497078418733},\"Distance\":249.99998474121095,\"DamageMultiplier\":1.0},{\"Id\":52,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-214.13475036621095,\"y\":2.189985990524292,\"z\":10.466742515563965},\"Direction\":{\"x\":-0.9880728721618652,\"y\":0.0026470066513866188,\"z\":0.1539643555879593},\"Distance\":237.99998474121095,\"DamageMultiplier\":1.0},{\"Id\":58,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-151.71376037597657,\"y\":4.525118350982666,\"z\":-25.63384437561035},\"Direction\":{\"x\":-0.9998036026954651,\"y\":0.016657976433634759,\"z\":0.010724231600761414},\"Distance\":177.99998474121095,\"DamageMultiplier\":1.0},{\"Id\":62,\"Owner\":3,\"OwnerLife\":1,\"Position\":{\"x\":28.933073043823243,\"y\":0.024428538978099824,\"z\":-128.18580627441407},\"Direction\":{\"x\":0.0050123510882258419,\"y\":-0.009971236810088158,\"z\":-0.9999376535415649},\"Distance\":153.99998474121095,\"DamageMultiplier\":1.0},{\"Id\":63,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-112.28983306884766,\"y\":4.90809965133667,\"z\":-3.479663848876953},\"Direction\":{\"x\":-0.9848393797874451,\"y\":0.02357814833521843,\"z\":0.17185859382152558},\"Distance\":141.99998474121095,\"DamageMultiplier\":1.0},{\"Id\":67,\"Owner\":1,\"OwnerLife\":1,\"Position\":{\"x\":-79.54996490478516,\"y\":2.8941049575805666,\"z\":-7.911107540130615},\"Direction\":{\"x\":-0.983346700668335,\"y\":0.012585921213030815,\"z\":0.18130339682102204},\"Distance\":105.99999237060547,\"DamageMultiplier\":1.0},{\"Id\":77,\"Owner\":0,\"OwnerLife\":1,\"Position\":{\"x\":-23.554738998413087,\"y\":1.5275379419326783,\"z\":-15.961170196533204},\"Direction\":{\"x\":-0.9989392161369324,\"y\":-0.0010820517782121897,\"z\":-0.046036865562200549},\"Distance\":29.99999237060547,\"DamageMultiplier\":1.0},{\"Id\":78,\"Owner\":2,\"OwnerLife\":1,\"Position\":{\"x\":4.6127166748046879,\"y\":1.3343009948730469,\"z\":-15.134672164916993},\"Direction\":{\"x\":0.9937325119972229,\"y\":-0.007523310370743275,\"z\":0.11153119802474976},\"Distance\":29.99999237060547,\"DamageMultiplier\":1.0},{\"Id\":79,\"Owner\":3,\"OwnerLife\":1,\"Position\":{\"x\":22.386520385742189,\"y\":1.7300761938095093,\"z\":-4.685682773590088},\"Direction\":{\"x\":-0.0667961984872818,\"y\":0.007086523808538914,\"z\":-0.9977415800094605},\"Distance\":23.99999237060547,\"DamageMultiplier\":1.0},{\"Id\":80,\"Owner\":0,\"OwnerLife\":1,\"Position\":{\"x\":-10.518277168273926,\"y\":0.734801173210144,\"z\":-15.805214881896973},\"Direction\":{\"x\":-0.997719407081604,\"y\":-0.04584437981247902,\"z\":-0.049540042877197269},\"Distance\":17.99999237060547,\"DamageMultiplier\":1.0},{\"Id\":81,\"Owner\":2,\"OwnerLife\":1,\"Position\":{\"x\":-6.503575801849365,\"y\":1.3377360105514527,\"z\":-16.4137020111084},\"Direction\":{\"x\":0.9973798990249634,\"y\":-0.01234801858663559,\"z\":0.07128001004457474},\"Distance\":17.99999237060547,\"DamageMultiplier\":1.0},{\"Id\":82,\"Owner\":0,\"OwnerLife\":1,\"Position\":{\"x\":2.4718923568725588,\"y\":1.412353515625,\"z\":-15.408075332641602},\"Direction\":{\"x\":-0.9993362426757813,\"y\":-0.02460775338113308,\"z\":-0.026859072968363763},\"Distance\":5.999997615814209,\"DamageMultiplier\":1.0},{\"Id\":83,\"Owner\":2,\"OwnerLife\":1,\"Position\":{\"x\":-17.694080352783204,\"y\":1.2663921117782593,\"z\":-16.865880966186525},\"Direction\":{\"x\":0.9987266659736633,\"y\":-0.048934657126665118,\"z\":0.012266162782907486},\"Distance\":5.999997615814209,\"DamageMultiplier\":1.0}],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":false,\"Remaining\":11.840001247823239},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":false,\"Remaining\":10.780001666396857},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":false,\"Remaining\":13.300000671297312},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":false,\"Remaining\":11.5000013820827},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[false,false,false,false,false,false,false,false],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":14.70000209286809}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"a2a0c9ddcba23f2774770d4d0b0c7808d729f789315fc9798bb1592b01cfd673\"},\"Time\":5.29999790713191,\"ShotSequence\":83,\"ShotCount\":83,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":40.0,\"Armor\":0.0,\"Ammo\":184,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":true,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":184,\"ShotgunAmmo\":20,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.04000002518296242,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.04000002518296242,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":176,\"SelectedWeapon\":1,\"PendingWeapon\":3,\"SwitchRemaining\":0.2600000947713852,\"ShotgunOwned\":false,\"RocketOwned\":true,\"CutterOwned\":false,\"RifleAmmo\":176,\"ShotgunAmmo\":0,\"RocketAmmo\":20,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":30.0,\"Ammo\":194,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":194,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.04000002518296242,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.04000002518296242,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":50.0,\"Ammo\":193,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":193,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":true,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":20,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":0.0,\"Armor\":0.0,\"Ammo\":184,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":184,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":true,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.7600008845329285,\"KillerId\":\"player-1\",\"KillerLife\":1},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":0.0,\"Armor\":0.0,\"Ammo\":198,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":198,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":true,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.5200009793043137,\"KillerId\":\"player-8\",\"KillerLife\":1},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":80.0,\"Armor\":0.0,\"Ammo\":188,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":188,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":false,\"RespawnRemaining\":27.920000821352006},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":false,\"RespawnRemaining\":27.920000821352006}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":4.70000209286809}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":9.70000209286809},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 5.299997806549072,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 3417,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 3417,
+                "hitches16": 1640,
+                "hitches25": 425,
+                "hitches50": 0,
+                "mean": 17.563540337430497,
+                "p50": 16.533082999998784,
+                "p95": 28.582083999992848,
+                "p99": 33.660874999998927,
+                "max": 47.03849999999932
+            },
+            "cpuMs": {
+                "count": 3417,
+                "hitches16": 1798,
+                "hitches25": 336,
+                "hitches50": 0,
+                "mean": 17.560034862452438,
+                "p50": 16.691583,
+                "p95": 26.956917,
+                "p99": 32.847542,
+                "max": 45.5655
+            },
+            "gpuMs": {
+                "count": 3417,
+                "hitches16": 646,
+                "hitches25": 127,
+                "hitches50": 0,
+                "mean": 12.406449992567949,
+                "p50": 11.499375046696514,
+                "p95": 22.990875004325063,
+                "p99": 31.158791622146965,
+                "max": 45.046874962281439
+            },
+            "mainMs": {
+                "count": 3417,
+                "hitches16": 5,
+                "hitches25": 1,
+                "hitches50": 0,
+                "mean": 5.668608644717581,
+                "p50": 5.512042,
+                "p95": 9.014792,
+                "p99": 11.38575,
+                "max": 28.366501
+            },
+            "renderMs": {
+                "count": 3417,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.7313925987708508,
+                "p50": 1.685583,
+                "p95": 3.23925,
+                "p99": 3.883916,
+                "max": 6.755084
+            },
+            "presentWaitMs": {
+                "count": 3417,
+                "hitches16": 633,
+                "hitches25": 46,
+                "hitches50": 0,
+                "mean": 11.878858685689206,
+                "p50": 10.777,
+                "p95": 22.09,
+                "p99": 26.148543,
+                "max": 42.134209
+            },
+            "drawCalls": {
+                "count": 3417,
+                "hitches16": 3009,
+                "hitches25": 3009,
+                "hitches50": 2963,
+                "mean": 580.2036874451273,
+                "p50": 536.0,
+                "p95": 1309.0,
+                "p99": 2042.0,
+                "max": 2555.0
+            },
+            "setPass": {
+                "count": 3417,
+                "hitches16": 2871,
+                "hitches25": 2683,
+                "hitches50": 2503,
+                "mean": 266.6286215978929,
+                "p50": 250.0,
+                "p95": 722.0,
+                "p99": 947.0,
+                "max": 1105.0
+            },
+            "triangles": {
+                "count": 3417,
+                "hitches16": 3015,
+                "hitches25": 3015,
+                "hitches50": 3015,
+                "mean": 1125742.1536435469,
+                "p50": 1152461.0,
+                "p95": 2342936.0,
+                "p99": 3012338.0,
+                "max": 3247002.0
+            },
+            "vertices": {
+                "count": 3417,
+                "hitches16": 3009,
+                "hitches25": 3009,
+                "hitches50": 3009,
+                "mean": 985817.0336552531,
+                "p50": 1003892.0,
+                "p95": 2062272.0,
+                "p99": 2546557.0,
+                "max": 2697598.0
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "s-armored-window-0",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "s-armored-window-1",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-0",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 4.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-1",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-2",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 4.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "divider-glass",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 16.0,
+                "y": 1.5,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "Acoustic ceiling / perforated panels",
+            "vertices": 40,
+            "triangles": 20,
+            "bounds": {
+                "x": 64.0,
+                "y": 9.000000953674317,
+                "z": 64.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "Grey lunar regolith",
+            "vertices": 21449,
+            "triangles": 11383,
+            "bounds": {
+                "x": 260.0,
+                "y": 28.196733474731447,
+                "z": 260.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "Graphite floor",
+            "vertices": 5448,
+            "triangles": 2706,
+            "bounds": {
+                "x": 60.540000915527347,
+                "y": 10.305000305175782,
+                "z": 56.47999954223633
+            },
+            "shadows": true
+        },
+        {
+            "name": "Ivory ceramic panels",
+            "vertices": 15075,
+            "triangles": 12188,
+            "bounds": {
+                "x": 60.900001525878909,
+                "y": 13.680864334106446,
+                "z": 50.37399673461914
+            },
+            "shadows": true
+        },
+        {
+            "name": "Brushed structural alloy",
+            "vertices": 25344,
+            "triangles": 13428,
+            "bounds": {
+                "x": 64.30000305175781,
+                "y": 13.310769081115723,
+                "z": 64.30000305175781
+            },
+            "shadows": true
+        },
+        {
+            "name": "N analysis blue grey",
+            "vertices": 7986,
+            "triangles": 8784,
+            "bounds": {
+                "x": 51.29999923706055,
+                "y": 8.479999542236329,
+                "z": 37.218997955322269
+            },
+            "shadows": true
+        },
+        {
+            "name": "Matte ochre",
+            "vertices": 86400,
+            "triangles": 77112,
+            "bounds": {
+                "x": 60.584999084472659,
+                "y": 9.51498794555664,
+                "z": 48.81999969482422
+            },
+            "shadows": true
+        },
+        {
+            "name": "Grating alloy without aliasing shadows",
+            "vertices": 23088,
+            "triangles": 11544,
+            "bounds": {
+                "x": 48.0,
+                "y": 0.10000038146972656,
+                "z": 30.0
+            },
+            "shadows": false
+        },
+        {
+            "name": "Neutral light diffuser",
+            "vertices": 282392,
+            "triangles": 397704,
+            "bounds": {
+                "x": 290.8785705566406,
+                "y": 147.01971435546876,
+                "z": 292.38592529296877
+            },
+            "shadows": false
+        },
+        {
+            "name": "Dust-grey paving",
+            "vertices": 2544,
+            "triangles": 1272,
+            "bounds": {
+                "x": 59.849998474121097,
+                "y": 0.017999999225139619,
+                "z": 59.849998474121097
+            },
+            "shadows": true
+        },
+        {
+            "name": "Blue photovoltaic cells",
+            "vertices": 720,
+            "triangles": 360,
+            "bounds": {
+                "x": 11.930000305175782,
+                "y": 0.8412456512451172,
+                "z": 2.5105485916137697
+            },
+            "shadows": true
+        },
+        {
+            "name": "W communications sage",
+            "vertices": 9224,
+            "triangles": 8356,
+            "bounds": {
+                "x": 0.6399993896484375,
+                "y": 7.334903717041016,
+                "z": 5.894904136657715
+            },
+            "shadows": true
+        },
+        {
+            "name": "E power grey lavender",
+            "vertices": 216,
+            "triangles": 108,
+            "bounds": {
+                "x": 0.46249961853027346,
+                "y": 6.950000286102295,
+                "z": 5.000000476837158
+            },
+            "shadows": true
+        },
+        {
+            "name": "Black lunar sky and stars",
+            "vertices": 515,
+            "triangles": 768,
+            "bounds": {
+                "x": 300.0,
+                "y": 300.0,
+                "z": 300.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "NASA Blue Marble / clouds and atmosphere",
+            "vertices": 515,
+            "triangles": 768,
+            "bounds": {
+                "x": 16.0,
+                "y": 16.0,
+                "z": 16.0
+            },
+            "shadows": true
+        }
+    ],
+    "botMs": {
+        "count": 0,
+        "hitches16": 0,
+        "hitches25": 0,
+        "hitches50": 0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+    },
+    "tickMs": {
+        "count": 0,
+        "hitches16": 0,
+        "hitches25": 0,
+        "hitches50": 0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+    },
+    "frozenState": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":-4.0,\"y\":0.009999999776482582,\"z\":18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"a2a0c9ddcba23f2774770d4d0b0c7808d729f789315fc9798bb1592b01cfd673\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}"
+}

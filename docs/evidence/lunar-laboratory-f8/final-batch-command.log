@@ -1,0 +1,13 @@
+unity-run: waiting exclusive; project=none
+unity-run: started exclusive; guardian=41970 pid=41971
+BEGIN f7-exact-visual 41973
+END f7-exact-visual 0
+BEGIN exact-frozen 42110
+END exact-frozen 0
+BEGIN exact-focus-repeat 46065
+END exact-focus-repeat 0
+BEGIN exact-live-baseline 46584
+END exact-live-baseline 0
+BEGIN exact-visual 47098
+END exact-visual 0
+unity-run: finished pid=41971 exit=0; capacity released
