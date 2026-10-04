@@ -76,12 +76,46 @@ namespace StarTournament.ProvingGround
             Check(actions.SequenceEqual(new[]{"Повторить матч","В главное меню"}),"results actions: "+string.Join(",",actions));
             yield return Capture(label);
         }
+        void SeedAccuracy()
+        {
+            var match=ground.Session.Match;
+            match.RecordAccuracy(0,WeaponId.Shotgun,8,2);match.RecordAccuracy(0,WeaponId.Rifle,4,3);
+            for(int i=1;i<ground.Composition.ParticipantCount;i++)
+            {
+                match.RecordAccuracy(i,WeaponId.Shotgun,8,i);
+                match.RecordAccuracy(i,WeaponId.Rifle,4,i%5);
+                match.RecordAccuracy(i,WeaponId.Cutter,2,i*.25);
+                match.RecordAccuracy(i,WeaponId.RocketLauncher,3,i%4);
+            }
+            Check(Math.Abs(match.Read().Standings.Single(r=>r.Seat==0).AccuracyPercent-50)<.000001,"mixed weapon accuracy");
+        }
+        void CheckAccuracyTable(string path,bool teams)
+        {
+            var table=ground.transform.Find(path);
+            Check(table!=null&&table.gameObject.activeInHierarchy,"accuracy table visible "+path);
+            var row=table.GetComponentsInChildren<Text>().Single(t=>t.name=="cell-0"&&t.text=="AFONASEV").transform.parent;
+            Check(row.Find("cell-6").GetComponent<Text>().text=="50%","accuracy before score");
+            Check(!row.Find("identity-accent").gameObject.activeSelf,"no player leader stripe");
+            Check(table.Find("row-0/header-6").GetComponent<StandingsIcon>().Kind==StandingsIcon.Symbol.Percent,"percent header");
+            if(teams)foreach(var team in table.GetComponentsInChildren<Text>().Where(t=>t.name=="cell-0"&&t.text.StartsWith("Team ")))
+                Check(team.transform.parent.Find("cell-6").GetComponent<Text>().text=="","no fabricated team accuracy");
+        }
         IEnumerator Start()
         {
             Application.runInBackground=true;
             ground=GetComponent<ProvingGround>();var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-scoreboardEvidence");directory=at>=0&&at+1<args.Length?args[at+1]:Path.Combine(Application.persistentDataPath,"scoreboard-review");Directory.CreateDirectory(directory);AudioListener.volume=0;
             while(!Application.isFocused||!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();
+            if(args.Contains("-accuracyOnly"))
+            {
+                yield return Configure(1,8,false,true);SeedAccuracy();Hit(7,0,500);Step(1);
+                yield return Held(true);yield return Capture("01-ffa-eight-accuracy-live");CheckAccuracyTable("native-ui/standings-0",false);yield return Held(false);
+                yield return Finish("02-ffa-eight-accuracy-results");CheckAccuracyTable("native-ui/setup-pause/results-table",false);
+                yield return Configure(3,8,true);SeedAccuracy();Hit(7,0,500);Step(1);
+                yield return Capture("03-teams-eight-accuracy-persistent");CheckAccuracyTable("native-ui/persistent-standings",true);
+                yield return Finish("04-teams-eight-accuracy-results");CheckAccuracyTable("native-ui/setup-pause/results-table",true);
+                Debug.Log("NATIVE_ACCURACY_REVIEW_COMPLETE "+directory);Application.Quit();yield break;
+            }
             if(args.Contains("-resultsActionsOnly"))
             {
                 var roster=NativeMatchRoster.Ffa(4);

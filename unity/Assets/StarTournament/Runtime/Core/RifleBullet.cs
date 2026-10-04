@@ -9,6 +9,7 @@ namespace StarTournament.ProvingGround
         public int Owner, OwnerLife;
         public Vector3 Position, Direction;
         public float Distance, DamageMultiplier;
+        public bool AccuracyTracked;
         public void Validate(int participants,uint sequence)
         {
             // Tolerance is a serialization numeric invariant, not gameplay tuning.

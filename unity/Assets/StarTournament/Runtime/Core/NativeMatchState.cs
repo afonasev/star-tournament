@@ -6,12 +6,31 @@ namespace StarTournament.ProvingGround
 {
     public enum NativeMatchPhase { Running, Overtime, Finished }
     [Serializable]
+    public struct WeaponAccuracy
+    {
+        public double Used, Successful;
+        public double Fraction => Used > 0 ? Successful / Used : 0;
+    }
+    [Serializable]
     public struct NativeStanding
     {
         // Legacy field name: stable participant slot, not a device/viewport binding.
         public int Seat, Kills, Assists, Deaths, Score;
         public int SelfKills, AllyKills, AccumulatedPenalty;
         public double DamageDealt, DamageReceived, AllyDamageDealt;
+        public WeaponAccuracy RifleAccuracy, ShotgunAccuracy, RocketAccuracy, CutterAccuracy;
+        public double AccuracyPercent
+        {
+            get
+            {
+                double total=0;int count=0;
+                AddAccuracy(RifleAccuracy,ref total,ref count);AddAccuracy(ShotgunAccuracy,ref total,ref count);
+                AddAccuracy(RocketAccuracy,ref total,ref count);AddAccuracy(CutterAccuracy,ref total,ref count);
+                return count==0?0:total/count*100;
+            }
+        }
+        static void AddAccuracy(WeaponAccuracy accuracy,ref double total,ref int count)
+        { if(accuracy.Used>0){total+=accuracy.Fraction;count++;} }
     }
     [Serializable]
     public struct NativeTeamStanding
@@ -127,6 +146,18 @@ namespace StarTournament.ProvingGround
             }
             ClearLedger(victim);
         }
+        public void RecordAccuracy(int participant,WeaponId weapon,double used,double successful)
+        {
+            if(participant<0||participant>=rows.Length)throw new ArgumentOutOfRangeException(nameof(participant));
+            if(weapon!=WeaponId.Rifle&&weapon!=WeaponId.Shotgun&&weapon!=WeaponId.RocketLauncher&&weapon!=WeaponId.Cutter)throw new ArgumentOutOfRangeException(nameof(weapon));
+            if(!FiniteAccuracy(used)||!FiniteAccuracy(successful))throw new ArgumentException("Invalid accuracy counters");
+            if(Phase==NativeMatchPhase.Finished||used==0&&successful==0)return;
+            ref var row=ref rows[participant];
+            var counter=weapon==WeaponId.Rifle?row.RifleAccuracy:weapon==WeaponId.Shotgun?row.ShotgunAccuracy:weapon==WeaponId.RocketLauncher?row.RocketAccuracy:row.CutterAccuracy;
+            counter.Used+=used;counter.Successful+=successful;
+            if(!FiniteAccuracy(counter.Used)||!FiniteAccuracy(counter.Successful)||counter.Successful>counter.Used)throw new ArgumentException("Invalid accuracy counters");
+            if(weapon==WeaponId.Rifle)row.RifleAccuracy=counter;else if(weapon==WeaponId.Shotgun)row.ShotgunAccuracy=counter;else if(weapon==WeaponId.RocketLauncher)row.RocketAccuracy=counter;else row.CutterAccuracy=counter;
+        }
         public void EndTick()
         {
             if(Phase==NativeMatchPhase.Finished) return;
@@ -174,9 +205,12 @@ namespace StarTournament.ProvingGround
                 throw new ArgumentException("Invalid resumable match snapshot");
             foreach(var row in snapshot.Standings)
                 if(row.Kills<0 || row.Assists<0 || row.Deaths<0 || row.SelfKills<0 || row.AllyKills<0 || row.AccumulatedPenalty<0 ||
-                    !FiniteDamage(row.DamageDealt) || !FiniteDamage(row.DamageReceived) || !FiniteDamage(row.AllyDamageDealt)) throw new ArgumentException("Invalid match counters");
+                    !FiniteDamage(row.DamageDealt) || !FiniteDamage(row.DamageReceived) || !FiniteDamage(row.AllyDamageDealt) ||
+                    !ValidAccuracy(row.RifleAccuracy)||!ValidAccuracy(row.ShotgunAccuracy)||!ValidAccuracy(row.RocketAccuracy)||!ValidAccuracy(row.CutterAccuracy)) throw new ArgumentException("Invalid match counters");
         }
         static bool FiniteDamage(double value)=>value>=0 && !double.IsNaN(value) && !double.IsInfinity(value);
+        static bool FiniteAccuracy(double value)=>FiniteDamage(value);
+        static bool ValidAccuracy(WeaponAccuracy value)=>FiniteAccuracy(value.Used)&&FiniteAccuracy(value.Successful)&&value.Successful<=value.Used;
         public void Restore(NativeMatchSnapshot snapshot)
         {
             ValidateSnapshot(snapshot);

@@ -306,6 +306,11 @@ namespace StarTournament.ProvingGround
                 float applied=0;
                 for(int t=0;t<targets.Length;t++) if(shot.damage[t]>0)
                     applied+=ApplyDamagePolicy(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.ProjectileCount(shot.notice.Weapon), shot.shooter, shot.life,false,FatalImpact.FromShot(shot.notice,targets[t].Seat,targets[t].Life)).Applied;
+                if(shot.notice.Weapon==WeaponId.Shotgun||shot.notice.Weapon==WeaponId.Rifle)
+                {
+                    int successful=shot.notice.Pellets.Count(p=>p.Contact==PelletContact.Participant&&IsEnemy(shot.shooter,p.TargetSeat));
+                    Match?.RecordAccuracy(shot.shooter,shot.notice.Weapon,shot.notice.Pellets.Length,successful);
+                }
                 ShotResolved?.Invoke(shot.notice);
                 Fired?.Invoke(shot.shooter,applied);
             }
@@ -332,7 +337,8 @@ namespace StarTournament.ProvingGround
             var pose=Pose(shooter);
             var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
             var direction=resolver.Direction(Quaternion.Euler(pose.Pitch,pose.Yaw,0),0,shotSequence,WeaponId.Rifle);
-            rifleBullets.Add(new RifleBulletState{Id=shotSequence,Owner=shooter,OwnerLife=Life(shooter).Life,Position=origin,Direction=direction,DamageMultiplier=damageRemaining[shooter]>0?damagePickup.Multiplier:1});
+            rifleBullets.Add(new RifleBulletState{Id=shotSequence,Owner=shooter,OwnerLife=Life(shooter).Life,Position=origin,Direction=direction,DamageMultiplier=damageRemaining[shooter]>0?damagePickup.Multiplier:1,AccuracyTracked=true});
+            Match?.RecordAccuracy(shooter,WeaponId.Rifle,1,0);
             // Launch has no target or damage; only later swept contact can determine either.
             ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Rifle));
             Fired?.Invoke(shooter,0);
@@ -358,6 +364,7 @@ namespace StarTournament.ProvingGround
                     var target=targets[hit.TargetIndex];
                     contact=new PelletNotice(b.Direction,b.Position,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
                     applied=ApplyDamagePolicy(target.Seat,target.Life,resolver.FullDamage(hit.Zone,WeaponId.Rifle)*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Rifle,b.Id,b.Direction,b.Position)).Applied;
+                    if(b.AccuracyTracked&&IsEnemy(b.Owner,target.Seat))Match?.RecordAccuracy(b.Owner,WeaponId.Rifle,0,1);
                 }
                 else contact=new PelletNotice(b.Direction,b.Position,wall.normal,PelletContact.World);
                 if(applied>0)targets=LiveTargets();
@@ -379,10 +386,18 @@ namespace StarTournament.ProvingGround
                 distances[i]=hit.TargetIndex<0?-1:hit.Distance;
             }
             bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;
-            if(began){ShotCount++;shotSequence++;ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Cutter));}
+            if(began){ShotCount++;shotSequence++;}
+            double successful=0;
             double spent=beams[shooter].Advance(seconds,Life(shooter).CutterEnergy,origin,direction,limit,distances,identities,
-                damageRemaining[shooter]>0?damagePickup.Multiplier:1,(target,amount)=>applied+=ApplyDamagePolicy(target,identities[target],amount,shooter,Life(shooter).Life,false,new FatalImpact(WeaponId.Cutter,shotSequence,direction,origin+direction*Mathf.Max(0,distances[target]))).Applied);
+                damageRemaining[shooter]>0?damagePickup.Multiplier:1,(target,amount,contact)=>
+                {
+                    var result=ApplyDamagePolicy(target,identities[target],amount,shooter,Life(shooter).Life,false,new FatalImpact(WeaponId.Cutter,shotSequence,direction,origin+direction*Mathf.Max(0,distances[target])));
+                    applied+=result.Applied;
+                    if(result.Applied>0&&IsEnemy(shooter,target))successful=Math.Max(successful,contact);
+                },out double emitted);
             lives[shooter].ConsumeCutter(spent);
+            Match?.RecordAccuracy(shooter,WeaponId.Cutter,emitted,successful);
+            if(began)ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,Array.Empty<PelletNotice>(),WeaponId.Cutter));
             if(began||applied>0)Fired?.Invoke(shooter,applied);
             if(Life(shooter).CutterEnergy<=0)beams[shooter].Stop();
         }
@@ -392,7 +407,8 @@ namespace StarTournament.ProvingGround
             ShotCount++;shotSequence=checked(shotSequence+1);
             rockets.Add(new RocketState{Id=shotSequence,Owner=shooter,OwnerLife=Life(shooter).Life,
                 Position=pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Direction=aim*Vector3.forward,
-                DamageMultiplier=damageRemaining[shooter]>0?damagePickup.Multiplier:1});
+                DamageMultiplier=damageRemaining[shooter]>0?damagePickup.Multiplier:1,AccuracyTracked=true});
+            Match?.RecordAccuracy(shooter,WeaponId.RocketLauncher,1,0);
             // Launch is a shot event; delayed damage comes only from RocketExploded, never from hitscan.
             ShotResolved?.Invoke(new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,rockets[rockets.Count-1].Position,Array.Empty<PelletNotice>(),WeaponId.RocketLauncher));
             Fired?.Invoke(shooter,0);
@@ -413,14 +429,17 @@ namespace StarTournament.ProvingGround
                     var center=direct?r.Position+r.Direction*contact.Distance:wall.point+wall.normal*movement.Get("player.capsule.skinWidth");
                     int directSeat=direct?targets[contact.TargetIndex].Seat:-1;
                     rockets.RemoveAt(index); // Remove before callbacks: one identity cannot explode twice.
+                    bool successful=false;
                     foreach(var target in targets)
                     {
                         bool directTarget=target.Seat==directSeat;
                         var point=rocketResolver.ClosestPoint(center,target.Pose.Position);var delta=point-center;
                         if(!directTarget&&(delta.magnitude>=rocketResolver.Radius||delta.sqrMagnitude>0&&physics.Raycast(center,delta.normalized,out _,delta.magnitude,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore)))continue;
                         float damage=rocketResolver.Damage(delta.magnitude,directTarget,r.DamageMultiplier);
-                        ApplyDamagePolicy(target.Seat,target.Life,damage,r.Owner,r.OwnerLife,true,new FatalImpact(WeaponId.RocketLauncher,r.Id,(target.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight")-center).normalized,center,Mathf.Clamp01(delta.magnitude/rocketResolver.Radius)));
+                        var result=ApplyDamagePolicy(target.Seat,target.Life,damage,r.Owner,r.OwnerLife,true,new FatalImpact(WeaponId.RocketLauncher,r.Id,(target.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight")-center).normalized,center,Mathf.Clamp01(delta.magnitude/rocketResolver.Radius)));
+                        if(r.AccuracyTracked&&IsEnemy(r.Owner,target.Seat)&&result.Applied>0)successful=true;
                     }
+                    if(successful)Match?.RecordAccuracy(r.Owner,WeaponId.RocketLauncher,0,1);
                     RocketExploded?.Invoke(new RocketExplosion(r,center,Time,directSeat));
                 }
                 else
@@ -460,6 +479,7 @@ namespace StarTournament.ProvingGround
         }
 
         bool Allied(int a,int b) => Match != null && Match.Roster.AreAllies(a,b);
+        bool IsEnemy(int attacker,int target)=>attacker>=0&&target>=0&&attacker!=target&&!Allied(attacker,target);
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
             => ApplyDamagePolicy(seat,life,damage,killer,killerLife,false);
         DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket,FatalImpact impact=default)

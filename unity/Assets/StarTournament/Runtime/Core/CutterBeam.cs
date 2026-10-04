@@ -48,9 +48,14 @@ namespace StarTournament.ProvingGround
         static bool Finite(Vector3 v)=>Finite(v.x)&&Finite(v.y)&&Finite(v.z);
         static bool Finite(double d)=>!double.IsNaN(d)&&!double.IsInfinity(d);
         public double Advance(double seconds,double energy,Vector3 origin,Vector3 direction,float wallDistance,float[] distances,int[] lives,float multiplier,Action<int,float> apply)
+            => Advance(seconds,energy,origin,direction,wallDistance,distances,lives,multiplier,(target,amount,contact)=>apply(target,amount),out _);
+        public double Advance(double seconds,double energy,Vector3 origin,Vector3 direction,float wallDistance,float[] distances,int[] lives,float multiplier,Action<int,float,double> apply)
+            => Advance(seconds,energy,origin,direction,wallDistance,distances,lives,multiplier,apply,out _);
+        public double Advance(double seconds,double energy,Vector3 origin,Vector3 direction,float wallDistance,float[] distances,int[] lives,float multiplier,Action<int,float,double> apply,out double emittedSeconds)
         {
             if(!Finite(seconds)||seconds<0||!Finite(energy)||energy<0)throw new ArgumentException("Invalid beam interval");
             double duration=Math.Min(seconds,energy/rate), before=state.EmissionSeconds;
+            emittedSeconds=duration;
             if(duration<=0){Stop();return 0;}
             state.Active=true;state.Origin=origin;state.EmissionSeconds+=duration;
             double length=range*(extension<=0?1:Math.Min(1,state.EmissionSeconds/extension));
@@ -64,7 +69,7 @@ namespace StarTournament.ProvingGround
                 double contact=Math.Max(0,duration-Math.Max(0,arrival-before));
                 // Apply every delivered fraction now; gaps and new lives never inherit deferred debt.
                 float amount=(float)(contact*damage*multiplier);
-                if(amount>0)apply(i,amount);
+                if(amount>0)apply(i,amount,contact);
                 state.Contacts[i]=c;
             }
             return duration*rate;
