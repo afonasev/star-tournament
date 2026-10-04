@@ -25,12 +25,13 @@ def main():
     p.add_argument('--dotnet', type=Path, required=True)
     p.add_argument('--vpk', type=Path, required=True)
     p.add_argument('--makensis', type=Path, help='Required Windows wizard compiler')
+    p.add_argument('--update-only', action='store_true', help='Produce authenticated update package without a first-install wizard')
     p.add_argument('--nsis-host', choices=['gfe'], help='Compile on the pinned VPS NSIS toolchain')
     a = p.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?', a.version): p.error('Invalid SemVer')
     datetime.date.fromisoformat(a.date)
     if not a.feed.startswith('https://'): p.error('HTTPS feed required')
-    if a.runtime == 'win-x64' and not a.nsis_host and (a.makensis is None or not a.makensis.is_file()):
+    if a.runtime == 'win-x64' and not a.update_only and not a.nsis_host and (a.makensis is None or not a.makensis.is_file()):
         p.error('Windows packages require --makensis for the installation wizard')
     a.output = a.output.resolve(); a.player = a.player.resolve()
     stage = a.output / ('payload-' + a.version)
@@ -68,7 +69,10 @@ def main():
             '--delta', 'None', '--outputDir', str(output)]
     if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
     subprocess.run(cmd, check=True, env=env)
-    if a.runtime == 'win-x64':
+    if a.update_only:
+        for first_install in output.iterdir():
+            if first_install.suffix in ('.exe', '.pkg', '.zip'): first_install.unlink()
+    elif a.runtime == 'win-x64':
         # NSIS owns installation, shortcuts and ARP; preserve the portable marker.
         portable = next(output.glob('*Portable.zip'))
         layout = a.output / ('windows-layout-' + a.version)
