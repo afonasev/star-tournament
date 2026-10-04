@@ -1,0 +1,23 @@
+Command line defined: "INPUT_DIR=/var/tmp/star-tournament-lock-01a1064f/layout"
+Command line defined: "VERSION=0.1.0-test.5"
+Command line defined: "OUTPUT_FILE=/var/tmp/star-tournament-lock-01a1064f/WindowsSetup.exe"
+Processing config: /etc/nsisconf.nsh
+Processing script file: "/var/tmp/star-tournament-lock-01a1064f/installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "/var/tmp/star-tournament-lock-01a1064f/WindowsSetup.exe"
+Install: 5 pages (320 bytes), 2 sections (1 required) (8240 bytes), 959 instructions (26852 bytes), 611 strings (32958 bytes), 1 language table (326 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (4120 bytes), 115 instructions (3220 bytes), 130 strings (4862 bytes), 1 language table (254 bytes).
+Datablock optimizer saved 134024 KiB (~24.1%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              136192 / 121344 bytes
+Install code:                          (65064 bytes)
+Install data:                          (410112903 bytes)
+Uninstall code+data:                   (67893938 bytes)
+Compressed data:           144650630 / 478071905 bytes
+CRC (0x3499F60F):                  4 / 4 bytes
+
+Total size:                144786826 / 478193253 bytes (30.2%)

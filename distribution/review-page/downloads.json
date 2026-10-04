@@ -3,10 +3,11 @@
   "publicationDate": "2026-10-04",
   "platforms": {
     "win-x64": {
-      "url": "/desktop/test/win-x64/installers/0.1.0-test.5/WindowsSetup.exe",
-      "size": 144782219,
-      "sha256": "a0f8c309cfd41946a24ce543d1b9a3c9c7d5b967fc3c27479a8c3dfb1adad238",
-      "version": "0.1.0-test.5"
+      "url": "/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe",
+      "size": 144786826,
+      "sha256": "453f8ca7b2e74779aa0147c85920b9c8c190c0aadbab6b92f5a939bd081a7ace",
+      "version": "0.1.0-test.5",
+      "installerRevision": 2
     },
     "osx-arm64": {
       "url": "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
