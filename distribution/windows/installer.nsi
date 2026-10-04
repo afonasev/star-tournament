@@ -66,7 +66,11 @@ Section "Star Tournament (обязательный компонент)" MainInst
     Abort "Не удалось проверить папку установки."
   ${EndIf}
 
+  ; Directory validation ends FindFirst/FindNext with the NSIS error flag set.
+  ; Start a fresh filesystem check so a successful lock is not treated as failure.
+  ClearErrors
   CreateDirectory "$INSTDIR\maintenance"
+  IfErrors install_lock_failed
   FileOpen $InstallFlag "$INSTDIR\maintenance\installing.flag" w
   IfErrors install_lock_failed
   FileWrite $InstallFlag "${VERSION}$\r$\n"
@@ -89,10 +93,12 @@ Section "Star Tournament (обязательный компонент)" MainInst
 
   ; Record ownership and write the uninstaller before payload files, so a partial
   ; first install can still be removed. The uninstaller embeds its own broker.
+  ClearErrors
   FileOpen $InstallFlag "$INSTDIR\${MARKER_NAME}" w
   IfErrors install_recovery_setup_failed
   FileWrite $InstallFlag "{$\"protocol$\":1,$\"product$\":$\"Star Tournament$\",$\"installerVersion$\":$\"${VERSION}$\"}$\r$\n"
   FileClose $InstallFlag
+  ClearErrors
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   IfErrors install_recovery_setup_failed
 
@@ -269,6 +275,8 @@ FunctionEnd
 
 Section "Uninstall"
   ; Prevent new launches before the final process check and owned-file removal.
+  ; ReadRegStr in un.onInit may set the error flag for a partial installation.
+  ClearErrors
   FileOpen $InstallFlag "$INSTDIR\maintenance\installing.flag" w
   IfErrors un_lock_failed
   FileWrite $InstallFlag "uninstall$\r$\n"

@@ -151,6 +151,18 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         self.assertIn('StrCmp $0 "$INSTDIR" un_registry_path_ok', function)
         self.assertIn('--validate-root "$INSTDIR"', function)
 
+    def test_filesystem_error_checks_ignore_prior_directory_and_registry_errors(self):
+        # FindFirst/FindNext set the persistent NSIS flag at normal enumeration end.
+        # ReadRegStr does the same for a partial install without registration.
+        for operation, failure in [
+            ('CreateDirectory "$INSTDIR\\maintenance"', 'install_lock_failed'),
+            ('FileOpen $InstallFlag "$INSTDIR\\${MARKER_NAME}" w', 'install_recovery_setup_failed'),
+            ('WriteUninstaller "$INSTDIR\\Uninstall.exe"', 'install_recovery_setup_failed'),
+            ('FileOpen $InstallFlag "$INSTDIR\\maintenance\\installing.flag" w', 'un_lock_failed'),
+        ]:
+            pattern = r'ClearErrors\s+' + re.escape(operation) + r'\s+IfErrors ' + failure
+            self.assertRegex(self.source, pattern)
+
     def test_install_marker_write_is_valid_owned_json(self):
         line = next(line.strip() for line in self.source.splitlines()
                     if line.strip().startswith("FileWrite $InstallFlag ")
