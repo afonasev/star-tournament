@@ -1,0 +1,45 @@
+{
+  "mode": "next",
+  "download_sent": true,
+  "ready": true,
+  "restart_acknowledged": false,
+  "failure": null,
+  "events": [
+    {
+      "time": 1791096101.9109042,
+      "status": {
+        "state": "checking",
+        "progress": 0,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791096102.22034,
+      "status": {
+        "state": "available",
+        "progress": 0,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791096102.5374458,
+      "status": {
+        "state": "downloading",
+        "progress": 0,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791096102.6378088,
+      "status": {
+        "state": "staged",
+        "progress": 100,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    }
+  ]
+}

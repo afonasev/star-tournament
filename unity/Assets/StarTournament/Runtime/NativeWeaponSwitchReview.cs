@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System;
 using System.Collections;
@@ -148,4 +149,6 @@ namespace StarTournament.ProvingGround
         [Serializable]sealed class Result{public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public bool muted;public int width,height;public string[] checks;}
     }
 }
+#endif
+
 #endif

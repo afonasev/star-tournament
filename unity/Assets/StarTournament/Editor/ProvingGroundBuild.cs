@@ -88,6 +88,23 @@ namespace StarTournament.ProvingGround.Editor
             if(!int.TryParse(value,out int dimension)||dimension<320||dimension>7680)throw new BuildFailedException("Invalid "+variable);
             return dimension;
         }
+        public static void BuildReleaseMac() => BuildRelease(BuildTarget.StandaloneOSX);
+        public static void BuildReleaseWindows() => BuildRelease(BuildTarget.StandaloneWindows64);
+        static void BuildRelease(BuildTarget target)
+        {
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_OUTPUT");
+            if(string.IsNullOrWhiteSpace(output)||!Path.IsPathFullyQualified(output))
+                throw new BuildFailedException("Absolute STAR_TOURNAMENT_RELEASE_OUTPUT required");
+            Prepare();
+            try
+            {
+                var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes=new[]{Scene},
+                    locationPathName=output, target=target, options=BuildOptions.None });
+                if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
+                Debug.Log("STAR_RELEASE_BUILD_PASS "+target+" "+report.summary.totalSize);
+            }
+            finally { Prepare(); }
+        }
     }
 
     [CustomEditor(typeof(ProvingGround))]

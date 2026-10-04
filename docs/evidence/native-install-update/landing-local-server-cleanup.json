@@ -1,0 +1,6 @@
+{
+  "pid": 84352,
+  "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python -m http.server 8880 --bind 127.0.0.1 --directory distribution/review-page",
+  "reason": "Preview is now served and verified at HTTPS VPS test URL; local preview server no longer needed",
+  "vps": "https://robowar.afonasev.tech/desktop/test/"
+}

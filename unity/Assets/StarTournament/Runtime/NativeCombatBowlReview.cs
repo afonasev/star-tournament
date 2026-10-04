@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 using System;
 using System.Collections;
 using System.IO;
@@ -299,3 +300,5 @@ namespace StarTournament.ProvingGround
         void OnDestroy(){Time.timeScale=reviewTimeScale;}
     }
 }
+
+#endif

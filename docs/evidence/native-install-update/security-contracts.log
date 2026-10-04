@@ -1,0 +1,10 @@
+PASS wrong platform
+PASS wrong architecture
+PASS path traversal
+PASS external URL
+PASS missing SHA256
+PASS untrusted signing key
+PASS tampered staged cache
+PASS interrupted package
+PASS quarantine before SDK admission
+PASS 14 security contracts

@@ -1,0 +1,66 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=NativeUpdateMenuTests
+revision=600d589af32eb6fea0764e5fc33acb7bb62beaae
+ M ../.gitignore
+ M Assets/StarTournament/Editor/ProvingGroundBuild.cs
+ M Assets/StarTournament/Runtime/NativeBloodReview.cs
+ M Assets/StarTournament/Runtime/NativeBonusVisualReview.cs
+ M Assets/StarTournament/Runtime/NativeBotBehaviorReview.cs
+ M Assets/StarTournament/Runtime/NativeBotNavigationReview.cs
+ M Assets/StarTournament/Runtime/NativeBotPerceptionReview.cs
+ M Assets/StarTournament/Runtime/NativeBotSeatsReview.cs
+ M Assets/StarTournament/Runtime/NativeBotSetupReview.cs
+ M Assets/StarTournament/Runtime/NativeBotTacticsReview.cs
+ M Assets/StarTournament/Runtime/NativeColorIdentityReview.cs
+ M Assets/StarTournament/Runtime/NativeColorSurfaceReview.cs
+ M Assets/StarTournament/Runtime/NativeCombatBowlReview.cs
+ M Assets/StarTournament/Runtime/NativeCombatReview.cs
+ M Assets/StarTournament/Runtime/NativeCutterReview.cs
+ M Assets/StarTournament/Runtime/NativeDamageBonusReview.cs
+ M Assets/StarTournament/Runtime/NativeDamageVignetteReview.cs
+ M Assets/StarTournament/Runtime/NativeDeathRagdollReview.cs
+ M Assets/StarTournament/Runtime/NativeDesignLabReview.cs
+ M Assets/StarTournament/Runtime/NativeFullHealReview.cs
+ M Assets/StarTournament/Runtime/NativeGamepadCameraReview.cs
+ M Assets/StarTournament/Runtime/NativeIndustrialTunnelsReview.cs
+ M Assets/StarTournament/Runtime/NativeLayoutReview.cs
+ M Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs
+ M Assets/StarTournament/Runtime/NativeLunarPerformanceReview.cs
+ M Assets/StarTournament/Runtime/NativeMatchReview.cs
+ M Assets/StarTournament/Runtime/NativeMovementAudioReview.cs
+ M Assets/StarTournament/Runtime/NativeMusicReview.cs
+ M Assets/StarTournament/Runtime/NativeParticipantReview.cs
+ M Assets/StarTournament/Runtime/NativePauseMenuReview.cs
+ M Assets/StarTournament/Runtime/NativeProfilesReview.cs
+ M Assets/StarTournament/Runtime/NativePulseReview.cs
+ M Assets/StarTournament/Runtime/NativeRocketEffectsReview.cs
+ M Assets/StarTournament/Runtime/NativeRocketGratingReview.cs
+ M Assets/StarTournament/Runtime/NativeRosterCardsReview.cs
+ M Assets/StarTournament/Runtime/NativeScoreboardReview.cs
+ M Assets/StarTournament/Runtime/NativeSetupSettingsReview.cs
+ M Assets/StarTournament/Runtime/NativeShotOriginReview.cs
+ M Assets/StarTournament/Runtime/NativeTeamsReview.cs
+ M Assets/StarTournament/Runtime/NativeUnifiedDamageReview.cs
+ M Assets/StarTournament/Runtime/NativeWeaponBalanceReview.cs
+ M Assets/StarTournament/Runtime/NativeWeaponColorReview.cs
+ M Assets/StarTournament/Runtime/NativeWeaponPickupReview.cs
+ M Assets/StarTournament/Runtime/NativeWeaponSwitchReview.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Runtime/ProvingGroundMenus.cs
+ M Assets/StarTournament/Runtime/TrooperReview.cs
+ M Assets/StarTournament/Runtime/VectorVisualReview.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Settings/ProvingURP.asset
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M Assets/UniversalRenderPipelineGlobalSettings.asset
+ M ProjectSettings/ProjectSettings.asset
+ M tools.sh
+?? ../distribution/
+?? ../docs/evidence/native-install-update/
+?? Assets/Resources.meta
+?? Assets/StarTournament/Runtime/NativeUpdateBridge.cs
+?? Assets/StarTournament/Runtime/NativeUpdateBridge.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/NativeUpdateMenuTests.cs
+?? Assets/StarTournament/Tests/PlayMode/NativeUpdateMenuTests.cs.meta
