@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-04T08:12:59.199734+00:00",
+  "sourceRevision": "5f601b06387ddbda5b34c8587c30a5787ea542dd",
+  "installedVersion": "0.1.0-test.3",
+  "pendingFeedVersion": "0.1.0-test.4",
+  "metadataState": "available; signed live feed admitted without package consent",
+  "realReleasePlayerStarted": false,
+  "reason": "Exclusive host guard remained queued for over 10 minutes behind foreign Unity sessions. Own unstarted queue cancelled with SIGINT; no foreign process changed.",
+  "pending": [
+    "Exact release in-menu download/progress/background gameplay and restart UI",
+    "Profiles/settings preservation",
+    "Windows user install/gameplay/update",
+    "macOS PKG OS installation",
+    "Offline/interrupted recovery manual QA"
+  ]
+}

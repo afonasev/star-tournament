@@ -1,7 +1,7 @@
 robowar.afonasev.tech {
     root * /opt/robowar
     encode zstd gzip
-    @updateMetadata path_regexp updateMetadata ^/desktop/(.*/latest\.json|downloads\.json)$
+    @updateMetadata path_regexp updateMetadata ^/desktop/(.*/)?(latest|downloads)\.json$
     @updatePackage path_regexp updatePackage ^/desktop/.*\.(nupkg|exe|pkg|zip)$
     handle /desktop/* {
         header @updateMetadata Cache-Control "no-store"

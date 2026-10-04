@@ -1,0 +1,27 @@
+{
+  "version": "0.1.0-test.4",
+  "date": "2026-10-04",
+  "runtime": "osx-arm64",
+  "revision": "5f601b06387ddbda5b34c8587c30a5787ea542dd",
+  "dirty": "?? ../docs/evidence/native-install-update/release-mac.log\n?? ../docs/evidence/native-install-update/release-win.log\n",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "player": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/release-players/mac/StarTournament.app",
+  "playerMarkerSha256": "5650fca0ab3724e120cfdcaba47aeb507f3c0ddeaf0a09ea6ae150e18eeb5f79",
+  "packages": [
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.4-osx-arm64-full.nupkg",
+      "size": 143662621,
+      "sha256": "54be0e825600bd55879aa2475be10611ab7f51349200a3bb0993a3b8779f31cc"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+      "size": 143857393,
+      "sha256": "36776767dfc9c3ac663d0b6084f3c8467984240a4b6d7a7122044f86d34d0040"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+      "size": 143198273,
+      "sha256": "15101ea0d2693a6636d7841fe974088b93fdcbe8abb54f24190411bc07cc07f9"
+    }
+  ]
+}

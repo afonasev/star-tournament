@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://robowar.afonasev.tech/desktop/test/win-x64/latest.json",
+    "release": {
+      "schema": 1,
+      "platform": "win",
+      "architecture": "x64",
+      "version": "0.1.0-test.4",
+      "publicationDate": "2026-10-04",
+      "publishedAt": "2026-10-04T07:58:49.946876+00:00",
+      "feed": {
+        "Assets": [
+          {
+            "PackageId": "tech.afonasev.star-tournament.win-x64",
+            "Version": "0.1.0-test.4",
+            "Type": "Full",
+            "FileName": "tech.afonasev.star-tournament.win-x64-0.1.0-test.4-win-x64-full.nupkg",
+            "SHA1": "BE3347F5A74F8D84A8103E8142A416251DA4610F",
+            "SHA256": "6DDFBAFA0048BB6AD545C279276FC9A16E2B9FA19A370CB6AD1178F661C69337",
+            "Size": 137127042
+          }
+        ]
+      }
+    }
+  },
+  {
+    "url": "https://robowar.afonasev.tech/desktop/test/osx-arm64/latest.json",
+    "release": {
+      "schema": 1,
+      "platform": "osx",
+      "architecture": "arm64",
+      "version": "0.1.0-test.4",
+      "publicationDate": "2026-10-04",
+      "publishedAt": "2026-10-04T07:59:46.484613+00:00",
+      "feed": {
+        "Assets": [
+          {
+            "PackageId": "tech.afonasev.star-tournament.osx-arm64",
+            "Version": "0.1.0-test.4",
+            "Type": "Full",
+            "FileName": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.4-osx-arm64-full.nupkg",
+            "SHA1": "9AD175537EC54A8CD80475DE8B9DC6D9B2B85AC0",
+            "SHA256": "54BE0E825600BD55879AA2475BE10611AB7F51349200A3BB0993A3B8779F31CC",
+            "Size": 143662621
+          }
+        ]
+      }
+    }
+  }
+]
