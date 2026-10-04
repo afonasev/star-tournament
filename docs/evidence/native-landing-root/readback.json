@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-04T09:54:06.115953+00:00",
+  "configCommit": "c23ad20",
+  "url": "https://robowar.afonasev.tech/",
+  "checks": {
+    "/": {
+      "sha256": "c5868f86f62bdc24033ebf5c6bf5b2f804f7d7b10db7cf44cf3560f84f92d6ac",
+      "bytes": 7929,
+      "matches": "/desktop/test/index.html"
+    },
+    "/style.css": {
+      "sha256": "ff1180129324fbcc0834d62a339ad79af6e3f5def8f01540a39c371a5e7c76e5",
+      "bytes": 6187,
+      "matches": "/desktop/test/style.css"
+    },
+    "/downloads.js": {
+      "sha256": "ecfe1055b43141973aec813317a8e4f7827200d201b68b5bc9d87c5fa2b935d9",
+      "bytes": 1045,
+      "matches": "/desktop/test/downloads.js"
+    },
+    "/downloads.json": {
+      "sha256": "a0b5fe35686f549756864dada68c5808fef8dc94e65e88825845a6684dd531dc",
+      "bytes": 623,
+      "matches": "/desktop/test/downloads.json"
+    },
+    "/arena.png": {
+      "etag": "\"dlvuxvrq51xp2rafz\"",
+      "bytes": 4632479,
+      "matches": "/desktop/test/arena.png"
+    }
+  },
+  "installers": [
+    {
+      "platform": "win-x64",
+      "url": "https://robowar.afonasev.tech/desktop/test/win-x64/installers/0.1.0-test.5/WindowsSetup.exe",
+      "http": 200,
+      "bytes": 144782219
+    },
+    {
+      "platform": "osx-arm64",
+      "url": "https://robowar.afonasev.tech/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+      "http": 200,
+      "bytes": 143198367
+    }
+  ],
+  "feeds": {
+    "/desktop/test/win-x64/latest.json": "985114c877fa7ce64a5192be8a568f8b443ebc000fbab6a7adf205821ad166de",
+    "/desktop/test/osx-arm64/latest.json": "0558cbc32876632e83328202051873a3c32b4421ca5101517d26ef956166892e"
+  },
+  "desktopRoute": "unchanged from previous.caddy",
+  "browser": "Root rendered; both installer links enabled at #download; screenshot landing.png",
+  "limitations": "Existing native test candidates; no platform/install/update human acceptance implied",
+  "transportNote": "Python local certificate store unavailable; verified HTTPS with curl; image full transfer timed out, HEAD ETag/length equality used"
+}
