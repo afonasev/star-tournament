@@ -1,0 +1,35 @@
+{
+  "tested_revision": "49fb846c04cb1a39a0a73614eaf8b9df0ed82502",
+  "main_baseline": "e40c1f5bb05717908832cbd09846cd28695d9b3f",
+  "results": {
+    "editmode": {
+      "result": "Passed",
+      "total": 68,
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0,
+      "fixtures": [
+        "DesignLabHistoryTests",
+        "LabSnapshotCopyTests",
+        "NativeAccuracyTests",
+        "NativeScoreboardTests",
+        "LunarLaboratoryTests"
+      ]
+    },
+    "playmode": {
+      "result": "Passed",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "fixtures": [
+        "LunarLaboratoryPhysicsTests",
+        "NativeAccuracyRuntimeTests",
+        "NativeScoreboardLayoutTests"
+      ]
+    }
+  },
+  "command_exit": 0,
+  "scope": "Integration compatibility after merging independently tested main scoreboard/accuracy plus landing changes. Supplements prior full F8 gate; not a substitute for it. Runtime source unchanged since tested merge revision.",
+  "human_acceptance": false
+}

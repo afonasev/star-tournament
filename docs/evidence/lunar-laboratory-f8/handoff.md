@@ -1,4 +1,6 @@
-# F8 verified slice handoff
+# F8 verified slice handoff — historical, superseded
+
+Continuation completed exact QA and integration compatibility. See `final-report.md`, `exact-player-manifest.json`, `checks/integration/result.json` and canonical acceptance.md for current result. Pre-commit checkpoint Player was replaced and removed; raw provenance retained in Git. Human visual/game acceptance remains open; no archive.
 
 Owner01a10571-1224-7552-9c8e-2224720be774, explicit GPT-6.1 Sol/medium. Source/evidence checkpoint `9bfe4655202a5b360e9b5ba8a2444b2351c58fa2`, branch `codex/lunar-light-overlap`, owned worktree `/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap`. Final make check PASS (334 EditMode +201 PlayMode, zero skipped/failed, macOS Development build). Exact committed-revision rebuild was cancelled only while own waiting client77024 had no Editor; no foreign process stopped. User instructed to wait for manual Spacewars slot. After second compaction stop current verified slice per project rule; future exact QA must await unity-run exclusive admission. No integration/acceptance/archive.
 

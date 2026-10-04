@@ -81,3 +81,7 @@
 Natural match PASS: seed20261003, 149 kills, 136 collections, muted. Полный автоматический gate ранее PASS334 EditMode +201 PlayMode, zero skipped/failed; exact build и весь exclusive QA batch exit0. Human visual/game acceptance открыта; archive запрещён.
 
 Полные CPU/GPU/main/render/present-wait/draw/setpass distributions и счётчики доступны в `final-summary.json` и исходных `performance.json`. GPU FrameTiming не используется как доказательство 8.33-мс budget.
+
+## Integration compatibility
+
+Main e40c1f5 merged at49fb846;68 EditMode +8 PlayMode passed, zero failed/skipped. Lunar/history/copy, scoreboard/accuracy, physics/runtime/layout fixtures all present in XML. `checks/integration/result.json` and logs preserve exact revision. This supplements the prior full334+201 gate, not a replacement.

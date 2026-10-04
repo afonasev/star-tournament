@@ -1,4 +1,6 @@
-# F8 local lighting study — in progress
+# F8 local lighting study — verified
+
+Final exact source f377625, native QA and integration compatibility PASS. See `final-report.md` for final metrics/limitations, `exact-player-manifest.json` for candidate identity. Historical studies and rejected samples below are retained as history, not current pending work. Human acceptance remains open.
 
 Owner: 01a10571-1224-7552-9c8e-2224720be774. Worktree `star-tournament-lunar-light-overlap`, branch `codex/lunar-light-overlap`, base 600d589. Baseline F7 immutable Player: `baseline-manifest.json`, SHA256 820563539c1e87d58bb5f1f2cf0b74d37efff5582060d3836acb8b05d768b5f0, checked live. First study build retains F6/F7 lighting unchanged; exact source and binary manifests are adjacent.
 

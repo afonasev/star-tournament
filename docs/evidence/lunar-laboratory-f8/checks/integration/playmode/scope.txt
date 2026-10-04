@@ -1,0 +1,5 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=LunarLaboratoryPhysicsTests;NativeAccuracyRuntimeTests;NativeScoreboardLayoutTests
+revision=bec660fc1dae851d52c28c9332a5adf7d8fcb162
+ M ProjectSettings/ShaderGraphSettings.asset

@@ -1,0 +1,4 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=LunarLaboratoryTests;DesignLabHistoryTests;LabSnapshotCopyTests;NativeScoreboardTests;NativeAccuracyTests
+revision=49fb846c04cb1a39a0a73614eaf8b9df0ed82502
