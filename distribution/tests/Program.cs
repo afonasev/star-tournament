@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using StarTournament.Distribution;
+using Velopack;
 using Velopack.Logging;
 
 using var rsa = RSA.Create(3072);
@@ -37,6 +38,23 @@ var root = Path.Combine(Path.GetTempPath(), "star-update-contracts-" + Guid.NewG
 Directory.CreateDirectory(root);
 try
 {
+    var legacyRoot = Path.Combine(root, "legacy-probe"); Directory.CreateDirectory(legacyRoot);
+    Directory.CreateDirectory(Path.Combine(legacyRoot, "packages"));
+    await File.WriteAllTextAsync(Path.Combine(legacyRoot, "Update.exe"), "cache runtime stub");
+    if (LegacyInstallationProbe.IsInstalled(legacyRoot)) throw new Exception("Package-cache Update.exe was treated as a legacy install");
+    passed++; Console.WriteLine("PASS cache-only Update.exe is not a legacy install");
+    Directory.CreateDirectory(Path.Combine(legacyRoot, "current"));
+    await File.WriteAllTextAsync(Path.Combine(legacyRoot, "current", "release.json"), JsonSerializer.Serialize(new {
+        appId = "tech.afonasev.star-tournament.win-x64", platform = "win", architecture = "x64", version = "1.2.3" }));
+    if (!LegacyInstallationProbe.IsInstalled(legacyRoot)) throw new Exception("Valid legacy release metadata was not detected");
+    passed++; Console.WriteLine("PASS valid legacy release metadata is detected");
+    File.Delete(Path.Combine(legacyRoot, "current", "release.json"));
+    await File.WriteAllTextAsync(Path.Combine(legacyRoot, "current", "StarTournamentLauncher.exe"), "launcher");
+    if (!LegacyInstallationProbe.IsInstalled(legacyRoot)) throw new Exception("Actual legacy launcher was not detected");
+    passed++; Console.WriteLine("PASS actual legacy launcher is detected");
+    if (!LegacyInstallationProbe.IsInstalled(legacyRoot, hasUninstallEntry: true)) throw new Exception("Legacy uninstall entry was not detected");
+    passed++;
+
     source.Admit(Signed());
     var file = Path.Combine(root, "cached.nupkg"); await File.WriteAllBytesAsync(file, bytes);
     await source.VerifyPackage(file, source.Asset!); passed++;
@@ -44,6 +62,34 @@ try
     await Reject("tampered staged cache", () => source.VerifyPackage(file, source.Asset!));
     await File.WriteAllBytesAsync(file, bytes[..^1]);
     await Reject("interrupted package", () => source.VerifyPackage(file, source.Asset!));
+    var winConfig = config with { Platform = "win", Architecture = "x64" };
+    using var winSource = new AuthenticatedSource(winConfig, rsa.ExportSubjectPublicKeyInfoPem());
+    var winPayload = JsonSerializer.SerializeToUtf8Bytes(new { schema = 1, platform = "win", architecture = "x64",
+        version = "1.1.0", publicationDate = "2026-10-04", feed = new { Assets = new[] { new {
+            PackageId = "tech.test", Version = "1.1.0", Type = "Full", FileName = "test-1.1.0-full.nupkg",
+            SHA256 = Convert.ToHexString(SHA256.HashData(bytes)), Size = bytes.Length } } } });
+    var winEnvelope = JsonSerializer.Serialize(new { payload = Convert.ToBase64String(winPayload),
+        signature = Convert.ToBase64String(rsa.SignData(winPayload, HashAlgorithmName.SHA256, RSASignaturePadding.Pss)) });
+    winSource.Admit(winEnvelope);
+    var validSourcePackage = Path.Combine(root, "valid.nupkg"); await File.WriteAllBytesAsync(validSourcePackage, bytes);
+    var protectedDir = Path.Combine(root, "protected-stage"); Directory.CreateDirectory(protectedDir);
+    var copied = await ProtectedPackage.CopyAndVerifyAsync(winSource, winEnvelope, winSource.Asset!, validSourcePackage, protectedDir);
+    if (Path.GetFileName(copied.PackagePath) != "test-1.1.0-full.nupkg" || new FileInfo(copied.PackagePath).Length != bytes.Length)
+        throw new Exception("Protected package copy contract");
+    passed++; Console.WriteLine("PASS copied signed package re-verification");
+    using var parsedWinEnvelope = JsonDocument.Parse(winEnvelope);
+    var tamperedSignature = Convert.FromBase64String(parsedWinEnvelope.RootElement.GetProperty("signature").GetString()!);
+    tamperedSignature[0] ^= 1;
+    var tamperedEnvelope = JsonSerializer.Serialize(new { payload = parsedWinEnvelope.RootElement.GetProperty("payload").GetString(),
+        signature = Convert.ToBase64String(tamperedSignature) });
+    var badCopy = Path.Combine(root, "bad-copy"); Directory.CreateDirectory(badCopy);
+    await Reject("copied package metadata signature", () => ProtectedPackage.CopyAndVerifyAsync(winSource, tamperedEnvelope,
+        winSource.Asset!, validSourcePackage, badCopy));
+    var corruptSourcePackage = Path.Combine(root, "corrupt-source.nupkg");
+    await File.WriteAllBytesAsync(corruptSourcePackage, bytes.Select(b => (byte)(b ^ 1)).ToArray());
+    var corruptCopy = Path.Combine(root, "corrupt-copy"); Directory.CreateDirectory(corruptCopy);
+    await Reject("copied package digest mismatch", () => ProtectedPackage.CopyAndVerifyAsync(winSource, winEnvelope,
+        winSource.Asset!, corruptSourcePackage, corruptCopy));
     var destination = Path.Combine(root, "sdk.partial");
     using var download = new AuthenticatedSource(config, rsa.ExportSubjectPublicKeyInfoPem(), new FixtureTransport(bytes));
     download.Admit(Signed());

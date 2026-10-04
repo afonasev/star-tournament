@@ -4,5 +4,8 @@
     <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
     <AssemblyName>StarTournamentLauncher</AssemblyName>
   </PropertyGroup>
-  <ItemGroup><PackageReference Include="Velopack" Version="1.2.158" /></ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Velopack" Version="1.2.158" />
+    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0" />
+  </ItemGroup>
 </Project>

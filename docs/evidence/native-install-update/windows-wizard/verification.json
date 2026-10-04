@@ -1,0 +1,43 @@
+{
+  "unityChanged": false,
+  "playerSourceRevision": "5f601b06387ddbda5b34c8587c30a5787ea542dd",
+  "playerMarkerSha256": "365da91724ce672acbfb499ce326fa72840e1355a59b268e2fe11170e9a6996f",
+  "gate": "make check",
+  "build": "Success",
+  "tests": {
+    "editmode": {
+      "id": "2",
+      "testcasecount": "333",
+      "result": "Passed",
+      "total": "333",
+      "passed": "333",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-04 08:40:56Z",
+      "end-time": "2026-10-04 08:53:16Z",
+      "duration": "740.2750988"
+    },
+    "playmode": {
+      "id": "2",
+      "testcasecount": "202",
+      "result": "Passed",
+      "total": "202",
+      "passed": "202",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-04 08:53:33Z",
+      "end-time": "2026-10-04 09:05:24Z",
+      "duration": "711.1897697"
+    }
+  },
+  "windowsRuntimeAcceptance": "pending user PC",
+  "compiler": "Ubuntu NSIS 3.10-2"
+}

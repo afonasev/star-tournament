@@ -19,7 +19,7 @@ DOTNET_ROOT=<sdk-directory> <dotnet> tool install vpk --version 1.2.158 --tool-p
 <dotnet> run --project distribution/tests/Launcher.Contracts.csproj
 STAR_TOURNAMENT_RELEASE_OUTPUT=<absolute Player.app> unity/tools.sh build-release-mac
 STAR_TOURNAMENT_RELEASE_OUTPUT=<absolute windows-directory/StarTournament.exe> unity/tools.sh build-release-win
-python3 distribution/package.py --runtime win-x64 --player <windows-directory> --version <SemVer> --date <yyyy-MM-dd> --feed https://robowar.afonasev.tech/desktop/test/win-x64/ --key <private-key> --output <output> --dotnet <dotnet> --vpk <vpk>
+python3 distribution/package.py --runtime win-x64 --player <windows-directory> --version <SemVer> --date <yyyy-MM-dd> --feed https://robowar.afonasev.tech/desktop/test/win-x64/ --key <private-key> --output <output> --dotnet <dotnet> --vpk <vpk> --nsis-host gfe
 python3 distribution/upload_candidate.py --runtime win-x64 --releases <output/releases> --version <SemVer> --installers
 ```
 
@@ -29,8 +29,18 @@ Local Unity QA must pass `--qa-unity-runner "$HOME/.local/bin/unity-run"` to the
 
 ## Remaining acceptance gates
 
+### Windows installation wizard
+
+Windows packaging replaces the unpublished one-click Setup with an NSIS Modern UI 2 wizard over the complete portable layout. Default destination is system Program Files (64-bit) / Star Tournament, normally `C:\Program Files\Star Tournament`. The directory page permits only protected locations inside 64-bit Program Files. This candidate supports fresh installation; existing complete machine installations must update in-game or be normally uninstalled first. Desktop shortcut and finish launch options are checked by default and can be cleared. NSIS owns machine uninstall registration and shortcuts; `.portable` prevents the updater from taking over those records. Old per-user test installations must be closed and uninstalled normally; Unity profiles/settings remain outside payloads.
+
+The protected `maintenance/` broker uses protocol 1 and the pinned public key. It lives outside replaceable `current/` and is refreshed by installers. Gameplay/download remain unelevated; activation prompts UAC after actual Player exit. Copied packages are authenticated in protected staging before the root updater executes. Cancelling UAC preserves the staged update and old version, suppresses automatic repeated prompts for that version, and leaves explicit restart retry available. No ordinary-user write permission is granted to executable contents. Installer finish launch uses the existing unelevated desktop Explorer and fails without an elevated fallback.
+
+Real Windows wizard, privilege boundaries, default/opt-out options, UAC cancellation and two activation paths require the user's PC; cross-compilation and source contracts do not close those gates.
+
 Published test landing: https://robowar.afonasev.tech/desktop/test/. Both installers are `0.1.0-test.3` (04.10.2026); both signed feeds offer `0.1.0-test.4`. Exact packages bind client source `5f601b06387ddbda5b34c8587c30a5787ea542dd`. These versions deliberately share game code to exercise the update lifecycle. macOS download targets Apple Silicon; Intel Mac distribution is not supplied by this candidate.
 
 Passed: full `make check` (334 EditMode / 202 PlayMode), fresh non-development Windows/macOS builds, 14 launcher authentication and 4 publication contracts, native menu consent/progress/staging test, and real baseline Unity macOS explicit-restart and ordinary-exit update paths. See `docs/evidence/native-install-update/` for primary logs and four exact package identities.
 
 Still pending: exact release native in-menu actions/focus and background gameplay; offline/interrupted recovery manual QA; preserved profiles/settings; macOS PKG OS installation; clean Windows installation and manual Windows gameplay/update on the user's PC. The release macOS UI run waited over ten minutes for an exclusive host guard and was cancelled before Player launch; no foreign process was changed. Packaging or macOS automation does not close Windows acceptance or authorize calling the test build a completed production release. Keep the owned branch/worktree and test.3/test.4 artifacts until these gates and integration are resolved.
+
+Windows compiler: Ubuntu VPS `gfe`, official NSIS 3.10 (`3.10-2ubuntu2`). The local Homebrew 3.13 compiler failed on language-table allocation; the tested compiler route transfers only public candidate payload, verifies the returned executable hash and removes its UUID-owned temporary staging. The signing key remains local.

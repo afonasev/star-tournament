@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import zipfile
 
 
 def main():
@@ -23,10 +24,14 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--dotnet', type=Path, required=True)
     p.add_argument('--vpk', type=Path, required=True)
+    p.add_argument('--makensis', type=Path, help='Required Windows wizard compiler')
+    p.add_argument('--nsis-host', choices=['gfe'], help='Compile on the pinned VPS NSIS toolchain')
     a = p.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?', a.version): p.error('Invalid SemVer')
     datetime.date.fromisoformat(a.date)
     if not a.feed.startswith('https://'): p.error('HTTPS feed required')
+    if a.runtime == 'win-x64' and not a.nsis_host and (a.makensis is None or not a.makensis.is_file()):
+        p.error('Windows packages require --makensis for the installation wizard')
     a.output = a.output.resolve(); a.player = a.player.resolve()
     stage = a.output / ('payload-' + a.version)
     if stage.exists(): p.error('Payload already exists; use an immutable new version/output')
@@ -61,7 +66,30 @@ def main():
     cmd += ['--skip-updates', 'pack', '--packId', app_id, '--packVersion', a.version, '--packDir', str(stage),
             '--mainExe', launcher, '--runtime', a.runtime, '--channel', a.runtime, '--packTitle', 'Star Tournament',
             '--delta', 'None', '--outputDir', str(output)]
+    if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
     subprocess.run(cmd, check=True, env=env)
+    if a.runtime == 'win-x64':
+        # NSIS owns installation, shortcuts and ARP; preserve the portable marker.
+        portable = next(output.glob('*Portable.zip'))
+        layout = a.output / ('windows-layout-' + a.version)
+        with zipfile.ZipFile(portable) as archive:
+            for entry in archive.infolist():
+                if not (layout/entry.filename).resolve().is_relative_to(layout.resolve()):
+                    raise ValueError('Unsafe portable layout path')
+            archive.extractall(layout)
+        if not (layout/'.portable').is_file() or not (layout/'Update.exe').is_file():
+            raise ValueError('Expected complete Velopack portable layout')
+        maintenance = layout/'maintenance'; maintenance.mkdir()
+        subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
+                        '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
+                        '-p:DebugType=None','-o',str(maintenance)],check=True,env=env)
+        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=1, **config),indent=2)+'\n')
+        shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
+        next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
+        installer = output/'WindowsSetup.exe'
+        compiler = (['--compiler-host',a.nsis_host] if a.nsis_host else ['--makensis',str(a.makensis.resolve())])
+        subprocess.run(['python3',str(root/'windows/build_installer.py'),'--layout',str(layout),
+                        '--version',a.version,'--output',str(installer)] + compiler,check=True)
     feed = json.loads((output/f'releases.{a.runtime}.json').read_text())
     asset = next(x for x in feed['Assets'] if x['Version'] == a.version and x['Type'] == 'Full')
     payload = json.dumps(dict(schema=1, platform=config['platform'], architecture=config['architecture'],

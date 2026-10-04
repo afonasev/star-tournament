@@ -55,8 +55,13 @@ static class Launcher
         }
         var key = File.ReadAllText(Path.Combine(baseDir, "update-public.pem"));
         using var source = new AuthenticatedSource(config, key);
-        var manager = new UpdateManager(source);
         var locator = VelopackLocator.Current;
+        var machineRoot = WindowsInstallation.MachineRoot(locator);
+        bool Installing() => machineRoot != null && File.Exists(Path.Combine(machineRoot, "maintenance", "installing.flag"));
+        if (Installing()) return 1;
+        using var installationLease = machineRoot == null ? null : WindowsInstallLease.TryAcquire(machineRoot);
+        if (machineRoot != null && (installationLease == null || Installing())) return 1;
+        var manager = new UpdateManager(source);
         var packages = locator.PackagesDir ?? throw new InvalidOperationException("Package cache missing");
         string PackagePath(VelopackAsset asset) => Path.Combine(packages, Path.GetFileName(asset.FileName));
         var stagedManifest = Path.Combine(packages, "star-authenticated.json");
@@ -75,16 +80,19 @@ static class Launcher
             return asset;
         }
 
-        try
+        VelopackAsset? stagedAtStartup = null;
+        try { stagedAtStartup = await Staged(); }
+        catch (Exception ex) { Log(ex); File.Delete(stagedManifest); } // Invalid staged bytes are never activated.
+        if (stagedAtStartup != null && (machineRoot == null || !WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString())))
         {
-            var beforeStartup = await Staged();
-            if (beforeStartup != null)
+            try
             {
-                manager.WaitExitThenApplyUpdates(beforeStartup, silent: true, restart: true, restartArgs: restartArguments);
+                if (machineRoot != null) WindowsInstallation.Activate(machineRoot, packages, true, restartArguments);
+                else manager.WaitExitThenApplyUpdates(stagedAtStartup, silent: true, restart: true, restartArgs: restartArguments);
                 return 0; // No Unity process has started yet.
             }
+            catch (Exception ex) { Log(ex); } // A failed handoff retains the authenticated staged package and starts the installed game.
         }
-        catch (Exception ex) { Log(ex); File.Delete(stagedManifest); } // Keep installed game playable.
 
         var session = Path.Combine(logRoot, "sessions", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(session);
@@ -110,7 +118,8 @@ static class Launcher
             }
             catch (Exception ex) { Log(ex); Status(new("unavailable", Error: "Не удалось проверить обновления")); }
         }
-        var operation = Check();
+        var operation = stagedAtStartup == null ? Check() : Task.CompletedTask;
+        if (stagedAtStartup != null) Status(new("staged", 100));
         var executable = Path.GetFullPath(Path.Combine(baseDir, config.GameExecutable));
         if (!executable.StartsWith(Path.GetFullPath(baseDir), StringComparison.Ordinal))
             throw new InvalidOperationException("Player must be inside release payload");
@@ -168,7 +177,15 @@ static class Launcher
         try
         {
             var ready = await Staged(); // Reauthenticate after the actual Player has finished.
-            if (ready != null) manager.WaitExitThenApplyUpdates(ready, silent: true, restart: restart, restartArgs: restartArguments);
+            if (ready != null)
+            {
+                if (machineRoot != null)
+                {
+                    if (restart || !WindowsInstallation.Declined(packages, ready.Version.ToString()))
+                        WindowsInstallation.Activate(machineRoot, packages, restart, restartArguments);
+                }
+                else manager.WaitExitThenApplyUpdates(ready, silent: true, restart: restart, restartArgs: restartArguments);
+            }
         }
         catch (Exception ex) { Log(ex); File.Delete(stagedManifest); }
         return 0;
