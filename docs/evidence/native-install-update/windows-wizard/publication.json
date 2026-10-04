@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-04T09:30:07.825792+00:00",
+  "installer": {
+    "name": "WindowsSetup.exe",
+    "size": 144782219,
+    "sha256": "a0f8c309cfd41946a24ce543d1b9a3c9c7d5b967fc3c27479a8c3dfb1adad238",
+    "url": "https://robowar.afonasev.tech/desktop/test/win-x64/installers/0.1.0-test.5/WindowsSetup.exe",
+    "storage": "immutable VPS artifact; redundant local mirror cancelled after compiler success"
+  },
+  "feed": {
+    "schema": 1,
+    "platform": "win",
+    "architecture": "x64",
+    "version": "0.1.0-test.6",
+    "publicationDate": "2026-10-04",
+    "publishedAt": "2026-10-04T09:24:10.171286+00:00",
+    "feed": {
+      "Assets": [
+        {
+          "PackageId": "tech.afonasev.star-tournament.win-x64",
+          "Version": "0.1.0-test.6",
+          "Type": "Full",
+          "FileName": "tech.afonasev.star-tournament.win-x64-0.1.0-test.6-win-x64-full.nupkg",
+          "SHA1": "624F33302E575D20A63883E560198E052374FBBA",
+          "SHA256": "D028CFB12E5094C8BBFA63081B26A3F0CD862F2CB5F439380C4359FC1DBA2154",
+          "Size": 137153437
+        }
+      ]
+    }
+  },
+  "latestCacheControl": "no-store (wizard-latest-https.headers)",
+  "signature": "Verified RSA-PSS/SHA256 against pinned public key",
+  "landingFiles": {
+    "index.html": "c5868f86f62bdc24033ebf5c6bf5b2f804f7d7b10db7cf44cf3560f84f92d6ac",
+    "downloads.js": "ecfe1055b43141973aec813317a8e4f7827200d201b68b5bc9d87c5fa2b935d9",
+    "downloads.json": "a0b5fe35686f549756864dada68c5808fef8dc94e65e88825845a6684dd531dc"
+  },
+  "windowsAcceptance": "pending user PC",
+  "sourceRevision": "0346bfcc4b5a8b85edd5d48db75954401e1096c2"
+}

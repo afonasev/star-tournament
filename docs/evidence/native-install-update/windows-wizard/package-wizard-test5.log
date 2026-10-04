@@ -1,0 +1,67 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/launcher/Launcher.csproj (in 3,66 sec).
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.5/payload-0.1.0-test.5/
+[14:14:01 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[14:14:01 INF] Velopack CLI 1.2.158, for distributing applications.
+[14:14:02 INF] Beginning to package Velopack release 0.1.0-test.5.
+[14:14:02 INF] Releases Directory: /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.5/releases
+[14:14:02 INF] Starting: Pre-process steps
+[14:14:02 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[14:14:02 INF] Shortcuts: None
+[14:14:02 INF] Complete: Pre-process steps
+[14:14:02 INF] Starting: Code-sign application
+[14:14:02 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[14:14:02 INF] Complete: Code-sign application
+[14:14:02 INF] Starting: Building portable package
+[14:14:02 INF] Starting: Building release 0.1.0-test.5
+[14:14:18 INF] Complete: Building portable package
+[14:14:18 INF] Complete: Building release 0.1.0-test.5
+[14:14:18 INF] Starting: Building setup package
+[14:14:18 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[14:14:18 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[14:14:18 INF] Complete: Building setup package
+[14:14:18 INF] Starting: Post-process steps
+[14:14:18 INF] Complete: Post-process steps
+[14:14:18 INF] Finished in 00:00:16.5076380.
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Maintenance -> /Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/maintenance/bin/Release/net8.0/win-x64/StarTournamentMaintenance.dll
+  Maintenance -> /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.5/windows-layout-0.1.0-test.5/maintenance/
+Compiling Windows installer on gfe with Ubuntu NSIS 3.10
+Remote compiler: makensis 3.10 (Ubuntu package)
+Command line defined: "INPUT_DIR=/var/tmp/star-tournament-installer-0d1c58dd181f444db66a56e400e6e4c0/layout"
+Command line defined: "VERSION=0.1.0-test.5"
+Command line defined: "OUTPUT_FILE=/var/tmp/star-tournament-installer-0d1c58dd181f444db66a56e400e6e4c0/WindowsSetup.exe"
+Processing config: /etc/nsisconf.nsh
+Processing script file: "/var/tmp/star-tournament-installer-0d1c58dd181f444db66a56e400e6e4c0/installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "/var/tmp/star-tournament-installer-0d1c58dd181f444db66a56e400e6e4c0/WindowsSetup.exe"
+Install: 5 pages (320 bytes), 2 sections (1 required) (8240 bytes), 955 instructions (26740 bytes), 611 strings (32958 bytes), 1 language table (326 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (4120 bytes), 114 instructions (3192 bytes), 130 strings (4862 bytes), 1 language table (254 bytes).
+Datablock optimizer saved 134024 KiB (~24.1%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              136192 / 121344 bytes
+Install code:                          (64952 bytes)
+Install data:                          (410112903 bytes)
+Uninstall code+data:                   (67893910 bytes)
+Compressed data:           144646023 / 478071765 bytes
+CRC (0xBD52474D):                  4 / 4 bytes
+
+Total size:                144782219 / 478193113 bytes (30.2%)
+Windows installer build failed: Command '['scp', 'gfe:/var/tmp/star-tournament-installer-0d1c58dd181f444db66a56e400e6e4c0/WindowsSetup.exe', '/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.5/releases/WindowsSetup.exe']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/package.py", line 124, in <module>
+    player=str(a.player), playerMarkerSha256=marker.hexdigest(), packages=files), indent=2)+'\n')
+                       ^^^^^^
+  File "/Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/package.py", line 91, in main
+    shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
+    next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['python3', '/Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/windows/build_installer.py', '--layout', '/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.5/windows-layout-0.1.0-test.5', '--version', '0.1.0-test.5', '--output', '/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.5/releases/WindowsSetup.exe', '--compiler-host', 'gfe']' returned non-zero exit status 1.

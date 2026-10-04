@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0-test.6",
+  "date": "2026-10-04",
+  "runtime": "win-x64",
+  "revision": "0346bfcc4b5a8b85edd5d48db75954401e1096c2",
+  "dirty": "",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "player": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/release-players/windows",
+  "playerMarkerSha256": "365da91724ce672acbfb499ce326fa72840e1355a59b268e2fe11170e9a6996f",
+  "packages": [
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.0-test.6-win-x64-full.nupkg",
+      "size": 137153437,
+      "sha256": "d028cfb12e5094c8bbfa63081b26a3f0cd862f2cb5f439380c4359fc1dba2154"
+    }
+  ]
+}
