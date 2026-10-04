@@ -31,5 +31,10 @@
   },
   "command_exit": 0,
   "scope": "Integration compatibility after merging independently tested main scoreboard/accuracy plus landing changes. Supplements prior full F8 gate; not a substitute for it. Runtime source unchanged since tested merge revision.",
-  "human_acceptance": false
+  "human_acceptance": false,
+  "generated_restore": [
+    "unity/ProjectSettings/ProjectSettings.asset",
+    "unity/ProjectSettings/ShaderGraphSettings.asset"
+  ],
+  "generated_provenance": "Two settings reserialized by own test Editor; task worktree was clean before invocation. Diff retained, generated changes restored; no authored runtime change."
 }
