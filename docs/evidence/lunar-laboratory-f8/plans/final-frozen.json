@@ -1,0 +1,1089 @@
+{
+  "steps": [
+    {
+      "name": "yard-baseline",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -25
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "yard-candidate",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -25
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "hall-baseline",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "hall-candidate",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "north-lower-baseline",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": 10
+      },
+      "yaw": 180,
+      "pitch": 5,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "north-lower-candidate",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": 10
+      },
+      "yaw": 180,
+      "pitch": 5,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "upper-baseline",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "upper-candidate",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "lab-a-baseline",
+      "feet": {
+        "x": -4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 200,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "lab-a-candidate",
+      "feet": {
+        "x": -4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 200,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "lab-b-baseline",
+      "feet": {
+        "x": 4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 160,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "lab-b-candidate",
+      "feet": {
+        "x": 4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 160,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "west-stair-baseline",
+      "feet": {
+        "x": -19.5,
+        "y": 2.25,
+        "z": -1.75
+      },
+      "yaw": 90,
+      "pitch": -12,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "west-stair-candidate",
+      "feet": {
+        "x": -19.5,
+        "y": 2.25,
+        "z": -1.75
+      },
+      "yaw": 90,
+      "pitch": -12,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "east-stair-baseline",
+      "feet": {
+        "x": 19.5,
+        "y": 2.25,
+        "z": -1.75
+      },
+      "yaw": 270,
+      "pitch": -12,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "east-stair-candidate",
+      "feet": {
+        "x": 19.5,
+        "y": 2.25,
+        "z": -1.75
+      },
+      "yaw": 270,
+      "pitch": -12,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "west-opening-baseline",
+      "feet": {
+        "x": -11.4,
+        "y": 4.5,
+        "z": -1.75
+      },
+      "yaw": 270,
+      "pitch": 15,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "west-opening-candidate",
+      "feet": {
+        "x": -11.4,
+        "y": 4.5,
+        "z": -1.75
+      },
+      "yaw": 270,
+      "pitch": 15,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "east-opening-baseline",
+      "feet": {
+        "x": 11.4,
+        "y": 4.5,
+        "z": -1.75
+      },
+      "yaw": 90,
+      "pitch": 15,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "east-opening-candidate",
+      "feet": {
+        "x": 11.4,
+        "y": 4.5,
+        "z": -1.75
+      },
+      "yaw": 90,
+      "pitch": 15,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "north-door-baseline",
+      "feet": {
+        "x": -6.5,
+        "y": 4.5,
+        "z": 10.4
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "north-door-candidate",
+      "feet": {
+        "x": -6.5,
+        "y": 4.5,
+        "z": 10.4
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "south-door-baseline",
+      "feet": {
+        "x": -0.6,
+        "y": 0.02,
+        "z": -11.3
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "south-door-candidate",
+      "feet": {
+        "x": -0.6,
+        "y": 0.02,
+        "z": -11.3
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "candidate",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "west-stair-low-baseline",
+      "feet": {
+        "x": -10.6,
+        "y": 0.02,
+        "z": 1.75
+      },
+      "yaw": 270,
+      "pitch": -12,
+      "variant": "baseline",
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ],
+      "warmup": 5,
+      "duration": 8
+    },
+    {
+      "name": "west-stair-low-candidate",
+      "feet": {
+        "x": -10.6,
+        "y": 0.02,
+        "z": 1.75
+      },
+      "yaw": 270,
+      "pitch": -12,
+      "variant": "candidate",
+      "lighting": [],
+      "warmup": 5,
+      "duration": 8
+    },
+    {
+      "name": "east-stair-low-baseline",
+      "feet": {
+        "x": 10.6,
+        "y": 0.02,
+        "z": 1.75
+      },
+      "yaw": 90,
+      "pitch": -12,
+      "variant": "baseline",
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ],
+      "warmup": 5,
+      "duration": 8
+    },
+    {
+      "name": "east-stair-low-candidate",
+      "feet": {
+        "x": 10.6,
+        "y": 0.02,
+        "z": 1.75
+      },
+      "yaw": 90,
+      "pitch": -12,
+      "variant": "candidate",
+      "lighting": [],
+      "warmup": 5,
+      "duration": 8
+    },
+    {
+      "name": "group-upper-baseline",
+      "variant": "baseline",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "group-upper-lower-point",
+      "variant": "without-lower-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "lower-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "group-upper-lower-spot",
+      "variant": "without-lower-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "lower-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "group-upper-upper-point",
+      "variant": "without-upper-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "group-upper-upper-spot",
+      "variant": "without-upper-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "group-upper-stairs-point",
+      "variant": "without-stairs-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "group-upper-stairs-spot",
+      "variant": "without-stairs-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "live-candidate",
+      "variant": "candidate",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "live": true,
+      "warmup": 5,
+      "duration": 60,
+      "lighting": []
+    }
+  ]
+}

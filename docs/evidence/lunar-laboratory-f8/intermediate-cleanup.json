@@ -1,0 +1,29 @@
+{
+  "removed": [
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/.local/f8-study",
+      "owner": "01a10571-1224-7552-9c8e-2224720be774",
+      "base": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+      "tree_sha256": "f4a0d656f5430c2ae55592d17e046f2d715ab9280a5645117e1da8015d77174a",
+      "reason": "Superseded diagnostic-only Player; source/binary manifests, plans, measurements and selected images retained. v3 immutable Player remains for diagnostic use."
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/.local/f8-study-v2",
+      "owner": "01a10571-1224-7552-9c8e-2224720be774",
+      "base": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+      "tree_sha256": "7cd2636dccf580bb2c8036fbb65d1ce6d1651e87424d8ff7ff41a52515678825",
+      "reason": "Superseded diagnostic-only Player; source/binary manifests, plans, measurements and selected images retained. v3 immutable Player remains for diagnostic use."
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity/Library/Bee",
+      "owner": "01a10571-1224-7552-9c8e-2224720be774",
+      "reason": "Own reconstructible Bee cache after closed-pipe build-backend failure; no Editor/backend process using owned project; failure log retained",
+      "bytes": 220002055
+    }
+  ],
+  "preserved": [
+    ".local/f8-study-v3",
+    "F7 original exact Player"
+  ],
+  "foreign_resources": "preserved"
+}

@@ -1,0 +1,298 @@
+{
+  "steps": [
+    {
+      "name": "hall-balanced",
+      "variant": "balanced",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 7,
+          "intensity": 20,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 7,
+          "intensity": 20,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "upper-balanced",
+      "variant": "balanced",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 7,
+          "intensity": 20,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 7,
+          "intensity": 20,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "hall-balanced-wide",
+      "variant": "balanced-wide",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 7,
+          "intensity": 3,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 7.5,
+          "intensity": 19,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 7,
+          "intensity": 3,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 7.5,
+          "intensity": 19,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "upper-balanced-wide",
+      "variant": "balanced-wide",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 7,
+          "intensity": 3,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 7.5,
+          "intensity": 19,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 7,
+          "intensity": 3,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 7.5,
+          "intensity": 19,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "hall-balanced-tight",
+      "variant": "balanced-tight",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 6,
+          "intensity": 4.5,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 6,
+          "intensity": 4.5,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "upper-balanced-tight",
+      "variant": "balanced-tight",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 6,
+          "intensity": 4.5,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 6,
+          "intensity": 4.5,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1
+        }
+      ]
+    }
+  ]
+}

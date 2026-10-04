@@ -1,0 +1,184 @@
+{
+  "steps": [
+    {
+      "name": "yard",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -25
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "hall",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "north-lower",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": 10
+      },
+      "yaw": 180,
+      "pitch": 5,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "upper",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "lab-a",
+      "feet": {
+        "x": -4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 200,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "lab-b",
+      "feet": {
+        "x": 4,
+        "y": 4.5,
+        "z": 10
+      },
+      "yaw": 160,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "west-stair",
+      "feet": {
+        "x": -18.8,
+        "y": 2.25,
+        "z": -1.8
+      },
+      "yaw": 270,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "east-stair",
+      "feet": {
+        "x": 18.8,
+        "y": 2.25,
+        "z": 1.8
+      },
+      "yaw": 90,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "west-opening",
+      "feet": {
+        "x": -12.7,
+        "y": 4.5,
+        "z": 1.5
+      },
+      "yaw": 270,
+      "pitch": -10,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "east-opening",
+      "feet": {
+        "x": 12.7,
+        "y": 4.5,
+        "z": 1.5
+      },
+      "yaw": 90,
+      "pitch": -10,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "north-door",
+      "feet": {
+        "x": -6.5,
+        "y": 4.5,
+        "z": 10.4
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    },
+    {
+      "name": "south-door",
+      "feet": {
+        "x": -0.6,
+        "y": 0.02,
+        "z": -11.3
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "variant": "baseline",
+      "warmup": 5,
+      "duration": 8,
+      "live": false,
+      "lighting": []
+    }
+  ]
+}

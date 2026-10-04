@@ -1,0 +1,7 @@
+./unity/tools.sh test-edit
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity
+unity-run: started shared:1; guardian=37703 pid=37704
+unity-run: finished pid=37704 exit=0; capacity released
+./unity/tools.sh test-play
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity
+make: *** [test-play] Error 130

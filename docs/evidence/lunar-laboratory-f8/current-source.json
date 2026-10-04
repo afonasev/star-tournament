@@ -1,0 +1,31 @@
+{
+  "owner": "01a10571-1224-7552-9c8e-2224720be774",
+  "base": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+  "status": "make check PASS; source checkpoint commit pending; exact Player smoke/performance and integration remain open",
+  "files": [
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs",
+      "sha256": "b835b036f42aa076ae9b88f133df23a9aa90f258a8d8c53d00c5960107be73df"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs",
+      "sha256": "fb01c6241451439d21086db2c3fdd8abf3e77ab72e4a08b4cd8ca178c2e85ea3"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs",
+      "sha256": "a0008490f8ea2c82a0b5c18231a5381f4c9d0ccdbc6d8b532314729655b1e8c9"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeLunarPerformanceReview.cs",
+      "sha256": "52e568d3578929b09ac16b1e1caf1c2c55e605cdff7340543ce18fa4d0fdda9e"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Scenes/ProvingGround.unity",
+      "sha256": "2420e760a40bbd941fb9e17c928c5b9e5eb1c3b405494789b2a2f476a472fe3b"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs",
+      "sha256": "d3ffcb98f36bcab2f6886b502659e7b41a2535898fee58deddfdb37f267e4f4a"
+    }
+  ]
+}

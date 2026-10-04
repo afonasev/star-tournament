@@ -17,6 +17,7 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }
+        [TestCase("BeforeLunarLighting")]
         [TestCase("BeforeLunarFlush")]
         [TestCase("BeforeLunarInterior")]
         [TestCase("BeforeLunarOpenCentre")]
@@ -29,9 +30,22 @@ namespace StarTournament.ProvingGround.Tests
                 var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
                 var method=typeof(ProvingProfile).GetMethod(transform,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 var old=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
-                var prior=new DesignLabHistory(path,old);prior.Create("Previous lunar map");string hash=prior.Selected.Hash;int number=prior.Selected.Number;
+                var prior=new DesignLabHistory(path,old);prior.Create("Previous lunar map");
+                if(transform=="BeforeLunarLighting")
+                {
+                    var custom=prior.Selected.Snapshot.Clone();custom.Set("lunar.officeLamp",15.5f);custom.Set("lunar.officeFill",4.25f);prior.Save(custom);
+                }
+                string hash=prior.Selected.Hash;int number=prior.Selected.Number;
                 var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);
                 Assert.That(next.SelectedProfile.Revisions.Single(x=>x.Number==number).Hash,Is.EqualTo(hash));
+                if(transform=="BeforeLunarLighting")
+                {
+                    Assert.That(next.Selected.Snapshot.Get("lunar.officeLamp"),Is.EqualTo(15.5f));
+                    Assert.That(next.Selected.Snapshot.Get("lunar.officeFill"),Is.EqualTo(4.25f));
+                    Assert.That(next.Selected.Snapshot.Get("lunar.officeInnerAngle"),Is.EqualTo(65));
+                    Assert.That(next.Selected.Snapshot.Get("lunar.stairLamp"),Is.EqualTo(15.5f));
+                    Assert.That(next.Selected.Snapshot.Get("lunar.stairFill"),Is.EqualTo(4.25f));
+                }
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }

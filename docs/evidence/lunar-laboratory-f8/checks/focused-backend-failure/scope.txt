@@ -1,0 +1,12 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=LunarLaboratoryTests
+revision=600d589af32eb6fea0764e5fc33acb7bb62beaae
+ M Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs
+ M Assets/StarTournament/Runtime/NativeLunarPerformanceReview.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/lunar-laboratory-f8/

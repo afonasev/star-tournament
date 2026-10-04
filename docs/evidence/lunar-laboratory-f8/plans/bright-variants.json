@@ -1,0 +1,298 @@
+{
+  "steps": [
+    {
+      "name": "hall-bright-fill",
+      "variant": "bright-fill",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 8,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 8,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 5.5,
+          "intensity": 8,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "upper-bright-fill",
+      "variant": "bright-fill",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 8,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 8,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 5.5,
+          "intensity": 8,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "hall-bright-tight",
+      "variant": "bright-tight",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5,
+          "intensity": 9,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 5,
+          "intensity": 9,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 5,
+          "intensity": 9,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "upper-bright-tight",
+      "variant": "bright-tight",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5,
+          "intensity": 9,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 5,
+          "intensity": 9,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 5,
+          "intensity": 9,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "hall-bright-spot",
+      "variant": "bright-spot",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 7,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 6,
+          "intensity": 32,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 7,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 6,
+          "intensity": 32,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 5.5,
+          "intensity": 7,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 6,
+          "intensity": 32,
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "upper-bright-spot",
+      "variant": "bright-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 7,
+          "stride": 1
+        },
+        {
+          "group": "lower-spot",
+          "range": 6,
+          "intensity": 32,
+          "stride": 1
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 7,
+          "stride": 1
+        },
+        {
+          "group": "upper-spot",
+          "range": 6,
+          "intensity": 32,
+          "stride": 1
+        },
+        {
+          "group": "stairs-point",
+          "range": 5.5,
+          "intensity": 7,
+          "stride": 1
+        },
+        {
+          "group": "stairs-spot",
+          "range": 6,
+          "intensity": 32,
+          "stride": 1
+        }
+      ]
+    }
+  ]
+}

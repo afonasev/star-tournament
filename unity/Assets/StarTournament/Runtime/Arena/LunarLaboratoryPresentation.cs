@@ -74,13 +74,13 @@ namespace StarTournament.ProvingGround
         void Ball(Material m,Vector3 c,Vector3 scale)=>Shape(m,sphere,c,scale,Quaternion.identity);
         void Ring(Material m,Vector3 c,float radius,Vector3 normal,float width)
         {var right=Vector3.Cross(normal,Mathf.Abs(normal.y)>.5f?Vector3.forward:Vector3.up).normalized;var up=Vector3.Cross(normal,right);for(int i=0;i<48;i++){float a=i*Mathf.PI/24,b=(i+1)*Mathf.PI/24;Pipe(m,c+radius*(right*Mathf.Cos(a)+up*Mathf.Sin(a)),c+radius*(right*Mathf.Cos(b)+up*Mathf.Sin(b)),width);}}
-        void Light(Vector3 c,bool office=false)
-        {Box(metal,c,new Vector3(1.5f,.16f,.6f));Box(white,c-Vector3.up*.085f,new Vector3(1.3f,.02f,.43f));var go=new GameObject("Neutral lunar luminaire");go.transform.SetParent(transform,false);go.transform.localPosition=c-Vector3.up*.25f;var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=125;go.transform.localRotation=Quaternion.Euler(90,0,0);l.color=new Color(1,.97f,.89f);l.intensity=P(office?"officeLamp":"lamp");l.range=P("range");l.renderMode=LightRenderMode.ForcePixel;LightCount++;
+        void Light(Vector3 c,bool office=false,bool stair=false)
+        {Box(metal,c,new Vector3(1.5f,.16f,.6f));Box(white,c-Vector3.up*.085f,new Vector3(1.3f,.02f,.43f));var go=new GameObject("Neutral lunar luminaire");go.transform.SetParent(transform,false);go.transform.localPosition=c-Vector3.up*.25f;var l=go.AddComponent<Light>();l.type=LightType.Spot;l.spotAngle=125;go.transform.localRotation=Quaternion.Euler(90,0,0);l.color=new Color(1,.97f,.89f);l.intensity=P(stair?"stairLamp":office?"officeLamp":"lamp");l.range=P(office&&!stair?"officeSpotRange":"range");if(office&&!stair)l.innerSpotAngle=P("officeInnerAngle");l.renderMode=LightRenderMode.ForcePixel;LightCount++;
             if(office)
             {
                 // Diffuse ceiling bounce is represented by local point fill, kept out of exterior ambient.
                 var fill=new GameObject("Office diffuse ceiling bounce");fill.transform.SetParent(transform,false);fill.transform.localPosition=c-Vector3.up*.8f;
-                var f=fill.AddComponent<Light>();f.type=LightType.Point;f.color=new Color(.96f,.98f,1);f.intensity=P("officeFill");f.range=P("range");f.renderMode=LightRenderMode.ForcePixel;LightCount++;
+                var f=fill.AddComponent<Light>();f.type=LightType.Point;f.color=new Color(.96f,.98f,1);f.intensity=P(stair?"stairFill":"officeFill");f.range=P(stair?"range":"officeFillRange");f.renderMode=LightRenderMode.ForcePixel;LightCount++;
             }
         }
         void Label(string value,Vector3 pos,Quaternion rot,float size,Color color,Vector2 area)
@@ -155,7 +155,7 @@ namespace StarTournament.ProvingGround
                 {var a=new Vector3(q,0,sign*31);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(b+Vector3.up*4);}
             }
             for(int x=-9;x<=9;x+=6)foreach(int z in new[]{-9,-3,3,9})foreach(float y in new[]{3.9f,8.4f})Light(new Vector3(x,y,z),true);
-            foreach(int a in new[]{-1,1})Light(new Vector3(a*19,7.8f,0),true);
+            foreach(int a in new[]{-1,1})Light(new Vector3(a*19,7.8f,0),true,true);
             // Paving leaves regolith visible; deterministic irregular sand drifts lay over it.
             for(int x=-28;x<=28;x+=4)for(int z=-28;z<=28;z+=4)
             {

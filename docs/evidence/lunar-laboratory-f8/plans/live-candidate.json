@@ -1,0 +1,19 @@
+{
+  "steps": [
+    {
+      "name": "live-candidate",
+      "variant": "candidate",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "live": true,
+      "warmup": 5,
+      "duration": 60,
+      "lighting": []
+    }
+  ]
+}

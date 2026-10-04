@@ -302,6 +302,8 @@ namespace StarTournament.ProvingGround
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeTunnelWayfinding))).ToArray();
                 // Preserve distinct legacy defaults even when registry keys coincide.
                 predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.TunnelsArtId&&p.Id!=ProvingProfile.TunnelsAuthoringId).ToList()})).ToArray();
+                var beforeLunarLighting=Cached(p=>p.BeforeLunarLighting());
+                predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarLighting))).ToArray();
                 var beforeLunarFlush=Cached(p=>p.BeforeLunarFlush());
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarFlush))).ToArray();
                 var beforeLunarInterior=Cached(p=>p.BeforeLunarInterior());
@@ -373,6 +375,15 @@ namespace StarTournament.ProvingGround
                         if(d.Path=="blood.drops"&&old.Snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                             value=currentDescriptor.DefaultValue;
                         next.Set(d.Path,value);
+                    }
+                    // Version3 used the office controls for both floors and stair annexes.
+                    // Preserve that custom stair lighting when the controls become independent.
+                    if(currentDescriptors.ContainsKey("lunar.stairLamp")&&currentDescriptors.ContainsKey("lunar.stairFill")
+                        &&old.Snapshot.Descriptors.Any(d=>d.Path=="lunar.officeLamp")
+                        &&old.Snapshot.Profile("lunar.officeLamp").Version==3)
+                    {
+                        next.Set("lunar.stairLamp",old.Snapshot.Get("lunar.officeLamp"));
+                        next.Set("lunar.stairFill",old.Snapshot.Get("lunar.officeFill"));
                     }
                     foreach(var weapon in new[]{"rifle","shot"})
                         if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&currentDescriptors.ContainsKey(weapon+".damage"))

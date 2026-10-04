@@ -1,0 +1,514 @@
+{
+  "steps": [
+    {
+      "name": "hall-lowered-fill",
+      "variant": "lowered-fill",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5,
+          "intensity": 8,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-point",
+          "range": 5,
+          "intensity": 8,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "upper-lowered-fill",
+      "variant": "lowered-fill",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5,
+          "intensity": 8,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-point",
+          "range": 5,
+          "intensity": 8,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "hall-lowered-soft",
+      "variant": "lowered-soft",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 6,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 6,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "upper-lowered-soft",
+      "variant": "lowered-soft",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 6,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 6,
+          "stride": 1,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "hall-checker-fill",
+      "variant": "checker-fill",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 6,
+          "intensity": 8,
+          "stride": 2,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-point",
+          "range": 6,
+          "intensity": 8,
+          "stride": 2,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "upper-checker-fill",
+      "variant": "checker-fill",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-point",
+          "range": 6,
+          "intensity": 8,
+          "stride": 2,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "lower-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-point",
+          "range": 6,
+          "intensity": 8,
+          "stride": 2,
+          "checkerboard": true,
+          "offset": {
+            "x": 0,
+            "y": -0.6,
+            "z": 0
+          }
+        },
+        {
+          "group": "upper-spot",
+          "range": 5.5,
+          "intensity": 24,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18,
+          "stride": 1,
+          "checkerboard": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ]
+    }
+  ]
+}

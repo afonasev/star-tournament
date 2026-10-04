@@ -1,0 +1,26 @@
+{
+  "status": "INCOMPLETE",
+  "owned_worktree": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap",
+  "branch": "codex/lunar-light-overlap",
+  "source_preservation": "Code/evidence checkpoint commit pending now; worktree remains unmerged for exact QA/integration.",
+  "active": "No owned Unity/test/build process; make check exited0",
+  "retained": [
+    "owned .local/f8-study-v3 exact diagnostic",
+    "owned unity/Builds prototype (will be replaced by required build)",
+    "own Library/Temp/Logs while tests/build pending",
+    "primary F7 exact candidate unchanged"
+  ],
+  "removed_records": [
+    "intermediate-cleanup.json",
+    "intermediate-image-retention.json"
+  ],
+  "foreign": "Main ProjectSettings dirty files, other worktrees and foreign Spacewars manual Player preserved",
+  "disk_free_GiB": 91,
+  "remaining": [
+    "exact Player smoke/performance at3456x2160 and original F7 visual review",
+    "Git code/evidence preservation and integration",
+    "exact F8 candidate retention",
+    "source/resource-safe worktree/build/cache/temp cleanup",
+    "human acceptance (separate)"
+  ]
+}

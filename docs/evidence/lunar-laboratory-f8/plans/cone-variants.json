@@ -1,0 +1,445 @@
+{
+  "steps": [
+    {
+      "name": "hall-baseline",
+      "variant": "baseline",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": []
+    },
+    {
+      "name": "upper-baseline",
+      "variant": "baseline",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": []
+    },
+    {
+      "name": "hall-wide-core",
+      "variant": "wide-core",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 7,
+          "intensity": 20,
+          "innerAngle": 90
+        },
+        {
+          "group": "lower-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 7,
+          "intensity": 20,
+          "innerAngle": 90
+        },
+        {
+          "group": "upper-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5
+        }
+      ]
+    },
+    {
+      "name": "upper-wide-core",
+      "variant": "wide-core",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 7,
+          "intensity": 20,
+          "innerAngle": 90
+        },
+        {
+          "group": "lower-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 7,
+          "intensity": 20,
+          "innerAngle": 90
+        },
+        {
+          "group": "upper-point",
+          "range": 6.5,
+          "intensity": 3.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5
+        }
+      ]
+    },
+    {
+      "name": "hall-tight-core",
+      "variant": "tight-core",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "innerAngle": 110
+        },
+        {
+          "group": "lower-point",
+          "range": 6,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "innerAngle": 110
+        },
+        {
+          "group": "upper-point",
+          "range": 6,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5
+        }
+      ]
+    },
+    {
+      "name": "upper-tight-core",
+      "variant": "tight-core",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "innerAngle": 110
+        },
+        {
+          "group": "lower-point",
+          "range": 6,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 6.5,
+          "intensity": 22,
+          "innerAngle": 110
+        },
+        {
+          "group": "upper-point",
+          "range": 6,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5
+        }
+      ]
+    },
+    {
+      "name": "hall-short-core",
+      "variant": "short-core",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 6,
+          "intensity": 24,
+          "innerAngle": 120
+        },
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 6,
+          "intensity": 24,
+          "innerAngle": 120
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5
+        }
+      ]
+    },
+    {
+      "name": "upper-short-core",
+      "variant": "short-core",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "warmup": 5,
+      "duration": 8,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 6,
+          "intensity": 24,
+          "innerAngle": 120
+        },
+        {
+          "group": "lower-point",
+          "range": 5.5,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 6,
+          "intensity": 24,
+          "innerAngle": 120
+        },
+        {
+          "group": "upper-point",
+          "range": 5.5,
+          "intensity": 4,
+          "innerAngle": 0
+        },
+        {
+          "group": "stairs-spot",
+          "range": 8,
+          "intensity": 18
+        },
+        {
+          "group": "stairs-point",
+          "range": 7,
+          "intensity": 2.5
+        }
+      ]
+    },
+    {
+      "name": "repeat-upper-baseline",
+      "variant": "baseline",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "repeat-upper-lower-point",
+      "variant": "without-lower-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "repeat-upper-lower-spot",
+      "variant": "without-lower-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "repeat-upper-upper-point",
+      "variant": "without-upper-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "upper-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "repeat-upper-upper-spot",
+      "variant": "without-upper-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "upper-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "repeat-upper-stairs-point",
+      "variant": "without-stairs-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "stairs-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "repeat-upper-stairs-spot",
+      "variant": "without-stairs-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "stairs-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    }
+  ]
+}

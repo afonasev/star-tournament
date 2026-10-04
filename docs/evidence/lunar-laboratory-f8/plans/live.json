@@ -1,0 +1,19 @@
+{
+  "steps": [
+    {
+      "name": "live-hard-bots",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "live": true,
+      "warmup": 5,
+      "duration": 60,
+      "variant": "baseline",
+      "yaw": 0,
+      "pitch": 0,
+      "lighting": []
+    }
+  ]
+}

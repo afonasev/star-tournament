@@ -1,0 +1,2254 @@
+{
+    "status": "DIAGNOSTIC_NOT_ACCEPTANCE",
+    "map": "lunar-laboratory-v1@6",
+    "unity": "6000.3.23f1",
+    "device": "Mac14,10",
+    "cpu": "Apple M2 Pro",
+    "gpu": "Apple M2 Pro",
+    "os": "Mac OS X 14.6.1",
+    "pipeline": "ProvingURP",
+    "protocol": "Explicit lighting study plan: {\n  \"steps\": [\n    {\n      \"name\": \"hall-lowered-fill\",\n      \"variant\": \"lowered-fill\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 0.02,\n        \"z\": -9\n      },\n      \"warmup\": 5,\n      \"duration\": 8,\n      \"lighting\": [\n        {\n          \"group\": \"lower-point\",\n          \"range\": 5,\n          \"intensity\": 8,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 5,\n          \"intensity\": 8,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-point\",\n          \"range\": 7,\n          \"intensity\": 2.5,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-spot\",\n          \"range\": 8,\n          \"intensity\": 18,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"upper-lowered-fill\",\n      \"variant\": \"lowered-fill\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 4.5,\n        \"z\": -9\n      },\n      \"warmup\": 5,\n      \"duration\": 8,\n      \"lighting\": [\n        {\n          \"group\": \"lower-point\",\n          \"range\": 5,\n          \"intensity\": 8,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 5,\n          \"intensity\": 8,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-point\",\n          \"range\": 7,\n          \"intensity\": 2.5,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-spot\",\n          \"range\": 8,\n          \"intensity\": 18,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"hall-lowered-soft\",\n      \"variant\": \"lowered-soft\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 0.02,\n        \"z\": -9\n      },\n      \"warmup\": 5,\n      \"duration\": 8,\n      \"lighting\": [\n        {\n          \"group\": \"lower-point\",\n          \"range\": 5.5,\n          \"intensity\": 6,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 5.5,\n          \"intensity\": 6,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-point\",\n          \"range\": 7,\n          \"intensity\": 2.5,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-spot\",\n          \"range\": 8,\n          \"intensity\": 18,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"upper-lowered-soft\",\n      \"variant\": \"lowered-soft\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 4.5,\n        \"z\": -9\n      },\n      \"warmup\": 5,\n      \"duration\": 8,\n      \"lighting\": [\n        {\n          \"group\": \"lower-point\",\n          \"range\": 5.5,\n          \"intensity\": 6,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 5.5,\n          \"intensity\": 6,\n          \"stride\": 1,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-point\",\n          \"range\": 7,\n          \"intensity\": 2.5,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-spot\",\n          \"range\": 8,\n          \"intensity\": 18,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"hall-checker-fill\",\n      \"variant\": \"checker-fill\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 0.02,\n        \"z\": -9\n      },\n      \"warmup\": 5,\n      \"duration\": 8,\n      \"lighting\": [\n        {\n          \"group\": \"lower-point\",\n          \"range\": 6,\n          \"intensity\": 8,\n          \"stride\": 2,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 6,\n          \"intensity\": 8,\n          \"stride\": 2,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-point\",\n          \"range\": 7,\n          \"intensity\": 2.5,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-spot\",\n          \"range\": 8,\n          \"intensity\": 18,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"upper-checker-fill\",\n      \"variant\": \"checker-fill\",\n      \"feet\": {\n        \"x\": 0,\n        \"y\": 4.5,\n        \"z\": -9\n      },\n      \"warmup\": 5,\n      \"duration\": 8,\n      \"lighting\": [\n        {\n          \"group\": \"lower-point\",\n          \"range\": 6,\n          \"intensity\": 8,\n          \"stride\": 2,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"lower-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-point\",\n          \"range\": 6,\n          \"intensity\": 8,\n          \"stride\": 2,\n          \"checkerboard\": true,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": -0.6,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"upper-spot\",\n          \"range\": 5.5,\n          \"intensity\": 24,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-point\",\n          \"range\": 7,\n          \"intensity\": 2.5,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        },\n        {\n          \"group\": \"stairs-spot\",\n          \"range\": 8,\n          \"intensity\": 18,\n          \"stride\": 1,\n          \"checkerboard\": false,\n          \"offset\": {\n            \"x\": 0,\n            \"y\": 0,\n            \"z\": 0\n          }\n        }\n      ]\n    }\n  ]\n}",
+    "seed": 20261003,
+    "originalVsync": 1,
+    "originalTargetRate": -1,
+    "cpuThreads": 12,
+    "systemMemoryMB": 32768,
+    "vsync": 1,
+    "refreshHz": 120.0,
+    "renderScale": 1.0,
+    "frameTimingEnabled": true,
+    "lights": [
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 14.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 14.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 28.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": -14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -28.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 0.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 0.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -14.0,
+                "y": 3.75,
+                "z": -31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "stairs-spot",
+            "position": {
+                "x": 19.0,
+                "y": 7.550000190734863,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": -14.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "stairs-point",
+            "position": {
+                "x": 19.0,
+                "y": 7.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 28.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "stairs-spot",
+            "position": {
+                "x": -19.0,
+                "y": 7.550000190734863,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": -28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "stairs-point",
+            "position": {
+                "x": -19.0,
+                "y": 7.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 9.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -9.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -28.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": 31.0,
+                "y": 3.75,
+                "z": 28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": -28.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -9.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "arena-light",
+            "type": "Directional",
+            "shadows": "Soft",
+            "group": "directional",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 0.30000001192092898
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -3.0,
+                "y": 7.59999942779541,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": -3.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 9.0,
+                "y": 3.6500000953674318,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -31.0,
+                "y": 3.75,
+                "z": 0.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 3.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 3.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": 3.0,
+                "y": 7.59999942779541,
+                "z": -3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "equipment-fill",
+            "type": "Point",
+            "shadows": "None",
+            "group": "equipment",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "range": 2.0,
+            "intensity": 0.05000000074505806
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": -3.0,
+                "y": 8.149999618530274,
+                "z": -9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "exterior",
+            "position": {
+                "x": -14.0,
+                "y": 3.75,
+                "z": 31.0
+            },
+            "range": 10.0,
+            "intensity": 12.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -3.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "lower-spot",
+            "position": {
+                "x": 3.0,
+                "y": 3.6500000953674318,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Neutral lunar luminaire",
+            "type": "Spot",
+            "shadows": "None",
+            "group": "upper-spot",
+            "position": {
+                "x": 9.0,
+                "y": 8.149999618530274,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 18.0
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": 9.0,
+                "y": 3.1000001430511476,
+                "z": 3.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "upper-point",
+            "position": {
+                "x": -9.0,
+                "y": 7.59999942779541,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        },
+        {
+            "name": "Office diffuse ceiling bounce",
+            "type": "Point",
+            "shadows": "None",
+            "group": "lower-point",
+            "position": {
+                "x": -9.0,
+                "y": 3.1000001430511476,
+                "z": 9.0
+            },
+            "range": 10.0,
+            "intensity": 2.5
+        }
+    ],
+    "samples": [
+        {
+            "name": "hall-lowered-fill",
+            "variant": "lowered-fill",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":0.0,\"y\":0.029999990016222,\"z\":-9.0},\"Velocity\":{\"x\":0.0,\"y\":0.4999997317790985,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 781,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 781,
+                "hitches16": 12,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.24661955825865,
+                "p50": 9.339457999999468,
+                "p95": 14.342750000000848,
+                "p99": 18.888916999998174,
+                "max": 21.36416599999791
+            },
+            "cpuMs": {
+                "count": 781,
+                "hitches16": 10,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.248789586427654,
+                "p50": 9.239375,
+                "p95": 14.29175,
+                "p99": 18.776041,
+                "max": 21.372792
+            },
+            "gpuMs": {
+                "count": 761,
+                "hitches16": 277,
+                "hitches25": 24,
+                "hitches50": 0,
+                "mean": 15.060348609482574,
+                "p50": 14.358208340127021,
+                "p95": 24.518624995835127,
+                "p99": 27.1082500112243,
+                "max": 29.048333293758334
+            },
+            "mainMs": {
+                "count": 781,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 2.670143768245841,
+                "p50": 2.610917,
+                "p95": 3.355835,
+                "p99": 4.037084,
+                "max": 5.082166
+            },
+            "renderMs": {
+                "count": 781,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.2752740665813057,
+                "p50": 1.247083,
+                "p95": 1.658208,
+                "p99": 1.925333,
+                "max": 2.1545
+            },
+            "presentWaitMs": {
+                "count": 781,
+                "hitches16": 4,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 7.567868030729831,
+                "p50": 6.616501,
+                "p95": 11.604125,
+                "p99": 16.228458,
+                "max": 18.939374
+            },
+            "drawCalls": {
+                "count": 781,
+                "hitches16": 684,
+                "hitches25": 684,
+                "hitches50": 684,
+                "mean": 599.0,
+                "p50": 599.0,
+                "p95": 1198.0,
+                "p99": 1198.0,
+                "max": 1198.0
+            },
+            "setPass": {
+                "count": 781,
+                "hitches16": 670,
+                "hitches25": 670,
+                "hitches50": 670,
+                "mean": 163.0,
+                "p50": 163.0,
+                "p95": 326.0,
+                "p99": 326.0,
+                "max": 326.0
+            },
+            "triangles": {
+                "count": 781,
+                "hitches16": 688,
+                "hitches25": 688,
+                "hitches50": 688,
+                "mean": 1167710.3841229194,
+                "p50": 1167710.0,
+                "p95": 2335420.0,
+                "p99": 2335424.0,
+                "max": 2335424.0
+            },
+            "vertices": {
+                "count": 781,
+                "hitches16": 689,
+                "hitches25": 689,
+                "hitches50": 689,
+                "mean": 1018399.7682458387,
+                "p50": 1018399.0,
+                "p95": 2036798.0,
+                "p99": 2036806.0,
+                "max": 2036806.0
+            }
+        },
+        {
+            "name": "upper-lowered-fill",
+            "variant": "lowered-fill",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":0.0,\"y\":4.5,\"z\":-9.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 4.5,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 785,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 785,
+                "hitches16": 11,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.199248142675165,
+                "p50": 9.096207999998996,
+                "p95": 14.261708999999457,
+                "p99": 19.296833000002068,
+                "max": 22.786625000001949
+            },
+            "cpuMs": {
+                "count": 785,
+                "hitches16": 11,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.203818312101915,
+                "p50": 9.105167,
+                "p95": 14.234667,
+                "p99": 19.478709,
+                "max": 24.614667
+            },
+            "gpuMs": {
+                "count": 780,
+                "hitches16": 216,
+                "hitches25": 6,
+                "hitches50": 0,
+                "mean": 13.666921633128555,
+                "p50": 13.011874980293215,
+                "p95": 21.901374973822386,
+                "p99": 24.910125008318575,
+                "max": 26.988499972503634
+            },
+            "mainMs": {
+                "count": 785,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 2.650583513375796,
+                "p50": 2.588708,
+                "p95": 3.296667,
+                "p99": 3.743834,
+                "max": 15.878958
+            },
+            "renderMs": {
+                "count": 785,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.3215148560509554,
+                "p50": 1.298084,
+                "p95": 1.711125,
+                "p99": 1.929375,
+                "max": 2.359833
+            },
+            "presentWaitMs": {
+                "count": 785,
+                "hitches16": 7,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 7.54306308535032,
+                "p50": 6.600708,
+                "p95": 11.723959,
+                "p99": 16.622209,
+                "max": 19.615707
+            },
+            "drawCalls": {
+                "count": 785,
+                "hitches16": 645,
+                "hitches25": 645,
+                "hitches50": 645,
+                "mean": 590.0,
+                "p50": 590.0,
+                "p95": 1180.0,
+                "p99": 1180.0,
+                "max": 1180.0
+            },
+            "setPass": {
+                "count": 785,
+                "hitches16": 624,
+                "hitches25": 624,
+                "hitches50": 624,
+                "mean": 156.0,
+                "p50": 156.0,
+                "p95": 312.0,
+                "p99": 312.0,
+                "max": 312.0
+            },
+            "triangles": {
+                "count": 785,
+                "hitches16": 646,
+                "hitches25": 646,
+                "hitches50": 646,
+                "mean": 1165058.6267515924,
+                "p50": 1165058.0,
+                "p95": 2330120.0,
+                "p99": 2330120.0,
+                "max": 2330120.0
+            },
+            "vertices": {
+                "count": 785,
+                "hitches16": 644,
+                "hitches25": 644,
+                "hitches50": 644,
+                "mean": 1016642.2535031848,
+                "p50": 1016641.0,
+                "p95": 2033290.0,
+                "p99": 2033290.0,
+                "max": 2033290.0
+            }
+        },
+        {
+            "name": "hall-lowered-soft",
+            "variant": "lowered-soft",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":0.0,\"y\":0.029999930411577226,\"z\":-9.0},\"Velocity\":{\"x\":0.0,\"y\":0.49999675154685976,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 762,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 762,
+                "hitches16": 22,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.509466699475068,
+                "p50": 9.824000000001832,
+                "p95": 15.192249999998353,
+                "p99": 20.16449999999992,
+                "max": 24.41258400000379
+            },
+            "cpuMs": {
+                "count": 762,
+                "hitches16": 19,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.503981463254603,
+                "p50": 9.79175,
+                "p95": 15.180208,
+                "p99": 20.054458,
+                "max": 22.105416
+            },
+            "gpuMs": {
+                "count": 717,
+                "hitches16": 358,
+                "hitches25": 73,
+                "hitches50": 0,
+                "mean": 16.851141910338865,
+                "p50": 16.656249994412066,
+                "p95": 26.644499972462655,
+                "p99": 29.211999964900316,
+                "max": 31.752333336044104
+            },
+            "mainMs": {
+                "count": 762,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 2.719722114173228,
+                "p50": 2.663084,
+                "p95": 3.331041,
+                "p99": 3.789292,
+                "max": 16.121084
+            },
+            "renderMs": {
+                "count": 762,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.3321405380577427,
+                "p50": 1.301583,
+                "p95": 1.696417,
+                "p99": 1.999959,
+                "max": 2.291167
+            },
+            "presentWaitMs": {
+                "count": 762,
+                "hitches16": 6,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 7.773508460629919,
+                "p50": 7.097542,
+                "p95": 12.374959,
+                "p99": 16.660916,
+                "max": 19.123376
+            },
+            "drawCalls": {
+                "count": 762,
+                "hitches16": 636,
+                "hitches25": 636,
+                "hitches50": 636,
+                "mean": 599.0,
+                "p50": 599.0,
+                "p95": 1198.0,
+                "p99": 1198.0,
+                "max": 1198.0
+            },
+            "setPass": {
+                "count": 762,
+                "hitches16": 617,
+                "hitches25": 617,
+                "hitches50": 617,
+                "mean": 163.0,
+                "p50": 163.0,
+                "p95": 326.0,
+                "p99": 326.0,
+                "max": 326.0
+            },
+            "triangles": {
+                "count": 762,
+                "hitches16": 639,
+                "hitches25": 639,
+                "hitches50": 639,
+                "mean": 1167710.0,
+                "p50": 1167710.0,
+                "p95": 2335420.0,
+                "p99": 2335420.0,
+                "max": 2335420.0
+            },
+            "vertices": {
+                "count": 762,
+                "hitches16": 638,
+                "hitches25": 638,
+                "hitches50": 638,
+                "mean": 1018399.0,
+                "p50": 1018399.0,
+                "p95": 2036798.0,
+                "p99": 2036798.0,
+                "max": 2036798.0
+            }
+        },
+        {
+            "name": "upper-lowered-soft",
+            "variant": "lowered-soft",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":0.0,\"y\":4.5,\"z\":-9.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 4.5,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 90,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 749,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 749,
+                "hitches16": 22,
+                "hitches25": 1,
+                "hitches50": 0,
+                "mean": 10.68552275166889,
+                "p50": 10.301167000001499,
+                "p95": 15.862249999997858,
+                "p99": 21.351583000004838,
+                "max": 27.538917000001108
+            },
+            "cpuMs": {
+                "count": 749,
+                "hitches16": 23,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.68544581575434,
+                "p50": 10.377375,
+                "p95": 15.692167,
+                "p99": 21.426667,
+                "max": 24.130458
+            },
+            "gpuMs": {
+                "count": 716,
+                "hitches16": 355,
+                "hitches25": 97,
+                "hitches50": 0,
+                "mean": 17.31416462963205,
+                "p50": 16.45654166350141,
+                "p95": 27.633125020656736,
+                "p99": 29.120291641447694,
+                "max": 31.49224998196587
+            },
+            "mainMs": {
+                "count": 749,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 2.6873248611481967,
+                "p50": 2.614458,
+                "p95": 3.298332,
+                "p99": 3.631292,
+                "max": 15.900583
+            },
+            "renderMs": {
+                "count": 749,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.2796293551401883,
+                "p50": 1.25325,
+                "p95": 1.600167,
+                "p99": 1.802083,
+                "max": 2.074666
+            },
+            "presentWaitMs": {
+                "count": 749,
+                "hitches16": 13,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 7.987492224299057,
+                "p50": 7.6565,
+                "p95": 12.685084,
+                "p99": 18.1805,
+                "max": 21.64046
+            },
+            "drawCalls": {
+                "count": 749,
+                "hitches16": 616,
+                "hitches25": 616,
+                "hitches50": 616,
+                "mean": 590.7877169559413,
+                "p50": 590.0,
+                "p95": 1180.0,
+                "p99": 1180.0,
+                "max": 1180.0
+            },
+            "setPass": {
+                "count": 749,
+                "hitches16": 599,
+                "hitches25": 599,
+                "hitches50": 599,
+                "mean": 156.2082777036048,
+                "p50": 156.0,
+                "p95": 312.0,
+                "p99": 312.0,
+                "max": 312.0
+            },
+            "triangles": {
+                "count": 749,
+                "hitches16": 619,
+                "hitches25": 619,
+                "hitches50": 619,
+                "mean": 1166613.4846461949,
+                "p50": 1165058.0,
+                "p95": 2330116.0,
+                "p99": 2330116.0,
+                "max": 2330116.0
+            },
+            "vertices": {
+                "count": 749,
+                "hitches16": 618,
+                "hitches25": 618,
+                "hitches50": 618,
+                "mean": 1017998.3311081441,
+                "p50": 1016641.0,
+                "p95": 2033282.0,
+                "p99": 2033282.0,
+                "max": 2033282.0
+            }
+        },
+        {
+            "name": "hall-checker-fill",
+            "variant": "checker-fill",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":0.0,\"y\":0.029999930411577226,\"z\":-9.0},\"Velocity\":{\"x\":0.0,\"y\":0.49999675154685976,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 74,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 796,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 796,
+                "hitches16": 5,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.06017928266331,
+                "p50": 8.787083000001417,
+                "p95": 13.89141700001062,
+                "p99": 15.791708000008953,
+                "max": 21.470332999996346
+            },
+            "cpuMs": {
+                "count": 796,
+                "hitches16": 4,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.071269472361797,
+                "p50": 8.799458,
+                "p95": 13.785916,
+                "p99": 15.789125,
+                "max": 21.021167
+            },
+            "gpuMs": {
+                "count": 791,
+                "hitches16": 91,
+                "hitches25": 6,
+                "hitches50": 0,
+                "mean": 11.768873734458547,
+                "p50": 11.174083279911429,
+                "p95": 18.9854166819714,
+                "p99": 23.852166661527009,
+                "max": 26.629375002812595
+            },
+            "mainMs": {
+                "count": 796,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 2.6556167474874385,
+                "p50": 2.605874,
+                "p95": 3.316249,
+                "p99": 3.818334,
+                "max": 15.530207
+            },
+            "renderMs": {
+                "count": 796,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.3548871394472367,
+                "p50": 1.334292,
+                "p95": 1.72425,
+                "p99": 1.968833,
+                "max": 2.147875
+            },
+            "presentWaitMs": {
+                "count": 796,
+                "hitches16": 2,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 7.404848942211063,
+                "p50": 6.378792,
+                "p95": 11.28,
+                "p99": 13.059876,
+                "max": 18.112041
+            },
+            "drawCalls": {
+                "count": 796,
+                "hitches16": 670,
+                "hitches25": 670,
+                "hitches50": 670,
+                "mean": 599.0,
+                "p50": 599.0,
+                "p95": 1198.0,
+                "p99": 1198.0,
+                "max": 1198.0
+            },
+            "setPass": {
+                "count": 796,
+                "hitches16": 651,
+                "hitches25": 651,
+                "hitches50": 651,
+                "mean": 163.0,
+                "p50": 163.0,
+                "p95": 326.0,
+                "p99": 326.0,
+                "max": 326.0
+            },
+            "triangles": {
+                "count": 796,
+                "hitches16": 672,
+                "hitches25": 672,
+                "hitches50": 672,
+                "mean": 1167710.6381909548,
+                "p50": 1167710.0,
+                "p95": 2335420.0,
+                "p99": 2335424.0,
+                "max": 2335424.0
+            },
+            "vertices": {
+                "count": 796,
+                "hitches16": 672,
+                "hitches25": 672,
+                "hitches50": 672,
+                "mean": 1018400.2763819095,
+                "p50": 1018399.0,
+                "p95": 2036798.0,
+                "p99": 2036806.0,
+                "max": 2036806.0
+            }
+        },
+        {
+            "name": "upper-checker-fill",
+            "variant": "checker-fill",
+            "state": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":0.0,\"y\":4.5,\"z\":-9.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":true,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}",
+            "feet": {
+                "x": 0.0,
+                "y": 4.5,
+                "z": -9.0
+            },
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "matchTime": 0.0,
+            "fieldOfView": 90.0,
+            "renderScale": 1.0,
+            "width": 3456,
+            "height": 2160,
+            "quality": 5,
+            "lights": 74,
+            "shadowLights": 1,
+            "cameras": 1,
+            "focused": true,
+            "focusedFrames": 793,
+            "unfocusedFrames": 0,
+            "frameMs": {
+                "count": 793,
+                "hitches16": 7,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.098192254728885,
+                "p50": 9.18054199999574,
+                "p95": 14.02679199999568,
+                "p99": 16.57737499999712,
+                "max": 20.858332999992514
+            },
+            "cpuMs": {
+                "count": 793,
+                "hitches16": 5,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 10.097899117276177,
+                "p50": 9.125667,
+                "p95": 13.882042,
+                "p99": 16.399667,
+                "max": 20.673917
+            },
+            "gpuMs": {
+                "count": 787,
+                "hitches16": 45,
+                "hitches25": 1,
+                "hitches50": 0,
+                "mean": 10.746640405807588,
+                "p50": 10.448791668750346,
+                "p95": 16.98575000045821,
+                "p99": 21.50529163191095,
+                "max": 25.6768332910724
+            },
+            "mainMs": {
+                "count": 793,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 2.6081761740226989,
+                "p50": 2.548877,
+                "p95": 3.282958,
+                "p99": 3.78325,
+                "max": 9.543041
+            },
+            "renderMs": {
+                "count": 793,
+                "hitches16": 0,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 1.3211180176544773,
+                "p50": 1.295,
+                "p95": 1.705458,
+                "p99": 1.92875,
+                "max": 2.143
+            },
+            "presentWaitMs": {
+                "count": 793,
+                "hitches16": 1,
+                "hitches25": 0,
+                "hitches50": 0,
+                "mean": 7.479406437578811,
+                "p50": 6.639292,
+                "p95": 11.364041,
+                "p99": 13.637167,
+                "max": 18.536208
+            },
+            "drawCalls": {
+                "count": 793,
+                "hitches16": 649,
+                "hitches25": 649,
+                "hitches50": 649,
+                "mean": 589.2559899117276,
+                "p50": 590.0,
+                "p95": 1180.0,
+                "p99": 1180.0,
+                "max": 1180.0
+            },
+            "setPass": {
+                "count": 793,
+                "hitches16": 628,
+                "hitches25": 628,
+                "hitches50": 628,
+                "mean": 155.80327868852459,
+                "p50": 156.0,
+                "p95": 312.0,
+                "p99": 312.0,
+                "max": 312.0
+            },
+            "triangles": {
+                "count": 793,
+                "hitches16": 650,
+                "hitches25": 650,
+                "hitches50": 650,
+                "mean": 1163589.684741488,
+                "p50": 1165058.0,
+                "p95": 2330120.0,
+                "p99": 2330120.0,
+                "max": 2330120.0
+            },
+            "vertices": {
+                "count": 793,
+                "hitches16": 650,
+                "hitches25": 650,
+                "hitches50": 650,
+                "mean": 1015360.7061790668,
+                "p50": 1016641.0,
+                "p95": 2033290.0,
+                "p99": 2033290.0,
+                "max": 2033290.0
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "s-armored-window-0",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "s-armored-window-1",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-0",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 4.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-1",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 10.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "n-armored-window-2",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 4.0,
+                "y": 2.299999952316284,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "divider-glass",
+            "vertices": 24,
+            "triangles": 12,
+            "bounds": {
+                "x": 16.0,
+                "y": 1.5,
+                "z": 0.11999999731779099
+            },
+            "shadows": true
+        },
+        {
+            "name": "Acoustic ceiling / perforated panels",
+            "vertices": 40,
+            "triangles": 20,
+            "bounds": {
+                "x": 64.0,
+                "y": 9.000000953674317,
+                "z": 64.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "Grey lunar regolith",
+            "vertices": 21449,
+            "triangles": 11383,
+            "bounds": {
+                "x": 260.0,
+                "y": 28.196733474731447,
+                "z": 260.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "Graphite floor",
+            "vertices": 5448,
+            "triangles": 2706,
+            "bounds": {
+                "x": 60.540000915527347,
+                "y": 10.305000305175782,
+                "z": 56.47999954223633
+            },
+            "shadows": true
+        },
+        {
+            "name": "Ivory ceramic panels",
+            "vertices": 15075,
+            "triangles": 12188,
+            "bounds": {
+                "x": 60.900001525878909,
+                "y": 13.680864334106446,
+                "z": 50.37399673461914
+            },
+            "shadows": true
+        },
+        {
+            "name": "Brushed structural alloy",
+            "vertices": 25344,
+            "triangles": 13428,
+            "bounds": {
+                "x": 64.30000305175781,
+                "y": 13.310769081115723,
+                "z": 64.30000305175781
+            },
+            "shadows": true
+        },
+        {
+            "name": "N analysis blue grey",
+            "vertices": 7986,
+            "triangles": 8784,
+            "bounds": {
+                "x": 51.29999923706055,
+                "y": 8.479999542236329,
+                "z": 37.218997955322269
+            },
+            "shadows": true
+        },
+        {
+            "name": "Matte ochre",
+            "vertices": 86400,
+            "triangles": 77112,
+            "bounds": {
+                "x": 60.584999084472659,
+                "y": 9.51498794555664,
+                "z": 48.81999969482422
+            },
+            "shadows": true
+        },
+        {
+            "name": "Grating alloy without aliasing shadows",
+            "vertices": 23088,
+            "triangles": 11544,
+            "bounds": {
+                "x": 48.0,
+                "y": 0.10000038146972656,
+                "z": 30.0
+            },
+            "shadows": false
+        },
+        {
+            "name": "Neutral light diffuser",
+            "vertices": 282392,
+            "triangles": 397704,
+            "bounds": {
+                "x": 290.8785705566406,
+                "y": 147.01971435546876,
+                "z": 292.38592529296877
+            },
+            "shadows": false
+        },
+        {
+            "name": "Dust-grey paving",
+            "vertices": 2544,
+            "triangles": 1272,
+            "bounds": {
+                "x": 59.849998474121097,
+                "y": 0.017999999225139619,
+                "z": 59.849998474121097
+            },
+            "shadows": true
+        },
+        {
+            "name": "Blue photovoltaic cells",
+            "vertices": 720,
+            "triangles": 360,
+            "bounds": {
+                "x": 11.930000305175782,
+                "y": 0.8412456512451172,
+                "z": 2.5105485916137697
+            },
+            "shadows": true
+        },
+        {
+            "name": "W communications sage",
+            "vertices": 9224,
+            "triangles": 8356,
+            "bounds": {
+                "x": 0.6399993896484375,
+                "y": 7.334903717041016,
+                "z": 5.894904136657715
+            },
+            "shadows": true
+        },
+        {
+            "name": "E power grey lavender",
+            "vertices": 216,
+            "triangles": 108,
+            "bounds": {
+                "x": 0.46249961853027346,
+                "y": 6.950000286102295,
+                "z": 5.000000476837158
+            },
+            "shadows": true
+        },
+        {
+            "name": "Black lunar sky and stars",
+            "vertices": 515,
+            "triangles": 768,
+            "bounds": {
+                "x": 300.0,
+                "y": 300.0,
+                "z": 300.0
+            },
+            "shadows": true
+        },
+        {
+            "name": "NASA Blue Marble / clouds and atmosphere",
+            "vertices": 515,
+            "triangles": 768,
+            "bounds": {
+                "x": 16.0,
+                "y": 16.0,
+                "z": 16.0
+            },
+            "shadows": true
+        }
+    ],
+    "botMs": {
+        "count": 0,
+        "hitches16": 0,
+        "hitches25": 0,
+        "hitches50": 0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+    },
+    "tickMs": {
+        "count": 0,
+        "hitches16": 0,
+        "hitches25": 0,
+        "hitches50": 0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+    },
+    "frozenState": "{\"Version\":9,\"Match\":{\"Version\":2,\"TuningIdentity\":\"50|15000|250|50|400|0|200|100,300,500,800,1200\",\"AssistLedger\":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],\"ChainAwards\":[0,0,0,0,0,0,0,0],\"DiedThisTick\":[false,false,false,false,false,false,false,false],\"Tick\":0,\"RemainingTicks\":15000,\"Phase\":0,\"Trigger\":\"\",\"Winner\":-1,\"WinnerTeam\":0,\"Roster\":{\"Mode\":0,\"Teams\":[0,0,0,0,0,0,0,0]},\"Standings\":[{\"Seat\":0,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":1,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":2,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":3,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":4,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":5,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":6,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0},{\"Seat\":7,\"Kills\":0,\"Assists\":0,\"Deaths\":0,\"Score\":0,\"SelfKills\":0,\"AllyKills\":0,\"AccumulatedPenalty\":0,\"DamageDealt\":0.0,\"DamageReceived\":0.0,\"AllyDamageDealt\":0.0}],\"Teams\":[],\"DirectKillsByPair\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"KillChains\":[0,0,0,0,0,0,0,0]},\"Poses\":[{\"Position\":{\"x\":-4.0,\"y\":0.009999999776482582,\"z\":18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":4.0,\"y\":0.009999999776482582,\"z\":-18.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":26.0,\"y\":0.009999999776482582,\"z\":0.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":10.0,\"y\":0.029999995604157449,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-10.0,\"y\":0.029999995604157449,\"z\":-10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":-3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0},{\"Position\":{\"x\":3.0,\"y\":4.510000228881836,\"z\":10.0},\"Velocity\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Yaw\":0.0,\"Pitch\":0.0,\"Grounded\":false,\"LookNeutralSeconds\":0.0,\"LookReturnVelocity\":0.0}],\"RifleBullets\":[],\"WeaponPickups\":[{\"InstanceId\":\"W1\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":-9.0,\"y\":0.019999999552965165,\"z\":9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W2\",\"Support\":\"support:ground\",\"Weapon\":2,\"Anchor\":{\"x\":9.0,\"y\":0.019999999552965165,\"z\":-9.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W3\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W4\",\"Support\":\"support:ground\",\"Weapon\":3,\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W5\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":-13.5,\"y\":4.5,\"z\":13.5},\"Available\":true,\"Remaining\":0.0},{\"InstanceId\":\"W6\",\"Support\":\"support:upper\",\"Weapon\":4,\"Anchor\":{\"x\":13.5,\"y\":4.5,\"z\":-13.5},\"Available\":true,\"Remaining\":0.0}],\"Beams\":[{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]},{\"Active\":false,\"Wall\":false,\"EmissionSeconds\":0.0,\"Origin\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Endpoint\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"Contacts\":[{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0},{\"Life\":0,\"Seconds\":0.0,\"DamageRemainder\":0.0}]}],\"BeamReleaseRequired\":[true,true,true,true,true,true,true,true],\"Rockets\":[],\"HealPickups\":[{\"InstanceId\":\"H\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":1.5},\"Available\":false,\"Remaining\":20.0}],\"ArenaIdentity\":\"lunar-laboratory-v1@6\",\"DesignProfile\":{\"ProfileId\":\"diagnostic-fixture\",\"Revision\":0,\"Hash\":\"e4876395cd7b3888646a1af1c962f298efd1c6b9c482247827a80cb9b1c59c46\"},\"Time\":0.0,\"ShotSequence\":0,\"ShotCount\":0,\"Lives\":[{\"ParticipantId\":\"player-1\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-2\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-3\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-4\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-5\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-6\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-7\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0},{\"ParticipantId\":\"player-8\",\"Life\":1,\"Health\":100.0,\"Armor\":0.0,\"Ammo\":200,\"SelectedWeapon\":1,\"PendingWeapon\":0,\"SwitchRemaining\":0.0,\"ShotgunOwned\":false,\"RocketOwned\":false,\"CutterOwned\":false,\"RifleAmmo\":200,\"ShotgunAmmo\":0,\"RocketAmmo\":0,\"CutterEnergy\":0.0,\"RifleCooldownRemaining\":0.0,\"ShotgunCooldownRemaining\":0.0,\"RocketCooldownRemaining\":0.0,\"Dead\":false,\"FireHeld\":false,\"CooldownRemaining\":0.0,\"RespawnRemaining\":0.0,\"KillerId\":\"\",\"KillerLife\":0}],\"ArmorPickups\":[{\"InstanceId\":\"A1\",\"Anchor\":{\"x\":28.0,\"y\":0.0,\"z\":28.0},\"Available\":true,\"RespawnRemaining\":0.0},{\"InstanceId\":\"A2\",\"Anchor\":{\"x\":-28.0,\"y\":0.0,\"z\":-28.0},\"Available\":true,\"RespawnRemaining\":0.0}],\"SpeedPickups\":[{\"InstanceId\":\"V\",\"Anchor\":{\"x\":0.0,\"y\":0.019999999552965165,\"z\":-1.5},\"Available\":false,\"Remaining\":10.0}],\"SpeedRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"DamagePickup\":{\"InstanceId\":\"D\",\"Anchor\":{\"x\":0.0,\"y\":4.5,\"z\":-7.0},\"Available\":false,\"Remaining\":15.0},\"DamageRemaining\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}"
+}

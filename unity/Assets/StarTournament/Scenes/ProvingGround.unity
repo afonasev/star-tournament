@@ -59363,7 +59363,7 @@ MonoBehaviour:
       Value: 0
   LunarPresentation:
     id: lunar-laboratory-presentation-v1
-    version: 3
+    version: 4
     descriptors:
     - Path: lunar.navigationClearance
       Group: lunar-presentation
@@ -59443,7 +59443,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 100
       Step: 0.5
-      DefaultValue: 18
+      DefaultValue: 20
     - Path: lunar.officeFill
       Group: lunar-presentation
       Label: "\u0417\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0449\u0438\u0439
@@ -59451,6 +59451,78 @@ MonoBehaviour:
       Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
         \u0417\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0449\u0438\u0439 \u043E\u0444\u0438\u0441\u043D\u044B\u0439
         \u0441\u0432\u0435\u0442; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: intensity
+      Minimum: 0
+      Maximum: 20
+      Step: 0.25
+      DefaultValue: 3.5
+    - Path: lunar.officeSpotRange
+      Group: lunar-presentation
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u043E\u0433\u043E
+        \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E \u0441\u0432\u0435\u0442\u0430"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u0420\u0430\u0434\u0438\u0443\u0441 \u043F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u043E\u0433\u043E
+        \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E \u0441\u0432\u0435\u0442\u0430;
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435 \u043D\u0435
+        \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: m
+      Minimum: 2
+      Maximum: 10
+      Step: 0.25
+      DefaultValue: 7
+    - Path: lunar.officeFillRange
+      Group: lunar-presentation
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E
+        \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u0420\u0430\u0434\u0438\u0443\u0441 \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E
+        \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: m
+      Minimum: 2
+      Maximum: 10
+      Step: 0.25
+      DefaultValue: 6.5
+    - Path: lunar.officeInnerAngle
+      Group: lunar-presentation
+      Label: "\u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u0438\u0439 \u0443\u0433\u043E\u043B
+        \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E \u0441\u0432\u0435\u0442\u0430"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u0438\u0439 \u0443\u0433\u043E\u043B
+        \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E \u0441\u0432\u0435\u0442\u0430;
+        \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435 \u043D\u0435
+        \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: deg
+      Minimum: 5
+      Maximum: 124
+      Step: 1
+      DefaultValue: 65
+    - Path: lunar.stairLamp
+      Group: lunar-presentation
+      Label: "\u041F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0439 \u0441\u0432\u0435\u0442
+        \u043B\u0435\u0441\u0442\u043D\u0438\u0446"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u041F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0439 \u0441\u0432\u0435\u0442
+        \u043B\u0435\u0441\u0442\u043D\u0438\u0446; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+        \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
+      Unit: intensity
+      Minimum: 0
+      Maximum: 100
+      Step: 0.5
+      DefaultValue: 18
+    - Path: lunar.stairFill
+      Group: lunar-presentation
+      Label: "\u0417\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0449\u0438\u0439
+        \u0441\u0432\u0435\u0442 \u043B\u0435\u0441\u0442\u043D\u0438\u0446"
+      Description: "\u041B\u0443\u043D\u043D\u0430\u044F \u043B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u0438\u044F:
+        \u0417\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0449\u0438\u0439 \u0441\u0432\u0435\u0442
+        \u043B\u0435\u0441\u0442\u043D\u0438\u0446; \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435
         \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0444\u0438\u0437\u0438\u0447\u0435\u0441\u043A\u0438\u0435
         \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u044B."
       Unit: intensity
@@ -59564,8 +59636,18 @@ MonoBehaviour:
     - Path: lunar.range
       Value: 10
     - Path: lunar.officeLamp
-      Value: 18
+      Value: 20
     - Path: lunar.officeFill
+      Value: 3.5
+    - Path: lunar.officeSpotRange
+      Value: 7
+    - Path: lunar.officeFillRange
+      Value: 6.5
+    - Path: lunar.officeInnerAngle
+      Value: 65
+    - Path: lunar.stairLamp
+      Value: 18
+    - Path: lunar.stairFill
       Value: 2.5
     - Path: lunar.glassOpacity
       Value: 0.3

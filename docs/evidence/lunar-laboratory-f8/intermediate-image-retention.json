@@ -1,0 +1,330 @@
+{
+  "policy": "Intermediate diagnostic PNGs summarized in lossless PNG contact sheets; full-resolution dark/count/cone comparison examples and closest12view examples retained. All CSV/JSON/plans/manifests retained. Not a product acceptance deletion. Final exact-baseline/candidate evidence pending and will be preserved.",
+  "removed": [
+    {
+      "path": "groups/hall-baseline.png",
+      "sha256": "abcf74e0c205e38b7bf73d4e333892dfb8d5cda8d77bb8c5064890a1409e04b1",
+      "bytes": 7173035
+    },
+    {
+      "path": "groups/hall-lower-point.png",
+      "sha256": "b1a340c045fd130e043262903d8111487a49cca55680242d025474235c475015",
+      "bytes": 6192276
+    },
+    {
+      "path": "groups/hall-lower-spot.png",
+      "sha256": "67103411c51b23466fc3b143ccddc93d237016dfbae0b474df53b7b7440c746d",
+      "bytes": 6720414
+    },
+    {
+      "path": "groups/hall-stairs-point.png",
+      "sha256": "7a4a6e15491344dc63218358a5237a10ab909eac94227ad11977f9ecd9bb2602",
+      "bytes": 7173053
+    },
+    {
+      "path": "groups/hall-stairs-spot.png",
+      "sha256": "7da486aa3d2f97067a1ca0429524a75a6b8b0d7aed4c5dd20c6d8ca7cd7ff3f8",
+      "bytes": 7171944
+    },
+    {
+      "path": "groups/hall-upper-point.png",
+      "sha256": "8bdf1061de29f5fb8aad8f9bbfa8a8835770305ae38406709e25a5cfdf11e4e5",
+      "bytes": 7108306
+    },
+    {
+      "path": "groups/hall-upper-spot.png",
+      "sha256": "5f7f9f3b110ed95ca18803758b73a3b915049c540c2c499bd65cff93e3c57700",
+      "bytes": 7042574
+    },
+    {
+      "path": "groups/upper-baseline.png",
+      "sha256": "06d9e8bcdbb5d879134b0ad540984b5a9e5580ae05e8c4e72dbec8bc6dac6818",
+      "bytes": 6950795
+    },
+    {
+      "path": "groups/upper-lower-point.png",
+      "sha256": "501eeddf4f5c1a892db09df6e689a87a5ba72da2e2707e53bd7126419a58a343",
+      "bytes": 6713187
+    },
+    {
+      "path": "groups/upper-lower-spot.png",
+      "sha256": "e8377a689ff7a2f539592d9c42f7979693261b99a32fa9940270ff21f695d553",
+      "bytes": 6950488
+    },
+    {
+      "path": "groups/upper-stairs-point.png",
+      "sha256": "95d561baf823d4f5e9abcfbe5d96b8a1e76065bb91a4bbf287cda94e66b981a3",
+      "bytes": 6950546
+    },
+    {
+      "path": "groups/upper-stairs-spot.png",
+      "sha256": "1e528898ba688992d0833f8483b0cc77a7797a59cf0c14a678b29f6945f6ccc3",
+      "bytes": 6950420
+    },
+    {
+      "path": "groups/upper-upper-point.png",
+      "sha256": "34c85ec94d33fcf9fb1e223acecfebcb13d056148ae8567d5b49b92b207f2409",
+      "bytes": 6175191
+    },
+    {
+      "path": "groups/upper-upper-spot.png",
+      "sha256": "b091237309d820317fe59be4a6d66638b5cd03e309078499beb66fee243dae04",
+      "bytes": 6527580
+    },
+    {
+      "path": "variants/hall-baseline.png",
+      "sha256": "2570e84d527c76db10fa244e8e89d80dba356fe025b3db3768eeb1b3afffd51d",
+      "bytes": 7173522
+    },
+    {
+      "path": "variants/hall-bounded-soft.png",
+      "sha256": "bea9c9f8483da631508f3be265a1a5703e32da83d919b20d1e2ca557b2db31cc",
+      "bytes": 6557778
+    },
+    {
+      "path": "variants/hall-sparse-fill.png",
+      "sha256": "fce0de447766f3eca9991fa00b5b0cc93bbe1fd544d75352f2c0943f04a2dfdc",
+      "bytes": 6149499
+    },
+    {
+      "path": "variants/upper-baseline.png",
+      "sha256": "cc462d29300c7d06934a493bd16a4ed346bb875e084e08800cfa9815f77b95c8",
+      "bytes": 6951474
+    },
+    {
+      "path": "variants/upper-bounded-soft.png",
+      "sha256": "d6c56a8b81887c927ee81caa1a5a588c9e5993c0ed3681410fc3e49fbe8d26fa",
+      "bytes": 6226768
+    },
+    {
+      "path": "variants/upper-sparse-fill.png",
+      "sha256": "6318db0ccb365d96bf4e0704aed284ff3b35f60a05f03ff0684d85dfba6b119b",
+      "bytes": 6091095
+    },
+    {
+      "path": "bright-variants/hall-bright-fill.png",
+      "sha256": "168e8c21bef0367f1eae6cebabb8545e2a9d4f531e22bebdbc81aee47e7946d4",
+      "bytes": 6825981
+    },
+    {
+      "path": "bright-variants/hall-bright-spot.png",
+      "sha256": "885539f66fe8411631bea9d2d4315854849f93113d0f84df97fef168b42a9019",
+      "bytes": 6945206
+    },
+    {
+      "path": "bright-variants/hall-bright-tight.png",
+      "sha256": "6d72aac53ac9958d3d66a4692a213a1058754527cb2cc922eab6b50d8405bb15",
+      "bytes": 6666828
+    },
+    {
+      "path": "bright-variants/upper-bright-fill.png",
+      "sha256": "a4133d555cce4be0b6aba03d7bbf27db4798c1a2564c75caf3238c57660f33a9",
+      "bytes": 6387270
+    },
+    {
+      "path": "bright-variants/upper-bright-spot.png",
+      "sha256": "5c641f33f8a6d1330c888111e3a4a922235bdbe1af7fe177332ae7d8118dd0d6",
+      "bytes": 6494547
+    },
+    {
+      "path": "bright-variants/upper-bright-tight.png",
+      "sha256": "4689147ef567e7ed9608376a7434ee5e111696d606a16fdd817497ebd14afcec",
+      "bytes": 6267862
+    },
+    {
+      "path": "spatial-variants/hall-lowered-fill.png",
+      "sha256": "6c1f5e6f921efd09a4e72dc3c8bc5bd28e58416fe818ec4a2efa3b142f82b2cc",
+      "bytes": 6908872
+    },
+    {
+      "path": "spatial-variants/hall-lowered-soft.png",
+      "sha256": "cb87bede49e0580ca94a2d2f90b474533e504ddc213f720c1fd377357124e705",
+      "bytes": 7001125
+    },
+    {
+      "path": "spatial-variants/upper-checker-fill.png",
+      "sha256": "d3f74f696b930fb39d70cba6f438a7bd5ba2bb9dcff7cc833eadcad3196593dc",
+      "bytes": 6301163
+    },
+    {
+      "path": "spatial-variants/upper-lowered-fill.png",
+      "sha256": "fb95bcf3af3f653e1ed6c8f81cc946d17f0bca255ea1a094284b15f6f3988a54",
+      "bytes": 6441466
+    },
+    {
+      "path": "spatial-variants/upper-lowered-soft.png",
+      "sha256": "4373b9790708b9a4de88d132c1916dd240f936c24bcfbd26c4f86427e813a13d",
+      "bytes": 6511623
+    },
+    {
+      "path": "balanced-variants/hall-balanced-tight.png",
+      "sha256": "848e6de8387712a87da54fa8645fe33f9033dc37a26edbf53c906dcd4744cc2b",
+      "bytes": 6867361
+    },
+    {
+      "path": "balanced-variants/hall-balanced-wide.png",
+      "sha256": "ad3b332c0cde1cd6fe012f00a486db0e009bc2581ab2b361745b9f08d3d61add",
+      "bytes": 6839351
+    },
+    {
+      "path": "balanced-variants/upper-balanced-tight.png",
+      "sha256": "9edf08fca11c3d6cd5785d056b9a82d0e7602a0250912f4ddef80a7dafff3771",
+      "bytes": 6445781
+    },
+    {
+      "path": "balanced-variants/upper-balanced-wide.png",
+      "sha256": "ef84d9f66ee5ebf43e94cf02e0ecb03e72e29a5382323ca0363479fb0de8ad41",
+      "bytes": 6531203
+    },
+    {
+      "path": "balanced-variants/upper-balanced.png",
+      "sha256": "48d7f6a1a4e1ba4e87a37a6957bbe72e209147c829926945a1f58c60897f64ee",
+      "bytes": 6464146
+    },
+    {
+      "path": "cone-variants/repeat-upper-baseline.png",
+      "sha256": "ee164c820b1c3a2e5df6b8dc0101b8c5878eed9d7599cee997827e7b849061f8",
+      "bytes": 6945373
+    },
+    {
+      "path": "cone-variants/repeat-upper-lower-point.png",
+      "sha256": "777a7eabe635c83dae089f781ddc39b24d41fbfdb2a7a9887a4019a6a506d09f",
+      "bytes": 6701119
+    },
+    {
+      "path": "cone-variants/repeat-upper-lower-spot.png",
+      "sha256": "000ab8411240c09d231fdc13c774fced413e7e7c849119dcc019415202bc9641",
+      "bytes": 6945490
+    },
+    {
+      "path": "cone-variants/repeat-upper-stairs-point.png",
+      "sha256": "57f438a5abe8c235179d909776e09288127024fc67c54317fb46a2ada74d8105",
+      "bytes": 6945596
+    },
+    {
+      "path": "cone-variants/repeat-upper-stairs-spot.png",
+      "sha256": "85f1418cd0b2006f0cd6849c4f80f619fbfbd6b81867054f0d51f36a3cb8983f",
+      "bytes": 6945359
+    },
+    {
+      "path": "cone-variants/repeat-upper-upper-point.png",
+      "sha256": "4eca53298a4fb79dd447724c491e6170d2a44bafa86bd3f632b7006ddd082195",
+      "bytes": 6163396
+    },
+    {
+      "path": "cone-variants/repeat-upper-upper-spot.png",
+      "sha256": "64fb2ad7e9fe0c5251ba4dd37aed995e99ad3687d72214ece4a351a86c5fb5fa",
+      "bytes": 6527731
+    },
+    {
+      "path": "cone-variants/upper-baseline.png",
+      "sha256": "d181fb4af8db1ebe5c4ee44891f8e53e317ef4413cc5a4f5820c41e5713b72e5",
+      "bytes": 6945349
+    },
+    {
+      "path": "cone-variants/upper-short-core.png",
+      "sha256": "b90d282184ff36ed2253add4e512bb2625bf1080e2147accb21917f3ead8ebc5",
+      "bytes": 6587112
+    },
+    {
+      "path": "cone-variants/upper-tight-core.png",
+      "sha256": "2054ae05270fd09ae15e6cce1b37e5fff6628eae06890d8727c36114104df15b",
+      "bytes": 6721046
+    },
+    {
+      "path": "cone-variants/upper-wide-core.png",
+      "sha256": "0463a7e7774dd8af848f03e0dd30342f04817f87e7191e8a5b8b862aa0b973ce",
+      "bytes": 6748095
+    },
+    {
+      "path": "matched-views/east-opening-baseline.png",
+      "sha256": "8ef35e353ef5fe9dc56c0be6257d832bf05b47d69b616fd5f6fafcaccfbf1e96",
+      "bytes": 6012500
+    },
+    {
+      "path": "matched-views/east-opening-matched.png",
+      "sha256": "39ffc9de11c5697e66ec550a5a2898cb0f4b55f760accced61c439a5adcc3635",
+      "bytes": 5911793
+    },
+    {
+      "path": "matched-views/east-stair-baseline.png",
+      "sha256": "8a604e576a6c29d599e0e7d2e322fda9adf1389c7fceb3015225665f753b9f3a",
+      "bytes": 4803601
+    },
+    {
+      "path": "matched-views/east-stair-matched.png",
+      "sha256": "8a604e576a6c29d599e0e7d2e322fda9adf1389c7fceb3015225665f753b9f3a",
+      "bytes": 4803601
+    },
+    {
+      "path": "matched-views/lab-a-baseline.png",
+      "sha256": "d339351b217ccc7a0a6f82c4614fb73a6eee446f8d316f00f4eb2e1e15926933",
+      "bytes": 7147425
+    },
+    {
+      "path": "matched-views/lab-a-matched.png",
+      "sha256": "2c8e6ed0a6a8a359faadcbc5a17370299441653c76bbcd93fe05e9cba98ef803",
+      "bytes": 6990880
+    },
+    {
+      "path": "matched-views/north-door-baseline.png",
+      "sha256": "7fb1d0ec9a0993bdf6adfbc27210b6e16ac4265cbdde6c655791df8811589d2f",
+      "bytes": 3913096
+    },
+    {
+      "path": "matched-views/north-door-matched.png",
+      "sha256": "063340645c4c3cdf275263ef6f63931bc21a2536f0d1cdff8e60dafbf1186f95",
+      "bytes": 3867246
+    },
+    {
+      "path": "matched-views/north-lower-baseline.png",
+      "sha256": "c0445d68402c5c459d4a95bada7f0959fcb4be6533ea905ac477427045872a49",
+      "bytes": 7191734
+    },
+    {
+      "path": "matched-views/north-lower-matched.png",
+      "sha256": "358352afc0a0ac9d1f2fa168259200ea93f0239453120a03f24f008d26478254",
+      "bytes": 7133921
+    },
+    {
+      "path": "matched-views/south-door-baseline.png",
+      "sha256": "b9b0f34b80c57acecfaecca263cdb830ef9948f10b93ac5ab6842e1637dc9c59",
+      "bytes": 7190269
+    },
+    {
+      "path": "matched-views/south-door-matched.png",
+      "sha256": "affeb5343f263f9418ffe9d9802fbdbe6d294c282b17cf9b122e20167e4be485",
+      "bytes": 7104407
+    },
+    {
+      "path": "matched-views/west-opening-baseline.png",
+      "sha256": "c9a807e34bdf8a567a2d4af650c238c2f3468c785df5ec17c41c6785196d1bfc",
+      "bytes": 6108579
+    },
+    {
+      "path": "matched-views/west-opening-matched.png",
+      "sha256": "2c8a6c8a2e3e8d9dbfa2eaf8939508ce8602c80b8c46f50eae24ea4469dd83fe",
+      "bytes": 6042151
+    },
+    {
+      "path": "matched-views/west-stair-baseline.png",
+      "sha256": "9c246ffe5b777a41fc84269cf4f6c763336b5870168a5e27ccd5acddf41695c3",
+      "bytes": 4817232
+    },
+    {
+      "path": "matched-views/west-stair-matched.png",
+      "sha256": "9c246ffe5b777a41fc84269cf4f6c763336b5870168a5e27ccd5acddf41695c3",
+      "bytes": 4817232
+    },
+    {
+      "path": "matched-views/yard-baseline.png",
+      "sha256": "013a7bc1b916ea2302c9249a824e04707ab423f3557782e5326b93ed878c5b29",
+      "bytes": 4760091
+    },
+    {
+      "path": "matched-views/yard-matched.png",
+      "sha256": "9d988031cf4af242f387bda7ddc0e472877f99d9da5775147b42f491467327ee",
+      "bytes": 4727272
+    }
+  ]
+}

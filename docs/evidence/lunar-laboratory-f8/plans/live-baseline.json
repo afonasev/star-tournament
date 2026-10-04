@@ -1,0 +1,44 @@
+{
+  "steps": [
+    {
+      "name": "live-baseline",
+      "variant": "baseline",
+      "feet": {
+        "x": 0,
+        "y": 0.02,
+        "z": -9
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "live": true,
+      "warmup": 5,
+      "duration": 60,
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "lower-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        },
+        {
+          "group": "upper-spot",
+          "range": 10,
+          "intensity": 18,
+          "innerAngle": 21.8020801544
+        },
+        {
+          "group": "upper-point",
+          "range": 10,
+          "intensity": 2.5,
+          "innerAngle": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "steps": [
+    {
+      "name": "upper-baseline",
+      "variant": "baseline",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "upper-lower-point",
+      "variant": "without-lower-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "upper-lower-spot",
+      "variant": "without-lower-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "lower-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "upper-upper-point",
+      "variant": "without-upper-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "upper-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "upper-upper-spot",
+      "variant": "without-upper-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "upper-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "upper-stairs-point",
+      "variant": "without-stairs-point",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "stairs-point",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    },
+    {
+      "name": "upper-stairs-spot",
+      "variant": "without-stairs-spot",
+      "feet": {
+        "x": 0,
+        "y": 4.5,
+        "z": -9
+      },
+      "lighting": [
+        {
+          "group": "stairs-spot",
+          "disable": true
+        }
+      ],
+      "yaw": 0,
+      "pitch": 0,
+      "warmup": 5,
+      "duration": 8,
+      "live": false
+    }
+  ]
+}

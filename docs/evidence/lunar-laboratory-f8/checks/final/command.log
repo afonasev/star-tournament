@@ -1,0 +1,12 @@
+./unity/tools.sh test-edit
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity
+unity-run: started shared:1; guardian=42965 pid=32668
+unity-run: finished pid=32668 exit=0; capacity released
+./unity/tools.sh test-play
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity
+unity-run: started shared:1; guardian=53791 pid=53793
+unity-run: finished pid=53793 exit=0; capacity released
+./unity/tools.sh build
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity
+unity-run: started shared:1; guardian=73497 pid=73498
+unity-run: finished pid=73498 exit=0; capacity released
