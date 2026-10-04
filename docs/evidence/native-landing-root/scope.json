@@ -1,0 +1,15 @@
+{
+  "owner": "01a1064f-c5c3-7f93-ae15-52d7a8876556",
+  "authorization": "User: \u0434\u0430\u0432\u0430\u0439 \u0437\u0430\u043c\u0435\u043d\u0438\u043c \u0433\u043b\u0430\u0432\u043d\u0443\u044e \u043d\u0430 \u043b\u0435\u043d\u0434\u0438\u043d\u0433",
+  "baseline": "ea05c58a9f50488e44386954e52fd8a789c56fa0",
+  "scope": "VPS Caddy site routing only; root serves existing desktop/test landing; immutable package/feed URLs preserved",
+  "checks": [
+    "Caddy config validation",
+    "public HTTPS root/asset byte equality with desktop/test",
+    "installer HTTP 200 and length",
+    "feed byte equality before/after",
+    "rendered enabled installer links"
+  ],
+  "runtimeChanges": false,
+  "retained": "Existing published landing and exact installation/update candidates; foreign local dirty settings and worktrees"
+}
