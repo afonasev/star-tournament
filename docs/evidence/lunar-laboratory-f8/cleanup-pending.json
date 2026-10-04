@@ -1,24 +1,29 @@
 {
-  "status": "INCOMPLETE",
-  "owned_worktree": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap",
-  "branch": "codex/lunar-light-overlap",
-  "source_preservation": "Source/evidence checkpoint 9bfe4655202a5b360e9b5ba8a2444b2351c58fa2; unmerged worktree/branch retained",
-  "active": "No owned Editor/Player/test/build; own waiting rebuild cancelled before launch",
-  "retained": [
-    "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f8-checkpoint-9bfe465/20261004T091820Z/StarTournamentProvingGround.app",
-    "Primary original F7 exact Player unchanged",
-    "Git source/evidence; owned unmerged worktree/branch"
-  ],
-  "removed_records": [
-    "intermediate-cleanup.json",
-    "intermediate-image-retention.json"
-  ],
-  "foreign": "Main ProjectSettings dirty files, other worktrees and foreign Spacewars manual Player preserved",
-  "disk_free_GiB": 98.5,
-  "remaining": [
-    "exact committed-revision rebuild and exclusive native/performance QA after slot release",
-    "integration/spec sync",
-    "safe removal of unmerged worktree/branch after integration",
-    "human acceptance (separate)"
-  ]
+  "status": "HISTORICAL_SUPERSEDED",
+  "current_record": "/Users/eaafonasev/Projects/star-tournament-planning/openspec/changes/add-lunar-laboratory-map/evidence/f8-continuation/final-cleanup.json",
+  "historical_snapshot": {
+    "status": "INCOMPLETE",
+    "owned_worktree": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap",
+    "branch": "codex/lunar-light-overlap",
+    "source_preservation": "Source/evidence checkpoint 9bfe4655202a5b360e9b5ba8a2444b2351c58fa2; unmerged worktree/branch retained",
+    "active": "No owned Editor/Player/test/build; own waiting rebuild cancelled before launch",
+    "retained": [
+      "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f8-checkpoint-9bfe465/20261004T091820Z/StarTournamentProvingGround.app",
+      "Primary original F7 exact Player unchanged",
+      "Git source/evidence; owned unmerged worktree/branch"
+    ],
+    "removed_records": [
+      "intermediate-cleanup.json",
+      "intermediate-image-retention.json"
+    ],
+    "foreign": "Main ProjectSettings dirty files, other worktrees and foreign Spacewars manual Player preserved",
+    "disk_free_GiB": 98.5,
+    "remaining": [
+      "exact committed-revision rebuild and exclusive native/performance QA after slot release",
+      "integration/spec sync",
+      "safe removal of unmerged worktree/branch after integration",
+      "human acceptance (separate)"
+    ]
+  },
+  "note": "Checkpoint binary superseded and removed; exact Player retained. Actual current cleanup and acceptance status are in canonical delivery.json."
 }
