@@ -1,0 +1,19 @@
+Valid configuration
+Valid configuration
+Caddy validated and reloaded
+{"level":"info","ts":1791107572.4029977,"msg":"using config from file","file":"/etc/caddy/sites/.robowar-01a1064f-next"}
+{"level":"info","ts":1791107572.4047687,"msg":"adapted config to JSON","adapter":"caddyfile"}
+{"level":"warn","ts":1791107572.4047925,"msg":"Caddyfile input is not formatted; run 'caddy fmt --overwrite' to fix inconsistencies","adapter":"caddyfile","file":"/etc/caddy/sites/.robowar-01a1064f-next","line":2}
+{"level":"info","ts":1791107572.40537,"logger":"http.auto_https","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"srv0","https_port":443}
+{"level":"info","ts":1791107572.4053907,"logger":"http.auto_https","msg":"enabling automatic HTTP->HTTPS redirects","server_name":"srv0"}
+{"level":"info","ts":1791107572.4054086,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0x1962075a9e00"}
+{"level":"info","ts":1791107572.4059322,"logger":"http","msg":"servers shutting down with eternal grace period"}
+{"level":"info","ts":1791107572.4059858,"logger":"tls.cache.maintenance","msg":"stopped background certificate maintenance","cache":"0x1962075a9e00"}
+{"level":"info","ts":1791107572.4406314,"msg":"using config from file","file":"/etc/caddy/Caddyfile"}
+{"level":"info","ts":1791107572.452053,"msg":"adapted config to JSON","adapter":"caddyfile"}
+{"level":"warn","ts":1791107572.452171,"msg":"Caddyfile input is not formatted; run 'caddy fmt --overwrite' to fix inconsistencies","adapter":"caddyfile","file":"/etc/caddy/Caddyfile","line":6}
+{"level":"info","ts":1791107572.4535394,"logger":"http.auto_https","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"srv0","https_port":443}
+{"level":"info","ts":1791107572.4536333,"logger":"http.auto_https","msg":"enabling automatic HTTP->HTTPS redirects","server_name":"srv0"}
+{"level":"info","ts":1791107572.4536386,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0x3d49110ae380"}
+{"level":"info","ts":1791107572.4562552,"logger":"tls.cache.maintenance","msg":"stopped background certificate maintenance","cache":"0x3d49110ae380"}
+{"level":"info","ts":1791107572.456369,"logger":"http","msg":"servers shutting down with eternal grace period"}

@@ -61,7 +61,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var p=ProvingProfile.CreateMatchDefault();var d=p.Descriptor("score.friendlyOrSelfKillPenalty");Assert.That((d.Minimum,d.Maximum,d.Step,d.DefaultValue),Is.EqualTo((0f,20000f,1f,200f)));
             var old=JsonUtility.FromJson<NativeMatchSnapshot>("{\"Standings\":[{\"Seat\":0,\"Kills\":2,\"Score\":300,\"DamageDealt\":200}]}");
             Assert.That(old.Standings[0].AccumulatedPenalty,Is.Zero);Assert.That(old.Standings[0].AllyDamageDealt,Is.Zero);
-            Assert.That(NativeStandingsView.Values(old.Standings[0],true)[6],Is.EqualTo("300"));
+            Assert.That(NativeStandingsView.Values(old.Standings[0],true)[7],Is.EqualTo("300"));
         }
     }
 }
