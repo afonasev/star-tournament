@@ -2,25 +2,23 @@
   "status": "INCOMPLETE",
   "owned_worktree": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap",
   "branch": "codex/lunar-light-overlap",
-  "source_preservation": "Code/evidence checkpoint commit pending now; worktree remains unmerged for exact QA/integration.",
-  "active": "No owned Unity/test/build process; make check exited0",
+  "source_preservation": "Source/evidence checkpoint 9bfe4655202a5b360e9b5ba8a2444b2351c58fa2; unmerged worktree/branch retained",
+  "active": "No owned Editor/Player/test/build; own waiting rebuild cancelled before launch",
   "retained": [
-    "owned .local/f8-study-v3 exact diagnostic",
-    "owned unity/Builds prototype (will be replaced by required build)",
-    "own Library/Temp/Logs while tests/build pending",
-    "primary F7 exact candidate unchanged"
+    "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f8-checkpoint-9bfe465/20261004T091820Z/StarTournamentProvingGround.app",
+    "Primary original F7 exact Player unchanged",
+    "Git source/evidence; owned unmerged worktree/branch"
   ],
   "removed_records": [
     "intermediate-cleanup.json",
     "intermediate-image-retention.json"
   ],
   "foreign": "Main ProjectSettings dirty files, other worktrees and foreign Spacewars manual Player preserved",
-  "disk_free_GiB": 91,
+  "disk_free_GiB": 98.5,
   "remaining": [
-    "exact Player smoke/performance at3456x2160 and original F7 visual review",
-    "Git code/evidence preservation and integration",
-    "exact F8 candidate retention",
-    "source/resource-safe worktree/build/cache/temp cleanup",
+    "exact committed-revision rebuild and exclusive native/performance QA after slot release",
+    "integration/spec sync",
+    "safe removal of unmerged worktree/branch after integration",
     "human acceptance (separate)"
   ]
 }

@@ -1,0 +1,39 @@
+{
+  "owner": "01a10571-1224-7552-9c8e-2224720be774",
+  "source_checkpoint": "9bfe4655202a5b360e9b5ba8a2444b2351c58fa2",
+  "retained_player": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f8-checkpoint-9bfe465/20261004T091820Z/StarTournamentProvingGround.app",
+  "retained_sha256": "dfdf54bcdbcab4ef56b38d2372c6c29dfe70ecd1f0c9430e278ae6442c700770",
+  "removed": [
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/.local/f8-study-v3",
+      "bytes": 488416382,
+      "reason": "Owned superseded/reconstructible; durable evidence and checkpoint Player retained"
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity/Builds",
+      "bytes": 488420567,
+      "reason": "Owned superseded/reconstructible; durable evidence and checkpoint Player retained"
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity/Library",
+      "bytes": 2265351346,
+      "reason": "Owned superseded/reconstructible; durable evidence and checkpoint Player retained"
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity/Logs",
+      "bytes": 162308,
+      "reason": "Owned superseded/reconstructible; durable evidence and checkpoint Player retained"
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity/UserSettings",
+      "bytes": 925,
+      "reason": "Owned superseded/reconstructible; durable evidence and checkpoint Player retained"
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/.local/unity-evidence",
+      "bytes": 3725799,
+      "reason": "Owned superseded/reconstructible; durable evidence and checkpoint Player retained"
+    }
+  ],
+  "remaining": "Unmerged worktree/branch retained for pending exact QA/integration; foreign resources preserved"
+}

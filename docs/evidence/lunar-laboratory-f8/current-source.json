@@ -1,7 +1,7 @@
 {
   "owner": "01a10571-1224-7552-9c8e-2224720be774",
   "base": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
-  "status": "make check PASS; source checkpoint commit pending; exact Player smoke/performance and integration remain open",
+  "status": "Source/evidence preserved in checkpoint commit; make check PASS. Exact-source rebuild, native/performance QA and integration pending.",
   "files": [
     {
       "path": "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs",
@@ -27,5 +27,6 @@
       "path": "unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs",
       "sha256": "d3ffcb98f36bcab2f6886b502659e7b41a2535898fee58deddfdb37f267e4f4a"
     }
-  ]
+  ],
+  "source_checkpoint": "9bfe4655202a5b360e9b5ba8a2444b2351c58fa2"
 }
