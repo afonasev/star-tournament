@@ -1,0 +1,53 @@
+{
+  "completed": true,
+  "owner": "01a1064a-a440-7283-bf7e-dcf057361c10",
+  "utc": "2026-10-05T09:47:54.143765+00:00",
+  "worktree_removed": "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame",
+  "branch_removed": "codex/lunar-door-frame",
+  "worktree_clean_before_removal": true,
+  "branch_merged_verified": true,
+  "no_owned_live_processes": true,
+  "removed": [
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/Library",
+      "KiB": 2338572,
+      "removed": true
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/Builds",
+      "KiB": 477560,
+      "removed": true
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/.local",
+      "KiB": 4828,
+      "removed": true
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/Logs",
+      "KiB": 184,
+      "removed": true
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/UserSettings",
+      "KiB": 8,
+      "removed": true
+    }
+  ],
+  "temporary_files_removed": [
+    "/tmp/lunar-f9-integration-lease.json",
+    "/tmp/lunar-f9-retained-verified.json",
+    "/tmp/lunar-f9-duplicate-verified.json",
+    "/tmp/lunar-f9-planning-lease.json"
+  ],
+  "retained_candidate": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app",
+  "retained_sha256_verified": "909e8b72f93ba74b18ebafc1aeb3ae0f0915c2d34cb0c2c680982fcd4022cba5",
+  "retention_reason": "Pending human game/visual acceptance; all older candidates preserved",
+  "durable_evidence": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9",
+  "foreign_settings_unchanged": true,
+  "foreign_worktrees_preserved": "worktree /Users/eaafonasev/Projects/star-tournament\nHEAD befce51b4c8f264353ec6cd6c6c0ef540134bbb0\nbranch refs/heads/main\n\nworktree /Users/eaafonasev/Projects/star-tournament-native-install-update\nHEAD 07b99e5eeb8a54376ce62219e68487d57a189e68\nbranch refs/heads/codex/native-install-update\n\n",
+  "remaining_owned_cleanup_debt": [],
+  "free_disk_after": "Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s5   460Gi   332Gi   100Gi    77%    3.0M  1.0G    0%   /System/Volumes/Data\n",
+  "human_acceptance": false,
+  "archive_performed": false
+}
