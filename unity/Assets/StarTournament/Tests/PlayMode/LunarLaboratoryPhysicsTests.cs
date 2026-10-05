@@ -91,6 +91,24 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {Object.Destroy(root);}yield return null;
         }
+        [UnityTest] public IEnumerator LowerFloorBypassesBesideBothStairsAdmitActualCapsule()
+        {
+            var root=new GameObject("lunar-f10-bypass");var movement=ProvingProfile.CreateDefault();var arena=root.AddComponent<ProvingArena>();
+            try
+            {
+                arena.Build(AuthoredArenaCatalog.Freeze(LunarLaboratoryCatalog.Id,movement),movement);yield return null;Physics.SyncTransforms();
+                foreach(int side in new[]{-1,1})foreach(int direction in new[]{-1,1})
+                {
+                    var go=new GameObject("bypass-walker");go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();
+                    var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,new Vector3(side*10.6f,.02f,-direction*4.5f),arena);
+                    var state=motor.State;state.Yaw=direction>0?0:180;motor.RestoreState(state);
+                    for(int tick=0;tick<180;tick++){motor.Tick(new LocalAction{Move=Vector2.up},1/60f);Physics.SyncTransforms();}
+                    Assert.That(direction*motor.State.Position.z,Is.GreaterThan(4.4f),"continuous bypass, side="+side+" direction="+direction);
+                    Object.DestroyImmediate(go);
+                }
+            }
+            finally {Object.Destroy(root);}yield return null;
+        }
         [UnityTest] public IEnumerator RoutesStairsGlassAndSpawns()
         {
             var root=new GameObject("lunar-physics");var movement=ProvingProfile.CreateDefault();var nav=ProvingProfile.CreateNavigationDefault();var arena=root.AddComponent<ProvingArena>();

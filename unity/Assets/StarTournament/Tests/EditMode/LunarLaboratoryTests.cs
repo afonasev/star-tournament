@@ -17,6 +17,7 @@ namespace StarTournament.ProvingGround.Tests
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }
+        [TestCase("BeforeLunarBypass")]
         [TestCase("BeforeLunarLighting")]
         [TestCase("BeforeLunarFlush")]
         [TestCase("BeforeLunarInterior")]

@@ -6,14 +6,15 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="6", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="7", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
         internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true,true));
         internal static ProvingProfile BeforeInteriorAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,true));
         internal static ProvingProfile BeforeFlushAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,false,true));
-        static ArenaDefinition Draft(bool includeFormerCentre=false,bool beforeInterior=false,bool beforeFlush=false)
+        internal static ProvingProfile BeforeBypassAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(beforeBypass:true));
+        static ArenaDefinition Draft(bool includeFormerCentre=false,bool beforeInterior=false,bool beforeFlush=false,bool beforeBypass=false)
         {
             var s=new List<ArenaSolid>();var ts=new List<NativeNavigationTransition>();
             void Box(string id,Vector3 c,Vector3 size,string mat="ivory",string support="",string surface=null,int layer=ProvingArena.WorldLayer)
@@ -166,7 +167,8 @@ namespace StarTournament.ProvingGround
             Cargo("f2-south-inner",3.7f,-3.4f,1.6f,2.5f,1.3f);
             Cargo("f2-south-west-stack",-7.3f,-9.4f,1.1f,2.6f,1.2f);
             Cargo("f2-south-east-store",10.6f,-10.8f,1.1f,2.4f,1.1f);
-            Cargo("f2-south-west-wall",-10.5f,-3.8f,1.1f,1.7f,1.5f);
+            // F10: retain cargo while clearing the capsule bypass beside the closed stair wall.
+            Cargo("f2-south-west-wall",-10.5f,beforeBypass?-3.8f:-8f,1.1f,1.7f,1.5f);
             foreach(int side in new[]{-1,1})
             {
                 foreach(int row in new[]{-1,1})
