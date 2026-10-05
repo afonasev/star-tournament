@@ -367,6 +367,9 @@ namespace StarTournament.ProvingGround
                 {
                     var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(currentDescriptors.TryGetValue(d.Path,out var currentDescriptor))
                     {
+                        // The compatible revision uses current trusted map/diagnostic metadata.
+                        // Previous read-only values remain intact only in their historical revision.
+                        if(next.IsAuthoring(d.Path)||next.IsDiagnostic(d.Path))continue;
                         float value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,old.Snapshot.Get(d.Path));
                         // Interpret the untouched v9/v10 step interval as the new shipped default.
                         // Historical snapshots remain byte-for-byte intact with their original hash.

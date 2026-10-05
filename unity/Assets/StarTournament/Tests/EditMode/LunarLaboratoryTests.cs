@@ -36,9 +36,18 @@ namespace StarTournament.ProvingGround.Tests
                 {
                     var custom=prior.Selected.Snapshot.Clone();custom.Set("lunar.officeLamp",15.5f);custom.Set("lunar.officeFill",4.25f);prior.Save(custom);
                 }
+                if(transform=="BeforeLunarBypass")
+                {
+                    var custom=prior.Selected.Snapshot.Clone();custom.Set("lunar.officeLamp",16.25f);prior.Save(custom);
+                }
                 string hash=prior.Selected.Hash;int number=prior.Selected.Number;
                 var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);
                 Assert.That(next.SelectedProfile.Revisions.Single(x=>x.Number==number).Hash,Is.EqualTo(hash));
+                if(transform=="BeforeLunarBypass")
+                {
+                    Assert.That(next.Selected.Snapshot.Get("lunar.map.cargo-f2-south-west-wall.position.z"),Is.EqualTo(current.Get("lunar.map.cargo-f2-south-west-wall.position.z")),"compatible revision must not restore the blocked passage");
+                    Assert.That(next.Selected.Snapshot.Get("lunar.officeLamp"),Is.EqualTo(16.25f),"editable lighting survives map metadata upgrade");
+                }
                 if(transform=="BeforeLunarLighting")
                 {
                     Assert.That(next.Selected.Snapshot.Get("lunar.officeLamp"),Is.EqualTo(15.5f));
@@ -47,6 +56,24 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(next.Selected.Snapshot.Get("lunar.stairLamp"),Is.EqualTo(15.5f));
                     Assert.That(next.Selected.Snapshot.Get("lunar.stairFill"),Is.EqualTo(4.25f));
                 }
+            }
+            finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
+        }
+        [Test] public void HistoricalLunarGeometryTamperingIsRejectedWithoutOverwritingFile()
+        {
+            var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"lunar-metadata-"+System.Guid.NewGuid()+".json");
+            try
+            {
+                var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
+                var method=typeof(ProvingProfile).GetMethod("BeforeLunarBypass",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var old=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+                var history=new DesignLabHistory(path,old);history.Create("Old lunar geometry");
+                var file=JsonUtility.FromJson<LabHistoryFile>(System.IO.File.ReadAllText(path));
+                var revision=file.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Single(r=>r.Number==1);
+                revision.Snapshot.Set("lunar.map.cargo-f2-south-west-wall.position.z",-3.9f);revision.Hash=revision.Snapshot.Hash();
+                string tampered=JsonUtility.ToJson(file,true);System.IO.File.WriteAllText(path,tampered);
+                Assert.That(new DesignLabHistory(path,current).StorageError,Is.Not.Null,"valid content hash must not authorize changed read-only geometry");
+                Assert.That(System.IO.File.ReadAllText(path),Is.EqualTo(tampered),"untrusted source must be preserved");
             }
             finally {if(System.IO.File.Exists(path))System.IO.File.Delete(path);}
         }

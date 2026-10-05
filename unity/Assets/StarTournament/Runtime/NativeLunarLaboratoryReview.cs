@@ -66,11 +66,18 @@ namespace StarTournament.ProvingGround
                 }
             }
             if(args.Contains("-lunarF10"))
+            {
                 foreach(int side in new[]{-1,1})foreach(int direction in new[]{-1,1})
                 {
                     ground.PlaceCombatReviewSeat(0,new Vector3(side*10.6f,.02f,-direction*4.5f),0,direction>0?0:180);
                     yield return Capture("f10-"+(side<0?"west":"east")+"-"+(direction>0?"northbound":"southbound"));
                 }
+                foreach(int side in new[]{-1,1})
+                {
+                    ground.PlaceCombatReviewSeat(0,new Vector3(side*6.5f,.02f,side*4.5f),0,side*90);
+                    yield return Capture("f10-"+(side<0?"west":"east")+"-turn");
+                }
+            }
             if(args.Contains("-lunarF7"))
                 foreach(int side in new[]{-1,1}){ground.PlaceCombatReviewSeat(0,new Vector3(side*9,.02f,-2.5f),0,side*90);yield return Capture("f7-"+(side<0?"west":"east"));}
             if(args.Contains("-lunarSigns"))
