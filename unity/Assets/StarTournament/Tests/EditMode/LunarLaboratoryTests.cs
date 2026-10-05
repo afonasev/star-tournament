@@ -68,6 +68,32 @@ namespace StarTournament.ProvingGround.Tests
                 }
             }
         }
+        [Test] public void ExteriorDoorTrimContactsFacadeAndCanonicalHeader()
+        {
+            var d=LunarLaboratoryCatalog.Build();var go=new GameObject("Door trim contact test");
+            try
+            {
+                var kit=go.AddComponent<LunarLaboratoryPresentation>();
+                var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                typeof(LunarLaboratoryPresentation).GetField("definition",flags).SetValue(kit,d);
+                var bounds=typeof(LunarLaboratoryPresentation).GetMethod("EntryTrimBounds",flags);
+                foreach(int sign in new[]{-1,1})foreach(bool upper in new[]{false,true})
+                foreach(float x in !upper||sign<0?new[]{0f}:new[]{-6.5f,6.5f})
+                {
+                    float width=!upper||sign<0?4:3;
+                    var frame=(Bounds)bounds.Invoke(kit,new object[]{sign,upper,x,width});
+                    var header=d.Solids.Single(s=>s.Id==(sign<0?"s":"n")+(upper?"-upper-door-header":"-ground-header"));
+                    Assert.That(frame.max.y,Is.EqualTo(header.Position.y-header.Size.y*.5f).Within(.00001f),"connected posts and lintel reach physical header");
+                    Assert.That(frame.min.y,Is.EqualTo(upper?LunarLaboratoryCatalog.Upper:0).Within(.00001f),"posts stand on doorway floor");
+                    float inner=sign*frame.center.z-frame.extents.z;
+                    float wallFace=sign*header.Position.z+header.Size.z*.5f;
+                    Assert.That(inner,Is.LessThan(wallFace),"frame embedded in facade, no air gap");
+                    if(upper)Assert.That(inner,Is.LessThanOrEqualTo(12.06f),"jambs also touch adjacent armored glazing");
+                    Assert.That(frame.size.x,Is.EqualTo(width),"approved clear portal width preserved");
+                }
+            }
+            finally {Object.DestroyImmediate(go);}
+        }
         [Test] public void ApprovedV4Contract()
         {
             var d=LunarLaboratoryCatalog.Build();var result=ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault());Assert.That(result.IsValid,Is.True,result.ToString());

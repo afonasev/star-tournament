@@ -148,9 +148,16 @@ namespace StarTournament.ProvingGround
                 {Box(ochre,new Vector3(0,y,sign*12.21f),new Vector3(24,.14f,.09f));Box(ochre,new Vector3(sign*12.21f,y,8),new Vector3(.09f,.14f,8));Box(ochre,new Vector3(sign*12.21f,y,-8),new Vector3(.09f,.14f,8));}
                 foreach(float x in new[]{-11.8f,11.8f})Pipe(ivory,new Vector3(x,.25f,sign*11.8f),new Vector3(x,8.7f,sign*11.8f),.28f);
                 foreach(float z in new[]{-9f,9f})for(int i=0;i<3;i++)Pipe(metal,new Vector3(sign*12.25f,.3f+i*.22f,z-2),new Vector3(sign*12.25f,.3f+i*.22f,z+2),.09f);
-                // Paired entry frames: rounded metal edges, bright neutral diffuser.
-                foreach(float y in new[]{0f,4.5f})foreach(float x in y==0||sign<0?new[]{0f}:new[]{-6.5f,6.5f})
-                {float w=y==0||sign<0?4:3;foreach(int a in new[]{-1,1})Pipe(ivory,new Vector3(x+a*w*.5f,y,sign*12.25f),new Vector3(x+a*w*.5f,y+2.8f,sign*12.25f),.15f);Pipe(ivory,new Vector3(x-w*.5f,y+3,sign*12.25f),new Vector3(x+w*.5f,y+3,sign*12.25f),.15f);}
+                // Rounded trim is seated in the facade; posts meet the physical header.
+                foreach(bool upper in new[]{false,true})foreach(float x in !upper||sign<0?new[]{0f}:new[]{-6.5f,6.5f})
+                {
+                    var frame=EntryTrimBounds(sign,upper,x,!upper||sign<0?4:3);
+                    var left=new Vector3(frame.min.x,frame.min.y,frame.center.z);
+                    var right=new Vector3(frame.max.x,frame.min.y,frame.center.z);
+                    var topLeft=new Vector3(left.x,frame.max.y,left.z);
+                    var topRight=new Vector3(right.x,frame.max.y,right.z);
+                    Pipe(ivory,left,topLeft,.15f);Pipe(ivory,right,topRight,.15f);Pipe(ivory,topLeft,topRight,.15f);
+                }
                 for(int q=-28;q<=28;q+=14)
                 {var a=new Vector3(q,0,sign*31);Ball(white,a+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(a+Vector3.up*4);var b=new Vector3(sign*31,0,q);Ball(white,b+Vector3.up*3.7f,new Vector3(.22f,.65f,.22f));Light(b+Vector3.up*4);}
             }
@@ -166,6 +173,16 @@ namespace StarTournament.ProvingGround
             foreach(int a in new[]{-1,1})for(int i=-10;i<=10;i+=4)Drift(new Vector3(i,.045f,a*12.7f),2.6f,1.1f,i*11+a);
             Box(ivory,new Vector3(-4,9.4f,2),new Vector3(3,.8f,4));Box(metal,new Vector3(-4,9.85f,2),new Vector3(2.8f,.1f,3.8f));
             Pipe(metal,new Vector3(4,9,0),new Vector3(4,13,0),.12f);Ring(ivory,new Vector3(4,12,0),1.4f,new Vector3(0,.6f,1).normalized,.22f);
+        }
+        Bounds EntryTrimBounds(int sign,bool upper,float x,float width)
+        {
+            var id=(sign<0?"s":"n")+(upper?"-upper-door-header":"-ground-header");
+            var header=Array.Find(definition.Solids,s=>s.Id==id);
+            float bottom=upper?LunarLaboratoryCatalog.Upper:0;
+            float top=header.Position.y-header.Size.y*.5f;
+            // Cylinder diameter is .15m: embed a quarter diameter in the wall surface.
+            float z=header.Position.z+sign*(header.Size.z*.5f-.15f*.25f);
+            return new Bounds(new Vector3(x,(bottom+top)*.5f,z),new Vector3(width,top-bottom,.15f));
         }
         void GlassFrame(ArenaSolid s)
         {
