@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround.Tests
                 }
                 if(transform=="BeforeLunarBypass")
                 {
-                    var custom=prior.Selected.Snapshot.Clone();custom.Set("lunar.officeLamp",16.25f);prior.Save(custom);
+                    var custom=prior.Selected.Snapshot.Clone();custom.Set("lunar.officeLamp",16.5f);prior.Save(custom);
                 }
                 string hash=prior.Selected.Hash;int number=prior.Selected.Number;
                 var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);
@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround.Tests
                 if(transform=="BeforeLunarBypass")
                 {
                     Assert.That(next.Selected.Snapshot.Get("lunar.map.cargo-f2-south-west-wall.position.z"),Is.EqualTo(current.Get("lunar.map.cargo-f2-south-west-wall.position.z")),"compatible revision must not restore the blocked passage");
-                    Assert.That(next.Selected.Snapshot.Get("lunar.officeLamp"),Is.EqualTo(16.25f),"editable lighting survives map metadata upgrade");
+                    Assert.That(next.Selected.Snapshot.Get("lunar.officeLamp"),Is.EqualTo(16.5f),"editable lighting survives map metadata upgrade");
                 }
                 if(transform=="BeforeLunarLighting")
                 {
