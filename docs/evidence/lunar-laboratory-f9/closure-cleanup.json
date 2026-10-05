@@ -10,7 +10,8 @@
       "bytes": 474475667,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/0c31718eb1be.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/34b898d61c3f/20261003T114346Z/StarTournamentProvingGround.app",
@@ -22,7 +23,8 @@
       "bytes": 473054887,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/34b898d61c3f.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/3b803ea35960/20261003T145207Z/StarTournamentProvingGround.app",
@@ -34,7 +36,8 @@
       "bytes": 474475419,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/3b803ea35960.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/436b7cc/20261003T200043Z/StarTournamentProvingGround.app",
@@ -46,7 +49,8 @@
       "bytes": 487376683,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/436b7cc.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/b23d9da3e747/20261003T154221Z/StarTournamentProvingGround.app",
@@ -58,7 +62,8 @@
       "bytes": 474478078,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/b23d9da3e747.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/c8e32a38b91d/20261003T131559Z/StarTournamentProvingGround.app",
@@ -70,7 +75,8 @@
       "bytes": 474469215,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/c8e32a38b91d.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/d901ba70c4e5/20261003T142304Z/StarTournamentProvingGround.app",
@@ -82,7 +88,8 @@
       "bytes": 474474755,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/d901ba70c4e5.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f0f666bc08d5/20261003T170435Z/StarTournamentProvingGround.app",
@@ -94,7 +101,8 @@
       "bytes": 487158526,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/f0f666bc08d5.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     },
     {
       "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f377625/20261004T154517Z/StarTournamentProvingGround.app",
@@ -106,7 +114,8 @@
       "bytes": 488420567,
       "manifest": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/lunar-laboratory-f9/superseded-manifests/f377625.json",
       "owner_change": "add-lunar-laboratory-map",
-      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained"
+      "reason": "Superseded by explicitly accepted cef0121; no active planning dependency or live process; historical evidence retained",
+      "removed": true
     }
   ],
   "retained": {
@@ -171,5 +180,10 @@
   },
   "human_decision": "принято завершаем",
   "source": "current chat 01a1064a-a440-7283-bf7e-dcf057361c10; 2026-10-05",
-  "no_other_active_change_dependencies": true
+  "no_other_active_change_dependencies": true,
+  "completed": true,
+  "bytes_removed": 4308383797,
+  "retained_sha256_verified": "909e8b72f93ba74b18ebafc1aeb3ae0f0915c2d34cb0c2c680982fcd4022cba5",
+  "remaining_owned_cleanup_debt": [],
+  "free_disk_after": "Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s5   460Gi   328Gi   104Gi    77%    3.0M  1.1G    0%   /System/Volumes/Data\n"
 }
