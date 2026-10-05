@@ -302,6 +302,8 @@ namespace StarTournament.ProvingGround
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeTunnelWayfinding))).ToArray();
                 // Preserve distinct legacy defaults even when registry keys coincide.
                 predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.TunnelsArtId&&p.Id!=ProvingProfile.TunnelsAuthoringId).ToList()})).ToArray();
+                var beforeLunarBypass=Cached(p=>p.BeforeLunarBypass());
+                predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarBypass))).ToArray();
                 var beforeLunarLighting=Cached(p=>p.BeforeLunarLighting());
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarLighting))).ToArray();
                 var beforeLunarFlush=Cached(p=>p.BeforeLunarFlush());

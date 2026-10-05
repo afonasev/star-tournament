@@ -97,13 +97,21 @@ namespace StarTournament.ProvingGround.Tests
             try
             {
                 arena.Build(AuthoredArenaCatalog.Freeze(LunarLaboratoryCatalog.Id,movement),movement);yield return null;Physics.SyncTransforms();
-                foreach(int side in new[]{-1,1})foreach(int direction in new[]{-1,1})
+                foreach(int side in new[]{-1,1})foreach(bool reverse in new[]{false,true})
                 {
+                    var route=new[]{new Vector3(side*6.5f,.02f,-side*4.5f),new Vector3(side*10.6f,.02f,-side*4.5f),new Vector3(side*10.6f,.02f,side*4.5f),new Vector3(side*6.5f,.02f,side*4.5f)};
+                    if(reverse)System.Array.Reverse(route);
                     var go=new GameObject("bypass-walker");go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();
-                    var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,new Vector3(side*10.6f,.02f,-direction*4.5f),arena);
-                    var state=motor.State;state.Yaw=direction>0?0:180;motor.RestoreState(state);
-                    for(int tick=0;tick<180;tick++){motor.Tick(new LocalAction{Move=Vector2.up},1/60f);Physics.SyncTransforms();}
-                    Assert.That(direction*motor.State.Position.z,Is.GreaterThan(4.4f),"continuous bypass, side="+side+" direction="+direction);
+                    var motor=go.AddComponent<CharacterMotor>();motor.Initialize(movement,route[0],arena);
+                    foreach(var target in route.Skip(1))
+                    {
+                        var delta=target-motor.State.Position;delta.y=0;var direction=delta.normalized;
+                        var state=motor.State;state.Yaw=Mathf.Atan2(direction.x,direction.z)*Mathf.Rad2Deg;motor.RestoreState(state);
+                        for(int tick=0;tick<180&&Vector3.Dot(target-motor.State.Position,direction)>.1f;tick++)
+                        {motor.Tick(new LocalAction{Move=Vector2.up},1/60f);Physics.SyncTransforms();}
+                        var remaining=target-motor.State.Position;remaining.y=0;
+                        Assert.That(remaining.magnitude,Is.LessThan(.2f),"bypass must include both turns, side="+side+" reverse="+reverse+" target="+target);
+                    }
                     Object.DestroyImmediate(go);
                 }
             }

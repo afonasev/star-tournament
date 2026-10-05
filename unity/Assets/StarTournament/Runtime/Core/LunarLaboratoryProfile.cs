@@ -3,16 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
-        public static ProvingProfile CreateLunarAuthoring(ArenaDefinition d)
+        public static ProvingProfile CreateLunarAuthoring(ArenaDefinition d,int registryVersion=2)
         {
             // Repeated mesh-kit bars/posts are derived from deck/fence bounds, not independent level controls.
             // Export structural geometry and all gameplay anchors/routes; keep kit encoding in the asset manifest.
             var structural=new ArenaDefinition{Solids=d.Solids.Where(s=>!s.Id.Contains("-bar-")&&!s.Id.StartsWith("fence-x")&&!s.Id.StartsWith("fence-z")&&!s.Id.StartsWith("rail-")&&!s.Id.Contains("-outer-post-")).ToArray(),Spawns=d.Spawns,SpawnRegions=d.SpawnRegions,Transitions=d.Transitions,RouteAnchors=d.RouteAnchors,Pickups=d.Pickups};
-            var p=CreateCombatBowlAuthoringDefault(structural);p.id="lunar-laboratory-authoring-v1";p.version=1;
+            var p=CreateCombatBowlAuthoringDefault(structural);p.id="lunar-laboratory-authoring-v1";p.version=registryVersion;
             foreach(var a in p.descriptors){a.Path="lunar.map."+a.Path;a.Description="Лунная лаборатория v4; изменение требует новой проверенной immutable ревизии карты.";}
             foreach(var a in p.values)a.Path="lunar.map."+a.Path;return p;
         }
-        internal ProvingProfile BeforeLunarBypass()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeBypassAuthoring():this;
+        internal ProvingProfile BeforeLunarBypass()=>Id=="lunar-laboratory-authoring-v1"&&Version==2?LunarLaboratoryCatalog.BeforeBypassAuthoring():this;
         internal ProvingProfile BeforeLunarFlush()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeFlushAuthoring():this;
         internal ProvingProfile BeforeLunarInterior()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeInteriorAuthoring():this;
         internal ProvingProfile BeforeLunarOpenCentre()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeOpenCentreAuthoring():this;

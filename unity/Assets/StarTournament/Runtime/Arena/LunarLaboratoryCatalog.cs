@@ -10,10 +10,10 @@ namespace StarTournament.ProvingGround
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
         public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
-        internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true,true));
-        internal static ProvingProfile BeforeInteriorAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,true));
-        internal static ProvingProfile BeforeFlushAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,false,true));
-        internal static ProvingProfile BeforeBypassAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(beforeBypass:true));
+        internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true,true,beforeBypass:true),1);
+        internal static ProvingProfile BeforeInteriorAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,true,beforeBypass:true),1);
+        internal static ProvingProfile BeforeFlushAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,false,true,true),1);
+        internal static ProvingProfile BeforeBypassAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(beforeBypass:true),1);
         static ArenaDefinition Draft(bool includeFormerCentre=false,bool beforeInterior=false,bool beforeFlush=false,bool beforeBypass=false)
         {
             var s=new List<ArenaSolid>();var ts=new List<NativeNavigationTransition>();
@@ -150,11 +150,11 @@ namespace StarTournament.ProvingGround
                 Cargo("north-low",-.7f,8.7f,2.2f,.85f,1.5f);
             }
             Cargo("north-west",-4.4f,4.3f,2.8f,2.5f,1.3f);
-            Cargo("north-east",7.8f,4.6f,2.5f,1.7f,1.4f);
+            Cargo("north-east",7.8f,beforeBypass?4.6f:9f,2.5f,1.7f,1.4f);
             Cargo("south-spine",-4.5f,-6.6f,1.5f,2.9f,4.6f);
             Cargo("south-east",2.8f,-9,2,2.6f,1.6f);
             Cargo("south-low",-.2f,-5.6f,1.4f,.85f,1.5f);
-            Cargo("south-west",-8.6f,-5.4f,2.5f,1.8f,1.2f);
+            Cargo("south-west",-8.6f,beforeBypass?-5.4f:-7.6f,2.5f,1.8f,1.2f);
             // F2 adds distinct islands of cargo; centre line, storage doors and spawn pockets stay open.
             Cargo("f2-north-entry-w",-2.8f,10.5f,1.2f,1.3f,1.4f);
             Cargo("f2-north-entry-e",3.1f,10.5f,1.3f,1.1f,1.2f);
