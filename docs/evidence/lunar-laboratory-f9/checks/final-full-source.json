@@ -1,0 +1,16 @@
+{
+  "revision": "cef0121c839327dd26ea01987ef968bbd71c23b3",
+  "status": "?? docs/evidence/lunar-laboratory-f9/checks/\n?? docs/evidence/lunar-laboratory-f9/f9-checkpoint/\n?? docs/evidence/lunar-laboratory-f9/foreign-primary-before.json\n?? docs/evidence/lunar-laboratory-f9/handoff.md\n?? docs/evidence/lunar-laboratory-f9/source-before-build.json\n?? docs/evidence/lunar-laboratory-f9/tests-generated.patch\n?? docs/evidence/lunar-laboratory-f9/ui-initial-generated.patch\n?? docs/evidence/lunar-laboratory-f9/user-floating-door.png\n",
+  "sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryCatalog.cs": "c2afdb5518a0af7aceafdce35b82c07976a32c157adcbee18aa94cb25195c405",
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryCatalog.cs.meta": "3d20424d6e296fb0fc951e18a9046d6c71f696db47116ae07b30e7e4908fac63",
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs": "726fe8d05032ac35dedb676f23496a1a83b75e0ab750eb8a60cb8b476b77af16",
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs.meta": "210e78fc8e27f705e0416a976bf8342e27dfbedec808f0b99cef2939e3e58017",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "2010c82d46173ef967f726f00792931905319069d8e51bb96033686491221f09",
+    "unity/Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs": "d53ab4b0acdff2e020d5629cb40d9fbcbf4192fcb56555c9016ec83a66a64c42",
+    "unity/Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs": "ade4f42376763418037b74087e6f442562169edc8c321f692073a344d0f77f21",
+    "unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs": "8f599de5927bac9f85b4aa255646e44af47696e5dd68e387304efb9ce41ccdeb",
+    "unity/Assets/StarTournament/Tests/PlayMode/LunarLaboratoryPhysicsTests.cs": "ea1f8b3479fbf759cc5bf6174a11182b61d6bac006311d2aecfbfbda59cdeb43"
+  },
+  "gate": "make check includes EditMode, PlayMode and exact development build"
+}

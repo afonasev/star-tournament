@@ -1,0 +1,6 @@
+{
+  "path": ".local/unity-evidence/editmode.xml",
+  "reason": "old failed attempt XML, duplicate durably preserved; remove to require fresh final result",
+  "durable": "docs/evidence/lunar-laboratory-f9/checks/first-full/editmode.xml",
+  "sha256": "eb21eac055cf826d75773112eaf0aea5c9999225f75f7b8a32e82731544c7463"
+}

@@ -1,0 +1,14 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=EditMode
+filter=BeforeLunarBypass
+revision=4c9c450e2a5677ad0dedcc592670d3f3fa6ac3b3
+ M Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/lunar-laboratory-f9/checks/
+?? ../docs/evidence/lunar-laboratory-f9/f9-checkpoint/
+?? ../docs/evidence/lunar-laboratory-f9/foreign-primary-before.json
+?? ../docs/evidence/lunar-laboratory-f9/handoff.md
+?? ../docs/evidence/lunar-laboratory-f9/source-before-build.json
+?? ../docs/evidence/lunar-laboratory-f9/tests-generated.patch
+?? ../docs/evidence/lunar-laboratory-f9/ui-initial-generated.patch
+?? ../docs/evidence/lunar-laboratory-f9/user-floating-door.png

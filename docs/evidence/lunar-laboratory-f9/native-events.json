@@ -1,0 +1,94 @@
+[
+  {
+    "name": "legacy-lab",
+    "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f377625/20261004T154517Z/StarTournamentProvingGround.app",
+    "pid": 97006,
+    "argv": [
+      "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/f377625/20261004T154517Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+      "-labReview",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab",
+      "-screen-width",
+      "1440",
+      "-screen-height",
+      "900",
+      "-screen-fullscreen",
+      "0",
+      "-profilesPath",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab/legacy-profiles.json",
+      "-logFile",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab/legacy-lab-0.log"
+    ],
+    "start_unix": 1791193036.776513,
+    "exit_code": 0,
+    "end_unix": 1791193066.5873559
+  },
+  {
+    "name": "legacy-lab",
+    "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app",
+    "pid": 97012,
+    "argv": [
+      "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+      "-labReview",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab",
+      "-screen-width",
+      "1440",
+      "-screen-height",
+      "900",
+      "-screen-fullscreen",
+      "0",
+      "-profilesPath",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab/current-profiles.json",
+      "-logFile",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab/legacy-lab-1.log"
+    ],
+    "start_unix": 1791193067.2501462,
+    "exit_code": 0,
+    "end_unix": 1791193095.3645718
+  },
+  {
+    "name": "legacy-lab",
+    "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app",
+    "pid": 97050,
+    "argv": [
+      "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+      "-labReview",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab",
+      "-screen-width",
+      "1440",
+      "-screen-height",
+      "900",
+      "-screen-fullscreen",
+      "0",
+      "-profilesPath",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab/current-profiles.json",
+      "-logFile",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/legacy-lab/legacy-lab-2.log"
+    ],
+    "start_unix": 1791193096.660762,
+    "exit_code": 0,
+    "end_unix": 1791193115.925535
+  },
+  {
+    "name": "exact-visual",
+    "app": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app",
+    "pid": 97061,
+    "argv": [
+      "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/add-lunar-laboratory-map/cef0121/20261005T093639Z/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+      "-lunarReview",
+      "-lunarF6",
+      "-lunarF7",
+      "-lunarF9",
+      "-lunarF10",
+      "-lunarSilentReview",
+      "-lunarEvidence",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/exact-visual",
+      "-profilesPath",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/exact-visual/qa-profiles.json",
+      "-logFile",
+      "/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/docs/evidence/lunar-laboratory-f9/exact-visual/exact-visual-3.log"
+    ],
+    "start_unix": 1791193115.976465,
+    "exit_code": 0,
+    "end_unix": 1791193289.479022
+  }
+]

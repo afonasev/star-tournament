@@ -1,0 +1,9 @@
+{
+  "revision": "ed524b81a608662db54116c76bd3fa30c2ae9c99",
+  "status": "?? docs/evidence/lunar-laboratory-f9/tests-generated.patch\n?? docs/evidence/lunar-laboratory-f9/ui-initial-generated.patch\n",
+  "hashes": {
+    "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs": "726fe8d05032ac35dedb676f23496a1a83b75e0ab750eb8a60cb8b476b77af16",
+    "unity/Assets/StarTournament/Runtime/NativeLunarLaboratoryReview.cs": "87d925100af9cfc80d4f46cf4182faa9a55859cc8b4d8392e6f6ec7c7ad07758",
+    "unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs": "c27e17a0f9b0e222d91c11393499c52a3d9abfbd512dad14a27b090befa69f94"
+  }
+}

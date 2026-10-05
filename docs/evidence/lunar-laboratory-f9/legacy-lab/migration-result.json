@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "muted": true,
+  "original_revisions_preserved": 4,
+  "original_hashes_and_values_preserved": true,
+  "restart_byte_identical": true,
+  "selected": "QA \u043f\u0440\u043e\u0444\u0438\u043b\u044c \u00b7 \u043f\u0435\u0440\u0435\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d \u00b7 v6-20261005\ncd147be389ee493fb217b9d3909c1a49\nSHA256 c9fe34663bb861e1b42ad3572201d7734ae1f254e11bfd361637a778fb2cfb3c",
+  "after_sha256": "6e99ea906f55abcbcadd1b10e2733b6a7b3b97484dc25c80d8031997c88823ab",
+  "human_acceptance": false
+}

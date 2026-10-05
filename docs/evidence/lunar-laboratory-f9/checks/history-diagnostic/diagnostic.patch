@@ -1,0 +1,38 @@
+diff --git a/unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs b/unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
+index 15ef980..20c34de 100644
+--- a/unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
++++ b/unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
+@@ -37,7 +37,19 @@ namespace StarTournament.ProvingGround.Tests
+                     var custom=prior.Selected.Snapshot.Clone();custom.Set("lunar.officeLamp",15.5f);custom.Set("lunar.officeFill",4.25f);prior.Save(custom);
+                 }
+                 string hash=prior.Selected.Hash;int number=prior.Selected.Number;
+-                var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);
++                var next=new DesignLabHistory(path,current);
++                if(next.StorageError!=null)
++                {
++                    var f=System.Reflection.BindingFlags.NonPublic;
++                    var candidates=(LabBundle[])typeof(DesignLabHistory).GetMethod("HistoricalPredecessors",f|System.Reflection.BindingFlags.Instance).Invoke(next,new object[]{old});
++                    var matches=typeof(DesignLabHistory).GetMethod("RegistryMatches",f|System.Reflection.BindingFlags.Static);
++                    foreach(var candidate in candidates.Where(c=>(bool)matches.Invoke(null,new object[]{c,old})).Take(3))
++                    {
++                        var mismatch=old.Descriptors.FirstOrDefault(d=>(old.IsAuthoring(d.Path)||old.IsDiagnostic(d.Path))&&old.Get(d.Path)!=candidate.Get(d.Path));
++                        TestContext.WriteLine("Trusted candidate mismatch: "+(mismatch==null?"none":mismatch.Path+" saved="+old.Get(mismatch.Path)+" trusted="+candidate.Get(mismatch.Path)));
++                    }
++                }
++                Assert.That(next.StorageError,Is.Null);
+                 Assert.That(next.SelectedProfile.Revisions.Single(x=>x.Number==number).Hash,Is.EqualTo(hash));
+                 if(transform=="BeforeLunarLighting")
+                 {
+diff --git a/unity/ProjectSettings/ShaderGraphSettings.asset b/unity/ProjectSettings/ShaderGraphSettings.asset
+index e7d2c65..e33ca24 100644
+--- a/unity/ProjectSettings/ShaderGraphSettings.asset
++++ b/unity/ProjectSettings/ShaderGraphSettings.asset
+@@ -10,7 +10,7 @@ MonoBehaviour:
+   m_Enabled: 1
+   m_EditorHideFlags: 0
+   m_Script: {fileID: 11500000, guid: de02f9e1d18f588468e474319d09a723, type: 3}
+-  m_Name:
++  m_Name: 
+   m_EditorClassIdentifier: Unity.ShaderGraph.Editor::UnityEditor.ShaderGraph.ShaderGraphProjectSettings
+   shaderVariantLimit: 2048
+   overrideShaderVariantLimit: 0

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.8216566">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="341" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.821657" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1418" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="341" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.814949" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="95043" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1419" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="341" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.812249" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1420" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="341" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.810014" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1421" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="341" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.807563" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1063" name="LunarLaboratoryTests" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.803729" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="1072" name="ReworkRegistryPreservesExistingLunarLabHistory" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.800898" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1065" name="ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarBypass&quot;)" fullname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory(&quot;BeforeLunarBypass&quot;)" methodname="ReworkRegistryPreservesExistingLunarLabHistory" classname="StarTournament.ProvingGround.Tests.LunarLaboratoryTests" runstate="Runnable" seed="1776748280" result="Failed" start-time="2026-10-05 08:56:05Z" end-time="2026-10-05 08:56:18Z" duration="12.794964" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: null
+  But was:  "История не загружена; исходный файл сохранён: Read-only metadata changed"
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory (System.String transform) [0x002a9] in /Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs:52
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Trusted candidate mismatch: none
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

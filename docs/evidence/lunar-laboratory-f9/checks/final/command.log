@@ -1,0 +1,12 @@
+./unity/tools.sh test-edit
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity
+unity-run: started shared:1; guardian=95597 pid=95598
+unity-run: finished pid=95598 exit=0; capacity released
+./unity/tools.sh test-play
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity
+unity-run: started shared:1; guardian=96389 pid=96390
+unity-run: finished pid=96390 exit=0; capacity released
+./unity/tools.sh build
+unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity
+unity-run: started shared:1; guardian=96746 pid=96747
+unity-run: finished pid=96747 exit=0; capacity released

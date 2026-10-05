@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "revision": "cef0121c839327dd26ea01987ef968bbd71c23b3",
+  "exit_code": 0,
+  "suites": {
+    "editmode": {
+      "total": "342",
+      "passed": "342",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "1079.356746"
+    },
+    "playmode": {
+      "total": "206",
+      "passed": "206",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "525.0729451"
+    }
+  },
+  "build": "PASS",
+  "runtime_source_sha256_unchanged": true
+}
