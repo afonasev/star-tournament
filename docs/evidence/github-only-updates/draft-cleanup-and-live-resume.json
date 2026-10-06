@@ -1,0 +1,17 @@
+{
+  "removedDuplicateDrafts": [
+    {
+      "id": 404965305,
+      "draft": true,
+      "assets": 8,
+      "reason": "Owned duplicate draft; exact bytes retained in immutable published release 404970171; no tag deletion"
+    }
+  ],
+  "realDraftDiscovery": {
+    "tagEndpoint404": true,
+    "authenticatedDraftListResolvedSameId": true,
+    "id": 404973672
+  },
+  "temporaryProbeDeleted": true,
+  "publishedRetained": "https://github.com/afonasev/star-tournament/releases/tag/v0.1.0-test.9"
+}

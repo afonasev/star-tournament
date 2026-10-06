@@ -1,0 +1,13 @@
+{
+  "url": "https://robowar.afonasev.tech/#download",
+  "version": "0.1.0-test.9",
+  "channel": "test",
+  "windows": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.9/Star-Tournament-0.1.0-test.9-Windows-x64-Setup.exe",
+  "macOS": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.9/Star-Tournament-0.1.0-test.9-macOS-arm64.pkg",
+  "consoleErrors": [],
+  "screenshot": "landing-test9.jpg",
+  "deployedFiles": {
+    "index.html": "e528ff32097597933d67a3922f07f0c6c4f93e377ed72b516f3430ea94b900a1",
+    "downloads.js": "61016aeed864fe62a2784b16a60167dabcf669d43cf07ebb280d24da361fe882"
+  }
+}

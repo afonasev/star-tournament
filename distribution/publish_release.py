@@ -122,9 +122,23 @@ def readback(version, assets):
     return rows
 
 
+def find_release(tag, token):
+    # GitHub's by-tag endpoint cannot resolve a draft's not-yet-created Git tag.
+    release=api('GET','/releases/tags/'+tag,token,missing=True)
+    if release is not None: return release
+    matches=[]
+    for page in range(1,11):
+        rows=api('GET',f'/releases?per_page=100&page={page}',token)
+        matches.extend(x for x in rows if x['tag_name']==tag)
+        if len(rows)<100:
+            if len(matches)>1: raise ValueError('Multiple releases for this tag; inspect draft identities before resuming')
+            return matches[0] if matches else None
+    raise ValueError('Release lookup exceeds pagination limit')
+
+
 def publish(version, date, channel, assets, token, source_ref, draft_only=False):
     tag='v'+version
-    release=api('GET','/releases/tags/'+tag,token,missing=True)
+    release=find_release(tag,token)
     if release is None:
         release=api('POST','/releases',token,dict(tag_name=tag,target_commitish=source_ref,name='Star Tournament '+version,
             body=f'Authenticated {channel} candidate, {date}. Windows/macOS installers and full updates share version and date.\n'
