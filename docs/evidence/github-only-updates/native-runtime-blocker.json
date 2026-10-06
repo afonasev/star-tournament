@@ -1,0 +1,12 @@
+{
+  "foreignGuardPid": 54212,
+  "foreignWorkload": "Spacewars Test.app/Contents/MacOS/Spacewars",
+  "ownedQueuedClientPid": 66567,
+  "action": "SIGINT normal cancellation of owned queued unity-run client only, before any Star Tournament Player started",
+  "nativeTests": "Not executed: host capacity blocked",
+  "userDeferral": "No answer; no deferral/acceptance inferred",
+  "retainedLayouts": [
+    ".local/github-only/install-restart/Star Tournament.app",
+    ".local/github-only/install-next/Star Tournament.app"
+  ]
+}

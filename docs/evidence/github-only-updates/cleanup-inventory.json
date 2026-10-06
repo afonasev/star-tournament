@@ -1,0 +1,56 @@
+[
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/unity/Builds/StarTournamentProvingGround.app",
+    "owner": "01a11211-ba35-70e2-a89f-0638b4804548",
+    "source": "aed5327 game check / test.8 exact Players / test.9 919ebea+preserved diff as applicable",
+    "bytes": 489464878,
+    "files": 283,
+    "markerSha256": "1e441d9a3609b51e8a7cdc6be5ccf3da531c532980fc766d2b2f70f5179c1584",
+    "reason": "Task-owned intermediate/duplicate; current exact candidate retained in immutable GitHub v0.1.0-test.9; pending two native layouts retained separately"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/players",
+    "owner": "01a11211-ba35-70e2-a89f-0638b4804548",
+    "source": "aed5327 game check / test.8 exact Players / test.9 919ebea+preserved diff as applicable",
+    "bytes": 546515793,
+    "files": 350,
+    "markerSha256": "0891d24f23a44610bf5cc32fd52b3df8d2bf36e32849eac61badc7e9f72f5296",
+    "reason": "Task-owned intermediate/duplicate; current exact candidate retained in immutable GitHub v0.1.0-test.9; pending two native layouts retained separately"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/original",
+    "owner": "01a11211-ba35-70e2-a89f-0638b4804548",
+    "source": "aed5327 game check / test.8 exact Players / test.9 919ebea+preserved diff as applicable",
+    "bytes": 431509511,
+    "files": 3,
+    "markerSha256": "d4a93635ea5b450db1917dde191a2390a3e846ca887e6a47f9f73b707a61b49e",
+    "reason": "Task-owned intermediate/duplicate; current exact candidate retained in immutable GitHub v0.1.0-test.9; pending two native layouts retained separately"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/candidate/win-x64/windows-layout-0.1.0-test.9",
+    "owner": "01a11211-ba35-70e2-a89f-0638b4804548",
+    "source": "aed5327 game check / test.8 exact Players / test.9 919ebea+preserved diff as applicable",
+    "bytes": 413704634,
+    "files": 370,
+    "markerSha256": "71c0124753ba3d656d206e83e66787f1ee14a6faad63e11723e0a03dcda36794",
+    "reason": "Task-owned intermediate/duplicate; current exact candidate retained in immutable GitHub v0.1.0-test.9; pending two native layouts retained separately"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/candidate/win-x64/payload-0.1.0-test.9",
+    "owner": "01a11211-ba35-70e2-a89f-0638b4804548",
+    "source": "aed5327 game check / test.8 exact Players / test.9 919ebea+preserved diff as applicable",
+    "bytes": 338773700,
+    "files": 363,
+    "markerSha256": "081d2c9c5c170742a35433e6497050f5c07fc7d3f305fa757f10d0cf8a0e3754",
+    "reason": "Task-owned intermediate/duplicate; current exact candidate retained in immutable GitHub v0.1.0-test.9; pending two native layouts retained separately"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/candidate/osx-arm64/payload-0.1.0-test.9",
+    "owner": "01a11211-ba35-70e2-a89f-0638b4804548",
+    "source": "aed5327 game check / test.8 exact Players / test.9 919ebea+preserved diff as applicable",
+    "bytes": 363054098,
+    "files": 367,
+    "markerSha256": "f728480ae994d55cc7ea0a08cd97e32168b93fc47120449bdeeb52659fc652e2",
+    "reason": "Task-owned intermediate/duplicate; current exact candidate retained in immutable GitHub v0.1.0-test.9; pending two native layouts retained separately"
+  }
+]
