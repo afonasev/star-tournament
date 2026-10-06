@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-06T19:01:05.328842+00:00",
+  "result": "PARTIAL_NOT_ACTIVATION_PASS",
+  "actualPlayerPid": 12063,
+  "downloadAndStaging": "passed; installed identity remained test.7 while alive",
+  "restartAcknowledged": true,
+  "activation": "not tested: actual UI restart button not activated",
+  "foreignPlayerPid": 10989,
+  "foreignPlayer": "fix-self-and-team-kill-notices/dfc650bbf05b-489466109",
+  "cuaFailure": "coordinate actions noWindowsAvailable with duplicate application bundle IDs",
+  "ownCancellation": "SIGINT to owned unity-run client12061; launcher exited130; no apply treated as pass",
+  "pending": [
+    "actual menu restart then test.9 current",
+    "normal exit/next launch test.9",
+    "profile preservation across successful activation"
+  ]
+}
