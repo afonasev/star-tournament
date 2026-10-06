@@ -1,0 +1,36 @@
+{
+  "mode": "next",
+  "download_sent": true,
+  "ready": true,
+  "restart_acknowledged": false,
+  "failure": null,
+  "events": [
+    {
+      "time": 1791313958.661957,
+      "status": {
+        "state": "available",
+        "progress": 0,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791313958.9722922,
+      "status": {
+        "state": "downloading",
+        "progress": 0,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791313959.0766542,
+      "status": {
+        "state": "staged",
+        "progress": 100,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    }
+  ]
+}

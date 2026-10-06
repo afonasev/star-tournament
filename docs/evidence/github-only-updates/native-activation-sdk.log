@@ -1,0 +1,102 @@
+[lib-csharp:18745] [00:10:00] [Information] Initializing OsxVelopackLocator
+[lib-csharp:18745] [00:10:00] [Information] Located valid manifest file at: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/sq.version
+[lib-csharp:18745] [00:10:00] [Information] Initialised OsxVelopackLocator for tech.afonasev.star-tournament.osx-arm64 v0.1.0-test.7
+[lib-csharp:18745] [00:10:00] [Information] Starting VelopackApp.Run (library version 1.2.158).
+[lib-csharp:18745] [00:10:00] [Information] Launching app is out-dated. Current: 0.1.0-test.7, Newest Local Available: 0.1.0-test.9
+[lib-csharp:18745] [00:10:00] [Information] Pre-condition failed, we will not restart to apply updates. (restarted: False, autoApply: False)
+[lib-csharp:18745] [00:10:00] [Debug] Running: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/UpdateMac --silent apply --package /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg --waitPid 18745 --rootDir "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app" --packageDir /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages -- --qa-unity-runner /Users/eaafonasev/.local/bin/unity-run -screen-fullscreen 0 -screen-width 960 -screen-height 540 -logFile /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/restart-player-2.log
+[lib-csharp:18745] [00:10:00] [Information] Process started with ID: 18761
+[lib-csharp:18745] [00:10:00] [Information] Update.exe [apply] executed successfully.
+[lib-csharp:19430] [00:11:07] [Information] Initializing OsxVelopackLocator
+[lib-csharp:19430] [00:11:07] [Information] Located valid manifest file at: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/sq.version
+[lib-csharp:19430] [00:11:07] [Information] Initialised OsxVelopackLocator for tech.afonasev.star-tournament.osx-arm64 v0.1.0-test.7
+[lib-csharp:19430] [00:11:07] [Information] Starting VelopackApp.Run (library version 1.2.158).
+[lib-csharp:19430] [00:11:07] [Information] Launching app is out-dated. Current: 0.1.0-test.7, Newest Local Available: 0.1.0-test.9
+[lib-csharp:19430] [00:11:07] [Information] Pre-condition failed, we will not restart to apply updates. (restarted: False, autoApply: False)
+[lib-csharp:19430] [00:11:07] [Information] Loaded existing staging userId: 3e5418de-a597-471a-ad13-84895794476b from /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/.betaId
+[lib-csharp:19430] [00:11:07] [Debug] Retrieving latest release feed.
+[lib-csharp:19430] [00:11:08] [Information] Found newer remote release available (0.1.0-test.7 -> 0.1.0-test.9).
+[lib-csharp:19430] [00:11:08] [Information] Unable to find any delta matching version 0.1.0-test.9, so delta updates will be disabled.
+[lib-csharp:19430] [00:11:15] [Information] Package already exists on disk: '/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg', nothing to do.
+[lib-csharp:19430] [00:11:27] [Debug] Running: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/UpdateMac --silent apply --package /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg --waitPid 19430 --rootDir "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app" --packageDir /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages -- --qa-unity-runner /Users/eaafonasev/.local/bin/unity-run -screen-fullscreen 0 -screen-width 960 -screen-height 540 -logFile /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/restart-player-3.log
+[lib-csharp:19430] [00:11:27] [Information] Process started with ID: 19688
+[lib-csharp:19430] [00:11:27] [Information] Update.exe [apply] executed successfully.
+[update:19688] [00:11:27] [INFO] --
+[update:19688] [00:11:27] [INFO] Starting Velopack Updater (1.2.158)
+[update:19688] [00:11:27] [INFO]     Location: "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/UpdateMac"
+[update:19688] [00:11:27] [INFO]     CWD: "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS"
+[update:19688] [00:11:27] [INFO]     Verbose: false
+[update:19688] [00:11:27] [INFO]     Silent: true
+[update:19688] [00:11:27] [INFO]     Root Directory: Some("/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app")
+[update:19688] [00:11:27] [INFO]     Log File: "/Users/eaafonasev/Library/Logs/velopack_tech.afonasev.star-tournament.osx-arm64.log"
+[update:19688] [00:11:27] [INFO]     Context: FromSpecifiedRootDir("/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app", Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages"))
+[update:19688] [00:11:27] [INFO] Command: Apply
+[update:19688] [00:11:27] [INFO]     Restart: true
+[update:19688] [00:11:27] [INFO]     Wait: WaitPid(19430)
+[update:19688] [00:11:27] [INFO]     Package: Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg")
+[update:19688] [00:11:27] [INFO]     Exe Args: Some(["--qa-unity-runner", "/Users/eaafonasev/.local/bin/unity-run", "-screen-fullscreen", "0", "-screen-width", "960", "-screen-height", "540", "-logFile", "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/restart-player-3.log"])
+[update:19688] [00:11:27] [ERROR] Error: 1:1 Unexpected characters outside the root element: .
+[update:19688] [00:11:27] [INFO] Waiting Some(60s) for process (19430) to exit.
+[update:19688] [00:11:27] [WARN] Failed to wait for process (19430) to exit (No such process (os error 3)). Continuing...
+[update:19688] [00:11:27] [INFO] Getting ready to apply package to tech.afonasev.star-tournament.osx-arm64 ver 0.1.0-test.7: "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg"
+[update:19688] [00:11:27] [INFO] Attempting to acquire exclusive lock on packages directory (non-blocking)...
+[update:19688] [00:11:27] [INFO] Extracting bundle to "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_p2bdALu58aDUp3x3"
+[update:19688] [00:11:27] [INFO] Extracting 374 app files to '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_p2bdALu58aDUp3x3"'...
+[update:19688] [00:11:28] [INFO]     26 Creating symlink '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_p2bdALu58aDUp3x3/Contents/MacOS/sq.version"' -> '../Resources/sq.version'
+[update:19688] [00:11:28] [INFO] Replacing bundle at "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app"
+[update:19688] [00:11:28] [INFO] Bundle extracted successfully to "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app"
+[update:19688] [00:11:28] [INFO] Package version 0.1.0-test.9 applied successfully.
+[update:19688] [00:11:28] [INFO] Starting application: open ["-n", "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app", "--args", "--qa-unity-runner", "/Users/eaafonasev/.local/bin/unity-run", "-screen-fullscreen", "0", "-screen-width", "960", "-screen-height", "540", "-logFile", "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/restart-player-3.log"]
+[lib-csharp:19701] [00:11:29] [Information] Initializing OsxVelopackLocator
+[lib-csharp:19701] [00:11:29] [Information] Located valid manifest file at: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/sq.version
+[lib-csharp:19701] [00:11:29] [Information] Initialised OsxVelopackLocator for tech.afonasev.star-tournament.osx-arm64 v0.1.0-test.9
+[lib-csharp:19701] [00:11:29] [Information] Starting VelopackApp.Run (library version 1.2.158).
+[lib-csharp:19701] [00:11:29] [Information] Loaded existing staging userId: 3e5418de-a597-471a-ad13-84895794476b from /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/.betaId
+[lib-csharp:19701] [00:11:29] [Debug] Retrieving latest release feed.
+[lib-csharp:19701] [00:11:31] [Information] No updates, remote version (0.1.0-test.9) is not newer than current version (0.1.0-test.9) and / or downgrade is not enabled.
+[lib-csharp:20349] [00:12:32] [Information] Initializing OsxVelopackLocator
+[lib-csharp:20349] [00:12:32] [Information] Located valid manifest file at: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app/Contents/MacOS/sq.version
+[lib-csharp:20349] [00:12:32] [Information] Initialised OsxVelopackLocator for tech.afonasev.star-tournament.osx-arm64 v0.1.0-test.7
+[lib-csharp:20349] [00:12:32] [Information] Starting VelopackApp.Run (library version 1.2.158).
+[lib-csharp:20349] [00:12:32] [Information] Launching app is out-dated. Current: 0.1.0-test.7, Newest Local Available: 0.1.0-test.9
+[lib-csharp:20349] [00:12:32] [Information] Pre-condition failed, we will not restart to apply updates. (restarted: False, autoApply: False)
+[lib-csharp:20349] [00:12:32] [Information] Loaded existing staging userId: 3e5418de-a597-471a-ad13-84895794476b from /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/.betaId
+[lib-csharp:20349] [00:12:32] [Debug] Retrieving latest release feed.
+[lib-csharp:20349] [00:12:32] [Information] Found newer remote release available (0.1.0-test.7 -> 0.1.0-test.9).
+[lib-csharp:20349] [00:12:32] [Information] Unable to find any delta matching version 0.1.0-test.9, so delta updates will be disabled.
+[lib-csharp:20349] [00:12:38] [Information] Package already exists on disk: '/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg', nothing to do.
+[lib-csharp:20349] [00:13:17] [Debug] Running: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app/Contents/MacOS/UpdateMac --silent apply --package /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg --waitPid 20349 --norestart --rootDir "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app" --packageDir /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages
+[lib-csharp:20349] [00:13:17] [Information] Process started with ID: 20865
+[lib-csharp:20349] [00:13:17] [Information] Update.exe [apply] executed successfully.
+[update:20865] [00:13:17] [INFO] --
+[update:20865] [00:13:17] [INFO] Starting Velopack Updater (1.2.158)
+[update:20865] [00:13:17] [INFO]     Location: "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app/Contents/MacOS/UpdateMac"
+[update:20865] [00:13:17] [INFO]     CWD: "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app/Contents/MacOS"
+[update:20865] [00:13:17] [INFO]     Verbose: false
+[update:20865] [00:13:17] [INFO]     Silent: true
+[update:20865] [00:13:17] [INFO]     Root Directory: Some("/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app")
+[update:20865] [00:13:17] [INFO]     Log File: "/Users/eaafonasev/Library/Logs/velopack_tech.afonasev.star-tournament.osx-arm64.log"
+[update:20865] [00:13:17] [INFO]     Context: FromSpecifiedRootDir("/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app", Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages"))
+[update:20865] [00:13:17] [INFO] Command: Apply
+[update:20865] [00:13:17] [INFO]     Restart: false
+[update:20865] [00:13:17] [INFO]     Wait: WaitPid(20349)
+[update:20865] [00:13:17] [INFO]     Package: Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg")
+[update:20865] [00:13:17] [INFO]     Exe Args: None
+[update:20865] [00:13:17] [ERROR] Error: 1:1 Unexpected characters outside the root element: .
+[update:20865] [00:13:17] [INFO] Waiting Some(60s) for process (20349) to exit.
+[update:20865] [00:13:17] [WARN] Failed to wait for process (20349) to exit (No such process (os error 3)). Continuing...
+[update:20865] [00:13:17] [INFO] Getting ready to apply package to tech.afonasev.star-tournament.osx-arm64 ver 0.1.0-test.7: "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg"
+[update:20865] [00:13:17] [INFO] Attempting to acquire exclusive lock on packages directory (non-blocking)...
+[update:20865] [00:13:17] [INFO] Extracting bundle to "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_HM6TnKVrmOhDcqMF"
+[update:20865] [00:13:17] [INFO] Extracting 374 app files to '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_HM6TnKVrmOhDcqMF"'...
+[update:20865] [00:13:18] [INFO]     26 Creating symlink '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_HM6TnKVrmOhDcqMF/Contents/MacOS/sq.version"' -> '../Resources/sq.version'
+[update:20865] [00:13:18] [INFO] Replacing bundle at "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app"
+[update:20865] [00:13:18] [INFO] Bundle extracted successfully to "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app"
+[update:20865] [00:13:18] [INFO] Package version 0.1.0-test.9 applied successfully.
+[lib-csharp:20967] [00:13:28] [Information] Initializing OsxVelopackLocator
+[lib-csharp:20967] [00:13:28] [Information] Located valid manifest file at: /Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app/Contents/MacOS/sq.version
+[lib-csharp:20967] [00:13:28] [Information] Initialised OsxVelopackLocator for tech.afonasev.star-tournament.osx-arm64 v0.1.0-test.9
+[lib-csharp:20967] [00:13:28] [Information] Starting VelopackApp.Run (library version 1.2.158).
+[lib-csharp:20967] [00:13:28] [Information] Loaded existing staging userId: 3e5418de-a597-471a-ad13-84895794476b from /Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/.betaId
+[lib-csharp:20967] [00:13:28] [Debug] Retrieving latest release feed.
+[lib-csharp:20967] [00:13:30] [Information] No updates, remote version (0.1.0-test.9) is not newer than current version (0.1.0-test.9) and / or downgrade is not enabled.

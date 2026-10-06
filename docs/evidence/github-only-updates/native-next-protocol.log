@@ -1,0 +1,3 @@
+{'state': 'available', 'progress': 0, 'error': '', 'restartAcknowledged': False}
+{'state': 'downloading', 'progress': 0, 'error': '', 'restartAcknowledged': False}
+{'state': 'staged', 'progress': 100, 'error': '', 'restartAcknowledged': False}
