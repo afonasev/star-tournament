@@ -1,0 +1,26 @@
+{
+  "command": "make check",
+  "editMode": {
+    "passed": 334,
+    "failed": 0,
+    "skipped": 0
+  },
+  "playMode": {
+    "passed": 202,
+    "failed": 0,
+    "skipped": 0
+  },
+  "build": {
+    "exit": 0,
+    "marker": "STAR_PROVING_BUILD_PASS 488418151"
+  },
+  "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+  "sourceDiffSha256": "c5b93b8ceef34b047ef024d26f59d694ef8bd0f7ccef734b183422506faec5a4",
+  "nativeMenuFocused": {
+    "passed": 1,
+    "failed": 0
+  },
+  "launcherSecurityContracts": 14,
+  "publicationContracts": 4,
+  "scope": "full distribution automatic gate; Windows execution and physical/user acceptance remain open"
+}

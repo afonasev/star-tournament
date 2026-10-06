@@ -1,0 +1,7 @@
+{
+  "newInstallerHTTP": 200,
+  "headers": "HTTP/2 200 \naccept-ranges: bytes\nalt-svc: h3=\":443\"; ma=2592000\ncache-control: public, max-age=31536000, immutable\ncontent-type: application/octet-stream\netag: \"dlw6bp9u3p502e7a8a\"\nlast-modified: Sun, 04 Oct 2026 15:53:59 GMT\nserver: Caddy\nvary: Accept-Encoding\ncontent-length: 144786826\ndate: Sun, 04 Oct 2026 15:55:28 GMT\n\n",
+  "rootAndTestLandingMetadata": "match published replacement identity",
+  "signedUpdateFeed": "unchanged",
+  "humanWindowsAcceptance": "pending user retry"
+}

@@ -1,0 +1,26 @@
+STAR_DISTRIBUTION_STARTUP 0.0.1 installed=True path=/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app/Contents/MacOS/
+[10:55:49] [INFO] --
+[10:55:49] [INFO] Starting Velopack Updater (1.2.158)
+[10:55:49] [INFO]     Location: "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app/Contents/MacOS/UpdateMac"
+[10:55:49] [INFO]     CWD: "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app/Contents/MacOS"
+[10:55:49] [INFO]     Verbose: false
+[10:55:49] [INFO]     Silent: false
+[10:55:49] [INFO]     Root Directory: Some("/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app")
+[10:55:49] [INFO]     Log File: "/Users/eaafonasev/Library/Logs/velopack_tech.afonasev.star-tournament.probe.log"
+[10:55:49] [INFO]     Context: FromSpecifiedRootDir("/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app", Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.probe/packages"))
+[10:55:49] [INFO] Command: Apply
+[10:55:49] [INFO]     Restart: true
+[10:55:49] [INFO]     Wait: WaitPid(62120)
+[10:55:49] [INFO]     Package: Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.probe/packages/tech.afonasev.star-tournament.probe-0.0.2-osx-full.nupkg")
+[10:55:49] [INFO]     Exe Args: Some(["report"])
+[10:55:49] [INFO] Waiting Some(60s) for process (62120) to exit.
+[10:55:49] [WARN] Failed to wait for process (62120) to exit (No such process (os error 3)). Continuing...
+[10:55:49] [INFO] Getting ready to apply package to tech.afonasev.star-tournament.probe ver 0.0.1: "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.probe/packages/tech.afonasev.star-tournament.probe-0.0.2-osx-full.nupkg"
+[10:55:49] [INFO] Attempting to acquire exclusive lock on packages directory (non-blocking)...
+[10:55:49] [INFO] Extracting bundle to "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.probe/packages/VelopackTemp/tmp_7d9TfXuAPvB5VQLE"
+[10:55:49] [INFO] Extracting 195 app files to '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.probe/packages/VelopackTemp/tmp_7d9TfXuAPvB5VQLE"'...
+[10:55:49] [INFO]     26 Creating symlink '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.probe/packages/VelopackTemp/tmp_7d9TfXuAPvB5VQLE/Contents/MacOS/sq.version"' -> '../Resources/sq.version'
+[10:55:49] [INFO] Replacing bundle at "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app"
+[10:55:49] [INFO] Bundle extracted successfully to "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app"
+[10:55:49] [INFO] Package version 0.0.2 applied successfully.
+[10:55:49] [INFO] Starting application: open ["-n", "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next/Star Tournament Probe.app", "--args", "report"]

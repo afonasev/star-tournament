@@ -9,6 +9,9 @@ dist/
 coverage/
 .ai-cache/
 .local/
+distribution/**/bin/
+distribution/**/obj/
+distribution/**/__pycache__/
 playwright-report/
 test-results/
 .asset-library/

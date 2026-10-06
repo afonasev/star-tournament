@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 using System;
 using System.Collections;
 using System.IO;
@@ -51,3 +52,5 @@ namespace StarTournament.ProvingGround
         void OnDestroy(){if(changedBackground)InputSystem.settings.backgroundBehavior=previousBackground;if(pads!=null)foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);}
     }
 }
+
+#endif

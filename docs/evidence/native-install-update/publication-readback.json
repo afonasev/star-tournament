@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-04T08:13:37.513824+00:00",
+  "landing": "https://robowar.afonasev.tech/desktop/test/",
+  "sourceRevision": "5f601b06387ddbda5b34c8587c30a5787ea542dd",
+  "installers": [
+    {
+      "url": "https://robowar.afonasev.tech/desktop/test/win-x64/installers/0.1.0-test.3/tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe",
+      "sha256": "6a0055d2e1154c16f7645b4c632c0855ae5c22c99fd3fac2a92e12bc0731abcd",
+      "size": 144642696,
+      "headers": "HTTP/2 200 \naccept-ranges: bytes\nalt-svc: h3=\":443\"; ma=2592000\ncache-control: public, max-age=31536000, immutable\ncontent-type: application/octet-stream\netag: \"dlvwapnc8ugu2e470o\"\nlast-modified: Sun, 04 Oct 2026 08:02:30 GMT\nserver: Caddy\nvary: Accept-Encoding\ncontent-length: 144642696\ndate: Sun, 04 Oct 2026 08:13:36 GMT\n\n"
+    },
+    {
+      "url": "https://robowar.afonasev.tech/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+      "sha256": "3d1b12f689a9d4be1820eda77aa37e7408b0809e8e427fec2ac0cb25f2d0efbb",
+      "size": 143198367,
+      "headers": "HTTP/2 200 \naccept-ranges: bytes\nalt-svc: h3=\":443\"; ma=2592000\ncache-control: public, max-age=31536000, immutable\ncontent-type: application/x-xar\netag: \"dlvwb8otpkgc2d98kf\"\nlast-modified: Sun, 04 Oct 2026 08:03:12 GMT\nserver: Caddy\nvary: Accept-Encoding\ncontent-length: 143198367\ndate: Sun, 04 Oct 2026 08:13:37 GMT\n\n"
+    }
+  ],
+  "downloadsMetadataHeaders": "HTTP/2 200 \naccept-ranges: bytes\nalt-svc: h3=\":443\"; ma=2592000\ncache-control: no-store\ncontent-type: application/json\netag: \"dlvwexdfw0r5ie\"\nlast-modified: Sun, 04 Oct 2026 08:08:01 GMT\nserver: Caddy\nvary: Accept-Encoding\ncontent-length: 662\ndate: Sun, 04 Oct 2026 08:13:37 GMT\n\n",
+  "humanAcceptance": "pending; test publication only"
+}

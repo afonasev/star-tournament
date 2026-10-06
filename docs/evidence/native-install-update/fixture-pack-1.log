@@ -1,0 +1,23 @@
+[10:54:47 INF] Velopack CLI 1.2.158, for distributing applications.
+[10:54:47 INF] Beginning to package Velopack release 0.0.1.
+[10:54:47 INF] Releases Directory: /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-feed
+[10:54:47 INF] Starting: Pre-process steps
+[10:54:47 INF] Generating new '.app' bundle from a directory of application files.
+[10:54:47 INF] Complete: Pre-process steps
+[10:54:47 INF] Starting: Code-sign application
+[10:54:47 INF] No entitlements specified, using default: https://docs.microsoft.com/dotnet/core/install/macos-notarization-issues
+[10:54:47 WRN] Package will not be signed or notarized. Missing the --signAppIdentity and --notaryProfile options.
+[10:54:47 INF] Complete: Code-sign application
+[10:54:47 INF] Starting: Building portable package
+[10:54:47 INF] Starting: Building release 0.0.1
+[10:54:50 INF] Complete: Building portable package
+[10:54:50 INF] Complete: Building release 0.0.1
+[10:54:50 INF] Starting: Building setup package
+[10:54:50 WRN] Package installer (.pkg) will not be Notarized. This is supported with the --signInstallIdentity and --notaryProfile arguments.
+[10:54:50 INF] Creating installer '.pkg' for app at '/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/velopack/temp.1/Star Tournament Probe.app'
+[10:54:53 WRN] No Installer signing identity provided. The '.pkg' will not be signed.
+[10:54:53 INF] Installer created successfully
+[10:54:53 INF] Complete: Building setup package
+[10:54:53 INF] Starting: Post-process steps
+[10:54:53 INF] Complete: Post-process steps
+[10:54:53 INF] Finished in 00:00:06.2109370.

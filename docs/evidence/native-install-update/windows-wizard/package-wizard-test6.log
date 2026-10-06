@@ -1,0 +1,27 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-native-install-update/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.6/payload-0.1.0-test.6/
+[14:23:27 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[14:23:27 INF] Velopack CLI 1.2.158, for distributing applications.
+[14:23:27 INF] Beginning to package Velopack release 0.1.0-test.6.
+[14:23:27 INF] Releases Directory: /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.6/releases
+[14:23:28 INF] Starting: Pre-process steps
+[14:23:28 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[14:23:28 INF] Shortcuts: None
+[14:23:29 INF] Complete: Pre-process steps
+[14:23:29 INF] Starting: Code-sign application
+[14:23:29 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[14:23:29 INF] Complete: Code-sign application
+[14:23:29 INF] Starting: Building portable package
+[14:23:29 INF] Starting: Building release 0.1.0-test.6
+[14:24:09 INF] Complete: Building release 0.1.0-test.6
+[14:24:09 INF] Starting: Building setup package
+[14:24:09 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[14:24:09 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[14:24:09 INF] Complete: Building setup package
+[14:24:09 INF] Complete: Building portable package
+[14:24:09 INF] Starting: Post-process steps
+[14:24:09 INF] Complete: Post-process steps
+[14:24:09 INF] Finished in 00:00:41.9972310.
+PACKAGED win-x64 0.1.0-test.6 /Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-candidates/user/win-x64/0.1.0-test.6/releases

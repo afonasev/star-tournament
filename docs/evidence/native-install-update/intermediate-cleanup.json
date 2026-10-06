@@ -1,0 +1,172 @@
+[
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-feed",
+    "bytes": 133714331,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/fixture-feed/tech.afonasev.star-tournament.probe-osx-Setup.pkg",
+        "sha256": "65359e8113bdf650663c19e633e9a3906cccecb2a2915b0ac5fdaf03045dfb34"
+      },
+      {
+        "path": ".local/distribution-spike/fixture-feed/tech.afonasev.star-tournament.probe-0.0.2-osx-full.nupkg",
+        "sha256": "78b654e7f80b979606e91a254a64e863e89aecf8dda7cdb34a344cc7bbdba825"
+      },
+      {
+        "path": ".local/distribution-spike/fixture-feed/tech.afonasev.star-tournament.probe-0.0.1-osx-full.nupkg",
+        "sha256": "155de77004f01cc99a2be5a3c4900c69dee32d8769d1f635eb5041a059cf0af8"
+      },
+      {
+        "path": ".local/distribution-spike/fixture-feed/tech.afonasev.star-tournament.probe-osx-Portable.zip",
+        "sha256": "1624ce8610d3a46e3f40894c85ac2175373ca5dc9875d78c2bea30f4402761b0"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-feed-win",
+    "bytes": 114526211,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/fixture-feed-win/tech.afonasev.star-tournament.probe-0.0.1-full.nupkg",
+        "sha256": "4e48740acc9c56e6a4952d693582f0dd66687fb245a1b8ffcfeab4314e156575"
+      },
+      {
+        "path": ".local/distribution-spike/fixture-feed-win/tech.afonasev.star-tournament.probe-win-Portable.zip",
+        "sha256": "c813d4f64a31405f704b817eb458513dda11fc51384984cf84ba8fb3ffa8717b"
+      },
+      {
+        "path": ".local/distribution-spike/fixture-feed-win/tech.afonasev.star-tournament.probe-win-Setup.exe",
+        "sha256": "19142b168818b6bfb535a6bf7f559e5b63701153843e0f14bef590ab32941ccf"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-next",
+    "bytes": 87362510,
+    "artifacts": [],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/fixture-install-restart",
+    "bytes": 87362510,
+    "artifacts": [],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/publish-mac",
+    "bytes": 79706541,
+    "artifacts": [],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/publish-win",
+    "bytes": 74369759,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/publish-win/createdump.exe",
+        "sha256": "beba75ffcd188a0ce594c304c737caf16681e1af19bdd7bb47b3f0eb8636c320"
+      },
+      {
+        "path": ".local/distribution-spike/publish-win/StarTournamentLauncher.exe",
+        "sha256": "2512481912116a09f09f7d22ca49621d700b062cded06fa5a93b2f183fa05bce"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/releases-mac",
+    "bytes": 100208691,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/releases-mac/tech.afonasev.star-tournament.probe-osx-Setup.pkg",
+        "sha256": "b8554cdc265623ea7fb079f39233f86b1c1bd285490b4f61b39f04c855669dec"
+      },
+      {
+        "path": ".local/distribution-spike/releases-mac/tech.afonasev.star-tournament.probe-0.0.1-osx-full.nupkg",
+        "sha256": "92eab2db19317ba711448ecb8ef2bd85cb032d41cd260ec2c473e73c2d052649"
+      },
+      {
+        "path": ".local/distribution-spike/releases-mac/tech.afonasev.star-tournament.probe-osx-Portable.zip",
+        "sha256": "89ba499b38ad4870f7f444c94bdf4c54b776cedc7656e5ad69d3f250d4435371"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/launcher/bin",
+    "bytes": 154076288,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/launcher/bin/Release/net8.0/win-x64/createdump.exe",
+        "sha256": "beba75ffcd188a0ce594c304c737caf16681e1af19bdd7bb47b3f0eb8636c320"
+      },
+      {
+        "path": ".local/distribution-spike/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.exe",
+        "sha256": "2512481912116a09f09f7d22ca49621d700b062cded06fa5a93b2f183fa05bce"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/launcher/obj",
+    "bytes": 468788,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/launcher/obj/Release/net8.0/win-x64/apphost.exe",
+        "sha256": "2512481912116a09f09f7d22ca49621d700b062cded06fa5a93b2f183fa05bce"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/windows-module",
+    "bytes": 665062,
+    "artifacts": [],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-spike/windows-mono.pkg",
+    "bytes": 384206888,
+    "artifacts": [
+      {
+        "path": ".local/distribution-spike/windows-mono.pkg",
+        "sha256": "3c67b79153fbc86b424ce88c0ca9ba378fcc1f007f77ede7c918e5afcd513a92"
+      }
+    ],
+    "owner": "prepare-native-installable-client/01a1056e-e1ec-7921-831c-abf0a50f71bd",
+    "baseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+    "reason": "Completed packaging fixtures replaced by real Unity candidate experiments; module payload installed, official release metadata retained",
+    "retainedEvidence": "docs/evidence/native-install-update/fixture-*.log, packaging-probe.cs.txt"
+  }
+]

@@ -1,0 +1,1859 @@
+{
+  "sourceInstallerSha256": "a0f8c309cfd41946a24ce543d1b9a3c9c7d5b967fc3c27479a8c3dfb1adad238",
+  "release": {
+    "appId": "tech.afonasev.star-tournament.win-x64",
+    "platform": "win",
+    "architecture": "x64",
+    "version": "0.1.0-test.5",
+    "publicationDate": "2026-10-04",
+    "feedBase": "https://robowar.afonasev.tech/desktop/test/win-x64/",
+    "gameExecutable": "game/StarTournament.exe"
+  },
+  "files": [
+    {
+      "path": ".portable",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Star Tournament.exe",
+      "size": 468480,
+      "sha256": "63959e494d656967b7515d421c791fc81e6676f1c52ef760ee9b399176fb2e3f"
+    },
+    {
+      "path": "Update.exe",
+      "size": 5208576,
+      "sha256": "4b2bfeed811543e2d37be8743f2b1ea46dd947bc09c8ada9eb0383c0d7886cdb"
+    },
+    {
+      "path": "current/Microsoft.CSharp.dll",
+      "size": 1005392,
+      "sha256": "30704c86c4c052ac630e5b5bf9e04aeb1eb0677fe3c5cf8a7df36c8ab78d0b56"
+    },
+    {
+      "path": "current/Microsoft.DiaSymReader.Native.amd64.dll",
+      "size": 2377016,
+      "sha256": "70e4b89978ce57ef87b28f4921f3140c383b04aa96e7f3bdb3c4ebb898fd8a72"
+    },
+    {
+      "path": "current/Microsoft.VisualBasic.Core.dll",
+      "size": 1247056,
+      "sha256": "bdcdd4bd2b6e2c0eec9a93187cd57ce9437c9a2324a6c6c20c55a2d1a27823be"
+    },
+    {
+      "path": "current/Microsoft.VisualBasic.dll",
+      "size": 17192,
+      "sha256": "a172fad5b53a27d32b21ba3b18e27046c1daf7451c46bea4f57f515d0eef756a"
+    },
+    {
+      "path": "current/Microsoft.Win32.Primitives.dll",
+      "size": 15184,
+      "sha256": "596160c8491d2110a36ce4cb93c736905b2c83b9b50496369f32e32ad28d2a20"
+    },
+    {
+      "path": "current/Microsoft.Win32.Registry.dll",
+      "size": 120656,
+      "sha256": "a8cc5503bbba36472d1dd3a8eebc3a8b26f0b2882e770851aab486690b23ead9"
+    },
+    {
+      "path": "current/StarTournamentLauncher.deps.json",
+      "size": 27442,
+      "sha256": "951a382ecc1ee7288ff39a675b083e9c2674dba663af5eff0d98f82c2864438f"
+    },
+    {
+      "path": "current/StarTournamentLauncher.dll",
+      "size": 41472,
+      "sha256": "5077a148a31520f987ad2e9304881e0b5f2546de7be40b7d6817c4340b61e00b"
+    },
+    {
+      "path": "current/StarTournamentLauncher.exe",
+      "size": 152064,
+      "sha256": "f0387e1df6209537f3dc35f7f9680eb9619f1523863e7f86cb86b46784722019"
+    },
+    {
+      "path": "current/StarTournamentLauncher.runtimeconfig.json",
+      "size": 358,
+      "sha256": "46c986e4f45508f40c79a4042fe8eac8a6b6574199a85884ed81c33bb18af092"
+    },
+    {
+      "path": "current/System.AppContext.dll",
+      "size": 15144,
+      "sha256": "c3d2cb89ec473b55fcbf6f0ed601139e46159e0d2834d9d92ed74ed89e2a2879"
+    },
+    {
+      "path": "current/System.Buffers.dll",
+      "size": 15184,
+      "sha256": "8cadbc77368593547381f18eafa12dd58216d7b35a60b487b66ca51a2ee3c406"
+    },
+    {
+      "path": "current/System.Collections.Concurrent.dll",
+      "size": 276264,
+      "sha256": "ed653ccb5dc40d0bb4ea3429165a0825705f2935a65c584ca67cba45671884c1"
+    },
+    {
+      "path": "current/System.Collections.Immutable.dll",
+      "size": 837456,
+      "sha256": "6e41c8ba23968f6a9b910e3c33f66761a588f24084c4e3599214805716d6d259"
+    },
+    {
+      "path": "current/System.Collections.NonGeneric.dll",
+      "size": 104232,
+      "sha256": "b40cdf234652b31b443164350f73e25f98c5edecfd30698789d6dbf9ca456e44"
+    },
+    {
+      "path": "current/System.Collections.Specialized.dll",
+      "size": 104272,
+      "sha256": "24022887037bfaad8c89c26642712c920dcc0ababd3396d80d8b2be16637673b"
+    },
+    {
+      "path": "current/System.Collections.dll",
+      "size": 259880,
+      "sha256": "c6bb79b8fb32504b6327b516e6ff32017a073669ab749d3c86ed49cd5f2f0c45"
+    },
+    {
+      "path": "current/System.ComponentModel.Annotations.dll",
+      "size": 198480,
+      "sha256": "97060d253527bdde94022ac6d22ae4c0474cf67f40bfe8342e9420b7888b3aff"
+    },
+    {
+      "path": "current/System.ComponentModel.DataAnnotations.dll",
+      "size": 16720,
+      "sha256": "e5b872cf98bf9f3f565877b21fdee61b569ecc586e6dc48c9199ae5e0cd100b3"
+    },
+    {
+      "path": "current/System.ComponentModel.EventBasedAsync.dll",
+      "size": 46928,
+      "sha256": "ce813a7cde09eba1bdd7d6661fa39c09057beddc78f554c5476c43766d763ed0"
+    },
+    {
+      "path": "current/System.ComponentModel.Primitives.dll",
+      "size": 79696,
+      "sha256": "d981af410d4ed7939fdee47a1ee58e3db472c05f17c2b0d48e4b1ebfb2fea0e5"
+    },
+    {
+      "path": "current/System.ComponentModel.TypeConverter.dll",
+      "size": 747304,
+      "sha256": "db04940603c749719e133bb567d142d46af3a6f2f37597db398955a3896b84c2"
+    },
+    {
+      "path": "current/System.ComponentModel.dll",
+      "size": 30504,
+      "sha256": "4d9e2e21ed5c16c100221433d1aab01409ec199c9f617e48b9fe1617989bbaa6"
+    },
+    {
+      "path": "current/System.Configuration.dll",
+      "size": 19240,
+      "sha256": "39eca0e98d4b206cbff6243a04494f79ec8b19903d3427b44d64d88097d77f65"
+    },
+    {
+      "path": "current/System.Console.dll",
+      "size": 173864,
+      "sha256": "d38105c5c790fc76ac6e4d99fe9b6c2672e4e250e191bd43593e55ae7d3b2afe"
+    },
+    {
+      "path": "current/System.Core.dll",
+      "size": 23336,
+      "sha256": "f7414ecfd958fdfb2b4bcdd2f7778a7b26968eb453ca2c03fdf53ba4bb21674f"
+    },
+    {
+      "path": "current/System.Data.Common.dll",
+      "size": 2860840,
+      "sha256": "089a74a39dceb113bea92522b227e24c881a618c5eb1e2abb166a6e8c12be0cb"
+    },
+    {
+      "path": "current/System.Data.DataSetExtensions.dll",
+      "size": 15696,
+      "sha256": "d425011a475bb44e6b9acd4c48e8f3b428312a05ca3a649abbcd871f7102decf"
+    },
+    {
+      "path": "current/System.Data.dll",
+      "size": 24912,
+      "sha256": "1efe79c9f164ce5da6542de89dc7f10d1feb1f38216b68f9a6b6a8ca5e3d2ac3"
+    },
+    {
+      "path": "current/System.Diagnostics.Contracts.dll",
+      "size": 16168,
+      "sha256": "a670f39c589bd9d4a994e75abc2385839649ed91a831a4ca7d9fe4f87834b492"
+    },
+    {
+      "path": "current/System.Diagnostics.Debug.dll",
+      "size": 15656,
+      "sha256": "e122bd1046864476252765e356c54d2454e72a6e11bf546907de1468ca0b0cb5"
+    },
+    {
+      "path": "current/System.Diagnostics.DiagnosticSource.dll",
+      "size": 415568,
+      "sha256": "25c3bf229337a485ceacb82c00f47f2e98de68a279eb5a450550526f9cbf0448"
+    },
+    {
+      "path": "current/System.Diagnostics.FileVersionInfo.dll",
+      "size": 46888,
+      "sha256": "24b0e8ed2ea93b84ff2a26cb1f69f7d6e331f6162eae4fae4446a5556b8a8eee"
+    },
+    {
+      "path": "current/System.Diagnostics.Process.dll",
+      "size": 337744,
+      "sha256": "7083c7046ac4cbed1068b6ae7a777d421eeaf180e5697283fc1c6af731c32a3d"
+    },
+    {
+      "path": "current/System.Diagnostics.StackTrace.dll",
+      "size": 46888,
+      "sha256": "7b26b1c48d500576994b3153b88fefd1e516680ae4b52cde608b8e869544b37d"
+    },
+    {
+      "path": "current/System.Diagnostics.TextWriterTraceListener.dll",
+      "size": 67368,
+      "sha256": "0279bba2ab8c1e023d043d802b0b3bbbf8483dd082e305391c6229382452b1c2"
+    },
+    {
+      "path": "current/System.Diagnostics.Tools.dll",
+      "size": 15184,
+      "sha256": "ca4cc511a2204af2a5652c7cf870a6a5eff109f98acc72a8e2a0498f72665507"
+    },
+    {
+      "path": "current/System.Diagnostics.TraceSource.dll",
+      "size": 145232,
+      "sha256": "2b5489bc5a6d65e109dbed6557dc2af3ba9dfb549efd18a64f37fd64255cb756"
+    },
+    {
+      "path": "current/System.Diagnostics.Tracing.dll",
+      "size": 16168,
+      "sha256": "6857ed7ca2c17d38f74639bacc59942599935593f9a0b33b246161c57db27eb3"
+    },
+    {
+      "path": "current/System.Drawing.Primitives.dll",
+      "size": 132944,
+      "sha256": "02bd1f5644dd73789b82c3a52c8f86ef726baa1d4cce2a0c64d9dc1c29b9cb02"
+    },
+    {
+      "path": "current/System.Drawing.dll",
+      "size": 20304,
+      "sha256": "97562444d2daf928cd78404156665dde55aa5ec71c6fcad705284338e4a36ebe"
+    },
+    {
+      "path": "current/System.Dynamic.Runtime.dll",
+      "size": 16208,
+      "sha256": "f6a93ad11464c19f720d34b92043dcc289885bf959b32549ee3ca24537e8b65a"
+    },
+    {
+      "path": "current/System.Formats.Asn1.dll",
+      "size": 243496,
+      "sha256": "61f505f140e2c6417640a5aa47a86d148d4f6dc5317a66a7bfa2266a3ac975bf"
+    },
+    {
+      "path": "current/System.Formats.Tar.dll",
+      "size": 276304,
+      "sha256": "ee3132a84cf9fd170f3ae0899a996adc120a899c51dbc5534b22e8870b5aa137"
+    },
+    {
+      "path": "current/System.Globalization.Calendars.dll",
+      "size": 15696,
+      "sha256": "e0974066e338d22097f5c77e47d086bd9c5826c256034a31f21b34c4392fbb7b"
+    },
+    {
+      "path": "current/System.Globalization.Extensions.dll",
+      "size": 15144,
+      "sha256": "9d57e781afd06f3c6d0a54842467b29079ba2932827a76d9047a327490f1f836"
+    },
+    {
+      "path": "current/System.Globalization.dll",
+      "size": 15656,
+      "sha256": "88a4c4517972878aebd264ac5150a3822d14ab3f5b9577c8372e1724b0ca8d88"
+    },
+    {
+      "path": "current/System.IO.Compression.Brotli.dll",
+      "size": 83752,
+      "sha256": "46d228e5ea0e3d25b15e95d6a97a3b80e86dde2660589462f30853eb5a0c40b5"
+    },
+    {
+      "path": "current/System.IO.Compression.FileSystem.dll",
+      "size": 15144,
+      "sha256": "75972527f5c874893f0515fbe6f8d1d484354ac421ccf31af346738aa74cbc07"
+    },
+    {
+      "path": "current/System.IO.Compression.Native.dll",
+      "size": 828240,
+      "sha256": "4f892a1f3bdf970e662435bb044b5c5e4d8f7241bce981237f57165ae12cb171"
+    },
+    {
+      "path": "current/System.IO.Compression.ZipFile.dll",
+      "size": 55080,
+      "sha256": "a8624a7c7359c1eb6767c50513a33eb9f09125089044ef0caf9d4d225b33a230"
+    },
+    {
+      "path": "current/System.IO.Compression.dll",
+      "size": 263976,
+      "sha256": "1f7e0ce87b7859c81d793750ea8fc58db6d1fa1b81d3cea1e73c614f66439c3c"
+    },
+    {
+      "path": "current/System.IO.FileSystem.AccessControl.dll",
+      "size": 104232,
+      "sha256": "6c384ee8c0613a469f9894209f39f154d2e6e8796f9b9c02e3686a42e15d94a6"
+    },
+    {
+      "path": "current/System.IO.FileSystem.DriveInfo.dll",
+      "size": 55080,
+      "sha256": "3eea221aaa9e6066bffb63218ee292fe499bbb5db434a57225aac1b8531c0b90"
+    },
+    {
+      "path": "current/System.IO.FileSystem.Primitives.dll",
+      "size": 15184,
+      "sha256": "fb2f15cf3356987e0120d265b7b4fbccc11dccfbae08b334a17b4e830eddc54e"
+    },
+    {
+      "path": "current/System.IO.FileSystem.Watcher.dll",
+      "size": 87888,
+      "sha256": "21c97f58651ea238a7018ecfa4bb4b3b6b4e682f97163ae14f8d4d145547f3f0"
+    },
+    {
+      "path": "current/System.IO.FileSystem.dll",
+      "size": 15656,
+      "sha256": "6005e3ac5cbee19d172cc29e48ca84db8e62dff34cff95e56c3600a0a95cb170"
+    },
+    {
+      "path": "current/System.IO.IsolatedStorage.dll",
+      "size": 91984,
+      "sha256": "af7c75423c9efdf88850a7197c57e19d588a326678bbe07aa7f0b5ddb3049f59"
+    },
+    {
+      "path": "current/System.IO.MemoryMappedFiles.dll",
+      "size": 83752,
+      "sha256": "e3136d19090f173d2ab75c392486a1427060bd149d966cfd58f3df3308546dfd"
+    },
+    {
+      "path": "current/System.IO.Pipes.AccessControl.dll",
+      "size": 16168,
+      "sha256": "fb206a579c16f5750ce10026913a7f16ad686fb37af1fc9bc997f611362b2f2e"
+    },
+    {
+      "path": "current/System.IO.Pipes.dll",
+      "size": 165672,
+      "sha256": "35030c28374b6ffa6393c2ab8ae80cf712a2f88e92a16dbbdbf6ae03f0e0d452"
+    },
+    {
+      "path": "current/System.IO.UnmanagedMemoryStream.dll",
+      "size": 15144,
+      "sha256": "9442d9391ff037cf388a9e15c171845e5436b093e3c928c60350957555393fd0"
+    },
+    {
+      "path": "current/System.IO.dll",
+      "size": 15656,
+      "sha256": "1ee3349f15c3a20a7394341d8d4ede2ac3d7ddbe4462f43dae828f407f84ff1d"
+    },
+    {
+      "path": "current/System.Linq.Expressions.dll",
+      "size": 3675984,
+      "sha256": "0f99977beddc9272d56a2e16b2581cde37f2afd43e77c8209827197c098dedeb"
+    },
+    {
+      "path": "current/System.Linq.Parallel.dll",
+      "size": 804648,
+      "sha256": "4ba87321ea950874380628879c3c25332281f7f9a920a090de930570ae8af0ea"
+    },
+    {
+      "path": "current/System.Linq.Queryable.dll",
+      "size": 173864,
+      "sha256": "5e14d4ab3bb2711b0cc4b197f973e9c74955a1e4c77041d5cad65e759c304232"
+    },
+    {
+      "path": "current/System.Linq.dll",
+      "size": 542504,
+      "sha256": "2b375e90fc687967bd95a0f47dbcba44d396923f3c98b7fe5754e34c8e4befaa"
+    },
+    {
+      "path": "current/System.Memory.dll",
+      "size": 157480,
+      "sha256": "84242cce5eacc6963a77163986066bd0a1c2eb698b5f26dbdd5e6706e002fbc7"
+    },
+    {
+      "path": "current/System.Net.Http.Json.dll",
+      "size": 128808,
+      "sha256": "7c4b39865655dd3b695a305527b8d11092c5dcf1b786d747cd45e6c00cce5249"
+    },
+    {
+      "path": "current/System.Net.Http.dll",
+      "size": 1734440,
+      "sha256": "5102639c2037d77949340d94761c9a4c5053b940b8ae4ba2fbbe3507b8a5ec43"
+    },
+    {
+      "path": "current/System.Net.HttpListener.dll",
+      "size": 550696,
+      "sha256": "ad612ae83e313eb7fc2afa59b829533c8e8f36fb76d1d398262a610e85af1ccc"
+    },
+    {
+      "path": "current/System.Net.Mail.dll",
+      "size": 431952,
+      "sha256": "8830477bb6b18b181a2495c77038ab8a7c941897c9e46feb06f61b2013ed1c8e"
+    },
+    {
+      "path": "current/System.Net.NameResolution.dll",
+      "size": 112424,
+      "sha256": "e8cc6c2f0d59fb018fdc4a66057e3a56a3aa5ed82fede17b2398cda88da407cd"
+    },
+    {
+      "path": "current/System.Net.NetworkInformation.dll",
+      "size": 157480,
+      "sha256": "db21f0c5659d925741f7a08b0b50fc297248b0155f375f0fd7f970dd2e4cd3f0"
+    },
+    {
+      "path": "current/System.Net.Ping.dll",
+      "size": 96040,
+      "sha256": "3a9aab851fff6116dee3524177859e051512fadf7e209372e2d2342b51845474"
+    },
+    {
+      "path": "current/System.Net.Primitives.dll",
+      "size": 231248,
+      "sha256": "0f929e8581f09fe85275df7b38549bc51415cd110aadfd89eade53943174511a"
+    },
+    {
+      "path": "current/System.Net.Quic.dll",
+      "size": 284456,
+      "sha256": "58f5e4c6f2bbd5320c9797fbead001a99e4d334fa936d5469df82262ac8069da"
+    },
+    {
+      "path": "current/System.Net.Requests.dll",
+      "size": 345896,
+      "sha256": "60b7c1595cecc53767c3efcdae74ddd37350ac51f377cac8d7e95428b1f231af"
+    },
+    {
+      "path": "current/System.Net.Security.dll",
+      "size": 669520,
+      "sha256": "c957641be9192e7812f209e2120e56a71da0d99b1a8443ca5f7947f38ea4376d"
+    },
+    {
+      "path": "current/System.Net.ServicePoint.dll",
+      "size": 46888,
+      "sha256": "8969d0ea32b01b7198030afe6258d85a3021655b4f7e2291cb5521bba1f7e29f"
+    },
+    {
+      "path": "current/System.Net.Sockets.dll",
+      "size": 546600,
+      "sha256": "49e95c5a59172d80941992016eb35c965d8fb4bc05b745f85e793b6c010bdc6b"
+    },
+    {
+      "path": "current/System.Net.WebClient.dll",
+      "size": 169768,
+      "sha256": "2c8ad06a15aee44e700cbff2bdf1da0000fcaa4e8ba5524e9db1b07c3add099e"
+    },
+    {
+      "path": "current/System.Net.WebHeaderCollection.dll",
+      "size": 67368,
+      "sha256": "8db64dd40a80422673f81ec67ee9df921795b0579e5ba6cef09bffce7fef1294"
+    },
+    {
+      "path": "current/System.Net.WebProxy.dll",
+      "size": 42792,
+      "sha256": "cfd65e84a782db8180c9bb3bf6eb739f250901e1006d941d66f08d6b6edb0b0e"
+    },
+    {
+      "path": "current/System.Net.WebSockets.Client.dll",
+      "size": 100136,
+      "sha256": "41836162542928ad88ac7a0176cbdc753f63da986d668688f7fb049b2ef0aee9"
+    },
+    {
+      "path": "current/System.Net.WebSockets.dll",
+      "size": 190288,
+      "sha256": "1250d5f182a8c3655a81b1e11955d904fd147d7f770191de4004619247178629"
+    },
+    {
+      "path": "current/System.Net.dll",
+      "size": 17232,
+      "sha256": "c2ddcdff66bbb2595e5bcaca342d600a81c9a2e618ac9b9b1c6977fc4e1d17fc"
+    },
+    {
+      "path": "current/System.Numerics.Vectors.dll",
+      "size": 15656,
+      "sha256": "6e45388834e11d4a8e460f97da371d6889cdf98d7b65b300079c2f2b69ea3faf"
+    },
+    {
+      "path": "current/System.Numerics.dll",
+      "size": 15184,
+      "sha256": "adb2dda9bbfc24d694b77e1700f2df0706ff077de8f40dd09ababc92459f2e2b"
+    },
+    {
+      "path": "current/System.ObjectModel.dll",
+      "size": 79656,
+      "sha256": "35187a8d7f9dc8896894d1a0a496fbabcd567f2ac0f047632f7178c308ff72f5"
+    },
+    {
+      "path": "current/System.Private.CoreLib.dll",
+      "size": 13174608,
+      "sha256": "99b168b84597a4f31fda8281efce7d42a14e2df0f4694194735e049dbc0f6418"
+    },
+    {
+      "path": "current/System.Private.DataContractSerialization.dll",
+      "size": 2082600,
+      "sha256": "f3d2acd4d5adeabb40991cd1c757d05640b64cdd89f59874cffe7bbd6ed38b97"
+    },
+    {
+      "path": "current/System.Private.Uri.dll",
+      "size": 259920,
+      "sha256": "f2a695dcd4073eaba43b4ee26f006c0174bff42673e17b38914450ca7d2547f5"
+    },
+    {
+      "path": "current/System.Private.Xml.Linq.dll",
+      "size": 403240,
+      "sha256": "5de081135173dd027bdc3f6285beaa31d184cff8d217d681d405e038d1819721"
+    },
+    {
+      "path": "current/System.Private.Xml.dll",
+      "size": 7997264,
+      "sha256": "f7285c6a22e221784f1d81f884283e9dcd02aa7bfd17c428943d29e00170d749"
+    },
+    {
+      "path": "current/System.Reflection.DispatchProxy.dll",
+      "size": 75560,
+      "sha256": "2f926a9f911d11b98c71e67b7e91f883c58b3b095794a8ac69a5cdbfd37c60c4"
+    },
+    {
+      "path": "current/System.Reflection.Emit.ILGeneration.dll",
+      "size": 15656,
+      "sha256": "ed892838c6ed6649ab57a436128845ec195329cdf568c99d9cb8e6f4b92c7a01"
+    },
+    {
+      "path": "current/System.Reflection.Emit.Lightweight.dll",
+      "size": 15656,
+      "sha256": "39cf409e3b41b813c9e715ec4f38bc02748499d62e89f71fd8f4dad6ebba80bb"
+    },
+    {
+      "path": "current/System.Reflection.Emit.dll",
+      "size": 128808,
+      "sha256": "51742f48054d452de444da58d4ac69b879a23bbc8841b4b08fc337745d50cb07"
+    },
+    {
+      "path": "current/System.Reflection.Extensions.dll",
+      "size": 15144,
+      "sha256": "3adaaf6f0dcd0208ab0282a774801486444af53118015ac12e0c6f8623d3f3ce"
+    },
+    {
+      "path": "current/System.Reflection.Metadata.dll",
+      "size": 1115944,
+      "sha256": "1795022b24ddf1e4db47f63035b685f2a9f3e4468fb277158bb909d3b6ec00a0"
+    },
+    {
+      "path": "current/System.Reflection.Primitives.dll",
+      "size": 15656,
+      "sha256": "b15b177125f391d1caee193167caffbec4ac2586447f822ac655ace9a6bdff41"
+    },
+    {
+      "path": "current/System.Reflection.TypeExtensions.dll",
+      "size": 42792,
+      "sha256": "191c401d245fbbe8d6e0105a53db610122871168e21ac849be6fbc86bb786048"
+    },
+    {
+      "path": "current/System.Reflection.dll",
+      "size": 16168,
+      "sha256": "558837b6bcaf55fdbb3e7d8f565f0c04d9b415823d0abe382ac31643db3639de"
+    },
+    {
+      "path": "current/System.Resources.Reader.dll",
+      "size": 15184,
+      "sha256": "34b31e5093ff2564fccde4b43c31330bc4cbc6cf24c38cb929d34f1ffb46d0fb"
+    },
+    {
+      "path": "current/System.Resources.ResourceManager.dll",
+      "size": 15656,
+      "sha256": "d0db07a7e954edbef7d586907574068ea2764e28acb7f5a64fd6006ee8889d93"
+    },
+    {
+      "path": "current/System.Resources.Writer.dll",
+      "size": 50984,
+      "sha256": "a09c234e643b0391367f975241592002270eb9bd5516f0d75b31f82be6426dd6"
+    },
+    {
+      "path": "current/System.Runtime.CompilerServices.Unsafe.dll",
+      "size": 15144,
+      "sha256": "69edf8cb4bfe291ff998f2ab0cea2f3b7f32664c53e9b9171a35f0664fc047cf"
+    },
+    {
+      "path": "current/System.Runtime.CompilerServices.VisualC.dll",
+      "size": 30544,
+      "sha256": "b0216c72f28e06bf4ee3c7561b5c483224847e5f40df6d939d2afbe731e2cfd2"
+    },
+    {
+      "path": "current/System.Runtime.Extensions.dll",
+      "size": 17704,
+      "sha256": "7e7a6460090cf9170b336ca12511ea8d793c281a79ccff9f96db88db74b97ff6"
+    },
+    {
+      "path": "current/System.Runtime.Handles.dll",
+      "size": 15144,
+      "sha256": "9b193371a3e739f81e601e343c60d6214e0b3966833f4eaebdcfb49f8217e97f"
+    },
+    {
+      "path": "current/System.Runtime.InteropServices.JavaScript.dll",
+      "size": 50984,
+      "sha256": "7cefe89e6502602a7e0256960f5f587046016cdb9b822a104e0bf961178dcf2a"
+    },
+    {
+      "path": "current/System.Runtime.InteropServices.RuntimeInformation.dll",
+      "size": 15144,
+      "sha256": "c7fdcd989c4732af5d8c5c00a5ce68d48fa6f500dee37aa3fd716fb260b01338"
+    },
+    {
+      "path": "current/System.Runtime.InteropServices.dll",
+      "size": 96080,
+      "sha256": "1930aea4d91654a4daf13bf95b2daff023d3104a9b3794059ea139e550bcfb5f"
+    },
+    {
+      "path": "current/System.Runtime.Intrinsics.dll",
+      "size": 16720,
+      "sha256": "8679a62575619caa282d3fb1a1ead4680417b0384ffed8b73a2c4f7dc102c32b"
+    },
+    {
+      "path": "current/System.Runtime.Loader.dll",
+      "size": 15696,
+      "sha256": "64ac3644e7fd9279b5410e9c8d31df01f763b4a362e626e6dd96416a9f6755b3"
+    },
+    {
+      "path": "current/System.Runtime.Numerics.dll",
+      "size": 329552,
+      "sha256": "d845c2a3d8edc282d5c32fd8020c2233fbeed3eb02b5064ab8637506049cfb70"
+    },
+    {
+      "path": "current/System.Runtime.Serialization.Formatters.dll",
+      "size": 309032,
+      "sha256": "10c352dba07e5de49fe362edd9d8a44cfc60cd0136a48eb1a5104da30d2333e5"
+    },
+    {
+      "path": "current/System.Runtime.Serialization.Json.dll",
+      "size": 15656,
+      "sha256": "70d7013dcd8aa116954f6efb1643c4db01927f75e362c5807f795e443d1eaa9a"
+    },
+    {
+      "path": "current/System.Runtime.Serialization.Primitives.dll",
+      "size": 38736,
+      "sha256": "65b4fdca2b36d551fa88c1cb8d7646ef9f29097b96487ab08fcf31f5dc9afe86"
+    },
+    {
+      "path": "current/System.Runtime.Serialization.Xml.dll",
+      "size": 16680,
+      "sha256": "875ef1fe60647f5bb00a756ad9e7bb0c4a579d35acead8386f27f8c7479ae5e0"
+    },
+    {
+      "path": "current/System.Runtime.Serialization.dll",
+      "size": 16680,
+      "sha256": "a4a2cd5a396a851e444c5e6ab82c6353a1d83906b65968a15cd8d57540b4f9c3"
+    },
+    {
+      "path": "current/System.Runtime.dll",
+      "size": 43304,
+      "sha256": "e8fb5b78dc75b0650520042936fca2165a060cb4afa4b8cce90524c9c9fc3563"
+    },
+    {
+      "path": "current/System.Security.AccessControl.dll",
+      "size": 231248,
+      "sha256": "149888fd2b8f15b37ba115e2bb3c0577c8db9aed6f91221902ad6c9a61a69a49"
+    },
+    {
+      "path": "current/System.Security.Claims.dll",
+      "size": 100176,
+      "sha256": "45171f0ad174047cbf511e7761d7abb2d44988e899f690c36ff3c5bcfbcb2467"
+    },
+    {
+      "path": "current/System.Security.Cryptography.Algorithms.dll",
+      "size": 17192,
+      "sha256": "e1bdf2d837d0c8c582b1f98992511421c3e5130b42603f868ef0b5c8c2609f92"
+    },
+    {
+      "path": "current/System.Security.Cryptography.Cng.dll",
+      "size": 16168,
+      "sha256": "7b6deb57bd6a2f0123527f04be5ccca9a8b30f4f09a97e6f32519b651496a7f6"
+    },
+    {
+      "path": "current/System.Security.Cryptography.Csp.dll",
+      "size": 15656,
+      "sha256": "8689e9d5ea215c4e92d8229da7dbc3fabee8997083876fed1927c4d643aef3f9"
+    },
+    {
+      "path": "current/System.Security.Cryptography.Encoding.dll",
+      "size": 15696,
+      "sha256": "bad69fae75cc6ea5c8cf0a953489b323857a3c8cba80418f09e98535380a6b8d"
+    },
+    {
+      "path": "current/System.Security.Cryptography.OpenSsl.dll",
+      "size": 15144,
+      "sha256": "5d580c0cafc4492dac0c4fa11ae46dd1309835ab12671b326f0b74428539d4b5"
+    },
+    {
+      "path": "current/System.Security.Cryptography.Primitives.dll",
+      "size": 15696,
+      "sha256": "a214418a0b70a48772e274ccda284d3cfc2392abf4aba55718c70324fb78a239"
+    },
+    {
+      "path": "current/System.Security.Cryptography.X509Certificates.dll",
+      "size": 16680,
+      "sha256": "07643c4b239dd2a9326c0a62491995be666a47d2c85d0455ca7379a1692fa284"
+    },
+    {
+      "path": "current/System.Security.Cryptography.dll",
+      "size": 2049872,
+      "sha256": "1e4c4ce04a46e2a2da8221bf583ebd4f6b5149d4b32792cacc5c33978d0bb121"
+    },
+    {
+      "path": "current/System.Security.Principal.Windows.dll",
+      "size": 186152,
+      "sha256": "aace487981f8c9077620abf9c9d236ce5ef98241cf4222fbb49c717286f2cd0f"
+    },
+    {
+      "path": "current/System.Security.Principal.dll",
+      "size": 15144,
+      "sha256": "aee0a10edcf634876126b0de882d01f432de3eb7cbfca0565e330efe336d6dc0"
+    },
+    {
+      "path": "current/System.Security.SecureString.dll",
+      "size": 15184,
+      "sha256": "a8c666cce29278836fee40d1058ebb55b56631056a26117176fce6adb793187f"
+    },
+    {
+      "path": "current/System.Security.dll",
+      "size": 18256,
+      "sha256": "ede7d28de4bfec4192915fb98b35f8979ed1e4a20a7333a7d2aea45e733a9495"
+    },
+    {
+      "path": "current/System.ServiceModel.Web.dll",
+      "size": 16720,
+      "sha256": "059d12d427d2cf95f90f5ca817c30d12d504db13a031cf5dce53bafceacd3800"
+    },
+    {
+      "path": "current/System.ServiceProcess.dll",
+      "size": 15656,
+      "sha256": "41a80e894c84cc938193a95a0c37fc0d3351d3b090e4fc2fe903cc384d55af2a"
+    },
+    {
+      "path": "current/System.Text.Encoding.CodePages.dll",
+      "size": 861992,
+      "sha256": "a597e456ac579a3814d4c11cd649cb188df0d4dc27ff9ae59e36664cca0927a9"
+    },
+    {
+      "path": "current/System.Text.Encoding.Extensions.dll",
+      "size": 15656,
+      "sha256": "9ad4679a4005eadc13af6ae025534f22648ded33ab7c1a796c70c8813ee51977"
+    },
+    {
+      "path": "current/System.Text.Encoding.dll",
+      "size": 15656,
+      "sha256": "c0dda0da1aeadba8a3baa8d4704c5e4d9dadc715f72fa11c6a25899a5fa6a35b"
+    },
+    {
+      "path": "current/System.Text.Encodings.Web.dll",
+      "size": 132904,
+      "sha256": "94afad93dfdd00e132467753615bfb4bc3fa6633701082a9553d6cb4eaccf2ac"
+    },
+    {
+      "path": "current/System.Text.Json.dll",
+      "size": 1501008,
+      "sha256": "9cf2e2ae44376dbea191925e571af703c6d7b53a5c138a0f0f13cd6b8af2c904"
+    },
+    {
+      "path": "current/System.Text.RegularExpressions.dll",
+      "size": 1021736,
+      "sha256": "8b3af9e3e0215b46c2dcef1f11c4cdc7ad477140883bcb5c778d04cc051bb0dc"
+    },
+    {
+      "path": "current/System.Threading.AccessControl.dll",
+      "size": 51976,
+      "sha256": "325e07acba4cfaaf400ea23ab52903f468e500e0dd80e458653a5abedd8be771"
+    },
+    {
+      "path": "current/System.Threading.Channels.dll",
+      "size": 132944,
+      "sha256": "ab05f710069580165c588789e0623e84d213c35594e3e12ae762a6c8265740b6"
+    },
+    {
+      "path": "current/System.Threading.Overlapped.dll",
+      "size": 15656,
+      "sha256": "739bfb326810706f497df3b66901e5657b9835ad945fdc6728a27bf932cbafaa"
+    },
+    {
+      "path": "current/System.Threading.Tasks.Dataflow.dll",
+      "size": 489256,
+      "sha256": "39def3e572cf7e4bbf11f6565b0a25db2540d8041c2950e48029e24c14e06342"
+    },
+    {
+      "path": "current/System.Threading.Tasks.Extensions.dll",
+      "size": 15656,
+      "sha256": "336e8d8f0e79bfff0c6c38d4a7677384b7951ff66394664bf4fb866ed0bba982"
+    },
+    {
+      "path": "current/System.Threading.Tasks.Parallel.dll",
+      "size": 132904,
+      "sha256": "08ffb9101534e1644c203427bd22b3beecaab021f4ce40f4b162b898e2fa66f7"
+    },
+    {
+      "path": "current/System.Threading.Tasks.dll",
+      "size": 16680,
+      "sha256": "d965e3057dca46b1e8d56012e623a4772ab5ab009231450fdb0f4d2f3875c374"
+    },
+    {
+      "path": "current/System.Threading.Thread.dll",
+      "size": 15656,
+      "sha256": "34ed4d7d03bf9a5a5df7addc37a5b75759956fc0d949e25df61d878238bc560a"
+    },
+    {
+      "path": "current/System.Threading.ThreadPool.dll",
+      "size": 15656,
+      "sha256": "5758d73199750af708edca8456eed908b0bfdaaccd7cb2083a6c95dad4006fdb"
+    },
+    {
+      "path": "current/System.Threading.Timer.dll",
+      "size": 15144,
+      "sha256": "39e1b46a16ba5d4a4d7687dcda0b8838e45198544417d227c7f174c8e15df56d"
+    },
+    {
+      "path": "current/System.Threading.dll",
+      "size": 83752,
+      "sha256": "435c110b598d30f118d0e673068b535b693c5a77fae17398ad46821ce1261aba"
+    },
+    {
+      "path": "current/System.Transactions.Local.dll",
+      "size": 661328,
+      "sha256": "5428f4bcae83612694e1bec71849ffffe7ef34f62aa46daf3f01250adb019bd8"
+    },
+    {
+      "path": "current/System.Transactions.dll",
+      "size": 16168,
+      "sha256": "2203532bf5483e00686b4f26610a6b9070e59da55f5218d4294c2c069c6fdfb9"
+    },
+    {
+      "path": "current/System.ValueTuple.dll",
+      "size": 15144,
+      "sha256": "2079ad867339bd4e2dc4d0e1c9250d9f78e4016da472c25fef3c78756244ac5b"
+    },
+    {
+      "path": "current/System.Web.HttpUtility.dll",
+      "size": 59216,
+      "sha256": "351125823b848b8cd9e2541b1e0f13add351b6dd3c34a6acb8c243565e5c6251"
+    },
+    {
+      "path": "current/System.Web.dll",
+      "size": 15144,
+      "sha256": "fc90f7d949615646b8d5af798cfb2bd37fbfe21b1c790b6a2e049bea36758e2d"
+    },
+    {
+      "path": "current/System.Windows.dll",
+      "size": 15656,
+      "sha256": "113a298c5e1887f9cc2371376e6aeadf631958c1c255ebac18282da7829d3c49"
+    },
+    {
+      "path": "current/System.Xml.Linq.dll",
+      "size": 15656,
+      "sha256": "64cab6d274de20fb8ec0d080b96091e85af0ddfc9619869169e8c41d5c1b02c0"
+    },
+    {
+      "path": "current/System.Xml.ReaderWriter.dll",
+      "size": 21800,
+      "sha256": "7cbf62bea50b44b1350fc241281b8c5bf1373cb9ad03304b10f5b0d4805edb47"
+    },
+    {
+      "path": "current/System.Xml.Serialization.dll",
+      "size": 16168,
+      "sha256": "7823bbfdcb819bd585488adeb6612cab2357dc2df5e4a85e0f2a02079c2ec736"
+    },
+    {
+      "path": "current/System.Xml.XDocument.dll",
+      "size": 15656,
+      "sha256": "e5a4ef2a7f8c927dc5c587eeb4b5bf1a7264a89825c3d7313082447d3446a11b"
+    },
+    {
+      "path": "current/System.Xml.XPath.XDocument.dll",
+      "size": 30544,
+      "sha256": "01f4f51c85b1533eef9ef35fcec4c281565e661a415f7cb10422c3840c5973f7"
+    },
+    {
+      "path": "current/System.Xml.XPath.dll",
+      "size": 15696,
+      "sha256": "cd0b232b8b161a4167b77387885b13e6bf938dfce4addfd68a646fa2e5471fcf"
+    },
+    {
+      "path": "current/System.Xml.XmlDocument.dll",
+      "size": 15656,
+      "sha256": "48781bea76ddce3732f316bcc01bb375910b18b4d83de62b6570835e09dab363"
+    },
+    {
+      "path": "current/System.Xml.XmlSerializer.dll",
+      "size": 17744,
+      "sha256": "ea1eb8da8a46bafe8ee7a8628900e5c4a3fe23cabc7d63d5be5eb5edd3fb76fb"
+    },
+    {
+      "path": "current/System.Xml.dll",
+      "size": 23376,
+      "sha256": "0d13174940cbd34ccdb350b2f33037cff214420850cbf5755d9c407ba8a42407"
+    },
+    {
+      "path": "current/System.dll",
+      "size": 49960,
+      "sha256": "173dd55a6d19794fb6eb8c4e4e73510ebf3a7928affe43c21e721861a4250e51"
+    },
+    {
+      "path": "current/Velopack.dll",
+      "size": 268288,
+      "sha256": "1cc96ee3d1b466739902a15188ec6046744017ab28185bd32cb60ec1537e9174"
+    },
+    {
+      "path": "current/WindowsBase.dll",
+      "size": 16208,
+      "sha256": "d2b82fd6347b45b6bc3ff23c60d215a8431906d25b68bf84a2ff6a0b2c46ae9e"
+    },
+    {
+      "path": "current/clretwrc.dll",
+      "size": 310568,
+      "sha256": "bc233572d7702ec8d8763c143ec62687c38abc3aad26336fb45c26657bf3a5e7"
+    },
+    {
+      "path": "current/clrgc.dll",
+      "size": 667944,
+      "sha256": "b09898e142791ea3b96fd1b432d0e5c8ad51c81cd99b608accd2981e78a93cdf"
+    },
+    {
+      "path": "current/clrjit.dll",
+      "size": 1777960,
+      "sha256": "697c09ac310b8fb8118863971955da135aee348116816e3b511bf5957dc6253a"
+    },
+    {
+      "path": "current/coreclr.dll",
+      "size": 4995880,
+      "sha256": "bbbcaedb369617695280caaa60cda1aba4fa3c5b557532a89d9f4a9174a5b692"
+    },
+    {
+      "path": "current/game/D3D12/D3D12Core.dll",
+      "size": 4725304,
+      "sha256": "625bd40005b1c3708695d5256ecf230d278e6b8edba5a88af70f3d91324f3052"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/EmbedRuntime/MonoPosixHelper.dll",
+      "size": 611240,
+      "sha256": "4d882d75accec7054b72498afd7c627efca8824453253fa67e38dceaedaba5df"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll",
+      "size": 7828912,
+      "sha256": "7ccc2fcff211b1be0f498bd537c6575e0a028bd6971cd1812d1884c9840d702d"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser",
+      "size": 1605,
+      "sha256": "8a1082057ac5681dcd4e9c227ed7fb8eb42ac1618963b5de3b65739dd77e2741"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx",
+      "size": 60575,
+      "sha256": "751861040b69ea63a3827507b7c8da9c7f549dc181c1c8af4b7ca78cc97d710a"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/2.0/machine.config",
+      "size": 29066,
+      "sha256": "e91782a27fa39fc6c1d6ee8b08529f5d35052310d0006034b878eb04b8f2af30"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/2.0/settings.map",
+      "size": 2622,
+      "sha256": "49c6160f9d54af4270a3b4e997fc4a8301f79b9e2070118fa46ddbcbbc44f9a2"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/2.0/web.config",
+      "size": 11635,
+      "sha256": "cf2b54339e069b9e42f7d6795eecbf562c50c1011f4ca8f65f578fe52d97ff92"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.0/Browsers/Compat.browser",
+      "size": 1605,
+      "sha256": "8a1082057ac5681dcd4e9c227ed7fb8eb42ac1618963b5de3b65739dd77e2741"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.0/DefaultWsdlHelpGenerator.aspx",
+      "size": 60575,
+      "sha256": "751861040b69ea63a3827507b7c8da9c7f549dc181c1c8af4b7ca78cc97d710a"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.0/machine.config",
+      "size": 33598,
+      "sha256": "e60aec2c5115d65b3acb3c55ea21576dbd770f579166c017125571e46ae560ed"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.0/settings.map",
+      "size": 2622,
+      "sha256": "ce1db1ad8a9512073164e3eccdc193f7eda036e1a9733caec4635de21b2865c8"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.0/web.config",
+      "size": 18802,
+      "sha256": "e38bb8cc68fe5b4edecdfd288d094b9e8ced7629039b2a347682aba0d8bd7492"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.5/Browsers/Compat.browser",
+      "size": 1605,
+      "sha256": "8a1082057ac5681dcd4e9c227ed7fb8eb42ac1618963b5de3b65739dd77e2741"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.5/DefaultWsdlHelpGenerator.aspx",
+      "size": 60575,
+      "sha256": "751861040b69ea63a3827507b7c8da9c7f549dc181c1c8af4b7ca78cc97d710a"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.5/machine.config",
+      "size": 34056,
+      "sha256": "ee950004b576fb28dc85f4b0435ed04bf96612de2e8b53be84d07afe85a0de6c"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.5/settings.map",
+      "size": 2622,
+      "sha256": "ce1db1ad8a9512073164e3eccdc193f7eda036e1a9733caec4635de21b2865c8"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/4.5/web.config",
+      "size": 18811,
+      "sha256": "c4cbddd4fd9347b58cc5a72b36dc4ba1ad2bb699e65869d05cd3fb9865f0d824"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/browscap.ini",
+      "size": 311984,
+      "sha256": "4ddd50f31fb968f30bedefc253a46dc3f2890192d05cdaa9e0a64a056eee807e"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/config",
+      "size": 3815,
+      "sha256": "5776169973a26a387b8b3e5c0f2301a7ab9a6dd7c7d3efa22a96abc47fbf8662"
+    },
+    {
+      "path": "current/game/MonoBleedingEdge/etc/mono/mconfig/config.xml",
+      "size": 25817,
+      "sha256": "0c56e34c69124510fa8c19e7b4c2ca6c1c4ff460ae19f798dd0ca035809e396d"
+    },
+    {
+      "path": "current/game/StarTournament.exe",
+      "size": 667136,
+      "sha256": "82efd5a8c297a5046f6bb72c240dab8972e64003851935eba0a46ad121ce0305"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Mono.Security.dll",
+      "size": 241152,
+      "sha256": "82df31404def10ffd69c09e3a8c454e76552f3a37675d1b7b8c743cfd3d1af6f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/StarTournament.ProvingGround.dll",
+      "size": 825856,
+      "sha256": "94f6cd80ecf346e93bf1fd0d41cc39462336459398811e1fb6ab564d40de84b3"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.ComponentModel.Composition.dll",
+      "size": 257024,
+      "sha256": "9373a420101d4c674b9f74bce93a45c58ddb3548c130d9b65ab87235d0a4ed30"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Configuration.dll",
+      "size": 124928,
+      "sha256": "d3acb14b8ebaf7482d2d3e26e8c04685299e2b471a513a30508bd0cab8336354"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Core.dll",
+      "size": 1113088,
+      "sha256": "ebf140bf5f8d49ccac20c14935625b0ae0a46c30aa4f90b2808f3b9678822470"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Data.DataSetExtensions.dll",
+      "size": 29696,
+      "sha256": "79a01061129709358567a9254684ba52ba66371e01e0354e7fa4852a9f62e59f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Data.dll",
+      "size": 2125312,
+      "sha256": "5d0807269bfcf112aa844951232ef105bbb642abb1e14c2e78dd70fb9245e98a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Drawing.dll",
+      "size": 489984,
+      "sha256": "76dca8fbe098c285b03de79369f9f2aa141dec44de99ebcc0478c7e762024204"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.EnterpriseServices.dll",
+      "size": 44544,
+      "sha256": "d8a3d6c1929ec028793ff07df92781c03ebb38c63005d4c12c35e3116d04fcaf"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.IO.Compression.FileSystem.dll",
+      "size": 18432,
+      "sha256": "40ef91246d44d6c4d8a1505e1210b0c54963a12938ba0458959bb064d62f36f4"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.IO.Compression.dll",
+      "size": 114688,
+      "sha256": "7370dc2d3a6f02dbda1a69ca596f2ae96fc464809b3bbca6071fc1fc1edfbb2d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Net.Http.dll",
+      "size": 122880,
+      "sha256": "c46d5b5dc68af8ce1b34e8ace4372b157e2e85ab63d6b5eea938ca71dc7fb064"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Numerics.dll",
+      "size": 119296,
+      "sha256": "74f6771aedd33262470e8e653fc0f4e04a659bcdadbeb44b2f8826fba7053f77"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Runtime.Serialization.dll",
+      "size": 934400,
+      "sha256": "2aa92fb930200ddb3c9c3ffaaff39bd6cdc6d689f19614f6c3b84a15060800f0"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Runtime.dll",
+      "size": 12288,
+      "sha256": "e0a7334b7ba419aaab6bd3bb6992d693e689341a9178172c9bf99c2aa6a085bd"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Security.dll",
+      "size": 320000,
+      "sha256": "95a29120e164e5bdb7ff5dcb2cb4641e5ea0aca7c1ad0854b0e9b2b0ff5abe2d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.ServiceModel.Internals.dll",
+      "size": 215040,
+      "sha256": "6738a31088136d38a50354371feb83a4fd1558acca2a5f8b165c34a859e08c47"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Transactions.dll",
+      "size": 35328,
+      "sha256": "cfac784408e3b7da6c6e94ec04c162c6d902372fab19353c02aeda3464ce185f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Xml.Linq.dll",
+      "size": 136704,
+      "sha256": "ed219710472b837fddf45cc73c912e04b4d6b8ca833ea074ec1f73bc00157b05"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.Xml.dll",
+      "size": 3160064,
+      "sha256": "f90799a0c38f3d45e390f9768ab467bf681a052e1b807f4c59fabef5f7edaffa"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/System.dll",
+      "size": 2641920,
+      "sha256": "9e8a5190797e35428b1ae9bce6d47d39a1dbc3e974f14239e44678913dc6194a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.AI.Navigation.dll",
+      "size": 23040,
+      "sha256": "3b3c0ec45a3eeaba17a4dcd7acc31c620fb8bde8dd9bd30e9ddde4e96c816721"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.Burst.Unsafe.dll",
+      "size": 5632,
+      "sha256": "9d9c1ff52411decbee5d9f0d1cd61ebeaa222077aa77a52101ea3debafae98e2"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.Burst.dll",
+      "size": 296960,
+      "sha256": "f76c2f7efd1fb31244ca7db806905c95d5bc7f0897ebd644bfe16d76ee83a336"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.Collections.LowLevel.ILSupport.dll",
+      "size": 5120,
+      "sha256": "ff50383f807f9692e4913b97e47d86fefcb8faa33d6d48cd3e3fd6fc7ffb448d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.Collections.dll",
+      "size": 432128,
+      "sha256": "f67c2f1c34d02ef24e4eecb01a59d7c92cf42062f5151998855bbcac6361719f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.InputSystem.ForUI.dll",
+      "size": 15360,
+      "sha256": "8ff43f067d84c2848af70294bcdc95fece9adbc38ce245db2c3c7852d4532d5d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.InputSystem.dll",
+      "size": 1095168,
+      "sha256": "fc2ec45db88c57b0998eb78740344540754aba3b32ed8db66135e4c56d8ae41b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.InternalAPIEngineBridge.004.dll",
+      "size": 4096,
+      "sha256": "902f5432c3e4a4690992852f949550e56fba7bd04879e93745f63d073a236f3f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.Mathematics.dll",
+      "size": 737280,
+      "sha256": "eabfc1b40f90cf4035225c8b3856324809a7cb2dbe232834a47279432a3eddf5"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipeline.Universal.ShaderLibrary.dll",
+      "size": 7680,
+      "sha256": "a55fc13d14915d5ab05314eed39785ad5f507eacc77c2f04568ba017c56b10e3"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Core.Runtime.Shared.dll",
+      "size": 4608,
+      "sha256": "798ec5162e38c53b5b02623c3f639e89bfc72b9e560dedd0e1fd96974687c486"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Core.Runtime.dll",
+      "size": 1139712,
+      "sha256": "55be3489f557da70921ef9af76be2fad4d49b47a69d36358ffc731d789db2334"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Core.ShaderLibrary.dll",
+      "size": 3584,
+      "sha256": "042ca5053d59c7f334708f650a7f853580c602a70c7bb4a53bfdeea8e18f35b5"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.GPUDriven.Runtime.dll",
+      "size": 220160,
+      "sha256": "adec1be3cc66f3049395e90e9625aab28c1af0f0dc58165ff9ed5cd700560458"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll",
+      "size": 3584,
+      "sha256": "87e93e602d2d3392b38bb37f1c55f6ef25c00dacc0c5d31ae434885aa54ba7be"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Universal.2D.Runtime.dll",
+      "size": 220672,
+      "sha256": "f5bd53529dd7c4f6e262c8e1b80a16078cd0f3f7f3c2c57545548d3387650a6b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Universal.Config.Runtime.dll",
+      "size": 4096,
+      "sha256": "fd2e74053264d960b9d524827e66e1443e29ddd13e709773f483b6b3b8671dde"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Universal.Runtime.dll",
+      "size": 714752,
+      "sha256": "d6b61bbcc45d1b32fe3679d3e64f516c32e349a7d8b5d1997018a9c85fa6a47b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.RenderPipelines.Universal.Shaders.dll",
+      "size": 3584,
+      "sha256": "60e39d8f582017846ccbb93a125dd329a69d2ce08b2bc84e76a6f5ac2d106bb6"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.TextMeshPro.dll",
+      "size": 435712,
+      "sha256": "e73ba553cda22dd934b4e9beb8f4fb69198508d341e74be6cff232880c7618c6"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/Unity.UnifiedRayTracing.Runtime.dll",
+      "size": 90624,
+      "sha256": "aa34a34dd222c3c6665dc4cd0aaa2b7db28a93dee4ab775a9ec50f433e759701"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AIModule.dll",
+      "size": 77224,
+      "sha256": "71f41d664d48128f5135884413f21ea9fa86b6ce9a4f053b5081bf286d7ccb99"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AMDModule.dll",
+      "size": 21928,
+      "sha256": "aa68b148f2e74c334ae8bd38ddeaff055730aeada6f809697521ebd8920ce988"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ARModule.dll",
+      "size": 25520,
+      "sha256": "b36cde8f19c92faef74723bc362e69de210181323bd55f1c4acefe47f2cda4a4"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AccessibilityModule.dll",
+      "size": 51120,
+      "sha256": "c8249b9ca23640f7959c529d61f2eed1c86b715d364ed17e494cfaa324001e4a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AdaptivePerformanceModule.dll",
+      "size": 125352,
+      "sha256": "385cc1158fb02325535a6df613811204afeb7e3f240737a1fc2add0bd976b49e"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AndroidJNIModule.dll",
+      "size": 121776,
+      "sha256": "8e008a125f9cd1417f84780eeb7de840e0f2c749ef92a9d87910637f9b5f9b58"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AnimationModule.dll",
+      "size": 225200,
+      "sha256": "e2952b9c0d9405a52f9b0e5cc72fcc14b63f23a20562e354c42ce2697c74836b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AssetBundleModule.dll",
+      "size": 41896,
+      "sha256": "8d542e27040bdd47d416a5d9d388059642a18da0dfbf18eb350e17597ca21bad"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.AudioModule.dll",
+      "size": 142760,
+      "sha256": "e340de4e194c183136a86f45fb17df334435775ed0680679b4c5d8370def04d9"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ClothModule.dll",
+      "size": 36272,
+      "sha256": "1b33dd16fe1022981108455221d5d608df9c42f9875a673c1edb39b0a232c3df"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ClusterInputModule.dll",
+      "size": 28080,
+      "sha256": "a7fba2eab6ee716d637ecb0f377cefb16979c7c1d26592d48eaa0665d3640fb0"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ClusterRendererModule.dll",
+      "size": 26536,
+      "sha256": "d9dbf5f9ab23959510d457a7a263dce628aa6f85490717e322bbed4dacd39c74"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ContentLoadModule.dll",
+      "size": 32680,
+      "sha256": "b7292cd077c601278bac76b65efe15df43efc52c13ed4913f8fd9dcaac908016"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.CoreModule.dll",
+      "size": 1985968,
+      "sha256": "6e113749845967506284bc65e85d28b527a4c4c99af73f0433af9b4ed5abfbc8"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.CrashReportingModule.dll",
+      "size": 26544,
+      "sha256": "8b3141bdc0c6bbef38dc74fa71021c9e54af76b2b1a37b63e49b39cfc9271bd6"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.DSPGraphModule.dll",
+      "size": 31664,
+      "sha256": "688f7cbed6213df3bd5ce6a5c6dac92b0f3d0530841b88e82c69bce5a2c1827e"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.DirectorModule.dll",
+      "size": 41896,
+      "sha256": "ad25a8f620e97ec1962a5cb2d5369485108673922b47b2cadf0b4239c94ce647"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.GIModule.dll",
+      "size": 24488,
+      "sha256": "53d4bd69745ee83d5c4f0760f92b9efdb099489fdfc64528af9a1c95b0adfeb8"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.GameCenterModule.dll",
+      "size": 45992,
+      "sha256": "5bb7513b5b76e44f118323fdd27302df224db134bd9c6818f008a3dd6bf95534"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.GraphicsStateCollectionSerializerModule.dll",
+      "size": 14256,
+      "sha256": "86ea17b6e8515403416ddfa2a08f4658b27d956cc28585f488a85d3e8939a358"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.GridModule.dll",
+      "size": 30632,
+      "sha256": "aac2d49a3b8f3d853cd318f0d67cbd8cffbe0f5f8f9ce288aaec85f25f46c5db"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.HierarchyCoreModule.dll",
+      "size": 109488,
+      "sha256": "bf800cc45f5c0354f9ad2ea22e0c1463bbfcc111c18247fea92c24baf4f45938"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.HierarchyModule.dll",
+      "size": 102312,
+      "sha256": "6a5d008a26eaed4289ffee5deaf6628cd708211674b9fbd2c243c465b022f748"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.HotReloadModule.dll",
+      "size": 24488,
+      "sha256": "a58a336e1f65a20fdaa79ef547388367540203ab07d9211d0f322f9fbb202c66"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.IMGUIModule.dll",
+      "size": 214448,
+      "sha256": "59079367d288ee1afc510ae174e6bd3373d44dffdcf39cd6a3d81f4ae72cc6a8"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.IdentifiersModule.dll",
+      "size": 16808,
+      "sha256": "9e32c80cb919fa932d33200fc1b840f028d9badd6bafdf540305ee51354d98d1"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ImageConversionModule.dll",
+      "size": 31152,
+      "sha256": "48deef77c0900f884d3a62530914188d6916519d415cd5196505a0dd2ba11b2d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.InputForUIModule.dll",
+      "size": 57768,
+      "sha256": "6b80e1f8e768de2769fe874111c1cb63ab21b8eb662fc0f208f9f45e7aa47625"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.InputLegacyModule.dll",
+      "size": 45488,
+      "sha256": "3fe0a3b1c2dcbf8430d053be5523c9db768601624069c593d981fe5d89262c41"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.InputModule.dll",
+      "size": 28584,
+      "sha256": "c7555f9e890b65d52806d11be2a18e79ad9e20dd3d9b7950c344b0e98269146b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.InsightsModule.dll",
+      "size": 14256,
+      "sha256": "7823f02c0fd49945db4611a061f76f952f3bea5f1888e8a3ee32432a42564367"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.JSONSerializeModule.dll",
+      "size": 27056,
+      "sha256": "7d596dab3f41e563d3cadacff3f9259b662d764a1efcbfeae7ce680f7bb503bd"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.LocalizationModule.dll",
+      "size": 27056,
+      "sha256": "d37f7fc4d38c8ea2462194e69b4ea33f88be334a1e7ed222f200f2e707564bad"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.MarshallingModule.dll",
+      "size": 83888,
+      "sha256": "2424626f708e2abf2cc58f1fe5e5093805aace99cd4e9f90b52c84ddaec993b3"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.MultiplayerModule.dll",
+      "size": 17832,
+      "sha256": "b0e7ca214c64d51d2fd6703aebdad36b2426e6f090ef93038b3bcf08ac7ecd58"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.NVIDIAModule.dll",
+      "size": 40880,
+      "sha256": "9401ce6e59d01797ddffc4db283dbd7cc8ed5e9d9516cf536e0ad9a4650d3bed"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ParticleSystemModule.dll",
+      "size": 171944,
+      "sha256": "ca47a718f791e2104377e7cfe218210314a957dc1bcfb70102417adb73b4a430"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.PerformanceReportingModule.dll",
+      "size": 25008,
+      "sha256": "35e66ed8f5d0fbd8b25479ae75625b4a17cd41519dbf605970db154757c254e2"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.Physics2DModule.dll",
+      "size": 586664,
+      "sha256": "a13a44e7344ba20d6fcd5abde493d2a159dcd4010be1a016f6a0eb877f007766"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.PhysicsBackendPhysXModule.dll",
+      "size": 14256,
+      "sha256": "33ae23327a5d59ee0743ab0c5df0b0264ccf4f292d2f0807bc8cef40efb5a813"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.PhysicsModule.dll",
+      "size": 183720,
+      "sha256": "6112016fb7df440b4af9ff6d1e05cdb1d7f5dae652cf19e3cbdc6a2ca4699d0a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.PropertiesModule.dll",
+      "size": 134064,
+      "sha256": "8063760df50b181d9f9c90db6fad2a34c06ef5fb02f26467384b3aec5d14dc76"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.RenderAs2DModule.dll",
+      "size": 25520,
+      "sha256": "52c9a1536d88fedc62df201840d435a745c16b6448b86f6e22f91902e4d92c8b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+      "size": 24488,
+      "sha256": "f59d4c5e3c08db5f532117e76b16f5d5c4d5219ba584ee94312bb7d54c399311"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ScreenCaptureModule.dll",
+      "size": 26544,
+      "sha256": "f04cdf78234bf6387aabad5aacb327542f5a8bdcca533eff7401c6eee3206e36"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ShaderRuntimeModule.dll",
+      "size": 25512,
+      "sha256": "1396cb6600b39b593d0a58221c978d513dd289e1dff71a2eb2c6b2b60d1356e1"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.ShaderVariantAnalyticsModule.dll",
+      "size": 24488,
+      "sha256": "7a26b6fcc298b6d2251e551b7bc6fc4910cf029c9a0dc0c6cb412b722a7fcf5e"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.SharedInternalsModule.dll",
+      "size": 38320,
+      "sha256": "8db34acfc413aeb640d9a618cc65964e3c6be6c2dbe3f5f9eb3fa3156fbf34f3"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.SpriteMaskModule.dll",
+      "size": 28584,
+      "sha256": "c77d26f5ae1ee1cfd733d51fa9b3e44687f47ab49cb8a1e5f951fb326cfe498d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.SpriteShapeModule.dll",
+      "size": 32688,
+      "sha256": "ad172378591dee76cc2d08d5a004a92ac4ce469fa1cc3a962854e29f04448cca"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.StreamingModule.dll",
+      "size": 26024,
+      "sha256": "56877ff28757655ffefa1daf4a4255b668616277c3c84df8f51f0daeecbf4b92"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.SubstanceModule.dll",
+      "size": 29104,
+      "sha256": "aeddbe082d614d20f56d26a0cb415118c17e76763094cae3ed85567fd0f517ba"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.SubsystemsModule.dll",
+      "size": 41896,
+      "sha256": "1372e9608f65909baf934b33fb04a8eb55bb386ed9d88e56840fffe9bc7d8b19"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TLSModule.dll",
+      "size": 32176,
+      "sha256": "e824d1cf3bdf44ae67b05d795e3a64ca351b4e71f283e37ff55c8312f59692b7"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TerrainModule.dll",
+      "size": 134056,
+      "sha256": "407e8d6c30c7fefbcc7d888e0086f5ef8743531bfcbbc04bb11762b12558a759"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TerrainPhysicsModule.dll",
+      "size": 25520,
+      "sha256": "e8c19bd79f9d840b6ae34ad78adac43581c03dcb9cc375bfdbc682e8a349f4b2"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TextCoreFontEngineModule.dll",
+      "size": 81832,
+      "sha256": "1e9ec852583e53600d166d6688c62aa0e29d8ec26ceabfd9aab5319fd098203a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TextCoreTextEngineModule.dll",
+      "size": 334760,
+      "sha256": "4345d56bea3d26f7aba127754d95d6a1a9b754491ff5cd01d707e90219eede5b"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TextRenderingModule.dll",
+      "size": 39336,
+      "sha256": "41d9b82516a161f4e33b33ec54ccbf4ff520a546dfc0278d9d89342cf48e187f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.TilemapModule.dll",
+      "size": 58800,
+      "sha256": "742b401342db4188a1d438cf42cff503d927f87182615e52d463ce13bb8d5aef"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UI.dll",
+      "size": 262656,
+      "sha256": "2f8983c5fe8f1dcab43eef31ee1c35549e521bfd4e3f3faf798058be747da65f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UIElementsModule.dll",
+      "size": 2452392,
+      "sha256": "f791cdee383a20ef998be28112bb4c0600528945289f9138ff4a6d5352946e16"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UIModule.dll",
+      "size": 50088,
+      "sha256": "8490946ba29a169115bf4d3e549d42a0a5e9b1c4fb49b28d0dea97b19c21af99"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UmbraModule.dll",
+      "size": 24496,
+      "sha256": "1fe54406a037f8f8bf0e4b648137b5d796e92716ee16d9120ded96b023e47f64"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityAnalyticsCommonModule.dll",
+      "size": 35752,
+      "sha256": "903a192bf5d0cb1b7c99826ccfd67401161949ecc0eb6c07ee350216526e53c3"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityAnalyticsModule.dll",
+      "size": 60848,
+      "sha256": "37c8de9c5b3b5014c491eb70db235bed73cb717c25d2c0a4438f3c9faddf009e"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityConnectModule.dll",
+      "size": 27560,
+      "sha256": "d795553835cb0a6bbd2d13ba36799323bfbfbdf6dbe3ed709f490b80d8e8af5a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityConsentModule.dll",
+      "size": 16304,
+      "sha256": "8252eeef40749b9b8d1015569a3dd0148ee5b8c2445821781476165a82713af3"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityCurlModule.dll",
+      "size": 26032,
+      "sha256": "4119615947f88d586ca33cc9b217fe2f81ada01e49214d2b9b73b186cd233e41"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityWebRequestAssetBundleModule.dll",
+      "size": 28592,
+      "sha256": "f1498767358fa09c93691d7907f67300ee3bee396413b978e948c83b1e2cf48c"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityWebRequestAudioModule.dll",
+      "size": 28592,
+      "sha256": "fd8d815a45915f17ec9f63fda402769746ea28251a408a5f439c62f4a8af2729"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityWebRequestModule.dll",
+      "size": 70064,
+      "sha256": "9d777e08bfe9b9c12ff69c5bba91a0ec67b6712c03aa62896eb892fa8fbb4009"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityWebRequestTextureModule.dll",
+      "size": 27560,
+      "sha256": "c983a36f4ecf311a8ac2f067a943612bdfdb04dd1d4b0902fe23b8c22b800caa"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.UnityWebRequestWWWModule.dll",
+      "size": 36776,
+      "sha256": "71a0dfa0aecd73f7935d58f90b24ea56adc8c7866495ef3528e1a128f1f36a14"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.VFXModule.dll",
+      "size": 78248,
+      "sha256": "5c62f2e10b2559ae6333487dfb94c82c2e128a074f4777d9e69a74c8e522ae6e"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.VRModule.dll",
+      "size": 31664,
+      "sha256": "881678fd43267960701bffe14b698fc40fbab28247b675c2e18c5578dcd6c0d2"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.VectorGraphicsModule.dll",
+      "size": 252840,
+      "sha256": "8d8aabf185a7238ac0e205c708305a9d1da2ba6160d497aaac70f439ee1671f6"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.VehiclesModule.dll",
+      "size": 31656,
+      "sha256": "2946f811e0b6e3ee9748d39b916e78f418a70c4157177efa946b8aeca90ca86d"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.VideoModule.dll",
+      "size": 49072,
+      "sha256": "33e1f716564b7fc9169c7ad9b4b433b2e7ab3eaf760e83cc658c49bf216dbf51"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.VirtualTexturingModule.dll",
+      "size": 42920,
+      "sha256": "8a0e54d097692eb82c8863b1d3f2319e1794e43f57b9e4d77a0ea728711173f8"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.WindModule.dll",
+      "size": 26536,
+      "sha256": "3db21bbc42641b0dbfe8cc802045c623bb45ec725e84734114330ac59889c18f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.XRModule.dll",
+      "size": 88496,
+      "sha256": "b3f56678282a17a731c9328f1c32d1203f4388fba7188060d9f5cb9b44c198d7"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/UnityEngine.dll",
+      "size": 197544,
+      "sha256": "8f5656476f57134b88f230538fff8abb66eac6bf3ac087daa86d64d88d9d39eb"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/glTFast.Documentation.Examples.dll",
+      "size": 26112,
+      "sha256": "40bd690d3071125a3a42bf40b4461cac039dd917ae069ec333fd307aadbb2289"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/glTFast.Export.dll",
+      "size": 89088,
+      "sha256": "a84775fa28f6cd6b66c3d6097286d03061d4fd8bf031ff01f3686e54fe3e82e8"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/glTFast.Newtonsoft.dll",
+      "size": 3072,
+      "sha256": "ebe7e217f9c683a26416ad5ec5e127a54a24b85274bec4f4b29b7a613454ecc0"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/glTFast.dll",
+      "size": 297984,
+      "sha256": "8434b181704ef94ad3b5108ab563c7bdc98c0e6891c73ff98e7992447409620f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/glTFast.dots.dll",
+      "size": 3584,
+      "sha256": "f88d1f320112ed8b94f768c930d5d3786230be7a49f5143d39cb616a6edbc71c"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/mscorlib.dll",
+      "size": 4632064,
+      "sha256": "194417662b72e9fdc29df44aa07fb693a9cf2194d84e327231f3eeff1104ae0f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Managed/netstandard.dll",
+      "size": 90112,
+      "sha256": "6ae62e082dc494a2433984177f60ca4db5fae69b1f360a8b33754172b310b8c5"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Plugins/x86_64/lib_burst_generated.dll",
+      "size": 572416,
+      "sha256": "3bd172034931770cd39ecfd055bef83ccc4769d5b73c73a7bd30be8f647ac428"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Resources/unity default resources",
+      "size": 5883716,
+      "sha256": "32b58bdb9cf090212b46a8ca7436dcdae89e4ef43e9d55a835233c21d1347734"
+    },
+    {
+      "path": "current/game/StarTournament_Data/Resources/unity_builtin_extra",
+      "size": 396568,
+      "sha256": "26103140e70593b0a284510fcb2ff9ab5e04ba9bf9b9daf90408388346af8d0a"
+    },
+    {
+      "path": "current/game/StarTournament_Data/RuntimeInitializeOnLoads.json",
+      "size": 4082,
+      "sha256": "d9e04c76f5cc8e2878955e0e534f8b1c48d586b5429789608797083b2a5234f7"
+    },
+    {
+      "path": "current/game/StarTournament_Data/ScriptingAssemblies.json",
+      "size": 4196,
+      "sha256": "1808d3468759dec3d48aacf163344465756065c6de39893ccef36cb858e05c01"
+    },
+    {
+      "path": "current/game/StarTournament_Data/StreamingAssets/trooper-ATTRIBUTION.txt",
+      "size": 1919,
+      "sha256": "8d22043f8afd898a449e2ea68a9cc8a3a57a803d7c437805812351286c54f0aa"
+    },
+    {
+      "path": "current/game/StarTournament_Data/app.info",
+      "size": 45,
+      "sha256": "4d549266a9b003dde79f974f2b4a8bb1759becd2e2d538498faa06dd500bad54"
+    },
+    {
+      "path": "current/game/StarTournament_Data/boot.config",
+      "size": 156,
+      "sha256": "91cb5aa8c267aada2517ab862c8999d89c6cf40c210637bc4cbe8d7c4b340c5f"
+    },
+    {
+      "path": "current/game/StarTournament_Data/globalgamemanagers",
+      "size": 200564,
+      "sha256": "04da944ab52104248da0ca86d94e37dadf68519fa89d9aea2701f5f28a9dc6f0"
+    },
+    {
+      "path": "current/game/StarTournament_Data/globalgamemanagers.assets",
+      "size": 552960,
+      "sha256": "9d936b1ab03a63a6a72f3121c0bf05102c24f72913279b7d3db0e59b2ab915df"
+    },
+    {
+      "path": "current/game/StarTournament_Data/globalgamemanagers.assets.resS",
+      "size": 2816736,
+      "sha256": "fa17cbffcba886c81d7e30fbb839bcb97932cedb8b38686ab06cc2c1e8cb4c99"
+    },
+    {
+      "path": "current/game/StarTournament_Data/level0",
+      "size": 1862092,
+      "sha256": "38028c771926f4550bb2d5ef7f2e86d687e1772b8e4ed5a681400b06305d30b5"
+    },
+    {
+      "path": "current/game/StarTournament_Data/resources.assets",
+      "size": 553592,
+      "sha256": "1c79f2538e3769ad54f596523fbfd01c656da757baa97b0c2e335773268f8377"
+    },
+    {
+      "path": "current/game/StarTournament_Data/resources.assets.resS",
+      "size": 2104432,
+      "sha256": "de6af06fb55deace03092e0b5833b15c42058d838ee516f0ba79cab2b1910834"
+    },
+    {
+      "path": "current/game/StarTournament_Data/resources.resource",
+      "size": 13864832,
+      "sha256": "f70829c2e19f9c7451809350349d7c48608cc1518f491db0e85ac62f0fe5deb9"
+    },
+    {
+      "path": "current/game/StarTournament_Data/sharedassets0.assets",
+      "size": 11410884,
+      "sha256": "7ce7b5ca2296fb126fc5b8e1ade3b67787dde8f1d8775f08889ac1cf412dab22"
+    },
+    {
+      "path": "current/game/StarTournament_Data/sharedassets0.assets.resS",
+      "size": 136664704,
+      "sha256": "413725c024495e38378f215b70ea46cc635b164b804047393aa08d4c5c4af81a"
+    },
+    {
+      "path": "current/game/UnityCrashHandler64.exe",
+      "size": 1669544,
+      "sha256": "4e65cef1be7996ccecec341c11a2f1319c1349b30288bf01455a2494451ddb69"
+    },
+    {
+      "path": "current/game/UnityPlayer.dll",
+      "size": 36730288,
+      "sha256": "6aaaa964ebb34fb3d72f14288729e64002e3b917062e313a3452f73a2a9c4cba"
+    },
+    {
+      "path": "current/hostfxr.dll",
+      "size": 366376,
+      "sha256": "4f5a0500cd2a2439b0d5edbf242950233aec4539ec9a5e7ba9b8a9b0079f63af"
+    },
+    {
+      "path": "current/hostpolicy.dll",
+      "size": 406824,
+      "sha256": "24f18ccb306d5e614932478471ad276e2b041a723a45e571073db383b37c5120"
+    },
+    {
+      "path": "current/mscordaccore.dll",
+      "size": 1348960,
+      "sha256": "a277f63f5722e1ed59a791fc5d30c53ed263abef4adf12d0bf494897d796c3e0"
+    },
+    {
+      "path": "current/mscordaccore_amd64_amd64_8.0.3126.42015.dll",
+      "size": 1348960,
+      "sha256": "a277f63f5722e1ed59a791fc5d30c53ed263abef4adf12d0bf494897d796c3e0"
+    },
+    {
+      "path": "current/mscordbi.dll",
+      "size": 1233800,
+      "sha256": "20140e71ed6dd59e6736e455b7be2784d7ac0b3f43839148a134aec3e7622de0"
+    },
+    {
+      "path": "current/mscorlib.dll",
+      "size": 59216,
+      "sha256": "ee4983e136ab524f29d2f43d01d1deb978f4948eb5ca05b5d6e40be37ec43023"
+    },
+    {
+      "path": "current/mscorrc.dll",
+      "size": 136488,
+      "sha256": "c0fc4c625ce2c62887a86a5e1d93895836e7c998a3c95169505f8515266160fc"
+    },
+    {
+      "path": "current/msquic.dll",
+      "size": 536344,
+      "sha256": "b7158d427b01c70483bb3d80c5211e387dd98e9471c8a70e4484d449de9157e8"
+    },
+    {
+      "path": "current/netstandard.dll",
+      "size": 100648,
+      "sha256": "53d854d33c3f0e1bbccff4b5c4b89420daa66fa5f6603f6e5df20d6bbb7e00f4"
+    },
+    {
+      "path": "current/release.json",
+      "size": 281,
+      "sha256": "694d8029337ca33bde1a2079287a8861c293cd5377b81a0ca85e2c393ed615ef"
+    },
+    {
+      "path": "current/sq.version",
+      "size": 632,
+      "sha256": "5d8b5a514d9f17c23609c3cf1cad63f7d7c338c53ec428d6ee0208b28d14c86b"
+    },
+    {
+      "path": "current/update-public.pem",
+      "size": 625,
+      "sha256": "ac574cb8ac9c6f90daafe542945a46b1b63dcd5d3f44e732c3d4349c0eb42121"
+    },
+    {
+      "path": "maintenance/StarTournamentMaintenance.exe",
+      "size": 67868039,
+      "sha256": "70d00a45154a9c6635657c0912fa8127fe4f91d9da895bac2ccf8560a00e0df9"
+    },
+    {
+      "path": "maintenance/maintenance.json",
+      "size": 298,
+      "sha256": "560c6a19bdfb63be0b058ac890a11a03ed976e325638690f099c61dba24e1350"
+    },
+    {
+      "path": "maintenance/update-public.pem",
+      "size": 625,
+      "sha256": "ac574cb8ac9c6f90daafe542945a46b1b63dcd5d3f44e732c3d4349c0eb42121"
+    }
+  ]
+}

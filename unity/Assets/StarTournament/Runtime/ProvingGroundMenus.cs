@@ -67,6 +67,14 @@ namespace StarTournament.ProvingGround
             Label(right.transform,"league","ОРБИТАЛЬНАЯ ЛИГА",26,new Vector2(.08f,.65f),new Vector2(.93f,.74f),TextAnchor.MiddleLeft,MenuGold);
             Label(right.transform,"route","01 / ЛОКАЛЬНЫЙ МАТЧ\n\nВыберите состав, профили и устройства",26,new Vector2(.08f,.36f),new Vector2(.93f,.61f),TextAnchor.UpperLeft,Color.white);
             Label(right.transform,"controls","МЫШЬ: выбор   ·   ГЕЙМПАД: крестовина / A",22,new Vector2(.08f,.07f),new Vector2(.95f,.19f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            var releaseLabel=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
+            if(!string.IsNullOrEmpty(releaseLabel))
+            {
+                Label(mainMenuScreen.transform,"installed-release",releaseLabel,22,new Vector2(.06f,.025f),new Vector2(.52f,.10f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+                var updateStatus=Label(mainMenuScreen.transform,"update-status","Проверка обновлений…",19,new Vector2(.56f,.02f),new Vector2(.78f,.11f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+                var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Проверить",new Vector2(.79f,.025f),new Vector2(.94f,.105f),()=>{});
+                gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
+            }
 
             CreateSetupUi(parent);
 

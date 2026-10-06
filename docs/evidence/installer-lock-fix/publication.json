@@ -1,0 +1,15 @@
+{
+  "installer": {
+    "url": "/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe",
+    "size": 144786826,
+    "sha256": "453f8ca7b2e74779aa0147c85920b9c8c190c0aadbab6b92f5a939bd081a7ace",
+    "version": "0.1.0-test.5",
+    "installerRevision": 2
+  },
+  "sourceCommit": "6425142",
+  "oldPayloadVerifiedFileCount": 369,
+  "unchangedFeedSha256": "985114c877fa7ce64a5192be8a568f8b443ebc000fbab6a7adf205821ad166de",
+  "payloadIdentitySha256": "274933ea6b5e6154442835c8eb8838d692f0b09bc6f96510fb4f49aba21856f7",
+  "compiler": "NSIS3.10",
+  "payloadReuse": "Compiled replacement extracted payload paths/bytes/SHA256 match original exact test.5 archive"
+}

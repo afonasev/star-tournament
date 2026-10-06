@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-10-04T07:02:36.268251+00:00",
+  "initialVersion": "0.1.0-test.1",
+  "updateVersion": "0.1.0-test.2",
+  "platform": "macOS Apple Silicon",
+  "fullPackageSize": 203854438,
+  "feed": "https://robowar.afonasev.tech/desktop/test/osx-arm64/latest.json",
+  "explicitRestart": {
+    "stagedConsentEvidence": "framework-update-progress-resumed.json",
+    "applyLog": "explicit-restart-apply.log",
+    "newPlayerLog": "staged-player.log",
+    "childExit": 0,
+    "sdkApply": "successful"
+  },
+  "ordinaryExit": {
+    "stagedConsentEvidence": "next-ipc.json",
+    "playerBeforeQuit": "next-player-before-quit.png",
+    "applyLog": "next-apply.log",
+    "restart": false,
+    "childExit": 0,
+    "nextVersionMenu": "next-version-menu.png",
+    "nextPlayerLog": "next-version-start.log",
+    "nextExit": 0
+  },
+  "limitations": [
+    "Real baseline Development Unity Player lifecycle experiment, not final native menu candidate",
+    "Windows execution/manual acceptance pending",
+    "Profiles/settings real preservation acceptance pending"
+  ]
+}

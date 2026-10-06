@@ -1,0 +1,19 @@
+{
+  "version": "0.1.0-test.5",
+  "publicationDate": "2026-10-04",
+  "platforms": {
+    "win-x64": {
+      "url": "/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe",
+      "size": 144786826,
+      "sha256": "453f8ca7b2e74779aa0147c85920b9c8c190c0aadbab6b92f5a939bd081a7ace",
+      "version": "0.1.0-test.5",
+      "installerRevision": 2
+    },
+    "osx-arm64": {
+      "url": "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+      "size": 143198367,
+      "sha256": "3d1b12f689a9d4be1820eda77aa37e7408b0809e8e427fec2ac0cb25f2d0efbb",
+      "version": "0.1.0-test.3"
+    }
+  }
+}
