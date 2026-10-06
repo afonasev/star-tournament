@@ -19,7 +19,8 @@ def main():
     p.add_argument('--player', type=Path, required=True)
     p.add_argument('--version', required=True)
     p.add_argument('--date', required=True)
-    p.add_argument('--feed', required=True)
+    p.add_argument('--feed', help='Legacy override, only for compatibility fixtures')
+    p.add_argument('--channel', choices=['test','production'], required=True)
     p.add_argument('--key', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--dotnet', type=Path, required=True)
@@ -30,7 +31,10 @@ def main():
     a = p.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?', a.version): p.error('Invalid SemVer')
     datetime.date.fromisoformat(a.date)
-    if not a.feed.startswith('https://'): p.error('HTTPS feed required')
+    expected_feed = ('https://api.github.com/repos/afonasev/star-tournament/releases' if a.channel == 'test' else 'https://github.com/afonasev/star-tournament/releases/latest/download/')
+    if a.feed and a.feed != expected_feed: p.error('Pinned GitHub feed required')
+    a.feed = expected_feed
+    if ('-' in a.version) != (a.channel == 'test'): p.error('Version must match release channel')
     if a.runtime == 'win-x64' and not a.update_only and not a.nsis_host and (a.makensis is None or not a.makensis.is_file()):
         p.error('Windows packages require --makensis for the installation wizard')
     a.output = a.output.resolve(); a.player = a.player.resolve()
@@ -56,7 +60,7 @@ def main():
         game_exe = 'game/StarTournament.exe'
     app_id = 'tech.afonasev.star-tournament.' + a.runtime
     config = dict(appId=app_id, platform=a.runtime.split('-')[0], architecture=a.runtime.split('-')[1],
-                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe)
+                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel)
     (stage/'release.json').write_text(json.dumps(config, indent=2)+'\n')
     subprocess.run(['openssl', 'pkey', '-in', str(a.key.resolve()), '-pubout', '-out', str(stage/'update-public.pem')], check=True)
     if (stage/'update-public.pem').read_bytes() != (root/'update-public.pem').read_bytes():
@@ -100,7 +104,7 @@ def main():
             package.rename(output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.pkg')
     feed = json.loads((output/f'releases.{a.runtime}.json').read_text())
     asset = next(x for x in feed['Assets'] if x['Version'] == a.version and x['Type'] == 'Full')
-    payload = json.dumps(dict(schema=1, platform=config['platform'], architecture=config['architecture'],
+    payload = json.dumps(dict(schema=1, channel=a.channel, platform=config['platform'], architecture=config['architecture'],
                               version=a.version, publicationDate=a.date,
                               downloadUrl=f'https://github.com/afonasev/star-tournament/releases/download/v{a.version}/{asset["FileName"]}',
                               publishedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(), feed={'Assets': [asset]}),
@@ -110,7 +114,8 @@ def main():
                             capture_output=True, check=True).stdout
     envelope = dict(payload=base64.b64encode(payload).decode(), signature=base64.b64encode(signed).decode())
     (output/f'{a.version}.signed.json').write_text(json.dumps(envelope)+'\n')
-    (output/'latest.json').write_text(json.dumps(envelope)+'\n')
+    (output/'latest.json').write_text(json.dumps(envelope)+'\n')  # Bridge feed compatibility.
+    (output/f'latest-{a.runtime}.json').write_text(json.dumps(envelope)+'\n')
     files = []
     for f in sorted(output.iterdir()):
         if f.is_file() and f.suffix in ('.nupkg','.exe','.pkg','.zip'):
@@ -125,7 +130,7 @@ def main():
             with player_file.open('rb') as stream: digest = hashlib.file_digest(stream, 'sha256').hexdigest()
             marker.update((player_file.relative_to(a.player).as_posix()+'\0'+digest+'\n').encode())
     (a.output/f'{a.version}.identity.json').write_text(json.dumps(dict(version=a.version, date=a.date,
-        runtime=a.runtime, revision=revision, dirty=dirty, sourceDiffSha256=hashlib.sha256(diff).hexdigest(),
+        runtime=a.runtime, channel=a.channel, revision=revision, dirty=dirty, sourceDiffSha256=hashlib.sha256(diff).hexdigest(),
         player=str(a.player), playerMarkerSha256=marker.hexdigest(), packages=files), indent=2)+'\n')
     print('PACKAGED', a.runtime, a.version, output)
 

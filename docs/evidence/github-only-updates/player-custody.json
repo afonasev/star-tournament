@@ -1,0 +1,16 @@
+[
+  {
+    "runtime": "win-x64",
+    "sourceVersion": "0.1.0-test.8",
+    "sha256": "5c4306410aa9101270d5a5edb120a7a0b85f31807ae5cd143c7402e38a0dd711",
+    "sourcePlayer": "72cf05a7b8d49f0dd94a4e8968fbdda42d940a7a",
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/players/win-x64"
+  },
+  {
+    "runtime": "osx-arm64",
+    "sourceVersion": "0.1.0-test.8",
+    "sha256": "9c5458551d179a3414910216bb7965a36094365060e866ba8e2f7f7e2552e042",
+    "sourcePlayer": "72cf05a7b8d49f0dd94a4e8968fbdda42d940a7a",
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/players/osx-arm64"
+  }
+]

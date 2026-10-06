@@ -1,1 +1,56 @@
-(async()=>{try{const r=await fetch('downloads.json',{cache:'no-store'});if(!r.ok)return;const data=await r.json();const date=data.publicationDate.split('-').reverse().join('.');document.querySelector('#release').textContent=`Windows ${data.platforms["win-x64"].version} · macOS ${data.platforms["osx-arm64"].version} (${date}) · обновление доступно из игры`;for(const [runtime,id] of [['win-x64','windows'],['osx-arm64','mac']]){const item=data.platforms[runtime];if(!item)continue;const button=document.getElementById(id);const url=new URL(item.url,location.href);const legacy=url.origin===location.origin&&url.pathname.startsWith('/desktop/test/');const github=url.protocol==='https:'&&url.hostname==='github.com'&&url.pathname.startsWith('/afonasev/star-tournament/releases/download/')&&!url.username&&!url.password&&!url.port&&!url.search&&!url.hash;if((!legacy&&!github)||!item.sha256.match(/^[a-f0-9]{64}$/i))continue;button.href=url.href;button.classList.remove('disabled');button.removeAttribute('aria-disabled');button.innerHTML=`Скачать установщик <span>↓</span>`;document.getElementById(id+'-meta').textContent=`${Math.round(item.size/1048576)} МБ · ${item.version} · SHA256 ${item.sha256.slice(0,16)}…`}}catch{}})();
+// GitHub's API supports browser CORS; release asset URLs are navigation links only.
+const RELEASES_API='https://api.github.com/repos/afonasev/star-tournament/releases';
+const RELEASES_PAGE='https://github.com/afonasev/star-tournament/releases';
+function installers(release){
+  if(release.draft || !release.prerelease || !/^v\d+\.\d+\.\d+-[A-Za-z0-9.-]+$/.test(release.tag_name)) return null;
+  const version=release.tag_name.slice(1),assets=release.assets||[];
+  if(!['latest-win-x64.json','latest-osx-arm64.json'].every(name=>assets.some(a=>a.name===name)))return null;
+  const result={};
+  for(const [id,name] of [['windows',`Star-Tournament-${version}-Windows-x64-Setup.exe`],['mac',`Star-Tournament-${version}-macOS-arm64.pkg`]]){
+    const asset=assets.find(a=>a.name===name);
+    if(!asset || asset.state!=='uploaded' || asset.size<=0 || !/^sha256:[a-f0-9]{64}$/i.test(asset.digest||''))return null;
+    if(asset.browser_download_url!==`https://github.com/afonasev/star-tournament/releases/download/v${version}/${name}`)return null;
+    result[id]=asset;
+  }
+  return {version,platforms:result};
+}
+// SemVer numeric prerelease comparison, including test.9 versus test.10.
+function compareVersions(a,b){
+  const parts=v=>v.split(/[.-]/),aa=parts(a),bb=parts(b);
+  for(let i=0;i<Math.max(aa.length,bb.length);i++){
+    if(aa[i]===bb[i])continue;
+    if(aa[i]===undefined)return -1;if(bb[i]===undefined)return 1;
+    const an=/^\d+$/.test(aa[i]),bn=/^\d+$/.test(bb[i]);
+    if(an&&bn){const x=BigInt(aa[i]),y=BigInt(bb[i]);return x<y?-1:x>y?1:0;}
+    if(an!==bn)return an?-1:1;
+    return aa[i]<bb[i]?-1:1;
+  }
+  return 0;
+}
+(async()=>{
+  for(const id of ['windows','mac']){
+    const button=document.getElementById(id);button.href=RELEASES_PAGE;
+    button.classList.remove('disabled');button.removeAttribute('aria-disabled');button.innerHTML='Открыть релизы GitHub <span>↗</span>';
+    document.getElementById(id+'-meta').textContent='Выберите установщик своей платформы на GitHub';
+  }
+  try{
+    let best=null;
+    for(let page=1;page<=10;page++){
+      const response=await fetch(`${RELEASES_API}?per_page=100&page=${page}`,{headers:{Accept:'application/vnd.github+json'},signal:AbortSignal.timeout(10000)});
+      if(!response.ok)throw Error('Release discovery unavailable');
+      const releases=await response.json();if(!Array.isArray(releases))throw Error('Invalid release list');
+      for(const release of releases){const candidate=installers(release);if(candidate&&(!best||compareVersions(candidate.version,best.version)>0))best=candidate;}
+      if(releases.length<100)break;
+      if(page===10)throw Error('Release discovery exceeds limit');
+    }
+    if(!best)throw Error('No complete test release');
+    document.getElementById('release').textContent=`Тестовая версия ${best.version} · обновления доступны из игры`;
+    for(const [id,item] of Object.entries(best.platforms)){
+      const button=document.getElementById(id);button.href=item.browser_download_url;
+      button.innerHTML='Скачать установщик <span>↓</span>';
+      document.getElementById(id+'-meta').textContent=`${Math.round(item.size/1048576)} МБ · ${best.version} · SHA256 ${item.digest.slice(7,23)}…`;
+    }
+  }catch{
+    document.getElementById('release').textContent='Актуальные тестовые установщики доступны на GitHub Releases';
+  }
+})();
