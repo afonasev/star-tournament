@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0-test.9",
+  "date": "2026-10-06",
+  "runtime": "osx-arm64",
+  "channel": "test",
+  "revision": "919ebea8eecc770d3f89f30086ee9f7bb0e8ae57",
+  "dirty": " M publish_release.py\n M review-page/downloads.js\n M review-page/index.html\n M tests/Program.cs\n M upload_github_assets.py\n M ../docs/evidence/github-only-updates/python-contracts.log\n M ../unity/ProjectSettings/ShaderGraphSettings.asset\n?? ../docs/evidence/github-only-updates/cors.json\n?? ../docs/evidence/github-only-updates/landing-fallback.json\n?? ../docs/evidence/github-only-updates/vps-before.txt\n?? ../unity/Assets/InitTestScene60b12d5c-043b-4f83-830f-6975609d7902.unity\n?? ../unity/Assets/InitTestScene60b12d5c-043b-4f83-830f-6975609d7902.unity.meta\n",
+  "sourceDiffSha256": "8005ea8ef8bb2ec07a0d615e059bf6719d74e926f52ec55518212355775689d2",
+  "player": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/players/osx-arm64/Player.app",
+  "playerMarkerSha256": "fb3abf89d8748c4229ab9d15bec167da30169fd6ff80f110143f8fb33854e162",
+  "packages": [
+    {
+      "name": "Star-Tournament-0.1.0-test.9-macOS-arm64.pkg",
+      "size": 146151102,
+      "sha256": "8288101f022d34c8f5a8aea3333077dd208d2f03541b87272ea36321f2899e80"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg",
+      "size": 146617246,
+      "sha256": "e89bd41aea31aee8c858bec64679b6442bf69254ac9d280cdb7cdfef84adae25"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+      "size": 146812912,
+      "sha256": "9634a9ea931e1a8fea603e935cb8e16603492fab3747a173723adf913bcb0e55"
+    }
+  ]
+}

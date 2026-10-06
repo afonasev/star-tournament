@@ -1,0 +1,46 @@
+{
+  "source": "a358b84; distribution-only code changes; Unity game source unchanged from baseline aed5327",
+  "command": "make check",
+  "exitCode": 0,
+  "checks": {
+    "editmode": {
+      "id": "2",
+      "testcasecount": "342",
+      "result": "Passed",
+      "total": "342",
+      "passed": "342",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-06 16:39:36Z",
+      "end-time": "2026-10-06 16:58:16Z",
+      "duration": "1119.6636486"
+    },
+    "playmode": {
+      "id": "2",
+      "testcasecount": "207",
+      "result": "Passed",
+      "total": "207",
+      "passed": "207",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-06 17:03:18Z",
+      "end-time": "2026-10-06 17:12:13Z",
+      "duration": "534.673647"
+    }
+  },
+  "build": "Development macOS Player succeeded",
+  "contracts": {
+    "CSharp": 49,
+    "Python": 31,
+    "landing": "production/test complete identities, pinned URL rejection, SemVer order; live fallback"
+  },
+  "playerReuse": "exact test.8 game files preserved in candidate, 173 Windows and 177 macOS"
+}

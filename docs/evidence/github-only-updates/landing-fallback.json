@@ -1,0 +1,8 @@
+{
+  "url": "http://127.0.0.1:56943/",
+  "browser": "Codex in-app browser",
+  "observed": "Актуальные тестовые установщики доступны на GitHub Releases",
+  "windowsHref": "https://github.com/afonasev/star-tournament/releases",
+  "consoleErrors": [],
+  "reason": "No complete GitHub-only paired test release published yet; static and JS fallback visible"
+}

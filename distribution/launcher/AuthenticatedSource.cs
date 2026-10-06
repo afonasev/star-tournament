@@ -8,7 +8,7 @@ using Velopack.Sources;
 namespace StarTournament.Distribution;
 
 public sealed record LauncherConfig(string AppId, string Platform, string Architecture, string Version,
-    string PublicationDate, string FeedBase, string GameExecutable);
+    string PublicationDate, string FeedBase, string GameExecutable, string? UpdateChannel = null);
 
 public sealed class AuthenticatedSource : IUpdateSource, IDisposable
 {
@@ -23,12 +23,21 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null)
     {
         this.config = config; this.key = key;
+        if (config.UpdateChannel != null && (config.UpdateChannel is not ("test" or "production") ||
+            config.FeedBase != (config.UpdateChannel == "test" ? TestLocator : ProductionBase)))
+            throw new CryptographicException("Untrusted GitHub channel configuration");
         http = new HttpClient(transport ?? new HttpClientHandler { AllowAutoRedirect = false })
         { Timeout = TimeSpan.FromMinutes(30), MaxResponseContentBufferSize = 65536 };
     }
 
+    public const string TestLocator = "https://api.github.com/repos/afonasev/star-tournament/releases";
+    public const string ProductionBase = "https://github.com/afonasev/star-tournament/releases/latest/download/";
+    string ManifestName => $"latest-{config.Platform}-{config.Architecture}.json";
+
     public void Admit(string envelope)
     {
+        // Clear prior admission before parsing any new, potentially rejected descriptor.
+        Envelope = null; Asset = null; PublicationDate = null; packageUri = null;
         if (envelope.Length > 65536) throw new CryptographicException("Release metadata exceeds limit");
         using var outer = JsonDocument.Parse(envelope);
         var payload = Convert.FromBase64String(outer.RootElement.GetProperty("payload").GetString()!);
@@ -41,6 +50,9 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             release.GetProperty("platform").GetString() != config.Platform ||
             release.GetProperty("architecture").GetString() != config.Architecture)
             throw new CryptographicException("Release target mismatch");
+        if (config.UpdateChannel != null && (!release.TryGetProperty("channel", out var signedChannel) ||
+            signedChannel.GetString() != config.UpdateChannel))
+            throw new CryptographicException("Release channel mismatch");
         var date = release.GetProperty("publicationDate").GetString()!;
         if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
             System.Globalization.DateTimeStyles.None, out _)) throw new CryptographicException("Invalid publication date");
@@ -62,6 +74,9 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
                 authenticatedUrl.AbsolutePath != expected || authenticatedUrl.Query.Length != 0)
                 throw new CryptographicException("Untrusted signed download URL");
         }
+        if (config.UpdateChannel != null && (authenticatedUrl == null ||
+            (config.UpdateChannel == "test") != asset.Version.IsPrerelease))
+            throw new CryptographicException("Missing GitHub identity or invalid channel version");
         packageUri = authenticatedUrl;
         Envelope = envelope; Asset = asset; PublicationDate = date;
     }
@@ -77,9 +92,8 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     static bool SafeHttps(Uri uri) => uri.Scheme == "https" && uri.Port == 443 &&
         uri.UserInfo.Length == 0 && uri.Fragment.Length == 0;
 
-    async Task<HttpResponseMessage> OpenPackage(string filename, CancellationToken token)
+    async Task<HttpResponseMessage> OpenAsset(Uri initial, bool metadata, bool redirectsAllowed, CancellationToken token)
     {
-        var initial = packageUri ?? Remote(filename);
         var target = initial;
         for (var redirects = 0; ; redirects++)
         {
@@ -87,22 +101,80 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             if ((int)response.StatusCode is not (301 or 302 or 303 or 307 or 308)) return response;
             var location = response.Headers.Location;
             response.Dispose();
-            if (packageUri == null || redirects >= 3 || location == null)
-                throw new CryptographicException("Unexpected package redirect");
+            if (!redirectsAllowed || redirects >= 3 || location == null)
+                throw new CryptographicException("Unexpected or excessive asset redirect");
             var next = location.IsAbsoluteUri ? location : new Uri(target, location);
-            if (!SafeHttps(next) || !(next.Host is "release-assets.githubusercontent.com" or "objects.githubusercontent.com" ||
-                (next.Host == "github.com" && next.AbsolutePath == initial.AbsolutePath)))
-                throw new CryptographicException("Untrusted package redirect");
+            var productionRedirect = metadata && initial.AbsolutePath.Contains("/releases/latest/download/") &&
+                Regex.IsMatch(next.AbsolutePath, @"\A/afonasev/star-tournament/releases/download/v[0-9]+\.[0-9]+\.[0-9]+/" + Regex.Escape(ManifestName) + @"\z");
+            var github = next.Host == "github.com" && next.Query.Length == 0 &&
+                (next.AbsolutePath == initial.AbsolutePath || productionRedirect);
+            if (!SafeHttps(next) || !(github || next.Host is "release-assets.githubusercontent.com" or "objects.githubusercontent.com"))
+                throw new CryptographicException("Untrusted asset redirect");
             target = next;
         }
+    }
+
+    async Task<string> ReadBounded(Uri uri, int limit, bool redirects, CancellationToken token)
+    {
+        using var response = await OpenAsset(uri, true, redirects, token);
+        response.EnsureSuccessStatusCode();
+        if (response.Content.Headers.ContentLength > limit) throw new CryptographicException("Metadata exceeds limit");
+        await using var input = await response.Content.ReadAsStreamAsync(token);
+        using var output = new MemoryStream();
+        var buffer = new byte[8192]; int count;
+        while ((count = await input.ReadAsync(buffer, token)) > 0)
+        {
+            if (output.Length + count > limit) throw new CryptographicException("Metadata exceeds limit");
+            output.Write(buffer, 0, count);
+        }
+        return System.Text.Encoding.UTF8.GetString(output.ToArray());
+    }
+
+    async Task<(Uri Uri, string? Version)> Discover(CancellationToken token)
+    {
+        if (config.UpdateChannel == null) return (Remote("latest.json"), null); // Legacy broker/config only.
+        if (config.UpdateChannel == "production") return (new Uri(ProductionBase + ManifestName), null);
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("StarTournament-Updater/1");
+        SemanticVersion? best = null;
+        Uri? bestUri = null;
+        for (var page = 1; page <= 10; page++)
+        {
+            using var doc = JsonDocument.Parse(await ReadBounded(new Uri(TestLocator + $"?per_page=100&page={page}"), 2 * 1024 * 1024, false, token));
+            var releases = doc.RootElement;
+            foreach (var release in releases.EnumerateArray())
+            {
+                if (release.GetProperty("draft").GetBoolean() || !release.GetProperty("prerelease").GetBoolean()) continue;
+                var tag = release.GetProperty("tag_name").GetString() ?? "";
+                if (!tag.StartsWith('v') || !SemanticVersion.TryParse(tag[1..], out var version) || !version.IsPrerelease || tag != "v" + version) continue;
+                var names = release.GetProperty("assets").EnumerateArray().Select(x => x.GetProperty("name").GetString()).ToHashSet();
+                if (!names.Contains("latest-win-x64.json") || !names.Contains("latest-osx-arm64.json") ||
+                    !names.Contains($"Star-Tournament-{version}-Windows-x64-Setup.exe") ||
+                    !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg")) continue;
+                if (best == null || version > best)
+                {
+                    best = version;
+                    // Construct the pinned URL; never trust a locator-provided arbitrary URL.
+                    bestUri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{ManifestName}");
+                }
+            }
+            if (releases.GetArrayLength() < 100)
+                return bestUri == null ? throw new InvalidOperationException("No complete test release") : (bestUri, best!.ToString());
+        }
+        throw new InvalidOperationException("Release discovery exceeds pagination limit");
     }
 
     public async Task<VelopackAssetFeed> GetReleaseFeed(IVelopackLogger logger, string? appId, string channel,
         Guid? stagingId = null, VelopackAsset? latestLocalRelease = null)
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        var envelope = await http.GetStringAsync(Remote("latest.json"), timeout.Token);
+        var location = await Discover(timeout.Token);
+        var envelope = await ReadBounded(location.Uri, 65536, config.UpdateChannel != null, timeout.Token);
         Admit(envelope);
+        if (location.Version != null && Asset!.Version.ToString() != location.Version)
+        {
+            Envelope = null; Asset = null; packageUri = null;
+            throw new CryptographicException("Release discovery version mismatch");
+        }
         return new VelopackAssetFeed { Assets = new[] { Asset! } };
     }
 
@@ -127,7 +199,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         cancelToken = timeout.Token;
         try
         {
-            using var response = await OpenPackage(releaseEntry.FileName, cancelToken);
+            using var response = await OpenAsset(packageUri ?? Remote(releaseEntry.FileName), false, packageUri != null, cancelToken);
             response.EnsureSuccessStatusCode();
             await using (var input = await response.Content.ReadAsStreamAsync(cancelToken))
             await using (var output = File.Create(quarantine))
