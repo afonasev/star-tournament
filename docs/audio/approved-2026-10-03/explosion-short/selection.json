@@ -1,0 +1,15 @@
+{
+  "event": "rocket-explosion",
+  "base_variant": 2,
+  "selected_preview": "explosion-short variant 1",
+  "duration_seconds": 0.65,
+  "unchanged_attack_seconds": 0.18,
+  "status": "selected-preview; game integration pending",
+  "user_feedback": "достаточно",
+  "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/explosion-short/explosion-1.wav",
+  "sha256": "2afd5ff85e8c204088edde045472ec1c3eec8f995e7bfe12ed10b44d381cdf16",
+  "author": "EZduzziteh",
+  "source": "https://opengameart.org/content/explosions-4",
+  "license": "CC0",
+  "processing": "pitch reduction, low-frequency layering, trim and cosine fade"
+}

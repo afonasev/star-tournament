@@ -1,0 +1,19 @@
+{
+  "event": "shotgun",
+  "status": "selected-preview; game integration pending",
+  "selected_variant": 1,
+  "base": "shotgun-v4 variant 3",
+  "second_barrel_delay_seconds": 0.055,
+  "user_feedback": "подходит давай так оставим",
+  "date": "2026-10-03",
+  "clips": [
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shotgun-v5/variant-1-0.wav",
+      "sha256": "bbdded9a6d326743b8cff365a3725684cbeaf866fc84a76a6dd716a1f99b4a83"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shotgun-v5/variant-1-1.wav",
+      "sha256": "22fcf19546d072ef5f09b1b015cb5ca9075da6c2ea4c782b2f40267cd597f32a"
+    }
+  ]
+}

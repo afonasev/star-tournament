@@ -1,0 +1,101 @@
+{
+  "arrangement": "continuous-phrases-v1",
+  "tracks": [
+    {
+      "id": "01-orbit",
+      "title": "Орбита",
+      "phases": [
+        {
+          "resource": "Audio/Music/01-orbit-0",
+          "bpm": 84,
+          "loopStart": 17.050691,
+          "loopEnd": 28.387097
+        },
+        {
+          "resource": "Audio/Music/01-orbit-1",
+          "bpm": 104,
+          "loopStart": 3.461538,
+          "loopEnd": 12.617866
+        },
+        {
+          "resource": "Audio/Music/01-orbit-2",
+          "bpm": 124,
+          "loopStart": 3.934426,
+          "loopEnd": 11.73982
+        }
+      ]
+    },
+    {
+      "id": "02-reactor",
+      "title": "Реактор",
+      "phases": [
+        {
+          "resource": "Audio/Music/02-reactor-0",
+          "bpm": 88,
+          "loopStart": 5.471591,
+          "loopEnd": 16.3125
+        },
+        {
+          "resource": "Audio/Music/02-reactor-1",
+          "bpm": 108,
+          "loopStart": 3.916667,
+          "loopEnd": 12.75
+        },
+        {
+          "resource": "Audio/Music/02-reactor-2",
+          "bpm": 128,
+          "loopStart": 4.699219,
+          "loopEnd": 12.152344
+        }
+      ]
+    },
+    {
+      "id": "03b-vector-cinematic",
+      "title": "Вектор — кинематографичный",
+      "phases": [
+        {
+          "resource": "Audio/Music/03b-vector-cinematic-0",
+          "bpm": 84,
+          "loopStart": 5.780731,
+          "loopEnd": 17.225914
+        },
+        {
+          "resource": "Audio/Music/03b-vector-cinematic-1",
+          "bpm": 110,
+          "loopStart": 3.707386,
+          "loopEnd": 12.238636
+        },
+        {
+          "resource": "Audio/Music/03b-vector-cinematic-2",
+          "bpm": 136,
+          "loopStart": 5.335157,
+          "loopEnd": 12.404241
+        }
+      ]
+    },
+    {
+      "id": "04-supernova",
+      "title": "Сверхновая",
+      "phases": [
+        {
+          "resource": "Audio/Music/04-supernova-0",
+          "bpm": 76,
+          "loopStart": 4.809437,
+          "loopEnd": 17.313975
+        },
+        {
+          "resource": "Audio/Music/04-supernova-1",
+          "bpm": 96,
+          "loopStart": 5.227273,
+          "loopEnd": 15.018939
+        },
+        {
+          "resource": "Audio/Music/04-supernova-2",
+          "bpm": 120,
+          "loopStart": 2.143939,
+          "loopEnd": 10.219697
+        }
+      ]
+    }
+  ]
+}

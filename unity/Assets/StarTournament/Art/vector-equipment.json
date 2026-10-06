@@ -1,0 +1,22 @@
+{
+  "id": "strata-oxblood-equipment-v1-f4",
+  "reference": "add-vector-shotgun-and-armored-hands/assets/f4-02-strata-oxblood.png",
+  "authoringSource": "scripts/trooper/build_vector.py",
+  "baselineRigCommit": "49878a337e98f999787b530b9a071ce6698f55cb",
+  "units": "meters",
+  "up": "+Y",
+  "front": "+Z",
+  "pivot": "weapon-grip; embedded derivatives preserve Trooper weapon mount",
+  "collision": "none; presentation only",
+  "lod0": "vector-shotgun-lod0.glb",
+  "lod1": "vector-shotgun-lod1.glb",
+  "runtime": "embedded authored Strata LOD0 and matching standalone LOD0/LOD1; original Trooper rig and seven clips; new oxblood sleeves and segmented pale armor",
+  "muzzles": [
+    "vector-muzzle-0",
+    "vector-muzzle-1"
+  ],
+  "materials": "warm pale ceramic / dark metal chassis / restrained oxblood accents; attributed textured Trooper cloth recoloured to oxblood and original anatomical glove preserved",
+  "lighting": "URP scene lighting; no gameplay light or occlusion",
+  "acceptance": "F4 model generated for native Player review; human artistic acceptance pending",
+  "compatibility": "Vector manifest paths and muzzle node names retained as stable pipeline keys"
+}

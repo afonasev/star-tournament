@@ -1,0 +1,9 @@
+{
+  "source": "../explosion/manifest.json",
+  "base_variant": 2,
+  "original_duration": 1.45,
+  "new_duration": 0.65,
+  "unchanged_attack_seconds": 0.18,
+  "processing": "cosine fade from .18 to .65 seconds, no gain change",
+  "status": "requested refinement; preview only"
+}

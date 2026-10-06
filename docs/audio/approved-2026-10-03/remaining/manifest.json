@@ -1,0 +1,175 @@
+{
+  "status": "preview only; runtime unchanged",
+  "reference": "Existing Resources/Audio; movement reference is bank sample 0",
+  "sources": "Original synthesized tones, Kenney Impact Sounds CC0: soft heavy 000, carpet 000, plate light 001",
+  "clips": [
+    {
+      "kind": "spawn",
+      "variant": 0,
+      "sha256": "2810eab809dd8590f14c0fa656153b51cbc6f75c20489430898129cf76d0b584",
+      "duration": 0.52,
+      "peak": 0.537567138671875
+    },
+    {
+      "kind": "spawn",
+      "variant": 1,
+      "sha256": "29c2f081cdaddaa256f1a31404f35a7eb84db22b9029392dcce76f98a3248d54",
+      "duration": 1.1,
+      "peak": 0.53
+    },
+    {
+      "kind": "spawn",
+      "variant": 2,
+      "sha256": "f2abf71883bb7afa118523c2d504b00adba72e31e9cd70d11c73c84c71c417c4",
+      "duration": 1.1,
+      "peak": 0.53
+    },
+    {
+      "kind": "spawn",
+      "variant": 3,
+      "sha256": "7a34ffceefb6a84104ce556d84fa691d58720c97dd04bf45f35bea679d767498",
+      "duration": 1.1,
+      "peak": 0.53
+    },
+    {
+      "kind": "jump",
+      "variant": 0,
+      "sha256": "ec0bd19c6091a1174b54b8c827abecfc00a0dc80e77e2c155b81aeff9597e128",
+      "duration": 0.23403125,
+      "peak": 0.280303955078125
+    },
+    {
+      "kind": "jump",
+      "variant": 1,
+      "sha256": "c8e0f6532f034b345d4a2cce7a4a51249c51a9ef07c120dcd8df6b0e5b3b28ba",
+      "duration": 0.55,
+      "peak": 0.53
+    },
+    {
+      "kind": "jump",
+      "variant": 2,
+      "sha256": "753da87a875bb700c7973f6aee2c1f1e0f9e13742d744d83ed8468d6bf02fcd7",
+      "duration": 0.55,
+      "peak": 0.53
+    },
+    {
+      "kind": "jump",
+      "variant": 3,
+      "sha256": "c02036b51e7ba6c29eab211a1115da1f2175149df4bb7974ace26b88230885d2",
+      "duration": 0.55,
+      "peak": 0.53
+    },
+    {
+      "kind": "land",
+      "variant": 0,
+      "sha256": "d8ee11a9c72fc0807d590d8416a7b3645abc37dee338aebcfce9f0524a6d75de",
+      "duration": 0.273875,
+      "peak": 0.585693359375
+    },
+    {
+      "kind": "land",
+      "variant": 1,
+      "sha256": "64d0c6c5164df5e1a728817b6d75095a55a4f732f3f0d4f9483c413c9279d22e",
+      "duration": 0.55,
+      "peak": 0.53
+    },
+    {
+      "kind": "land",
+      "variant": 2,
+      "sha256": "b411cf05a3a224af396b10d1ea32fecead0ab02813c95486b3cb8b19d6edb762",
+      "duration": 0.55,
+      "peak": 0.53
+    },
+    {
+      "kind": "land",
+      "variant": 3,
+      "sha256": "31b382179e5db488200bdff4383dc5836b926348e61e32733ca0be18205b0cdc",
+      "duration": 0.55,
+      "peak": 0.53
+    },
+    {
+      "kind": "move",
+      "variant": 0,
+      "sha256": "1a4d3bd75b3afa7205cc82882c7cdd83aa1c18ef1a5cad9d5f3485bf480e0d9f",
+      "duration": 0.22,
+      "peak": 0.888671875
+    },
+    {
+      "kind": "move",
+      "variant": 1,
+      "sha256": "0ec33a021b5e4691b44b002b0f8b98e37efd99d07792ecd2dc92b80b323154fc",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "move",
+      "variant": 2,
+      "sha256": "0a8b8d02a855de5651af65e99dd05b614bbacbf56f6046922d4e5fb2460d3de5",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "move",
+      "variant": 3,
+      "sha256": "f67c645826433106a8e1557a8ff4340b86f71ca6ead61b0212ce15528b2ae7bd",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "confirm",
+      "variant": 0,
+      "sha256": "c1d644dfcc0c8400760bf08ccdf2c29eaacf60081a2d80e591d6b26cca4b0a83",
+      "duration": 0.08,
+      "peak": 0.888671875
+    },
+    {
+      "kind": "confirm",
+      "variant": 1,
+      "sha256": "3a3669b98b389a40fb6d1cfc5a490114916e4166cbc51474aa44cfaad8e19acc",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "confirm",
+      "variant": 2,
+      "sha256": "dab247497715fd86e751fc666dd94ce729b28d1103416fcb4633ccd4aa041a39",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "confirm",
+      "variant": 3,
+      "sha256": "33289ee22860207b086ea5a151ba8e3c719c09589cedf9284e91e30dd24e9bfb",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "back",
+      "variant": 0,
+      "sha256": "b03b9678ffa7c8fb03a90bbeeddd48745f6e03ee7b7e3013e178877597a45ad2",
+      "duration": 0.3,
+      "peak": 0.888671875
+    },
+    {
+      "kind": "back",
+      "variant": 1,
+      "sha256": "d5cb953fc764d2a040327686412b58efdb49c68051a8c9667a1124ed996f028c",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "back",
+      "variant": 2,
+      "sha256": "865dfb44917762d55eb193f838712465f9120220d0c6213acfca23b41fb26149",
+      "duration": 0.34,
+      "peak": 0.38
+    },
+    {
+      "kind": "back",
+      "variant": 3,
+      "sha256": "d8854a155cbbfb4b90370231c60104e5c169b8dd6f1d442551f279deb3c4e4ee",
+      "duration": 0.34,
+      "peak": 0.38
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "event": "cutter",
+  "selected_variant": 2,
+  "preview_version": "cutter-v2",
+  "name": "50% current + 50% plasma stream",
+  "status": "selected-preview; game integration pending",
+  "user_feedback": "2",
+  "mix": {
+    "current_weight": 0.5,
+    "plasma_weight": 0.5,
+    "normalization": "divide weighted sum by sqrt(0.5^2 + 0.5^2)",
+    "attack_seconds": 0.055,
+    "release_seconds": 0.14
+  },
+  "files": [
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/cutter-v2/preview-2-0.wav",
+      "sha256": "200e0940fae589de2783bb90afcb3b32e25aeed9d0a3b57c64528f3096011606"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/cutter-v2/preview-2-1.wav",
+      "sha256": "6efe05ea344bd33b41729e48e7243f7aa6a00c3f82cc03c1b4794f29341ac82e"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/cutter/loop-0.wav",
+      "sha256": "4dc2edc3a548d286f22523ef4505dc7b5647982acefdd66229d0fb375f806662"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/cutter/loop-3.wav",
+      "sha256": "ef510019c6218114309de6170530b3b0315755198cd6db7692fd2e8a46aaa281"
+    }
+  ],
+  "source_manifests": [
+    "../cutter/manifest.json",
+    "manifest.json"
+  ],
+  "note": "Preview contains repeating source loops. Runtime loop/start/release preparation and in-game listening remain pending."
+}

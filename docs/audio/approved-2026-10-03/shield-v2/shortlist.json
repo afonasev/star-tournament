@@ -1,0 +1,19 @@
+{
+  "event": "shield-hit",
+  "status": "shortlist only; no final selection",
+  "preview_version": "shield-v2",
+  "variants": [
+    0,
+    3
+  ],
+  "files": [
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shield-v2/hit-0-0.wav",
+      "sha256": "3eaa91a3a16145d035ae90e1dd4655c213d102009563251aaf190fce4a0b8efc"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shield-v2/hit-3-0.wav",
+      "sha256": "0d701ad89bff24041d2f7abdfbc2ddb7c1d248b42b3982f4b80cafa699fa2290"
+    }
+  ]
+}

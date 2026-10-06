@@ -1,0 +1,9 @@
+{
+  "status": "none accepted",
+  "rejected": [
+    1,
+    2
+  ],
+  "direction": "between 0 and 3",
+  "feedback": "возможно что-то между 0 и 3, пока никакой вариант не подходит, 1 и 2 вообще мимо"
+}

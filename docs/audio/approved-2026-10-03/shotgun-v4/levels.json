@@ -1,0 +1,50 @@
+[
+  {
+    "file": "variant-0-0.wav",
+    "peak": 0.599334716796875,
+    "rms_250ms": 0.11999639055650735,
+    "duration": 0.7
+  },
+  {
+    "file": "variant-0-1.wav",
+    "peak": 0.626556396484375,
+    "rms_250ms": 0.11999638500041886,
+    "duration": 0.7
+  },
+  {
+    "file": "variant-1-0.wav",
+    "peak": 0.9,
+    "rms_250ms": 0.09651829866264222,
+    "duration": 0.95
+  },
+  {
+    "file": "variant-1-1.wav",
+    "peak": 0.9,
+    "rms_250ms": 0.12067980801490677,
+    "duration": 0.95
+  },
+  {
+    "file": "variant-2-0.wav",
+    "peak": 0.9000000000000001,
+    "rms_250ms": 0.13226195610228536,
+    "duration": 0.95
+  },
+  {
+    "file": "variant-2-1.wav",
+    "peak": 0.9,
+    "rms_250ms": 0.1556459948368791,
+    "duration": 0.95
+  },
+  {
+    "file": "variant-3-0.wav",
+    "peak": 0.9,
+    "rms_250ms": 0.11933947161069705,
+    "duration": 0.95
+  },
+  {
+    "file": "variant-3-1.wav",
+    "peak": 0.9,
+    "rms_250ms": 0.11464662344382562,
+    "duration": 0.95
+  }
+]

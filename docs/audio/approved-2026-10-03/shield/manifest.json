@@ -1,0 +1,45 @@
+{
+  "sources": [
+    {
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0"
+    },
+    {
+      "author": "Hansj\u00f6rg Malthaner",
+      "url": "https://opengameart.org/content/force-field-electric-hum",
+      "attribution": "https://opengameart.org/users/varkalandar",
+      "license": "CC BY 4.0"
+    }
+  ],
+  "processing": "impact and electrical layers, filtering, pitch, envelopes; variant 1 added short resonant tone; first 150ms level matching",
+  "series_interval": 0.12,
+  "series_hits": 6,
+  "scope": "shield-hit only; body-hit remains separate; game unchanged",
+  "clips": [
+    {
+      "variant": 0,
+      "single_duration": 0.51,
+      "burst_peak": 0.3288793028632736,
+      "variants": 1
+    },
+    {
+      "variant": 1,
+      "single_duration": 0.25,
+      "burst_peak": 0.42461690172114436,
+      "variants": 2
+    },
+    {
+      "variant": 2,
+      "single_duration": 0.19,
+      "burst_peak": 0.4326405982503252,
+      "variants": 2
+    },
+    {
+      "variant": 3,
+      "single_duration": 0.4,
+      "burst_peak": 0.5618551950265575,
+      "variants": 2
+    }
+  ]
+}

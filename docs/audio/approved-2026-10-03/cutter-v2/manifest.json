@@ -1,0 +1,25 @@
+{
+  "source": "../cutter/manifest.json",
+  "processing": "blend approved-to-explore directions 0 and 3; equal-power normalization; 55ms attack, 140ms release; reference previews unchanged",
+  "variants": [
+    {
+      "variant": 1,
+      "current_weight": 0.75,
+      "plasma_weight": 0.25,
+      "peak": 0.23120681207981575
+    },
+    {
+      "variant": 2,
+      "current_weight": 0.5,
+      "plasma_weight": 0.5,
+      "peak": 0.2878663470772871
+    },
+    {
+      "variant": 3,
+      "current_weight": 0.25,
+      "plasma_weight": 0.75,
+      "peak": 0.31958614194987806
+    }
+  ],
+  "runtime_integration": false
+}

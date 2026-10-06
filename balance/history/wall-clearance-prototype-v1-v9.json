@@ -1,0 +1,241 @@
+{
+  "contentHash": "fnv1a64-v1:249d0a5b23a7cf6a",
+  "id": "prototype-v1",
+  "name": "Prototype v1",
+  "revision": 9,
+  "rules": {
+    "arenaGenerator": {
+      "presets": {
+        "large": {
+          "barrierHighMeters": 1.5,
+          "barrierLowMeters": 0.75,
+          "basementDepthMultiplier": 1.75,
+          "corridorWidthMeters": 6,
+          "coverCount": 8,
+          "coverSizeMeters": 3,
+          "depthMeters": 44,
+          "doorwayWidthMeters": 4,
+          "elevationDeltaMeters": 0.75,
+          "maximumInitialEnemyLosRatio": 0.25,
+          "maximumTeamDistanceRatio": 1.1,
+          "minimumSpawnSeparationMeters": 6,
+          "perimeterInsetMeters": 5,
+          "rampLengthMeters": 4,
+          "rampWidthMeters": 6,
+          "recipeCount": 5,
+          "routeInsetMeters": 6.5,
+          "spawnSlotCount": 20,
+          "upperDeckFootprintRatio": 0.5,
+          "upperDeckHeightMultiplier": 2,
+          "wallHeightMeters": 5,
+          "wallThicknessMeters": 1.8,
+          "widthMeters": 60
+        },
+        "medium": {
+          "barrierHighMeters": 1.5,
+          "barrierLowMeters": 0.75,
+          "basementDepthMultiplier": 1.5,
+          "corridorWidthMeters": 5,
+          "coverCount": 6,
+          "coverSizeMeters": 2.5,
+          "depthMeters": 34,
+          "doorwayWidthMeters": 3.5,
+          "elevationDeltaMeters": 0.75,
+          "maximumInitialEnemyLosRatio": 0.3,
+          "maximumTeamDistanceRatio": 1.15,
+          "minimumSpawnSeparationMeters": 5,
+          "perimeterInsetMeters": 4,
+          "rampLengthMeters": 4,
+          "rampWidthMeters": 5,
+          "recipeCount": 5,
+          "routeInsetMeters": 5.5,
+          "spawnSlotCount": 16,
+          "upperDeckFootprintRatio": 0.45,
+          "upperDeckHeightMultiplier": 1.75,
+          "wallHeightMeters": 4.5,
+          "wallThicknessMeters": 1.4,
+          "widthMeters": 46
+        },
+        "small": {
+          "barrierHighMeters": 1.5,
+          "barrierLowMeters": 0.75,
+          "basementDepthMultiplier": 1.25,
+          "corridorWidthMeters": 5,
+          "coverCount": 4,
+          "coverSizeMeters": 2,
+          "depthMeters": 26,
+          "doorwayWidthMeters": 3.5,
+          "elevationDeltaMeters": 0.75,
+          "maximumInitialEnemyLosRatio": 0.35,
+          "maximumTeamDistanceRatio": 1.2,
+          "minimumSpawnSeparationMeters": 4,
+          "perimeterInsetMeters": 3,
+          "rampLengthMeters": 4,
+          "rampWidthMeters": 5,
+          "recipeCount": 5,
+          "routeInsetMeters": 4.5,
+          "spawnSlotCount": 16,
+          "upperDeckFootprintRatio": 0.4,
+          "upperDeckHeightMultiplier": 1.5,
+          "wallHeightMeters": 4,
+          "wallThicknessMeters": 0.9,
+          "widthMeters": 34
+        }
+      }
+    },
+    "bots": {
+      "cooperation": {
+        "communicationSeconds": 0.3,
+        "personalitySpread": 0.2,
+        "separationMeters": 2.5,
+        "supportDistanceMeters": 18,
+        "supportSeconds": 3
+      },
+      "easy": {
+        "aimDegreesPerSecond": 90,
+        "aimErrorDegrees": 12,
+        "aimPeriodSeconds": 1.4,
+        "decisionSeconds": 0.35,
+        "fieldOfViewDegrees": 110,
+        "fireToleranceDegrees": 18,
+        "jumpChance": 0.12,
+        "jumpCooldownSeconds": 6,
+        "memorySeconds": 2,
+        "preferredDistanceMeters": 6,
+        "reactionSeconds": 0.6,
+        "retreatHealthRatio": 0.2,
+        "retreatSeconds": 0.7,
+        "strafeSeconds": 1.8,
+        "strafeWeight": 0.35,
+        "supportChance": 0.2
+      },
+      "hard": {
+        "aimDegreesPerSecond": 230,
+        "aimErrorDegrees": 1.5,
+        "aimPeriodSeconds": 0.7,
+        "decisionSeconds": 0.1,
+        "fieldOfViewDegrees": 150,
+        "fireToleranceDegrees": 8,
+        "jumpChance": 0.22,
+        "jumpCooldownSeconds": 3,
+        "memorySeconds": 6,
+        "preferredDistanceMeters": 4,
+        "reactionSeconds": 0.12,
+        "retreatHealthRatio": 0.35,
+        "retreatSeconds": 1.2,
+        "strafeSeconds": 0.7,
+        "strafeWeight": 0.85,
+        "supportChance": 0.65
+      },
+      "navigation": {
+        "clearance": 0.1,
+        "progressMeters": 0.4,
+        "recoverySeconds": 0.7,
+        "stuckSeconds": 1.5,
+        "waypointRadius": 0.5
+      },
+      "normal": {
+        "aimDegreesPerSecond": 160,
+        "aimErrorDegrees": 5,
+        "aimPeriodSeconds": 1,
+        "decisionSeconds": 0.2,
+        "fieldOfViewDegrees": 130,
+        "fireToleranceDegrees": 12,
+        "jumpChance": 0.18,
+        "jumpCooldownSeconds": 4,
+        "memorySeconds": 4,
+        "preferredDistanceMeters": 5,
+        "reactionSeconds": 0.28,
+        "retreatHealthRatio": 0.3,
+        "retreatSeconds": 1,
+        "strafeSeconds": 1.1,
+        "strafeWeight": 0.65,
+        "supportChance": 0.45
+      }
+    },
+    "camera": {
+      "farPlane": 250,
+      "fieldOfViewDegrees": 90,
+      "horizontalSensitivity": 4,
+      "maximumPitchDegrees": 85,
+      "nearPlane": 0.05,
+      "verticalSensitivity": 3.2
+    },
+    "death": {
+      "corpseSeconds": 10,
+      "killcamSeconds": 3
+    },
+    "match": {
+      "duration": {
+        "defaultMinutes": 5,
+        "maximumMinutes": 30,
+        "minimumMinutes": 1
+      },
+      "scoreTarget": {
+        "defaultPoints": 3000,
+        "maximumPoints": 20000,
+        "minimumPoints": 1000,
+        "stepPoints": 100
+      }
+    },
+    "player": {
+      "capsule": {
+        "halfHeight": 0.35,
+        "radius": 0.55,
+        "skinWidth": 0.01
+      },
+      "eyeHeight": 0.55,
+      "movement": {
+        "airAcceleration": 12,
+        "autostepMaxHeight": 0.45,
+        "autostepMinWidth": 0.25,
+        "gravity": 24,
+        "groundAcceleration": 45,
+        "groundDeceleration": 32,
+        "jumpSpeed": 8.5,
+        "maxSlopeClimbDegrees": 45,
+        "maximumGroundSpeed": 9,
+        "minSlopeSlideDegrees": 60,
+        "snapToGroundDistance": 0.2
+      },
+      "startingHealth": 100
+    },
+    "scoring": {
+      "assist": {
+        "points": 50,
+        "windowSeconds": 5
+      },
+      "killChain": {
+        "cumulativeTotals": [
+          100,
+          300,
+          500,
+          800,
+          1200
+        ],
+        "maximumGapSeconds": 10,
+        "postFiveIncrementPoints": 400
+      }
+    },
+    "weapons": {
+      "doubleBarrelShotgun": {
+        "cooldownSeconds": 0.7,
+        "damage": {
+          "head": 100,
+          "limb": 30,
+          "torso": 70
+        },
+        "emptyRefillAmmo": 20,
+        "hitmarkerSeconds": 0.15,
+        "impactFeedbackSeconds": 0.12,
+        "muzzleFeedbackSeconds": 0.08,
+        "pelletCount": 12,
+        "rangeMeters": 35,
+        "spreadDegrees": 7,
+        "startingAmmo": 20
+      }
+    }
+  },
+  "schemaVersion": 7,
+  "source": "shipped"
+}

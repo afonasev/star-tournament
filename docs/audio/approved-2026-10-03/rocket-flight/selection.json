@@ -1,0 +1,11 @@
+{
+  "event": "rocket-flight",
+  "selected_variant": 2,
+  "name": "Тяжёлый двигатель",
+  "status": "selected-preview; game integration pending",
+  "user_feedback": "2",
+  "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/rocket-flight/flight-2.wav",
+  "sha256": "c5cf1c1df100e904770e7c18505133ee318f55800c5e32283ace9525558ec349",
+  "source_manifest": "rocket-flight/manifest.json",
+  "runtime_requirement": "Moving spatial sound source attached to flying rocket; loudness depends on listener distance. Runtime loop preparation and in-game listening remain pending."
+}

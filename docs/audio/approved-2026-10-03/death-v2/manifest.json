@@ -1,0 +1,34 @@
+{
+  "sources": "../death/manifest.json (Kenney + HaelDB, CC0)",
+  "reference": "previous death variant 3 unchanged",
+  "processing": "two-pole vocal lowpass 1350/950/750Hz, modest pitch reduction, shortened voice; common soft heavy body/cloth fall; no metal sources",
+  "voice_files": [
+    "1yell1.wav",
+    "2yell1.wav",
+    "1yell2.wav"
+  ],
+  "contact_seconds": 0.48,
+  "game_integration": false,
+  "clips": [
+    {
+      "variant": 0,
+      "peak": 0.649993896484375,
+      "duration": 1.25
+    },
+    {
+      "variant": 1,
+      "peak": 0.5799644452853255,
+      "duration": 1.3
+    },
+    {
+      "variant": 2,
+      "peak": 0.5784372220439596,
+      "duration": 1.3
+    },
+    {
+      "variant": 3,
+      "peak": 0.58,
+      "duration": 1.3
+    }
+  ]
+}

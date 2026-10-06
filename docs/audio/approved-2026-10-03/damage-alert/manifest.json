@@ -1,0 +1,26 @@
+{
+  "event": "damage-powerup-other-player-alert",
+  "status": "preview only, not selected or integrated",
+  "source": "original synthesized harmonic signals",
+  "reference_0": "../bonus-review/damage-3.wav, selected collector sound",
+  "clips": [
+    {
+      "variant": 1,
+      "duration": 1.15,
+      "peak": 0.58,
+      "sha256": "f3ee4185102a04c0c3f159f1b7dd84f32808e466f9ed8dd9bcf43ba348855ed0"
+    },
+    {
+      "variant": 2,
+      "duration": 0.95,
+      "peak": 0.58,
+      "sha256": "5dc60b41bbaf77d2a2e2c0f590df6c79f04f5666266e661e913c76adc56b952e"
+    },
+    {
+      "variant": 3,
+      "duration": 1.1,
+      "peak": 0.58,
+      "sha256": "54b0fd9a687f422849e321caf82c6a7ef960d8e96957222975cd9a0f830e6f10"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+schema: spec-driven
+
+context: |
+  Project: Star Tournament, a local-first 3D arena shooter for playing together
+  on a TV, with keyboard/mouse and gamepad input, local split-screen, and a
+  future online mode.
+  All artifacts must be written in Russian; keep OpenSpec structural headings
+  and SHALL/MUST keywords in English.
+  Treat docs/GAME_SPEC.md as the canonical source for approved product, gameplay,
+  visual, UI, technical, and accessibility decisions. Do not invent unresolved
+  design choices: record them explicitly and obtain confirmation before build work.
+  Small, unambiguous fixes may bypass the full OpenSpec workflow; update
+  GAME_SPEC when they change an approved decision. If the required workflow is
+  uncertain, ask the user before implementation.
+  Keep gameplay, renderer, input, cameras, HUD/UI, networking, and assets separate.
+  Persist serializable gameplay state. Unity uses native physics and state-recorded
+  replay without strict determinism; browser contracts are historical baseline.
+  Use native Player playtests for Unity interaction and physical devices/TV;
+  browser playtests apply only to browser changes. Neither synthetic input nor
+  build success closes the physical or target-hardware acceptance gates.
+
+rules:
+  proposal:
+    - State player impact, scope, non-goals, dependencies, and every product decision still open.
+    - For gameplay, weapon, movement, camera, input, split-screen, networking, bots, asset, or UI changes, cite the affected GAME_SPEC sections.
+  design:
+    - Define simulation ownership separately from rendering, HUD/UI, input, cameras, networking, and asset loading.
+    - Specify controller action maps, keyboard/mouse focus and pointer-lock behavior, pause/reconnect behavior, per-seat camera policy, viewport layout, and split-screen performance budget when relevant.
+    - For online features, state authority, prediction/reconciliation, serialization compatibility, disconnect/reconnect behavior, and local/online parity; do not select these without an approved GAME_SPEC decision.
+  specs:
+    - Write testable requirements and scenarios; distinguish single-player, local multiplayer, bots, and online behavior.
+    - State how gamepad reconnect/disconnect, unavailable controller slots, mouse focus, and viewport joining/leaving behave when relevant.
+  tasks:
+    - Keep implementation, automated checks, and a real native Player playtest (Unity) or browser playtest (browser) as explicit tasks.
+    - Keep one coherent feature or handoff per change; do not mix unrelated UI, audio, balance, networking, or bug work.
+
+operations:
+  apply:
+    guidance:
+      - Read the active change artifacts and the relevant GAME_SPEC section before editing.
+      - Preserve unrelated working-tree changes and report concise test evidence.
+      - Verify controller, keyboard/mouse, cursor capture and split-screen in native Player for Unity, or in-app Browser for browser changes.
+  archive:
+    guidance:
+      - Archive only after strict validation, required automated checks, native Player evidence (Unity) or browser evidence, physical acceptance, and the dedicated commit are complete.
+      - Sync approved spec deltas into the canonical specs before completing the change.

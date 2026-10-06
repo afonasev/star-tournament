@@ -1,0 +1,31 @@
+{
+  "event": "shield-pickup-charge",
+  "source": "Original synthesized charge layers; variant 0 is existing pickup reference",
+  "game_integration": false,
+  "clips": [
+    {
+      "variant": 0,
+      "duration": 0.6,
+      "peak": 0.888641357421875,
+      "sha256": "4e3a053d2e37d1e2770950306dade1af4c50ab09409f48b6247e5d3475b2ba8f"
+    },
+    {
+      "variant": 1,
+      "duration": 0.68,
+      "peak": 0.56,
+      "sha256": "9232c21945d489812149e672fb63cf3bbe2aee2a9401f7cd1a01bd19bd99df3b"
+    },
+    {
+      "variant": 2,
+      "duration": 0.86,
+      "peak": 0.56,
+      "sha256": "03ae2e78e44a8cc37834e6facd900738867ee062b141eb7e3859d812c4aa983e"
+    },
+    {
+      "variant": 3,
+      "duration": 0.62,
+      "peak": 0.56,
+      "sha256": "14591cd64aee2c50fa3b3ba794e50e25c5bf1720e2af095faa8197ba4640dd11"
+    }
+  ]
+}

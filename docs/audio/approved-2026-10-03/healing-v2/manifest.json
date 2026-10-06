@@ -1,0 +1,25 @@
+{
+  "event": "healing-pickup",
+  "status": "new alternatives, not selected, runtime unchanged",
+  "sources": "1/2 original synthesized tones; 3 Kenney Impact Sounds CC0 with filtering, trim, gain, plus synthesized tone",
+  "clips": [
+    {
+      "variant": 1,
+      "sha256": "c25e2b91a31a13153188e4a57c8bb47323552377d35acdedc1ea3c1aa4385f88",
+      "duration": 0.9,
+      "peak": 0.5
+    },
+    {
+      "variant": 2,
+      "sha256": "20c02f461dd058e001cc2f7fa4c59bf73935d44fa8728ae920472aa3b1814106",
+      "duration": 0.9,
+      "peak": 0.5
+    },
+    {
+      "variant": 3,
+      "sha256": "8441d843b3d227e5e0e5c6ee5202684055985c8bd4c5619091c7da886e60365c",
+      "duration": 0.9,
+      "peak": 0.5
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "event": "shield-pickup",
+  "selected_variant": 2,
+  "preview_version": "shield-charge",
+  "name": "Плотное поле",
+  "status": "selected-preview; game integration pending",
+  "user_feedback": "2",
+  "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/shield-charge/charge-2.wav",
+  "sha256": "03ae2e78e44a8cc37834e6facd900738867ee062b141eb7e3859d812c4aa983e",
+  "source_manifest": "shield-charge/manifest.json"
+}

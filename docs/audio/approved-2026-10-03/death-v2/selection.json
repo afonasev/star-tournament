@@ -1,0 +1,29 @@
+{
+  "event": "death",
+  "preview_version": "death-v2",
+  "status": "selected-preview; game integration pending",
+  "selected_variants": [
+    2,
+    3,
+    "fall-only"
+  ],
+  "playback": "Randomly select one of the three variants per death. Random selection is a runtime requirement, not yet integrated.",
+  "weights": "unspecified by user",
+  "contact_seconds": 0.48,
+  "fall": "identical soft heavy suit fall in all three, no metal",
+  "user_feedback": "2 и 3 можно взять, выбирать случайный из них плюс можно смерть без голоса еще добавить просто мягкое падение для разнообразия",
+  "files": [
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/death-v2/death-2.wav",
+      "sha256": "567c34983f727e175eb407fcf4cb2ead9e60eefc701ebafe6fe247eab1271a75"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/death-v2/death-3.wav",
+      "sha256": "876c21384d63ac4193155a13933201202f047d3c5cd0fac192e13221e0d1ad8c"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/visualizations/2026/10/03/01a10112-6b54-72d1-979a-7aeb9734a1a3/rifle-review/death-v2/death-fall-only.wav",
+      "sha256": "56c427cc5e839f250a382e5d27684d69e8c4dc50c3c98aa8cddc2dd416538547"
+    }
+  ]
+}

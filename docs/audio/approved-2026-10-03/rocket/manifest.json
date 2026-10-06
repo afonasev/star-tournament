@@ -1,0 +1,55 @@
+{
+  "sources": [
+    {
+      "author": "Michel Baradari",
+      "url": "https://opengameart.org/content/4-projectile-launches",
+      "license": "CC BY 3.0",
+      "use": "variant 1: trim, speed and gain changes"
+    },
+    {
+      "author": "dklon",
+      "url": "https://opengameart.org/content/rocket-launch-pack",
+      "license": "CC BY 3.0",
+      "use": "variants 2 and 3: trim, gain, pitch and bass layering"
+    },
+    {
+      "author": "Ben Jaszczak, Brian Nelson, Kevin Heras, Matthew Nanney",
+      "url": "https://opengameart.org/node/21826",
+      "license": "CC0",
+      "use": "variant 3 low launch thump"
+    }
+  ],
+  "cadence": 1.2,
+  "visual_flight_seconds": 0.8,
+  "visual_note": "illustrative, not simulation trajectory",
+  "clips": [
+    {
+      "file": "variant-0.wav",
+      "source": "/Users/eaafonasev/Projects/star-tournament/unity/Assets/StarTournament/Resources/Audio/rocket.wav",
+      "duration": 0.95,
+      "peak": 0.28540870441156074,
+      "rms350ms": 0.10000000000000002
+    },
+    {
+      "file": "variant-1.wav",
+      "source": "source/launches/rlaunch.wav",
+      "duration": 0.55,
+      "peak": 0.28031122695118826,
+      "rms350ms": 0.1
+    },
+    {
+      "file": "variant-2.wav",
+      "source": "source/rocket_launch_2.wav",
+      "duration": 1.0,
+      "peak": 0.40723506362704254,
+      "rms350ms": 0.09999999999999999
+    },
+    {
+      "file": "variant-3.wav",
+      "source": "source/rocket_launch_4.wav",
+      "duration": 0.85,
+      "peak": 0.4180957796181299,
+      "rms350ms": 0.1
+    }
+  ]
+}

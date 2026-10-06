@@ -1,0 +1,21 @@
+model_verbosity = "low"
+approvals_reviewer = "user"
+
+[features]
+memories = true
+
+[agents]
+default_subagent_model = "gpt-6-luna"
+default_subagent_reasoning_effort = "medium"
+
+[mcp_servers.avito]
+enabled = false
+
+[mcp_servers.mcp-hub]
+enabled = false
+
+[mcp_servers.singularity]
+enabled = false
+
+[plugins."chrome@openai-bundled"]
+enabled = false

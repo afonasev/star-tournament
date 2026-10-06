@@ -1,0 +1,17 @@
+node_modules/
+/node_modules
+dist/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+.ai-cache/
+.local/
+distribution/**/bin/
+distribution/**/obj/
+distribution/**/__pycache__/
+playwright-report/
+test-results/
+.asset-library/

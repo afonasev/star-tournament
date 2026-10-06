@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ApplicationIcon>../branding/app-icon.ico</ApplicationIcon>
+    <OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <AssemblyName>StarTournamentMaintenance</AssemblyName>
+    <PublishSingleFile>true</PublishSingleFile><SelfContained>true</SelfContained><RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Velopack" Version="1.2.158" />
+    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0" />
+    <RuntimeHostConfigurationOption Include="System.StartupHookProvider.IsSupported" Value="false" />
+    <Compile Include="../launcher/AuthenticatedSource.cs" Link="AuthenticatedSource.cs" />
+    <Compile Include="../launcher/WindowsInstallLease.cs" Link="WindowsInstallLease.cs" />
+    <None Include="../update-public.pem" Link="update-public.pem" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+{
+  "id": "menu-arena",
+  "title": "Арена",
+  "resource": "Audio/Music/menu-arena",
+  "bpm": 110.05434782608695,
+  "loopStart": 3.0418140589569163,
+  "loopEnd": 29.210702947845807,
+  "loopFadeSeconds": 2.180748299319728
+}

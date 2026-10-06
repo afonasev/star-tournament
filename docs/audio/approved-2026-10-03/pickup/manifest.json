@@ -1,0 +1,31 @@
+{
+  "reference": "Current Unity Resources/Audio/pickup.wav",
+  "sources": "Kenney Impact Sounds CC0; original synthesized energy layers",
+  "scope": "ordinary pickups, excludes damage bonus; preview only",
+  "clips": [
+    {
+      "variant": 0,
+      "duration": 0.6,
+      "peak": 0.888671875,
+      "sha256": "8f4946dd3800be15bc68e4abfcd1a93b797a9e897dd89725c10fc963c6fee3a8"
+    },
+    {
+      "variant": 1,
+      "duration": 0.65,
+      "peak": 0.57,
+      "sha256": "b0e5106c14f9ca1b1ce27e5d56fb24ee120ef75a665d9be30f53ae846716eb9e"
+    },
+    {
+      "variant": 2,
+      "duration": 0.65,
+      "peak": 0.57,
+      "sha256": "939278f82adc6bf3857f24faebb91d79e924435ace3eb83aec4da89a7bb481a0"
+    },
+    {
+      "variant": 3,
+      "duration": 0.65,
+      "peak": 0.57,
+      "sha256": "d2d822eb5cd56668ea5ec504ab4166d68ed97ecf70bdcdd4a271be5cd9363e5b"
+    }
+  ]
+}

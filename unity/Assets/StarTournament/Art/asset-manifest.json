@@ -1,0 +1,180 @@
+{
+  "sourceCommit": "8844e40",
+  "entries": [
+    {
+      "key": "world-weapon",
+      "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
+      "sha256": "8d51753af570ca8a477bfde1e1931ffae6b3abbba8b50713683c5d11ebadd1f8",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "weapon-grip",
+      "source": "Strata F5 with fitted primary palm grip; same authored model in world and view"
+    },
+    {
+      "key": "view-weapon",
+      "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
+      "sha256": "8d51753af570ca8a477bfde1e1931ffae6b3abbba8b50713683c5d11ebadd1f8",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "camera-weapon-grip",
+      "source": "Strata F5 with fitted primary palm grip; same authored model in world and view"
+    },
+    {
+      "key": "player-body",
+      "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
+      "sha256": "4f77896887dce890db3d703bb223cd77c68fcf691ef6e7c69710a71213a3fdea",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center",
+      "source": "Strata F4 oxblood world body with fitted primary palm grip; build_vector.py and strata_palette.py"
+    },
+    {
+      "key": "player-hands",
+      "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
+      "sha256": "c74d56b1cd0cb6d58fdaa1d26ec3bb480ec44980e4ecbdae7f37ebfb2124bb20",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "feet-center",
+      "source": "Selected Orbital F3/F2 FPS hands and Strata F5 weapon over attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py"
+    },
+    {
+      "key": "speed-pickup",
+      "path": "Assets/StarTournament/Art/speed-pickup-crystal-runes-lod0.glb",
+      "sha256": "201b9f6ff8e347df38a11b7703073ccfca8c01a3cf4c9861a58cae2750f894d8",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
+    },
+    {
+      "key": "armor-pickup",
+      "path": "Assets/StarTournament/Art/armor-pickup-crystal-runes-lod0.glb",
+      "sha256": "008bdd25f5da8746a22eff813e5a4879a2dcb6cd0e416f13e8819b306775a764",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
+    },
+    {
+      "key": "damage-pickup",
+      "path": "Assets/StarTournament/Art/damage-pickup-crystal-runes-lod0.glb",
+      "sha256": "5a1aca5f919ab4631c3ef0711b9cc23f190cbb0c7414c1334bd26d48a21756c1",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender source generate-crystal-rune-pickups.py; user-selected concept 3 on 2026-09-23; renderer-only, no collision proxy."
+    },
+    {
+      "key": "rifle-lod0",
+      "path": "Assets/StarTournament/Art/automatic-rifle-lod0.glb",
+      "sha256": "042456059164630b7fa4b7d37b5190a96ef3963eea297d493219bc1b743bb6c0",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "rifle-grip",
+      "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
+    },
+    {
+      "key": "rifle-lod1",
+      "path": "Assets/StarTournament/Art/automatic-rifle-lod1.glb",
+      "sha256": "831e76388bf323b83133aa3f1b1cf3eb358ee1579d24e05f0a150ccbac1266f2",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "rifle-grip",
+      "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
+    },
+    {
+      "key": "heal-pickup",
+      "path": "Assets/StarTournament/Art/heal-pickup-crystal-runes-lod0.glb",
+      "sha256": "4f9c9ff0db669759d9bf69f4b40eaad9510a24ca5a2e3ac4041cedd0df8200d9",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "ground-center",
+      "source": "Original Blender generate-heal-pickup.py; approved red heart concept 2 (2026-09-28), shared planning add-full-heal-pickup/assets/red-heart-selected.png; renderer-only, no collision or navigation proxy."
+    },
+    {
+      "key": "pulse-lod0",
+      "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
+      "sha256": "a105e145b0f566a818892657d861304a7aa4f6ea11c4bf576127bedd87a3dfa1",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "pulse-grip",
+      "source": "Original Pulse concept 03 adaptation; scripts/trooper/build_pulse.py; renderer-only, no collision proxy.",
+      "lod": 0
+    },
+    {
+      "key": "pulse-lod1",
+      "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
+      "sha256": "35616098b0292ba74389e2529b243bdc73644d5e9d2683950e5bdea2f781969d",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "pulse-grip",
+      "source": "Original Pulse concept 03 adaptation; scripts/trooper/build_pulse.py; renderer-only, no collision proxy.",
+      "lod": 1
+    },
+    {
+      "key": "cutter-lod0",
+      "path": "Assets/StarTournament/Art/cutter-lod0.glb",
+      "sha256": "52c72a6e3b0e706e4ecb6651e3a897a34586f72bf89d85968ca8d66a72f2ed84",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "cutter-grip",
+      "lod": 0,
+      "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+    },
+    {
+      "key": "cutter-lod1",
+      "path": "Assets/StarTournament/Art/cutter-lod1.glb",
+      "sha256": "6122e5d44c90b4d088fc0cdf949ae9be0d197a185f767d13be07baf26177fcde",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "cutter-grip",
+      "lod": 1,
+      "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+    },
+    {
+      "key": "pulse-projectile",
+      "path": "Assets/StarTournament/Art/pulse-projectile.glb",
+      "sha256": "01d29994ac3e9b61d83fe840e958cab6fb4477128a82d783f04b8e5effc688b0",
+      "units": "meters",
+      "up": "+Y",
+      "front": "+Z",
+      "pivot": "center",
+      "source": "Original build_pulse_projectile.py; hot impulse concept 1 selected 2026-10-02; no collision proxy, no gameplay LOD. Shared four-material mesh."
+    },
+    {
+      "key": "industrial-tunnel-panels",
+      "path": "Assets/StarTournament/Resources/IndustrialTunnels/steel-panels.png",
+      "sha256": "6f35b816ca385756caf67382cf9410727a34ee3d9315aefd633409c5ff1dc14c",
+      "source": "Built-in image_gen 2026-10-02; restrained worn graphite steel panel albedo",
+      "units": "UV repeat via tunnels.surface.tile",
+      "collision": "none",
+      "lighting": "albedo only; URP local lights",
+      "lod": "single repeating texture; Unity mipmaps"
+    },
+    {
+      "key": "lunar-earth",
+      "path": "Assets/StarTournament/Resources/LunarEarth.jpg",
+      "sha256": "dc059529b8ed1cfcdd59747a7c3f259c93c1322bf88ca1ec8bab1dd71fcc57f5",
+      "source": "NASA Earth Observatory, Blue Marble Next Generation, June 2004; Reto Stockli",
+      "sourceUrl": "https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-base/june/world.200406.3x5400x2700.jpg",
+      "usage": "Public NASA Earth imagery; renderer-only globe, no collision or navigation; runtime clouds/terminator/rim in LunarEarth.shader",
+      "units": "sphere scaled in meters",
+      "pivot": "planet center",
+      "lod": "single distant sphere, 2048 texture import with mipmaps"
+    }
+  ]
+}

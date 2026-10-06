@@ -1,0 +1,23 @@
+{
+  "source": "Kenney Impact Sounds, https://kenney.nl/assets/impact-sounds, CC0",
+  "processing": "physical foley layers, shortened damped envelopes, lowpass; variant 2 lowered pitch; first150ms normalization",
+  "shield_references": "shield-v2 0 and 3, previews reused byte-for-byte",
+  "scope": "timbre preview only; spatial requirements recorded separately in ../audio-requirements.json",
+  "clips": [
+    {
+      "variant": 1,
+      "duration": 0.19,
+      "series_peak": 0.3135202079300757
+    },
+    {
+      "variant": 2,
+      "duration": 0.23,
+      "series_peak": 0.3471747685946254
+    },
+    {
+      "variant": 3,
+      "duration": 0.19,
+      "series_peak": 0.3876501544755508
+    }
+  ]
+}
