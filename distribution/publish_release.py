@@ -120,7 +120,7 @@ def readback(version, assets):
     return rows
 
 
-def publish(version, date, channel, assets, token, source_ref):
+def publish(version, date, channel, assets, token, source_ref, draft_only=False):
     tag='v'+version
     release=api('GET','/releases/tags/'+tag,token,missing=True)
     if release is None:
@@ -133,6 +133,7 @@ def publish(version, date, channel, assets, token, source_ref):
         upload(release['id'],assets,token)
         release=api('GET',f'/releases/{release["id"]}',token)
         verify_remote(release,assets)
+        if draft_only: return release, []
         release=api('PATCH',f'/releases/{release["id"]}',token,dict(draft=False,prerelease=channel=='test',make_latest='true' if channel=='production' else 'false'))
     else: verify_remote(release,assets)  # Idempotent identical published input; no asset replacement.
     if release['prerelease'] != (channel=='test') or release['draft']: raise ValueError('Published channel mismatch')
@@ -144,6 +145,7 @@ def main():
     for name in ('version','date','channel','source-ref'): p.add_argument('--'+name,required=True)
     for name in ('windows-player','mac-player','output','key','dotnet','vpk'): p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--nsis-host',choices=['gfe'],default='gfe')
+    p.add_argument('--draft-only',action='store_true',help='Prepare and verify a draft for pre-publication QA')
     p.add_argument('--resume',action='store_true',help='Validate and resume an already packaged exact output')
     a=p.parse_args()
     if a.channel not in ('test','production') or not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?',a.version) or ('-' in a.version)!=(a.channel=='test'):
@@ -160,9 +162,9 @@ def main():
             subprocess.run(cmd,check=True)
     assets=collect(a.output,a.version,a.date,a.channel)
     (a.output/'asset-manifest.json').write_text(json.dumps(assets,indent=2)+'\n')
-    release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref)
+    release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only)
     (a.output/'publication.json').write_text(json.dumps(dict(release=release,readback=checks),indent=2)+'\n')
-    print('PUBLISHED',release['html_url'])
+    print('DRAFT' if release['draft'] else 'PUBLISHED',release['html_url'])
 
 
 if __name__=='__main__':main()

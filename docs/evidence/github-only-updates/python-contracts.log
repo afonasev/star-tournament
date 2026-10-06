@@ -1,4 +1,4 @@
-........usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+.........usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
                            --releases RELEASES --version VERSION
                            [--installers]
 upload_candidate.py: error: Package differs from signed manifest
@@ -10,7 +10,7 @@ upload_candidate.py: error: Artifact changed since packaging; installer may belo
                            --releases RELEASES --version VERSION
                            [--installers]
 upload_candidate.py: error: Signed manifest target/version mismatch
-...........Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmpqbvi39ck/release/Star-Tournament-1.2.3-Windows-x64-Setup.exe
+...........Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmpn9xo41cz/release/Star-Tournament-1.2.3-Windows-x64-Setup.exe
 Compiling Windows installer on gfe with Ubuntu NSIS 3.10
 usage: python3 -m unittest [-h] --layout LAYOUT --version VERSION
                            --output OUTPUT [--makensis MAKENSIS]
@@ -18,7 +18,7 @@ usage: python3 -m unittest [-h] --layout LAYOUT --version VERSION
 python3 -m unittest: error: argument --compiler-host: invalid choice: 'other-host' (choose from 'gfe')
 ........
 ----------------------------------------------------------------------
-Ran 30 tests in 1.888s
+Ran 31 tests in 0.531s
 
 OK
-Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmphw3zde7e/remote/Star-Tournament-1.2.3-Windows-x64-Setup.exe
+Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmph6h7u0ob/remote/Star-Tournament-1.2.3-Windows-x64-Setup.exe
