@@ -1,0 +1,24 @@
+Command line defined: "INPUT_DIR=/var/tmp/star-tournament-uninstall-fix-01a1064f/layout"
+Command line defined: "VERSION=0.1.0-test.7"
+Command line defined: "OUTPUT_FILE=/var/tmp/star-tournament-uninstall-fix-01a1064f/Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe"
+Processing config: /etc/nsisconf.nsh
+Processing script file: "/var/tmp/star-tournament-uninstall-fix-01a1064f/installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "/var/tmp/star-tournament-uninstall-fix-01a1064f/Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe"
+Install: 4 pages (256 bytes), 1 section (1 required) (4120 bytes), 974 instructions (27272 bytes), 603 strings (32730 bytes), 1 language table (294 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (4120 bytes), 115 instructions (3220 bytes), 130 strings (4888 bytes), 1 language table (254 bytes).
+Datablock optimizer saved 135440 KiB (~24.1%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              134144 / 121344 bytes
+Install code:                          (63088 bytes)
+Install data:                          (412293841 bytes)
+Uninstall code+data:                   (68618956 bytes)
+Compressed data:           145305107 / 480975885 bytes
+CRC (0xE03FCABD):                  4 / 4 bytes
+
+Total size:                145439255 / 481097233 bytes (30.2%)
+WRAPPER_BUILD_AND_PAYLOAD_CUSTODY_PASS 370 2eea283fa7155ac04a770608c64677d76ae2583b016a547bf6bfcca19cce8a35
