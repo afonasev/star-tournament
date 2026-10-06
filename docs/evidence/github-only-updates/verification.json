@@ -42,5 +42,7 @@
     "Python": 31,
     "landing": "production/test complete identities, pinned URL rejection, SemVer order; live fallback"
   },
-  "playerReuse": "exact test.8 game files preserved in candidate, 173 Windows and 177 macOS"
+  "playerReuse": "exact test.8 game files preserved in candidate, 173 Windows and 177 macOS",
+  "Python": 34,
+  "nativeMacActivation": "pending; actual download/staging passed, UI activation blocked by duplicate foreign Player"
 }
