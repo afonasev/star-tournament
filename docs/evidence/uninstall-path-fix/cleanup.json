@@ -1,0 +1,18 @@
+{
+  "completed": true,
+  "removedWorktrees": [
+    "/Users/eaafonasev/Projects/star-tournament-uninstall-path-fix",
+    "/Users/eaafonasev/Projects/star-tournament-public-source"
+  ],
+  "removedBranch": "codex/uninstall-path-fix",
+  "removedServerStaging": "/var/tmp/star-tournament-uninstall-fix-01a1064f",
+  "temporaryServerPackageRemoved": "7zip (previously absent, installed solely for exact wrapper extraction comparison)",
+  "retainedCandidates": "Immutable GitHub installer.2/current/legacy releases and tracked source/custody/checksums; no sole binary copy removed",
+  "publicMirrorBranchRetained": "codex/public-native-source, also public GitHub main",
+  "preExistingAndUnrelatedWorkPreserved": [
+    "Unity ProjectSettings dirty files",
+    "main tools/__pycache__ (unknown owner)",
+    "planning archive delivery record and docs/evidence/inbox-finalization-20261006 (foreign)"
+  ],
+  "pending": "Physical Windows normal uninstall/workaround retry; no human acceptance inferred"
+}
