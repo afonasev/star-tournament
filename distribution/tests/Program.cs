@@ -7,14 +7,24 @@ using Velopack.Logging;
 using var rsa = RSA.Create(3072);
 var config = new LauncherConfig("tech.test", "osx", "arm64", "1.0.0", "2026-10-04", "https://fixture.invalid/", "game/Player");
 var bytes = "authenticated package fixture"u8.ToArray();
-string Signed(string platform = "osx", string architecture = "arm64", string filename = "test-1.1.0-full.nupkg", string? sha = null, string? downloadUrl = null)
+string Signed(string platform = "osx", string architecture = "arm64", string filename = "test-1.1.0-full.nupkg", string? sha = null, string? downloadUrl = null, string version = "1.1.0", string? channel = null)
 {
-    var payload = JsonSerializer.SerializeToUtf8Bytes(new { schema = 1, platform, architecture,
-        version = "1.1.0", publicationDate = "2026-10-04", downloadUrl, feed = new { Assets = new[] { new {
-            PackageId = "tech.test", Version = "1.1.0", Type = "Full", FileName = filename,
+    var payload = JsonSerializer.SerializeToUtf8Bytes(new { schema = 1, platform, architecture, channel,
+        version, publicationDate = "2026-10-04", downloadUrl, feed = new { Assets = new[] { new {
+            PackageId = "tech.test", Version = version, Type = "Full", FileName = filename,
             SHA256 = sha ?? Convert.ToHexString(SHA256.HashData(bytes)), Size = bytes.Length } } } });
     return JsonSerializer.Serialize(new { payload = Convert.ToBase64String(payload),
         signature = Convert.ToBase64String(rsa.SignData(payload, HashAlgorithmName.SHA256, RSASignaturePadding.Pss)) });
+}
+// Live transport probe uses the production verifier, with no SDK auto-activation.
+if (args.Length == 3 && args[0] == "--live")
+{
+    var liveConfig = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(args[1]), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+    using var live = new AuthenticatedSource(liveConfig, File.ReadAllText(Path.Combine(Path.GetDirectoryName(args[1])!, "update-public.pem")));
+    await live.GetReleaseFeed(null!, liveConfig.AppId, "");
+    await live.DownloadReleaseEntry(null!, live.Asset!, args[2], _ => { });
+    Console.WriteLine(JsonSerializer.Serialize(new { version = live.Asset!.Version.ToString(), sha256 = live.Asset.SHA256, size = live.Asset.Size, channel = liveConfig.UpdateChannel }));
+    return;
 }
 int passed = 0;
 async Task Reject(string label, Func<Task> test)
@@ -22,6 +32,43 @@ async Task Reject(string label, Func<Task> test)
     try { await test(); } catch (CryptographicException) { passed++; Console.WriteLine("PASS " + label); return; }
     throw new Exception("Did not reject: " + label);
 }
+var production = config with { UpdateChannel = "production", FeedBase = AuthenticatedSource.ProductionBase };
+var test = config with { UpdateChannel = "test", FeedBase = AuthenticatedSource.TestLocator };
+await Reject("GitHub config wrong feed", () => { using var bad = new AuthenticatedSource(test with { FeedBase = "https://evil.example/" }, rsa.ExportSubjectPublicKeyInfoPem()); return Task.CompletedTask; });
+await Reject("unknown channel", () => { using var bad = new AuthenticatedSource(test with { UpdateChannel = "other" }, rsa.ExportSubjectPublicKeyInfoPem()); return Task.CompletedTask; });
+const string prodUrl = "https://github.com/afonasev/star-tournament/releases/download/v1.1.0/test-1.1.0-full.nupkg";
+using (var prod = new AuthenticatedSource(production, rsa.ExportSubjectPublicKeyInfoPem()))
+{
+    prod.Admit(Signed(downloadUrl: prodUrl, channel: "production")); passed++;
+    await Reject("missing signed channel", () => { prod.Admit(Signed(downloadUrl: prodUrl)); return Task.CompletedTask; });
+    await Reject("wrong signed channel", () => { prod.Admit(Signed(downloadUrl: prodUrl, channel: "test")); return Task.CompletedTask; });
+    await Reject("missing pinned download URL", () => { prod.Admit(Signed(channel: "production")); return Task.CompletedTask; });
+    if (prod.Asset != null || prod.Envelope != null) throw new Exception("Rejected metadata retained stale admission"); passed++;
+}
+var testEnvelope = Signed(version: "1.1.0-test.1", channel: "test", downloadUrl: prodUrl.Replace("v1.1.0/", "v1.1.0-test.1/"));
+foreach (var ch in new[] { production, test })
+{
+    var envelope = ch.UpdateChannel == "test" ? testEnvelope : Signed(downloadUrl: prodUrl, channel: "production");
+    using var transport = new MetadataTransport(envelope);
+    using var github = new AuthenticatedSource(ch, rsa.ExportSubjectPublicKeyInfoPem(), transport);
+    await github.GetReleaseFeed(null!, ch.AppId, "");
+    if (github.Asset!.Version.ToString() != (ch.UpdateChannel == "test" ? "1.1.0-test.1" : "1.1.0")) throw new Exception("Channel discovery version");
+    if (transport.Hosts.Any(x => x is not ("github.com" or "api.github.com" or "release-assets.githubusercontent.com"))) throw new Exception("Non-GitHub request");
+    passed++;
+}
+foreach (var failure in new[] { "oversize", "foreign", "downgrade", "loop", "wrongrepo", "wrongversion", "signature" })
+{
+    using var github = new AuthenticatedSource(production, rsa.ExportSubjectPublicKeyInfoPem(), new MetadataTransport(Signed(downloadUrl: prodUrl, channel: "production"), failure));
+    await Reject("metadata " + failure, () => github.GetReleaseFeed(null!, production.AppId, ""));
+}
+foreach (var failure in new[] { "offline", "rate-limit", "empty", "pagination" })
+{
+    using var github = new AuthenticatedSource(test, rsa.ExportSubjectPublicKeyInfoPem(), new MetadataTransport(testEnvelope, failure));
+    try { await github.GetReleaseFeed(null!, test.AppId, ""); throw new Exception("Discovery failure admitted"); }
+    catch (Exception ex) when (ex is HttpRequestException or InvalidOperationException) { passed++; }
+}
+using (var mismatch = new AuthenticatedSource(test, rsa.ExportSubjectPublicKeyInfoPem(), new MetadataTransport(testEnvelope.Replace("never", "used"), "tag-mismatch")))
+    await Reject("API tag signed version mismatch", () => mismatch.GetReleaseFeed(null!, test.AppId, ""));
 using var source = new AuthenticatedSource(config, rsa.ExportSubjectPublicKeyInfoPem());
 source.Admit(Signed());
 if (source.PublicationDate != "2026-10-04" || source.Asset!.Version.ToString() != "1.1.0") throw new Exception("Release metadata");
@@ -85,6 +132,7 @@ try
     var badCopy = Path.Combine(root, "bad-copy"); Directory.CreateDirectory(badCopy);
     await Reject("copied package metadata signature", () => ProtectedPackage.CopyAndVerifyAsync(winSource, tamperedEnvelope,
         winSource.Asset!, validSourcePackage, badCopy));
+    winSource.Admit(winEnvelope); // Failed metadata cleared the previous admission.
     var corruptSourcePackage = Path.Combine(root, "corrupt-source.nupkg");
     await File.WriteAllBytesAsync(corruptSourcePackage, bytes.Select(b => (byte)(b ^ 1)).ToArray());
     var corruptCopy = Path.Combine(root, "corrupt-copy"); Directory.CreateDirectory(corruptCopy);
@@ -147,5 +195,40 @@ sealed class RedirectTransport(byte[] bytes, string location) : HttpMessageHandl
         var response = new HttpResponseMessage(System.Net.HttpStatusCode.Redirect);
         response.Headers.Location = new Uri(location);
         return Task.FromResult(response);
+    }
+}
+
+sealed class MetadataTransport(string envelope, string failure = "") : HttpMessageHandler
+{
+    public List<string> Hosts { get; } = new();
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        var uri = request.RequestUri!; Hosts.Add(uri.Host);
+        if (failure == "offline") throw new HttpRequestException("Offline fixture");
+        if (failure == "rate-limit") return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden));
+        if (uri.Host == "api.github.com")
+        {
+            var version = failure == "tag-mismatch" ? "1.1.0-test.2" : "1.1.0-test.1";
+            var release = new { tag_name = "v" + version, draft = false, prerelease = true, assets = new[] {
+                new { name = "latest-win-x64.json" }, new { name = "latest-osx-arm64.json" },
+                new { name = $"Star-Tournament-{version}-Windows-x64-Setup.exe" }, new { name = $"Star-Tournament-{version}-macOS-arm64.pkg" } } };
+            var rows = failure == "empty" ? Array.Empty<object>() : failure == "pagination" ? Enumerable.Repeat<object>(release, 100).ToArray() : new object[] { release,
+                new { tag_name = "v99.0.0-test.1", draft = false, prerelease = true, assets = new[] { new { name = "installer-only.exe" } } } };
+            return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new StringContent(JsonSerializer.Serialize(rows)) });
+        }
+        if (uri.Host == "github.com")
+        {
+            var location = failure switch {
+                "foreign" => "https://evil.example/manifest", "downgrade" => "http://release-assets.githubusercontent.com/fixture",
+                "loop" => uri.ToString(), "wrongrepo" => "https://github.com/other/star-tournament/releases/download/v1.1.0/latest-osx-arm64.json",
+                "wrongversion" => "https://github.com/afonasev/star-tournament/releases/download/v1.1.0-test.1/latest-osx-arm64.json",
+                _ => uri.AbsolutePath.Contains("/latest/") ? "https://github.com/afonasev/star-tournament/releases/download/v1.1.0/latest-osx-arm64.json" : "https://release-assets.githubusercontent.com/fixture/manifest" };
+            var response = new HttpResponseMessage(System.Net.HttpStatusCode.Redirect); response.Headers.Location = new Uri(location); return Task.FromResult(response);
+        }
+        var body = failure == "oversize" ? new string('x',65537) : envelope;
+        if (failure == "signature") { using var doc = JsonDocument.Parse(envelope); var sig = Convert.FromBase64String(doc.RootElement.GetProperty("signature").GetString()!); sig[0] ^= 1;
+            body = JsonSerializer.Serialize(new { payload = doc.RootElement.GetProperty("payload").GetString(), signature = Convert.ToBase64String(sig) }); }
+        return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new StringContent(body) });
     }
 }

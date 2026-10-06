@@ -34,6 +34,8 @@ static class Launcher
         Directory.CreateDirectory(logRoot);
         void Log(Exception ex) => File.AppendAllText(Path.Combine(logRoot, "errors.log"), DateTimeOffset.UtcNow + " " + ex + Environment.NewLine);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(baseDir, "release.json")), Json)!;
+        if (config.UpdateChannel is not ("test" or "production"))
+            throw new InvalidOperationException("GitHub update channel required");
         FileStream ownership;
         try { ownership = new FileStream(Path.Combine(logRoot, config.AppId + ".lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
         catch (IOException) { return 0; }
