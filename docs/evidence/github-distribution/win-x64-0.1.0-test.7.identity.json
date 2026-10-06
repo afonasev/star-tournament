@@ -1,0 +1,27 @@
+{
+  "version": "0.1.0-test.7",
+  "date": "2026-10-06",
+  "runtime": "win-x64",
+  "revision": "cd92ae6e19fb9a2f6baf1e13434f051d20be00ca",
+  "dirty": " M legacy-release-manifest.json\n M review-page/downloads.json\n?? ../docs/evidence/github-distribution/current-transport.log\n?? ../docs/evidence/github-distribution/landing-github-test7.png\n?? ../docs/evidence/github-distribution/legacy-transport.log\n?? ../docs/evidence/github-distribution/new-asset-readback.json\n?? ../docs/evidence/github-distribution/new-github-release-test7.json\n?? ../docs/evidence/github-distribution/new-github-release-test8.json\n",
+  "sourceDiffSha256": "487931d3122b43b46be7a09c247fa3b743708967a54c20df1b6330c7c5fb1e2c",
+  "player": "/Users/eaafonasev/Projects/star-tournament-public-source/.local/release-players/windows",
+  "playerMarkerSha256": "763072cd9ee7fd8ff9e442f8ab13ef7cd5cf28e2ca349b4698ea10a163cf3ece",
+  "packages": [
+    {
+      "name": "Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe",
+      "size": 145437042,
+      "sha256": "c3cc8d4b950c10549282ef670e53047229ae619bb59b673c0009c25087a64460"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.0-test.7-win-x64-full.nupkg",
+      "size": 138086058,
+      "sha256": "6572776e2bef7172f25f802bf2d2e88448bb9e2e42436594ca23221dd9fcecc3"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+      "size": 137893916,
+      "sha256": "3bb4f1cd920e5b2a7480a48076aeb32848b06056d902136e77f26991f034097b"
+    }
+  ]
+}
