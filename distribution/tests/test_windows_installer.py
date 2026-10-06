@@ -146,9 +146,10 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         self.assertNotIn('RMDir /r "$PROFILE', self.source)
         self.assertIn('RMDir "$INSTDIR"', self.source)
 
-    def test_uninstaller_recovers_from_partial_install_without_registry_path(self):
+    def test_uninstaller_preserves_original_root_and_partial_recovery(self):
         function = self.source.split("Function un.onInit", 1)[1].split("FunctionEnd", 1)[0]
-        self.assertIn('StrCpy $INSTDIR "$EXEDIR"', function)
+        self.assertNotIn('StrCpy $INSTDIR "$EXEDIR"', function)
+        self.assertNotRegex(function, r'(?m)^\s*(?:StrCpy|ReadRegStr|GetFullPathName) \$INSTDIR\b')
         self.assertIn('ReadRegStr $0 HKLM "${PRODUCT_KEY}" "InstallLocation"', function)
         self.assertIn('StrCmp $0 "" un_registry_path_ok', function)
         self.assertIn('StrCmp $0 "$INSTDIR" un_registry_path_ok', function)
