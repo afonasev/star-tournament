@@ -46,3 +46,15 @@ The signed descriptor additionally binds `downloadUrl` to the admitted version a
 Windows compiler: Ubuntu VPS `gfe`, official NSIS 3.10 (`3.10-2ubuntu2`). The local Homebrew 3.13 compiler failed on language-table allocation; the tested compiler route transfers only public candidate payload, verifies the returned executable hash and removes its UUID-owned temporary staging. The signing key remains local.
 
 Historical test.5 build evidence: the actual .NET 8.0.31 Windows broker uses the static singlefilehost: its inspected bundle contains only managed assemblies/config, zero native extraction entries. Full NSIS test.5 compilation succeeded and the protected remote output was hash-verified into its immutable public location. The redundant slow SCP mirror was intentionally cancelled; `package.py` consequently exited 1 before its signed test.5 feed step. No test.5 feed was promoted. Independently completed `--update-only` test.6 packaging and its signed publication passed; source/artifact/custody evidence is in `docs/evidence/native-install-update/windows-wizard/`.
+
+## Windows uninstall path repair (installer revision 2)
+
+NSIS launches a temporary uninstaller copy, while its original installation root is already in `$INSTDIR`. The corrected wrapper preserves that root; registry equality, protected owned-root validation and process checks stay in place. Neither update packages nor gameplay were changed. Existing installations contain the earlier root uninstaller until a fresh installation; a game update does not replace this file.
+
+For an existing copy at the default location, close the game and use Win+R:
+
+```text
+"C:\Program Files\Star Tournament\Uninstall.exe" _?=C:\Program Files\Star Tournament
+```
+
+Confirm UAC. `_?=` is the documented NSIS option preventing the temporary copy, so the old path assignment no longer points at the temp folder. Keep the final argument unquoted; use the actual installation folder in both places if it differs. Deleting the running uninstaller itself may require reboot. This is a manual Windows workaround, not a verified device result. After reinstalling with the corrected wrapper, verify normal Windows Settings/menu uninstall, profile preservation, and rejection of moved/mismatched or busy installations.

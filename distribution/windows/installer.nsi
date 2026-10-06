@@ -267,9 +267,9 @@ FunctionEnd
 Function un.onInit
   SetRegView 64
   SetShellVarContext all
-  ; The uninstaller is written before payload copy for safe first-install recovery.
-  ; Keep that executable's directory as the authority when registration is absent.
-  StrCpy $INSTDIR "$EXEDIR"
+  ; NSIS initializes $INSTDIR to the original uninstaller's installation folder,
+  ; then runs a temporary executable copy. $EXEDIR points at that temporary copy.
+  ; Preserve the original root, including partial installs without registration.
   ReadRegStr $0 HKLM "${PRODUCT_KEY}" "InstallLocation"
   StrCmp $0 "" un_registry_path_ok
   StrCmp $0 "$INSTDIR" un_registry_path_ok
