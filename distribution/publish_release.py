@@ -30,7 +30,9 @@ def api(method, path, token, data=None, missing=False):
             'X-GitHub-Api-Version': '2022-11-28'})
         response = conn.getresponse(); raw = response.read()
         if missing and response.status == 404: return None
-        if response.status not in (200, 201): raise RuntimeError('GitHub API status ' + str(response.status))
+        if response.status not in (200, 201):
+            details=json.loads(raw)
+            raise RuntimeError('GitHub API status '+str(response.status)+': '+json.dumps(details.get('errors',details.get('message'))))
         return json.loads(raw)
     finally: conn.close()
 
@@ -134,7 +136,7 @@ def publish(version, date, channel, assets, token, source_ref, draft_only=False)
         release=api('GET',f'/releases/{release["id"]}',token)
         verify_remote(release,assets)
         if draft_only: return release, []
-        release=api('PATCH',f'/releases/{release["id"]}',token,dict(draft=False,prerelease=channel=='test',make_latest='true' if channel=='production' else 'false'))
+        release=api('PATCH',f'/releases/{release["id"]}',token,dict(draft=False,prerelease=channel=='test',make_latest='true' if channel=='production' else 'false',target_commitish=source_ref))
     else: verify_remote(release,assets)  # Idempotent identical published input; no asset replacement.
     if release['prerelease'] != (channel=='test') or release['draft']: raise ValueError('Published channel mismatch')
     return release,readback(version,assets)
@@ -152,6 +154,9 @@ def main():
         p.error('Channel/version mismatch')
     token=sys.stdin.read(1024).strip()
     if not token: p.error('GitHub credential required on stdin')
+    if not re.fullmatch(r'[0-9a-f]{40}',a.source_ref): p.error('Full reviewed public commit SHA required for --source-ref')
+    commit=api('GET','/commits/'+a.source_ref,token)
+    if commit['sha']!=a.source_ref: raise ValueError('Public source identity mismatch')
     a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=True)
     if not a.resume:
         for runtime,player in zip(RUNTIMES,(a.windows_player,a.mac_player)):
