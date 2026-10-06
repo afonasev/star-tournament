@@ -20,7 +20,7 @@ class GithubPublication(unittest.TestCase):
         public=dict(self.remote,draft=False)
         with patch.object(publisher,'api',side_effect=[None,self.remote,self.remote,public]) as api,patch.object(publisher,'upload') as upload,patch.object(publisher,'readback',return_value=[]) as readback:
             publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main')
-            self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=True,make_latest='false'))
+            self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=True,make_latest='false',target_commitish='main'))
             upload.assert_called_once();readback.assert_called_once()
     def test_draft_only_never_publishes(self):
         with patch.object(publisher,'api',side_effect=[None,self.remote,self.remote]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback') as readback:
@@ -44,7 +44,7 @@ class GithubPublication(unittest.TestCase):
         public=dict(self.remote,draft=False,prerelease=False)
         with patch.object(publisher,'api',side_effect=[None,self.remote,self.remote,public]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback',return_value=[]):
             publisher.publish('1.0.0','2026-10-06','production',self.assets,'fixture','main')
-            self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=False,make_latest='true'))
+            self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=False,make_latest='true',target_commitish='main'))
     def test_changed_local_input_never_uploaded(self):
         Path(self.assets[0]['path']).write_text('modified')
         with patch.object(uploader,'request',return_value=[]) as remote:

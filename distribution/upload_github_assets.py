@@ -7,13 +7,23 @@ import json
 from pathlib import Path
 import re
 import sys
+import ssl
 import urllib.parse
 
 REPO = 'afonasev/star-tournament'
 
 
+def tls_context():
+    context = ssl.create_default_context()
+    # macOS python.org installs may lack their optional certificate bootstrap.
+    # Use the OS PEM roots only when the default store is empty; verification stays required.
+    if not context.get_ca_certs() and sys.platform == 'darwin':
+        context.load_verify_locations('/etc/ssl/cert.pem')
+    return context
+
+
 def request(host, method, path, token, body=None, size=None):
-    conn = http.client.HTTPSConnection(host, timeout=1800)
+    conn = http.client.HTTPSConnection(host, timeout=1800, context=tls_context())
     headers = {'Authorization':'Bearer '+token, 'User-Agent':'StarTournament-Publisher/1',
                'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28'}
     if body is not None: headers.update({'Content-Type':'application/octet-stream','Content-Length':str(size)})

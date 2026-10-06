@@ -1,0 +1,14 @@
+[
+  {
+    "host": "api.github.com",
+    "status": 200,
+    "allowOrigin": "*",
+    "redirectHost": null
+  },
+  {
+    "host": "github.com",
+    "status": 302,
+    "allowOrigin": null,
+    "redirectHost": "release-assets.githubusercontent.com"
+  }
+]

@@ -1,0 +1,37 @@
+[Unit]
+Description=Star Tournament immutable GitHub release compatibility relay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+ExecStart=/usr/bin/python3 /usr/local/lib/star-tournament/legacy_release_relay.py --manifest /etc/star-tournament-release-relay/manifest.json
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+CapabilityBoundingSet=
+MemoryMax=192M
+TasksMax=24
+
+[Install]
+WantedBy=multi-user.target
+total 4560
+-rw-r--r-- 1 root root 4632479 Oct  4 06:58 arena.png
+-rw-r--r-- 1 root root    1280 Oct  6 09:26 downloads.js
+-rw-r--r-- 1 root root     742 Oct  6 12:23 downloads.json
+-rw-r--r-- 1 root root    8294 Oct  6 09:26 index.html
+drwxr-xr-x 3 root root    4096 Oct  6 09:24 osx-arm64
+-rw-r--r-- 1 root root    6187 Oct  4 06:58 style.css
+drwxr-xr-x 3 root root    4096 Oct  6 09:24 win-x64
+2720be9953345db1257d0dacac442db25ee1d6dc74f7bc99fb9084a19663bdac  /opt/robowar/desktop/test/win-x64/latest.json
+4e3c425608f4a08eca6fbaaad76b878064c0f9edf5d8a0be3f0f0bda3764437d  /opt/robowar/desktop/test/osx-arm64/latest.json
