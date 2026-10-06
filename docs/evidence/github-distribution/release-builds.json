@@ -1,0 +1,19 @@
+{
+  "verificationRevision": "1dd0dd708eeb271f27849e97f422a070509e9a59",
+  "playerSourceRevision": "72cf05a7b8d49f0dd94a4e8968fbdda42d940a7a",
+  "editMode": {
+    "passed": 342,
+    "failed": 0
+  },
+  "playMode": {
+    "passed": 207,
+    "failed": 0
+  },
+  "windowsBuildBytes": 263595644,
+  "macOSUniversalBuildBytes": 282920149,
+  "generatedDiffs": [
+    "verification-unity-generated.patch",
+    "public-player-unity-generated.patch"
+  ],
+  "nativeSmoke": "Actual macOS universal release Player started silently using STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE, rendered the normal main menu (native-macos-menu.png); diagnostic four-view scene also rendered. QA Player was stopped via task-owned process interrupt. Windows device acceptance remains pending."
+}

@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0-test.5",
+  "date": "2026-10-04",
+  "runtime": "win-x64",
+  "revision": "047eadd7e1197a76a8a7b500ea726c9122f1d70b",
+  "packagingToolRevisionAtStart": "047eadd7e1197a76a8a7b500ea726c9122f1d70b",
+  "installerCompiler": "Ubuntu NSIS 3.10-2",
+  "playerSourceRevision": "5f601b06387ddbda5b34c8587c30a5787ea542dd",
+  "playerMarkerSha256": "365da91724ce672acbfb499ce326fa72840e1355a59b268e2fe11170e9a6996f",
+  "packages": [
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.0-test.5-win-x64-full.nupkg",
+      "size": 137153418,
+      "sha256": "fdca52656ceec30e1a934e8ddc3ede81b9e69071e2917a67005410c533d59958"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+      "size": 137152306,
+      "sha256": "43d8bc5ece8938ce01861e61467d8f98502a7aab1ad59172a674d6291e8d21ee"
+    },
+    {
+      "name": "WindowsSetup.exe",
+      "size": 144782219,
+      "sha256": "a0f8c309cfd41946a24ce543d1b9a3c9c7d5b967fc3c27479a8c3dfb1adad238",
+      "url": "https://robowar.afonasev.tech/desktop/test/win-x64/installers/0.1.0-test.5/WindowsSetup.exe",
+      "storage": "immutable VPS artifact; redundant local mirror cancelled after compiler success"
+    }
+  ],
+  "result": "Actual full NSIS compile succeeded; original package.py terminated when redundant SCP mirror was intentionally cancelled. No signed test.5 feed was promoted; initial installer uses independently signed test.6 feed."
+}

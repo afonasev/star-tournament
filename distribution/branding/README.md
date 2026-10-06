@@ -1,0 +1,1 @@
+Approved production app-icon-v1 restored unchanged from Git c3dedd2:src/assets/app-icon.png (blob 203162452536ff91af73bdf4fb6f5cf48c1febb2). ICO/ICNS are size derivatives of this PNG, generated with Pillow. No new visual design.

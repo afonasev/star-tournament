@@ -1,0 +1,62 @@
+[
+  {
+    "route": "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+    "size": 143857398,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+    "size": 143198367,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.2-osx-arm64-full.nupkg",
+    "size": 203854438,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.3-osx-arm64-full.nupkg",
+    "size": 143662628,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.4-osx-arm64-full.nupkg",
+    "size": 143662621,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/installers/0.1.0-test.3/tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+    "size": 137125923,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/installers/0.1.0-test.3/tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe",
+    "size": 144642696,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/installers/0.1.0-test.5/WindowsSetup.exe",
+    "size": 144782219,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe",
+    "size": 144786826,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.3-win-x64-full.nupkg",
+    "size": 137127048,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.4-win-x64-full.nupkg",
+    "size": 137127042,
+    "status": 200
+  },
+  {
+    "route": "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.6-win-x64-full.nupkg",
+    "size": 137153437,
+    "status": 200
+  }
+]

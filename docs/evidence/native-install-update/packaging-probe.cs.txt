@@ -1,0 +1,19 @@
+using Velopack;
+using System.Text.Json;
+VelopackApp.Build().SetAutoApplyOnStartup(false).Run();
+var manager = new UpdateManager(args.Length>1 ? args[1] : AppContext.BaseDirectory);
+var marker = File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"probe-version.txt")).Trim();
+Console.WriteLine($"STAR_DISTRIBUTION_STARTUP {marker} installed={manager.IsInstalled} path={AppContext.BaseDirectory}");
+if(args.Length>1 && args[0]=="stage") {
+ var update=await manager.CheckForUpdatesAsync();
+ if(update==null) throw new Exception("No update");
+ await manager.DownloadUpdatesAsync(update);
+ Console.WriteLine("STAR_DISTRIBUTION_STAGED "+update.TargetFullRelease.Version);
+ File.WriteAllText(Path.Combine(Path.GetTempPath(),"star-distribution-probe-staged.txt"),marker);
+ if(args.Length>2 && args[2]=="restart") manager.WaitExitThenApplyUpdates(update.TargetFullRelease,restart:true,restartArgs:new[]{"report"});
+}
+else if(args.Length>0 && args[0]=="apply") {
+ var update=manager.UpdatePendingRestart??throw new Exception("No staged update");
+ manager.WaitExitThenApplyUpdates(update,restart:true,restartArgs:new[]{"report"});
+}
+else if(args.Length>0 && args[0]=="report") File.WriteAllText(Path.Combine(Path.GetTempPath(),"star-distribution-probe-result.txt"),marker);

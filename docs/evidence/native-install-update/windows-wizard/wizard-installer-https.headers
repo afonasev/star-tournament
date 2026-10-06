@@ -1,0 +1,12 @@
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+cache-control: public, max-age=31536000, immutable
+content-type: application/octet-stream
+etag: "dlvy1jdjxmd22e76ob"
+last-modified: Sun, 04 Oct 2026 09:24:34 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 144782219
+date: Sun, 04 Oct 2026 09:26:44 GMT
+

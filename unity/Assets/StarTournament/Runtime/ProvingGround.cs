@@ -232,11 +232,14 @@ namespace StarTournament.ProvingGround
             }
             CreateInterface();
             phase=Phase.MainMenu;RefreshInterface();Select(mainBattleButton);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
             if(!string.IsNullOrEmpty(CombatBowlReviewDirectory))gameObject.AddComponent<NativeCombatBowlReview>();
+#endif
             gameObject.AddComponent<ProvingTelemetry>();
             if(args.Contains("-teamsDiagnostic")) SetMatchMode(NativeMatchMode.Teams);
             bool requestedDiagnostic = Environment.GetCommandLineArgs().Contains("-diagnostic");
             if (requestedDiagnostic) Begin(true);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
             if (args.Contains("-botSeatsReview")) gameObject.AddComponent<NativeBotSeatsReview>();
             if (args.Contains("-botSetupReview")) gameObject.AddComponent<NativeBotSetupReview>();
             if (args.Contains("-botPerceptionReview")) gameObject.AddComponent<NativeBotPerceptionReview>();
@@ -292,6 +295,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
             if (args.Contains("-gamepadCameraReview"))gameObject.AddComponent<NativeGamepadCameraReview>();
             if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
+#endif
 #endif
         }
         static string PlayerProfilesPath()

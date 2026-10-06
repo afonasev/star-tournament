@@ -1,0 +1,27 @@
+{
+  "version": "0.1.0-test.4",
+  "date": "2026-10-04",
+  "runtime": "win-x64",
+  "revision": "5f601b06387ddbda5b34c8587c30a5787ea542dd",
+  "dirty": "?? ../docs/evidence/native-install-update/release-mac.log\n?? ../docs/evidence/native-install-update/release-win.log\n",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "player": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/release-players/windows",
+  "playerMarkerSha256": "365da91724ce672acbfb499ce326fa72840e1355a59b268e2fe11170e9a6996f",
+  "packages": [
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.0-test.4-win-x64-full.nupkg",
+      "size": 137127042,
+      "sha256": "6ddfbafa0048bb6ad545c279276fc9a16e2b9fa19a370cb6ad1178f661c69337"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+      "size": 137125918,
+      "sha256": "41baedde7cedafe9b17899d36ef5dfa73b9716fd2162f142234fa8054aa4d139"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe",
+      "size": 144642690,
+      "sha256": "17da90eb9fb47b489ff656fab666e5d4a8b972283be40f41a540fb3bb763c7d0"
+    }
+  ]
+}

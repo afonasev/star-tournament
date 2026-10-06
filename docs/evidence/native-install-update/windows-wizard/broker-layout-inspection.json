@@ -1,0 +1,103 @@
+{
+  "brokerSha256": "70d00a45154a9c6635657c0912fa8127fe4f91d9da895bac2ccf8560a00e0df9",
+  "bundleVersion": [
+    6,
+    0
+  ],
+  "bundleEntries": 173,
+  "nativeExtractedEntries": [],
+  "entryTypes": [
+    1,
+    3,
+    4
+  ],
+  "runtimeNativeDropFromSingleFile": [
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/Microsoft.DiaSymReader.Native.amd64.dll",
+      "FileVersion": "14.50.35738.0",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/System.IO.Compression.Native.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/clretwrc.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/clrgc.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/clrjit.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/coreclr.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/createdump.exe",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/hostfxr.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/hostpolicy.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/mscordaccore.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/mscordaccore_amd64_amd64_8.0.3126.42015.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/mscordbi.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/mscorrc.dll",
+      "FileVersion": "8.0.3126.42015",
+      "DropFromSingleFile": "true"
+    },
+    {
+      "Type": "Native",
+      "Path": "runtimes/win-x64/native/msquic.dll",
+      "FileVersion": "2.5.10.0",
+      "DropFromSingleFile": "true"
+    }
+  ],
+  "primarySource": "https://devblogs.microsoft.com/dotnet/announcing-net-6-preview-1/",
+  "runtime": "8.0.31 win-x64 static singlefilehost",
+  "windowsExecution": "pending"
+}

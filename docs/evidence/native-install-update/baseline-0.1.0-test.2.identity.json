@@ -1,0 +1,29 @@
+{
+  "version": "0.1.0-test.2",
+  "date": "2026-10-04",
+  "runtime": "osx-arm64",
+  "revision": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+  "player": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-music-600d589a/StarTournamentProvingGround.app",
+  "packages": [
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.1-osx-arm64-full.nupkg",
+      "size": 203854400,
+      "sha256": "56e7e78688612e5812bd44714180cb4f95bf165efde6debc07f2143329bd43e3"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.2-osx-arm64-full.nupkg",
+      "size": 203854438,
+      "sha256": "77386cf12d514a590830adef497d3e321a8e75ce43dfb1502528db64859423b4"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+      "size": 204049208,
+      "sha256": "ab7deee3a1fec0ff1e7a1d69a5a34bf42abfded969c9e6fc4a0271e3d01d4253"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+      "size": 203402934,
+      "sha256": "ac13e8db37e347c80e7ae74a3411bf8c51d486f7d85013a0117527aa3ca0d279"
+    }
+  ]
+}

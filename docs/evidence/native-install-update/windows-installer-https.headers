@@ -1,0 +1,12 @@
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+cache-control: public, max-age=31536000, immutable
+content-type: application/octet-stream
+etag: "dlvwapnc8ugu2e470o"
+last-modified: Sun, 04 Oct 2026 08:02:30 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 144642696
+date: Sun, 04 Oct 2026 08:06:00 GMT
+

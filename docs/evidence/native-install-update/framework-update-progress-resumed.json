@@ -1,0 +1,144 @@
+{
+  "mode": "restart",
+  "download_sent": false,
+  "ready": true,
+  "restart_acknowledged": true,
+  "failure": null,
+  "events": [
+    {
+      "time": 1791094680.438047,
+      "status": {
+        "state": "downloading",
+        "progress": 76,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094690.220059,
+      "status": {
+        "state": "downloading",
+        "progress": 78,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094699.0141592,
+      "status": {
+        "state": "downloading",
+        "progress": 80,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094708.610399,
+      "status": {
+        "state": "downloading",
+        "progress": 82,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094717.000107,
+      "status": {
+        "state": "downloading",
+        "progress": 84,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094728.065314,
+      "status": {
+        "state": "downloading",
+        "progress": 86,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094738.160071,
+      "status": {
+        "state": "downloading",
+        "progress": 88,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094746.790445,
+      "status": {
+        "state": "downloading",
+        "progress": 90,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094755.7533388,
+      "status": {
+        "state": "downloading",
+        "progress": 92,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094764.973931,
+      "status": {
+        "state": "downloading",
+        "progress": 94,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094776.5941818,
+      "status": {
+        "state": "downloading",
+        "progress": 96,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094785.542636,
+      "status": {
+        "state": "downloading",
+        "progress": 98,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094793.102668,
+      "status": {
+        "state": "downloading",
+        "progress": 100,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094800.3135731,
+      "status": {
+        "state": "staged",
+        "progress": 100,
+        "error": "",
+        "restartAcknowledged": false
+      }
+    },
+    {
+      "time": 1791094800.420663,
+      "status": {
+        "state": "staged",
+        "progress": 100,
+        "error": "",
+        "restartAcknowledged": true
+      }
+    }
+  ]
+}

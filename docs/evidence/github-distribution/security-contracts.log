@@ -1,0 +1,22 @@
+PASS wrong platform
+PASS wrong architecture
+PASS path traversal
+PASS external URL
+PASS missing SHA256
+PASS untrusted signing key
+PASS cache-only Update.exe is not a legacy install
+PASS valid legacy release metadata is detected
+PASS actual legacy launcher is detected
+PASS tampered staged cache
+PASS interrupted package
+PASS copied signed package re-verification
+PASS copied package metadata signature
+PASS copied package digest mismatch
+PASS signed URL wrong repository
+PASS signed URL HTTP downgrade
+PASS signed URL mismatched version
+PASS redirect host/downgrade/loop
+PASS redirect host/downgrade/loop
+PASS redirect host/downgrade/loop
+PASS quarantine before SDK admission
+PASS 28 security contracts

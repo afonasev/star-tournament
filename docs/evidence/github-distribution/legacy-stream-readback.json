@@ -1,0 +1,14 @@
+[
+  {
+    "route": "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.3-win-x64-full.nupkg",
+    "size": 137127048,
+    "sha256": "b6f2e6a1c68a3f61e0a21b74ce130046c30571bdd115dd6a068d737ebe5d48e4",
+    "result": "passed"
+  },
+  {
+    "route": "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.2-osx-arm64-full.nupkg",
+    "size": 203854438,
+    "sha256": "77386cf12d514a590830adef497d3e321a8e75ce43dfb1502528db64859423b4",
+    "result": "passed"
+  }
+]

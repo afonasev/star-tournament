@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System;
 using System.Collections;
@@ -140,4 +141,6 @@ namespace StarTournament.ProvingGround
         void OnDestroy(){draws.Dispose();passes.Dispose();triangles.Dispose();vertices.Dispose();if(report!=null&&lights!=null)RestoreRender();}
     }
 }
+#endif
+
 #endif

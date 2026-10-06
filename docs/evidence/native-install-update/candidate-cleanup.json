@@ -1,0 +1,51 @@
+{
+  "owner": "01a1056e-e1ec-7921-831c-abf0a50f71bd",
+  "removed": [
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-installed/mac-a",
+      "identities": [
+        {
+          "path": "Star Tournament.app/Contents/MacOS/release.json",
+          "sha256": "ad71991921d13914ddba04daac1470ac1f61dbd9f5ae9eb8e6c69f186c3fe8c1",
+          "release": {
+            "appId": "tech.afonasev.star-tournament.osx-arm64",
+            "platform": "osx",
+            "architecture": "arm64",
+            "version": "0.1.0-test.2",
+            "publicationDate": "2026-10-04",
+            "feedBase": "https://robowar.afonasev.tech/desktop/test/osx-arm64/",
+            "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground"
+          }
+        }
+      ],
+      "reason": "Duplicate installation of completed baseline lifecycle experiment; exact package identities and primary logs preserved in Git and published test feed; current test.3/.4 candidates retained."
+    },
+    {
+      "path": "/Users/eaafonasev/Projects/star-tournament-native-install-update/.local/distribution-installed/mac-next",
+      "identities": [
+        {
+          "path": "Star Tournament.app/Contents/MacOS/release.json",
+          "sha256": "ad71991921d13914ddba04daac1470ac1f61dbd9f5ae9eb8e6c69f186c3fe8c1",
+          "release": {
+            "appId": "tech.afonasev.star-tournament.osx-arm64",
+            "platform": "osx",
+            "architecture": "arm64",
+            "version": "0.1.0-test.2",
+            "publicationDate": "2026-10-04",
+            "feedBase": "https://robowar.afonasev.tech/desktop/test/osx-arm64/",
+            "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground"
+          }
+        }
+      ],
+      "reason": "Duplicate installation of completed baseline lifecycle experiment; exact package identities and primary logs preserved in Git and published test feed; current test.3/.4 candidates retained."
+    }
+  ],
+  "retained": [
+    "test.3/test.4 exact installers and payloads for pending acceptance",
+    "baseline test.1/test.2 source packages for reproducible lifecycle evidence",
+    "SDK/vpk for remaining packaging QA",
+    "private signing key outside Git",
+    "task worktree/branch: unintegrated and acceptance pending"
+  ],
+  "freeBytes": 109236641792
+}

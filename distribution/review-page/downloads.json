@@ -1,0 +1,18 @@
+{
+  "version": "0.1.0-test.7",
+  "publicationDate": "2026-10-06",
+  "platforms": {
+    "win-x64": {
+      "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.7/Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe",
+      "size": 145437042,
+      "sha256": "c3cc8d4b950c10549282ef670e53047229ae619bb59b673c0009c25087a64460",
+      "version": "0.1.0-test.7"
+    },
+    "osx-arm64": {
+      "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.7/Star-Tournament-0.1.0-test.7-macOS-arm64.pkg",
+      "size": 146149326,
+      "sha256": "17294f6ad20859b3bb4f39d38f81839c8edd016940f9c8d2da4d9ce1ffdd2057",
+      "version": "0.1.0-test.7"
+    }
+  }
+}

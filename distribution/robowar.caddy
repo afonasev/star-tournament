@@ -3,6 +3,10 @@ robowar.afonasev.tech {
     encode zstd gzip
     @updateMetadata path_regexp updateMetadata ^/desktop/(.*/)?(latest|downloads)\.json$
     @updatePackage path_regexp updatePackage ^/desktop/.*\.(nupkg|exe|pkg|zip)$
+    @legacyBinary path_regexp legacyBinary ^/desktop/test/.*\.(nupkg|exe|pkg|zip)$
+    handle @legacyBinary {
+        reverse_proxy 127.0.0.1:4192
+    }
     handle /desktop/* {
         header @updateMetadata Cache-Control "no-store"
         header @updatePackage Cache-Control "public, max-age=31536000, immutable"

@@ -1,0 +1,34 @@
+{
+  "observedAt": "2026-10-04T06:47:33.075117+00:00",
+  "installed": {
+    "mac-a": {
+      "release": {
+        "appId": "tech.afonasev.star-tournament.osx-arm64",
+        "platform": "osx",
+        "architecture": "arm64",
+        "version": "0.1.0-test.2",
+        "publicationDate": "2026-10-04",
+        "feedBase": "https://robowar.afonasev.tech/desktop/test/osx-arm64/",
+        "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground"
+      },
+      "sha256": "ad71991921d13914ddba04daac1470ac1f61dbd9f5ae9eb8e6c69f186c3fe8c1"
+    },
+    "mac-next": {
+      "release": {
+        "appId": "tech.afonasev.star-tournament.osx-arm64",
+        "platform": "osx",
+        "architecture": "arm64",
+        "version": "0.1.0-test.1",
+        "publicationDate": "2026-10-04",
+        "feedBase": "https://robowar.afonasev.tech/desktop/test/osx-arm64/",
+        "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground"
+      },
+      "sha256": "b485563aa1a49554c5325833923eb553b4832ab2d7413bd8f62dd70970d6adc4"
+    }
+  },
+  "sourceBaseline": "600d589af32eb6fea0764e5fc33acb7bb62beaae",
+  "scope": "Real baseline Unity Player packaging experiments; native menu candidate not yet built",
+  "explicitRestart": "Signed VPS package staged while installed identity remained test.1; old child exit0; SDK applied test.2 and restarted guarded Unity child; new diagnostic report/log retained",
+  "normalExit": "Staged, Player queued; activation not yet proven",
+  "windows": "Build only, physical user PC install/update pending"
+}

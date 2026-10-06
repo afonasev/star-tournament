@@ -1,0 +1,17 @@
+usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Package differs from signed manifest
+..usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Artifact changed since packaging; installer may belong to another version
+.usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Signed manifest target/version mismatch
+.
+----------------------------------------------------------------------
+Ran 4 tests in 0.006s
+
+OK

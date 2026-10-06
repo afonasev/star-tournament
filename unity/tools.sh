@@ -29,6 +29,11 @@ case "${1:-}" in
   test-edit) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform EditMode -testResults "$evidence_dir/editmode.xml" -logFile "$evidence_dir/editmode.log" ;;
   test-play) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform PlayMode -testResults "$evidence_dir/playmode.xml" -logFile "$evidence_dir/playmode.log" ;;
   build) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.ProvingGroundBuild.BuildMac -logFile "$evidence_dir/build.log" ;;
+  build-release-mac|build-release-win)
+    [ -n "${STAR_TOURNAMENT_RELEASE_OUTPUT:-}" ] || { echo "Set absolute STAR_TOURNAMENT_RELEASE_OUTPUT" >&2; exit 2; }
+    case "$1" in build-release-mac) target=OSXUniversal; method=BuildReleaseMac ;; build-release-win) target=Win64; method=BuildReleaseWindows ;; esac
+    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -quit -projectPath "$project_dir" -buildTarget "$target" -executeMethod "StarTournament.ProvingGround.Editor.ProvingGroundBuild.$method" -logFile "$evidence_dir/$1.log"
+    ;;
   editor) mode=${UNITY_RUN_MODE:-exclusive}; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -projectPath "$project_dir" ;;
   run)
     [ -d "$player_app" ] || { echo "Player is missing: run 'make build' first." >&2; exit 2; }

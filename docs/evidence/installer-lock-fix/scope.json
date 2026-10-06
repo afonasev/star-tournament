@@ -1,0 +1,25 @@
+{
+  "owner": "01a1064f-c5c3-7f93-ae15-52d7a8876556",
+  "at": "2026-10-04T15:49:58.586626+00:00",
+  "sourceCommit": "6425142",
+  "baseCommit": "b9adc3f",
+  "feedback": "W2: Не удалось создать блокировку установки in Windows wizard",
+  "cause": "FindFirst/FindNext normal end and missing ReadRegStr entries leave a persistent NSIS error flag; old filesystem checks lacked ClearErrors",
+  "officialDocs": "https://nsis.sourceforge.io/Docs/Chapter4.html#4.9.5.13",
+  "change": "Clear error flag before installation directory/marker/uninstaller and uninstall lock writes; check directory creation failure immediately",
+  "verification": [
+    "16 focused NSIS/compiler contracts passed",
+    "20 complete Python distribution contracts passed",
+    "Actual NSIS3.10 full compiler and extracted payload identity verification pending"
+  ],
+  "artifactPlan": {
+    "installedVersion": "0.1.0-test.5",
+    "installerRevision": 2,
+    "url": "https://robowar.afonasev.tech/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe",
+    "feed": "unchanged 0.1.0-test.6",
+    "payload": "Exact original test.5 payload recovered from SHA256-verified immutable Setup archive",
+    "macOS": "unchanged"
+  },
+  "acceptance": "User Windows fresh installation retry pending; no Windows runtime automation available",
+  "fullUnityGate": "Original recorded 333 EditMode/202 PlayMode release gate remains bound to unchanged Player; no Unity assets/runtime changes"
+}

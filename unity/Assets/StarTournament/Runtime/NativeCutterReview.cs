@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 using System;
 using System.Collections;
 using System.IO;
@@ -55,3 +56,5 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class Result {public string classification="AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE",arena,profile;public bool muted;public int width,height;}
     }
 }
+
+#endif

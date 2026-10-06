@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System;
 using System.Collections;
@@ -114,4 +115,6 @@ namespace StarTournament.ProvingGround
         [Serializable]sealed class Results{public string arena,note;public uint seed;public string[] checks;}
     }
 }
+#endif
+
 #endif
