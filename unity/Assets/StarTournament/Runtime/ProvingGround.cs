@@ -34,6 +34,7 @@ namespace StarTournament.ProvingGround
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], armor = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         readonly Text[] killNotice = new Text[SeatInputCoordinator.SeatCount];
         readonly string[] killNoticeText = new string[SeatInputCoordinator.SeatCount];
+        readonly bool[] killNoticeAllied = new bool[SeatInputCoordinator.SeatCount];
         readonly double[] killNoticeUntil = new double[SeatInputCoordinator.SeatCount];
         readonly GameObject[] armorGroups = new GameObject[SeatInputCoordinator.SeatCount];
         readonly HudIndicatorIcon[] ammoIcons = new HudIndicatorIcon[SeatInputCoordinator.SeatCount];
@@ -574,9 +575,13 @@ namespace StarTournament.ProvingGround
                 ammo[i].color=Session.DamageBoostRemaining(participant)>0?Color.red:Color.white;
                 ammoIcons[i].color=ammo[i].color;
                 crosshair[i].text=life.Dead ? "" : "+";
-                if(killNotice[i]) killNotice[i].text=phase==Phase.Setup || phase==Phase.Results ? "" :
-                    life.Dead ? DeathNoticeText(participant,snapshot) :
-                    Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
+                if(killNotice[i])
+                {
+                    killNotice[i].text=phase==Phase.Setup || phase==Phase.Results ? "" :
+                        life.Dead ? DeathNoticeText(participant,snapshot) :
+                        Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
+                    killNotice[i].color=!life.Dead && Session.Time<killNoticeUntil[i] && killNoticeAllied[i] ? Color.red : Color.white;
+                }
                 standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition,lifeStates);
                 names[i].color=Composition.Participant(participant).Color;
                 names[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "");
@@ -626,7 +631,8 @@ namespace StarTournament.ProvingGround
             if(view<0)return;
             var snapshot=Session.Match.Read();
             int chain=snapshot.KillChain(killer);
-            killNoticeText[view]=Session.Match.Roster.AreAllies(killer,notice.Seat)?"Ты убил союзника "+Composition.Participant(notice.Seat).Name.Replace('<','‹').Replace('>','›'):"Убит "+ColoredName(notice.Seat)+" · "+
+            killNoticeAllied[view]=Session.Match.Roster.AreAllies(killer,notice.Seat);
+            killNoticeText[view]=killNoticeAllied[view]?"Ты убил союзника "+Composition.Participant(notice.Seat).Name.Replace('<','‹').Replace('>','›'):"Убит "+ColoredName(notice.Seat)+" · "+
                 snapshot.DirectKills(killer,notice.Seat)+":"+snapshot.DirectKills(notice.Seat,killer)+
                 (chain==2?"\nDouble kill!":chain>2?"\n"+chain+" kills!":"");
             killNoticeUntil[view]=Session.Time+(frozenMovement??Profile).Get("ui.killNoticeSeconds");
@@ -724,6 +730,7 @@ namespace StarTournament.ProvingGround
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath,bloodProfile:frozenBlood,rocketPrefab:RocketProjectilePrefab,rocketEffects:frozenRocketEffects);
             Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
+            Array.Clear(killNoticeAllied,0,killNoticeAllied.Length);
             for(int seat=0;seat<damageVignettes.Length;seat++)
                 damageVignettes[seat]?.Bind(seat<frozenSeatCount?Session:null,seat<frozenSeatCount?Composition.ParticipantAt(seat):-1,frozenMovement);
             Session.Died+=OnMatchDeath;
@@ -987,7 +994,7 @@ namespace StarTournament.ProvingGround
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
                 var notice=TextElement(viewportRoots[i],"kill-notice-"+i,"",(int)Profile.Get("ui.killNoticeFontSize"));
                 Layout(notice.rectTransform,new Vector2(0,Profile.Get("ui.killNoticeBottom")),new Vector2(1,Profile.Get("ui.killNoticeTop")));
-                notice.alignment=TextAnchor.MiddleCenter;notice.color=Color.red;notice.supportRichText=true;killNotice[i]=notice;
+                notice.alignment=TextAnchor.MiddleCenter;notice.color=Color.white;notice.supportRichText=true;killNotice[i]=notice;
                 var outline=notice.gameObject.AddComponent<Outline>();outline.effectColor=new Color(0,0,0,.9f);
             }
             for(int i=0;i<standings.Length;i++)

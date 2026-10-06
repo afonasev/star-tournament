@@ -79,14 +79,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
         }
         Text Notice(int seat) => ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="kill-notice-"+seat);
-        [UnityTest] public IEnumerator SelfKillIsRedAndDoesNotNameSelfAsKiller()
+        [UnityTest] public IEnumerator SelfKillUsesNormalColorAndDoesNotNameSelfAsKiller()
         {
             yield return Load();var session=ground.Session;
             session.ApplyDamage(0,session.Life(0).Life,10000,0,session.Life(0).Life);
             yield return null;yield return null;
             Assert.That(Notice(0).text,Does.StartWith("Ты убил себя\nВозрождение через "));
             Assert.That(Notice(0).text,Does.Not.Contain("Вас убил"));
-            Assert.That(Notice(0).color,Is.EqualTo(Color.red));
+            Assert.That(Notice(0).color,Is.EqualTo(Color.white));
         }
         [UnityTest] public IEnumerator TeamKillIsRedWithoutEnemyScoreOrStreak()
         {
@@ -96,6 +96,29 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Notice(0).text,Is.EqualTo("Ты убил союзника "+ground.Composition.Participant(1).Name.Replace('<','‹').Replace('>','›')));
             Assert.That(Notice(0).color,Is.EqualTo(Color.red));
             Assert.That(Notice(1).text,Does.StartWith("Вас убил "));
+            Assert.That(Notice(1).color,Is.EqualTo(Color.white));
+        }
+        [UnityTest] public IEnumerator EnemyKillAfterTeamKillRestoresNormalColorAndPreservesNameColor()
+        {
+            yield return Load(true);var session=ground.Session;
+            session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);
+            yield return null;yield return null;
+            Assert.That(Notice(0).color,Is.EqualTo(Color.red));
+            session.ApplyDamage(2,session.Life(2).Life,10000,0,session.Life(0).Life);
+            yield return null;yield return null;
+            Assert.That(Notice(0).text,Does.StartWith("Убит <color=#"+ColorUtility.ToHtmlStringRGB(ground.Composition.Participant(2).Color)+">"));
+            Assert.That(Notice(0).color,Is.EqualTo(Color.white));
+        }
+        [UnityTest] public IEnumerator SelfKillAfterTeamKillRestoresNormalColor()
+        {
+            yield return Load(true);var session=ground.Session;
+            session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);
+            yield return null;yield return null;
+            Assert.That(Notice(0).color,Is.EqualTo(Color.red));
+            session.ApplyDamage(0,session.Life(0).Life,10000,0,session.Life(0).Life);
+            yield return null;yield return null;
+            Assert.That(Notice(0).text,Does.StartWith("Ты убил себя\nВозрождение через "));
+            Assert.That(Notice(0).color,Is.EqualTo(Color.white));
         }
         [UnityTest] public IEnumerator KillcamViewPauseRepeatAndMenuKeepOneSceneAndFreshLifecycle()
         {
