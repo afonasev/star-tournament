@@ -22,6 +22,11 @@ class GithubPublication(unittest.TestCase):
             publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main')
             self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=True,make_latest='false'))
             upload.assert_called_once();readback.assert_called_once()
+    def test_draft_only_never_publishes(self):
+        with patch.object(publisher,'api',side_effect=[None,self.remote,self.remote]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback') as readback:
+            release,_=publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',draft_only=True)
+            self.assertTrue(release['draft']);readback.assert_not_called()
+            self.assertFalse(any(c.args[0]=='PATCH' for c in api.call_args_list))
     def test_incomplete_draft_never_published(self):
         with patch.object(publisher,'api',side_effect=[self.remote,dict(self.remote,assets=[])]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback') as readback:
             with self.assertRaises(ValueError):publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main')

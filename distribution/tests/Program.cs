@@ -20,10 +20,11 @@ string Signed(string platform = "osx", string architecture = "arm64", string fil
 if (args.Length == 3 && args[0] == "--live")
 {
     var liveConfig = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(args[1]), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
-    using var live = new AuthenticatedSource(liveConfig, File.ReadAllText(Path.Combine(Path.GetDirectoryName(args[1])!, "update-public.pem")));
+    using var trace = new TraceTransport();
+    using var live = new AuthenticatedSource(liveConfig, File.ReadAllText(Path.Combine(Path.GetDirectoryName(args[1])!, "update-public.pem")), trace);
     await live.GetReleaseFeed(null!, liveConfig.AppId, "");
     await live.DownloadReleaseEntry(null!, live.Asset!, args[2], _ => { });
-    Console.WriteLine(JsonSerializer.Serialize(new { version = live.Asset!.Version.ToString(), sha256 = live.Asset.SHA256, size = live.Asset.Size, channel = liveConfig.UpdateChannel }));
+    Console.WriteLine(JsonSerializer.Serialize(new { version = live.Asset!.Version.ToString(), sha256 = live.Asset.SHA256, size = live.Asset.Size, channel = liveConfig.UpdateChannel, requests = trace.Requests }));
     return;
 }
 int passed = 0;
@@ -230,5 +231,16 @@ sealed class MetadataTransport(string envelope, string failure = "") : HttpMessa
         if (failure == "signature") { using var doc = JsonDocument.Parse(envelope); var sig = Convert.FromBase64String(doc.RootElement.GetProperty("signature").GetString()!); sig[0] ^= 1;
             body = JsonSerializer.Serialize(new { payload = doc.RootElement.GetProperty("payload").GetString(), signature = Convert.ToBase64String(sig) }); }
         return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new StringContent(body) });
+    }
+}
+
+sealed class TraceTransport : DelegatingHandler
+{
+    public List<string> Requests { get; } = new();
+    public TraceTransport() : base(new HttpClientHandler { AllowAutoRedirect = false }) { }
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+    {
+        Requests.Add(request.RequestUri!.GetLeftPart(UriPartial.Path));
+        return base.SendAsync(request, token);
     }
 }

@@ -16,7 +16,7 @@ function installers(release){
 }
 // SemVer numeric prerelease comparison, including test.9 versus test.10.
 function compareVersions(a,b){
-  const parts=v=>v.split(/[.-]/),aa=parts(a),bb=parts(b);
+  const parts=v=>{const [core,...labels]=v.split("-");return core.split(".").concat(labels.join("-").split("."));},aa=parts(a),bb=parts(b);
   for(let i=0;i<Math.max(aa.length,bb.length);i++){
     if(aa[i]===bb[i])continue;
     if(aa[i]===undefined)return -1;if(bb[i]===undefined)return 1;
