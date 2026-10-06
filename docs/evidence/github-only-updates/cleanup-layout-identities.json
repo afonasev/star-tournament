@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app",
+    "owner": "github-only-native-updates",
+    "platform": "osx-arm64",
+    "release": {
+      "appId": "tech.afonasev.star-tournament.osx-arm64",
+      "platform": "osx",
+      "architecture": "arm64",
+      "version": "0.1.0-test.9",
+      "publicationDate": "2026-10-06",
+      "feedBase": "https://api.github.com/repos/afonasev/star-tournament/releases",
+      "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+      "updateChannel": "test"
+    },
+    "treeHash": "70f6d07381b87e4c624c766d1166ba60fd56d29f2ae0daace1b249b0cc389249",
+    "files": 371,
+    "bytes": 372357774,
+    "sourceTag": "20f681f4272750fe09823e699ddeab318d0b4b90",
+    "replacement": "immutable GitHub v0.1.0-test.9 asset with recorded signature/hash, local QA completed",
+    "reason": "duplicate complete layouts no longer needed for completed automated checks"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-next/Star Tournament.app",
+    "owner": "github-only-native-updates",
+    "platform": "osx-arm64",
+    "release": {
+      "appId": "tech.afonasev.star-tournament.osx-arm64",
+      "platform": "osx",
+      "architecture": "arm64",
+      "version": "0.1.0-test.9",
+      "publicationDate": "2026-10-06",
+      "feedBase": "https://api.github.com/repos/afonasev/star-tournament/releases",
+      "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+      "updateChannel": "test"
+    },
+    "treeHash": "70f6d07381b87e4c624c766d1166ba60fd56d29f2ae0daace1b249b0cc389249",
+    "files": 371,
+    "bytes": 372357774,
+    "sourceTag": "20f681f4272750fe09823e699ddeab318d0b4b90",
+    "replacement": "immutable GitHub v0.1.0-test.9 asset with recorded signature/hash, local QA completed",
+    "reason": "duplicate complete layouts no longer needed for completed automated checks"
+  }
+]
