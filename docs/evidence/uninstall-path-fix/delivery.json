@@ -1,0 +1,20 @@
+{
+  "userReport": "Uninstaller registered-directory mismatch",
+  "owner": "01a1064f-c5c3-7f93-ae15-52d7a8876556",
+  "rootCause": "NSIS original $INSTDIR overwritten by temporary $EXEDIR",
+  "fix": "Preserve original $INSTDIR; registry/owned-root/idle guards retained",
+  "implementation": "ad43cb5",
+  "merge": "813cae2ffe6a19cb00e4c1baee5d88fc5ea86ef5",
+  "publicSource": "21545210e764bdc8ee9f0fce4a002d2369e028f2",
+  "release": "https://github.com/afonasev/star-tournament/releases/tag/v0.1.0-test.7-installer.2",
+  "asset": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.7-installer.2/Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe",
+  "size": 145439255,
+  "sha256": "2eea283fa7155ac04a770608c64677d76ae2583b016a547bf6bfcca19cce8a35",
+  "unchangedPayloadFiles": 370,
+  "pythonContracts": 22,
+  "actualCompiler": "Ubuntu NSIS3.10 gfe",
+  "unchangedSignedFeeds": true,
+  "deviceAcceptance": "Pending Windows PC normal uninstall and workaround retry",
+  "evidencePath": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/uninstall-path-fix",
+  "cleanup": "Temporary staging/package and clean integrated worktrees to remove; exact current candidates retained in immutable GitHub assets, public source branch preserved"
+}
