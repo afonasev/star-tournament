@@ -1,0 +1,28 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/launcher/Launcher.csproj (in 137 ms).
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/launcher/bin/Release/net8.0/osx-arm64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/osx-arm64/test7/payload-0.1.0-test.7/
+[14:18:20 INF] Velopack CLI 1.2.158, for distributing applications.
+[14:18:20 INF] Beginning to package Velopack release 0.1.0-test.7.
+[14:18:20 INF] Releases Directory: /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/osx-arm64/test7/releases
+[14:18:20 INF] Starting: Pre-process steps
+[14:18:20 INF] Generating new '.app' bundle from a directory of application files.
+[14:18:21 INF] Complete: Pre-process steps
+[14:18:21 INF] Starting: Code-sign application
+[14:18:21 INF] No entitlements specified, using default: https://docs.microsoft.com/dotnet/core/install/macos-notarization-issues
+[14:18:21 WRN] Package will not be signed or notarized. Missing the --signAppIdentity and --notaryProfile options.
+[14:18:21 INF] Complete: Code-sign application
+[14:18:21 INF] Starting: Building portable package
+[14:18:21 INF] Starting: Building release 0.1.0-test.7
+[14:18:33 INF] Complete: Building portable package
+[14:18:33 INF] Complete: Building release 0.1.0-test.7
+[14:18:33 INF] Starting: Building setup package
+[14:18:33 WRN] Package installer (.pkg) will not be Notarized. This is supported with the --signInstallIdentity and --notaryProfile arguments.
+[14:18:33 INF] Creating installer '.pkg' for app at '/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/velopack/temp.1/Star Tournament.app'
+[14:18:47 WRN] No Installer signing identity provided. The '.pkg' will not be signed.
+[14:18:47 INF] Installer created successfully
+[14:18:47 INF] Complete: Building setup package
+[14:18:47 INF] Starting: Post-process steps
+[14:18:48 INF] Complete: Post-process steps
+[14:18:48 INF] Finished in 00:00:27.0528950.
+PACKAGED osx-arm64 0.1.0-test.7 /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/osx-arm64/test7/releases

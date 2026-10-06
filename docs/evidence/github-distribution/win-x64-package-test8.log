@@ -1,0 +1,27 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/launcher/Launcher.csproj (in 155 ms).
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test8/payload-0.1.0-test.8/
+[14:19:27 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[14:19:27 INF] Velopack CLI 1.2.158, for distributing applications.
+[14:19:27 INF] Beginning to package Velopack release 0.1.0-test.8.
+[14:19:27 INF] Releases Directory: /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test8/releases
+[14:19:27 INF] Starting: Pre-process steps
+[14:19:27 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[14:19:27 INF] Shortcuts: None
+[14:19:27 INF] Complete: Pre-process steps
+[14:19:27 INF] Starting: Code-sign application
+[14:19:27 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[14:19:27 INF] Complete: Code-sign application
+[14:19:27 INF] Starting: Building portable package
+[14:19:27 INF] Starting: Building release 0.1.0-test.8
+[14:19:39 INF] Complete: Building release 0.1.0-test.8
+[14:19:39 INF] Starting: Building setup package
+[14:19:39 INF] Complete: Building portable package
+[14:19:39 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[14:19:39 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[14:19:39 INF] Complete: Building setup package
+[14:19:39 INF] Starting: Post-process steps
+[14:19:39 INF] Complete: Post-process steps
+[14:19:40 INF] Finished in 00:00:12.8594660.
+PACKAGED win-x64 0.1.0-test.8 /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test8/releases

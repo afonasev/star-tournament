@@ -1,0 +1,57 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/launcher/Launcher.csproj (in 859 ms).
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test7/payload-0.1.0-test.7/
+[14:17:41 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[14:17:41 INF] Velopack CLI 1.2.158, for distributing applications.
+[14:17:41 INF] Beginning to package Velopack release 0.1.0-test.7.
+[14:17:41 INF] Releases Directory: /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test7/releases
+[14:17:41 INF] Starting: Pre-process steps
+[14:17:41 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[14:17:41 INF] Shortcuts: None
+[14:17:41 INF] Complete: Pre-process steps
+[14:17:41 INF] Starting: Code-sign application
+[14:17:41 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[14:17:41 INF] Complete: Code-sign application
+[14:17:41 INF] Starting: Building portable package
+[14:17:41 INF] Starting: Building release 0.1.0-test.7
+[14:17:53 INF] Complete: Building portable package
+[14:17:53 INF] Complete: Building release 0.1.0-test.7
+[14:17:53 INF] Starting: Building setup package
+[14:17:54 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[14:17:54 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[14:17:54 INF] Complete: Building setup package
+[14:17:54 INF] Starting: Post-process steps
+[14:17:54 INF] Complete: Post-process steps
+[14:17:54 INF] Finished in 00:00:12.8732830.
+  Determining projects to restore...
+  Restored /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/maintenance/Maintenance.csproj (in 150 ms).
+  Maintenance -> /Users/eaafonasev/Projects/star-tournament-github-distribution/distribution/maintenance/bin/Release/net8.0/win-x64/StarTournamentMaintenance.dll
+  Maintenance -> /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test7/windows-layout-0.1.0-test.7/maintenance/
+Compiling Windows installer on gfe with Ubuntu NSIS 3.10
+Remote compiler: makensis 3.10 (Ubuntu package)
+Command line defined: "INPUT_DIR=/var/tmp/star-tournament-installer-c14d722774ef4add962ac483dd0373a8/layout"
+Command line defined: "VERSION=0.1.0-test.7"
+Command line defined: "OUTPUT_FILE=/var/tmp/star-tournament-installer-c14d722774ef4add962ac483dd0373a8/WindowsSetup.exe"
+Processing config: /etc/nsisconf.nsh
+Processing script file: "/var/tmp/star-tournament-installer-c14d722774ef4add962ac483dd0373a8/installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "/var/tmp/star-tournament-installer-c14d722774ef4add962ac483dd0373a8/WindowsSetup.exe"
+Install: 4 pages (256 bytes), 1 section (1 required) (4120 bytes), 974 instructions (27272 bytes), 603 strings (32730 bytes), 1 language table (294 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (4120 bytes), 116 instructions (3248 bytes), 131 strings (4894 bytes), 1 language table (254 bytes).
+Datablock optimizer saved 135440 KiB (~24.1%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              134144 / 121344 bytes
+Install code:                          (63088 bytes)
+Install data:                          (412293841 bytes)
+Uninstall code+data:                   (68618990 bytes)
+Compressed data:           145302894 / 480975919 bytes
+CRC (0x25C21D12):                  4 / 4 bytes
+
+Total size:                145437042 / 481097267 bytes (30.2%)
+Built /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test7/releases/Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe
+PACKAGED win-x64 0.1.0-test.7 /Users/eaafonasev/Projects/star-tournament-github-distribution/.local/github-candidates/win-x64/test7/releases
