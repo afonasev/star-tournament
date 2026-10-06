@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-06T19:14:26.793515+00:00",
+  "classification": "AUTOMATED_MACOS_COMPLETE_LAYOUT_NOT_OS_PKG_OR_HUMAN_ACCEPTANCE",
+  "release": "v0.1.0-test.9",
+  "from": "0.1.0-test.7",
+  "restart": {
+    "result": "PASS",
+    "guardedPlayer": true,
+    "activation": "actual UI restart button; normal Unity exit; SDK replacement and automatic launcher restart",
+    "test9LauncherPid": 19701,
+    "test9PlayerPid": 19718,
+    "status": "current",
+    "screenshot": "native-restart-test9.png"
+  },
+  "nextLaunch": {
+    "result": "PASS",
+    "guardedPlayer": true,
+    "activation": "ordinary Cmd+Q; SDK apply with restart false; explicit next launcher start",
+    "oldPlayerPid": 20368,
+    "status": "current",
+    "screenshot": "native-next-test9.png"
+  },
+  "profile": "SHA256 and size identical before/after both scenarios",
+  "downloadStage": "installed identity remained test.7 while Player alive; signed test.9 package verified",
+  "installedConfig": "test channel pinned GitHub API; no VPS source in fresh config",
+  "diagnostic": "Initial detached updater was cut short when execution session ended; holding the harness alive allowed actual launcher handoff to complete. Direct UpdateMac diagnostic not counted as activation evidence. No production code repair needed.",
+  "limits": [
+    "physical Windows wizard/UAC/uninstall/update acceptance pending",
+    "OS macOS PKG installation and physical/offline acceptance pending",
+    "production release not published",
+    "no archive or human acceptance"
+  ]
+}

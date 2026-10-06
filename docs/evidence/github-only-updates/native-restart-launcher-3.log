@@ -1,0 +1,60 @@
+unity-run: waiting exclusive; project=none
+unity-run: started exclusive; guardian=19446 pid=19447
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=4194304"
+    "memorysetup-bucket-allocator-block-count=1"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=4194304"
+    "memorysetup-profiler-bucket-allocator-block-count=1"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=4194304"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+unity-run: finished pid=19447 exit=0; capacity released
+[00:11:27] [INFO] --
+[00:11:27] [INFO] Starting Velopack Updater (1.2.158)
+[00:11:27] [INFO]     Location: "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS/UpdateMac"
+[00:11:27] [INFO]     CWD: "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app/Contents/MacOS"
+[00:11:27] [INFO]     Verbose: false
+[00:11:27] [INFO]     Silent: true
+[00:11:27] [INFO]     Root Directory: Some("/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app")
+[00:11:27] [INFO]     Log File: "/Users/eaafonasev/Library/Logs/velopack_tech.afonasev.star-tournament.osx-arm64.log"
+[00:11:27] [INFO]     Context: FromSpecifiedRootDir("/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app", Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages"))
+[00:11:27] [INFO] Command: Apply
+[00:11:27] [INFO]     Restart: true
+[00:11:27] [INFO]     Wait: WaitPid(19430)
+[00:11:27] [INFO]     Package: Some("/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg")
+[00:11:27] [INFO]     Exe Args: Some(["--qa-unity-runner", "/Users/eaafonasev/.local/bin/unity-run", "-screen-fullscreen", "0", "-screen-width", "960", "-screen-height", "540", "-logFile", "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/restart-player-3.log"])
+[00:11:27] [ERROR] Error: 1:1 Unexpected characters outside the root element: .
+[00:11:27] [INFO] Waiting Some(60s) for process (19430) to exit.
+[00:11:27] [WARN] Failed to wait for process (19430) to exit (No such process (os error 3)). Continuing...
+[00:11:27] [INFO] Getting ready to apply package to tech.afonasev.star-tournament.osx-arm64 ver 0.1.0-test.7: "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg"
+[00:11:27] [INFO] Attempting to acquire exclusive lock on packages directory (non-blocking)...
+[00:11:27] [INFO] Extracting bundle to "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_p2bdALu58aDUp3x3"
+[00:11:27] [INFO] Extracting 374 app files to '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_p2bdALu58aDUp3x3"'...
+[00:11:28] [INFO]     26 Creating symlink '"/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/VelopackTemp/tmp_p2bdALu58aDUp3x3/Contents/MacOS/sq.version"' -> '../Resources/sq.version'
+[00:11:28] [INFO] Replacing bundle at "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app"
+[00:11:28] [INFO] Bundle extracted successfully to "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app"
+[00:11:28] [INFO] Package version 0.1.0-test.9 applied successfully.
+[00:11:28] [INFO] Starting application: open ["-n", "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/install-restart/Star Tournament.app", "--args", "--qa-unity-runner", "/Users/eaafonasev/.local/bin/unity-run", "-screen-fullscreen", "0", "-screen-width", "960", "-screen-height", "540", "-logFile", "/Users/eaafonasev/Projects/star-tournament-github-only/.local/github-only/restart-player-3.log"]

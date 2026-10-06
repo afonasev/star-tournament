@@ -44,5 +44,5 @@
   },
   "playerReuse": "exact test.8 game files preserved in candidate, 173 Windows and 177 macOS",
   "Python": 34,
-  "nativeMacActivation": "pending; actual download/staging passed, UI activation blocked by duplicate foreign Player"
+  "nativeMacActivation": "PASS: actual menu restart and ordinary exit/next launch test.7 -> test.9; profile hash preserved; complete-layout only"
 }
