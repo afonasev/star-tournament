@@ -6,7 +6,6 @@ SetCompressorDictSize 32
 
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
-!include "Sections.nsh"
 !include "x64.nsh"
 
 !ifndef INPUT_DIR
@@ -30,15 +29,19 @@ InstallDir "$PROGRAMFILES64\Star Tournament"
 InstallDirRegKey HKLM "${PRODUCT_KEY}" "InstallLocation"
 ShowInstDetails show
 ShowUninstDetails show
+Icon "${INPUT_DIR}\app-icon.ico"
+UninstallIcon "${INPUT_DIR}\app-icon.ico"
 
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchInstalledGame
 !define MUI_FINISHPAGE_RUN_TEXT "Запустить Star Tournament"
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Star Tournament.exe"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Создать ярлык на рабочем столе"
+!define MUI_FINISHPAGE_SHOWREADME_FUNCTION CreateDesktopShortcut
 !define MUI_WELCOMEPAGE_TITLE "Установка Star Tournament"
 !define MUI_WELCOMEPAGE_TEXT "Мастер установит Star Tournament для всех пользователей компьютера."
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_COMPONENTS
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE ValidateInstallTarget
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -118,13 +121,14 @@ Section "Star Tournament (обязательный компонент)" MainInst
   WriteRegStr HKLM "${PRODUCT_KEY}" "DisplayName" "${PRODUCT}"
   WriteRegStr HKLM "${PRODUCT_KEY}" "DisplayVersion" "${VERSION}"
   WriteRegStr HKLM "${PRODUCT_KEY}" "Publisher" "Star Tournament"
+  WriteRegStr HKLM "${PRODUCT_KEY}" "DisplayIcon" "$INSTDIR\app-icon.ico"
   WriteRegStr HKLM "${PRODUCT_KEY}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "${PRODUCT_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
   WriteRegDWORD HKLM "${PRODUCT_KEY}" "NoModify" 1
   WriteRegDWORD HKLM "${PRODUCT_KEY}" "NoRepair" 1
 
   CreateDirectory "$SMPROGRAMS\Star Tournament"
-  CreateShortcut "$SMPROGRAMS\Star Tournament\Star Tournament.lnk" "$INSTDIR\Star Tournament.exe"
+  CreateShortcut "$SMPROGRAMS\Star Tournament\Star Tournament.lnk" "$INSTDIR\Star Tournament.exe" "" "$INSTDIR\app-icon.ico" 0
   CreateShortcut "$SMPROGRAMS\Star Tournament\Uninstall Star Tournament.lnk" "$INSTDIR\Uninstall.exe"
   ; A repair with the desktop option unchecked removes only our prior shortcut.
   Delete "$DESKTOP\Star Tournament.lnk"
@@ -148,9 +152,19 @@ Section "Star Tournament (обязательный компонент)" MainInst
   install_done:
 SectionEnd
 
-Section /o "Ярлык на рабочем столе" DesktopShortcut
-  CreateShortcut "$DESKTOP\Star Tournament.lnk" "$INSTDIR\Star Tournament.exe"
-SectionEnd
+Function CreateDesktopShortcut
+  SetShellVarContext all
+  ClearErrors
+  CreateDirectory "$DESKTOP"
+  IfErrors desktop_shortcut_failed
+  CreateShortcut "$DESKTOP\Star Tournament.lnk" "$INSTDIR\Star Tournament.exe" "" "$INSTDIR\app-icon.ico" 0
+  IfErrors desktop_shortcut_failed
+  IfFileExists "$DESKTOP\Star Tournament.lnk" desktop_shortcut_done desktop_shortcut_failed
+  desktop_shortcut_failed:
+    DetailPrint "Не удалось создать ярлык: $DESKTOP\Star Tournament.lnk"
+    MessageBox MB_ICONEXCLAMATION|MB_OK "Игра установлена, но Windows не удалось создать ярлык на рабочем столе.$\r$\nПуть: $DESKTOP\Star Tournament.lnk$\r$\nИгру можно открыть из меню «Пуск»."
+  desktop_shortcut_done:
+FunctionEnd
 
 Function .onInit
   ${IfNot} ${RunningX64}
@@ -167,7 +181,6 @@ Function .onInit
   SetOutPath "$PLUGINSDIR"
   ; The broker's native runtime files must travel with it in plugin temp.
   File /r "${INPUT_DIR}\maintenance\*"
-  SectionSetFlags ${DesktopShortcut} ${SF_SELECTED}
 
   StrCpy $R0 '--check-legacy-user'
   Call CallBroker
@@ -205,6 +218,7 @@ Function ValidateInstallTarget
     StrCmp $FindName ".." find_target_next
     StrCmp $FindName "${MARKER_NAME}" find_target_next
     StrCmp $FindName ".portable" find_target_next
+    StrCmp $FindName "app-icon.ico" find_target_next
     StrCmp $FindName "Star Tournament.exe" find_target_next
     StrCmp $FindName "Update.exe" find_target_next
     StrCmp $FindName "Uninstall.exe" find_target_next
@@ -301,6 +315,7 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\Star Tournament"
   DeleteRegKey HKLM "${PRODUCT_KEY}"
 
+  Delete "$INSTDIR\app-icon.ico"
   Delete "$INSTDIR\.portable"
   RMDir /r "$INSTDIR\current"
   RMDir /r "$INSTDIR\packages"

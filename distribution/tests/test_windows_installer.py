@@ -49,9 +49,9 @@ class WindowsInstallerBuildTests(unittest.TestCase):
 
     def test_output_is_named_windows_setup_exe(self):
         result = installer.normalize_output(self.root / "release output")
-        self.assertEqual(result.name, "WindowsSetup.exe")
+        self.assertEqual(result.name, "Star-Tournament-1.2.3-Windows-x64-Setup.exe")
         self.assertTrue(result.parent.is_dir())
-        with self.assertRaisesRegex(installer.BuildInputError, "WindowsSetup.exe"):
+        with self.assertRaisesRegex(installer.BuildInputError, "filename must include Star Tournament"):
             installer.normalize_output(self.root / "wrong-name.exe")
 
     def test_compiler_receives_exact_defines_and_script(self):
@@ -72,7 +72,7 @@ class WindowsInstallerBuildTests(unittest.TestCase):
 
     def test_main_calls_compiler_and_requires_output(self):
         output_dir = self.root / "release"
-        created = output_dir / "WindowsSetup.exe"
+        created = output_dir / "Star-Tournament-1.2.3-Windows-x64-Setup.exe"
 
         def compile_installer(command, check):
             self.assertTrue(check)
@@ -109,14 +109,17 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
     def test_admin_mui2_wizard_and_default_finish_launch(self):
         self.assertIn("RequestExecutionLevel admin", self.source)
         self.assertIn('!include "MUI2.nsh"', self.source)
-        for page in ("MUI_PAGE_COMPONENTS", "MUI_PAGE_DIRECTORY", "MUI_PAGE_FINISH"):
+        for page in ("MUI_PAGE_DIRECTORY", "MUI_PAGE_FINISH"):
             self.assertIn(f"!insertmacro {page}", self.source)
         self.assertIn("!define MUI_FINISHPAGE_RUN\n", self.source)
         self.assertIn("MUI_FINISHPAGE_RUN_FUNCTION LaunchInstalledGame", self.source)
         self.assertNotIn("MUI_FINISHPAGE_RUN_NOTCHECKED", self.source)
-        self.assertRegex(self.source, r'Section /o "Ярлык на рабочем столе" DesktopShortcut')
+        self.assertNotIn("MUI_PAGE_COMPONENTS", self.source)
+        self.assertIn("MUI_FINISHPAGE_SHOWREADME_FUNCTION CreateDesktopShortcut", self.source)
+        self.assertNotIn("MUI_FINISHPAGE_SHOWREADME_NOTCHECKED", self.source)
         self.assertRegex(self.source, r'Section "Star Tournament \(обязательный компонент\)" MainInstall\n\s+SectionIn RO')
-        self.assertIn("SectionSetFlags ${DesktopShortcut} ${SF_SELECTED}", self.source)
+        self.assertIn("IfErrors desktop_shortcut_failed", self.source)
+        self.assertIn('IfFileExists "$DESKTOP\\Star Tournament.lnk" desktop_shortcut_done desktop_shortcut_failed', self.source)
         self.assertIn('InstallDir "$PROGRAMFILES64\\Star Tournament"', self.source)
         self.assertIn('SetShellVarContext all', self.source)
         self.assertIn('!insertmacro MUI_LANGUAGE "Russian"', self.source)
@@ -199,6 +202,8 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         self.assertIn("Var mui.FinishPage.Run", result.stdout)
         self.assertIn("SendMessage $mui.FinishPage.Run 0x00F1 1 0", result.stdout)
         self.assertIn('Call "LaunchInstalledGame"', result.stdout)
+        self.assertIn('Call "CreateDesktopShortcut"', result.stdout)
+        self.assertIn("SendMessage $mui.FinishPage.ShowReadme 0x00F1 1 0", result.stdout)
 
 
 if __name__ == "__main__":

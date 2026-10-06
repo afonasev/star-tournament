@@ -25,6 +25,7 @@ VERSION_RE = re.compile(
 REQUIRED_FILES = (
     Path("Star Tournament.exe"),
     Path("Update.exe"),
+    Path("app-icon.ico"),
     Path("current/release.json"),
     Path("current/sq.version"),
     Path("current/StarTournamentLauncher.exe"),
@@ -52,14 +53,15 @@ def validate_layout(layout: Path) -> Path:
     return layout
 
 
-def normalize_output(output: Path) -> Path:
+def normalize_output(output: Path, version: str = "1.2.3") -> Path:
     output = output.expanduser()
+    name = f"Star-Tournament-{version}-Windows-x64-Setup.exe"
     if output.suffix.lower() == ".exe":
-        if output.name.lower() != "windowssetup.exe":
-            raise BuildInputError("Installer output filename must be WindowsSetup.exe")
+        if output.name != name:
+            raise BuildInputError("Installer filename must include Star Tournament, version and platform")
         output_file = output.resolve()
     else:
-        output_file = (output / "WindowsSetup.exe").resolve()
+        output_file = (output / name).resolve()
     output_file.parent.mkdir(parents=True, exist_ok=True)
     return output_file
 
@@ -152,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         layout = validate_layout(args.layout)
-        output_file = normalize_output(args.output)
+        output_file = normalize_output(args.output, args.version)
         script = Path(__file__).with_name("installer.nsi").resolve()
         if not VERSION_RE.fullmatch(args.version):
             raise BuildInputError(f"Invalid semantic version: {args.version}")

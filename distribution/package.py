@@ -66,7 +66,7 @@ def main():
     cmd = [str(a.vpk.resolve())] + (['[win]'] if a.runtime.startswith('win') else [])
     cmd += ['--skip-updates', 'pack', '--packId', app_id, '--packVersion', a.version, '--packDir', str(stage),
             '--mainExe', launcher, '--runtime', a.runtime, '--channel', a.runtime, '--packTitle', 'Star Tournament',
-            '--delta', 'None', '--outputDir', str(output)]
+            '--delta', 'None', '--outputDir', str(output), '--icon', str(root/'branding'/('app-icon.ico' if a.runtime.startswith('win') else 'app-icon.icns'))]
     if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
     subprocess.run(cmd, check=True, env=env)
     if a.update_only:
@@ -83,6 +83,7 @@ def main():
             archive.extractall(layout)
         if not (layout/'.portable').is_file() or not (layout/'Update.exe').is_file():
             raise ValueError('Expected complete Velopack portable layout')
+        shutil.copyfile(root/'branding/app-icon.ico',layout/'app-icon.ico')
         maintenance = layout/'maintenance'; maintenance.mkdir()
         subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
                         '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
@@ -90,14 +91,18 @@ def main():
         (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=1, **config),indent=2)+'\n')
         shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
-        installer = output/'WindowsSetup.exe'
+        installer = output/f'Star-Tournament-{a.version}-Windows-x64-Setup.exe'
         compiler = (['--compiler-host',a.nsis_host] if a.nsis_host else ['--makensis',str(a.makensis.resolve())])
         subprocess.run(['python3',str(root/'windows/build_installer.py'),'--layout',str(layout),
                         '--version',a.version,'--output',str(installer)] + compiler,check=True)
+    if a.runtime.startswith('osx') and not a.update_only:
+        for package in output.glob('*.pkg'):
+            package.rename(output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.pkg')
     feed = json.loads((output/f'releases.{a.runtime}.json').read_text())
     asset = next(x for x in feed['Assets'] if x['Version'] == a.version and x['Type'] == 'Full')
     payload = json.dumps(dict(schema=1, platform=config['platform'], architecture=config['architecture'],
                               version=a.version, publicationDate=a.date,
+                              downloadUrl=f'https://github.com/afonasev/star-tournament/releases/download/v{a.version}/{asset["FileName"]}',
                               publishedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(), feed={'Assets': [asset]}),
                          separators=(',', ':'), ensure_ascii=False).encode()
     signed = subprocess.run(['openssl','dgst','-sha256','-sign',str(a.key.resolve()),

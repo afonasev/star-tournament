@@ -15,6 +15,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     readonly LauncherConfig config;
     readonly string key;
     readonly HttpClient http;
+    Uri? packageUri;
     public string? Envelope { get; private set; }
     public VelopackAsset? Asset { get; private set; }
     public string? PublicationDate { get; private set; }
@@ -51,6 +52,17 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             !Regex.IsMatch(asset.SHA256 ?? "", "\\A[0-9a-fA-F]{64}\\z") || asset.Size <= 0 ||
             !Regex.IsMatch(asset.FileName ?? "", "\\A[A-Za-z0-9][A-Za-z0-9._-]*\\.nupkg\\z"))
             throw new CryptographicException("Invalid authenticated package identity");
+        Uri? authenticatedUrl = null;
+        if (release.TryGetProperty("downloadUrl", out var url) && url.ValueKind != JsonValueKind.Null)
+        {
+            if (!Uri.TryCreate(url.GetString(), UriKind.Absolute, out authenticatedUrl))
+                throw new CryptographicException("Invalid signed download URL");
+            var expected = $"/afonasev/star-tournament/releases/download/v{asset.Version}/{asset.FileName}";
+            if (!SafeHttps(authenticatedUrl) || authenticatedUrl.Host != "github.com" ||
+                authenticatedUrl.AbsolutePath != expected || authenticatedUrl.Query.Length != 0)
+                throw new CryptographicException("Untrusted signed download URL");
+        }
+        packageUri = authenticatedUrl;
         Envelope = envelope; Asset = asset; PublicationDate = date;
     }
 
@@ -60,6 +72,29 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         if (origin.Scheme != "https" || !string.IsNullOrEmpty(origin.UserInfo))
             throw new CryptographicException("HTTPS feed required");
         return new Uri(origin, filename);
+    }
+
+    static bool SafeHttps(Uri uri) => uri.Scheme == "https" && uri.Port == 443 &&
+        uri.UserInfo.Length == 0 && uri.Fragment.Length == 0;
+
+    async Task<HttpResponseMessage> OpenPackage(string filename, CancellationToken token)
+    {
+        var initial = packageUri ?? Remote(filename);
+        var target = initial;
+        for (var redirects = 0; ; redirects++)
+        {
+            var response = await http.GetAsync(target, HttpCompletionOption.ResponseHeadersRead, token);
+            if ((int)response.StatusCode is not (301 or 302 or 303 or 307 or 308)) return response;
+            var location = response.Headers.Location;
+            response.Dispose();
+            if (packageUri == null || redirects >= 3 || location == null)
+                throw new CryptographicException("Unexpected package redirect");
+            var next = location.IsAbsoluteUri ? location : new Uri(target, location);
+            if (!SafeHttps(next) || !(next.Host is "release-assets.githubusercontent.com" or "objects.githubusercontent.com" ||
+                (next.Host == "github.com" && next.AbsolutePath == initial.AbsolutePath)))
+                throw new CryptographicException("Untrusted package redirect");
+            target = next;
+        }
     }
 
     public async Task<VelopackAssetFeed> GetReleaseFeed(IVelopackLogger logger, string? appId, string channel,
@@ -92,7 +127,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         cancelToken = timeout.Token;
         try
         {
-            using var response = await http.GetAsync(Remote(releaseEntry.FileName), HttpCompletionOption.ResponseHeadersRead, cancelToken);
+            using var response = await OpenPackage(releaseEntry.FileName, cancelToken);
             response.EnsureSuccessStatusCode();
             await using (var input = await response.Content.ReadAsStreamAsync(cancelToken))
             await using (var output = File.Create(quarantine))

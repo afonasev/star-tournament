@@ -7,10 +7,10 @@ using Velopack.Logging;
 using var rsa = RSA.Create(3072);
 var config = new LauncherConfig("tech.test", "osx", "arm64", "1.0.0", "2026-10-04", "https://fixture.invalid/", "game/Player");
 var bytes = "authenticated package fixture"u8.ToArray();
-string Signed(string platform = "osx", string architecture = "arm64", string filename = "test-1.1.0-full.nupkg", string? sha = null)
+string Signed(string platform = "osx", string architecture = "arm64", string filename = "test-1.1.0-full.nupkg", string? sha = null, string? downloadUrl = null)
 {
     var payload = JsonSerializer.SerializeToUtf8Bytes(new { schema = 1, platform, architecture,
-        version = "1.1.0", publicationDate = "2026-10-04", feed = new { Assets = new[] { new {
+        version = "1.1.0", publicationDate = "2026-10-04", downloadUrl, feed = new { Assets = new[] { new {
             PackageId = "tech.test", Version = "1.1.0", Type = "Full", FileName = filename,
             SHA256 = sha ?? Convert.ToHexString(SHA256.HashData(bytes)), Size = bytes.Length } } } });
     return JsonSerializer.Serialize(new { payload = Convert.ToBase64String(payload),
@@ -90,6 +90,25 @@ try
     var corruptCopy = Path.Combine(root, "corrupt-copy"); Directory.CreateDirectory(corruptCopy);
     await Reject("copied package digest mismatch", () => ProtectedPackage.CopyAndVerifyAsync(winSource, winEnvelope,
         winSource.Asset!, corruptSourcePackage, corruptCopy));
+    const string githubUrl = "https://github.com/afonasev/star-tournament/releases/download/v1.1.0/test-1.1.0-full.nupkg";
+    await Reject("signed URL wrong repository", () => { source.Admit(Signed(downloadUrl: githubUrl.Replace("afonasev", "other"))); return Task.CompletedTask; });
+    await Reject("signed URL HTTP downgrade", () => { source.Admit(Signed(downloadUrl: githubUrl.Replace("https:", "http:"))); return Task.CompletedTask; });
+    await Reject("signed URL mismatched version", () => { source.Admit(Signed(downloadUrl: githubUrl.Replace("v1.1.0", "v2.0.0"))); return Task.CompletedTask; });
+    var githubDestination = Path.Combine(root, "github.nupkg");
+    using (var github = new AuthenticatedSource(config, rsa.ExportSubjectPublicKeyInfoPem(),
+        new RedirectTransport(bytes, "https://release-assets.githubusercontent.com/fixture/package")))
+    {
+        github.Admit(Signed(downloadUrl: githubUrl));
+        await github.DownloadReleaseEntry(null!, github.Asset!, githubDestination, _ => { });
+        await github.VerifyPackage(githubDestination, github.Asset!); passed++;
+    }
+    foreach (var unsafeLocation in new[] { "http://release-assets.githubusercontent.com/package", "https://other.example/package", githubUrl })
+    {
+        using var redirected = new AuthenticatedSource(config, rsa.ExportSubjectPublicKeyInfoPem(), new RedirectTransport(bytes, unsafeLocation));
+        redirected.Admit(Signed(downloadUrl: githubUrl));
+        await Reject("redirect host/downgrade/loop", () => redirected.DownloadReleaseEntry(null!, redirected.Asset!, githubDestination + ".bad", _ => { }));
+        if (File.Exists(githubDestination + ".bad")) throw new Exception("Untrusted redirect admitted");
+    }
     var destination = Path.Combine(root, "sdk.partial");
     using var download = new AuthenticatedSource(config, rsa.ExportSubjectPublicKeyInfoPem(), new FixtureTransport(bytes));
     download.Admit(Signed());
@@ -115,5 +134,18 @@ sealed class FixtureTransport(byte[] bytes) : HttpMessageHandler
     {
         token.ThrowIfCancellationRequested();
         return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) });
+    }
+}
+
+sealed class RedirectTransport(byte[] bytes, string location) : HttpMessageHandler
+{
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        if (request.RequestUri!.Host == "release-assets.githubusercontent.com")
+            return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) });
+        var response = new HttpResponseMessage(System.Net.HttpStatusCode.Redirect);
+        response.Headers.Location = new Uri(location);
+        return Task.FromResult(response);
     }
 }

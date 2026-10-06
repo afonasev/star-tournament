@@ -37,6 +37,10 @@ namespace StarTournament.ProvingGround.Editor
             var settings = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset")[0]);
             settings.FindProperty("activeInputHandler").intValue=1; settings.ApplyModifiedPropertiesWithoutUndo();
             PlayerSettings.companyName="Afonasev"; PlayerSettings.productName="Star Tournament Unity Proving Ground";
+            var appIcon=AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"Branding/AppIcon.png");
+            if(!appIcon)throw new BuildFailedException("Approved app icon is missing");
+            PlayerSettings.SetIcons(NamedBuildTarget.Standalone,
+                PlayerSettings.GetIconSizes(NamedBuildTarget.Standalone,IconKind.Any).Select(_=>appIcon).ToArray(),IconKind.Any);
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone,ScriptingImplementation.Mono2x);
             PlayerSettings.runInBackground=false; PlayerSettings.defaultScreenWidth=width; PlayerSettings.defaultScreenHeight=height;
             PlayerSettings.enableFrameTimingStats=true;
