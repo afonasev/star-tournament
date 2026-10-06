@@ -1,0 +1,13 @@
+{
+  "landing": "matched",
+  "feedsUnchanged": [
+    {
+      "runtime": "win-x64",
+      "sha256": "2720be9953345db1257d0dacac442db25ee1d6dc74f7bc99fb9084a19663bdac"
+    },
+    {
+      "runtime": "osx-arm64",
+      "sha256": "4e3c425608f4a08eca6fbaaad76b878064c0f9edf5d8a0be3f0f0bda3764437d"
+    }
+  ]
+}
