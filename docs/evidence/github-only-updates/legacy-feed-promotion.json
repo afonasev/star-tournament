@@ -1,0 +1,16 @@
+[
+  {
+    "runtime": "win-x64",
+    "previousSha256": "2720be9953345db1257d0dacac442db25ee1d6dc74f7bc99fb9084a19663bdac",
+    "sha256": "73e97156ac9755a843e50b60b1a41769e245adefa5908da89136d5585fa1fd40",
+    "version": "0.1.0-test.9",
+    "kind": "One bridge feed update; legacy feeds retained, no binaries uploaded"
+  },
+  {
+    "runtime": "osx-arm64",
+    "previousSha256": "4e3c425608f4a08eca6fbaaad76b878064c0f9edf5d8a0be3f0f0bda3764437d",
+    "sha256": "d22c0d3368ef8935cbbb34462bbb2a6721b8926189b058e4207636748d21149c",
+    "version": "0.1.0-test.9",
+    "kind": "One bridge feed update; legacy feeds retained, no binaries uploaded"
+  }
+]

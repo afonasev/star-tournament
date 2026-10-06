@@ -68,5 +68,15 @@
     "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.8/tech.afonasev.star-tournament.win-x64-0.1.0-test.8-win-x64-full.nupkg",
     "size": 138086058,
     "sha256": "5c4306410aa9101270d5a5edb120a7a0b85f31807ae5cd143c7402e38a0dd711"
+  },
+  "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.9-win-x64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.9/tech.afonasev.star-tournament.win-x64-0.1.0-test.9-win-x64-full.nupkg",
+    "size": 138089429,
+    "sha256": "d3de1d92bae03f514c0f041fb7c7f40cf437af033f94e34f127cbe801d3e1594"
+  },
+  "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.9/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg",
+    "size": 146617246,
+    "sha256": "e89bd41aea31aee8c858bec64679b6442bf69254ac9d280cdb7cdfef84adae25"
   }
 }
