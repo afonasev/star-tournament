@@ -1,19 +1,18 @@
 {
-  "version": "0.1.0-test.5",
-  "publicationDate": "2026-10-04",
+  "version": "0.1.0-test.7",
+  "publicationDate": "2026-10-06",
   "platforms": {
     "win-x64": {
-      "url": "/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe",
-      "size": 144786826,
-      "sha256": "453f8ca7b2e74779aa0147c85920b9c8c190c0aadbab6b92f5a939bd081a7ace",
-      "version": "0.1.0-test.5",
-      "installerRevision": 2
+      "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.7/Star-Tournament-0.1.0-test.7-Windows-x64-Setup.exe",
+      "size": 145437042,
+      "sha256": "c3cc8d4b950c10549282ef670e53047229ae619bb59b673c0009c25087a64460",
+      "version": "0.1.0-test.7"
     },
     "osx-arm64": {
-      "url": "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
-      "size": 143198367,
-      "sha256": "3d1b12f689a9d4be1820eda77aa37e7408b0809e8e427fec2ac0cb25f2d0efbb",
-      "version": "0.1.0-test.3"
+      "url": "https://github.com/afonasev/star-tournament/releases/download/v0.1.0-test.7/Star-Tournament-0.1.0-test.7-macOS-arm64.pkg",
+      "size": 146149326,
+      "sha256": "17294f6ad20859b3bb4f39d38f81839c8edd016940f9c8d2da4d9ce1ffdd2057",
+      "version": "0.1.0-test.7"
     }
   }
 }
