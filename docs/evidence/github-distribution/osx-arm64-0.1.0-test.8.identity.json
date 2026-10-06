@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0-test.8",
+  "date": "2026-10-06",
+  "runtime": "osx-arm64",
+  "revision": "d6c7f549a7809f328e9f73af672a4d203fe008c5",
+  "dirty": "",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "player": "/Users/eaafonasev/Projects/star-tournament-public-source/.local/release-players/Player.app",
+  "playerMarkerSha256": "fb3abf89d8748c4229ab9d15bec167da30169fd6ff80f110143f8fb33854e162",
+  "packages": [
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.8-osx-arm64-full.nupkg",
+      "size": 146613897,
+      "sha256": "9c5458551d179a3414910216bb7965a36094365060e866ba8e2f7f7e2552e042"
+    }
+  ]
+}

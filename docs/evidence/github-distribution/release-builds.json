@@ -15,5 +15,5 @@
     "verification-unity-generated.patch",
     "public-player-unity-generated.patch"
   ],
-  "nativeSmoke": "macOS muted diagnostic Player rendered four views; screenshot native-macos-menu.png (arena, filename historical). No Windows device acceptance."
+  "nativeSmoke": "Actual macOS universal release Player started silently using STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE, rendered the normal main menu (native-macos-menu.png); diagnostic four-view scene also rendered. QA Player was stopped via task-owned process interrupt. Windows device acceptance remains pending."
 }
