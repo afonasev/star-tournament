@@ -1,0 +1,62 @@
+{
+  "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-osx-arm64--installers--0.1.0-test.3--tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+    "size": 143857398,
+    "sha256": "010e0ca7abb1b394c08c43e12251103e5de5c1275b4a7dfe136bf37450b37899"
+  },
+  "/desktop/test/osx-arm64/installers/0.1.0-test.3/tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-osx-arm64--installers--0.1.0-test.3--tech.afonasev.star-tournament.osx-arm64-osx-arm64-Setup.pkg",
+    "size": 143198367,
+    "sha256": "3d1b12f689a9d4be1820eda77aa37e7408b0809e8e427fec2ac0cb25f2d0efbb"
+  },
+  "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.2-osx-arm64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-osx-arm64--tech.afonasev.star-tournament.osx-arm64-0.1.0-test.2-osx-arm64-full.nupkg",
+    "size": 203854438,
+    "sha256": "77386cf12d514a590830adef497d3e321a8e75ce43dfb1502528db64859423b4"
+  },
+  "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.3-osx-arm64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-osx-arm64--tech.afonasev.star-tournament.osx-arm64-0.1.0-test.3-osx-arm64-full.nupkg",
+    "size": 143662628,
+    "sha256": "791948256e838755da990b5a3a83203a7266d75492f6db154ff8af9a0daf36ff"
+  },
+  "/desktop/test/osx-arm64/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.4-osx-arm64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-osx-arm64--tech.afonasev.star-tournament.osx-arm64-0.1.0-test.4-osx-arm64-full.nupkg",
+    "size": 143662621,
+    "sha256": "54be0e825600bd55879aa2475be10611ab7f51349200a3bb0993a3b8779f31cc"
+  },
+  "/desktop/test/win-x64/installers/0.1.0-test.3/tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--installers--0.1.0-test.3--tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+    "size": 137125923,
+    "sha256": "a0ed0e65b8748ab5b8ab2dc950664298384902475eb207b57c81f9659d8198e1"
+  },
+  "/desktop/test/win-x64/installers/0.1.0-test.3/tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--installers--0.1.0-test.3--tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe",
+    "size": 144642696,
+    "sha256": "6a0055d2e1154c16f7645b4c632c0855ae5c22c99fd3fac2a92e12bc0731abcd"
+  },
+  "/desktop/test/win-x64/installers/0.1.0-test.5/WindowsSetup.exe": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--installers--0.1.0-test.5--WindowsSetup.exe",
+    "size": 144782219,
+    "sha256": "a0f8c309cfd41946a24ce543d1b9a3c9c7d5b967fc3c27479a8c3dfb1adad238"
+  },
+  "/desktop/test/win-x64/installers/0.1.0-test.5-r2/WindowsSetup.exe": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--installers--0.1.0-test.5-r2--WindowsSetup.exe",
+    "size": 144786826,
+    "sha256": "453f8ca7b2e74779aa0147c85920b9c8c190c0aadbab6b92f5a939bd081a7ace"
+  },
+  "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.3-win-x64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--tech.afonasev.star-tournament.win-x64-0.1.0-test.3-win-x64-full.nupkg",
+    "size": 137127048,
+    "sha256": "b6f2e6a1c68a3f61e0a21b74ce130046c30571bdd115dd6a068d737ebe5d48e4"
+  },
+  "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.4-win-x64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--tech.afonasev.star-tournament.win-x64-0.1.0-test.4-win-x64-full.nupkg",
+    "size": 137127042,
+    "sha256": "6ddfbafa0048bb6ad545c279276fc9a16e2b9fa19a370cb6ad1178f661c69337"
+  },
+  "/desktop/test/win-x64/tech.afonasev.star-tournament.win-x64-0.1.0-test.6-win-x64-full.nupkg": {
+    "url": "https://github.com/afonasev/star-tournament/releases/download/native-test-archive-2026-10-04/legacy-win-x64--tech.afonasev.star-tournament.win-x64-0.1.0-test.6-win-x64-full.nupkg",
+    "size": 137153437,
+    "sha256": "d028cfb12e5094c8bbfa63081b26a3f0cd862f2cb5f439380c4359fc1dba2154"
+  }
+}
