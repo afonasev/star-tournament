@@ -1,0 +1,17 @@
+{
+  "completed": true,
+  "removed": [
+    "/Users/eaafonasev/Projects/star-tournament-github-only/.local",
+    "/Users/eaafonasev/Projects/star-tournament-github-only/unity/Logs",
+    "/Users/eaafonasev/Projects/star-tournament-github-only/unity/UserSettings",
+    "/Users/eaafonasev/Projects/star-tournament-github-only/distribution/tests/__pycache__",
+    "/Users/eaafonasev/Projects/star-tournament-github-only/distribution/windows/__pycache__",
+    "/Users/eaafonasev/Library/Caches/velopack/tech.afonasev.star-tournament.osx-arm64/packages/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.9-osx-arm64-full.nupkg"
+  ],
+  "worktree": "removed via safe git worktree remove",
+  "branch": "deleted via git branch -d, all commits integrated",
+  "retained": "immutable GitHub test.9 eight assets; keys/toolchain; public source mirror branch; durable main evidence",
+  "foreign": "primary dirty Unity settings preserved",
+  "activeProcesses": "no task-owned Player/launcher/updater before deletion",
+  "remainingDebt": null
+}
