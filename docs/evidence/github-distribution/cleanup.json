@@ -3,10 +3,25 @@
   "primaryIntegration": "bd531ffbf3d2f59299705d8e1defa4e8e7522b89",
   "retainedCandidates": "GitHub v0.1.0-test.7/v0.1.0-test.8 and native-test-archive-2026-10-04, exact hashes in tracked identities/readbacks",
   "toolchain": "~/.local/share/star-tournament-distribution/toolchain/ (existing pinned SDK/vpk relocated, reusable)",
-  "plannedRemovedWorktrees": [
+  "reason": "All owned code integrated or preserved in public mirror branch; exact pending binary candidates retained on GitHub; no active owned Unity/packaging processes. Build caches/duplicate Players/stages/probes superseded.",
+  "completed": true,
+  "removedWorktrees": [
     "/Users/eaafonasev/Projects/star-tournament-github-distribution",
     "/Users/eaafonasev/Projects/star-tournament-public-source",
     "/Users/eaafonasev/Projects/star-tournament-native-install-update"
   ],
-  "reason": "All owned code integrated or preserved in public mirror branch; exact pending binary candidates retained on GitHub; no active owned Unity/packaging processes. Build caches/duplicate Players/stages/probes superseded."
+  "removedLocalBranches": [
+    "codex/github-native-distribution",
+    "codex/native-install-update"
+  ],
+  "retainedPublicMirrorBranch": "codex/public-native-source, source is also on public GitHub main",
+  "remoteStagingRemoved": "/var/tmp/star-tournament-github-01a1064f and compiler UUID staging",
+  "primaryDirtyFilesPreserved": [
+    "unity/ProjectSettings/GraphicsSettings.asset",
+    "unity/ProjectSettings/QualitySettings.asset",
+    "unity/ProjectSettings/ShaderGraphSettings.asset",
+    "unity/ProjectSettings/PackageManagerSettings.asset",
+    "unity/ProjectSettings/URPProjectSettings.asset"
+  ],
+  "diskAvailableBeforeAfter": "82 GiB before cleanup; 102 GiB after"
 }
