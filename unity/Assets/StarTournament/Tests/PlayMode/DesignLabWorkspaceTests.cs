@@ -55,11 +55,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             string savedIdentity=ground.LabSavedIdentity;Assert.That(Button("lab-release").interactable,Is.True);Click("lab-release");yield return null;
             Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("да · локально"));Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
             Input("input-rifle.damage").text="34";yield return null;Assert.That(Button("lab-release").interactable,Is.False);
-            Assert.That(Input("input-rifle.damage").interactable,Is.False);
-            foreach(var name in new[]{"lab-save","lab-rename","plus-rifle.damage","minus-rifle.damage","reset-rifle.damage"})Assert.That(Button(name).interactable,Is.False);
-            Assert.That(Button("lab-create").GetComponentInChildren<Text>().text,Is.EqualTo("Создать копию"));
-            Click("lab-create");yield return null;Input("lab-profile-name").text="Локальная копия";Click("submit");yield return null;
-            Assert.That(Input("input-rifle.damage").interactable,Is.True);Click("lab-clear");yield return null;
+            Assert.That(Input("input-rifle.damage").interactable,Is.True,"A local mark does not lock the separate local profile");Click("lab-clear");yield return null;
             Click("lab-back");Click("main-action-0");yield return null;Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));
             var identity=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="setup-lab-identity");Canvas.ForceUpdateCanvases();Assert.That(identity.text,Does.Contain("SHA256"));Assert.That(identity.preferredHeight,Is.LessThanOrEqualTo(identity.rectTransform.rect.height+1),"Saved revision/hash must fit in setup summary");
             ground.StartCombatReview(new[]{pad},true,true);yield return null;Assert.That(ground.Running,Is.True);
