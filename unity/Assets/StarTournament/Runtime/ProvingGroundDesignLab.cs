@@ -115,7 +115,7 @@ namespace StarTournament.ProvingGround
         }
         InputField LabInput(Transform parent,string name,string text,Vector2 min,Vector2 max)
         {
-            var panel=Panel(parent,name,min,max,new Color32(38,61,72,255));var input=panel.AddComponent<InputField>();
+            var panel=Panel(parent,name,min,max,new Color32(35,51,68,255));var input=panel.AddComponent<InputField>();
             input.textComponent=Label(panel.transform,"value",text,16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,Color.white);
             input.text=text;return input;
         }
@@ -146,7 +146,7 @@ namespace StarTournament.ProvingGround
             LabButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.68f,.889f),new Vector2(.82f,.928f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
             labIdentity=Label(labScreen.transform,"lab-identity","",14,new Vector2(.02f,.813f),new Vector2(.98f,.883f),TextAnchor.MiddleLeft,Color.white);
             labSearch=LabInput(labScreen.transform,"lab-search","",new Vector2(.02f,.765f),new Vector2(.47f,.804f));
-            labSearch.placeholder=Label(labSearch.transform,"search-placeholder","Поиск по названию, описанию или пути…",16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            labSearch.placeholder=Label(labSearch.transform,"search-placeholder","Поиск по названию, описанию или пути…",16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             Hint(labSearch.gameObject,"Поиск во всех сущностях: название, влияние, группа или stable path. Очистите для возврата к выбранной сущности.");
             labSearch.onValueChanged.AddListener(q=>{labQuery=q;labAllChanges=false;RefreshLabWorkspace();});
             labStatus=Label(labScreen.transform,"lab-status","",14,new Vector2(.49f,.765f),new Vector2(.86f,.804f),TextAnchor.MiddleLeft,MenuGold);
@@ -197,7 +197,7 @@ namespace StarTournament.ProvingGround
         {
             var row=Panel(labFields,"field-"+d.Path,Vector2.zero,Vector2.one,MenuCard);PlaceLabRow((RectTransform)row.transform,index,LabFieldRowHeight);
             Label(row.transform,"label",d.Label,18,new Vector2(.02f,.76f),new Vector2(.56f,.98f),TextAnchor.MiddleLeft,Color.white);
-            Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+d.Description,14,new Vector2(.02f,.36f),new Vector2(.56f,.75f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+d.Description,14,new Vector2(.02f,.36f),new Vector2(.56f,.75f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             var input=LabInput(row.transform,"input-"+d.Path,labRaw.TryGetValue(d.Path,out var raw)?raw:LabNumber(labDraft.Get(d.Path)),new Vector2(.64f,.57f),new Vector2(.82f,.90f));
             var down=LabButton(row.transform,"minus-"+d.Path,"−",new Vector2(.58f,.57f),new Vector2(.63f,.90f),()=>EditLabValue(d,labDraft.Get(d.Path)-d.Step));
             var up=LabButton(row.transform,"plus-"+d.Path,"+",new Vector2(.83f,.57f),new Vector2(.88f,.90f),()=>EditLabValue(d,labDraft.Get(d.Path)+d.Step));
