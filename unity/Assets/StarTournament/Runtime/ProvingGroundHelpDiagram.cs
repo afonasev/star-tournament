@@ -47,6 +47,7 @@ namespace StarTournament.ProvingGround
             foreach(var label in parent.GetComponentsInChildren<Text>()){label.resizeTextForBestFit=true;label.resizeTextMinSize=12;label.resizeTextMaxSize=label.fontSize;}
         }
     }
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class HelpGamepadGraphic:MaskableGraphic
     {
         protected override void OnPopulateMesh(VertexHelper m)
@@ -58,6 +59,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<points.Length;i++)m.AddTriangle(0,i+1,(i+1)%points.Length+1);
         }
     }
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class HelpCalloutGraphic:MaskableGraphic
     {
         Vector2 from,to;public void Set(Vector2 a,Vector2 b){from=a;to=b;raycastTarget=false;color=new Color32(231,187,114,220);SetVerticesDirty();}

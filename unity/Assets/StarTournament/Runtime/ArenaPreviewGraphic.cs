@@ -4,6 +4,7 @@ using UnityEngine.UI;
 namespace StarTournament.ProvingGround
 {
     // A presentation-only axonometric miniature of the published map geometry.
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class ArenaPreviewGraphic : MaskableGraphic
     {
         string map; ArenaDefinition arena;
