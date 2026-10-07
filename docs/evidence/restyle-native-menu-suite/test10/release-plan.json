@@ -1,0 +1,33 @@
+{
+  "version": "0.1.0-test.10",
+  "date": "2026-10-08",
+  "channel": "test",
+  "source": "c6ab890157fdbcf73edf8c1e4efb1c5af01d1a55",
+  "public_source": "fc297f1b8ed118e2fa3aa8f75b30c3a524e65346",
+  "accepted_F4_source": "42beb5f91be72a480361a3588bcd172263167b8e",
+  "public_exclusions": [
+    "docs/evidence",
+    "docs/qa",
+    "artifacts",
+    "star-tournament-*.png"
+  ],
+  "status": "published and verified",
+  "contracts": {
+    "csharp": 49,
+    "python": 34
+  },
+  "date_note": "Asia/Yekaterinburg publication preparation crossed midnight; use 2026-10-08",
+  "full_gate": {
+    "editmode": 353,
+    "playmode": 216,
+    "development_build": "Passed"
+  },
+  "url": "https://github.com/afonasev/star-tournament/releases/tag/v0.1.0-test.10",
+  "public_readbacks": 8,
+  "live_verified_platforms": [
+    "win-x64",
+    "osx-arm64"
+  ],
+  "native_release_smoke": "Passed via CUA: keyboard and mouse, map/rules/teams/roster",
+  "physical_windows_acceptance": "separate pending gate"
+}

@@ -1,0 +1,10 @@
+{
+  "appId": "tech.afonasev.star-tournament.win-x64",
+  "platform": "win",
+  "architecture": "x64",
+  "version": "0.1.0-test.10",
+  "publicationDate": "2026-10-08",
+  "feedBase": "https://api.github.com/repos/afonasev/star-tournament/releases",
+  "gameExecutable": "game/StarTournament.exe",
+  "updateChannel": "test"
+}

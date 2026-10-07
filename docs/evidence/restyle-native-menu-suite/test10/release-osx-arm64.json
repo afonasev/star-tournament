@@ -1,0 +1,10 @@
+{
+  "appId": "tech.afonasev.star-tournament.osx-arm64",
+  "platform": "osx",
+  "architecture": "arm64",
+  "version": "0.1.0-test.10",
+  "publicationDate": "2026-10-08",
+  "feedBase": "https://api.github.com/repos/afonasev/star-tournament/releases",
+  "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+  "updateChannel": "test"
+}

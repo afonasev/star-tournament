@@ -1,0 +1,9 @@
+{
+  "source": "c6ab890",
+  "scanner": "gitleaks detect --no-git --redact",
+  "findings": 359,
+  "rules": {
+    "generic-api-key": 359
+  },
+  "classification": "All findings are Authored R7 transition descriptions in serialized Unity scene and Lab catalogue; no credential/private key finding. Internal evidence, QA and artifacts excluded from mirror."
+}

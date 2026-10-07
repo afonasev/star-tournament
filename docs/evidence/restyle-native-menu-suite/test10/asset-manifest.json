@@ -1,0 +1,50 @@
+[
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/win-x64/releases/tech.afonasev.star-tournament.win-x64-0.1.0-test.10-win-x64-full.nupkg",
+    "name": "tech.afonasev.star-tournament.win-x64-0.1.0-test.10-win-x64-full.nupkg",
+    "size": 139839281,
+    "sha256": "6619540157a8ddffb73c75fd9ad86d135258c0564b49a1758939ab3e65d8bd94"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/win-x64/releases/Star-Tournament-0.1.0-test.10-Windows-x64-Setup.exe",
+    "name": "Star-Tournament-0.1.0-test.10-Windows-x64-Setup.exe",
+    "size": 146771820,
+    "sha256": "b9f6ff5f4b1d2dbb5ad06ffe3d8d1285d602b0b3ae781f55900dba112f1c345d"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/win-x64/releases/latest-win-x64.json",
+    "name": "latest-win-x64.json",
+    "size": 1449,
+    "sha256": "8f9e18c3871dbef9cb83f7fd398db8e22b4e71920c92b8180cc0ca6909820241"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/win-x64/releases/identity-win-x64.json",
+    "name": "identity-win-x64.json",
+    "size": 1542,
+    "sha256": "c6e3b4a984878b34700410984bee0211be89a1b1914ab95cde71f058ead56a1f"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/osx-arm64/releases/tech.afonasev.star-tournament.osx-arm64-0.1.0-test.10-osx-arm64-full.nupkg",
+    "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.10-osx-arm64-full.nupkg",
+    "size": 148367086,
+    "sha256": "3a1a17bf7ae8f4cbdb7fc63422c0698e4eac91ec4a64590d57c8d36ae3773daf"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/osx-arm64/releases/Star-Tournament-0.1.0-test.10-macOS-arm64.pkg",
+    "name": "Star-Tournament-0.1.0-test.10-macOS-arm64.pkg",
+    "size": 147915998,
+    "sha256": "01d9da1d426d65b065fd2ca88e06f201fa541eebf655763b7a17b91ad2baa121"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/osx-arm64/releases/latest-osx-arm64.json",
+    "name": "latest-osx-arm64.json",
+    "size": 1465,
+    "sha256": "09e4ac0b7ecaf5f4f7bf5b13fd6ca1b6ecd139e3ce74bd9b0f34df2179d2d980"
+  },
+  {
+    "path": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/packages/osx-arm64/releases/identity-osx-arm64.json",
+    "name": "identity-osx-arm64.json",
+    "size": 1565,
+    "sha256": "35268cdda9109136ac7ca7ad1981f49bc26fed251ad163aa935b1eb78269f8be"
+  }
+]

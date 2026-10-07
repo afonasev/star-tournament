@@ -1,0 +1,28 @@
+{
+  "development_hook_probe": "Unavailable in Release: ProvingGround.cs lines 272-300 exclude NativeMenuStyleReview without DEVELOPMENT_BUILD. Timed out; not a product test failure.",
+  "actual_release_main": "release-main.jpg captured from exact release Player via CUA",
+  "manual_transitions": {
+    "passed": true,
+    "input": [
+      "keyboard Return: main to map, map to rules",
+      "mouse: team mode, next to roster"
+    ],
+    "observations": [
+      "Main menu rendered",
+      "Map preview and tabs without numeric prefixes",
+      "Team mode target 3500; no team color button",
+      "Roster Y/X hint separated above tabs"
+    ],
+    "pid": 23239,
+    "audio": "-noaudio",
+    "files": [
+      "release-main.jpg",
+      "release-map.jpg",
+      "release-rules.jpg",
+      "release-teams.jpg",
+      "release-roster.jpg"
+    ]
+  },
+  "audio": "manual rerun uses -noaudio",
+  "source": "c6ab890157fdbcf73edf8c1e4efb1c5af01d1a55"
+}
