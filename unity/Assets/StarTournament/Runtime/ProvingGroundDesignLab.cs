@@ -155,8 +155,8 @@ namespace StarTournament.ProvingGround
             labStatus=Label(labScreen.transform,"lab-status","",14,new Vector2(.49f,.735f),new Vector2(.98f,.775f),TextAnchor.MiddleLeft,MenuGold);
             LabButton(labScreen.transform,"lab-errors","Ошибки",new Vector2(.72f,.785f),new Vector2(.81f,.83f),ShowLabErrors);
             labTreeScroll=LabScroll(labScreen.transform,"lab-tree",new Vector2(.02f,.065f),new Vector2(.22f,.70f),out labTree);
-            labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",18,new Vector2(.24f,.67f),new Vector2(.98f,.70f),TextAnchor.MiddleLeft,MenuGold);
-            labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.24f,.065f),new Vector2(.98f,.665f),out labFields);
+            labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",18,new Vector2(.24f,.695f),new Vector2(.98f,.718f),TextAnchor.MiddleLeft,MenuGold);
+            labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.24f,.065f),new Vector2(.98f,.69f),out labFields);
         }
         void OpenDesignLab(){if(phase!=Phase.MainMenu)return;phase=Phase.Lab;ResetLabDraft();RefreshLabWorkspace();labTreeScroll.verticalNormalizedPosition=1;labFieldsScroll.verticalNormalizedPosition=1;var group=labTree.Find("group-"+labGroup);if(group)RevealLabFocus(group.gameObject);RefreshInterface();Select(labBack);}
         void ResetLabDraft()
