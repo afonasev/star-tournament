@@ -28,6 +28,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Click("main-action-2");yield return null;
             Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("в клиенте"));
             Assert.That(Button("lab-release").interactable,Is.False);
+            Assert.That(Input("input-rifle.damage").interactable,Is.False);
+            foreach(var name in new[]{"lab-save","lab-rename","plus-rifle.damage","minus-rifle.damage","reset-rifle.damage"})Assert.That(Button(name).interactable,Is.False);
+            Assert.That(Button("lab-create").GetComponentInChildren<Text>().text,Is.EqualTo("Создать копию"));
+            Click("lab-create");yield return null;Input("lab-profile-name").text="Локальная копия";Click("submit");yield return null;
+            Assert.That(Input("input-rifle.damage").interactable,Is.True);
             Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("group-map-")||b.name=="group-layout"||b.name=="group-ring-layout"||b.name=="group-details"||b.name=="group-ring"||b.name=="group-world-query"||b.name=="group-navigation"||b.name=="group-simulation"),Is.False);
             foreach(var hidden in new[]{"layout.fill-0.x","wayfinding.sign-0.yaw","broadcast.screenWidth","ring.spaceCenterY"}.Concat(LabBundle.AuditedExcludedPaths))
             {Input("lab-search").text=hidden;yield return null;Assert.That(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-"+hidden),Is.False);}
@@ -51,7 +56,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Input("input-rifle.damage").text="33";Click("lab-save");yield return null;Assert.That(history.Selected.Number,Is.EqualTo(nextRevision));Assert.That(ground.LabSavedIdentity,Does.Contain("v"+nextRevision+"-"));Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(original));
             string savedIdentity=ground.LabSavedIdentity;Assert.That(Button("lab-release").interactable,Is.True);Click("lab-release");yield return null;
             Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("да · локально"));Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
-            Input("input-rifle.damage").text="34";yield return null;Assert.That(Button("lab-release").interactable,Is.False);Click("lab-clear");yield return null;
+            Input("input-rifle.damage").text="34";yield return null;Assert.That(Button("lab-release").interactable,Is.False);
+            Assert.That(Input("input-rifle.damage").interactable,Is.True,"A local mark does not lock the separate local profile");Click("lab-clear");yield return null;
             Click("lab-back");Click("main-action-0");yield return null;Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));
             Assert.That(ground.GetComponentsInChildren<Text>().Any(t=>t.name=="setup-lab-identity"),Is.False,"Setup does not duplicate the Lab summary");Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
             ground.StartCombatReview(new[]{pad},true,true);yield return null;Assert.That(ground.Running,Is.True);

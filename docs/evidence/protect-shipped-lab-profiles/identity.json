@@ -1,0 +1,8 @@
+{
+  "identity": "local-macos-development-player/8fc435654fdf525e3ce9f1b06e97dcfb8456217c/protect-shipped-lab-profiles",
+  "revision": "8fc435654fdf525e3ce9f1b06e97dcfb8456217c",
+  "sha256": "0ed5924da7b95e4edda68e7374815435cd4315914c0d86822f6a00bc7833efd6",
+  "checksum_kind": "complete-file-manifest",
+  "path": "/Users/eaafonasev/Projects/star-tournament-candidates/protect-shipped-lab-profiles/StarTournamentProvingGround.app",
+  "classification": "DEVELOPMENT_LOCAL_NOT_PUBLIC_NOT_HUMAN_ACCEPTANCE"
+}

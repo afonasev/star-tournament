@@ -28,10 +28,35 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(history.SelectedProfile.Revisions.Single(r=>r.Number==preserved.Number).Hash,Is.EqualTo(preserved.Hash));
             history.Select("alternative",4);Assert.That(history.SelectedProfileName,Is.EqualTo("Альтернатива"));
             Assert.That(history.SelectedProfileProtected,Is.True);Assert.Throws<InvalidOperationException>(()=>history.DeleteSelected());
-            var experiment=history.Selected.Snapshot;experiment.Set("rifle.damage",33);history.Save(experiment);history.MarkSelectedForRelease(true);
+            history.Create("Копия альтернативы");string copyId=history.SelectedProfileId;var experiment=history.Selected.Snapshot;experiment.Set("rifle.damage",33);history.Save(experiment);history.MarkSelectedForRelease(true);
             var restart=new DesignLabHistory(path,baseline,releases:catalogue,resetToLatestDefault:true);
             Assert.That(restart.Selected.ReleaseSequence,Is.EqualTo(2));
-            Assert.That(restart.Profiles.Single(p=>p.Id=="alternative").Revisions.Single(r=>r.Number==5).ReleaseCandidate,Is.True);
+            Assert.That(restart.Profiles.Single(p=>p.Id==copyId).Revisions.Single(r=>r.Number==2).ReleaseCandidate,Is.True);
+        }
+        [TestCase(false)][TestCase(true)]public void WholeShippedProfileIsReadOnlyAndCopiesSurviveUpdates(bool useDefault)
+        {
+            var baseline=Baseline();var local=new DesignLabHistory(path,baseline);
+            if(!useDefault)local.Create("Альтернатива");
+            string sourceId=local.SelectedProfileId;
+            var old=local.Selected.Snapshot;old.Set("rifle.damage",32);local.Save(old);
+            var catalog=LabReleaseCatalog.Factory(baseline);
+            if(!useDefault)catalog.Entries.Add(Entry(2,sourceId,"Альтернатива",1,baseline));
+            var history=new DesignLabHistory(path,baseline,releases:catalog);history.Select(sourceId,2);
+            Assert.That(history.SelectedProfileReadOnly,Is.True);Assert.That(history.IsShipped(history.Selected),Is.False);
+            var bytes=File.ReadAllBytes(path);var changed=history.Selected.Snapshot;changed.Set("rifle.damage",33);
+            Assert.Throws<InvalidOperationException>(()=>history.Save(changed));
+            Assert.Throws<InvalidOperationException>(()=>history.Rename("Переименовано"));
+            Assert.Throws<InvalidOperationException>(()=>history.MarkSelectedForRelease(true));
+            Assert.That(File.ReadAllBytes(path),Is.EqualTo(bytes));Assert.That(history.Selected.Hash,Is.EqualTo(old.Hash()));
+            history.Create("Моя копия");string copyId=history.SelectedProfileId;
+            Assert.That(copyId,Is.Not.EqualTo(sourceId));Assert.That(history.SelectedProfileReadOnly,Is.False);
+            Assert.That(history.Selected.Hash,Is.EqualTo(old.Hash()));Assert.That(history.Selected.ReleaseCandidate,Is.False);
+            history.Save(changed);history.MarkSelectedForRelease(true);history.Rename("Своя копия");
+            var update=baseline.Clone();update.Set("rifle.damage",34);catalog.Entries.Add(Entry(3,sourceId,"Обновлённый",3,update));
+            var restart=new DesignLabHistory(path,baseline,releases:catalog,resetToLatestDefault:true);
+            restart.Select(sourceId,3);Assert.That(restart.Selected.Hash,Is.EqualTo(update.Hash()));Assert.That(restart.SelectedProfileReadOnly,Is.True);
+            restart.Select(copyId,2);Assert.That(restart.Selected.Hash,Is.EqualTo(changed.Hash()));Assert.That(restart.SelectedProfileReadOnly,Is.False);
+            Assert.That(restart.Profiles.Single(p=>p.Id==sourceId).Revisions.Single(r=>r.Number==2).Hash,Is.EqualTo(old.Hash()));
         }
         [Test]public void MarkingAndSavingDoNotChangeReleaseContentOrInheritTheMark()
         {
@@ -93,11 +118,11 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
                 var clean=new DesignLabHistory(Path.Combine(directory,"new-install.json"),baseline,releases:staged,resetToLatestDefault:true);
                 Assert.That(clean.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));Assert.That(clean.Profiles.Any(p=>p.Id==first),Is.True);
-                var next=new DesignLabHistory(path,baseline,releases:staged);next.Select(first,2);next.Rename("Новое имя первого профиля");
+                var next=new DesignLabHistory(path,baseline,releases:staged);next.Select(first,2);Assert.Throws<InvalidOperationException>(()=>next.Rename("Запрещено"));next.Create("Копия первого профиля");string copyId=next.SelectedProfileId;next.Rename("Новое имя первого профиля");
                 var changed=next.Selected.Snapshot;changed.Set("rifle.damage",32);next.Save(changed);next.MarkSelectedForRelease(true);
                 source=File.ReadAllBytes(path);build.GetMethod("PromoteMarked").Invoke(null,null);
                 var renamed=UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(asset)).Entries.Last();
-                Assert.That(renamed.ProfileId,Is.EqualTo(first));Assert.That(renamed.ProfileName,Is.EqualTo("Новое имя первого профиля"));
+                Assert.That(renamed.ProfileId,Is.EqualTo(copyId));Assert.That(renamed.ProfileName,Is.EqualTo("Новое имя первого профиля"));
                 Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
             }
             finally

@@ -155,6 +155,8 @@ namespace StarTournament.ProvingGround
         public string SelectedProfileName=>DisplayName(data.Profiles.Single(p=>p.Id==data.SelectedId));
         bool IsProtected(string id)=>id==ReleaseId||(releases!=null&&releases.Entries.Any(e=>e.ProfileId==id));
         public bool SelectedProfileProtected=>IsProtected(data.SelectedId);
+        public bool SelectedProfileReadOnly=>releases!=null&&releases.Entries.Any(e=>e.ProfileId==data.SelectedId);
+        void RequireLocalProfile(){if(SelectedProfileReadOnly)throw new InvalidOperationException("Релизный профиль доступен только для чтения. Создайте копию для своих изменений.");}
         public LabHistoryProfile SelectedProfile=>DisplayProfile(data.Profiles.Single(p=>p.Id==data.SelectedId));
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true)
@@ -233,6 +235,7 @@ namespace StarTournament.ProvingGround
         }
         public void MarkSelectedForRelease(bool marked)
         {
+            RequireLocalProfile();
             if(IsShipped(Selected))throw new InvalidOperationException("Ревизия уже встроена в клиент");
             if(!Current(Selected.Snapshot))throw new InvalidOperationException("Выберите совместимую сохранённую ревизию");
             Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Revisions.Single(r=>r.Number==f.SelectedRevision).ReleaseCandidate=marked);
@@ -518,6 +521,7 @@ namespace StarTournament.ProvingGround
         public void Select(string id,int number)=>Commit(f=>{var r=f.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);if(!Current(r.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");f.SelectedId=id;f.SelectedRevision=number;});
         public void Save(LabBundle draft)
         {
+            RequireLocalProfile();
             // Previously editable placement overrides remain valid immutable history.
             // New revisions may retain them, but cannot introduce further changes to hidden fields.
             var baseline=Selected.Snapshot;
@@ -532,7 +536,7 @@ namespace StarTournament.ProvingGround
             RequireName(name);var baseSnapshot=Selected.Snapshot;string id=Guid.NewGuid().ToString("N");
             Commit(f=>{f.Profiles.Add(new LabHistoryProfile{Id=id,Name=name.Trim(),Revisions=new List<LabRevision>{Revision(baseSnapshot,1,DateTime.Now.ToString("yyyyMMdd"))}});f.SelectedId=id;f.SelectedRevision=1;});
         }
-        public void Rename(string name){RequireName(name);Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Name=name.Trim());}
+        public void Rename(string name){RequireLocalProfile();RequireName(name);Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Name=name.Trim());}
         public void DeleteSelected()
         {
             if(SelectedProfileProtected)throw new InvalidOperationException("Стандартный профиль защищён от удаления");

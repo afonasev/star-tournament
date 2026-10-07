@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
             var row=(RectTransform)Input("input-rifle.damage").transform.parent;
             if(fields.viewport.rect.height<row.rect.height*6)throw new InvalidOperationException("Compact Lab must fit six complete parameter rows");
             yield return Capture("01-editor-base");
+            if(Input("input-rifle.damage").interactable||Button("lab-rename").interactable||Button("lab-save").interactable||Button("plus-rifle.damage").interactable)throw new InvalidOperationException("Shipped profile must be read-only");
             if(args.Contains("-labCatalogReview")){yield return CatalogReview();yield break;}
             if(File.Exists(Path.Combine(directory,"first-run-complete.json")))
             {
@@ -83,6 +84,7 @@ namespace StarTournament.ProvingGround
                 Click("revision-"+entry.Revision);yield return null;
                 if(!ground.LabSavedIdentity.Contains(entry.Hash)||!ground.LabSavedIdentity.Contains(entry.ProfileId)||Button("lab-release").interactable)
                     throw new InvalidOperationException("Shipped catalogue selection mismatch: "+entry.Sequence);
+                if(Input("input-rifle.damage").interactable||Button("lab-rename").interactable)throw new InvalidOperationException("Shipped profile is editable: "+entry.Sequence);
                 yield return Capture("catalogue-selected-"+entry.Sequence);
             }
             Click("lab-create");yield return null;Input("lab-profile-name").text="QA каталог · эксперимент";Click("submit");yield return null;
