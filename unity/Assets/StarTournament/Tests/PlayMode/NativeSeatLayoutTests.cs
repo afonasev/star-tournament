@@ -215,7 +215,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.RemoveDevice(pads[2]);yield return null;Assert.That(ground.Running,Is.True);
             InputSystem.RemoveDevice(pads[1]);yield return null;yield return null;
             Assert.That(ground.Running,Is.False);Assert.That(Button("Продолжить").interactable,Is.False);
-            var text=ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>();Assert.That(text.text,Does.Contain("P2"));
+            var text=ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>();Assert.That(text.text,Does.Contain("Пауза"));
+            var reason=(string)typeof(ProvingGround).GetField("pauseReason",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);Assert.That(reason,Does.Contain("P2"),"The disconnected seat still owns the pause reason");
             InputSystem.AddDevice(pads[1]);yield return null;Assert.That(ground.Running,Is.False);
             Assert.That(Button("Продолжить").interactable,Is.True);
             Button("Продолжить").onClick.Invoke();yield return null;Assert.That(ground.Running,Is.True);
