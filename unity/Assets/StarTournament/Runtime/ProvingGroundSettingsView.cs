@@ -245,13 +245,13 @@ namespace StarTournament.ProvingGround
                 settingsRevertButton=MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);
                 foreach(var button in settingsScreen.GetComponentsInChildren<Selectable>(true))
                 {
-                    if(button is Button)button.GetComponent<Image>().color=Color.white;
+                    if(button is Button)button.GetComponent<Image>().color=MenuCard;
                     var colors=button.colors;
-                    colors.normalColor=MenuCard;
-                    colors.highlightedColor=new Color32(61,96,112,255);
-                    colors.selectedColor=MenuCard;
-                    colors.pressedColor=new Color32(176,125,66,255);
-                    colors.disabledColor=new Color32(50,62,69,255);
+                    colors.normalColor=button is Button?Color.white:MenuCard;
+                    colors.highlightedColor=button is Button?new Color(1.15f,1.15f,1.15f,1):new Color32(61,96,112,255);
+                    colors.selectedColor=button is Button?Color.white:MenuCard;
+                    colors.pressedColor=button is Button?new Color(.8f,.8f,.8f,1):new Color32(176,125,66,255);
+                    colors.disabledColor=button is Button?new Color(.52f,.57f,.62f,1):new Color32(50,62,69,255);
                     button.colors=colors;
                     var border=new GameObject("controller-focus",typeof(RectTransform));
                     border.transform.SetParent(button.transform,false);
@@ -290,7 +290,12 @@ namespace StarTournament.ProvingGround
             {
                 var edge=new GameObject(name,typeof(RectTransform),typeof(Image));
                 edge.transform.SetParent(parent,false);
-                Layout((RectTransform)edge.transform,min,max);
+                var rect=(RectTransform)edge.transform;
+                // Fixed Canvas-pixel focus strokes do not become wide bars on long controls.
+                bool horizontal=name=="top"||name=="bottom";
+                Vector2 at=name=="top"?new Vector2(0,1):name=="right"?new Vector2(1,0):Vector2.zero;
+                Layout(rect,at,horizontal?new Vector2(1,at.y):new Vector2(at.x,1));
+                rect.sizeDelta=horizontal?new Vector2(0,2):new Vector2(2,0);
                 var image=edge.GetComponent<Image>();image.color=MenuGold;image.raycastTarget=false;
             }
             void RefreshSettingsFocus()
