@@ -142,7 +142,7 @@ namespace StarTournament.ProvingGround
             LabButton(labScreen.transform,"lab-create","Создать",new Vector2(.38f,.889f),new Vector2(.46f,.928f),()=>LabNameDialog(false));
             LabButton(labScreen.transform,"lab-rename","Переименовать",new Vector2(.47f,.889f),new Vector2(.58f,.928f),()=>LabNameDialog(true));
             labDelete=LabButton(labScreen.transform,"lab-delete","Удалить",new Vector2(.59f,.889f),new Vector2(.67f,.928f),()=>LabConfirm("Удалить «"+labHistory.SelectedProfileName+"»?\nРевизий: "+labHistory.SelectedProfile.Revisions.Count,"Удалить профиль",()=>LabOperation(labHistory.DeleteSelected,true)));
-            Hint(labDelete.gameObject,"Удаляется целый локальный профиль после подтверждения. Опубликованный профиль защищён.");
+            Hint(labDelete.gameObject,"Удаляется целый локальный профиль после подтверждения. Стандартный профиль защищён от удаления.");
             LabButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.68f,.889f),new Vector2(.82f,.928f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
             labIdentity=Label(labScreen.transform,"lab-identity","",14,new Vector2(.02f,.813f),new Vector2(.98f,.883f),TextAnchor.MiddleLeft,Color.white);
             labSearch=LabInput(labScreen.transform,"lab-search","",new Vector2(.02f,.765f),new Vector2(.47f,.804f));
@@ -233,7 +233,7 @@ namespace StarTournament.ProvingGround
             }
             labSave.interactable=LabDirty&&issues.Count==0&&labHistory.Writable;labDelete.interactable=!labHistory.SelectedProfileProtected&&labHistory.Writable;
             string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=labSavedRevisionLabel+" ▾";
-            labIdentity.text=LabSavedIdentity+(labHistory.SelectedProfileProtected?" · удаление запрещено: shipped release":"");labStatus.text=labError??labHistory.StorageError??(issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
+            labIdentity.text=LabSavedIdentity+(labHistory.SelectedProfileProtected?" · стандартный профиль: удаление запрещено":"");labStatus.text=labError??labHistory.StorageError??(issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
         }
         void LabOperation(Action action,bool reset)
         {

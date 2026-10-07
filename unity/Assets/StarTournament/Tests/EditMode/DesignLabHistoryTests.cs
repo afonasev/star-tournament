@@ -330,6 +330,17 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(restarted.SelectedProfile.Revisions[0].Hash,Is.EqualTo(v1.Hash));Assert.That(restarted.SelectedProfile.Revisions[1].Hash,Is.EqualTo(v2.Hash));
             var detached=restarted.Selected;detached.Snapshot.Set("rifle.damage",99);Assert.That(restarted.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(32));
         }
+        [Test]public void DefaultDisplayPreservesLegacyHistoryAndUserNames()
+        {
+            var history=new DesignLabHistory(path,Shipped());Assert.That(history.SelectedProfileName,Is.EqualTo("Default"));
+            history.Rename("Опубликованный профиль");var source=File.ReadAllBytes(path);var hash=history.Selected.Hash;
+            var reopened=new DesignLabHistory(path,Shipped());Assert.That(reopened.StorageError,Is.Null);
+            Assert.That(reopened.SelectedProfileName,Is.EqualTo("Default"));Assert.That(reopened.SelectedProfile.Name,Is.EqualTo("Default"));
+            Assert.That(reopened.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Name,Is.EqualTo("Default"));
+            Assert.That(reopened.Selected.Hash,Is.EqualTo(hash));Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
+            reopened.Rename("Мой баланс");Assert.That(new DesignLabHistory(path,Shipped()).SelectedProfileName,Is.EqualTo("Мой баланс"));
+            reopened.Create("Опубликованный профиль");Assert.That(reopened.SelectedProfileName,Is.EqualTo("Опубликованный профиль"));
+        }
         [Test]public void CorruptionIsPreservedAndCannotBeOverwritten()
         {File.WriteAllText(path,"broken");var history=new DesignLabHistory(path,Shipped());Assert.That(history.StorageError,Is.Not.Null);Assert.Throws<IOException>(()=>history.Create("test"));Assert.That(File.ReadAllText(path),Is.EqualTo("broken"));}
         [Test]public void ProtectedReleaseCannotBeDeletedAndLocalProfileDeletionReturnsToRelease()

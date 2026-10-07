@@ -136,11 +136,18 @@ namespace StarTournament.ProvingGround
         readonly string path; readonly LabBundle shipped; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
-        public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(p=>p.Clone()).ToList();
+        static LabHistoryProfile DisplayProfile(LabHistoryProfile profile)
+        {
+            var copy=profile.Clone();
+            copy.Name=DisplayName(profile);
+            return copy;
+        }
+        static string DisplayName(LabHistoryProfile profile)=>profile.Id==ReleaseId&&profile.Name=="Опубликованный профиль"?"Default":profile.Name;
+        public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(DisplayProfile).ToList();
         public string SelectedProfileId=>data.SelectedId;
-        public string SelectedProfileName=>data.Profiles.Single(p=>p.Id==data.SelectedId).Name;
+        public string SelectedProfileName=>DisplayName(data.Profiles.Single(p=>p.Id==data.SelectedId));
         public bool SelectedProfileProtected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Protected;
-        public LabHistoryProfile SelectedProfile=>data.Profiles.Single(p=>p.Id==data.SelectedId).Clone();
+        public LabHistoryProfile SelectedProfile=>DisplayProfile(data.Profiles.Single(p=>p.Id==data.SelectedId));
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
         {
@@ -324,7 +331,7 @@ namespace StarTournament.ProvingGround
             }
         }
         LabHistoryFile NewFile()=>new LabHistoryFile{SelectedId=ReleaseId,SelectedRevision=1,Profiles=new List<LabHistoryProfile>{
-            new LabHistoryProfile{Id=ReleaseId,Name="Опубликованный профиль",Protected=true,Revisions=new List<LabRevision>{Revision(shipped,1,null)}}}};
+            new LabHistoryProfile{Id=ReleaseId,Name="Default",Protected=true,Revisions=new List<LabRevision>{Revision(shipped,1,null)}}}};
         static LabRevision Revision(LabBundle bundle,int number,string date)=>new LabRevision{Number=number,Date=date,Hash=bundle.Hash(),Snapshot=bundle.Clone()};
         void ValidateFile(LabHistoryFile file)
         {
@@ -446,7 +453,7 @@ namespace StarTournament.ProvingGround
         public void Rename(string name){RequireName(name);Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Name=name.Trim());}
         public void DeleteSelected()
         {
-            if(SelectedProfileProtected)throw new InvalidOperationException("Опубликованный профиль защищён");
+            if(SelectedProfileProtected)throw new InvalidOperationException("Стандартный профиль защищён от удаления");
             Commit(f=>{f.Profiles.RemoveAll(p=>p.Id==f.SelectedId);f.SelectedId=ReleaseId;f.SelectedRevision=f.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash()).Number;});
         }
         static void RequireName(string name){if(string.IsNullOrWhiteSpace(name)||name.Trim().Length>48)throw new ArgumentException("Имя: от 1 до 48 символов");}
