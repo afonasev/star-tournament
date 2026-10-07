@@ -90,16 +90,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Button("Диагностика четырёх камер · без управления").interactable,Is.False);
             Button("Диагностика четырёх камер · без управления").onClick.Invoke();Assert.That(ground.Running,Is.False);
             ground.SetTeam(3,NativeTeam.TeamB);Button("seats-minus").onClick.Invoke();Assert.That(Button("Диагностика четырёх камер · без управления").interactable,Is.False);
-            ground.SetTeam(1,NativeTeam.TeamB);Button("team-colors").onClick.Invoke();
+            ground.SetTeam(1,NativeTeam.TeamB);
+            Assert.That(ground.GetComponentsInChildren<Button>(true).Any(b=>b.name=="team-colors"),Is.False);
             Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
             Assert.That(ground.Running,Is.True);Assert.That(ground.Session.Match.Roster.Count,Is.EqualTo(3));
-            var old=ground.Session;var roster=JsonUtility.ToJson(old.Match.Roster.Read());var expected=NativeStandingsView.TeamColor(NativeTeam.TeamA,true);
+            var old=ground.Session;var roster=JsonUtility.ToJson(old.Match.Roster.Read());var expected=NativeStandingsView.TeamColor(NativeTeam.TeamA,false);
             AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),expected);AssertIdentity(ground.transform.Find("seat-camera-1/trooper-view"),expected);
             var table=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="persistent-standings");
             Assert.That(table.gameObject.activeSelf,Is.True);Assert.That(table.GetComponentsInChildren<Text>().Any(t=>t.text=="Team A"),Is.True);
             ground.SetTeam(0,NativeTeam.TeamB);Assert.That(JsonUtility.ToJson(old.Match.Roster.Read()),Is.EqualTo(roster),"Setup mutation ignored while running");
             old.ApplyDamage(1,old.Life(1).Life,500,0,old.Life(0).Life);yield return null;
-            var corpse=ground.GetComponentsInChildren<Transform>(true).First(t=>t.name.StartsWith("corpse-2-"));AssertIdentity(corpse,NativeStandingsView.TeamColor(NativeTeam.TeamB,true));
+            var corpse=ground.GetComponentsInChildren<Transform>(true).First(t=>t.name.StartsWith("corpse-2-"));AssertIdentity(corpse,NativeStandingsView.TeamColor(NativeTeam.TeamB,false));
             // Exercise result through session time completion, then actual result button.
             while(old.Match.Phase==NativeMatchPhase.Running)old.Tick(new LocalAction[3],1f/ground.Profile.Get("simulation.fixedTickHz"));
             yield return new WaitForFixedUpdate();yield return null;

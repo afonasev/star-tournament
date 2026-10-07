@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
         bool swappedTeamColors, frozenSwappedColors;
         public NativeMatchMode SetupMode { get; private set; }
         readonly NativeTeam[] teamAssignments={NativeTeam.TeamA,NativeTeam.TeamB,NativeTeam.TeamA,NativeTeam.TeamB};
-        Button modeButton, colorButton;
+        Button modeButton;
         GameObject teamRow;
         readonly Button[] teamButtons=new Button[SeatInputCoordinator.SeatCount];
         string setupError;
@@ -1032,7 +1032,6 @@ namespace StarTournament.ProvingGround
             teamRow=new GameObject("team-assignments",typeof(RectTransform),typeof(HorizontalLayoutGroup));teamRow.transform.SetParent(column.transform,false);
             var teamLayout=teamRow.GetComponent<HorizontalLayoutGroup>();teamLayout.childControlWidth=teamLayout.childControlHeight=true;teamLayout.childForceExpandWidth=teamLayout.childForceExpandHeight=true;
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }
-            colorButton=ButtonElement(column.transform,"Поменять цвета команд",()=>{if(phase!=Phase.Setup)return;swappedTeamColors=!swappedTeamColors;RefreshInterface();});colorButton.gameObject.name="team-colors";
             resume=ButtonElement(column.transform,"Продолжить",Resume);
             fallbackSettings=ButtonElement(column.transform,"Настройки",()=>OpenSettings(-1));operatorSettingsButton=fallbackSettings;
             fallbackSettings.gameObject.name="fallback-settings";
@@ -1204,7 +1203,6 @@ namespace StarTournament.ProvingGround
             arenaButton.gameObject.SetActive(phase==Phase.Setup);
             arenaButton.GetComponentInChildren<Text>().text="Сменить карту · "+AuthoredArenaCatalog.Name(SelectedMapId)+" · 2–"+AuthoredArenaCatalog.Maximum(SelectedMapId);
             teamRow.SetActive(phase==Phase.Setup && SetupMode==NativeMatchMode.Teams);
-            colorButton.gameObject.SetActive(teamRow.activeSelf);
             for(int i=0;i<teamButtons.Length;i++)
             {
                 teamButtons[i].gameObject.SetActive(i<LocalSeatCount);

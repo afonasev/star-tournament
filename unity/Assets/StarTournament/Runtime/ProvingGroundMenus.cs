@@ -132,7 +132,7 @@ namespace StarTournament.ProvingGround
             setupScreen=Panel(parent,"setup-screen",Vector2.zero,Vector2.one,MenuInk);
             Label(setupScreen.transform,"setup-brand","STAR TOURNAMENT  /  БИТВА",35,new Vector2(.05f,.91f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
             Label(setupScreen.transform,"setup-description","Выберите карту, задайте правила, соберите игроков и начните матч.",22,new Vector2(.05f,.86f),new Vector2(.95f,.92f),TextAnchor.MiddleLeft,Color.white);
-            var steps=new[]{"1  КАРТА","2  ПРАВИЛА","3  ИГРОКИ"};
+            var steps=new[]{"КАРТА","ПРАВИЛА","ИГРОКИ"};
             for(int i=0;i<3;i++)
             {
                 int selected=i;float left=.05f+i*.305f;
@@ -170,7 +170,6 @@ namespace StarTournament.ProvingGround
             Label(setupRulesPage.transform,"target-help","Необязательный порог по очкам.",19,new Vector2(.05f,.20f),new Vector2(.95f,.26f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             teamRow.transform.SetParent(setupRulesPage.transform,false);
             Layout((RectTransform)teamRow.transform,new Vector2(.05f,.09f),new Vector2(.95f,.20f));
-            MoveSetupControl(colorButton,setupRulesPage,new Vector2(.05f,.06f),new Vector2(.62f,.14f));
 
             setupPlayersPage=Panel(content.transform,"setup-players",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             MoveSetupControl(start,summary,new Vector2(.07f,.02f),new Vector2(.93f,.10f));
@@ -239,7 +238,7 @@ namespace StarTournament.ProvingGround
             Layout(brand.rectTransform,new Vector2(.18f,.91f),roster?new Vector2(.95f,.965f):new Vector2(.95f,.98f));
             rosterPageTitle.gameObject.SetActive(roster);
             var description=setupScreen.transform.Find("setup-description").GetComponent<Text>();
-            Layout(description.rectTransform,roster?new Vector2(.05f,.83f):new Vector2(.05f,.86f),roster?new Vector2(.95f,.87f):new Vector2(.95f,.92f));
+            Layout(description.rectTransform,new Vector2(.05f,.86f),new Vector2(.95f,.90f));
             description.color=roster?RosterMuted:Color.white;
             start.GetComponentInChildren<Text>().fontStyle=FontStyle.Bold;
             setupScreen.transform.Find("setup-description").GetComponent<Text>().text=roster?"Выберите карточку, чтобы изменить участника. Свободный геймпад: Y — присоединиться.":"Выберите карту, задайте правила, соберите игроков и начните матч.";

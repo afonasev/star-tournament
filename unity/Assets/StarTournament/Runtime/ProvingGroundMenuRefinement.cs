@@ -71,8 +71,8 @@ namespace StarTournament.ProvingGround
             summary.Find("summary-title").gameObject.SetActive(false);setupSummary.gameObject.SetActive(false);setupLabIdentity.gameObject.SetActive(false);
             Layout(setupMessage.rectTransform,new Vector2(0,0),new Vector2(.68f,1));
             Layout((RectTransform)setupNext.transform,new Vector2(.76f,0),new Vector2(1,1));Layout((RectTransform)start.transform,new Vector2(.76f,0),new Vector2(1,1));
-            setupSteps[0].GetComponentInChildren<Text>().text="1  "+AuthoredArenaCatalog.Name(SelectedMapId);
-            setupSteps[1].GetComponentInChildren<Text>().text="2  "+(SetupMode==NativeMatchMode.Teams?"Командный бой":"Каждый сам за себя");
+            setupSteps[0].GetComponentInChildren<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId);
+            setupSteps[1].GetComponentInChildren<Text>().text=(SetupMode==NativeMatchMode.Teams?"Командный бой":"Каждый сам за себя");
             for(int i=0;i<3;i++)Layout((RectTransform)setupSteps[i].transform,new Vector2(.05f+i*.305f,.78f),new Vector2(.34f+i*.305f,.85f));
             rosterPageTitle.gameObject.SetActive(false);
             arenaButton.gameObject.SetActive(false);modeButton.gameObject.SetActive(false);targetButton.gameObject.SetActive(false);
