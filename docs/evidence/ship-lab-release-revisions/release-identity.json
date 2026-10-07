@@ -1,0 +1,9 @@
+{
+  "classification": "LOCAL_RELEASE_PLAYER_NOT_PUBLISHED_NOT_HUMAN_ACCEPTED",
+  "source": "4549ee5",
+  "build_options": "None",
+  "path": "/Users/eaafonasev/Projects/star-tournament-candidates/ship-lab-release-revisions/Star Tournament Unity Proving Ground.app",
+  "manifest_sha256": "12af4a5294b555d627f55c36ca6c6835990457ae4447ff712cf188a72f9c8419",
+  "release_identity": "local-macos-release-candidate/4549ee5/12af4a5294b555d627f55c36ca6c6835990457ae4447ff712cf188a72f9c8419",
+  "catalogue_sha256": "b00f9fcfadb3f6687438f313216c25f0114e386d1dd3151aa5f2180fc6ac5de8"
+}
