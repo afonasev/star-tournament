@@ -1253,8 +1253,9 @@ namespace StarTournament.ProvingGround
                     botTeams[i].GetComponent<Image>().color=NativeStandingsView.TeamColor(bot.Team,swappedTeamColors);
                 }
             }
-            status.text="STAR TOURNAMENT · UNITY ПОЛИГОН\n"+(phase==Phase.Paused ? pauseReason : "Space / Y — присоединить человека · Esc — пауза")+"\n"+
+            status.text=(phase==Phase.Paused ? "Пауза" : "Space / Y — присоединить человека · Esc — пауза")+"\n"+
                 string.Join("  |  ",Enumerable.Range(0,LocalSeatCount).Select(i=>"P"+(i+1)+": "+(!input.IsHumanSeat(i)?"AI":input.IsConnected(i)?IdentityLabel(i):"ожидает")));
+            if(phase==Phase.Paused)status.text="Пауза\n"+IdentityLabel(Mathf.Max(0,DefaultPauseSeat()));
             if(phase==Phase.Setup && !ValidSetup()) status.text+=LocalSeatCount+botSetup.Count<2?"\nДобавьте бота или второго игрока":"\nНужны обе команды: Team A и Team B";
             if(phase==Phase.Setup && setupError!=null) status.text+="\n"+setupError;
             if(phase==Phase.Results)

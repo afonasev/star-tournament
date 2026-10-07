@@ -637,3 +637,5 @@ Windows wizard candidate scope: новая установка, папка вну
 ## Native menu presentation — 2026-10-07
 
 Согласован стиль «Арена / эфир» для всех native меню: navy/champagne, компактные кнопки с единым фокусом, фон орбитальной арены во внешних экранах и читаемые тёмные панели. Главное меню без декоративных верхних подписей, «Локальный матч» и блока «Комбат боул»; название игры, шесть действий и версия/обновление сохраняются. Стиль распространяется на setup, профили, identity, все настройки, Lab/диалоги, pause/подтверждения и результаты. Поведение и настройки сохраняются; точный Player требует отдельной визуальной приёмки.
+
+Menu feedback F1: common top Back action, compact controls with bottom padding, square checks, unpaged resolution/device scroll lists with inline readiness, authored-geometry map miniatures and device diagrams with callouts. Pause titles contain player identity only. A single global FPS display aggregates the existing local human preferences (any enabled); profile storage and gameplay input mappings are unchanged.

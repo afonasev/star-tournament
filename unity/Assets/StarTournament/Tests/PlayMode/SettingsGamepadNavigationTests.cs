@@ -131,14 +131,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("settings-section-1").onClick.Invoke();
             Button("settings-controls-devices").onClick.Invoke();yield return null;
             bool foundPad=false,foundUnsupported=false;
-            do
             {
                 var rows=ground.GetComponentsInChildren<Text>(true).Where(t=>t.name.StartsWith("device-row-")&&t.gameObject.activeInHierarchy).Select(t=>t.text).ToArray();
                 foundPad|=rows.Any(t=>t.Contains(pad.deviceId.ToString())&&t.Contains("Готов к игре"));
                 foundUnsupported|=rows.Any(t=>t.Contains(unsupported.deviceId.ToString())&&t.Contains("XInput"));
-                if(!Button("devices-next").interactable)break;
-                Button("devices-next").onClick.Invoke();yield return null;
-            }while(true);
+            }
             Assert.That(foundPad,Is.True);
             Assert.That(foundUnsupported,Is.True);
             Button("devices-back").onClick.Invoke();

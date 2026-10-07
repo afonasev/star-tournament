@@ -133,13 +133,13 @@ namespace StarTournament.ProvingGround
                 Label(field.transform,"dropdown-arrow","▾",26,new Vector2(.90f,0),new Vector2(.98f,1),TextAnchor.MiddleCenter,RosterMuted);
             }
             rosterEditorHelp=Label(card.transform,"editor-help","",21,new Vector2(.055f,.19f),new Vector2(.945f,.285f),TextAnchor.MiddleLeft,RosterMuted);
-            rosterRemove=RosterButton(card.transform,"roster-remove","УДАЛИТЬ ИЗ МАТЧА",new Vector2(.055f,.12f),new Vector2(.945f,.20f),RemoveRosterParticipant);
-            rosterDone=RosterButton(card.transform,"roster-done","ГОТОВО",new Vector2(.055f,.025f),new Vector2(.945f,.105f),CloseRosterEditor);
+            rosterRemove=RosterButton(card.transform,"roster-remove","УДАЛИТЬ ИЗ МАТЧА",new Vector2(.055f,.16f),new Vector2(.945f,.23f),RemoveRosterParticipant);
+            rosterDone=RosterButton(card.transform,"roster-done","ГОТОВО",new Vector2(.055f,.06f),new Vector2(.945f,.14f),CloseRosterEditor);
             rosterDone.GetComponent<Image>().color=MenuGold;rosterDone.GetComponentInChildren<Text>().color=MenuInk;
             rosterPicker=Panel(card.transform,"roster-picker",Vector2.zero,Vector2.one,new Color32(24,38,54,255));
-            rosterPickerHeading=Label(rosterPicker.transform,"picker-title","",28,new Vector2(.055f,.85f),new Vector2(.945f,.97f),TextAnchor.MiddleLeft,MenuGold);
+            rosterPickerHeading=Label(rosterPicker.transform,"picker-title","",28,new Vector2(.30f,.85f),new Vector2(.945f,.97f),TextAnchor.MiddleLeft,MenuGold);
             rosterPickerContent=RosterScroll(rosterPicker.transform,"roster-picker-scroll",new Vector2(.055f,.16f),new Vector2(.945f,.83f),out rosterChoiceScroll);
-            rosterPickerBack=RosterButton(rosterPicker.transform,"roster-picker-back","‹ НАЗАД",new Vector2(.055f,.035f),new Vector2(.945f,.115f),CloseRosterPicker);
+            rosterPickerBack=RosterButton(rosterPicker.transform,"roster-picker-back","‹ НАЗАД",new Vector2(.055f,.86f),new Vector2(.28f,.95f),CloseRosterPicker);
             rosterPicker.SetActive(false);rosterEditor.SetActive(false);
         }
         void Frame(Transform parent,Color color)

@@ -8,7 +8,7 @@ namespace StarTournament.ProvingGround
     // These never feed simulation, camera or in-game readability/balance profiles.
     public sealed class MenuPresentation : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        public const float ButtonHeight = 64;
+        public const float ButtonHeight = 46;
         public bool Compact = true;
         Outline border;
         Button button;

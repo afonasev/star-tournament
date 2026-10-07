@@ -45,6 +45,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
+        [UnityTest] public IEnumerator SplitScreenDrawsOneGlobalFpsCounter()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("seat-settings-0-settings-section-2").onClick.Invoke();yield return null;
+            var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(t=>t.name=="seat-settings-0-settings-fps");toggle.isOn=true;yield return null;
+            var counters=ground.GetComponentsInChildren<Text>().Where(t=>t.name=="fps-value"||t.name.StartsWith("seat-fps-")).ToArray();
+            Assert.That(counters.Length,Is.EqualTo(1));Assert.That(counters[0].name,Is.EqualTo("fps-value"));
+            var rect=(RectTransform)counters[0].transform.parent;Assert.That(rect.anchorMax,Is.EqualTo(Vector2.one));
+        }
         [UnityTest] public IEnumerator TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses()
         {
             yield return Load();
