@@ -33,5 +33,13 @@
     "muted": true,
     "classification": "automated-not-human",
     "completion": "first-run-complete.json"
+  },
+  "native_restart": {
+    "result": "Passed",
+    "selected": "Default / unity-shipped-release",
+    "readonly_assertion": true,
+    "persisted_history_unchanged": true,
+    "completion": "restart-complete.txt",
+    "classification": "automated-not-human"
   }
 }

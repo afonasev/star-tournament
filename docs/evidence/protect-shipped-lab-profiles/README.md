@@ -12,3 +12,5 @@ Selected gate: **UI**. Permission controls and workspace UI change; balance valu
 All 70 selected tests passed. This is not a new full gameplay gate or human/device/audio acceptance. The catalogue used by these tests remains trusted input; local release marks alone do not lock a local profile. No user history migration/deletion occurs.
 
 Native Player screenshots and completion records are produced with isolated QA history and muted audio. Candidate identity and complete file manifest checksum bind the retained local app to the tested source. External publication and human acceptance remain separate.
+
+Native first run and restart passed. Restart selects shipped Default and keeps it read-only; saved QA copy history is byte-for-byte unchanged across restart. See `first-run-complete.json`, `restart-complete.txt`, and the two compressed Player logs.
