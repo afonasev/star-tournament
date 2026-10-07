@@ -1,0 +1,32 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+  "dirty": " M docs/evidence/restyle-native-menu-suite/F2/README.md\n M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Settings/ProvingURP.asset\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/Assets/UniversalRenderPipelineGlobalSettings.asset\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/restyle-native-menu-suite/F2/EditMode-first-run.xml\n?? docs/evidence/restyle-native-menu-suite/F2/PlayMode-first-run.xml\n?? docs/evidence/restyle-native-menu-suite/F2/PlayMode-second-run.xml\n?? docs/evidence/restyle-native-menu-suite/F2/coverage.md\n?? docs/evidence/restyle-native-menu-suite/F2/editmode-first-run.log.gz\n?? docs/evidence/restyle-native-menu-suite/F2/gallery.html\n?? docs/evidence/restyle-native-menu-suite/F2/native-final-first-attempt/\n?? docs/evidence/restyle-native-menu-suite/F2/native/\n?? docs/evidence/restyle-native-menu-suite/F2/playmode-first-run.log.gz\n?? docs/evidence/restyle-native-menu-suite/F2/playmode-second-run.log.gz\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F2/UI-EditMode.xml",
+      "passed": 3,
+      "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f2/unity/../.local/unity-evidence/focused-editmode.Y0Y32j/editmode.xml"
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F2/UI-PlayMode.xml",
+      "passed": 12,
+      "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f2/unity/../.local/unity-evidence/focused-playmode.gCr8S7/playmode.xml"
+    }
+  ]
+}
