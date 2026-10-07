@@ -198,6 +198,7 @@ namespace StarTournament.ProvingGround
                 {
                     var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
                     ValidateFile(file);e.Snapshot=r.Snapshot;
+                    if(e.Hash!=e.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
                 }
                 if(validatedReleases.Count>=4)validatedReleases.Clear();
                 validatedReleases.Add(key,releases.Clone());

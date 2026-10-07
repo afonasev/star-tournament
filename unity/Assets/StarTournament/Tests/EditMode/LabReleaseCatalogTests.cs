@@ -115,8 +115,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void HistoricalReleaseKeepsOriginalHashAndHasARunnableCounterpart()
         {
             var baseline=Baseline();baseline.Profiles.Add(ProvingProfile.CreateBloodDefault());
-            var old=baseline.Clone();var before=typeof(ProvingProfile).GetMethod("BeforeBloodIntensity",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
-            old.Profiles=old.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();
+            var old=baseline.Clone();old.Profiles=old.Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList();
             var catalogue=LabReleaseCatalog.Factory(baseline);catalogue.Entries.Add(Entry(2,"historical","Старая версия",1,old));
             var history=new DesignLabHistory(path,baseline,releases:catalogue,resetToLatestDefault:true);
             var revisions=history.Profiles.Single(p=>p.Id=="historical").Revisions;
