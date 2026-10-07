@@ -1066,6 +1066,7 @@ namespace StarTournament.ProvingGround
             var buildLabel=TextElement(canvasObject.transform,"development-build-label","Development Build",buildFontSize);
             buildLabel.fontStyle=FontStyle.Bold;
             buildLabel.alignment=TextAnchor.UpperLeft;
+            buildLabel.horizontalOverflow=HorizontalWrapMode.Overflow;buildLabel.verticalOverflow=VerticalWrapMode.Overflow;
             var buildRect=buildLabel.rectTransform;
             buildRect.anchorMin=buildRect.anchorMax=buildRect.pivot=new Vector2(0,1);
             buildRect.anchoredPosition=new Vector2(buildFontSize,-buildFontSize);

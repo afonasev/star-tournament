@@ -64,7 +64,7 @@ namespace StarTournament.ProvingGround
             oldMenuColumn=parent.Find("menu").gameObject;
             mainMenuScreen=Panel(parent,"main-menu",Vector2.zero,Vector2.one,MenuInk);
             var left=Panel(mainMenuScreen.transform,"actions",new Vector2(.05f,.13f),new Vector2(.325f,.80f),Color.clear);
-            Label(left.transform,"brand","STAR\nTOURNAMENT",52,new Vector2(0,.76f),new Vector2(1,.99f),TextAnchor.MiddleLeft,MenuGold).fontStyle=FontStyle.Bold;
+            Label(left.transform,"brand","<color=#EFF5F5>STAR</color>\nTOURNAMENT",52,new Vector2(0,.76f),new Vector2(1,.99f),TextAnchor.MiddleLeft,MenuGold).fontStyle=FontStyle.Bold;
             string[] labels={"Битва","Сетевая игра · скоро","Лаборатория геймдизайна","Профили игроков","Настройки игры","Выход"};
             UnityEngine.Events.UnityAction[] actions={OpenSetup,()=>{},OpenLab,OpenProfiles,()=>OpenSettings(-1),()=>Application.Quit()};
             for(int i=0;i<labels.Length;i++)
