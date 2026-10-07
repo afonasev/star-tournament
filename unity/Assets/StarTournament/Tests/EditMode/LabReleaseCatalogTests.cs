@@ -93,6 +93,12 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
                 var clean=new DesignLabHistory(Path.Combine(directory,"new-install.json"),baseline,releases:staged,resetToLatestDefault:true);
                 Assert.That(clean.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));Assert.That(clean.Profiles.Any(p=>p.Id==first),Is.True);
+                var next=new DesignLabHistory(path,baseline,releases:staged);next.Select(first,2);next.Rename("Новое имя первого профиля");
+                var changed=next.Selected.Snapshot;changed.Set("rifle.damage",32);next.Save(changed);next.MarkSelectedForRelease(true);
+                source=File.ReadAllBytes(path);build.GetMethod("PromoteMarked").Invoke(null,null);
+                var renamed=UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(asset)).Entries.Last();
+                Assert.That(renamed.ProfileId,Is.EqualTo(first));Assert.That(renamed.ProfileName,Is.EqualTo("Новое имя первого профиля"));
+                Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
             }
             finally
             {
