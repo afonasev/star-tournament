@@ -202,7 +202,7 @@ namespace StarTournament.ProvingGround
 
                 settingsHelpPage=Panel(content.transform,"settings-help-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
                 settingsHelpScroll=ListViewport(settingsHelpPage.transform,"help-viewport",new Vector2(.02f,.09f),new Vector2(.98f,.82f),out helpDiagram);
-                helpDiagram.sizeDelta=new Vector2(0,1100);
+                helpDiagram.sizeDelta=new Vector2(0,1100);var diagramFit=helpDiagram.gameObject.AddComponent<AspectRatioFitter>();diagramFit.aspectMode=AspectRatioFitter.AspectMode.WidthControlsHeight;diagramFit.aspectRatio=1.25f;
                 settingsHelpText=Label(settingsHelpPage.transform,"keyboard-help",KeyboardHelp,18,Vector2.zero,Vector2.zero,TextAnchor.UpperLeft,Color.white);settingsHelpText.gameObject.SetActive(false);
                 settingsHelpKeyboard=MenuButton(settingsHelpPage.transform,"settings-help-keyboard","КЛАВИАТУРА / МЫШЬ",new Vector2(.02f,.85f),new Vector2(.48f,.95f),()=>SetHelpText(KeyboardHelp));
                 settingsHelpGamepad=MenuButton(settingsHelpPage.transform,"settings-help-gamepad","ГЕЙМПАД",new Vector2(.51f,.85f),new Vector2(.98f,.95f),()=>SetHelpText(GamepadHelp));

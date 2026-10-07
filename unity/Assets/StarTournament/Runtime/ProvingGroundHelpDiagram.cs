@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
             void Call(string text,float x,float y,float tx,float ty,bool right){float end=right?.76f:.24f;var line=new GameObject("callout",typeof(RectTransform),typeof(HelpCalloutGraphic));line.transform.SetParent(parent,false);Layout((RectTransform)line.transform,Vector2.zero,Vector2.one);line.GetComponent<HelpCalloutGraphic>().Set(new Vector2(x,y),new Vector2(end,ty+.025f));Label(parent,"binding",text,18,new Vector2(right?.77f:0,ty-.025f),new Vector2(right?1:.23f,ty+.065f),right?TextAnchor.MiddleLeft:TextAnchor.MiddleRight,Color.white);}
             if(pad)
             {
-                Panel(parent,"gamepad-body",new Vector2(.29f,.55f),new Vector2(.72f,.80f),new Color32(48,65,82,255));
+                var body=new GameObject("gamepad-body",typeof(RectTransform),typeof(HelpGamepadGraphic));body.transform.SetParent(parent,false);Layout((RectTransform)body.transform,new Vector2(.27f,.50f),new Vector2(.74f,.82f));
                 Key("LB",.31f,.80f,.10f);Key("RB",.60f,.80f,.10f);Key("RT",.62f,.87f,.08f);
                 Key("L",.34f,.68f,.08f,.08f);Key("R",.55f,.57f,.08f,.08f);
                 Key("← ↑ → ↓",.40f,.56f,.12f);Key("View",.44f,.72f,.06f);Key("Menu",.52f,.72f,.07f);
@@ -44,6 +44,18 @@ namespace StarTournament.ProvingGround
             string[] keys=pad?new[]{"L / D-pad","A / × / B","B / ○ / A","Y / △ / X"}:new[]{"↑ ↓ ← →","Enter","Esc / ⌫","Space"};
             string[] desc={"Выбор · ← / → меняют значение","Подтвердить · включить галочку","Назад / отмена","Присоединиться к матчу"};
             for(int i=0;i<4;i++){float y=.25f-i*.07f;Key(keys[i],.03f,y,.23f,.055f);Label(parent,"menu-binding-"+i,"→   "+desc[i],20,new Vector2(.30f,y),new Vector2(.98f,y+.055f),TextAnchor.MiddleLeft,Color.white);}
+            foreach(var label in parent.GetComponentsInChildren<Text>()){label.resizeTextForBestFit=true;label.resizeTextMinSize=12;label.resizeTextMaxSize=label.fontSize;}
+        }
+    }
+    public sealed class HelpGamepadGraphic:MaskableGraphic
+    {
+        protected override void OnPopulateMesh(VertexHelper m)
+        {
+            m.Clear();raycastTarget=false;var r=rectTransform.rect;
+            Vector2[] points={new Vector2(.08f,0),new Vector2(0,.10f),new Vector2(.04f,.70f),new Vector2(.18f,.98f),new Vector2(.38f,1),new Vector2(.50f,.87f),new Vector2(.62f,1),new Vector2(.82f,.98f),new Vector2(.96f,.70f),new Vector2(1,.10f),new Vector2(.92f,0),new Vector2(.73f,.31f),new Vector2(.27f,.31f)};
+            m.AddVert(r.center,new Color32(48,65,82,255),Vector2.zero);
+            foreach(var p in points)m.AddVert(r.min+Vector2.Scale(p,r.size),new Color32(48,65,82,255),Vector2.zero);
+            for(int i=0;i<points.Length;i++)m.AddTriangle(0,i+1,(i+1)%points.Length+1);
         }
     }
     public sealed class HelpCalloutGraphic:MaskableGraphic
