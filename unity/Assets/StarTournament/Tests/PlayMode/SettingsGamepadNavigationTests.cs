@@ -75,12 +75,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.South);Assert.That(toggle.isOn,Is.EqualTo(!checkedBefore));
             yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-help-back"));
             var scroll=ground.GetComponentsInChildren<ScrollRect>(true).Single(x=>x.name=="help-viewport");
-            // Exercise overflow navigation at a compact viewport size even when the shell text fits.
-            scroll.viewport.offsetMin+=new Vector2(0,scroll.viewport.rect.height*.65f);Canvas.ForceUpdateCanvases();
-            Assert.That(scroll.content.rect.height,Is.GreaterThan(scroll.viewport.rect.height));
-            scroll.verticalNormalizedPosition=1;
-            Assert.That(scroll.verticalNormalizedPosition,Is.EqualTo(1).Within(.001));
-            yield return Press(GamepadButton.DpadRight);Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(1));
+            // The complete raster fits the viewport; navigation switches illustrations without cropping.
+            Canvas.ForceUpdateCanvases();
+            Assert.That(scroll.vertical,Is.False);
+            Assert.That(scroll.content.rect.height,Is.LessThanOrEqualTo(scroll.viewport.rect.height+.1f));
+            Assert.That(scroll.content.rect.width,Is.LessThanOrEqualTo(scroll.viewport.rect.width+.1f));
+            Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-help-keyboard"));
+            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-help-gamepad"));
+            yield return Press(GamepadButton.South);
+            Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"));
+            yield return Press(GamepadButton.DpadLeft);yield return Press(GamepadButton.South);
+            Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-controls-help"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));

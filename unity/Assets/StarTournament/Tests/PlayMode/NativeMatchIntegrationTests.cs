@@ -182,6 +182,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.Session.ApplyDamage(1,1,100,0,1);
             Assert.That(ground.Session.Match.Read().Standings[0].Score,Is.EqualTo(100));
             Button("В главное меню").onClick.Invoke();Button("main-action-2").onClick.Invoke();yield return null;
+            Button("lab-create").onClick.Invoke();yield return null;
+            ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="lab-profile-name").text="Match integration copy";Button("submit").onClick.Invoke();yield return null;
             ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="lab-search").text="score.chainTotal1";yield return null;
             ground.GetComponentsInChildren<InputField>().Single(f=>f.name=="input-score.chainTotal1").text="200";Button("lab-save").onClick.Invoke();yield return null;
             var saved=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
