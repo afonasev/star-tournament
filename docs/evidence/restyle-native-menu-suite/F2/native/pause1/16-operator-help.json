@@ -1,0 +1,16 @@
+{
+    "state": "16-operator-help",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "localSeats": 1,
+    "openMenus": 0,
+    "visibleFps": 1,
+    "buildLabels": 1,
+    "width": 1920,
+    "height": 1080,
+    "sourceRevision": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+    "running": false,
+    "focused": true,
+    "muted": true,
+    "unityDeveloperWatermark": false,
+    "matchTime": 0.019999992102384568
+}

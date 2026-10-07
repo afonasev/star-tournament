@@ -1,0 +1,149 @@
+{
+  "source_binding": {
+    "EditMode": "4da7d63e9fcdd0cdb530fc9177b074dac5edfd0d",
+    "PlayMode": "cb6592dc0161fc2009fe471650df113f2135e3f2",
+    "native": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+    "final_ui": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+    "build": "BuildMac regenerates scene and authored derivatives before packaging.",
+    "post_full_ui_files": [
+      "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs"
+    ],
+    "note": "Full EditMode covers unchanged Core/assets. Full PlayMode passed at cb6592d; the only subsequent runtime change moves two Lab UI rectangles. Final UI gate, Lab workspace tests, build and native review cover that local layout correction. Roster runtime is unchanged from its focused pass.",
+    "final_lab": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05"
+  },
+  "qa_bundle": {
+    "id": "com.afonasev.star-tournament-menu-f2-qa",
+    "name": "Star Tournament F2 QA",
+    "note": "Local QA metadata and ad-hoc signature only; isolates macOS app routing from retained historical candidates. Reproducible with qa_identity.py."
+  },
+  "EditMode": {
+    "passed": "353",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "1051.9794309"
+  },
+  "PlayMode": {
+    "passed": "216",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "1503.7718889"
+  },
+  "natural_matches": [
+    {
+      "name": "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.NaturalDefaultEightFfaReachesTerminalWithoutInvalidRuntimeState",
+      "result": "Passed"
+    },
+    {
+      "name": "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.NaturalDefaultEightTeamsReachesTerminalWithoutInvalidRuntimeState",
+      "result": "Passed"
+    }
+  ],
+  "final_ui_gate": {
+    "scope": "ui-only",
+    "natural_bot_matches": false,
+    "suites": {
+      "EditMode": [
+        "LocalSeatLayoutTests"
+      ],
+      "PlayMode": [
+        "FourPlayerMenuTests",
+        "IndependentPauseMenuTests"
+      ]
+    },
+    "policy": ".agents/references/qa-scope.md",
+    "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+    "revision": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+    "dirty": " M docs/evidence/restyle-native-menu-suite/F2/README.md\n M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Settings/ProvingURP.asset\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/Assets/UniversalRenderPipelineGlobalSettings.asset\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/restyle-native-menu-suite/F2/EditMode-first-run.xml\n?? docs/evidence/restyle-native-menu-suite/F2/PlayMode-first-run.xml\n?? docs/evidence/restyle-native-menu-suite/F2/PlayMode-second-run.xml\n?? docs/evidence/restyle-native-menu-suite/F2/coverage.md\n?? docs/evidence/restyle-native-menu-suite/F2/editmode-first-run.log.gz\n?? docs/evidence/restyle-native-menu-suite/F2/gallery.html\n?? docs/evidence/restyle-native-menu-suite/F2/native-final-first-attempt/\n?? docs/evidence/restyle-native-menu-suite/F2/native/\n?? docs/evidence/restyle-native-menu-suite/F2/playmode-first-run.log.gz\n?? docs/evidence/restyle-native-menu-suite/F2/playmode-second-run.log.gz\n",
+    "result": "Passed",
+    "checks": [
+      {
+        "platform": "EditMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F2/UI-EditMode.xml",
+        "passed": 3,
+        "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f2/unity/../.local/unity-evidence/focused-editmode.Y0Y32j/editmode.xml"
+      },
+      {
+        "platform": "PlayMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F2/UI-PlayMode.xml",
+        "passed": 12,
+        "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f2/unity/../.local/unity-evidence/focused-playmode.gCr8S7/playmode.xml"
+      }
+    ]
+  },
+  "final_roster": {
+    "passed": "6",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "90.4288364"
+  },
+  "final_lab": {
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "24.5925409"
+  },
+  "commands": {
+    "EditMode": "make check: test-edit passed; later PlayMode failed and was corrected",
+    "PlayMode": "unity/tools.sh test-play (complete rerun after fixture corrections)",
+    "build": "unity/tools.sh build",
+    "lab": "unity/tools.sh test-play-filter DesignLabWorkspaceTests",
+    "ui": "make check-ui",
+    "roster": "unity/tools.sh test-play-filter RosterCardsTests",
+    "native": "unity-run --exclusive -- python3 run_reviews.py"
+  },
+  "source": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+  "scope": "full",
+  "native_cases": [
+    {
+      "name": "menu",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 21.1,
+      "screenshots": 26
+    },
+    {
+      "name": "setup",
+      "passed": true,
+      "exit": -15,
+      "stoppedAfterMarker": true,
+      "seconds": 36.2,
+      "screenshots": 15
+    },
+    {
+      "name": "pause1",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 25.1,
+      "screenshots": 27
+    },
+    {
+      "name": "pause4",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 22.1,
+      "screenshots": 22
+    },
+    {
+      "name": "results",
+      "passed": true,
+      "exit": -15,
+      "stoppedAfterMarker": true,
+      "seconds": 14.1,
+      "screenshots": 5
+    },
+    {
+      "name": "lab",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 42.2,
+      "screenshots": 17
+    }
+  ],
+  "build_marker": "STAR_PROVING_BUILD_PASS 501488493",
+  "candidate": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F2-f334bbc/StarTournamentProvingGround.app",
+  "human_acceptance": false
+}

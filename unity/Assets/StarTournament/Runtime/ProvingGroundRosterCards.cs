@@ -15,6 +15,7 @@ namespace StarTournament.ProvingGround
         readonly Text[] rosterNames=new Text[NativeMatchRoster.MaximumParticipants],rosterDetails=new Text[NativeMatchRoster.MaximumParticipants],rosterViews=new Text[NativeMatchRoster.MaximumParticipants],rosterIcons=new Text[NativeMatchRoster.MaximumParticipants];
         readonly Image[] rosterStripes=new Image[NativeMatchRoster.MaximumParticipants];
         GameObject rosterEditor,rosterPicker;
+        Toggle rosterBotView;
         Transform rosterFfa,rosterBlue,rosterRed,rosterPickerContent;
         ScrollRect rosterFfaScroll,rosterBlueScroll,rosterRedScroll,rosterChoiceScroll;
         GameObject rosterBluePanel,rosterRedPanel;
@@ -126,6 +127,7 @@ namespace StarTournament.ProvingGround
             rosterTeam=RosterButton(card.transform,"roster-team","",new Vector2(.055f,.43f),new Vector2(.945f,.51f),OpenRosterTeamChoices);
             rosterDeviceLabel=Label(card.transform,"editor-device-label","",23,new Vector2(.055f,.375f),new Vector2(.945f,.43f),TextAnchor.MiddleLeft,RosterMuted);
             rosterDevice=RosterButton(card.transform,"roster-device","",new Vector2(.055f,.29f),new Vector2(.945f,.37f),OpenRosterDeviceChoices);
+            rosterBotView=BooleanSetting(card.transform,"roster-bot-view","Собственный экран",new Vector2(.055f,.29f),new Vector2(.945f,.37f),SetRosterBotView);
             foreach(var field in new[]{rosterIdentity,rosterTeam,rosterDevice})
             {
                 var value=field.GetComponentInChildren<Text>();value.fontStyle=FontStyle.Normal;value.alignment=TextAnchor.MiddleLeft;
@@ -223,7 +225,9 @@ namespace StarTournament.ProvingGround
             rosterIdentity.GetComponentInChildren<Text>().text=(bot?RosterDifficultyNames[RosterDifficultyAt(p)]:IdentityLabel(p));
             rosterTeam.gameObject.SetActive(teams);rosterTeamLabel.gameObject.SetActive(teams);
             rosterTeam.GetComponentInChildren<Text>().text=RosterTeamName(RosterTeamAt(p));
-            rosterDeviceLabel.text=bot?"Собственный экран":"Устройство";
+            rosterDevice.gameObject.SetActive(!bot);rosterBotView.gameObject.SetActive(bot);RefreshToggle(rosterBotView,p<LocalSeatCount);
+            rosterBotView.interactable=p<LocalSeatCount?LocalSeatCount>1:LocalSeatCount<4;
+            rosterDeviceLabel.text=bot?"":"Устройство";
             rosterDevice.GetComponentInChildren<Text>().text=(bot?(p<LocalSeatCount?"Вкл · Экран "+(p+1):"Выкл"):input.Label(p));
             rosterEditorHelp.text=bot?"Экран бота занимает одну из 4 частей split-screen.":input.IsConnected(p)?"Профиль сохраняется при смене устройства.":"Подключите устройство или выберите другое.";
             rosterRemove.interactable=RosterTotal>1&&(p>=LocalSeatCount||LocalSeatCount>1||botSetup.Count>0);
@@ -238,7 +242,11 @@ namespace StarTournament.ProvingGround
         {
             rosterPickerReturn=source;rosterPickerHeading.text=title;rosterChoices.Clear();
             foreach(Transform child in rosterPickerContent){child.gameObject.SetActive(false);child.name="retired-"+child.name;Destroy(child.gameObject);}
-            rosterPicker.SetActive(true);rosterChoiceScroll.verticalNormalizedPosition=1;
+            rosterPicker.SetActive(true);
+            var sourceRect=(RectTransform)source.transform;var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds((RectTransform)rosterPicker.transform.parent,sourceRect);
+            var popup=(RectTransform)rosterPicker.transform;popup.anchorMin=popup.anchorMax=new Vector2(.5f,.5f);popup.pivot=new Vector2(.5f,1);popup.anchoredPosition=new Vector2(bounds.center.x,bounds.min.y);popup.sizeDelta=new Vector2(bounds.size.x,230);
+            rosterPickerHeading.gameObject.SetActive(false);rosterPickerBack.gameObject.SetActive(false);Layout((RectTransform)rosterChoiceScroll.transform,new Vector2(0,0),new Vector2(1,1));
+            rosterChoiceScroll.verticalNormalizedPosition=1;
         }
         void AddRosterChoice(string name,string title,UnityEngine.Events.UnityAction choose,bool enabled=true)
         {
@@ -346,8 +354,8 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Setup)return;
             if(rosterEditing>=0)
             {
-                if(rosterPicker.activeSelf)RosterVerticalNavigation(rosterChoices.Where(b=>b.interactable).Concat(new[]{rosterPickerBack}).ToArray());
-                else RosterVerticalNavigation(new[]{rosterIdentity,rosterTeam,rosterDevice,rosterRemove,rosterDone}.Where(b=>b.gameObject.activeSelf&&b.interactable).ToArray());
+                if(rosterPicker.activeSelf)RosterVerticalNavigation(rosterChoices.Where(b=>b.interactable).Cast<Selectable>().ToArray());
+                else RosterVerticalNavigation(new Selectable[]{rosterIdentity,rosterTeam,rosterDevice,rosterBotView,rosterRemove,rosterDone}.Where(b=>b.gameObject.activeSelf&&b.interactable).ToArray());
                 return;
             }
             if(setupStep!=2)return;
@@ -377,7 +385,7 @@ namespace StarTournament.ProvingGround
             setupPrevious.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnRight=start.interactable?start:setupPrevious};
             start.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnLeft=setupPrevious};
         }
-        void RosterVerticalNavigation(Button[] buttons)
+        void RosterVerticalNavigation(Selectable[] buttons)
         {
             for(int i=0;i<buttons.Length;i++)buttons[i].navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=buttons[Math.Max(0,i-1)],selectOnDown=buttons[Math.Min(buttons.Length-1,i+1)]};
         }

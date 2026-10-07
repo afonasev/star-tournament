@@ -1,0 +1,50 @@
+[
+  {
+    "name": "menu",
+    "passed": false,
+    "exit": -15,
+    "stoppedAfterMarker": false,
+    "seconds": 180.1,
+    "screenshots": 0
+  },
+  {
+    "name": "setup",
+    "passed": false,
+    "exit": -15,
+    "stoppedAfterMarker": false,
+    "seconds": 16.1,
+    "screenshots": 7
+  },
+  {
+    "name": "pause1",
+    "passed": true,
+    "exit": 0,
+    "stoppedAfterMarker": false,
+    "seconds": 25.1,
+    "screenshots": 27
+  },
+  {
+    "name": "pause4",
+    "passed": true,
+    "exit": 0,
+    "stoppedAfterMarker": false,
+    "seconds": 22.1,
+    "screenshots": 22
+  },
+  {
+    "name": "results",
+    "passed": true,
+    "exit": -15,
+    "stoppedAfterMarker": true,
+    "seconds": 14.1,
+    "screenshots": 5
+  },
+  {
+    "name": "lab",
+    "passed": false,
+    "exit": -15,
+    "stoppedAfterMarker": false,
+    "seconds": 11.1,
+    "screenshots": 0
+  }
+]

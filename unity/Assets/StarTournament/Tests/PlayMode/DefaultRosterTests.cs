@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;AssertDefault(pad,profiles);
             B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();ground.AddBot();
             B("setup-previous").onClick.Invoke();B("setup-next").onClick.Invoke();Assert.That(ground.SetupBotCount,Is.EqualTo(2));
-            B("setup-previous").onClick.Invoke();B("setup-previous").onClick.Invoke();B("setup-map-exit").onClick.Invoke();
+            B("setup-previous").onClick.Invoke();B("setup-previous").onClick.Invoke();B("Назад к главному меню").onClick.Invoke();
             InputSystem.QueueStateEvent(mouse,new MouseState{position=new Vector2(20,20)});yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;AssertDefault(pad,profiles);

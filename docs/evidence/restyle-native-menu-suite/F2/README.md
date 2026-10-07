@@ -1,0 +1,28 @@
+# F2 — переработка меню и поведения подготовки
+
+Запрос: список арен и подробности без боковой сводки; выбранные карта/режим во вкладках; компактные профили без параметров; отдельные значения и степперы; обязательные цели 2000/3500 с шагом100; Y вход/команда, X бот с последней изменённой сложностью; inline списки и галочка экрана бота; растровая справка; три строки Lab; единая пауза и более крупные главные кнопки.
+
+QA scope full: make check, natural bot matches, affected UI/input contracts, muted native screenshots. Полный автоматический прогон и 6 native сценариев прошли; verification.json содержит точные результаты. Визуальная и физическая приёмка остаются открытыми.
+
+Растровые ассеты созданы встроенным image_gen: `unity/Assets/StarTournament/Resources/UI/help-keyboard.png`, `help-gamepad.png`. Палитра navy/gold, реалистичные устройства, русские подписи и стрелки. Исходные generated PNG сохранены генератором; рабочие копии находятся в Resources. Текст основан на существующих привязках и новом Y/X поведении.
+
+Prompt keyboard: infographic-diagram, premium Russian game control reference, landscape1536x1024, navy #142130/gold #e7bb72; realistic keyboard/mouse, gold Esc/Tab/WASD/1–4/Q/E/Space/LMB/wheel; labels movement, jump, pause/back, held scoreboard, weapon selection/cycling, fire/look; menu arrows/Enter/Esc.
+Prompt gamepad: infographic-diagram, landscape1536x1024, realistic Xbox-layout controller, navy/gold, exact sticks/D-pad/ABXY/View/Menu/LB/RB/RT callouts for existing bindings; footer menu selection/confirm/back and roster Y join/team, X add bot.
+
+Старые immutable Lab snapshots сохраняются. Новые параметры `match.ffaTargetDefault`/`match.teamTargetDefault` имеют metadata и совместимость с историческим реестром.
+
+## Проверки и обнаруженные расхождения
+Первый полный EditMode: 351/351. Первый полный PlayMode: 210/216; шесть ошибок сохранены в `PlayMode-first-run.xml`. Исправлены устаревшие маршруты тестов (верхний выход вместо удалённой кнопки, прямой Y-вход вместо выбора гостя), проверка следующей ревизии относительно истории и ожидание фокуса нового участника. Проверка клавиатуры использует штатный режим синтетического Editor-ввода с восстановлением настроек в teardown. Причина отключения P2 проверяется отдельно от нового краткого заголовка паузы.
+
+С main интегрирована защита поставляемых профилей Lab: поля только для чтения, отдельная локальная копия редактируется. F2-компоновка трёх строк сохранена.
+
+Справка проверена в Player: импорт текстур и FitInParent исправляют белый блок/обрезание. Native сценарии с синтетическим вводом ждут реального фокуса окна; ограничения FocusAllowsResume не обходятся. Локальный QA-кандидат получает отдельные CFBundleIdentifier/имя и ad-hoc подпись для однозначного выбора окна macOS. Это не опубликованный дистрибутив и не физическая приёмка контроллеров.
+
+Второй полный PlayMode: 214/216; XML и журнал сохранены в `PlayMode-second-run.xml` и `playmode-second-run.log.gz`. Два старых теста адаптированы к текущим контрактам: сначала создать локальную копию shipped-профиля, а вместо прокрутки справки проверить целое изображение и переключение клавиатура/геймпад через настоящий UI input.
+
+Привязка проверок к ревизиям явная в `verification.json`: полный EditMode покрывает неизменённый Core; полный PlayMode прошёл на cb6592d. После него обнаружено обрезание шестой строки Lab: исправлены только две границы UI. Эту локальную правку покрывают повторный UI gate, DesignLabWorkspaceTests, сборка и native обзор. Отдельная проверка roster относится к неизменённому runtime состава.
+
+Последний native обзор сначала выявил отсутствие фокуса первого запуска и асинхронный возврат режима окна. Повтор без изменения проверок прошёл. Проверка Lab затем обнаружила реальное обрезание шестой строки; это исправлено поднятием границы списка без уменьшения текста. Диагностика первого запуска сохранена в `native-final-first-attempt/`.
+
+Кандидат: /Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F2-f334bbc/StarTournamentProvingGround.app
+Галерея: gallery.html

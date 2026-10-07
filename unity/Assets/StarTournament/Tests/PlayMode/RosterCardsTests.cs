@@ -31,13 +31,30 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(b));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
         }
+        [UnityTest] public IEnumerator RosterYJoinsThenSwitchesOwnTeamAndXAddsInheritedBot()
+        {
+            yield return Load();ground.SetMatchMode(NativeMatchMode.Teams);
+            var input=Field<SeatInputCoordinator>("input");input.Reset();
+            yield return Press(GamepadButton.North);
+            int seat=Enumerable.Range(0,ground.LocalSeatCount).Single(i=>input.DeviceAt(i)==pad);
+            Assert.That(Field<int>("rosterEditing"),Is.EqualTo(-1));
+            var team=ground.SetupComposition().Roster.Read().Teams[seat];
+            yield return Press(GamepadButton.North);
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[seat],Is.Not.EqualTo(team));
+            ground.AddBot();ground.SetBotDifficulty(0,0);int before=ground.SetupComposition().ParticipantCount;
+            yield return Press(GamepadButton.West);Assert.That(ground.SetupComposition().ParticipantCount,Is.EqualTo(before+1));
+            Assert.That(ground.SetupComposition().Participant(before).Difficulty,Is.EqualTo(0));
+            ground.SetBotDifficulty(0,2);before=ground.SetupComposition().ParticipantCount;
+            yield return Press(GamepadButton.West);Assert.That(ground.SetupComposition().Participant(before).Difficulty,Is.EqualTo(2));
+            Assert.That(Field<int>("rosterEditing"),Is.EqualTo(-1));
+        }
         [UnityTest] public IEnumerator BotViewRoundtripPreservesRosterDifficultyTeamAndFocus()
         {
             yield return Load();Click("roster-card-3");Click("roster-remove");
-            Click("roster-add-bot");Click("roster-identity");Click("roster-choice-difficulty-2");Click("roster-device");Click("roster-choice-view-on");Click("roster-done");
+            Click("roster-add-bot");Click("roster-identity");Click("roster-choice-difficulty-2");ground.GetComponentsInChildren<Toggle>().Single(t=>t.name=="roster-bot-view").isOn=true;Click("roster-done");
             Assert.That(ground.LocalSeatCount,Is.EqualTo(4));Assert.That(ground.SetupBotCount,Is.EqualTo(0));
             Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-3"));
-            Click("roster-card-3");Click("roster-device");Click("roster-choice-view-off");Click("roster-done");
+            Click("roster-card-3");ground.GetComponentsInChildren<Toggle>().Single(t=>t.name=="roster-bot-view").isOn=false;Click("roster-done");
             Assert.That(ground.LocalSeatCount,Is.EqualTo(3));Assert.That(ground.SetupComposition().ParticipantCount,Is.EqualTo(4));Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));
             var view=B("roster-card-3").GetComponentsInChildren<Text>(true).Single(t=>t.name=="participant-view");Assert.That(view.gameObject.activeSelf,Is.False);
             Click("setup-previous");Click("setup-previous");Click("setup-step-2");Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));
@@ -80,6 +97,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Click("roster-card-2");Click("roster-identity");yield return Press(GamepadButton.North);
             Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(ground.SetupComposition().ParticipantCount,Is.EqualTo(4));
             Assert.That(Field<int>("rosterEditing"),Is.EqualTo(3));Assert.That(Field<GameObject>("rosterPicker").activeSelf,Is.False);
+            Assert.That(EventSystem.current.currentSelectedGameObject.transform.IsChildOf(Field<GameObject>("rosterEditor").transform),Is.True,"Joining must not steal focus from the open editor");
             Assert.That(Field<LocalIdentitySession>("identities").ProfileId(1),Is.EqualTo(profile.Id));
             Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(1),Is.SameAs(pad));
             Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));

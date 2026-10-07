@@ -52,6 +52,7 @@ namespace StarTournament.ProvingGround
             (t.name=="fps-value"||t.name.StartsWith("seat-fps-"))&&t.gameObject.activeInHierarchy);
         IEnumerator Press(Gamepad pad,GamepadButton button)
         {
+            while(!Application.isFocused)yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(button));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
         }

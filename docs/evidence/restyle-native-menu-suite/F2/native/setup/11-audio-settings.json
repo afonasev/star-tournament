@@ -1,0 +1,16 @@
+{
+    "state": "11-audio-settings",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "width": 1920,
+    "height": 1080,
+    "muted": true,
+    "setupMap": false,
+    "setupRules": false,
+    "setupPlayers": false,
+    "settingsImage": false,
+    "settingsAudio": true,
+    "confirmation": false,
+    "shadows": true,
+    "musicPercent": 70,
+    "effectsPercent": 80
+}

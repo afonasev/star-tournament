@@ -1,0 +1,1 @@
+PASS: map → rules → players, back navigation, native settings sections including audio, supported resolution picker, display rollback, shadows toggle. Muted synthetic Player journey; physical gamepad and human acceptance pending.

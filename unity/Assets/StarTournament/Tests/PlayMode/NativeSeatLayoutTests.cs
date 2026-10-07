@@ -202,7 +202,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 InputSystem.QueueStateEvent(pads[i],new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
                 InputSystem.QueueStateEvent(pads[i],new GamepadState());yield return null;
-                Button("roster-identity").onClick.Invoke();Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
+                Assert.That(ground.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b=>b.name=="roster-done"),Is.False,"Y joins directly without an editor");
             }
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadDown));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
@@ -215,7 +215,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.RemoveDevice(pads[2]);yield return null;Assert.That(ground.Running,Is.True);
             InputSystem.RemoveDevice(pads[1]);yield return null;yield return null;
             Assert.That(ground.Running,Is.False);Assert.That(Button("Продолжить").interactable,Is.False);
-            var text=ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>();Assert.That(text.text,Does.Contain("P2"));
+            var text=ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>();Assert.That(text.text,Does.Contain("Пауза"));
+            var reason=(string)typeof(ProvingGround).GetField("pauseReason",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);Assert.That(reason,Does.Contain("P2"),"The disconnected seat still owns the pause reason");
             InputSystem.AddDevice(pads[1]);yield return null;Assert.That(ground.Running,Is.False);
             Assert.That(Button("Продолжить").interactable,Is.True);
             Button("Продолжить").onClick.Invoke();yield return null;Assert.That(ground.Running,Is.True);

@@ -1,0 +1,1 @@
+PASS: muted native Player, 4 viewport pause menus; synthetic devices, no physical-controller or human acceptance.

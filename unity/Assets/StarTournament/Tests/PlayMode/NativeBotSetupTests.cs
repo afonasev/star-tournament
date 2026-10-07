@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(B("Начать — четыре игрока").interactable,Is.False);
             pad=InputSystem.AddDevice<Gamepad>();InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-            B("roster-identity").onClick.Invoke();B("roster-choice-guest").onClick.Invoke();B("roster-done").onClick.Invoke();
+            Assert.That(ground.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b=>b.name=="roster-done"),Is.False,"Y joins directly without an editor");
             Assert.That(B("Начать — четыре игрока").interactable,Is.False,"One participant is invalid even with a device");
             for(int i=0;i<7;i++)B("bot-add").onClick.Invoke();
             B("bot-difficulty-0").onClick.Invoke();ground.SetMatchMode(NativeMatchMode.Teams);

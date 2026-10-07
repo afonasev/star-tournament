@@ -206,6 +206,13 @@ namespace StarTournament.ProvingGround
             }
             version=7;
         }
+        internal ProvingProfile BeforeModeTargets()
+        {
+            if(id!="unity-native-match-v1")return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path=="match.ffaTargetDefault"||d.Path=="match.teamTargetDefault");
+            copy.values.RemoveAll(v=>v.Path=="match.ffaTargetDefault"||v.Path=="match.teamTargetDefault");return copy;
+        }
         public void EnsureMatchDescriptors()
         {
             valueIndex=null;

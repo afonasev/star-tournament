@@ -71,6 +71,7 @@ namespace StarTournament.ProvingGround
             {
                 float top=.69f-i*.112f;
                 var button=MenuButton(left.transform,"main-action-"+i,labels[i],new Vector2(0,top-.088f),new Vector2(1,top),actions[i],i!=1);
+                button.GetComponent<MenuPresentation>().Height=60;button.SendMessage("OnRectTransformDimensionsChange");
                 var label=button.GetComponentInChildren<Text>();label.alignment=TextAnchor.MiddleLeft;
                 label.rectTransform.offsetMin=new Vector2(24,0);label.rectTransform.offsetMax=new Vector2(-20,0);
                 if(i==0){mainBattleButton=button;button.GetComponent<Image>().color=MenuGold;label.color=MenuInk;label.fontStyle=FontStyle.Bold;}
@@ -98,8 +99,8 @@ namespace StarTournament.ProvingGround
             profileDetail=Label(detailCard.transform,"profile-detail","Выберите профиль",27,new Vector2(.08f,.77f),new Vector2(.95f,.97f),TextAnchor.MiddleLeft,MenuGold);
             profileNameInput=CreateNameInput(detailCard.transform);
             MenuButton(detailCard.transform,"profile-rename","Переименовать",new Vector2(.08f,.57f),new Vector2(.92f,.64f),RenameSelectedProfile);
-            MenuButton(detailCard.transform,"profile-settings","Личные настройки",new Vector2(.08f,.28f),new Vector2(.92f,.48f),OpenProfileSettings);
-            MenuButton(detailCard.transform,"profile-delete","Удалить профиль",new Vector2(.08f,.06f),new Vector2(.92f,.16f),DeleteSelectedProfile);
+            MenuButton(detailCard.transform,"profile-settings","Личные настройки",new Vector2(.08f,.46f),new Vector2(.92f,.53f),OpenProfileSettings);
+            MenuButton(detailCard.transform,"profile-delete","Удалить профиль",new Vector2(.08f,.35f),new Vector2(.92f,.42f),DeleteSelectedProfile);
 
             CreateSettingsUi(parent);
 
@@ -174,6 +175,7 @@ namespace StarTournament.ProvingGround
             setupPlayersPage=Panel(content.transform,"setup-players",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             MoveSetupControl(start,summary,new Vector2(.07f,.02f),new Vector2(.93f,.10f));
             CreateRosterUi(parent);
+            CreateF2Setup();
 
         }
         void ShowSetupStep(int step)
@@ -247,7 +249,8 @@ namespace StarTournament.ProvingGround
             mapCard.GetComponentInChildren<ArenaPreviewGraphic>().Show(SelectedMapId);
             mapCard.Find("map-name").GetComponent<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId).ToUpperInvariant();
             mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
-            setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"Значения сохраняются при переходе между шагами");
+            setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"");
+            RefreshF2Setup();
         }
         InputField CreateNameInput(Transform parent)
         {
@@ -267,7 +270,7 @@ namespace StarTournament.ProvingGround
         void OpenSetup()
         {
             ApplySavedLabRevision();Configuration=NativeMatchConfiguration.Default(MatchProfile);fps.RestoreGeneralPreference();
-            phase=Phase.Setup;setupStep=setupMaxStep=0;setupError=null;pendingSeat=-1;rosterEditing=-1;
+            phase=Phase.Setup;SetupMode=NativeMatchMode.Ffa;ApplyModeTarget();lastBotDifficulty=(int)NativeBotDifficulty.Normal;setupStep=setupMaxStep=0;setupError=null;pendingSeat=-1;rosterEditing=-1;
             input.Reset();input.SetActiveSeatCount(1);
             for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++){identities.ClearSeat(seat);botSetup.SetAi(seat,false);botSetup.SetSeatDifficulty(seat,(int)NativeBotDifficulty.Normal);teamAssignments[seat]=seat%2==0?NativeTeam.TeamA:NativeTeam.TeamB;}
             while(botSetup.Count>0)botSetup.Remove(botSetup.Count-1);
@@ -306,6 +309,7 @@ namespace StarTournament.ProvingGround
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;
+            if(setupStep==2 && device is Gamepad){if(identities.HasIdentity(seat))identities.RememberBinding(seat,device.deviceId);else if(!identities.TryRestore(seat,device.deviceId,playerProfiles))identities.ChooseGuest(seat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);RefreshInterface();if(rosterEditing<0&&pendingSeat<0)Select(rosterCards[seat]);return;}
             if(identities.HasIdentity(seat)){identities.RememberBinding(seat,device.deviceId);RefreshInterface();return;}
             if(!identities.TryRestore(seat,device.deviceId,playerProfiles))OpenIdentityPicker(seat);
             else RefreshInterface();
@@ -396,7 +400,7 @@ namespace StarTournament.ProvingGround
         void RefreshProfileDetail()
         {
             var selected=playerProfiles.Find(selectedProfileId);
-            profileDetail.text=selected==null?"Создайте профиль":selected.Name+"\nМышь: "+selected.MouseDegreesPerPixel.ToString("0.00")+"°/px\nFPS: "+(selected.ShowFps?"вкл":"выкл");
+            profileDetail.text=selected==null?"Создайте профиль":selected.Name;
             profileNameInput.text=selected?.Name??"";
         }
         void CreateNamedProfile()
@@ -480,6 +484,7 @@ namespace StarTournament.ProvingGround
         void RefreshModernMenuUi()
         {
             if(mainMenuScreen==null)return;
+            if(EventSystem.current && phase!=Phase.Running && !(phase==Phase.Paused&&UseSeatPauseMenus))EventSystem.current.sendNavigationEvents=true;
             bool shell=phase==Phase.MainMenu||phase==Phase.Profiles||phase==Phase.Settings||phase==Phase.Lab;
             oldMenuColumn.SetActive(!shell && phase!=Phase.Setup && pendingSeat<0);
             mainMenuScreen.SetActive(phase==Phase.MainMenu);
