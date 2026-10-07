@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="18" result="Passed" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.1695476">
+  <test-suite type="TestSuite" id="1273" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="213" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.169548" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1265" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament-menu-feedback/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="213" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.163244" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8835" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1266" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="213" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.161487" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1267" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="213" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.159953" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1268" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="213" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.158457" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1269" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="160" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:09:13Z" duration="62.154011" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1090" name="DesignLabWorkspaceTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests" classname="StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:08:27Z" duration="16.072181" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1091" name="DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch" fullname="StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests.DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch" methodname="DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch" classname="StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests" runstate="Runnable" seed="859124819" result="Passed" start-time="2026-10-07 12:08:11Z" end-time="2026-10-07 12:08:27Z" duration="16.065358" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1168" name="NativeMenuPresentationTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 12:08:27Z" end-time="2026-10-07 12:08:39Z" duration="12.277902" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1169" name="ApprovedMainMenuHasReadableArtworkAndSixPreservedActions" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.ApprovedMainMenuHasReadableArtworkAndSixPreservedActions" methodname="ApprovedMainMenuHasReadableArtworkAndSixPreservedActions" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests" runstate="Runnable" seed="1792668285" result="Passed" start-time="2026-10-07 12:08:27Z" end-time="2026-10-07 12:08:34Z" duration="7.022437" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1170" name="CompactControlsDoNotCollapseRosterCardsOrLoseSettingsNavigation" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.CompactControlsDoNotCollapseRosterCardsOrLoseSettingsNavigation" methodname="CompactControlsDoNotCollapseRosterCardsOrLoseSettingsNavigation" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests" runstate="Runnable" seed="1080435339" result="Passed" start-time="2026-10-07 12:08:34Z" end-time="2026-10-07 12:08:36Z" duration="2.481085" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1171" name="FeedbackUsesTopBackSquareChecksAndFullResolutionList" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.FeedbackUsesTopBackSquareChecksAndFullResolutionList" methodname="FeedbackUsesTopBackSquareChecksAndFullResolutionList" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests" runstate="Runnable" seed="787792822" result="Passed" start-time="2026-10-07 12:08:36Z" end-time="2026-10-07 12:08:39Z" duration="2.772873" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1181" name="NativeScoreboardLayoutTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 12:08:39Z" end-time="2026-10-07 12:08:39Z" duration="0.045174" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1183" name="CompleteGroupsShareIconAxisAndAllEightTeamRowsFitWithIndependentLifeAndLeaders" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests.CompleteGroupsShareIconAxisAndAllEightTeamRowsFitWithIndependentLifeAndLeaders" methodname="CompleteGroupsShareIconAxisAndAllEightTeamRowsFitWithIndependentLifeAndLeaders" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests" runstate="Runnable" seed="1176036798" result="Passed" start-time="2026-10-07 12:08:39Z" end-time="2026-10-07 12:08:39Z" duration="0.029526" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1182" name="FfaLeaderKeepsCrownWithoutYellowRowOrStripe" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests.FfaLeaderKeepsCrownWithoutYellowRowOrStripe" methodname="FfaLeaderKeepsCrownWithoutYellowRowOrStripe" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests" runstate="Runnable" seed="2117594840" result="Passed" start-time="2026-10-07 12:08:39Z" end-time="2026-10-07 12:08:39Z" duration="0.014330" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1234" name="RosterCardsTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" classname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-07 12:08:39Z" end-time="2026-10-07 12:08:53Z" duration="13.518683" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1235" name="BotViewRoundtripPreservesRosterDifficultyTeamAndFocus" fullname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.BotViewRoundtripPreservesRosterDifficultyTeamAndFocus" methodname="BotViewRoundtripPreservesRosterDifficultyTeamAndFocus" classname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" runstate="Runnable" seed="2036775944" result="Passed" start-time="2026-10-07 12:08:39Z" end-time="2026-10-07 12:08:42Z" duration="2.517307" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1239" name="FullUnequalTeamsAllowExplicitTransferAndBlockFurtherAdds" fullname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.FullUnequalTeamsAllowExplicitTransferAndBlockFurtherAdds" methodname="FullUnequalTeamsAllowExplicitTransferAndBlockFurtherAdds" classname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" runstate="Runnable" seed="109705257" result="Passed" start-time="2026-10-07 12:08:42Z" end-time="2026-10-07 12:08:44Z" duration="2.831298" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1237" name="GamepadCanEditDifficultyCancelAndReturnToCard" fullname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.GamepadCanEditDifficultyCancelAndReturnToCard" methodname="GamepadCanEditDifficultyCancelAndReturnToCard" classname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" runstate="Runnable" seed="103746541" result="Passed" start-time="2026-10-07 12:08:44Z" end-time="2026-10-07 12:08:47Z" duration="2.719179" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1236" name="GenericJoystickAppearsInPickerButCannotBeAssigned" fullname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.GenericJoystickAppearsInPickerButCannotBeAssigned" methodname="GenericJoystickAppearsInPickerButCannotBeAssigned" classname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" runstate="Runnable" seed="1362859318" result="Passed" start-time="2026-10-07 12:08:47Z" end-time="2026-10-07 12:08:50Z" duration="2.721891" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1238" name="YRestoresProfileWhileEditorRemainsOnSameBot" fullname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.YRestoresProfileWhileEditorRemainsOnSameBot" methodname="YRestoresProfileWhileEditorRemainsOnSameBot" classname="StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests" runstate="Runnable" seed="328097936" result="Passed" start-time="2026-10-07 12:08:50Z" end-time="2026-10-07 12:08:53Z" duration="2.726706" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1240" name="SettingsGamepadNavigationTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-07 12:08:53Z" end-time="2026-10-07 12:09:13Z" duration="20.227691" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1243" name="AllAiOperatorOpensTheSameSettingsAndReturnsToPause" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AllAiOperatorOpensTheSameSettingsAndReturnsToPause" methodname="AllAiOperatorOpensTheSameSettingsAndReturnsToPause" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1738387603" result="Passed" start-time="2026-10-07 12:08:53Z" end-time="2026-10-07 12:08:59Z" duration="6.435493" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1247" name="AudioSettingsPersistAndRemainGamepadNavigable" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AudioSettingsPersistAndRemainGamepadNavigable" methodname="AudioSettingsPersistAndRemainGamepadNavigable" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1861097152" result="Passed" start-time="2026-10-07 12:08:59Z" end-time="2026-10-07 12:09:02Z" duration="2.793274" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1244" name="DevicePageShowsSupportedAndUnsupportedControllers" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.DevicePageShowsSupportedAndUnsupportedControllers" methodname="DevicePageShowsSupportedAndUnsupportedControllers" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="921490762" result="Passed" start-time="2026-10-07 12:09:02Z" end-time="2026-10-07 12:09:04Z" duration="2.594531" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1245" name="GamepadCanCancelDisplayConfirmation" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.GamepadCanCancelDisplayConfirmation" methodname="GamepadCanCancelDisplayConfirmation" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="902422" result="Passed" start-time="2026-10-07 12:09:04Z" end-time="2026-10-07 12:09:07Z" duration="2.679992" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1246" name="SectionFocusShowsParametersWithoutSubmit" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SectionFocusShowsParametersWithoutSubmit" methodname="SectionFocusShowsParametersWithoutSubmit" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1474785361" result="Passed" start-time="2026-10-07 12:09:07Z" end-time="2026-10-07 12:09:10Z" duration="2.778032" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1241" name="SettingsAreFullyNavigableWithGamepad" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SettingsAreFullyNavigableWithGamepad" methodname="SettingsAreFullyNavigableWithGamepad" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="863743524" result="Passed" start-time="2026-10-07 12:09:10Z" end-time="2026-10-07 12:09:13Z" duration="2.940420" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1242" name="ShoulderButtonsCycleOnlyAssignedWeaponOnPress" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.ShoulderButtonsCycleOnlyAssignedWeaponOnPress" methodname="ShoulderButtonsCycleOnlyAssignedWeaponOnPress" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1176101235" result="Passed" start-time="2026-10-07 12:09:13Z" end-time="2026-10-07 12:09:13Z" duration="0.003548" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
