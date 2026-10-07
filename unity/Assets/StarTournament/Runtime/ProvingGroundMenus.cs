@@ -10,9 +10,9 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround
     {
-        static readonly Color32 MenuInk = new Color32(17,30,41,255);
-        static readonly Color32 MenuCard = new Color32(28,49,60,255);
-        static readonly Color32 MenuGold = new Color32(255,189,98,255);
+        static readonly Color32 MenuInk = new Color32(16,28,41,255);
+        static readonly Color32 MenuCard = new Color32(27,43,59,255);
+        static readonly Color32 MenuGold = new Color32(231,187,114,255);
         GameObject oldMenuColumn, mainMenuScreen, setupScreen, setupMapPage, setupRulesPage, setupPlayersPage, profilesScreen, settingsScreen, labScreen, identityScreen;
         Transform profileList, identityList;
         Text profileDetail, identityHeading, labDetail, setupSummary, setupMessage, setupLabIdentity;
@@ -33,7 +33,21 @@ namespace StarTournament.ProvingGround
         {
             var panel=new GameObject(name,typeof(RectTransform),typeof(Image));panel.transform.SetParent(parent,false);
             Layout((RectTransform)panel.transform,min,max);panel.GetComponent<Image>().color=color;
+            bool outer=name=="main-menu"||name=="setup-screen"||name=="profiles-screen"||name=="lab-screen"||name=="settings-screen"&&parent.name!="pause-card";
+            if(outer)AddMenuBackdrop(panel,name=="main-menu");
+            else if(color.a>0 && min!=Vector2.zero && max!=Vector2.one)RoundRosterPanel(panel);
             return panel;
+        }
+        void AddMenuBackdrop(GameObject panel,bool main)
+        {
+            var texture=Resources.Load<Texture2D>("UI/menu-arena");
+            var art=new GameObject("menu-arena-background",typeof(RectTransform),typeof(RawImage),typeof(AspectRatioFitter));
+            art.transform.SetParent(panel.transform,false);Layout((RectTransform)art.transform,Vector2.zero,Vector2.one);
+            var image=art.GetComponent<RawImage>();image.texture=texture;image.raycastTarget=false;
+            var fit=art.GetComponent<AspectRatioFitter>();fit.aspectMode=AspectRatioFitter.AspectMode.EnvelopeParent;
+            fit.aspectRatio=texture?(float)texture.width/texture.height:16f/9f;
+            var shade=new GameObject("menu-background-shade",typeof(RectTransform),typeof(Image));shade.transform.SetParent(panel.transform,false);
+            Layout((RectTransform)shade.transform,Vector2.zero,Vector2.one);shade.GetComponent<Image>().color=new Color32(10,20,32,(byte)(main?20:190));shade.GetComponent<Image>().raycastTarget=false;
         }
         Text Label(Transform parent,string name,string value,int size,Vector2 min,Vector2 max,TextAnchor align,Color color)
         {
@@ -42,36 +56,32 @@ namespace StarTournament.ProvingGround
         Button MenuButton(Transform parent,string name,string value,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action,bool enabled=true)
         {
             var button=ButtonElement(parent,value,action);button.name=name;Layout((RectTransform)button.transform,min,max);
-            var image=button.GetComponent<Image>();image.color=MenuCard;
-            var colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=MenuGold;
-            colors.selectedColor=MenuGold;colors.pressedColor=new Color(.75f,.57f,.32f);colors.disabledColor=new Color(.43f,.50f,.52f);
-            button.colors=colors;button.interactable=enabled;
+            button.interactable=enabled;
             return button;
         }
         void CreateModernMenuUi(Transform parent)
         {
             oldMenuColumn=parent.Find("menu").gameObject;
             mainMenuScreen=Panel(parent,"main-menu",Vector2.zero,Vector2.one,MenuInk);
-            var left=Panel(mainMenuScreen.transform,"actions",new Vector2(.06f,.13f),new Vector2(.53f,.87f),new Color32(20,39,53,255));
-            var right=Panel(mainMenuScreen.transform,"broadcast",new Vector2(.56f,.13f),new Vector2(.94f,.87f),MenuCard);
-            Label(left.transform,"brand","STAR TOURNAMENT",38,new Vector2(.07f,.85f),new Vector2(.95f,.97f),TextAnchor.MiddleLeft,MenuGold);
+            var left=Panel(mainMenuScreen.transform,"actions",new Vector2(.05f,.13f),new Vector2(.325f,.80f),Color.clear);
+            Label(left.transform,"brand","<color=#EFF5F5>STAR</color>\nTOURNAMENT",52,new Vector2(0,.76f),new Vector2(1,.99f),TextAnchor.MiddleLeft,MenuGold).fontStyle=FontStyle.Bold;
             string[] labels={"Битва","Сетевая игра · скоро","Лаборатория геймдизайна","Профили игроков","Настройки игры","Выход"};
             UnityEngine.Events.UnityAction[] actions={OpenSetup,()=>{},OpenLab,OpenProfiles,()=>OpenSettings(-1),()=>Application.Quit()};
             for(int i=0;i<labels.Length;i++)
             {
-                float top=.79f-i*.115f;
-                var button=MenuButton(left.transform,"main-action-"+i,labels[i],new Vector2(.07f,top-.095f),new Vector2(.93f,top),actions[i],i!=1);
-                if(i==0)mainBattleButton=button;
+                float top=.69f-i*.112f;
+                var button=MenuButton(left.transform,"main-action-"+i,labels[i],new Vector2(0,top-.088f),new Vector2(1,top),actions[i],i!=1);
+                var label=button.GetComponentInChildren<Text>();label.alignment=TextAnchor.MiddleLeft;
+                label.rectTransform.offsetMin=new Vector2(24,0);label.rectTransform.offsetMax=new Vector2(-20,0);
+                if(i==0){mainBattleButton=button;button.GetComponent<Image>().color=MenuGold;label.color=MenuInk;label.fontStyle=FontStyle.Bold;}
+                if(i==5)button.GetComponent<Image>().color=new Color32(16,28,41,140);
             }
-            Label(right.transform,"bowl","КОМБАТ БОУЛ",42,new Vector2(.08f,.73f),new Vector2(.93f,.88f),TextAnchor.MiddleLeft,Color.white);
-            Label(right.transform,"league","ОРБИТАЛЬНАЯ ЛИГА",26,new Vector2(.08f,.65f),new Vector2(.93f,.74f),TextAnchor.MiddleLeft,MenuGold);
-            Label(right.transform,"route","01 / ЛОКАЛЬНЫЙ МАТЧ\n\nВыберите состав, профили и устройства",26,new Vector2(.08f,.36f),new Vector2(.93f,.61f),TextAnchor.UpperLeft,Color.white);
-            Label(right.transform,"controls","МЫШЬ: выбор   ·   ГЕЙМПАД: крестовина / A",22,new Vector2(.08f,.07f),new Vector2(.95f,.19f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            Label(mainMenuScreen.transform,"controls","↑ ↓  Выбрать     A  Подтвердить     Мышь: выбор",18,new Vector2(.05f,.025f),new Vector2(.53f,.075f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             var releaseLabel=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
             if(!string.IsNullOrEmpty(releaseLabel))
             {
-                Label(mainMenuScreen.transform,"installed-release",releaseLabel,22,new Vector2(.06f,.025f),new Vector2(.52f,.10f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
-                var updateStatus=Label(mainMenuScreen.transform,"update-status","Проверка обновлений…",19,new Vector2(.56f,.02f),new Vector2(.78f,.11f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+                Label(mainMenuScreen.transform,"installed-release",releaseLabel,22,new Vector2(.56f,.025f),new Vector2(.78f,.075f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+                var updateStatus=Label(mainMenuScreen.transform,"update-status","Проверка обновлений…",19,new Vector2(.56f,.08f),new Vector2(.78f,.13f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
                 var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Проверить",new Vector2(.79f,.025f),new Vector2(.94f,.105f),()=>{});
                 gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
             }
@@ -79,10 +89,10 @@ namespace StarTournament.ProvingGround
             CreateSetupUi(parent);
 
             profilesScreen=Panel(parent,"profiles-screen",Vector2.zero,Vector2.one,MenuInk);
-            var listCard=Panel(profilesScreen.transform,"profile-list-card",new Vector2(.06f,.12f),new Vector2(.57f,.89f),new Color32(20,39,53,255));
+            var listCard=Panel(profilesScreen.transform,"profile-list-card",new Vector2(.06f,.12f),new Vector2(.57f,.89f),new Color32(20,33,48,245));
             var detailCard=Panel(profilesScreen.transform,"profile-detail-card",new Vector2(.59f,.12f),new Vector2(.94f,.89f),MenuCard);
             Label(listCard.transform,"profiles-title","ПРОФИЛИ ИГРОКОВ",35,new Vector2(.06f,.86f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,Color.white);
-            var list=Panel(listCard.transform,"profile-list",new Vector2(.06f,.20f),new Vector2(.94f,.84f),new Color32(20,39,53,255));profileList=list.transform;
+            var list=Panel(listCard.transform,"profile-list",new Vector2(.06f,.20f),new Vector2(.94f,.84f),new Color32(20,33,48,245));profileList=list.transform;
             MenuButton(listCard.transform,"profile-create","+ СОЗДАТЬ ПРОФИЛЬ",new Vector2(.06f,.10f),new Vector2(.94f,.18f),CreateNamedProfile);
             profilesBackButton=MenuButton(listCard.transform,"profiles-back","‹ НАЗАД",new Vector2(.06f,.01f),new Vector2(.94f,.08f),ToMainMenu);
             profileDetail=Label(detailCard.transform,"profile-detail","Выберите профиль",27,new Vector2(.08f,.77f),new Vector2(.95f,.97f),TextAnchor.MiddleLeft,MenuGold);
@@ -96,9 +106,9 @@ namespace StarTournament.ProvingGround
             CreateDesignLabUi(parent);
 
             identityScreen=Panel(parent,"identity-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,248));
-            var identityCard=Panel(identityScreen.transform,"identity-card",new Vector2(.17f,.12f),new Vector2(.83f,.88f),new Color32(20,39,53,255));
+            var identityCard=Panel(identityScreen.transform,"identity-card",new Vector2(.17f,.12f),new Vector2(.83f,.88f),new Color32(20,33,48,245));
             identityHeading=Label(identityCard.transform,"identity-heading","КТО ИГРАЕТ?",35,new Vector2(.06f,.85f),new Vector2(.94f,.97f),TextAnchor.MiddleLeft,MenuGold);
-            var options=Panel(identityCard.transform,"identity-options",new Vector2(.06f,.19f),new Vector2(.94f,.82f),new Color32(20,39,53,255));identityList=options.transform;
+            var options=Panel(identityCard.transform,"identity-options",new Vector2(.06f,.19f),new Vector2(.94f,.82f),new Color32(20,33,48,245));identityList=options.transform;
             MenuButton(identityCard.transform,"identity-cancel","‹ НАЗАД",new Vector2(.06f,.06f),new Vector2(.48f,.16f),()=>{pendingSeat=-1;RefreshInterface();});
             identitySettingsButton=MenuButton(identityCard.transform,"identity-settings","Личные настройки",new Vector2(.52f,.06f),new Vector2(.94f,.16f),()=>{int seat=pendingSeat;pendingSeat=-1;OpenSettings(seat);});
             for(int seat=0;seat<seatIdentityButtons.Length;seat++)
@@ -127,7 +137,7 @@ namespace StarTournament.ProvingGround
                 int selected=i;float left=.05f+i*.305f;
                 setupSteps[i]=MenuButton(setupScreen.transform,"setup-step-"+i,steps[i],new Vector2(left,.78f),new Vector2(left+.29f,.85f),()=>ShowSetupStep(selected));
             }
-            var content=Panel(setupScreen.transform,"setup-content",new Vector2(.05f,.12f),new Vector2(.69f,.76f),new Color32(20,39,53,255));
+            var content=Panel(setupScreen.transform,"setup-content",new Vector2(.05f,.12f),new Vector2(.69f,.76f),new Color32(20,33,48,245));
             var summary=Panel(setupScreen.transform,"setup-summary-card",new Vector2(.71f,.12f),new Vector2(.95f,.76f),MenuCard);
             Label(summary.transform,"summary-title","ПЕРЕД СТАРТОМ",26,new Vector2(.07f,.85f),new Vector2(.93f,.96f),TextAnchor.MiddleLeft,MenuGold);
             setupSummary=Label(summary.transform,"setup-summary","",20,new Vector2(.07f,.53f),new Vector2(.93f,.83f),TextAnchor.UpperLeft,Color.white);
@@ -135,32 +145,32 @@ namespace StarTournament.ProvingGround
             setupMessage=Label(summary.transform,"setup-message","",18,new Vector2(.07f,.22f),new Vector2(.93f,.34f),TextAnchor.UpperLeft,new Color32(255,213,157,255));
             setupPrevious=MenuButton(summary.transform,"setup-previous","‹ НАЗАД",new Vector2(.07f,.12f),new Vector2(.93f,.20f),PreviousSetupStep);
             setupNext=MenuButton(summary.transform,"setup-next","ДАЛЕЕ ›",new Vector2(.07f,.02f),new Vector2(.93f,.10f),NextSetupStep);
-            setupMapPage=Panel(content.transform,"setup-map",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
+            setupMapPage=Panel(content.transform,"setup-map",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             Label(setupMapPage.transform,"map-title","ВЫБЕРИТЕ КАРТУ",30,new Vector2(.05f,.86f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
-            Label(setupMapPage.transform,"map-help","Опубликованные карты с точной ревизией. Выбор не меняет геометрию.",20,new Vector2(.05f,.77f),new Vector2(.95f,.86f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            Label(setupMapPage.transform,"map-help","Опубликованные карты с точной ревизией. Выбор не меняет геометрию.",20,new Vector2(.05f,.77f),new Vector2(.95f,.86f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             var mapCard=Panel(setupMapPage.transform,"selected-map",new Vector2(.05f,.36f),new Vector2(.95f,.73f),MenuCard);
             Label(mapCard.transform,"map-name","COMBAT BOWL",31,new Vector2(.05f,.59f),new Vector2(.95f,.90f),TextAnchor.MiddleLeft,MenuGold);
             Label(mapCard.transform,"map-revision","Орбитальная арена · "+CombatBowlCatalog.Identity+"\nФиксированная карта · 2–8 участников",21,new Vector2(.05f,.14f),new Vector2(.95f,.58f),TextAnchor.MiddleLeft,Color.white);
             MoveSetupControl(arenaButton,setupMapPage,new Vector2(.05f,.15f),new Vector2(.95f,.30f));
             MenuButton(setupMapPage.transform,"setup-map-exit","‹ ГЛАВНОЕ МЕНЮ",new Vector2(.05f,.03f),new Vector2(.45f,.12f),ToMainMenu);
 
-            setupRulesPage=Panel(content.transform,"setup-rules",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
+            setupRulesPage=Panel(content.transform,"setup-rules",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             Label(setupRulesPage.transform,"rules-title","ПРАВИЛА МАТЧА",30,new Vector2(.05f,.87f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
             MoveSetupControl(modeButton,setupRulesPage,new Vector2(.05f,.68f),new Vector2(.95f,.82f));
-            Label(setupRulesPage.transform,"mode-help","Каждый за себя или две команды с отдельным счётом.",19,new Vector2(.05f,.61f),new Vector2(.95f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            Label(setupRulesPage.transform,"mode-help","Каждый за себя или две команды с отдельным счётом.",19,new Vector2(.05f,.61f),new Vector2(.95f,.67f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             MoveSetupControl(durationButton,setupRulesPage,new Vector2(.05f,.47f),new Vector2(.69f,.59f));
             var durationMinus=oldMenuColumn.transform.Find("duration-minus").GetComponent<Button>();
             MoveSetupControl(durationMinus,setupRulesPage,new Vector2(.71f,.47f),new Vector2(.95f,.59f));
-            Label(setupRulesPage.transform,"duration-help","Матч закончится по времени или раньше по цели.",19,new Vector2(.05f,.40f),new Vector2(.95f,.46f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            Label(setupRulesPage.transform,"duration-help","Матч закончится по времени или раньше по цели.",19,new Vector2(.05f,.40f),new Vector2(.95f,.46f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             MoveSetupControl(targetButton,setupRulesPage,new Vector2(.05f,.27f),new Vector2(.69f,.39f));
             MoveSetupControl(targetMinus,setupRulesPage,new Vector2(.71f,.27f),new Vector2(.82f,.39f));
             MoveSetupControl(targetPlus,setupRulesPage,new Vector2(.84f,.27f),new Vector2(.95f,.39f));
-            Label(setupRulesPage.transform,"target-help","Необязательный порог по очкам.",19,new Vector2(.05f,.20f),new Vector2(.95f,.26f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+            Label(setupRulesPage.transform,"target-help","Необязательный порог по очкам.",19,new Vector2(.05f,.20f),new Vector2(.95f,.26f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             teamRow.transform.SetParent(setupRulesPage.transform,false);
             Layout((RectTransform)teamRow.transform,new Vector2(.05f,.09f),new Vector2(.95f,.20f));
             MoveSetupControl(colorButton,setupRulesPage,new Vector2(.05f,.01f),new Vector2(.95f,.08f));
 
-            setupPlayersPage=Panel(content.transform,"setup-players",Vector2.zero,Vector2.one,new Color32(20,39,53,255));
+            setupPlayersPage=Panel(content.transform,"setup-players",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             MoveSetupControl(start,summary,new Vector2(.07f,.02f),new Vector2(.93f,.10f));
             CreateRosterUi(parent);
 
@@ -239,7 +249,7 @@ namespace StarTournament.ProvingGround
         }
         InputField CreateNameInput(Transform parent)
         {
-            var shell=Panel(parent,"profile-name-input",new Vector2(.08f,.67f),new Vector2(.92f,.76f),new Color32(38,61,72,255));
+            var shell=Panel(parent,"profile-name-input",new Vector2(.08f,.67f),new Vector2(.92f,.76f),new Color32(35,51,68,255));
             var input=shell.AddComponent<InputField>();
             var value=Label(shell.transform,"name-value","",26,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,Color.white);
             input.textComponent=value;input.characterLimit=24;input.contentType=InputField.ContentType.Standard;

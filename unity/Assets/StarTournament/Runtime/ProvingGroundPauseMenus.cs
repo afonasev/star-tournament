@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
                 dim.GetComponent<Image>().raycastTarget=false;
                 var wait=Label(root.transform,"pause-wait","МАТЧ НА ПАУЗЕ",24,new Vector2(.08f,.42f),new Vector2(.92f,.58f),TextAnchor.MiddleCenter,Color.white);
                 seatPauseWaiting[seat]=wait.gameObject;
-                var card=Panel(root.transform,"pause-card",new Vector2(.11f,.09f),new Vector2(.89f,.91f),new Color32(20,39,53,248));
+                var card=Panel(root.transform,"pause-card",new Vector2(.11f,.09f),new Vector2(.89f,.91f),new Color32(20,33,48,248));
                 seatPauseCards[seat]=card;
                 card.AddComponent<CanvasGroup>();
                 seatPauseActions[seat]=PausePage(card.transform,"actions");
@@ -265,6 +265,14 @@ namespace StarTournament.ProvingGround
                 seatSettingsViews[seat].Root.SetActive(human&&page==SeatPausePage.Settings);
                 // A settings view follows the same full-panel proportions as the shell, within this viewport.
                 Layout((RectTransform)seatPauseCards[seat].transform,page==SeatPausePage.Settings?Vector2.zero:new Vector2(.11f,.09f),page==SeatPausePage.Settings?Vector2.one:new Vector2(.89f,.91f));
+                if(page!=SeatPausePage.Settings)
+                {
+                    // Keep action dialogs compact on a full viewport; retain proportional sizing in split-screen.
+                    var cardRect=(RectTransform)seatPauseCards[seat].transform;
+                    var viewport=(RectTransform)cardRect.parent;
+                    float width=Mathf.Min(viewport.rect.width*.78f,760),height=Mathf.Min(viewport.rect.height*.82f,650);
+                    cardRect.anchorMin=cardRect.anchorMax=new Vector2(.5f,.5f);cardRect.sizeDelta=new Vector2(width,height);cardRect.anchoredPosition=Vector2.zero;
+                }
                 seatPauseRepeat[seat].SetActive(human&&page==SeatPausePage.ConfirmRepeat);
                 seatPauseExit[seat].SetActive(human&&page==SeatPausePage.ConfirmExit);
                 if(human)

@@ -160,7 +160,7 @@ namespace StarTournament.ProvingGround
                 settingsScreen=Panel(parent,"settings-screen",Vector2.zero,Vector2.one,MenuInk);
                 Label(settingsScreen.transform,"settings-brand","STAR TOURNAMENT  /  НАСТРОЙКИ",35,new Vector2(.05f,.84f),new Vector2(.95f,.90f),TextAnchor.MiddleLeft,MenuGold);
                 var navigation=Panel(settingsScreen.transform,"settings-navigation",new Vector2(.05f,.11f),new Vector2(.25f,.80f),MenuCard);
-                var content=Panel(settingsScreen.transform,"settings-content",new Vector2(.27f,.11f),new Vector2(.95f,.80f),new Color32(20,39,53,255));
+                var content=Panel(settingsScreen.transform,"settings-content",new Vector2(.27f,.11f),new Vector2(.95f,.80f),new Color32(20,33,48,245));
                 string[] names={"ИЗОБРАЖЕНИЕ","УПРАВЛЕНИЕ","ИНТЕРФЕЙС","ЗВУК"};
                 for(int i=0;i<names.Length;i++)
                 {
@@ -171,9 +171,9 @@ namespace StarTournament.ProvingGround
                 }
                 settingsBackButton=MenuButton(navigation.transform,"settings-back","‹ НАЗАД",new Vector2(.06f,.05f),new Vector2(.94f,.15f),CloseSettings);
                 settingsHeading=Label(content.transform,"settings-heading","НАСТРОЙКИ ИГРЫ",35,new Vector2(.05f,.85f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
-                settingsDescription=Label(content.transform,"settings-description","",21,new Vector2(.05f,.77f),new Vector2(.95f,.87f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+                settingsDescription=Label(content.transform,"settings-description","",21,new Vector2(.05f,.77f),new Vector2(.95f,.87f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
-                settingsImagePage=Panel(content.transform,"settings-image",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
+                settingsImagePage=Panel(content.transform,"settings-image",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 Panel(settingsImagePage.transform,"display-mode-card",new Vector2(.02f,.75f),new Vector2(.98f,.98f),MenuCard);
                 settingsDisplayMode=Label(settingsImagePage.transform,"display-mode-label","",25,new Vector2(.04f,.78f),new Vector2(.96f,.96f),TextAnchor.MiddleLeft,Color.white);
                 settingsModeButton=MenuButton(settingsImagePage.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,.78f),new Vector2(.96f,.96f),ChangeDisplayMode);
@@ -183,26 +183,26 @@ namespace StarTournament.ProvingGround
                 Panel(settingsImagePage.transform,"shadows-card",new Vector2(.02f,.19f),new Vector2(.98f,.45f),MenuCard);
                 settingsShadows=Label(settingsImagePage.transform,"shadows-label","",25,new Vector2(.04f,.22f),new Vector2(.96f,.44f),TextAnchor.MiddleLeft,Color.white);
                 settingsShadowsToggle=BooleanSetting(settingsImagePage.transform,"settings-shadows","Тени",new Vector2(.59f,.24f),new Vector2(.96f,.42f),v=>{if(v!=shadowsEnabled)ToggleShadows();});
-                Label(settingsImagePage.transform,"graphics-help","Графика общая для всех экранов. Новое разрешение нужно подтвердить.",20,new Vector2(.04f,.03f),new Vector2(.96f,.18f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+                Label(settingsImagePage.transform,"graphics-help","Графика общая для всех экранов. Новое разрешение нужно подтвердить.",20,new Vector2(.04f,.03f),new Vector2(.96f,.18f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
-                settingsControlPage=Panel(content.transform,"settings-control",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
+                settingsControlPage=Panel(content.transform,"settings-control",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 settingsMouseSlider=NumericSetting(settingsControlPage.transform,"settings-mouse-sensitivity","Мышь",new Vector2(.02f,.77f),new Vector2(.98f,.99f),MouseSensitivityPreference.Descriptor(Profile),SetMenuMouse);
                 settingsHorizontalSlider=NumericSetting(settingsControlPage.transform,"settings-gamepad-horizontal","Геймпад: горизонталь",new Vector2(.02f,.54f),new Vector2(.98f,.76f),Profile.Descriptor(GamepadLookSettings.HorizontalPath),v=>SetMenuGamepad(0,v));
                 settingsVerticalSlider=NumericSetting(settingsControlPage.transform,"settings-gamepad-vertical","Геймпад: вертикаль",new Vector2(.02f,.31f),new Vector2(.98f,.53f),Profile.Descriptor(GamepadLookSettings.VerticalPath),v=>SetMenuGamepad(1,v));
                 settingsAutoLevelToggle=BooleanSetting(settingsControlPage.transform,"settings-auto-level","Выравнивать взгляд по полу / лестнице",new Vector2(.02f,.16f),new Vector2(.98f,.29f),v=>SetMenuGamepad(2,0,v));
                 settingsHelpButton=MenuButton(settingsControlPage.transform,"settings-controls-help","СПРАВКА ПО КНОПКАМ",new Vector2(.02f,.01f),new Vector2(.49f,.14f),()=>SetHelp(true));
                 settingsDevicesButton=MenuButton(settingsControlPage.transform,"settings-controls-devices","УСТРОЙСТВА",new Vector2(.51f,.01f),new Vector2(.98f,.14f),()=>SetDevices(true));
-                settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
+                settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 Panel(settingsInterfacePage.transform,"fps-card",new Vector2(.02f,.25f),new Vector2(.98f,.94f),MenuCard);
                 settingsFps=Label(settingsInterfacePage.transform,"fps-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
-                Label(settingsInterfacePage.transform,"fps-help","Индикатор частоты кадров без изменения правил матча.",20,new Vector2(.04f,.50f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(177,199,201,255));
+                Label(settingsInterfacePage.transform,"fps-help","Индикатор частоты кадров без изменения правил матча.",20,new Vector2(.04f,.50f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
                 settingsFpsToggle=BooleanSetting(settingsInterfacePage.transform,"settings-fps","Показывать FPS",new Vector2(.05f,.28f),new Vector2(.96f,.47f),SetMenuFps);
 
-                settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,39,53,255));
-                settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.55f),new Vector2(.98f,.95f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
-                settingsEffectsSlider=NumericSetting(settingsAudioPage.transform,"settings-effects","Эффекты",new Vector2(.02f,.10f),new Vector2(.98f,.50f),Profile.Descriptor("audio.effectsDefaultPercent"),v=>{NativeAudioPreferences.SetEffects(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
+                settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
+                settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.66f),new Vector2(.98f,.94f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
+                settingsEffectsSlider=NumericSetting(settingsAudioPage.transform,"settings-effects","Эффекты",new Vector2(.02f,.31f),new Vector2(.98f,.59f),Profile.Descriptor("audio.effectsDefaultPercent"),v=>{NativeAudioPreferences.SetEffects(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
 
-                settingsHelpPage=Panel(content.transform,"settings-help-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,39,53,255));
+                settingsHelpPage=Panel(content.transform,"settings-help-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
                 var helpViewport=Panel(settingsHelpPage.transform,"help-viewport",new Vector2(.02f,.33f),new Vector2(.98f,.98f),Color.clear);
                 helpViewport.AddComponent<RectMask2D>();settingsHelpScroll=helpViewport.AddComponent<ScrollRect>();
                 settingsHelpScroll.viewport=(RectTransform)helpViewport.transform;settingsHelpScroll.horizontal=false;settingsHelpScroll.movementType=ScrollRect.MovementType.Clamped;
@@ -215,7 +215,7 @@ namespace StarTournament.ProvingGround
                 settingsHelpKeyboard=MenuButton(settingsHelpPage.transform,"settings-help-keyboard","КЛАВИАТУРА / МЫШЬ",new Vector2(.02f,.14f),new Vector2(.49f,.24f),()=>SetHelpText(KeyboardHelp));
                 settingsHelpGamepad=MenuButton(settingsHelpPage.transform,"settings-help-gamepad","ГЕЙМПАД",new Vector2(.51f,.14f),new Vector2(.98f,.24f),()=>SetHelpText(GamepadHelp));
                 settingsHelpBack=MenuButton(settingsHelpPage.transform,"settings-help-back","‹ К НАСТРОЙКАМ",new Vector2(.02f,.02f),new Vector2(.98f,.12f),()=>SetHelp(false));
-                settingsDevicesPage=Panel(content.transform,"settings-devices-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,39,53,255));
+                settingsDevicesPage=Panel(content.transform,"settings-devices-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
                 Label(settingsDevicesPage.transform,"devices-title","ПОДКЛЮЧЁННЫЕ УСТРОЙСТВА",27,new Vector2(.03f,.88f),new Vector2(.97f,.98f),TextAnchor.MiddleLeft,MenuGold);
                 for(int i=0;i<settingsDeviceRows.Length;i++)
                 {
@@ -245,13 +245,13 @@ namespace StarTournament.ProvingGround
                 settingsRevertButton=MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);
                 foreach(var button in settingsScreen.GetComponentsInChildren<Selectable>(true))
                 {
-                    if(button is Button)button.GetComponent<Image>().color=Color.white;
+                    if(button is Button)button.GetComponent<Image>().color=MenuCard;
                     var colors=button.colors;
-                    colors.normalColor=MenuCard;
-                    colors.highlightedColor=new Color32(61,96,112,255);
-                    colors.selectedColor=MenuCard;
-                    colors.pressedColor=new Color32(176,125,66,255);
-                    colors.disabledColor=new Color32(50,62,69,255);
+                    colors.normalColor=button is Button?Color.white:MenuCard;
+                    colors.highlightedColor=button is Button?new Color(1.15f,1.15f,1.15f,1):new Color32(61,96,112,255);
+                    colors.selectedColor=button is Button?Color.white:MenuCard;
+                    colors.pressedColor=button is Button?new Color(.8f,.8f,.8f,1):new Color32(176,125,66,255);
+                    colors.disabledColor=button is Button?new Color(.52f,.57f,.62f,1):new Color32(50,62,69,255);
                     button.colors=colors;
                     var border=new GameObject("controller-focus",typeof(RectTransform));
                     border.transform.SetParent(button.transform,false);
@@ -290,7 +290,12 @@ namespace StarTournament.ProvingGround
             {
                 var edge=new GameObject(name,typeof(RectTransform),typeof(Image));
                 edge.transform.SetParent(parent,false);
-                Layout((RectTransform)edge.transform,min,max);
+                var rect=(RectTransform)edge.transform;
+                // Fixed Canvas-pixel focus strokes do not become wide bars on long controls.
+                bool horizontal=name=="top"||name=="bottom";
+                Vector2 at=name=="top"?new Vector2(0,1):name=="right"?new Vector2(1,0):Vector2.zero;
+                Layout(rect,at,horizontal?new Vector2(1,at.y):new Vector2(at.x,1));
+                rect.sizeDelta=horizontal?new Vector2(0,2):new Vector2(2,0);
                 var image=edge.GetComponent<Image>();image.color=MenuGold;image.raycastTarget=false;
             }
             void RefreshSettingsFocus()
