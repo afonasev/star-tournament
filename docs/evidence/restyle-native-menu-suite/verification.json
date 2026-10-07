@@ -1,0 +1,99 @@
+{
+  "revision": "34f610a",
+  "scope": "ui-only",
+  "ui_gate": {
+    "editmode": 3,
+    "playmode": 11,
+    "result": "Passed"
+  },
+  "affected_screens": {
+    "passed": 17,
+    "skipped": 0,
+    "failed": 0,
+    "revision": "f2d57b6"
+  },
+  "build": {
+    "result": "Passed",
+    "marker": "STAR_PROVING_BUILD_PASS 490524013"
+  },
+  "background": {
+    "path": "unity/Assets/StarTournament/Resources/UI/menu-arena.png",
+    "sha256": "9265eaadd2f77471ea860281e9923df79872a5f605dd2d7d4324cbac43f9494b",
+    "generator": "built-in image_gen",
+    "seed": null
+  },
+  "native_review": {
+    "result": "Passed",
+    "cases": [
+      {
+        "name": "menu",
+        "passed": true,
+        "exit": 0,
+        "stoppedAfterMarker": false,
+        "seconds": 13.0,
+        "screenshots": 21
+      },
+      {
+        "name": "setup",
+        "passed": true,
+        "exit": -15,
+        "stoppedAfterMarker": true,
+        "seconds": 31.2,
+        "screenshots": 15
+      },
+      {
+        "name": "pause1",
+        "passed": true,
+        "exit": 0,
+        "stoppedAfterMarker": false,
+        "seconds": 21.1,
+        "screenshots": 27
+      },
+      {
+        "name": "pause4",
+        "passed": true,
+        "exit": 0,
+        "stoppedAfterMarker": false,
+        "seconds": 18.1,
+        "screenshots": 22
+      },
+      {
+        "name": "results",
+        "passed": true,
+        "exit": -15,
+        "stoppedAfterMarker": true,
+        "seconds": 10.1,
+        "screenshots": 5
+      },
+      {
+        "name": "lab",
+        "passed": true,
+        "exit": 0,
+        "stoppedAfterMarker": false,
+        "seconds": 31.1,
+        "screenshots": 16
+      }
+    ],
+    "screenshots": 106,
+    "resolution": [
+      3456,
+      2160
+    ],
+    "muted": true
+  },
+  "human_acceptance": false,
+  "final_settings": {
+    "result": "Passed",
+    "passed": "9",
+    "failed": "0",
+    "skipped": "0",
+    "revision": "34f610a"
+  },
+  "final_lab": {
+    "result": "Passed",
+    "passed": "3",
+    "failed": "0",
+    "skipped": "0",
+    "revision": "175e455"
+  }
+}

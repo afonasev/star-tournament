@@ -1,0 +1,16 @@
+{
+    "state": "01-map",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "width": 3456,
+    "height": 2160,
+    "muted": true,
+    "setupMap": true,
+    "setupRules": false,
+    "setupPlayers": false,
+    "settingsImage": false,
+    "settingsAudio": false,
+    "confirmation": false,
+    "shadows": true,
+    "musicPercent": 70,
+    "effectsPercent": 80
+}
