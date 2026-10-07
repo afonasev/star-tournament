@@ -137,6 +137,8 @@ namespace StarTournament.ProvingGround
         public const string ReleaseId="unity-shipped-release";
         static readonly object historicalLock=new object();
         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
+        static readonly object releaseValidationLock=new object();
+        static readonly Dictionary<string,LabReleaseCatalog> validatedReleases=new Dictionary<string,LabReleaseCatalog>();
         readonly string path; readonly LabBundle shipped; readonly LabReleaseCatalog releases; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
@@ -174,9 +176,12 @@ namespace StarTournament.ProvingGround
             if(this.releases!=null)
             {
                 MergeReleases(data);
-                if(data.Profiles.Any(p=>p.Revisions.Any(r=>IsShipped(r)&&!Current(r.Snapshot))))MigrateCompatibility(data);
+                bool migrated=data.Profiles.Any(p=>p.Revisions.Any(r=>IsShipped(r)&&!Current(r.Snapshot)));
+                if(migrated)MigrateCompatibility(data);
                 if(resetToLatestDefault)SelectLatestDefault(data);
-                ValidateFile(data);
+                // Existing local snapshots were validated on read; catalogue snapshots were
+                // validated below. Only newly derived compatibility snapshots need that work again.
+                ValidateFile(data,migrated);
             }
         }
         void ValidateReleases()
@@ -184,10 +189,18 @@ namespace StarTournament.ProvingGround
             if(releases.Schema!=1||releases.Entries==null||releases.Entries.Count==0||releases.Entries.Any(e=>e==null||e.Sequence<1||e.Revision<1||string.IsNullOrWhiteSpace(e.ProfileId)||string.IsNullOrWhiteSpace(e.ProfileName)||e.ProfileName.Length>48||e.Snapshot==null||e.Hash!=e.Snapshot.Hash())
                 ||releases.Entries.Select(e=>e.Sequence).Distinct().Count()!=releases.Entries.Count
                 ||!releases.Entries.Any(e=>e.ProfileId==ReleaseId))throw new InvalidDataException("Некорректный релизный каталог");
-            foreach(var e in releases.Entries)
+            string key;
+            using(var sha=SHA256.Create())key=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(shipped)+"\n"+JsonUtility.ToJson(releases))));
+            lock(releaseValidationLock)
             {
-                var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
-                ValidateFile(file);e.Snapshot=r.Snapshot;
+                if(validatedReleases.TryGetValue(key,out var cached)){releases.Entries=cached.Clone().Entries;return;}
+                foreach(var e in releases.Entries)
+                {
+                    var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
+                    ValidateFile(file);e.Snapshot=r.Snapshot;
+                }
+                if(validatedReleases.Count>=4)validatedReleases.Clear();
+                validatedReleases.Add(key,releases.Clone());
             }
         }
         public bool IsShipped(LabRevision revision)=>releases!=null&&releases.Entries.Any(e=>e.Sequence==revision.ReleaseSequence&&e.Hash==revision.ReleaseHash);
@@ -395,7 +408,7 @@ namespace StarTournament.ProvingGround
         LabHistoryFile NewFile()=>new LabHistoryFile{SelectedId=ReleaseId,SelectedRevision=1,Profiles=new List<LabHistoryProfile>{
             new LabHistoryProfile{Id=ReleaseId,Name="Default",Protected=true,Revisions=new List<LabRevision>{Revision(shipped,1,null)}}}};
         static LabRevision Revision(LabBundle bundle,int number,string date)=>new LabRevision{Number=number,Date=date,Hash=bundle.Hash(),Snapshot=bundle.Clone()};
-        void ValidateFile(LabHistoryFile file)
+        void ValidateFile(LabHistoryFile file,bool validateSnapshots=true)
         {
             if(file==null||file.Schema!=1||file.Profiles==null||file.Profiles.Count==0)throw new InvalidDataException("Неподдерживаемая схема");
 
@@ -406,6 +419,8 @@ namespace StarTournament.ProvingGround
                 if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
                 foreach(var r in p.Revisions)
                 {
+                    if(r.Number<1||r.Snapshot==null||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
+                    if(!validateSnapshots)continue;
                     var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
                     var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
                     if(r.Number<1||r.Snapshot==null||!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");

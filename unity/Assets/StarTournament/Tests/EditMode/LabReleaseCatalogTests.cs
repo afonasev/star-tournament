@@ -100,5 +100,33 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Environment.SetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY",oldEnvironment);
             }
         }
+        [Test]public void ValidationCacheUsesFullTrustedMetadataAndKeepsSnapshotsDetached()
+        {
+            var baseline=Baseline();var catalogue=LabReleaseCatalog.Factory(baseline);
+            foreach(string label in new[]{"trusted A","trusted B","trusted A"})
+            {
+                var trusted=baseline.Clone();trusted.Profile("rifle.damage").Descriptor("rifle.damage").Label=label;
+                var history=new DesignLabHistory(path,trusted,releases:catalogue);
+                var snapshot=history.Selected.Snapshot;Assert.That(snapshot.Profile("rifle.damage").Descriptor("rifle.damage").Label,Is.EqualTo(label));
+                snapshot.Profile("rifle.damage").Descriptor("rifle.damage").Label="poisoned";
+                Assert.That(new DesignLabHistory(path,trusted,releases:catalogue).Selected.Snapshot.Profile("rifle.damage").Descriptor("rifle.damage").Label,Is.EqualTo(label));
+            }
+        }
+        [Test]public void HistoricalReleaseKeepsOriginalHashAndHasARunnableCounterpart()
+        {
+            var baseline=Baseline();baseline.Profiles.Add(ProvingProfile.CreateBloodDefault());
+            var old=baseline.Clone();var before=typeof(ProvingProfile).GetMethod("BeforeBloodIntensity",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            old.Profiles=old.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();
+            var catalogue=LabReleaseCatalog.Factory(baseline);catalogue.Entries.Add(Entry(2,"historical","Старая версия",1,old));
+            var history=new DesignLabHistory(path,baseline,releases:catalogue,resetToLatestDefault:true);
+            var revisions=history.Profiles.Single(p=>p.Id=="historical").Revisions;
+            Assert.That(revisions.Any(r=>r.Hash==old.Hash()),Is.True);
+            var compatible=revisions.Single(r=>r.ReleaseSequence==2&&history.Compatible(r));
+            Assert.That(compatible.ReleaseHash,Is.EqualTo(old.Hash()));Assert.That(compatible.ReleaseNumber,Is.EqualTo(1));
+            history.Select("historical",compatible.Number);Assert.That(history.IsShipped(history.Selected),Is.True);
+            var restart=new DesignLabHistory(path,baseline,releases:catalogue,resetToLatestDefault:true);
+            Assert.That(restart.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));
+            Assert.That(restart.Profiles.Single(p=>p.Id=="historical").Revisions.Count,Is.EqualTo(revisions.Count));
+        }
     }
 }

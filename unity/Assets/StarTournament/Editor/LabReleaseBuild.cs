@@ -41,7 +41,6 @@ namespace StarTournament.ProvingGround.Editor
             foreach(var p in history.Profiles)
                 foreach(var r in p.Revisions.Where(r=>r.ReleaseCandidate&&!history.IsShipped(r)).OrderBy(r=>r.Number))
                 {
-                    if(!history.Compatible(r))throw new BuildFailedException("Marked revision has an obsolete schema: "+p.Id+"/"+r.Number);
                     catalog.Entries.Add(new LabReleaseEntry{Sequence=++sequence,ProfileId=p.Id,ProfileName=p.Id==DesignLabHistory.ReleaseId?"Default":p.Name,
                         Revision=r.Number,Date=r.Date,Hash=r.Hash,Snapshot=r.Snapshot.Clone()});added++;
                 }
