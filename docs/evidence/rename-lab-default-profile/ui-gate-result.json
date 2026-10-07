@@ -1,0 +1,20 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "7f2d8c6f319ccbd0b044c4f12601e69cabee808d",
+  "dirty": " M unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs\n M unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs\n M unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs\n",
+  "result": "Failed",
+  "checks": [],
+  "error": "EditMode Unity exit 130"
+}
