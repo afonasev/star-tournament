@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround
             readonly Dictionary<Selectable,GameObject> settingsFocusBorders=new Dictionary<Selectable,GameObject>();
             GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsAudioPage,settingsConfirmation,resolutionPicker;
             Slider settingsMusicSlider,settingsEffectsSlider;
-            Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsFps,settingsConfirmationText;
+            Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsConfirmationText;
             Button settingsConfirmButton;
             Button[] resolutionChoices;
             ScrollRect resolutionScroll,deviceScroll; RectTransform deviceContent;
@@ -76,8 +76,6 @@ namespace StarTournament.ProvingGround
             {
                 if(back){Back();return;}
                 if(Selected==null||!Selected.IsActive()||!Selected.IsInteractable())Select(displayConfirmationActive?settingsRevertButton:FirstSettingsAction());
-                if(settingsHelpOpen&&x!=0&&Selected==settingsHelpBack)
-                {settingsHelpScroll.verticalNormalizedPosition=Mathf.Clamp01(settingsHelpScroll.verticalNormalizedPosition-x*.25f);return;}
                 if(settingsDevicesOpen&&x!=0&&Selected==settingsDevicesBack){deviceScroll.verticalNormalizedPosition=Mathf.Clamp01(deviceScroll.verticalNormalizedPosition-x*.25f);return;}
                 if(Selected is SettingsSlider slider&&x!=0)slider.value+=x*slider.Step;
                 else if(x!=0||y!=0)
@@ -191,22 +189,19 @@ namespace StarTournament.ProvingGround
                 settingsHelpButton=MenuButton(settingsControlPage.transform,"settings-controls-help","СПРАВКА ПО КНОПКАМ",new Vector2(.02f,.01f),new Vector2(.49f,.14f),()=>SetHelp(true));
                 settingsDevicesButton=MenuButton(settingsControlPage.transform,"settings-controls-devices","УСТРОЙСТВА",new Vector2(.51f,.01f),new Vector2(.98f,.14f),()=>SetDevices(true));
                 settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
-                Panel(settingsInterfacePage.transform,"fps-card",new Vector2(.02f,.25f),new Vector2(.98f,.94f),MenuCard);
-                settingsFps=Label(settingsInterfacePage.transform,"fps-label","",27,new Vector2(.04f,.65f),new Vector2(.96f,.90f),TextAnchor.MiddleLeft,Color.white);
-                Label(settingsInterfacePage.transform,"fps-help","Индикатор частоты кадров без изменения правил матча.",20,new Vector2(.04f,.50f),new Vector2(.96f,.67f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-                settingsFpsToggle=BooleanSetting(settingsInterfacePage.transform,"settings-fps","Показывать FPS",new Vector2(.05f,.28f),new Vector2(.96f,.47f),SetMenuFps);
+                settingsFpsToggle=BooleanSetting(settingsInterfacePage.transform,"settings-fps","Показывать FPS",new Vector2(.02f,.78f),new Vector2(.98f,.96f),SetMenuFps);
 
                 settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.66f),new Vector2(.98f,.94f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
                 settingsEffectsSlider=NumericSetting(settingsAudioPage.transform,"settings-effects","Эффекты",new Vector2(.02f,.31f),new Vector2(.98f,.59f),Profile.Descriptor("audio.effectsDefaultPercent"),v=>{NativeAudioPreferences.SetEffects(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
 
-                settingsHelpPage=Panel(content.transform,"settings-help-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
-                settingsHelpScroll=ListViewport(settingsHelpPage.transform,"help-viewport",new Vector2(.02f,.09f),new Vector2(.98f,.82f),out helpDiagram);
+                settingsHelpPage=Panel(content.transform,"settings-help-page",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
+                settingsHelpScroll=ListViewport(settingsHelpPage.transform,"help-viewport",new Vector2(.015f,.12f),new Vector2(.985f,.985f),out helpDiagram);
                 settingsHelpScroll.vertical=false;helpDiagram.pivot=new Vector2(.5f,.5f);
-                var diagramFit=helpDiagram.gameObject.AddComponent<AspectRatioFitter>();diagramFit.aspectMode=AspectRatioFitter.AspectMode.FitInParent;diagramFit.aspectRatio=1.5f;
+                Layout(helpDiagram,Vector2.zero,Vector2.one);
                 settingsHelpText=Label(settingsHelpPage.transform,"keyboard-help",KeyboardHelp,18,Vector2.zero,Vector2.zero,TextAnchor.UpperLeft,Color.white);settingsHelpText.gameObject.SetActive(false);
-                settingsHelpKeyboard=MenuButton(settingsHelpPage.transform,"settings-help-keyboard","КЛАВИАТУРА / МЫШЬ",new Vector2(.02f,.85f),new Vector2(.48f,.95f),()=>SetHelpText(KeyboardHelp));
-                settingsHelpGamepad=MenuButton(settingsHelpPage.transform,"settings-help-gamepad","ГЕЙМПАД",new Vector2(.51f,.85f),new Vector2(.98f,.95f),()=>SetHelpText(GamepadHelp));
+                settingsHelpKeyboard=MenuButton(settingsHelpPage.transform,"settings-help-keyboard","‹",new Vector2(.40f,.02f),new Vector2(.48f,.10f),()=>SetHelpText(settingsHelpText.text==KeyboardHelp?GamepadHelp:KeyboardHelp));
+                settingsHelpGamepad=MenuButton(settingsHelpPage.transform,"settings-help-gamepad","›",new Vector2(.52f,.02f),new Vector2(.60f,.10f),()=>SetHelpText(settingsHelpText.text==KeyboardHelp?GamepadHelp:KeyboardHelp));
                 settingsHelpBack=MenuButton(settingsScreen.transform,"settings-help-back","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetHelp(false));
                 settingsDevicesPage=Panel(content.transform,"settings-devices-page",new Vector2(.04f,.06f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
                 deviceScroll=ListViewport(settingsDevicesPage.transform,"device-list",new Vector2(.03f,.10f),new Vector2(.97f,.90f),out deviceContent);
@@ -273,7 +268,6 @@ namespace StarTournament.ProvingGround
                         entry.callback.AddListener(_=>{Select(captured);});trigger.triggers.Add(entry);
                     }
                 }
-                if(!InMatch)settingsHelpBack.gameObject.AddComponent<SettingsHelpScrollNavigation>().Scroll=settingsHelpScroll;
                 ConfigureSettingsNavigation();
             }
             void AddFocusEdge(Transform parent,string name,Vector2 min,Vector2 max)
@@ -368,7 +362,8 @@ namespace StarTournament.ProvingGround
                         (i==0?"ИЗОБРАЖЕНИЕ":i==1?"УПРАВЛЕНИЕ":i==2?"ИНТЕРФЕЙС":"ЗВУК");
                 }
                 settingsHeading.text=settingsProfileId!=null?"НАСТРОЙКИ · "+playerProfiles.Find(settingsProfileId).Name:settingsSeat<0?"НАСТРОЙКИ ИГРЫ":"НАСТРОЙКИ · "+IdentityLabel(settingsSeat);
-                settingsDescription.gameObject.SetActive(!settingsHelpOpen && !settingsDevicesOpen);
+                settingsHeading.gameObject.SetActive(!settingsHelpOpen);
+                settingsDescription.gameObject.SetActive(!settingsHelpOpen && !settingsDevicesOpen && settingsSection!=SettingsSection.Interface);
                 if(settingsHelpOpen)settingsHeading.text="УПРАВЛЕНИЕ · СПРАВКА";
                 if(settingsDevicesOpen)settingsHeading.text="УПРАВЛЕНИЕ · УСТРОЙСТВА";
                 settingsDescription.text=settingsSection==SettingsSection.Image?"Режим вывода и тени применяются ко всем игровым экранам":
@@ -387,7 +382,6 @@ namespace StarTournament.ProvingGround
                 RefreshToggle(settingsFpsToggle,MenuFps());
                 RefreshNumericSetting(settingsMusicSlider,"Музыка",NativeAudioPreferences.Music(Profile),"%");
                 RefreshNumericSetting(settingsEffectsSlider,"Эффекты",NativeAudioPreferences.Effects(Profile),"%");
-                settingsFps.text="ПОКАЗЫВАТЬ FPS";
                 RefreshConnectedDevices();
                 if(displayConfirmationActive)
                     settingsConfirmationText.text="Подтвердить режим?\n"+pendingDisplayWidth+" × "+pendingDisplayHeight+" · "+
