@@ -1,0 +1,15 @@
+{
+    "Version": 1,
+    "Profiles": [
+        {
+            "Id": "1e79f32f448d4c84afd217c502f62c13",
+            "Name": "Игрок 1",
+            "MouseDegreesPerPixel": 0.11999999731779099,
+            "ShowFps": true,
+            "GamepadLookVersion": 1,
+            "GamepadHorizontal": 180.0,
+            "GamepadVertical": 180.0,
+            "GamepadAutoLevel": true
+        }
+    ]
+}

@@ -1,0 +1,65 @@
+{
+  "source": "42beb5f91be72a480361a3588bcd172263167b8e",
+  "scope": "ui-only",
+  "ui_gate": {
+    "scope": "ui-only",
+    "natural_bot_matches": false,
+    "suites": {
+      "EditMode": [
+        "LocalSeatLayoutTests"
+      ],
+      "PlayMode": [
+        "FourPlayerMenuTests",
+        "IndependentPauseMenuTests"
+      ]
+    },
+    "policy": ".agents/references/qa-scope.md",
+    "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+    "revision": "42beb5f91be72a480361a3588bcd172263167b8e",
+    "dirty": " M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/restyle-native-menu-suite/F4/README.md\n",
+    "result": "Passed",
+    "checks": [
+      {
+        "platform": "EditMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F4/UI-EditMode.xml",
+        "passed": 3,
+        "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f4/unity/../.local/unity-evidence/focused-editmode.yPmMea/editmode.xml"
+      },
+      {
+        "platform": "PlayMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F4/UI-PlayMode.xml",
+        "passed": 12,
+        "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f4/unity/../.local/unity-evidence/focused-playmode.rLdWvQ/playmode.xml"
+      }
+    ]
+  },
+  "affected": {
+    "result": "Passed",
+    "passed": "10",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "133.1822777"
+  },
+  "build_marker": "STAR_PROVING_BUILD_PASS 501487278",
+  "native_cases": [
+    {
+      "name": "menu",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 24.1,
+      "screenshots": 26
+    },
+    {
+      "name": "setup",
+      "passed": true,
+      "exit": -15,
+      "stoppedAfterMarker": true,
+      "seconds": 52.3,
+      "screenshots": 15
+    }
+  ],
+  "candidate": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F4-42beb5f/StarTournamentProvingGround.app",
+  "candidate_digest": "2e2b9ccc972ab4226bd59c3d3d03633853a6ef9562a1d942c8f4c08a3003dfaa",
+  "human_acceptance": false
+}

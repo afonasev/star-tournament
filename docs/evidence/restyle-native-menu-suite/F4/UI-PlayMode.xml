@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.5379607">
+  <test-suite type="TestSuite" id="1276" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.537961" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1268" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament-menu-f4/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.533430" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50893" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1269" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.532705" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1270" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.532030" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1271" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.531386" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1272" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="163" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:19:39Z" duration="183.529790" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1092" name="FourPlayerMenuTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests" classname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:17:16Z" duration="40.757280" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1096" name="FourGamepadsCanJoinStartPauseAndResumeWithoutMouse" fullname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FourGamepadsCanJoinStartPauseAndResumeWithoutMouse" methodname="FourGamepadsCanJoinStartPauseAndResumeWithoutMouse" classname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests" runstate="Runnable" seed="627249892" result="Passed" start-time="2026-10-07 18:16:35Z" end-time="2026-10-07 18:17:00Z" duration="24.065256" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1095" name="FpsSettingPersistsAndKeepsSamplingWhilePaused" fullname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FpsSettingPersistsAndKeepsSamplingWhilePaused" methodname="FpsSettingPersistsAndKeepsSamplingWhilePaused" classname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests" runstate="Runnable" seed="394857533" result="Passed" start-time="2026-10-07 18:17:00Z" end-time="2026-10-07 18:17:00Z" duration="0.705623" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1093" name="FramesStayWithAssignedSeatAndEdgesAreConsumedOnce" fullname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FramesStayWithAssignedSeatAndEdgesAreConsumedOnce" methodname="FramesStayWithAssignedSeatAndEdgesAreConsumedOnce" classname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests" runstate="Runnable" seed="1733065082" result="Passed" start-time="2026-10-07 18:17:00Z" end-time="2026-10-07 18:17:00Z" duration="0.004539" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1094" name="NewBotsConfirmDefaultDifficultyWithOneSubmit" fullname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.NewBotsConfirmDefaultDifficultyWithOneSubmit" methodname="NewBotsConfirmDefaultDifficultyWithOneSubmit" classname="StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests" runstate="Runnable" seed="1863565985" result="Passed" start-time="2026-10-07 18:17:00Z" end-time="2026-10-07 18:17:16Z" duration="15.975681" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1101" name="IndependentPauseMenuTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-07 18:17:16Z" end-time="2026-10-07 18:19:39Z" duration="142.767172" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1109" name="DisconnectedSeatCannotResumeThroughTheOtherMenu" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.DisconnectedSeatCannotResumeThroughTheOtherMenu" methodname="DisconnectedSeatCannotResumeThroughTheOtherMenu" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="2002408621" result="Passed" start-time="2026-10-07 18:17:16Z" end-time="2026-10-07 18:17:34Z" duration="17.553659" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1105" name="GamepadNavigationSubmitsOnlyItsOwnViewport" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GamepadNavigationSubmitsOnlyItsOwnViewport" methodname="GamepadNavigationSubmitsOnlyItsOwnViewport" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1667279882" result="Passed" start-time="2026-10-07 18:17:34Z" end-time="2026-10-07 18:17:51Z" duration="17.617282" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1108" name="MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose" methodname="MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="383682698" result="Passed" start-time="2026-10-07 18:17:51Z" end-time="2026-10-07 18:18:09Z" duration="17.626711" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1104" name="PersonalSettingsAndGlobalConfirmationStayScoped" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PersonalSettingsAndGlobalConfirmationStayScoped" methodname="PersonalSettingsAndGlobalConfirmationStayScoped" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1619925800" result="Passed" start-time="2026-10-07 18:18:09Z" end-time="2026-10-07 18:18:27Z" duration="17.910276" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1107" name="SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit" methodname="SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1380298465" result="Passed" start-time="2026-10-07 18:18:27Z" end-time="2026-10-07 18:18:45Z" duration="17.754593" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1106" name="SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport" methodname="SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1674461399" result="Passed" start-time="2026-10-07 18:18:45Z" end-time="2026-10-07 18:19:03Z" duration="18.398165" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1102" name="SplitScreenDrawsOneGlobalFpsCounter" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SplitScreenDrawsOneGlobalFpsCounter" methodname="SplitScreenDrawsOneGlobalFpsCounter" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1101593899" result="Passed" start-time="2026-10-07 18:19:03Z" end-time="2026-10-07 18:19:21Z" duration="18.177449" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1103" name="TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses" methodname="TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1384507297" result="Passed" start-time="2026-10-07 18:19:21Z" end-time="2026-10-07 18:19:39Z" duration="17.726361" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

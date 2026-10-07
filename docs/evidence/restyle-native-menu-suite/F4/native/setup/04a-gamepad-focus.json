@@ -1,0 +1,16 @@
+{
+    "state": "04a-gamepad-focus",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "width": 1920,
+    "height": 1080,
+    "muted": true,
+    "setupMap": false,
+    "setupRules": false,
+    "setupPlayers": false,
+    "settingsImage": true,
+    "settingsAudio": false,
+    "confirmation": false,
+    "shadows": true,
+    "musicPercent": 70,
+    "effectsPercent": 80
+}
