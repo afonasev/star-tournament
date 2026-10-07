@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
         protected override void OnPopulateMesh(VertexHelper mesh)
         {
             mesh.Clear();if(arena==null)return;
-            var solids=arena.Solids.Where(s=>s.Size.x>0&&s.Size.z>0).OrderByDescending(s=>s.Position.x+s.Position.z).ToArray();
+            var solids=arena.Solids.Where(s=>s.Size.x>0&&s.Size.z>0&&!s.Id.Contains("roof")&&!s.Id.Contains("ceiling")&&!s.Id.Contains("grille")).OrderBy(s=>s.Position.y+s.Size.y*.5f).ThenByDescending(s=>s.Position.x+s.Position.z).ToArray();
             var points=solids.SelectMany(s=>Corners(s)).Select(Project).ToArray();if(points.Length==0)return;
             var min=new Vector2(points.Min(p=>p.x),points.Min(p=>p.y));var max=new Vector2(points.Max(p=>p.x),points.Max(p=>p.y));
             var rect=rectTransform.rect;float scale=Mathf.Min(rect.width/(max.x-min.x+1),rect.height/(max.y-min.y+1))*.92f;
