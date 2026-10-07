@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class NativeMenuPresentationTests
@@ -46,6 +49,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
             }
             B("settings-back").onClick.Invoke();Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);
+        }
+        [UnityTest] public IEnumerator KeyboardNavigatesMainMenuAndSubmitsAfterReturningFromSettings()
+        {
+            var keyboard=InputSystem.AddDevice<Keyboard>();
+            try
+            {
+                B("main-action-4").onClick.Invoke();B("settings-back").onClick.Invoke();
+                EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);yield return null;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.DownArrow));yield return null;yield return null;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(B("main-action-2").gameObject));
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
+                Assert.That(B("lab-back").gameObject.activeInHierarchy,Is.True);
+            }
+            finally{InputSystem.RemoveDevice(keyboard);}
         }
         [UnityTest] public IEnumerator SetupUsesMandatoryModeTargetsAndInheritedBotDifficulty()
         {
