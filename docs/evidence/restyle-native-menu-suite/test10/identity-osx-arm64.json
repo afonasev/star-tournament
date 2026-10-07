@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0-test.10",
+  "date": "2026-10-08",
+  "runtime": "osx-arm64",
+  "channel": "test",
+  "revision": "c6ab890157fdbcf73edf8c1e4efb1c5af01d1a55",
+  "dirty": " M ../unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M ../unity/Assets/StarTournament/Settings/ProvingURP.asset\n M ../unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M ../unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M ../unity/Assets/UniversalRenderPipelineGlobalSettings.asset\n M ../unity/ProjectSettings/ProjectSettings.asset\n M ../unity/ProjectSettings/ShaderGraphSettings.asset\n?? ../docs/evidence/restyle-native-menu-suite/test10/\n",
+  "sourceDiffSha256": "60314e5e4bc40b6940727384c3d05912ff023672ded90dd5ad2abd9ac1653429",
+  "player": "/Users/eaafonasev/Projects/star-tournament-menu-release/.local/test10/players/mac/StarTournament.app",
+  "playerMarkerSha256": "082da65eff42d2960280154fbaa151e70064298cc86737efc1ab6baf75a4e57b",
+  "packages": [
+    {
+      "name": "Star-Tournament-0.1.0-test.10-macOS-arm64.pkg",
+      "size": 147915998,
+      "sha256": "01d9da1d426d65b065fd2ca88e06f201fa541eebf655763b7a17b91ad2baa121"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.0-test.10-osx-arm64-full.nupkg",
+      "size": 148367086,
+      "sha256": "3a1a17bf7ae8f4cbdb7fc63422c0698e4eac91ec4a64590d57c8d36ae3773daf"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+      "size": 148562752,
+      "sha256": "18bf6a3bf4444b8b36bf46b53f665af28310450cda0fcf62e84c521fd3ded5d3"
+    }
+  ]
+}

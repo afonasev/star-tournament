@@ -1,0 +1,10 @@
+Browser tab: 1, Title: "Star Tournament — скачать игру", URL: "https://robowar.afonasev.tech/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 31-32, 39, 46
++			112 text ТЕСТОВЫЙ ВЫПУСК
++			113 text Тестовая версия 0.1.0-test.10 · обновления доступны из игры
+~				38 link Description: Скачать установщик ↓, ID: windows, Value: github.com/afonasev/star-tournament/releases/download/v0.1.0-test.10/Star-Tournament-0.1.0-test.10-Windows-x64-Setup.exe
++				114 text 140 МБ · 0.1.0-test.10 · SHA256 b9f6ff5f4b1d2dbb…
+~				45 link Description: Скачать установщик ↓, ID: mac, Value: github.com/afonasev/star-tournament/releases/download/v0.1.0-test.10/Star-Tournament-0.1.0-test.10-macOS-arm64.pkg
++				115 text 141 МБ · 0.1.0-test.10 · SHA256 01d9da1d426d65b0…
+The focused UI element is 0 AXWebArea Star Tournament — скачать игру, URL: robowar.afonasev.tech/
