@@ -78,7 +78,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(music.RoundWeight,Is.EqualTo(0));Assert.That(music.MenuWeight,Is.LessThan(.02f));
                 Assert.That(sources.Where(s=>s.name.StartsWith("round-music-")).All(s=>!s.isPlaying&&s.volume==0),Is.True);
                 var second=Match();music.Tick(false,second,profile,false,4);music.UpdateVolume(1,1);
-                var snapshot=second.Read();snapshot.Phase=NativeMatchPhase.Finished;second.Restore(snapshot);
+                var snapshot=second.Read();snapshot.Phase=NativeMatchPhase.Finished;snapshot.AwardsFrozen=true;second.Restore(snapshot);
                 music.Tick(false,second,profile,false,3);music.UpdateVolume(1,1);
                 Assert.That(music.Round.HasOutput,Is.False);
                 music.Tick(true,null,profile,false,.1f);music.UpdateVolume(1,1);
