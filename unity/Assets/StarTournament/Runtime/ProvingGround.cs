@@ -34,6 +34,7 @@ namespace StarTournament.ProvingGround
         readonly Text[] health = new Text[SeatInputCoordinator.SeatCount], armor = new Text[SeatInputCoordinator.SeatCount], ammo = new Text[SeatInputCoordinator.SeatCount], crosshair = new Text[SeatInputCoordinator.SeatCount];
         readonly Text[] killNotice = new Text[SeatInputCoordinator.SeatCount];
         readonly string[] killNoticeText = new string[SeatInputCoordinator.SeatCount];
+        readonly bool[] killNoticeAllied = new bool[SeatInputCoordinator.SeatCount];
         readonly double[] killNoticeUntil = new double[SeatInputCoordinator.SeatCount];
         readonly GameObject[] armorGroups = new GameObject[SeatInputCoordinator.SeatCount];
         readonly HudIndicatorIcon[] ammoIcons = new HudIndicatorIcon[SeatInputCoordinator.SeatCount];
@@ -64,7 +65,7 @@ namespace StarTournament.ProvingGround
         bool swappedTeamColors, frozenSwappedColors;
         public NativeMatchMode SetupMode { get; private set; }
         readonly NativeTeam[] teamAssignments={NativeTeam.TeamA,NativeTeam.TeamB,NativeTeam.TeamA,NativeTeam.TeamB};
-        Button modeButton, colorButton;
+        Button modeButton;
         GameObject teamRow;
         readonly Button[] teamButtons=new Button[SeatInputCoordinator.SeatCount];
         string setupError;
@@ -85,22 +86,22 @@ namespace StarTournament.ProvingGround
         public void SetSeatDifficulty(int seat,int difficulty)
         {
             if(phase!=Phase.Setup)return;
-            botSetup.SetSeatDifficulty(seat,difficulty);RefreshInterface();
+            botSetup.SetSeatDifficulty(seat,difficulty);lastBotDifficulty=difficulty;RefreshInterface();
         }
         void SyncHumanSeats()
         {
             for(int seat=0;seat<LocalSeatCount;seat++)input.SetHumanSeat(seat,!botSetup.IsAi(seat));
         }
         public NativeMatchComposition SetupComposition()=>botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
-        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);setupError=null;RefreshInterface();}
+        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
         public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();if(setupStep==2)FocusRosterCard(LocalSeatCount+Math.Min(index,botSetup.Count-1));else Select(setupNext);}
-        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);RefreshInterface();}
+        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);lastBotDifficulty=value;RefreshInterface();}
         public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
         public void SetMatchMode(NativeMatchMode mode)
         {
             if(phase!=Phase.Setup) return;
             if(mode!=NativeMatchMode.Ffa && mode!=NativeMatchMode.Teams) throw new ArgumentException("Invalid mode");
-            SetupMode=mode;setupError=null;RefreshInterface();
+            bool changed=SetupMode!=mode;SetupMode=mode;if(changed)ApplyModeTarget();setupError=null;RefreshInterface();
         }
         public void SetTeam(int seat,NativeTeam team)
         {
@@ -294,6 +295,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-pauseReview")) gameObject.AddComponent<NativePauseMenuReview>();
             if (args.Contains("-rosterCardsReview")) gameObject.AddComponent<NativeRosterCardsReview>();
             if (args.Contains("-gamepadCameraReview"))gameObject.AddComponent<NativeGamepadCameraReview>();
+            if (args.Contains("-menuStyleReview")) gameObject.AddComponent<NativeMenuStyleReview>();
             if (args.Contains("-setupSettingsReview")) gameObject.AddComponent<NativeSetupSettingsReview>();
 #endif
 #endif
@@ -473,7 +475,7 @@ namespace StarTournament.ProvingGround
             UpdateRosterInput();
             if (phase == Phase.Setup)
             {
-                bool ready=input.Ready; input.PollSetup();
+                bool ready=input.Ready; PollRosterShortcuts(); input.PollSetup();
                 if(!ready && input.Ready && IdentitiesReady() && rosterEditing<0 && pendingSeat<0) { start.interactable=true; Select(setupStep==2?start:setupNext); }
             }
             else if (phase == Phase.Running && !diagnostic)
@@ -574,9 +576,13 @@ namespace StarTournament.ProvingGround
                 ammo[i].color=Session.DamageBoostRemaining(participant)>0?Color.red:Color.white;
                 ammoIcons[i].color=ammo[i].color;
                 crosshair[i].text=life.Dead ? "" : "+";
-                if(killNotice[i]) killNotice[i].text=phase==Phase.Setup || phase==Phase.Results ? "" :
-                    life.Dead ? DeathNoticeText(participant,snapshot) :
-                    Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
+                if(killNotice[i])
+                {
+                    killNotice[i].text=phase==Phase.Setup || phase==Phase.Results ? "" :
+                        life.Dead ? DeathNoticeText(participant,snapshot) :
+                        Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
+                    killNotice[i].color=!life.Dead && Session.Time<killNoticeUntil[i] && killNoticeAllied[i] ? Color.red : Color.white;
+                }
                 standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition,lifeStates);
                 names[i].color=Composition.Participant(participant).Color;
                 names[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "");
@@ -626,7 +632,8 @@ namespace StarTournament.ProvingGround
             if(view<0)return;
             var snapshot=Session.Match.Read();
             int chain=snapshot.KillChain(killer);
-            killNoticeText[view]=Session.Match.Roster.AreAllies(killer,notice.Seat)?"Ты убил союзника "+Composition.Participant(notice.Seat).Name.Replace('<','‹').Replace('>','›'):"Убит "+ColoredName(notice.Seat)+" · "+
+            killNoticeAllied[view]=Session.Match.Roster.AreAllies(killer,notice.Seat);
+            killNoticeText[view]=killNoticeAllied[view]?"Ты убил союзника "+Composition.Participant(notice.Seat).Name.Replace('<','‹').Replace('>','›'):"Убит "+ColoredName(notice.Seat)+" · "+
                 snapshot.DirectKills(killer,notice.Seat)+":"+snapshot.DirectKills(notice.Seat,killer)+
                 (chain==2?"\nDouble kill!":chain>2?"\n"+chain+" kills!":"");
             killNoticeUntil[view]=Session.Time+(frozenMovement??Profile).Get("ui.killNoticeSeconds");
@@ -687,7 +694,8 @@ namespace StarTournament.ProvingGround
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
                 frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);
                 FrozenLabIdentity=LabSavedIdentity;
-                frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:labHistory.Selected.Number,Hash=CurrentLabBundle().Hash()};
+                var selectedLab=labHistory?.Selected;
+                frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:selectedLab.ReleaseSequence>0?selectedLab.ReleaseNumber:selectedLab.Number,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             Time.fixedDeltaTime=1/frozenMovement.Get("simulation.fixedTickHz");
@@ -724,6 +732,7 @@ namespace StarTournament.ProvingGround
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
             presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath,bloodProfile:frozenBlood,rocketPrefab:RocketProjectilePrefab,rocketEffects:frozenRocketEffects);
             Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
+            Array.Clear(killNoticeAllied,0,killNoticeAllied.Length);
             for(int seat=0;seat<damageVignettes.Length;seat++)
                 damageVignettes[seat]?.Bind(seat<frozenSeatCount?Session:null,seat<frozenSeatCount?Composition.ParticipantAt(seat):-1,frozenMovement);
             Session.Died+=OnMatchDeath;
@@ -987,7 +996,7 @@ namespace StarTournament.ProvingGround
                 Layout(cross.rectTransform,new Vector2(rect.xMin,rect.yMin),new Vector2(rect.xMax,rect.yMax)); cross.alignment=TextAnchor.MiddleCenter; crosshair[i]=cross;
                 var notice=TextElement(viewportRoots[i],"kill-notice-"+i,"",(int)Profile.Get("ui.killNoticeFontSize"));
                 Layout(notice.rectTransform,new Vector2(0,Profile.Get("ui.killNoticeBottom")),new Vector2(1,Profile.Get("ui.killNoticeTop")));
-                notice.alignment=TextAnchor.MiddleCenter;notice.color=Color.red;notice.supportRichText=true;killNotice[i]=notice;
+                notice.alignment=TextAnchor.MiddleCenter;notice.color=Color.white;notice.supportRichText=true;killNotice[i]=notice;
                 var outline=notice.gameObject.AddComponent<Outline>();outline.effectColor=new Color(0,0,0,.9f);
             }
             for(int i=0;i<standings.Length;i++)
@@ -1023,7 +1032,6 @@ namespace StarTournament.ProvingGround
             teamRow=new GameObject("team-assignments",typeof(RectTransform),typeof(HorizontalLayoutGroup));teamRow.transform.SetParent(column.transform,false);
             var teamLayout=teamRow.GetComponent<HorizontalLayoutGroup>();teamLayout.childControlWidth=teamLayout.childControlHeight=true;teamLayout.childForceExpandWidth=teamLayout.childForceExpandHeight=true;
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }
-            colorButton=ButtonElement(column.transform,"Поменять цвета команд",()=>{if(phase!=Phase.Setup)return;swappedTeamColors=!swappedTeamColors;RefreshInterface();});colorButton.gameObject.name="team-colors";
             resume=ButtonElement(column.transform,"Продолжить",Resume);
             fallbackSettings=ButtonElement(column.transform,"Настройки",()=>OpenSettings(-1));operatorSettingsButton=fallbackSettings;
             fallbackSettings.gameObject.name="fallback-settings";
@@ -1033,8 +1041,8 @@ namespace StarTournament.ProvingGround
             diagnosticButton=ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
             durationButton=ButtonElement(column.transform,"Длительность",()=>StepConfiguration("match.durationMinutes",1));
             durationButton.gameObject.name="duration-plus";
-            var durationMinus=ButtonElement(column.transform,"Длительность −",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
-            targetButton=ButtonElement(column.transform,"Цель",()=>{ if(phase!=Phase.Setup)return; var c=Configuration;c.TargetEnabled=!c.TargetEnabled;Configuration=c;RefreshInterface(); });
+            var durationMinus=ButtonElement(column.transform,"−",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
+            targetButton=ButtonElement(column.transform,"Цель",()=>{ if(phase!=Phase.Setup)return; var c=Configuration;c.TargetEnabled=true;Configuration=c;RefreshInterface(); });
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
@@ -1058,6 +1066,7 @@ namespace StarTournament.ProvingGround
             var buildLabel=TextElement(canvasObject.transform,"development-build-label","Development Build",buildFontSize);
             buildLabel.fontStyle=FontStyle.Bold;
             buildLabel.alignment=TextAnchor.UpperLeft;
+            buildLabel.horizontalOverflow=HorizontalWrapMode.Overflow;buildLabel.verticalOverflow=VerticalWrapMode.Overflow;
             var buildRect=buildLabel.rectTransform;
             buildRect.anchorMin=buildRect.anchorMax=buildRect.pivot=new Vector2(0,1);
             buildRect.anchoredPosition=new Vector2(buildFontSize,-buildFontSize);
@@ -1135,9 +1144,12 @@ namespace StarTournament.ProvingGround
         Button ButtonElement(Transform parent,string title,UnityEngine.Events.UnityAction action)
         {
             var go=new GameObject(title,typeof(RectTransform),typeof(Image),typeof(Button)); go.transform.SetParent(parent,false);
-            go.GetComponent<Image>().color=new Color32(32,75,92,255);
+            go.GetComponent<Image>().color=MenuCard;RoundRosterPanel(go);
             var button=go.GetComponent<Button>(); button.onClick.AddListener(()=>{if(go.name.Contains("back")||go.name.Contains("cancel")||title.StartsWith("‹"))gameAudio?.MenuBack();else gameAudio?.MenuConfirm();action();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;});
-            var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter; return button;
+            var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter;
+            label.rectTransform.offsetMin=new Vector2(12,4);label.rectTransform.offsetMax=new Vector2(-12,-4);
+            var colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=colors.selectedColor=new Color(1.15f,1.15f,1.15f,1);colors.pressedColor=new Color(.8f,.8f,.8f,1);colors.disabledColor=new Color(.52f,.57f,.62f,1);colors.fadeDuration=.12f;button.colors=colors;
+            go.AddComponent<MenuPresentation>();return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }
         static RectTransform CreateViewportDivider(Transform parent,string name)
@@ -1191,7 +1203,6 @@ namespace StarTournament.ProvingGround
             arenaButton.gameObject.SetActive(phase==Phase.Setup);
             arenaButton.GetComponentInChildren<Text>().text="Сменить карту · "+AuthoredArenaCatalog.Name(SelectedMapId)+" · 2–"+AuthoredArenaCatalog.Maximum(SelectedMapId);
             teamRow.SetActive(phase==Phase.Setup && SetupMode==NativeMatchMode.Teams);
-            colorButton.gameObject.SetActive(teamRow.activeSelf);
             for(int i=0;i<teamButtons.Length;i++)
             {
                 teamButtons[i].gameObject.SetActive(i<LocalSeatCount);
@@ -1241,8 +1252,9 @@ namespace StarTournament.ProvingGround
                     botTeams[i].GetComponent<Image>().color=NativeStandingsView.TeamColor(bot.Team,swappedTeamColors);
                 }
             }
-            status.text="STAR TOURNAMENT · UNITY ПОЛИГОН\n"+(phase==Phase.Paused ? pauseReason : "Space / Y — присоединить человека · Esc — пауза")+"\n"+
+            status.text=(phase==Phase.Paused ? "Пауза" : "Space / Y — присоединить человека · Esc — пауза")+"\n"+
                 string.Join("  |  ",Enumerable.Range(0,LocalSeatCount).Select(i=>"P"+(i+1)+": "+(!input.IsHumanSeat(i)?"AI":input.IsConnected(i)?IdentityLabel(i):"ожидает")));
+            if(phase==Phase.Paused)status.text=DefaultPauseSeat()<0?"Пауза":"Пауза\n"+IdentityLabel(DefaultPauseSeat());
             if(phase==Phase.Setup && !ValidSetup()) status.text+=LocalSeatCount+botSetup.Count<2?"\nДобавьте бота или второго игрока":"\nНужны обе команды: Team A и Team B";
             if(phase==Phase.Setup && setupError!=null) status.text+="\n"+setupError;
             if(phase==Phase.Results)
@@ -1253,6 +1265,7 @@ namespace StarTournament.ProvingGround
             CompactMatchMenu(menuRect);
             RefreshModernMenuUi();
             RefreshSeatPauseUi();
+            StyleOperatorPause();
         }
     }
 }

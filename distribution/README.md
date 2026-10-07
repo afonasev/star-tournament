@@ -12,6 +12,14 @@ Private signing key is outside Git and build worktrees at `~/.local/share/star-t
 
 ## Commands
 
+### Lab release profiles
+
+The regular release Player includes `Assets/StarTournament/Resources/LabReleaseCatalog.json`. This immutable Git catalogue contains full released snapshots for every profile, with a global release sequence and the original profile/revision/hash identity. Each start selects the latest packaged release of `Default`. Other packaged profiles/releases and saved local experiments remain selectable in Lab for subsequent matches.
+
+In Lab, save a revision and use **Релизная** to mark it locally. This does not publish it; packaged profiles are read-only locally. Use **Создать копию** on the selected saved release base to create a separate editable profile; its new revisions are unmarked local experiments. Existing local revisions under a packaged profile remain available for selection/copy, but cannot be extended or renamed locally. To explicitly stage all new marked saved revisions from a reviewed history file, run `unity/tools.sh lab-stage-releases /absolute/path/to/history.json` in the owning worktree. Review and commit the catalogue diff, run the full game gate and release Player smoke, then use the normal authorized client publication flow. The source history is preserved. Do not stage another person's history or unreviewed numeric changes. Build validation rejects invalid or unsupported catalogue snapshots and retains all previous releases. Profile IDs/names are preserved; a revision is not moved into Default.
+
+The initial catalogue is explicitly bootstrapped from the authored Player baseline with `LabReleaseBuild.Bootstrap`; the bootstrap refuses to overwrite an existing catalogue. Local history remains outside the installed payload. Startup selection resets, while saved experiments and local release marks remain available.
+
 Install .NET SDK 8 locally; install the pinned `vpk` 1.2.158 tool using that SDK. In the owning worktree:
 
 ```

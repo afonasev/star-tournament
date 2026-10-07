@@ -26,6 +26,8 @@ namespace StarTournament.ProvingGround
             var row=(RectTransform)Input("input-rifle.damage").transform.parent;
             if(fields.viewport.rect.height<row.rect.height*6)throw new InvalidOperationException("Compact Lab must fit six complete parameter rows");
             yield return Capture("01-editor-base");
+            if(Input("input-rifle.damage").interactable||Button("lab-rename").interactable||Button("lab-save").interactable||Button("plus-rifle.damage").interactable)throw new InvalidOperationException("Shipped profile must be read-only");
+            if(args.Contains("-labCatalogReview")){yield return CatalogReview();yield break;}
             if(File.Exists(Path.Combine(directory,"first-run-complete.json")))
             {
                 yield return Capture("10-restarted-history");Click("lab-revision-select");yield return null;yield return Capture("11-restarted-revisions");
@@ -39,6 +41,8 @@ namespace StarTournament.ProvingGround
             Click("lab-back");yield return null;yield return Capture("05-dirty-exit-guard");Click("cancel");yield return null;
             Input("input-rifle.damage").text="31";yield return null;Click("lab-save");yield return null;string v2=ground.LabSavedIdentity;
             Click("lab-revision-select");yield return null;yield return Capture("06-history");Click("revision-1");yield return null;
+            Click("lab-release");yield return null;yield return Capture("06b-local-release-mark");
+            if(!Button("lab-release").GetComponentInChildren<Text>().text.Contains("да · локально"))throw new InvalidOperationException("Local release mark missing");
             Input("input-rifle.damage").text="32";yield return null;Click("lab-save");yield return null;if(!ground.LabSavedIdentity.Contains("v3-"))throw new InvalidOperationException("Save from older base did not append v3");
             Click("lab-rename");yield return null;Input("lab-profile-name").text="QA профиль · переименован";Click("submit");yield return null;
             Input("input-rifle.damage").text="33";Click("lab-revision-select");yield return null;Click("revision-1");yield return null;yield return Capture("07a-dirty-revision-guard");Click("cancel");yield return null;Click("lab-clear");yield return null;
@@ -57,6 +61,38 @@ namespace StarTournament.ProvingGround
             Click("lab-back");yield return null;Click("main-action-0");yield return null;yield return Capture("09-setup-revision-hash");
             if(AudioListener.volume!=0)throw new InvalidOperationException("QA not muted");
             File.WriteAllText(Path.Combine(directory,"first-run-complete.json"),"{\"classification\":\"AUTOMATED_NATIVE_PLAYER_NOT_HUMAN_ACCEPTANCE\",\"muted\":true,\"v2\":\""+v2.Replace("\n"," ")+"\",\"selected\":\""+ground.LabSavedIdentity.Replace("\n"," ")+"\"}");Application.Quit();
+        }
+        IEnumerator CatalogReview()
+        {
+            var catalogue=LabReleaseCatalog.Load();
+            var primary=catalogue.Entries.Where(e=>e.ProfileId==DesignLabHistory.ReleaseId).OrderBy(e=>e.Sequence).Last();
+            if(!ground.LabSavedIdentity.Contains(primary.Hash)||!ground.LabSavedIdentity.Contains(primary.ProfileId))
+                throw new InvalidOperationException("Startup did not select latest released Default");
+            if(File.Exists(Path.Combine(directory,"catalogue-first-complete.json")))
+            {
+                Click("lab-profile-select");yield return null;
+                if(!ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("profile-")&&b.GetComponentInChildren<Text>().text=="QA каталог · эксперимент"))
+                    throw new InvalidOperationException("Local experiment lost on restart");
+                yield return Capture("catalogue-restart-profiles");Click("cancel");yield return null;
+                File.WriteAllText(Path.Combine(directory,"catalogue-restart-complete.txt"),ground.LabSavedIdentity);Application.Quit();yield break;
+            }
+            Click("lab-profile-select");yield return null;yield return Capture("catalogue-profiles");Click("cancel");yield return null;
+            foreach(var entry in catalogue.Entries.OrderBy(e=>e.Sequence))
+            {
+                Click("lab-profile-select");yield return null;Click("profile-"+entry.ProfileId);yield return null;
+                Click("lab-revision-select");yield return null;yield return Capture("catalogue-revisions-"+entry.Sequence);
+                Click("revision-"+entry.Revision);yield return null;
+                if(!ground.LabSavedIdentity.Contains(entry.Hash)||!ground.LabSavedIdentity.Contains(entry.ProfileId)||Button("lab-release").interactable)
+                    throw new InvalidOperationException("Shipped catalogue selection mismatch: "+entry.Sequence);
+                if(Input("input-rifle.damage").interactable||Button("lab-rename").interactable)throw new InvalidOperationException("Shipped profile is editable: "+entry.Sequence);
+                yield return Capture("catalogue-selected-"+entry.Sequence);
+            }
+            Click("lab-create");yield return null;Input("lab-profile-name").text="QA каталог · эксперимент";Click("submit");yield return null;
+            Input("input-rifle.damage").text="31";yield return null;Click("lab-save");yield return null;
+            if(Button("lab-release").GetComponentInChildren<Text>().text!="Релизная: нет")throw new InvalidOperationException("Experiment inherited release mark");
+            Click("lab-release");yield return null;yield return Capture("catalogue-local-experiment");
+            File.WriteAllText(Path.Combine(directory,"catalogue-first-complete.json"),"{\"classification\":\"QA_FIXTURE_NOT_REAL_RELEASE\",\"entries\":"+catalogue.Entries.Count+",\"muted\":true}");
+            Application.Quit();
         }
     }
 }

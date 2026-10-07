@@ -108,9 +108,13 @@ namespace StarTournament.ProvingGround
     [Serializable] public sealed class LabRevision
     {
         public int Number; public string Date; public string Hash; public LabBundle Snapshot;
-        public string Label => "v"+Number+"-"+(string.IsNullOrEmpty(Date)?"без-даты":Date);
+        public bool ReleaseCandidate;
+        public int ReleaseSequence,ReleaseNumber;
+        public string ReleaseHash,ReleaseDate;
+        public string Label => "v"+(ReleaseSequence>0?ReleaseNumber:Number)+"-"+(string.IsNullOrEmpty(ReleaseSequence>0?ReleaseDate:Date)?"без-даты":ReleaseSequence>0?ReleaseDate:Date);
         public LabRevision Clone()=>Snapshot==null?JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this))
-            :new LabRevision{Number=Number,Date=Date??"",Hash=Hash??"",Snapshot=Snapshot.Clone()};
+            :new LabRevision{Number=Number,Date=Date??"",Hash=Hash??"",Snapshot=Snapshot.Clone(),ReleaseCandidate=ReleaseCandidate,
+                ReleaseSequence=ReleaseSequence,ReleaseNumber=ReleaseNumber,ReleaseHash=ReleaseHash,ReleaseDate=ReleaseDate};
     }
     [Serializable] public sealed class LabHistoryProfile
     {
@@ -133,26 +137,108 @@ namespace StarTournament.ProvingGround
         public const string ReleaseId="unity-shipped-release";
         static readonly object historicalLock=new object();
         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
-        readonly string path; readonly LabBundle shipped; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
+        static readonly object releaseValidationLock=new object();
+        static readonly Dictionary<string,LabReleaseCatalog> validatedReleases=new Dictionary<string,LabReleaseCatalog>();
+        readonly string path; readonly LabBundle shipped; readonly LabReleaseCatalog releases; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
-        public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(p=>p.Clone()).ToList();
-        public string SelectedProfileId=>data.SelectedId;
-        public string SelectedProfileName=>data.Profiles.Single(p=>p.Id==data.SelectedId).Name;
-        public bool SelectedProfileProtected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Protected;
-        public LabHistoryProfile SelectedProfile=>data.Profiles.Single(p=>p.Id==data.SelectedId).Clone();
-        public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
-        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null)
+        LabHistoryProfile DisplayProfile(LabHistoryProfile profile)
         {
-            this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;
+            var copy=profile.Clone();
+            copy.Name=DisplayName(profile);
+            copy.Protected=IsProtected(profile.Id);
+            return copy;
+        }
+        static string DisplayName(LabHistoryProfile profile)=>profile.Id==ReleaseId&&profile.Name=="Опубликованный профиль"?"Default":profile.Name;
+        public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(DisplayProfile).ToList();
+        public string SelectedProfileId=>data.SelectedId;
+        public string SelectedProfileName=>DisplayName(data.Profiles.Single(p=>p.Id==data.SelectedId));
+        bool IsProtected(string id)=>id==ReleaseId||(releases!=null&&releases.Entries.Any(e=>e.ProfileId==id));
+        public bool SelectedProfileProtected=>IsProtected(data.SelectedId);
+        public bool SelectedProfileReadOnly=>releases!=null&&releases.Entries.Any(e=>e.ProfileId==data.SelectedId);
+        void RequireLocalProfile(){if(SelectedProfileReadOnly)throw new InvalidOperationException("Релизный профиль доступен только для чтения. Создайте копию для своих изменений.");}
+        public LabHistoryProfile SelectedProfile=>DisplayProfile(data.Profiles.Single(p=>p.Id==data.SelectedId));
+        public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
+        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true)
+        {
+            this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
             data=NewFile();
-            if(!File.Exists(path))return;
+            if(this.releases!=null)ValidateReleases();
+            if(File.Exists(path))
             try
             {
                 var loaded=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));ValidateFile(loaded);data=loaded;
-                if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))Commit(MigrateCompatibility);
+                if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))
+                {
+                    if(persistMigration)Commit(MigrateCompatibility);
+                    else{var next=data.Clone();MigrateCompatibility(next);ValidateFile(next);data=next;}
+                }
             }
             catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
+            if(this.releases!=null)
+            {
+                MergeReleases(data);
+                bool migrated=data.Profiles.Any(p=>p.Revisions.Any(r=>IsShipped(r)&&!Current(r.Snapshot)));
+                if(migrated)MigrateCompatibility(data);
+                if(resetToLatestDefault)SelectLatestDefault(data);
+                // Existing local snapshots were validated on read; catalogue snapshots were
+                // validated below. Only newly derived compatibility snapshots need that work again.
+                ValidateFile(data,migrated);
+            }
+        }
+        void ValidateReleases()
+        {
+            if(releases.Schema!=1||releases.Entries==null||releases.Entries.Count==0||releases.Entries.Any(e=>e==null||e.Sequence<1||e.Revision<1||string.IsNullOrWhiteSpace(e.ProfileId)||string.IsNullOrWhiteSpace(e.ProfileName)||e.ProfileName.Length>48||e.Snapshot==null||e.Hash!=e.Snapshot.Hash())
+                ||releases.Entries.Select(e=>e.Sequence).Distinct().Count()!=releases.Entries.Count
+                ||!releases.Entries.Any(e=>e.ProfileId==ReleaseId))throw new InvalidDataException("Некорректный релизный каталог");
+            string key;
+            using(var sha=SHA256.Create())key=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(shipped)+"\n"+JsonUtility.ToJson(releases))));
+            lock(releaseValidationLock)
+            {
+                if(validatedReleases.TryGetValue(key,out var cached)){releases.Entries=cached.Clone().Entries;return;}
+                foreach(var e in releases.Entries)
+                {
+                    var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
+                    ValidateFile(file);e.Snapshot=r.Snapshot;
+                    if(e.Hash!=e.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
+                }
+                if(validatedReleases.Count>=4)validatedReleases.Clear();
+                validatedReleases.Add(key,releases.Clone());
+            }
+        }
+        public bool IsShipped(LabRevision revision)=>releases!=null&&releases.Entries.Any(e=>e.Sequence==revision.ReleaseSequence&&e.Hash==revision.ReleaseHash);
+        static void BindRelease(LabRevision revision,LabReleaseEntry entry)
+        {revision.ReleaseSequence=entry.Sequence;revision.ReleaseNumber=entry.Revision;revision.ReleaseHash=entry.Hash;revision.ReleaseDate=entry.Date;revision.ReleaseCandidate=false;}
+        void MergeReleases(LabHistoryFile file)
+        {
+            // Never trust locally stored claims of being shipped. Rebind only from the packaged catalogue.
+            foreach(var p in file.Profiles)foreach(var r in p.Revisions){r.ReleaseSequence=0;r.ReleaseNumber=0;r.ReleaseHash=null;r.ReleaseDate=null;}
+            foreach(var e in releases.Entries.OrderBy(e=>e.Sequence))
+            {
+                var p=file.Profiles.FirstOrDefault(p=>p.Id==e.ProfileId);
+                if(p==null){p=new LabHistoryProfile{Id=e.ProfileId,Name=e.ProfileName,Protected=e.ProfileId==ReleaseId};file.Profiles.Add(p);}
+                p.Name=e.ProfileId==ReleaseId?"Default":e.ProfileName;
+                var r=p.Revisions.FirstOrDefault(r=>r.Hash==e.Hash&&r.ReleaseSequence==0);
+                if(r==null)
+                {
+                    int number=p.Revisions.Any(r=>r.Number==e.Revision)?p.Revisions.Max(r=>r.Number)+1:e.Revision;
+                    r=Revision(e.Snapshot,number,e.Date);p.Revisions.Add(r);
+                }
+                BindRelease(r,e);
+            }
+        }
+        void SelectLatestDefault(LabHistoryFile file)
+        {
+            if(releases==null){file.SelectedId=ReleaseId;file.SelectedRevision=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash()).Number;return;}
+            int sequence=releases.Entries.Where(e=>e.ProfileId==ReleaseId).Max(e=>e.Sequence);
+            file.SelectedId=ReleaseId;file.SelectedRevision=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>r.ReleaseSequence==sequence&&Current(r.Snapshot)).Number;
+        }
+        public void MarkSelectedForRelease(bool marked)
+        {
+            RequireLocalProfile();
+            if(IsShipped(Selected))throw new InvalidOperationException("Ревизия уже встроена в клиент");
+            if(!Current(Selected.Snapshot))throw new InvalidOperationException("Выберите совместимую сохранённую ревизию");
+            Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Revisions.Single(r=>r.Number==f.SelectedRevision).ReleaseCandidate=marked);
         }
         // Most matches use the current registry. Generate historical combinations only when
         // a saved revision actually needs one, then share the exact immutable registry set.
@@ -239,6 +325,7 @@ namespace StarTournament.ProvingGround
                     var cache=new Dictionary<ProvingProfile,ProvingProfile>();
                     return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
                 }
+                var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
@@ -258,6 +345,7 @@ namespace StarTournament.ProvingGround
                 var beforeBloodIntensity=Cached(p=>p.BeforeBloodIntensityIncrease());
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseVisibility))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
@@ -291,6 +379,7 @@ namespace StarTournament.ProvingGround
                 // Add the current gameplay registry only after historical transforms: identical
                 // legacy schema keys can otherwise discard the actual pre-rebalance defaults.
                 var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
                 // Music can be absent alongside an earlier Pulse registry without changing gameplay defaults.
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusic))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));
@@ -324,9 +413,9 @@ namespace StarTournament.ProvingGround
             }
         }
         LabHistoryFile NewFile()=>new LabHistoryFile{SelectedId=ReleaseId,SelectedRevision=1,Profiles=new List<LabHistoryProfile>{
-            new LabHistoryProfile{Id=ReleaseId,Name="Опубликованный профиль",Protected=true,Revisions=new List<LabRevision>{Revision(shipped,1,null)}}}};
+            new LabHistoryProfile{Id=ReleaseId,Name="Default",Protected=true,Revisions=new List<LabRevision>{Revision(shipped,1,null)}}}};
         static LabRevision Revision(LabBundle bundle,int number,string date)=>new LabRevision{Number=number,Date=date,Hash=bundle.Hash(),Snapshot=bundle.Clone()};
-        void ValidateFile(LabHistoryFile file)
+        void ValidateFile(LabHistoryFile file,bool validateSnapshots=true)
         {
             if(file==null||file.Schema!=1||file.Profiles==null||file.Profiles.Count==0)throw new InvalidDataException("Неподдерживаемая схема");
 
@@ -337,9 +426,11 @@ namespace StarTournament.ProvingGround
                 if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
                 foreach(var r in p.Revisions)
                 {
+                    if(r.Number<1||r.Snapshot==null||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
+                    if(!validateSnapshots)continue;
                     var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
                     var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
-                    if(r.Number<1||r.Snapshot==null||!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k))||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
+                    if(!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k)))throw new InvalidDataException("Снимок или hash повреждён: missing="+string.Join(",",paths.Except(r.Snapshot.Descriptors.Select(d=>d.Path)))+"; extra="+string.Join(",",r.Snapshot.Descriptors.Select(d=>d.Path).Except(paths)));
                     // Metadata is trusted only from the shipped registry, never from the file.
                     var trusted=registry.Clone();foreach(var d in trusted.Descriptors)trusted.Set(d.Path,r.Snapshot.Get(d.Path));
                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
@@ -401,8 +492,9 @@ namespace StarTournament.ProvingGround
                         next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);
                     }
                     string nextHash=next.Hash();
-                    var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash);
+                    var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash&&(old.ReleaseSequence==0||r.ReleaseSequence==0||r.ReleaseSequence==old.ReleaseSequence));
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
+                    if(IsShipped(old))BindRelease(existing,releases.Entries.Single(e=>e.Sequence==old.ReleaseSequence));
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
                 }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
@@ -429,6 +521,7 @@ namespace StarTournament.ProvingGround
         public void Select(string id,int number)=>Commit(f=>{var r=f.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);if(!Current(r.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");f.SelectedId=id;f.SelectedRevision=number;});
         public void Save(LabBundle draft)
         {
+            RequireLocalProfile();
             // Previously editable placement overrides remain valid immutable history.
             // New revisions may retain them, but cannot introduce further changes to hidden fields.
             var baseline=Selected.Snapshot;
@@ -443,11 +536,11 @@ namespace StarTournament.ProvingGround
             RequireName(name);var baseSnapshot=Selected.Snapshot;string id=Guid.NewGuid().ToString("N");
             Commit(f=>{f.Profiles.Add(new LabHistoryProfile{Id=id,Name=name.Trim(),Revisions=new List<LabRevision>{Revision(baseSnapshot,1,DateTime.Now.ToString("yyyyMMdd"))}});f.SelectedId=id;f.SelectedRevision=1;});
         }
-        public void Rename(string name){RequireName(name);Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Name=name.Trim());}
+        public void Rename(string name){RequireLocalProfile();RequireName(name);Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Name=name.Trim());}
         public void DeleteSelected()
         {
-            if(SelectedProfileProtected)throw new InvalidOperationException("Опубликованный профиль защищён");
-            Commit(f=>{f.Profiles.RemoveAll(p=>p.Id==f.SelectedId);f.SelectedId=ReleaseId;f.SelectedRevision=f.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash()).Number;});
+            if(SelectedProfileProtected)throw new InvalidOperationException("Стандартный профиль защищён от удаления");
+            Commit(f=>{f.Profiles.RemoveAll(p=>p.Id==f.SelectedId);SelectLatestDefault(f);});
         }
         static void RequireName(string name){if(string.IsNullOrWhiteSpace(name)||name.Trim().Length>48)throw new ArgumentException("Имя: от 1 до 48 символов");}
     }

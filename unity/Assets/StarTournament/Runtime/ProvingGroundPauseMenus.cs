@@ -43,12 +43,12 @@ namespace StarTournament.ProvingGround
                 dim.GetComponent<Image>().raycastTarget=false;
                 var wait=Label(root.transform,"pause-wait","МАТЧ НА ПАУЗЕ",24,new Vector2(.08f,.42f),new Vector2(.92f,.58f),TextAnchor.MiddleCenter,Color.white);
                 seatPauseWaiting[seat]=wait.gameObject;
-                var card=Panel(root.transform,"pause-card",new Vector2(.11f,.09f),new Vector2(.89f,.91f),new Color32(20,39,53,248));
+                var card=Panel(root.transform,"pause-card",new Vector2(.11f,.09f),new Vector2(.89f,.91f),new Color32(20,33,48,248));
                 seatPauseCards[seat]=card;
                 card.AddComponent<CanvasGroup>();
                 seatPauseActions[seat]=PausePage(card.transform,"actions");
-                Label(seatPauseActions[seat].transform,"title","ПАУЗА",31,new Vector2(.08f,.85f),new Vector2(.92f,.97f),TextAnchor.MiddleLeft,MenuGold);
-                seatPauseReason[seat]=Label(seatPauseActions[seat].transform,"reason","",18,new Vector2(.08f,.73f),new Vector2(.92f,.85f),TextAnchor.MiddleLeft,Color.white);
+                Label(seatPauseActions[seat].transform,"title","Пауза",40,new Vector2(.08f,.83f),new Vector2(.92f,.96f),TextAnchor.MiddleCenter,MenuGold);
+                seatPauseReason[seat]=Label(seatPauseActions[seat].transform,"reason","",30,new Vector2(.08f,.72f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white);
                 string[] actionLabels={"Продолжить","Настройки","Начать заново","Выйти в главное меню"};
                 for(int item=0;item<4;item++)
                 {
@@ -265,17 +265,25 @@ namespace StarTournament.ProvingGround
                 seatSettingsViews[seat].Root.SetActive(human&&page==SeatPausePage.Settings);
                 // A settings view follows the same full-panel proportions as the shell, within this viewport.
                 Layout((RectTransform)seatPauseCards[seat].transform,page==SeatPausePage.Settings?Vector2.zero:new Vector2(.11f,.09f),page==SeatPausePage.Settings?Vector2.one:new Vector2(.89f,.91f));
+                if(page!=SeatPausePage.Settings)
+                {
+                    // Keep action dialogs compact on a full viewport; retain proportional sizing in split-screen.
+                    var cardRect=(RectTransform)seatPauseCards[seat].transform;
+                    var viewport=(RectTransform)cardRect.parent;
+                    float width=Mathf.Min(viewport.rect.width*.78f,760),height=Mathf.Min(viewport.rect.height*.82f,650);
+                    cardRect.anchorMin=cardRect.anchorMax=new Vector2(.5f,.5f);cardRect.sizeDelta=new Vector2(width,height);cardRect.anchoredPosition=Vector2.zero;
+                }
                 seatPauseRepeat[seat].SetActive(human&&page==SeatPausePage.ConfirmRepeat);
                 seatPauseExit[seat].SetActive(human&&page==SeatPausePage.ConfirmExit);
                 if(human)
                 {
-                    seatPauseReason[seat].text=pauseReason;
+                    seatPauseReason[seat].text=IdentityLabel(seat);
                     if(page==SeatPausePage.Settings)seatSettingsViews[seat].RefreshSettingsUi();
                     seatPauseActionButtons[seat,0].interactable=input.Ready&&FocusAllowsResume;
                     if(page!=SeatPausePage.Settings&&page!=SeatPausePage.Closed)PaintSeatButtons(seat,page);
                 }
                 bool showFps=(phase==Phase.Running||phase==Phase.Paused)&&UseSeatPauseMenus&&seat<LocalSeatCount&&input.IsHumanSeat(seat)&&PersonalFps(seat);
-                seatPauseFps[seat].gameObject.SetActive(showFps);
+                seatPauseFps[seat].gameObject.SetActive(false);
                 if(showFps)seatPauseFps[seat].text=fps.CurrentText;
             }
         }
@@ -287,7 +295,8 @@ namespace StarTournament.ProvingGround
                 Selectable button=page==SeatPausePage.Actions?seatPauseActionButtons[seat,item]:
                     page==SeatPausePage.ConfirmRepeat?seatPauseRepeatButtons[seat,item]:seatPauseExitButtons[seat,item];
                 var image=button.GetComponent<Image>();
-                if(image)image.color=!button.interactable?new Color32(46,57,63,255):item==seatPauseCursor[seat]?new Color32(61,96,112,255):MenuCard;
+                if(image)image.color=!button.interactable?new Color32(46,57,63,255):MenuCard;
+                button.GetComponent<MenuPresentation>()?.SetFocused(item==seatPauseCursor[seat]);
                 if(button is Slider){button.transform.parent.GetComponent<Image>().color=item==seatPauseCursor[seat]?new Color32(61,96,112,255):MenuCard;}
 
             }

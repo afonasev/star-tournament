@@ -52,6 +52,7 @@ namespace StarTournament.ProvingGround
             (t.name=="fps-value"||t.name.StartsWith("seat-fps-"))&&t.gameObject.activeInHierarchy);
         IEnumerator Press(Gamepad pad,GamepadButton button)
         {
+            while(!Application.isFocused)yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(button));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
         }
@@ -93,6 +94,7 @@ namespace StarTournament.ProvingGround
             ground.StartCombatReview(pads);
             if(!ground.Running)throw new InvalidOperationException("Native pause review match did not start: "+ground.CombatReviewDiagnostic());
             ground.EnableNativeInputReview();yield return null;
+            if(VisibleFpsCount()>1)throw new InvalidOperationException("Duplicate global FPS counters");
             yield return Capture("01-running-"+count);
             for(int seat=0;seat<count;seat++)yield return Press(pads[seat],GamepadButton.Start);
             if(ground.Running)Debug.Log("NATIVE_PAUSE_INPUT_FALLBACK_UNFOCUSED");

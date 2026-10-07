@@ -28,6 +28,7 @@ namespace StarTournament.ProvingGround
             public NativeMatchSnapshot match;
             public CombatLifeState[] lives;
             public string[] killNotices;
+            public string[] killNoticeColors;
         }
         Button Button(string name) => ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Start()
@@ -47,11 +48,11 @@ namespace StarTournament.ProvingGround
                 for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
                 ground.StartCombatReview(pads);yield return new WaitForSeconds(.3f);
                 ground.Session.ApplyDamage(2,ground.Session.Life(2).Life,10000,0,ground.Session.Life(0).Life);
-                yield return null;yield return Capture("enemy-kill-red");
+                yield return null;yield return Capture("enemy-kill-white");
                 ground.Session.ApplyDamage(1,ground.Session.Life(1).Life,10000,0,ground.Session.Life(0).Life);
                 yield return null;yield return Capture("ally-kill-red");
                 ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,10000,0,ground.Session.Life(0).Life);
-                yield return null;yield return Capture("self-kill-red");
+                yield return null;yield return Capture("self-kill-white");
                 Debug.Log("KILL_NOTICE_REVIEW_COMPLETE "+directory);
                 Application.Quit();yield break;
             }
@@ -120,6 +121,7 @@ namespace StarTournament.ProvingGround
                 muted=AudioListener.volume==0,combatClock=ground.Session.Time,shots=ground.Session.ShotCount,
                 configuration=ground.Session.Match?.Configuration??ground.Configuration,match=ground.Session.Match?.Read(),lives=new CombatLifeState[4],
                 killNotices=Enumerable.Range(0,4).Select(i=>ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="kill-notice-"+i).text).ToArray(),
+                killNoticeColors=Enumerable.Range(0,4).Select(i=>ColorUtility.ToHtmlStringRGB(ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="kill-notice-"+i).color)).ToArray(),
                 eventSystems=ground.GetComponentsInChildren<UnityEngine.EventSystems.EventSystem>(true).Length,
                 listeners=ground.GetComponentsInChildren<AudioListener>(true).Length,arenas=ground.GetComponentsInChildren<ProvingArena>(true).Length,
                 corpses=ground.GetComponentsInChildren<Transform>(true).Count(t=>t.name.StartsWith("corpse-")&&t.gameObject.activeSelf) };
