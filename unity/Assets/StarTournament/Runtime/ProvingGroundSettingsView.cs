@@ -256,6 +256,9 @@ namespace StarTournament.ProvingGround
                 }
                 if(InMatch)
                 {
+                    // Leave a shared telemetry gutter above each split-screen navigation header.
+                    foreach(var name in new[]{"settings-brand","settings-back","settings-help-back","devices-back"})
+                    {var header=(RectTransform)settingsScreen.transform.Find(name);var min=header.anchorMin;var max=header.anchorMax;min.y=.85f;max.y=.90f;Layout(header,min,max);}
                     // Keep the widget-internal paths used by common refresh helpers stable.
                     foreach(var node in settingsScreen.GetComponentsInChildren<Transform>(true))
                         if(node.name!="value"&&node.name!="box"&&node.name!="check"&&node.name!="check-fill")node.name="seat-settings-"+settingsSeat+"-"+node.name;
