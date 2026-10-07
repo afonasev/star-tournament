@@ -24,5 +24,5 @@ Prompt gamepad: infographic-diagram, landscape1536x1024, realistic Xbox-layout c
 
 Последний native обзор сначала выявил отсутствие фокуса первого запуска и асинхронный возврат режима окна. Повтор без изменения проверок прошёл. Проверка Lab затем обнаружила реальное обрезание шестой строки; это исправлено поднятием границы списка без уменьшения текста. Диагностика первого запуска сохранена в `native-final-first-attempt/`.
 
-Кандидат: /Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F2-f334bbc/StarTournamentProvingGround.app
+Кандидат F2 удалён как заменённый непринятый результат после проверки F3. Точные старые идентификаторы сохранены в candidate-manifest.json; причина и замена — ../F3/retired-F2.json. Текущий кандидат F3 указан в ../F3/README.md.
 Галерея: gallery.html

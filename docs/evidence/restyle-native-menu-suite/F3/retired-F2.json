@@ -1,0 +1,22 @@
+{
+  "owner": "01a115d9-a38d-75a1-b6c2-c106194278d2",
+  "change": "restyle-native-menu-suite",
+  "platform": "macOS",
+  "retired": {
+    "label": "F2",
+    "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F2-f334bbc/StarTournamentProvingGround.app",
+    "source": "f334bbc8a3fab2ba1a6c024c242f7b1918e52c05",
+    "digest": "a177ca5a60b32601d249845f4ce5409267c7a02ff11f4cc15940510cc3daa3a2",
+    "files": 283,
+    "verified": true
+  },
+  "replacement": {
+    "label": "F3",
+    "path": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F3-46ed1d4/StarTournamentProvingGround.app",
+    "source": "46ed1d4a02d7c32655e534ccdc92faff93348166",
+    "digest": "7a7090329124b819b0c224d6d060dbaf1b137d3a1c291326181175fde9f3d379",
+    "files": 283,
+    "verified": true
+  },
+  "reason": "F2 was not accepted; user requested F3 layout corrections. F3 tests, native review and integration are complete; retain exact F3 for pending acceptance. Preserve F2 manifests, screenshots and logs."
+}
