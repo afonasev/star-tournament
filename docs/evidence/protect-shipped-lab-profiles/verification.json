@@ -1,0 +1,37 @@
+{
+  "revision": "8fc4356",
+  "scope": "ui",
+  "ui_gate": {
+    "result": "Passed",
+    "passed": 15,
+    "recorded_revision": "9de7820c80f5f054659db482f6b4d7d38a1ffc94",
+    "runtime_unchanged_in_test_only_fix": "8fc4356"
+  },
+  "history": {
+    "result": "Passed",
+    "total": "54",
+    "passed": "54",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "475.9563421"
+  },
+  "workspace": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "20.4744689"
+  },
+  "build": {
+    "result": "Passed",
+    "source": "8fc4356",
+    "kind": "development-player"
+  },
+  "native_first": {
+    "result": "Passed",
+    "muted": true,
+    "classification": "automated-not-human",
+    "completion": "first-run-complete.json"
+  }
+}
