@@ -1,0 +1,16 @@
+{
+    "state": "00-menu-image",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "localSeats": 1,
+    "openMenus": 0,
+    "visibleFps": 0,
+    "buildLabels": 1,
+    "width": 1920,
+    "height": 1080,
+    "sourceRevision": "46ed1d4a02d7c32655e534ccdc92faff93348166",
+    "running": false,
+    "focused": false,
+    "muted": true,
+    "unityDeveloperWatermark": false,
+    "matchTime": 0.0
+}

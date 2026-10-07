@@ -78,8 +78,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // The complete raster fits the viewport; navigation switches illustrations without cropping.
             Canvas.ForceUpdateCanvases();
             Assert.That(scroll.vertical,Is.False);
-            Assert.That(scroll.content.rect.height,Is.LessThanOrEqualTo(scroll.viewport.rect.height+.1f));
-            Assert.That(scroll.content.rect.width,Is.LessThanOrEqualTo(scroll.viewport.rect.width+.1f));
+            Assert.That(scroll.content.rect.height,Is.EqualTo(scroll.viewport.rect.height).Within(.1f));
+            Assert.That(scroll.content.rect.width,Is.EqualTo(scroll.viewport.rect.width).Within(.1f));
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-help-keyboard"));
             yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-help-gamepad"));
@@ -87,10 +87,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"));
             yield return Press(GamepadButton.DpadLeft);yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
+            yield return Press(GamepadButton.South);
+            Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"),"Previous arrow wraps from keyboard to gamepad");
+            yield return Press(GamepadButton.South);
+            Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-controls-help"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-fps"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Count(t=>t.text.ToUpperInvariant().Contains("ПОКАЗЫВАТЬ FPS")),Is.EqualTo(1));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.DpadUp);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-mouse-sensitivity"));
