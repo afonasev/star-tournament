@@ -97,6 +97,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Click("roster-card-2");Click("roster-identity");yield return Press(GamepadButton.North);
             Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(ground.SetupComposition().ParticipantCount,Is.EqualTo(4));
             Assert.That(Field<int>("rosterEditing"),Is.EqualTo(3));Assert.That(Field<GameObject>("rosterPicker").activeSelf,Is.False);
+            Assert.That(EventSystem.current.currentSelectedGameObject.transform.IsChildOf(Field<GameObject>("rosterEditor").transform),Is.True,"Joining must not steal focus from the open editor");
             Assert.That(Field<LocalIdentitySession>("identities").ProfileId(1),Is.EqualTo(profile.Id));
             Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(1),Is.SameAs(pad));
             Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));

@@ -309,7 +309,7 @@ namespace StarTournament.ProvingGround
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;
-            if(setupStep==2 && device is Gamepad){if(identities.HasIdentity(seat))identities.RememberBinding(seat,device.deviceId);else if(!identities.TryRestore(seat,device.deviceId,playerProfiles))identities.ChooseGuest(seat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);RefreshInterface();Select(rosterCards[seat]);return;}
+            if(setupStep==2 && device is Gamepad){if(identities.HasIdentity(seat))identities.RememberBinding(seat,device.deviceId);else if(!identities.TryRestore(seat,device.deviceId,playerProfiles))identities.ChooseGuest(seat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);RefreshInterface();if(rosterEditing<0&&pendingSeat<0)Select(rosterCards[seat]);return;}
             if(identities.HasIdentity(seat)){identities.RememberBinding(seat,device.deviceId);RefreshInterface();return;}
             if(!identities.TryRestore(seat,device.deviceId,playerProfiles))OpenIdentityPicker(seat);
             else RefreshInterface();
