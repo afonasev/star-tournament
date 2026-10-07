@@ -1,0 +1,13 @@
+{
+  "path": "/Users/eaafonasev/Projects/star-tournament-candidates/rename-lab-default-profile/StarTournamentProvingGround.app",
+  "owner_change": "rename-lab-default-profile",
+  "platform": "macOS",
+  "source_revision": "5a3fb31",
+  "source_basis": "build source recorded in this task; functional implementation 157b8b5",
+  "sha256": "9b7fa89f29683116df234835267f473f7e77dd4f1469a2983d3ffe8f5e9f5e8f",
+  "checksum_kind": "complete-file-manifest",
+  "replacement": "/Users/eaafonasev/Projects/star-tournament-candidates/protect-shipped-lab-profiles/StarTournamentProvingGround.app",
+  "replacement_revision": "8fc435654fdf525e3ce9f1b06e97dcfb8456217c",
+  "reason": "All Lab changes explicitly accepted; newer accepted development Player covers Default name and protected profile behavior. Accepted regular release Player retained separately.",
+  "action": "superseded binary removal after durable manifest commit"
+}
