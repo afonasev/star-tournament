@@ -3,7 +3,7 @@ import subprocess,os,time,json
 root=Path.cwd();out=root/'.local/f3/native';out.mkdir(parents=True,exist_ok=True)
 exe=root/'unity/Builds/StarTournamentProvingGround.app/Contents/MacOS/Star Tournament Unity Proving Ground'
 cases=[('menu',['-menuStyleReview'],'MENU_STYLE_REVIEW_COMPLETE'),('setup',['-setupSettingsReview'],'NATIVE_SETUP_SETTINGS_REVIEW_COMPLETE'),('pause1',['-pauseReview'],'NATIVE_PAUSE_REVIEW_COMPLETE'),('pause4',['-pauseReview'],'NATIVE_PAUSE_REVIEW_COMPLETE'),('results',['-scoreboardReview','-scoreboardEvidence'],'NATIVE_SCOREBOARD_REVIEW_COMPLETE'),('lab',['-labReview'],'')]
-only=["menu","pause1","pause4"]
+only=os.environ.get("STAR_TOURNAMENT_REVIEW_CASES", "menu,pause1,pause4").split(",")
 if only:cases=[c for c in cases if c[0] in only]
 results=json.loads((out/"results.json").read_text()) if only and (out/"results.json").exists() else []
 for name,flags,marker in cases:

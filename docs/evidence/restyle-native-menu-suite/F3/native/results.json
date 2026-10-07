@@ -1,0 +1,26 @@
+[
+  {
+    "name": "menu",
+    "passed": true,
+    "exit": 0,
+    "stoppedAfterMarker": false,
+    "seconds": 23.1,
+    "screenshots": 26
+  },
+  {
+    "name": "pause4",
+    "passed": true,
+    "exit": 0,
+    "stoppedAfterMarker": false,
+    "seconds": 40.1,
+    "screenshots": 22
+  },
+  {
+    "name": "pause1",
+    "passed": true,
+    "exit": 0,
+    "stoppedAfterMarker": false,
+    "seconds": 29.1,
+    "screenshots": 27
+  }
+]

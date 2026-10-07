@@ -1,0 +1,87 @@
+{
+  "source": "46ed1d4a02d7c32655e534ccdc92faff93348166",
+  "scope": "ui-only",
+  "ui_gate": {
+    "scope": "ui-only",
+    "natural_bot_matches": false,
+    "suites": {
+      "EditMode": [
+        "LocalSeatLayoutTests"
+      ],
+      "PlayMode": [
+        "FourPlayerMenuTests",
+        "IndependentPauseMenuTests"
+      ]
+    },
+    "policy": ".agents/references/qa-scope.md",
+    "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+    "revision": "46ed1d4a02d7c32655e534ccdc92faff93348166",
+    "dirty": " M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n",
+    "result": "Passed",
+    "checks": [
+      {
+        "platform": "EditMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F3/UI-EditMode.xml",
+        "passed": 3,
+        "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f3/unity/../.local/unity-evidence/focused-editmode.T3SWC0/editmode.xml"
+      },
+      {
+        "platform": "PlayMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament/docs/evidence/restyle-native-menu-suite/F3/UI-PlayMode.xml",
+        "passed": 12,
+        "original_xml": "/Users/eaafonasev/Projects/star-tournament-menu-f3/unity/../.local/unity-evidence/focused-playmode.5leXNu/playmode.xml"
+      }
+    ]
+  },
+  "settings": {
+    "result": "Passed",
+    "passed": "7",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "99.3937943"
+  },
+  "build_marker": "STAR_PROVING_BUILD_PASS 501487890",
+  "human_acceptance": false,
+  "commands": {
+    "ui": "make check-ui",
+    "settings": "unity/tools.sh test-play-filter SettingsGamepadNavigationTests",
+    "build": "unity/tools.sh build",
+    "native": "unity-run --exclusive -- python3 docs/evidence/restyle-native-menu-suite/F3/run_reviews.py"
+  },
+  "native_cases": [
+    {
+      "name": "menu",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 23.1,
+      "screenshots": 26
+    },
+    {
+      "name": "pause4",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 40.1,
+      "screenshots": 22
+    },
+    {
+      "name": "pause1",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 29.1,
+      "screenshots": 27
+    }
+  ],
+  "native_first_attempt": "pause1 did not acquire OS focus; timed out before input at 180s. Unchanged build passed on retry. Logs retained.",
+  "screenshots_captured": 75,
+  "screenshots_retained": "Changed help/interface states only; all native state JSON and logs retained.",
+  "candidate": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F3-46ed1d4/StarTournamentProvingGround.app",
+  "candidate_digest": "7a7090329124b819b0c224d6d060dbaf1b137d3a1c291326181175fde9f3d379",
+  "qa_bundle": {
+    "id": "com.afonasev.star-tournament-menu-f3-qa",
+    "name": "Star Tournament F3 QA",
+    "note": "QA metadata and ad-hoc signature only; see qa_identity.py."
+  }
+}
