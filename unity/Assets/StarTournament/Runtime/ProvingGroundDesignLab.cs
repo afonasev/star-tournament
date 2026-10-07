@@ -240,11 +240,7 @@ namespace StarTournament.ProvingGround
             labRelease.interactable=!readOnly&&!LabDirty&&!shipped&&labHistory.Compatible(selected)&&labHistory.Writable;
             labRelease.GetComponentInChildren<Text>().text=shipped?"Релизная · в клиенте":selected.ReleaseCandidate?"Релизная: да · локально":"Релизная: нет";
             string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=labSavedRevisionLabel+" ▾";
-<<<<<<< HEAD
-            labIdentity.text=labHistory.SelectedProfileProtected?"Стандартный профиль · удаление запрещено":"Локальный профиль";labStatus.text=labError??labHistory.StorageError??(issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
-=======
-            labIdentity.text=LabSavedIdentity+(labHistory.SelectedProfileProtected?" · стандартный профиль: удаление запрещено":"");labStatus.text=labError??labHistory.StorageError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
->>>>>>> main
+            labIdentity.text=labHistory.SelectedProfileProtected?"Стандартный профиль · удаление запрещено":"Локальный профиль";labStatus.text=labError??labHistory.StorageError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
         }
         void LabOperation(Action action,bool reset)
         {
