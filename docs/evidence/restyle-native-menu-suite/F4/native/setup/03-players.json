@@ -1,0 +1,16 @@
+{
+    "state": "03-players",
+    "classification": "SYNTHETIC_NATIVE_PLAYER_VISUAL_NOT_HUMAN_ACCEPTANCE",
+    "width": 1920,
+    "height": 1080,
+    "muted": true,
+    "setupMap": false,
+    "setupRules": false,
+    "setupPlayers": true,
+    "settingsImage": false,
+    "settingsAudio": false,
+    "confirmation": false,
+    "shadows": true,
+    "musicPercent": 70,
+    "effectsPercent": 80
+}
