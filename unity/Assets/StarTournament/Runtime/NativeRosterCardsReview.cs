@@ -55,7 +55,7 @@ namespace StarTournament.ProvingGround
             Click("roster-device");Click("roster-choice-device-"+device.deviceId);Click("roster-done");
         }
         void Remove(int p){Click("roster-card-"+p);Click("roster-remove");}
-        void ChangeView(int p,bool own){Click("roster-card-"+p);Click("roster-device");Click(own?"roster-choice-view-on":"roster-choice-view-off");Click("roster-done");}
+        void ChangeView(int p,bool own){Click("roster-card-"+p);var toggle=ground.GetComponentsInChildren<Toggle>().Single(t=>t.name=="roster-bot-view");Check(toggle.interactable,"Own view is unavailable");toggle.isOn=own;Click("roster-done");}
         IEnumerator Start()
         {
             Application.runInBackground=true;
@@ -161,8 +161,8 @@ namespace StarTournament.ProvingGround
             yield return Capture("08-team-move-six-two");
             ChangeView(2,true);ChangeView(3,true);Check(ground.LocalSeatCount==4&&ground.SetupComposition().ParticipantCount==8,"Own screens changed roster count");
             yield return Capture("09-four-human-ai-views");
-            Click("roster-card-4");Click("roster-device");Check(!Button("roster-choice-view-on").interactable,"Fifth view is allowed");
-            yield return Capture("10-four-view-limit");Click("roster-picker-back");Click("roster-done");
+            Click("roster-card-4");Check(!ground.GetComponentsInChildren<Toggle>().Single(t=>t.name=="roster-bot-view").interactable,"Fifth view is allowed");
+            yield return Capture("10-four-view-limit");Click("roster-done");
             ChangeView(2,false);Check(ground.LocalSeatCount==3&&ground.SetupComposition().ParticipantCount==8,"View demotion changed count");
             yield return Capture("11-view-demoted");
             InputSystem.DisableDevice(pad);yield return null;yield return null;

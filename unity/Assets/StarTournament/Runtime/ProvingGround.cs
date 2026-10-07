@@ -1043,7 +1043,7 @@ namespace StarTournament.ProvingGround
             durationButton=ButtonElement(column.transform,"Длительность",()=>StepConfiguration("match.durationMinutes",1));
             durationButton.gameObject.name="duration-plus";
             var durationMinus=ButtonElement(column.transform,"−",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
-            targetButton=ButtonElement(column.transform,"Цель",()=>{ if(phase!=Phase.Setup)return; var c=Configuration;c.TargetEnabled=!c.TargetEnabled;Configuration=c;RefreshInterface(); });
+            targetButton=ButtonElement(column.transform,"Цель",()=>{ if(phase!=Phase.Setup)return; var c=Configuration;c.TargetEnabled=true;Configuration=c;RefreshInterface(); });
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
