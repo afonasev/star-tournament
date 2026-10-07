@@ -47,5 +47,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             B("settings-back").onClick.Invoke();Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);
         }
+        [UnityTest] public IEnumerator FeedbackUsesTopBackSquareChecksAndFullResolutionList()
+        {
+            B("main-action-3").onClick.Invoke();yield return null;
+            Assert.That(((RectTransform)B("profiles-back").transform).anchorMin.y,Is.GreaterThan(.9f));
+            B("profiles-back").onClick.Invoke();B("main-action-0").onClick.Invoke();yield return null;
+            Assert.That(ground.GetComponentsInChildren<ArenaPreviewGraphic>().Length,Is.EqualTo(1));
+            Assert.That(((RectTransform)B("setup-previous").transform).anchorMin.y,Is.GreaterThan(.9f));
+            B("Назад к главному меню").onClick.Invoke();B("main-action-4").onClick.Invoke();yield return null;Canvas.ForceUpdateCanvases();
+            foreach(var t in ground.GetComponentsInChildren<Toggle>())
+            {var box=(RectTransform)t.transform.Find("box");Assert.That(box.rect.width,Is.EqualTo(box.rect.height).Within(.1));}
+            B("settings-resolution").onClick.Invoke();yield return null;
+            Assert.That(ground.GetComponentsInChildren<Button>(true).Any(b=>b.name=="resolution-page-next"),Is.False);
+            var choices=ground.GetComponentsInChildren<Button>().Where(b=>b.name.StartsWith("resolution-choice-")).ToArray();
+            Assert.That(choices.Length,Is.GreaterThan(0));Assert.That(choices.Last().navigation.selectOnDown,Is.EqualTo(B("resolution-cancel")));
+            B("resolution-cancel").onClick.Invoke();B("settings-section-1").onClick.Invoke();B("settings-controls-help").onClick.Invoke();yield return null;
+            Assert.That(ground.GetComponentsInChildren<HelpCalloutGraphic>().Length,Is.GreaterThanOrEqualTo(8));
+            Assert.That(((RectTransform)B("settings-help-back").transform).anchorMin,Is.EqualTo(((RectTransform)B("settings-back").transform).anchorMin));
+        }
     }
 }

@@ -277,13 +277,13 @@ namespace StarTournament.ProvingGround
                 seatPauseExit[seat].SetActive(human&&page==SeatPausePage.ConfirmExit);
                 if(human)
                 {
-                    seatPauseReason[seat].text=pauseReason;
+                    seatPauseReason[seat].text=IdentityLabel(seat);
                     if(page==SeatPausePage.Settings)seatSettingsViews[seat].RefreshSettingsUi();
                     seatPauseActionButtons[seat,0].interactable=input.Ready&&FocusAllowsResume;
                     if(page!=SeatPausePage.Settings&&page!=SeatPausePage.Closed)PaintSeatButtons(seat,page);
                 }
                 bool showFps=(phase==Phase.Running||phase==Phase.Paused)&&UseSeatPauseMenus&&seat<LocalSeatCount&&input.IsHumanSeat(seat)&&PersonalFps(seat);
-                seatPauseFps[seat].gameObject.SetActive(showFps);
+                seatPauseFps[seat].gameObject.SetActive(false);
                 if(showFps)seatPauseFps[seat].text=fps.CurrentText;
             }
         }

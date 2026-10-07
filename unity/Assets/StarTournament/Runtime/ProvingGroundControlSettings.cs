@@ -26,14 +26,17 @@ namespace StarTournament.ProvingGround
         {
             var row=Panel(parent,name,min,max,MenuCard);var toggle=row.AddComponent<Toggle>();
             var box=Panel(row.transform,"box",new Vector2(.04f,.18f),new Vector2(.10f,.82f),new Color32(79,102,114,255));
+            box.GetComponent<Image>().sprite=null;
+            var boxRect=(RectTransform)box.transform;boxRect.anchorMin=boxRect.anchorMax=new Vector2(0,.5f);boxRect.pivot=new Vector2(0,.5f);boxRect.anchoredPosition=new Vector2(16,0);boxRect.sizeDelta=new Vector2(30,30);
             var mark=Label(box.transform,"check","✓",font,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,MenuInk);
             // The glyph may exceed the compact box in four-seat layout, while remaining inside its row.
             mark.verticalOverflow=VerticalWrapMode.Overflow;
             var fill=Panel(box.transform,"check-fill",new Vector2(.08f,.08f),new Vector2(.92f,.92f),MenuGold);
+            fill.GetComponent<Image>().sprite=null;
             mark.transform.SetAsLastSibling();toggle.graphic=fill.GetComponent<Image>();toggle.targetGraphic=box.GetComponent<Image>();
             // The filled gold box is the checked-state marker; decorative glyph follows it.
             toggle.onValueChanged.AddListener(v=>{mark.gameObject.SetActive(v);changed(v);});
-            Label(row.transform,"label",title,font,new Vector2(.14f,.05f),new Vector2(.96f,.95f),TextAnchor.MiddleLeft,Color.white);
+            var caption=Label(row.transform,"label",title,font,new Vector2(0,.05f),new Vector2(1,.95f),TextAnchor.MiddleLeft,Color.white);caption.rectTransform.offsetMin=new Vector2(60,0);caption.rectTransform.offsetMax=new Vector2(-12,0);
             return toggle;
         }
         static void RefreshNumericSetting(Slider slider,string title,float value,string unit)

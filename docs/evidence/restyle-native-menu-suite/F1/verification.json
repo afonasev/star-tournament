@@ -1,0 +1,95 @@
+{
+  "source": "2e3ae8c0c472ecdedb62e5d477f8b5a642e674b0",
+  "scope": "ui-only",
+  "ui_gate": {
+    "scope": "ui-only",
+    "natural_bot_matches": false,
+    "suites": {
+      "EditMode": [
+        "LocalSeatLayoutTests"
+      ],
+      "PlayMode": [
+        "FourPlayerMenuTests",
+        "IndependentPauseMenuTests"
+      ]
+    },
+    "policy": ".agents/references/qa-scope.md",
+    "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+    "revision": "2e3ae8c0c472ecdedb62e5d477f8b5a642e674b0",
+    "dirty": "?? docs/evidence/restyle-native-menu-suite/F1/\n",
+    "result": "Passed",
+    "checks": [
+      {
+        "platform": "EditMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament-menu-feedback/unity/../.local/unity-evidence/focused-editmode.dl8L93/editmode.xml",
+        "passed": 3
+      },
+      {
+        "platform": "PlayMode",
+        "xml": "/Users/eaafonasev/Projects/star-tournament-menu-feedback/unity/../.local/unity-evidence/focused-playmode.11Dp7F/playmode.xml",
+        "passed": 12
+      }
+    ]
+  },
+  "focused_final": {
+    "passed": "10",
+    "revision": "2e3ae8c0c472ecdedb62e5d477f8b5a642e674b0"
+  },
+  "earlier_affected": {
+    "revision": "b8a8f36",
+    "passed": 18
+  },
+  "build_marker": "STAR_PROVING_BUILD_PASS 490537125",
+  "native_cases": [
+    {
+      "name": "menu",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 15.1,
+      "screenshots": 25
+    },
+    {
+      "name": "setup",
+      "passed": true,
+      "exit": -15,
+      "stoppedAfterMarker": true,
+      "seconds": 29.2,
+      "screenshots": 15
+    },
+    {
+      "name": "pause1",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 19.1,
+      "screenshots": 27
+    },
+    {
+      "name": "pause4",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 16.1,
+      "screenshots": 22
+    },
+    {
+      "name": "results",
+      "passed": true,
+      "exit": -15,
+      "stoppedAfterMarker": true,
+      "seconds": 10.1,
+      "screenshots": 5
+    },
+    {
+      "name": "lab",
+      "passed": true,
+      "exit": 0,
+      "stoppedAfterMarker": false,
+      "seconds": 30.1,
+      "screenshots": 16
+    }
+  ],
+  "human_acceptance": false,
+  "candidate": "/Users/eaafonasev/Projects/star-tournament/.local/player-candidates/menu-F1-2e3ae8c/StarTournamentProvingGround.app"
+}

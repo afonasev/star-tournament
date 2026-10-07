@@ -1042,7 +1042,7 @@ namespace StarTournament.ProvingGround
             diagnosticButton=ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
             durationButton=ButtonElement(column.transform,"Длительность",()=>StepConfiguration("match.durationMinutes",1));
             durationButton.gameObject.name="duration-plus";
-            var durationMinus=ButtonElement(column.transform,"Длительность −",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
+            var durationMinus=ButtonElement(column.transform,"−",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
             targetButton=ButtonElement(column.transform,"Цель",()=>{ if(phase!=Phase.Setup)return; var c=Configuration;c.TargetEnabled=!c.TargetEnabled;Configuration=c;RefreshInterface(); });
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
@@ -1254,8 +1254,9 @@ namespace StarTournament.ProvingGround
                     botTeams[i].GetComponent<Image>().color=NativeStandingsView.TeamColor(bot.Team,swappedTeamColors);
                 }
             }
-            status.text="STAR TOURNAMENT · UNITY ПОЛИГОН\n"+(phase==Phase.Paused ? pauseReason : "Space / Y — присоединить человека · Esc — пауза")+"\n"+
+            status.text=(phase==Phase.Paused ? "Пауза" : "Space / Y — присоединить человека · Esc — пауза")+"\n"+
                 string.Join("  |  ",Enumerable.Range(0,LocalSeatCount).Select(i=>"P"+(i+1)+": "+(!input.IsHumanSeat(i)?"AI":input.IsConnected(i)?IdentityLabel(i):"ожидает")));
+            if(phase==Phase.Paused)status.text=DefaultPauseSeat()<0?"Пауза":"Пауза\n"+IdentityLabel(DefaultPauseSeat());
             if(phase==Phase.Setup && !ValidSetup()) status.text+=LocalSeatCount+botSetup.Count<2?"\nДобавьте бота или второго игрока":"\nНужны обе команды: Team A и Team B";
             if(phase==Phase.Setup && setupError!=null) status.text+="\n"+setupError;
             if(phase==Phase.Results)

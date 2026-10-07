@@ -38,14 +38,11 @@ namespace StarTournament.ProvingGround
             var unsupportedJoystick=InputSystem.AddDevice<Joystick>();
             Button("settings-controls-devices").onClick.Invoke();yield return Capture("02a-controller-status");
             bool foundPad=false,foundUnsupported=false;
-            do
             {
                 var deviceRows=ground.GetComponentsInChildren<Text>(true).Where(t=>t.name.StartsWith("device-row-")&&t.gameObject.activeInHierarchy).Select(t=>t.text).ToArray();
                 foundPad|=deviceRows.Any(t=>t.Contains(compatibilityPad.deviceId.ToString())&&t.Contains("Готов к игре"));
                 foundUnsupported|=deviceRows.Any(t=>t.Contains(unsupportedJoystick.deviceId.ToString())&&t.Contains("XInput"));
-                if(!Button("devices-next").interactable)break;
-                Button("devices-next").onClick.Invoke();yield return null;
-            }while(true);
+            }
             if(!foundPad||!foundUnsupported)
                 throw new InvalidOperationException("Controller compatibility list missed a known gamepad or unsupported joystick");
             Button("devices-back").onClick.Invoke();

@@ -93,6 +93,7 @@ namespace StarTournament.ProvingGround
             ground.StartCombatReview(pads);
             if(!ground.Running)throw new InvalidOperationException("Native pause review match did not start: "+ground.CombatReviewDiagnostic());
             ground.EnableNativeInputReview();yield return null;
+            if(VisibleFpsCount()>1)throw new InvalidOperationException("Duplicate global FPS counters");
             yield return Capture("01-running-"+count);
             for(int seat=0;seat<count;seat++)yield return Press(pads[seat],GamepadButton.Start);
             if(ground.Running)Debug.Log("NATIVE_PAUSE_INPUT_FALLBACK_UNFOCUSED");

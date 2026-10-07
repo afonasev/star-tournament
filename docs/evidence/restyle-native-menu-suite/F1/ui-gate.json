@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "2e3ae8c0c472ecdedb62e5d477f8b5a642e674b0",
+  "dirty": "?? docs/evidence/restyle-native-menu-suite/F1/\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-menu-feedback/unity/../.local/unity-evidence/focused-editmode.dl8L93/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-menu-feedback/unity/../.local/unity-evidence/focused-playmode.11Dp7F/playmode.xml",
+      "passed": 12
+    }
+  ]
+}
