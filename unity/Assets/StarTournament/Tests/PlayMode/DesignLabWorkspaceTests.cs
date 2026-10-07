@@ -26,6 +26,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
             Click("main-action-2");yield return null;
+            Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("в клиенте"));
+            Assert.That(Button("lab-release").interactable,Is.False);
             Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("group-map-")||b.name=="group-layout"||b.name=="group-ring-layout"||b.name=="group-details"||b.name=="group-ring"||b.name=="group-world-query"||b.name=="group-navigation"||b.name=="group-simulation"),Is.False);
             foreach(var hidden in new[]{"layout.fill-0.x","wayfinding.sign-0.yaw","broadcast.screenWidth","ring.spaceCenterY"}.Concat(LabBundle.AuditedExcludedPaths))
             {Input("lab-search").text=hidden;yield return null;Assert.That(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-"+hidden),Is.False);}
@@ -45,6 +47,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadRight));yield return null;yield return null;InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("reset-rifle.damage"));
             Input("input-rifle.damage").text="33";Click("lab-save");yield return null;Assert.That(ground.LabSavedIdentity,Does.Contain("v2-"));Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(original));
+            string savedIdentity=ground.LabSavedIdentity;Assert.That(Button("lab-release").interactable,Is.True);Click("lab-release");yield return null;
+            Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("да · локально"));Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
+            Input("input-rifle.damage").text="34";yield return null;Assert.That(Button("lab-release").interactable,Is.False);Click("lab-clear");yield return null;
             Click("lab-back");Click("main-action-0");yield return null;Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));
             var identity=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="setup-lab-identity");Canvas.ForceUpdateCanvases();Assert.That(identity.text,Does.Contain("SHA256"));Assert.That(identity.preferredHeight,Is.LessThanOrEqualTo(identity.rectTransform.rect.height+1),"Saved revision/hash must fit in setup summary");
             ground.StartCombatReview(new[]{pad},true,true);yield return null;Assert.That(ground.Running,Is.True);

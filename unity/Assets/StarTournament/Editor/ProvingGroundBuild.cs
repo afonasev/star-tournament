@@ -78,6 +78,7 @@ namespace StarTournament.ProvingGround.Editor
             if(!string.IsNullOrEmpty(familyText))throw new BuildFailedException("Procedural QA source is unsupported.");
             int width=ReadQaDimension("STAR_TOURNAMENT_QA_WIDTH",1920),height=ReadQaDimension("STAR_TOURNAMENT_QA_HEIGHT",1080);
             PrepareAuthored(width,height);
+            LabReleaseBuild.Validate();
             var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes=new[]{Scene}, locationPathName="Builds/StarTournamentProvingGround.app", target=BuildTarget.StandaloneOSX, options=BuildOptions.Development,
                 extraScriptingDefines=new[]{"STAR_TOURNAMENT_DEVELOPMENT_QA"} });
             // Keep the editable canonical scene at its authored catalog after a one-off QA artifact build.
@@ -102,6 +103,7 @@ namespace StarTournament.ProvingGround.Editor
             Prepare();
             try
             {
+                LabReleaseBuild.Validate();
                 var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes=new[]{Scene},
                     locationPathName=output, target=target, options=BuildOptions.None });
                 if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());

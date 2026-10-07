@@ -39,6 +39,8 @@ namespace StarTournament.ProvingGround
             Click("lab-back");yield return null;yield return Capture("05-dirty-exit-guard");Click("cancel");yield return null;
             Input("input-rifle.damage").text="31";yield return null;Click("lab-save");yield return null;string v2=ground.LabSavedIdentity;
             Click("lab-revision-select");yield return null;yield return Capture("06-history");Click("revision-1");yield return null;
+            Click("lab-release");yield return null;yield return Capture("06b-local-release-mark");
+            if(!Button("lab-release").GetComponentInChildren<Text>().text.Contains("да · локально"))throw new InvalidOperationException("Local release mark missing");
             Input("input-rifle.damage").text="32";yield return null;Click("lab-save");yield return null;if(!ground.LabSavedIdentity.Contains("v3-"))throw new InvalidOperationException("Save from older base did not append v3");
             Click("lab-rename");yield return null;Input("lab-profile-name").text="QA профиль · переименован";Click("submit");yield return null;
             Input("input-rifle.damage").text="33";Click("lab-revision-select");yield return null;Click("revision-1");yield return null;yield return Capture("07a-dirty-revision-guard");Click("cancel");yield return null;Click("lab-clear");yield return null;
