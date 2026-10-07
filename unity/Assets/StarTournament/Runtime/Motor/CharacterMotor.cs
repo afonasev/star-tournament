@@ -19,6 +19,7 @@ namespace StarTournament.ProvingGround
         private float horizontalSpeedMultiplier=1f;
 
         public ParticipantState State => state;
+        public bool AcceptedJumpThisTick { get; private set; }
 
         public void Initialize(ProvingProfile provingProfile, Vector3 spawn, ProvingArena supportArena=null)
         {
@@ -68,6 +69,7 @@ namespace StarTournament.ProvingGround
 
         public void Tick(LocalAction action, float dt)
         {
+            AcceptedJumpThisTick=false;
             if (!initialized) throw new System.InvalidOperationException("Initialize must be called before Tick.");
             if (dt <= 0f) throw new System.ArgumentOutOfRangeException(nameof(dt));
 
@@ -96,6 +98,7 @@ namespace StarTournament.ProvingGround
             {
                 verticalVelocity = -profile.Get("player.movement.gravity") * dt;
                 if (action.Jump) verticalVelocity = profile.Get("player.movement.jumpSpeed");
+                if (action.Jump) AcceptedJumpThisTick=true;
             }
             else
             {

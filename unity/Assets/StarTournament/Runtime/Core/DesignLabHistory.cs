@@ -326,6 +326,7 @@ namespace StarTournament.ProvingGround
                     return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
                 }
                 var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
+                var beforeMatchAchievements=Cached(p=>p.BeforeMatchAchievements());
                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
@@ -346,6 +347,7 @@ namespace StarTournament.ProvingGround
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseVisibility))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
@@ -380,6 +382,7 @@ namespace StarTournament.ProvingGround
                 // legacy schema keys can otherwise discard the actual pre-rebalance defaults.
                 var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
                 // Music can be absent alongside an earlier Pulse registry without changing gameplay defaults.
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusic))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));

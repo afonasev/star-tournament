@@ -213,6 +213,13 @@ namespace StarTournament.ProvingGround
             copy.descriptors.RemoveAll(d=>d.Path=="match.ffaTargetDefault"||d.Path=="match.teamTargetDefault");
             copy.values.RemoveAll(v=>v.Path=="match.ffaTargetDefault"||v.Path=="match.teamTargetDefault");return copy;
         }
+        internal ProvingProfile BeforeMatchAchievements()
+        {
+            if(id!="unity-native-match-v1"||(FindDescriptor("achievement.minimumShots")==null&&FindDescriptor("achievement.minimumBeamSeconds")==null))return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path=="achievement.minimumShots"||d.Path=="achievement.minimumBeamSeconds");
+            copy.values.RemoveAll(v=>v.Path=="achievement.minimumShots"||v.Path=="achievement.minimumBeamSeconds");return copy;
+        }
         public void EnsureMatchDescriptors()
         {
             valueIndex=null;

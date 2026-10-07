@@ -119,6 +119,7 @@ namespace StarTournament.ProvingGround
         RectTransform verticalDivider, horizontalDivider;
         readonly NativeStandingsView[] standings = new NativeStandingsView[SeatInputCoordinator.SeatCount];
         NativeStandingsView results, persistentStandings;
+        NativeAchievementsView achievementsView;
         readonly DamageVignette[] damageVignettes=new DamageVignette[SeatInputCoordinator.SeatCount];
         readonly RectTransform[] viewportRoots=new RectTransform[SeatInputCoordinator.SeatCount];
         Button seatsMinus, seatsPlus;
@@ -274,6 +275,7 @@ namespace StarTournament.ProvingGround
             if (args.Contains("-movementAudioReview")) gameObject.AddComponent<NativeMovementAudioReview>();
             if (args.Contains("-unifiedDamageReview")) gameObject.AddComponent<NativeUnifiedDamageReview>();
             if (args.Contains("-scoreboardReview")) gameObject.AddComponent<NativeScoreboardReview>();
+            if (args.Contains("-achievementReview")) gameObject.AddComponent<NativeAchievementReview>();
             if (args.Contains("-labReview")) gameObject.AddComponent<NativeDesignLabReview>();
             if (args.Contains("-fullHealReview")) gameObject.AddComponent<NativeFullHealReview>();
             if (args.Contains("-weaponBalanceReview")) gameObject.AddComponent<NativeWeaponBalanceReview>();
@@ -724,6 +726,8 @@ namespace StarTournament.ProvingGround
             ApplyLayout(frozenSeatCount);
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
+            match.ConfigureAchievementRecipients(Enumerable.Range(0,Composition.ParticipantCount)
+                .Select(p=>Composition.Participant(p).Kind==NativeParticipantKind.LocalHuman).ToArray());
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match,frozenLabReference,frozenCutter);
             RebuildPickupVisuals();
             gameAudio?.Bind(Session,Composition,frozenMovement);BindDamageBonusAlerts();
@@ -1048,6 +1052,7 @@ namespace StarTournament.ProvingGround
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
             results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile);
             results.Root.SetActive(false);
+            achievementsView=new NativeAchievementsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"));
             var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
             settings.gameObject.name = "fps-setting";settings.gameObject.SetActive(false);
             fps = canvasObject.AddComponent<FpsDisplay>();
@@ -1177,8 +1182,9 @@ namespace StarTournament.ProvingGround
             var title=status.GetComponent<LayoutElement>()??status.gameObject.AddComponent<LayoutElement>();
             title.minHeight=title.preferredHeight=statusHeight;title.flexibleHeight=0;
             // The title uses its measured wrapped text height; action sizes come from the UI profile.
-            Layout(menuRect,new Vector2(.5f,phase==Phase.Results?.23f:.5f),new Vector2(.5f,phase==Phase.Results?.23f:.5f));
             menuRect.sizeDelta=new Vector2(width,statusHeight+buttons*(height+spacing));
+            if(phase==Phase.Results)NativeAchievementsView.PlaceResultsActionsAtBottom(menuRect);
+            else Layout(menuRect,new Vector2(.5f,.5f),new Vector2(.5f,.5f));
         }
         void RefreshInterface()
         {
@@ -1227,8 +1233,10 @@ namespace StarTournament.ProvingGround
             durationButton.GetComponentInChildren<Text>().text="Длительность: "+Configuration.DurationMinutes+" мин   +";
             targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
             results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition,phase==Phase.Results?Session.LifeStates:null);
+            achievementsView.Show(phase==Phase.Results,Session.Match?.Read(),Composition);
+            achievementsView.PositionResultsTable(results);
             var menuRect=(RectTransform)status.transform.parent;
-            Layout(menuRect,new Vector2(phase==Phase.Setup?.04f:.15f,phase==Phase.Results?.06f:.08f),new Vector2(phase==Phase.Setup?.51f:.85f,phase==Phase.Results?.40f:.92f));
+            Layout(menuRect,new Vector2(phase==Phase.Setup?.04f:.15f,phase==Phase.Results?.11f:.08f),new Vector2(phase==Phase.Setup?.51f:.85f,phase==Phase.Results?.11f:.92f));
             if(seatPanel)
             {
                 seatPanel.SetActive(phase==Phase.Setup);
@@ -1266,6 +1274,8 @@ namespace StarTournament.ProvingGround
             RefreshModernMenuUi();
             RefreshSeatPauseUi();
             StyleOperatorPause();
+            if(phase==Phase.Results)achievementsView.AdaptToActions((RectTransform)status.transform.parent,results);
+            else achievementsView.PositionResultsTable(results);
         }
     }
 }
