@@ -7,3 +7,5 @@
 Ожидаемые команды: `unity/tools.sh prepare`, `make check-ui`, `unity/tools.sh test-play-filter SettingsGamepadNavigationTests`, `unity/tools.sh build`; затем muted native menu/pause1/pause4 на этой сборке. Все Unity-команды используют штатный unity-run.
 
 На момент реализации runtime занят чужим эксклюзивным Player Star Racing. Сохранённый F2-кандидат не удаляется до проверенной замены.
+
+Подготовка ожидала допуска около 13 минут и была отменена до запуска Unity (exit 130). Чужой Star Racing не остановлен. `git diff --check` и strict OpenSpec validation прошли. Код сохранён в ветке `codex/menu-feedback-f3`; worktree оставлен для обязательных проверок. Следующий шаг после закрытия Star Racing — команды выше, затем сохранение кандидата/кадров, merge, spec sync и cleanup.
