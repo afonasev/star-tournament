@@ -202,7 +202,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 InputSystem.QueueStateEvent(pads[i],new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
                 InputSystem.QueueStateEvent(pads[i],new GamepadState());yield return null;
-                Button("roster-identity").onClick.Invoke();Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
+                Assert.That(ground.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b=>b.name=="roster-done"),Is.False,"Y joins directly without an editor");
             }
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadDown));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;

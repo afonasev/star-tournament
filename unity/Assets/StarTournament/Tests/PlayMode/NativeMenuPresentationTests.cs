@@ -13,14 +13,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class NativeMenuPresentationTests
     {
         Scene scene;ProvingGround ground;
+        InputSettings.EditorInputBehaviorInPlayMode priorEditorInput;InputSettings.BackgroundBehavior priorBackground;
         Button B(string n)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==n);
         [UnitySetUp] public IEnumerator Setup()
         {
+            priorEditorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorBackground=InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(x=>x.GetComponentsInChildren<ProvingGround>()).Single();
         }
-        [UnityTearDown] public IEnumerator Cleanup(){if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
+        [UnityTearDown] public IEnumerator Cleanup(){if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);InputSystem.settings.editorInputBehaviorInPlayMode=priorEditorInput;InputSystem.settings.backgroundBehavior=priorBackground;}
         [UnityTest] public IEnumerator ApprovedMainMenuHasReadableArtworkAndSixPreservedActions()
         {
             var root=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="main-menu");
