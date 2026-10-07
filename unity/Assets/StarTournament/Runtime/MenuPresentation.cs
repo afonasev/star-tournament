@@ -28,6 +28,7 @@ namespace StarTournament.ProvingGround
             bool focus=button && button.interactable && (selected||hover);
             border.effectColor=focus?Gold:Line;border.effectDistance=focus?new Vector2(2,-2):new Vector2(1,-1);
         }
+        public void SetFocused(bool value){selected=value;Paint();}
         public void OnSelect(BaseEventData e){selected=true;Paint();}
         public void OnDeselect(BaseEventData e){selected=false;Paint();}
         public void OnPointerEnter(PointerEventData e){hover=true;Paint();}

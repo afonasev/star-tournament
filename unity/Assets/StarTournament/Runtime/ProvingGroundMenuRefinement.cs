@@ -35,7 +35,8 @@ namespace StarTournament.ProvingGround
             var previousIdentity=oldMenuColumn.transform.Find("operator-identity");if(previousIdentity)previousIdentity.gameObject.SetActive(phase==Phase.Paused&&!UseSeatPauseMenus);
             if(phase!=Phase.Paused||UseSeatPauseMenus){if(background)background.enabled=false;group.enabled=true;return;}
             group.enabled=false;if(!background)background=oldMenuColumn.AddComponent<Image>();background.enabled=true;background.color=new Color32(20,33,48,248);RoundRosterPanel(oldMenuColumn);
-            Layout((RectTransform)oldMenuColumn.transform,new Vector2(.11f,.09f),new Vector2(.89f,.91f));
+            var pauseRect=(RectTransform)oldMenuColumn.transform;var viewport=(RectTransform)pauseRect.parent;
+            pauseRect.anchorMin=pauseRect.anchorMax=new Vector2(.5f,.5f);pauseRect.sizeDelta=new Vector2(Mathf.Min(viewport.rect.width*.78f,760),Mathf.Min(viewport.rect.height*.82f,650));pauseRect.anchoredPosition=Vector2.zero;
             status.text="Пауза";status.fontSize=40;status.color=MenuGold;Layout(status.rectTransform,new Vector2(.08f,.83f),new Vector2(.92f,.96f));
             var identity=oldMenuColumn.transform.Find("operator-identity");
             if(!identity)identity=Label(oldMenuColumn.transform,"operator-identity","",30,new Vector2(.08f,.72f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white).transform;

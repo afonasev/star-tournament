@@ -295,7 +295,8 @@ namespace StarTournament.ProvingGround
                 Selectable button=page==SeatPausePage.Actions?seatPauseActionButtons[seat,item]:
                     page==SeatPausePage.ConfirmRepeat?seatPauseRepeatButtons[seat,item]:seatPauseExitButtons[seat,item];
                 var image=button.GetComponent<Image>();
-                if(image)image.color=!button.interactable?new Color32(46,57,63,255):item==seatPauseCursor[seat]?new Color32(61,96,112,255):MenuCard;
+                if(image)image.color=!button.interactable?new Color32(46,57,63,255):MenuCard;
+                button.GetComponent<MenuPresentation>()?.SetFocused(item==seatPauseCursor[seat]);
                 if(button is Slider){button.transform.parent.GetComponent<Image>().color=item==seatPauseCursor[seat]?new Color32(61,96,112,255):MenuCard;}
 
             }
