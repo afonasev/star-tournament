@@ -187,7 +187,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var saved=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
             Assert.That(saved.Selected.Snapshot.Get("score.chainTotal1"),Is.EqualTo(200),"Lab save: "+ground.GetComponentsInChildren<Text>().First(t=>t.name=="lab-status").text);
             Button("lab-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ChooseGuestsForAssignedSeats();yield return null;
-            Button("duration-plus").onClick.Invoke();Button("target-toggle").onClick.Invoke();
+            Button("duration-plus").onClick.Invoke();Assert.That(ground.Configuration.TargetEnabled,Is.True);
             Button("Начать — четыре игрока").onClick.Invoke();yield return null;
             Assert.That(ground.Session.Match.Configuration.DurationMinutes,Is.EqualTo(6));Assert.That(ground.Session.Match.Configuration.TargetEnabled,Is.True);
             ground.Session.ApplyDamage(1,1,100,0,1);Assert.That(ground.Session.Match.Read().Standings[0].Score,Is.EqualTo(200));

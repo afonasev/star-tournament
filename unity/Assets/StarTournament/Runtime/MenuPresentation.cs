@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
     {
         public const float ButtonHeight = 46;
         public bool Compact = true;
+        public float Height = ButtonHeight;
         Outline border;
         Button button;
         bool selected, hover, resizing;
@@ -39,7 +40,7 @@ namespace StarTournament.ProvingGround
             if(!Compact||resizing)return;
             var rect=(RectTransform)transform;var parent=rect.parent as RectTransform;
             if(!parent||rect.anchorMin.y==rect.anchorMax.y)return;
-            float inset=Mathf.Max(0,((rect.anchorMax.y-rect.anchorMin.y)*parent.rect.height-ButtonHeight)*.5f);
+            float inset=Mathf.Max(0,((rect.anchorMax.y-rect.anchorMin.y)*parent.rect.height-Height)*.5f);
             if(Mathf.Abs(rect.offsetMin.y-inset)<.1f && Mathf.Abs(rect.offsetMax.y+inset)<.1f)return;
             resizing=true;
             rect.offsetMin=new Vector2(rect.offsetMin.x,inset);rect.offsetMax=new Vector2(rect.offsetMax.x,-inset);

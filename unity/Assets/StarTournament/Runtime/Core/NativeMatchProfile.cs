@@ -11,6 +11,8 @@ namespace StarTournament.ProvingGround
             // Baseline: released prototype-v1@12. Ranges are shared by setup and validation.
             p.Add("match.durationMinutes", "match", "Длительность", "Основное время; равенство запускает overtime.", "minutes", 1, 30, 1, 5);
             p.Add("match.targetPoints", "match", "Цель по очкам", "Используется только при включённой цели.", "points", 1000, 20000, 100, 3000);
+            p.Add("match.ffaTargetDefault", "match", "Цель: каждый сам за себя", "Начальная цель при выборе одиночного режима.", "points", 1000, 20000, 100, 2000);
+            p.Add("match.teamTargetDefault", "match", "Цель: командный бой", "Начальная цель при выборе командного режима.", "points", 1000, 20000, 100, 3500);
             p.Add("score.assistWindow", "scoring", "Окно помощи", "Последний положительный урон учитывается включительно.", "seconds", 0, 60, 1, 5);
             p.Add("score.assistPoints", "scoring", "Очки помощи", "Награда один раз за чужое убийство.", "points", 0, 1000, 1, 50);
             int[] totals = { 100, 300, 500, 800, 1200 };

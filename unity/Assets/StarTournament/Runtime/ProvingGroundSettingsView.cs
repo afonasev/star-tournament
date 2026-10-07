@@ -202,7 +202,7 @@ namespace StarTournament.ProvingGround
 
                 settingsHelpPage=Panel(content.transform,"settings-help-page",new Vector2(.04f,.01f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
                 settingsHelpScroll=ListViewport(settingsHelpPage.transform,"help-viewport",new Vector2(.02f,.09f),new Vector2(.98f,.82f),out helpDiagram);
-                helpDiagram.sizeDelta=new Vector2(0,1100);var diagramFit=helpDiagram.gameObject.AddComponent<AspectRatioFitter>();diagramFit.aspectMode=AspectRatioFitter.AspectMode.WidthControlsHeight;diagramFit.aspectRatio=1.25f;
+                helpDiagram.sizeDelta=new Vector2(0,1100);var diagramFit=helpDiagram.gameObject.AddComponent<AspectRatioFitter>();diagramFit.aspectMode=AspectRatioFitter.AspectMode.WidthControlsHeight;diagramFit.aspectRatio=1.5f;
                 settingsHelpText=Label(settingsHelpPage.transform,"keyboard-help",KeyboardHelp,18,Vector2.zero,Vector2.zero,TextAnchor.UpperLeft,Color.white);settingsHelpText.gameObject.SetActive(false);
                 settingsHelpKeyboard=MenuButton(settingsHelpPage.transform,"settings-help-keyboard","КЛАВИАТУРА / МЫШЬ",new Vector2(.02f,.85f),new Vector2(.48f,.95f),()=>SetHelpText(KeyboardHelp));
                 settingsHelpGamepad=MenuButton(settingsHelpPage.transform,"settings-help-gamepad","ГЕЙМПАД",new Vector2(.51f,.85f),new Vector2(.98f,.95f),()=>SetHelpText(GamepadHelp));
@@ -211,8 +211,8 @@ namespace StarTournament.ProvingGround
                 deviceScroll=ListViewport(settingsDevicesPage.transform,"device-list",new Vector2(.03f,.10f),new Vector2(.97f,.90f),out deviceContent);
                 settingsDevicesPageLabel=Label(settingsDevicesPage.transform,"devices-page-label","",19,new Vector2(.03f,.10f),new Vector2(.97f,.20f),TextAnchor.MiddleLeft,Color.white);
                 settingsDevicesBack=MenuButton(settingsScreen.transform,"devices-back","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetDevices(false));
-                resolutionPicker=Panel(settingsScreen.transform,"resolution-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
-                var pickerCard=Panel(resolutionPicker.transform,"resolution-card",new Vector2(.12f,.10f),new Vector2(.88f,.90f),MenuCard);
+                resolutionPicker=Panel(settingsImagePage.transform,"resolution-picker",new Vector2(.57f,.04f),new Vector2(.98f,.51f),MenuCard);
+                var pickerCard=Panel(resolutionPicker.transform,"resolution-card",Vector2.zero,Vector2.one,MenuCard);
                 Label(pickerCard.transform,"resolution-title","ВЫБЕРИТЕ РАЗРЕШЕНИЕ",30,new Vector2(.06f,.84f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
                 resolutionScroll=ListViewport(pickerCard.transform,"resolution-list",new Vector2(.06f,.08f),new Vector2(.94f,.78f),out var resolutionContent);
                 resolutionChoices=new Button[SupportedResolutions().Count];resolutionContent.sizeDelta=new Vector2(0,resolutionChoices.Length*56);

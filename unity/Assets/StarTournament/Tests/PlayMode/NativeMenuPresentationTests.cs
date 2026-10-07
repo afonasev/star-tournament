@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<6;i++)Assert.That(B("main-action-"+i).interactable,Is.EqualTo(i!=1));
             Canvas.ForceUpdateCanvases();yield return null;
             var battle=(RectTransform)B("main-action-0").transform;
-            Assert.That(battle.rect.height,Is.InRange(20,MenuPresentation.ButtonHeight+.1f));
+            Assert.That(battle.rect.height,Is.InRange(50,72));
             Assert.That(B("main-action-0").GetComponentInChildren<Text>().color,Is.Not.EqualTo(Color.white));
         }
         [UnityTest] public IEnumerator CompactControlsDoNotCollapseRosterCardsOrLoseSettingsNavigation()
@@ -47,6 +47,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             B("settings-back").onClick.Invoke();Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);
         }
+        [UnityTest] public IEnumerator SetupUsesMandatoryModeTargetsAndInheritedBotDifficulty()
+        {
+            B("main-action-0").onClick.Invoke();yield return null;
+            Assert.That(ground.Configuration.TargetEnabled,Is.True);Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2000));
+            ground.SetMatchMode(NativeMatchMode.Teams);Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(3500));
+            ground.SetBotDifficulty(0,0);ground.AddBot();Assert.That(ground.SetupComposition().Participant(2).Difficulty,Is.EqualTo(0));
+            ground.SetBotDifficulty(0,2);ground.AddBot();Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));
+            ground.SetMatchMode(NativeMatchMode.Ffa);Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2000));
+        }
         [UnityTest] public IEnumerator FeedbackUsesTopBackSquareChecksAndFullResolutionList()
         {
             B("main-action-3").onClick.Invoke();yield return null;
@@ -62,7 +71,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var choices=ground.GetComponentsInChildren<Button>().Where(b=>b.name.StartsWith("resolution-choice-")).ToArray();
             Assert.That(choices.Length,Is.GreaterThan(0));Assert.That(choices.Last().navigation.selectOnDown,Is.EqualTo(B("resolution-cancel")));
             B("resolution-cancel").onClick.Invoke();B("settings-section-1").onClick.Invoke();B("settings-controls-help").onClick.Invoke();yield return null;
-            Assert.That(ground.GetComponentsInChildren<HelpCalloutGraphic>().Length,Is.GreaterThanOrEqualTo(8));
+            var illustration=ground.GetComponentsInChildren<RawImage>().Single(x=>x.name=="help-illustration");Assert.That(illustration.texture,Is.Not.Null);Assert.That(illustration.texture.width,Is.GreaterThanOrEqualTo(1024));
             Assert.That(((RectTransform)B("settings-help-back").transform).anchorMin,Is.EqualTo(((RectTransform)B("settings-back").transform).anchorMin));
         }
     }

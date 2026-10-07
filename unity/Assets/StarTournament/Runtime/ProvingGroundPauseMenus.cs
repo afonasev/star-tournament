@@ -47,8 +47,8 @@ namespace StarTournament.ProvingGround
                 seatPauseCards[seat]=card;
                 card.AddComponent<CanvasGroup>();
                 seatPauseActions[seat]=PausePage(card.transform,"actions");
-                Label(seatPauseActions[seat].transform,"title","ПАУЗА",31,new Vector2(.08f,.85f),new Vector2(.92f,.97f),TextAnchor.MiddleLeft,MenuGold);
-                seatPauseReason[seat]=Label(seatPauseActions[seat].transform,"reason","",18,new Vector2(.08f,.73f),new Vector2(.92f,.85f),TextAnchor.MiddleLeft,Color.white);
+                Label(seatPauseActions[seat].transform,"title","Пауза",40,new Vector2(.08f,.83f),new Vector2(.92f,.96f),TextAnchor.MiddleCenter,MenuGold);
+                seatPauseReason[seat]=Label(seatPauseActions[seat].transform,"reason","",30,new Vector2(.08f,.72f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white);
                 string[] actionLabels={"Продолжить","Настройки","Начать заново","Выйти в главное меню"};
                 for(int item=0;item<4;item++)
                 {

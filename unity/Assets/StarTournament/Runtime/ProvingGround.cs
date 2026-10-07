@@ -86,22 +86,22 @@ namespace StarTournament.ProvingGround
         public void SetSeatDifficulty(int seat,int difficulty)
         {
             if(phase!=Phase.Setup)return;
-            botSetup.SetSeatDifficulty(seat,difficulty);RefreshInterface();
+            botSetup.SetSeatDifficulty(seat,difficulty);lastBotDifficulty=difficulty;RefreshInterface();
         }
         void SyncHumanSeats()
         {
             for(int seat=0;seat<LocalSeatCount;seat++)input.SetHumanSeat(seat,!botSetup.IsAi(seat));
         }
         public NativeMatchComposition SetupComposition()=>botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
-        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);setupError=null;RefreshInterface();}
+        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
         public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();if(setupStep==2)FocusRosterCard(LocalSeatCount+Math.Min(index,botSetup.Count-1));else Select(setupNext);}
-        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);RefreshInterface();}
+        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);lastBotDifficulty=value;RefreshInterface();}
         public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
         public void SetMatchMode(NativeMatchMode mode)
         {
             if(phase!=Phase.Setup) return;
             if(mode!=NativeMatchMode.Ffa && mode!=NativeMatchMode.Teams) throw new ArgumentException("Invalid mode");
-            SetupMode=mode;setupError=null;RefreshInterface();
+            bool changed=SetupMode!=mode;SetupMode=mode;if(changed)ApplyModeTarget();setupError=null;RefreshInterface();
         }
         public void SetTeam(int seat,NativeTeam team)
         {
@@ -475,7 +475,7 @@ namespace StarTournament.ProvingGround
             UpdateRosterInput();
             if (phase == Phase.Setup)
             {
-                bool ready=input.Ready; input.PollSetup();
+                bool ready=input.Ready; PollRosterShortcuts(); input.PollSetup();
                 if(!ready && input.Ready && IdentitiesReady() && rosterEditing<0 && pendingSeat<0) { start.interactable=true; Select(setupStep==2?start:setupNext); }
             }
             else if (phase == Phase.Running && !diagnostic)
@@ -1267,6 +1267,7 @@ namespace StarTournament.ProvingGround
             CompactMatchMenu(menuRect);
             RefreshModernMenuUi();
             RefreshSeatPauseUi();
+            StyleOperatorPause();
         }
     }
 }
