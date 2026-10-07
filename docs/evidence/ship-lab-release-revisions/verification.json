@@ -1,0 +1,86 @@
+{
+  "editmode": {
+    "id": "2",
+    "testcasecount": "351",
+    "result": "Passed",
+    "total": "351",
+    "passed": "351",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-07 12:37:11Z",
+    "end-time": "2026-10-07 12:54:43Z",
+    "duration": "1052.4156859"
+  },
+  "playmode": {
+    "id": "2",
+    "testcasecount": "211",
+    "result": "Passed",
+    "total": "211",
+    "passed": "211",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-07 12:54:56Z",
+    "end-time": "2026-10-07 13:04:41Z",
+    "duration": "585.1370183"
+  },
+  "source": "35c7191",
+  "catalogue_sha256": "b00f9fcfadb3f6687438f313216c25f0114e386d1dd3151aa5f2180fc6ac5de8",
+  "classification": "AUTOMATED_QA_NOT_HUMAN_ACCEPTANCE",
+  "integration_source": "4549ee5",
+  "release_build": {
+    "source": "4549ee5",
+    "command": "STAR_TOURNAMENT_RELEASE_OUTPUT=... unity/tools.sh build-release-mac",
+    "exit_code": 0,
+    "path": "/Users/eaafonasev/Projects/star-tournament-candidates/ship-lab-release-revisions/Star Tournament Unity Proving Ground.app",
+    "executable_sha256": "0b5a378d984355bc91248aae5a6f173e513133c442578cbf5b036b78dc3e27c7"
+  },
+  "after_menu_merge": {
+    "source": "4549ee5",
+    "command": "DesignLabWorkspaceTests;NativeMenuPresentationTests",
+    "result": {
+      "id": "2",
+      "testcasecount": "4",
+      "result": "Passed",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-07 13:16:44Z",
+      "end-time": "2026-10-07 13:17:10Z",
+      "duration": "26.7915254"
+    }
+  },
+  "regular_release_smoke": {
+    "source": "4549ee5",
+    "observed": [
+      "main menu includes Lab",
+      "startup/setup Default hash matches packaged v1"
+    ],
+    "limitation": "CUA fullscreen actions failed with noWindowsAvailable; Lab interactions covered by isolated automated development Player"
+  },
+  "user_history_sha256_before_after": "5af2e8a16000474bb347bdd048bdf304fe0ec65d631dafe8fed1d21a6eeac9b4",
+  "qa_catalogue_native": {
+    "source": "597f5ef",
+    "classification": "QA_FIXTURE_NOT_REAL_RELEASE",
+    "catalogue_sha256": "3b83bec68dfa0e514b19f79dc466f5996235b1fde33a8e7683fb598af7d3e4eb",
+    "entries": 4,
+    "profiles": 3,
+    "first_run": "Passed",
+    "restart": "Passed",
+    "muted": true,
+    "local_experiment_preserved": true,
+    "real_catalogue_restored": true
+  }
+}
