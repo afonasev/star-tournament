@@ -1,0 +1,15 @@
+{
+  "asset": "unity/Assets/StarTournament/Resources/UI/help-gamepad.png",
+  "generator": "built-in image_gen",
+  "prompt": "Regenerate this Russian gamepad-controls infographic for the Star Tournament game's Settings screen. Use the supplied image as style/reference and edit target. Keep a single accurate Xbox-style black gamepad with gold trim, cinematic dark navy background, warm gold headings, white Cyrillic labels and fine gold leader arrows. Landscape 1536x1024, crisp highly legible typesetting. Recompose the diagram to give every control enough space; controller slightly smaller if needed. MOST IMPORTANT: add a prominent callout connected specifically to the LEFT TRIGGER LT near upper left, exact three lines: 'LT — управление прицелом' / 'Короткое нажатие — к горизонту' / 'Удержание — фиксация высоты'. The hold fixes the CURRENT vertical aim angle, horizontal turns remain available, no reset on hold. Do not place this callout over the controller or overlap LB label. Preserve ALL existing mappings, exact labels: 'ГЕЙМПАД', 'LB / RB — смена оружия', 'RT — огонь', 'View — таблица (удерживать)', 'Menu — пауза', 'Левый стик — движение', 'D-pad — выбор оружия', 'A — прыжок', 'Правый стик — взгляд'. Buttons correctly Y top yellow, X left blue, B right red, A bottom green; left stick upper left, right stick lower right, D-pad lower left. Bottom footer in bordered navy panel exact text: 'В меню: D-pad / стик — выбор · A — подтвердить · B — назад' and 'Состав матча: Y — войти / сменить команду · X — добавить бота'. Make all arrows terminate at their actual controls. Leave safe margins all around. No UI shell, no Development Build watermark, no extra labels or fabricated controls. Produce the complete final infographic, not a screenshot.",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "sha256": "4a1e3975672c14ba82e43a161611c1048f08e47fae8ed58fe1ee02642e12c89d",
+  "review": "Inspected generated pixels: exact Cyrillic LT callout, existing control mappings, footer and safe margins; asset dimensions and existing .meta GUID preserved",
+  "verification": "sips decoded PNG dimensions; git diff --check; no runtime/code changes",
+  "Player_build": false,
+  "deploy": false,
+  "human_acceptance": false
+}

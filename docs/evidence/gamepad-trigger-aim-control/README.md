@@ -11,3 +11,5 @@ PlayMode использует поддерживаемый STAR_TOURNAMENT_QA_LA
 Снимок показывает новую подпись под полной схемой геймпада; прежняя строка управления меню читается. Метка Development Build принадлежит Editor-сценарию и не означает сборку Player.
 
 Открыты: удобство с физическим геймпадом, human acceptance, native Player/device acceptance. Player/release/build/publication остаются отложенными до отдельной команды по решению08.10.2026. Аудио QA не затронуто; Editor был заглушён штатным muteReview.
+
+09.10.2026: по команде пользователя перегенерирован Resources/UI/help-gamepad.png: подсказка LT включена прямо в схему. Prompt, SHA256 и статическая проверка: help-image-regeneration.json. Снимок Editor выше относится к предыдущей версии ассета; новый PNG имеет тот же размер, layout/runtime не менялись. После замены Editor/Player не запускался.
