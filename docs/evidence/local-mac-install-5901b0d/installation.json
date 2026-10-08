@@ -1,0 +1,24 @@
+{
+  "source_revision": "5901b0d2ccdd6ad946044ce33bafc17eb74e16b4",
+  "installed_app": "/Users/eaafonasev/Applications/Star Tournament.app",
+  "player": "/Users/eaafonasev/Applications/Star Tournament.app/Contents/MacOS/game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+  "kind": "Development main build",
+  "build_exit": 0,
+  "build_pass": "STAR_PROVING_BUILD_PASS 501532854",
+  "codesign_verify": "Passed --deep --strict, adhoc",
+  "player_menu_review": "Passed: 26 screenshots, muted, isolated profiles and Lab history",
+  "inspected_images": [
+    "player/01-main.png",
+    "player/07-players.png"
+  ],
+  "original_install": "/Applications/Star Tournament.app retained; replacement denied by macOS permissions",
+  "user_authorization": "собери и установи локально на мак последнюю версию",
+  "release_publication": false,
+  "physical_human_acceptance": false,
+  "launcher_smoke": {
+    "launcher_exit": 0,
+    "player_started": true,
+    "player_stopped": "Owned PID 94032 SIGTERM after successful startup; standalone Player ignores -quit",
+    "errors": []
+  }
+}
