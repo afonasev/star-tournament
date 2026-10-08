@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround
             {
                 Label(mainMenuScreen.transform,"installed-release",releaseLabel,22,new Vector2(.56f,.025f),new Vector2(.78f,.075f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
                 var updateStatus=Label(mainMenuScreen.transform,"update-status","Проверка обновлений…",19,new Vector2(.56f,.08f),new Vector2(.78f,.13f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-                var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Проверить",new Vector2(.79f,.025f),new Vector2(.94f,.105f),()=>{});
+                var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Обновить",new Vector2(.79f,.025f),new Vector2(.94f,.105f),()=>{});
                 gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
             }
 

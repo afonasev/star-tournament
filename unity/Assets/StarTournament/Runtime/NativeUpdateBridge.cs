@@ -31,10 +31,10 @@ namespace StarTournament.ProvingGround
                 case "available": return new View("Доступна новая версия","Обновить","download",true);
                 case "downloading": return new View(state.progress>=100?"Проверка обновления…":"Загрузка · "+Math.Max(0,Math.Min(100,state.progress))+"%","Обновить","",false);
                 case "staged": return new View("Обновление готово","Перезапустить","restart",true);
-                case "current": return new View("Установлена последняя версия","Проверить","check",true);
-                case "unavailable": return new View("Нет связи с обновлениями","Проверить","check",true);
+                case "current": return new View("Установлена последняя версия","","",false);
+                case "unavailable": return new View("Нет связи с обновлениями","","",false);
                 case "error": return new View("Не удалось скачать обновление","Повторить","download",true);
-                default: return new View("Проверка обновлений…","Проверить","",false);
+                default: return new View("Проверка обновлений…","","",false);
             }
         }
         Text message,buttonText;
@@ -50,6 +50,7 @@ namespace StarTournament.ProvingGround
         public void Bind(Text status,Button action)
         {
             message=status;button=action;buttonText=action.GetComponentInChildren<Text>();
+            button.gameObject.SetActive(false);
             statusPath=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS");
             commandPath=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND");
             if(string.IsNullOrEmpty(statusPath)||string.IsNullOrEmpty(commandPath)||
@@ -107,6 +108,7 @@ namespace StarTournament.ProvingGround
             if(message.text!=view.Message)message.text=view.Message;
             if(buttonText.text!=view.Button)buttonText.text=view.Button;
             command=view.Action;
+            button.gameObject.SetActive(!string.IsNullOrEmpty(view.Button));
             button.interactable=view.Enabled&&!writing;
             if(restartRequested&&shown.restartAcknowledged)
             {

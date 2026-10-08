@@ -55,6 +55,40 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(label.text,Is.EqualTo("0.1.0 (28.09.2026)"),"Staged metadata never replaces the running version/date");
             Assert.That(File.Exists(command),Is.False,"No implicit restart command");
         }
+        [UnityTest]
+        public IEnumerator AutomaticCheckShowsActionOnlyWhenUpdateIsAvailable()
+        {
+            oldStatus=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS");
+            oldCommand=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND");
+            oldRelease=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
+            directory=Path.Combine(Path.GetTempPath(),"star-update-menu-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            var status=Path.Combine(directory,"status.json");var command=Path.Combine(directory,"command.json");
+            File.WriteAllText(status,"{\"state\":\"checking\"}");
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS",status);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND",command);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","0.1.0-test.10 (08.10.2026)");
+            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            var button=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="update-action");
+            var message=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="update-status");
+            Assert.That(button.gameObject.activeSelf,Is.False,"No check button or startup flash");
+            foreach(var state in new[]{"current","unavailable","available","current"})
+            {
+                File.WriteAllText(status,"{\"state\":\""+state+"\"}");
+                var expected=state=="current"?"Установлена последняя версия":state=="available"?"Доступна новая версия":"Нет связи с обновлениями";
+                float end=Time.realtimeSinceStartup+5;
+                while(message.text!=expected&&Time.realtimeSinceStartup<end)yield return null;
+                Assert.That(message.text,Is.EqualTo(expected));
+                Assert.That(button.gameObject.activeSelf,Is.EqualTo(state=="available"));
+                if(state=="available")
+                {
+                    Assert.That(button.GetComponentInChildren<Text>().text,Is.EqualTo("Обновить"));
+                    Assert.That(button.interactable,Is.True);
+                }
+                Assert.That(File.Exists(command),Is.False,"Automatic metadata check grants no download consent");
+            }
+        }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);
