@@ -1,5 +1,8 @@
 # star-tournament — рабочие правила
 
+- UI/copy/layout и минорные локальные правки не запускают полную игровую QA и длительные симуляции матчей. Выбери UI/affected fixtures; full и natural matches требуют конкретного обоснования влиянием изменения. `make check` — локальный набор; `make check-full` — явный полный запуск.
+- Локальная Unity-разработка: `.agents/references/local-development.md` (решение 2026-10-08) отменяет прежние автоматические Player build/deploy gates. Быстрые проверки выбирай по поведению; полный набор — по общим зависимостям/рискам, сборка и поставка отдельно.
+
 - Planning: `/Users/eaafonasev/Projects/star-tournament-planning`, store `star-tournament-planning`; читай его `workflow/project.json`. Code `openspec/` — исторический snapshot.
 - Явное решение пользователя имеет приоритет. Сохраняй утверждённые требования, exact scope, историю и чужую незакоммиченную работу; новые продуктовые развилки согласуй до реализации.
 - Изменения выполняй в принадлежащем задаче Git worktree/ветке. Не возобновляй другой change автоматически. Не выдавай автоматические проверки за human/device/visual/audio acceptance; deploy/archive требуют существующей авторизации и gates.
