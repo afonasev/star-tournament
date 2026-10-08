@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround.Tests
 {
-    public sealed class SeatInputTests
+    public sealed class SeatInputTests : InputTestFixture
     {
         [Test]
         public void KeyboardMousePairDoesNotSwitchToSpareMouse()
@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(locked.GamepadLookLocked,Is.True);Assert.That(locked.LookDegrees.x,Is.GreaterThan(0));Assert.That(locked.LookDegrees.y,Is.Zero);
                 Assert.That(locked.Fire,Is.True,"RT remains independent of LT aim locking");
                 var other=seats.Consume(1);Assert.That(other.GamepadLookLocked,Is.False);Assert.That(other.LookDegrees.y,Is.GreaterThan(0));
-                Capture(seats,pads[0],profile,new GamepadState{leftTrigger=1,rightStick=Vector2.up},.10f);
+                Capture(seats,pads[0],profile,new GamepadState{leftTrigger=1,rightStick=Vector2.up},.08f); // Total across all captures is .21 s, below the tap boundary.
                 Assert.That(seats.Consume(0).GamepadLookLocked,Is.True,"hold state survives fixed-tick consumption");
                 Capture(seats,pads[0],profile,new GamepadState{rightStick=Vector2.up},.01f);
                 var released=seats.Consume(0);
@@ -132,7 +132,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(seats.Consume(0).GamepadLookLocked,Is.True);
                 InputSystem.RemoveDevice(pad);seats.Capture(profile,.01f);
                 replacement=InputSystem.AddDevice<Gamepad>();
-                InputSystem.QueueStateEvent(replacement,new GamepadState{leftTrigger=1});InputSystem.Update(InputUpdateType.Dynamic);
+                InputSystem.QueueStateEvent(replacement,new GamepadState{leftTrigger=1});InputSystem.Update();
                 Assert.That(seats.Replace(0,replacement),Is.True);
                 seats.Capture(profile,.05f);
                 Assert.That(seats.Consume(0).GamepadLookLocked,Is.False,"rebind while LT is held requires release");
@@ -145,8 +145,8 @@ namespace StarTournament.ProvingGround.Tests
         static void Capture(SeatInputCoordinator seats,Gamepad pad,ProvingProfile profile,GamepadState state,float dt)
         {
             InputSystem.QueueStateEvent(pad,state);
-            // Gameplay button edges use the Dynamic update counter, even when the fixture runs in EditMode.
-            InputSystem.Update(InputUpdateType.Dynamic);seats.Capture(profile,dt);
+            // InputTestFixture supplies an isolated gameplay runtime for frame-edge assertions in EditMode.
+            InputSystem.Update();seats.Capture(profile,dt);
         }
     }
 }
