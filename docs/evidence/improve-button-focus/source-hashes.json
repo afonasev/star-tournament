@@ -1,0 +1,9 @@
+{
+  "unity/Assets/StarTournament/Runtime/MenuPresentation.cs": "bc8faea99f082215172b025f8787bac7e4444246ad8dbb13b87b1a5263bb886e",
+  "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "bf8907a2192bb4a609df9b49688c7be19be7007ec13a2d9786df4078a37656cd",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundRosterCards.cs": "a740d4b730a0055b92bb650780b26e7bc98a230cfdd29efa4ed8ddc21948ad14",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "02a270b066a8fe8be898616d03d8e302cac0852d1719e430f6280d3cd0a90a3e",
+  "unity/Assets/StarTournament/Tests/PlayMode/NativeMenuPresentationTests.cs": "55b5e815919edd8998db919c4125d85b8eaaae85d4bf8a2e7ccd485582b145ea",
+  "unity/Assets/StarTournament/Editor/ButtonFocusPreview.cs": "7d5a6ee65588f1730ceac2d2a1dd3dd6789e8d46f16fad6f60de74915be72cf1",
+  "unity/Assets/StarTournament/Scenes/ProvingGround.unity": "213cb930bda11de22c7922869fcd6e0882c4b2a9d28085607718d4d0336d02b3"
+}

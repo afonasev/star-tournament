@@ -1,0 +1,21 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=NativeMenuPresentationTests;RosterCardsTests;SettingsGamepadNavigationTests
+revision=c5fdf093d10312b538da0dd0341cdfdf435cb2b8
+ M Assets/StarTournament/Runtime/MenuPresentation.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Runtime/ProvingGroundRosterCards.cs
+ M Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Tests/PlayMode/NativeMenuPresentationTests.cs
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M ProjectSettings/GraphicsSettings.asset
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/QualitySettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/improve-button-focus/
+?? Assets/InitTestScene9252f42d-42b5-49d8-a5c0-916aa0094a53.unity
+?? Assets/InitTestScene9252f42d-42b5-49d8-a5c0-916aa0094a53.unity.meta
+?? Assets/StarTournament/Editor/ButtonFocusPreview.cs
+?? Assets/StarTournament/Editor/ButtonFocusPreview.cs.meta

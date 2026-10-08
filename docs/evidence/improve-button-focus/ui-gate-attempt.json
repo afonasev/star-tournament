@@ -1,0 +1,27 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests; native build and visual smoke for visible changes",
+  "revision": "c5fdf093d10312b538da0dd0341cdfdf435cb2b8",
+  "dirty": " M unity/Assets/StarTournament/Runtime/MenuPresentation.cs\n M unity/Assets/StarTournament/Runtime/ProvingGround.cs\n M unity/Assets/StarTournament/Runtime/ProvingGroundRosterCards.cs\n M unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs\n M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Tests/PlayMode/NativeMenuPresentationTests.cs\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/GraphicsSettings.asset\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/QualitySettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/improve-button-focus/\n?? unity/Assets/InitTestScene9252f42d-42b5-49d8-a5c0-916aa0094a53.unity\n?? unity/Assets/InitTestScene9252f42d-42b5-49d8-a5c0-916aa0094a53.unity.meta\n?? unity/Assets/StarTournament/Editor/ButtonFocusPreview.cs\n?? unity/Assets/StarTournament/Editor/ButtonFocusPreview.cs.meta\n",
+  "result": "Failed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "ui-edit.xml",
+      "passed": 3
+    }
+  ],
+  "error": "PlayMode Unity exit 130",
+  "blocked_reason": "Runtime admission unavailable behind foreign QA; queued PlayMode never started and owned waiting command was cancelled (130)."
+}
