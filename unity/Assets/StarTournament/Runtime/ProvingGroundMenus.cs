@@ -288,6 +288,7 @@ namespace StarTournament.ProvingGround
         }
         void ToMainMenu()
         {
+            if(labHistory!=null&&labHistory.Busy)return;
             rosterEditing=-1;
             if(phase==Phase.Lab && LabDirty){ConfirmLabDiscard(ToMainMenu);return;}
             ClearSeatPauseMenus();

@@ -17,6 +17,13 @@ namespace StarTournament.ProvingGround
         void Click(string name){var b=Button(name);if(!b.interactable)throw new InvalidOperationException("Disabled: "+name);b.onClick.Invoke();}
         IEnumerator Capture(string name)
         {yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return new WaitForSecondsRealtime(.3f);}
+        IEnumerator WaitForLabSelection()
+        {
+            float deadline=Time.realtimeSinceStartup+60;
+            while(ground.LabSelectionPending&&Time.realtimeSinceStartup<deadline)yield return null;
+            if(ground.LabSelectionPending)throw new TimeoutException("Lab selection did not finish");
+            yield return null;
+        }
         IEnumerator Start()
         {
             ground=GetComponent<ProvingGround>();Application.runInBackground=true;var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-labReview");directory=args[flag+1];Directory.CreateDirectory(directory);
@@ -40,7 +47,7 @@ namespace StarTournament.ProvingGround
             Input("input-rifle.damage").text="999";yield return null;if(Button("lab-save").interactable)throw new InvalidOperationException("Invalid draft save enabled");yield return Capture("04-local-errors");Click("lab-errors");yield return null;yield return Capture("04b-error-summary");Click("cancel");yield return null;
             Click("lab-back");yield return null;yield return Capture("05-dirty-exit-guard");Click("cancel");yield return null;
             Input("input-rifle.damage").text="31";yield return null;Click("lab-save");yield return null;string v2=ground.LabSavedIdentity;
-            Click("lab-revision-select");yield return null;yield return Capture("06-history");Click("revision-1");yield return null;
+            Click("lab-revision-select");yield return null;yield return Capture("06-history");Click("revision-1");yield return WaitForLabSelection();
             Click("lab-release");yield return null;yield return Capture("06b-local-release-mark");
             if(!Button("lab-release").GetComponentInChildren<Text>().text.Contains("да · локально"))throw new InvalidOperationException("Local release mark missing");
             Input("input-rifle.damage").text="32";yield return null;Click("lab-save");yield return null;if(!ground.LabSavedIdentity.Contains("v3-"))throw new InvalidOperationException("Save from older base did not append v3");
@@ -79,9 +86,9 @@ namespace StarTournament.ProvingGround
             Click("lab-profile-select");yield return null;yield return Capture("catalogue-profiles");Click("cancel");yield return null;
             foreach(var entry in catalogue.Entries.OrderBy(e=>e.Sequence))
             {
-                Click("lab-profile-select");yield return null;Click("profile-"+entry.ProfileId);yield return null;
+                Click("lab-profile-select");yield return null;Click("profile-"+entry.ProfileId);yield return WaitForLabSelection();
                 Click("lab-revision-select");yield return null;yield return Capture("catalogue-revisions-"+entry.Sequence);
-                Click("revision-"+entry.Revision);yield return null;
+                Click("revision-"+entry.Revision);yield return WaitForLabSelection();
                 if(!ground.LabSavedIdentity.Contains(entry.Hash)||!ground.LabSavedIdentity.Contains(entry.ProfileId)||Button("lab-release").interactable)
                     throw new InvalidOperationException("Shipped catalogue selection mismatch: "+entry.Sequence);
                 if(Input("input-rifle.damage").interactable||Button("lab-rename").interactable)throw new InvalidOperationException("Shipped profile is editable: "+entry.Sequence);

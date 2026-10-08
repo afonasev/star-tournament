@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround
@@ -142,6 +144,8 @@ namespace StarTournament.ProvingGround
         readonly string path; readonly LabBundle shipped; readonly LabReleaseCatalog releases; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
+        int mutationInFlight;
+        public bool Busy=>Volatile.Read(ref mutationInFlight)!=0;
         LabHistoryProfile DisplayProfile(LabHistoryProfile profile)
         {
             var copy=profile.Clone();
@@ -510,7 +514,18 @@ namespace StarTournament.ProvingGround
         }
         void Commit(Action<LabHistoryFile> mutation)
         {
+            BeginMutation();
+            try {data=PrepareCommit(mutation);}
+            finally {Volatile.Write(ref mutationInFlight,0);}
+        }
+        void BeginMutation()
+        {
             if(!Writable)throw new IOException(StorageError);
+            if(Interlocked.CompareExchange(ref mutationInFlight,1,0)!=0)
+                throw new InvalidOperationException("Дождитесь завершения выбора ревизии");
+        }
+        LabHistoryFile PrepareCommit(Action<LabHistoryFile> mutation)
+        {
             var next=data.Clone();mutation(next);ValidateFile(next);
             string temp=path+"."+Guid.NewGuid().ToString("N")+".tmp";
             try
@@ -519,12 +534,29 @@ namespace StarTournament.ProvingGround
                 using(var stream=new FileStream(temp,FileMode.CreateNew,FileAccess.Write,FileShare.None))
                 {byte[] bytes=Encoding.UTF8.GetBytes(JsonUtility.ToJson(next,true));stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
                 atomicPublish(temp,path);
-                data=next;
+                return next;
             }
             finally {if(File.Exists(temp))File.Delete(temp);}
         }
         static void Publish(string temp,string destination){if(File.Exists(destination))File.Replace(temp,destination,null);else File.Move(temp,destination);}
-        public void Select(string id,int number)=>Commit(f=>{var r=f.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);if(!Current(r.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");f.SelectedId=id;f.SelectedRevision=number;});
+        void SelectIn(LabHistoryFile file,string id,int number)
+        {
+            var revision=file.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);
+            if(!Current(revision.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");
+            file.SelectedId=id;file.SelectedRevision=number;
+        }
+        public void Select(string id,int number)=>Commit(f=>SelectIn(f,id,number));
+        public async Task SelectAsync(string id,int number)
+        {
+            BeginMutation();
+            try
+            {
+                // Serializable data only. Keep all validation and atomic disk publication off
+                // the frame loop; publish in-memory selection on the caller's Unity context.
+                data=await Task.Run(()=>PrepareCommit(f=>SelectIn(f,id,number)));
+            }
+            finally {Volatile.Write(ref mutationInFlight,0);}
+        }
         public void Save(LabBundle draft)
         {
             RequireLocalProfile();

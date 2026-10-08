@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -25,6 +27,7 @@ namespace StarTournament.ProvingGround
         string labSavedIdentity="",labSavedRevisionLabel="";
         NumericDescriptor[] labRegistry=Array.Empty<NumericDescriptor>();
         public string LabSavedIdentity=>labSavedIdentity;
+        public bool LabSelectionPending=>labHistory!=null&&labHistory.Busy;
         void CacheLabIdentity()
         {
             var revision=labHistory.Selected;
@@ -55,6 +58,7 @@ namespace StarTournament.ProvingGround
         }
         bool ProtectLabQuit()
         {
+            if(labHistory!=null&&labHistory.Busy)return false;
             if(phase!=Phase.Lab||!LabDirty)return true;
             ConfirmLabDiscard(()=>Application.Quit());return false;
         }
@@ -242,8 +246,20 @@ namespace StarTournament.ProvingGround
             string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=labSavedRevisionLabel+" ▾";
             labIdentity.text=labHistory.SelectedProfileProtected?"Стандартный профиль · удаление запрещено":"Локальный профиль";labStatus.text=labError??labHistory.StorageError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
         }
+        IEnumerator SelectLabRevision(string profile,int revision)
+        {
+            if(labHistory.Busy)yield break;
+            var card=LabDialog("Выбор ревизии…");
+            var cancel=LabButton(card,"cancel","Назад",new Vector2(.70f,.10f),new Vector2(.95f,.185f),CloseLabDialog);
+            cancel.interactable=false;
+            Task operation=labHistory.SelectAsync(profile,revision);
+            while(!operation.IsCompleted)yield return null;
+            if(cancel){cancel.interactable=true;Select(cancel);}
+            LabOperation(()=>operation.GetAwaiter().GetResult(),true);
+        }
         void LabOperation(Action action,bool reset)
         {
+            if(labHistory.Busy)return;
             try{action();if(reset)ResetLabDraft();else CacheLabIdentity();labError=null;CloseLabDialog();RefreshLabWorkspace();}
             catch(Exception e)
             {
@@ -259,6 +275,7 @@ namespace StarTournament.ProvingGround
         }
         void CloseLabDialog()
         {
+            if(labHistory!=null&&labHistory.Busy)return;
             if(labDialog==null&&labDialogControls.Count==0)return;
             if(labDialog!=null){labDialog.SetActive(false);Destroy(labDialog);labDialog=null;}
             foreach(var pair in labDialogControls)if(pair.Key)pair.Key.interactable=pair.Value;labDialogControls.Clear();
@@ -293,21 +310,21 @@ namespace StarTournament.ProvingGround
         void ShowLabProfiles()
         {
             var card=LabDropdown(labProfileSelector);var scroll=LabScroll(card,"profile-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
-            foreach(var profile in labHistory.Profiles){var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(p.Id,p.Revisions.Max(r=>r.Number)),true)));PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;}
+            foreach(var profile in labHistory.Profiles){var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(p.Id,p.Revisions.Max(r=>r.Number)))));PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;}
             ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void ShowLabRevisions()
         {
             var card=LabDropdown(labRevisionSelector);var scroll=LabScroll(card,"revision-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
             var revisions=labHistory.SelectedProfile.Revisions;
-            foreach(var r in revisions.Where(r=>labHistory.Compatible(r)||!labHistory.IsShipped(r)||!revisions.Any(other=>other.ReleaseSequence==r.ReleaseSequence&&labHistory.Compatible(other))).OrderByDescending(r=>r.Number)){int n=r.Number;var b=LabButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12)+(labHistory.IsShipped(r)?" · в клиенте":r.ReleaseCandidate?" · релизная (локально)":" · локальная")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>LabOperation(()=>labHistory.Select(labHistory.SelectedProfileId,n),true)));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);if(b.interactable)first=first??b;}
+            foreach(var r in revisions.Where(r=>labHistory.Compatible(r)||!labHistory.IsShipped(r)||!revisions.Any(other=>other.ReleaseSequence==r.ReleaseSequence&&labHistory.Compatible(other))).OrderByDescending(r=>r.Number)){int n=r.Number;var b=LabButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12)+(labHistory.IsShipped(r)?" · в клиенте":r.ReleaseCandidate?" · релизная (локально)":" · локальная")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(labHistory.SelectedProfileId,n))));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);if(b.interactable)first=first??b;}
             ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void LabNameDialog(bool rename)
         {var card=LabDialog(rename?"Переименовать профиль":"Создать от выбранной сохранённой базы");var name=LabInput(card,"lab-profile-name",rename?labHistory.SelectedProfileName:labHistory.SelectedProfileReadOnly?labHistory.SelectedProfileName+" · копия":"Новый профиль",new Vector2(.05f,.52f),new Vector2(.95f,.605f));LabButton(card,"submit",rename?"Переименовать":"Создать",new Vector2(.60f,.15f),new Vector2(.95f,.235f),()=>{string value=name.text;if(rename)LabOperation(()=>labHistory.Rename(value),false);else GuardLabSelection(()=>LabOperation(()=>labHistory.Create(value),true));});LabButton(card,"cancel","Отмена",new Vector2(.05f,.15f),new Vector2(.55f,.235f),CloseLabDialog);SelectLabControl(name);}
         void UpdateDesignLab()
         {
-            if(phase!=Phase.Lab)return;bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
+            if(phase!=Phase.Lab||labHistory.Busy)return;bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
             foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
             if(back){if(labDialog!=null)CloseLabDialog();else ToMainMenu();}
         }
