@@ -17,6 +17,13 @@ class LocalWorkflowTests(unittest.TestCase):
                               'project_checks.py build', 'PrototypeBuilder.BuildMac'):
                     self.assertNotIn(token, route)
 
+    def test_check_is_local_without_full_match_suites(self):
+        route = self.route('check')
+        self.assertEqual(route, self.route('check-local'))
+        for token in ('tools.sh test-edit', 'tools.sh test-play', '--suite all',
+                      'check_qa.py full', 'RunWithFixtureEquivalence'):
+            self.assertNotIn(token, route)
+
     def test_build_remains_explicit(self):
         route = self.route('build')
         self.assertTrue(any(token in route for token in ('tools.sh build', '--suite build',

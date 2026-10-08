@@ -21,7 +21,7 @@ test: test-edit test-play ## Run both Unity test suites.
 check-ui: ## Run the minimal UI-only automatic gate (no natural bot matches).
 	python3 tools/check_ui.py
 
-check: check-full ## Run the full Unity test suites without building a Player.
+check: check-local ## Run the full Unity test suites without building a Player.
 
 check-full: test ## Run both complete Unity test suites (no Player build).
 
