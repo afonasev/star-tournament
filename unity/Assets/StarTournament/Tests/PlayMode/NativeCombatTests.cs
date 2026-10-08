@@ -107,6 +107,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.ApplyDamage(1,1,100,0,1).Applied,Is.Zero,"Old-life damage cannot hit respawn");
         }
         [UnityTest]
+        public IEnumerator LtTapKeepsRtShotAndCameraOnTheSameHorizonDirection()
+        {
+            Setup();yield return null;
+            var cameras=new Camera[4];var views=new GameObject[4];CombatPresentation presentation=null;
+            try
+            {
+                for(int i=0;i<4;i++)
+                {
+                    var cameraObject=new GameObject("LT camera "+i);cameraObject.transform.SetParent(owner.transform);cameras[i]=cameraObject.AddComponent<Camera>();
+                    views[i]=new GameObject("LT view "+i);views[i].transform.SetParent(owner.transform);
+                }
+                presentation=new CombatPresentation(session,movement,combat,owner.transform,scene.GetPhysicsScene(),cameras,
+                    motors.Select(m=>m.gameObject).ToArray(),views);
+                session.Tick(new LocalAction[4],.02f); // Clear the initial physical-fire release gate.
+                var aim=new LocalAction[4];aim[0].LookDegrees=new Vector2(27,-34);session.Tick(aim,.02f);
+                var tapAndFire=new LocalAction[4];tapAndFire[0]=new LocalAction{ResetLookPitch=true,Fire=true};
+                session.Tick(tapAndFire,.02f);presentation.Render();
+                var pose=session.Pose(0);var bullet=session.RifleBullets.Single(b=>b.Owner==0);
+                Assert.That(session.ShotCount,Is.EqualTo(1),"RT-style fire edge still launches during the LT reset tick");
+                Assert.That(pose.Pitch,Is.Zero);Assert.That(pose.Yaw,Is.EqualTo(27).Within(.001));
+                Assert.That(Vector3.Angle(cameras[0].transform.forward,bullet.Direction),Is.LessThan(.01),
+                    "the rendered camera and authoritative rifle shot use the same post-LT orientation");
+            }
+            finally{presentation?.Dispose();}
+        }
+        [UnityTest]
         public IEnumerator CurrentOccupancyBatchAndInvalidFloorAreSafe()
         {
             Setup(); yield return null;

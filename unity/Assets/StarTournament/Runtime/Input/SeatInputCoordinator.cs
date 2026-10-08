@@ -11,6 +11,10 @@ namespace StarTournament.ProvingGround
         readonly InputDevice[] devices = new InputDevice[SeatCount];
         readonly LocalAction[] queued = new LocalAction[SeatCount];
         readonly bool[] fireReleaseRequired = new bool[SeatCount];
+        readonly bool[] ltHeld = new bool[SeatCount];
+        readonly bool[] ltReleaseRequired = new bool[SeatCount];
+        readonly bool[] seatAlive = { true, true, true, true };
+        readonly float[] ltHeldSeconds = new float[SeatCount];
         readonly bool[] humanSeats = { true, true, true, true };
         Mouse pairedMouse;
         bool pauseRequested;
@@ -23,7 +27,7 @@ namespace StarTournament.ProvingGround
             if(count < 1 || count > SeatCount) throw new ArgumentOutOfRangeException(nameof(count));
             int previous=ActiveSeatCount;
             for(int i=count;i<SeatCount;i++) ReleaseSeat(i);
-            if(count>previous) for(int i=previous;i<count;i++) humanSeats[i]=true;
+            if(count>previous) for(int i=previous;i<count;i++) {humanSeats[i]=true;seatAlive[i]=true;}
             ActiveSeatCount=count;
             if(!HasKeyboard) pairedMouse=null;
             Clear();
@@ -57,8 +61,8 @@ namespace StarTournament.ProvingGround
         {
             if(ActiveSeatCount<=1 || slot<0 || slot>=ActiveSeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
             for(int i=slot;i<ActiveSeatCount-1;i++)
-            { devices[i]=devices[i+1];humanSeats[i]=humanSeats[i+1]; }
-            ActiveSeatCount--;ReleaseSeat(ActiveSeatCount);humanSeats[ActiveSeatCount]=true;
+            { devices[i]=devices[i+1];humanSeats[i]=humanSeats[i+1];seatAlive[i]=seatAlive[i+1]; }
+            ActiveSeatCount--;ReleaseSeat(ActiveSeatCount);humanSeats[ActiveSeatCount]=true;seatAlive[ActiveSeatCount]=true;
             if(!HasKeyboard)pairedMouse=null;
             Clear();
         }
@@ -73,6 +77,7 @@ namespace StarTournament.ProvingGround
                 pairedMouse=Mouse.current;
             }
             devices[slot] = device;
+            CancelLookGesture(slot);
             return true;
         }
         void Join(InputDevice device)
@@ -98,8 +103,20 @@ namespace StarTournament.ProvingGround
             if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && Mouse.current != null) Join(Keyboard.current);
             foreach (var pad in Gamepad.all) if (pad.buttonNorth.wasPressedThisFrame) Join(pad);
         }
-        public void Reset() { Array.Clear(devices, 0, devices.Length); pairedMouse=null; Clear(); }
-        public void Clear() { Array.Clear(queued, 0, queued.Length); pauseRequested = false; for(int i=0;i<SeatCount;i++) fireReleaseRequired[i]=true; }
+        public void Reset() { Array.Clear(devices, 0, devices.Length); pairedMouse=null; for(int i=0;i<SeatCount;i++)seatAlive[i]=true; Clear(); }
+        public void Clear() { Array.Clear(queued, 0, queued.Length); pauseRequested = false; for(int i=0;i<SeatCount;i++){fireReleaseRequired[i]=true;CancelLookGesture(i);} }
+        public void ClearSeat(int slot)
+        {
+            if(slot<0||slot>=SeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
+            queued[slot]=default;fireReleaseRequired[slot]=true;CancelLookGesture(slot);
+        }
+        public void SetSeatAlive(int slot,bool alive)
+        {
+            if(slot<0||slot>=SeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
+            if(seatAlive[slot]==alive)return;
+            seatAlive[slot]=alive;ClearSeat(slot);
+        }
+        void CancelLookGesture(int slot){ltHeld[slot]=false;ltHeldSeconds[slot]=0;ltReleaseRequired[slot]=true;}
         public bool ConsumePause() { bool value = pauseRequested; pauseRequested = false; return value; }
         // Capture once per rendered frame; consume edges/delta once per simulation tick.
         public void Capture(ProvingProfile profile, float deltaTime, float? mouseDegreesPerPixelOverride=null, System.Func<int,GamepadLookSettings> gamepadSettings=null)
@@ -114,7 +131,7 @@ namespace StarTournament.ProvingGround
             {
                 if (!humanSeats[i] || !IsConnected(i))
                 {
-                    queued[i]=default;fireReleaseRequired[i]=true;
+                    queued[i]=default;fireReleaseRequired[i]=true;CancelLookGesture(i);
                     continue;
                 }
                 var a = queued[i];
@@ -139,9 +156,29 @@ namespace StarTournament.ProvingGround
                     a.Move = Deadzone(pad.leftStick.ReadValue(), profile.Get("input.deadzone"));
                     var look=Deadzone(pad.rightStick.ReadValue(),profile.Get("input.deadzone"));
                     var settings=gamepadSettings!=null?gamepadSettings(i):GamepadLookSettings.Default(profile);
-                    a.LookDegrees += Vector2.Scale(look,new Vector2(settings.Horizontal,settings.Vertical))*deltaTime;
+                    if(!seatAlive[i])CancelLookGesture(i);
+                    bool ltDown=seatAlive[i]&&pad.leftTrigger.isPressed;
+                    if(ltReleaseRequired[i])
+                    {
+                        if(!ltDown)ltReleaseRequired[i]=false;
+                        ltDown=false;
+                    }
+                    bool ltStarted=!ltHeld[i]&&ltDown;
+                    bool ltReleased=ltHeld[i]&&!ltDown;
+                    if(ltStarted){ltHeld[i]=true;ltHeldSeconds[i]=deltaTime;a.LookDegrees.y=0;}
+                    else if(ltHeld[i]&&ltDown)ltHeldSeconds[i]+=deltaTime;
+                    if(ltReleased)
+                    {
+                        ltHeld[i]=false;
+                        if(ltHeldSeconds[i]<=profile.Get("input.gamepadTapAimThresholdSeconds"))
+                        {a.ResetLookPitch=true;a.LookDegrees.y=0;}
+                        ltHeldSeconds[i]=0;
+                    }
+                    var appliedLook=ltDown||a.ResetLookPitch?new Vector2(look.x,0):look;
+                    a.LookDegrees += Vector2.Scale(appliedLook,new Vector2(settings.Horizontal,settings.Vertical))*deltaTime;
                     a.ManualLook=look.sqrMagnitude>0;
                     a.GamepadLookAssistance=settings.AutoLevel;
+                    a.GamepadLookLocked=ltHeld[i];
                     a.Jump |= pad.buttonSouth.wasPressedThisFrame;
                     CaptureFire(i, ref a, pad.rightTrigger.isPressed, pad.rightTrigger.wasPressedThisFrame);
                     if(pad.dpad.left.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;
@@ -159,8 +196,7 @@ namespace StarTournament.ProvingGround
         void ReleaseSeat(int slot)
         {
             devices[slot]=null;
-            queued[slot]=default;
-            fireReleaseRequired[slot]=true;
+            ClearSeat(slot);
         }
         void CaptureFire(int slot, ref LocalAction action, bool held, bool edge)
         {
@@ -176,7 +212,7 @@ namespace StarTournament.ProvingGround
         public LocalAction Consume(int slot)
         {
             var value = queued[slot];
-            queued[slot].Jump = false; queued[slot].Fire = false; queued[slot].SelectWeapon=WeaponSelection.None; queued[slot].LookDegrees = Vector2.zero;
+            queued[slot].Jump = false; queued[slot].Fire = false; queued[slot].SelectWeapon=WeaponSelection.None; queued[slot].LookDegrees = Vector2.zero;queued[slot].ResetLookPitch=false;
             return value;
         }
     }

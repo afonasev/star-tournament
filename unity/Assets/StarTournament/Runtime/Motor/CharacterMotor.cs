@@ -76,7 +76,9 @@ namespace StarTournament.ProvingGround
             if (!controller.enabled) return;
             state.Yaw = Mathf.Repeat(state.Yaw + action.LookDegrees.x, 360f);
             var maximumPitch = profile.Get("camera.maximumPitchDegrees");
-            state.Pitch = Mathf.Clamp(state.Pitch - action.LookDegrees.y, -maximumPitch, maximumPitch);
+            if(!action.GamepadLookLocked)
+                state.Pitch = Mathf.Clamp(state.Pitch - action.LookDegrees.y, -maximumPitch, maximumPitch);
+            if(action.ResetLookPitch)state.Pitch=0f;
             transform.rotation = Quaternion.Euler(0f, state.Yaw, 0f);
 
             var groundedBeforeMove = controller.isGrounded;
@@ -112,6 +114,8 @@ namespace StarTournament.ProvingGround
             state.Position = transform.position;
             state.Velocity = actualVelocity;
             state.Grounded = controller.isGrounded || (collisionFlags & CollisionFlags.Below) != 0;
+            if(action.GamepadLookLocked||action.ResetLookPitch)
+            {state.LookNeutralSeconds=0;state.LookReturnVelocity=0;return;}
             ApplyLookAssistance(action,dt);
 
         }
