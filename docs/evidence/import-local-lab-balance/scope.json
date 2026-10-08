@@ -1,0 +1,20 @@
+{
+  "user_request": "возьми правки баланса из моей локальной копии",
+  "source": "user 2026-10-08 chat 01a11c9b-5d94-7771-9059-5c6e204663f3",
+  "scope": "saved local copy revision 4 as new packaged Default; no build or install/publication",
+  "dependencies": [
+    "packaged catalogue",
+    "movement",
+    "match duration/points",
+    "weapon ammo/cutter visuals",
+    "respawn/death timing",
+    "pickups",
+    "gamepad camera return"
+  ],
+  "checks": [
+    "complete EditMode and PlayMode suites (no Player build)",
+    "short packaged Default motor movement scenario"
+  ],
+  "route": "quick",
+  "full_justification": "Selected snapshot contains 20 value differences from previous packaged catalogue across movement, match progression, combat and presentation; full suites cover shared integration and terminal-match regressions."
+}
