@@ -34,4 +34,4 @@ Record worktree/branch/build removals and retained resources in `cleanup` eviden
 
 ## Unity process capacity
 
-Use `~/.local/bin/unity-run --shared|--exclusive -- COMMAND`, not a project-local runtime lease or manual coordinator ACK. The wrapper admits up to four shared commands or one exclusive command across repositories. Exclusive is required for performance and UI/focus/physical input QA. Do not hold planning/integration leases while waiting for Unity. Existing product coordination and Git leases remain independent.
+Use `~/.local/bin/unity-run --shared|--exclusive -- COMMAND`, not a project-local runtime lease or manual coordinator ACK. The wrapper admits up to four shared commands or one exclusive command across repositories. Shared is the default for autonomous Editor/Player checks, including UI fixtures. Exclusive is required only for performance measurements or shared desktop/focus/system input/audio-device QA; document the resource or metric before choosing it. Follow ../project-policy/unity.md. Do not hold planning/integration leases while waiting for Unity. Existing product coordination and Git leases remain independent.
