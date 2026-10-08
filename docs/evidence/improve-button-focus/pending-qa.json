@@ -1,25 +1,15 @@
 {
-  "state": "blocked-on-runtime-admission",
-  "checked_at_utc": "2026-10-08T15:03:14Z",
-  "runtime_status": {
-    "occupied_slots": 1,
-    "admission_busy": true
-  },
-  "passed": {
-    "affected_screens": 20,
-    "layout_editmode": 3,
-    "focus_contract": 2
-  },
+  "source_commit": "fff40f031b762092b0a32ca121eb03c41f74d1db",
+  "tested_integration_revision": "51291779457e0e9e3eca32989c525b3326b10893",
+  "passed": [
+    "Affected screens 20/20",
+    "UI gate 3 EditMode + 12 PlayMode"
+  ],
   "pending": [
-    "make check-ui PlayMode: FourPlayerMenuTests;IndependentPauseMenuTests",
-    "Editor ButtonFocusPreview.Render and visual inspection",
-    "main integration and final worktree cleanup"
+    "Actual Editor render/visual inspection",
+    "Physical SN30 Pro and installed Player acceptance"
   ],
-  "not_run": [
-    "Player build",
-    "installed update",
-    "release publication",
-    "physical Player acceptance"
-  ],
-  "ownership": "Only own queued clients 13193 and 18217 cancelled; foreign Unity processes and locks untouched"
+  "merge_authorization": "User: \u0441\u043c\u0435\u0440\u0436\u0438 \u0432 main \u0432\u0441\u0435; merge authorized with previously disclosed visual QA incomplete",
+  "render_blocker": "Foreign interactive spacewars Editor holds exclusive runtime. Own waiting render canceled; no Editor started.",
+  "build_release": "Deferred by user policy; none run"
 }

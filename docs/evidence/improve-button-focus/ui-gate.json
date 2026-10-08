@@ -1,0 +1,31 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests and Editor Play Mode; Player gates deferred unless explicitly requested or necessary",
+  "revision": "51291779457e0e9e3eca32989c525b3326b10893",
+  "dirty": " M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "docs/evidence/improve-button-focus/ui-edit.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "docs/evidence/improve-button-focus/ui-play.xml",
+      "passed": 12
+    }
+  ],
+  "prepared_scene_sha256": "ae12660ffdf5ef0e90502ceda2b835f6fe493de752d7e529c3cf10c2b39bb613"
+}

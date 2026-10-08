@@ -1,7 +1,7 @@
-# Gold button navigation focus
+# Visible button focus
 
-Approved direction: thick gold rim, dark gap and pointer, preserving existing fills and text. UI-only implementation uses a shared MenuFocusGraphic for all ButtonElement factories, roster and manual per-seat pause/settings focus. Hover remains thin; disabled buttons do not get the navigation rim. Compact control strokes scale inward to avoid overlapping rows, and the graphic is behind text/semantic markers and never intercepts pointer input.
+Gold rim, dark gap and pointer preserving existing fills.
 
-Verified so far: affected screens PlayMode 20/20, dedicated focus contract 2/2 (included in those 20), current UI layout EditMode 3/3; source diff whitespace and strict OpenSpec validation. Test scenes were regenerated with unity/tools.sh prepare without Player build. Generated scene/prefab/ProjectSettings derivatives are not part of the implementation.
+Affected screens: 20/20; UI gate: 3 EditMode + 12 PlayMode passed. Source hashes bind original focused checks; ui-gate.json records the prepared scene hash for the latest checks.
 
-Pending: UI gate PlayMode (FourPlayerMenuTests and IndependentPauseMenuTests), Editor render inspection, main integration and cleanup. Runtime admission remained unavailable for the remaining gate after over one hour overall; only the owned waiting commands were cancelled. The PlayMode gate did not start; it is not a source test failure. Approved concept is a mockup, not the rendered implementation. No Player build, installed update, distribution or physical/visual Player acceptance is authorized by this implementation request.
+Merged on explicit user instruction with actual Editor visual inspection still pending because a foreign interactive Editor holds exclusive runtime. approved-concept.png is a mockup, not rendered implementation evidence. No Player build, install/update or release was performed.
