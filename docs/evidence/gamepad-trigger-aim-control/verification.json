@@ -1,8 +1,8 @@
 {
-  "source_revision": "3465c5feda4351cd18d213b1f6d033f133d30e6e",
+  "source_revision": "2ed666f54c6a7b3d364f45586f8343caad63996c",
   "EditMode_unique_passed": 74,
-  "PlayMode_unique_passed": 36,
-  "coverage": "52 unchanged EditMode cases passed at31bf957 +22 input cases at e8796ff;17 unchanged PlayMode cases passed at e8796ff +19 corrected combat/help cases at3465c5f",
+  "PlayMode_unique_passed": 43,
+  "coverage": "74 EditMode unique cases from preserved affected checks; all 43 affected PlayMode cases passed together at integrated main 2ed666f, including Default v2 ProvingGroundTests",
   "checks": [
     {
       "platform": "EditMode",
@@ -198,6 +198,53 @@
       },
       "failed": [],
       "artifact": "PlayMode-corrected.xml"
+    },
+    {
+      "platform": "PlayMode",
+      "fixtures": [
+        "GamepadLookAssistanceTests",
+        "NativeCombatTests",
+        "FourPlayerMenuTests",
+        "IndependentPauseMenuTests",
+        "SettingsGamepadNavigationTests",
+        "ProvingGroundTests"
+      ],
+      "command": [
+        "/Users/eaafonasev/.local/bin/unity-run",
+        "--shared",
+        "--project",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "--",
+        "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+        "-batchmode",
+        "-projectPath",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "-runTests",
+        "-testPlatform",
+        "PlayMode",
+        "-testFilter",
+        "GamepadLookAssistanceTests;NativeCombatTests;FourPlayerMenuTests;IndependentPauseMenuTests;SettingsGamepadNavigationTests;ProvingGroundTests",
+        "-testResults",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/PlayMode.xml",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/PlayMode.log"
+      ],
+      "revision": "2ed666f54c6a7b3d364f45586f8343caad63996c",
+      "dirty": "",
+      "build_player": false,
+      "exit_code": 0,
+      "result": "Passed",
+      "total": 43,
+      "counts": {
+        "GamepadLookAssistanceTests": 4,
+        "NativeCombatTests": 12,
+        "FourPlayerMenuTests": 5,
+        "IndependentPauseMenuTests": 8,
+        "SettingsGamepadNavigationTests": 7,
+        "ProvingGroundTests": 7
+      },
+      "failed": [],
+      "artifact": "PlayMode-integrated.xml"
     }
   ],
   "isolation": {
@@ -219,5 +266,6 @@
     "unity/Assets/StarTournament/Runtime/Motor": true,
     "unity/Assets/StarTournament/Runtime/Core": true
   },
-  "screenshot_sha256": "1522f036117509a03f269449b54c69d2ddaa36fca07882e1c63efcd6cc86282e"
+  "screenshot_sha256": "f97c1a35cd98ed36ab725e2427c6d9c0ff051342bc078107d370bb0ae5f25faa",
+  "integrated_default_v2": true
 }
