@@ -48,3 +48,10 @@ target environment and smoke procedure require a separately approved decision.
 ## Download and distribution
 
 Download test Windows/macOS installers from https://robowar.afonasev.tech or the GitHub Releases of https://github.com/afonasev/star-tournament. Windows installation uses Program Files with UAC; both optional Desktop shortcut and launch actions are on the final screen. Updates require explicit user consent and verify an RSA-PSS/SHA256 signed descriptor plus package size/hash. Private signing keys and local build/generated data are excluded from Git. See `distribution/README.md` and `THIRD_PARTY_NOTICES.md`.
+
+
+## Production 0.1.0 (09.10.2026)
+
+Stable Windows x64/macOS arm64 installers and signed full updates are published through [GitHub Latest](https://github.com/afonasev/star-tournament/releases/latest). Test installations retain their test channel; install the production package to switch channels. User profiles remain outside the payload. OS developer signing/notarization and physical device acceptance are separate from update-package signature verification.
+
+This source includes gamepad match-setup navigation, LT aim, Default v2 packaged balance, nonblocking saved Lab selection and compact update-menu identity. Verification: 406 EditMode / 235 PlayMode tests; 2 menu-state tests; 34 Python / 49 launcher security contracts. Internal source revision: `a7f809332e14878a623b80e85a7181188541a561`. Build preparation regenerates authored scene/prefab data; exact artifact custody is supplied with the release.

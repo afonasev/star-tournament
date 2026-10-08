@@ -19,6 +19,7 @@ namespace StarTournament.ProvingGround
         private float horizontalSpeedMultiplier=1f;
 
         public ParticipantState State => state;
+        public bool AcceptedJumpThisTick { get; private set; }
 
         public void Initialize(ProvingProfile provingProfile, Vector3 spawn, ProvingArena supportArena=null)
         {
@@ -68,13 +69,16 @@ namespace StarTournament.ProvingGround
 
         public void Tick(LocalAction action, float dt)
         {
+            AcceptedJumpThisTick=false;
             if (!initialized) throw new System.InvalidOperationException("Initialize must be called before Tick.");
             if (dt <= 0f) throw new System.ArgumentOutOfRangeException(nameof(dt));
 
             if (!controller.enabled) return;
             state.Yaw = Mathf.Repeat(state.Yaw + action.LookDegrees.x, 360f);
             var maximumPitch = profile.Get("camera.maximumPitchDegrees");
-            state.Pitch = Mathf.Clamp(state.Pitch - action.LookDegrees.y, -maximumPitch, maximumPitch);
+            if(!action.GamepadLookLocked)
+                state.Pitch = Mathf.Clamp(state.Pitch - action.LookDegrees.y, -maximumPitch, maximumPitch);
+            if(action.ResetLookPitch)state.Pitch=0f;
             transform.rotation = Quaternion.Euler(0f, state.Yaw, 0f);
 
             var groundedBeforeMove = controller.isGrounded;
@@ -96,6 +100,7 @@ namespace StarTournament.ProvingGround
             {
                 verticalVelocity = -profile.Get("player.movement.gravity") * dt;
                 if (action.Jump) verticalVelocity = profile.Get("player.movement.jumpSpeed");
+                if (action.Jump) AcceptedJumpThisTick=true;
             }
             else
             {
@@ -109,6 +114,8 @@ namespace StarTournament.ProvingGround
             state.Position = transform.position;
             state.Velocity = actualVelocity;
             state.Grounded = controller.isGrounded || (collisionFlags & CollisionFlags.Below) != 0;
+            if(action.GamepadLookLocked||action.ResetLookPitch)
+            {state.LookNeutralSeconds=0;state.LookReturnVelocity=0;return;}
             ApplyLookAssistance(action,dt);
 
         }

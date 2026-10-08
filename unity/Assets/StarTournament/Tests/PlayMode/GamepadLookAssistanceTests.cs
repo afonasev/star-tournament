@@ -86,5 +86,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             finally{Object.Destroy(body);Object.Destroy(ramp);}
             yield return null;
         }
+        [UnityTest] public IEnumerator LtLocksCurrentPitchKeepsYawAndTapResetsToWorldHorizon()
+        {
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.layer=ProvingArena.WorldLayer;floor.transform.position=new Vector3(120,-.5f,120);floor.transform.localScale=new Vector3(30,1,30);
+            var body=new GameObject("LT aim motor");var motor=body.AddComponent<CharacterMotor>();var profile=ProvingProfile.CreateDefault();
+            motor.Initialize(profile,new Vector3(120,.02f,120));Physics.SyncTransforms();yield return new WaitForFixedUpdate();
+            try
+            {
+                motor.Tick(new LocalAction{LookDegrees=new Vector2(25,-32),ManualLook=true},.02f);
+                float aimedPitch=motor.State.Pitch;float aimedYaw=motor.State.Yaw;
+                motor.Tick(new LocalAction{LookDegrees=new Vector2(18,45),GamepadLookLocked=true,GamepadLookAssistance=true},.02f);
+                Assert.That(motor.State.Pitch,Is.EqualTo(aimedPitch),"LT ignores vertical action input and auto-level");
+                Assert.That(motor.State.Yaw,Is.EqualTo(aimedYaw+18).Within(.001),"LT keeps horizontal stick control");
+                Assert.That(motor.State.LookNeutralSeconds,Is.Zero);Assert.That(motor.State.LookReturnVelocity,Is.Zero);
+                for(int tick=0;tick<10;tick++)motor.Tick(new LocalAction{GamepadLookAssistance=true},.02f);
+                Assert.That(motor.State.Pitch,Is.EqualTo(aimedPitch),"after LT release auto-level waits for the existing delay");
+                var beforeResetYaw=motor.State.Yaw;
+                motor.Tick(new LocalAction{ResetLookPitch=true,GamepadLookAssistance=false},.02f);
+                Assert.That(motor.State.Pitch,Is.Zero,"tap sets world horizon independently of surface assistance");
+                Assert.That(motor.State.Yaw,Is.EqualTo(beforeResetYaw));
+            }
+            finally{Object.Destroy(body);Object.Destroy(floor);}
+            yield return null;
+        }
     }
 }

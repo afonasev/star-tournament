@@ -15,6 +15,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Scene scene;
         ProvingGround ground;
         readonly Gamepad[] pads=new Gamepad[2];
+        bool hadLastMap;string priorLastMap;
+        [SetUp] public void PreserveLastMap()
+        {
+            hadLastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
+            PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
+        }
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(button=>button.name==name);
         GameObject Object(string name)=>ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name==name).gameObject;
         IEnumerator Load()
@@ -24,13 +30,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
+            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
             for(int seat=0;seat<2;seat++)
             {
                 pads[seat]=InputSystem.AddDevice<Gamepad>();
                 InputSystem.QueueStateEvent(pads[seat],new GamepadState().WithButton(GamepadButton.North));
                 yield return null;yield return null;
                 InputSystem.QueueStateEvent(pads[seat],new GamepadState());yield return null;
-                Button("identity-guest").onClick.Invoke();
+                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();
+                Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
             }
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
             Assert.That(ground.Running,Is.True);
@@ -44,6 +52,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             foreach(var pad in pads)if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+            if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
+            PlayerPrefs.Save();
         }
         [UnityTest] public IEnumerator SplitScreenDrawsOneGlobalFpsCounter()
         {

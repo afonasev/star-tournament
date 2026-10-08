@@ -18,6 +18,9 @@ namespace StarTournament.ProvingGround
         public int Seat, Kills, Assists, Deaths, Score;
         public int SelfKills, AllyKills, AccumulatedPenalty;
         public double DamageDealt, DamageReceived, AllyDamageDealt;
+        public double DistanceTravelled, SelfDamageDealt, EnemyDamageReceived;
+        public int Jumps, Shots, WeaponSwitches, HealPickups, ArmorPickups, BonusPickups;
+        public long FirstDeathTick;
         public WeaponAccuracy RifleAccuracy, ShotgunAccuracy, RocketAccuracy, CutterAccuracy;
         public double AccuracyPercent
         {
@@ -47,6 +50,12 @@ namespace StarTournament.ProvingGround
         public long[] AssistLedger;
         public int[] ChainAwards;
         public bool[] DiedThisTick;
+        public int AchievementTelemetryVersion;
+        public int AwardSeed, MinimumShots;
+        public double MinimumBeamSeconds;
+        public bool[] AwardRecipients;
+        public bool AwardsFrozen;
+        public NativeAchievement[] Achievements;
         public long Tick, RemainingTicks;
         public NativeMatchPhase Phase;
         public string Trigger;
@@ -71,12 +80,20 @@ namespace StarTournament.ProvingGround
         readonly int assistPoints, increment, target, penalty;
         readonly double tickHz;
         readonly string tuningIdentity;
+        readonly string legacyTuningIdentity;
         long tick;
         string trigger;
         bool enteredOvertime;
         int winner = -1;
         NativeTeam winnerTeam;
         NativeStanding[] finalRows;
+        readonly bool[] awardRecipients;
+        NativeAchievement[] achievements=Array.Empty<NativeAchievement>();
+        int awardSeed;
+        readonly int minimumShots;
+        readonly double minimumBeamSeconds;
+        bool awardsFrozen, legacyAchievementsDisabled;
+        int telemetryVersion=1;
         public NativeMatchPhase Phase { get; private set; }
         public NativeMatchConfiguration Configuration { get; }
         public NativeMatchRoster Roster { get; }
@@ -93,6 +110,8 @@ namespace StarTournament.ProvingGround
                 throw new ArgumentException("Invalid match profile");
             foreach (var d in profile.Descriptors) NativeMatchConfiguration.ValidateValue(profile, d.Path, profile.Get(d.Path));
             config.Validate(profile); Configuration=config; tickHz=hz;
+            minimumShots=(int)(profile.Descriptor("achievement.minimumShots")!=null?profile.Get("achievement.minimumShots"):ProvingProfile.CreateMatchDefault().Get("achievement.minimumShots"));
+            minimumBeamSeconds=profile.Descriptor("achievement.minimumBeamSeconds")!=null?profile.Get("achievement.minimumBeamSeconds"):ProvingProfile.CreateMatchDefault().Get("achievement.minimumBeamSeconds");
             durationTicks=(long)Math.Round(config.DurationMinutes*60d*hz);
             assistTicks=(long)Math.Ceiling(profile.Get("score.assistWindow")*hz);
             assistPoints=(int)profile.Get("score.assistPoints"); increment=(int)profile.Get("score.chainIncrement");
@@ -102,28 +121,55 @@ namespace StarTournament.ProvingGround
                 ? (int)ProvingProfile.CreateMatchDefault().Get("score.friendlyOrSelfKillPenalty")
                 : (int)profile.Get("score.friendlyOrSelfKillPenalty");
             target=config.TargetEnabled ? config.TargetPoints : 0;
-            tuningIdentity=string.Join("|",new[]{hz.ToString("R",CultureInfo.InvariantCulture),durationTicks.ToString(),assistTicks.ToString(),assistPoints.ToString(),increment.ToString(),target.ToString(),penalty.ToString(),string.Join(",",totals)});
+            awardSeed=Guid.NewGuid().GetHashCode();
+            legacyTuningIdentity=string.Join("|",new[]{hz.ToString("R",CultureInfo.InvariantCulture),durationTicks.ToString(),assistTicks.ToString(),assistPoints.ToString(),increment.ToString(),target.ToString(),penalty.ToString(),string.Join(",",totals)});
+            tuningIdentity=legacyTuningIdentity+"|"+minimumShots.ToString()+"|"+minimumBeamSeconds.ToString("R",CultureInfo.InvariantCulture);
             rows=new NativeStanding[seats]; ledger=new long[seats,seats]; chains=new int[seats]; chainAwards=new int[seats];
             directKillsByPair=new int[seats*seats]; diedThisTick=new bool[seats];
+            awardRecipients=new bool[seats];
             for(int i=0;i<seats;i++) { rows[i].Seat=i; ClearLedger(i); }
         }
         void ClearLedger(int victim) { for(int i=0;i<rows.Length;i++) ledger[victim,i]=-1; }
         public void BeginTick() { if(Phase!=NativeMatchPhase.Finished) tick++; }
+        public void ConfigureAchievementRecipients(bool[] recipients)
+        {
+            if(tick!=0||Phase!=NativeMatchPhase.Running||legacyAchievementsDisabled||recipients==null||recipients.Length!=rows.Length)throw new ArgumentException("Invalid achievement recipients",nameof(recipients));
+            Array.Copy(recipients,awardRecipients,rows.Length);
+        }
+        public void RecordMovement(int participant,double horizontalDistance,bool acceptedJump)
+        {
+            CheckParticipant(participant);if(Phase==NativeMatchPhase.Finished)return;
+            if(!FiniteDamage(horizontalDistance))throw new ArgumentOutOfRangeException(nameof(horizontalDistance));
+            rows[participant].DistanceTravelled+=horizontalDistance;if(acceptedJump)rows[participant].Jumps++;
+        }
+        public void RecordShot(int participant){CheckParticipant(participant);if(Phase!=NativeMatchPhase.Finished)rows[participant].Shots++;}
+        public void RecordWeaponSwitch(int participant){CheckParticipant(participant);if(Phase!=NativeMatchPhase.Finished)rows[participant].WeaponSwitches++;}
+        public void RecordPickup(int participant,NativeBotPickupKind kind)
+        {
+            CheckParticipant(participant);if(Phase==NativeMatchPhase.Finished)return;
+            if(kind==NativeBotPickupKind.Heal){rows[participant].HealPickups++;rows[participant].BonusPickups++;}
+            else if(kind==NativeBotPickupKind.Armor){rows[participant].ArmorPickups++;rows[participant].BonusPickups++;}
+            else if(kind==NativeBotPickupKind.Speed||kind==NativeBotPickupKind.Damage)rows[participant].BonusPickups++;
+        }
+        void CheckParticipant(int participant){if(participant<0||participant>=rows.Length)throw new ArgumentOutOfRangeException(nameof(participant));}
         public void RecordDamage(int victim, int attacker, DamageResult result, bool chainEligible=true, int? originalSource=null)
         {
             if(Phase==NativeMatchPhase.Finished || result.Applied<=0) return;
             int source=originalSource??attacker;
             if(victim<0 || victim>=rows.Length || source < -1 || source>=rows.Length || attacker < -1 || attacker>=rows.Length) throw new ArgumentOutOfRangeException();
             bool enemy=attacker>=0 && attacker!=victim && !Roster.AreAllies(attacker,victim);
+            bool enemySource=source>=0&&source!=victim&&!Roster.AreAllies(source,victim);
             rows[victim].DamageReceived+=result.Applied;
+            if(source==victim)rows[victim].SelfDamageDealt+=result.Applied;
             if(source>=0 && source!=victim && Roster.AreAllies(source,victim)) rows[source].AllyDamageDealt+=result.Applied;
+            if(enemySource)rows[victim].EnemyDamageReceived+=result.Applied;
             if(enemy)
             {
                 rows[attacker].DamageDealt+=result.Applied;
                 ledger[victim,attacker]=tick;
             }
             if(!result.Killed) return;
-            rows[victim].Deaths++; diedThisTick[victim]=true;
+            rows[victim].Deaths++; if(rows[victim].FirstDeathTick==0)rows[victim].FirstDeathTick=tick; diedThisTick[victim]=true;
             if(source>=0 && (source==victim || Roster.AreAllies(source,victim)))
             {
                 if(source==victim) rows[source].SelfKills++; else rows[source].AllyKills++;
@@ -175,6 +221,7 @@ namespace StarTournament.ProvingGround
             if (Roster.Mode == NativeMatchMode.Teams) winnerTeam=teamRows.Single(r=>r.Score==maximum).Team;
             else winner=rows.Single(r=>r.Score==maximum).Seat;
             finalRows=Ordered();
+            if(!legacyAchievementsDisabled&&!awardsFrozen){achievements=NativeAchievementCatalog.Select(finalRows,(bool[])awardRecipients.Clone(),awardSeed,minimumShots,minimumBeamSeconds);awardsFrozen=true;}
         }
         NativeTeamStanding[] TeamTotals()
         {
@@ -192,12 +239,14 @@ namespace StarTournament.ProvingGround
             Standings=finalRows==null ? Ordered() : (NativeStanding[])finalRows.Clone(),
             DirectKillsByPair=(int[])directKillsByPair.Clone(), KillChains=(int[])chains.Clone(),
             AssistLedger=Enumerable.Range(0,rows.Length*rows.Length).Select(i=>ledger[i/rows.Length,i%rows.Length]).ToArray(),
-            ChainAwards=(int[])chainAwards.Clone(), DiedThisTick=(bool[])diedThisTick.Clone() };
+            ChainAwards=(int[])chainAwards.Clone(), DiedThisTick=(bool[])diedThisTick.Clone(),
+            AchievementTelemetryVersion=telemetryVersion,AwardSeed=awardSeed,MinimumShots=minimumShots,MinimumBeamSeconds=minimumBeamSeconds,
+            AwardRecipients=(bool[])awardRecipients.Clone(),AwardsFrozen=awardsFrozen,Achievements=(NativeAchievement[])achievements.Clone() };
 
         public void ValidateSnapshot(NativeMatchSnapshot snapshot)
         {
             int count=rows.Length;
-            if(snapshot==null || snapshot.Version!=2 || snapshot.TuningIdentity!=tuningIdentity || snapshot.Tick<0 || !Enum.IsDefined(typeof(NativeMatchPhase),snapshot.Phase) ||
+            if(snapshot==null || snapshot.Version!=2 || (snapshot.TuningIdentity!=tuningIdentity&&!(snapshot.AchievementTelemetryVersion==0&&snapshot.TuningIdentity==legacyTuningIdentity)) || snapshot.Tick<0 || !Enum.IsDefined(typeof(NativeMatchPhase),snapshot.Phase) ||
                 snapshot.Roster==null || snapshot.Roster.Mode!=Roster.Mode || snapshot.Roster.Teams==null || !snapshot.Roster.Teams.SequenceEqual(Roster.Read().Teams) ||
                 snapshot.Standings==null || snapshot.Standings.Length!=count || !snapshot.Standings.Select(r=>r.Seat).OrderBy(i=>i).SequenceEqual(Enumerable.Range(0,count)) ||
                 snapshot.AssistLedger?.Length!=count*count || snapshot.DirectKillsByPair?.Length!=count*count ||
@@ -207,6 +256,22 @@ namespace StarTournament.ProvingGround
                 if(row.Kills<0 || row.Assists<0 || row.Deaths<0 || row.SelfKills<0 || row.AllyKills<0 || row.AccumulatedPenalty<0 ||
                     !FiniteDamage(row.DamageDealt) || !FiniteDamage(row.DamageReceived) || !FiniteDamage(row.AllyDamageDealt) ||
                     !ValidAccuracy(row.RifleAccuracy)||!ValidAccuracy(row.ShotgunAccuracy)||!ValidAccuracy(row.RocketAccuracy)||!ValidAccuracy(row.CutterAccuracy)) throw new ArgumentException("Invalid match counters");
+            if(snapshot.AchievementTelemetryVersion!=0&&snapshot.AchievementTelemetryVersion!=1)throw new ArgumentException("Invalid achievement telemetry version");
+            if(snapshot.AchievementTelemetryVersion==1)
+            {
+                if(snapshot.MinimumShots!=minimumShots||snapshot.MinimumBeamSeconds!=minimumBeamSeconds||snapshot.AwardRecipients?.Length!=count||snapshot.Achievements==null||
+                    snapshot.Standings.Any(r=>!FiniteDamage(r.DistanceTravelled)||!FiniteDamage(r.SelfDamageDealt)||!FiniteDamage(r.EnemyDamageReceived)||r.Jumps<0||r.Shots<0||r.WeaponSwitches<0||r.HealPickups<0||r.ArmorPickups<0||r.BonusPickups<0||r.FirstDeathTick<0||r.FirstDeathTick>snapshot.Tick))
+                    throw new ArgumentException("Invalid achievement telemetry");
+                if(snapshot.Achievements.Select(a=>a.Participant).Distinct().Count()!=snapshot.Achievements.Length||snapshot.Achievements.Any(a=>!ValidAward(snapshot,a,count))||!snapshot.AwardsFrozen&&snapshot.Achievements.Length!=0)throw new ArgumentException("Invalid frozen achievements");
+                if(snapshot.AwardsFrozen!=(snapshot.Phase==NativeMatchPhase.Finished))throw new ArgumentException("Invalid achievement freeze state");
+            }
+        }
+        bool ValidAward(NativeMatchSnapshot snapshot,NativeAchievement award,int count)
+        {
+            if(award.Participant<0||award.Participant>=count||!snapshot.AwardRecipients[award.Participant]||!NativeAchievementCatalog.IsKnown(award.Id)||!Enum.IsDefined(typeof(NativeAchievementTier),award.Tier)||string.IsNullOrEmpty(award.Name)||string.IsNullOrEmpty(award.Fact))return false;
+            var eligible=NativeAchievementCatalog.Eligible(snapshot.Standings,award.Participant,minimumShots,minimumBeamSeconds);
+            if(eligible.Length==0)return false;var highest=eligible.Max(candidate=>candidate.Tier);
+            return award.Tier==highest&&eligible.Any(candidate=>candidate.Id==award.Id&&candidate.Tier==award.Tier&&candidate.Name==award.Name&&candidate.Fact==award.Fact);
         }
         static bool FiniteDamage(double value)=>value>=0 && !double.IsNaN(value) && !double.IsInfinity(value);
         static bool FiniteAccuracy(double value)=>FiniteDamage(value);
@@ -217,6 +282,10 @@ namespace StarTournament.ProvingGround
             // JsonUtility round-trips a null string as empty; both mean no finish trigger.
             tick=snapshot.Tick;Phase=snapshot.Phase;trigger=string.IsNullOrEmpty(snapshot.Trigger)?null:snapshot.Trigger;winner=snapshot.Winner;winnerTeam=snapshot.WinnerTeam;
             enteredOvertime=snapshot.RemainingTicks==0 && trigger!=null;
+            if(snapshot.AchievementTelemetryVersion==0)
+            {legacyAchievementsDisabled=true;telemetryVersion=0;Array.Clear(awardRecipients,0,awardRecipients.Length);achievements=Array.Empty<NativeAchievement>();awardsFrozen=false;}
+            else
+            {legacyAchievementsDisabled=false;telemetryVersion=1;awardSeed=snapshot.AwardSeed;Array.Copy(snapshot.AwardRecipients,awardRecipients,rows.Length);achievements=(NativeAchievement[])snapshot.Achievements.Clone();awardsFrozen=snapshot.AwardsFrozen;}
             foreach(var row in snapshot.Standings)rows[row.Seat]=row;
             Array.Copy(snapshot.KillChains,chains,rows.Length);Array.Copy(snapshot.ChainAwards,chainAwards,rows.Length);
             Array.Copy(snapshot.DirectKillsByPair,directKillsByPair,directKillsByPair.Length);Array.Copy(snapshot.DiedThisTick,diedThisTick,rows.Length);

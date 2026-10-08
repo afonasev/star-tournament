@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround
@@ -142,6 +144,8 @@ namespace StarTournament.ProvingGround
         readonly string path; readonly LabBundle shipped; readonly LabReleaseCatalog releases; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
+        int mutationInFlight;
+        public bool Busy=>Volatile.Read(ref mutationInFlight)!=0;
         LabHistoryProfile DisplayProfile(LabHistoryProfile profile)
         {
             var copy=profile.Clone();
@@ -326,6 +330,7 @@ namespace StarTournament.ProvingGround
                     return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
                 }
                 var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
+                var beforeMatchAchievements=Cached(p=>p.BeforeMatchAchievements());
                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
@@ -336,6 +341,7 @@ namespace StarTournament.ProvingGround
                 var withoutMovementAudio=Cached(p=>p.BeforeMovementAudio());
                 var withoutCompactMatchMenu=Cached(p=>p.BeforeCompactMatchMenu());
                 var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
+                var withoutGamepadTriggerAim=Cached(p=>p.BeforeGamepadTriggerAim());
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 var withoutDiscreteIdentityPanels=Cached(p=>p.BeforeDiscreteIdentityPanels());
@@ -346,6 +352,7 @@ namespace StarTournament.ProvingGround
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseVisibility))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
@@ -363,6 +370,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCutterDamage))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutScoreboard))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadLook))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutDiscreteIdentityPanels))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutIdentitySurface))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p))));
@@ -379,7 +387,9 @@ namespace StarTournament.ProvingGround
                 // Add the current gameplay registry only after historical transforms: identical
                 // legacy schema keys can otherwise discard the actual pre-rebalance defaults.
                 var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
                 // Music can be absent alongside an earlier Pulse registry without changing gameplay defaults.
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusic))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));
@@ -504,7 +514,18 @@ namespace StarTournament.ProvingGround
         }
         void Commit(Action<LabHistoryFile> mutation)
         {
+            BeginMutation();
+            try {data=PrepareCommit(mutation);}
+            finally {Volatile.Write(ref mutationInFlight,0);}
+        }
+        void BeginMutation()
+        {
             if(!Writable)throw new IOException(StorageError);
+            if(Interlocked.CompareExchange(ref mutationInFlight,1,0)!=0)
+                throw new InvalidOperationException("Дождитесь завершения выбора ревизии");
+        }
+        LabHistoryFile PrepareCommit(Action<LabHistoryFile> mutation)
+        {
             var next=data.Clone();mutation(next);ValidateFile(next);
             string temp=path+"."+Guid.NewGuid().ToString("N")+".tmp";
             try
@@ -513,12 +534,29 @@ namespace StarTournament.ProvingGround
                 using(var stream=new FileStream(temp,FileMode.CreateNew,FileAccess.Write,FileShare.None))
                 {byte[] bytes=Encoding.UTF8.GetBytes(JsonUtility.ToJson(next,true));stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
                 atomicPublish(temp,path);
-                data=next;
+                return next;
             }
             finally {if(File.Exists(temp))File.Delete(temp);}
         }
         static void Publish(string temp,string destination){if(File.Exists(destination))File.Replace(temp,destination,null);else File.Move(temp,destination);}
-        public void Select(string id,int number)=>Commit(f=>{var r=f.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);if(!Current(r.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");f.SelectedId=id;f.SelectedRevision=number;});
+        void SelectIn(LabHistoryFile file,string id,int number)
+        {
+            var revision=file.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);
+            if(!Current(revision.Snapshot))throw new InvalidOperationException("Историческая схема: выберите её новую совместимую ревизию");
+            file.SelectedId=id;file.SelectedRevision=number;
+        }
+        public void Select(string id,int number)=>Commit(f=>SelectIn(f,id,number));
+        public async Task SelectAsync(string id,int number)
+        {
+            BeginMutation();
+            try
+            {
+                // Serializable data only. Keep all validation and atomic disk publication off
+                // the frame loop; publish in-memory selection on the caller's Unity context.
+                data=await Task.Run(()=>PrepareCommit(f=>SelectIn(f,id,number)));
+            }
+            finally {Volatile.Write(ref mutationInFlight,0);}
+        }
         public void Save(LabBundle draft)
         {
             RequireLocalProfile();

@@ -361,18 +361,20 @@ namespace StarTournament.ProvingGround
             if(setupStep!=2)return;
             var cards=Enumerable.Range(0,RosterTotal).Select(p=>rosterCards[p]).ToArray();
             var top=new[]{rosterAddHuman,rosterAddBot}.Where(b=>b.interactable).ToArray();
-            var steps=setupSteps.Where(b=>b.interactable).ToArray();
-            for(int i=0;i<steps.Length;i++)
-            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=steps[Math.Max(0,i-1)],selectOnRight=steps[Math.Min(steps.Length-1,i+1)],selectOnDown=top.FirstOrDefault()??cards[0]};steps[i].navigation=n;}
+            if(!setupGamepadNavigation)
+            {
+                var steps=setupSteps.Where(b=>b.interactable).ToArray();
+                for(int i=0;i<steps.Length;i++)steps[i].navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=steps[Math.Max(0,i-1)],selectOnRight=steps[Math.Min(steps.Length-1,i+1)],selectOnDown=top.FirstOrDefault()??cards[0]};
+            }
             for(int i=0;i<top.Length;i++)
-            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=top[Math.Max(0,i-1)],selectOnRight=top[Math.Min(top.Length-1,i+1)],selectOnUp=setupSteps[2],selectOnDown=cards[0]};top[i].navigation=n;}
+            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=top[System.Math.Max(0,i-1)],selectOnRight=top[System.Math.Min(top.Length-1,i+1)],selectOnUp=setupGamepadNavigation?top[i]:setupSteps[2],selectOnDown=cards[0]};top[i].navigation=n;}
             // Authored grid coordinates keep offscreen cards reachable; select scrolls their rect into view.
             int[] a=Enumerable.Range(0,RosterTotal).Where(p=>SetupMode!=NativeMatchMode.Teams||RosterTeamAt(p)==NativeTeam.TeamA).ToArray();
             int[] bteam=Enumerable.Range(0,RosterTotal).Where(p=>SetupMode==NativeMatchMode.Teams&&RosterTeamAt(p)==NativeTeam.TeamB).ToArray();
             foreach(var group in new[]{a,bteam})for(int i=0;i<group.Length;i++)
             {
                 int cols=SetupMode==NativeMatchMode.Teams?2:4;
-                var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=i>=cols?rosterCards[group[i-cols]]:top.FirstOrDefault()??setupSteps[2],selectOnDown=i+cols<group.Length?rosterCards[group[i+cols]]:start.interactable?start:setupPrevious,
+                var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=i>=cols?rosterCards[group[i-cols]]:top.FirstOrDefault()??(setupGamepadNavigation?rosterCards[group[i]]:setupSteps[2]),selectOnDown=i+cols<group.Length?rosterCards[group[i+cols]]:setupGamepadNavigation?rosterCards[group[i]]:start.interactable?start:setupPrevious,
                     selectOnLeft=i%cols>0?rosterCards[group[i-1]]:rosterCards[group[i]],selectOnRight=i%cols<cols-1&&i+1<group.Length?rosterCards[group[i+1]]:rosterCards[group[i]]};
                 if(SetupMode==NativeMatchMode.Teams)
                 {
@@ -382,8 +384,12 @@ namespace StarTournament.ProvingGround
                 }
                 rosterCards[group[i]].navigation=n;
             }
-            setupPrevious.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnRight=start.interactable?start:setupPrevious};
-            start.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnLeft=setupPrevious};
+            if(setupGamepadNavigation){NoSetupNavigation(setupPrevious);NoSetupNavigation(start);}
+            else
+            {
+                setupPrevious.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnRight=start.interactable?start:setupPrevious};
+                start.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnLeft=setupPrevious};
+            }
         }
         void RosterVerticalNavigation(Selectable[] buttons)
         {
@@ -396,6 +402,7 @@ namespace StarTournament.ProvingGround
             foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
             if(back)
             {
+                setupTransitionFrame=Time.frameCount;
                 if(rosterEditing>=0){if(rosterPicker.activeSelf)CloseRosterPicker();else CloseRosterEditor();}
                 else if(pendingSeat>=0){pendingSeat=-1;RefreshInterface();FocusRosterCard(0);}
                 else PreviousSetupStep();
@@ -409,27 +416,12 @@ namespace StarTournament.ProvingGround
     // Frame stays visible for both pointer hover and EventSystem focus. Selection also reveals clipped cards.
     public sealed class RosterFocus : MonoBehaviour,ISelectHandler,IDeselectHandler,IPointerEnterHandler,IPointerExitHandler
     {
-        GameObject frame;
-        bool hover,selected;
         public Func<ScrollRect> UseScroll;
-        public void Initialize(Color color)
-        {
-            frame=new GameObject("gold-focus",typeof(RectTransform));frame.transform.SetParent(transform,false);
-            var rect=(RectTransform)frame.transform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
-            for(int i=0;i<4;i++)
-            {
-                var edge=new GameObject("edge",typeof(RectTransform),typeof(Image));edge.transform.SetParent(frame.transform,false);
-                var r=(RectTransform)edge.transform;r.anchorMin=i==0?Vector2.zero:i==1?new Vector2(0,1):i==2?Vector2.zero:new Vector2(1,0);r.anchorMax=i==0?new Vector2(1,0):i==1?Vector2.one:i==2?new Vector2(0,1):Vector2.one;r.offsetMin=r.offsetMax=Vector2.zero;r.sizeDelta=i<2?new Vector2(0,3):new Vector2(3,0);
-                var image=edge.GetComponent<Image>();image.color=color;image.raycastTarget=false;
-            }
-            frame.SetActive(false);
-        }
-        void Paint(){if(frame)frame.SetActive((hover||selected)&&GetComponent<Button>().interactable);}
-        public void OnSelect(BaseEventData e){selected=true;Paint();Reveal();}
-        public void OnDeselect(BaseEventData e){selected=false;Paint();}
-        public void OnPointerEnter(PointerEventData e){hover=true;Paint();}
-        public void OnPointerExit(PointerEventData e){hover=false;Paint();}
-        void OnDisable(){selected=hover=false;Paint();}
+        public void Initialize(Color color) { /* Focus is rendered by the shared MenuPresentation. */ }
+        public void OnSelect(BaseEventData e){Reveal();}
+        public void OnDeselect(BaseEventData e){}
+        public void OnPointerEnter(PointerEventData e){}
+        public void OnPointerExit(PointerEventData e){}
         void Reveal()
         {
             var scroll=UseScroll?.Invoke();if(scroll==null||!scroll.gameObject.activeInHierarchy)return;

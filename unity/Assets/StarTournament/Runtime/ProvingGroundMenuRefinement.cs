@@ -20,11 +20,16 @@ namespace StarTournament.ProvingGround
             if(setupStep!=2||rosterEditing>=0||pendingSeat>=0)return;
             foreach(var pad in Gamepad.all)
             {
+                if(pad.buttonNorth.wasPressedThisFrame||pad.buttonWest.wasPressedThisFrame)SetSetupNavigationMode(true);
                 int seat=Enumerable.Range(0,LocalSeatCount).Where(i=>input.DeviceAt(i)==pad).DefaultIfEmpty(-1).First();
                 if(seat>=0&&pad.buttonNorth.wasPressedThisFrame&&SetupMode==NativeMatchMode.Teams)
                     SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA);
                 if(pad.buttonWest.wasPressedThisFrame)AddBot();
             }
+        }
+        void PollSetupStart()
+        {
+            if(Gamepad.all.Any(pad=>pad.startButton.wasPressedThisFrame)){SetSetupNavigationMode(true);AdvanceSetupInput();}
         }
         void StyleOperatorPause()
         {
@@ -46,12 +51,15 @@ namespace StarTournament.ProvingGround
         }
         void CreateF2Setup()
         {
-            string[] ids={CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id};
+            var ids=SetupMapIds;
             arenaChoices=new Button[ids.Length];
             for(int i=0;i<ids.Length;i++)
             {
                 string id=ids[i];float top=.71f-i*.115f;
                 arenaChoices[i]=MenuButton(setupMapPage.transform,"arena-choice-"+i,AuthoredArenaCatalog.Name(id),new Vector2(.04f,top-.08f),new Vector2(.32f,top),()=>{SelectAuthoredMap(id);setupMaxStep=Mathf.Max(1,setupMaxStep);RefreshInterface();});
+                arenaChoices[i].gameObject.AddComponent<SetupMapChoice>().Initialize(
+                    ()=>{if(setupGamepadNavigation&&phase==Phase.Setup&&setupStep==0&&SelectedMapId!=id)SelectAuthoredMap(id);},
+                    ()=>{if(setupGamepadNavigation&&setupStep==0)AdvanceSetupInput();});
             }
             modeChoices=new Button[2];
             for(int i=0;i<2;i++)
@@ -89,7 +97,11 @@ namespace StarTournament.ProvingGround
             Layout((RectTransform)targetMinus.transform,new Vector2(.37f,.28f),new Vector2(.43f,.37f));targetMinus.GetComponentInChildren<Text>().text="−";
             Layout((RectTransform)targetPlus.transform,new Vector2(.45f,.28f),new Vector2(.51f,.37f));targetPlus.GetComponentInChildren<Text>().text="+";
             setupRulesPage.transform.Find("target-help").GetComponent<Text>().text="Победа по очкам или по времени. Шаг: 100 очков.";
-            if(setupStep==2)setupScreen.transform.Find("setup-description").GetComponent<Text>().text="Y — присоединиться / сменить команду · X — добавить бота";
+            setupScreen.transform.Find("setup-description").GetComponent<Text>().text=setupStep==0?
+                "Стрелки — выбрать карту · A / Start — далее · B — меню":setupStep==1?
+                "Стрелки — выбрать настройку · A — изменить · Start — далее · B — назад":
+                "A — изменить участника · X — бот · Y — игрок / команда · Start — начать · B — назад";
+            setupNext.GetComponentInChildren<Text>().text=setupStep==0?"ДАЛЕЕ · A / Start":"ДАЛЕЕ · Start";
         }
     }
 }

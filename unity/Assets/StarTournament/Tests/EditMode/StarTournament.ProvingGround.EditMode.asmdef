@@ -2,7 +2,8 @@
   "name": "StarTournament.ProvingGround.EditMode",
   "references": [
     "StarTournament.ProvingGround",
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "Unity.InputSystem.TestFramework"
   ],
   "includePlatforms": [
     "Editor"

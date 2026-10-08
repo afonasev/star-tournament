@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Object = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine;
@@ -28,6 +29,58 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             if (arenaRoot != null) Object.DestroyImmediate(arenaRoot);
             if (testScene.IsValid()) SceneManager.UnloadSceneAsync(testScene);
+        }
+
+        [UnityTest]
+        public IEnumerator LatestPackagedDefault_DrivesPhysicalAccelerationBrakingAndJump()
+        {
+            var latest = LabReleaseCatalog.Load().Entries
+                .Where(e => e.ProfileId == DesignLabHistory.ReleaseId)
+                .OrderByDescending(e => e.Sequence).First();
+            profile = latest.Snapshot.Clone().Profile("player.movement.maximumGroundSpeed");
+            Assert.That(profile.Validate(), Is.Empty);
+            arenaRoot = new GameObject("packaged-default-movement");
+            SceneManager.MoveGameObjectToScene(arenaRoot, testScene);
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.transform.SetParent(arenaRoot.transform);
+            floor.transform.position = new Vector3(0, -.5f, 0);
+            floor.transform.localScale = new Vector3(100, 1, 100);
+            floor.layer = ProvingArena.WorldLayer;
+            var motor = CreateMotor(Vector3.zero);
+            yield return Settle(motor);
+            Assert.That(motor.State.Grounded, Is.True);
+            float dt = Time.fixedDeltaTime;
+            motor.Tick(new LocalAction { Move = Vector2.up }, dt);
+            Assert.That(motor.State.Velocity.z,
+                Is.EqualTo(profile.Get("player.movement.groundAcceleration") * dt).Within(.02f));
+            yield return new WaitForFixedUpdate();
+            yield return MoveWorld(motor, Vector3.forward, 30);
+            Assert.That(motor.State.Velocity.z,
+                Is.EqualTo(profile.Get("player.movement.maximumGroundSpeed")).Within(.02f));
+            float speed = motor.State.Velocity.z;
+            motor.Tick(default, dt);
+            Assert.That(motor.State.Velocity.z,
+                Is.EqualTo(Mathf.Max(0, speed - profile.Get("player.movement.groundDeceleration") * dt)).Within(.02f));
+            yield return new WaitForFixedUpdate();
+            for (int tick = 0; tick < 30; tick++)
+            {
+                motor.Tick(default, dt);
+                yield return new WaitForFixedUpdate();
+            }
+            float startY = motor.State.Position.y, highestY = startY;
+            bool airborne = false;
+            for (int tick = 0; tick < 100; tick++)
+            {
+                motor.Tick(new LocalAction { Jump = tick == 0 }, dt);
+                highestY = Mathf.Max(highestY, motor.State.Position.y);
+                airborne |= !motor.State.Grounded;
+                yield return new WaitForFixedUpdate();
+            }
+            float jumpSpeed = profile.Get("player.movement.jumpSpeed");
+            float expectedHeight = jumpSpeed * jumpSpeed / (2 * profile.Get("player.movement.gravity"));
+            Assert.That(airborne, Is.True);
+            Assert.That(highestY - startY, Is.EqualTo(expectedHeight).Within(jumpSpeed * dt + .05f));
+            Assert.That(motor.State.Grounded, Is.True);
         }
 
         [UnityTest]

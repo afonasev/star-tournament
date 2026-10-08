@@ -18,6 +18,7 @@ namespace StarTournament.ProvingGround
             Button resolutionCancelButton,settingsRevertButton;
 
             readonly Dictionary<Selectable,GameObject> settingsFocusBorders=new Dictionary<Selectable,GameObject>();
+            readonly List<Button> settingsFocusButtons=new List<Button>();
             GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsAudioPage,settingsConfirmation,resolutionPicker;
             Slider settingsMusicSlider,settingsEffectsSlider;
             Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsConfirmationText;
@@ -230,11 +231,12 @@ namespace StarTournament.ProvingGround
                     if(button is Button)button.GetComponent<Image>().color=MenuCard;
                     var colors=button.colors;
                     colors.normalColor=button is Button?Color.white:MenuCard;
-                    colors.highlightedColor=button is Button?new Color(1.15f,1.15f,1.15f,1):new Color32(61,96,112,255);
+                    colors.highlightedColor=button is Button?Color.white:new Color32(61,96,112,255);
                     colors.selectedColor=button is Button?Color.white:MenuCard;
                     colors.pressedColor=button is Button?new Color(.8f,.8f,.8f,1):new Color32(176,125,66,255);
                     colors.disabledColor=button is Button?new Color(.52f,.57f,.62f,1):new Color32(50,62,69,255);
                     button.colors=colors;
+                    if(button is Button focusButton){settingsFocusButtons.Add(focusButton);continue;}
                     var border=new GameObject("controller-focus",typeof(RectTransform));
                     border.transform.SetParent(button.transform,false);
                     Layout((RectTransform)border.transform,Vector2.zero,Vector2.one);
@@ -285,6 +287,8 @@ namespace StarTournament.ProvingGround
             void RefreshSettingsFocus()
             {
                 var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
+                foreach(var button in settingsFocusButtons)
+                    button.GetComponent<MenuPresentation>().SetFocused(button.gameObject==(InMatch?Selected?.gameObject:selected));
                 foreach(var pair in settingsFocusBorders)
                 {
                     bool focused=pair.Key.gameObject==(InMatch?Selected?.gameObject:selected) && pair.Key.IsActive() && pair.Key.IsInteractable();

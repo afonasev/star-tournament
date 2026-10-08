@@ -20,6 +20,8 @@ namespace StarTournament.ProvingGround
                 p.Add("score.chainTotal"+(i+1), "scoring", "Итог серии "+(i+1), "Накопительная награда серии без assists.", "points", 0, 20000, 1, totals[i]);
             p.Add("score.chainIncrement", "scoring", "После пятого", "Дополнительная награда за каждое следующее убийство.", "points", 0, 20000, 1, 400);
             p.Add("score.friendlyOrSelfKillPenalty", "scoring", "Штраф за убийство себя/союзника", "Вычитание из личного счёта за каждую такую смерть; матч сохраняет выбранное значение.", "points", 0, 20000, 1, 200);
+            p.Add("achievement.minimumShots", "match", "Выстрелы для достижений", "Минимум фактических выстрелов для точностных номинаций.", "shots", 1, 1000, 1, 10);
+            p.Add("achievement.minimumBeamSeconds", "match", "Время луча для достижений", "Минимальная длительность луча для точностных номинаций.", "seconds", .1f, 60, .1f, 1);
             return p;
         }
     }

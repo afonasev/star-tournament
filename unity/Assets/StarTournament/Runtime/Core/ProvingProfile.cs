@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 13;
+        public const int DefaultVersion = 14;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -158,6 +158,14 @@ namespace StarTournament.ProvingGround
             old.descriptors.RemoveAll(d=>NewLookPath(d.Path));old.values.RemoveAll(v=>NewLookPath(v.Path));
             old.version=Math.Max(6,old.version-1);return old;
         }
+        internal ProvingProfile BeforeGamepadTriggerAim()
+        {
+            const string path="input.gamepadTapAimThresholdSeconds";
+            if(id!=DefaultId||Descriptor(path)==null)return this;
+            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            old.descriptors.RemoveAll(d=>d.Path==path);old.values.RemoveAll(v=>v.Path==path);
+            old.version=Math.Min(13,old.version);return old;
+        }
         public ProvingProfile BeforeDamageVignette()
         {
             // Only this registry changed; share untouched profiles rather than serialize every
@@ -212,6 +220,13 @@ namespace StarTournament.ProvingGround
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             copy.descriptors.RemoveAll(d=>d.Path=="match.ffaTargetDefault"||d.Path=="match.teamTargetDefault");
             copy.values.RemoveAll(v=>v.Path=="match.ffaTargetDefault"||v.Path=="match.teamTargetDefault");return copy;
+        }
+        internal ProvingProfile BeforeMatchAchievements()
+        {
+            if(id!="unity-native-match-v1"||(FindDescriptor("achievement.minimumShots")==null&&FindDescriptor("achievement.minimumBeamSeconds")==null))return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path=="achievement.minimumShots"||d.Path=="achievement.minimumBeamSeconds");
+            copy.values.RemoveAll(v=>v.Path=="achievement.minimumShots"||v.Path=="achievement.minimumBeamSeconds");return copy;
         }
         public void EnsureMatchDescriptors()
         {
@@ -419,6 +434,7 @@ namespace StarTournament.ProvingGround
             profile.Add("input.gamepadDegreesPerSecond", "input", "Gamepad degrees per second", "Maximum analog-stick look rotation rate.", "degrees-per-second", 1f, 720f, 1f, 180f);
             profile.Add("input.gamepadHorizontalDegreesPerSecond", "input", "Геймпад: горизонталь", "Скорость поворота при полном отклонении правого стика по горизонтали.", "°/с", 1f, 720f, 1f, 180f);
             profile.Add("input.gamepadVerticalDegreesPerSecond", "input", "Геймпад: вертикаль", "Скорость наклона при полном отклонении правого стика по вертикали.", "°/с", 1f, 720f, 1f, 180f);
+            profile.Add("input.gamepadTapAimThresholdSeconds", "input", "Геймпад: граница короткого LT", "Максимальная длительность нажатия LT, которое при отпускании сбрасывает наклон взгляда к мировому горизонту; более долгое нажатие фиксирует текущий наклон.", "с", .05f, .5f, .01f, .22f);
             profile.Add("input.gamepadReturnDelay", "input", "Задержка выравнивания", "Пауза после отпускания правого стика перед возвратом взгляда.", "с", 0f, 3f, .05f, .35f);
             profile.Add("input.gamepadReturnDegreesPerSecond", "input", "Скорость выравнивания", "Максимальная скорость плавного возврата наклона к уклону пола.", "°/с", 1f, 180f, 1f, 45f);
             profile.Add("input.gamepadReturnSmoothingSeconds", "input", "Плавность выравнивания", "Время плавного приближения наклона к целевому уклону без скачка.", "с", .01f, 2f, .01f, .3f);

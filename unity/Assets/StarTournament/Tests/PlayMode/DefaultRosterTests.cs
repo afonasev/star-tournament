@@ -13,16 +13,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class DefaultRosterTests
     {
-        Scene scene;ProvingGround ground;Gamepad pad;Keyboard keyboard;Mouse mouse;
+        Scene scene;ProvingGround ground;Gamepad pad,otherPad;Keyboard keyboard;Mouse mouse;
         InputSettings.EditorInputBehaviorInPlayMode priorEditorInput;InputSettings.BackgroundBehavior priorBackground;
         T Field<T>(string name)=>(T)typeof(ProvingGround).GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
         Button B(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
-        IEnumerator Load()
+        IEnumerator Load(bool sn30=false)
         {
             priorEditorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorBackground=InputSystem.settings.backgroundBehavior;
             InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
-            keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();pad=InputSystem.AddDevice<Gamepad>();
+            keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();if(sn30)
+            {
+                EightBitDoSn30ProGamepad.Register();
+                pad=(Gamepad)InputSystem.AddDevice(new UnityEngine.InputSystem.Layouts.InputDeviceDescription
+                {interfaceName="HID",product="8Bitdo SN30 Pro",capabilities="{\"vendorId\":1118,\"productId\":736}"});
+                otherPad=InputSystem.AddDevice<Gamepad>();
+            }
+            else pad=InputSystem.AddDevice<Gamepad>();
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
         }
@@ -36,7 +43,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTearDown] public IEnumerator Cleanup()
         {
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
-            foreach(var d in new InputDevice[]{pad,keyboard,mouse})if(d!=null&&d.added)InputSystem.RemoveDevice(d);
+            foreach(var d in new InputDevice[]{pad,otherPad,keyboard,mouse})if(d!=null&&d.added)InputSystem.RemoveDevice(d);
             InputSystem.settings.editorInputBehaviorInPlayMode=priorEditorInput;InputSystem.settings.backgroundBehavior=priorBackground;
         }
         [UnityTest] public IEnumerator GamepadEntryUsesSubmittingPadAndBackKeepsDraftButNewMatchResets()
@@ -50,6 +57,45 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(mouse,new MouseState{position=new Vector2(20,20)});yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;AssertDefault(pad,profiles);
+        }
+        [UnityTest] public IEnumerator Sn30EntrySelectsSubmittingHidPadWithAnotherGamepadConnected()
+        {
+            yield return Load(sn30:true);int profiles=Field<PlayerProfileCatalog>("playerProfiles").Profiles.Count;
+            Assert.That(Gamepad.current,Is.SameAs(otherPad),"The most recently connected pad is not the menu operator");
+            var neutral=new EightBitDoSn30ProHidState{reportId=1,leftStickX=32767,leftStickY=32767,rightStickX=32767,rightStickY=32767};
+            InputSystem.QueueStateEvent(pad,neutral);yield return null;
+            var submit=neutral;submit.buttons=1;
+            InputSystem.QueueStateEvent(pad,submit);yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,neutral);yield return null;
+            AssertDefault(pad,profiles);
+            B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();
+            AssertDefault(pad,profiles);
+        }
+        [UnityTest] public IEnumerator Sn30SubmitIsNotOverriddenByKeyboardNavigationRelease()
+        {
+            yield return Load(sn30:true);int profiles=Field<PlayerProfileCatalog>("playerProfiles").Profiles.Count;
+            var neutral=new EightBitDoSn30ProHidState{reportId=1,leftStickX=32767,leftStickY=32767,rightStickX=32767,rightStickY=32767};
+            InputSystem.QueueStateEvent(pad,neutral);yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.DownArrow));yield return null;
+            EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);
+            var submit=neutral;submit.buttons=1;
+            InputSystem.QueueStateEvent(pad,submit);
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,neutral);yield return null;
+            AssertDefault(pad,profiles);
+        }
+        [UnityTest] public IEnumerator Sn30SubmitIsNotOverriddenByMouseButtonRelease()
+        {
+            yield return Load(sn30:true);int profiles=Field<PlayerProfileCatalog>("playerProfiles").Profiles.Count;
+            var neutral=new EightBitDoSn30ProHidState{reportId=1,leftStickX=32767,leftStickY=32767,rightStickX=32767,rightStickY=32767};
+            InputSystem.QueueStateEvent(pad,neutral);yield return null;
+            InputSystem.QueueStateEvent(mouse,new MouseState{position=Vector2.zero}.WithButton(MouseButton.Left));yield return null;
+            EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);
+            var submit=neutral;submit.buttons=1;
+            InputSystem.QueueStateEvent(pad,submit);
+            InputSystem.QueueStateEvent(mouse,new MouseState{position=Vector2.zero});yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,neutral);yield return null;
+            AssertDefault(pad,profiles);
         }
         [UnityTest] public IEnumerator KeyboardEntryCreatesOnlyOneGuestAndOneBot()
         {

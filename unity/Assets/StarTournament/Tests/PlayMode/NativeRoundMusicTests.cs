@@ -31,7 +31,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(music.TrackId,Is.EqualTo(track));Assert.That(music.Phase,Is.EqualTo(1));
                 snapshot=match.Read();snapshot.Phase=NativeMatchPhase.Overtime;snapshot.RemainingTicks=0;snapshot.Trigger="time-limit";match.Restore(snapshot);music.Restore();
                 music.Tick(true,.02f);Assert.That(music.Phase,Is.EqualTo(2));
-                snapshot=match.Read();snapshot.Phase=NativeMatchPhase.Finished;match.Restore(snapshot);
+                snapshot=match.Read();snapshot.Phase=NativeMatchPhase.Finished;snapshot.AwardsFrozen=true;match.Restore(snapshot);
                 for(int i=0;i<110;i++){music.Tick(false,.025f);music.UpdateVolume(1,1);}
                 Assert.That(sources.All(s=>!s.isPlaying&&s.volume==0),Is.True);
             }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -68,6 +69,54 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(B("lab-back").gameObject.activeInHierarchy,Is.True);
             }
             finally{InputSystem.RemoveDevice(keyboard);}
+        }
+        [UnityTest] public IEnumerator NavigationFocusHasGoldGraphicAndHoverCannotCreateASecondFocus()
+        {
+            var primary=B("main-action-0");var secondary=B("main-action-2");
+            var primaryFill=primary.GetComponent<Image>().color;
+            EventSystem.current.SetSelectedGameObject(primary.gameObject);yield return null;
+            Assert.That(primary.GetComponent<MenuPresentation>().FocusVisible,Is.True);
+            var graphic=primary.GetComponentInChildren<MenuFocusGraphic>();
+            Assert.That(graphic,Is.Not.Null);Assert.That(graphic.raycastTarget,Is.False);
+            Assert.That(primary.GetComponent<Image>().color,Is.EqualTo(primaryFill),"Focus preserves action fill");
+            Assert.That(MenuFocusGraphic.StrokeWidth(95),Is.EqualTo(7));
+            Assert.That(MenuFocusGraphic.GapWidth(95),Is.GreaterThan(5));
+            Assert.That(MenuFocusGraphic.StrokeWidth(46)+MenuFocusGraphic.GapWidth(46),Is.LessThan(7));
+            EventSystem.current.SetSelectedGameObject(secondary.gameObject);yield return null;
+            ExecuteEvents.Execute(primary.gameObject,new PointerEventData(EventSystem.current),ExecuteEvents.pointerEnterHandler);
+            Assert.That(primary.GetComponent<MenuPresentation>().FocusVisible,Is.False);
+            Assert.That(secondary.GetComponent<MenuPresentation>().FocusVisible,Is.True);
+            secondary.interactable=false;yield return null;
+            Assert.That(secondary.GetComponent<MenuPresentation>().FocusVisible,Is.False,"Disabled controls never show navigation focus");
+        }
+        [UnityTest] public IEnumerator GoldStartAndSettingsButtonsUseTheSameFocusFrame()
+        {
+            var keyboard=InputSystem.AddDevice<Keyboard>();var mouse=InputSystem.AddDevice<Mouse>();
+            try
+            {
+                B("main-action-0").onClick.Invoke();B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();yield return null;
+                var start=(Button)typeof(ProvingGround).GetField("start",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+                var fill=start.GetComponent<Image>().color;
+                start.GetComponent<MenuPresentation>().SetFocused(true);yield return null;
+                Assert.That(start.GetComponent<MenuPresentation>().FocusVisible,Is.True);
+                Assert.That(start.GetComponentInChildren<MenuFocusGraphic>(),Is.Not.Null);
+                Assert.That(start.GetComponent<Image>().color,Is.EqualTo(fill));
+                B("Назад к главному меню").onClick.Invoke();B("main-action-4").onClick.Invoke();yield return null;
+                for(int section=0;section<4;section++)
+                {
+                    B("settings-section-"+section).onClick.Invoke();yield return null;
+                    var buttons=ground.GetComponentsInChildren<Button>().Where(b=>b.name.StartsWith("settings-")&&!b.name.StartsWith("settings-section-")).ToArray();
+                    foreach(var button in buttons)
+                    {
+                        if(!button.gameObject.activeInHierarchy||!button.interactable)continue;
+                        EventSystem.current.SetSelectedGameObject(button.gameObject);yield return null;
+                        Assert.That(button.GetComponent<MenuPresentation>().FocusVisible,Is.True,button.name);
+                        Assert.That(button.GetComponentInChildren<MenuFocusGraphic>(),Is.Not.Null,button.name);
+                        Assert.That(button.transform.Find("controller-focus"),Is.Null,"Button must not retain a competing legacy frame");
+                    }
+                }
+            }
+            finally{InputSystem.RemoveDevice(keyboard);InputSystem.RemoveDevice(mouse);}
         }
         [UnityTest] public IEnumerator SetupUsesMandatoryModeTargetsAndInheritedBotDifficulty()
         {

@@ -2,7 +2,7 @@
 
 UNITY_TOOLS := ./unity/tools.sh
 
-.PHONY: help prepare test-edit test-play test check check-ui build unity-editor unity-run trooper-help trooper-pipeline trooper-unity-shipping
+.PHONY: help check-local check-full check-player prepare test-edit test-play test check check-ui build unity-editor unity-run trooper-help trooper-pipeline trooper-unity-shipping
 
 help: ## Show the supported local Unity workflow.
 	@awk 'BEGIN {FS = ":.*##"; printf "Star Tournament (Unity-only)\n\nUsage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -21,7 +21,14 @@ test: test-edit test-play ## Run both Unity test suites.
 check-ui: ## Run the minimal UI-only automatic gate (no natural bot matches).
 	python3 tools/check_ui.py
 
-check: test build ## Run the canonical Unity tests and local development build.
+check: check-local ## Run the full Unity test suites without building a Player.
+
+check-full: test ## Run both complete Unity test suites (no Player build).
+
+check-local: check-ui ## Run UI contracts; add tests for the changed behavior.
+
+check-player: check-full
+	$(MAKE) build ## Explicit full tests and Development Player build; requires a build request.
 
 build: ## Build the local macOS Development Player (not a distributable release).
 	$(UNITY_TOOLS) build

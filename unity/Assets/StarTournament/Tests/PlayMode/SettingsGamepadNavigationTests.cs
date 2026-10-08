@@ -45,6 +45,30 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
         }
+        static void CaptureLtHelp(Canvas canvas)
+        {
+            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LT_QA_IMAGES");
+            if(string.IsNullOrEmpty(directory))return;
+            System.IO.Directory.CreateDirectory(directory);
+            var owner=new GameObject("LT help evidence camera");var camera=owner.AddComponent<Camera>();camera.enabled=false;
+            var target=new RenderTexture(1920,1080,24);target.Create();camera.targetTexture=target;
+            var mode=canvas.renderMode;var previousCamera=canvas.worldCamera;float distance=canvas.planeDistance;
+            var active=RenderTexture.active;var pixels=new Texture2D(1920,1080,TextureFormat.RGB24,false);
+            try
+            {
+                canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
+                Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;
+                pixels.ReadPixels(new Rect(0,0,1920,1080),0,0);pixels.Apply();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,"gamepad-lt-help.png"),pixels.EncodeToPNG());
+            }
+            finally
+            {
+                canvas.renderMode=mode;canvas.worldCamera=previousCamera;canvas.planeDistance=distance;
+                RenderTexture.active=active;camera.targetTexture=null;target.Release();
+                Object.Destroy(pixels);Object.Destroy(target);Object.Destroy(owner);Canvas.ForceUpdateCanvases();
+            }
+        }
+
         [UnityTearDown] public IEnumerator Cleanup()
         {
             if(preferencesCaptured){GamepadLookSettings.SaveGeneral(originalGamepad);MouseSensitivityPreference.Set(ground.Profile,originalMouse);preferencesCaptured=false;}
@@ -85,6 +109,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-help-gamepad"));
             yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"));
+            Assert.That(scroll.content.GetComponentsInChildren<Text>(true).Single(t=>t.name=="help-lt-aim-text").text,
+                Does.Contain("короткое нажатие — сброс к горизонту"));
+            CaptureLtHelp(scroll.content.GetComponentInParent<Canvas>());
             yield return Press(GamepadButton.DpadLeft);yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
             yield return Press(GamepadButton.South);

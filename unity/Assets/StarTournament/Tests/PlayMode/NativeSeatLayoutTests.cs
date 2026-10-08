@@ -16,6 +16,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Scene scene;
         ProvingGround ground;
         readonly Gamepad[] pads=new Gamepad[4];
+        bool hadLastMap;string priorLastMap;
+        [SetUp] public void Setup(){hadLastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);}
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load()
         {
@@ -28,6 +30,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+            if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);PlayerPrefs.Save();
         }
         [UnityTest] public IEnumerator AssignedDpadWeaponChoicesAreSeatLocalAndConsumedOnce()
         {
@@ -206,8 +209,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadDown));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
-            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("Начать — четыре игрока"));
-            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
+            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-1"),"Gamepad navigation stays on content instead of the footer");
+            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));yield return null;yield return null;
             Assert.That(ground.Running,Is.True);yield return null;AssertLayout(2);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());
             InputSystem.QueueStateEvent(pads[2],new GamepadState{rightTrigger=1,leftStick=Vector2.one}.WithButton(GamepadButton.Start));

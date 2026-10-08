@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1258644585
+--- !u!1 &1288802435
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1258644587}
-  - component: {fileID: 1258644586}
+  - component: {fileID: 1288802437}
+  - component: {fileID: 1288802436}
   m_Layer: 0
   m_Name: Star Tournament Proving Ground
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1258644586
+--- !u!114 &1288802436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1258644585}
+  m_GameObject: {fileID: 1288802435}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f45f72800493e42b3989bdfbaccc0c94, type: 3}
@@ -1083,14 +1083,99 @@ MonoBehaviour:
     id: unity-proving-ground-v1
     version: 13
     descriptors:
+    - Path: audio.music.gain
+      Group: music
+      Label: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u0438\u0433\u0440\u043E\u0432\u043E\u0433\u043E
+        \u043C\u0443\u0437\u044B\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u043C\u0438\u043A\u0441\u0430"
+      Description: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u043C\u0443\u0437\u044B\u043A\u0438
+        \u0434\u043E \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0439
+        \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u0438; \u043E\u0431\u0449\u0438\u0439
+        \u043C\u0438\u043A\u0441 \u043C\u0443\u0437\u044B\u043A\u0438 \u0438 \u044D\u0444\u0444\u0435\u043A\u0442\u043E\u0432
+        \u043D\u043E\u0440\u043C\u0430\u043B\u0438\u0437\u0443\u0435\u0442\u0441\u044F
+        \u0431\u0435\u0437 \u043F\u0435\u0440\u0435\u0433\u0440\u0443\u0437\u043A\u0438."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 1
+      Step: 0.05
+      DefaultValue: 0.55
+    - Path: audio.music.transitionBeats
+      Group: music
+      Label: "\u041F\u043B\u0430\u0432\u043D\u043E\u0441\u0442\u044C \u043C\u0443\u0437\u044B\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430"
+      Description: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430 \u0432 \u0434\u043E\u043B\u044F\u0445
+        \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0442\u0435\u043C\u043F\u0430;
+        \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F
+        \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0439 \u0434\u043B\u0438\u043D\u043E\u0439
+        \u043F\u0435\u0442\u043B\u0438."
+      Unit: beats
+      Minimum: 1
+      Maximum: 8
+      Step: 1
+      DefaultValue: 4
+    - Path: audio.music.finishSeconds
+      Group: music
+      Label: "\u0425\u0432\u043E\u0441\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u044F
+        \u043C\u0443\u0437\u044B\u043A\u0438"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0437\u0430\u0442\u0443\u0445\u0430\u043D\u0438\u044F
+        \u043F\u0440\u0438 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0438
+        \u043C\u0430\u0442\u0447\u0430."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 5
+      Step: 0.1
+      DefaultValue: 2
+    - Path: audio.music.menuTransitionSeconds
+      Group: music
+      Label: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u043C\u0435\u043D\u044E
+        \u0438 \u043C\u0430\u0442\u0447\u0430"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u043F\u043B\u0430\u0432\u043D\u043E\u0439
+        \u0441\u043C\u0435\u043D\u044B \u0442\u0435\u043C\u044B \u043C\u0435\u043D\u044E
+        \u0438 \u043C\u0430\u0442\u0447\u0435\u0432\u043E\u0439 \u043C\u0443\u0437\u044B\u043A\u0438;
+        \u043F\u043E\u0432\u0442\u043E\u0440\u043D\u0430\u044F \u043D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u0442 \u0442\u0435\u043A\u0443\u0449\u0443\u044E
+        \u043E\u0433\u0438\u0431\u0430\u044E\u0449\u0443\u044E."
+      Unit: seconds
+      Minimum: 0.2
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 4
+    - Path: audio.music.developAt
+      Group: music
+      Label: "\u041D\u0430\u0447\u0430\u043B\u043E \u0440\u0430\u0437\u0432\u0438\u0442\u0438\u044F
+        \u043C\u0443\u0437\u044B\u043A\u0438"
+      Description: "\u0414\u043E\u043B\u044F \u043F\u0440\u043E\u0448\u0435\u0434\u0448\u0435\u0439
+        \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438
+        \u0440\u0430\u0443\u043D\u0434\u0430 \u0434\u043B\u044F \u0441\u0440\u0435\u0434\u043D\u0435\u0439
+        \u0444\u0430\u0437\u044B."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.33
+    - Path: audio.music.climaxAt
+      Group: music
+      Label: "\u041D\u0430\u0447\u0430\u043B\u043E \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u043E\u0439
+        \u0444\u0430\u0437\u044B"
+      Description: "\u0414\u043E\u043B\u044F \u043F\u0440\u043E\u0448\u0435\u0434\u0448\u0435\u0439
+        \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438
+        \u0440\u0430\u0443\u043D\u0434\u0430 \u0434\u043B\u044F \u043D\u0430\u0441\u044B\u0449\u0435\u043D\u043D\u043E\u0439
+        \u0431\u044B\u0441\u0442\u0440\u043E\u0439 \u0444\u0430\u0437\u044B; overtime
+        \u0432\u0441\u0435\u0433\u0434\u0430 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442
+        \u0435\u0451."
+      Unit: ratio
+      Minimum: 0.6
+      Maximum: 0.9
+      Step: 0.01
+      DefaultValue: 0.67
     - Path: audio.musicDefaultPercent
       Group: audio
       Label: "\u041C\u0443\u0437\u044B\u043A\u0430 \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E"
       Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C
         \u043C\u0443\u0437\u044B\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E
         \u043A\u0430\u043D\u0430\u043B\u0430 \u0434\u043E \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0433\u043E
-        \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F; \u0442\u0440\u0435\u043A
-        \u043F\u043E\u043A\u0430 \u043E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442."
+        \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F."
       Unit: percent
       Minimum: 0
       Maximum: 100
@@ -2356,6 +2441,18 @@ MonoBehaviour:
       Step: 0.01
       DefaultValue: 0.04
     values:
+    - Path: audio.music.gain
+      Value: 0.55
+    - Path: audio.music.transitionBeats
+      Value: 4
+    - Path: audio.music.finishSeconds
+      Value: 2
+    - Path: audio.music.menuTransitionSeconds
+      Value: 4
+    - Path: audio.music.developAt
+      Value: 0.33
+    - Path: audio.music.climaxAt
+      Value: 0.67
     - Path: audio.musicDefaultPercent
       Value: 70
     - Path: audio.effectsDefaultPercent
@@ -6343,6 +6440,30 @@ MonoBehaviour:
       Maximum: 20000
       Step: 100
       DefaultValue: 3000
+    - Path: match.ffaTargetDefault
+      Group: match
+      Label: "\u0426\u0435\u043B\u044C: \u043A\u0430\u0436\u0434\u044B\u0439 \u0441\u0430\u043C
+        \u0437\u0430 \u0441\u0435\u0431\u044F"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u0446\u0435\u043B\u044C
+        \u043F\u0440\u0438 \u0432\u044B\u0431\u043E\u0440\u0435 \u043E\u0434\u0438\u043D\u043E\u0447\u043D\u043E\u0433\u043E
+        \u0440\u0435\u0436\u0438\u043C\u0430."
+      Unit: points
+      Minimum: 1000
+      Maximum: 20000
+      Step: 100
+      DefaultValue: 2000
+    - Path: match.teamTargetDefault
+      Group: match
+      Label: "\u0426\u0435\u043B\u044C: \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u044B\u0439
+        \u0431\u043E\u0439"
+      Description: "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u0430\u044F \u0446\u0435\u043B\u044C
+        \u043F\u0440\u0438 \u0432\u044B\u0431\u043E\u0440\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0433\u043E
+        \u0440\u0435\u0436\u0438\u043C\u0430."
+      Unit: points
+      Minimum: 1000
+      Maximum: 20000
+      Step: 100
+      DefaultValue: 3500
     - Path: score.assistWindow
       Group: scoring
       Label: "\u041E\u043A\u043D\u043E \u043F\u043E\u043C\u043E\u0449\u0438"
@@ -6444,11 +6565,40 @@ MonoBehaviour:
       Maximum: 20000
       Step: 1
       DefaultValue: 200
+    - Path: achievement.minimumShots
+      Group: match
+      Label: "\u0412\u044B\u0441\u0442\u0440\u0435\u043B\u044B \u0434\u043B\u044F
+        \u0434\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u0439"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0443\u043C \u0444\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0445
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u043E\u0432 \u0434\u043B\u044F
+        \u0442\u043E\u0447\u043D\u043E\u0441\u0442\u043D\u044B\u0445 \u043D\u043E\u043C\u0438\u043D\u0430\u0446\u0438\u0439."
+      Unit: shots
+      Minimum: 1
+      Maximum: 1000
+      Step: 1
+      DefaultValue: 10
+    - Path: achievement.minimumBeamSeconds
+      Group: match
+      Label: "\u0412\u0440\u0435\u043C\u044F \u043B\u0443\u0447\u0430 \u0434\u043B\u044F
+        \u0434\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u0439"
+      Description: "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F
+        \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043B\u0443\u0447\u0430 \u0434\u043B\u044F \u0442\u043E\u0447\u043D\u043E\u0441\u0442\u043D\u044B\u0445
+        \u043D\u043E\u043C\u0438\u043D\u0430\u0446\u0438\u0439."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 60
+      Step: 0.1
+      DefaultValue: 1
     values:
     - Path: match.durationMinutes
       Value: 5
     - Path: match.targetPoints
       Value: 3000
+    - Path: match.ffaTargetDefault
+      Value: 2000
+    - Path: match.teamTargetDefault
+      Value: 3500
     - Path: score.assistWindow
       Value: 5
     - Path: score.assistPoints
@@ -6467,10 +6617,14 @@ MonoBehaviour:
       Value: 400
     - Path: score.friendlyOrSelfKillPenalty
       Value: 200
+    - Path: achievement.minimumShots
+      Value: 10
+    - Path: achievement.minimumBeamSeconds
+      Value: 1
   CombatBowlReviewDirectory:
   OrbitalLeagueProfile:
     id: orbital-league-ring-v1
-    version: 8
+    version: 10
     descriptors:
     - Path: surface.tile
       Group: surfaces
@@ -8272,7 +8426,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: 0
+      DefaultValue: -5.97
     - Path: layout.broadcast-screen-0.y
       Group: layout
       Label: layout.broadcast-screen-0 / y
@@ -8284,7 +8438,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: 7
+      DefaultValue: 6.55
     - Path: layout.broadcast-screen-0.z
       Group: layout
       Label: layout.broadcast-screen-0 / z
@@ -8296,7 +8450,7 @@ MonoBehaviour:
       Minimum: -40
       Maximum: 40
       Step: 0.01
-      DefaultValue: 7.98
+      DefaultValue: -2.6
     - Path: layout.broadcast-screen-1.x
       Group: layout
       Label: layout.broadcast-screen-1 / x
@@ -8551,6 +8705,152 @@ MonoBehaviour:
       Maximum: 1
       Step: 0.01
       DefaultValue: 0.18
+    - Path: veteran.hallFloorValue
+      Group: veteran-league
+      Label: "\u041F\u043E\u043B \u0437\u0430\u043B\u0430"
+      Description: "\u0421\u0432\u0435\u0442\u043B\u043E\u0442\u0430 \u0440\u0435\u0437\u0438\u043D\u043E\u0432\u044B\u0445
+        \u0441\u043F\u043E\u0440\u0442\u0438\u0432\u043D\u044B\u0445 \u0434\u043E\u0440\u043E\u0436\u0435\u043A."
+      Unit: ratio
+      Minimum: 0.08
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.22
+    - Path: veteran.columnBandHeight
+      Group: veteran-league
+      Label: "\u041F\u043E\u044F\u0441 \u043A\u043E\u043B\u043E\u043D\u043D"
+      Description: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0437\u0430\u0449\u0438\u0442\u043D\u043E\u0433\u043E
+        \u043E\u043A\u0440\u0430\u0448\u0435\u043D\u043D\u043E\u0433\u043E \u043F\u043E\u044F\u0441\u0430
+        \u043D\u0430\u0434 \u043F\u043E\u043B\u043E\u043C."
+      Unit: m
+      Minimum: 0.5
+      Maximum: 2.5
+      Step: 0.1
+      DefaultValue: 1.2
+    - Path: veteran.ceilingServiceDepth
+      Group: veteran-league
+      Label: "\u041F\u043E\u0442\u043E\u043B\u043E\u0447\u043D\u044B\u0435 \u043A\u043E\u043C\u043C\u0443\u043D\u0438\u043A\u0430\u0446\u0438\u0438"
+      Description: "\u041E\u0442\u0441\u0442\u0443\u043F \u043A\u0430\u0431\u0435\u043B\u044C\u043D\u044B\u0445
+        \u043B\u043E\u0442\u043A\u043E\u0432 \u043E\u0442 \u043F\u043E\u0442\u043E\u043B\u043A\u0430;
+        \u0432\u044B\u0448\u0435 \u0438\u0433\u0440\u043E\u0432\u044B\u0445 \u0441\u0438\u043B\u0443\u044D\u0442\u043E\u0432."
+      Unit: m
+      Minimum: 0.05
+      Maximum: 0.35
+      Step: 0.01
+      DefaultValue: 0.16
+    - Path: veteran.portalLightWidth
+      Group: veteran-league
+      Label: "\u0421\u0432\u0435\u0442 \u043F\u043E\u0440\u0442\u0430\u043B\u0430"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u0441\u0432\u0435\u0442\u043E\u0432\u043E\u0433\u043E
+        \u0430\u043A\u0446\u0435\u043D\u0442\u0430 \u043F\u043E \u043A\u0440\u0430\u044F\u043C
+        \u0432\u044B\u0441\u043E\u043A\u0438\u0445 \u0432\u0445\u043E\u0434\u043E\u0432."
+      Unit: m
+      Minimum: 0.015
+      Maximum: 0.08
+      Step: 0.005
+      DefaultValue: 0.035
+    - Path: veteran.wear
+      Group: veteran-league
+      Label: "\u0418\u0437\u043D\u043E\u0441 \u043E\u0431\u0440\u0430\u0437\u0446\u0430"
+      Description: "\u041F\u043E\u0442\u0451\u0440\u0442\u044B\u0435 \u043A\u0440\u043E\u043C\u043A\u0438
+        \u0438 \u0446\u0430\u0440\u0430\u043F\u0438\u043D\u044B \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432
+        \u0446\u0435\u043D\u0442\u0440\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0437\u0430\u043B\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.6
+      Step: 0.01
+      DefaultValue: 0.28
+    - Path: veteran.roughness
+      Group: veteran-league
+      Label: "\u041C\u0430\u0442\u043E\u0432\u044B\u0435 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F"
+      Description: "\u0428\u0438\u0440\u0438\u043D\u0430 \u0431\u043B\u0438\u043A\u0430
+        \u043D\u0430 \u0441\u0442\u0430\u0440\u043E\u0439 \u043A\u0440\u0430\u0441\u043A\u0435
+        \u0438 \u0440\u0435\u0437\u0438\u043D\u0435."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 0.9
+      Step: 0.01
+      DefaultValue: 0.72
+    - Path: veteran.lightIntensity
+      Group: veteran-league
+      Label: "\u0421\u0435\u0440\u0432\u0438\u0441\u043D\u044B\u0439 \u0441\u0432\u0435\u0442"
+      Description: "\u0422\u0451\u043F\u043B\u044B\u0439 \u0441\u0432\u0435\u0442
+        \u0443 \u0448\u043A\u0430\u0444\u0430; \u0431\u0435\u0437 \u0434\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439
+        \u043A\u0430\u0440\u0442\u044B \u0442\u0435\u043D\u0435\u0439."
+      Unit: intensity
+      Minimum: 0
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 3.2
+    - Path: veteran.lightRange
+      Group: veteran-league
+      Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0441\u0435\u0440\u0432\u0438\u0441\u043D\u043E\u0433\u043E
+        \u0441\u0432\u0435\u0442\u0430"
+      Description: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0442\u0451\u043F\u043B\u043E\u0433\u043E \u043F\u044F\u0442\u043D\u0430."
+      Unit: m
+      Minimum: 1
+      Maximum: 8
+      Step: 0.1
+      DefaultValue: 4
+    - Path: veteran.steamInterval
+      Group: veteran-league
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u043F\u0430\u0440\u0430"
+      Description: "\u041F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443
+        \u043C\u0430\u043B\u044B\u043C\u0438 \u0432\u044B\u043F\u0443\u0441\u043A\u0430\u043C\u0438
+        \u0443 \u0432\u0435\u043D\u0442\u0438\u043B\u044F\u0446\u0438\u043E\u043D\u043D\u043E\u0439
+        \u0442\u0440\u0443\u0431\u044B."
+      Unit: s
+      Minimum: 4
+      Maximum: 30
+      Step: 1
+      DefaultValue: 12
+    - Path: veteran.steamLifetime
+      Group: veteran-league
+      Label: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0430\u0440\u0430"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0436\u0438\u0437\u043D\u0438
+        \u043C\u0430\u043B\u043E\u0439 \u0441\u0442\u0440\u0443\u0438 \u0432\u043D\u0435
+        \u043F\u043E\u0440\u0442\u0430\u043B\u0430."
+      Unit: s
+      Minimum: 0.2
+      Maximum: 2
+      Step: 0.1
+      DefaultValue: 1.1
+    - Path: veteran.steamSpeed
+      Group: veteran-league
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0430\u0440\u0430"
+      Description: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043C\u0430\u043B\u043E\u0439
+        \u0441\u0442\u0440\u0443\u0438 \u0443 \u0441\u0435\u0440\u0432\u0438\u0441\u043D\u043E\u0439
+        \u0442\u0440\u0443\u0431\u044B."
+      Unit: m/s
+      Minimum: 0.05
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.18
+    - Path: veteran.steamSize
+      Group: veteran-league
+      Label: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043F\u0430\u0440\u0430"
+      Description: "\u0414\u0438\u0430\u043C\u0435\u0442\u0440 \u0447\u0430\u0441\u0442\u0438\u0446
+        \u0432\u043E\u0437\u043B\u0435 \u0442\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u043E\u0439
+        \u043D\u0438\u0448\u0438."
+      Unit: m
+      Minimum: 0.03
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.14
+    - Path: veteran.steamOpacity
+      Group: veteran-league
+      Label: "\u041F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0441\u0442\u044C
+        \u043F\u0430\u0440\u0430"
+      Description: "\u0421\u043B\u0430\u0431\u0430\u044F \u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u044C
+        \u043F\u0430\u0440\u0430 \u0431\u0435\u0437 \u043D\u0435\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u043E\u0433\u043E
+        \u043E\u0431\u043B\u0430\u043A\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.3
+      Step: 0.01
+      DefaultValue: 0.12
     - Path: ring.spawn-mark-3.x
       Group: ring-layout
       Label: ring.spawn-mark-3.x
@@ -10063,11 +10363,11 @@ MonoBehaviour:
     - Path: broadcast.servicePanelHeight
       Value: 1.6
     - Path: layout.broadcast-screen-0.x
-      Value: 0
+      Value: -5.97
     - Path: layout.broadcast-screen-0.y
-      Value: 7
+      Value: 6.55
     - Path: layout.broadcast-screen-0.z
-      Value: 7.98
+      Value: -2.6
     - Path: layout.broadcast-screen-1.x
       Value: -27.78
     - Path: layout.broadcast-screen-1.y
@@ -10112,6 +10412,32 @@ MonoBehaviour:
       Value: 0.05
     - Path: ring.windowFrameWidth
       Value: 0.18
+    - Path: veteran.hallFloorValue
+      Value: 0.22
+    - Path: veteran.columnBandHeight
+      Value: 1.2
+    - Path: veteran.ceilingServiceDepth
+      Value: 0.16
+    - Path: veteran.portalLightWidth
+      Value: 0.035
+    - Path: veteran.wear
+      Value: 0.28
+    - Path: veteran.roughness
+      Value: 0.72
+    - Path: veteran.lightIntensity
+      Value: 3.2
+    - Path: veteran.lightRange
+      Value: 4
+    - Path: veteran.steamInterval
+      Value: 12
+    - Path: veteran.steamLifetime
+      Value: 1.1
+    - Path: veteran.steamSpeed
+      Value: 0.18
+    - Path: veteran.steamSize
+      Value: 0.14
+    - Path: veteran.steamOpacity
+      Value: 0.12
     - Path: ring.spawn-mark-3.x
       Value: -35.94
     - Path: ring.spawn-mark-3.y
@@ -10326,7 +10652,7 @@ MonoBehaviour:
       Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
-    version: 10
+    version: 12
     descriptors:
     - Path: foundation-north.position.x
       Group: geometry
@@ -14577,7 +14903,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 7.1
+      DefaultValue: 7.75
     - Path: hall-north-lintel.position.z
       Group: geometry
       Label: hall-north-lintel.position / z
@@ -14607,7 +14933,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 1.8000002
+      DefaultValue: 0.5
     - Path: hall-north-lintel.size.z
       Group: geometry
       Label: hall-north-lintel.size / z
@@ -14667,7 +14993,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 0.01
-      DefaultValue: 7.1
+      DefaultValue: 7.75
     - Path: hall-south-lintel.position.z
       Group: geometry
       Label: hall-south-lintel.position / z
@@ -14697,7 +15023,7 @@ MonoBehaviour:
       Minimum: 0.01
       Maximum: 100
       Step: 0.01
-      DefaultValue: 1.8000002
+      DefaultValue: 0.5
     - Path: hall-south-lintel.size.z
       Group: geometry
       Label: hall-south-lintel.size / z
@@ -35438,6 +35764,276 @@ MonoBehaviour:
       Maximum: 360
       Step: 0.1
       DefaultValue: 0
+    - Path: veteran-case-tall.position.x
+      Group: geometry
+      Label: veteran-case-tall.position / x
+      Description: Authored R7 veteran-case-tall.position; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.85
+    - Path: veteran-case-tall.position.y
+      Group: geometry
+      Label: veteran-case-tall.position / y
+      Description: Authored R7 veteran-case-tall.position; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.8
+    - Path: veteran-case-tall.position.z
+      Group: geometry
+      Label: veteran-case-tall.position / z
+      Description: Authored R7 veteran-case-tall.position; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 6.65
+    - Path: veteran-case-tall.size.x
+      Group: geometry
+      Label: veteran-case-tall.size / x
+      Description: Authored R7 veteran-case-tall.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.7
+    - Path: veteran-case-tall.size.y
+      Group: geometry
+      Label: veteran-case-tall.size / y
+      Description: Authored R7 veteran-case-tall.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.6
+    - Path: veteran-case-tall.size.z
+      Group: geometry
+      Label: veteran-case-tall.size / z
+      Description: Authored R7 veteran-case-tall.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.5
+    - Path: veteran-case-tall.rotation.x
+      Group: geometry
+      Label: veteran-case-tall.rotation / x
+      Description: Authored R7 veteran-case-tall.rotation; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: veteran-case-tall.rotation.y
+      Group: geometry
+      Label: veteran-case-tall.rotation / y
+      Description: Authored R7 veteran-case-tall.rotation; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: veteran-case-tall.rotation.z
+      Group: geometry
+      Label: veteran-case-tall.rotation / z
+      Description: Authored R7 veteran-case-tall.rotation; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: veteran-case-low.position.x
+      Group: geometry
+      Label: veteran-case-low.position / x
+      Description: Authored R7 veteran-case-low.position; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 3.25
+    - Path: veteran-case-low.position.y
+      Group: geometry
+      Label: veteran-case-low.position / y
+      Description: Authored R7 veteran-case-low.position; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4.48
+    - Path: veteran-case-low.position.z
+      Group: geometry
+      Label: veteran-case-low.position / z
+      Description: Authored R7 veteran-case-low.position; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 6.9
+    - Path: veteran-case-low.size.x
+      Group: geometry
+      Label: veteran-case-low.size / x
+      Description: Authored R7 veteran-case-low.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.25
+    - Path: veteran-case-low.size.y
+      Group: geometry
+      Label: veteran-case-low.size / y
+      Description: Authored R7 veteran-case-low.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0.96
+    - Path: veteran-case-low.size.z
+      Group: geometry
+      Label: veteran-case-low.size / z
+      Description: Authored R7 veteran-case-low.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.2
+    - Path: veteran-case-low.rotation.x
+      Group: geometry
+      Label: veteran-case-low.rotation / x
+      Description: Authored R7 veteran-case-low.rotation; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: veteran-case-low.rotation.y
+      Group: geometry
+      Label: veteran-case-low.rotation / y
+      Description: Authored R7 veteran-case-low.rotation; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: veteran-case-low.rotation.z
+      Group: geometry
+      Label: veteran-case-low.rotation / z
+      Description: Authored R7 veteran-case-low.rotation; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: veteran-service-cabinet.position.x
+      Group: geometry
+      Label: veteran-service-cabinet.position / x
+      Description: Authored R7 veteran-service-cabinet.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -4.65
+    - Path: veteran-service-cabinet.position.y
+      Group: geometry
+      Label: veteran-service-cabinet.position / y
+      Description: Authored R7 veteran-service-cabinet.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 5.35
+    - Path: veteran-service-cabinet.position.z
+      Group: geometry
+      Label: veteran-service-cabinet.position / z
+      Description: Authored R7 veteran-service-cabinet.position; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 7.82
+    - Path: veteran-service-cabinet.size.x
+      Group: geometry
+      Label: veteran-service-cabinet.size / x
+      Description: Authored R7 veteran-service-cabinet.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.28
+    - Path: veteran-service-cabinet.size.y
+      Group: geometry
+      Label: veteran-service-cabinet.size / y
+      Description: Authored R7 veteran-service-cabinet.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 1.75
+    - Path: veteran-service-cabinet.size.z
+      Group: geometry
+      Label: veteran-service-cabinet.size / z
+      Description: Authored R7 veteran-service-cabinet.size; changes require an explicit
+        rebuild and a new reviewed map revision.
+      Unit: meters
+      Minimum: 0.01
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0.3
+    - Path: veteran-service-cabinet.rotation.x
+      Group: geometry
+      Label: veteran-service-cabinet.rotation / x
+      Description: Authored R7 veteran-service-cabinet.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: -0
+    - Path: veteran-service-cabinet.rotation.y
+      Group: geometry
+      Label: veteran-service-cabinet.rotation / y
+      Description: Authored R7 veteran-service-cabinet.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
+    - Path: veteran-service-cabinet.rotation.z
+      Group: geometry
+      Label: veteran-service-cabinet.rotation / z
+      Description: Authored R7 veteran-service-cabinet.rotation; changes require
+        an explicit rebuild and a new reviewed map revision.
+      Unit: degrees
+      Minimum: -360
+      Maximum: 360
+      Step: 0.1
+      DefaultValue: 0
     - Path: interior-shell-roof.position.x
       Group: geometry
       Label: interior-shell-roof.position / x
@@ -52038,13 +52634,13 @@ MonoBehaviour:
     - Path: hall-north-lintel.position.x
       Value: 0
     - Path: hall-north-lintel.position.y
-      Value: 7.1
+      Value: 7.75
     - Path: hall-north-lintel.position.z
       Value: 8.2
     - Path: hall-north-lintel.size.x
       Value: 4.8
     - Path: hall-north-lintel.size.y
-      Value: 1.8000002
+      Value: 0.5
     - Path: hall-north-lintel.size.z
       Value: 0.4
     - Path: hall-north-lintel.rotation.x
@@ -52056,13 +52652,13 @@ MonoBehaviour:
     - Path: hall-south-lintel.position.x
       Value: 0
     - Path: hall-south-lintel.position.y
-      Value: 7.1
+      Value: 7.75
     - Path: hall-south-lintel.position.z
       Value: -8.2
     - Path: hall-south-lintel.size.x
       Value: 4.8
     - Path: hall-south-lintel.size.y
-      Value: 1.8000002
+      Value: 0.5
     - Path: hall-south-lintel.size.z
       Value: 0.4
     - Path: hall-south-lintel.rotation.x
@@ -56210,6 +56806,60 @@ MonoBehaviour:
     - Path: hall-north-right.rotation.y
       Value: 0
     - Path: hall-north-right.rotation.z
+      Value: 0
+    - Path: veteran-case-tall.position.x
+      Value: 4.85
+    - Path: veteran-case-tall.position.y
+      Value: 4.8
+    - Path: veteran-case-tall.position.z
+      Value: 6.65
+    - Path: veteran-case-tall.size.x
+      Value: 1.7
+    - Path: veteran-case-tall.size.y
+      Value: 1.6
+    - Path: veteran-case-tall.size.z
+      Value: 1.5
+    - Path: veteran-case-tall.rotation.x
+      Value: -0
+    - Path: veteran-case-tall.rotation.y
+      Value: 0
+    - Path: veteran-case-tall.rotation.z
+      Value: 0
+    - Path: veteran-case-low.position.x
+      Value: 3.25
+    - Path: veteran-case-low.position.y
+      Value: 4.48
+    - Path: veteran-case-low.position.z
+      Value: 6.9
+    - Path: veteran-case-low.size.x
+      Value: 1.25
+    - Path: veteran-case-low.size.y
+      Value: 0.96
+    - Path: veteran-case-low.size.z
+      Value: 1.2
+    - Path: veteran-case-low.rotation.x
+      Value: -0
+    - Path: veteran-case-low.rotation.y
+      Value: 0
+    - Path: veteran-case-low.rotation.z
+      Value: 0
+    - Path: veteran-service-cabinet.position.x
+      Value: -4.65
+    - Path: veteran-service-cabinet.position.y
+      Value: 5.35
+    - Path: veteran-service-cabinet.position.z
+      Value: 7.82
+    - Path: veteran-service-cabinet.size.x
+      Value: 1.28
+    - Path: veteran-service-cabinet.size.y
+      Value: 1.75
+    - Path: veteran-service-cabinet.size.z
+      Value: 0.3
+    - Path: veteran-service-cabinet.rotation.x
+      Value: -0
+    - Path: veteran-service-cabinet.rotation.y
+      Value: 0
+    - Path: veteran-service-cabinet.rotation.z
       Value: 0
     - Path: interior-shell-roof.position.x
       Value: 0
@@ -86795,13 +87445,13 @@ MonoBehaviour:
       Value: 0
     - Path: tunnels.map.tunnels-pulse-south.anchor.z
       Value: -19
---- !u!4 &1258644587
+--- !u!4 &1288802437
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1258644585}
+  m_GameObject: {fileID: 1288802435}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -86814,4 +87464,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1258644587}
+  - {fileID: 1288802437}

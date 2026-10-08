@@ -12,6 +12,33 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static LabBundle Baseline()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
         static LabReleaseEntry Entry(int sequence,string id,string name,int number,LabBundle snapshot)=>new LabReleaseEntry{
             Sequence=sequence,ProfileId=id,ProfileName=name,Revision=number,Date="20261007",Hash=snapshot.Hash(),Snapshot=snapshot.Clone()};
+        // Run before staging tests, which regenerate the scene and could hide a stale checked-in baseline.
+        [Test,Order(-1)]public void PackagedSceneAndCatalogPreserveEveryPublishedSnapshot()
+        {
+            var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene(
+                "Assets/StarTournament/Scenes/ProvingGround.unity",UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            const string asset="Assets/StarTournament/Resources/LabReleaseCatalog.json";
+            var bytes=File.ReadAllBytes(asset);
+            try
+            {
+                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+                var catalog=LabReleaseCatalog.Load();
+                var history=new DesignLabHistory(path,ground.CaptureLabBundle(),releases:catalog,resetToLatestDefault:true);
+                Assert.That(history.StorageError,Is.Null);
+                Assert.That(history.Compatible(history.Selected),Is.True);
+                foreach(var entry in catalog.Entries)
+                {
+                    var revisions=history.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions;
+                    var original=revisions.Single(r=>r.Hash==entry.Hash&&r.ReleaseSequence==entry.Sequence);
+                    Assert.That(original.Snapshot.Hash(),Is.EqualTo(entry.Hash));
+                    Assert.That(UnityEngine.JsonUtility.ToJson(original.Snapshot),
+                        Is.EqualTo(UnityEngine.JsonUtility.ToJson(entry.Snapshot)));
+                    Assert.That(revisions.Any(r=>r.ReleaseSequence==entry.Sequence&&history.Compatible(r)),Is.True);
+                }
+                Assert.That(File.ReadAllBytes(asset),Is.EqualTo(bytes));
+            }
+            finally {UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene,true);}
+        }
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-release-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [Test]public void StartupResetsToLatestDefaultAndKeepsAllProfilesAndExperiments()
