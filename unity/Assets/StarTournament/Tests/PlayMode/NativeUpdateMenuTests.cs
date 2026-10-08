@@ -101,8 +101,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 if(!string.IsNullOrEmpty(captureDirectory)&&(state=="current"||state=="available"))
                 {
                     Directory.CreateDirectory(captureDirectory);
-                    ScreenCapture.CaptureScreenshot(Path.Combine(captureDirectory,state+".png"));
-                    yield return new WaitForSecondsRealtime(.5f);
+                    yield return EditorUiCapture.Capture(ground,Path.Combine(captureDirectory,state+".png"));
+                    File.WriteAllText(Path.Combine(captureDirectory,state+".txt"),"EDITOR_OFFSCREEN_SYNTHETIC_NOT_PLAYER_ACCEPTANCE\nrevision="+Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_SOURCE_REVISION")+"\nstate="+state+"\nidentity="+label.text+"\n");
                 }
             }
         }
