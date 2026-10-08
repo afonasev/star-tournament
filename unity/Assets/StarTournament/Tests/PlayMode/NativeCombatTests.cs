@@ -18,11 +18,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         CharacterMotor[] motors;
         ProvingProfile movement, combat, lifecycle;
         NativeCombatSession session;
-        void Setup()
+        void Setup(bool centeredRifle=false)
         {
             scene=SceneManager.CreateScene("native-combat-"+Guid.NewGuid(),new CreateSceneParameters(LocalPhysicsMode.Physics3D));
             owner=new GameObject("test-session"); SceneManager.MoveGameObjectToScene(owner,scene);
             movement=ProvingProfile.CreateDefault(); combat=ProvingProfile.CreateNativeCombatDefault(); combat.Set("shot.spread",0);
+            if(centeredRifle)combat.Set("rifle.spread",0);
             lifecycle=ProvingProfile.CreateCombatDefault(); lifecycle.Set("combat.killcamSeconds",.2f);
             var root=new GameObject("arena"); root.transform.SetParent(owner.transform); arena=root.AddComponent<ProvingArena>(); arena.Build(AuthoredPhysicsFixture.Freeze(),movement);
             motors=new CharacterMotor[4];
@@ -109,7 +110,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest]
         public IEnumerator LtTapKeepsRtShotAndCameraOnTheSameHorizonDirection()
         {
-            Setup();yield return null;
+            Setup(centeredRifle:true);yield return null;
             var cameras=new Camera[4];var views=new GameObject[4];CombatPresentation presentation=null;
             try
             {
@@ -127,7 +128,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var pose=session.Pose(0);var bullet=session.RifleBullets.Single(b=>b.Owner==0);
                 Assert.That(session.ShotCount,Is.EqualTo(1),"RT-style fire edge still launches during the LT reset tick");
                 Assert.That(pose.Pitch,Is.Zero);Assert.That(pose.Yaw,Is.EqualTo(27).Within(.001));
-                Assert.That(Vector3.Angle(cameras[0].transform.forward,bullet.Direction),Is.LessThan(.01),
+                Assert.That(Vector3.Distance(cameras[0].transform.forward,bullet.Direction),Is.LessThan(.00001f),
                     "the rendered camera and authoritative rifle shot use the same post-LT orientation");
             }
             finally{presentation?.Dispose();}
