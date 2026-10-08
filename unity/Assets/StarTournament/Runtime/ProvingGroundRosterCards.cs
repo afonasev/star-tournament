@@ -409,27 +409,12 @@ namespace StarTournament.ProvingGround
     // Frame stays visible for both pointer hover and EventSystem focus. Selection also reveals clipped cards.
     public sealed class RosterFocus : MonoBehaviour,ISelectHandler,IDeselectHandler,IPointerEnterHandler,IPointerExitHandler
     {
-        GameObject frame;
-        bool hover,selected;
         public Func<ScrollRect> UseScroll;
-        public void Initialize(Color color)
-        {
-            frame=new GameObject("gold-focus",typeof(RectTransform));frame.transform.SetParent(transform,false);
-            var rect=(RectTransform)frame.transform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
-            for(int i=0;i<4;i++)
-            {
-                var edge=new GameObject("edge",typeof(RectTransform),typeof(Image));edge.transform.SetParent(frame.transform,false);
-                var r=(RectTransform)edge.transform;r.anchorMin=i==0?Vector2.zero:i==1?new Vector2(0,1):i==2?Vector2.zero:new Vector2(1,0);r.anchorMax=i==0?new Vector2(1,0):i==1?Vector2.one:i==2?new Vector2(0,1):Vector2.one;r.offsetMin=r.offsetMax=Vector2.zero;r.sizeDelta=i<2?new Vector2(0,3):new Vector2(3,0);
-                var image=edge.GetComponent<Image>();image.color=color;image.raycastTarget=false;
-            }
-            frame.SetActive(false);
-        }
-        void Paint(){if(frame)frame.SetActive((hover||selected)&&GetComponent<Button>().interactable);}
-        public void OnSelect(BaseEventData e){selected=true;Paint();Reveal();}
-        public void OnDeselect(BaseEventData e){selected=false;Paint();}
-        public void OnPointerEnter(PointerEventData e){hover=true;Paint();}
-        public void OnPointerExit(PointerEventData e){hover=false;Paint();}
-        void OnDisable(){selected=hover=false;Paint();}
+        public void Initialize(Color color) { /* Focus is rendered by the shared MenuPresentation. */ }
+        public void OnSelect(BaseEventData e){Reveal();}
+        public void OnDeselect(BaseEventData e){}
+        public void OnPointerEnter(PointerEventData e){}
+        public void OnPointerExit(PointerEventData e){}
         void Reveal()
         {
             var scroll=UseScroll?.Invoke();if(scroll==null||!scroll.gameObject.activeInHierarchy)return;

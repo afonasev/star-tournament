@@ -1,0 +1,25 @@
+{
+  "state": "blocked-on-runtime-admission",
+  "checked_at_utc": "2026-10-08T15:03:14Z",
+  "runtime_status": {
+    "occupied_slots": 1,
+    "admission_busy": true
+  },
+  "passed": {
+    "affected_screens": 20,
+    "layout_editmode": 3,
+    "focus_contract": 2
+  },
+  "pending": [
+    "make check-ui PlayMode: FourPlayerMenuTests;IndependentPauseMenuTests",
+    "Editor ButtonFocusPreview.Render and visual inspection",
+    "main integration and final worktree cleanup"
+  ],
+  "not_run": [
+    "Player build",
+    "installed update",
+    "release publication",
+    "physical Player acceptance"
+  ],
+  "ownership": "Only own queued clients 13193 and 18217 cancelled; foreign Unity processes and locks untouched"
+}

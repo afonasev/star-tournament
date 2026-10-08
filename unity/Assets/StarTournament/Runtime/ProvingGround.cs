@@ -1153,7 +1153,7 @@ namespace StarTournament.ProvingGround
             var button=go.GetComponent<Button>(); button.onClick.AddListener(()=>{if(go.name.Contains("back")||go.name.Contains("cancel")||title.StartsWith("‹"))gameAudio?.MenuBack();else gameAudio?.MenuConfirm();action();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;});
             var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter;
             label.rectTransform.offsetMin=new Vector2(12,4);label.rectTransform.offsetMax=new Vector2(-12,-4);
-            var colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=colors.selectedColor=new Color(1.15f,1.15f,1.15f,1);colors.pressedColor=new Color(.8f,.8f,.8f,1);colors.disabledColor=new Color(.52f,.57f,.62f,1);colors.fadeDuration=.12f;button.colors=colors;
+            var colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=colors.selectedColor=Color.white;colors.pressedColor=new Color(.8f,.8f,.8f,1);colors.disabledColor=new Color(.52f,.57f,.62f,1);colors.fadeDuration=.12f;button.colors=colors;
             go.AddComponent<MenuPresentation>();return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }
