@@ -1,5 +1,8 @@
 # Delivery, concurrency and cleanup
 
+**Актуальная политика 2026-10-08:** [локальная разработка](../local-development.md). Проверки выбираются по поведению; Player build, standalone smoke и поставка не являются автоматическими gates каждой фичи. Упоминания обязательной сборки/Player ниже действуют только для явно заказанной сборки/приёмки или обоснованной минимальной QA-сборки. Tooling, не меняющий Unity runtime, не требует реального Unity запуска ради одного маршрута команд.
+
+
 Read project profile; never execute missing or guessed commands. Shared planning root is not the code worktree. Each implementation works on its owned branch/worktree and records ownership at start (session, branch, worktree, baseline main revision, process IDs and paths). Capture pre-existing status. Record exact spec revision used.
 
 Use the integration lease for merge, canonical spec sync and deployment; use the planning lease for shared artifact edits/commits. Lock order is integration then planning; never reverse it. Release planning before long tests when safe. Do not wait for human responses holding either lease. No lease auto-stealing: confirm prior owner is stopped and inspect Git/deploy state before `lease recover` with a recorded reason.

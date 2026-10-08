@@ -35,7 +35,7 @@ def run():
     args = parser.parse_args()
     plan = {'scope': 'ui-only', 'natural_bot_matches': False, 'suites': SUITES,
             'policy': '.agents/references/qa-scope.md',
-            'additional_gates': 'affected-screen tests; native build and visual smoke for visible changes'}
+            'additional_gates': 'affected-screen tests and Editor Play Mode; Player gates deferred unless explicitly requested or necessary'}
     if args.plan:
         print(json.dumps(plan, indent=2))
         return 0
