@@ -132,7 +132,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(seats.Consume(0).GamepadLookLocked,Is.True);
                 InputSystem.RemoveDevice(pad);seats.Capture(profile,.01f);
                 replacement=InputSystem.AddDevice<Gamepad>();
-                InputSystem.QueueStateEvent(replacement,new GamepadState{leftTrigger=1});InputSystem.Update();
+                InputSystem.QueueStateEvent(replacement,new GamepadState{leftTrigger=1});InputSystem.Update(InputUpdateType.Dynamic);
                 Assert.That(seats.Replace(0,replacement),Is.True);
                 seats.Capture(profile,.05f);
                 Assert.That(seats.Consume(0).GamepadLookLocked,Is.False,"rebind while LT is held requires release");
@@ -143,6 +143,10 @@ namespace StarTournament.ProvingGround.Tests
             finally {if(pad.added)InputSystem.RemoveDevice(pad);if(replacement!=null&&replacement.added)InputSystem.RemoveDevice(replacement);}
         }
         static void Capture(SeatInputCoordinator seats,Gamepad pad,ProvingProfile profile,GamepadState state,float dt)
-        {InputSystem.QueueStateEvent(pad,state);InputSystem.Update();seats.Capture(profile,dt);}
+        {
+            InputSystem.QueueStateEvent(pad,state);
+            // Gameplay button edges use the Dynamic update counter, even when the fixture runs in EditMode.
+            InputSystem.Update(InputUpdateType.Dynamic);seats.Capture(profile,dt);
+        }
     }
 }
