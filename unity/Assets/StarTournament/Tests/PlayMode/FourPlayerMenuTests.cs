@@ -13,6 +13,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         readonly Gamepad[] pads=new Gamepad[4];
         Scene scene;
+        bool hadLastMap;string priorLastMap;
+        [SetUp] public void PreserveLastMap()
+        {
+            hadLastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);
+            priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
+            PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
+        }
         [UnityTest]
         public IEnumerator FramesStayWithAssignedSeatAndEdgesAreConsumedOnce()
         {
@@ -70,11 +77,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,pad);
             button("main-action-0").onClick.Invoke();
             yield return PressBotMenu(pad,GamepadButton.Start);
-            Assert.That(ground.Running,Is.False,"Start must not skip the map step");
-            button("setup-next").onClick.Invoke();
+            Assert.That(button("mode-choice-0").gameObject.activeInHierarchy,Is.True,"Start advances map to rules once");
             yield return PressBotMenu(pad,GamepadButton.Start);
-            Assert.That(ground.Running,Is.False,"Start must not skip the rules step");
-            button("setup-next").onClick.Invoke();
+            Assert.That(button("roster-card-0").gameObject.activeInHierarchy,Is.True,"A fresh Start advances rules to players");
             yield return PressBotMenu(pad,GamepadButton.North);
             var launch=button("Начать — четыре игрока");
             Assert.That(launch.interactable,Is.True);
@@ -101,6 +106,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             foreach(var pad in pads) if(pad!=null && pad.added)InputSystem.RemoveDevice(pad);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+            if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);
+            else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
+            PlayerPrefs.Save();
         }
         [UnityTest]
         public IEnumerator FpsSettingPersistsAndKeepsSamplingWhilePaused()
@@ -177,10 +185,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-3"));
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadDown));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
-            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("Начать — четыре игрока"));
-            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));
+            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-3"),"Down at the last card must not focus the launch button");
+            InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));
             yield return null;yield return null;
-            Assert.That(ground.Running,Is.True,"Gamepad Submit must activate the selected four-player Start button");
+            Assert.That(ground.Running,Is.True,"Gamepad Start must launch from the selected fourth-player card");
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));
             yield return null;yield return null;Assert.That(ground.Running,Is.False);
