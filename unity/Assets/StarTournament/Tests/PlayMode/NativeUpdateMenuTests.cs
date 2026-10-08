@@ -48,6 +48,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var message=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="update-status");
             end=Time.realtimeSinceStartup+5;while(!message.text.Contains("41%")&&Time.realtimeSinceStartup<end)yield return null;
             Assert.That(message.text,Does.Contain("41%"));Assert.That(button.interactable,Is.False);
+            Assert.That(message.gameObject.activeSelf,Is.True,"Download progress remains visible");
             Assert.That(label.text,Is.EqualTo("0.1.0 (28.09.2026)"));
             File.WriteAllText(status,"{\"state\":\"staged\",\"progress\":100}");
             end=Time.realtimeSinceStartup+5;while(button.GetComponentInChildren<Text>().text!="Перезапустить"&&Time.realtimeSinceStartup<end)yield return null;
@@ -73,13 +74,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var button=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="update-action");
             var message=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="update-status");
             Assert.That(button.gameObject.activeSelf,Is.False,"No check button or startup flash");
-            foreach(var state in new[]{"current","unavailable","available","current"})
+            Assert.That(message.gameObject.activeSelf,Is.False,"No checking status flash");
+            var label=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="installed-release");
+            Assert.That(label.alignment,Is.EqualTo(TextAnchor.MiddleRight));
+            Assert.That(label.rectTransform.anchorMax.x,Is.GreaterThan(.95f));
+            Assert.That(label.rectTransform.anchorMax.y,Is.LessThan(.075f));
+            Assert.That(((RectTransform)button.transform).anchorMin.y,Is.GreaterThan(label.rectTransform.anchorMax.y),"Action stays above the version");
+            foreach(var state in new[]{"current","unavailable","available","checking","available","current"})
             {
                 File.WriteAllText(status,"{\"state\":\""+state+"\"}");
-                var expected=state=="current"?"Установлена последняя версия":state=="available"?"Доступна новая версия":"Нет связи с обновлениями";
+                var expected="";
                 float end=Time.realtimeSinceStartup+5;
-                while(message.text!=expected&&Time.realtimeSinceStartup<end)yield return null;
+                // Allow the IPC polling loop to observe even transitions with identical empty messages.
+                yield return new WaitForSecondsRealtime(.25f);
+                while((message.text!=expected||button.gameObject.activeSelf!=(state=="available"))&&Time.realtimeSinceStartup<end)yield return null;
                 Assert.That(message.text,Is.EqualTo(expected));
+                Assert.That(message.gameObject.activeSelf,Is.False,"Idle updates show only the release identity and conditional action");
                 Assert.That(button.gameObject.activeSelf,Is.EqualTo(state=="available"));
                 if(state=="available")
                 {
@@ -87,6 +97,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(button.interactable,Is.True);
                 }
                 Assert.That(File.Exists(command),Is.False,"Automatic metadata check grants no download consent");
+                var captureDirectory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_MENU_QA_SCREENSHOTS");
+                if(!string.IsNullOrEmpty(captureDirectory)&&(state=="current"||state=="available"))
+                {
+                    Directory.CreateDirectory(captureDirectory);
+                    ScreenCapture.CaptureScreenshot(Path.Combine(captureDirectory,state+".png"));
+                    yield return new WaitForSecondsRealtime(.5f);
+                }
             }
         }
         [UnityTearDown] public IEnumerator Cleanup()
