@@ -18,10 +18,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Keyboard syntheticKeyboard;
         InputSettings.EditorInputBehaviorInPlayMode priorEditorInput;
         InputSettings.BackgroundBehavior priorBackground;
+        bool hadLastMap;string priorLastMap;
 
         Button Button(string name) => ground.GetComponentsInChildren<Button>(true).Single(button => button.name == name);
         IEnumerator Load()
         {
+            hadLastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
             // Batchmode has no focused GameView. Route only this test's synthetic keyboard to runtime.
             priorEditorInput=InputSystem.settings.editorInputBehaviorInPlayMode;
             priorBackground=InputSystem.settings.backgroundBehavior;
@@ -32,6 +34,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;
             ground = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
+            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
             // Use our own current device: batchmode may keep an unrelated keyboard alive.
             syntheticKeyboard = InputSystem.AddDevice<Keyboard>();
         }
@@ -41,7 +44,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null; yield return null;
             InputSystem.QueueStateEvent(pad, new GamepadState());
             yield return null;
-            Button("identity-guest").onClick.Invoke();
+            var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
+            int seat=Enumerable.Range(0,ground.LocalSeatCount).Single(i=>input.DeviceAt(i)==pad);
+            Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();
+            Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
         }
         IEnumerator PauseEscape()
         {
@@ -62,6 +68,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if (scene.IsValid()) yield return SceneManager.UnloadSceneAsync(scene);
             InputSystem.settings.editorInputBehaviorInPlayMode=priorEditorInput;
             InputSystem.settings.backgroundBehavior=priorBackground;
+            if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);PlayerPrefs.Save();
         }
 
         [UnityTest] public IEnumerator SparseHumanAllAiOperatorAndFrozenLifecycleUseOrdinarySetup()
@@ -81,6 +88,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.BotDriver.Planner(0), Is.Not.Null); Assert.That(ground.BotDriver.Planner(1), Is.Not.Null); Assert.That(ground.BotDriver.Planner(3), Is.Not.Null);
             ground.SendMessage("Pause", "test setup transition"); Button("В главное меню").onClick.Invoke(); yield return null;
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
+            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
             InputSystem.RemoveDevice(pads[0]); pads[0] = null;
 
             // An all-AI ordinary match has no hidden device prerequisite and keeps one TrooperVisual implementation per body/view.
