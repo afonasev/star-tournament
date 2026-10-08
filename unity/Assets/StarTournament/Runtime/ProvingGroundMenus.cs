@@ -180,7 +180,7 @@ namespace StarTournament.ProvingGround
         void ShowSetupStep(int step)
         {
             if(phase!=Phase.Setup || step<0 || step>setupMaxStep || step>2)return;
-            rosterEditing=-1;setupStep=step;RefreshInterface();if(step==2)FocusRosterCard(0);else Select(setupNext);
+            rosterEditing=-1;setupStep=step;RefreshInterface();FocusSetupStep();
         }
         void NextSetupStep() { setupMaxStep=Mathf.Max(setupMaxStep,Mathf.Min(2,setupStep+1));ShowSetupStep(Mathf.Min(2,setupStep+1)); }
         void PreviousSetupStep() { if(setupStep==0)ToMainMenu();else ShowSetupStep(setupStep-1); }
@@ -250,6 +250,7 @@ namespace StarTournament.ProvingGround
             mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
             setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"");
             RefreshF2Setup();
+            ConfigureSetupNavigation();
         }
         InputField CreateNameInput(Transform parent)
         {
@@ -261,6 +262,7 @@ namespace StarTournament.ProvingGround
         }
         void RememberMenuDevice(InputAction.CallbackContext context)
         {
+            if(phase==Phase.Setup){TrackSetupNavigationInput(context);return;}
             if(phase!=Phase.MainMenu && phase!=Phase.Profiles && phase!=Phase.Settings && phase!=Phase.Lab)return;
             // UI navigation and pointer clicks are PassThrough actions: releases also
             // perform. A release must not replace the device that submitted the menu.
@@ -282,7 +284,7 @@ namespace StarTournament.ProvingGround
             if(device==null || !device.added || !device.enabled)device=(InputDevice)Keyboard.current??Gamepad.all.FirstOrDefault(p=>p.added&&p.enabled);
             if(input.Assign(0,device) && !identities.TryRestore(0,device.deviceId,playerProfiles))
                 identities.ChooseGuest(0,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
-            ApplyLayout(1);RefreshInterface();Select(setupNext);
+            setupGamepadNavigation=device is Gamepad;RestoreLastPlayedMap();ApplyLayout(1);RefreshInterface();FocusSetupStep();
         }
         void ToMainMenu()
         {
@@ -312,7 +314,7 @@ namespace StarTournament.ProvingGround
         void OnDeviceJoined(int seat,InputDevice device)
         {
             setupError=null;
-            if(setupStep==2 && device is Gamepad){if(identities.HasIdentity(seat))identities.RememberBinding(seat,device.deviceId);else if(!identities.TryRestore(seat,device.deviceId,playerProfiles))identities.ChooseGuest(seat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);RefreshInterface();if(rosterEditing<0&&pendingSeat<0)Select(rosterCards[seat]);return;}
+            if(setupStep==2 && device is Gamepad){if(identities.HasIdentity(seat))identities.RememberBinding(seat,device.deviceId);else if(!identities.TryRestore(seat,device.deviceId,playerProfiles))identities.ChooseGuest(seat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);RefreshInterface();SetSetupNavigationMode(true);if(rosterEditing<0&&pendingSeat<0)Select(rosterCards[seat]);return;}
             if(identities.HasIdentity(seat)){identities.RememberBinding(seat,device.deviceId);RefreshInterface();return;}
             if(!identities.TryRestore(seat,device.deviceId,playerProfiles))OpenIdentityPicker(seat);
             else RefreshInterface();
@@ -349,7 +351,7 @@ namespace StarTournament.ProvingGround
             var device=input.DeviceAt(pendingSeat);
             if(!input.IsConnected(pendingSeat)||device==null||!identities.ChooseProfile(pendingSeat,device.deviceId,id,playerProfiles))
             {setupError="Профиль занят или устройство отключено";RefreshIdentityOptions();return;}
-            pendingSeat=-1;RefreshInterface();Select(setupStep==2?start:setupNext);
+            pendingSeat=-1;RefreshInterface();FocusSetupStep();
         }
         void CreateAndChooseProfile()
         {
@@ -361,7 +363,7 @@ namespace StarTournament.ProvingGround
             var device=input.DeviceAt(pendingSeat);
             if(!input.IsConnected(pendingSeat)||device==null){setupError="Устройство отключено";RefreshInterface();return;}
             identities.ChooseGuest(pendingSeat,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
-            pendingSeat=-1;RefreshInterface();Select(setupStep==2?start:setupNext);
+            pendingSeat=-1;RefreshInterface();FocusSetupStep();
         }
         bool IdentitiesReady()
         {

@@ -361,18 +361,20 @@ namespace StarTournament.ProvingGround
             if(setupStep!=2)return;
             var cards=Enumerable.Range(0,RosterTotal).Select(p=>rosterCards[p]).ToArray();
             var top=new[]{rosterAddHuman,rosterAddBot}.Where(b=>b.interactable).ToArray();
-            var steps=setupSteps.Where(b=>b.interactable).ToArray();
-            for(int i=0;i<steps.Length;i++)
-            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=steps[Math.Max(0,i-1)],selectOnRight=steps[Math.Min(steps.Length-1,i+1)],selectOnDown=top.FirstOrDefault()??cards[0]};steps[i].navigation=n;}
+            if(!setupGamepadNavigation)
+            {
+                var steps=setupSteps.Where(b=>b.interactable).ToArray();
+                for(int i=0;i<steps.Length;i++)steps[i].navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=steps[Math.Max(0,i-1)],selectOnRight=steps[Math.Min(steps.Length-1,i+1)],selectOnDown=top.FirstOrDefault()??cards[0]};
+            }
             for(int i=0;i<top.Length;i++)
-            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=top[Math.Max(0,i-1)],selectOnRight=top[Math.Min(top.Length-1,i+1)],selectOnUp=setupSteps[2],selectOnDown=cards[0]};top[i].navigation=n;}
+            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=top[System.Math.Max(0,i-1)],selectOnRight=top[System.Math.Min(top.Length-1,i+1)],selectOnUp=setupGamepadNavigation?top[i]:setupSteps[2],selectOnDown=cards[0]};top[i].navigation=n;}
             // Authored grid coordinates keep offscreen cards reachable; select scrolls their rect into view.
             int[] a=Enumerable.Range(0,RosterTotal).Where(p=>SetupMode!=NativeMatchMode.Teams||RosterTeamAt(p)==NativeTeam.TeamA).ToArray();
             int[] bteam=Enumerable.Range(0,RosterTotal).Where(p=>SetupMode==NativeMatchMode.Teams&&RosterTeamAt(p)==NativeTeam.TeamB).ToArray();
             foreach(var group in new[]{a,bteam})for(int i=0;i<group.Length;i++)
             {
                 int cols=SetupMode==NativeMatchMode.Teams?2:4;
-                var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=i>=cols?rosterCards[group[i-cols]]:top.FirstOrDefault()??setupSteps[2],selectOnDown=i+cols<group.Length?rosterCards[group[i+cols]]:start.interactable?start:setupPrevious,
+                var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=i>=cols?rosterCards[group[i-cols]]:top.FirstOrDefault()??(setupGamepadNavigation?rosterCards[group[i]]:setupSteps[2]),selectOnDown=i+cols<group.Length?rosterCards[group[i+cols]]:setupGamepadNavigation?rosterCards[group[i]]:start.interactable?start:setupPrevious,
                     selectOnLeft=i%cols>0?rosterCards[group[i-1]]:rosterCards[group[i]],selectOnRight=i%cols<cols-1&&i+1<group.Length?rosterCards[group[i+1]]:rosterCards[group[i]]};
                 if(SetupMode==NativeMatchMode.Teams)
                 {
@@ -382,8 +384,12 @@ namespace StarTournament.ProvingGround
                 }
                 rosterCards[group[i]].navigation=n;
             }
-            setupPrevious.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnRight=start.interactable?start:setupPrevious};
-            start.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnLeft=setupPrevious};
+            if(setupGamepadNavigation){NoSetupNavigation(setupPrevious);NoSetupNavigation(start);}
+            else
+            {
+                setupPrevious.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnRight=start.interactable?start:setupPrevious};
+                start.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnLeft=setupPrevious};
+            }
         }
         void RosterVerticalNavigation(Selectable[] buttons)
         {
@@ -396,6 +402,7 @@ namespace StarTournament.ProvingGround
             foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
             if(back)
             {
+                setupTransitionFrame=Time.frameCount;
                 if(rosterEditing>=0){if(rosterPicker.activeSelf)CloseRosterPicker();else CloseRosterEditor();}
                 else if(pendingSeat>=0){pendingSeat=-1;RefreshInterface();FocusRosterCard(0);}
                 else PreviousSetupStep();
