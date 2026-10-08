@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,6 +17,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class DesignLabWorkspaceTests
     {
         Scene scene;ProvingGround ground;Gamepad pad;string directory,oldEnvironment;
+        ManualResetEventSlim selectionEntered,selectionRelease;
         Button Button(string name)=>ground.GetComponentsInChildren<Button>().Single(b=>b.name==name);
         InputField Input(string name)=>ground.GetComponentsInChildren<InputField>().Single(b=>b.name==name);
         void Click(string name)=>Button(name).onClick.Invoke();
@@ -74,7 +76,55 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.Not.Null,"Search restores focus when the previous row is removed");
             Click("lab-clear");yield return null;Assert.That(Button("lab-save").interactable,Is.False);
         }
+        [UnityTest] public IEnumerator RevisionSelectionKeepsFramesRunningUntilAtomicPublication()
+        {
+            directory=Path.Combine(Path.GetTempPath(),"st-lab-async-"+Guid.NewGuid());Directory.CreateDirectory(directory);
+            string historyPath=Path.Combine(directory,"history.json");
+            oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",historyPath);
+            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            var field=typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic);
+            var seed=(DesignLabHistory)field.GetValue(ground);seed.Create("Async UI");
+            var draft=seed.Selected.Snapshot;draft.Set("rifle.damage",31);seed.Save(draft);
+            selectionEntered=new ManualResetEventSlim();selectionRelease=new ManualResetEventSlim();
+            var baseline=(LabBundle)typeof(DesignLabHistory).GetField("shipped",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(seed);
+            var catalogue=(LabReleaseCatalog)typeof(DesignLabHistory).GetField("releases",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(seed);
+            var history=new DesignLabHistory(historyPath,baseline,(temp,destination)=>
+            {
+                selectionEntered.Set();
+                if(!selectionRelease.Wait(TimeSpan.FromSeconds(60)))throw new TimeoutException("Test did not release writer");
+                File.Replace(temp,destination,null);
+            },releases:catalogue);
+            Assert.That(history.StorageError,Is.Null);
+            field.SetValue(ground,history);Click("main-action-2");yield return null;
+            string identity=ground.LabSavedIdentity;
+            Click("lab-revision-select");yield return null;Click("revision-1");
+            float deadline=Time.realtimeSinceStartup+45;
+            while(!selectionEntered.IsSet&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.That(selectionEntered.IsSet,Is.True);
+            Assert.That(ground.LabSelectionPending,Is.True);
+            int frame=Time.frameCount;
+            for(int i=0;i<5;i++)yield return null;
+            Assert.That(Time.frameCount-frame,Is.GreaterThanOrEqualTo(5),"Disk publication must not block the frame loop");
+            Assert.That(ground.LabSavedIdentity,Is.EqualTo(identity));
+            Assert.That(Button("cancel").interactable,Is.False);
+            typeof(ProvingGround).GetMethod("CloseLabDialog",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null);
+            Assert.That(Button("cancel").gameObject.activeInHierarchy,Is.True,"Back cannot dismiss an in-flight selection");
+            Assert.That(typeof(ProvingGround).GetMethod("ProtectLabQuit",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null),Is.False);
+            selectionRelease.Set();deadline=Time.realtimeSinceStartup+45;
+            while(ground.LabSelectionPending&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.That(ground.LabSelectionPending,Is.False);yield return null;
+            Assert.That(history.Selected.Number,Is.EqualTo(1));
+            Assert.That(ground.LabSavedIdentity,Is.Not.EqualTo(identity));
+            Assert.That(Button("lab-back").interactable,Is.True);
+        }
         [UnityTearDown] public IEnumerator Cleanup()
-        {if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",oldEnvironment);if(directory!=null&&Directory.Exists(directory))Directory.Delete(directory,true);}
+        {selectionRelease?.Set();
+            float deadline=Time.realtimeSinceStartup+45;while(ground&&ground.LabSelectionPending&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.That(ground&&ground.LabSelectionPending,Is.False,"Selection worker must exit before teardown");
+            selectionEntered?.Dispose();selectionRelease?.Dispose();
+            if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",oldEnvironment);if(directory!=null&&Directory.Exists(directory))Directory.Delete(directory,true);}
     }
 }
