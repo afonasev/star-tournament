@@ -13,6 +13,8 @@ namespace StarTournament.ProvingGround
         public Vector2 LookDegrees;
         public bool GamepadLookAssistance; // Explicit device-independent assistance request for this seat.
         public bool ManualLook; // Held right-stick intent, preserved even between fixed ticks.
+        public bool GamepadLookLocked; // LT holds the current authoritative pitch while yaw remains available.
+        public bool ResetLookPitch; // Latched LT tap command; motor applies it once on a fixed tick.
         public bool Jump;
         public bool Fire; // Latched short tap between fixed ticks.
         public bool FireHeld; // Physical level persists across fixed ticks.

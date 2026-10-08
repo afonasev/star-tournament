@@ -1,0 +1,223 @@
+{
+  "source_revision": "3465c5feda4351cd18d213b1f6d033f133d30e6e",
+  "EditMode_unique_passed": 74,
+  "PlayMode_unique_passed": 36,
+  "coverage": "52 unchanged EditMode cases passed at31bf957 +22 input cases at e8796ff;17 unchanged PlayMode cases passed at e8796ff +19 corrected combat/help cases at3465c5f",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "fixtures": [
+        "SeatInputTests",
+        "GamepadLookSettingsTests",
+        "MotorProfileTests",
+        "DesignLabHistoryTests",
+        "LocalSeatLayoutTests",
+        "GamepadCompatibilityTests",
+        "EightBitDoSn30ProInputTests"
+      ],
+      "command": [
+        "/Users/eaafonasev/.local/bin/unity-run",
+        "--shared",
+        "--project",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "--",
+        "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+        "-batchmode",
+        "-nographics",
+        "-projectPath",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "-runTests",
+        "-testPlatform",
+        "EditMode",
+        "-testFilter",
+        "SeatInputTests;GamepadLookSettingsTests;MotorProfileTests;DesignLabHistoryTests;LocalSeatLayoutTests;GamepadCompatibilityTests;EightBitDoSn30ProInputTests",
+        "-testResults",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/EditMode.xml",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/EditMode.log"
+      ],
+      "revision": "31bf957415e2c0f881b04948b2bb640e9735c444",
+      "dirty": "",
+      "build_player": false,
+      "exit_code": 2,
+      "result": "Failed(Child)",
+      "total": 74,
+      "counts": {
+        "SeatInputTests": 7,
+        "GamepadLookSettingsTests": 3,
+        "MotorProfileTests": 4,
+        "DesignLabHistoryTests": 45,
+        "LocalSeatLayoutTests": 3,
+        "GamepadCompatibilityTests": 10,
+        "EightBitDoSn30ProInputTests": 2
+      },
+      "failed": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.SeatInputTests.LtLifecycleCancellationRequiresPhysicalReleaseAndDeadSeatCannotStartGesture",
+          "result": "Failed",
+          "message": "  dead players retain ordinary pause input\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.SeatInputTests.LtTapIsLatchedOnceAndHoldLocksPitchWithoutBlockingYawOrAnotherSeat",
+          "result": "Failed",
+          "message": "  RT remains independent of LT aim locking\n  Expected: True\n  But was:  False\n"
+        }
+      ],
+      "artifact": "EditMode-initial.xml"
+    },
+    {
+      "platform": "EditMode",
+      "fixtures": [
+        "SeatInputTests",
+        "GamepadLookSettingsTests",
+        "GamepadCompatibilityTests",
+        "EightBitDoSn30ProInputTests"
+      ],
+      "command": [
+        "/Users/eaafonasev/.local/bin/unity-run",
+        "--shared",
+        "--project",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "--",
+        "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+        "-batchmode",
+        "-nographics",
+        "-projectPath",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "-runTests",
+        "-testPlatform",
+        "EditMode",
+        "-testFilter",
+        "SeatInputTests;GamepadLookSettingsTests;GamepadCompatibilityTests;EightBitDoSn30ProInputTests",
+        "-testResults",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/EditMode.xml",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/EditMode.log"
+      ],
+      "revision": "e8796ff562a4b76875fb2629ac1a3a0c26fe736e",
+      "dirty": "",
+      "build_player": false,
+      "exit_code": 0,
+      "result": "Passed",
+      "total": 22,
+      "counts": {
+        "SeatInputTests": 7,
+        "GamepadLookSettingsTests": 3,
+        "GamepadCompatibilityTests": 10,
+        "EightBitDoSn30ProInputTests": 2
+      },
+      "failed": [],
+      "artifact": "EditMode-inputs.xml"
+    },
+    {
+      "platform": "PlayMode",
+      "fixtures": [
+        "GamepadLookAssistanceTests",
+        "NativeCombatTests",
+        "FourPlayerMenuTests",
+        "IndependentPauseMenuTests",
+        "SettingsGamepadNavigationTests"
+      ],
+      "command": [
+        "/Users/eaafonasev/.local/bin/unity-run",
+        "--shared",
+        "--project",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "--",
+        "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+        "-batchmode",
+        "-projectPath",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "-runTests",
+        "-testPlatform",
+        "PlayMode",
+        "-testFilter",
+        "GamepadLookAssistanceTests;NativeCombatTests;FourPlayerMenuTests;IndependentPauseMenuTests;SettingsGamepadNavigationTests",
+        "-testResults",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/PlayMode.xml",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/PlayMode.log"
+      ],
+      "revision": "e8796ff562a4b76875fb2629ac1a3a0c26fe736e",
+      "dirty": " M unity/ProjectSettings/ShaderGraphSettings.asset\n?? unity/Assets/InitTestScene7a2ebdd7-17a3-4776-9055-c0053a4da057.unity\n?? unity/Assets/InitTestScene7a2ebdd7-17a3-4776-9055-c0053a4da057.unity.meta\n",
+      "build_player": false,
+      "exit_code": 2,
+      "result": "Failed(Child)",
+      "total": 36,
+      "counts": {
+        "GamepadLookAssistanceTests": 4,
+        "NativeCombatTests": 12,
+        "FourPlayerMenuTests": 5,
+        "IndependentPauseMenuTests": 8,
+        "SettingsGamepadNavigationTests": 7
+      },
+      "failed": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.LtTapKeepsRtShotAndCameraOnTheSameHorizonDirection",
+          "result": "Failed",
+          "message": "  the rendered camera and authoritative rifle shot use the same post-LT orientation\n  Expected: less than 0.01d\n  But was:  0.61865598f\n"
+        }
+      ],
+      "artifact": "PlayMode-initial.xml"
+    },
+    {
+      "platform": "PlayMode",
+      "fixtures": [
+        "NativeCombatTests",
+        "SettingsGamepadNavigationTests"
+      ],
+      "command": [
+        "/Users/eaafonasev/.local/bin/unity-run",
+        "--shared",
+        "--project",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "--",
+        "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity",
+        "-batchmode",
+        "-projectPath",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/unity",
+        "-runTests",
+        "-testPlatform",
+        "PlayMode",
+        "-testFilter",
+        "NativeCombatTests;SettingsGamepadNavigationTests",
+        "-testResults",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/PlayMode.xml",
+        "-logFile",
+        "/Users/eaafonasev/Projects/star-tournament-lt-aim/.local/lt-aim-qa/PlayMode.log"
+      ],
+      "revision": "3465c5feda4351cd18d213b1f6d033f133d30e6e",
+      "dirty": "",
+      "build_player": false,
+      "exit_code": 0,
+      "result": "Passed",
+      "total": 19,
+      "counts": {
+        "NativeCombatTests": 12,
+        "SettingsGamepadNavigationTests": 7
+      },
+      "failed": [],
+      "artifact": "PlayMode-corrected.xml"
+    }
+  ],
+  "isolation": {
+    "PlayMode_env": "STAR_TOURNAMENT_QA_LAB_HISTORY points to task-owned nonexistent file under .local/lt-aim-qa/isolation",
+    "images_env": "STAR_TOURNAMENT_LT_QA_IMAGES points to task-owned images directory",
+    "shared_history_attempt": "cancelled gracefully; no completed XML; large real history was retained untouched by cleanup"
+  },
+  "build_player": false,
+  "release_or_deploy": false,
+  "human_device_acceptance": false,
+  "compile_failure": {
+    "revision": "98a3dfd",
+    "cause": "InputSystem.Update(InputUpdateType) is internal in installed1.20; fixed via InputTestFixture public test setup",
+    "exit_code": 1,
+    "stale_xml_ignored": true
+  },
+  "current_source_unchanged_checks": {
+    "unity/Assets/StarTournament/Runtime/Input": true,
+    "unity/Assets/StarTournament/Runtime/Motor": true,
+    "unity/Assets/StarTournament/Runtime/Core": true
+  },
+  "screenshot_sha256": "1522f036117509a03f269449b54c69d2ddaa36fca07882e1c63efcd6cc86282e"
+}

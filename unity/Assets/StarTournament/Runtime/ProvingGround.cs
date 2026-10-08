@@ -593,6 +593,7 @@ namespace StarTournament.ProvingGround
         void OnApplicationFocus(bool focus)
         {
             musicFocused=focus;
+            if(!focus)input.Clear();
             if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
@@ -626,6 +627,8 @@ namespace StarTournament.ProvingGround
         }
         void OnMatchDeath(DeathNotice notice)
         {
+            int localSeat=Composition==null?-1:Composition.SeatOf(notice.Seat);
+            if(localSeat>=0)input.SetSeatAlive(localSeat,false);
             if(Session.Match==null || notice.Life.KillerId==null)return;
             int killer=ParticipantWithId(notice.Life.KillerId);
             if(killer<0 || killer==notice.Seat)return;
@@ -638,6 +641,11 @@ namespace StarTournament.ProvingGround
                 snapshot.DirectKills(killer,notice.Seat)+":"+snapshot.DirectKills(notice.Seat,killer)+
                 (chain==2?"\nDouble kill!":chain>2?"\n"+chain+" kills!":"");
             killNoticeUntil[view]=Session.Time+(frozenMovement??Profile).Get("ui.killNoticeSeconds");
+        }
+        void OnMatchRespawn(int participant)
+        {
+            int localSeat=Composition==null?-1:Composition.SeatOf(participant);
+            if(localSeat>=0)input.SetSeatAlive(localSeat,true);
         }
         void Begin(bool diagnostics)
         {
@@ -669,6 +677,7 @@ namespace StarTournament.ProvingGround
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
         void CreateMatch(bool repeating)
         {
+            for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++)input.SetSeatAlive(seat,true);
             if(!repeating)
                 foreach(var profile in new[]{Profile,LifeProfile,CombatProfile,MatchProfile,TrooperProfile,TeamProfile,RosterProfile,ParticipantPaletteProfile,CutterProfile,DeathProfile,RocketEffectsProfile})
                 {
@@ -740,6 +749,7 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<damageVignettes.Length;seat++)
                 damageVignettes[seat]?.Bind(seat<frozenSeatCount?Session:null,seat<frozenSeatCount?Composition.ParticipantAt(seat):-1,frozenMovement);
             Session.Died+=OnMatchDeath;
+            Session.Respawned+=OnMatchRespawn;
             BindShotFeedback();
             foreach(var view in standings) view.SwapTeamColors=frozenSwappedColors;
             persistentStandings.SwapTeamColors=results.SwapTeamColors=frozenSwappedColors;

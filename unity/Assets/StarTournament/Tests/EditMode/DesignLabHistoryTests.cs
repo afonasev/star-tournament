@@ -74,7 +74,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [TestCase(false)][TestCase(true)] public void GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(bool beforeVignette)
         {
-            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null)).Select(p=>p.BeforeAudio()).ToList();
+            var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadLook",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke((ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p.BeforeFootstepMix(),null),null)).Select(p=>p.BeforeAudio()).ToList();
             if(beforeVignette)old.Profiles=old.Profiles.Select(p=>p.BeforeDamageVignette()).ToList();
             Assert.That(old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId).Version,Is.EqualTo(beforeVignette?7:8));
             var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
@@ -89,6 +89,18 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get(GamepadLookSettings.VerticalPath),Is.EqualTo(90));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath),Is.False);
+        }
+        [Test]public void GamepadTapThresholdAppendsCompatibleRevisionAndKeepsPriorSnapshotImmutable()
+        {
+            var old=Shipped();int index=old.Profiles.FindIndex(p=>p.Id==ProvingProfile.DefaultId);
+            old.Profiles[index]=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(old.Profiles[index],null);
+            var history=new DesignLabHistory(path,old);Assert.That(history.StorageError,Is.Null);history.Create("До LT tap");
+            var prior=history.Selected;string priorJson=JsonUtility.ToJson(prior.Snapshot);string priorHash=prior.Hash;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Descriptors.Any(d=>d.Path=="input.gamepadTapAimThresholdSeconds"),Is.True);
+            Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadTapAimThresholdSeconds"),Is.EqualTo(.22f));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Hash==priorHash);
+            Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(priorJson));
         }
         static LabBundle BeforeRebalance(LabBundle bundle)
         {bundle.Profiles=bundle.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList();return bundle;}

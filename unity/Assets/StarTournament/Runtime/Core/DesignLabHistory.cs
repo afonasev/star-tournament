@@ -337,6 +337,7 @@ namespace StarTournament.ProvingGround
                 var withoutMovementAudio=Cached(p=>p.BeforeMovementAudio());
                 var withoutCompactMatchMenu=Cached(p=>p.BeforeCompactMatchMenu());
                 var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
+                var withoutGamepadTriggerAim=Cached(p=>p.BeforeGamepadTriggerAim());
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
                 var withoutDiscreteIdentityPanels=Cached(p=>p.BeforeDiscreteIdentityPanels());
@@ -365,6 +366,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCutterDamage))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutScoreboard))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadLook))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutDiscreteIdentityPanels))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutIdentitySurface))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,p=>p.Id==ProvingProfile.DeathPresentationId?previousDeath:p))));
@@ -381,6 +383,7 @@ namespace StarTournament.ProvingGround
                 // Add the current gameplay registry only after historical transforms: identical
                 // legacy schema keys can otherwise discard the actual pre-rebalance defaults.
                 var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
                 // Music can be absent alongside an earlier Pulse registry without changing gameplay defaults.
