@@ -1,0 +1,11 @@
+{
+  "platform": "PlayMode",
+  "result": "Failed(Child)",
+  "total": 227,
+  "passed": 225,
+  "failed": 2,
+  "skipped": 0,
+  "duration_seconds": 696.8496872,
+  "exit": 2,
+  "failures": "Two old fixed expectations: duration 5+1 and respawn after 4s. Runtime data unchanged; corrected fixtures will be rerun in full."
+}

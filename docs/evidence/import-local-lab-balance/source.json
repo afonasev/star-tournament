@@ -1,0 +1,142 @@
+{
+  "source_path": "/Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/design-lab-history-v2.json",
+  "source_file_sha256": "67ac035963063b5d180d52ac028f6feac7e5b1ebd59ece40bb040a55f133e77d",
+  "source_profile_id": "6f92b103f65e4493a4d64c6d692e614d",
+  "source_profile_name": "Default · копия",
+  "source_revision": 4,
+  "source_snapshot_hash": "0ad5f6be72052bfa6f9fa4d301547c1ba9655b00faaa852e33be6d0bfdfad17f",
+  "destination_sequence": 2,
+  "destination_revision": 2,
+  "changes": [
+    {
+      "path": "player.movement.maximumGroundSpeed",
+      "before": 7.0,
+      "after": 6.0
+    },
+    {
+      "path": "player.movement.groundAcceleration",
+      "before": 45.0,
+      "after": 40.0
+    },
+    {
+      "path": "player.movement.groundDeceleration",
+      "before": 32.0,
+      "after": 30.0
+    },
+    {
+      "path": "player.movement.gravity",
+      "before": 24.0,
+      "after": 22.0
+    },
+    {
+      "path": "player.movement.jumpSpeed",
+      "before": 6.999999046325684,
+      "after": 7.0
+    }
+  ],
+  "source_modified": false,
+  "release_publication": false,
+  "build": false,
+  "changes_from_previous_catalog": [
+    {
+      "path": "player.movement.maximumGroundSpeed",
+      "before": 9.0,
+      "after": 6.0
+    },
+    {
+      "path": "player.movement.groundAcceleration",
+      "before": 45.0,
+      "after": 40.0
+    },
+    {
+      "path": "player.movement.groundDeceleration",
+      "before": 32.0,
+      "after": 30.0
+    },
+    {
+      "path": "player.movement.gravity",
+      "before": 24.0,
+      "after": 22.0
+    },
+    {
+      "path": "player.movement.jumpSpeed",
+      "before": 8.5,
+      "after": 7.0
+    },
+    {
+      "path": "input.gamepadReturnDelay",
+      "before": 0.3499999940395355,
+      "after": 0.550000011920929
+    },
+    {
+      "path": "damageBoost.initialDelaySeconds",
+      "before": 15.0,
+      "after": 30.0
+    },
+    {
+      "path": "combat.killcamSeconds",
+      "before": 3.0,
+      "after": 5.0
+    },
+    {
+      "path": "rocket.startingAmmo",
+      "before": 20.0,
+      "after": 15.0
+    },
+    {
+      "path": "death.corpseSeconds",
+      "before": 8.0,
+      "after": 15.0
+    },
+    {
+      "path": "rocket.botMinimumDistance",
+      "before": 7.0,
+      "after": 6.5
+    },
+    {
+      "path": "match.durationMinutes",
+      "before": 5.0,
+      "after": 4.0
+    },
+    {
+      "path": "match.targetPoints",
+      "before": 3000.0,
+      "after": 2000.0
+    },
+    {
+      "path": "cutter.width",
+      "before": 0.029999999329447746,
+      "after": 0.05000000074505806
+    },
+    {
+      "path": "cutter.jitter",
+      "before": 0.07999999821186066,
+      "after": 0.10000000149011612
+    },
+    {
+      "path": "cutter.frequency",
+      "before": 24.0,
+      "after": 25.0
+    },
+    {
+      "path": "cutter.arcWidth",
+      "before": 0.004000000189989805,
+      "after": 0.009999999776482582
+    },
+    {
+      "path": "corpse.rifleSpeed",
+      "before": 3.75,
+      "after": 5.75
+    },
+    {
+      "path": "corpse.cutterSpeed",
+      "before": 0.375,
+      "after": 2.375
+    },
+    {
+      "path": "blood.markSize",
+      "before": 0.18000000715255737,
+      "after": 0.20000000298023224
+    }
+  ]
+}

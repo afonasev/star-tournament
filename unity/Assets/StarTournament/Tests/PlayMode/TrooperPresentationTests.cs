@@ -99,7 +99,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(view.gameObject.activeSelf,Is.False);
             var corpse=ground.GetComponentsInChildren<TrooperVisual>().Single(v=>v.name.StartsWith("corpse-"));
             Assert.That(corpse.State,Is.EqualTo("ragdoll"));Assert.That(corpse.Ragdoll,Is.Not.Null);Assert.That(corpse.GetComponentsInChildren<Collider>(),Is.Empty,"Physics proxies must stay outside the gameplay scene");
-            for(int i=0;i<200;i++)ground.Session.Tick(new LocalAction[3],.02f);
+            const float dt=.02f;
+            // Follow the frozen life timer instead of assuming a particular release's delay.
+            int beforeRespawnTicks=Mathf.Max(0,Mathf.CeilToInt((float)(ground.Session.Life(0).RespawnRemaining/dt))-2);
+            for(int i=0;i<beforeRespawnTicks;i++)ground.Session.Tick(new LocalAction[3],dt);
+            Assert.That(ground.Session.Life(0).Dead,Is.True,"No respawn before the configured delay");
+            Assert.That(ground.Session.Life(0).RespawnRemaining,Is.GreaterThan(0));
+            for(int i=0;i<3;i++)ground.Session.Tick(new LocalAction[3],dt);
             yield return null;
             Assert.That(view.gameObject.activeSelf,Is.True);Assert.That(view.GetComponent<TrooperVisual>().State,Is.EqualTo("aim"));
             ground.SendMessage("Pause","test");double sessionTime=ground.Session.Time;

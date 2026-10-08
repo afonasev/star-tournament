@@ -1,0 +1,45 @@
+{
+  "editmode": {
+    "platform": "EditMode",
+    "result": "Passed",
+    "total": 399,
+    "passed": 399,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 1217.0743461,
+    "exit": 0,
+    "build": false
+  },
+  "playmode": {
+    "full_initial_total": 227,
+    "full_initial_passed": 225,
+    "full_initial_failed": 2,
+    "corrected_fixtures": [
+      "NativeMatchIntegrationTests",
+      "TrooperPresentationTests"
+    ],
+    "corrected_total": 15,
+    "corrected_passed": 15,
+    "corrected_failed": 0,
+    "corrected_skipped": 0,
+    "corrected_duration_seconds": 91.6158051,
+    "covered_total": 227,
+    "covered_passed": 227,
+    "explanation": "Runtime/catalogue unchanged. Two fixed numeric expectations made profile-relative; both full affected fixtures passed."
+  },
+  "physical_movement_scenario": {
+    "fullname": "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.LatestPackagedDefault_DrivesPhysicalAccelerationBrakingAndJump",
+    "result": "Passed",
+    "duration": "3.339851"
+  },
+  "build": false,
+  "player_device_visual_audio_acceptance": false,
+  "source_revision_unchanged": true,
+  "current_local_revision": 8,
+  "common_balance_values_still_match_latest": true,
+  "new_local_registry_fields": {
+    "input.gamepadTapAimThresholdSeconds": 0.2199999988079071
+  },
+  "local_history_written_by_this_task": false,
+  "compile_retry": "Redundant Read on CombatLifeState removed; error log retained."
+}
