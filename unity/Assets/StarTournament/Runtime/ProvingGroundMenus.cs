@@ -262,6 +262,10 @@ namespace StarTournament.ProvingGround
         void RememberMenuDevice(InputAction.CallbackContext context)
         {
             if(phase!=Phase.MainMenu && phase!=Phase.Profiles && phase!=Phase.Settings && phase!=Phase.Lab)return;
+            // UI navigation and pointer clicks are PassThrough actions: releases also
+            // perform. A release must not replace the device that submitted the menu.
+            if(context.action==menuMoveAction && context.ReadValue<Vector2>()==Vector2.zero)return;
+            if(context.action==menuClickAction && !context.ReadValueAsButton())return;
             var device=context.control?.device;
             if(device is Mouse)device=Keyboard.current;
             if(device is Keyboard || device is Gamepad)menuDevice=device;

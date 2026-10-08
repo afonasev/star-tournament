@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.8477659">
+  <test-suite type="TestSuite" id="1281" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="219" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.847766" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1273" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="219" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.842693" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="83901" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1274" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="219" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.841674" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1275" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="219" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.840619" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1276" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="219" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.839651" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1277" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="166" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.838134" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1086" name="DefaultRosterTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests" classname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:11Z" duration="6.833411" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1087" name="GamepadEntryUsesSubmittingPadAndBackKeepsDraftButNewMatchResets" fullname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.GamepadEntryUsesSubmittingPadAndBackKeepsDraftButNewMatchResets" methodname="GamepadEntryUsesSubmittingPadAndBackKeepsDraftButNewMatchResets" classname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests" runstate="Runnable" seed="906114096" result="Failed" start-time="2026-10-08 13:18:04Z" end-time="2026-10-08 13:18:09Z" duration="5.315628" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[Unhandled log message: '[Exception] InvalidDataException: Снимок или hash повреждён: missing=achievement.minimumBeamSeconds,achievement.minimumShots,match.ffaTargetDefault,match.teamTargetDefault; extra=veteran-case-tall.position.x,veteran-case-tall.position.y,veteran-case-tall.position.z,veteran-case-tall.size.x,veteran-case-tall.size.y,veteran-case-tall.size.z,veteran-case-tall.rotation.x,veteran-case-tall.rotation.y,veteran-case-tall.rotation.z,veteran-case-low.position.x,veteran-case-low.position.y,veteran-case-low.position.z,veteran-case-low.size.x,veteran-case-low.size.y,veteran-case-low.size.z,veteran-case-low.rotation.x,veteran-case-low.rotation.y,veteran-case-low.rotation.z,veteran-service-cabinet.position.x,veteran-service-cabinet.position.y,veteran-service-cabinet.position.z,veteran-service-cabinet.size.x,veteran-service-cabinet.size.y,veteran-service-cabinet.size.z,veteran-service-cabinet.rotation.x,veteran-service-cabinet.rotation.y,veteran-service-cabinet.rotation.z'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                    <stack-trace><![CDATA[StarTournament.ProvingGround.DesignLabHistory.ValidateFile (StarTournament.ProvingGround.LabHistoryFile file, System.Boolean validateSnapshots) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:436)
+StarTournament.ProvingGround.DesignLabHistory.ValidateReleases () (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:202)
+StarTournament.ProvingGround.DesignLabHistory..ctor (System.String path, StarTournament.ProvingGround.LabBundle shipped, System.Action`2[T1,T2] atomicPublish, StarTournament.ProvingGround.LabReleaseCatalog releases, System.Boolean resetToLatestDefault, System.Boolean persistMigration) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:166)
+StarTournament.ProvingGround.ProvingGround.InitializeDesignLab () (at Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:52)
+StarTournament.ProvingGround.ProvingGround.Start () (at Assets/StarTournament/Runtime/ProvingGround.cs:191)
+
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[InvalidDataException: Снимок или hash повреждён: missing=achievement.minimumBeamSeconds,achievement.minimumShots,match.ffaTargetDefault,match.teamTargetDefault; extra=veteran-case-tall.position.x,veteran-case-tall.position.y,veteran-case-tall.position.z,veteran-case-tall.size.x,veteran-case-tall.size.y,veteran-case-tall.size.z,veteran-case-tall.rotation.x,veteran-case-tall.rotation.y,veteran-case-tall.rotation.z,veteran-case-low.position.x,veteran-case-low.position.y,veteran-case-low.position.z,veteran-case-low.size.x,veteran-case-low.size.y,veteran-case-low.size.z,veteran-case-low.rotation.x,veteran-case-low.rotation.y,veteran-case-low.rotation.z,veteran-service-cabinet.position.x,veteran-service-cabinet.position.y,veteran-service-cabinet.position.z,veteran-service-cabinet.size.x,veteran-service-cabinet.size.y,veteran-service-cabinet.size.z,veteran-service-cabinet.rotation.x,veteran-service-cabinet.rotation.y,veteran-service-cabinet.rotation.z
+StarTournament.ProvingGround.DesignLabHistory.ValidateFile (StarTournament.ProvingGround.LabHistoryFile file, System.Boolean validateSnapshots) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:436)
+StarTournament.ProvingGround.DesignLabHistory.ValidateReleases () (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:202)
+StarTournament.ProvingGround.DesignLabHistory..ctor (System.String path, StarTournament.ProvingGround.LabBundle shipped, System.Action`2[T1,T2] atomicPublish, StarTournament.ProvingGround.LabReleaseCatalog releases, System.Boolean resetToLatestDefault, System.Boolean persistMigration) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:166)
+StarTournament.ProvingGround.ProvingGround.InitializeDesignLab () (at Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:52)
+StarTournament.ProvingGround.ProvingGround.Start () (at Assets/StarTournament/Runtime/ProvingGround.cs:191)
+
+]]></output>
+                </test-case>
+                <test-case id="1088" name="KeyboardEntryCreatesOnlyOneGuestAndOneBot" fullname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.KeyboardEntryCreatesOnlyOneGuestAndOneBot" methodname="KeyboardEntryCreatesOnlyOneGuestAndOneBot" classname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests" runstate="Runnable" seed="1860180940" result="Failed" start-time="2026-10-08 13:18:09Z" end-time="2026-10-08 13:18:10Z" duration="0.831891" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[Unhandled log message: '[Exception] InvalidDataException: Снимок или hash повреждён: missing=achievement.minimumBeamSeconds,achievement.minimumShots,match.ffaTargetDefault,match.teamTargetDefault; extra=veteran-case-tall.position.x,veteran-case-tall.position.y,veteran-case-tall.position.z,veteran-case-tall.size.x,veteran-case-tall.size.y,veteran-case-tall.size.z,veteran-case-tall.rotation.x,veteran-case-tall.rotation.y,veteran-case-tall.rotation.z,veteran-case-low.position.x,veteran-case-low.position.y,veteran-case-low.position.z,veteran-case-low.size.x,veteran-case-low.size.y,veteran-case-low.size.z,veteran-case-low.rotation.x,veteran-case-low.rotation.y,veteran-case-low.rotation.z,veteran-service-cabinet.position.x,veteran-service-cabinet.position.y,veteran-service-cabinet.position.z,veteran-service-cabinet.size.x,veteran-service-cabinet.size.y,veteran-service-cabinet.size.z,veteran-service-cabinet.rotation.x,veteran-service-cabinet.rotation.y,veteran-service-cabinet.rotation.z'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                    <stack-trace><![CDATA[StarTournament.ProvingGround.DesignLabHistory.ValidateFile (StarTournament.ProvingGround.LabHistoryFile file, System.Boolean validateSnapshots) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:436)
+StarTournament.ProvingGround.DesignLabHistory.ValidateReleases () (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:202)
+StarTournament.ProvingGround.DesignLabHistory..ctor (System.String path, StarTournament.ProvingGround.LabBundle shipped, System.Action`2[T1,T2] atomicPublish, StarTournament.ProvingGround.LabReleaseCatalog releases, System.Boolean resetToLatestDefault, System.Boolean persistMigration) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:166)
+StarTournament.ProvingGround.ProvingGround.InitializeDesignLab () (at Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:52)
+StarTournament.ProvingGround.ProvingGround.Start () (at Assets/StarTournament/Runtime/ProvingGround.cs:191)
+
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[InvalidDataException: Снимок или hash повреждён: missing=achievement.minimumBeamSeconds,achievement.minimumShots,match.ffaTargetDefault,match.teamTargetDefault; extra=veteran-case-tall.position.x,veteran-case-tall.position.y,veteran-case-tall.position.z,veteran-case-tall.size.x,veteran-case-tall.size.y,veteran-case-tall.size.z,veteran-case-tall.rotation.x,veteran-case-tall.rotation.y,veteran-case-tall.rotation.z,veteran-case-low.position.x,veteran-case-low.position.y,veteran-case-low.position.z,veteran-case-low.size.x,veteran-case-low.size.y,veteran-case-low.size.z,veteran-case-low.rotation.x,veteran-case-low.rotation.y,veteran-case-low.rotation.z,veteran-service-cabinet.position.x,veteran-service-cabinet.position.y,veteran-service-cabinet.position.z,veteran-service-cabinet.size.x,veteran-service-cabinet.size.y,veteran-service-cabinet.size.z,veteran-service-cabinet.rotation.x,veteran-service-cabinet.rotation.y,veteran-service-cabinet.rotation.z
+StarTournament.ProvingGround.DesignLabHistory.ValidateFile (StarTournament.ProvingGround.LabHistoryFile file, System.Boolean validateSnapshots) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:436)
+StarTournament.ProvingGround.DesignLabHistory.ValidateReleases () (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:202)
+StarTournament.ProvingGround.DesignLabHistory..ctor (System.String path, StarTournament.ProvingGround.LabBundle shipped, System.Action`2[T1,T2] atomicPublish, StarTournament.ProvingGround.LabReleaseCatalog releases, System.Boolean resetToLatestDefault, System.Boolean persistMigration) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:166)
+StarTournament.ProvingGround.ProvingGround.InitializeDesignLab () (at Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:52)
+StarTournament.ProvingGround.ProvingGround.Start () (at Assets/StarTournament/Runtime/ProvingGround.cs:191)
+
+]]></output>
+                </test-case>
+                <test-case id="1089" name="MouseEntryAssignsKeyboardMouseInsteadOfCurrentGamepad" fullname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.MouseEntryAssignsKeyboardMouseInsteadOfCurrentGamepad" methodname="MouseEntryAssignsKeyboardMouseInsteadOfCurrentGamepad" classname="StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests" runstate="Runnable" seed="1961474404" result="Failed" start-time="2026-10-08 13:18:10Z" end-time="2026-10-08 13:18:11Z" duration="0.679497" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[Unhandled log message: '[Exception] InvalidDataException: Снимок или hash повреждён: missing=achievement.minimumBeamSeconds,achievement.minimumShots,match.ffaTargetDefault,match.teamTargetDefault; extra=veteran-case-tall.position.x,veteran-case-tall.position.y,veteran-case-tall.position.z,veteran-case-tall.size.x,veteran-case-tall.size.y,veteran-case-tall.size.z,veteran-case-tall.rotation.x,veteran-case-tall.rotation.y,veteran-case-tall.rotation.z,veteran-case-low.position.x,veteran-case-low.position.y,veteran-case-low.position.z,veteran-case-low.size.x,veteran-case-low.size.y,veteran-case-low.size.z,veteran-case-low.rotation.x,veteran-case-low.rotation.y,veteran-case-low.rotation.z,veteran-service-cabinet.position.x,veteran-service-cabinet.position.y,veteran-service-cabinet.position.z,veteran-service-cabinet.size.x,veteran-service-cabinet.size.y,veteran-service-cabinet.size.z,veteran-service-cabinet.rotation.x,veteran-service-cabinet.rotation.y,veteran-service-cabinet.rotation.z'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                    <stack-trace><![CDATA[StarTournament.ProvingGround.DesignLabHistory.ValidateFile (StarTournament.ProvingGround.LabHistoryFile file, System.Boolean validateSnapshots) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:436)
+StarTournament.ProvingGround.DesignLabHistory.ValidateReleases () (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:202)
+StarTournament.ProvingGround.DesignLabHistory..ctor (System.String path, StarTournament.ProvingGround.LabBundle shipped, System.Action`2[T1,T2] atomicPublish, StarTournament.ProvingGround.LabReleaseCatalog releases, System.Boolean resetToLatestDefault, System.Boolean persistMigration) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:166)
+StarTournament.ProvingGround.ProvingGround.InitializeDesignLab () (at Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:52)
+StarTournament.ProvingGround.ProvingGround.Start () (at Assets/StarTournament/Runtime/ProvingGround.cs:191)
+
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[InvalidDataException: Снимок или hash повреждён: missing=achievement.minimumBeamSeconds,achievement.minimumShots,match.ffaTargetDefault,match.teamTargetDefault; extra=veteran-case-tall.position.x,veteran-case-tall.position.y,veteran-case-tall.position.z,veteran-case-tall.size.x,veteran-case-tall.size.y,veteran-case-tall.size.z,veteran-case-tall.rotation.x,veteran-case-tall.rotation.y,veteran-case-tall.rotation.z,veteran-case-low.position.x,veteran-case-low.position.y,veteran-case-low.position.z,veteran-case-low.size.x,veteran-case-low.size.y,veteran-case-low.size.z,veteran-case-low.rotation.x,veteran-case-low.rotation.y,veteran-case-low.rotation.z,veteran-service-cabinet.position.x,veteran-service-cabinet.position.y,veteran-service-cabinet.position.z,veteran-service-cabinet.size.x,veteran-service-cabinet.size.y,veteran-service-cabinet.size.z,veteran-service-cabinet.rotation.x,veteran-service-cabinet.rotation.y,veteran-service-cabinet.rotation.z
+StarTournament.ProvingGround.DesignLabHistory.ValidateFile (StarTournament.ProvingGround.LabHistoryFile file, System.Boolean validateSnapshots) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:436)
+StarTournament.ProvingGround.DesignLabHistory.ValidateReleases () (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:202)
+StarTournament.ProvingGround.DesignLabHistory..ctor (System.String path, StarTournament.ProvingGround.LabBundle shipped, System.Action`2[T1,T2] atomicPublish, StarTournament.ProvingGround.LabReleaseCatalog releases, System.Boolean resetToLatestDefault, System.Boolean persistMigration) (at Assets/StarTournament/Runtime/Core/DesignLabHistory.cs:166)
+StarTournament.ProvingGround.ProvingGround.InitializeDesignLab () (at Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:52)
+StarTournament.ProvingGround.ProvingGround.Start () (at Assets/StarTournament/Runtime/ProvingGround.cs:191)
+
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.0649671">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.064967" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1483" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/Projects/star-tournament-sn30-match-entry/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.058882" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6422" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1484" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.056531" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1485" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.054355" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1486" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.052197" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1020" name="EightBitDoSn30ProInputTests" fullname="StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests" classname="StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.048610" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1021" name="BluetoothHidIsRecognizedAsAssignableGamepad" fullname="StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests.BluetoothHidIsRecognizedAsAssignableGamepad" methodname="BluetoothHidIsRecognizedAsAssignableGamepad" classname="StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests" runstate="Runnable" seed="53403014" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.032224" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="HidReportMapsMenuGameplayButtonsHatSticksAndTriggers" fullname="StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests.HidReportMapsMenuGameplayButtonsHatSticksAndTriggers" methodname="HidReportMapsMenuGameplayButtonsHatSticksAndTriggers" classname="StarTournament.ProvingGround.Tests.EightBitDoSn30ProInputTests" runstate="Runnable" seed="175824839" result="Passed" start-time="2026-10-08 13:33:19Z" end-time="2026-10-08 13:33:19Z" duration="0.010679" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

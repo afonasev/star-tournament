@@ -1,0 +1,11 @@
+scope=focused (iteration only; NOT a full delivery gate)
+platform=PlayMode
+filter=DefaultRosterTests
+revision=5d77b3e6abc1c4ea3b11edf5b7cc836c5b37003a
+ M Assets/StarTournament/Runtime/ProvingGroundMenus.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Tests/PlayMode/DefaultRosterTests.cs
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
