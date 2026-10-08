@@ -81,9 +81,9 @@ namespace StarTournament.ProvingGround
             var releaseLabel=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
             if(!string.IsNullOrEmpty(releaseLabel))
             {
-                Label(mainMenuScreen.transform,"installed-release",releaseLabel,22,new Vector2(.56f,.025f),new Vector2(.78f,.075f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-                var updateStatus=Label(mainMenuScreen.transform,"update-status","Проверка обновлений…",19,new Vector2(.56f,.08f),new Vector2(.78f,.13f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-                var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Обновить",new Vector2(.79f,.025f),new Vector2(.94f,.105f),()=>{});
+                Label(mainMenuScreen.transform,"installed-release",releaseLabel,18,new Vector2(.60f,.02f),new Vector2(.97f,.06f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
+                var updateStatus=Label(mainMenuScreen.transform,"update-status","",16,new Vector2(.60f,.135f),new Vector2(.97f,.17f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
+                var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Обновить",new Vector2(.80f,.072f),new Vector2(.97f,.13f),()=>{});
                 gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
             }
 
