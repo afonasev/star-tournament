@@ -26,6 +26,13 @@ namespace StarTournament.ProvingGround
                 if(pad.buttonWest.wasPressedThisFrame)AddBot();
             }
         }
+        void PollSetupStart()
+        {
+            if(setupStep!=2 || rosterEditing>=0 || pendingSeat>=0 ||
+                !input.Ready || !IdentitiesReady() || !ValidSetup())return;
+            if(Gamepad.all.Any(pad=>pad.startButton.wasPressedThisFrame))
+                start.onClick.Invoke();
+        }
         void StyleOperatorPause()
         {
             if(oldMenuColumn==null)return;

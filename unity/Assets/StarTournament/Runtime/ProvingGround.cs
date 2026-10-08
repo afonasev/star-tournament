@@ -478,6 +478,7 @@ namespace StarTournament.ProvingGround
             if (phase == Phase.Setup)
             {
                 bool ready=input.Ready; PollRosterShortcuts(); input.PollSetup();
+                PollSetupStart();
                 if(!ready && input.Ready && IdentitiesReady() && rosterEditing<0 && pendingSeat<0) { start.interactable=true; Select(setupStep==2?start:setupNext); }
             }
             else if (phase == Phase.Running && !diagnostic)

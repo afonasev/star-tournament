@@ -208,7 +208,7 @@ namespace StarTournament.ProvingGround
             setupNext.gameObject.SetActive(setupStep<2);
             start.gameObject.SetActive(phase==Phase.Setup && setupStep==2);
             start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
-            start.GetComponentInChildren<Text>().text="НАЧАТЬ МАТЧ";
+            start.GetComponentInChildren<Text>().text="НАЧАТЬ МАТЧ  ·  Start";
             start.GetComponentInChildren<Text>().fontSize=26;
             start.GetComponentInChildren<Text>().color=MenuInk;
             start.GetComponent<Image>().color=MenuGold;

@@ -60,6 +60,42 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             button("roster-card-"+(ground.LocalSeatCount+ground.SetupBotCount-1)).onClick.Invoke();
             Assert.That(events.currentSelectedGameObject.name,Is.EqualTo("roster-identity"));
         }
+        [UnityTest] public IEnumerator StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld()
+        {
+            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
+            var pad=pads[0]=InputSystem.AddDevice<Gamepad>();
+            System.Func<string,UnityEngine.UI.Button> button=name=>ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name==name);
+            typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,pad);
+            button("main-action-0").onClick.Invoke();
+            yield return PressBotMenu(pad,GamepadButton.Start);
+            Assert.That(ground.Running,Is.False,"Start must not skip the map step");
+            button("setup-next").onClick.Invoke();
+            yield return PressBotMenu(pad,GamepadButton.Start);
+            Assert.That(ground.Running,Is.False,"Start must not skip the rules step");
+            button("setup-next").onClick.Invoke();
+            yield return PressBotMenu(pad,GamepadButton.North);
+            var launch=button("Начать — четыре игрока");
+            Assert.That(launch.interactable,Is.True);
+            StringAssert.Contains("Start",launch.GetComponentInChildren<UnityEngine.UI.Text>().text);
+            button("roster-card-0").onClick.Invoke();
+            yield return PressBotMenu(pad,GamepadButton.Start);
+            Assert.That(ground.Running,Is.False,"Start must not bypass participant editing");
+            button("roster-done").onClick.Invoke();
+            ground.RemoveBot(0);yield return null;
+            yield return PressBotMenu(pad,GamepadButton.Start);
+            Assert.That(ground.Running,Is.False,"Start must reject a one-participant roster");
+            ground.AddBot();yield return null;
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(button("roster-card-0").gameObject);
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Start));
+            yield return null;yield return null;
+            Assert.That(ground.Running,Is.True,"Start must launch without selecting the launch button");
+            for(int i=0;i<5;i++){yield return null;Assert.That(ground.Running,Is.True,"Held Start must not pause the new match");}
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            yield return PressBotMenu(pad,GamepadButton.Start);
+            Assert.That(ground.Running,Is.False,"A fresh Start press still pauses the running match");
+        }
         [UnityTearDown]
         public IEnumerator Cleanup()
         {
