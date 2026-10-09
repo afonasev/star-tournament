@@ -40,7 +40,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Select));
-            InputSystem.QueueStateEvent(pads[1],new GamepadState().WithButton(GamepadButton.Select));yield return new WaitForFixedUpdate();yield return null;yield return null;
+            InputSystem.QueueStateEvent(pads[1],new GamepadState().WithButton(GamepadButton.Select));
+            // Apply the queued device event in Dynamic Update before the fixed tick consumes it.
+            yield return null;yield return new WaitForFixedUpdate();yield return null;yield return null;
             var tables=Field<NativeStandingsView[]>("standings");
             Assert.That(tables[0].Root.activeSelf,Is.True);Assert.That(tables[1].Root.activeSelf,Is.True);
             Assert.That(tables[0].PerspectiveParticipant,Is.EqualTo(0));Assert.That(tables[1].PerspectiveParticipant,Is.EqualTo(1));

@@ -178,6 +178,7 @@ namespace StarTournament.ProvingGround
                     a.LookDegrees += Vector2.Scale(appliedLook,new Vector2(settings.Horizontal,settings.Vertical))*deltaTime;
                     a.ManualLook=look.sqrMagnitude>0;
                     a.GamepadLookAssistance=settings.AutoLevel;
+                    a.GamepadReturnDelay=settings.ReturnDelay;a.HasGamepadReturnDelay=true;
                     a.GamepadLookLocked=ltHeld[i];
                     a.Jump |= pad.buttonSouth.wasPressedThisFrame;
                     CaptureFire(i, ref a, pad.rightTrigger.isPressed, pad.rightTrigger.wasPressedThisFrame);

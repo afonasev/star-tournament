@@ -57,7 +57,7 @@ namespace StarTournament.ProvingGround
             ground.GetComponentsInChildren<InputField>(true).Single(x=>x.name=="profile-name-input").text="QA Новый";
             Button("profile-create").onClick.Invoke();yield return null;
             var created=new PlayerProfileCatalog(args[profilesAt+1]).Profiles.Single(x=>x.Name=="QA Новый");
-            if(created.GamepadLookVersion!=1||created.GamepadHorizontal!=general.Horizontal||created.GamepadVertical!=general.Vertical||created.GamepadAutoLevel!=general.AutoLevel)throw new InvalidOperationException("New profile did not inherit general gamepad settings");
+            if(created.GamepadLookVersion!=2||created.GamepadHorizontal!=general.Horizontal||created.GamepadVertical!=general.Vertical||created.GamepadAutoLevel!=general.AutoLevel)throw new InvalidOperationException("New profile did not inherit general gamepad settings");
             Button("profile-settings").onClick.Invoke();yield return Capture("04a-new-profile-inherited");Button("settings-back").onClick.Invoke();yield return null;
             Button("profile-qa-camera-profile").onClick.Invoke();Button("profile-settings").onClick.Invoke();
             var horizontal=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-gamepad-horizontal");horizontal.value=123;

@@ -220,7 +220,7 @@ namespace StarTournament.ProvingGround
         }
         public void ClearInput()
         {
-            for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); beams[i].Stop(); releaseRequired[i] = true; }
+            for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); motors[i].CancelLookReturn(); beams[i].Stop(); releaseRequired[i] = true; }
         }
         public void Tick(LocalAction[] actions, float seconds)
         {

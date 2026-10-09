@@ -13,6 +13,18 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault(),ProvingProfile.CreateIndustrialTunnelsPresentation(),IndustrialTunnelsCatalog.AuthoringProfile(),ProvingProfile.CreateLunarPresentation(),LunarLaboratoryCatalog.AuthoringProfile()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [TestCase(13)][TestCase(14)]public void SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(int previousVersion)
+        {
+            var prior=typeof(ProvingProfile).GetMethod(previousVersion==14?"BeforeSmoothGamepadTap":"BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой LT");
+            var draft=history.Selected.Snapshot;draft.Set("input.gamepadReturnDelay",1.2f);history.Save(draft);
+            var previous=history.Selected;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadReturnDelay"),Is.EqualTo(1.2f));
+            Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadTapAimSmoothingSeconds"),Is.EqualTo(.18f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
+        }
         [Test]public void StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation()
         {
             var shipped=Shipped();shipped.Profiles.Insert(14,ProvingProfile.CreateBotEvaluationDefault());

@@ -84,6 +84,14 @@ namespace StarTournament.ProvingGround
                 Rect((RectTransform)line.transform,Vector2.zero,new Vector2(1,0));((RectTransform)line.transform).sizeDelta=new Vector2(0,1);line.GetComponent<Image>().color=new Color32(37,55,75,255);line.GetComponent<Image>().raycastTarget=false;
             }
         }
+        public static void FitResultsFrame(RectTransform frame)
+        {
+            // Full HD is the established UI design frame; 6% gutters are structural geometry.
+            var parent=(RectTransform)frame.parent;
+            frame.anchorMin=frame.anchorMax=frame.pivot=new Vector2(.5f,.5f);
+            frame.anchoredPosition=Vector2.zero;frame.sizeDelta=new Vector2(1920,1080);
+            frame.localScale=Vector3.one*Mathf.Min(parent.rect.width*.88f/1920,parent.rect.height*.88f/1080);
+        }
         static StandingsIcon Icon(Transform parent,string name,StandingsIcon.Symbol kind)
         {var go=new GameObject(name,typeof(RectTransform),typeof(StandingsIcon));go.transform.SetParent(parent,false);var i=go.GetComponent<StandingsIcon>();i.Kind=kind;i.raycastTarget=false;return i;}
         static Text Text(Transform parent,Font font,string name,int size,TextAnchor alignment)
