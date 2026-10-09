@@ -13,6 +13,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault(),ProvingProfile.CreateIndustrialTunnelsPresentation(),IndustrialTunnelsCatalog.AuthoringProfile(),ProvingProfile.CreateLunarPresentation(),LunarLaboratoryCatalog.AuthoringProfile()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test]public void StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation()
+        {
+            var shipped=Shipped();shipped.Profiles.Insert(14,ProvingProfile.CreateBotEvaluationDefault());
+            var old=BeforeRebalance(shipped);
+            var originalHistory=new DesignLabHistory(path,old);originalHistory.Create("Мои настройки");
+            var originalRevision=originalHistory.Selected;
+            var bytes=File.ReadAllBytes(path);
+            var loaded=new DesignLabHistory(path,shipped,releases:LabReleaseCatalog.Factory(shipped),resetToLatestDefault:true,persistMigration:false);
+            Assert.That(loaded.StorageError,Is.Null);
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            Assert.That(loaded.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));
+            var local=loaded.Profiles.Single(p=>p.Name=="Мои настройки");
+            Assert.That(local.Revisions.Single(r=>r.Number==originalRevision.Number).Hash,Is.EqualTo(originalRevision.Hash));
+            var migrated=local.Revisions.Last();Assert.That(loaded.Compatible(migrated),Is.True);
+            loaded.Select(local.Id,migrated.Number);loaded.Rename("Сохранённые настройки");
+            var restarted=new DesignLabHistory(path,shipped);
+            Assert.That(restarted.StorageError,Is.Null);
+            Assert.That(restarted.SelectedProfileName,Is.EqualTo("Сохранённые настройки"));
+            Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Hash));
+            Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==originalRevision.Number).Hash,Is.EqualTo(originalRevision.Hash));
+        }
         [Test]public void IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors()
         {
             var prior=typeof(ProvingProfile).GetMethod("BeforeIdentitySurface",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);

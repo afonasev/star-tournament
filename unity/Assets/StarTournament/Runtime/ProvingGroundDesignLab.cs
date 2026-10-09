@@ -52,7 +52,13 @@ namespace StarTournament.ProvingGround
             if(Array.IndexOf(args,"-colorIdentityReview")>=0&&colors>=0&&colors+1<args.Length)
                 historyPath=Path.Combine(args[colors+1],"qa-lab-history.json");
 #endif
-            labHistory=new DesignLabHistory(historyPath,CurrentLabBundle(),releases:LabReleaseCatalog.Load(),resetToLatestDefault:true);
+            var startupWatch=System.Diagnostics.Stopwatch.StartNew();
+            Debug.Log("Lab startup: validating history in memory");
+            // Startup selects the packaged Default; compatibility snapshots are validated
+            // in memory. Persist them with the next explicit Lab mutation, not a full history
+            // rewrite while the splash screen blocks the player.
+            labHistory=new DesignLabHistory(historyPath,CurrentLabBundle(),releases:LabReleaseCatalog.Load(),resetToLatestDefault:true,persistMigration:false);
+            Debug.Log("Lab startup: history ready in "+startupWatch.Elapsed.TotalSeconds.ToString("F2",CultureInfo.InvariantCulture)+" seconds");
             Application.wantsToQuit+=ProtectLabQuit;
             labBaseline=labHistory.Selected.Snapshot;labDraft=labBaseline.Clone();CacheLabIdentity();ApplySavedLabRevision();
         }
