@@ -1,0 +1,49 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/launcher/Launcher.csproj (in 136 ms).
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/payload-0.1.2/
+[20:15:40 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[20:15:40 INF] Velopack CLI 1.2.158, for distributing applications.
+[20:15:40 INF] Beginning to package Velopack release 0.1.2.
+[20:15:40 INF] Releases Directory: /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/releases
+[20:15:40 INF] Starting: Pre-process steps
+[20:15:40 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[20:15:40 INF] Shortcuts: None
+[20:15:41 INF] Complete: Pre-process steps
+[20:15:41 INF] Starting: Code-sign application
+[20:15:41 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[20:15:41 INF] Complete: Code-sign application
+[20:15:41 INF] Starting: Building portable package
+[20:15:41 INF] Starting: Building release 0.1.2
+[20:15:52 INF] Complete: Building portable package
+[20:15:53 INF] Complete: Building release 0.1.2
+[20:15:53 INF] Starting: Building setup package
+[20:15:53 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[20:15:53 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[20:15:53 INF] Complete: Building setup package
+[20:15:53 INF] Starting: Post-process steps
+[20:15:53 INF] Complete: Post-process steps
+[20:15:53 INF] Finished in 00:00:12.7588190.
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/maintenance/Maintenance.csproj (in 142 ms).
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/maintenance/bin/Release/net8.0/win-x64/StarTournamentMaintenance.dll
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/windows-layout-0.1.2/maintenance/
+Command line defined: "INPUT_DIR=/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/windows-layout-0.1.2"
+Command line defined: "VERSION=0.1.2"
+Command line defined: "OUTPUT_FILE=/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/releases/Star-Tournament-0.1.2-Windows-x64-Setup.exe"
+Processing script file: "/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/windows/installer.nsi" (UTF8)
+libc++abi: terminating due to uncaught exception of type std::bad_alloc: std::bad_alloc
+Windows installer build failed: Command '['/opt/homebrew/Cellar/makensis/3.13/bin/makensis', '-DINPUT_DIR=/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/windows-layout-0.1.2', '-DVERSION=0.1.2', '-DOUTPUT_FILE=/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/releases/Star-Tournament-0.1.2-Windows-x64-Setup.exe', '-INPUTCHARSET', 'UTF8', '/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/windows/installer.nsi']' died with <Signals.SIGABRT: 6>.
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/package.py", line 138, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/package.py", line 100, in main
+    subprocess.run(['python3',str(root/'windows/build_installer.py'),'--layout',str(layout),
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    '--version',a.version,'--output',str(installer)] + compiler,check=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['python3', '/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/windows/build_installer.py', '--layout', '/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/windows-layout-0.1.2', '--version', '0.1.2', '--output', '/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages/win-x64/releases/Star-Tournament-0.1.2-Windows-x64-Setup.exe', '--makensis', '/opt/homebrew/Cellar/makensis/3.13/bin/makensis']' returned non-zero exit status 1.

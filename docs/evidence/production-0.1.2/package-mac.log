@@ -1,0 +1,28 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/launcher/Launcher.csproj (in 231 ms).
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/distribution/launcher/bin/Release/net8.0/osx-arm64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages-final/osx-arm64/payload-0.1.2/
+[20:17:12 INF] Velopack CLI 1.2.158, for distributing applications.
+[20:17:12 INF] Beginning to package Velopack release 0.1.2.
+[20:17:12 INF] Releases Directory: /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages-final/osx-arm64/releases
+[20:17:12 INF] Starting: Pre-process steps
+[20:17:12 INF] Generating new '.app' bundle from a directory of application files.
+[20:17:13 INF] Complete: Pre-process steps
+[20:17:13 INF] Starting: Code-sign application
+[20:17:13 INF] No entitlements specified, using default: https://docs.microsoft.com/dotnet/core/install/macos-notarization-issues
+[20:17:13 WRN] Package will not be signed or notarized. Missing the --signAppIdentity and --notaryProfile options.
+[20:17:13 INF] Complete: Code-sign application
+[20:17:13 INF] Starting: Building portable package
+[20:17:13 INF] Starting: Building release 0.1.2
+[20:17:28 INF] Complete: Building release 0.1.2
+[20:17:28 INF] Starting: Building setup package
+[20:17:28 WRN] Package installer (.pkg) will not be Notarized. This is supported with the --signInstallIdentity and --notaryProfile arguments.
+[20:17:28 INF] Creating installer '.pkg' for app at '/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/velopack/temp.1/Star Tournament.app'
+[20:17:28 INF] Complete: Building portable package
+[20:17:41 WRN] No Installer signing identity provided. The '.pkg' will not be signed.
+[20:17:42 INF] Installer created successfully
+[20:17:42 INF] Complete: Building setup package
+[20:17:42 INF] Starting: Post-process steps
+[20:17:42 INF] Complete: Post-process steps
+[20:17:42 INF] Finished in 00:00:30.2855890.
+PACKAGED osx-arm64 0.1.2 /Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/packages-final/osx-arm64/releases

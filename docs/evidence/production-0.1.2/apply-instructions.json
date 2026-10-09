@@ -1,0 +1,60 @@
+{
+  "changeName": "ship-production-0-1-2",
+  "changeDir": "/Users/eaafonasev/Projects/star-tournament-planning/openspec/changes/ship-production-0-1-2",
+  "schemaName": "flow-quick",
+  "contextFiles": {
+    "proposal": [
+      "/Users/eaafonasev/Projects/star-tournament-planning/openspec/changes/ship-production-0-1-2/proposal.md"
+    ],
+    "tasks": [
+      "/Users/eaafonasev/Projects/star-tournament-planning/openspec/changes/ship-production-0-1-2/tasks.md"
+    ]
+  },
+  "progress": {
+    "total": 5,
+    "complete": 0,
+    "remaining": 5
+  },
+  "tasks": [
+    {
+      "id": "1",
+      "description": "Контракты и immutable game reuse.",
+      "done": false
+    },
+    {
+      "id": "2",
+      "description": "Paired packaging и PE icon resources.",
+      "done": false
+    },
+    {
+      "id": "3",
+      "description": "Public source/tag, draft и production Latest.",
+      "done": false
+    },
+    {
+      "id": "4",
+      "description": "Восемь readbacks, оба SDK и landing.",
+      "done": false
+    },
+    {
+      "id": "5",
+      "description": "Durable Git evidence, acceptance guide, cleanup.",
+      "done": false
+    }
+  ],
+  "state": "ready",
+  "instruction": "Follow the project flow-apply lifecycle. Check readiness and required specs before implementation.\nExecute tracked work through authorized publication and cleanup. Record explicit human acceptance immediately or in a later session, independently of cleanup. Use helper finalize after technical gates: accepted with a valid recorded decision, otherwise awaiting-acceptance. Record postponed review with defer-acceptance; do not block technical work or ask again until the user resumes review.\nOpenSpec artifact completion is not human acceptance. Persist blocking questions before pausing.",
+  "context": "Project: Star Tournament, a local-first 3D arena shooter for playing together\non a TV, with keyboard/mouse and gamepad input, local split-screen, and a\nfuture online mode. This is the one shared OpenSpec planning home; resolve\nworkflow/project.json before implementation and use store\nstar-tournament-planning on supported OpenSpec calls.\nAll artifacts must be written in Russian; keep OpenSpec structural headings\nand SHALL/MUST keywords in English.\ndocs/GAME_SPEC.md is the approved product and architecture overview. The\ncanonical current OpenSpec specs in this planning home hold reconciled\nrequirements; changes describe deltas. Do not invent unresolved design\nchoices: record them explicitly and obtain confirmation before build work.\nSmall, unambiguous fixes may bypass the full OpenSpec workflow; update\nGAME_SPEC when they change an approved decision. If the required workflow is\nuncertain, ask the user before implementation.\nKeep deterministic simulation, renderer, input, cameras, HUD/UI, networking,\nand asset pipeline separate. Persist serializable simulation state only.\nUnity is the executable runtime. Use native Player QA evidence for interaction\nchanges, including affected controller, focus and split-screen scenarios.\nBrowser playtests are historical evidence only. Automated QA is not human acceptance.\nUse flow-explore, flow-apply and flow-inbox lifecycle instructions. Agent\ncompletion is not human acceptance. Do not invent deployment commands or\ndeploy without the profile's recorded authorization.\n",
+  "operationGuidance": [
+    "Read the active change artifacts and the relevant GAME_SPEC section before editing.",
+    "Preserve unrelated working-tree changes and report concise test evidence.",
+    "Verify affected controller, keyboard/mouse, native focus and split-screen behavior in the native Player; retain physical-device gates when untested.",
+    "Include verification, canonical spec synchronization, merge, authorized publication, cleanup, and finalization before handoff.",
+    "Record explicit human acceptance with exact result ref, scope and source immediately or in a later session, independently of cleanup and worker ownership. Record postponed review with defer-acceptance and continue authorized technical work. After technical gates use helper finalize; do not infer acceptance or repeat a recorded decision."
+  ],
+  "root": {
+    "path": "/Users/eaafonasev/Projects/star-tournament-planning",
+    "source": "store",
+    "store_id": "star-tournament-planning"
+  }
+}

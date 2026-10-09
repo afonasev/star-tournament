@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "checks": [
+    {
+      "runtime": "win-x64",
+      "game_files": 173,
+      "exact_previous_bytes": true,
+      "new_package": "tech.afonasev.star-tournament.win-x64-0.1.2-win-x64-full.nupkg"
+    },
+    {
+      "runtime": "osx-arm64",
+      "game_files": 177,
+      "exact_previous_bytes": true,
+      "new_package": "tech.afonasev.star-tournament.osx-arm64-0.1.2-osx-arm64-full.nupkg"
+    }
+  ],
+  "inherited_QA": "production-0.1.1 full 413 EditMode/240 PlayMode with retained failure/retries, ordinary macOS MAIN_MENU_READY and original Lab history integrity. Same game bytes; no fresh Unity gate claimed."
+}

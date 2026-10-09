@@ -1,0 +1,28 @@
+{
+  "version": "0.1.2",
+  "date": "2026-10-09",
+  "runtime": "osx-arm64",
+  "channel": "production",
+  "revision": "38c146665e23b5110b761c7d7c45ec85aaad113e",
+  "dirty": "?? ../docs/evidence/production-0.1.2/\n",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "player": "/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/.local/production-012/players/StarTournament.app",
+  "playerMarkerSha256": "1d5f2776a24ce5c2b5d7c223f54faffa53183a049caaab8876dedc7f73c540e6",
+  "packages": [
+    {
+      "name": "Star-Tournament-0.1.2-macOS-arm64.pkg",
+      "size": 148154331,
+      "sha256": "be198b51fedd9c4b71adc6fc329b5b9f012be00d18a7feb24956ff2808080c57"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.2-osx-arm64-full.nupkg",
+      "size": 148611260,
+      "sha256": "a0237defa4699125dec481ad8cfed7115b93b9f531e50d821614f10511b73de2"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-osx-arm64-Portable.zip",
+      "size": 148806930,
+      "sha256": "16c1e9ee0692cd2c8c7bad42fd7596fd52cef8a6cf1aacb3c5ce2dbc17afef1a"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "result": "Passed",
+  "installer_sha256": "09b8ca0ce87abdf211ccd8e1495d5920494d10c1aa26ba5358dbdce4a8de32f0",
+  "approved_ico_sha256": "05b6204395e3e2b697cf73dbbd13fd2997de4fa8ead5ee137ccf0ebb59380bf7",
+  "groups": [
+    {
+      "resource": [
+        14,
+        103,
+        1033
+      ],
+      "icons": [
+        {
+          "width": 16,
+          "height": 16,
+          "sha256": "1e277be4d755d2b4ce03ddf1b8eb810e09099c39360ae7b771cd2081901e5e6b"
+        },
+        {
+          "width": 24,
+          "height": 24,
+          "sha256": "d9c3eece96e4d47ef4259f92ba113dd6fa85239421b30682025091cd8b9b1f27"
+        },
+        {
+          "width": 32,
+          "height": 32,
+          "sha256": "106833890afd09e86f72bc5e16b40454923107fc0a88ebee7ad109df1cc8bfe0"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "sha256": "38ba4696e2edea1226e705983ce0ec5244f33ff6b037e2364a180a156b27c7f1"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "sha256": "f00df80c514255a9f59abede87f162f5cecec3adf6f501ccc29d0279e9fb7920"
+        },
+        {
+          "width": 128,
+          "height": 128,
+          "sha256": "b42001e502b1ed255e49bf3585861f71e1b208b114d75b567fe1b7e936a6ed79"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "sha256": "76082604d017561f9665f50cadded6cec2e98060c7098261ac942fad5f955a59"
+        }
+      ]
+    }
+  ],
+  "physical_Explorer_wizard_acceptance": false
+}

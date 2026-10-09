@@ -1,0 +1,11 @@
+{
+  "baseline": "a434db61dd5086ac40d2a2dad702e7de532f7ddf",
+  "public_commit": "e497ca6f326db6c418a67654827dcd2945fae936",
+  "private_package_source": "38c146665e23b5110b761c7d7c45ec85aaad113e",
+  "files": [
+    "distribution/windows/installer.nsi",
+    "distribution/tests/test_windows_installer.py"
+  ],
+  "method": "GitHub Git API exact blobs, parent tree preserved, non-force FF ref update",
+  "pushed": true
+}

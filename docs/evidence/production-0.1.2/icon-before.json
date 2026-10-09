@@ -1,0 +1,10 @@
+{
+  "result": "ExpectedFailure",
+  "release": "v0.1.1",
+  "actual_PE_group": [
+    14,
+    103,
+    1033
+  ],
+  "reason": "First icon entry metadata differs from approved app ICO; old published PE confirms regression. Same verifier will require all entries and image bytes in 0.1.2."
+}
