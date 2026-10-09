@@ -22,6 +22,38 @@ namespace StarTournament.ProvingGround
         float health;
         double firedAt=double.NegativeInfinity, hitAt=double.NegativeInfinity;
         bool firstPerson, corpse;
+        ProvingProfile hitProfile;
+        Transform chest;
+        Vector3 hitAxis;
+        Quaternion impulseFrom=Quaternion.identity;
+        double impulseAt=double.NegativeInfinity;
+        public float HitWeight {get;private set;}
+        public void ConfigureHitFeedback(ProvingProfile tuning)
+        {
+            if(firstPerson)return;
+            hitProfile=tuning;
+            foreach(var bone in GetComponentsInChildren<Transform>(true))if(bone.name=="Chest"){chest=bone;break;}
+        }
+        public void Hit(DamageNotice notice)
+        {
+            if(corpse||firstPerson||hitProfile==null||!chest||hitProfile.Get("hit.enabled")==0||
+                !notice.Impact.Valid||notice.HealthLost+notice.ArmorLost<=0||notice.Time-impulseAt<hitProfile.Get("hit.interval"))return;
+            var direction=Vector3.ProjectOnPlane(notice.Impact.Direction,Vector3.up).normalized;
+            // A blast directly above/below still needs a readable, stable torso response.
+            if(direction.sqrMagnitude==0)direction=-transform.forward;
+            impulseFrom=Impulse(notice.Time);
+            hitAxis=transform.InverseTransformDirection(Vector3.Cross(Vector3.up,direction));impulseAt=notice.Time;
+        }
+        Quaternion Impulse(double clock)
+        {
+            if(hitProfile==null)return Quaternion.identity;
+            double elapsed=clock-impulseAt;float attack=hitProfile.Get("hit.attackSeconds"),tail=hitProfile.Get("hit.returnSeconds");
+            if(elapsed<0||elapsed>=attack+tail)return Quaternion.identity;
+            var peak=Quaternion.AngleAxis(hitProfile.Get("hit.degrees"),hitAxis);
+            return elapsed<attack?Quaternion.Slerp(impulseFrom,peak,(float)elapsed/attack):
+                Quaternion.Slerp(peak,Quaternion.identity,Mathf.SmoothStep(0,1,(float)(elapsed-attack)/tail));
+        }
+        public void ClearHit(){impulseAt=double.NegativeInfinity;impulseFrom=Quaternion.identity;HitWeight=0;}
         public ProvingProfile Tuning => profile;
         public DeathRagdoll Ragdoll {get;internal set;}
         public string State => Ragdoll!=null?"ragdoll":active<0?"uninitialized":ClipNames[active];
@@ -57,6 +89,7 @@ namespace StarTournament.ProvingGround
         {
             corpse=false; life=-1; active=-1; health=0;
             firedAt=hitAt=double.NegativeInfinity;
+            ClearHit();
             Array.Clear(weights,0,weights.Length); Array.Clear(starts,0,starts.Length);
             Sample(firstPerson?3:0,clock,true);
         }
@@ -64,13 +97,14 @@ namespace StarTournament.ProvingGround
         public void BeginDeath(double clock)
         {
             corpse=true; active=-1; Array.Clear(weights,0,weights.Length); Sample(6,clock,true);
+            ClearHit();
         }
         public void Render(double clock,Vector3 velocity,float currentHealth,int currentLife)
         {
             if(!graph.IsValid()) return;
             if(corpse) { Sample(6,clock,false); return; }
             if(life!=currentLife) { if(life>=0) ResetPose(clock); life=currentLife; health=currentHealth; }
-            if(currentHealth<health) { hitAt=clock; starts[5]=clock; }
+            if(currentHealth<health&&(firstPerson||hitProfile==null)) { hitAt=clock; starts[5]=clock; }
             health=currentHealth;
             float speed=new Vector2(velocity.x,velocity.z).magnitude;
             int next=speed<profile.Get("animation.walkThreshold")?(firstPerson?3:0):speed<profile.Get("animation.runThreshold")?1:2;
@@ -99,6 +133,14 @@ namespace StarTournament.ProvingGround
             }
             if(immediate) Array.Copy(weights,transitionFrom,weights.Length);
             graph.Evaluate(0);
+            if(!corpse&&chest&&hitProfile!=null)
+            {
+                var impulse=Impulse(clock);float degrees=hitProfile.Get("hit.degrees");
+                HitWeight=degrees>0?Quaternion.Angle(Quaternion.identity,impulse)/degrees:0;
+                // Apply after every absolute graph sample, never to the previous rendered pose.
+                var actorToParent=Quaternion.Inverse(chest.parent.rotation)*transform.rotation;
+                chest.localRotation=(actorToParent*impulse*Quaternion.Inverse(actorToParent))*chest.localRotation;
+            }
             if(!corpse)equipmentGrip?.Apply(profile);
             PoseRevision++;
         }

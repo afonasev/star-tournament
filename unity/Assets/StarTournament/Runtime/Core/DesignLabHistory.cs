@@ -448,6 +448,8 @@ namespace StarTournament.ProvingGround
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarRework))).ToArray();
                 if(this.shipped.Profiles.Any(p=>p.Id=="lunar-laboratory-authoring-v1"))
                     predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="lunar-laboratory-authoring-v1"&&p.Id!="lunar-laboratory-presentation-v1").ToList()})).ToArray();
+                // Adding the contact profile must not rewrite any previous immutable registry/hash.
+                predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.HitFeedbackPresentationId).ToList()})).ToArray();
                 if(historicalCache.Count>=2)historicalCache.Clear();
                 historicalCache.Add(key,predecessors);
                 return predecessors;
