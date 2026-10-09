@@ -1,0 +1,31 @@
+{
+  "feedback": "F1",
+  "baseline": "f9d93a4",
+  "scope": "caption removal and award presentation only",
+  "checks": {
+    "ui": {
+      "passed": 16
+    },
+    "affected": {
+      "passed": 4
+    }
+  },
+  "source_hashes": {
+    "unity/Assets/StarTournament/Runtime/NativeAchievementCardGraphic.cs": "6087ed55092d9ca645a8206f60409f4e1b89e6b9eb16b13d40ce1b5d4b0ffd5b",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementReview.cs": "b9f877b66caf0874e5971b57e63ace14b935d9c2598e3171606194a71cc6cce8",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementMedalGraphic.cs": "72f38dacb300a0b09b578d60e1c5a92c06d6bceb42612260fc5327adc60ebec0",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs": "3a3128efb98638eb77a53051e14c5371ebca65e8ba47aae92c93f4b063f64107",
+    "unity/Assets/StarTournament/Runtime/NativeStandingsView.cs": "1432ce3de1b2a6237949c7f2299ca071644a1b2727608841442e87219450b03a"
+  },
+  "editor": "6000.3.23f1",
+  "renders": "real Unity Editor PlayMode, FFA/teams, results/TAB at 1280x720 and 1920x1080",
+  "layout": "all 30 awards at 960x540, 1280x720, 1920x1080 and 3840x2160",
+  "deferred": [
+    "Player build",
+    "physical input acceptance",
+    "release",
+    "deploy"
+  ],
+  "generated_prepare_files": "QA only, restored before commit",
+  "ui_note": "UI gate before final fact alignment; final affected gate and renders after alignment"
+}

@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround
         readonly Text[] duels=new Text[10];
         readonly int[] rowParticipants=Enumerable.Repeat(-1,10).ToArray();
         readonly StandingsIcon[] duelHelmets=new StandingsIcon[2];
-        readonly Text duelVs, perspective;
+        readonly Text duelVs;
         NativeMatchSnapshot shownSnapshot;
         NativeMatchComposition shownComposition;
         CombatLifeState[] shownLives;
@@ -50,7 +50,6 @@ namespace StarTournament.ProvingGround
             Root=new GameObject(name,typeof(RectTransform),typeof(Image));Root.transform.SetParent(parent,false);
             Rect((RectTransform)Root.transform,min,max);Root.GetComponent<Image>().color=Base;Root.GetComponent<Image>().raycastTarget=false;
             title=Text(Root.transform,font,"title",size,TextAnchor.MiddleLeft);
-            perspective=Text(Root.transform,font,"perspective",size,TextAnchor.MiddleRight);
             var headerParent=Root.transform; // Reparent onto the header once it exists.
             duelVs=Text(headerParent,font,"duel-vs",size,TextAnchor.MiddleCenter);duelVs.text="VS";duelVs.color=Muted;
             for(int i=0;i<2;i++){duelHelmets[i]=Icon(headerParent,"duel-helmet-"+i,StandingsIcon.Symbol.Helmet);duelHelmets[i].color=Muted;}
@@ -124,10 +123,7 @@ namespace StarTournament.ProvingGround
             title.text=(teams?"Командный матч":"FFA")+(finished?" · РЕЗУЛЬТАТЫ":"");
             if(finished)title.text+=" · "+(teams?TeamName(state.WinnerTeam):SafeName(composition?.Participant(state.Winner).Name??("Игрок "+(state.Winner+1))))+" — победитель";
             title.fontSize=Mathf.Max(10,Mathf.RoundToInt(fontSize*factor));title.fontStyle=FontStyle.Bold;
-            Rect(perspective.rectTransform,new Vector2(.55f,1),Vector2.one);perspective.rectTransform.offsetMin=new Vector2(0,-TopInset-padding-toolbarHeight);perspective.rectTransform.offsetMax=new Vector2(-padding,-TopInset-padding);
-            perspective.text=hasPerspective?"Личный счёт: "+(SafeName(composition?.Participant(owner).Name??("Игрок "+(owner+1))))+" : соперник":"";
-            perspective.fontSize=Mathf.Max(9,Mathf.RoundToInt(title.fontSize*.7f));perspective.color=Muted;
-            title.rectTransform.anchorMax=new Vector2(hasPerspective?.55f:1,1);Fit(title);Fit(perspective);
+            Fit(title);
             for(int r=0;r<11;r++)
             {
                 var row=(RectTransform)cells[r,0].transform.parent;Rect(row,new Vector2(0,1),Vector2.one);

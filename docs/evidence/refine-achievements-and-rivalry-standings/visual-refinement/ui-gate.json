@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests and Editor Play Mode; Player gates deferred unless explicitly requested or necessary",
+  "revision": "f9d93a4e3038a55d41610048e41f2c7606c68e58",
+  "dirty": " M unity/Assets/StarTournament/Runtime/NativeAchievementMedalGraphic.cs\n M unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs\n M unity/Assets/StarTournament/Runtime/NativeStandingsView.cs\n M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? unity/Assets/StarTournament/Runtime/NativeAchievementCardGraphic.cs\n?? unity/Assets/StarTournament/Runtime/NativeAchievementCardGraphic.cs.meta\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/achievement-visual-refinement/star-tournament/unity/../.local/unity-evidence/focused-editmode.5N4KEu/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/achievement-visual-refinement/star-tournament/unity/../.local/unity-evidence/focused-playmode.YbEa0W/playmode.xml",
+      "passed": 13
+    }
+  ]
+}

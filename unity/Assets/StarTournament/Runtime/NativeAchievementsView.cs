@@ -29,16 +29,19 @@ namespace StarTournament.ProvingGround
             root.anchorMin=new Vector2(.06f,.25f);root.anchorMax=new Vector2(.94f,.43f);root.offsetMin=root.offsetMax=Vector2.zero;
             for(int i=0;i<4;i++)
             {
-                var tile=new GameObject("achievement-tile-"+i,typeof(RectTransform),typeof(Image));tile.transform.SetParent(Root.transform,false);
-                tiles[i]=(RectTransform)tile.transform;tiles[i].anchorMin=new Vector2(i*.25f,0);tiles[i].anchorMax=new Vector2((i+1)*.25f,1);tiles[i].offsetMin=new Vector2(3,3);tiles[i].offsetMax=new Vector2(-3,-3);
-                var panel=tile.GetComponent<Image>();panel.color=new Color32(19,31,47,250);panel.raycastTarget=false;
+                var tile=new GameObject("achievement-tile-"+i,typeof(RectTransform),typeof(NativeAchievementCardGraphic));tile.transform.SetParent(Root.transform,false);
+                tiles[i]=(RectTransform)tile.transform;tiles[i].anchorMin=new Vector2(i*.25f,0);tiles[i].anchorMax=new Vector2((i+1)*.25f,1);tiles[i].offsetMin=new Vector2(5,3);tiles[i].offsetMax=new Vector2(-5,-3);
+                var panel=tile.GetComponent<NativeAchievementCardGraphic>();panel.color=new Color32(24,37,55,255);panel.raycastTarget=false;
                 medals[i]=new GameObject("medal",typeof(RectTransform),typeof(NativeAchievementMedalGraphic)).GetComponent<NativeAchievementMedalGraphic>();
                 medals[i].transform.SetParent(tile.transform,false);medals[i].raycastTarget=false;Place(medals[i].rectTransform,new Vector2(.035f,.70f),new Vector2(.27f,.99f));
                 tiers[i]=Label(tile.transform,"tier",TextAnchor.MiddleLeft);
                 titles[i]=Label(tile.transform,"title",TextAnchor.MiddleLeft);
                 names[i]=Label(tile.transform,"participant",TextAnchor.MiddleLeft);
                 reasons[i]=Label(tile.transform,"reason",TextAnchor.UpperLeft);
-                facts[i]=Label(tile.transform,"fact",TextAnchor.LowerLeft);
+                facts[i]=Label(tile.transform,"fact",TextAnchor.UpperLeft);
+                var divider=new GameObject("fact-divider",typeof(RectTransform),typeof(Image));divider.transform.SetParent(tile.transform,false);
+                var dividerRect=(RectTransform)divider.transform;Place(dividerRect,new Vector2(.06f,.205f),new Vector2(.94f,.205f));dividerRect.sizeDelta=new Vector2(0,1);
+                divider.GetComponent<Image>().color=new Color32(54,74,95,255);divider.GetComponent<Image>().raycastTarget=false;
                 var frame=new GameObject("earned-stamp-frame",typeof(RectTransform));frame.transform.SetParent(tile.transform,false);
                 var frameRect=(RectTransform)frame.transform;frameRect.localRotation=Quaternion.Euler(0,0,-10);stampFrames[i]=CreateStampFrame(frame.transform);
                 stamps[i]=Label(tile.transform,"earned-stamp",TextAnchor.MiddleCenter);stamps[i].text="ЗАСЛУЖЕНО";stamps[i].fontStyle=FontStyle.Bold;stamps[i].color=new Color(1,1,1,.18f);stamps[i].transform.localRotation=Quaternion.Euler(0,0,-10);
@@ -62,8 +65,8 @@ namespace StarTournament.ProvingGround
                 var go=new GameObject("edge-"+i,typeof(RectTransform),typeof(Image));go.transform.SetParent(parent,false);
                 edges[i]=go.GetComponent<Image>();edges[i].raycastTarget=false;
                 var rect=(RectTransform)go.transform;
-                if(i<2)Place(rect,new Vector2(.01f,i==0?.94f:.01f),new Vector2(.99f,i==0?.99f:.06f));
-                else Place(rect,new Vector2(i==2?.01f:.96f,.04f),new Vector2(i==2?.06f:.99f,.96f));
+                if(i<2){Place(rect,new Vector2(0,i==0?1:0),new Vector2(1,i==0?1:0));rect.sizeDelta=new Vector2(0,1);}
+                else {Place(rect,new Vector2(i==2?0:1,0),new Vector2(i==2?0:1,1));rect.sizeDelta=new Vector2(1,0);}
             }
             return edges;
         }
@@ -86,9 +89,9 @@ namespace StarTournament.ProvingGround
                 bool active=i<count;tiles[i].gameObject.SetActive(active);if(!active)continue;
                 var award=awards[i];var info=composition?.Participant(award.Participant);
                 float left=(float)i/4,right=(float)(i+1)/4;
-                tiles[i].anchorMin=new Vector2(left,0);tiles[i].anchorMax=new Vector2(right,1);tiles[i].offsetMin=new Vector2(3,3);tiles[i].offsetMax=new Vector2(-3,-3);
-                Color metal=TierColor(award.Tier);medals[i].color=metal;medals[i].Theme=ThemeFor(award.Id);
-                tiers[i].text=TierName(award.Tier);tiers[i].color=metal;tiers[i].fontStyle=FontStyle.Bold;
+                tiles[i].anchorMin=new Vector2(left,0);tiles[i].anchorMax=new Vector2(right,1);tiles[i].offsetMin=new Vector2(5,3);tiles[i].offsetMax=new Vector2(-5,-3);
+                Color metal=TierColor(award.Tier);var card=tiles[i].GetComponent<NativeAchievementCardGraphic>();card.Accent=metal;card.SetVerticesDirty();medals[i].color=metal;medals[i].Theme=ThemeFor(award.Id);
+                tiers[i].text=TierName(award.Tier);tiers[i].color=metal;tiers[i].fontStyle=FontStyle.Normal;
                 titles[i].text=award.Name??string.Empty;titles[i].color=Ink;titles[i].fontStyle=FontStyle.Bold;
                 names[i].text=info?.Name??("Игрок "+(award.Participant+1));names[i].color=info?.Color??NativeStandingsView.Palette[award.Participant%NativeStandingsView.Palette.Length];names[i].fontStyle=FontStyle.Bold;
                 reasons[i].text=ExplanationFor(award.Id);reasons[i].color=Ink;
@@ -97,12 +100,12 @@ namespace StarTournament.ProvingGround
                 Place(titles[i].rectTransform,new Vector2(.30f,.70f),new Vector2(.96f,.89f));
                 Place(names[i].rectTransform,new Vector2(.06f,.58f),new Vector2(.94f,.70f));
                 Place(reasons[i].rectTransform,new Vector2(.06f,.32f),new Vector2(.94f,.58f));
-                Place(facts[i].rectTransform,new Vector2(.06f,.015f),new Vector2(.94f,.215f));
-                Place(stamps[i].rectTransform,new Vector2(.38f,.22f),new Vector2(.97f,.31f));stamps[i].color=new Color(metal.r,metal.g,metal.b,.18f);
-                Place(((RectTransform)stamps[i].transform.parent.Find("earned-stamp-frame")),new Vector2(.38f,.22f),new Vector2(.97f,.31f));
+                Place(facts[i].rectTransform,new Vector2(.06f,.015f),new Vector2(.94f,.18f));
+                var stampRect=stamps[i].rectTransform;Place(stampRect,new Vector2(.94f,.275f),new Vector2(.94f,.275f));stampRect.pivot=new Vector2(1,.5f);stampRect.sizeDelta=new Vector2(104,18);stamps[i].color=new Color(metal.r,metal.g,metal.b,.40f);
+                var stampFrame=(RectTransform)stamps[i].transform.parent.Find("earned-stamp-frame");Place(stampFrame,stampRect.anchorMin,stampRect.anchorMax);stampFrame.pivot=stampRect.pivot;stampFrame.sizeDelta=stampRect.sizeDelta;
                 foreach(var edge in stampFrames[i])edge.color=new Color(metal.r,metal.g,metal.b,.38f);
                 int size=Mathf.Max(12,Mathf.RoundToInt(baseFontSize*Mathf.Lerp(.64f,1f,Mathf.Clamp01(root.rect.height/128f))));
-                tiers[i].fontSize=Mathf.Max(12,size-2);titles[i].fontSize=size;names[i].fontSize=Mathf.Max(12,size-1);reasons[i].fontSize=Mathf.Max(12,size-1);facts[i].fontSize=Mathf.Max(12,size-3);stamps[i].fontSize=Mathf.Max(12,size-2);
+                tiers[i].fontSize=Mathf.Max(12,Mathf.RoundToInt(size*.60f));titles[i].fontSize=Mathf.Max(12,Mathf.RoundToInt(size*.88f));names[i].fontSize=Mathf.Max(12,Mathf.RoundToInt(size*.70f));reasons[i].fontSize=Mathf.Max(12,Mathf.RoundToInt(size*.72f));facts[i].fontSize=Mathf.Max(12,Mathf.RoundToInt(size*.60f));stamps[i].fontSize=12;
                 Fit(tiers[i]);FitWrapped(titles[i]);Fit(names[i]);FitWrapped(reasons[i]);FitWrapped(facts[i]);Fit(stamps[i]);
                 medals[i].SetAllDirty();
             }
@@ -170,6 +173,7 @@ namespace StarTournament.ProvingGround
         static Color TierColor(NativeAchievementTier tier)=>tier==NativeAchievementTier.Gold?Gold:tier==NativeAchievementTier.Silver?Silver:Bronze;
         static NativeAchievementMedalGraphic.ThemeKind ThemeFor(string id)
         {
+            if(id=="why-ammo")return NativeAchievementMedalGraphic.ThemeKind.Ammo;
             if(id=="jumper"||id=="cardio"||id=="jumped-to-end")return NativeAchievementMedalGraphic.ThemeKind.Movement;
             if(id=="pharmacy-magnate")return NativeAchievementMedalGraphic.ThemeKind.Heal;
             if(id=="all-mine"||id=="greed"||id=="collector"||id=="armor-didnt-help")return NativeAchievementMedalGraphic.ThemeKind.Bonus;
