@@ -55,8 +55,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(bone.localRotation,Is.EqualTo(frozen));Assert.That(visual.SampleTime,Is.EqualTo(time));
             visual.Fire(.4);visual.Render(.5,Vector3.zero,100,1);Assert.That(visual.State,Is.EqualTo("fire"));
             visual.Fire(.52);visual.Render(.54,Vector3.zero,100,1);Assert.That(visual.SampleTime,Is.EqualTo(.02).Within(.0001));
-            visual.Render(.6,Vector3.zero,90,1);Assert.That(visual.State,Is.EqualTo("hit"));
-            visual.Render(.7,Vector3.zero,80,1);Assert.That(visual.SampleTime,Is.Zero.Within(.0001));
+            visual.Hit(new DamageNotice(0,1,10,0,.6,new FatalImpact(WeaponId.Rifle,1,Vector3.forward,visual.transform.position)));
+            visual.Render(.63,Vector3.zero,90,1);Assert.That(visual.HitWeight,Is.GreaterThan(.9f));
+            visual.Render(.7,Vector3.zero,80,1);Assert.That(visual.HitWeight,Is.GreaterThan(0));
             visual.BeginDeath(.7);visual.Render(2.4,Vector3.zero,0,1);Assert.That(visual.State,Is.EqualTo("death"));
             Assert.That(ground.Session.Pose(0).Position,Is.EqualTo(pose.Position));
         }

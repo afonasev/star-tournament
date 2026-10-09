@@ -1,0 +1,123 @@
+{
+  "scope": "World animation/contact VFX + frozen Lab registry/history; no simulation/input/camera rules changed",
+  "checks": [
+    {
+      "name": "edit-initial",
+      "result": "Failed(Child)",
+      "total": 55,
+      "passed": 37,
+      "failed": 18,
+      "skipped": 0,
+      "duration_seconds": 337.3557366,
+      "xml": "checks/edit-initial.xml"
+    },
+    {
+      "name": "edit-disk-retry",
+      "result": "Passed",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 279.3713988,
+      "xml": "checks/edit-disk-retry.xml"
+    },
+    {
+      "name": "edit-final-profile",
+      "result": "Passed",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 28.7176692,
+      "xml": "checks/edit-final-profile.xml"
+    },
+    {
+      "name": "edit-projection",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 0.0278315,
+      "xml": "checks/edit-projection.xml"
+    },
+    {
+      "name": "play-affected",
+      "result": "Passed",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 104.8301135,
+      "xml": "checks/play-affected.xml"
+    },
+    {
+      "name": "play-final-visual",
+      "result": "Passed",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 52.8411491,
+      "xml": "checks/play-final-visual.xml"
+    },
+    {
+      "name": "play-final-direction",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 14.7807469,
+      "xml": "checks/play-final-direction.xml"
+    },
+    {
+      "name": "edit-integration-profile",
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 24.5701196,
+      "xml": "checks/edit-integration-profile.xml"
+    },
+    {
+      "name": "edit-integration-lt",
+      "result": "Passed",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 7.74912,
+      "xml": "checks/edit-integration-lt.xml"
+    },
+    {
+      "name": "play-integration",
+      "result": "Passed",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 94.1452737,
+      "xml": "checks/play-integration.xml"
+    }
+  ],
+  "coverage": "58 unique EditMode cases and 22 unique PlayMode cases, including 2 Editor visual capture cases. After final changes: profile 2/2, projection 1/1, seven feedback/capture cases 7/7, directional case 1/1. On integration baseline: profile/projection 3/3, LT history 2/2, affected PlayMode 20/20.",
+  "visual": "14 muted Editor PNGs and 36-frame 30fps GIF. Controlled damage notices for captures; real rifle armor/health events checked separately in PlayMode. 1/4-seat cameras.",
+  "environment_recovery": "Disk-full IOException only in 18 initial cases. Removed owned BurstCache and excluded duplicate historical evidence from owned worktree via sparse checkout. Cancelled only owned PlayMode process 21796 reading 153 MiB user history; subsequent runs used isolated STAR_TOURNAMENT_QA_LAB_HISTORY. User history unchanged (mtime 2026-10-08 23:57 local).",
+  "deferred": [
+    "Player build",
+    "release/distribution",
+    "deploy/installed game update",
+    "human visual/gameplay acceptance",
+    "TV/device/performance acceptance"
+  ],
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/TrooperVisual.cs": "d4826eec20a37e260e1e2b8a1eda24c1e37706a0f93b42a01c25accd771bc1a7",
+    "unity/Assets/StarTournament/Runtime/SkinnedContactPatch.cs": "c747663a08d6c0d4d59a3f0331a79c87ecd76f288255e0337def0a1e6e9623e4",
+    "unity/Assets/StarTournament/Runtime/HitFeedbackPresentation.cs": "a749f45f51f852170b556d4951f390b6810f65b7d13fe441ef7b0d1d3816f45d",
+    "unity/Assets/StarTournament/Runtime/Core/HitFeedbackProfile.cs": "a4a5534f7b796969f823aa9626cb11e54932e83e239cf9260336bcc1129331ae"
+  },
+  "evidence_format": "Log/XML trailing whitespace normalized without changing diagnostic contents.",
+  "integration_baseline": "27ab7a3 — results/cursor changes; both documentation decisions preserved. Rechecked hit profile/projection 3/3, LT history 2/2 and all 20 affected PlayMode cases."
+}
