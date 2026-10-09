@@ -3,9 +3,10 @@ using UnityEngine.UI;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Authored vector glyphs, independent of installed font/emoji coverage.</summary>
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class StandingsIcon : MaskableGraphic
     {
-        public enum Symbol { Crosshair, Handshake, Skull, Outgoing, Incoming, Star, Pulse, Crown, Human, Bot, Shield, Fixture, Percent }
+        public enum Symbol { Crosshair, Handshake, Skull, Outgoing, Incoming, Star, Pulse, Crown, Human, Bot, Shield, Fixture, Percent, Helmet }
         Symbol symbol;
         public Symbol Kind { get=>symbol; set{symbol=value;SetVerticesDirty();} }
         protected override void OnPopulateMesh(VertexHelper mesh)
@@ -32,6 +33,9 @@ namespace StarTournament.ProvingGround
                 case Symbol.Human: Path(mesh,new[]{V(.08f,.26f),V(.17f,.7f),V(.38f,.75f),V(.44f,.65f),V(.56f,.65f),V(.62f,.75f),V(.83f,.7f),V(.92f,.26f),V(.72f,.24f),V(.61f,.43f),V(.39f,.43f),V(.28f,.24f),V(.08f,.26f)});Line(mesh,.23f,.56f,.39f,.56f);Line(mesh,.31f,.48f,.31f,.64f);Ring(mesh,.72f,.57f,.025f);break;
                 case Symbol.Bot: Path(mesh,new[]{V(.17f,.22f),V(.17f,.71f),V(.83f,.71f),V(.83f,.22f),V(.17f,.22f)});Line(mesh,.5f,.71f,.5f,.88f);Line(mesh,.07f,.35f,.07f,.59f);Line(mesh,.93f,.35f,.93f,.59f);Ring(mesh,.34f,.51f,.045f);Ring(mesh,.66f,.51f,.045f);Line(mesh,.36f,.32f,.64f,.32f);break;
                 case Symbol.Shield: Path(mesh,new[]{V(.5f,.08f),V(.16f,.32f),V(.16f,.77f),V(.5f,.93f),V(.84f,.77f),V(.84f,.32f),V(.5f,.08f)});break;
+                case Symbol.Helmet:
+                    Path(mesh,new[]{V(.15f,.48f),V(.15f,.62f),V(.22f,.82f),V(.42f,.9f),V(.67f,.88f),V(.82f,.72f),V(.85f,.46f),V(.67f,.3f),V(.67f,.13f),V(.36f,.13f),V(.36f,.4f),V(.15f,.4f),V(.15f,.48f)});
+                    Path(mesh,new[]{V(.15f,.58f),V(.73f,.58f),V(.73f,.4f),V(.36f,.4f)});Line(mesh,.51f,.25f,.67f,.25f);break;
                 case Symbol.Percent: Ring(mesh,.25f,.75f,.13f);Ring(mesh,.75f,.25f,.13f);Line(mesh,.2f,.15f,.8f,.85f);break;
                 case Symbol.Fixture: Line(mesh,.18f,.18f,.82f,.82f);Line(mesh,.18f,.82f,.82f,.18f);break;
             }

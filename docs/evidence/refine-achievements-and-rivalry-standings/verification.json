@@ -1,0 +1,60 @@
+{
+  "scope": "UI-only",
+  "baseline": "b584526",
+  "checks": [
+    {
+      "name": "UI EditMode",
+      "passed": 3,
+      "file": "ui-editmode.xml"
+    },
+    {
+      "name": "UI PlayMode",
+      "passed": 13,
+      "file": "ui-playmode.xml"
+    },
+    {
+      "name": "core-editmode",
+      "passed": 41,
+      "file": "core-editmode.xml"
+    },
+    {
+      "name": "affected-playmode",
+      "passed": 8,
+      "file": "affected-playmode.xml"
+    },
+    {
+      "name": "render-playmode",
+      "passed": 1,
+      "file": "render-playmode.xml"
+    }
+  ],
+  "tested_files_sha256": {
+    "unity/Assets/StarTournament/Runtime/NativeStandingsSelection.cs": "41071819d7be970c9c6900a117e38bba1431b9726018c8f6045ae42e5f7b3860",
+    "unity/Assets/StarTournament/Runtime/NativeStandingsView.cs": "30eb587546d40cdde3be9a191c234048bffda3b9cc782feb2953d9abbbbc9a22",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementReview.cs": "b9f877b66caf0874e5971b57e63ace14b935d9c2598e3171606194a71cc6cce8",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementMedalGraphic.cs": "60899f3c198dbb1507c58c7b991f62760cbcd426bb5ebaacdd9be610b561527c",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs": "5c1c8691082b09ed131e7730463557bb1f7fc09e209e06113a60ec013eb0835f",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryInputTests.cs": "54384eda96b4e727954100e71adfc4a0f1fbcc1407f9ac73fb155d0f0772b7bb",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementsLayoutTests.cs": "8a1a06224968f8c5a91842d20b16384a8639c54889b7b748a32e9025b9d55c53",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementSessionTests.cs": "fc0c3b09cff52873b575dd803dc0733901361f973f0fa537bcc4e3d58cebcd14",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryPresentationTests.cs": "b04b189bf00daf846777b6eaac4d889b1b90e9aad10507ebbed3b8fcc0e28979",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementExplanationTests.cs": "9e08e5e76a696231bc123b143ca7057ebe84f1cf0e693c94b08ea334c3b61f08",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "88067e6607dc3ece9087724a51bc17f9f2b9a17a8e7f2b7727c38977959f3e9e",
+    "unity/Assets/StarTournament/Runtime/StandingsIcon.cs": "6dda4e5ef39b5439edd36d690bbe22a524f60b8dc28fb0b6bbc879a306d93418"
+  },
+  "renders": "Native Editor Play Mode fixtures, FFA/teams, results/TAB,1280x720 and1920x1080",
+  "screen_examples": "Illustrative snapshot values; no claim of natural match or human acceptance",
+  "prepare": "unity/tools.sh prepare; refreshed derived scene/profile, no Player build",
+  "deferred": [
+    "standalone Player",
+    "physical controller/TV acceptance",
+    "release/distribution",
+    "publication"
+  ],
+  "initial_repaired_failures": [
+    "Wrapped text measured by visible glyphs instead of unwrapped preferredWidth",
+    "WaitForFixedUpdate for held gameplay TAB input",
+    "CanvasRenderer required on authored vector graphics",
+    "Result action size retained when anchoring at bottom"
+  ]
+}
