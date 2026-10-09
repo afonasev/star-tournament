@@ -48,7 +48,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Duel(tables[0],"Участник 1").text,Is.EqualTo("1 : 0"));Assert.That(Duel(tables[1],"Участник 0").text,Is.EqualTo("0 : 1"));
             Assert.That(Duel(tables[0],"Участник 1").color.g,Is.GreaterThan(Duel(tables[0],"Участник 1").color.r));
             Assert.That(Duel(tables[1],"Участник 0").color.r,Is.GreaterThan(Duel(tables[1],"Участник 0").color.g));
-            InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return new WaitForFixedUpdate();yield return null;yield return null;
+            InputSystem.QueueStateEvent(pads[0],new GamepadState());
+            // Dynamic input capture precedes the simulation tick that copies held actions to the HUD.
+            yield return null;
+            Assert.That(pads[0].selectButton.isPressed,Is.False);
+            Assert.That(pads[1].selectButton.isPressed,Is.True);
+            yield return new WaitForFixedUpdate();yield return null;
             Assert.That(tables[0].Root.activeSelf,Is.False);Assert.That(tables[1].Root.activeSelf,Is.True);
         }
         IEnumerator Finish()
