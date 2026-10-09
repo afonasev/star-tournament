@@ -234,6 +234,7 @@ namespace StarTournament.ProvingGround
             }
             CreateInterface();
             phase=Phase.MainMenu;RefreshInterface();Select(mainBattleButton);
+            Debug.Log("STAR_TOURNAMENT_MAIN_MENU_READY");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
             if(!string.IsNullOrEmpty(CombatBowlReviewDirectory))gameObject.AddComponent<NativeCombatBowlReview>();
 #endif
