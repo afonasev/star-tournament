@@ -49,6 +49,55 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(received.HealthLost,Is.GreaterThan(0));Assert.That(ground.HitFeedbackForReview.BloodMarks,Is.GreaterThan(0));
             Assert.That(ground.HitFeedbackForReview.ShieldFlashes,Is.Zero);
         }
+        [UnityTest] public IEnumerator ActualShotgunPreservesIndividualTargetContactsAndSingleDamageNotice()
+        {
+            yield return Load();ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,2),0,0);ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,5),0,180);
+            ground.SendMessage("LateUpdate");var saved=ground.Session.Capture();
+            saved.Lives[0].ShotgunOwned=true;saved.Lives[0].ShotgunAmmo=20;saved.Lives[0].SelectedWeapon=WeaponId.Shotgun;saved.Lives[0].Ammo=20;
+            saved.Lives[1].Armor=100;ground.Session.Restore(saved);Advance(.02f);
+            DamageNotice received=default;ShotNotice shot=default;int count=0;
+            ground.Session.Damaged+=n=>{if(n.Participant==1){received=n;count++;}};ground.Session.ShotResolved+=n=>shot=n;
+            var actions=new LocalAction[ground.Session.ParticipantCount];actions[0].Fire=true;ground.Session.Tick(actions,.02f);
+            var hits=shot.Pellets.Where(p=>p.Contact==PelletContact.Participant&&p.TargetSeat==1&&p.TargetLife==received.Life).ToArray();
+            Assert.That(hits.Length,Is.GreaterThan(1));Assert.That(count,Is.EqualTo(1));Assert.That(received.HealthLost,Is.Zero);
+            Assert.That(received.Contacts.Count,Is.EqualTo(hits.Length));
+            for(int i=0;i<hits.Length;i++)
+            {Assert.That(received.Contacts[i].Point,Is.EqualTo(hits[i].Endpoint));Assert.That(Vector3.Distance(received.Contacts[i].Direction,hits[i].Direction.normalized),Is.LessThan(.0001f));}
+            Assert.That(received.Contacts.Select(c=>c.Point).Distinct().Count(),Is.GreaterThan(1));
+            Assert.That(ground.HitFeedbackForReview.ShieldFlashes,Is.GreaterThan(1));Assert.That(ground.HitFeedbackForReview.BloodMarks,Is.Zero);
+            Assert.That(100-ground.Session.Life(1).Armor,Is.EqualTo(received.ArmorLost).Within(.001f));
+        }
+        DamageNotice ShotgunNotice(float health,float armor,int count=3)
+        {
+            var chest=Bone("Chest");var points=new[]{chest.position+body.transform.right*.27f+Vector3.up*.12f,
+                chest.position-body.transform.right*.27f+Vector3.up*.12f,chest.position-Vector3.up*.25f};
+            var contacts=Enumerable.Range(0,count).Select(i=>new FatalImpact(WeaponId.Shotgun,2,-body.transform.forward,points[i%points.Length])).ToArray();
+            return new DamageNotice(1,ground.Session.Life(1).Life,health,armor,ground.Session.Time,contacts[0],Array.AsReadOnly(contacts));
+        }
+        [UnityTest] public IEnumerator ShotgunPatchesUseSeparatePositionsAndShotLevelRateLimitsWithinBudget()
+        {
+            yield return Load();var effects=ground.HitFeedbackForReview;string before=JsonUtility.ToJson(ground.Session.Capture());
+            var notice=ShotgunNotice(0,10);effects.Observe(notice);
+            Assert.That(effects.ShieldFlashes,Is.EqualTo(3));Assert.That(effects.BloodMarks,Is.Zero);
+            var patches=body.GetComponentsInChildren<SkinnedMeshRenderer>().Where(r=>r.name=="hit-contact-shield").ToArray();
+            Assert.That(patches.Select(r=>r.transform.parent.name+string.Join(";",r.sharedMesh.uv.Select(v=>v.ToString("F4")))).Distinct().Count(),Is.EqualTo(3),"Each patch has its own contact projection");
+            effects.Observe(notice);Assert.That(effects.ShieldFlashes,Is.EqualTo(3),"Repeated notice is limited as a shot, while all its pellets were admitted together");
+            effects.Clear();effects.Observe(ShotgunNotice(10,0));Assert.That(effects.BloodMarks,Is.EqualTo(3));Assert.That(effects.ShieldFlashes,Is.Zero);
+            effects.Observe(ShotgunNotice(10,0));Assert.That(effects.BloodMarks,Is.EqualTo(3));
+            effects.Clear();effects.Observe(ShotgunNotice(5,5,40));
+            Assert.That(effects.BloodMarks,Is.EqualTo((int)ground.HitFeedbackProfile.Get("hit.maxBloodMarksPerParticipant")));
+            Assert.That(effects.ShieldFlashes,Is.EqualTo((int)ground.HitFeedbackProfile.Get("hit.maxShieldFlashes")));
+            Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+            effects.Clear();Assert.That(effects.BloodMarks+effects.ShieldFlashes,Is.Zero);
+        }
+        [UnityTest] public IEnumerator CaptureShotgunSeparateContactPositions()
+        {
+            string directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SHOTGUN_CAPTURE");
+            if(string.IsNullOrEmpty(directory)){Assert.Ignore("Visual capture runs separately with graphics enabled");yield break;}
+            yield return Load();Directory.CreateDirectory(directory);var effects=ground.HitFeedbackForReview;
+            effects.Observe(ShotgunNotice(8,0));Advance(.03f);yield return Capture(Path.Combine(directory,"shotgun-health.png"));
+            effects.Clear();Advance(.3f);effects.Observe(ShotgunNotice(0,8));Advance(.03f);yield return Capture(Path.Combine(directory,"shotgun-shield.png"));
+        }
         [UnityTest] public IEnumerator ArmorAndHealthUseSeparateSkinEffectsAndPreserveAuthoritativeState()
         {
             yield return Load();var effects=ground.HitFeedbackForReview;string before=JsonUtility.ToJson(ground.Session.Capture());
