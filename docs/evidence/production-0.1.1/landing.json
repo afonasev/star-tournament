@@ -1,0 +1,10 @@
+{
+  "url": "https://robowar.afonasev.tech/",
+  "browser": "Codex IAB, background, reloaded after publication",
+  "visible_text": "Версия 0.1.1 · обновления доступны из игры",
+  "windows": "https://github.com/afonasev/star-tournament/releases/download/v0.1.1/Star-Tournament-0.1.1-Windows-x64-Setup.exe",
+  "mac": "https://github.com/afonasev/star-tournament/releases/download/v0.1.1/Star-Tournament-0.1.1-macOS-arm64.pkg",
+  "windows_size_label": "140 МБ",
+  "mac_size_label": "141 МБ",
+  "result": "Passed"
+}

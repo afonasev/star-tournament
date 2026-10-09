@@ -13,3 +13,9 @@ Authorized by user: «выкати все на прод». Both ordinary Players
 ## Separate acceptance
 
 Physical Windows/macOS installation, controller and sensory acceptance remain open. Human approval of previous UI screenshots does not approve changed award rule frequency. No natural-match frequency measurement is claimed. Production publication is separately authorized and does not install/update any local application.
+
+## Publication
+
+v0.1.1 published 2026-10-09T14:53:55Z, GitHub release 408016823, stable production Latest. Tag points to public `a434db61dd5086ac40d2a2dad702e7de532f7ddf`. All eight anonymous HTTPS asset readbacks match exact size/SHA256. Both live SDK routes followed production Latest, authenticated the signed manifest, downloaded the pinned full package and verified size/SHA256 for 0.1.1. Browser landing renders version 0.1.1 and both exact installer links. See publication.json, sdk-win.log, sdk-mac.log, source-tag.json and landing.json.
+
+Exact installers/full updates/manifests/custody files retained outside the worktree under `~/.local/share/star-tournament-distribution/retained/production-0.1.1`, total 583654526 bytes, for pending physical acceptance. Published immutable assets also remain available on GitHub.
