@@ -17,6 +17,7 @@ namespace StarTournament.ProvingGround
         readonly NativeAchievementMedalGraphic[] medals=new NativeAchievementMedalGraphic[4];
         public bool CompactLayout { get; private set; }
         public bool HasAwards { get; private set; }
+        public bool ContentLayout { get; set; }
         static readonly Color Ink=new Color32(231,239,250,255);
         static readonly Color Muted=new Color32(148,171,194,255);
         static readonly Color Bronze=new Color32(205,139,83,255), Silver=new Color32(190,207,224,255), Gold=new Color32(255,206,88,255);
@@ -83,7 +84,8 @@ namespace StarTournament.ProvingGround
             // One row keeps four complete explanations visible at 960x540. At wider sizes
             // cards gain height while preserving the same reading order and table boundary.
             float panelHeight=CompactLayout?.33f:.23f;
-            root.anchorMin=new Vector2(.06f,.245f);root.anchorMax=new Vector2(.94f,.245f+panelHeight);root.offsetMin=root.offsetMax=Vector2.zero;
+            if(ContentLayout)SetContentRect(root,1690,248,0);
+            else {root.anchorMin=new Vector2(.06f,.245f);root.anchorMax=new Vector2(.94f,.245f+panelHeight);root.offsetMin=root.offsetMax=Vector2.zero;}
             for(int i=0;i<4;i++)
             {
                 bool active=i<count;tiles[i].gameObject.SetActive(active);if(!active)continue;
@@ -110,6 +112,28 @@ namespace StarTournament.ProvingGround
                 Fit(tiers[i]);FitWrapped(titles[i]);Fit(names[i]);FitWrapped(reasons[i]);FitWrapped(facts[i]);Fit(stamps[i]);
                 medals[i].SetAllDirty();
             }
+        }
+
+        public void CenterResultsContent(RectTransform actions,NativeStandingsView table)
+        {
+            // Keep the established inner design width and award-card height. Only occupied
+            // content contributes to the frame height; gutters belong to the screen.
+            const float width=1690, awardHeight=248, gap=16;
+            var frame=(RectTransform)Root.transform.parent;
+            float cards=HasAwards?awardHeight+gap:0;
+            float height=table.ContentHeight+cards+gap+actions.rect.height;
+            NativeStandingsView.FitResultsFrame(frame,width,height);
+            float bottom=-height*.5f;
+            var actionSize=actions.sizeDelta;
+            SetContentRect(actions,actionSize.x,actionSize.y,bottom+actionSize.y*.5f);
+            float tableBottom=bottom+actionSize.y+gap+cards;
+            SetContentRect((RectTransform)table.Root.transform,width,table.ContentHeight,tableBottom+table.ContentHeight*.5f);
+            if(HasAwards)SetContentRect((RectTransform)Root.transform,width,awardHeight,bottom+actionSize.y+gap+awardHeight*.5f);
+        }
+        static void SetContentRect(RectTransform rect,float width,float height,float centerY)
+        {
+            rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(.5f,.5f);
+            rect.sizeDelta=new Vector2(width,height);rect.anchoredPosition=new Vector2(0,centerY);
         }
 
         public void PositionResultsTable(NativeStandingsView table)

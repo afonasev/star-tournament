@@ -1278,10 +1278,9 @@ namespace StarTournament.ProvingGround
             var resultMenu=(RectTransform)status.transform.parent;
             Transform resultParent=phase==Phase.Results?resultsFrame:overlay.transform;
             if(resultMenu.parent!=resultParent)resultMenu.SetParent(resultParent,false);
-            NativeStandingsView.FitResultsFrame(resultsFrame);
             results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition,phase==Phase.Results?Session.LifeStates:null);
+            achievementsView.ContentLayout=true;
             achievementsView.Show(phase==Phase.Results,Session.Match?.Read(),Composition);
-            achievementsView.PositionResultsTable(results);
             var menuRect=(RectTransform)status.transform.parent;
             Layout(menuRect,new Vector2(phase==Phase.Setup?.04f:.15f,phase==Phase.Results?.11f:.08f),new Vector2(phase==Phase.Setup?.51f:.85f,phase==Phase.Results?.11f:.92f));
             if(seatPanel)
@@ -1321,7 +1320,11 @@ namespace StarTournament.ProvingGround
             RefreshModernMenuUi();
             RefreshSeatPauseUi();
             StyleOperatorPause();
-            if(phase==Phase.Results)achievementsView.AdaptToActions((RectTransform)status.transform.parent,results);
+            if(phase==Phase.Results)
+            {
+                achievementsView.CenterResultsContent(menuRect,results);
+                results.Show(true,Session.Match.Read(),diagnostic||combatReview,Composition,Session.LifeStates);
+            }
             else achievementsView.PositionResultsTable(results);
         }
     }

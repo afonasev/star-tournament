@@ -92,7 +92,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(frame.rect.height*frame.localScale.y,Is.LessThanOrEqualTo(size.y*.88f+.1f));
                     var table=new NativeStandingsView(frame,font,20,"results-table",new Vector2(.06f,.535f),new Vector2(.94f,.94f))
                     {AllowSelection=true,PerspectiveParticipant=0};
-                    var awards=new NativeAchievementsView(frame,font,20);
+                    var awards=new NativeAchievementsView(frame,font,20){ContentLayout=true};
                     var actionRoot=new GameObject("results-actions",typeof(RectTransform));actionRoot.transform.SetParent(frame,false);
                     var actionRect=(RectTransform)actionRoot.transform;actionRect.sizeDelta=new Vector2(520,48);NativeAchievementsView.PlaceResultsActionsAtBottom(actionRect);
                     var repeat=CreateAction(actionRoot.transform,"repeat-action","Повторить матч").GetComponent<Button>();
@@ -103,7 +103,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     {
                         table.Show(true,snapshot,false,composition);awards.Show(true,snapshot,composition);awards.PositionResultsTable(table);
                         table.ConfigureResultNavigation(repeat,menu);
-                        awards.AdaptToActions(actionRect,table);
+                        awards.CenterResultsContent(actionRect,table);table.Show(true,snapshot,false,composition);
+                        Assert.That(frame.rect.height,Is.EqualTo(table.ContentHeight+248+32+48).Within(.1f));
+                        Assert.That(frame.anchoredPosition,Is.EqualTo(Vector2.zero));
+                        Assert.That(frame.localScale.x,Is.EqualTo(frame.localScale.y));
+                        Assert.That(frame.rect.width*frame.localScale.x,Is.LessThanOrEqualTo(size.x*.88f+.1f));
+                        Assert.That(frame.rect.height*frame.localScale.y,Is.LessThanOrEqualTo(size.y*.88f+.1f));
+                        Assert.That(table.Root.GetComponent<RectTransform>().rect.height,Is.EqualTo(table.ContentHeight).Within(.1f));
                         Canvas.ForceUpdateCanvases();yield return null;Canvas.ForceUpdateCanvases();
                         AssertVerticalGap(table.Root.GetComponent<RectTransform>(),awards.Root.GetComponent<RectTransform>(),"table and four-card band");
                         AssertVerticalGap(awards.Root.GetComponent<RectTransform>(),actionRect,"four-card band and both result actions");
@@ -165,7 +171,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                                 for(int count=1;count<=3;count++)
                                 {
                                     var fewer=JsonUtility.FromJson<NativeMatchSnapshot>(frozenSnapshot);fewer.Achievements=fewer.Achievements.Take(count).ToArray();
-                                    awards.Show(true,fewer,composition);awards.AdaptToActions(actionRect,table);table.Show(true,snapshot,false,composition);
+                                    awards.Show(true,fewer,composition);awards.CenterResultsContent(actionRect,table);table.Show(true,snapshot,false,composition);
                                     Canvas.ForceUpdateCanvases();yield return null;
                                     yield return Capture(host,canvas,size,teams,"awards-"+count+"-");
                                 }
@@ -178,6 +184,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                             Canvas.ForceUpdateCanvases();yield return null;
                             yield return Capture(host,canvas,size,teams,"tab-");
                         }
+                        var withoutAwards=JsonUtility.FromJson<NativeMatchSnapshot>(frozenSnapshot);
+                        withoutAwards.Achievements=null;
+                        awards.Show(true,withoutAwards,composition);
+                        awards.CenterResultsContent(actionRect,table);
+                        Assert.That(frame.rect.height,Is.EqualTo(table.ContentHeight+16+48).Within(.1f),"no empty award band");
                     }
                     finally
                     {

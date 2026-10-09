@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests and Editor Play Mode; Player gates deferred unless explicitly requested or necessary",
+  "revision": "648473c16a9a627fb5e7488cb6bc729a63b9267a",
+  "dirty": " M unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs\n M unity/Assets/StarTournament/Runtime/NativeStandingsView.cs\n M unity/Assets/StarTournament/Runtime/ProvingGround.cs\n M unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryPresentationTests.cs\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/center-results-content/\n?? unity/Assets/InitTestScene21c7631e-4328-4d10-ae31-a4a1235e2cc8.unity\n?? unity/Assets/InitTestScene21c7631e-4328-4d10-ae31-a4a1235e2cc8.unity.meta\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-results-center/unity/../.local/unity-evidence/focused-editmode.tJMZd5/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/Projects/star-tournament-results-center/unity/../.local/unity-evidence/focused-playmode.o4pAf9/playmode.xml",
+      "passed": 13
+    }
+  ]
+}
