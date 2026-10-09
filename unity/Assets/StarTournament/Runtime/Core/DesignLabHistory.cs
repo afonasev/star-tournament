@@ -248,6 +248,15 @@ namespace StarTournament.ProvingGround
         // a saved revision actually needs one, then share the exact immutable registry set.
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
+            // The preceding LT registries lack only the new timing/gesture descriptors.
+            // Match the trusted shipped projection first, without expanding all older schemas.
+            // Values and metadata still pass the unchanged ValidateFile checks below.
+            int previousVersion=sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DefaultId)?.Version??0;
+            if(previousVersion==14||previousVersion==13)
+            {
+                var previous=new LabBundle{Profiles=shipped.Profiles.Select(p=>previousVersion==14?p.BeforeSmoothGamepadTap():p.BeforeGamepadTriggerAim()).ToList()};
+                if(RegistryMatches(previous,sought))return new[]{previous};
+            }
             // Hash covers gameplay values; metadata is also trusted during migration.
             string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
                 string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
@@ -342,6 +351,7 @@ namespace StarTournament.ProvingGround
                 var withoutMovementAudio=Cached(p=>p.BeforeMovementAudio());
                 var withoutCompactMatchMenu=Cached(p=>p.BeforeCompactMatchMenu());
                 var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
+                var withoutSmoothGamepadTap=Cached(p=>p.BeforeSmoothGamepadTap());
                 var withoutGamepadTriggerAim=Cached(p=>p.BeforeGamepadTriggerAim());
                 var withoutGamepadLook=Cached(p=>p.BeforeGamepadLook());
                 var withoutUnifiedDamage=Cached(p=>p.BeforeUnifiedBodyDamage());
@@ -354,6 +364,7 @@ namespace StarTournament.ProvingGround
                 // complete metadata/hash before skipping the combinatorial legacy search.
                 // Values alone or matching path counts never establish this shortcut.
                 var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutSmoothGamepadTap))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
@@ -399,6 +410,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutCutterDamage))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutScoreboard))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadLook))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutSmoothGamepadTap))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutDiscreteIdentityPanels))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutIdentitySurface))));

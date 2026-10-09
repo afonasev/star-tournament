@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests and Editor Play Mode; Player gates deferred unless explicitly requested or necessary",
+  "revision": "f9ed5f9406e0ce46b0797b90fffa5b6ca64507b1",
+  "dirty": " M docs/GAME_SPEC.md\n M unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs\n M unity/Assets/StarTournament/Runtime/Core/LocalAction.cs\n M unity/Assets/StarTournament/Runtime/Core/ParticipantState.cs\n M unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs\n M unity/Assets/StarTournament/Runtime/GamepadLookSettings.cs\n M unity/Assets/StarTournament/Runtime/Input/SeatInputCoordinator.cs\n M unity/Assets/StarTournament/Runtime/Motor/CharacterMotor.cs\n M unity/Assets/StarTournament/Runtime/NativeCombatSession.cs\n M unity/Assets/StarTournament/Runtime/NativeGamepadCameraReview.cs\n M unity/Assets/StarTournament/Runtime/NativeStandingsView.cs\n M unity/Assets/StarTournament/Runtime/PlayerProfiles.cs\n M unity/Assets/StarTournament/Runtime/ProvingGround.cs\n M unity/Assets/StarTournament/Runtime/ProvingGroundControlSettings.cs\n M unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs\n M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs\n M unity/Assets/StarTournament/Tests/EditMode/GamepadLookSettingsTests.cs\n M unity/Assets/StarTournament/Tests/PlayMode/GamepadLookAssistanceTests.cs\n M unity/Assets/StarTournament/Tests/PlayMode/NativeCombatTests.cs\n M unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryPresentationTests.cs\n M unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? docs/evidence/results-cursor-polish/\n?? unity/Assets/InitTestScene5a9cd934-5303-4171-87d1-7cd614340e35.unity\n?? unity/Assets/InitTestScene5a9cd934-5303-4171-87d1-7cd614340e35.unity.meta\n?? unity/Assets/InitTestSceneb87e5d4f-cd4b-434b-a471-c4d7555e7a65.unity\n?? unity/Assets/InitTestSceneb87e5d4f-cd4b-434b-a471-c4d7555e7a65.unity.meta\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/results-cursor-polish/star-tournament/unity/../.local/unity-evidence/focused-editmode.e8GrFF/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/results-cursor-polish/star-tournament/unity/../.local/unity-evidence/focused-playmode.HDRKCD/playmode.xml",
+      "passed": 13
+    }
+  ]
+}

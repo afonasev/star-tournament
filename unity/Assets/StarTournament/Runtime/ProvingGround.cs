@@ -142,6 +142,7 @@ namespace StarTournament.ProvingGround
         bool nativeInputReview;
         ProvingArena arena;
         GameObject overlay;
+        RectTransform resultsFrame;
         Text status;
         Button start, resume, rebind, setupBack;
         public string CombatBowlReviewDirectory;
@@ -595,7 +596,7 @@ namespace StarTournament.ProvingGround
         void OnApplicationFocus(bool focus)
         {
             musicFocused=focus;
-            if(!focus)input.Clear();
+            if(!focus){input.Clear();Session?.ClearInput();}
             if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
@@ -1062,9 +1063,12 @@ namespace StarTournament.ProvingGround
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
-            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile){AllowSelection=true};
+            resultsFrame=new GameObject("results-frame",typeof(RectTransform)).GetComponent<RectTransform>();
+            resultsFrame.SetParent(overlay.transform,false);resultsFrame.anchorMin=resultsFrame.anchorMax=resultsFrame.pivot=new Vector2(.5f,.5f);
+            resultsFrame.sizeDelta=new Vector2(1920,1080);
+            results=new NativeStandingsView(resultsFrame,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile){AllowSelection=true};
             results.Root.SetActive(false);
-            achievementsView=new NativeAchievementsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"));
+            achievementsView=new NativeAchievementsView(resultsFrame,font,(int)Profile.Get("ui.fontSize"));
             var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
             settings.gameObject.name = "fps-setting";settings.gameObject.SetActive(false);
             fps = canvasObject.AddComponent<FpsDisplay>();
@@ -1269,6 +1273,10 @@ namespace StarTournament.ProvingGround
             mouseSensitivityPlus.GetComponentInChildren<Text>().text=sensitivityDescriptor.Label+": "+sensitivity.ToString("0.00")+" "+sensitivityDescriptor.Unit+"   +";
             durationButton.GetComponentInChildren<Text>().text="Длительность: "+Configuration.DurationMinutes+" мин   +";
             targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
+            var resultMenu=(RectTransform)status.transform.parent;
+            Transform resultParent=phase==Phase.Results?resultsFrame:overlay.transform;
+            if(resultMenu.parent!=resultParent)resultMenu.SetParent(resultParent,false);
+            NativeStandingsView.FitResultsFrame(resultsFrame);
             results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition,phase==Phase.Results?Session.LifeStates:null);
             achievementsView.Show(phase==Phase.Results,Session.Match?.Read(),Composition);
             achievementsView.PositionResultsTable(results);

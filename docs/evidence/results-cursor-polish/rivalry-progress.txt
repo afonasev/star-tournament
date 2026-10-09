@@ -1,0 +1,6 @@
+2026-10-09T18:18:38.2110280Z RUN Star Tournament Unity Proving Ground
+2026-10-09T18:18:38.2343400Z START StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.IndependentHeldTabsUseTheirSeatAndResetForARepeat
+2026-10-09T18:19:24.8225780Z END Passed StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.IndependentHeldTabsUseTheirSeatAndResetForARepeat
+2026-10-09T18:19:24.8233630Z START StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.ResultsNavigationSelectsRowsWithoutRepeatingAndReturnsToActions
+2026-10-09T18:20:00.5128680Z END Passed StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.ResultsNavigationSelectsRowsWithoutRepeatingAndReturnsToActions
+2026-10-09T18:20:00.5143450Z DONE Passed Star Tournament Unity Proving Ground

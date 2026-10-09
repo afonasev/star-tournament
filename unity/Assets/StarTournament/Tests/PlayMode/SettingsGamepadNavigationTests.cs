@@ -94,6 +94,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-mouse-sensitivity"));Assert.That(slider.value,Is.GreaterThan(before));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-gamepad-horizontal"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-gamepad-vertical"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-gamepad-return-delay"));
+            var delay=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-gamepad-return-delay");
+            delay.value=.8f;yield return Press(GamepadButton.DpadRight);
+            Assert.That(GamepadLookSettings.General(ground.Profile).ReturnDelay,Is.EqualTo(delay.value).Within(.001));
+            if(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null)
+            {
+                string evidence=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UI_EVIDENCE");
+                if(!string.IsNullOrWhiteSpace(evidence))
+                {System.IO.Directory.CreateDirectory(evidence);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(evidence,"control-settings.png"));}
+            }
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-auto-level"));
             var toggle=ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="settings-auto-level");var checkedBefore=toggle.isOn;
             yield return Press(GamepadButton.South);Assert.That(toggle.isOn,Is.EqualTo(!checkedBefore));

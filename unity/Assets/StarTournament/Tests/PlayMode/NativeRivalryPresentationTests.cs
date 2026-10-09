@@ -77,7 +77,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         public IEnumerator RivalryResultsRenderAndSelectWithoutChangingFrozenData()
         {
             foreach(bool teams in new[]{false,true})
-                foreach(var size in new[]{new Vector2(1280,720),new Vector2(1920,1080)})
+                foreach(var size in new[]{new Vector2(1280,720),new Vector2(1920,1080),new Vector2(3440,1440),new Vector2(3840,2160)})
                 {
                     var host=new GameObject("rivalry-presentation-test",typeof(RectTransform),typeof(Canvas));
                     var canvas=host.GetComponent<Canvas>();canvas.renderMode=RenderMode.WorldSpace;
@@ -85,10 +85,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     var eventSystemObject=new GameObject("rivalry-event-system",typeof(EventSystem));
                     var font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");var composition=Composition(teams);var snapshot=Snapshot(composition);
                     string frozenSnapshot=JsonUtility.ToJson(snapshot),frozenComposition=JsonUtility.ToJson(composition.Read());
-                    var table=new NativeStandingsView(host.transform,font,20,"results-table",new Vector2(.06f,.535f),new Vector2(.94f,.94f))
+                    var frame=new GameObject("results-frame",typeof(RectTransform)).GetComponent<RectTransform>();frame.SetParent(host.transform,false);
+                    NativeStandingsView.FitResultsFrame(frame);
+                    Assert.That(frame.localScale.x,Is.EqualTo(frame.localScale.y));
+                    Assert.That(frame.rect.width*frame.localScale.x,Is.LessThanOrEqualTo(size.x*.88f+.1f));
+                    Assert.That(frame.rect.height*frame.localScale.y,Is.LessThanOrEqualTo(size.y*.88f+.1f));
+                    var table=new NativeStandingsView(frame,font,20,"results-table",new Vector2(.06f,.535f),new Vector2(.94f,.94f))
                     {AllowSelection=true,PerspectiveParticipant=0};
-                    var awards=new NativeAchievementsView(host.transform,font,20);
-                    var actionRoot=new GameObject("results-actions",typeof(RectTransform));actionRoot.transform.SetParent(host.transform,false);
+                    var awards=new NativeAchievementsView(frame,font,20);
+                    var actionRoot=new GameObject("results-actions",typeof(RectTransform));actionRoot.transform.SetParent(frame,false);
                     var actionRect=(RectTransform)actionRoot.transform;actionRect.sizeDelta=new Vector2(520,48);NativeAchievementsView.PlaceResultsActionsAtBottom(actionRect);
                     var repeat=CreateAction(actionRoot.transform,"repeat-action","Повторить матч").GetComponent<Button>();
                     var menu=CreateAction(actionRoot.transform,"menu-action","В главное меню").GetComponent<Button>();
