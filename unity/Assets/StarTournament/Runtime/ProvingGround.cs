@@ -585,6 +585,7 @@ namespace StarTournament.ProvingGround
                         Session.Time<killNoticeUntil[i] ? killNoticeText[i] : "";
                     killNotice[i].color=!life.Dead && Session.Time<killNoticeUntil[i] && killNoticeAllied[i] ? Color.red : Color.white;
                 }
+                standings[i].PerspectiveParticipant=participant;
                 standings[i].Show(phase==Phase.Running && (actions[participant].ShowRoster || (reviewComposition!=null&&reviewShowStandings)),snapshot,diagnostic||combatReview,Composition,lifeStates);
                 names[i].color=Composition.Participant(participant).Color;
                 names[i].text=Composition.Participant(participant).Name+(snapshot?.Roster.Mode==NativeMatchMode.Teams ? " · "+NativeStandingsView.TeamName(snapshot.Roster.Teams[participant]) : "")+(diagnostic || combatReview ? " · DIAGNOSTIC" : "");
@@ -1019,7 +1020,7 @@ namespace StarTournament.ProvingGround
                 var r=cameras[i].rect;
                 standings[i]=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"standings-"+i,
                     new Vector2(r.xMin,r.yMin+r.height*.12f),new Vector2(r.xMax,r.yMin+r.height*.88f),Profile);
-                standings[i].Root.SetActive(false);
+                standings[i].FitToContent=true;standings[i].Root.SetActive(false);
             }
             persistentStandings=new NativeStandingsView(canvasObject.transform,font,(int)Profile.Get("ui.fontSize"),"persistent-standings",new Vector2(.5f,0),new Vector2(1,.5f),Profile);
             persistentStandings.Root.SetActive(false);
@@ -1061,7 +1062,7 @@ namespace StarTournament.ProvingGround
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
-            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile);
+            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile){AllowSelection=true};
             results.Root.SetActive(false);
             achievementsView=new NativeAchievementsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"));
             var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
@@ -1181,6 +1182,31 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Paused && phase!=Phase.Results)return;
             float width=Profile.Get("ui.matchMenuWidth"),height=Profile.Get("ui.matchMenuButtonHeight"),spacing=Profile.Get("ui.matchMenuSpacing");
             var group=menuRect.GetComponent<VerticalLayoutGroup>();
+            if(phase==Phase.Results)
+            {
+                group.enabled=false;bool reconnectNotice=!repeat.interactable;
+                status.gameObject.SetActive(reconnectNotice);
+                float noticeHeight=reconnectNotice?height*.8f:0;
+                float totalHeight=height+noticeHeight;
+                if(reconnectNotice)
+                {
+                    status.text="Подключите устройства для повтора или вернитесь в меню";
+                    Layout(status.rectTransform,new Vector2(0,height/totalHeight),Vector2.one);
+                }
+                foreach(var button in new[]{repeat,menu})
+                {
+                    var element=button.GetComponent<LayoutElement>()??button.gameObject.AddComponent<LayoutElement>();element.ignoreLayout=true;
+                    var rect=(RectTransform)button.transform;
+                    float x=button==repeat?0:.5f;
+                    Layout(rect,new Vector2(x,0),new Vector2(x+.5f,height/totalHeight));rect.offsetMin=new Vector2(button==repeat?0:spacing*.5f,0);rect.offsetMax=new Vector2(button==repeat?-spacing*.5f:0,0);
+                }
+                menuRect.sizeDelta=new Vector2(width*1.8f,totalHeight);
+                NativeAchievementsView.PlaceResultsActionsAtBottom(menuRect);
+                results.ConfigureResultNavigation(repeat,menu);return;
+            }
+            status.gameObject.SetActive(true);group.enabled=true;
+            foreach(var button in new[]{repeat,menu})if(button.GetComponent<LayoutElement>())button.GetComponent<LayoutElement>().ignoreLayout=false;
+            repeat.navigation=menu.navigation=new Navigation{mode=Navigation.Mode.Automatic};
             group.childForceExpandHeight=false;group.spacing=spacing;
             int buttons=0;
             foreach(var button in menuRect.GetComponentsInChildren<Button>())

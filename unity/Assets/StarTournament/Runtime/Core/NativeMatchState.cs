@@ -269,7 +269,9 @@ namespace StarTournament.ProvingGround
         bool ValidAward(NativeMatchSnapshot snapshot,NativeAchievement award,int count)
         {
             if(award.Participant<0||award.Participant>=count||!snapshot.AwardRecipients[award.Participant]||!NativeAchievementCatalog.IsKnown(award.Id)||!Enum.IsDefined(typeof(NativeAchievementTier),award.Tier)||string.IsNullOrEmpty(award.Name)||string.IsNullOrEmpty(award.Fact))return false;
-            var eligible=NativeAchievementCatalog.Eligible(snapshot.Standings,award.Participant,minimumShots,minimumBeamSeconds);
+            int version=award.RulesVersion==0?1:award.RulesVersion;
+            if(version!=1&&version!=NativeAchievementCatalog.Version)return false;
+            var eligible=NativeAchievementCatalog.Eligible(snapshot.Standings,award.Participant,minimumShots,minimumBeamSeconds,version);
             if(eligible.Length==0)return false;var highest=eligible.Max(candidate=>candidate.Tier);
             return award.Tier==highest&&eligible.Any(candidate=>candidate.Id==award.Id&&candidate.Tier==award.Tier&&candidate.Name==award.Name&&candidate.Fact==award.Fact);
         }
