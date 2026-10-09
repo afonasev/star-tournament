@@ -331,6 +331,7 @@ namespace StarTournament.ProvingGround
                 }
                 var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
                 var beforeMatchAchievements=Cached(p=>p.BeforeMatchAchievements());
+                var beforeBotMovement=Cached(p=>p.BeforeBotCombatMovement());
                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
                 var withoutCutterDamage=Cached(p=>p.BeforeCutterDamage());
@@ -349,6 +350,33 @@ namespace StarTournament.ProvingGround
                 var withoutPulseRefinement=Cached(p=>p.BeforePulseRefinement());
                 var withoutIdentitySurface=Cached(p=>p.BeforeIdentitySurface());
                 var beforeBloodIntensity=Cached(p=>p.BeforeBloodIntensityIncrease());
+                // Recent additive upgrades have an exact trusted registry. Prove the
+                // complete metadata/hash before skipping the combinatorial legacy search.
+                // Values alone or matching path counts never establish this shortcut.
+                var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
+                // Music can be absent alongside an earlier Pulse registry without changing gameplay defaults.
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusic))));
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));
+                // Blood defaults can be retuned independently of the gameplay registry upgrade.
+                // Include that exact combination without rewriting historical snapshots.
+                currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBotMovement)));
+                currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutEvaluation)));
+                var recentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity))).ToArray();
+                foreach(var registry in recentGameplay)
+                {
+                    if(!RegistryMatches(registry,sought))continue;
+                    // Gameplay hashes omit descriptor metadata. Compare the complete
+                    // trusted descriptors separately before taking the recent-schema path.
+                    var supplied=sought.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal);
+                    if(registry.Descriptors.Any(d=>JsonUtility.ToJson(d)!=JsonUtility.ToJson(supplied[d.Path])))continue;
+                    var trusted=registry.Clone();
+                    foreach(var descriptor in trusted.Descriptors)trusted.Set(descriptor.Path,sought.Get(descriptor.Path));
+                    if(trusted.Hash()!=sought.Hash())continue;
+                    historicalCache[key]=recentGameplay;return recentGameplay;
+                }
                 // Collapse exact duplicate registries after each additive branch. Delaying this to
                 // the end serializes the same historical profile thousands of times on Lab open.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
@@ -357,6 +385,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeBotMovement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutEvaluation))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutMusic))));
@@ -386,16 +415,6 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeTravelingRifle))));
                 // Add the current gameplay registry only after historical transforms: identical
                 // legacy schema keys can otherwise discard the actual pre-rebalance defaults.
-                var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
-                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
-                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
-                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeMatchAchievements))));
-                // Music can be absent alongside an earlier Pulse registry without changing gameplay defaults.
-                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusic))));
-                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));
-                // Blood defaults can be retuned independently of the gameplay registry upgrade.
-                // Include that exact combination without rewriting historical snapshots.
-                currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutEvaluation)));
                 predecessors=predecessors.Concat(currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity)))).ToArray();
                 var beforeTunnelWayfinding=Cached(p=>p.BeforeTunnelWayfinding());
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeTunnelWayfinding))).ToArray();
@@ -472,6 +491,10 @@ namespace StarTournament.ProvingGround
                         // Previous read-only values remain intact only in their historical revision.
                         if(next.IsAuthoring(d.Path)||next.IsDiagnostic(d.Path))continue;
                         float value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,old.Snapshot.Get(d.Path));
+                        // The packaged Default adopts this behavior update. Named local
+                        // profiles keep their tuning; original release snapshots stay intact.
+                        if(p.Id==ReleaseId&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&old.Snapshot.Profile(d.Path).Version<4)
+                            value=currentDescriptor.DefaultValue;
                         // Interpret the untouched v9/v10 step interval as the new shipped default.
                         // Historical snapshots remain byte-for-byte intact with their original hash.
                         if(d.Path=="audio.footstepDistanceMeters"&&old.Snapshot.Profile(d.Path).Version>=9&&old.Snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
