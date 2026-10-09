@@ -181,7 +181,7 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         })
 
     @unittest.skipUnless(shutil.which("makensis"), "makensis is not installed")
-    def test_modern_ui_expands_default_checked_finish_action(self):
+    def test_modern_ui_expands_branded_icons_and_checked_finish_actions(self):
         # POSIX makensis cannot emit an installer here; its preprocessor still validates UI macros.
         with tempfile.TemporaryDirectory(prefix="nsis-ppo-") as tmp:
             temp = Path(tmp)
@@ -200,6 +200,13 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
                 "-DVERSION=1.2.3", f"-DOUTPUT_FILE={temp / 'WindowsSetup.exe'}", str(script),
             ], check=False, text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
+        # Check the effective commands after MUI_INTERFACE expansion: direct Icon
+        # commands before the page macros are overwritten by Modern UI defaults.
+        for command in ("Icon", "UninstallIcon"):
+            paths = re.findall(r'^' + command + r' "([^"\n]+)"', result.stdout, re.MULTILINE)
+            self.assertTrue(paths, f"Missing expanded {command} command")
+            self.assertTrue(all(path.replace("\\", "/") == f"{layout}/app-icon.ico"
+                                for path in paths), paths)
         self.assertIn("Var mui.FinishPage.Run", result.stdout)
         self.assertIn("SendMessage $mui.FinishPage.Run 0x00F1 1 0", result.stdout)
         self.assertIn('Call "LaunchInstalledGame"', result.stdout)

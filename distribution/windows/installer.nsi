@@ -29,8 +29,9 @@ InstallDir "$PROGRAMFILES64\Star Tournament"
 InstallDirRegKey HKLM "${PRODUCT_KEY}" "InstallLocation"
 ShowInstDetails show
 ShowUninstDetails show
-Icon "${INPUT_DIR}\app-icon.ico"
-UninstallIcon "${INPUT_DIR}\app-icon.ico"
+; Modern UI applies its icon settings when the first page is inserted.
+!define MUI_ICON "${INPUT_DIR}\app-icon.ico"
+!define MUI_UNICON "${INPUT_DIR}\app-icon.ico"
 
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_RUN
