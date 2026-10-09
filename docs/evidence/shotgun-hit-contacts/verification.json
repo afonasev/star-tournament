@@ -1,0 +1,55 @@
+{
+  "baseline": "648473c16a9a627fb5e7488cb6bc729a63b9267a",
+  "scope": "transient shotgun contacts, skin effects; gameplay damage/snapshot and death contracts unchanged",
+  "checks": {
+    "platform": "PlayMode",
+    "result": "Passed",
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 87.8935057,
+    "test_names": [
+      "ActualRifleDamageUsesAuthoritativeImpactAndArmorOnlyHitDoesNotEmit",
+      "CapsFreezeRestoreAndExpiryArePresentationOnly",
+      "MarksHaveVariedSilhouettesAndTailsFollowSurfaceVelocity",
+      "SurfaceMeshStaysOnActualWallAndClipsAtItsEdge",
+      "AirborneCorpseKeepsPoseMomentumAndFreezesAtMatchClock",
+      "EveryRealWeaponReportsFatalContextBeforeLaterEffects",
+      "ActualShotgunPreservesIndividualTargetContactsAndSingleDamageNotice",
+      "ActualWeaponDamageDrivesShieldThenHealthEffects",
+      "ArmorAndHealthUseSeparateSkinEffectsAndPreserveAuthoritativeState",
+      "CaptureShotgunSeparateContactPositions",
+      "ContactBudgetPauseExpiryAndDeathCloneDoNotLeak",
+      "ShieldWorksWithBloodDisabledAndFourSeatsShareOneBudget",
+      "ShotgunPatchesUseSeparatePositionsAndShotLevelRateLimitsWithinBudget",
+      "TorsoReactsDirectionallyWithoutChangingFeetRootOrFrozenPose",
+      "AdditiveReloadOwnsAllRuntimeObjects",
+      "CurrentOccupancyBatchAndInvalidFloorAreSafe",
+      "DamageNoticeAndViewportPulseFollowActualLossAndLifecycle",
+      "FreshPressImmediatelyAfterRespawnIsAccepted",
+      "KillcamTracksOnlyKillerLifeAndAirborneCorpseFindsFloor",
+      "LtTapKeepsRtShotAndCameraOnTheSameInterpolatedDirection",
+      "MixedPelletsApplyProportionalDamageThroughSession",
+      "RealShotKillsDisablesCapsuleAndRespawnsFullLife",
+      "RespawnPrefersHiddenUpperFloorAndRechecksOccupiedWinner",
+      "RifleHoldAndSameTickSelectionUseDistinctAuthoritativeShots",
+      "ScenePhysicsWallBlocksShotAndDeadParticipantDoesNot",
+      "ShotNoticeCapturesEveryResolvedEndpointWithoutChangingDamage"
+    ]
+  },
+  "command": "unity-run --shared --project <owned-worktree>/unity -- Unity -batchmode -projectPath <owned-worktree>/unity -runTests -testPlatform PlayMode -testFilter HitFeedbackPresentationTests.(Actual|Armor|Torso|Contact|Shield|Shotgun|CaptureShotgun)|NativeCombatTests|BloodPresentationTests|DeathRagdollTests",
+  "environment": {
+    "STAR_TOURNAMENT_QA_LAB_HISTORY": "isolated .local/qa-shotgun/history/history.json",
+    "STAR_TOURNAMENT_SHOTGUN_CAPTURE": "docs/evidence/shotgun-hit-contacts",
+    "graphics": "enabled offscreen RenderTexture, no system input/focus",
+    "audio": "muted"
+  },
+  "screenshots": "controlled three-point shotgun notice on actual skinned model; real shotgun contact payload and shield-only tested separately",
+  "deferred": [
+    "Player build",
+    "deploy/installed game update",
+    "human visual/gameplay acceptance",
+    "performance/device acceptance"
+  ]
+}

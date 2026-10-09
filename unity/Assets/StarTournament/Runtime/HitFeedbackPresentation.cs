@@ -30,10 +30,25 @@ namespace StarTournament.ProvingGround
             bool stain=blood.Get("blood.enabled")!=0&&notice.HealthLost>0&&notice.Time-lastBlood[p]>=profile.Get("hit.bloodInterval");
             bool shield=notice.ArmorLost>0&&notice.Time-lastShield[p]>=profile.Get("hit.shieldInterval");
             if(!stain&&!shield)return;
-            var contact=SkinnedContactPatch.Find(bodies[p],notice.Impact.Point,notice.Impact.Direction);
-            if(contact==null)return;
-            if(stain){Add(contact,notice,false);lastBlood[p]=notice.Time;}
-            if(shield){Add(contact,notice,true);lastShield[p]=notice.Time;}
+            // Rate-limit the shot, not each pellet: one shot may create several bounded patches.
+            bool placed=false;
+            if(notice.Contacts!=null&&notice.Contacts.Count>0)
+            {
+                foreach(var impact in notice.Contacts)placed|=Place(impact);
+            }
+            else placed=Place(notice.Impact);
+            if(!placed)return;
+            if(stain)lastBlood[p]=notice.Time;
+            if(shield)lastShield[p]=notice.Time;
+            bool Place(FatalImpact impact)
+            {
+                if(!impact.Valid)return false;
+                var contact=SkinnedContactPatch.Find(bodies[p],impact.Point,impact.Direction);
+                if(contact==null)return false;
+                if(stain)Add(contact,notice,false);
+                if(shield)Add(contact,notice,true);
+                return true;
+            }
         }
         void Add(SkinnedContactPatch.Contact contact,DamageNotice notice,bool shield)
         {
