@@ -1,0 +1,23 @@
+{
+  "initial": {
+    "total": 240,
+    "passed": 238,
+    "failed": 2
+  },
+  "retry": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "fixtures": [
+      "NativeParticipantRosterTests",
+      "NativeRivalryInputTests"
+    ]
+  },
+  "resolved_cases": [
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeParticipantRosterTests.TeamTotalUsesFrozenCompositionColors",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.IndependentHeldTabsUseTheirSeatAndResetForARepeat"
+  ],
+  "changes": "Test-only: approved removed human labels replaced with all-eight frozen participant identities/colors; release event waits dynamic capture before fixed simulation consumption. No assertions/timeouts skipped or relaxed.",
+  "runtime_source": "4249c096c721394798dc28548a19c63342427b92",
+  "full_suite_initial_xml_retained": true
+}

@@ -1,0 +1,12 @@
+{
+  "full_total": 413,
+  "initial_passed": 412,
+  "initial_failures": [
+    "StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory(True)"
+  ],
+  "retry_fixture": "WeaponSwitchPresentationTests",
+  "retry_passed": 12,
+  "unchanged_timeouts_and_assertions": true,
+  "all_full_cases_now_have_pass_evidence": true,
+  "cause": "not established; original True case 170s in production0.1.0; initial current run hit 180s; retain timeout history"
+}

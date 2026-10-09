@@ -1,0 +1,12 @@
+{
+  "result": "Passed",
+  "ordinary_release": true,
+  "source": "4249c09",
+  "app": "/Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/.local/production-011/packages/osx-arm64/payload-0.1.1/game/Player.app",
+  "main_menu_ready": true,
+  "history_unchanged": true,
+  "history_sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "elapsed_seconds": 110.76187483401736,
+  "mode": "shared autonomous batchmode with graphics and automatic muted audio; no desktop input",
+  "physical_acceptance": false
+}

@@ -1,0 +1,24 @@
+{
+  "private_source": "4249c096c721394798dc28548a19c63342427b92",
+  "public_baseline": "4aac0bae73b56c42fbe72b87361496be4e01278c",
+  "paths": [
+    "unity",
+    "distribution",
+    "balance",
+    "scripts",
+    "tools",
+    "Makefile",
+    "ASSET_LIBRARY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "docs/GAME_SPEC.md",
+    "docs/CONTROLLER_COMPATIBILITY.md",
+    "docs/AI.md",
+    "docs/ai"
+  ],
+  "copy": "git archive committed source only; no internal evidence/user history; public LICENSE/README preserved",
+  "status": " M docs/GAME_SPEC.md\n M unity/Assets/StarTournament/Runtime/Core/NativeMatchAchievements.cs\n M unity/Assets/StarTournament/Runtime/Core/NativeMatchState.cs\n M unity/Assets/StarTournament/Runtime/NativeAchievementReview.cs\n M unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs\n M unity/Assets/StarTournament/Runtime/NativeStandingsView.cs\n M unity/Assets/StarTournament/Runtime/ProvingGround.cs\n M unity/Assets/StarTournament/Runtime/StandingsIcon.cs\n M unity/Assets/StarTournament/Tests/EditMode/NativeAchievementCatalogTests.cs\n M unity/Assets/StarTournament/Tests/EditMode/NativeAchievementTelemetryTests.cs\n M unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementsLayoutTests.cs\n?? unity/Assets/StarTournament/Runtime/NativeAchievementCardGraphic.cs\n?? unity/Assets/StarTournament/Runtime/NativeAchievementCardGraphic.cs.meta\n?? unity/Assets/StarTournament/Runtime/NativeAchievementMedalGraphic.cs\n?? unity/Assets/StarTournament/Runtime/NativeAchievementMedalGraphic.cs.meta\n?? unity/Assets/StarTournament/Runtime/NativeStandingsSelection.cs\n?? unity/Assets/StarTournament/Runtime/NativeStandingsSelection.cs.meta\n?? unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementExplanationTests.cs\n?? unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementExplanationTests.cs.meta\n?? unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryInputTests.cs\n?? unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryInputTests.cs.meta\n?? unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryPresentationTests.cs\n?? unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryPresentationTests.cs.meta\n",
+  "public_commit": "a434db61dd5086ac40d2a2dad702e7de532f7ddf",
+  "public_pushed": true,
+  "qa_only_commit": "5e04abdbd345a37d0e3972e94dd213d45bb282d6",
+  "runtime_build_source_unchanged": true
+}
