@@ -142,7 +142,7 @@ namespace StarTournament.ProvingGround
         void CreateDesignLabUi(Transform parent)
         {
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
-            labBack=LabButton(labScreen.transform,"lab-back","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
+            labBack=LabButton(labScreen.transform,"lab-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
             Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",21,new Vector2(.18f,.91f),new Vector2(.75f,.96f),TextAnchor.MiddleLeft,MenuGold);
             var clear=LabButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.46f,.785f),new Vector2(.56f,.83f),()=>{ResetLabDraft();RefreshLabWorkspace();});
             labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.34f,.785f),new Vector2(.45f,.83f),()=>LabOperation(()=>labHistory.Save(labDraft),true));

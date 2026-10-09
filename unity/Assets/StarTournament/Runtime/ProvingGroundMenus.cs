@@ -95,7 +95,7 @@ namespace StarTournament.ProvingGround
             Label(listCard.transform,"profiles-title","ПРОФИЛИ ИГРОКОВ",35,new Vector2(.06f,.86f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,Color.white);
             var list=Panel(listCard.transform,"profile-list",new Vector2(.06f,.20f),new Vector2(.94f,.84f),new Color32(20,33,48,245));profileList=list.transform;
             MenuButton(listCard.transform,"profile-create","+ СОЗДАТЬ ПРОФИЛЬ",new Vector2(.06f,.08f),new Vector2(.55f,.17f),CreateNamedProfile);
-            profilesBackButton=MenuButton(profilesScreen.transform,"profiles-back","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
+            profilesBackButton=MenuButton(profilesScreen.transform,"profiles-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
             profileDetail=Label(detailCard.transform,"profile-detail","Выберите профиль",27,new Vector2(.08f,.77f),new Vector2(.95f,.97f),TextAnchor.MiddleLeft,MenuGold);
             profileNameInput=CreateNameInput(detailCard.transform);
             MenuButton(detailCard.transform,"profile-rename","Переименовать",new Vector2(.08f,.57f),new Vector2(.92f,.64f),RenameSelectedProfile);
@@ -110,7 +110,7 @@ namespace StarTournament.ProvingGround
             var identityCard=Panel(identityScreen.transform,"identity-card",new Vector2(.17f,.12f),new Vector2(.83f,.88f),new Color32(20,33,48,245));
             identityHeading=Label(identityCard.transform,"identity-heading","КТО ИГРАЕТ?",35,new Vector2(.06f,.85f),new Vector2(.94f,.97f),TextAnchor.MiddleLeft,MenuGold);
             var options=Panel(identityCard.transform,"identity-options",new Vector2(.06f,.19f),new Vector2(.94f,.82f),new Color32(20,33,48,245));identityList=options.transform;
-            MenuButton(identityScreen.transform,"identity-cancel","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>{pendingSeat=-1;RefreshInterface();});
+            MenuButton(identityScreen.transform,"identity-cancel","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>{pendingSeat=-1;RefreshInterface();});
             identitySettingsButton=MenuButton(identityCard.transform,"identity-settings","Личные настройки",new Vector2(.52f,.06f),new Vector2(.94f,.16f),()=>{int seat=pendingSeat;pendingSeat=-1;OpenSettings(seat);});
             for(int seat=0;seat<seatIdentityButtons.Length;seat++)
             {
@@ -144,7 +144,7 @@ namespace StarTournament.ProvingGround
             setupSummary=Label(summary.transform,"setup-summary","",20,new Vector2(.07f,.53f),new Vector2(.93f,.83f),TextAnchor.UpperLeft,Color.white);
             setupLabIdentity=Label(summary.transform,"setup-lab-identity","",16,new Vector2(.07f,.34f),new Vector2(.93f,.52f),TextAnchor.UpperLeft,Color.white);setupLabIdentity.supportRichText=false;
             setupMessage=Label(summary.transform,"setup-message","",18,new Vector2(.07f,.22f),new Vector2(.93f,.34f),TextAnchor.UpperLeft,new Color32(255,213,157,255));
-            setupPrevious=MenuButton(setupScreen.transform,"setup-previous","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),PreviousSetupStep);
+            setupPrevious=MenuButton(setupScreen.transform,"setup-previous","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),PreviousSetupStep);
             setupNext=MenuButton(summary.transform,"setup-next","ДАЛЕЕ ›",new Vector2(.07f,.02f),new Vector2(.93f,.10f),NextSetupStep);
             setupMapPage=Panel(content.transform,"setup-map",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             Label(setupMapPage.transform,"map-title","ВЫБЕРИТЕ КАРТУ",30,new Vector2(.05f,.86f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
@@ -204,7 +204,7 @@ namespace StarTournament.ProvingGround
                 setupSteps[i].GetComponent<Image>().color=i==setupStep?MenuGold:MenuCard;
                 setupSteps[i].GetComponentInChildren<Text>().color=i==setupStep?MenuInk:Color.white;
             }
-            setupPrevious.GetComponentInChildren<Text>().text=setupStep==0?"‹ МЕНЮ":"‹ НАЗАД";
+            setupPrevious.GetComponentInChildren<Text>().text=setupStep==0?"‹ МЕНЮ · B":"‹ НАЗАД · B";
             setupNext.gameObject.SetActive(setupStep<2);
             start.gameObject.SetActive(phase==Phase.Setup && setupStep==2);
             start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
