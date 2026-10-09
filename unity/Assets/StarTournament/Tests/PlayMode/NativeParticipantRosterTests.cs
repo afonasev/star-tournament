@@ -99,7 +99,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var table=ground.transform.Find("native-ui/persistent-standings");
             var total=table.Find("row-1/cell-0").GetComponent<Text>();Assert.That(total.text,Is.EqualTo("Team A"));
             Assert.That(total.color,Is.EqualTo(NativeStandingsView.TeamColor(NativeTeam.TeamA,true)));
-            Assert.That(table.GetComponentsInChildren<Text>().Count(t=>t.text.Contains("FIXTURE")||t.text.Contains("ИГРОК")),Is.EqualTo(8));
+            var names=table.GetComponentsInChildren<Text>().Where(t=>t.name=="cell-0").ToArray();
+            foreach(var participant in snapshot.Participants)
+            {
+                var name=names.Single(t=>t.text==participant.Name);
+                Assert.That(name.color,Is.EqualTo(participant.Color),"Participant identity uses the frozen composition");
+            }
+            Assert.That(names.Count(t=>snapshot.Participants.Any(p=>p.Name==t.text)),Is.EqualTo(8));
+            Assert.That(table.GetComponentsInChildren<Text>().Any(t=>t.text=="ИГРОК"||t.text=="БОТ"),Is.False);
         }
         [UnityTest] public IEnumerator EightSlotAllocatorHasBoundedAtomicFailure()
         {
