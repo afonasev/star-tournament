@@ -11,3 +11,5 @@ Local macOS NSIS 3.13 full compression invocation aborted with `std::bad_alloc`;
 Physical Windows Explorer and wizard appearance, OS installation/update and physical controllers remain separate acceptance. Existing published release files are immutable.
 
 Windows real NSIS compile completed. Full installer SHA256 was checked against the remote output by build_installer.py; actual PE group 14/103/1033 matches all seven approved icon metadata/image resources. Both repackaged full packages preserve all 350 previous game file SHA256s. See icon-after.json and reused-payload-verification.json.
+
+Production published 2026-10-09T15:32:20Z: https://github.com/afonasev/star-tournament/releases/tag/v0.1.2, GitHub release 408051837. Public tag/source e497ca6f326db6c418a67654827dcd2945fae936. All eight anonymous HTTPS readbacks match size/SHA256. Both live SDKs downloaded authenticated full 0.1.2 packages through production Latest. Fresh IAB landing shows 0.1.2 and both pinned installer links. Exact eight assets retained outside worktree for physical acceptance; see retention.json.
