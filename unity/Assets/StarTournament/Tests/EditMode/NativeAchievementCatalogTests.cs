@@ -63,16 +63,16 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 case "assistant-assistant": r.Assists=5;r.Kills=1;break;
                 case "armor-didnt-help": r.ArmorPickups=5;r.Deaths=5;break;
                 case "greed": r.BonusPickups=5;r.Score=5;break;
-                case "own-opponent": r.SelfDamageDealt=50;break;
+                case "own-opponent": r.SelfDamageDealt=5;r.DamageDealt=10;break;
                 case "jumped-to-end": r.Jumps=5;r.Kills=1;break;
                 case "noise-force": r.Shots=20;r.RifleAccuracy.Successful=1;break;
                 case "bad-trade": r.EnemyDamageReceived=50;r.DamageDealt=5;break;
-                case "pacifist": r.Kills=0;break;
-                case "enemy-within": r.AllyDamageDealt=50;break;
-                case "why-ammo": r.Shots=20;r.RifleAccuracy.Successful=0;break;
-                case "worst-own-enemy": r.SelfKills=3;break;
-                case "team-saboteur": r.AllyKills=3;break;
-                case "collector": r.BonusPickups=5;r.Kills=0;break;
+                case "pacifist": r.Kills=1;r.Assists=5;r.DamageDealt=5;break;
+                case "enemy-within": r.AllyDamageDealt=5;r.DamageDealt=10;break;
+                case "why-ammo": r.Shots=20;r.RifleAccuracy.Successful=1;r.DamageDealt=10;break;
+                case "worst-own-enemy": r.SelfDamageDealt=5;r.Deaths=5;break;
+                case "team-saboteur": r.AllyKills=1;r.Kills=1;break;
+                case "collector": r.BonusPickups=5;r.Kills=1;r.DistanceTravelled=50;break;
                 default: Assert.Fail("Unknown test nomination");break;
             }
             var award=Eligible(rows).Single(x=>x.Id==id);
@@ -103,7 +103,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test] public void GoldPrecedesBothSilverAndBronzeAndChoiceIsStableForSavedSeed()
         {
-            var rows=Rows();rows[0].SelfDamageDealt=50;rows[0].SelfKills=5;rows[0].AllyKills=5;
+            var rows=Rows();rows[0].SelfDamageDealt=5;rows[0].Deaths=5;rows[0].AllyKills=1;rows[0].Kills=1;rows[0].Jumps=5;
             var mask=new[]{true,false,false,false};
             var candidates=Eligible(rows);Assert.That(candidates.Select(x=>x.Tier).Distinct().Count(),Is.EqualTo(3));
             var selected=NativeAchievementCatalog.Select(rows,mask,77,10,1);
@@ -119,6 +119,49 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(NativeAchievementCatalog.Select(rows,new[]{true,false,false,false},5,10,1)[0].Tier,Is.EqualTo(NativeAchievementTier.Silver));
             Assert.That(NativeAchievementCatalog.Select(Rows(),new[]{true,false,false,false},5,10,1),Is.Empty);
         }
+        [Test] public void LoneLowestKillerCanBeAlmostDangerousEvenInADuel()
+        {
+            var rows=Rows().Take(2).ToArray();rows[0].Kills=1;
+            Assert.That(Eligible(rows).Any(a=>a.Id=="almost-dangerous"),Is.True);
+            Assert.That(NativeAchievementCatalog.Eligible(rows,0,10,1,1).Any(a=>a.Id=="almost-dangerous"),Is.False);
+            rows[0].DamageDealt=0;Assert.That(Eligible(rows).Any(a=>a.Id=="almost-dangerous"),Is.False);
+            rows=Rows();rows[0].Kills=rows[1].Kills=1;Assert.That(Eligible(rows).Any(a=>a.Id=="almost-dangerous"),Is.False,"multiple equal lowest-kill peers keep complete-tie exclusion");
+        }
+        [Test] public void IdleParticipantCannotCollectAwardsFromDeathsOrComparativeMinimums()
+        {
+            var rows=Rows();rows[0]=new NativeStanding{Seat=0,Deaths=9,EnemyDamageReceived=100,FirstDeathTick=1};
+            Assert.That(Eligible(rows),Is.Empty);
+            Assert.That(NativeAchievementCatalog.Eligible(rows,0,10,1,1),Is.Not.Empty,"old frozen rules remain available");
+            rows[0].Shots=9;Assert.That(Eligible(rows),Is.Empty);
+            rows[0].Shots=10;Assert.That(Eligible(rows),Is.Not.Empty,"existing sample threshold qualifies participation");
+            rows[0].Shots=0;rows[0].DamageDealt=1;Assert.That(Eligible(rows),Is.Not.Empty,"actual enemy contribution qualifies below shot threshold");
+        }
+        [Test] public void NewGoldKeepsSuccessfulCombatAndSmallAccidentalHarm()
+        {
+            foreach(string id in new[]{"pacifist","enemy-within","why-ammo","worst-own-enemy","team-saboteur","collector"})
+            {
+                var rows=Rows();ref var row=ref rows[0];row.Kills=1;row.DamageDealt=10;
+                if(id=="pacifist")row.Assists=5;
+                if(id=="enemy-within")row.AllyDamageDealt=1;
+                if(id=="why-ammo"){row.Shots=20;row.RifleAccuracy.Successful=1;}
+                if(id=="worst-own-enemy"){row.SelfDamageDealt=1;row.Deaths=5;}
+                if(id=="team-saboteur")row.AllyKills=1;
+                if(id=="collector"){row.BonusPickups=5;row.DistanceTravelled=50;}
+                var award=Eligible(rows).Single(a=>a.Id==id);Assert.That(award.RulesVersion,Is.EqualTo(2));
+                Assert.That(row.Kills,Is.Positive);Assert.That(row.RifleAccuracy.Successful,Is.Positive);
+                Assert.That(row.SelfKills,Is.Zero);Assert.That(row.SelfDamageDealt,Is.LessThan(row.DamageDealt));
+                Assert.That(row.AllyDamageDealt,Is.LessThan(row.DamageDealt));Assert.That(row.AllyKills,Is.LessThanOrEqualTo(row.Kills));
+                if(id=="why-ammo"){row.DamageDealt=25;Assert.That(Eligible(rows).Any(a=>a.Id==id),Is.False,"all three independent ranks are required");}
+            }
+        }
+        [Test] public void FourActiveHumansCanShareGoldRecordsAgainstBots()
+        {
+            var rows=Enumerable.Range(0,8).Select(p=>new NativeStanding{Seat=p,Kills=p<4?1:2,Shots=10,DamageDealt=20,SelfDamageDealt=p<4?5:0,Deaths=p<4?5:1}).ToArray();
+            var awards=NativeAchievementCatalog.Select(rows,new[]{true,true,true,true,false,false,false,false},77,10,1);
+            Assert.That(awards.Length,Is.EqualTo(4));Assert.That(awards.All(a=>a.Tier==NativeAchievementTier.Gold&&a.Id=="worst-own-enemy"),Is.True);
+        }
+        [Test] public void UnknownRulesVersionIsRejected()
+        {Assert.Throws<ArgumentException>(()=>NativeAchievementCatalog.Eligible(Rows(),0,10,1,99));}
         [Test] public void FirstDeathUsesTickAndAllowsSimultaneousFirstVictims()
         {
             var rows=Rows();rows[0].FirstDeathTick=rows[1].FirstDeathTick=8;rows[2].FirstDeathTick=9;

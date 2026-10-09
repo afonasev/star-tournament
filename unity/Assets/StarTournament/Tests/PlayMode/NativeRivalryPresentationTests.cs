@@ -51,10 +51,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Standings=rows,Teams=new[]{new NativeTeamStanding{Team=NativeTeam.TeamA,Score=1480},new NativeTeamStanding{Team=NativeTeam.TeamB,Score=1125}},
                 DirectKillsByPair=pairs,KillChains=new int[ParticipantCount],
                 Achievements=new[]{
-                    new NativeAchievement{Participant=0,Id="jumper",Name="Попрыгун",Fact="Прыжков: 78 — максимум в матче",Tier=NativeAchievementTier.Bronze},
-                    new NativeAchievement{Participant=1,Id="warning-fire",Name="Предупредительный огонь",Fact="Выстрелов: 220 · убийств: 0",Tier=NativeAchievementTier.Silver},
-                    new NativeAchievement{Participant=2,Id="why-ammo",Name="Зачем тебе патроны?",Fact="Выстрелов: 220 · попаданий: 0",Tier=NativeAchievementTier.Gold},
-                    new NativeAchievement{Participant=3,Id="collector",Name="Коллекционер без побед",Fact="Бонусов: 9 · убийств: 0",Tier=NativeAchievementTier.Gold}
+                    new NativeAchievement{RulesVersion=NativeAchievementCatalog.Version,Participant=0,Id="jumper",Name="Попрыгун",Fact="Прыжков: 78 — максимум в матче",Tier=NativeAchievementTier.Bronze},
+                    new NativeAchievement{RulesVersion=NativeAchievementCatalog.Version,Participant=1,Id="warning-fire",Name="Предупредительный огонь",Fact="Выстрелов: 220 · убийств: 0",Tier=NativeAchievementTier.Silver},
+                    new NativeAchievement{RulesVersion=NativeAchievementCatalog.Version,Participant=2,Id="why-ammo",Name="Зачем тебе патроны?",Fact="Выстрелов: 220 · Точность: 12.5% · урон: 310",Tier=NativeAchievementTier.Gold},
+                    new NativeAchievement{RulesVersion=NativeAchievementCatalog.Version,Participant=3,Id="collector",Name="Коллекционер без побед",Fact="Бонусов: 9 · Убийств: 1 · путь: 123.4 м",Tier=NativeAchievementTier.Gold}
                 }
             };
         }

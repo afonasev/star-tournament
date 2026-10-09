@@ -95,7 +95,7 @@ namespace StarTournament.ProvingGround
                 tiers[i].text=TierName(award.Tier);tiers[i].color=metal;tiers[i].fontStyle=FontStyle.Normal;
                 titles[i].text=award.Name??string.Empty;titles[i].color=Ink;titles[i].fontStyle=FontStyle.Bold;
                 names[i].text=info?.Name??("Игрок "+(award.Participant+1));names[i].color=info?.Color??NativeStandingsView.Palette[award.Participant%NativeStandingsView.Palette.Length];names[i].fontStyle=FontStyle.Bold;
-                reasons[i].text=ExplanationFor(award.Id);reasons[i].color=Ink;
+                reasons[i].text=ExplanationFor(award.Id,award.RulesVersion==0?1:award.RulesVersion);reasons[i].color=Ink;
                 facts[i].text=award.Fact??string.Empty;facts[i].color=Muted;
                 Place(tiers[i].rectTransform,new Vector2(.30f,.89f),new Vector2(.96f,.99f));
                 Place(titles[i].rectTransform,new Vector2(.30f,.70f),new Vector2(.96f,.89f));
@@ -133,8 +133,21 @@ namespace StarTournament.ProvingGround
         public static void PlaceResultsActionsAtBottom(RectTransform menuRect,float inset=.018f)
         {var size=menuRect.sizeDelta;float parentHeight=((RectTransform)menuRect.parent).rect.height;float center=inset+(parentHeight>0?size.y/parentHeight*.5f:0);Layout(menuRect,new Vector2(.5f,center),new Vector2(.5f,center));menuRect.sizeDelta=size;}
 
-        public static string ExplanationFor(string id)
+        public static string ExplanationFor(string id,int rulesVersion=NativeAchievementCatalog.Version)
         {
+            if(rulesVersion<=1)
+            {
+                switch(id)
+                {
+                    case "own-opponent":return "Урона себе больше, чем врагам; оба значения больше нуля.";
+                    case "pacifist":return "Ноль убийств при достаточной стрельбе и уроне врагам.";
+                    case "enemy-within":return "Урона союзникам больше, чем врагам; оба значения больше нуля.";
+                    case "why-ammo":return "Больше всех выстрелов при достаточной стрельбе, ноль попаданий во врага.";
+                    case "worst-own-enemy":return "Самоустранений больше, чем убийств врагов.";
+                    case "team-saboteur":return "Убийств союзников больше, чем убийств врагов.";
+                    case "collector":return "Больше всех бонусов, ноль убийств и положительный урон врагам.";
+                }
+            }
             switch(id)
             {
                 case "slowpoke":return "Меньше всех расстояния за матч.";
@@ -157,16 +170,16 @@ namespace StarTournament.ProvingGround
                 case "assistant-assistant":return "Больше всех ассистов и меньше всех убийств.";
                 case "armor-didnt-help":return "Больше всех подборов брони и смертей.";
                 case "greed":return "Больше всех подборов бонусов и меньше всех очков.";
-                case "own-opponent":return "Урона себе больше, чем врагам; оба значения больше нуля.";
+                case "own-opponent":return "Больше всех урона себе и меньше всех урона врагам.";
                 case "jumped-to-end":return "Больше всех прыжков и меньше всех убийств.";
                 case "noise-force":return "Больше всех выстрелов; самая низкая точность при достаточной стрельбе.";
                 case "bad-trade":return "Больше всех урона от врагов и меньше всех урона врагам.";
-                case "pacifist":return "Ноль убийств при достаточной стрельбе и уроне врагам.";
-                case "enemy-within":return "Урона союзникам больше, чем врагам; оба значения больше нуля.";
-                case "why-ammo":return "Больше всех выстрелов при достаточной стрельбе, ноль попаданий во врага.";
-                case "worst-own-enemy":return "Самоустранений больше, чем убийств врагов.";
-                case "team-saboteur":return "Убийств союзников больше, чем убийств врагов.";
-                case "collector":return "Больше всех бонусов, ноль убийств и положительный урон врагам.";
+                case "pacifist":return "Больше всех ассистов; меньше всех убийств и урона врагам.";
+                case "enemy-within":return "Больше всех урона союзникам и меньше всех урона врагам.";
+                case "why-ammo":return "Достаточно стрелял: максимум выстрелов, минимум точности и урона врагам.";
+                case "worst-own-enemy":return "Больше всех урона себе и смертей.";
+                case "team-saboteur":return "Больше всех убийств союзников и меньше всех убийств врагов.";
+                case "collector":return "Больше всех бонусов и расстояния; меньше всех убийств.";
                 default:return "Награда сохранена в итогах матча.";
             }
         }

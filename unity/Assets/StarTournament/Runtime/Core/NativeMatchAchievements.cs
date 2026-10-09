@@ -10,15 +10,18 @@ namespace StarTournament.ProvingGround
     public struct NativeAchievement
     {
         public int Participant;
+        // Missing in old snapshots: zero means the original catalog rules.
+        public int RulesVersion;
         public string Id, Name, Fact;
         public NativeAchievementTier Tier;
     }
     /// <summary>Pure post-match rules. Never reads scene, input or gameplay random state.</summary>
     public static class NativeAchievementCatalog
     {
-        public const int Version=1;
-        public static NativeAchievement[] Eligible(NativeStanding[] rows,int participant,int minimumShots,double minimumBeamSeconds)
+        public const int Version=2;
+        public static NativeAchievement[] Eligible(NativeStanding[] rows,int participant,int minimumShots,double minimumBeamSeconds,int rulesVersion=Version)
         {
+            if(rulesVersion!=1&&rulesVersion!=Version)throw new ArgumentException("Invalid achievement rules version");
             if(rows==null || rows.Length<2 || rows.Count(x=>x.Seat==participant)!=1)
                 throw new ArgumentException("Invalid achievement roster");
             if(minimumShots<1 || minimumBeamSeconds<=0 || double.IsNaN(minimumBeamSeconds) || double.IsInfinity(minimumBeamSeconds))
@@ -29,7 +32,9 @@ namespace StarTournament.ProvingGround
             bool maxShots=Maximum(rows,r,x=>x.Shots), maxDeaths=Maximum(rows,r,x=>x.Deaths);
             bool maxBonus=Maximum(rows,r,x=>x.BonusPickups), minDamage=Minimum(rows,r,x=>x.DamageDealt);
             bool maxReceived=Maximum(rows,r,x=>x.EnemyDamageReceived);
+            bool legacy=rulesVersion==1;
             bool active=HasSample(r,minimumShots,minimumBeamSeconds);
+            if(!legacy&&!active&&r.DamageDealt<=0)return Array.Empty<NativeAchievement>();
             var accurate=rows.Where(x=>HasSample(x,minimumShots,minimumBeamSeconds)).ToArray();
             bool minAccuracy=active && Minimum(accurate,r,x=>x.AccuracyPercent);
             string kills="Убийств: "+r.Kills, shots="Выстрелов: "+r.Shots, distance="Пройдено: "+N(r.DistanceTravelled)+" м";
@@ -53,22 +58,22 @@ namespace StarTournament.ProvingGround
 
             Add(awards,r,"warning-fire",NativeAchievementTier.Silver,"Предупредительный огонь",maxShots&&minKills,shots+" · "+kills);
             Add(awards,r,"cardio",NativeAchievementTier.Silver,"Кардиотренировка",maxDistance&&minKills,distance+" · "+kills);
-            Add(awards,r,"almost-dangerous",NativeAchievementTier.Silver,"Почти опасный",minKills&&Maximum(rows.Where(x=>x.Kills==r.Kills).ToArray(),r,x=>x.DamageDealt),damage+" · "+kills);
+            Add(awards,r,"almost-dangerous",NativeAchievementTier.Silver,"Почти опасный",minKills&&BestDamageAmongLowestKillers(rows,r,legacy),damage+" · "+kills);
             Add(awards,r,"assistant-assistant",NativeAchievementTier.Silver,"Ассистент ассистента",Maximum(rows,r,x=>x.Assists)&&minKills,"Ассистов: "+r.Assists+" · "+kills);
             Add(awards,r,"armor-didnt-help",NativeAchievementTier.Silver,"Броня не помогла",Maximum(rows,r,x=>x.ArmorPickups)&&maxDeaths,"Брони: "+r.ArmorPickups+" · смертей: "+r.Deaths);
             Add(awards,r,"greed",NativeAchievementTier.Silver,"Жадность до добра",maxBonus&&Minimum(rows,r,x=>x.Score),bonuses+" · очков: "+r.Score);
-            Add(awards,r,"own-opponent",NativeAchievementTier.Silver,"Сам себе противник",r.DamageDealt>0&&r.SelfDamageDealt>r.DamageDealt,"Себе: "+N(r.SelfDamageDealt)+" · врагам: "+N(r.DamageDealt));
+            Add(awards,r,"own-opponent",NativeAchievementTier.Silver,"Сам себе противник",legacy?r.DamageDealt>0&&r.SelfDamageDealt>r.DamageDealt:Maximum(rows,r,x=>x.SelfDamageDealt)&&minDamage,"Себе: "+N(r.SelfDamageDealt)+" · врагам: "+N(r.DamageDealt));
             Add(awards,r,"jumped-to-end",NativeAchievementTier.Silver,"Прыгал до последнего",maxJumps&&minKills,"Прыжков: "+r.Jumps+" · "+kills);
             Add(awards,r,"noise-force",NativeAchievementTier.Silver,"Шумовой спецназ",maxShots&&minAccuracy,shots+" · "+precision);
             Add(awards,r,"bad-trade",NativeAchievementTier.Silver,"Обмен невыгодный",maxReceived&&minDamage,received+" · "+damage);
 
-            Add(awards,r,"pacifist",NativeAchievementTier.Gold,"Пацифист года",r.Kills==0&&active&&r.DamageDealt>0,kills+" · "+damage);
-            Add(awards,r,"enemy-within",NativeAchievementTier.Gold,"Враг внутри",r.DamageDealt>0&&r.AllyDamageDealt>r.DamageDealt,"Союзникам: "+N(r.AllyDamageDealt)+" · врагам: "+N(r.DamageDealt));
-            Add(awards,r,"why-ammo",NativeAchievementTier.Gold,"Зачем тебе патроны?",maxShots&&active&&r.RifleAccuracy.Successful==0&&r.ShotgunAccuracy.Successful==0&&r.RocketAccuracy.Successful==0&&r.CutterAccuracy.Successful==0,shots+" · попаданий во врагов: 0");
-            Add(awards,r,"worst-own-enemy",NativeAchievementTier.Gold,"Главный свой враг",r.SelfKills>r.Kills,"Самоустранений: "+r.SelfKills+" · "+kills);
-            Add(awards,r,"team-saboteur",NativeAchievementTier.Gold,"Командный вредитель",r.AllyKills>r.Kills,"Союзников убито: "+r.AllyKills+" · "+kills);
-            Add(awards,r,"collector",NativeAchievementTier.Gold,"Коллекционер без побед",maxBonus&&r.Kills==0&&r.DamageDealt>0,bonuses+" · "+kills);
-            return awards.ToArray();
+            Add(awards,r,"pacifist",NativeAchievementTier.Gold,"Пацифист года",legacy?r.Kills==0&&active&&r.DamageDealt>0:minKills&&Maximum(rows,r,x=>x.Assists)&&minDamage,legacy?kills+" · "+damage:"Ассистов: "+r.Assists+" · "+kills+" · врагам: "+N(r.DamageDealt));
+            Add(awards,r,"enemy-within",NativeAchievementTier.Gold,"Враг внутри",legacy?r.DamageDealt>0&&r.AllyDamageDealt>r.DamageDealt:Maximum(rows,r,x=>x.AllyDamageDealt)&&minDamage,"Союзникам: "+N(r.AllyDamageDealt)+" · врагам: "+N(r.DamageDealt));
+            Add(awards,r,"why-ammo",NativeAchievementTier.Gold,"Зачем тебе патроны?",legacy?maxShots&&active&&r.RifleAccuracy.Successful==0&&r.ShotgunAccuracy.Successful==0&&r.RocketAccuracy.Successful==0&&r.CutterAccuracy.Successful==0:maxShots&&minAccuracy&&minDamage,legacy?shots+" · попаданий во врагов: 0":shots+" · "+precision+" · урон: "+N(r.DamageDealt));
+            Add(awards,r,"worst-own-enemy",NativeAchievementTier.Gold,"Главный свой враг",legacy?r.SelfKills>r.Kills:Maximum(rows,r,x=>x.SelfDamageDealt)&&maxDeaths,legacy?"Самоустранений: "+r.SelfKills+" · "+kills:"Себе: "+N(r.SelfDamageDealt)+" · смертей: "+r.Deaths);
+            Add(awards,r,"team-saboteur",NativeAchievementTier.Gold,"Командный вредитель",legacy?r.AllyKills>r.Kills:Maximum(rows,r,x=>x.AllyKills)&&minKills,"Союзников убито: "+r.AllyKills+" · "+kills);
+            Add(awards,r,"collector",NativeAchievementTier.Gold,"Коллекционер без побед",legacy?maxBonus&&r.Kills==0&&r.DamageDealt>0:maxBonus&&minKills&&maxDistance,legacy?bonuses+" · "+kills:bonuses+" · "+kills+" · путь: "+N(r.DistanceTravelled)+" м");
+            return awards.Select(a=>{a.RulesVersion=rulesVersion;return a;}).ToArray();
         }
         public static NativeAchievement[] Select(NativeStanding[] rows,bool[] recipients,int seed,int minimumShots,double minimumBeamSeconds)
         {
@@ -87,6 +92,13 @@ namespace StarTournament.ProvingGround
         static readonly string[] ids={"slowpoke","jumper","bad-friend","diamond-eye","cemetery-sponsor","first-pancake","humanitarian","walking-target","pharmacy-magnate","weapon-sommelier","trainee","own-pain","no-help-needed","all-mine","warning-fire","cardio","almost-dangerous","assistant-assistant","armor-didnt-help","greed","own-opponent","jumped-to-end","noise-force","bad-trade","pacifist","enemy-within","why-ammo","worst-own-enemy","team-saboteur","collector"};
         public static bool IsKnown(string id)=>Array.IndexOf(ids,id)>=0;
         public static bool HasSample(NativeStanding row,int minimumShots,double minimumBeamSeconds)=>row.Shots>=minimumShots||row.CutterAccuracy.Used>=minimumBeamSeconds;
+        static bool BestDamageAmongLowestKillers(NativeStanding[] rows,NativeStanding row,bool legacy)
+        {
+            var peers=rows.Where(x=>x.Kills==row.Kills).ToArray();
+            // A unique last-place participant is comparable to the rest of the roster through minKills.
+            // Multiple peers retain the existing no-complete-tie rule.
+            return !legacy&&peers.Length==1?row.DamageDealt>0:Maximum(peers,row,x=>x.DamageDealt);
+        }
         static string N(double number)=>number.ToString("0.#",CultureInfo.InvariantCulture);
         static bool Maximum(NativeStanding[] rows,NativeStanding row,Func<NativeStanding,double> value)
         {var v=value(row);return rows.Length>1&&v>0&&rows.Any(x=>value(x)<v)&&rows.All(x=>value(x)<=v);}

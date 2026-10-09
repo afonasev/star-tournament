@@ -47,8 +47,16 @@ namespace StarTournament.ProvingGround
                 match.RecordDamage((p+1)%8,p,new DamageResult(100,true));
             }
             match.RecordDamage((humans+1)%8,humans,new DamageResult(100,true));
+            // Controlled fixture participation must satisfy the same v2 gate as normal play.
+            for(int p=0;p<humans;p++)for(int shot=0;shot<match.Read().MinimumShots;shot++)match.RecordShot(p);
             if(tier>=1)for(int p=0;p<humans;p++)for(int j=0;j<20+p;j++)match.RecordMovement(p,0,true);
-            if(tier>=2)for(int p=0;p<humans;p++)for(int k=0;k<3+p;k++)match.RecordDamage(p,p,new DamageResult(100,true));
+            if(tier>=2)
+            {
+                // Human 0 already died in the bot loop. Equalize fixture deaths so every human
+                // shares positive self-damage/death maxima against the lower bot values.
+                for(int p=1;p<humans;p++)match.RecordDamage(p,humans,new DamageResult(100,true));
+                for(int p=0;p<humans;p++)for(int k=0;k<3;k++)match.RecordDamage(p,p,new DamageResult(100,true));
+            }
             match.EndTick();
             for(int i=0;i<3100 && match.Phase!=NativeMatchPhase.Finished;i++){match.BeginTick();match.EndTick();}
             Check(match.Phase==NativeMatchPhase.Finished,"controlled result overtime");

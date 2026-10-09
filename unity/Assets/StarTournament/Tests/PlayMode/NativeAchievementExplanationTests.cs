@@ -23,10 +23,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(NativeAchievementsView.ExplanationFor("diamond-eye"),Does.Contain("Самая низкая точность").And.Contain("достаточной стрельбе"));
             Assert.That(NativeAchievementsView.ExplanationFor("noise-force"),Does.Contain("выстрелов").And.Contain("низкая точность").And.Contain("достаточной стрельбе"));
             Assert.That(NativeAchievementsView.ExplanationFor("bad-trade"),Does.Contain("от врагов").And.Contain("урона врагам"));
-            Assert.That(NativeAchievementsView.ExplanationFor("pacifist"),Does.Contain("Ноль убийств").And.Contain("достаточной стрельбе").And.Contain("уроне врагам"));
-            Assert.That(NativeAchievementsView.ExplanationFor("enemy-within"),Does.Contain("Урона союзникам больше, чем врагам").And.Contain("оба значения больше нуля"));
-            Assert.That(NativeAchievementsView.ExplanationFor("why-ammo"),Does.Contain("выстрелов").And.Contain("достаточной стрельбе").And.Contain("ноль попаданий"));
-            Assert.That(NativeAchievementsView.ExplanationFor("collector"),Does.Contain("Больше всех бонусов").And.Contain("ноль убийств").And.Contain("положительный урон"));
+            Assert.That(NativeAchievementsView.ExplanationFor("pacifist"),Does.Contain("ассистов").And.Contain("убийств").And.Contain("урона врагам"));
+            Assert.That(NativeAchievementsView.ExplanationFor("enemy-within"),Does.Contain("урона союзникам").And.Contain("меньше всех урона врагам"));
+            Assert.That(NativeAchievementsView.ExplanationFor("why-ammo"),Does.Contain("выстрелов").And.Contain("Достаточно стрелял").And.Contain("точности").And.Contain("урона врагам"));
+            Assert.That(NativeAchievementsView.ExplanationFor("collector"),Does.Contain("бонусов").And.Contain("расстояния").And.Contain("убийств"));
+            foreach(string id in new[]{"pacifist","enemy-within","why-ammo","worst-own-enemy","team-saboteur","collector"})
+                Assert.That(NativeAchievementsView.ExplanationFor(id),Does.Not.Contain("Ноль").And.Not.Contain("ноль"));
+            Assert.That(NativeAchievementsView.ExplanationFor("why-ammo",1),Does.Contain("ноль попаданий"));
+            Assert.That(NativeAchievementsView.ExplanationFor("pacifist",1),Does.Contain("Ноль убийств"));
         }
 
         [Test]

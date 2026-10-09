@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround.Tests
             var saved=JsonUtility.FromJson<NativeMatchSnapshot>(JsonUtility.ToJson(match.Read()));Assert.That(saved.AwardsFrozen,Is.True);Assert.That(saved.AchievementTelemetryVersion,Is.EqualTo(1));
             var restored=Make();restored.Restore(saved);Assert.That(restored.Read().AwardsFrozen,Is.True);
             Assert.That(restored.Read().AwardSeed,Is.EqualTo(saved.AwardSeed));
-            Assert.That(saved.Achievements.Length,Is.EqualTo(1));
+            Assert.That(saved.Achievements.Length,Is.EqualTo(1));Assert.That(saved.Achievements[0].RulesVersion,Is.EqualTo(2));
             Assert.That(restored.Read().Achievements[0].Id,Is.EqualTo(saved.Achievements[0].Id));
             var exposed=restored.Read();exposed.Achievements[0].Name="mutated";exposed.AwardRecipients[0]=false;restored.RecordShot(0);restored.RecordMovement(0,10,true);
             Assert.That(restored.Read().Achievements[0].Name,Is.EqualTo(saved.Achievements[0].Name));
@@ -48,6 +48,27 @@ namespace StarTournament.ProvingGround.Tests
             var invalid=restored.Read();invalid.AwardRecipients=Array.Empty<bool>();
             Assert.Throws<ArgumentException>(()=>restored.Restore(invalid));
             Assert.That(restored.Read().AwardRecipients.Length,Is.EqualTo(2));
+        }
+
+        [Test]
+        public void OldFrozenAwardWithoutRulesVersionRestoresUsingOriginalEligibilityAndFact()
+        {
+            var source=Make();source.ConfigureAchievementRecipients(new[]{true,false});source.BeginTick();
+            source.RecordDamage(1,0,new DamageResult(100,true));source.EndTick();
+            var old=source.Read();
+            old.Standings[0].Shots=20;old.Standings[0].RifleAccuracy=new WeaponAccuracy{Used=20,Successful=0};
+            old.Standings[1].Shots=10;old.Standings[1].RifleAccuracy=new WeaponAccuracy{Used=10,Successful=5};
+            old.Standings[1].DamageDealt=20;
+            var award=NativeAchievementCatalog.Eligible(old.Standings,0,10,1,1).Single(a=>a.Id=="why-ammo");award.RulesVersion=0;old.Achievements=new[]{award};
+            Assert.That(NativeAchievementCatalog.Eligible(old.Standings,0,10,1).Any(a=>a.Id=="why-ammo"),Is.False,"new conditions deliberately differ");
+            string json=JsonUtility.ToJson(old).Replace("\"RulesVersion\":0,","");Assert.That(json,Does.Not.Contain("RulesVersion"));
+            var restored=Make();restored.Restore(JsonUtility.FromJson<NativeMatchSnapshot>(json));
+            Assert.That(restored.Read().Achievements[0].Id,Is.EqualTo("why-ammo"));
+            Assert.That(restored.Read().Achievements[0].Fact,Is.EqualTo("Выстрелов: 20 · попаданий во врагов: 0"));
+            Assert.That(restored.Read().Achievements[0].RulesVersion,Is.Zero);
+            var forged=restored.Read();forged.Achievements[0].RulesVersion=2;Assert.Throws<ArgumentException>(()=>restored.Restore(forged));
+            forged=restored.Read();forged.Achievements[0].RulesVersion=99;Assert.Throws<ArgumentException>(()=>restored.Restore(forged));
+            Assert.That(restored.Read().Achievements[0].RulesVersion,Is.Zero,"rejected restore does not mutate valid legacy result");
         }
 
         [Test]

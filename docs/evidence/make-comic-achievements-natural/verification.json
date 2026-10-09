@@ -1,0 +1,42 @@
+{
+  "baseline": "0ca6590",
+  "rules_version": 2,
+  "runs": {
+    "core": {
+      "result": "Passed",
+      "total": "55",
+      "passed": "55",
+      "failed": "0",
+      "skipped": "0"
+    },
+    "catalog": {
+      "result": "Passed",
+      "total": "41",
+      "passed": "41",
+      "failed": "0",
+      "skipped": "0"
+    },
+    "affected-playmode": {
+      "result": "Passed",
+      "total": "6",
+      "passed": "6",
+      "failed": "0",
+      "skipped": "0"
+    }
+  },
+  "unique_core_tests": 56,
+  "ui_passed": 16,
+  "source_hashes": {
+    "unity/Assets/StarTournament/Runtime/Core/NativeMatchAchievements.cs": "f228d3425f0ce7641cffe72985fd086b65d5bf23f84aafc01d376d2d83d06d7d",
+    "unity/Assets/StarTournament/Runtime/Core/NativeMatchState.cs": "28bbeec3fd0b4a18265e046f76c0b5414e57c37e8129dcce07d28d0e39442039",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs": "0f4b4095e11f63be901c154c51c9e020e7c7044b090425164a35f5050f7424e8",
+    "unity/Assets/StarTournament/Runtime/NativeAchievementReview.cs": "1763704f3d6a01035b0aea2148a703e95d970a99182ed84d330c4645f2aae635"
+  },
+  "scope": "post-match rule/copy and frozen compatibility only",
+  "no_full_or_natural_matches": "no effect on match outcome/progression; no frequency claims",
+  "renders": "synthetic frozen data, actual Unity Editor PlayMode",
+  "editor": "6000.3.23f1",
+  "player_release_deploy": "not requested",
+  "generated_prepare_files": "QA-only restored before commit",
+  "review_fixture": "controlled Player QA fixture adapted; standalone review not run"
+}

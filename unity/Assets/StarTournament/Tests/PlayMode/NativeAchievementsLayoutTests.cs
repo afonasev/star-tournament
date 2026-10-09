@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         static NativeMatchSnapshot Snapshot(int count)
         {
             return new NativeMatchSnapshot{Achievements=Enumerable.Range(0,count).Select(i=>new NativeAchievement
-            {Participant=i,Id="award-"+i,Name="Achievement "+i,Fact=(10+i)+" damage",Tier=(NativeAchievementTier)(i%3)}).ToArray()};
+            {RulesVersion=NativeAchievementCatalog.Version,Participant=i,Id="award-"+i,Name="Achievement "+i,Fact=(10+i)+" damage",Tier=(NativeAchievementTier)(i%3)}).ToArray()};
         }
         static readonly string[] CatalogIds={"slowpoke","jumper","bad-friend","diamond-eye","cemetery-sponsor","first-pancake","humanitarian","walking-target","pharmacy-magnate","weapon-sommelier","trainee","own-pain","no-help-needed","all-mine","warning-fire","cardio","almost-dangerous","assistant-assistant","armor-didnt-help","greed","own-opponent","jumped-to-end","noise-force","bad-trade","pacifist","enemy-within","why-ammo","worst-own-enemy","team-saboteur","collector"};
         static readonly string[] CatalogNames={
@@ -30,11 +30,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         static readonly string[] CatalogFacts={
             "Пройдено: 123.4 м","Прыжков: 23","Союзникам: 840.5 урона","Точность: 12.5%","Смертей: 23","Смерть №1 в матче","Врагам: 840.5 урона","От врагов: 840.5 урона","Аптечек: 23","Смен оружия: 23","Убийств: 23","Себе: 840.5 урона","Самоустранений: 23","Бонусов: 23",
             "Выстрелов: 80 · убийств: 0","Пройдено: 123.4 м · убийств: 0","Врагам: 840.5 урона · убийств: 0","Ассистов: 23 · убийств: 0","Брони: 23 · смертей: 23","Бонусов: 23 · очков: 123","Себе: 840.5 · врагам: 620.5","Прыжков: 23 · убийств: 0","Выстрелов: 80 · точность: 12.5%","От врагов: 840.5 · Врагам: 620.5 урона",
-            "Убийств: 0 · Врагам: 840.5 урона","Союзникам: 840.5 · врагам: 620.5","Выстрелов: 80 · попаданий во врагов: 0","Самоустранений: 23 · убийств: 0","Союзников убито: 23 · убийств: 0","Бонусов: 23 · убийств: 0"};
+            "Ассистов: 23 · Убийств: 1 · врагам: 840.5","Союзникам: 10.5 · врагам: 840.5","Выстрелов: 80 · Точность: 12.5% · урон: 840.5","Себе: 10.5 · смертей: 23","Союзников убито: 1 · убийств: 2","Бонусов: 23 · Убийств: 1 · путь: 123.4 м"};
         static NativeMatchSnapshot CatalogSnapshot(int first,int count)
         {
             return new NativeMatchSnapshot{Achievements=Enumerable.Range(first, count).Select(i=>new NativeAchievement
-            {Participant=(i-first)%4,Id=CatalogIds[i],Name=CatalogNames[i],Fact=CatalogFacts[i],Tier=(NativeAchievementTier)(i<14?0:i<24?1:2)}).ToArray()};
+            {RulesVersion=NativeAchievementCatalog.Version,Participant=(i-first)%4,Id=CatalogIds[i],Name=CatalogNames[i],Fact=CatalogFacts[i],Tier=(NativeAchievementTier)(i<14?0:i<24?1:2)}).ToArray()};
         }
         [UnityTest] public IEnumerator CatalogCopyFitsAtResponsiveSizesAndKeepsResultsBoundsAndFrozenIdentity()
         {
