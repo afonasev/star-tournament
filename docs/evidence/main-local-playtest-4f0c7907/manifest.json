@@ -1,0 +1,24 @@
+{
+  "source_revision": "4f0c7907a3153f1119bebd00ced810d0a95f4f19",
+  "source_branch": "main",
+  "build_command": "UNITY_RUN_MODE=shared unity/tools.sh build",
+  "build_result": "STAR_PROVING_BUILD_PASS 510466126; exit 0",
+  "kind": "local macOS Development Player, not release/deployment",
+  "app_path": "/Users/eaafonasev/Projects/star-tournament/.local/player-review/main-4f0c7907/StarTournamentProvingGround.app",
+  "executable": "Star Tournament Unity Proving Ground",
+  "content_sha256": "8d4c0a9f7f15a2b5a307237e91d57c07b290fb1c5a1fafaa680d63085d7121a7",
+  "file_count": 283,
+  "run_arguments": [
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1600",
+    "-screen-height",
+    "900",
+    "-mute-audio"
+  ],
+  "history": "isolated /Users/eaafonasev/Projects/star-tournament/.local/player-review/main-4f0c7907/history.json",
+  "acceptance": "pending user gameplay/visual test",
+  "retention": "keep exact app and logs for pending user review",
+  "cleanup": "Generated build changes restored; exact app/log retained outside disposable worktree for pending manual test."
+}
