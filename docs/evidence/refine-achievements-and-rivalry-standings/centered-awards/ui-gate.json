@@ -1,0 +1,30 @@
+{
+  "scope": "ui-only",
+  "natural_bot_matches": false,
+  "suites": {
+    "EditMode": [
+      "LocalSeatLayoutTests"
+    ],
+    "PlayMode": [
+      "FourPlayerMenuTests",
+      "IndependentPauseMenuTests"
+    ]
+  },
+  "policy": ".agents/references/qa-scope.md",
+  "additional_gates": "affected-screen tests and Editor Play Mode; Player gates deferred unless explicitly requested or necessary",
+  "revision": "22d20411798978cbc1c28dd3956e219ee0700ec3",
+  "dirty": " M unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs\n M unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementsLayoutTests.cs\n M unity/Assets/StarTournament/Tests/PlayMode/NativeRivalryPresentationTests.cs\n M unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M unity/ProjectSettings/ProjectSettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n",
+  "result": "Passed",
+  "checks": [
+    {
+      "platform": "EditMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/center-achievement-cards/star-tournament/unity/../.local/unity-evidence/focused-editmode.F2RjAb/editmode.xml",
+      "passed": 3
+    },
+    {
+      "platform": "PlayMode",
+      "xml": "/Users/eaafonasev/.codex/worktrees/center-achievement-cards/star-tournament/unity/../.local/unity-evidence/focused-playmode.A4jy1j/playmode.xml",
+      "passed": 13
+    }
+  ]
+}

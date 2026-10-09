@@ -155,6 +155,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         {
                             table.SelectParticipant(0); // Capture a perspective containing win, loss and tied scores.
                             yield return Capture(host,canvas,size,teams);
+                            if(!teams&&size.x==1280)
+                            {
+                                for(int count=1;count<=3;count++)
+                                {
+                                    var fewer=JsonUtility.FromJson<NativeMatchSnapshot>(frozenSnapshot);fewer.Achievements=fewer.Achievements.Take(count).ToArray();
+                                    awards.Show(true,fewer,composition);awards.AdaptToActions(actionRect,table);table.Show(true,snapshot,false,composition);
+                                    Canvas.ForceUpdateCanvases();yield return null;
+                                    yield return Capture(host,canvas,size,teams,"awards-"+count+"-");
+                                }
+                            }
                             table.Root.SetActive(false);awards.Root.SetActive(false);actionRoot.SetActive(false);
                             var liveSnapshot=JsonUtility.FromJson<NativeMatchSnapshot>(frozenSnapshot);liveSnapshot.Phase=NativeMatchPhase.Running;
                             var held=new NativeStandingsView(host.transform,font,20,"held-table",new Vector2(.10f,.10f),new Vector2(.90f,.90f))

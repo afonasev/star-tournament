@@ -88,7 +88,8 @@ namespace StarTournament.ProvingGround
             {
                 bool active=i<count;tiles[i].gameObject.SetActive(active);if(!active)continue;
                 var award=awards[i];var info=composition?.Participant(award.Participant);
-                float left=(float)i/4,right=(float)(i+1)/4;
+                float groupLeft=(4-count)*.125f;
+                float left=groupLeft+(float)i/4,right=groupLeft+(float)(i+1)/4;
                 tiles[i].anchorMin=new Vector2(left,0);tiles[i].anchorMax=new Vector2(right,1);tiles[i].offsetMin=new Vector2(5,3);tiles[i].offsetMax=new Vector2(-5,-3);
                 Color metal=TierColor(award.Tier);var card=tiles[i].GetComponent<NativeAchievementCardGraphic>();card.Accent=metal;card.SetVerticesDirty();medals[i].color=metal;medals[i].Theme=ThemeFor(award.Id);
                 tiers[i].text=TierName(award.Tier);tiers[i].color=metal;tiers[i].fontStyle=FontStyle.Normal;

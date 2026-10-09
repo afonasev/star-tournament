@@ -1,0 +1,10 @@
+{
+  "baseline": "22d2041",
+  "scope": "center 1\u20133 cards, same width and order",
+  "ui_passed": 16,
+  "affected_passed": 2,
+  "source_sha256": "4f13e74b726aa59a5782748884d160b1816576836ba017ddc65b50bc1ed9dc79",
+  "editor": "6000.3.23f1",
+  "player_build_deploy": "not requested",
+  "prepare_generated_files": "QA-only restored before commit"
+}

@@ -47,7 +47,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var table=new NativeStandingsView(parent.transform,font,20,"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f));
                 var actionObject=new GameObject("measured-results-actions",typeof(RectTransform));actionObject.transform.SetParent(parent.transform,false);
                 var actionRect=(RectTransform)actionObject.transform;actionRect.sizeDelta=new Vector2(480,128);
-                foreach(int count in new[]{0,1,4})
+                foreach(int count in new[]{0,1,2,3,4})
                 {
                     var snapshot=Snapshot(count);string frozen=JsonUtility.ToJson(snapshot);
                     view.Show(false,snapshot,Composition(false));Assert.That(view.Root.activeSelf,Is.False,"awards are hidden outside Results");
@@ -59,6 +59,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     if(count==0)continue;
                     var composition=Composition(count==4);
                     view.Show(true,snapshot,composition);Canvas.ForceUpdateCanvases();
+                    foreach(var size in new[]{new Vector2(960,540),new Vector2(1280,720),new Vector2(1920,1080),new Vector2(3840,2160)})
+                    {
+                        rect.sizeDelta=size;view.Show(true,snapshot,composition);Canvas.ForceUpdateCanvases();
+                        var first=(RectTransform)view.Root.transform.Find("achievement-tile-0");
+                        var last=(RectTransform)view.Root.transform.Find("achievement-tile-"+(count-1));
+                        var a=new Vector3[4];var b=new Vector3[4];var bounds=new Vector3[4];
+                        first.GetWorldCorners(a);last.GetWorldCorners(b);((RectTransform)view.Root.transform).GetWorldCorners(bounds);
+                        Assert.That((a[0].x+b[2].x)*.5f,Is.EqualTo((bounds[0].x+bounds[2].x)*.5f).Within(.1f),$"{count} award group centered at {size}");
+                        Assert.That(first.rect.width,Is.EqualTo(((RectTransform)view.Root.transform).rect.width*.25f-10).Within(.1f),"fewer awards do not stretch cards");
+                    }
+                    rect.sizeDelta=new Vector2(960,540);view.Show(true,snapshot,composition);Canvas.ForceUpdateCanvases();
                     for(int i=0;i<count;i++)
                     {
                         var tile=view.Root.transform.Find("achievement-tile-"+i);var tileRect=(RectTransform)tile;
