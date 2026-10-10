@@ -1,0 +1,11 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=NativeMusicTests;DesignLabHistoryTests;NativeAudioSpatialTests
+lab_history=/Users/eaafonasev/.codex/worktrees/death-audio-audibility/star-tournament/unity/../.local/unity-evidence/focused-editmode.0QRBYS/qa-lab-history.json
+revision=97c42610c1b1667c1d664a3159b90fa2044fec0b
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/NativeGameAudio.cs
+ M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs
+ M Assets/StarTournament/Tests/PlayMode/ApprovedSpatialAudioTests.cs
+?? ../docs/tasks/44-death-audio-audibility.md

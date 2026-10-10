@@ -32,6 +32,7 @@ namespace StarTournament.ProvingGround
         float[] voiceGain,voiceBaseGain;
         Vector3[] voicePosition;
         int[] voiceParticipant;
+        bool[] voiceDeath;
         AudioSource[] rocketSources;
         uint[] rocketIds;
         float[] rocketGain;
@@ -102,7 +103,7 @@ namespace StarTournament.ProvingGround
             if(voices!=null&&voices.Length==count)return;
             if(voices!=null)foreach(var voice in voices)if(voice)UnityEngine.Object.Destroy(voice.gameObject);
             if(rocketSources!=null)foreach(var rocket in rocketSources)if(rocket)UnityEngine.Object.Destroy(rocket.gameObject);
-            voices=new AudioSource[count];voiceGain=new float[count];voiceBaseGain=new float[count];voicePosition=new Vector3[count];voiceParticipant=new int[count];nextVoice=0;
+            voices=new AudioSource[count];voiceGain=new float[count];voiceBaseGain=new float[count];voicePosition=new Vector3[count];voiceParticipant=new int[count];voiceDeath=new bool[count];nextVoice=0;
             rocketSources=new AudioSource[count];rocketIds=new uint[count];rocketGain=new float[count];
             for(int i=0;i<count;i++){rocketSources[i]=Source("rocket-flight-"+i);rocketSources[i].clip=clips["rocket-flight"];rocketSources[i].loop=true;}
             for(int i=0;i<count;i++)voices[i]=Source("voice-"+i);
@@ -176,7 +177,7 @@ namespace StarTournament.ProvingGround
         {
             PlayAt(clip,gain,participant,session!=null&&participant>=0?session.Pose(participant).Position:Vector3.zero,pitch);
         }
-        void PlayAt(AudioClip clip,float baseGain,int participant,Vector3 point,float pitch=1)
+        void PlayAt(AudioClip clip,float baseGain,int participant,Vector3 point,float pitch=1,bool death=false)
         {
             if(clip==null||EffectsVolume<=0)return;
             var mix=participant>=0?Spatial(point,participant):new AudioSpatialMix(1,0);
@@ -191,15 +192,18 @@ namespace StarTournament.ProvingGround
             }
             if(source==null)
             {
-                int weakest=0;
-                for(int i=1;i<voices.Length;i++)if(voiceGain[i]<voiceGain[weakest])weakest=i;
+                int weakest=-1;
+                // A short death cue must finish even when subsequent shots fill the pool.
+                for(int i=0;i<voices.Length;i++)
+                    if(!voiceDeath[i]&&(weakest<0||voiceGain[i]<voiceGain[weakest]))weakest=i;
+                if(weakest<0)return;
                 source=voices[weakest];
                 // Keep a louder event audible when 1–4 viewports all produce events at once.
-                if(voiceGain[weakest]>gain)return;
+                if(!death&&voiceGain[weakest]>gain)return;
             }
             int slot=Array.IndexOf(voices,source);
             source.Stop();source.clip=clip;source.pitch=pitch;source.panStereo=mix.Pan;
-            voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
+            voiceDeath[slot]=death;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
         }
         void PlayMovement(string name,float gain,int participant)
         {
@@ -253,7 +257,11 @@ namespace StarTournament.ProvingGround
             var clip=damage.ArmorLost>0?clips["shield-hit"]:Bank("body-hit");
             PlayAt(clip,.85f,damage.Participant,damage.Impact.Valid?damage.Impact.Point:session.Pose(damage.Participant).Position);
         }
-        void Death(DeathNotice death){PlayAt(Bank("death"),1,death.Seat,death.Pose.Position);beams[death.Seat].Stop();beamGain[death.Seat]=0;beamEnvelope[death.Seat]=0;}
+        void Death(DeathNotice death)
+        {
+            beams[death.Seat].Stop();beamGain[death.Seat]=0;beamEnvelope[death.Seat]=0;
+            PlayAt(Bank("death"),ProvingProfile.DeathAudioGain(profile),death.Seat,death.Pose.Position,death:true);
+        }
         void Explosion(RocketExplosion explosion)=>PlayAt(clips["explosion"],1,explosion.Rocket.Owner,explosion.Position);
         void DamageBonusSpawn()=>PlayDamageBonus("damage-bonus-spawn",profile.Get("audio.damageBonusSpawnGain"));
         void PlayDamageBonus(string name,float gain)
