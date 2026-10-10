@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround
         GameObject startup,match;
         Text mapName,modeLabel,participants,target,status;
         GameObject targetGroup;
-        RectTransform sweep;
+        RectTransform sweep,track;
         LoadingEmblem emblem;
         float started;
         bool failed;
@@ -44,14 +44,14 @@ namespace StarTournament.ProvingGround
             var fit=art.gameObject.AddComponent<AspectRatioFitter>();fit.aspectMode=AspectRatioFitter.AspectMode.EnvelopeParent;fit.aspectRatio=image.texture?(float)image.texture.width/image.texture.height:16f/9;
             var shade=Area(transform,"loading-shade",Vector2.zero,Vector2.one).gameObject.AddComponent<LoadingShade>();shade.raycastTarget=false;
             startup=Area(transform,"loading-startup",Vector2.zero,Vector2.one).gameObject;
-            var icon=Area(startup.transform,"loading-emblem",new Vector2(.44f,.66f),new Vector2(.56f,.86f));
+            var icon=Area(startup.transform,"loading-emblem",new Vector2(.4325f,.625f),new Vector2(.5675f,.865f));
             emblem=icon.gameObject.AddComponent<LoadingEmblem>();emblem.raycastTarget=false;
             var brand=Label(startup.transform,"loading-brand","STAR <color=#E7BB72>TOURNAMENT</color>",65,new Vector2(.12f,.53f),new Vector2(.88f,.64f),Color.white);brand.fontStyle=FontStyle.Bold;
             Label(startup.transform,"loading-credit","© 2026 Evgeniy Afonasev · afonasev.tech · Made with Codex",16,new Vector2(.12f,.47f),new Vector2(.88f,.52f),Muted);
             match=Area(transform,"loading-match",Vector2.zero,Vector2.one).gameObject;
             var small=Label(match.transform,"loading-match-brand","STAR <color=#E7BB72>TOURNAMENT</color>",22,new Vector2(.06f,.875f),new Vector2(.5f,.935f),Color.white,TextAnchor.MiddleLeft);small.fontStyle=FontStyle.Bold;
             var card=Area(match.transform,"loading-match-card",new Vector2(.22f,.355f),new Vector2(.78f,.75f));
-            var panel=card.gameObject.AddComponent<LoadingCardGraphic>();panel.color=new Color32(16,28,41,242);panel.raycastTarget=false;
+            var panel=card.gameObject.AddComponent<LoadingCardGraphic>();panel.color=new Color32(16,28,41,242);panel.raycastTarget=false;card.gameObject.AddComponent<Mask>().showMaskGraphic=true;
             var illustration=Area(card,"loading-card-art",new Vector2(.002f,.002f),new Vector2(.38f,.998f));var raw=illustration.gameObject.AddComponent<RawImage>();raw.texture=image.texture;raw.uvRect=new Rect(.5f,0,.35f,1);raw.raycastTarget=false;
             Surface(illustration,"loading-card-shade",Vector2.zero,Vector2.one,new Color32(7,16,27,70));
             Label(illustration,"loading-map-badge","ВЫБРАННАЯ КАРТА",14,new Vector2(.07f,.04f),new Vector2(.93f,.16f),Gold,TextAnchor.MiddleLeft);
@@ -69,14 +69,19 @@ namespace StarTournament.ProvingGround
             target=Label(targetGroup.transform,"loading-target-value","",18,new Vector2(.04f,0),new Vector2(1,.5f),Color.white,TextAnchor.MiddleLeft);
             Label(match.transform,"loading-auto-start","Матч начнётся автоматически",20,new Vector2(.2f,.155f),new Vector2(.8f,.2f),Muted);
             status=Label(transform,"loading-status","",20,new Vector2(.2f,.225f),new Vector2(.8f,.265f),Color.white);
-            var track=Surface(transform,"loading-track",new Vector2(.3f,.205f),new Vector2(.7f,.208f),new Color32(52,68,82,255));
-            track.gameObject.AddComponent<RectMask2D>();
+            var trackImage=Surface(transform,"loading-track",new Vector2(.3f,.205f),new Vector2(.7f,.208f),new Color32(52,68,82,255));
+            track=trackImage.rectTransform;track.gameObject.AddComponent<RectMask2D>();
             sweep=Surface(track.transform,"loading-sweep",new Vector2(0,0),new Vector2(.18f,1),Gold).rectTransform;
         }
-        public void ShowStartup(){gameObject.SetActive(true);startup.SetActive(true);match.SetActive(false);status.text="Загрузка игры";started=Time.unscaledTime;failed=false;}
+        void PositionIndicator(bool initial)
+        {
+            track.anchorMin=new Vector2(initial?.34f:.3f,initial?.15f:.205f);track.anchorMax=new Vector2(initial?.66f:.7f,initial?.153f:.208f);
+            status.rectTransform.anchorMin=new Vector2(.2f,initial?.175f:.225f);status.rectTransform.anchorMax=new Vector2(.8f,initial?.215f:.265f);
+        }
+        public void ShowStartup(){PositionIndicator(true);gameObject.SetActive(true);startup.SetActive(true);match.SetActive(false);status.text="Загрузка игры";started=Time.unscaledTime;failed=false;}
         public void ShowMatch(string map,NativeMatchMode mode,int count,NativeMatchConfiguration configuration)
         {
-            gameObject.SetActive(true);startup.SetActive(false);match.SetActive(true);started=Time.unscaledTime;failed=false;
+            PositionIndicator(false);gameObject.SetActive(true);startup.SetActive(false);match.SetActive(true);started=Time.unscaledTime;failed=false;
             mapName.text=map;modeLabel.text=mode==NativeMatchMode.Teams?"Командный матч":"Каждый за себя";
             participants.text=count.ToString(CultureInfo.InvariantCulture);
             targetGroup.SetActive(configuration.TargetEnabled);target.text=configuration.TargetPoints.ToString("N0",CultureInfo.GetCultureInfo("ru-RU"))+" очков";
@@ -92,6 +97,7 @@ namespace StarTournament.ProvingGround
             emblem.Angle=t*60;emblem.SetVerticesDirty();
         }
     }
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class LoadingShade:MaskableGraphic
     {
         protected override void OnPopulateMesh(VertexHelper m)
@@ -107,6 +113,7 @@ namespace StarTournament.ProvingGround
             }
         }
     }
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class LoadingCardGraphic:MaskableGraphic
     {
         protected override void OnPopulateMesh(VertexHelper m)
@@ -122,6 +129,7 @@ namespace StarTournament.ProvingGround
             int n=4*(steps+1);for(int i=0;i<n;i++)m.AddTriangle(first,first+1+i,first+1+(i+1)%n);
         }
     }
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class LoadingEmblem:MaskableGraphic
     {
         public float Angle;
