@@ -1,0 +1,13 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=BotBanterTests;BotBanterVoiceCatalogTests;NativeMusicTests
+lab_history=/Users/eaafonasev/Projects/star-tournament-voice-tuning/unity/../.local/unity-evidence/focused-editmode.hqr1PA/qa-lab-history.json
+revision=4fd5d50bcf6f46e8838200357b86f268b6bf0993
+ M ../docs/tasks/47-voice-level-and-frequency.md
+ M Assets/StarTournament/Runtime/Core/BotBanter.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/ProvingGroundBotBanter.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Tests/EditMode/BotBanterTests.cs
+ M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs

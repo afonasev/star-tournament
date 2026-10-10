@@ -259,6 +259,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.BotBanterIntervalPath))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeBotBanterInterval()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponGain"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCombatAudioMix()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponReadyGain"))

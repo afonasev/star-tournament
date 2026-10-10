@@ -130,6 +130,30 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{if(File.Exists(path))File.Delete(path);}
         }
+        [Test] public void BotBanterIntervalMigrationPreservesHistoryAndPersistsTheNewControl()
+        {
+            const string field="presentation.botBanterIntervalSeconds";
+            var shipped=DesignLabHistoryTests.Shipped();
+            var method=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",BindingFlags.NonPublic|BindingFlags.Instance);
+            var before=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,before);history.Create("Saved banter predecessor");
+                var draft=history.Selected.Snapshot;draft.Set("audio.effectsDefaultPercent",45);history.Save(draft);string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get(field),Is.EqualTo(10));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var descriptor=migrated.Selected.Snapshot.Descriptors.Single(d=>d.Path==field);
+                Assert.That(descriptor.Validate(out _),Is.True);Assert.That(descriptor.Minimum,Is.EqualTo(10));Assert.That(descriptor.Maximum,Is.EqualTo(120));
+                Assert.That(migrated.Selected.Snapshot.IsEditable(field),Is.True);
+                var changed=migrated.Selected.Snapshot;changed.Set(field,30);migrated.Save(changed);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Snapshot.Get(field),Is.EqualTo(30));
+                Assert.That(BotBanterPolicy.FromProfile(reopened.Selected.Snapshot.Profile(field)).GlobalMinimum,Is.EqualTo(30));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void MusicBalanceMigrationPreservesHistoricalHashAndCustomMusicGain()
         {
             var shipped=DesignLabHistoryTests.Shipped();

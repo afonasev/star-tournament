@@ -1,0 +1,362 @@
+{
+  "baseline": "1deb6de0b9ede1be2b4a6c187d8fcf6678f6013b",
+  "amplitude_multiplier": 1.2,
+  "gain_db": 1.5836249209524964,
+  "recordings": [
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/no-reply-1.mp3",
+      "before": {
+        "samples": 102068,
+        "peak": 0.6731736660003662,
+        "rms": 0.09865158624391246,
+        "sha256": "883287fdc2978be997a32e8338a830245bacbac0715a956e6f48c52e3e5921af"
+      },
+      "after": {
+        "samples": 102068,
+        "peak": 0.8060709834098816,
+        "rms": 0.11839805888736972,
+        "sha256": "21b3cd81a607e801c7d5ffb2fec6bea9351bb1e8d85347add3987f9b76302759"
+      },
+      "rms_ratio": 1.200163762137943
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/missed-2.mp3",
+      "before": {
+        "samples": 92362,
+        "peak": 0.6711981296539307,
+        "rms": 0.09770068524735966,
+        "sha256": "77165ea192c751621a5931d956e3e908319d7816c3bb7b222d5711403d4543c3"
+      },
+      "after": {
+        "samples": 92362,
+        "peak": 0.8067778944969177,
+        "rms": 0.11722248877790414,
+        "sha256": "e49dfa680cc61921ac684d7eb9792c7f33c8bc805cc773316ed1ca6934ecf642"
+      },
+      "rms_ratio": 1.1998123501500422
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/self-explosion-1.mp3",
+      "before": {
+        "samples": 194227,
+        "peak": 0.6742833852767944,
+        "rms": 0.08638851713952869,
+        "sha256": "6c518972349bc72176696ec901d3c49547e681793620c7f8a27cca7b524ce70d"
+      },
+      "after": {
+        "samples": 194227,
+        "peak": 0.8090121150016785,
+        "rms": 0.10364029114887387,
+        "sha256": "19097031f6cc01f299a455282e1129a13ae4351854a42f91d256d039cccc8a66"
+      },
+      "rms_ratio": 1.1996998510980494
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-2.mp3",
+      "before": {
+        "samples": 111491,
+        "peak": 0.6728224754333496,
+        "rms": 0.07740728601161252,
+        "sha256": "642836c19fec98eff5eeac2e9407840cc1fc8e3415e05df30ede83c26c6d1e3f"
+      },
+      "after": {
+        "samples": 111491,
+        "peak": 0.8072842955589294,
+        "rms": 0.09290813178990065,
+        "sha256": "bdd3ddb44fb7ecdf6e71d40472832a670fdf4cd3cd7c97f81b10d478ad142dc2"
+      },
+      "rms_ratio": 1.2002504748191625
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-1.mp3",
+      "before": {
+        "samples": 84824,
+        "peak": 0.6732205748558044,
+        "rms": 0.08342665694585892,
+        "sha256": "d424a6c57b782bdc1b46aa377230b9a037387b4dd88efb56fa9ef7c5413ba0db"
+      },
+      "after": {
+        "samples": 84824,
+        "peak": 0.8064502477645874,
+        "rms": 0.10013247181670504,
+        "sha256": "cb509a0e7487a010c75d4b7a096d5b80003d3ca3bcdbe7eb2375d7ed817c09e0"
+      },
+      "rms_ratio": 1.2002455268186958
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-1.mp3",
+      "before": {
+        "samples": 156629,
+        "peak": 0.6733464002609253,
+        "rms": 0.10607790285071254,
+        "sha256": "7a3a675f2a416f21ab31c5a28f53851a69bd7e504ea544d5221cd8a1c66790a4"
+      },
+      "after": {
+        "samples": 156629,
+        "peak": 0.8084951043128967,
+        "rms": 0.1272968859894465,
+        "sha256": "3bfade12dfa234150f6b6466842815aa1313347c3d9c2180792fd8619511d09c"
+      },
+      "rms_ratio": 1.2000320761299008
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-3.mp3",
+      "before": {
+        "samples": 114601,
+        "peak": 0.6726819276809692,
+        "rms": 0.05674311525980343,
+        "sha256": "7f11c026f527167d83678fc6dc5fcac96f710bc93107a4dfad7e1461c8a8843c"
+      },
+      "after": {
+        "samples": 114601,
+        "peak": 0.8070548176765442,
+        "rms": 0.06812563989359766,
+        "sha256": "94cce9aceaa0a5fc0e43075389f3b808e8fd8d011cede58cb6b99f772c79304d"
+      },
+      "rms_ratio": 1.2005974571836304
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-2.mp3",
+      "before": {
+        "samples": 71348,
+        "peak": 0.6184289455413818,
+        "rms": 0.09790433249222412,
+        "sha256": "b331e56330d4e77b3fe1229824d81ac594bd355594a12208a47845f7e3ff5414"
+      },
+      "after": {
+        "samples": 71348,
+        "peak": 0.743524432182312,
+        "rms": 0.1175181368612639,
+        "sha256": "08827382bf7c1facabb30a6f7816183d1b9e50ec1cbe6fd156c9d64753b4333d"
+      },
+      "rms_ratio": 1.2003364291421688
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-2.mp3",
+      "before": {
+        "samples": 92362,
+        "peak": 0.6704477667808533,
+        "rms": 0.09147896960715339,
+        "sha256": "c56c0088f5a24a433d885f16cd62fa470a074ba22c16b50c948d64643ed1b9a7"
+      },
+      "after": {
+        "samples": 92362,
+        "peak": 0.806743323802948,
+        "rms": 0.10980417541952238,
+        "sha256": "60023eb28226cbd9bafe408ba813da2eb1e921ed858ce22a13b91c0f1f8c63b3"
+      },
+      "rms_ratio": 1.2003215153282183
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-2.mp3",
+      "before": {
+        "samples": 124024,
+        "peak": 0.6632166504859924,
+        "rms": 0.10045433878745082,
+        "sha256": "e343976fd844aa050fa6db1cd916cdc68e6853baa14eb496d890223beb9c60fd"
+      },
+      "after": {
+        "samples": 124024,
+        "peak": 0.7958737015724182,
+        "rms": 0.1205532526955199,
+        "sha256": "4b1029660738d1fb137e5fc8da762f40a9fdcd6c4d6bbd92f5a1d82e12a1fb6c"
+      },
+      "rms_ratio": 1.200080097591364
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-1.mp3",
+      "before": {
+        "samples": 83881,
+        "peak": 0.6687471270561218,
+        "rms": 0.0799193593721308,
+        "sha256": "c73adfedc23b5cc8ba32ba7c094b428f3c50569008be847613cd85e165f35f9d"
+      },
+      "after": {
+        "samples": 83881,
+        "peak": 0.8010033369064331,
+        "rms": 0.09587169224737316,
+        "sha256": "331f5a3ca272221fccbc0b9f69b558242010475d833d97400e7ff629010fe86b"
+      },
+      "rms_ratio": 1.1996053647147378
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-1.mp3",
+      "before": {
+        "samples": 112433,
+        "peak": 0.6690436005592346,
+        "rms": 0.06481460325558774,
+        "sha256": "327f1d3b221ed5c01b284ed8f3b2c8d42cb1d68af30703dd257f272cca5d2bf1"
+      },
+      "after": {
+        "samples": 112433,
+        "peak": 0.8026174902915955,
+        "rms": 0.07777591055547214,
+        "sha256": "1d5974343f429333f1aa5a358744119f3d30bf241608d05d31421ecc35cf91d8"
+      },
+      "rms_ratio": 1.1999751082140118
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/self-kill-1.mp3",
+      "before": {
+        "samples": 134672,
+        "peak": 0.6741212606430054,
+        "rms": 0.08521882895400436,
+        "sha256": "9c5b6e169aab74f36f33498e177c9769ed28d3e84c60e5efd51905a823f110fe"
+      },
+      "after": {
+        "samples": 134672,
+        "peak": 0.8070040941238403,
+        "rms": 0.10225861500847763,
+        "sha256": "ddaa43270a7401f1efb0adb7fe5a051570a7a44590d4dce24794feff52fa69db"
+      },
+      "rms_ratio": 1.1999532998003324
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-2.mp3",
+      "before": {
+        "samples": 143153,
+        "peak": 0.66261225938797,
+        "rms": 0.10461618622813364,
+        "sha256": "1615eed6251459bbcaeb8f85731a54dfb1a48d3255f954d176be37071441b764"
+      },
+      "after": {
+        "samples": 143153,
+        "peak": 0.7961404919624329,
+        "rms": 0.12552220306331682,
+        "sha256": "fd1b7888f8e663077f8337aec4d8bfc564b95892af12d00a5542b80599b7a893"
+      },
+      "rms_ratio": 1.1998353943967524
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-1.mp3",
+      "before": {
+        "samples": 105838,
+        "peak": 0.6722908020019531,
+        "rms": 0.10405407144899938,
+        "sha256": "c5071d113f9a89743d2bda5f50f18ee360e370a83bf7fe0f16782c5de7b917b4"
+      },
+      "after": {
+        "samples": 105838,
+        "peak": 0.8069272041320801,
+        "rms": 0.12481268367784848,
+        "sha256": "be96428d334233e858bbbc6e70ad98731f6285af9020b9feffdac5ac900055ab"
+      },
+      "rms_ratio": 1.199498317939665
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-1.mp3",
+      "before": {
+        "samples": 72290,
+        "peak": 0.6730963587760925,
+        "rms": 0.08148306935377678,
+        "sha256": "c97cd28a39ee4c8ac061086a09212abeebccb619a558c836c5dc9be1e937bc35"
+      },
+      "after": {
+        "samples": 72290,
+        "peak": 0.8056294918060303,
+        "rms": 0.09775075366403334,
+        "sha256": "d75a7535022d67becf6fd4791795afe047c6a0cf73180dee03adce612c6e6617"
+      },
+      "rms_ratio": 1.1996449623126837
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-2.mp3",
+      "before": {
+        "samples": 84824,
+        "peak": 0.6142725348472595,
+        "rms": 0.0969459777398612,
+        "sha256": "c362da007f1a6149d6b74f513e36726c8ad86a70d53d3f29b1d0eae36fb19736"
+      },
+      "after": {
+        "samples": 84824,
+        "peak": 0.7368338704109192,
+        "rms": 0.1163476729715498,
+        "sha256": "84fed59a97831b3e23bb1f1561859a9e189fd606808bfcc924f620d6b3db1bbe"
+      },
+      "rms_ratio": 1.2001289345262978
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-1.mp3",
+      "before": {
+        "samples": 87650,
+        "peak": 0.6748172044754028,
+        "rms": 0.07142286381286891,
+        "sha256": "682848a58f3b7f69bcb9499ae37733084b1dde4b9e226785cda4b3d494877237"
+      },
+      "after": {
+        "samples": 87650,
+        "peak": 0.8036900162696838,
+        "rms": 0.08570382468560091,
+        "sha256": "bf0643eb0c114f207a15f4db421c85d40de32a7e4e4221aeeaed7beba90d281a"
+      },
+      "rms_ratio": 1.1999494295012973
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3",
+      "before": {
+        "samples": 136558,
+        "peak": 0.672234058380127,
+        "rms": 0.08164389006811852,
+        "sha256": "1c0f9f2b4fdc2a7d6ae4c3a9f1bb7495eaade303492ebd30a58373e36127196e"
+      },
+      "after": {
+        "samples": 136558,
+        "peak": 0.8070598244667053,
+        "rms": 0.09799635501205808,
+        "sha256": "83f9b3a09e65091209e322d07a91edcf79ba2081e0eac411eb40ae7c18b564af"
+      },
+      "rms_ratio": 1.200290124959701
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-2.mp3",
+      "before": {
+        "samples": 88593,
+        "peak": 0.6725394129753113,
+        "rms": 0.061290106291285965,
+        "sha256": "30d83f311ef2d6ed1b3e6868b95df7387873649c978386855fc5018bd3ca759d"
+      },
+      "after": {
+        "samples": 88593,
+        "peak": 0.8071407675743103,
+        "rms": 0.07353104149216955,
+        "sha256": "356083ad13b817b5bc1132276f5218ac0b19eef1d23d4db3ef73f1e3e70f002d"
+      },
+      "rms_ratio": 1.1997212265011843
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/kill-triple.wav",
+      "before": {
+        "samples": 67200,
+        "peak": 0.544952392578125,
+        "rms": 0.10354549655314194,
+        "sha256": "a0e32bc982da8f9fdeb603da9a33eea20765c7c98872cf85ffd1fe251ed69828"
+      },
+      "after": {
+        "samples": 67200,
+        "peak": 0.6539306640625,
+        "rms": 0.12425454946036096,
+        "sha256": "eede93643f87e8f8d6075acae4e5e0981725a378687c3341fa512e4e88d7d95f"
+      },
+      "rms_ratio": 1.1999995518548763
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/kill-quadruple.wav",
+      "before": {
+        "samples": 72000,
+        "peak": 0.559173583984375,
+        "rms": 0.10237168312101928,
+        "sha256": "3893c854829892c088221a70c8f32ffd6c89172c52b175e0105f65bd415f01b0"
+      },
+      "after": {
+        "samples": 72000,
+        "peak": 0.6710205078125,
+        "rms": 0.1228460699346535,
+        "sha256": "1912c37f5df8f7421c0a727999060944e87c50d1d61da49a58e2b3ef66d857da"
+      },
+      "rms_ratio": 1.2000004902667303
+    }
+  ],
+  "result": "22/22: +20% decoded RMS within codec tolerance, no clipping, unchanged sample counts",
+  "unity_tests": "NotRun: insufficient disk for isolated Unity import; required EditMode filter BotBanterTests;BotBanterVoiceCatalogTests",
+  "human_listening": "pending"
+}

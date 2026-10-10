@@ -107,6 +107,7 @@ namespace StarTournament.ProvingGround
                 case "pickups":return "Бонусы → Подбор";case "combat":return "Игрок → Здоровье";case "motor":return "Игрок → Движение";
                 case "capsule":return "Игрок → Капсула";case "camera":return "Камера → Вид игрока";case "input":return "Игрок → Управление";
                 case "death":return "Смерть → Тело";case "spawn":return "Смерть → Возрождение";case "killcam":return "Камера → Killcam";
+                case "bot-banter":return "Боты → Реплики";
                 case "bot-evaluation":return "Боты → Контрольная оценка (read-only)";case "bots":return "Боты → Восприятие";case "bot-navigation":return "Боты → Навигация";case "bot-behavior":return "Боты → Поведение";
                 case "match":return "Матч → Правила";case "score":return "Матч → Очки";case "teams":return "Матч → Команды";
                 case "damage-policy":return "Оружие → Урон союзникам и себе";case "hit-zones":return "Игрок → Зоны попадания";case "presentation":return "Оформление → Сцена";case "shot-feedback":return "Оформление → Выстрел";case "audio":return "Оформление → Звук";case "music":return "Оформление → Музыка";
