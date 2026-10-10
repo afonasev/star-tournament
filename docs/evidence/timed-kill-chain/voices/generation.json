@@ -1,28 +1,28 @@
 {
   "provider": "Microsoft Edge online TTS via edge-tts 7.2.8",
-  "voice": "ru-RU-DmitryNeural",
-  "rate": "-5%",
-  "pitch": "-5Hz",
-  "source": "dmitry.mp3",
+  "voice": "ru-RU-SvetlanaNeural",
+  "rate": "+0%",
+  "pitch": "+0Hz",
+  "source": "svetlana.mp3",
   "text": "Тройное убийство! Четверное убийство!",
   "assets": [
     {
       "file": "unity/Assets/StarTournament/Resources/Audio/kill-triple.wav",
-      "sha256": "ae677a954ef77afc75a9679cfb78ec5b8ad8c3e9b816b3720568e8a882ef3eed",
+      "sha256": "a0e32bc982da8f9fdeb603da9a33eea20765c7c98872cf85ffd1fe251ed69828",
       "cut_seconds": [
         0.18,
-        1.5
+        1.4
       ]
     },
     {
       "file": "unity/Assets/StarTournament/Resources/Audio/kill-quadruple.wav",
-      "sha256": "bc9282b0f4e4e20c7c8dcb8b177df9a71ef7123b0bad5df326abc6b9937c3c07",
+      "sha256": "3893c854829892c088221a70c8f32ffd6c89172c52b175e0105f65bd415f01b0",
       "cut_seconds": [
-        2.52,
-        1.6
+        2.48,
+        1.5
       ]
     }
   ],
   "format": "PCM s16le,48000Hz,mono",
-  "audition": "pending; male candidate selected after optional question, no human audio acceptance"
+  "audition": "female voice selected by user2026-10-10; gameplay mix/human acceptance pending"
 }

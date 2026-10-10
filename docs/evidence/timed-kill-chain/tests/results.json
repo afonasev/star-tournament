@@ -72,6 +72,16 @@
       "duration": "52.8580037",
       "ended": "2026-10-10 11:20:41Z",
       "source_revision": "5a13e0dd"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.Cbx0k6/playmode.xml",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "duration": "20.5915574",
+      "ended": "2026-10-10 11:24:48Z",
+      "asset_snapshot": "selected Svetlana WAV checksums in voices/generation.json"
     }
   ],
   "distinct_latest_passed": 56,
@@ -343,8 +353,8 @@
     },
     "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices": {
       "result": "Passed",
-      "ended": "2026-10-10 11:20:41Z",
-      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.m3VP9t/playmode.xml"
+      "ended": "2026-10-10 11:24:48Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.Cbx0k6/playmode.xml"
     },
     "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.FourChannelCombinationsHaveOneVoiceAcrossOneAndFourViews": {
       "result": "Passed",

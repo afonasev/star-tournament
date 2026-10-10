@@ -1,0 +1,9 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices
+lab_history=/Users/eaafonasev/.codex/worktrees/timed-kill-chain/star-tournament/unity/../.local/unity-evidence/focused-playmode.Cbx0k6/qa-lab-history.json
+revision=6db5cba2de3705624d33993eac0e5bab3256246f
+ M ../docs/evidence/timed-kill-chain/verification.md
+ M ../docs/evidence/timed-kill-chain/voices/generation.json
+ M Assets/StarTournament/Resources/Audio/kill-quadruple.wav
+ M Assets/StarTournament/Resources/Audio/kill-triple.wav
