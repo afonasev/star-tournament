@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
         {
             UnbindBotBanter();
             botBanter=new NativeBotBanter(Session,Composition,gameObject.scene.GetPhysicsScene(),
-                (frozenMovement??Profile).Get("camera.eyeHeight"),(frozenLife??LifeProfile).Get("combat.maximumHealth"),unchecked((int)botSeed));
+                (frozenMovement??Profile).Get("camera.eyeHeight"),(frozenLife??LifeProfile).Get("combat.maximumHealth"),unchecked((int)botSeed),BotBanterPolicy.FromProfile(frozenMovement??Profile));
             botBanter.Banter.LineSelected+=OnBotBanterLineSelected;
         }
         void UnbindBotBanter()

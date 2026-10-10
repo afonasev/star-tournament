@@ -12,6 +12,11 @@ namespace StarTournament.ProvingGround
         public const string Identity = "bot-banter-v1";
         public double InitialSilence = 10, GlobalMinimum = 10, GlobalMaximum = 10;
         public double BotMinimum = 10, BotMaximum = 10, DisplaySeconds = 4, DuelSeconds = 8;
+        public static BotBanterPolicy FromProfile(ProvingProfile profile)
+        {
+            double interval=ProvingProfile.BotBanterIntervalSeconds(profile);
+            return new BotBanterPolicy { InitialSilence=interval,GlobalMinimum=interval,GlobalMaximum=interval,BotMinimum=interval,BotMaximum=interval };
+        }
         public double Chance = .65;
         public float WeakDamageFraction = .1f, NearDeathFraction = .2f;
         public int SeriesLength = 3;

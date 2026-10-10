@@ -97,6 +97,16 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Respawn(0);Die(0,0,220,WeaponId.RocketLauncher);Assert.That(banter.Current.Value.Reason,Is.EqualTo(BotBanterReason.SelfExplosion));
             Respawn(0);Die(0,0,290);Assert.That(banter.Current.Value.Reason,Is.EqualTo(BotBanterReason.SelfExplosion),"Exhausted exact phrase cannot repeat");
         }
+        [Test] public void LabIntervalControlsInitialSilenceAndBothCooldowns()
+        {
+            var profile=ProvingProfile.CreateDefault();profile.Set("presentation.botBanterIntervalSeconds",30);
+            var policy=BotBanterPolicy.FromProfile(profile);Assert.That(policy.InitialSilence,Is.EqualTo(30));
+            Assert.That(policy.GlobalMinimum,Is.EqualTo(30));Assert.That(policy.GlobalMaximum,Is.EqualTo(30));
+            Assert.That(policy.BotMinimum,Is.EqualTo(30));Assert.That(policy.BotMaximum,Is.EqualTo(30));
+            policy.InitialSilence=0;policy.Chance=1;Setup(policy);int count=0;banter.LineSelected+=_=>count++;
+            Duel();Die(1,0,20);Assert.That(count,Is.EqualTo(1));
+            Die(2,2,49.999);Assert.That(count,Is.EqualTo(1));Respawn(2);Die(2,2,50);Assert.That(count,Is.EqualTo(2));
+        }
         [Test] public void DefaultCooldownAllowsNewLinesAtTenSecondsButNeverEarlier()
         {
             var policy=new BotBanterPolicy { InitialSilence=0,Chance=1 };
