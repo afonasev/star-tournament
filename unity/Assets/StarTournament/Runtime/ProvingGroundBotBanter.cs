@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround
         void OnBotBanterLineSelected(BotBanterLine line)
         {
             if(phase==Phase.Running&&Session.Match?.Phase!=NativeMatchPhase.Finished)
-                gameAudio?.PlayBotReaction(line.Text,line.Speaker);
+                gameAudio?.PlayBotReaction(line.Text,line.Speaker,line.SpeakerMayBeDead);
         }
         void CreateBotBanterNotice(int seat)
         {

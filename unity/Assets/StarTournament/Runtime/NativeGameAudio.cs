@@ -44,7 +44,7 @@ namespace StarTournament.ProvingGround
         readonly AudioSource uiSource;
         readonly AudioSource damageBonusSource;
         readonly AudioSource botReactionSource;
-        readonly AudioClip botReactionClip;
+        readonly Dictionary<string,AudioClip> botReactionClips=new Dictionary<string,AudioClip>(StringComparer.Ordinal);
         const float BotReactionGain=1;
         int botReactionSpeaker=-1;
         public int BotReactionPlayCount { get; private set; }
@@ -99,8 +99,12 @@ namespace StarTournament.ProvingGround
             musicScene=new NativeMusicCoordinator(root,profile);music=musicScene.Round;musicProfile=profile;
             uiSource=Source("menu-ui");damageBonusSource=Source("damage-bonus-alert");
             botReactionSource=Source("bot-reaction");
-            botReactionClip=Resources.Load<AudioClip>("Audio/Banter/dazhe-ne-pocarapal-radio");
-            if(botReactionClip==null)Debug.LogError("Missing bot reaction voice clip");
+            foreach(var entry in NativeBotBanterVoice.Clips)
+            {
+                var clip=Resources.Load<AudioClip>(entry.Value);
+                if(clip==null)Debug.LogError("Missing bot reaction voice clip: "+entry.Value);
+                else botReactionClips.Add(entry.Key,clip);
+            }
             killSeriesSource=Source("kill-series-voice");
             beams=new AudioSource[NativeMatchRoster.MaximumParticipants];
             beamGain=new float[beams.Length];
@@ -159,11 +163,11 @@ namespace StarTournament.ProvingGround
         public void SuspendMusic(){musicScene.SetSuspended(true);UpdateVolume();}
         public void StopEffects(){StopBotReaction();combatMusicGain=1;damageBonusSource.Stop();killSeriesSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
         public void StopBotReaction(){botReactionSource.Stop();botReactionSpeaker=-1;}
-        public bool PlayBotReaction(string text,int speaker)
+        public bool PlayBotReaction(string text,int speaker,bool speakerMayBeDead=false)
         {
-            if(!NativeBotReactionPreferences.VoiceEnabled||text!="Даже не поцарапал!"||botReactionClip==null||EffectsVolume<=0||
-                session==null||speaker<0||speaker>=session.ParticipantCount||session.Life(speaker).Dead)return false;
-            StopBotReaction();botReactionSpeaker=speaker;botReactionSource.clip=botReactionClip;
+            if(!NativeBotReactionPreferences.VoiceEnabled||text==null||!botReactionClips.TryGetValue(text,out var clip)||EffectsVolume<=0||
+                session==null||speaker<0||speaker>=session.ParticipantCount||!speakerMayBeDead&&session.Life(speaker).Dead)return false;
+            StopBotReaction();botReactionSpeaker=speakerMayBeDead?-1:speaker;botReactionSource.clip=clip;
             botReactionSource.Play();BotReactionPlayCount++;UpdateVolume();return true;
         }
         public void UpdateVolume()

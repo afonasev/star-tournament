@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.0360479">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="474" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.036048" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1576" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/bot-banter-full-voice/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="474" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.032599" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26277" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1577" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="474" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.032425" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1578" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="474" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.032325" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1579" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="474" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.032200" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="BotBanterVoiceCatalogTests" fullname="StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests" classname="StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.027707" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1003" name="EveryImportedRecordingIsNonemptyMonoWithBoundedDuration" fullname="StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests.EveryImportedRecordingIsNonemptyMonoWithBoundedDuration" methodname="EveryImportedRecordingIsNonemptyMonoWithBoundedDuration" classname="StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests" runstate="Runnable" seed="1620882021" result="Passed" start-time="2026-10-10 11:33:20Z" end-time="2026-10-10 11:33:20Z" duration="0.022021" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

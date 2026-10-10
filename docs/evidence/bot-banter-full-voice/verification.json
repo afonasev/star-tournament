@@ -1,0 +1,151 @@
+{
+  "initial_baseline": "5a13e0dd8a7270706fcd787f3984325597ccd30b",
+  "final_dependency_baseline": "f53d0c85350c16364cf73480b6d77f111fda668a",
+  "tested_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/NativeBotBanterVoice.cs": "2b35449b532b9fc1dbdd661fa6083edf9c54fb181c784878df2ec22c4a63d467",
+    "unity/Assets/StarTournament/Runtime/NativeGameAudio.cs": "b5b627fd2ec78dad87a06061d6648e572a66036a556103cc0f1370b05f20eec4",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundBotBanter.cs": "7a5075f06051ef1ae4f55aa2879fd03ef05f17cacc3708a6374e585fab6ec374",
+    "unity/Assets/StarTournament/Tests/EditMode/BotBanterVoiceCatalogTests.cs": "ae1fc9740c080c4fc597def7014a4b34f24e951ab0d12cc24c3aad4b6974e1ec",
+    "unity/Assets/StarTournament/Tests/PlayMode/BotReactionSettingsTests.cs": "19cfc645214d7f13467ebacc879de8874bc034cbfcdddc0b972caa4f1e19cdde",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3": "80470a84fb30b5d48d703a12ffefa78ea701ef136e57575a2dd1d5570dd76da6",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3.meta": "eb0abaab27bd4d9cf74604c495d6f5a1d3c6dc3fd912f6f4730d7b50957405fd",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-1.mp3": "ff8e2473ab5c6fe196a32bb125580e95c36a4c44b9224a374829eb194727b2c5",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-1.mp3.meta": "9ac5327a6e705cdab77374de0da6380ab843d4a1b6160bba0cf7a64828870896",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-2.mp3": "e8c86614fa7ecbdd2e6394e9dd38403d2286010f29cbbdb184af4f506efcd0da",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-2.mp3.meta": "f81e2480365ed8b8ca4a1d28459bd26e3d0869873b594c0dc85b51d75e36af29",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-1.mp3": "4a65f5fdf6b216402a147be93c7db7854831ebd8694884325eca5a639792f317",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-1.mp3.meta": "f91b8a6639726fcf41f6f4857904b5328c1e0d287a79ec42ee1b80e85c787dd0",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-2.mp3": "739075076199654c85d93cf08c8d6bdb393bbeab7da2330d79c26055b08d5002",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-2.mp3.meta": "d49890d65edd196c812c1a1e420b1b9fe2690e5cd213d4dc2c312359402cdfa9",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/missed-2.mp3": "89eacede0565b3e37b8645c8d35db45334fd2684a3edf54fac791bcdf41dc5c8",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/missed-2.mp3.meta": "5edb26e048c33322218a6640e1d73e2c85028d7e0cfb7938b264dd495c46b26b",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-1.mp3": "eb006664f3748752c6c2a8e6df4886ffc85875121e5e76b356ab91a8c4ea145e",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-1.mp3.meta": "2c76e028c3023da6e557e571bee9c8088238e6242fe846b98430a0c8ef9fa7e6",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-2.mp3": "6f6c6ff0649ca1f1893fa7006bc68d26dee26d7117fd680922fe3537f3a2f761",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-2.mp3.meta": "c4fa5efdc328a925ae5ae2fdf682d760474690fc5e14241fcbacd5466e43febc",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/no-reply-1.mp3": "a465aee8687fa56d02206d8452bb784712d8263011a3ca27b80b5c8d733cb865",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/no-reply-1.mp3.meta": "9b8819ad8f114fd7983a3f9fcd6d646b96aab0f2676e66c28ed01f7010e3ce31",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-1.mp3": "98e29622fac3e55a05d338cd2f90cbd384b3f8f83dc5780160f62ba70ca6bd20",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-1.mp3.meta": "645891ed76032e48eee1da82ca2a3afe449f242eff21294fae9e22b872e9c318",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-2.mp3": "1a36e14a585e8c2d85416de9ededee2ace1bc4b0b9ac3c143d9a43a1565e0eac",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-2.mp3.meta": "9f49b5fe54910d3411743db24f847a51561773c961d1bb731e1943da722da880",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-1.mp3": "01f9a142c20571b7d0247b276c138d82a122d3640b49c73e358872828511c68c",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-1.mp3.meta": "84612b8044ed062e093015101bb3c36a92af39f025452d97bfffce1010af1df4",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-2.mp3": "8f00c3c52396f86c2520d1707b3ca0179474e562275b61e1fe994d7e944f2d2a",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-2.mp3.meta": "421dfa811038e5037bdd4dd032a62d4d54832686ff48c5f82b5db5ce09b4c122",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/self-explosion-1.mp3": "27c8d748c22ae59f800866a2fd170f8f2fda350781ca6af9be2bbe7336a4296f",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/self-explosion-1.mp3.meta": "396f923ec8f1395e241d849c03883630c295b555f269927bc77e0a7646dc875b",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/self-kill-1.mp3": "a0ea4750d393ebced6d52d8d7560d8a1b61b08a170b6ca89cee2d2f0735a4d57",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/self-kill-1.mp3.meta": "fa58bdc49eb1eb4dfcf6c0bbda9d8fa14bfe8bd49a98ad87e8fb09d0c8b08c4c",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-1.mp3": "e84989ad7d6205b469a95f05ed5ffcee08c90db3a3b5c6b92b86c56f1f266bf1",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-1.mp3.meta": "eadb184b7b2a731f2840e929667419e09732a93a04bf1859c352f1da3115fea6",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-2.mp3": "dc142eb0bb30b4be5b0fb31ffb9a228e1f74ddb2a993848c8bef60b2f59558ca",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-2.mp3.meta": "203102aeffc7ce2850692611a22bb62a581901624a073ac41993b2d63bf56b58",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-1.mp3": "b9ec01843d806d5aff043c3b9c4ed5053e38dc5a41276970da7f2a49e5cd5918",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-1.mp3.meta": "b609bbb5a74a1c93697aaa58e9b5a50859b3bf8c0a8fe48b71e56005366e32e6",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-2.mp3": "5d577335b9b70c938703ac8762ba9a9377283765e3963a1b0e8feceed2a00296",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-2.mp3.meta": "fefc9024a966998187b792e66504404315101f1bfd7eff08e4386606d6f4caa4",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-3.mp3": "1a57a836718e1ee914eafa22453f0af0c363222ecd3c5d0d2ecf028912cbe6e4",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-3.mp3.meta": "33ffe9e991666202f01fc64562168b29f29e4fdad003d5367f02ccb3b1d82261"
+  },
+  "runs": [
+    {
+      "xml": "docs/evidence/bot-banter-full-voice/tests/editmode-final-assets.xml",
+      "passed": 1,
+      "failed": 0,
+      "duration_seconds": 0.0360479,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests.EveryImportedRecordingIsNonemptyMonoWithBoundedDuration",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "xml": "docs/evidence/bot-banter-full-voice/tests/editmode-initial.xml",
+      "passed": 2,
+      "failed": 0,
+      "duration_seconds": 0.0391809,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests.EveryImportedRecordingIsNonemptyMonoWithBoundedDuration",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.BotBanterVoiceCatalogTests.ExactCatalogCoversEveryExistingPhraseOnce",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "xml": "docs/evidence/bot-banter-full-voice/tests/playmode-final-assets.xml",
+      "passed": 3,
+      "failed": 0,
+      "duration_seconds": 26.8487229,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.DeadComplaintsReachAudioAndRespawnNeverReplaysThem",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.EveryPhrasePlaysItsOwnClipFromOneSource",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.VoiceLifecycleAndEffectsMixNeverReplayOldLines",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "xml": "docs/evidence/bot-banter-full-voice/tests/playmode-initial.xml",
+      "passed": 7,
+      "failed": 0,
+      "duration_seconds": 70.5763053,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests.ActualAttackDamageOrderingAndSnapshotRemainIndependent",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests.HudOneToFourViewsPauseRestoreRepeatAndLayout",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.DeadComplaintsReachAudioAndRespawnNeverReplaysThem",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.EveryPhrasePlaysItsOwnClipFromOneSource",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.FourChannelCombinationsHaveOneVoiceAcrossOneAndFourViews",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.SettingsDefaultsNavigationAndPersistence",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.VoiceLifecycleAndEffectsMixNeverReplayOldLines",
+          "result": "Passed"
+        }
+      ]
+    }
+  ],
+  "conclusion": "2 unique EditMode and7 unique PlayMode passed. After processing-only change, final import1 and mapping/dead/lifecycle3 repeated passed. Catalog/input/persistence/one-four-view/HUD contracts are unchanged and retain initial passing evidence.",
+  "checks": [
+    "20 exact catalog mappings and unique real imported mono assets",
+    "20 actual AudioSource clip selections; unknown/null/invalid source rejected",
+    "posthumous flag reaches handler after real death; complaint can finish after respawn without replay; live boasting rejects/stops at death",
+    "four channels at1/4 views, settings navigation/persistence and shared effects budget/lifecycle",
+    "all source/runtime audio SHA256/FFprobe/loudness, diagnostic raw/radio ASR retained"
+  ],
+  "human_acceptance": "pending aggression/intelligibility/real combat mix listening",
+  "deferred": [
+    "full suite",
+    "Player/build/release/deploy"
+  ],
+  "source_review": "Two read-only Astra memos, no concrete code defects; all20 audio text semantics remain human audition, ASR only diagnostic"
+}

@@ -120,7 +120,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(labels.Length,Is.EqualTo(locals));foreach(var label in labels)Assert.That(string.IsNullOrEmpty(label.text),Is.EqualTo(!text));
                 Assert.That(Audio.BotReactionPlayCount-count,Is.EqualTo(voice?1:0));Assert.That(Voice.isPlaying,Is.EqualTo(voice));
                 Assert.That(Voice.spatialBlend,Is.Zero);Assert.That(Voice.loop,Is.False);
-                if(voice){Assert.That(Voice.clip.length,Is.InRange(3.4f,3.8f));Assert.That(Voice.volume,Is.GreaterThan(0));}
+                if(voice){Assert.That(Voice.clip,Is.SameAs(Resources.Load<AudioClip>(NativeBotBanterVoice.Clips["Даже не поцарапал!"])));Assert.That(Voice.volume,Is.GreaterThan(0));}
             }
         }
         [UnityTest] public IEnumerator VoiceLifecycleAndEffectsMixNeverReplayOldLines()
@@ -128,7 +128,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Load();NativeBotReactionPreferences.SetVoice(false);yield return Start(1);EmitVoicedLine();
             int count=Audio.BotReactionPlayCount;NativeBotReactionPreferences.SetVoice(true);yield return null;
             Assert.That(Audio.BotReactionPlayCount,Is.EqualTo(count));Assert.That(Voice.isPlaying,Is.False);
-            Assert.That(Audio.PlayBotReaction("Ты хоть попади сначала!",0),Is.False);
+            Assert.That(Audio.PlayBotReaction("Неизвестная фраза",0),Is.False);
+            Assert.That(Audio.PlayBotReaction("Ты хоть попади сначала!",0),Is.True);
+            Assert.That(Voice.clip,Is.SameAs(Resources.Load<AudioClip>(NativeBotBanterVoice.Clips["Ты хоть попади сначала!"])));
             Assert.That(Audio.PlayBotReaction("Даже не поцарапал!",0),Is.True);Assert.That(Voice.isPlaying,Is.True);
             NativeAudioPreferences.SetEffects(50);Audio.MenuConfirm();Audio.UpdateVolume();
             Assert.That(Voice.volume,Is.InRange(.001f,.5f));
@@ -144,6 +146,54 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Audio.PlayBotReaction("Даже не поцарапал!",0);ground.Session.Restore(ground.Session.Capture());Assert.That(Voice.isPlaying,Is.False);
             Audio.PlayBotReaction("Даже не поцарапал!",0);Audio.Bind(ground.Session,ground.Composition);Assert.That(Voice.isPlaying,Is.False);
             Audio.PlayBotReaction("Даже не поцарапал!",0);ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,100,1,ground.Session.Life(1).Life);Assert.That(Voice.isPlaying,Is.False);
+        }
+        [UnityTest] public IEnumerator EveryPhrasePlaysItsOwnClipFromOneSource()
+        {
+            yield return Load();NativeBotReactionPreferences.SetVoice(true);yield return Start(1);
+            int count=Audio.BotReactionPlayCount;
+            foreach(var entry in NativeBotBanterVoice.Clips)
+            {
+                Assert.That(Audio.PlayBotReaction(entry.Key,0),Is.True,entry.Key);
+                Assert.That(Voice.clip,Is.SameAs(Resources.Load<AudioClip>(entry.Value)),entry.Key);
+                Assert.That(Voice.isPlaying,Is.True,entry.Key);
+            }
+            Assert.That(Audio.BotReactionPlayCount-count,Is.EqualTo(20));
+            Assert.That(ground.transform.Find("native-game-audio").GetComponentsInChildren<AudioSource>().Count(x=>x.name=="bot-reaction"),Is.EqualTo(1));
+            var current=Voice.clip;
+            Assert.That(Audio.PlayBotReaction(null,0),Is.False);Assert.That(Audio.PlayBotReaction("Слабак",0),Is.False,"No punctuation-insensitive fallback");
+            Assert.That(Audio.PlayBotReaction("Слабак!",-1),Is.False);Assert.That(Audio.PlayBotReaction("Слабак!",ground.Session.ParticipantCount),Is.False);
+            Assert.That(Voice.clip,Is.SameAs(current));
+        }
+        [UnityTest] public IEnumerator DeadComplaintsReachAudioAndRespawnNeverReplaysThem()
+        {
+            yield return Load();NativeBotReactionPreferences.SetVoice(true);yield return Start(1);
+            Assert.That(Audio.PlayBotReaction("Кто следующий?",0),Is.True);
+            ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,100,1,ground.Session.Life(1).Life);
+            Assert.That(ground.Session.Life(0).Dead,Is.True);Assert.That(Voice.isPlaying,Is.False);
+            Assert.That(Audio.PlayBotReaction("Кто следующий?",0),Is.False,"Dead live boast rejected");
+            var selected=typeof(ProvingGround).GetMethod("OnBotBanterLineSelected",BindingFlags.Instance|BindingFlags.NonPublic);
+            foreach(var reason in new[]{BotBanterReason.SeriesEnded,BotBanterReason.RepeatedKiller,BotBanterReason.LosingStreak,BotBanterReason.SelfExplosion,BotBanterReason.SelfKill})
+            foreach(var text in BotBanter.Lines(reason))
+            {
+                int before=Audio.BotReactionPlayCount;
+                selected.Invoke(ground,new object[]{new BotBanterLine(0,1,reason,text,ground.Session.Time+4,true)});
+                Assert.That(Audio.BotReactionPlayCount,Is.EqualTo(before+1),text);
+                Assert.That(Voice.clip,Is.SameAs(Resources.Load<AudioClip>(NativeBotBanterVoice.Clips[text])),text);
+                Assert.That(Voice.isPlaying,Is.True,text);
+            }
+            int count=Audio.BotReactionPlayCount,ticks=0;
+            while(ground.Session.Life(0).Dead)
+            {
+                Assert.That(++ticks,Is.LessThan(400));
+                ground.Session.Tick(new LocalAction[ground.Composition.ParticipantCount],.02f);
+            }
+            yield return null;
+            Assert.That(Audio.BotReactionPlayCount,Is.EqualTo(count));Assert.That(Voice.isPlaying,Is.True,"Already started complaint can finish after respawn");
+            Audio.StopBotReaction();
+            selected.Invoke(ground,new object[]{new BotBanterLine(0,1,BotBanterReason.KillStreak,"Кто следующий?",ground.Session.Time+4,false)});
+            Assert.That(Voice.isPlaying,Is.True);
+            ground.Session.ApplyDamage(0,ground.Session.Life(0).Life,100,1,ground.Session.Life(1).Life);
+            Assert.That(Voice.isPlaying,Is.False,"Respawned live boast retains death stop");
         }
     }
 }
