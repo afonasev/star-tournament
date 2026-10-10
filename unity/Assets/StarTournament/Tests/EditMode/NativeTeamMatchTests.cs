@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Enumerable.Range(0,count).Select(i=>i%2==0 ? NativeTeam.TeamA : NativeTeam.TeamB).ToArray());
         static NativeMatchState Make(bool target=false, int count=4, int firstAward=100)
         {
-            var p=ProvingProfile.CreateMatchDefault();
+            var p=ProvingProfile.CreateLegacyMatchDefault();
             for(int i=1;i<=5;i++) p.Set("score.chainTotal"+i,Math.Max(firstAward,p.Get("score.chainTotal"+i)));
             var c=NativeMatchConfiguration.Default(p);c.DurationMinutes=1;c.TargetEnabled=target;c.TargetPoints=1000;
             return new NativeMatchState(Roster(count),c,p,1);

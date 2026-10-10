@@ -113,6 +113,33 @@ namespace StarTournament.ProvingGround
             }
             valueIndex=null;
         }
+        internal const float DefaultWeaponAudioGain=2f;
+        internal static float WeaponAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.weaponGain")==null?DefaultWeaponAudioGain:profile.Get("audio.weaponGain");
+        internal ProvingProfile BeforeCombatAudioMix()
+        {
+            if(id!=DefaultId||Descriptor("audio.weaponGain")==null)return this;
+            bool Added(string path)=>path=="audio.weaponGain"||path=="audio.music.combatDuckGain"||path=="audio.music.combatDuckReleaseSeconds"||path=="audio.music.combatDuckReferenceGain";
+            var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
+            return copy;
+        }
+        internal const float DefaultWeaponReadyAudioGain=2f;
+        internal static float WeaponReadyAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.weaponReadyGain")==null?DefaultWeaponReadyAudioGain:profile.Get("audio.weaponReadyGain");
+        internal ProvingProfile BeforeWeaponReadyAudioGain()
+        {
+            const string path="audio.weaponReadyGain";
+            if(id!=DefaultId||Descriptor(path)==null)return this;
+            var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);
+            return copy;
+        }
+        internal const float DefaultDeathAudioGain=2f;
+        internal static float DeathAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.deathGain")==null?DefaultDeathAudioGain:profile.Get("audio.deathGain");
+        internal ProvingProfile BeforeDeathAudioGain()
+        {
+            const string path="audio.deathGain";
+            if(id!=DefaultId||Descriptor(path)==null)return this;
+            var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);
+            return copy;
+        }
         /// <summary>Exact trusted predecessor shared by pre-blood histories from before bonus alerts.</summary>
         public ProvingProfile BeforeDamageBonusAlerts()
         {
@@ -236,10 +263,18 @@ namespace StarTournament.ProvingGround
             copy.descriptors.RemoveAll(d=>d.Path=="achievement.minimumShots"||d.Path=="achievement.minimumBeamSeconds");
             copy.values.RemoveAll(v=>v.Path=="achievement.minimumShots"||v.Path=="achievement.minimumBeamSeconds");return copy;
         }
+        internal ProvingProfile BeforeTimedKillChains()
+        {
+            if(id!="unity-native-match-v1"||version<3)return this;
+            var copy=DetachedCopy();copy.version=2;
+            copy.descriptors.RemoveAll(d=>d.Path=="score.chainWindowSeconds"||d.Path=="score.chainAwardStep");
+            copy.values.RemoveAll(v=>v.Path=="score.chainWindowSeconds"||v.Path=="score.chainAwardStep");
+            return copy;
+        }
         public void EnsureMatchDescriptors()
         {
             valueIndex=null;
-            // The old time gap is no longer a gameplay control: a chain ends only on death.
+            // The historical prototype gap is not the v3 adjacent-kill window.
             descriptors.RemoveAll(d=>d.Path=="score.chainGap");values.RemoveAll(v=>v.Path=="score.chainGap");
             var current=CreateMatchDefault();
             version=current.version;
@@ -426,6 +461,9 @@ namespace StarTournament.ProvingGround
             profile.Add("audio.maxDistanceMeters", "audio", "Дальность слышимости", "Расстояние, на котором удалённые боевые и двигательные эффекты затухают.", "meters", 5f, 100f, 1f, 28f);
             profile.Add("audio.localGain", "audio", "Свои события", "Относительный уровень важного звука своего local participant до общей пользовательской громкости.", "ratio", 0f, 1f, .05f, .65f);
             profile.Add("audio.remoteGain", "audio", "Другие участники", "Относительный уровень событий остальных участников до затухания по расстоянию.", "ratio", 0f, 1f, .05f, .40f);
+            profile.Add("audio.weaponGain", "audio", "Уровень стрельбы", "Усиление выстрелов и непрерывного резака своего и чужого игрока до пространственного затухания и общей нормализации.", "ratio", 0f, 4f, .05f, DefaultWeaponAudioGain);
+            profile.Add("audio.weaponReadyGain", "audio", "Готовность оружия", "Уровень короткого щелчка после смены оружия и завершения его cooldown; сигнал своего локального игрока до общей нормализации.", "ratio", 0f, 4f, .05f, DefaultWeaponReadyAudioGain);
+            profile.Add("audio.deathGain", "audio", "Уровень смерти", "Усиление смерти своего и чужого игрока до пространственного затухания и общей нормализации; 2 соответствует +6 дБ до ограничения микса.", "ratio", 0f, 4f, .05f, DefaultDeathAudioGain);
             profile.Add("audio.hitIntervalSeconds", "audio", "Разделение попаданий", "Минимальный интервал повторного звука урона одной цели при частых контактных событиях.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("simulation.fixedTickHz", "simulation", "Fixed tick frequency", "Frequency of native movement and gameplay ticks, independent of rendered FPS.", "Hz", 30f, 120f, 1f, 50f);
             profile.Add("player.capsule.radius", "player-capsule", "Capsule radius", "Collision radius of a participant capsule.", "meters", .2f, 1f, .01f, .55f);

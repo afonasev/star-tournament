@@ -373,7 +373,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void ScoreboardUpgradePreservesOldValuesAndHashes()
         {
-            var old=BeforeRebalance(Shipped());
+            var old=BeforeRebalance(Shipped());old.Profiles[old.Profiles.FindIndex(p=>p.Id=="unity-native-match-v1")]=ProvingProfile.CreateLegacyMatchDefault();
             foreach(var profile in old.Profiles.Where(p=>p.Id==ProvingProfile.DefaultId||p.Id=="unity-native-match-v1").ToArray())
             {
                 var serialized=JsonUtility.FromJson<LegacyProfile>(JsonUtility.ToJson(profile));
@@ -420,7 +420,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var history=new DesignLabHistory(path,Shipped());var draft=history.Selected.Snapshot.Clone();draft.Set("rifle.damage",999);Assert.Throws<ArgumentException>(()=>history.Save(draft));
             draft=history.Selected.Snapshot.Clone();draft.Set("rifle.damage",30.5f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
-            draft=history.Selected.Snapshot.Clone();draft.Set("score.chainTotal2",0);Assert.Throws<ArgumentException>(()=>history.Save(draft));
+            draft=history.Selected.Snapshot.Clone();draft.Set("score.chainWindowSeconds",-1);Assert.Throws<ArgumentException>(()=>history.Save(draft));
             draft=history.Selected.Snapshot.Clone();draft.Set("zone.armTop",.5f);draft.Set("zone.armBottom",.6f);Assert.Throws<ArgumentException>(()=>history.Save(draft));
             Assert.That(File.Exists(path),Is.False);
         }

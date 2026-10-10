@@ -63,7 +63,7 @@ namespace StarTournament.ProvingGround
             "view.x","view.y","view.z","cutter.modelX","cutter.modelY","cutter.modelZ",
             "cutter.modelPitch","cutter.modelYaw","cutter.modelRoll"};
         public static IEnumerable<string> AuditedExcludedPaths=>AuditedExclusions.OrderBy(path=>path,StringComparer.Ordinal);
-        public bool IsVisible(string path)=>!IsDiagnostic(path)&&!AuditedExclusions.Contains(path)&&!IsLevelAuthoring(path);
+        public bool IsVisible(string path)=>!(Profile(path).Id=="unity-native-match-v1"&&Profile(path).Version>=3&&((path.StartsWith("score.chainTotal")&&path!="score.chainTotal1")||path=="score.chainIncrement"))&&!IsDiagnostic(path)&&!AuditedExclusions.Contains(path)&&!IsLevelAuthoring(path);
         public bool IsEditable(string path)=>IsVisible(path)&&!IsAuthoring(path);
         public string Domain(string path)=>path.StartsWith("audio.music.")?"Presentation":IsAuthoring(path)?"Authored map":Profile(path).Descriptor(path).Group=="cutter-effects"||Profile(path).Id==ProvingProfile.RocketEffectsId||Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
         public List<ProfileValidationIssue> Validate()
@@ -86,7 +86,7 @@ namespace StarTournament.ProvingGround
             CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
             CheckOrder(issues,"zone.armBottom","zone.armTop",1);
             CheckOrder(issues,"zone.legBottom","zone.legTop",1);
-            for(int i=2;i<=5;i++)CheckOrder(issues,"score.chainTotal"+(i-1),"score.chainTotal"+i,1,false);
+            for(int i=2;Profile("score.chainTotal1").Version<3&&i<=5;i++)CheckOrder(issues,"score.chainTotal"+(i-1),"score.chainTotal"+i,1,false);
             return issues;
         }
         void CheckOrder(List<ProfileValidationIssue> issues,string low,string high,float factor,bool strict=true)
@@ -255,6 +255,16 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
             var shipped=this.shipped;
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-native-match-v1")?.Version??3)<3)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
+            // Project the exact trusted predecessor before the existing legacy search.
+            // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponGain"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCombatAudioMix()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponReadyGain"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWeaponReadyAudioGain()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path=="audio.deathGain"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDeathAudioGain()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??7)<7)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSmoothFirstPersonWalk()).ToList()};
             // Hash covers gameplay values; metadata is also trusted during migration.

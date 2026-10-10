@@ -66,6 +66,70 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{if(File.Exists(path))File.Delete(path);}
         }
+        [TestCase(false)] [TestCase(true)] public void CombatMixMigrationPreservesSavedLevelsAndHistoricalHashes(bool beforeFeedback)
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            ProvingProfile Before(ProvingProfile p,string name)=>(ProvingProfile)typeof(ProvingProfile).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(p,null);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>Before(p,"BeforeCombatAudioMix")).Select(p=>beforeFeedback?Before(Before(p,"BeforeWeaponReadyAudioGain"),"BeforeDeathAudioGain"):p).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,old);history.Create("Saved combat mix predecessor");var draft=history.Selected.Snapshot;
+                draft.Set("audio.music.balanceGain",.12f);draft.Set("audio.effectsDefaultPercent",45);draft.Set("audio.remoteGain",.3f);history.Save(draft);string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                foreach(var pair in new[]{("audio.weaponGain",2f),("audio.music.combatDuckGain",.25f),("audio.music.combatDuckReferenceGain",.3f),("audio.music.combatDuckReleaseSeconds",.3f)})
+                {Assert.That(migrated.Selected.Snapshot.Get(pair.Item1),Is.EqualTo(pair.Item2));Assert.That(migrated.Selected.Snapshot.Descriptors.Single(d=>d.Path==pair.Item1).Validate(out _),Is.True);}
+                Assert.That(migrated.Selected.Snapshot.Get("audio.music.balanceGain"),Is.EqualTo(.12f));Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));Assert.That(migrated.Selected.Snapshot.Get("audio.remoteGain"),Is.EqualTo(.3f));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var chosen=migrated.Selected.Snapshot;chosen.Set("audio.weaponGain",1.5f);chosen.Set("audio.music.combatDuckGain",.5f);migrated.Save(chosen);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Snapshot.Get("audio.weaponGain"),Is.EqualTo(1.5f));Assert.That(reopened.Selected.Snapshot.Get("audio.music.combatDuckGain"),Is.EqualTo(.5f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+        [TestCase(false)] [TestCase(true)] public void WeaponReadyGainMigrationKeepsAudioSettingsAndHistoricalHash(bool beforeDeathGain)
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            ProvingProfile Before(ProvingProfile p,string name)=>(ProvingProfile)typeof(ProvingProfile).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(p,null);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>Before(p,"BeforeWeaponReadyAudioGain")).Select(p=>beforeDeathGain?Before(p,"BeforeDeathAudioGain"):p).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,old);history.Create("Saved readiness predecessor");var draft=history.Selected.Snapshot;
+                draft.Set("audio.remoteGain",.3f);draft.Set("audio.effectsDefaultPercent",45);history.Save(draft);string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("audio.weaponReadyGain"),Is.EqualTo(2));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.remoteGain"),Is.EqualTo(.3f));Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var descriptor=migrated.Selected.Snapshot.Descriptors.Single(d=>d.Path=="audio.weaponReadyGain");Assert.That(descriptor.Validate(out _),Is.True);
+                var chosen=migrated.Selected.Snapshot;chosen.Set("audio.weaponReadyGain",1.5f);migrated.Save(chosen);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Snapshot.Get("audio.weaponReadyGain"),Is.EqualTo(1.5f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+        [Test] public void DeathGainMigrationPreservesHistoricalHashAndExistingAudioControls()
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            var method=typeof(ProvingProfile).GetMethod("BeforeDeathAudioGain",BindingFlags.NonPublic|BindingFlags.Instance);
+            var before=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,before);history.Create("Saved death mix predecessor");
+                var draft=history.Selected.Snapshot;draft.Set("audio.remoteGain",.3f);draft.Set("audio.effectsDefaultPercent",45);history.Save(draft);
+                string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("audio.deathGain"),Is.EqualTo(2));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.remoteGain"),Is.EqualTo(.3f));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var descriptor=migrated.Selected.Snapshot.Descriptors.Single(d=>d.Path=="audio.deathGain");
+                Assert.That(descriptor.Validate(out _),Is.True);Assert.That(descriptor.Maximum,Is.EqualTo(4));
+                var changed=migrated.Selected.Snapshot;changed.Set("audio.deathGain",1.5f);migrated.Save(changed);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);
+                Assert.That(reopened.Selected.Snapshot.Get("audio.deathGain"),Is.EqualTo(1.5f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void MusicBalanceMigrationPreservesHistoricalHashAndCustomMusicGain()
         {
             var shipped=DesignLabHistoryTests.Shipped();

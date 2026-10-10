@@ -11,19 +11,20 @@ namespace StarTournament.ProvingGround
         public readonly CombatLifeState Life;
         public readonly ParticipantState Pose;
         public readonly FatalImpact Impact;
-        public DeathNotice(int seat, CombatLifeState life, ParticipantState pose,FatalImpact impact=default) { Seat=seat; Life=life; Pose=pose; Impact=impact; }
+        public readonly KillScoreEvent Score;
+        public DeathNotice(int seat, CombatLifeState life, ParticipantState pose,FatalImpact impact=default,KillScoreEvent score=default) { Seat=seat; Life=life; Pose=pose; Impact=impact; Score=score; }
     }
     /// <summary>Actual post-policy losses; presentation cannot infer armor hits from health alone.</summary>
     public readonly struct DamageNotice
     {
-        public readonly int Participant, Life;
+        public readonly int Participant, Life, Shooter, ShooterLife;
         public readonly float HealthLost, ArmorLost;
         public readonly double Time;
         public readonly FatalImpact Impact;
         // Individual shotgun contacts are transient presentation data, never simulation/snapshot state.
         public readonly IReadOnlyList<FatalImpact> Contacts;
-        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time,FatalImpact impact=default,IReadOnlyList<FatalImpact> contacts=null)
-        { Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time;Impact=impact;Contacts=contacts; }
+        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time,FatalImpact impact=default,IReadOnlyList<FatalImpact> contacts=null,int shooter=-1,int shooterLife=0)
+        { Shooter=shooter;ShooterLife=shooterLife;Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time;Impact=impact;Contacts=contacts; }
     }
     public enum PelletContact { Miss, World, Participant }
     public readonly struct PelletNotice
@@ -160,6 +161,12 @@ namespace StarTournament.ProvingGround
         public event Action<int,string,NativeBotPickupKind> PickupCollected;
         public event Action DamageBonusAppeared;
         public event Action<ShotNotice> ShotResolved;
+        // Accepted fire before its damage callbacks; consumers never alter simulation.
+        public event Action<int,int,WeaponId,double,Vector3,Vector3,float> AttackEmitted;
+        public event Action TickCompleted;
+        // Presentation observes the resolved selection before Fire consumes ammo or resets cooldown.
+        // This notification carries no authority and is not part of snapshot/replay state.
+        public event Action<int> WeaponStateResolved;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null)
         {
@@ -282,6 +289,7 @@ namespace StarTournament.ProvingGround
             for (int i = 0; i < lives.Length; i++)
             {
                 lives[i].Select(actions[i].SelectWeapon); // Selection is authoritative before fire on this tick.
+                WeaponStateResolved?.Invoke(i);
                 bool held = actions[i].FireHeld || actions[i].Fire;
                 if(Life(i).SelectedWeapon!=WeaponId.Cutter||Life(i).SwitchRemaining>0||Life(i).Dead||!held)beams[i].Stop();
                 if (releaseRequired[i])
@@ -305,6 +313,7 @@ namespace StarTournament.ProvingGround
                     { LaunchRocket(i); continue; }
                     if(Life(i).SelectedWeapon==WeaponId.Rifle)
                     { LaunchRifleBullet(i); continue; }
+                    EmitAttack(i,resolver.RangeFor(Life(i).SelectedWeapon));
                     var result=ResolveShot(i,targets);
                     shots.Add((i,Life(i).Life,result.notice,result.damage));
                 }
@@ -331,6 +340,7 @@ namespace StarTournament.ProvingGround
             }
             AdvanceRockets(seconds);
             Match?.EndTick();
+            TickCompleted?.Invoke();
             if(Match?.Phase==NativeMatchPhase.Finished) return;
             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
             {
@@ -348,6 +358,7 @@ namespace StarTournament.ProvingGround
         }
         void LaunchRifleBullet(int shooter)
         {
+            EmitAttack(shooter,float.PositiveInfinity);
             ShotCount++;shotSequence++;
             var pose=Pose(shooter);
             var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
@@ -388,6 +399,7 @@ namespace StarTournament.ProvingGround
         }
         void AdvanceBeam(int shooter,float seconds)
         {
+            if(Life(shooter).CutterEnergy>0)EmitAttack(shooter,beams[shooter].Range);
             var pose=Pose(shooter);var direction=Quaternion.Euler(pose.Pitch,pose.Yaw,0)*Vector3.forward;
             var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
             float limit=float.PositiveInfinity;
@@ -419,6 +431,7 @@ namespace StarTournament.ProvingGround
         }
         void LaunchRocket(int shooter)
         {
+            EmitAttack(shooter,rocketResolver.Range);
             var pose=Pose(shooter);var aim=Quaternion.Euler(pose.Pitch,pose.Yaw,0);
             ShotCount++;shotSequence=checked(shotSequence+1);
             rockets.Add(new RocketState{Id=shotSequence,Owner=shooter,OwnerLife=Life(shooter).Life,
@@ -494,6 +507,12 @@ namespace StarTournament.ProvingGround
             return (new ShotNotice(shotSequence,shooter,Life(shooter).Life,Time,origin,pellets,weapon),damage);
         }
 
+        void EmitAttack(int shooter,float range)
+        {
+            var pose=Pose(shooter);var direction=Quaternion.Euler(pose.Pitch,pose.Yaw,0)*Vector3.forward;
+            AttackEmitted?.Invoke(shooter,Life(shooter).Life,Life(shooter).SelectedWeapon,Time,
+                pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),direction,range);
+        }
         bool Allied(int a,int b) => Match != null && Match.Roster.AreAllies(a,b);
         bool IsEnemy(int attacker,int target)=>attacker>=0&&target>=0&&attacker!=target&&!Allied(attacker,target);
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
@@ -512,11 +531,11 @@ namespace StarTournament.ProvingGround
             {
                 // Splash originates at the target capsule centre; lethal physics keeps the explosion centre.
                 var visualImpact=impact.Valid&&impact.Weapon==WeaponId.RocketLauncher?new FatalImpact(impact.Weapon,impact.Sequence,impact.Direction,Pose(seat).Position+Vector3.up*(movement.Get("player.capsule.height")*.5f),impact.ExplosionFraction):impact;
-                Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time,visualImpact,contacts));
+                Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time,visualImpact,contacts,killer,killerLife));
             }
             // Friendly splash can kill, but cannot earn enemy kill/assist rewards.
             int scorer=killer>=0&&killer!=seat&&Allied(killer,seat)?-1:killer;
-            Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer);
+            var score=Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer)??default;
             if (result.Killed)
             {
                 var deathPose=Pose(seat); // Capture momentum before SetAlive clears motor velocity.
@@ -524,7 +543,7 @@ namespace StarTournament.ProvingGround
                 damageRemaining[seat]=0;speedRemaining[seat]=0;motors[seat].SetHorizontalSpeedMultiplier(1);
                 motors[seat].SetAlive(false);
                 releaseRequired[seat] = true;
-                Died?.Invoke(new DeathNotice(seat, Life(seat), deathPose,impact));
+                Died?.Invoke(new DeathNotice(seat, Life(seat), deathPose,impact,score));
             }
             return result;
         }

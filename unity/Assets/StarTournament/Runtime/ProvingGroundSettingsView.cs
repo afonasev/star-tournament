@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround
             RectTransform helpDiagram;
             bool resolutionPickerOpen;
             Slider settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsReturnDelaySlider;
-            Toggle settingsAutoLevelToggle,settingsFpsToggle,settingsShadowsToggle;
+            Toggle settingsAutoLevelToggle,settingsFpsToggle,settingsShadowsToggle,settingsBotTextToggle,settingsBotVoiceToggle;
             GameObject settingsHelpPage;
             Button settingsHelpButton,settingsHelpBack;
             bool settingsHelpOpen;
@@ -192,6 +192,9 @@ namespace StarTournament.ProvingGround
                 settingsDevicesButton=MenuButton(settingsControlPage.transform,"settings-controls-devices","УСТРОЙСТВА",new Vector2(.51f,.01f),new Vector2(.98f,.14f),()=>SetDevices(true));
                 settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 settingsFpsToggle=BooleanSetting(settingsInterfacePage.transform,"settings-fps","Показывать FPS",new Vector2(.02f,.78f),new Vector2(.98f,.96f),SetMenuFps);
+                settingsBotTextToggle=BooleanSetting(settingsInterfacePage.transform,"settings-bot-reaction-text","Реакции ботов: текст",new Vector2(.02f,.53f),new Vector2(.98f,.71f),v=>{NativeBotReactionPreferences.SetText(v);owner.RefreshSettingsUi();});
+                settingsBotVoiceToggle=BooleanSetting(settingsInterfacePage.transform,"settings-bot-reaction-voice","Реакции ботов: голос",new Vector2(.02f,.28f),new Vector2(.98f,.46f),v=>{NativeBotReactionPreferences.SetVoice(v);if(!v)owner.gameAudio?.StopBotReaction();owner.RefreshSettingsUi();});
+                Label(settingsInterfacePage.transform,"settings-bot-reactions-help","Реакции ботов общие для всех игроков",20,new Vector2(.04f,.06f),new Vector2(.96f,.20f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
                 settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.66f),new Vector2(.98f,.94f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
@@ -327,7 +330,9 @@ namespace StarTournament.ProvingGround
                 Link(settingsHelpBack,settingsHelpKeyboard,settingsHelpKeyboard);
                 Link(settingsDevicesBack,settingsDevicesBack,settingsDevicesBack);
                 if(settingsDevicesBack.GetComponent<SettingsHelpScrollNavigation>()==null)settingsDevicesBack.gameObject.AddComponent<SettingsHelpScrollNavigation>().Scroll=deviceScroll;
-                Link(settingsFpsToggle,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);
+                Link(settingsFpsToggle,settingsSectionButtons[2],settingsBotTextToggle,settingsSectionButtons[2]);
+                Link(settingsBotTextToggle,settingsFpsToggle,settingsBotVoiceToggle,settingsSectionButtons[2]);
+                Link(settingsBotVoiceToggle,settingsBotTextToggle,settingsBackButton,settingsSectionButtons[2]);
                 Link(settingsMusicSlider,settingsSectionButtons[3],settingsEffectsSlider);
                 Link(settingsEffectsSlider,settingsMusicSlider,settingsBackButton);
                 for(int i=0;i<resolutionChoices.Length;i++)
@@ -387,6 +392,8 @@ namespace StarTournament.ProvingGround
                 RefreshNumericSetting(settingsReturnDelaySlider,"Задержка автовыравнивания",look.ReturnDelay,"с");
                 RefreshToggle(settingsAutoLevelToggle,look.AutoLevel);RefreshToggle(settingsShadowsToggle,shadowsEnabled);
                 RefreshToggle(settingsFpsToggle,MenuFps());
+                RefreshToggle(settingsBotTextToggle,NativeBotReactionPreferences.TextEnabled);
+                RefreshToggle(settingsBotVoiceToggle,NativeBotReactionPreferences.VoiceEnabled);
                 RefreshNumericSetting(settingsMusicSlider,"Музыка",NativeAudioPreferences.Music(Profile),"%");
                 RefreshNumericSetting(settingsEffectsSlider,"Эффекты",NativeAudioPreferences.Effects(Profile),"%");
                 RefreshConnectedDevices();

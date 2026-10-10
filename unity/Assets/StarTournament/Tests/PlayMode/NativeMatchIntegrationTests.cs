@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var motors=new CharacterMotor[4];
             for(int i=0;i<4;i++){var go=new GameObject("seat");go.transform.SetParent(owner.transform);go.layer=ProvingArena.ParticipantLayer;motors[i]=go.AddComponent<CharacterMotor>();motors[i].Initialize(move,new Vector3(i*4,0,0));}
             motors[1].Initialize(move,new Vector3(0,0,4));motors[1].Tick(new LocalAction{LookDegrees=new Vector2(180,0)},.02f);
-            var profile=ProvingProfile.CreateMatchDefault();for(int i=1;i<=4;i++)profile.Set("score.chainTotal"+i,1000);
+            var profile=ProvingProfile.CreateLegacyMatchDefault();for(int i=1;i<=4;i++)profile.Set("score.chainTotal"+i,1000);
             var config=NativeMatchConfiguration.Default(profile);config.DurationMinutes=1;config.TargetEnabled=true;config.TargetPoints=1000;
             var match=new NativeMatchState(4,config,profile,50);
             for(int i=0;i<2999;i++){match.BeginTick();match.EndTick();}
@@ -79,12 +79,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
         }
         Text Notice(int seat) => ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="kill-notice-"+seat);
-        [UnityTest] public IEnumerator SelfKillUsesNormalColorAndDoesNotNameSelfAsKiller()
+        [UnityTest] public IEnumerator SelfKillUsesNormalColorWithRedPenaltyAndDoesNotNameSelfAsKiller()
         {
             yield return Load();var session=ground.Session;
             session.ApplyDamage(0,session.Life(0).Life,10000,0,session.Life(0).Life);
             yield return null;yield return null;
-            Assert.That(Notice(0).text,Does.StartWith("Ты убил себя\nВозрождение через "));
+            Assert.That(Notice(0).text,Does.StartWith("Вы убили себя · <color=#FF0000>−200</color>\nВозрождение через "));
             Assert.That(Notice(0).text,Does.Not.Contain("Вас убил"));
             Assert.That(Notice(0).color,Is.EqualTo(Color.white));
         }
@@ -93,7 +93,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Load(true);var session=ground.Session;
             session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);
             yield return null;yield return null;
-            Assert.That(Notice(0).text,Is.EqualTo("Ты убил союзника "+ground.Composition.Participant(1).Name.Replace('<','‹').Replace('>','›')));
+            Assert.That(Notice(0).text,Is.EqualTo("Вы убили союзника "+ground.Composition.Participant(1).Name.Replace('<','‹').Replace('>','›')+" · −200"));
             Assert.That(Notice(0).color,Is.EqualTo(Color.red));
             Assert.That(Notice(1).text,Does.StartWith("Вас убил "));
             Assert.That(Notice(1).color,Is.EqualTo(Color.white));
@@ -106,10 +106,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Notice(0).color,Is.EqualTo(Color.red));
             session.ApplyDamage(2,session.Life(2).Life,10000,0,session.Life(0).Life);
             yield return null;yield return null;
-            Assert.That(Notice(0).text,Does.StartWith("Убит <color=#"+ColorUtility.ToHtmlStringRGB(ground.Composition.Participant(2).Color)+">"));
+            Assert.That(Notice(0).text,Does.StartWith("Вы убили <color=#"+ColorUtility.ToHtmlStringRGB(ground.Composition.Participant(2).Color)+">"));
             Assert.That(Notice(0).color,Is.EqualTo(Color.white));
         }
-        [UnityTest] public IEnumerator SelfKillAfterTeamKillRestoresNormalColor()
+        [UnityTest] public IEnumerator SelfKillAfterTeamKillShowsRedPenaltyInNormalText()
         {
             yield return Load(true);var session=ground.Session;
             session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);
@@ -117,8 +117,56 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Notice(0).color,Is.EqualTo(Color.red));
             session.ApplyDamage(0,session.Life(0).Life,10000,0,session.Life(0).Life);
             yield return null;yield return null;
-            Assert.That(Notice(0).text,Does.StartWith("Ты убил себя\nВозрождение через "));
+            Assert.That(Notice(0).text,Does.StartWith("Вы убили себя · <color=#FF0000>−200</color>\nВозрождение через "));
             Assert.That(Notice(0).color,Is.EqualTo(Color.white));
+        }
+        [UnityTest] public IEnumerator TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices()
+        {
+            float listener=AudioListener.volume;AudioListener.volume=0;
+            try
+            {
+                yield return Load();var session=ground.Session;
+                var audio=(NativeGameAudio)typeof(ProvingGround).GetField("gameAudio",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
+                audio.SetDiagnosticMute(false);
+                var voice=ground.transform.Find("native-game-audio/kill-series-voice").GetComponent<AudioSource>();
+                var before=session.Capture();var notices=new System.Collections.Generic.List<DeathNotice>();session.Died+=notices.Add;
+                session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);yield return null;
+                Assert.That(Notice(0).text,Does.Contain("+100"));Assert.That(Notice(0).text,Does.Not.Contain("Серия убийств!"));Assert.That(Notice(0).color,Is.EqualTo(Color.white));Assert.That(voice.clip,Is.Null);
+                session.ApplyDamage(2,session.Life(2).Life,10000,0,session.Life(0).Life);yield return null;
+                Assert.That(Notice(0).text,Does.Contain("+200"));Assert.That(Notice(0).text,Does.Contain("Серия убийств! · 2"));Assert.That(Notice(0).color,Is.EqualTo(NativeKillNotice.SeriesColor));Assert.That(voice.clip,Is.Null);
+                session.ApplyDamage(3,session.Life(3).Life,10000,0,session.Life(0).Life);yield return null;
+                Assert.That(Notice(0).text,Does.Contain("+300"));Assert.That(voice.clip.name,Is.EqualTo("kill-triple"));Assert.That(voice.spatialBlend,Is.Zero);
+                Assert.That(notices.Last().Score.Points,Is.EqualTo(300));
+                if(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UI_EVIDENCE") is string directory)
+                {
+                    yield return CaptureSeriesHud(directory);
+                }
+                var current=session.Capture();current.Lives[1]=before.Lives[1];current.Poses[1]=before.Poses[1];session.Restore(current);
+                Assert.That(voice.isPlaying,Is.False);session.ApplyDamage(1,session.Life(1).Life,10000,0,session.Life(0).Life);yield return null;
+                Assert.That(Notice(0).text,Does.Contain("+400"));Assert.That(Notice(0).text,Does.Contain("Серия убийств! · 4"));Assert.That(voice.clip.name,Is.EqualTo("kill-quadruple"));
+                audio.SetDiagnosticMute(true);Assert.That(voice.isPlaying,Is.False);Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Score,Is.EqualTo(1000));
+            }
+            finally{AudioListener.volume=listener;}
+        }
+        IEnumerator CaptureSeriesHud(string directory)
+        {
+            var canvas=Notice(0).canvas.rootCanvas;var mode=canvas.renderMode;var oldCamera=canvas.worldCamera;float distance=canvas.planeDistance;
+            var go=new GameObject("series-evidence-camera");var camera=go.AddComponent<Camera>();camera.enabled=false;camera.orthographic=true;camera.orthographicSize=540;camera.aspect=1920f/1080;camera.nearClipPlane=.1f;camera.farClipPlane=10;camera.transform.position=new Vector3(0,0,-5);camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color32(8,15,27,255);
+            var target=new RenderTexture(1920,1080,24);target.Create();camera.targetTexture=target;
+            var prior=RenderTexture.active;var image=new Texture2D(1920,1080,TextureFormat.RGB24,false);
+            try
+            {
+                canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
+                Canvas.ForceUpdateCanvases();yield return null;Canvas.ForceUpdateCanvases();
+                foreach(var graphic in canvas.GetComponentsInChildren<Graphic>())graphic.Rebuild(CanvasUpdate.PreRender);
+                if(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline!=null)
+                {var request=new UnityEngine.Rendering.RenderPipeline.StandardRequest{destination=target};Assert.That(UnityEngine.Rendering.RenderPipeline.SupportsRenderRequest(camera,request),Is.True);UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(camera,request);}
+                else camera.Render();
+                RenderTexture.active=target;image.ReadPixels(new Rect(0,0,1920,1080),0,0);image.Apply();
+                System.IO.Directory.CreateDirectory(directory);System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,"series-four-views.png"),image.EncodeToPNG());
+            }
+            finally
+            {canvas.renderMode=mode;canvas.worldCamera=oldCamera;canvas.planeDistance=distance;RenderTexture.active=prior;camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(image);UnityEngine.Object.Destroy(go);}
         }
         [UnityTest] public IEnumerator KillcamViewPauseRepeatAndMenuKeepOneSceneAndFreshLifecycle()
         {
