@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             AudioListener.volume=0;NativeAudioPreferences.SetEffects(80);
             try
             {
-                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                yield return NativeLoadingTestScene.Load();
                 scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
                 var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
                 pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();

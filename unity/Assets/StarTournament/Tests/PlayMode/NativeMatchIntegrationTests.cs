@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         IEnumerator Load(bool teams=false)
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
             if(teams){Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ground.SetMatchMode(NativeMatchMode.Teams);ground.SetTeam(0,NativeTeam.TeamA);ground.SetTeam(1,NativeTeam.TeamA);ground.SetTeam(2,NativeTeam.TeamB);ground.SetTeam(3,NativeTeam.TeamB);}
@@ -136,7 +136,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int n=0;n<3;n++)
             {
                 Button("Повторить матч").onClick.Invoke();yield return null;yield return new WaitForFixedUpdate();
-                Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(ground.Session.ShotCount,Is.Zero);
+                yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(ground.Session.ShotCount,Is.Zero);
                 Assert.That(old.ApplyDamage(0,1,100).Applied,Is.Zero);
                 Assert.That(ground.Session.Match.Read().Standings.All(r=>r.Score==0 && r.Deaths==0),Is.True);
                 for(int i=0;i<4;i++){Assert.That(ground.Session.Life(i).Life,Is.EqualTo(1));Assert.That(ground.Session.Life(i).Health,Is.EqualTo(100));}
@@ -150,7 +150,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Session.ShotCount,Is.EqualTo(1));
             var last=ground.Session;Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);ChooseGuestsForAssignedSeats();yield return null;
             Assert.That(ground.Running,Is.False);clock=last.Time;yield return new WaitForFixedUpdate();Assert.That(last.Time,Is.EqualTo(clock));
-            Button("Начать — четыре игрока").onClick.Invoke();yield return null;Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(last));
+            Button("Начать — четыре игрока").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(last));
         }
         [UnityTest] public IEnumerator DisconnectSelectsActiveMenuAndReconnectCanNavigateToResume()
         {
@@ -168,7 +168,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.DpadUp));yield return null;yield return null;
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(Button("Продолжить").gameObject));
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
-            Assert.That(ground.Running,Is.True);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
         }
         [UnityTest] public IEnumerator ResultsRepeatPreservesFrozenSettingsAndSetupCanChangeNextMatch()
         {

@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         IEnumerator Load(int seats=1)
         {
             AudioListener.volume=0;
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             for(int i=0;i<seats;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
             ground.StartCombatReview(pads.Take(seats).ToArray(),backgroundDiagnostic:true,ensureOpponent:true);

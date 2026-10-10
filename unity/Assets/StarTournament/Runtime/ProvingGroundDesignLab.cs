@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -37,7 +38,17 @@ namespace StarTournament.ProvingGround
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
         LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,HitFeedbackProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
-        void InitializeDesignLab()
+        CancellationTokenSource historyCancellation;
+        Task<DesignLabHistory> historyLoading;
+        void CancelHistoryLoading()
+        {
+            var cancellation=historyCancellation;if(cancellation==null)return;
+            historyCancellation=null;cancellation.Cancel();
+            var pending=historyLoading;historyLoading=null;
+            if(pending==null){cancellation.Dispose();return;}
+            pending.ContinueWith(done=>{var observed=done.Exception;cancellation.Dispose();},TaskScheduler.Default);
+        }
+        IEnumerator InitializeDesignLabAsync()
         {
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
             BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();
@@ -57,7 +68,15 @@ namespace StarTournament.ProvingGround
             // Startup selects the packaged Default; compatibility snapshots are validated
             // in memory. Persist them with the next explicit Lab mutation, not a full history
             // rewrite while the splash screen blocks the player.
-            labHistory=new DesignLabHistory(historyPath,CurrentLabBundle(),releases:LabReleaseCatalog.Load(),resetToLatestDefault:true,persistMigration:false);
+            var shipped=CurrentLabBundle().Clone();
+            var releases=LabReleaseCatalog.Load();
+            var cancellation=new CancellationTokenSource();historyCancellation=cancellation;
+            var token=cancellation.Token;
+            var pending=Task.Run(()=>new DesignLabHistory(historyPath,shipped,releases:releases,resetToLatestDefault:true,persistMigration:false,cancellationToken:token),token);
+            historyLoading=pending;
+            while(!pending.IsCompleted)yield return null;
+            try{labHistory=pending.GetAwaiter().GetResult();}
+            finally{historyCancellation=null;historyLoading=null;cancellation.Dispose();}
             Debug.Log("Lab startup: history ready in "+startupWatch.Elapsed.TotalSeconds.ToString("F2",CultureInfo.InvariantCulture)+" seconds");
             Application.wantsToQuit+=ProtectLabQuit;
             labBaseline=labHistory.Selected.Snapshot;labDraft=labBaseline.Clone();CacheLabIdentity();ApplySavedLabRevision();

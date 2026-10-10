@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -41,21 +42,28 @@ namespace StarTournament.ProvingGround
         // Complete placement is committed by the caller only after this bounded search succeeds.
         public bool TryInitial(NativeMatchRoster roster,float separation,out Vector3[] selected,int searchBudget=0,int candidateBudget=0)
         {
+            bool success=false;Vector3[] positions=System.Array.Empty<Vector3>();
+            var steps=AllocateInitial(roster,separation,(ok,result)=>{success=ok;positions=result;},searchBudget,candidateBudget);
+            while(steps.MoveNext()){} selected=positions;return success;
+        }
+        public IEnumerator AllocateInitial(NativeMatchRoster roster,float separation,System.Action<bool,Vector3[]> complete,int searchBudget=0,int candidateBudget=0)
+        {
             if(roster==null || float.IsNaN(separation) || float.IsInfinity(separation) || separation<0)
                 throw new System.ArgumentException("Invalid initial allocation");
             if(searchBudget==0)searchBudget=(int)ProvingProfile.CreateRosterDefault().Get("spawn.initialSearchBudgetNodes");
             if(searchBudget<1)throw new System.ArgumentOutOfRangeException(nameof(searchBudget));
             if(candidateBudget==0)candidateBudget=(int)ProvingProfile.CreateRosterDefault().Get("spawn.initialCandidateBudget");
             if(candidateBudget<1)throw new System.ArgumentOutOfRangeException(nameof(candidateBudget));
-            InitialSearchNodes=0;InitialFailure=null;selected=System.Array.Empty<Vector3>();
+            InitialSearchNodes=0;InitialFailure=null;
             var candidates=new List<Vector3>();
             var initialSlots=new List<Vector3>(slots);
-            if(initialSlots.Count>candidateBudget){InitialFailure="CandidateBudgetExceeded";return false;}
+            if(initialSlots.Count>candidateBudget){InitialFailure="CandidateBudgetExceeded";complete(false,System.Array.Empty<Vector3>());yield break;}
             foreach(var slot in initialSlots)if(Valid(slot,out var candidate)&&!candidates.Contains(candidate))candidates.Add(candidate);
             int n=candidates.Count;var overlapPair=new bool[n,n];var closePair=new bool[n,n];var visiblePair=new bool[n,n];
             float radius=motor.Get("player.capsule.radius")+motor.Get("player.capsule.skinWidth");
             for(int a=0;a<n;a++)for(int b=0;b<n;b++)
             {
+                if(b==0)yield return null;
                 var delta=candidates[a]-candidates[b];
                 float gap=Mathf.Max(0,Mathf.Abs(delta.y)-(motor.Get("player.capsule.height")-2*motor.Get("player.capsule.radius")));
                 overlapPair[a,b]=delta.x*delta.x+delta.z*delta.z+gap*gap<4*radius*radius;
@@ -68,13 +76,19 @@ namespace StarTournament.ProvingGround
                     (!roster.AreAllies(participant,j)&&closePair[candidate,reserved[j]]))return false;
                 return true;
             }
-            bool Place(int participant)
+            // Explicit DFS preserves the original candidate order, pruning and total budget,
+            // while yielding bounded node slices on the native UI preparation route.
+            var nextCandidate=new int[reserved.Length];int participant=0;bool placed=false;
+            while(participant>=0)
             {
-                if(participant==reserved.Length)return true;
-                for(int c=0;c<n;c++)
+                if(participant==reserved.Length){placed=true;break;}
+                bool descended=false;
+                for(int c=nextCandidate[participant];c<n;c++)
                 {
-                    if(InitialSearchNodes>=searchBudget){exhausted=true;return false;}
+                    nextCandidate[participant]=c+1;
+                    if(InitialSearchNodes>=searchBudget){exhausted=true;break;}
                     InitialSearchNodes++;
+                    if(InitialSearchNodes%128==0)yield return null;
                     if(!Compatible(participant,c,participant))continue;
                     reserved[participant]=c;bool viable=true;
                     for(int future=participant+1;future<reserved.Length&&viable;future++)
@@ -82,13 +96,15 @@ namespace StarTournament.ProvingGround
                         bool any=false;for(int k=0;k<n;k++)if(Compatible(future,k,participant+1)){any=true;break;}
                         viable=any;
                     }
-                    if(viable&&Place(participant+1))return true;
-                    if(exhausted)return false;
+                    if(!viable)continue;
+                    participant++;if(participant<reserved.Length)nextCandidate[participant]=0;
+                    descended=true;break;
                 }
-                return false;
+                if(exhausted)break;
+                if(!descended)participant--;
             }
-            if(Place(0)){selected=reserved.Select(i=>candidates[i]).ToArray();return true;}
-            InitialFailure=exhausted?"SearchBudgetExceeded":"NoValidPlacement";return false;
+            if(placed){complete(true,reserved.Select(i=>candidates[i]).ToArray());yield break;}
+            InitialFailure=exhausted?"SearchBudgetExceeded":"NoValidPlacement";complete(false,System.Array.Empty<Vector3>());
         }
         public bool BodyVisible(Vector3 observerFeet,Vector3 targetFeet)
         {

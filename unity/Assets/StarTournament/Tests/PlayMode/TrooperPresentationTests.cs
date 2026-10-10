@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load(int count)
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive); scene=SceneManager.GetSceneByName("ProvingGround"); yield return null;
+            yield return NativeLoadingTestScene.Load(); scene=SceneManager.GetSceneByName("ProvingGround"); yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
             ground.StartCombatReview(pads.Take(count).ToArray()); yield return null;

@@ -28,11 +28,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         IEnumerator Load(NativeMatchComposition composition,uint seed,int fixedTickHz=0)
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             if(fixedTickHz>0)ground.Profile.Set("simulation.fixedTickHz",fixedTickHz);
             ground.StartBotReview(composition,seed);ground.enabled=false;
-            Assert.That(ground.Running,Is.True,string.Join(" | ",ground.GetComponentsInChildren<UnityEngine.UI.Text>(true).Select(x=>x.text)));Assert.That(ground.BotDriver,Is.Not.Null);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,string.Join(" | ",ground.GetComponentsInChildren<UnityEngine.UI.Text>(true).Select(x=>x.text)));Assert.That(ground.BotDriver,Is.Not.Null);
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {

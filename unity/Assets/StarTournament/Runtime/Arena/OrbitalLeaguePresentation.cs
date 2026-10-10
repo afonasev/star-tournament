@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -26,6 +27,8 @@ namespace StarTournament.ProvingGround
         public int FixtureLightCount {get;private set;}
         public string ProfileIdentity {get;private set;}
         public void Build(ArenaDefinition definition,ProvingProfile profile)
+        { var steps=BuildSteps(definition,profile);while(steps.MoveNext()){} }
+        public IEnumerator BuildSteps(ArenaDefinition definition,ProvingProfile profile)
         {
             profile.EnsureOrbitalLeagueDescriptors();
             if(profile.Validate().Count!=0)throw new ArgumentException("Invalid Orbital League art profile");
@@ -48,6 +51,7 @@ namespace StarTournament.ProvingGround
             structuralSolids=definition.Solids;
             for(int solidIndex=0;solidIndex<definition.Solids.Length;solidIndex++)
             {
+                if(solidIndex%16==0)yield return null;
                 var s=definition.Solids[solidIndex];
                 structuralIndex=solidIndex;
                 var target=transform.parent.Find(s.Id);if(!target)continue;
@@ -83,7 +87,7 @@ namespace StarTournament.ProvingGround
             CeilingFixture(new Vector3(0,3.58f,-4),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,1),Quaternion.identity);
             CeilingFixture(new Vector3(0,3.58f,6),Quaternion.identity);
-            PickupMarkings(definition);Labels();BroadcastDetails();WayfindingSigns();SpaceBackdrop();VeteranSlice(definition);
+            PickupMarkings(definition);yield return null;Labels();yield return null;BroadcastDetails();yield return null;WayfindingSigns();yield return null;SpaceBackdrop();yield return null;VeteranSlice(definition);yield return null;
             // Shared ceiling zones retain the accepted F2 light and two bounded local shadow maps.
             var poweredFixtures=new HashSet<int>();
             for(int zone=0;zone<16;zone++)

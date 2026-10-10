@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -14,6 +15,57 @@ namespace StarTournament.ProvingGround.Tests
             arena.Build(CombatBowlCatalog.Freeze(movement),movement);spawn=new SafeSpawnSelector(Physics.defaultPhysicsScene,arena,movement,combat);yield return null;
         }
         [UnityTearDown] public IEnumerator Cleanup(){Object.Destroy(root);yield return null;}
+        // Independent recursive oracle retained from the pre-loading allocator (a1db27a7).
+        bool LegacyAllocation(NativeMatchRoster roster,float separation,int budget,out Vector3[] selected,out int nodes)
+        {
+            var candidates=new List<Vector3>();foreach(var slot in spawn.Slots)if(spawn.Valid(slot,out var point)&&!candidates.Contains(point))candidates.Add(point);
+            int n=candidates.Count,visited=0;bool exhausted=false;var overlap=new bool[n,n];var close=new bool[n,n];var visible=new bool[n,n];
+            float radius=movement.Get("player.capsule.radius")+movement.Get("player.capsule.skinWidth");
+            for(int a=0;a<n;a++)for(int b=0;b<n;b++)
+            {
+                var delta=candidates[a]-candidates[b];float gap=Mathf.Max(0,Mathf.Abs(delta.y)-(movement.Get("player.capsule.height")-2*movement.Get("player.capsule.radius")));
+                overlap[a,b]=delta.x*delta.x+delta.z*delta.z+gap*gap<4*radius*radius;close[a,b]=delta.magnitude<separation;
+                visible[a,b]=spawn.BodyVisible(candidates[a],candidates[b])||spawn.BodyVisible(candidates[b],candidates[a]);
+            }
+            var reserved=new int[roster.Count];
+            bool Compatible(int participant,int candidate,int prefix)
+            {for(int j=0;j<prefix;j++)if(overlap[candidate,reserved[j]]||visible[candidate,reserved[j]]||(!roster.AreAllies(participant,j)&&close[candidate,reserved[j]]))return false;return true;}
+            bool Place(int participant)
+            {
+                if(participant==reserved.Length)return true;
+                for(int c=0;c<n;c++)
+                {
+                    if(visited>=budget){exhausted=true;return false;}visited++;
+                    if(!Compatible(participant,c,participant))continue;reserved[participant]=c;bool viable=true;
+                    for(int future=participant+1;future<reserved.Length&&viable;future++)
+                    {bool any=false;for(int k=0;k<n;k++)if(Compatible(future,k,participant+1)){any=true;break;}viable=any;}
+                    if(viable&&Place(participant+1))return true;if(exhausted)return false;
+                }
+                return false;
+            }
+            bool ok=Place(0);nodes=visited;selected=ok?reserved.Select(i=>candidates[i]).ToArray():System.Array.Empty<Vector3>();return ok;
+        }
+        [UnityTest] public IEnumerator IncrementalAllocationMatchesLegacyRecursionIncludingFailureAndBudget()
+        {
+            foreach(int count in new[]{2,4,8})foreach(float separation in new[]{5f,35f,50f,float.MaxValue})foreach(int budget in new[]{1,100000})
+            {
+                var roster=NativeMatchRoster.Ffa(count);bool expectedSuccess=LegacyAllocation(roster,separation,budget,out var expected,out int expectedNodes);
+                bool success=false;Vector3[] actual=null;yield return spawn.AllocateInitial(roster,separation,(ok,positions)=>{success=ok;actual=positions;},budget);
+                Assert.That(success,Is.EqualTo(expectedSuccess),$"count={count}, separation={separation}, budget={budget}");
+                Assert.That(actual,Is.EqualTo(expected));Assert.That(spawn.InitialSearchNodes,Is.EqualTo(expectedNodes));
+            }
+        }
+        [UnityTest] public IEnumerator IncrementalAllocationPreservesPositionsAndSearchBudget()
+        {
+            for(int count=2;count<=8;count++)
+            {
+                var roster=NativeMatchRoster.Ffa(count);float separation=ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation");
+                Assert.That(spawn.TryInitial(roster,separation,out var expected),Is.True);
+                int expectedNodes=spawn.InitialSearchNodes;bool success=false;Vector3[] actual=null;
+                yield return spawn.AllocateInitial(roster,separation,(ok,positions)=>{success=ok;actual=positions;});
+                Assert.That(success,Is.True);Assert.That(actual,Is.EqualTo(expected));Assert.That(spawn.InitialSearchNodes,Is.EqualTo(expectedNodes));
+            }
+        }
         [UnityTest] public IEnumerator EightRegionsAreValidAndAllTwentyEightPairsAreBodyHidden()
         {
             foreach(var p in arena.Spawns)Assert.That(spawn.Valid(p,out _),Is.True,"Invalid spawn "+p);

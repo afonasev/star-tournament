@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
             originalGamepad=GamepadLookSettings.General(ground.Profile);originalMouse=MouseSensitivityPreference.Resolve(ground.Profile);preferencesCaptured=true;
@@ -161,7 +161,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Load();Button("settings-back").onClick.Invoke();Button("main-action-0").onClick.Invoke();
             for(int seat=0;seat<ground.LocalSeatCount;seat++)ground.SetSeatAi(seat,true);
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
-            Assert.That(ground.Running,Is.True);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
             Button("fallback-settings").onClick.Invoke();yield return null;
             Assert.That(Button("settings-section-0").gameObject.activeInHierarchy,Is.True);
@@ -171,7 +171,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.East);yield return Press(GamepadButton.East);
             Assert.That(Focus,Is.EqualTo("settings-section-1"));yield return Press(GamepadButton.East);
             Assert.That(Focus,Is.EqualTo("fallback-settings"));Assert.That(ground.Running,Is.False);
-            Button("Продолжить").onClick.Invoke();yield return new WaitForFixedUpdate();Assert.That(ground.Running,Is.True);
+            Button("Продолжить").onClick.Invoke();yield return new WaitForFixedUpdate();yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
         }
         [UnityTest] public IEnumerator DevicePageShowsSupportedAndUnsupportedControllers()
         {

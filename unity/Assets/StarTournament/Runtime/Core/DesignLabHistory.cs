@@ -141,6 +141,7 @@ namespace StarTournament.ProvingGround
         static readonly Dictionary<string,LabBundle[]> historicalCache=new Dictionary<string,LabBundle[]>();
         static readonly object releaseValidationLock=new object();
         static readonly Dictionary<string,LabReleaseCatalog> validatedReleases=new Dictionary<string,LabReleaseCatalog>();
+        CancellationToken startupCancellation;
         readonly string path; readonly LabBundle shipped; readonly LabReleaseCatalog releases; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
@@ -163,8 +164,9 @@ namespace StarTournament.ProvingGround
         void RequireLocalProfile(){if(SelectedProfileReadOnly)throw new InvalidOperationException("Релизный профиль доступен только для чтения. Создайте копию для своих изменений.");}
         public LabHistoryProfile SelectedProfile=>DisplayProfile(data.Profiles.Single(p=>p.Id==data.SelectedId));
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
-        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true)
+        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default)
         {
+            startupCancellation=cancellationToken;startupCancellation.ThrowIfCancellationRequested();
             this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
             data=NewFile();
             if(this.releases!=null)ValidateReleases();
@@ -178,7 +180,9 @@ namespace StarTournament.ProvingGround
                     else{var next=data.Clone();MigrateCompatibility(next);ValidateFile(next);data=next;}
                 }
             }
+            catch(OperationCanceledException){throw;}
             catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
+            startupCancellation.ThrowIfCancellationRequested();
             if(this.releases!=null)
             {
                 MergeReleases(data);
@@ -189,6 +193,7 @@ namespace StarTournament.ProvingGround
                 // validated below. Only newly derived compatibility snapshots need that work again.
                 ValidateFile(data,migrated);
             }
+            startupCancellation=default;
         }
         void ValidateReleases()
         {
@@ -202,6 +207,7 @@ namespace StarTournament.ProvingGround
                 if(validatedReleases.TryGetValue(key,out var cached)){releases.Entries=cached.Clone().Entries;return;}
                 foreach(var e in releases.Entries)
                 {
+                    startupCancellation.ThrowIfCancellationRequested();
                     var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
                     ValidateFile(file);e.Snapshot=r.Snapshot;
                     if(e.Hash!=e.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
@@ -336,7 +342,7 @@ namespace StarTournament.ProvingGround
                 Func<ProvingProfile,ProvingProfile> Cached(Func<ProvingProfile,ProvingProfile> transform)
                 {
                     var cache=new Dictionary<ProvingProfile,ProvingProfile>();
-                    return profile=>{if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
+                    return profile=>{startupCancellation.ThrowIfCancellationRequested();if(!cache.TryGetValue(profile,out var previous)){previous=transform(profile);cache.Add(profile,previous);}return previous;};
                 }
                 var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
                 var beforeMatchAchievements=Cached(p=>p.BeforeMatchAchievements());
@@ -465,10 +471,12 @@ namespace StarTournament.ProvingGround
             if(file.Profiles.Select(p=>p.Id).Distinct().Count()!=file.Profiles.Count)throw new InvalidDataException("Повтор ID");
             foreach(var p in file.Profiles)
             {
+                startupCancellation.ThrowIfCancellationRequested();
                 if(string.IsNullOrWhiteSpace(p.Id)||string.IsNullOrWhiteSpace(p.Name)||p.Revisions==null||p.Revisions.Count==0||p.Protected!=(p.Id==ReleaseId))throw new InvalidDataException("Некорректный профиль");
                 if(p.Revisions.Select(r=>r.Number).Distinct().Count()!=p.Revisions.Count)throw new InvalidDataException("Повтор ревизии");
                 foreach(var r in p.Revisions)
                 {
+                    startupCancellation.ThrowIfCancellationRequested();
                     if(r.Number<1||r.Snapshot==null||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
                     if(!validateSnapshots)continue;
                     var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
@@ -499,6 +507,7 @@ namespace StarTournament.ProvingGround
             foreach(var p in file.Profiles)
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
+                    startupCancellation.ThrowIfCancellationRequested();
                     var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(currentDescriptors.TryGetValue(d.Path,out var currentDescriptor))
                     {
                         // The compatible revision uses current trusted map/diagnostic metadata.

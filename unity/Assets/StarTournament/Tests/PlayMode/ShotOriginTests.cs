@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Scene scene;
         [UnityTest]public IEnumerator WeaponsUseCurrentMuzzlesAcrossStrafeRotationAndBatchedTicks()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             var review=ground.gameObject.AddComponent<NativeShotOriginReview>();

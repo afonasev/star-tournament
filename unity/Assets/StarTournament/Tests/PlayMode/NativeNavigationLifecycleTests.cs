@@ -1,3 +1,4 @@
+using StarTournament.ProvingGround.Tests.PlayMode;
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ namespace StarTournament.ProvingGround.Tests
         }
         [UnityTest] public IEnumerator SessionTickPauseDeathAndFrozenRepeatOwnNavigationLifecycle()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             pads=Enumerable.Range(0,3).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);ground.EnableNavigationReview();
             var driver=ground.NavigationReviewDriver;var configuration=driver.Controller.Capture().Configuration;

@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 
         [UnityTest] public IEnumerator InactiveActorIdentityPreservesEquipmentMaterialsAndBoostRestoresThem()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             var body=Object.Instantiate(ground.TrooperBodyPrefab,ground.transform);

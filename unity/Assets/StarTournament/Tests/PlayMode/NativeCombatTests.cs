@@ -296,7 +296,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             int listeners=Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Length;
             for(int repeat=0;repeat<2;repeat++)
             {
-                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                yield return NativeLoadingTestScene.Load();
                 scene=SceneManager.GetSceneByName("ProvingGround"); yield return null;
                 var ground=Array.Find(Object.FindObjectsByType<ProvingGround>(FindObjectsSortMode.None),g=>g.gameObject.scene==scene);
                 Assert.That(ground,Is.Not.Null);

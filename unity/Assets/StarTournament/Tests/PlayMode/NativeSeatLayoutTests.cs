@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 // New-match fixture above already clears the previous solo opponent.
                 ground.StartCombatReview(pads.Take(count).ToArray());
                 yield return null;yield return new WaitForFixedUpdate();yield return null;
-                Assert.That(ground.Running,Is.True);
+                yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
                 var panel=ground.transform.Find("native-ui/match-timer-panel").GetComponent<RectTransform>();
                 Assert.That(panel.gameObject.activeSelf,Is.True);
                 Assert.That(panel.Find("match-timer").GetComponent<Text>().text,Does.Match(@"^\d\d:\d\d$"));
@@ -211,18 +211,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
             Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-1"),"Gamepad navigation stays on content instead of the footer");
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));yield return null;yield return null;
-            Assert.That(ground.Running,Is.True);yield return null;AssertLayout(2);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);yield return null;AssertLayout(2);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());
             InputSystem.QueueStateEvent(pads[2],new GamepadState{rightTrigger=1,leftStick=Vector2.one}.WithButton(GamepadButton.Start));
-            yield return null;yield return new WaitForFixedUpdate();Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ShotCount,Is.Zero);
-            InputSystem.RemoveDevice(pads[2]);yield return null;Assert.That(ground.Running,Is.True);
+            yield return null;yield return new WaitForFixedUpdate();yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ShotCount,Is.Zero);
+            InputSystem.RemoveDevice(pads[2]);yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             InputSystem.RemoveDevice(pads[1]);yield return null;yield return null;
             Assert.That(ground.Running,Is.False);Assert.That(Button("Продолжить").interactable,Is.False);
             var text=ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>();Assert.That(text.text,Does.Contain("Пауза"));
             var reason=(string)typeof(ProvingGround).GetField("pauseReason",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);Assert.That(reason,Does.Contain("P2"),"The disconnected seat still owns the pause reason");
             InputSystem.AddDevice(pads[1]);yield return null;Assert.That(ground.Running,Is.False);
             Assert.That(Button("Продолжить").interactable,Is.True);
-            Button("Продолжить").onClick.Invoke();yield return null;Assert.That(ground.Running,Is.True);
+            Button("Продолжить").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             ground.SendMessage("OnApplicationFocus",false);Assert.That(ground.Running,Is.False);
         }
     }

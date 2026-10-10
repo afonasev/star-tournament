@@ -79,7 +79,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator SetupRepeatResultAndFfaRestoreKeepRosterAndIdentityCoherent()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             ground.TeamProfile.Set("spawn.initialOpponentSeparation",5.1f);
@@ -93,7 +93,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SetTeam(1,NativeTeam.TeamB);
             Assert.That(ground.GetComponentsInChildren<Button>(true).Any(b=>b.name=="team-colors"),Is.False);
             Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
-            Assert.That(ground.Running,Is.True);Assert.That(ground.Session.Match.Roster.Count,Is.EqualTo(3));
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session.Match.Roster.Count,Is.EqualTo(3));
             var old=ground.Session;var roster=JsonUtility.ToJson(old.Match.Roster.Read());var expected=NativeStandingsView.TeamColor(NativeTeam.TeamA,false);
             AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),expected);AssertIdentity(ground.transform.Find("seat-camera-1/trooper-view"),expected);
             var table=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="persistent-standings");

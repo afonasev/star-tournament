@@ -1,4 +1,5 @@
 using Unity.AI.Navigation;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ namespace StarTournament.ProvingGround
         Material floor, wall, accent;
         public void ClearProjection()
         {
-            if (Surface) { Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
+            if (Surface) { if(Surface.navMeshData)NavMeshBuilder.Cancel(Surface.navMeshData); Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
             for(int i=transform.childCount-1;i>=0;i--) DestroyImmediate(transform.GetChild(i).gameObject);
             if(floor)DestroyImmediate(floor);if(wall)DestroyImmediate(wall);if(accent)DestroyImmediate(accent);
             supports.Clear(); rocketGrating.Clear(); navigationTransitions=System.Array.Empty<NativeNavigationTransition>(); Spawns=System.Array.Empty<Vector3>();
@@ -79,6 +80,8 @@ namespace StarTournament.ProvingGround
             Build(CombatBowlCatalog.Freeze(profile),profile);
         }
         public void Build(ArenaFreezeSnapshot frozen, ProvingProfile profile, ProvingProfile artProfile=null)
+        { var steps=BuildSteps(frozen,profile,artProfile,false);while(steps.MoveNext()){} }
+        public IEnumerator BuildSteps(ArenaFreezeSnapshot frozen, ProvingProfile profile, ProvingProfile artProfile=null,bool asynchronous=true)
         {
             if(frozen==null) throw new System.ArgumentException("ARENA_FREEZE_MISSING_INPUT|family:unknown|element:snapshot");
             ClearProjection();
@@ -86,7 +89,8 @@ namespace StarTournament.ProvingGround
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
-            foreach(var solid in Definition.Solids){var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
+            int projected=0;
+            foreach(var solid in Definition.Solids){if(asynchronous&&projected++%32==0)yield return null;var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
             Physics.SyncTransforms();
             Surface = gameObject.AddComponent<NavMeshSurface>();
@@ -108,22 +112,30 @@ namespace StarTournament.ProvingGround
             var sources=new List<NavMeshBuildSource>();
             NavMeshBuilder.CollectSources(transform,(1<<WorldLayer)|(1<<MovementOnlyLayer),NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>(),sources);
             var all=Definition.Solids; var bakeBounds=new Bounds(all[0].Position,all[0].Size);foreach(var solid in all)bakeBounds.Encapsulate(new Bounds(solid.Position,solid.Size)); bakeBounds.Expand(2f);
-            Surface.navMeshData=NavMeshBuilder.BuildNavMeshData(settings,sources,bakeBounds,Vector3.zero,Quaternion.identity);
+            if(asynchronous)
+            {
+                Surface.navMeshData=new NavMeshData(settings.agentTypeID);
+                yield return NavMeshBuilder.UpdateNavMeshDataAsync(Surface.navMeshData,settings,sources,bakeBounds);
+            }
+            else Surface.navMeshData=NavMeshBuilder.BuildNavMeshData(settings,sources,bakeBounds,Vector3.zero,Quaternion.identity);
             Surface.AddData();
             if(Definition.Identity==CombatBowlCatalog.Identity)
             {
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);
-                decoration.AddComponent<OrbitalLeaguePresentation>().Build(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
+                var steps=decoration.AddComponent<OrbitalLeaguePresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
+                while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
             else if(Definition.Identity==LunarLaboratoryCatalog.Identity)
             {
                 var decoration=new GameObject("Lunar laboratory presentation");decoration.transform.SetParent(transform,false);
-                decoration.AddComponent<LunarLaboratoryPresentation>().Build(Definition,artProfile??ProvingProfile.CreateLunarPresentation());
+                var steps=decoration.AddComponent<LunarLaboratoryPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateLunarPresentation());
+                while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
             else if(Definition.Identity==IndustrialTunnelsCatalog.Identity)
             {
                 var decoration=new GameObject("Industrial tunnels presentation");decoration.transform.SetParent(transform,false);
-                decoration.AddComponent<IndustrialTunnelsPresentation>().Build(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
+                var steps=decoration.AddComponent<IndustrialTunnelsPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
+                while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
         }
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)
@@ -145,7 +157,7 @@ namespace StarTournament.ProvingGround
         }
         void OnDestroy()
         {
-            if (Surface) { Surface.RemoveData(); if (Surface.navMeshData) Destroy(Surface.navMeshData); }
+            if (Surface) { if(Surface.navMeshData)NavMeshBuilder.Cancel(Surface.navMeshData); Surface.RemoveData(); if (Surface.navMeshData) Destroy(Surface.navMeshData); }
             if (floor) Destroy(floor); if (wall) Destroy(wall); if (accent) Destroy(accent);
         }
     }

@@ -45,7 +45,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator NewBotsConfirmDefaultDifficultyWithOneSubmit()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
             var pad=pads[0]=InputSystem.AddDevice<Gamepad>();
@@ -69,7 +69,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
             var pad=pads[0]=InputSystem.AddDevice<Gamepad>();
@@ -95,8 +95,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(button("roster-card-0").gameObject);
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Start));
             yield return null;yield return null;
-            Assert.That(ground.Running,Is.True,"Start must launch without selecting the launch button");
-            for(int i=0;i<5;i++){yield return null;Assert.That(ground.Running,Is.True,"Held Start must not pause the new match");}
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Start must launch without selecting the launch button");
+            for(int i=0;i<5;i++){yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Held Start must not pause the new match");}
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             yield return PressBotMenu(pad,GamepadButton.Start);
             Assert.That(ground.Running,Is.False,"A fresh Start press still pauses the running match");
@@ -163,7 +163,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest]
         public IEnumerator FourGamepadsCanJoinStartPauseAndResumeWithoutMouse()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");
             yield return null;
             var ground=Object.FindFirstObjectByType<ProvingGround>(); Assert.That(ground,Is.Not.Null);
@@ -188,13 +188,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-3"),"Down at the last card must not focus the launch button");
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));
             yield return null;yield return null;
-            Assert.That(ground.Running,Is.True,"Gamepad Start must launch from the selected fourth-player card");
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Gamepad Start must launch from the selected fourth-player card");
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));
             yield return null;yield return null;Assert.That(ground.Running,Is.False);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));
-            yield return null;yield return null;Assert.That(ground.Running,Is.True,"Resume must be reachable without a mouse");
+            yield return null;yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Resume must be reachable without a mouse");
             InputSystem.RemoveDevice(pads[3]);yield return null;yield return null;
             Assert.That(ground.Running,Is.False,"Disconnect pauses the whole proving ground");
         }

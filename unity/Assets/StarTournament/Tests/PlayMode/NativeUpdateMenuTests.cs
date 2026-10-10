@@ -30,7 +30,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS",status);
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND",command);
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","0.1.0 (28.09.2026)");
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             var button=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="update-action");
@@ -68,7 +68,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS",status);
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND",command);
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","0.1.0-test.10 (08.10.2026)");
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             var button=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="update-action");

@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             float listener=AudioListener.volume;AudioListener.volume=0;NativeAudioPreferences.SetEffects(80);
             try
             {
-                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                yield return NativeLoadingTestScene.Load();
                 scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
                 var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
                 pad=InputSystem.AddDevice<Gamepad>();ground.StartCombatReview(new[]{pad},ensureOpponent:true);
@@ -80,7 +80,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             NativeAudioPreferences.SetEffects(80);
             try
             {
-                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                yield return NativeLoadingTestScene.Load();
                 scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
                 var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
                 ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="main-action-0").onClick.Invoke();
@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             AudioListener.volume=0;
             try
             {
-                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                yield return NativeLoadingTestScene.Load();
                 scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
                 var ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
                 var audio=(NativeGameAudio)typeof(ProvingGround).GetField("gameAudio",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);

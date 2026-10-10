@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTearDown] public IEnumerator Cleanup(){if(ground)ground.enabled=true;if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
         [UnityTest] public IEnumerator VeteranPlannerJumpUsesNativeMotorAndLostTargetDoesNotStopSearch()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
             ground.StartBotReview(NativeBotTacticsReview.Composition(false,NativeBotDifficulty.Hard,NativeBotDifficulty.Normal,0),271021);ground.enabled=false;
             Assert.That(ground.BotBehaviorProfile.Get("bots.easy.jumpChance"),Is.Zero);
@@ -44,7 +44,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator RetreatActuallyMovesAwayWhileItsReadyRifleDamagesTheVisiblePursuer()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
             ground.StartBotReview(NativeBotTacticsReview.Composition(false,NativeBotDifficulty.Hard,NativeBotDifficulty.Normal,0),271019);ground.enabled=false;
             float floor=AuthoredPhysicsFixture.Value("fixture.floorHeight");var start=new Vector3(-8,floor,26);var threat=new Vector3(-8,floor,30);
@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator NativeActionsActuallyUnlockWeaponsCollectBonusesAndRestoreWithoutInstantKnowledge()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
             ground.StartBotReview(NativeBotTacticsReview.Composition(false,NativeBotDifficulty.Hard,NativeBotDifficulty.Normal,0),271001);ground.enabled=false;
             var session=ground.Session;var driver=ground.BotDriver;float dt=1/ground.Profile.Get("simulation.fixedTickHz");var actions=new LocalAction[4];int weapons=0,bonuses=0,damage=0;
