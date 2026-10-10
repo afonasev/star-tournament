@@ -1,0 +1,340 @@
+{
+  "runs": [
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml",
+      "result": "Passed",
+      "total": "24",
+      "passed": "24",
+      "failed": "0",
+      "duration": "13.0340044",
+      "ended": "2026-10-10 11:14:22Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.byXCot/editmode.xml",
+      "result": "Passed",
+      "total": "10",
+      "passed": "10",
+      "failed": "0",
+      "duration": "13.4304257",
+      "ended": "2026-10-10 11:09:56Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.fwrDFw/editmode.xml",
+      "result": "Failed(Child)",
+      "total": "46",
+      "passed": "45",
+      "failed": "1",
+      "duration": "32.8316157",
+      "ended": "2026-10-10 11:05:05Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.rU09YE/editmode.xml",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "duration": "0.2929441",
+      "ended": "2026-10-10 11:15:41Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml",
+      "result": "Failed(Child)",
+      "total": "46",
+      "passed": "45",
+      "failed": "1",
+      "duration": "31.1532429",
+      "ended": "2026-10-10 11:07:57Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series/playmode.xml",
+      "result": "Failed(Child)",
+      "total": "6",
+      "passed": "5",
+      "failed": "1",
+      "duration": "51.259894",
+      "ended": "2026-10-10 11:12:16Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series-render/playmode.xml",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "duration": "28.3136867",
+      "ended": "2026-10-10 11:16:34Z"
+    }
+  ],
+  "distinct_latest_passed": 54,
+  "tests": {
+    "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.ScoreboardUpgradePreservesOldValuesAndHashes": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.AssistOutsideWindowAndWorldSelfKillsDoNotAwardKillerPoints": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.ConfigurationMetadataRejectsBadStepsAndProfileIsFrozen": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.EarlyTargetOvertimeZerosTimerThroughFinish": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.FinalTickAppliesAllAwardsAndTargetPrecedesTimeWithFrozenResult": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.InclusiveAssistWindowDeduplicatesHitsAndClearsVictimLedger": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.LegacyChainContinuesAcrossAnyGapUntilDeathAndPairCountsRemain": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.LinearChainAwardsGrowAndDeathResetsAfterMutualKills": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeMatchTests.TimeOvertimeKeepsOriginalTriggerAndNoExtraTimeLimit": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeScoreboardTests.EnemyAllySelfAndWorldAreSeparatedAndPenaltyCannotBeErasedByChainReward": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeScoreboardTests.FrozenPenaltySerializableLedgerFinalAndFreshRepeat": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeScoreboardTests.MetadataAndHistoricalProjectionAreCompatible": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeScoreboardTests.OriginalFriendlySourceIsRetainedWithNoEnemyRewardsOrAlliedAssists": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeScoreboardTests.SameTickNetTargetRankingAndWinnerAreEvaluatedAfterPenalty": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.AssistsLateProjectilesPenaltyAndSameTickEventsKeepTheirOwnPoints": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.BoundaryIsInclusiveAndNextTickStartsOver(1.0f)": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.BoundaryIsInclusiveAndNextTickStartsOver(50.0f)": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.CurrentFirstRewardCanExceedInactiveLegacyTotals": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.EveryAdjacentKillRenewsWindowAndAwardsKeepGrowingPastFive": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.FrozenTuningAndNoTickPauseDoNotChangeWindow": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.LabUpgradePreservesHistoricalHashesAndOtherCustomTuning": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.LegacyProfileRetainsUnboundedCumulativeRulesAndRestoresExactly": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.NoticeAndVoiceUseActualEventRatherThanCurrentChainOrTotalScore": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.TimedKillChainTests.SnapshotPreservesOriginalDeadlineAndRejectsForgedOrLegacyState": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:14:22Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.OdGOc4/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAccuracyTests.AggregatesMeanOfUsedWeaponFractionsWithoutIntermediateRounding": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAccuracyTests.CutterGrowthAccumulatesOnlyTheDeliveredEnemyContactInterval": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAccuracyTests.CutterReportsExactEnergyLimitedEmissionAndContactDurationsForUnion": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAccuracyTests.DelayedResultAndInvalidOrOverflowingUpdatesPreserveAggregateInvariant": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAccuracyTests.SnapshotRestorePreservesAccuracyOldZeroFieldsAndFinishedStateFreezesIt": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAchievementHistoryTests.AchievementThresholdUpgradePreservesHistoricalMatch(False)": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAchievementHistoryTests.AchievementThresholdUpgradePreservesHistoricalMatch(True)": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAchievementHistoryTests.AchievementTransformLeavesOtherAndAlreadyHistoricalProfilesUntouched": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAchievementHistoryTests.HistoricalAchievementReleaseLoadsIdempotently": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAchievementHistoryTests.UnrecognizedPartialHistoricalRegistryStillFailsBeforeWriting(\"achievement.minimumShots\")": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeAchievementHistoryTests.UnrecognizedPartialHistoricalRegistryStillFailsBeforeWriting(\"score.assistPoints\")": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeTeamMatchTests.FinalTickTargetTieEntersOvertimeAndAssistBreaksTieWithoutNewTimeLimit": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.NativeTeamMatchTests.TimeWinnerUsesTeamSumRatherThanTopIndividual": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests.ActualLossIncludesShieldOnlyOverflowAndCappedOverkill": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests.EnvironmentalLethalKeepsPriorEnemyAssist": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests.EveryBodyZoneHasWeaponSpecificDamageAndDescriptorsValidateSteps": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests.FriendlyAndSelfLethalsClearRewardsAndChainWithoutReducingKills": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests.HistoricalZonalValuesAndHashesSurviveMigrationToTorsoDamage": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.UnifiedDamageTests.OldLifeTeamkillDoesNotResetNewLifeChainAndFriendlyHitsCannotAssist": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.NativeAchievementTelemetryTests.CountersAndDamageAreRecordedAsAppliedFacts": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.NativeAchievementTelemetryTests.FinishedTelemetrySnapshotRestoresFrozenProjectionAndRejectsInvalidBeforeMutation": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.NativeAchievementTelemetryTests.LegacyMarkerDisablesAwardsForRestoredMatch": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.NativeAchievementTelemetryTests.OldFrozenAwardWithoutRulesVersionRestoresUsingOriginalEligibilityAndFact": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:07:57Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.xGl8JF/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.InvalidRangeStepAndCrossFieldDraftCannotSave": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:15:41Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-editmode.rU09YE/editmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.EnemyKillAfterTeamKillRestoresNormalColorAndPreservesNameColor": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:12:16Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.ResultsRepeatPreservesFrozenSettingsAndSetupCanChangeNextMatch": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:12:16Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.SelfKillAfterTeamKillShowsRedPenaltyInNormalText": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:12:16Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.SelfKillUsesNormalColorWithRedPenaltyAndDoesNotNameSelfAsKiller": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:12:16Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.TeamKillIsRedWithoutEnemyScoreOrStreak": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:12:16Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:16:34Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series-render/playmode.xml"
+    }
+  }
+}

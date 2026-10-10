@@ -1,0 +1,25 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=TimedKillChainTests;NativeMatchTests;UnifiedDamageTests;NativeScoreboardTests;NativeAchievementTelemetryTests;NativeAccuracyTests;NativeTeamMatchTests.FinalTickTargetTieEntersOvertimeAndAssistBreaksTieWithoutNewTimeLimit;NativeTeamMatchTests.TimeWinnerUsesTeamSumRatherThanTopIndividual;NativeAchievementHistoryTests;DesignLabHistoryTests.ScoreboardUpgradePreservesOldValuesAndHashes
+lab_history=/Users/eaafonasev/.codex/worktrees/timed-kill-chain/star-tournament/unity/../.local/unity-evidence/focused-editmode.fwrDFw/qa-lab-history.json
+revision=24721b5530368140ebff6f6f295fe4f25fd0d80c
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/NativeMatchProfile.cs
+ M Assets/StarTournament/Runtime/Core/NativeMatchState.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/NativeCombatSession.cs
+ M Assets/StarTournament/Runtime/NativeGameAudio.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Tests/EditMode/NativeMatchTests.cs
+ M Assets/StarTournament/Tests/EditMode/NativeTeamMatchTests.cs
+ M Assets/StarTournament/Tests/PlayMode/NativeMatchIntegrationTests.cs
+?? ../docs/evidence/timed-kill-chain/
+?? Assets/StarTournament/Resources/Audio/kill-quadruple.wav
+?? Assets/StarTournament/Resources/Audio/kill-quadruple.wav.meta
+?? Assets/StarTournament/Resources/Audio/kill-triple.wav
+?? Assets/StarTournament/Resources/Audio/kill-triple.wav.meta
+?? Assets/StarTournament/Runtime/NativeKillNotice.cs
+?? Assets/StarTournament/Runtime/NativeKillNotice.cs.meta
+?? Assets/StarTournament/Tests/EditMode/TimedKillChainTests.cs
+?? Assets/StarTournament/Tests/EditMode/TimedKillChainTests.cs.meta

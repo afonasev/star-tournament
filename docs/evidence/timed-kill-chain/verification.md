@@ -1,0 +1,13 @@
+# Проверки
+Baseline `24721b55`, diff: match v3/timed-linear/snapshot, profile migration, event delta HUD, speech routing.
+
+EditMode: `unity/tools.sh test-edit-filter 'TimedKillChainTests;NativeMatchTests;UnifiedDamageTests;NativeScoreboardTests;NativeAchievementTelemetryTests;NativeAccuracyTests;NativeTeamMatchTests.FinalTickTargetTieEntersOvertimeAndAssistBreaksTieWithoutNewTimeLimit;NativeTeamMatchTests.TimeWinnerUsesTeamSumRatherThanTopIndividual;NativeAchievementHistoryTests;DesignLabHistoryTests.ScoreboardUpgradePreservesOldValuesAndHashes'`. Эти fixtures покрывают правила очков и их соседние snapshot/penalty/achievement/profile контракты; полный набор и bot simulations не нужны. Первый запуск: 45/46 Passed, historical scoreboard fixture создавал @1 из нового @3 с новыми полями; исправлен конструктор исторического baseline, assertions сохранены. Повторить после этого изменения и усиления v3 tuning identity validation.
+
+PlayMode: `NativeMatchIntegrationTests.SelfKillHasNoKillerLabel;NativeMatchIntegrationTests.TeamKillIsRedWithoutEnemyScoreOrStreak;NativeMatchIntegrationTests.EnemyKillAfterTeamKillRestoresNormalColorAndPreservesNameColor;NativeMatchIntegrationTests.SelfKillAfterTeamKillKeepsPenaltyRed;NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices;NativeMatchIntegrationTests.MatchProfileFrozenUntilRepeat`. Проверяет настоящие session events, UI, audio clips, restore/mute и frozen Lab tuning. Графический Editor для screenshot; без Player build. Проверить точные существующие имена перед запуском.
+
+Full, Player build, release/deploy и physical/audio acceptance отложены; автоматическая QA их не подтверждает.
+
+## Итог
+48 различных EditMode cases и 6 PlayMode methods имеют последний Passed результат. Это последовательность affected прогонов: после исправлений повторялись только относящиеся проверки; XML каждого запуска сохранён в `tests/`, первичные неудачи не скрыты. Финальные группы24/24, Lab validation1/1, series render+audio1/1; остальные соседние контракты passed до последних независимых UI/validation изменений. Спецификация strict valid. Screenshot `series-four-views.png` — offscreen render настоящего HUD1920×1080; фон gameplay не является предметом этой проверки, FPS1 в диагностическом кадре не является performance измерением. Награда+300, золотистый текст, подпись серии и имя проверены визуально.
+
+Аудиоassets PCM mono48kHz,1.5/1.6s; ffmpeg decode passed. Источник мужской TTS кандидат; человеческая оценка подачи и gameplay mix pending. Существующие death/weapon-ready/combat music assets/tuning не менялись. Full/Player/release/deploy не запускались.

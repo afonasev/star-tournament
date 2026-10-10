@@ -43,6 +43,8 @@ namespace StarTournament.ProvingGround
         readonly float[] beamGain;
         readonly AudioSource uiSource;
         readonly AudioSource damageBonusSource;
+        readonly AudioSource killSeriesSource;
+        const float KillSeriesGain=.85f;
         float damageBonusGain;
         float uiGain;
         readonly Transform root;
@@ -66,7 +68,7 @@ namespace StarTournament.ProvingGround
         {
             this.profile=profile;muted=mute;
             var holder=new GameObject("native-game-audio");holder.transform.SetParent(parent,false);root=holder.transform;
-            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","weapon-ready","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup"})
+            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","weapon-ready","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup","kill-triple","kill-quadruple"})
             {
                 var clip=Resources.Load<AudioClip>("Audio/"+name);
                 if(clip==null)Debug.LogError("Missing native audio clip: "+name);
@@ -90,7 +92,7 @@ namespace StarTournament.ProvingGround
             }
             BuildVoicePool();
             musicScene=new NativeMusicCoordinator(root,profile);music=musicScene.Round;musicProfile=profile;
-            uiSource=Source("menu-ui");damageBonusSource=Source("damage-bonus-alert");
+            uiSource=Source("menu-ui");damageBonusSource=Source("damage-bonus-alert");killSeriesSource=Source("kill-series-voice");
             beams=new AudioSource[NativeMatchRoster.MaximumParticipants];
             beamGain=new float[beams.Length];
             for(int i=0;i<beams.Length;i++){beams[i]=Source("cutter-"+i);beams[i].clip=clips["cutter-loop"];beams[i].loop=true;}
@@ -146,7 +148,7 @@ namespace StarTournament.ProvingGround
             UpdateVolume();
         }
         public void SuspendMusic(){musicScene.SetSuspended(true);UpdateVolume();}
-        public void StopEffects(){combatMusicGain=1;damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
+        public void StopEffects(){combatMusicGain=1;damageBonusSource.Stop();killSeriesSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
         public void UpdateVolume()
         {
             float volume=EffectsVolume;
@@ -155,6 +157,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying&&voiceParticipant[i]>=0)
             {var mix=Spatial(voicePosition[i],voiceParticipant[i]);voiceGain[i]=voiceBaseGain[i]*mix.Gain;voices[i].panStereo=mix.Pan;}
             if(uiSource.isPlaying)sum+=uiGain;
+            if(killSeriesSource.isPlaying)sum+=KillSeriesGain;
             if(damageBonusSource.isPlaying)sum+=damageBonusGain;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying)
             {sum+=voiceGain[i];if(voiceCombat[i])combatStrength=Mathf.Max(combatStrength,voiceGain[i]*volume);}
@@ -176,7 +179,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<voices.Length;i++)voices[i].volume=voiceGain[i]*scale;
             for(int i=0;i<beams.Length;i++)beams[i].volume=beamGain[i]*scale;
             for(int i=0;i<rocketSources.Length;i++)rocketSources[i].volume=rocketGain[i]*scale;
-            uiSource.volume=uiGain*scale;damageBonusSource.volume=damageBonusGain*scale;
+            killSeriesSource.volume=KillSeriesGain*scale;uiSource.volume=uiGain*scale;damageBonusSource.volume=damageBonusGain*scale;
             musicScene.UpdateVolume(musicVolume,musicBudget*attenuation);
         }
         public void MenuMove()=>PlayMenu("menu_move",.40f);
@@ -279,6 +282,9 @@ namespace StarTournament.ProvingGround
         }
         void Death(DeathNotice death)
         {
+            string cue=NativeKillNotice.Voice(death.Score);
+            if(cue!=null&&composition!=null&&composition.SeatOf(death.Score.Source)>=0&&EffectsVolume>0)
+            {killSeriesSource.clip=clips[cue];killSeriesSource.volume=KillSeriesGain*EffectsVolume;killSeriesSource.Play();}
             beams[death.Seat].Stop();beamGain[death.Seat]=0;beamEnvelope[death.Seat]=0;
             PlayAt(Bank("death"),ProvingProfile.DeathAudioGain(profile),death.Seat,death.Pose.Position,feedback:true);
         }
