@@ -1,0 +1,15 @@
+{
+  "text": "Даже не поцарапал!",
+  "voice": "ru-RU-DmitryNeural",
+  "provider": "Microsoft Edge online TTS via edge-tts",
+  "edge_tts_version": "7.2.8",
+  "rate": "-10%",
+  "pitch": "-5Hz",
+  "duration_seconds": 2.664,
+  "format": "mp3,24000Hz,mono",
+  "max_volume_db": -5.5,
+  "sha256": "73445ec20f0a17efc38a82e6d13eea4880776dd9e13d0c89fc43d2238e7e2999",
+  "desired_direction": "Уверенный взрослый мужчина, азарт и лёгкая усмешка; это творческая цель, не подтверждение актёрской подачи",
+  "acceptance": "pending audition",
+  "game_integration": false
+}
