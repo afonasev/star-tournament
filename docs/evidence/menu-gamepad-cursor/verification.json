@@ -15,6 +15,10 @@
     {
       "command": "test-play-filter SettingsGamepadNavigationTests.MenuCursorFollowsGamepadAndMouseAcrossScreens",
       "passed": 1
+    },
+    {
+      "command": "test-play-filter MenuCursorFollowsGamepadAndMouseAcrossScreens;SettingsAreFullyNavigableWithGamepad;TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses",
+      "passed": 3
     }
   ],
   "interrupted_startup": "first PlayMode attempt stopped during shared user Lab loading; NotRun; task-owned QA history used on retry",
@@ -23,5 +27,7 @@
     "Player build",
     "release/deploy",
     "physical device acceptance"
-  ]
+  ],
+  "tested_integration": "7399edb4",
+  "result": "Passed across selected cases; 3 EditMode and 26 PlayMode cases"
 }
