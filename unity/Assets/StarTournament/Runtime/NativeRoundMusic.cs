@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround
         {
             Stop();match=next;if(match==null||manifest?.tracks==null||manifest.tracks.Length==0)return;
             float Get(string key,float fallback)=>profile.Descriptor("audio.music."+key)==null?fallback:profile.Get("audio.music."+key);
-            gain=Get("gain",.55f);transitionBeats=Get("transitionBeats",4);finishSeconds=Get("finishSeconds",2);
+            gain=Get("gain",.55f)*ProvingProfile.MusicBalanceGain(profile);transitionBeats=Get("transitionBeats",4);finishSeconds=Get("finishSeconds",2);
             firstThreshold=Get("developAt",.33f);finalThreshold=Get("climaxAt",.67f);
             // Draw from the other tracks without consuming the gameplay random stream.
             int count=manifest.tracks.Length,index=count==1?0:random.Next(previous<0?count:count-1);

@@ -1,0 +1,70 @@
+{
+  "baseline": "a385bed7a3360c5c0bcc1448b7b15a9ad711a985",
+  "checks": [
+    {
+      "filter": "scope=focused (affected evidence; NOT a full suite)\nplatform=EditMode\nfilter=StarTournament.ProvingGround.Tests.EditMode.NativeMusicTests\nlab_history=/Users/eaafonasev/Projects/star-tournament-audio-mix/unity/../.local/unity-evidence/focused-editmode.s7fPeJ/qa-lab-history.json\nrevision=a385bed7a3360c5c0bcc1448b7b15a9ad711a985\n M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs\n M Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs\n M Assets/StarTournament/Runtime/NativeMenuMusic.cs\n M Assets/StarTournament/Runtime/NativeRoundMusic.cs\n M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs\n M Assets/StarTournament/Tests/PlayMode/NativeMenuMusicTests.cs\n",
+      "result": {
+        "id": "2",
+        "testcasecount": "8",
+        "result": "Passed",
+        "total": "8",
+        "passed": "8",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-10 07:14:17Z",
+        "end-time": "2026-10-10 07:14:39Z",
+        "duration": "21.6943431"
+      },
+      "artifact": "focused-editmode.s7fPeJ-editmode.xml"
+    },
+    {
+      "filter": "scope=focused (affected evidence; NOT a full suite)\nplatform=PlayMode\nfilter=StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests;StarTournament.ProvingGround.Tests.PlayMode.NativeRoundMusicTests;StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests\nlab_history=/Users/eaafonasev/Projects/star-tournament-audio-mix/unity/../.local/unity-evidence/focused-playmode.c0vMWk/qa-lab-history.json\nrevision=a385bed7a3360c5c0bcc1448b7b15a9ad711a985\n M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs\n M Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs\n M Assets/StarTournament/Runtime/NativeMenuMusic.cs\n M Assets/StarTournament/Runtime/NativeRoundMusic.cs\n M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs\n M Assets/StarTournament/Tests/PlayMode/NativeMenuMusicTests.cs\n M ProjectSettings/ShaderGraphSettings.asset\n",
+      "result": {
+        "id": "2",
+        "testcasecount": "9",
+        "result": "Passed",
+        "total": "9",
+        "passed": "9",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-10 07:15:06Z",
+        "end-time": "2026-10-10 07:15:36Z",
+        "duration": "29.949729"
+      },
+      "artifact": "focused-playmode.c0vMWk-playmode.xml"
+    },
+    {
+      "filter": "scope=focused (affected evidence; NOT a full suite)\nplatform=EditMode\nfilter=StarTournament.ProvingGround.Tests.EditMode.LabReleaseCatalogTests.PackagedSceneAndCatalogPreserveEveryPublishedSnapshot;StarTournament.ProvingGround.Tests.EditMode.LabReleaseCatalogTests.HistoricalReleaseKeepsOriginalHashAndHasARunnableCounterpart\nlab_history=/Users/eaafonasev/Projects/star-tournament-audio-mix/unity/../.local/unity-evidence/focused-editmode.6xk14g/qa-lab-history.json\nrevision=a385bed7a3360c5c0bcc1448b7b15a9ad711a985\n M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs\n M Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs\n M Assets/StarTournament/Runtime/NativeMenuMusic.cs\n M Assets/StarTournament/Runtime/NativeRoundMusic.cs\n M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs\n M Assets/StarTournament/Tests/PlayMode/NativeMenuMusicTests.cs\n M ProjectSettings/ShaderGraphSettings.asset\n?? Assets/InitTestScene3641cdb7-e13d-4c67-83e3-932bbf703669.unity\n?? Assets/InitTestScene3641cdb7-e13d-4c67-83e3-932bbf703669.unity.meta\n",
+      "result": {
+        "id": "2",
+        "testcasecount": "2",
+        "result": "Passed",
+        "total": "2",
+        "passed": "2",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-10 07:15:50Z",
+        "end-time": "2026-10-10 07:16:13Z",
+        "duration": "22.8909165"
+      },
+      "artifact": "focused-editmode.6xk14g-editmode.xml"
+    }
+  ],
+  "player_build": "deferred, not necessary for automated mix/routing checks",
+  "full_tests": "not authorized; not run",
+  "listening_acceptance": "pending",
+  "gain": 0.32,
+  "music_change_db": -9.897
+}

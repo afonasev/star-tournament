@@ -66,6 +66,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{if(File.Exists(path))File.Delete(path);}
         }
+        [Test] public void MusicBalanceMigrationPreservesHistoricalHashAndCustomMusicGain()
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            var method=typeof(ProvingProfile).GetMethod("BeforeMusicBalance",BindingFlags.NonPublic|BindingFlags.Instance);
+            var before=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,before);history.Create("Saved audio balance predecessor");
+                var draft=history.Selected.Snapshot;draft.Set("audio.music.gain",.35f);draft.Set("audio.effectsDefaultPercent",45);history.Save(draft);
+                string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("audio.music.balanceGain"),Is.EqualTo(.32f));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.music.gain"),Is.EqualTo(.35f));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);
+                Assert.That(reopened.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void RoundMusicPredecessorMigratesMenuSettingAndPreservesSavedMixAndHash()
         {
             var shipped=DesignLabHistoryTests.Shipped();

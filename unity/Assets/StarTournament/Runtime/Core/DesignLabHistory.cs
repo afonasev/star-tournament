@@ -371,6 +371,7 @@ namespace StarTournament.ProvingGround
                 var withoutBonusAlerts=Cached(p=>p.BeforeDamageBonusAlerts());
                 var withoutMusic=Cached(p=>p.BeforeRoundMusic());
                 var withoutMenuMusic=Cached(p=>p.BeforeMenuMusic());
+                var withoutMusicBalance=Cached(p=>p.BeforeMusicBalance());
                 var withoutMovementAudio=Cached(p=>p.BeforeMovementAudio());
                 var withoutCompactMatchMenu=Cached(p=>p.BeforeCompactMatchMenu());
                 var withoutFootstepMix=Cached(p=>p.BeforeFootstepMix());
@@ -386,7 +387,9 @@ namespace StarTournament.ProvingGround
                 // Recent additive upgrades have an exact trusted registry. Prove the
                 // complete metadata/hash before skipping the combinatorial legacy search.
                 // Values alone or matching path counts never establish this shortcut.
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutMusicBalance))));
                 var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusicBalance))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutSmoothGamepadTap))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutModeTargets))));
