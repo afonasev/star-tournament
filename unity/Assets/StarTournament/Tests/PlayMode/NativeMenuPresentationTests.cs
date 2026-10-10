@@ -152,6 +152,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SetBotDifficulty(0,2);ground.AddBot();Assert.That(ground.SetupComposition().Participant(3).Difficulty,Is.EqualTo(2));
             ground.SetMatchMode(NativeMatchMode.Ffa);Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2000));
         }
+        [UnityTest] public IEnumerator RosterUsesActionButtonHintsInsteadOfATopShortcutLegend()
+        {
+            B("main-action-0").onClick.Invoke();B("setup-next").onClick.Invoke();B("setup-next").onClick.Invoke();yield return null;
+            Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("+ ИГРОК · Y"));
+            Assert.That(B("roster-add-bot").GetComponentInChildren<Text>().text,Is.EqualTo("+ БОТ · X"));
+            StringAssert.Contains("Start",B("Начать — четыре игрока").GetComponentInChildren<Text>().text);
+            StringAssert.Contains("B",B("setup-previous").GetComponentInChildren<Text>().text);
+            var description=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="setup-description").text;
+            Assert.That(description,Is.EqualTo("Соберите участников матча."));
+        }
         [UnityTest] public IEnumerator FeedbackUsesTopBackSquareChecksAndFullResolutionList()
         {
             B("main-action-3").onClick.Invoke();yield return null;

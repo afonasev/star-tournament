@@ -1,0 +1,6 @@
+{
+  "reason": "General PlayMode fixtures used the default persistent Lab history; startup logs show repeated 92-95 s reads. Retry the full PlayMode suite with STAR_TOURNAMENT_QA_LAB_HISTORY pointing into this worktree. Runtime startup persistMigration=false. No source change; full EditMode 427/427 remains valid.",
+  "client_pid": 79980,
+  "guardian_pid": 79985,
+  "editor_pid": 79986
+}
