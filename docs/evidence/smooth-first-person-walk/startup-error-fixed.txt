@@ -1,0 +1,16 @@
+KeyNotFoundException: Unknown proving profile path 'view.walkCycleSeconds'.
+  at StarTournament.ProvingGround.ProvingProfile.Set (System.String path, System.Single value) [0x0001e] in /Users/eaafonasev/.codex/worktrees/smooth-first-person-walk/star-tournament/unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs:311
+  at StarTournament.ProvingGround.ProvingGround.ApplySavedLabRevision () [0x0004b] in /Users/eaafonasev/.codex/worktrees/smooth-first-person-walk/star-tournament/unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:96
+  at StarTournament.ProvingGround.ProvingGround+<InitializeDesignLabAsync>d__365.MoveNext () [0x0024c] in /Users/eaafonasev/.codex/worktrees/smooth-first-person-walk/star-tournament/unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs:82
+  at StarTournament.ProvingGround.ProvingGround+<RunLoadingSteps>d__455.MoveNext () [0x0005b] in /Users/eaafonasev/.codex/worktrees/smooth-first-person-walk/star-tournament/unity/Assets/StarTournament/Runtime/ProvingGroundLoading.cs:67
+UnityEngine.DebugLogHandler:Internal_LogException_Injected(Exception, IntPtr)
+UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+UnityEngine.DebugLogHandler:LogException(Exception, Object)
+UnityEngine.Logger:LogException(Exception, Object)
+UnityEngine.Debug:LogException(Exception)
+StarTournament.ProvingGround.<RunLoadingSteps>d__455:MoveNext() (at Assets/StarTournament/Runtime/ProvingGroundLoading.cs:93)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: Assets/StarTournament/Runtime/Core/ProvingProfile.cs Line: 311)
+
+TrimDiskCac

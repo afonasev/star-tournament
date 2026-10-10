@@ -237,7 +237,7 @@ namespace StarTournament.ProvingGround
             // so an automatic follow-up cannot freeze the previous shot's animated barrel.
             var visual=source.GetComponent<TrooperVisual>();
             visual?.Fire(session.Time);
-            visual?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+            visual?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
             if(view>=0)weaponSwitches[view]?.Apply(life,session.WeaponSwitchSeconds);
             else source.GetComponent<WeaponModelPresentation>()?.Show(life.SelectedWeapon);
         }
@@ -430,7 +430,7 @@ namespace StarTournament.ProvingGround
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
                 if(!life.Dead)
                 {
-                    views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+                    views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
                     weaponSwitches[v]?.Apply(life,session.WeaponSwitchSeconds);
                     cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;

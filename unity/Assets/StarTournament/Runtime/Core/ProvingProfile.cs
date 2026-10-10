@@ -290,6 +290,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
+            valueIndex=null; // Appended values must be visible after earlier Set calls built the cache.
         }
 
         [NonSerialized] Dictionary<string,ProvingProfileValue> valueIndex;

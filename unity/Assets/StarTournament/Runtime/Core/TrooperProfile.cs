@@ -2,6 +2,14 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeSmoothFirstPersonWalk()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<7)return this;
+            var p=DetachedCopy();p.version=6;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.walk"));
+            p.values.RemoveAll(v=>v.Path.StartsWith("view.walk"));
+            return p;
+        }
         internal ProvingProfile BeforeWeaponSwitch()
         {
             var p=BeforeShoulderSwitch();
@@ -39,7 +47,7 @@ namespace StarTournament.ProvingGround
         }
         internal ProvingProfile BeforeMediumWeaponSwitch()
         {
-            var p=BeforeWeaponPickups();
+            var p=BeforeWeaponPickups().BeforeSmoothFirstPersonWalk();
             if(p.id=="unity-trooper-presentation-v1"&&p.FindDescriptor("view.switchShoulderDegrees")!=null)
             {
                 p.version=5;
@@ -57,11 +65,15 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=6};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=7};
             p.Add("animation.walkThreshold","trooper-animation","Порог шага","Минимальная фактическая горизонтальная скорость для walk.","meters-per-second",.01f,3,.01f,.1f);
             p.Add("animation.runThreshold","trooper-animation","Порог бега","Фактическая горизонтальная скорость переключения walk на run.","meters-per-second",3,15,.1f,6);
             p.Add("animation.blendSeconds","trooper-animation","Переход позы","Время сглаживания весов только визуальных клипов.","seconds",0,.5f,.01f,.12f);
             p.Add("animation.aimHoldSeconds","trooper-animation","Боевая стойка","Сколько удерживать aim после принятого выстрела.","seconds",.4f,5,.1f,1.6f);
+            p.Add("view.walkCycleSeconds","trooper-view","Ритм покачивания","Длительность полного плавного цикла влево-вправо; два мягких шага за цикл, независимо от клипов тела.","seconds",.8f,3,.05f,1.3f);
+            p.Add("view.walkHorizontalMeters","trooper-view","Ширина покачивания","Максимальное смещение рук и оружия в сторону при наземном движении.","meters",0,.03f,.001f,.008f);
+            p.Add("view.walkVerticalMeters","trooper-view","Высота покачивания","Максимальное мягкое вертикальное смещение рук и оружия при шаге.","meters",0,.02f,.001f,.005f);
+            p.Add("view.walkResponseSeconds","trooper-view","Плавность шага","Время отклика интенсивности покачивания на начало, остановку и отрыв от земли.","seconds",.05f,.8f,.01f,.2f);
             p.Add("view.x","trooper-view","Руки по горизонтали","Смещение всей модели рук и оружия относительно камеры.","meters",-.5f,.5f,.01f,.20f);
             p.Add("view.y","trooper-view","Руки по вертикали","Смещение feet-origin модели рук относительно камеры.","meters",-2,-.5f,.01f,-1.46f);
             p.Add("view.switchShoulderDegrees","trooper-view","Подъём рук при смене","Промежуточный по высоте подъём от неподвижных плеч перед камерой; в верхней позе оружие меняется в руках. Весь цикл следует weapon.switchSeconds.","degrees",0,75,1,60);

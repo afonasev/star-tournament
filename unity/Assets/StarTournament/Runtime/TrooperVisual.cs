@@ -17,7 +17,10 @@ namespace StarTournament.ProvingGround
         OrbitalGripPose equipmentGrip;
         readonly double[] starts=new double[7]; // Fixed clip contract, not tunable gameplay data.
         readonly float[] weights=new float[7], transitionFrom=new float[7];
-        double transitionAt;
+        double transitionAt,walkClock,walkPhase;
+        float walkWeight;
+        public Vector3 WalkOffset {get;private set;}
+
         int active=-1, life=-1;
         float health;
         double firedAt=double.NegativeInfinity, hitAt=double.NegativeInfinity;
@@ -90,6 +93,7 @@ namespace StarTournament.ProvingGround
             corpse=false; life=-1; active=-1; health=0;
             firedAt=hitAt=double.NegativeInfinity;
             ClearHit();
+            walkClock=clock;walkPhase=0;walkWeight=0;WalkOffset=Vector3.zero;
             Array.Clear(weights,0,weights.Length); Array.Clear(starts,0,starts.Length);
             Sample(firstPerson?3:0,clock,true);
         }
@@ -97,9 +101,9 @@ namespace StarTournament.ProvingGround
         public void BeginDeath(double clock)
         {
             corpse=true; active=-1; Array.Clear(weights,0,weights.Length); Sample(6,clock,true);
-            ClearHit();
+            ClearHit();WalkOffset=Vector3.zero;
         }
-        public void Render(double clock,Vector3 velocity,float currentHealth,int currentLife)
+        public void Render(double clock,Vector3 velocity,float currentHealth,int currentLife,bool grounded=true)
         {
             if(!graph.IsValid()) return;
             if(corpse) { Sample(6,clock,false); return; }
@@ -107,11 +111,26 @@ namespace StarTournament.ProvingGround
             if(currentHealth<health&&(firstPerson||hitProfile==null)) { hitAt=clock; starts[5]=clock; }
             health=currentHealth;
             float speed=new Vector2(velocity.x,velocity.z).magnitude;
-            int next=speed<profile.Get("animation.walkThreshold")?(firstPerson?3:0):speed<profile.Get("animation.runThreshold")?1:2;
+            if(firstPerson)UpdateWalk(clock,speed,grounded);
+            int next=firstPerson?3:speed<profile.Get("animation.walkThreshold")?0:speed<profile.Get("animation.runThreshold")?1:2;
             if(clock-firedAt<profile.Get("animation.aimHoldSeconds")) next=3;
             if(clock-firedAt<Clips[4].length) next=4;
             if(clock-hitAt<Clips[5].length) next=5;
             Sample(next,clock,false);
+        }
+        void UpdateWalk(double clock,float speed,bool grounded)
+        {
+            // Session time freezes on pause. Repeated muzzle/render samples at the same
+            // clock are idempotent; no wall-clock animation or gameplay state is added.
+            double delta=Math.Max(0,clock-walkClock);walkClock=clock;
+            float target=grounded&&speed>=profile.Get("animation.walkThreshold")?
+                Mathf.Clamp01(speed/profile.Get("animation.runThreshold")):0;
+            walkWeight=target+(walkWeight-target)*(float)Math.Exp(-delta/profile.Get("view.walkResponseSeconds"));
+            // One lateral cycle contains two vertical steps: a geometric invariant.
+            walkPhase=(walkPhase+delta/profile.Get("view.walkCycleSeconds"))%1;
+            double angle=walkPhase*Math.PI*2;
+            WalkOffset=new Vector3((float)Math.Sin(angle)*profile.Get("view.walkHorizontalMeters"),
+                (float)Math.Sin(angle*2)*profile.Get("view.walkVerticalMeters"),0)*walkWeight;
         }
         void Sample(int next,double clock,bool immediate)
         {

@@ -254,14 +254,18 @@ namespace StarTournament.ProvingGround
         // a saved revision actually needs one, then share the exact immutable registry set.
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
+            var shipped=this.shipped;
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??7)<7)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSmoothFirstPersonWalk()).ToList()};
             // Hash covers gameplay values; metadata is also trusted during migration.
-            string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
+            string key=(shippedCacheKey??(shippedCacheKey=this.shipped.Hash()+"|"+JsonUtility.ToJson(this.shipped)))+"|"+
                 string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
                 string.Join("|",sought.Descriptors.Select(d=>d.Path));
             // A warm lookup must precede even the linear predecessor probes: those transforms
             // serialize large unchanged authored-map profiles on every history validation.
             lock(historicalLock)
                 if(historicalCache.TryGetValue(key,out var warm))return warm;
+            if(RegistryMatches(shipped,sought))return new[]{shipped};
             // The preceding LT registries lack only the new timing/gesture descriptors.
             // Match the trusted shipped projection first, without expanding all older schemas.
             // Values and metadata still pass the unchanged ValidateFile checks below.
@@ -306,8 +310,8 @@ namespace StarTournament.ProvingGround
                 LabBundle WithoutPickups(LabBundle b)=>new LabBundle{Profiles=b.Profiles.Select(WithoutPickupProfile).ToList()};
                 LabBundle WithPalette(LabBundle b)
                 {
-                    var copy=new LabBundle{Profiles=b.Profiles.ToList()};if(this.shipped.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId)&&!copy.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId))
-                        copy.Profiles.Add(this.shipped.Profiles.Single(p=>p.Id==ProvingProfile.ParticipantPaletteId));
+                    var copy=new LabBundle{Profiles=b.Profiles.ToList()};if(shipped.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId)&&!copy.Profiles.Any(p=>p.Id==ProvingProfile.ParticipantPaletteId))
+                        copy.Profiles.Add(shipped.Profiles.Single(p=>p.Id==ProvingProfile.ParticipantPaletteId));
                     return copy;
                 }
                 // Keep exact historical registries and additive schema combinations; version tuples
@@ -319,7 +323,7 @@ namespace StarTournament.ProvingGround
                     {previous=profile.BeforeDamageVignette();vignettePredecessors.Add(profile,previous);}
                     return previous;
                 }
-                var previousDeath=this.shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
+                var previousDeath=shipped.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DeathPresentationId)?.BeforeDeathImpulseIncrease();
                 // These profiles are immutable trusted candidates, not the file's mutable metadata.
                 // Reuse their schema fragments across branches, preserving the exact flattened key.
                 var profilePaths=new Dictionary<ProvingProfile,string>();
@@ -388,7 +392,7 @@ namespace StarTournament.ProvingGround
                 // complete metadata/hash before skipping the combinatorial legacy search.
                 // Values alone or matching path counts never establish this shortcut.
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutMusicBalance))));
-                var currentGameplay=Closest(this.shipped,Change(this.shipped,withoutPulseVisibility),Change(this.shipped,withoutPulseRefinement),new LabBundle{Profiles=this.shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
+                var currentGameplay=Closest(shipped,Change(shipped,withoutPulseVisibility),Change(shipped,withoutPulseRefinement),new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()});
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMusicBalance))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutSmoothGamepadTap))));
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutGamepadTriggerAim))));
@@ -472,7 +476,7 @@ namespace StarTournament.ProvingGround
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarOffice))).ToArray();
                 var beforeLunarRework=Cached(p=>p.BeforeLunarRework());
                 predecessors=predecessors.SelectMany(b=>Closest(b,Change(b,beforeLunarRework))).ToArray();
-                if(this.shipped.Profiles.Any(p=>p.Id=="lunar-laboratory-authoring-v1"))
+                if(shipped.Profiles.Any(p=>p.Id=="lunar-laboratory-authoring-v1"))
                     predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="lunar-laboratory-authoring-v1"&&p.Id!="lunar-laboratory-presentation-v1").ToList()})).ToArray();
                 // Adding the contact profile must not rewrite any previous immutable registry/hash.
                 predecessors=predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.HitFeedbackPresentationId).ToList()})).ToArray();

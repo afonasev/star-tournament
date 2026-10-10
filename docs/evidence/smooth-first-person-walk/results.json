@@ -1,0 +1,39 @@
+{
+  "baseline": "8116b624a5ae5136b88a8cebfcb6d1272878c28d",
+  "editmode": {
+    "passed": 23,
+    "failed": 0,
+    "xml_duration_includes_setup": 166.550592,
+    "xml": "editmode.xml"
+  },
+  "playmode": {
+    "valid_distinct_passed": 9,
+    "failed_final": 0,
+    "neighbor_xml": "playmode-neighbors.xml",
+    "neighbor_valid_cases": 8,
+    "superseded_case": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene: use playmode-motion.xml instead; old fixture reset the sway each snapshot",
+    "motion_xml": "playmode-motion.xml",
+    "motion_passed": 1
+  },
+  "motion": {
+    "samples": 264,
+    "maximum_20ms_mount_displacement_meters": 0.0012290907208176145,
+    "maximum_horizontal_offset_meters": 0.007913
+  },
+  "deferred": [
+    "full tests",
+    "Player/release build",
+    "deployment",
+    "physical/human gameplay acceptance"
+  ],
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/FirstPersonWeaponSwitch.cs": "30ac917734a8ece0716d6239e4ac53ff366fe632227e556dfc84df0a643e4c22",
+    "unity/Assets/StarTournament/Runtime/CombatPresentation.cs": "0dd258b8e424179a3983da848794adc3240db82d79a16084a3e9133ef05e00e7",
+    "unity/Assets/StarTournament/Runtime/TrooperVisual.cs": "307b086cb07ff6dbe58da17aae62fdd4f88257aa590d6a8b899e6e0d92a2956d",
+    "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "4971472c63da2eb4e7ab453d37edf64df312bb035fd5b9c1acf51e924f6a3041",
+    "unity/Assets/StarTournament/Tests/EditMode/FirstPersonWalkTests.cs": "f8b30a4e00274a42f2c5334753dd52ce79eb56d9e8418ceb31d3af8bcd30dbd6",
+    "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "224752b21df5c9d376698374a1117f1ca5a6aadecb87dc87b0d0030281b39419",
+    "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs": "1bf10bbddd5a9cdb423440a39c66c977d112cf3e14c20d57bc5bbb92cda05d05",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "4db285c329ba94b213b9577d27173f74c36960e4dbe71bbbf8feab418732e7a9"
+  }
+}
