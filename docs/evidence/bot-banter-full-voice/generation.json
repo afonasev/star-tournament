@@ -5,7 +5,8 @@
   "rate": "+12%",
   "pitch": "-18Hz",
   "pitch_ratio": 0.94,
-  "filter_complex": "[0:a]asetrate=22560,aresample=48000,atempo=1.063829787,highpass=f=130,lowpass=f=3500,equalizer=f=550:t=q:w=0.8:g=2,equalizer=f=2200:t=q:w=1:g=2,acompressor=threshold=0.075:ratio=3:attack=2:release=75:makeup=2,volume=1.3,asoftclip=type=tanh:threshold=0.8:output=0.85:oversample=4,lowpass=f=4000[voice];[1:a]highpass=f=900,lowpass=f=4500[noise];[voice][noise]amix=inputs=2:duration=first:normalize=0[radio]",
+  "speech_tempo": 1.2,
+  "filter_complex": "[0:a]asetrate=22560,aresample=48000,atempo=1.276595745,highpass=f=130,lowpass=f=3500,equalizer=f=550:t=q:w=0.8:g=2,equalizer=f=2200:t=q:w=1:g=2,acompressor=threshold=0.075:ratio=3:attack=2:release=75:makeup=2,volume=1.3,asoftclip=type=tanh:threshold=0.8:output=0.85:oversample=4,lowpass=f=4000[voice];[1:a]highpass=f=900,lowpass=f=4500[noise];[voice][noise]amix=inputs=2:duration=first:normalize=0[radio]",
   "noise": "anoisesrc=color=white:sample_rate=48000:amplitude=0.0014:seed=42",
   "normalization": "two-pass loudnorm I=-18 LUFS / TP=-3dBTP / LRA=5; measurements decoded MP3",
   "direction": "lower rough male, sharper pace and compressed/saturated radio timbre; emotional aggression requires human listening",
@@ -16,23 +17,23 @@
       "text": "А вот и моя месть!",
       "speech": "А вот и моя месть!",
       "metrics": {
-        "input_i": "-21.27",
-        "input_tp": "-3.39",
+        "input_i": "-21.33",
+        "input_tp": "-3.42",
         "input_lra": "0.00",
-        "input_thresh": "-32.68",
-        "output_i": "-20.88",
+        "input_thresh": "-32.67",
+        "output_i": "-20.91",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-32.29",
+        "output_thresh": "-32.26",
         "normalization_type": "linear",
-        "target_offset": "2.88"
+        "target_offset": "2.91"
       },
-      "duration_seconds": 2.188708,
+      "duration_seconds": 1.826042,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "c13bce8c0af2f3286c5d2efc96bfbab27f9afc70b4de2d8a69e3b3182a7fe9c3",
-        "radio": "01f9a142c20571b7d0247b276c138d82a122d3640b49c73e358872828511c68c"
+        "radio": "682848a58f3b7f69bcb9499ae37733084b1dde4b9e226785cda4b3d494877237"
       }
     },
     {
@@ -40,23 +41,23 @@
       "text": "Всё, отомстил!",
       "speech": "Всё, отомстил!",
       "metrics": {
-        "input_i": "-22.16",
-        "input_tp": "-3.46",
+        "input_i": "-22.53",
+        "input_tp": "-3.45",
         "input_lra": "0.00",
-        "input_thresh": "-33.49",
-        "output_i": "-21.69",
+        "input_thresh": "-33.50",
+        "output_i": "-22.09",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-33.02",
+        "output_thresh": "-33.06",
         "normalization_type": "linear",
-        "target_offset": "3.69"
+        "target_offset": "4.09"
       },
-      "duration_seconds": 2.212896,
+      "duration_seconds": 1.845688,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "f4ba71a2c5eade97faa58c7c957065e50b5b99d4d4017a91bff0b24eebf63653",
-        "radio": "8f00c3c52396f86c2520d1707b3ca0179474e562275b61e1fe994d7e944f2d2a"
+        "radio": "30d83f311ef2d6ed1b3e6868b95df7387873649c978386855fc5018bd3ca759d"
       }
     },
     {
@@ -64,23 +65,23 @@
       "text": "Убили-таки! А я только разошёлся!",
       "speech": "Убили-таки! А я только разошёлся!",
       "metrics": {
-        "input_i": "-18.28",
-        "input_tp": "-3.43",
-        "input_lra": "1.70",
-        "input_thresh": "-30.28",
-        "output_i": "-17.29",
+        "input_i": "-18.43",
+        "input_tp": "-3.44",
+        "input_lra": "0.80",
+        "input_thresh": "-29.83",
+        "output_i": "-16.96",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-28.87",
+        "output_thresh": "-28.36",
         "normalization_type": "dynamic",
-        "target_offset": "-0.71"
+        "target_offset": "-1.04"
       },
-      "duration_seconds": 3.916729,
+      "duration_seconds": 3.263104,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "f2b8aaec36fa76fd727036893afebcdf218eef1184a46742ea2a8eba54d65ef0",
-        "radio": "e84989ad7d6205b469a95f05ed5ffcee08c90db3a3b5c6b92b86c56f1f266bf1"
+        "radio": "7a3a675f2a416f21ab31c5a28f53851a69bd7e504ea544d5221cd8a1c66790a4"
       }
     },
     {
@@ -88,23 +89,23 @@
       "text": "Ну всё, кончилась моя серия!",
       "speech": "Ну всё, кончилась моя серия!",
       "metrics": {
-        "input_i": "-18.44",
-        "input_tp": "-3.67",
-        "input_lra": "0.30",
-        "input_thresh": "-29.66",
-        "output_i": "-16.62",
-        "output_tp": "-3.00",
+        "input_i": "-18.45",
+        "input_tp": "-3.56",
+        "input_lra": "0.00",
+        "input_thresh": "-29.56",
+        "output_i": "-17.99",
+        "output_tp": "-3.12",
         "output_lra": "0.00",
-        "output_thresh": "-27.86",
-        "normalization_type": "dynamic",
-        "target_offset": "-1.38"
+        "output_thresh": "-29.10",
+        "normalization_type": "linear",
+        "target_offset": "-0.01"
       },
-      "duration_seconds": 3.100375,
+      "duration_seconds": 2.583833,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "34714e8a6999067f989f2d806b28cf2fc73e95392d8cba81910f1e2dd9d257b8",
-        "radio": "dc142eb0bb30b4be5b0fb31ffb9a228e1f74ddb2a993848c8bef60b2f59558ca"
+        "radio": "e343976fd844aa050fa6db1cd916cdc68e6853baa14eb496d890223beb9c60fd"
       }
     },
     {
@@ -112,23 +113,23 @@
       "text": "Опять ты меня убил!",
       "speech": "Опять ты меня убил!",
       "metrics": {
-        "input_i": "-20.42",
-        "input_tp": "-3.44",
+        "input_i": "-20.37",
+        "input_tp": "-3.45",
         "input_lra": "0.00",
-        "input_thresh": "-31.59",
-        "output_i": "-19.98",
+        "input_thresh": "-31.80",
+        "output_i": "-19.91",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-31.15",
+        "output_thresh": "-31.34",
         "normalization_type": "linear",
-        "target_offset": "1.98"
+        "target_offset": "1.91"
       },
-      "duration_seconds": 2.092021,
+      "duration_seconds": 1.747521,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "dbb5ce0ba329dd8dddd64336487bfb3d321974a671f4679acd1497d481e61057",
-        "radio": "98e29622fac3e55a05d338cd2f90cbd384b3f8f83dc5780160f62ba70ca6bd20"
+        "radio": "c73adfedc23b5cc8ba32ba7c094b428f3c50569008be847613cd85e165f35f9d"
       }
     },
     {
@@ -136,23 +137,23 @@
       "text": "Да отстань ты от меня!",
       "speech": "Да отстань ты от меня!",
       "metrics": {
-        "input_i": "-18.99",
-        "input_tp": "-3.42",
+        "input_i": "-19.36",
+        "input_tp": "-3.46",
         "input_lra": "0.00",
-        "input_thresh": "-30.52",
-        "output_i": "-18.55",
+        "input_thresh": "-30.60",
+        "output_i": "-18.90",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-30.08",
+        "output_thresh": "-30.14",
         "normalization_type": "linear",
-        "target_offset": "0.55"
+        "target_offset": "0.90"
       },
-      "duration_seconds": 2.308208,
+      "duration_seconds": 1.924208,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "dc68ba771120a08e4656cccac8fbcc7ec5b617419bb7b7dc9d564fab1ba120b5",
-        "radio": "1a36e14a585e8c2d85416de9ededee2ace1bc4b0b9ac3c143d9a43a1565e0eac"
+        "radio": "c56c0088f5a24a433d885f16cd62fa470a074ba22c16b50c948d64643ed1b9a7"
       }
     },
     {
@@ -160,23 +161,23 @@
       "text": "Опять меня убили!",
       "speech": "Опять меня убили!",
       "metrics": {
-        "input_i": "-19.77",
+        "input_i": "-19.93",
         "input_tp": "-3.44",
         "input_lra": "0.00",
-        "input_thresh": "-31.52",
-        "output_i": "-19.32",
+        "input_thresh": "-31.38",
+        "output_i": "-19.47",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-31.07",
+        "output_thresh": "-30.92",
         "normalization_type": "linear",
-        "target_offset": "1.32"
+        "target_offset": "1.47"
       },
-      "duration_seconds": 2.116208,
+      "duration_seconds": 1.767167,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "50d230c89c7dce7d8891fe76967a5a868d83b7b3d19049a8ee7d07d0aa3a7d11",
-        "radio": "4a65f5fdf6b216402a147be93c7db7854831ebd8694884325eca5a639792f317"
+        "radio": "d424a6c57b782bdc1b46aa377230b9a037387b4dd88efb56fa9ef7c5413ba0db"
       }
     },
     {
@@ -184,23 +185,23 @@
       "text": "Я играть пришёл, а не помирать!",
       "speech": "Я играть пришёл, а не помирать!",
       "metrics": {
-        "input_i": "-20.99",
+        "input_i": "-21.12",
         "input_tp": "-3.44",
         "input_lra": "0.00",
-        "input_thresh": "-32.00",
-        "output_i": "-20.53",
+        "input_thresh": "-32.08",
+        "output_i": "-20.66",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-31.54",
+        "output_thresh": "-31.62",
         "normalization_type": "linear",
-        "target_offset": "2.53"
+        "target_offset": "2.66"
       },
-      "duration_seconds": 2.788896,
+      "duration_seconds": 2.322729,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "fa0a1d03106be604c63f559d52cb8d3f5452026bb4c9c665c3c99203121a928f",
-        "radio": "739075076199654c85d93cf08c8d6bdb393bbeab7da2330d79c26055b08d5002"
+        "radio": "642836c19fec98eff5eeac2e9407840cc1fc8e3415e05df30ede83c26c6d1e3f"
       }
     },
     {
@@ -208,23 +209,23 @@
       "text": "Чуть не убил меня, зараза!",
       "speech": "Чуть не убил меня, зараза!",
       "metrics": {
-        "input_i": "-18.44",
-        "input_tp": "-3.48",
+        "input_i": "-18.75",
+        "input_tp": "-3.44",
         "input_lra": "0.00",
-        "input_thresh": "-29.50",
-        "output_i": "-18.02",
-        "output_tp": "-3.03",
+        "input_thresh": "-29.78",
+        "output_i": "-18.33",
+        "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-29.08",
+        "output_thresh": "-29.35",
         "normalization_type": "linear",
-        "target_offset": "0.02"
+        "target_offset": "0.33"
       },
-      "duration_seconds": 2.645229,
+      "duration_seconds": 2.204958,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "3d658ef6359b64832525b4612eb731762c31ca50da5072e453df3b0913758335",
-        "radio": "eb006664f3748752c6c2a8e6df4886ffc85875121e5e76b356ab91a8c4ea145e"
+        "radio": "c5071d113f9a89743d2bda5f50f18ee360e370a83bf7fe0f16782c5de7b917b4"
       }
     },
     {
@@ -232,23 +233,23 @@
       "text": "Еле выжил! Но ты-то помер!",
       "speech": "Еле выжил! Но ты-то помер!",
       "metrics": {
-        "input_i": "-18.98",
-        "input_tp": "-3.44",
-        "input_lra": "2.20",
-        "input_thresh": "-30.90",
-        "output_i": "-16.58",
-        "output_tp": "-3.00",
+        "input_i": "-18.43",
+        "input_tp": "-3.56",
+        "input_lra": "0.00",
+        "input_thresh": "-29.80",
+        "output_i": "-18.00",
+        "output_tp": "-3.13",
         "output_lra": "0.00",
-        "output_thresh": "-28.40",
-        "normalization_type": "dynamic",
-        "target_offset": "-1.42"
+        "output_thresh": "-29.36",
+        "normalization_type": "linear",
+        "target_offset": "-0.00"
       },
-      "duration_seconds": 3.581042,
+      "duration_seconds": 2.982354,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "31ce4533fd7434f345a493033afc26f6c115527e2538f565e508f989c6cb7c9d",
-        "radio": "6f6c6ff0649ca1f1893fa7006bc68d26dee26d7117fd680922fe3537f3a2f761"
+        "radio": "1615eed6251459bbcaeb8f85731a54dfb1a48d3255f954d176be37071441b764"
       }
     },
     {
@@ -256,23 +257,23 @@
       "text": "Даже не поцарапал!",
       "speech": "Хех... Даже не поцарапал!",
       "metrics": {
-        "input_i": "-17.92",
-        "input_tp": "-3.44",
-        "input_lra": "0.90",
-        "input_thresh": "-30.49",
-        "output_i": "-16.68",
+        "input_i": "-19.80",
+        "input_tp": "-3.45",
+        "input_lra": "0.00",
+        "input_thresh": "-31.71",
+        "output_i": "-19.34",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-28.79",
-        "normalization_type": "dynamic",
-        "target_offset": "-1.32"
+        "output_thresh": "-31.25",
+        "normalization_type": "linear",
+        "target_offset": "1.34"
       },
-      "duration_seconds": 3.413229,
+      "duration_seconds": 2.844958,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "06a2d247616b4bede6fed3333362f4081290ac5607be5d8468d961573e4307ea",
-        "radio": "80470a84fb30b5d48d703a12ffefa78ea701ef136e57575a2dd1d5570dd76da6"
+        "radio": "1c0f9f2b4fdc2a7d6ae4c3a9f1bb7495eaade303492ebd30a58373e36127196e"
       }
     },
     {
@@ -280,23 +281,23 @@
       "text": "Ты хоть попади сначала!",
       "speech": "Ты хоть попади сначала!",
       "metrics": {
-        "input_i": "-19.16",
-        "input_tp": "-3.45",
+        "input_i": "-18.80",
+        "input_tp": "-3.46",
         "input_lra": "0.00",
-        "input_thresh": "-30.41",
-        "output_i": "-18.71",
+        "input_thresh": "-30.04",
+        "output_i": "-18.33",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-29.96",
+        "output_thresh": "-29.57",
         "normalization_type": "linear",
-        "target_offset": "0.71"
+        "target_offset": "0.33"
       },
-      "duration_seconds": 2.308208,
+      "duration_seconds": 1.924208,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "6161162007b2c9432e1b12f7e27bd224bcfa0870659440c359d42902c1ad49ae",
-        "radio": "89eacede0565b3e37b8645c8d35db45334fd2684a3edf54fac791bcdf41dc5c8"
+        "radio": "77165ea192c751621a5931d956e3e908319d7816c3bb7b222d5711403d4543c3"
       }
     },
     {
@@ -304,23 +305,23 @@
       "text": "Слабак!",
       "speech": "Хех... Слабак!",
       "metrics": {
-        "input_i": "-20.25",
+        "input_i": "-21.11",
         "input_tp": "-3.44",
         "input_lra": "0.00",
-        "input_thresh": "-33.07",
-        "output_i": "-19.79",
+        "input_thresh": "-33.31",
+        "output_i": "-20.66",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-32.61",
+        "output_thresh": "-32.86",
         "normalization_type": "linear",
-        "target_offset": "1.79"
+        "target_offset": "2.66"
       },
-      "duration_seconds": 2.813042,
+      "duration_seconds": 2.342354,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "d57a8507662284fa18c60f8826f75844c12350d30d227bbb060b0ee5beac4a7e",
-        "radio": "b9ec01843d806d5aff043c3b9c4ed5053e38dc5a41276970da7f2a49e5cd5918"
+        "radio": "327f1d3b221ed5c01b284ed8f3b2c8d42cb1d68af30703dd257f272cca5d2bf1"
       }
     },
     {
@@ -328,23 +329,23 @@
       "text": "Слабо бьёшь!",
       "speech": "Слабо бьёшь!",
       "metrics": {
-        "input_i": "-18.45",
-        "input_tp": "-4.26",
+        "input_i": "-18.44",
+        "input_tp": "-4.16",
         "input_lra": "0.00",
-        "input_thresh": "-29.89",
-        "output_i": "-17.99",
-        "output_tp": "-3.80",
+        "input_thresh": "-29.31",
+        "output_i": "-18.01",
+        "output_tp": "-3.72",
         "output_lra": "0.00",
-        "output_thresh": "-29.43",
+        "output_thresh": "-28.88",
         "normalization_type": "linear",
-        "target_offset": "-0.01"
+        "target_offset": "0.01"
       },
-      "duration_seconds": 1.780542,
+      "duration_seconds": 1.486417,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "4343b483edbb78107779e0a7891b7d8b95bca932604701ec76085b8a58e7c8ca",
-        "radio": "5d577335b9b70c938703ac8762ba9a9377283765e3963a1b0e8feceed2a00296"
+        "radio": "b331e56330d4e77b3fe1229824d81ac594bd355594a12208a47845f7e3ff5414"
       }
     },
     {
@@ -352,23 +353,23 @@
       "text": "Попал. А толку?",
       "speech": "Попал. А толку?",
       "metrics": {
-        "input_i": "-22.38",
-        "input_tp": "-3.45",
+        "input_i": "-23.12",
+        "input_tp": "-3.44",
         "input_lra": "0.00",
-        "input_thresh": "-35.20",
-        "output_i": "-21.93",
+        "input_thresh": "-34.99",
+        "output_i": "-22.66",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-34.75",
+        "output_thresh": "-34.53",
         "normalization_type": "linear",
-        "target_offset": "3.93"
+        "target_offset": "4.66"
       },
-      "duration_seconds": 2.860021,
+      "duration_seconds": 2.387521,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "2c3a2656ab93b5081974242d4d3947d83ad31cbe5c28769b539d2492db8a239d",
-        "radio": "1a57a836718e1ee914eafa22453f0af0c363222ecd3c5d0d2ecf028912cbe6e4"
+        "radio": "7f11c026f527167d83678fc6dc5fcac96f710bc93107a4dfad7e1461c8a8843c"
       }
     },
     {
@@ -376,23 +377,23 @@
       "text": "Даже выстрелить не успел!",
       "speech": "Даже выстрелить не успел!",
       "metrics": {
-        "input_i": "-18.45",
-        "input_tp": "-3.57",
+        "input_i": "-19.01",
+        "input_tp": "-3.43",
         "input_lra": "0.00",
-        "input_thresh": "-29.56",
-        "output_i": "-18.01",
-        "output_tp": "-3.12",
+        "input_thresh": "-30.10",
+        "output_i": "-18.59",
+        "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-29.13",
+        "output_thresh": "-29.68",
         "normalization_type": "linear",
-        "target_offset": "0.01"
+        "target_offset": "0.59"
       },
-      "duration_seconds": 2.548542,
+      "duration_seconds": 2.126417,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "c7d33a4cb92a42be22bc00b8974669e4107eb25eed9669236f0734d6cc812808",
-        "radio": "a465aee8687fa56d02206d8452bb784712d8263011a3ca27b80b5c8d733cb865"
+        "radio": "883287fdc2978be997a32e8338a830245bacbac0715a956e6f48c52e3e5921af"
       }
     },
     {
@@ -400,23 +401,23 @@
       "text": "Кто следующий?",
       "speech": "Кто следующий?",
       "metrics": {
-        "input_i": "-19.14",
-        "input_tp": "-3.46",
+        "input_i": "-19.34",
+        "input_tp": "-3.43",
         "input_lra": "0.00",
-        "input_thresh": "-30.90",
-        "output_i": "-18.68",
+        "input_thresh": "-31.09",
+        "output_i": "-18.91",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-30.44",
+        "output_thresh": "-30.67",
         "normalization_type": "linear",
-        "target_offset": "0.68"
+        "target_offset": "0.91"
       },
-      "duration_seconds": 1.804708,
+      "duration_seconds": 1.506042,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "1f20e64e4bcbf364418223a1acbbb53db040279b156863f77551a62b399959d3",
-        "radio": "ff8e2473ab5c6fe196a32bb125580e95c36a4c44b9224a374829eb194727b2c5"
+        "radio": "c97cd28a39ee4c8ac061086a09212abeebccb619a558c836c5dc9be1e937bc35"
       }
     },
     {
@@ -425,22 +426,22 @@
       "speech": "Я сегодня в ударе!",
       "metrics": {
         "input_i": "-18.44",
-        "input_tp": "-4.03",
+        "input_tp": "-4.22",
         "input_lra": "0.00",
-        "input_thresh": "-29.85",
-        "output_i": "-18.02",
-        "output_tp": "-3.59",
+        "input_thresh": "-29.87",
+        "output_i": "-18.00",
+        "output_tp": "-3.78",
         "output_lra": "0.00",
         "output_thresh": "-29.43",
         "normalization_type": "linear",
-        "target_offset": "0.02"
+        "target_offset": "-0.00"
       },
-      "duration_seconds": 2.116208,
+      "duration_seconds": 1.767167,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "fad5448f90bbee9bee2507a9020afc14268d46357ff2ffc1a5b4dbdaffe10729",
-        "radio": "e8c86614fa7ecbdd2e6394e9dd38403d2286010f29cbbdb184af4f506efcd0da"
+        "radio": "c362da007f1a6149d6b74f513e36726c8ad86a70d53d3f29b1d0eae36fb19736"
       }
     },
     {
@@ -448,23 +449,23 @@
       "text": "Сам себя взорвал. Молодец!",
       "speech": "Хех... Сам себя взорвал. Молодец!",
       "metrics": {
-        "input_i": "-19.22",
+        "input_i": "-18.87",
         "input_tp": "-3.42",
-        "input_lra": "1.80",
-        "input_thresh": "-31.10",
-        "output_i": "-17.43",
+        "input_lra": "0.70",
+        "input_thresh": "-30.63",
+        "output_i": "-17.50",
         "output_tp": "-3.00",
-        "output_lra": "0.30",
-        "output_thresh": "-29.48",
+        "output_lra": "0.20",
+        "output_thresh": "-29.20",
         "normalization_type": "dynamic",
-        "target_offset": "-0.57"
+        "target_offset": "-0.50"
       },
-      "duration_seconds": 4.852542,
+      "duration_seconds": 4.046396,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "266d175f11a962cc0be8132bbd56108503729027bd73ba0309086a70482923ea",
-        "radio": "27c8d748c22ae59f800866a2fd170f8f2fda350781ca6af9be2bbe7336a4296f"
+        "radio": "6c518972349bc72176696ec901d3c49547e681793620c7f8a27cca7b524ce70d"
       }
     },
     {
@@ -472,23 +473,23 @@
       "text": "Сам себя убил. Талант!",
       "speech": "Сам себя убил. Талант!",
       "metrics": {
-        "input_i": "-18.03",
-        "input_tp": "-3.41",
-        "input_lra": "0.80",
-        "input_thresh": "-30.05",
-        "output_i": "-16.86",
+        "input_i": "-19.35",
+        "input_tp": "-3.43",
+        "input_lra": "0.00",
+        "input_thresh": "-31.27",
+        "output_i": "-18.89",
         "output_tp": "-3.00",
         "output_lra": "0.00",
-        "output_thresh": "-28.84",
-        "normalization_type": "dynamic",
-        "target_offset": "-1.14"
+        "output_thresh": "-30.81",
+        "normalization_type": "linear",
+        "target_offset": "0.89"
       },
-      "duration_seconds": 3.364875,
+      "duration_seconds": 2.805667,
       "sample_rate": 48000,
       "channels": 1,
       "sha256": {
         "source": "5afd70174e978d6ff4307ccf43af50d853407763f900421640fc24c4035263bd",
-        "radio": "a0ea4750d393ebced6d52d8d7560d8a1b61b08a170b6ca89cee2d2f0735a4d57"
+        "radio": "9c5b6e169aab74f36f33498e177c9769ed28d3e84c60e5efd51905a823f110fe"
       }
     }
   ]

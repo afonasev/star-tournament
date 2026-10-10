@@ -11,3 +11,5 @@
 Команды/основания проверки — scope.md; XML, source hashes и результаты сохранены здесь. Автоматические import/playback/mix/ASR измерения не подтверждают эмоциональную подачу и слышимость в реальном бою. Human listening/gameplay acceptance pending. Player/build/release/deploy не выполнялись.
 
 Первую обработку пересмотрели после ASR диагностики: чрезмерное pitch lowering и drive ухудшали распознавание против raw. Финальная версия сохраняет низкий TTS pitch, но снижает дополнительное понижение до ratio0.94, перегруз и расширяет полосу. Исходные/первые/candidate/final транскрипции — asr-comparison.json; ASR ошибается на коротких русских фразах и «Хех», поэтому его результат диагностический. Длиннейшая запись ~4.85s может закончиться чуть позже четырёхсекундного текста; она не повторяется на respawn.
+
+`speed-up-bot-banter-voice`: текущие recordings/preview/all-phrases/generation обновлены до tempo1.2; raw/pitch/radio прежние. XML/hash в этом каталоге относятся к исходному69df4791, новые import/playback/hash и сравнение длительности — `../bot-banter-faster/`.

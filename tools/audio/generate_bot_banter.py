@@ -16,7 +16,9 @@ BANK = ROOT / 'unity/Assets/StarTournament/Resources/Audio/Banter'
 CATALOG = ROOT / 'unity/Assets/StarTournament/Runtime/NativeBotBanterVoice.cs'
 VOICE = 'ru-RU-DmitryNeural'
 RATE, PITCH, RATIO = '+12%', '-18Hz', .94
-FILTER = (f'[0:a]asetrate=22560,aresample=48000,atempo={1/RATIO:.9f},'
+# Offline asset authoring tempo; runtime AudioSource pitch remains 1.
+SPEECH_TEMPO = 1.2
+FILTER = (f'[0:a]asetrate=22560,aresample=48000,atempo={SPEECH_TEMPO/RATIO:.9f},'
           'highpass=f=130,lowpass=f=3500,equalizer=f=550:t=q:w=0.8:g=2,'
           'equalizer=f=2200:t=q:w=1:g=2,acompressor=threshold=0.075:ratio=3:attack=2:release=75:makeup=2,'
           'volume=1.3,asoftclip=type=tanh:threshold=0.8:output=0.85:oversample=4,lowpass=f=4000[voice];'
@@ -103,7 +105,7 @@ async def main():
     for entry, src in zip(entries, sources): process(entry, src)
     catalog(entries)
     provenance = {'voice': VOICE, 'provider': 'Microsoft Edge online TTS via edge-tts', 'edge_tts_version': '7.2.8',
-                  'rate': RATE, 'pitch': PITCH, 'pitch_ratio': RATIO, 'filter_complex': FILTER, 'noise': NOISE,
+                  'rate': RATE, 'pitch': PITCH, 'pitch_ratio': RATIO, 'speech_tempo': SPEECH_TEMPO, 'filter_complex': FILTER, 'noise': NOISE,
                   'normalization': 'two-pass loudnorm I=-18 LUFS / TP=-3dBTP / LRA=5; measurements decoded MP3',
                   'direction': 'lower rough male, sharper pace and compressed/saturated radio timbre; emotional aggression requires human listening',
                   'acceptance': 'pending human/gameplay listening', 'entries': entries}

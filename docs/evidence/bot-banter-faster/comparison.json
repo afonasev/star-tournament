@@ -1,0 +1,168 @@
+{
+  "baseline": "69df479144dbefa5d525733562368d8236bd3b2c",
+  "tempo": 1.2,
+  "route": "FFmpeg atempo (pitch preserved); original asetrate ratio/radio chain unchanged; runtime pitch stays1",
+  "duration_tolerance_seconds": 0.06,
+  "entries": [
+    {
+      "key": "revenge-1",
+      "before_seconds": 2.188708,
+      "after_seconds": 1.826042,
+      "source_unchanged": true,
+      "radio_sha256": "682848a58f3b7f69bcb9499ae37733084b1dde4b9e226785cda4b3d494877237",
+      "decoded_true_peak_db": -3.42
+    },
+    {
+      "key": "revenge-2",
+      "before_seconds": 2.212896,
+      "after_seconds": 1.845688,
+      "source_unchanged": true,
+      "radio_sha256": "30d83f311ef2d6ed1b3e6868b95df7387873649c978386855fc5018bd3ca759d",
+      "decoded_true_peak_db": -3.45
+    },
+    {
+      "key": "series-ended-1",
+      "before_seconds": 3.916729,
+      "after_seconds": 3.263104,
+      "source_unchanged": true,
+      "radio_sha256": "7a3a675f2a416f21ab31c5a28f53851a69bd7e504ea544d5221cd8a1c66790a4",
+      "decoded_true_peak_db": -3.44
+    },
+    {
+      "key": "series-ended-2",
+      "before_seconds": 3.100375,
+      "after_seconds": 2.583833,
+      "source_unchanged": true,
+      "radio_sha256": "e343976fd844aa050fa6db1cd916cdc68e6853baa14eb496d890223beb9c60fd",
+      "decoded_true_peak_db": -3.56
+    },
+    {
+      "key": "repeated-killer-1",
+      "before_seconds": 2.092021,
+      "after_seconds": 1.747521,
+      "source_unchanged": true,
+      "radio_sha256": "c73adfedc23b5cc8ba32ba7c094b428f3c50569008be847613cd85e165f35f9d",
+      "decoded_true_peak_db": -3.45
+    },
+    {
+      "key": "repeated-killer-2",
+      "before_seconds": 2.308208,
+      "after_seconds": 1.924208,
+      "source_unchanged": true,
+      "radio_sha256": "c56c0088f5a24a433d885f16cd62fa470a074ba22c16b50c948d64643ed1b9a7",
+      "decoded_true_peak_db": -3.46
+    },
+    {
+      "key": "losing-streak-1",
+      "before_seconds": 2.116208,
+      "after_seconds": 1.767167,
+      "source_unchanged": true,
+      "radio_sha256": "d424a6c57b782bdc1b46aa377230b9a037387b4dd88efb56fa9ef7c5413ba0db",
+      "decoded_true_peak_db": -3.44
+    },
+    {
+      "key": "losing-streak-2",
+      "before_seconds": 2.788896,
+      "after_seconds": 2.322729,
+      "source_unchanged": true,
+      "radio_sha256": "642836c19fec98eff5eeac2e9407840cc1fc8e3415e05df30ede83c26c6d1e3f",
+      "decoded_true_peak_db": -3.44
+    },
+    {
+      "key": "narrow-win-1",
+      "before_seconds": 2.645229,
+      "after_seconds": 2.204958,
+      "source_unchanged": true,
+      "radio_sha256": "c5071d113f9a89743d2bda5f50f18ee360e370a83bf7fe0f16782c5de7b917b4",
+      "decoded_true_peak_db": -3.44
+    },
+    {
+      "key": "narrow-win-2",
+      "before_seconds": 3.581042,
+      "after_seconds": 2.982354,
+      "source_unchanged": true,
+      "radio_sha256": "1615eed6251459bbcaeb8f85731a54dfb1a48d3255f954d176be37071441b764",
+      "decoded_true_peak_db": -3.56
+    },
+    {
+      "key": "dazhe-ne-pocarapal-radio",
+      "before_seconds": 3.413229,
+      "after_seconds": 2.844958,
+      "source_unchanged": true,
+      "radio_sha256": "1c0f9f2b4fdc2a7d6ae4c3a9f1bb7495eaade303492ebd30a58373e36127196e",
+      "decoded_true_peak_db": -3.45
+    },
+    {
+      "key": "missed-2",
+      "before_seconds": 2.308208,
+      "after_seconds": 1.924208,
+      "source_unchanged": true,
+      "radio_sha256": "77165ea192c751621a5931d956e3e908319d7816c3bb7b222d5711403d4543c3",
+      "decoded_true_peak_db": -3.46
+    },
+    {
+      "key": "weak-reply-1",
+      "before_seconds": 2.813042,
+      "after_seconds": 2.342354,
+      "source_unchanged": true,
+      "radio_sha256": "327f1d3b221ed5c01b284ed8f3b2c8d42cb1d68af30703dd257f272cca5d2bf1",
+      "decoded_true_peak_db": -3.44
+    },
+    {
+      "key": "weak-reply-2",
+      "before_seconds": 1.780542,
+      "after_seconds": 1.486417,
+      "source_unchanged": true,
+      "radio_sha256": "b331e56330d4e77b3fe1229824d81ac594bd355594a12208a47845f7e3ff5414",
+      "decoded_true_peak_db": -4.16
+    },
+    {
+      "key": "weak-reply-3",
+      "before_seconds": 2.860021,
+      "after_seconds": 2.387521,
+      "source_unchanged": true,
+      "radio_sha256": "7f11c026f527167d83678fc6dc5fcac96f710bc93107a4dfad7e1461c8a8843c",
+      "decoded_true_peak_db": -3.44
+    },
+    {
+      "key": "no-reply-1",
+      "before_seconds": 2.548542,
+      "after_seconds": 2.126417,
+      "source_unchanged": true,
+      "radio_sha256": "883287fdc2978be997a32e8338a830245bacbac0715a956e6f48c52e3e5921af",
+      "decoded_true_peak_db": -3.43
+    },
+    {
+      "key": "kill-streak-1",
+      "before_seconds": 1.804708,
+      "after_seconds": 1.506042,
+      "source_unchanged": true,
+      "radio_sha256": "c97cd28a39ee4c8ac061086a09212abeebccb619a558c836c5dc9be1e937bc35",
+      "decoded_true_peak_db": -3.43
+    },
+    {
+      "key": "kill-streak-2",
+      "before_seconds": 2.116208,
+      "after_seconds": 1.767167,
+      "source_unchanged": true,
+      "radio_sha256": "c362da007f1a6149d6b74f513e36726c8ad86a70d53d3f29b1d0eae36fb19736",
+      "decoded_true_peak_db": -4.22
+    },
+    {
+      "key": "self-explosion-1",
+      "before_seconds": 4.852542,
+      "after_seconds": 4.046396,
+      "source_unchanged": true,
+      "radio_sha256": "6c518972349bc72176696ec901d3c49547e681793620c7f8a27cca7b524ce70d",
+      "decoded_true_peak_db": -3.42
+    },
+    {
+      "key": "self-kill-1",
+      "before_seconds": 3.364875,
+      "after_seconds": 2.805667,
+      "source_unchanged": true,
+      "radio_sha256": "9c5b6e169aab74f36f33498e177c9769ed28d3e84c60e5efd51905a823f110fe",
+      "decoded_true_peak_db": -3.43
+    }
+  ]
+}

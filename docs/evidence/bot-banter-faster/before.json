@@ -1,0 +1,495 @@
+{
+  "voice": "ru-RU-DmitryNeural",
+  "provider": "Microsoft Edge online TTS via edge-tts",
+  "edge_tts_version": "7.2.8",
+  "rate": "+12%",
+  "pitch": "-18Hz",
+  "pitch_ratio": 0.94,
+  "filter_complex": "[0:a]asetrate=22560,aresample=48000,atempo=1.063829787,highpass=f=130,lowpass=f=3500,equalizer=f=550:t=q:w=0.8:g=2,equalizer=f=2200:t=q:w=1:g=2,acompressor=threshold=0.075:ratio=3:attack=2:release=75:makeup=2,volume=1.3,asoftclip=type=tanh:threshold=0.8:output=0.85:oversample=4,lowpass=f=4000[voice];[1:a]highpass=f=900,lowpass=f=4500[noise];[voice][noise]amix=inputs=2:duration=first:normalize=0[radio]",
+  "noise": "anoisesrc=color=white:sample_rate=48000:amplitude=0.0014:seed=42",
+  "normalization": "two-pass loudnorm I=-18 LUFS / TP=-3dBTP / LRA=5; measurements decoded MP3",
+  "direction": "lower rough male, sharper pace and compressed/saturated radio timbre; emotional aggression requires human listening",
+  "acceptance": "pending human/gameplay listening",
+  "entries": [
+    {
+      "key": "revenge-1",
+      "text": "А вот и моя месть!",
+      "speech": "А вот и моя месть!",
+      "metrics": {
+        "input_i": "-21.27",
+        "input_tp": "-3.39",
+        "input_lra": "0.00",
+        "input_thresh": "-32.68",
+        "output_i": "-20.88",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-32.29",
+        "normalization_type": "linear",
+        "target_offset": "2.88"
+      },
+      "duration_seconds": 2.188708,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "c13bce8c0af2f3286c5d2efc96bfbab27f9afc70b4de2d8a69e3b3182a7fe9c3",
+        "radio": "01f9a142c20571b7d0247b276c138d82a122d3640b49c73e358872828511c68c"
+      }
+    },
+    {
+      "key": "revenge-2",
+      "text": "Всё, отомстил!",
+      "speech": "Всё, отомстил!",
+      "metrics": {
+        "input_i": "-22.16",
+        "input_tp": "-3.46",
+        "input_lra": "0.00",
+        "input_thresh": "-33.49",
+        "output_i": "-21.69",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-33.02",
+        "normalization_type": "linear",
+        "target_offset": "3.69"
+      },
+      "duration_seconds": 2.212896,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "f4ba71a2c5eade97faa58c7c957065e50b5b99d4d4017a91bff0b24eebf63653",
+        "radio": "8f00c3c52396f86c2520d1707b3ca0179474e562275b61e1fe994d7e944f2d2a"
+      }
+    },
+    {
+      "key": "series-ended-1",
+      "text": "Убили-таки! А я только разошёлся!",
+      "speech": "Убили-таки! А я только разошёлся!",
+      "metrics": {
+        "input_i": "-18.28",
+        "input_tp": "-3.43",
+        "input_lra": "1.70",
+        "input_thresh": "-30.28",
+        "output_i": "-17.29",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-28.87",
+        "normalization_type": "dynamic",
+        "target_offset": "-0.71"
+      },
+      "duration_seconds": 3.916729,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "f2b8aaec36fa76fd727036893afebcdf218eef1184a46742ea2a8eba54d65ef0",
+        "radio": "e84989ad7d6205b469a95f05ed5ffcee08c90db3a3b5c6b92b86c56f1f266bf1"
+      }
+    },
+    {
+      "key": "series-ended-2",
+      "text": "Ну всё, кончилась моя серия!",
+      "speech": "Ну всё, кончилась моя серия!",
+      "metrics": {
+        "input_i": "-18.44",
+        "input_tp": "-3.67",
+        "input_lra": "0.30",
+        "input_thresh": "-29.66",
+        "output_i": "-16.62",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-27.86",
+        "normalization_type": "dynamic",
+        "target_offset": "-1.38"
+      },
+      "duration_seconds": 3.100375,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "34714e8a6999067f989f2d806b28cf2fc73e95392d8cba81910f1e2dd9d257b8",
+        "radio": "dc142eb0bb30b4be5b0fb31ffb9a228e1f74ddb2a993848c8bef60b2f59558ca"
+      }
+    },
+    {
+      "key": "repeated-killer-1",
+      "text": "Опять ты меня убил!",
+      "speech": "Опять ты меня убил!",
+      "metrics": {
+        "input_i": "-20.42",
+        "input_tp": "-3.44",
+        "input_lra": "0.00",
+        "input_thresh": "-31.59",
+        "output_i": "-19.98",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-31.15",
+        "normalization_type": "linear",
+        "target_offset": "1.98"
+      },
+      "duration_seconds": 2.092021,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "dbb5ce0ba329dd8dddd64336487bfb3d321974a671f4679acd1497d481e61057",
+        "radio": "98e29622fac3e55a05d338cd2f90cbd384b3f8f83dc5780160f62ba70ca6bd20"
+      }
+    },
+    {
+      "key": "repeated-killer-2",
+      "text": "Да отстань ты от меня!",
+      "speech": "Да отстань ты от меня!",
+      "metrics": {
+        "input_i": "-18.99",
+        "input_tp": "-3.42",
+        "input_lra": "0.00",
+        "input_thresh": "-30.52",
+        "output_i": "-18.55",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-30.08",
+        "normalization_type": "linear",
+        "target_offset": "0.55"
+      },
+      "duration_seconds": 2.308208,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "dc68ba771120a08e4656cccac8fbcc7ec5b617419bb7b7dc9d564fab1ba120b5",
+        "radio": "1a36e14a585e8c2d85416de9ededee2ace1bc4b0b9ac3c143d9a43a1565e0eac"
+      }
+    },
+    {
+      "key": "losing-streak-1",
+      "text": "Опять меня убили!",
+      "speech": "Опять меня убили!",
+      "metrics": {
+        "input_i": "-19.77",
+        "input_tp": "-3.44",
+        "input_lra": "0.00",
+        "input_thresh": "-31.52",
+        "output_i": "-19.32",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-31.07",
+        "normalization_type": "linear",
+        "target_offset": "1.32"
+      },
+      "duration_seconds": 2.116208,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "50d230c89c7dce7d8891fe76967a5a868d83b7b3d19049a8ee7d07d0aa3a7d11",
+        "radio": "4a65f5fdf6b216402a147be93c7db7854831ebd8694884325eca5a639792f317"
+      }
+    },
+    {
+      "key": "losing-streak-2",
+      "text": "Я играть пришёл, а не помирать!",
+      "speech": "Я играть пришёл, а не помирать!",
+      "metrics": {
+        "input_i": "-20.99",
+        "input_tp": "-3.44",
+        "input_lra": "0.00",
+        "input_thresh": "-32.00",
+        "output_i": "-20.53",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-31.54",
+        "normalization_type": "linear",
+        "target_offset": "2.53"
+      },
+      "duration_seconds": 2.788896,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "fa0a1d03106be604c63f559d52cb8d3f5452026bb4c9c665c3c99203121a928f",
+        "radio": "739075076199654c85d93cf08c8d6bdb393bbeab7da2330d79c26055b08d5002"
+      }
+    },
+    {
+      "key": "narrow-win-1",
+      "text": "Чуть не убил меня, зараза!",
+      "speech": "Чуть не убил меня, зараза!",
+      "metrics": {
+        "input_i": "-18.44",
+        "input_tp": "-3.48",
+        "input_lra": "0.00",
+        "input_thresh": "-29.50",
+        "output_i": "-18.02",
+        "output_tp": "-3.03",
+        "output_lra": "0.00",
+        "output_thresh": "-29.08",
+        "normalization_type": "linear",
+        "target_offset": "0.02"
+      },
+      "duration_seconds": 2.645229,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "3d658ef6359b64832525b4612eb731762c31ca50da5072e453df3b0913758335",
+        "radio": "eb006664f3748752c6c2a8e6df4886ffc85875121e5e76b356ab91a8c4ea145e"
+      }
+    },
+    {
+      "key": "narrow-win-2",
+      "text": "Еле выжил! Но ты-то помер!",
+      "speech": "Еле выжил! Но ты-то помер!",
+      "metrics": {
+        "input_i": "-18.98",
+        "input_tp": "-3.44",
+        "input_lra": "2.20",
+        "input_thresh": "-30.90",
+        "output_i": "-16.58",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-28.40",
+        "normalization_type": "dynamic",
+        "target_offset": "-1.42"
+      },
+      "duration_seconds": 3.581042,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "31ce4533fd7434f345a493033afc26f6c115527e2538f565e508f989c6cb7c9d",
+        "radio": "6f6c6ff0649ca1f1893fa7006bc68d26dee26d7117fd680922fe3537f3a2f761"
+      }
+    },
+    {
+      "key": "dazhe-ne-pocarapal-radio",
+      "text": "Даже не поцарапал!",
+      "speech": "Хех... Даже не поцарапал!",
+      "metrics": {
+        "input_i": "-17.92",
+        "input_tp": "-3.44",
+        "input_lra": "0.90",
+        "input_thresh": "-30.49",
+        "output_i": "-16.68",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-28.79",
+        "normalization_type": "dynamic",
+        "target_offset": "-1.32"
+      },
+      "duration_seconds": 3.413229,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "06a2d247616b4bede6fed3333362f4081290ac5607be5d8468d961573e4307ea",
+        "radio": "80470a84fb30b5d48d703a12ffefa78ea701ef136e57575a2dd1d5570dd76da6"
+      }
+    },
+    {
+      "key": "missed-2",
+      "text": "Ты хоть попади сначала!",
+      "speech": "Ты хоть попади сначала!",
+      "metrics": {
+        "input_i": "-19.16",
+        "input_tp": "-3.45",
+        "input_lra": "0.00",
+        "input_thresh": "-30.41",
+        "output_i": "-18.71",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-29.96",
+        "normalization_type": "linear",
+        "target_offset": "0.71"
+      },
+      "duration_seconds": 2.308208,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "6161162007b2c9432e1b12f7e27bd224bcfa0870659440c359d42902c1ad49ae",
+        "radio": "89eacede0565b3e37b8645c8d35db45334fd2684a3edf54fac791bcdf41dc5c8"
+      }
+    },
+    {
+      "key": "weak-reply-1",
+      "text": "Слабак!",
+      "speech": "Хех... Слабак!",
+      "metrics": {
+        "input_i": "-20.25",
+        "input_tp": "-3.44",
+        "input_lra": "0.00",
+        "input_thresh": "-33.07",
+        "output_i": "-19.79",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-32.61",
+        "normalization_type": "linear",
+        "target_offset": "1.79"
+      },
+      "duration_seconds": 2.813042,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "d57a8507662284fa18c60f8826f75844c12350d30d227bbb060b0ee5beac4a7e",
+        "radio": "b9ec01843d806d5aff043c3b9c4ed5053e38dc5a41276970da7f2a49e5cd5918"
+      }
+    },
+    {
+      "key": "weak-reply-2",
+      "text": "Слабо бьёшь!",
+      "speech": "Слабо бьёшь!",
+      "metrics": {
+        "input_i": "-18.45",
+        "input_tp": "-4.26",
+        "input_lra": "0.00",
+        "input_thresh": "-29.89",
+        "output_i": "-17.99",
+        "output_tp": "-3.80",
+        "output_lra": "0.00",
+        "output_thresh": "-29.43",
+        "normalization_type": "linear",
+        "target_offset": "-0.01"
+      },
+      "duration_seconds": 1.780542,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "4343b483edbb78107779e0a7891b7d8b95bca932604701ec76085b8a58e7c8ca",
+        "radio": "5d577335b9b70c938703ac8762ba9a9377283765e3963a1b0e8feceed2a00296"
+      }
+    },
+    {
+      "key": "weak-reply-3",
+      "text": "Попал. А толку?",
+      "speech": "Попал. А толку?",
+      "metrics": {
+        "input_i": "-22.38",
+        "input_tp": "-3.45",
+        "input_lra": "0.00",
+        "input_thresh": "-35.20",
+        "output_i": "-21.93",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-34.75",
+        "normalization_type": "linear",
+        "target_offset": "3.93"
+      },
+      "duration_seconds": 2.860021,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "2c3a2656ab93b5081974242d4d3947d83ad31cbe5c28769b539d2492db8a239d",
+        "radio": "1a57a836718e1ee914eafa22453f0af0c363222ecd3c5d0d2ecf028912cbe6e4"
+      }
+    },
+    {
+      "key": "no-reply-1",
+      "text": "Даже выстрелить не успел!",
+      "speech": "Даже выстрелить не успел!",
+      "metrics": {
+        "input_i": "-18.45",
+        "input_tp": "-3.57",
+        "input_lra": "0.00",
+        "input_thresh": "-29.56",
+        "output_i": "-18.01",
+        "output_tp": "-3.12",
+        "output_lra": "0.00",
+        "output_thresh": "-29.13",
+        "normalization_type": "linear",
+        "target_offset": "0.01"
+      },
+      "duration_seconds": 2.548542,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "c7d33a4cb92a42be22bc00b8974669e4107eb25eed9669236f0734d6cc812808",
+        "radio": "a465aee8687fa56d02206d8452bb784712d8263011a3ca27b80b5c8d733cb865"
+      }
+    },
+    {
+      "key": "kill-streak-1",
+      "text": "Кто следующий?",
+      "speech": "Кто следующий?",
+      "metrics": {
+        "input_i": "-19.14",
+        "input_tp": "-3.46",
+        "input_lra": "0.00",
+        "input_thresh": "-30.90",
+        "output_i": "-18.68",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-30.44",
+        "normalization_type": "linear",
+        "target_offset": "0.68"
+      },
+      "duration_seconds": 1.804708,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "1f20e64e4bcbf364418223a1acbbb53db040279b156863f77551a62b399959d3",
+        "radio": "ff8e2473ab5c6fe196a32bb125580e95c36a4c44b9224a374829eb194727b2c5"
+      }
+    },
+    {
+      "key": "kill-streak-2",
+      "text": "Я сегодня в ударе!",
+      "speech": "Я сегодня в ударе!",
+      "metrics": {
+        "input_i": "-18.44",
+        "input_tp": "-4.03",
+        "input_lra": "0.00",
+        "input_thresh": "-29.85",
+        "output_i": "-18.02",
+        "output_tp": "-3.59",
+        "output_lra": "0.00",
+        "output_thresh": "-29.43",
+        "normalization_type": "linear",
+        "target_offset": "0.02"
+      },
+      "duration_seconds": 2.116208,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "fad5448f90bbee9bee2507a9020afc14268d46357ff2ffc1a5b4dbdaffe10729",
+        "radio": "e8c86614fa7ecbdd2e6394e9dd38403d2286010f29cbbdb184af4f506efcd0da"
+      }
+    },
+    {
+      "key": "self-explosion-1",
+      "text": "Сам себя взорвал. Молодец!",
+      "speech": "Хех... Сам себя взорвал. Молодец!",
+      "metrics": {
+        "input_i": "-19.22",
+        "input_tp": "-3.42",
+        "input_lra": "1.80",
+        "input_thresh": "-31.10",
+        "output_i": "-17.43",
+        "output_tp": "-3.00",
+        "output_lra": "0.30",
+        "output_thresh": "-29.48",
+        "normalization_type": "dynamic",
+        "target_offset": "-0.57"
+      },
+      "duration_seconds": 4.852542,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "266d175f11a962cc0be8132bbd56108503729027bd73ba0309086a70482923ea",
+        "radio": "27c8d748c22ae59f800866a2fd170f8f2fda350781ca6af9be2bbe7336a4296f"
+      }
+    },
+    {
+      "key": "self-kill-1",
+      "text": "Сам себя убил. Талант!",
+      "speech": "Сам себя убил. Талант!",
+      "metrics": {
+        "input_i": "-18.03",
+        "input_tp": "-3.41",
+        "input_lra": "0.80",
+        "input_thresh": "-30.05",
+        "output_i": "-16.86",
+        "output_tp": "-3.00",
+        "output_lra": "0.00",
+        "output_thresh": "-28.84",
+        "normalization_type": "dynamic",
+        "target_offset": "-1.14"
+      },
+      "duration_seconds": 3.364875,
+      "sample_rate": 48000,
+      "channels": 1,
+      "sha256": {
+        "source": "5afd70174e978d6ff4307ccf43af50d853407763f900421640fc24c4035263bd",
+        "radio": "a0ea4750d393ebced6d52d8d7560d8a1b61b08a170b6ca89cee2d2f0735a4d57"
+      }
+    }
+  ]
+}
