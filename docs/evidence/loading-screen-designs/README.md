@@ -40,3 +40,5 @@ NODE_PATH=<workspace-node-modules> <workspace-node> docs/evidence/loading-screen
 PNG: `a-start.png`, `a-match.png`, `b-start.png`, `b-match.png`. Проверены визуально после рендера в 1600×900; автоматическая проверка переполнения текста в 1280×720. Это проверка макетов, не Unity/runtime/physical acceptance. Unity, Player build и release не запускались.
 
 Ветка с исходниками и PNG сохраняется для выбора и дальнейшей работы; временные сборки, кэши и логи этой задачей не создавались.
+
+Изменение по запросу пользователя: на стартовом экране B увеличены эмблема и название игры; под названием добавлена небольшая английская строка «© 2026 Evgeniy Afonasev · afonasev.tech · Made with Codex». Экран перед матчем не менялся.
