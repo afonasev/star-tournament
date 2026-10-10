@@ -147,7 +147,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 if(!string.IsNullOrEmpty(source))File.Copy(source,path);
                 else
                 {
-                    yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var bundle=Ground().CaptureLabBundle();
+                    yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var initial=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(Ground());
+                    var bundle=((LabBundle)typeof(DesignLabHistory).GetField("shipped",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(initial)).Clone();
                     yield return SceneManager.UnloadSceneAsync(scene);scene=default;
                     var history=new DesignLabHistory(path,bundle,releases:LabReleaseCatalog.Load(),resetToLatestDefault:true,persistMigration:false);history.Create("Loading QA");
                 }

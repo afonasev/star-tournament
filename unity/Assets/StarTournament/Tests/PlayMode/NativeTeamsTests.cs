@@ -109,7 +109,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(JsonUtility.ToJson(ground.Session.Match.Roster.Read()),Is.EqualTo(roster));
             Assert.That(ground.Session.Match.Read().Standings.All(r=>r.Score==0),Is.True);Assert.That(ground.Session.Life(1).Health,Is.EqualTo(100));
             AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),expected);
-            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,3);ground.SetMatchMode(NativeMatchMode.Ffa);Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
+            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,3);ground.SetMatchMode(NativeMatchMode.Ffa);Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return null;
             Assert.That(ground.Session.Match.Roster.Mode,Is.EqualTo(NativeMatchMode.Ffa));AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),NativeStandingsView.Palette[0]);
             Assert.That(table.GetComponentsInChildren<Text>().Any(t=>t.text=="Team A"||t.text=="Team B"),Is.False);
         }

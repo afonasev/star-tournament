@@ -173,7 +173,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 ground.Session.ApplyDamage(1,1,100,0,1);
                 while(ground.Session.Match.Phase==NativeMatchPhase.Running){ground.Session.Match.BeginTick();ground.Session.Match.EndTick();}
                 yield return new WaitForFixedUpdate();yield return null;
-                var result=ground.transform.Find("native-ui/setup-pause/results-table");
+                var result=ground.transform.Find("native-ui/setup-pause/results-frame/results-table");
                 Assert.That(result.gameObject.activeSelf,Is.True);Assert.That(result.Find("row-4").gameObject.activeSelf,Is.EqualTo(count==4));
                 Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return new WaitForFixedUpdate();yield return null;AssertLayout(count);
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
@@ -192,7 +192,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 while(ground.LocalSeatCount>pair[1])Button("seats-minus").onClick.Invoke();
                 while(ground.LocalSeatCount<pair[1])Button("seats-plus").onClick.Invoke();
-                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);AssertLayout(pair[1]);
+                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return null;AssertLayout(pair[1]);
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
             }
         }

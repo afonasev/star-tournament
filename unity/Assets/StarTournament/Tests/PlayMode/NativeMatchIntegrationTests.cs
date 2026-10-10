@@ -176,7 +176,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             old.ApplyDamage(1,1,100,0,1); // explicit gameplay fixture
             for(int i=0;i<15000;i++){old.Match.BeginTick();old.Match.EndTick();if(old.Match.Phase==NativeMatchPhase.Finished)break;}
             yield return new WaitForFixedUpdate();yield return null;
-            Assert.That(ground.Running,Is.False);Assert.That(ground.transform.Find("native-ui/setup-pause/results-table").gameObject.activeSelf,Is.True);
+            Assert.That(ground.Running,Is.False);Assert.That(ground.transform.Find("native-ui/setup-pause/results-frame/results-table").gameObject.activeSelf,Is.True);
             ground.MatchProfile.Set("score.chainTotal1",200);
             Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             ground.Session.ApplyDamage(1,1,100,0,1);
