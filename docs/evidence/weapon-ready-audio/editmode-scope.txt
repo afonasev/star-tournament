@@ -1,0 +1,16 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=NativeMusicTests;WeaponSwitchPresentationTests.AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary;WeaponSwitchPresentationTests.VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf;WeaponSwitchPresentationTests.AllWeaponPairsShareTheSamePhaseWithoutMutatingState
+lab_history=/Users/eaafonasev/.codex/worktrees/weapon-ready-audio/star-tournament/unity/../.local/unity-evidence/focused-editmode.EOIJrq/qa-lab-history.json
+revision=6dc4662a0728edfb869baa2ce822c75b2bd948e1
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/NativeCombatSession.cs
+ M Assets/StarTournament/Runtime/NativeGameAudio.cs
+ M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs
+ M Assets/StarTournament/Tests/PlayMode/ApprovedSpatialAudioTests.cs
+?? ../docs/tasks/45-weapon-ready-audio.md
+?? ../tools/prepare-weapon-ready-audio.py
+?? Assets/StarTournament/Resources/Audio/weapon-ready.wav
+?? Assets/StarTournament/Resources/Audio/weapon-ready.wav.meta

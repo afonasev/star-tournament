@@ -257,6 +257,8 @@ namespace StarTournament.ProvingGround
             var shipped=this.shipped;
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponReadyGain"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWeaponReadyAudioGain()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.deathGain"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDeathAudioGain()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??7)<7)

@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
         float[] voiceGain,voiceBaseGain;
         Vector3[] voicePosition;
         int[] voiceParticipant;
-        bool[] voiceDeath;
+        bool[] voiceFeedback;
         AudioSource[] rocketSources;
         uint[] rocketIds;
         float[] rocketGain;
@@ -54,6 +54,8 @@ namespace StarTournament.ProvingGround
         NativeCombatSession session;
         NativeMatchComposition composition;
         ParticipantState[] lastPose;
+        CombatLifeState[] lastWeaponState;
+        bool[] weaponReadyPending;
         float[] stepDistance;
         double[] lastHit;
         int nextVoice;
@@ -63,7 +65,7 @@ namespace StarTournament.ProvingGround
         {
             this.profile=profile;muted=mute;
             var holder=new GameObject("native-game-audio");holder.transform.SetParent(parent,false);root=holder.transform;
-            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup"})
+            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","weapon-ready","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup"})
             {
                 var clip=Resources.Load<AudioClip>("Audio/"+name);
                 if(clip==null)Debug.LogError("Missing native audio clip: "+name);
@@ -103,7 +105,7 @@ namespace StarTournament.ProvingGround
             if(voices!=null&&voices.Length==count)return;
             if(voices!=null)foreach(var voice in voices)if(voice)UnityEngine.Object.Destroy(voice.gameObject);
             if(rocketSources!=null)foreach(var rocket in rocketSources)if(rocket)UnityEngine.Object.Destroy(rocket.gameObject);
-            voices=new AudioSource[count];voiceGain=new float[count];voiceBaseGain=new float[count];voicePosition=new Vector3[count];voiceParticipant=new int[count];voiceDeath=new bool[count];nextVoice=0;
+            voices=new AudioSource[count];voiceGain=new float[count];voiceBaseGain=new float[count];voicePosition=new Vector3[count];voiceParticipant=new int[count];voiceFeedback=new bool[count];nextVoice=0;
             rocketSources=new AudioSource[count];rocketIds=new uint[count];rocketGain=new float[count];
             for(int i=0;i<count;i++){rocketSources[i]=Source("rocket-flight-"+i);rocketSources[i].clip=clips["rocket-flight"];rocketSources[i].loop=true;}
             for(int i=0;i<count;i++)voices[i]=Source("voice-"+i);
@@ -113,13 +115,13 @@ namespace StarTournament.ProvingGround
             Unbind();BuildVoicePool();session=next;composition=roster;
             musicProfile=musicTuning??profile;
             if(session==null)return;
-            lastPose=new ParticipantState[session.ParticipantCount];stepDistance=new float[session.ParticipantCount];lastHit=new double[session.ParticipantCount];
-            for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastHit[i]=double.NegativeInfinity;}
-            session.DamageBonusAppeared+=DamageBonusSpawn;session.ShotResolved+=Shot;session.Damaged+=Damage;session.Died+=Death;session.PickupCollected+=Pickup;session.StateRestored+=ResetMotion;session.RocketExploded+=Explosion;
+            lastPose=new ParticipantState[session.ParticipantCount];lastWeaponState=new CombatLifeState[session.ParticipantCount];weaponReadyPending=new bool[session.ParticipantCount];stepDistance=new float[session.ParticipantCount];lastHit=new double[session.ParticipantCount];
+            for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastWeaponState[i]=session.Life(i);lastHit[i]=double.NegativeInfinity;}
+            session.DamageBonusAppeared+=DamageBonusSpawn;session.ShotResolved+=Shot;session.Damaged+=Damage;session.Died+=Death;session.PickupCollected+=Pickup;session.StateRestored+=ResetMotion;session.RocketExploded+=Explosion;session.WeaponStateResolved+=WeaponState;
         }
         void Unbind()
         {
-            if(session!=null){session.DamageBonusAppeared-=DamageBonusSpawn;session.ShotResolved-=Shot;session.Damaged-=Damage;session.Died-=Death;session.PickupCollected-=Pickup;session.StateRestored-=ResetMotion;session.RocketExploded-=Explosion;}
+            if(session!=null){session.DamageBonusAppeared-=DamageBonusSpawn;session.ShotResolved-=Shot;session.Damaged-=Damage;session.Died-=Death;session.PickupCollected-=Pickup;session.StateRestored-=ResetMotion;session.RocketExploded-=Explosion;session.WeaponStateResolved-=WeaponState;}
             session=null;composition=null;
             StopEffects();
         }
@@ -128,7 +130,7 @@ namespace StarTournament.ProvingGround
             if(session==null)return;
             musicScene.Restore(session.Match);
             StopEffects();
-            for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);stepDistance[i]=0;lastHit[i]=double.NegativeInfinity;}
+            for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastWeaponState[i]=session.Life(i);weaponReadyPending[i]=false;stepDistance[i]=0;lastHit[i]=double.NegativeInfinity;}
             for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}
         }
         public void SetDiagnosticMute(bool value){muted=value;if(value)StopEffects();UpdateVolume();}
@@ -177,7 +179,7 @@ namespace StarTournament.ProvingGround
         {
             PlayAt(clip,gain,participant,session!=null&&participant>=0?session.Pose(participant).Position:Vector3.zero,pitch);
         }
-        void PlayAt(AudioClip clip,float baseGain,int participant,Vector3 point,float pitch=1,bool death=false)
+        void PlayAt(AudioClip clip,float baseGain,int participant,Vector3 point,float pitch=1,bool feedback=false)
         {
             if(clip==null||EffectsVolume<=0)return;
             var mix=participant>=0?Spatial(point,participant):new AudioSpatialMix(1,0);
@@ -193,17 +195,17 @@ namespace StarTournament.ProvingGround
             if(source==null)
             {
                 int weakest=-1;
-                // A short death cue must finish even when subsequent shots fill the pool.
+                // Short death/weapon-ready feedback must finish even when subsequent shots fill the pool.
                 for(int i=0;i<voices.Length;i++)
-                    if(!voiceDeath[i]&&(weakest<0||voiceGain[i]<voiceGain[weakest]))weakest=i;
+                    if(!voiceFeedback[i]&&(weakest<0||voiceGain[i]<voiceGain[weakest]))weakest=i;
                 if(weakest<0)return;
                 source=voices[weakest];
                 // Keep a louder event audible when 1–4 viewports all produce events at once.
-                if(!death&&voiceGain[weakest]>gain)return;
+                if(!feedback&&voiceGain[weakest]>gain)return;
             }
             int slot=Array.IndexOf(voices,source);
             source.Stop();source.clip=clip;source.pitch=pitch;source.panStereo=mix.Pan;
-            voiceDeath[slot]=death;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
+            voiceFeedback[slot]=feedback;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
         }
         void PlayMovement(string name,float gain,int participant)
         {
@@ -260,7 +262,23 @@ namespace StarTournament.ProvingGround
         void Death(DeathNotice death)
         {
             beams[death.Seat].Stop();beamGain[death.Seat]=0;beamEnvelope[death.Seat]=0;
-            PlayAt(Bank("death"),ProvingProfile.DeathAudioGain(profile),death.Seat,death.Pose.Position,death:true);
+            PlayAt(Bank("death"),ProvingProfile.DeathAudioGain(profile),death.Seat,death.Pose.Position,feedback:true);
+        }
+        void WeaponState(int participant)
+        {
+            var now=session.Life(participant);var old=lastWeaponState[participant];lastWeaponState[participant]=now;
+            if(now.Dead||now.Life!=old.Life||old.Dead)
+            {weaponReadyPending[participant]=false;return;}
+            if(now.SwitchRemaining>0){weaponReadyPending[participant]=false;return;}
+            if(now.SelectedWeapon!=old.SelectedWeapon)weaponReadyPending[participant]=true;
+            if(!weaponReadyPending[participant]||now.CooldownRemaining>0)return;
+            bool hasAmmo=now.SelectedWeapon==WeaponId.Cutter?now.CutterEnergy>0:now.Ammo>0;
+            weaponReadyPending[participant]=false;
+            if(!hasAmmo)return;
+            // Private readiness feedback; the single shared output does not broadcast bot/opponent switches.
+            for(int seat=0;composition!=null&&seat<composition.LocalCount;seat++)
+                if(composition.ParticipantAt(seat)==participant)
+                {PlayAt(clips["weapon-ready"],ProvingProfile.WeaponReadyAudioGain(profile),participant,session.Pose(participant).Position,feedback:true);break;}
         }
         void Explosion(RocketExplosion explosion)=>PlayAt(clips["explosion"],1,explosion.Rocket.Owner,explosion.Position);
         void DamageBonusSpawn()=>PlayDamageBonus("damage-bonus-spawn",profile.Get("audio.damageBonusSpawnGain"));

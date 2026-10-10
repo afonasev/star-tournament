@@ -66,6 +66,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{if(File.Exists(path))File.Delete(path);}
         }
+        [TestCase(false)] [TestCase(true)] public void WeaponReadyGainMigrationKeepsAudioSettingsAndHistoricalHash(bool beforeDeathGain)
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            ProvingProfile Before(ProvingProfile p,string name)=>(ProvingProfile)typeof(ProvingProfile).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(p,null);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>Before(p,"BeforeWeaponReadyAudioGain")).Select(p=>beforeDeathGain?Before(p,"BeforeDeathAudioGain"):p).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,old);history.Create("Saved readiness predecessor");var draft=history.Selected.Snapshot;
+                draft.Set("audio.remoteGain",.3f);draft.Set("audio.effectsDefaultPercent",45);history.Save(draft);string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("audio.weaponReadyGain"),Is.EqualTo(2));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.remoteGain"),Is.EqualTo(.3f));Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var descriptor=migrated.Selected.Snapshot.Descriptors.Single(d=>d.Path=="audio.weaponReadyGain");Assert.That(descriptor.Validate(out _),Is.True);
+                var chosen=migrated.Selected.Snapshot;chosen.Set("audio.weaponReadyGain",1.5f);migrated.Save(chosen);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Snapshot.Get("audio.weaponReadyGain"),Is.EqualTo(1.5f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void DeathGainMigrationPreservesHistoricalHashAndExistingAudioControls()
         {
             var shipped=DesignLabHistoryTests.Shipped();

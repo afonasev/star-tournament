@@ -160,6 +160,9 @@ namespace StarTournament.ProvingGround
         public event Action<int,string,NativeBotPickupKind> PickupCollected;
         public event Action DamageBonusAppeared;
         public event Action<ShotNotice> ShotResolved;
+        // Presentation observes the resolved selection before Fire consumes ammo or resets cooldown.
+        // This notification carries no authority and is not part of snapshot/replay state.
+        public event Action<int> WeaponStateResolved;
         public NativeCombatSession(CharacterMotor[] motors, ProvingArena arena, PhysicsScene physics,
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null)
         {
@@ -282,6 +285,7 @@ namespace StarTournament.ProvingGround
             for (int i = 0; i < lives.Length; i++)
             {
                 lives[i].Select(actions[i].SelectWeapon); // Selection is authoritative before fire on this tick.
+                WeaponStateResolved?.Invoke(i);
                 bool held = actions[i].FireHeld || actions[i].Fire;
                 if(Life(i).SelectedWeapon!=WeaponId.Cutter||Life(i).SwitchRemaining>0||Life(i).Dead||!held)beams[i].Stop();
                 if (releaseRequired[i])

@@ -89,6 +89,93 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             audio.StopEffects();Assert.That(cue.isPlaying,Is.False);
             yield return null;
         }
+        void RequestWeapon(int participant,WeaponSelection selection)
+        {
+            var actions=new LocalAction[ground.Session.ParticipantCount];actions[participant].SelectWeapon=selection;
+            ground.Session.Tick(actions,.02f);
+        }
+        void CompleteWeaponSwitch()
+        {
+            var actions=new LocalAction[ground.Session.ParticipantCount];
+            for(int i=0;i<200&&Enumerable.Range(0,ground.Session.ParticipantCount).Any(p=>ground.Session.Life(p).SwitchRemaining>0||ground.Session.Life(p).CooldownRemaining>0);i++)
+                ground.Session.Tick(actions,.02f);
+            Assert.That(Enumerable.Range(0,ground.Session.ParticipantCount).All(p=>ground.Session.Life(p).SwitchRemaining==0&&ground.Session.Life(p).CooldownRemaining==0),Is.True);
+        }
+        [UnityTest] public IEnumerator EveryWeaponGetsOneLocalReadyCueOnlyAtTheEndOfItsSwitch()
+        {
+            EquippedCombatFixture.Equip(ground.Session);Clear();
+            var clip=Resources.Load<AudioClip>("Audio/weapon-ready");Assert.That(clip,Is.Not.Null);
+            Assert.That(clip.length,Is.EqualTo(.16f).Within(.001f));Assert.That(clip.preloadAudioData,Is.True);
+            foreach(var pair in new[]{(WeaponSelection.Shotgun,WeaponId.Shotgun),(WeaponSelection.RocketLauncher,WeaponId.RocketLauncher),(WeaponSelection.Cutter,WeaponId.Cutter),(WeaponSelection.Rifle,WeaponId.Rifle)})
+            {
+                RequestWeapon(0,pair.Item1);Assert.That(Voices.Any(v=>v.clip),Is.False,"Request is not readiness");
+                while(ground.Session.Life(0).SwitchRemaining>0)
+                {
+                    ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+                    if(ground.Session.Life(0).SwitchRemaining>0)Assert.That(Voices.Any(v=>v.clip),Is.False);
+                }
+                Assert.That(ground.Session.Life(0).SelectedWeapon,Is.EqualTo(pair.Item2));
+                var ready=Voices.Single(v=>v.clip);Assert.That(ready.clip.name,Is.EqualTo("weapon-ready"));
+                Assert.That(ready.volume,Is.GreaterThan(.5f));Assert.That(ready.panStereo,Is.EqualTo(0));Assert.That(ready.pitch,Is.EqualTo(1));Clear();
+                for(int t=0;t<5;t++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+                RequestWeapon(0,pair.Item1);Assert.That(Voices.Any(v=>v.clip),Is.False,"Idle/same-slot input must not repeat readiness");
+            }
+            RequestWeapon(1,WeaponSelection.Shotgun);CompleteWeaponSwitch();
+            Assert.That(Voices.Any(v=>v.clip),Is.False,"Opponent/bot readiness is private");
+            yield return null;
+        }
+        [UnityTest] public IEnumerator WeaponReadyWaitsForExistingTargetCooldownAndPrecedesFirstHeldRifleShot()
+        {
+            EquippedCombatFixture.Equip(ground.Session);var snap=ground.Session.Capture();
+            snap.Lives[0].ShotgunCooldownRemaining=ground.Session.WeaponSwitchSeconds+.2;
+            ground.Session.Restore(snap);Clear();RequestWeapon(0,WeaponSelection.Shotgun);
+            while(ground.Session.Life(0).SwitchRemaining>0)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            Assert.That(ground.Session.Life(0).CooldownRemaining,Is.GreaterThan(0));Assert.That(Voices.Any(v=>v.clip),Is.False,"Animation completion is not readiness while cooldown remains");
+            CompleteWeaponSwitch();Assert.That(Voices.Single(v=>v.clip).clip.name,Is.EqualTo("weapon-ready"));Clear();
+            for(int i=0;i<Voices.Length;i++)Invoke(audio,"Play","rifle",1f,0);
+            bool observed=false;ground.Session.ShotResolved+=notice=>
+            {
+                if(notice.Shooter!=0||notice.Weapon!=WeaponId.Rifle)return;
+                observed=true;Assert.That(Voices.Count(v=>v.clip&&v.clip.name=="weapon-ready"),Is.EqualTo(1),"Ready feedback must precede cooldown/ammo consumption on the first eligible tick");
+            };
+            RequestWeapon(0,WeaponSelection.Rifle);var held=new LocalAction[ground.Session.ParticipantCount];held[0].FireHeld=true;
+            while(ground.Session.Life(0).SwitchRemaining>0)ground.Session.Tick(held,.02f);
+            Assert.That(observed,Is.True);var cue=Voices.Single(v=>v.clip&&v.clip.name=="weapon-ready");
+            for(int i=0;i<Voices.Length*2;i++)Invoke(audio,"Play","shotgun",1f,0);
+            Assert.That(cue.isPlaying,Is.True);Assert.That(cue.clip.name,Is.EqualTo("weapon-ready"));
+            Assert.That(Voices.Sum(v=>v.volume),Is.LessThanOrEqualTo(1.0001f));
+            yield return null;
+        }
+        [UnityTest] public IEnumerator WeaponReadyHasNoGhostsFromRestoreDeathEmptyAmmoOrMute()
+        {
+            EquippedCombatFixture.Equip(ground.Session);var original=ground.Session.Capture();Clear();
+            var changed=ground.Session.Capture();changed.Lives[0].SelectedWeapon=WeaponId.Shotgun;changed.Lives[0].Ammo=changed.Lives[0].ShotgunAmmo;
+            ground.Session.Restore(changed);ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            Assert.That(Voices.Any(v=>v.clip),Is.False,"Restored selected weapon is not a newly completed switch");
+            ground.Session.Restore(original);RequestWeapon(0,WeaponSelection.Shotgun);
+            var dead=ground.Session.Capture();dead.Lives[0].Dead=true;dead.Lives[0].Health=0;dead.Lives[0].RespawnRemaining=2;
+            ground.Session.Restore(dead);ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            Assert.That(Voices.Any(v=>v.clip),Is.False,"Death cancels readiness");
+            var empty=original;empty.Lives[0].ShotgunAmmo=0;ground.Session.Restore(empty);RequestWeapon(0,WeaponSelection.Shotgun);CompleteWeaponSwitch();
+            Assert.That(Voices.Any(v=>v.clip),Is.False,"Empty weapon cannot promise a shot");
+            var restocked=ground.Session.Capture();restocked.Lives[0].ShotgunAmmo=20;restocked.Lives[0].Ammo=20;
+            ground.Session.Restore(restocked);ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            Assert.That(Voices.Any(v=>v.clip),Is.False,"Restock must not replay a suppressed empty-weapon cue");
+            RequestWeapon(0,WeaponSelection.Rifle);CompleteWeaponSwitch();Clear();
+            var equipped=ground.Session.Capture();audio.SetDiagnosticMute(true);RequestWeapon(0,WeaponSelection.Shotgun);CompleteWeaponSwitch();
+            Assert.That(Voices.Any(v=>v.clip),Is.False);audio.SetDiagnosticMute(false);
+            ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);Assert.That(Voices.Any(v=>v.clip),Is.False,"Unmute must not replay readiness");
+            ground.Session.Restore(equipped);var profile=(ProvingProfile)typeof(NativeGameAudio).GetField("profile",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio);
+            profile.Set("audio.weaponReadyGain",0);RequestWeapon(0,WeaponSelection.Shotgun);CompleteWeaponSwitch();Assert.That(Voices.Any(v=>v.clip),Is.False);
+            yield return null;
+        }
+        [UnityTest] public IEnumerator SplitScreenWeaponReadyIsEmittedOnceForTheSwitchingSeat()
+        {
+            foreach(var p in pads)InputSystem.RemoveDevice(p);pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);
+            EquippedCombatFixture.Equip(ground.Session);Clear();RequestWeapon(2,WeaponSelection.Cutter);CompleteWeaponSwitch();
+            Assert.That(Voices.Count(v=>v.clip&&v.clip.name=="weapon-ready"),Is.EqualTo(1));
+            yield return null;
+        }
         [UnityTest] public IEnumerator MovingRocketLoopUsesPositionAndStopsOnPauseRestoreMute()
         {
             var snap=ground.Session.Capture();snap.ShotSequence=1;
