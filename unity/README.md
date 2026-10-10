@@ -8,16 +8,18 @@
 
 ```sh
 make prepare
-make test-edit
-make test-play
+make check-tooling
 make check
 make unity-editor
 make unity-run
 ```
 
-`make check` выполняет canonical EditMode/PlayMode tests и local Development
-build; `make build` выполняет только build. Низкоуровневые эквиваленты остаются
-`unity/tools.sh prepare|test-edit|test-play|build|editor|run`.
+`make check` выполняет локальные UI-контракты без сборки. `make build` и
+`check-player` делают только явно заказанную Development-сборку. Полные
+`make test`, `test-edit`, `test-play`, `check-full` требуют отдельного подтверждения
+человека, включая production; лишь после него задаётся `CONFIRM_FULL_TESTS=1`.
+До запуска записывай baseline/diff и выбирай минимально достаточный affected набор.
+`make check-tooling` проверяет маршруты QA/XML без Unity.
 
 Для быстрой итерации можно выбрать fixture, метод или regex Unity Test Framework:
 
@@ -28,11 +30,12 @@ unity/tools.sh test-play-filter 'NativeBotBehaviorTests.NaturalDefaultEight'
 
 Аргумент обязателен; несколько фильтров разделяются `;` внутри одного quoted
 аргумента. Каждый запуск создаёт собственный `.local/unity-evidence/focused-<platform>.*`
-с XML, log и `scope.txt` (filter, revision и dirty state). Это только focused check:
-integration gate выбирается по [qa-scope.md](../.agents/references/qa-scope.md):
-для UI-only — `make check-ui` + tests экрана и native Player QA; для gameplay/
-общих зависимостей и неясного влияния — полный `make check`. Проверяйте число реально
-выполненных тестов в XML: фильтр без совпадений ничего не проверяет.
+с XML, log и `scope.txt` (filter, revision, dirty state и Lab history path).
+Focused check подтверждает выбранный scope; integration QA выбирается по
+[qa-scope.md](../.agents/references/qa-scope.md). Общие зависимости расширяют
+affected набор; неясность требует разбора, full — отдельного подтверждения человека.
+Проверяйте число и результаты реально выполненных тестов в XML: фильтр без
+совпадений ничего не проверяет. Player build не является автоматическим gate.
 
 Не запускайте два Unity-процесса для одного проекта одновременно. `UNITY_EDITOR` переопределяет путь редактора. Логи/XML сохраняются в `.local/unity-evidence/`; Mac Player — `unity/Builds/StarTournamentProvingGround.app`. Сборка Development, не production installer и не notarized release. Deploy/distribution command отсутствует намеренно.
 
@@ -72,6 +75,9 @@ Focused Development review: `-botSeatsReview -botSeatsEvidence /absolute/output`
 
 `make check-ui` запускает layout/menu/pause smoke без natural bot matches.
 `python3 tools/check_ui.py --plan` показывает точный набор без запуска Unity.
-Это допустимый UI-only integration gate; build и screenshots изменённых
-экранов остаются обязательными для видимой правки. Scope выбирается по diff
+Это допустимый UI-only integration gate; screenshots изменённых
+экранов выбираются по поведению. Player build — по отдельной команде человека
+или обоснованной необходимости QA согласно локальной политике. Scope выбирается по diff
 и фиксируется в change, не определяется расширением/именем файла.
+
+Тестовые wrappers по умолчанию используют отдельную QA Lab-историю на запуск. Для history-specific checks явно передавай `STAR_TOURNAMENT_QA_LAB_HISTORY` с принадлежащей задаче копией; Editor/build/игра сохраняют прежние пути.

@@ -1,25 +1,28 @@
-# Проверки по затронутому поведению
+# Минимально достаточные проверки
 
-UI/copy/layout и минорные локальные изменения: только выбранные UI/affected fixtures и короткий Editor-сценарий; никакого автоматического full или длительной симуляции матча. `make check` означает локальный набор. Full требует записанного обоснования широкого влияния, long natural matches — влияния на прогресс/исход/завершение матча или долгосрочное AI-поведение. Неизвестное влияние сначала исследуй; отсутствие записанного scope не является причиной запускать всю игру.
+Решение пользователя 2026-10-10 заменяет прежние автоматические full/regression gates, включая release и production. Полный прогон всех тестов требует отдельного явного подтверждения человека. Сборка, выкатка, commit, merge и «доведи до конца» его не разрешают. `CONFIRM_FULL_TESTS=1` фиксирует полученное разрешение; агент не может выдать его себе. Не проси full после каждой правки по шаблону.
 
-**Актуальная политика 2026-10-08:** [локальная разработка](local-development.md). Проверки выбираются по поведению; Player build, standalone smoke и поставка не являются автоматическими gates каждой фичи. Упоминания обязательной сборки/Player ниже действуют только для явно заказанной сборки/приёмки или обоснованной минимальной QA-сборки. Tooling, не меняющий Unity runtime, не требует реального Unity запуска ради одного маршрута команд.
+До запуска запиши baseline SHA, diff, изменённое поведение и зависимости, конкретные команды и причину выбора. Выбирай минимально достаточный набор по семантике изменений. Общие зависимости/найденная регрессия расширяют affected набор до соседних контрактов. Неизвестное влияние сначала исследуй. Если без full достаточная проверка невозможна, объясни причину и запроси отдельное подтверждение; не запускай его автоматически.
 
-
-Перед реализацией записать в change выбранный scope, изменённое поведение, затронутые зависимости и дополнительные проверки. Выбор делается по смыслу diff, а не автоматически по именам файлов. Сначала установи влияние по diff и зависимостям; выбери минимальный достаточный набор.
-
-| Scope | Обязательный gate |
+| Изменение | Выбор проверки |
 | --- | --- |
-| Документация без runtime/config changes | Проверка diff, ссылок и OpenSpec validation при изменении planning |
-| Tooling тестов/сборки | Контрактные тесты tooling и реальная проверка изменённого маршрута; build только при изменении сборки |
-| Локальная UI правка: подпись, оформление, layout, menu navigation | `make check-ui` + focused tests затронутого экрана + проверка изменённых состояний в Editor Play Mode |
-| Локальная gameplay/input/balance правка | Полные affected fixtures + короткий Editor-сценарий; длительные natural matches только при затронутом прогрессе/исходе матча |
-| Широкое влияние на общую simulation/serialization/input ownership, engine/packages или найденная межсистемная регрессия | `make check-full` + относящийся сценарий; обоснование записать до запуска |
-| Дистрибутивный release / широкая интеграция нескольких систем | `make check-full`; build и платформенные/физические gates по явно заказанному scope |
+| Документация | Diff, ссылки; validation только изменённых planning artifacts |
+| Python/shell QA tooling, маршруты команд, XML | Соответствующие Python contract tests и recording runner; Unity не нужен |
+| UI/copy/layout/menu | Fixtures изменённого экрана/состояний; `make check-ui` — удобный layout/menu/pause набор, добавляй нужные экранные контракты |
+| Gameplay/input/balance | Affected fixtures и необходимые соседние контракты; Unity для API/lifecycle/physics/input |
+| Общая simulation/serialization/input ownership, engine/packages, регрессия | Разбор зависимостей и расширенный affected набор; full только после отдельного подтверждения |
+| Release/production/широкая интеграция | QA по фактическому diff от проверенного baseline и взаимодействиям; никаких автоматических full gates |
 
-`make check-ui` — минимальный автоматический UI gate, допустимый при интеграции UI-only change. В нём нет завершённых natural bot matches: EditMode `LocalSeatLayoutTests`, PlayMode `FourPlayerMenuTests` и `IndependentPauseMenuTests`. Проверяются viewport layout, seat ownership, меню/настройки, запуск, pause/resume и независимые pause menus. Короткий запуск игрового сеанса здесь нужен для UI переходов, а не для проверки качества AI.
+Focused fixtures/методы — полноценные доказательства выбранного scope, но не проверка всей игры. Не выбирай все UI fixtures для простой правки подписи по привычке. `make check`/`check-local` — alias UI-набора без сборки; эти команды не обязательны для docs/tooling. `make check-tooling` проверяет маршруты QA и XML без Unity. Для конкретного tooling diff выбирай соответствующие модули из него.
 
-Базовый smoke не охватывает каждый экран: для scoreboard добавить `NativeScoreboardLayoutTests`, для Lab — соответствующие workspace/history tests, для roster — roster tests. Изменение общих параметров через Lab требует проверок затронутой семантики; full только при широком влиянии; перенос подписи поля без изменения значения/metadata — UI scope. Если UI код меняет roster, команду начала матча или input mapping, проверить соответствующий контракт и выбрать affected gameplay fixtures; full только при широком влиянии. Synthetic gamepads не заменяют физическую приёмку input.
+`make check-ui`: EditMode `LocalSeatLayoutTests`; PlayMode `FourPlayerMenuTests;IndependentPauseMenuTests`. Нет natural bot matches. Для scoreboard добавь `NativeScoreboardLayoutTests`, для Lab — соответствующие workspace/history tests, для roster — roster tests. Меняющийся roster/start/input mapping требует соответствующих gameplay контрактов. Длительные natural matches выбирай отдельно при изменении прогресса/исхода/завершения матча или долгосрочного AI-поведения.
 
-`make check-full` остаётся полным набором тестов без Player build. До запуска явно выбери scope; по умолчанию локальный набор не подтверждает всю игру. Успешный UI smoke не даёт право объявлять полный gameplay gate зелёным. Full suite не запускается автоматически вслед за успешно проверенной локальной UI правкой. Произвольный `test-*-filter` остаётся focused evidence, а не универсальным gate.
+`make test`, `test-edit`, `test-play`, `check-full` и прямой `tools/unity.sh ... -runTests` без фильтра отказывают без `CONFIRM_FULL_TESTS=1`. Не обходи правило через прямой Editor/CI или фильтр, эквивалентный всем тестам. `make check-player` делает только явно заказанную Development-сборку; affected QA выбирается отдельно. Перед составной командой прочитай фактический маршрут. Player/release/deploy регулируются [локальной разработкой](local-development.md).
 
-Runner хранит отдельный JSON plan/result, revision, dirty state, XML/log. Отсутствующий XML, ноль тестов, пропущенный fixture, skipped/failed тест или ошибка Unity считаются ошибкой. Смена scope не сокращает, не ослабляет и не удаляет существующие bot tests. Human acceptance точного результата сохраняется.
+Тестовые wrappers по умолчанию задают новый `STAR_TOURNAMENT_QA_LAB_HISTORY` внутри `.local/unity-evidence/` каждого запуска. Общие scene fixtures не читают пользовательскую Lab-историю. Явный override сохраняется: для миграции/старой/большой истории используй принадлежащую задаче копию; не подменяй её пустой историей. Editor, build и установленная игра используют прежние пути. Исторические C#-тесты сами создают свои данные; их assertions/hash/replay contracts не меняются.
+
+Повторяй QA после относящихся к ней изменений/ошибок. Тот же source snapshot после commit или metadata не требует повторения. После merge оцени новые зависимости/конфликты, повтори только затронутые проверки. Не пересоздавай worktree/Library между итерациями, не копируй и не чисти чужие caches.
+
+Разделяй admission/queue, startup/import/compile, setup/body/teardown, build. XML duration не равна времени только тестовых тел; вложенные suite duration не суммируй с родителями. Логи загрузки Lab могут описывать setup внутри XML, их нельзя прибавлять ещё раз. Missing/empty/skipped XML, admission timeout и ноль выполненных тестов — NotRun/неполная проверка, а не зелёный результат. Assertion failure — отдельная категория. Не сокращай seeds/длительность/assertions/exact byte equality и не увеличивай timeout ради green.
+
+Unity-free C# возможен только при запуске настоящего исходного кода существующим независимым runner. Переписывание логики на Python, моки всей Unity API и текстовый поиск не доказывают выполнение C#. Unity Input System, JsonUtility/Resources, lifecycle/physics/render остаются Unity-зависимыми. Automated evidence не заменяет physical/device/visual/audio/human acceptance.

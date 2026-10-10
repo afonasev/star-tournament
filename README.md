@@ -11,10 +11,10 @@ Install/open Unity **6000.3.23f1**, then from the repository root:
 
 ```sh
 make prepare       # after import or scene-source changes
-make test           # EditMode + PlayMode
-make check          # canonical tests and macOS Development build
+make check-tooling  # QA routing/XML contract tests, no Unity
+make check          # local UI contracts, no Player build
 make unity-editor   # open the project in Unity
-make unity-run      # open the Player built by `make build` or `make check`
+make unity-run      # open the Player explicitly built by `make build`
 ```
 
 `make build` creates `unity/Builds/StarTournamentProvingGround.app`: a local
@@ -22,6 +22,15 @@ macOS **Development** Player, not an installer, release or deployable artifact.
 Do not run the Editor, batch tests and Player QA against this project at the
 same time. `UNITY_EDITOR=/path/to/Unity` overrides the default editor path.
 Logs and test XML are written under `.local/unity-evidence/`.
+
+Choose the smallest sufficient fixtures from the recorded baseline/diff and dependencies.
+Full tests (`make test`, `check-full`, `test-edit`, `test-play`) require separate
+human confirmation, including production. Only then set `CONFIRM_FULL_TESTS=1`;
+an agent must not grant itself authorization. Build/deploy permission does not
+include full tests. `check-player` builds only; affected QA is selected separately.
+Test wrappers isolate Lab history per run; explicit `STAR_TOURNAMENT_QA_LAB_HISTORY`
+is preserved for history-specific QA. Focused examples and policy:
+[QA scope](.agents/references/qa-scope.md).
 
 Run `make help` for all supported commands. The trooper asset pipelines are
 deliberately confirmation-gated (`make trooper-help` first); they author local

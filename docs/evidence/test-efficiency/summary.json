@@ -1,0 +1,168 @@
+{
+  "baseline": "dd8af9e2",
+  "scope": "QA wrappers, full-run authorization and isolated test history; no runtime edits",
+  "saved_runs": [
+    {
+      "path": "docs/evidence/lab-staging-timeout/full-editmode.xml.gz",
+      "result": "Passed",
+      "total": 427,
+      "passed": 427,
+      "failed": 0,
+      "skipped": 0,
+      "xml_seconds": 949.7526237,
+      "case_seconds_sum": 949.6028249999999,
+      "largest_fixtures": [
+        {
+          "name": "DesignLabHistoryTests",
+          "seconds": 345.277862
+        },
+        {
+          "name": "LabReleaseCatalogTests",
+          "seconds": 179.931576
+        },
+        {
+          "name": "LunarLaboratoryTests",
+          "seconds": 162.384284
+        },
+        {
+          "name": "WeaponSwitchPresentationTests",
+          "seconds": 109.262756
+        },
+        {
+          "name": "IndustrialTunnelsTests",
+          "seconds": 41.826338
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/lab-staging-timeout/full-playmode-graphics.xml.gz",
+      "result": "Passed",
+      "total": 252,
+      "passed": 252,
+      "failed": 0,
+      "skipped": 0,
+      "xml_seconds": 989.3559224,
+      "case_seconds_sum": 989.164888,
+      "largest_fixtures": [
+        {
+          "name": "NativeBotBehaviorTests",
+          "seconds": 133.037017
+        },
+        {
+          "name": "HitFeedbackPresentationTests",
+          "seconds": 84.933893
+        },
+        {
+          "name": "NativeMatchIntegrationTests",
+          "seconds": 52.729798
+        },
+        {
+          "name": "IndependentPauseMenuTests",
+          "seconds": 49.420218
+        },
+        {
+          "name": "TrooperPresentationTests",
+          "seconds": 49.170502
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/menu-gamepad-cursor/menus-initial-playmode.xml.gz",
+      "result": "Failed(Child)",
+      "total": 26,
+      "passed": 25,
+      "failed": 1,
+      "skipped": 0,
+      "xml_seconds": 152.3710935,
+      "case_seconds_sum": 152.330585,
+      "largest_fixtures": [
+        {
+          "name": "IndependentPauseMenuTests",
+          "seconds": 54.849077
+        },
+        {
+          "name": "FourPlayerMenuTests",
+          "seconds": 34.941609
+        },
+        {
+          "name": "SettingsGamepadNavigationTests",
+          "seconds": 34.34885
+        },
+        {
+          "name": "SetupGamepadNavigationTests",
+          "seconds": 28.205544
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/menu-gamepad-cursor/integration-playmode.xml.gz",
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "xml_seconds": 31.9789206,
+      "case_seconds_sum": 31.939458,
+      "largest_fixtures": [
+        {
+          "name": "IndependentPauseMenuTests",
+          "seconds": 23.483557
+        },
+        {
+          "name": "SettingsGamepadNavigationTests",
+          "seconds": 8.465958
+        }
+      ]
+    }
+  ],
+  "lab_startup_logs": [
+    {
+      "path": "docs/evidence/lab-staging-timeout/interrupted-playmode-startups.log",
+      "completed_loads": 8,
+      "seconds_sum": 759.71,
+      "minimum": 91.29,
+      "maximum": 107.21,
+      "in_xml_may_overlap": true
+    },
+    {
+      "path": "docs/evidence/lab-staging-timeout/full-playmode-graphics.log.gz",
+      "completed_loads": 116,
+      "seconds_sum": 149.64,
+      "minimum": 1.09,
+      "maximum": 12.46,
+      "in_xml_may_overlap": true
+    },
+    {
+      "path": "docs/evidence/menu-gamepad-cursor/integration-playmode.log.gz",
+      "completed_loads": 3,
+      "seconds_sum": 20.56,
+      "minimum": 1.16,
+      "maximum": 17.99,
+      "in_xml_may_overlap": true
+    }
+  ],
+  "verification": {
+    "command": "make check-tooling",
+    "selected_modules": [
+      "test_unity_tools.py",
+      "test_local_workflow.py",
+      "test_check_ui.py"
+    ],
+    "passed": 19,
+    "module_seconds": [
+      2.366,
+      0.098,
+      0.004
+    ],
+    "actual_unity_launches": 0,
+    "shell_syntax": "Passed",
+    "diff_check": "Passed"
+  },
+  "new_patch_runtime_speedup": "Not measured; prior isolated-history runs are evidence for the route choice, not a paired benchmark",
+  "deferred": [
+    "full Unity tests unless separately authorized",
+    "Unity runtime measurement of new wrapper defaults",
+    "Player/build/release/deploy",
+    "device/visual/audio/human acceptance"
+  ]
+}
