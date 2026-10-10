@@ -11,14 +11,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class ApprovedSpatialAudioTests
     {
-        const string Key="StarTournament.Audio.EffectsPercent";
+        const string Key="StarTournament.Audio.EffectsPercent",MusicKey="StarTournament.Audio.MusicPercent";
         Scene scene;Gamepad[] pads;ProvingGround ground;NativeGameAudio audio;Transform root;
-        bool had;int prior;float listener;
+        bool had,hadMusic;int prior,priorMusic;float listener;
         static object Invoke(object target,string name,params object[] args)=>target.GetType().GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(target,args);
         AudioSource[] Voices=>root.GetComponentsInChildren<AudioSource>().Where(s=>s.name.StartsWith("voice-")).ToArray();
+        AudioSource[] MusicSources=>root.GetComponentsInChildren<AudioSource>().Where(s=>s.name.Contains("-music-")).ToArray();
+        ProvingProfile EffectsProfile=>(ProvingProfile)typeof(NativeGameAudio).GetField("profile",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio);
+        ProvingProfile MusicProfile=>(ProvingProfile)typeof(NativeGameAudio).GetField("musicProfile",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio);
         void Clear(){audio.StopEffects();foreach(var s in Voices)s.clip=null;root.Find("damage-bonus-alert").GetComponent<AudioSource>().clip=null;}
         [UnitySetUp] public IEnumerator Setup()
         {
+            hadMusic=PlayerPrefs.HasKey(MusicKey);priorMusic=PlayerPrefs.GetInt(MusicKey);NativeAudioPreferences.SetMusic(100);
             had=PlayerPrefs.HasKey(Key);prior=PlayerPrefs.GetInt(Key);listener=AudioListener.volume;AudioListener.volume=0;NativeAudioPreferences.SetEffects(80);
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
@@ -32,6 +36,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             if(pads!=null)foreach(var p in pads)if(p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);
+            if(hadMusic)PlayerPrefs.SetInt(MusicKey,priorMusic);else PlayerPrefs.DeleteKey(MusicKey);
             AudioListener.volume=listener;if(had)PlayerPrefs.SetInt(Key,prior);else PlayerPrefs.DeleteKey(Key);PlayerPrefs.Save();
         }
         [UnityTest] public IEnumerator HitsDeathAndPickupUseApprovedBanksAndAudience()
@@ -174,6 +179,98 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var p in pads)InputSystem.RemoveDevice(p);pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);
             EquippedCombatFixture.Equip(ground.Session);Clear();RequestWeapon(2,WeaponSelection.Cutter);CompleteWeaponSwitch();
             Assert.That(Voices.Count(v=>v.clip&&v.clip.name=="weapon-ready"),Is.EqualTo(1));
+            yield return null;
+        }
+        [UnityTest] public IEnumerator HistoricalCombatMixDefaultsWorkWithoutRewritingTheSavedProfile()
+        {
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCombatAudioMix",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ProvingProfile.CreateDefault(),null);
+            Assert.That(old.Descriptor("audio.weaponGain"),Is.Null);Assert.That(old.Descriptor("audio.music.combatDuckGain"),Is.Null);string serialized=JsonUtility.ToJson(old);
+            audio.SetDiagnosticMute(true);var owner=new GameObject("legacy-combat-audio");owner.transform.SetParent(ground.transform,false);
+            var legacy=new NativeGameAudio(owner.transform,old,false);
+            try
+            {
+                legacy.Bind(ground.Session,ground.Composition);legacy.TickMusic(false,false,4);
+                var sources=owner.GetComponentsInChildren<AudioSource>();var music=sources.Where(v=>v.name.Contains("-music-")).ToArray();float idle=music.Sum(v=>v.volume);
+                Assert.That(idle,Is.GreaterThan(0));
+                Invoke(legacy,"Shot",new ShotNotice(1,0,1,0,ground.Session.Pose(0).Position,Array.Empty<PelletNotice>(),WeaponId.Rifle));
+                var shot=sources.Single(v=>v.name.StartsWith("voice-")&&v.clip);Assert.That(shot.volume,Is.EqualTo(.8f).Within(.0001f));
+                Assert.That(music.Sum(v=>v.volume),Is.EqualTo(idle*.25f).Within(.0001f));shot.Stop();legacy.TickMusic(false,false,.3f);
+                Assert.That(music.Sum(v=>v.volume),Is.EqualTo(idle).Within(.0001f));Assert.That(JsonUtility.ToJson(old),Is.EqualTo(serialized));
+            }
+            finally{legacy.Dispose();UnityEngine.Object.Destroy(owner);}
+            yield return null;
+        }
+        [UnityTest] public IEnumerator OwnAndNearbyGunshotsGainForegroundOverFullVolumeMusic()
+        {
+            audio.TickMusic(false,false,4);Assert.That(audio.Music.HasOutput,Is.True);
+            foreach(int seat in new[]{0,1})
+            {
+                if(seat==1)ground.PlaceCombatReviewSeat(1,new Vector3(-6,0,2),0);
+                foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher})
+                {
+                    Clear();EffectsProfile.Set("audio.weaponGain",1);MusicProfile.Set("audio.music.combatDuckGain",1);audio.TickMusic(false,false,0);
+                    var shot=new ShotNotice(1,seat,1,0,ground.Session.Pose(seat).Position,Array.Empty<PelletNotice>(),weapon);
+                    Invoke(audio,"Shot",shot);float oldShot=Voices.Single(v=>v.clip).volume,oldMusic=MusicSources.Sum(v=>v.volume);
+                    Assert.That(oldMusic,Is.GreaterThan(0));Clear();
+                    EffectsProfile.Set("audio.weaponGain",2);MusicProfile.Set("audio.music.combatDuckGain",.25f);audio.TickMusic(false,false,0);
+                    Invoke(audio,"Shot",shot);var foreground=Voices.Single(v=>v.clip);float quietMusic=MusicSources.Sum(v=>v.volume);
+                    Assert.That(foreground.volume,Is.GreaterThan(oldShot*1.4f),weapon+" seat "+seat);
+                    Assert.That(quietMusic,Is.GreaterThan(0));Assert.That(quietMusic,Is.LessThan(oldMusic*.4f));
+                    Assert.That(foreground.volume/quietMusic,Is.GreaterThan(oldShot/oldMusic*4));
+                    if(seat==0)Assert.That(foreground.panStereo,Is.EqualTo(0).Within(.0001f));else Assert.That(foreground.panStereo,Is.GreaterThan(0));
+                    Assert.That(Voices.Count(v=>v.isPlaying),Is.EqualTo(1),"One event is mixed once; stopped pool slots do not contribute audio");
+                    Assert.That(Voices.Where(v=>v.isPlaying).Sum(v=>v.volume)+MusicSources.Where(v=>v.isPlaying).Sum(v=>v.volume),Is.LessThanOrEqualTo(1.0001f));
+                }
+            }
+            Assert.That(NativeAudioPreferences.Music(MusicProfile),Is.EqualTo(100));Assert.That(NativeAudioPreferences.Effects(EffectsProfile),Is.EqualTo(80));
+            yield return null;
+        }
+        [UnityTest] public IEnumerator DistantGunshotsDuckLessAndInaudibleShotsLeaveMusicUnchanged()
+        {
+            audio.TickMusic(false,false,4);float idle=MusicSources.Sum(v=>v.volume);Assert.That(idle,Is.GreaterThan(0));
+            float FireAt(float distance)
+            {
+                Clear();audio.TickMusic(false,false,0);var point=ground.Session.Pose(0).Position+Vector3.right*distance;
+                Invoke(audio,"Shot",new ShotNotice(1,1,1,0,point,Array.Empty<PelletNotice>(),WeaponId.Rifle));return MusicSources.Sum(v=>v.volume);
+            }
+            float near=FireAt(2),far=FireAt(20);Assert.That(near,Is.LessThan(far));Assert.That(far,Is.LessThan(idle));
+            Assert.That(FireAt(EffectsProfile.Get("audio.maxDistanceMeters")+1),Is.EqualTo(idle).Within(.0001f));
+            Assert.That(Voices.Any(v=>v.clip),Is.False);
+            yield return null;
+        }
+        [UnityTest] public IEnumerator CombatDuckingReleasesOnMusicClockAndEffectsZeroRestoreLeavesNoGhost()
+        {
+            audio.TickMusic(false,false,4);float idle=MusicSources.Sum(v=>v.volume);string track=audio.Music.TrackId;
+            Invoke(audio,"Shot",new ShotNotice(1,0,1,0,ground.Session.Pose(0).Position,Array.Empty<PelletNotice>(),WeaponId.Rifle));
+            float ducked=MusicSources.Sum(v=>v.volume);Assert.That(ducked,Is.LessThan(idle*.4f));
+            foreach(var voice in Voices)voice.Stop();
+            for(int i=0;i<10;i++)audio.UpdateVolume();Assert.That(MusicSources.Sum(v=>v.volume),Is.EqualTo(ducked).Within(.0001f),"Refresh does not advance the release clock");
+            audio.TickMusic(false,true,10);Assert.That(MusicSources.Sum(v=>v.volume),Is.Zero);
+            audio.TickMusic(false,false,0);Assert.That(MusicSources.Sum(v=>v.volume),Is.EqualTo(ducked).Within(.0001f));
+            float half=MusicProfile.Get("audio.music.combatDuckReleaseSeconds")*.5f;
+            audio.TickMusic(false,false,half);float recovering=MusicSources.Sum(v=>v.volume);
+            Assert.That(recovering,Is.GreaterThan(ducked));Assert.That(recovering,Is.LessThan(idle));
+            audio.TickMusic(false,false,half);Assert.That(MusicSources.Sum(v=>v.volume),Is.EqualTo(idle).Within(.0001f));Assert.That(audio.Music.TrackId,Is.EqualTo(track));
+            Invoke(audio,"Shot",new ShotNotice(1,0,1,0,ground.Session.Pose(0).Position,Array.Empty<PelletNotice>(),WeaponId.Rifle));
+            NativeAudioPreferences.SetEffects(0);audio.UpdateVolume();Assert.That(Voices.All(v=>!v.isPlaying),Is.True);
+            Assert.That(MusicSources.Sum(v=>v.volume),Is.EqualTo(idle).Within(.0001f));
+            NativeAudioPreferences.SetEffects(80);Invoke(audio,"Shot",new ShotNotice(1,0,1,0,ground.Session.Pose(0).Position,Array.Empty<PelletNotice>(),WeaponId.Rifle));
+            ground.Session.Restore(ground.Session.Capture());audio.TickMusic(false,false,0);Assert.That(MusicSources.Sum(v=>v.volume),Is.EqualTo(idle).Within(.0001f));
+            yield return null;
+        }
+        [UnityTest] public IEnumerator NearbyCutterDucksMusicForSustainAndSharedCombatMixStaysBounded()
+        {
+            audio.TickMusic(false,false,4);float idle=MusicSources.Sum(v=>v.volume);
+            var snap=ground.Session.Capture();snap.Beams[1].Active=true;snap.Beams[1].EmissionSeconds=1;
+            snap.Beams[1].Origin=new Vector3(10,0,2);snap.Beams[1].Endpoint=ground.Session.Pose(0).Position;
+            ground.Session.Restore(snap);audio.TickMusic(false,false,0);for(int i=0;i<5;i++)audio.Tick(true);
+            var cutter=root.Find("cutter-1").GetComponent<AudioSource>();Assert.That(cutter.isPlaying,Is.True);Assert.That(cutter.volume,Is.GreaterThan(.3f));
+            Assert.That(MusicSources.Sum(v=>v.volume),Is.LessThan(idle*.4f));
+            for(int i=0;i<Voices.Length;i++)Invoke(audio,"Shot",new ShotNotice(1,0,1,0,ground.Session.Pose(0).Position,Array.Empty<PelletNotice>(),WeaponId.Rifle));
+            Assert.That(Voices.Sum(v=>v.volume)+cutter.volume+MusicSources.Sum(v=>v.volume),Is.LessThanOrEqualTo(1.0001f));
+            Assert.That(MusicSources.Sum(v=>v.volume),Is.GreaterThan(0));
+            NativeAudioPreferences.SetMusic(0);audio.UpdateVolume();float effectsOnly=Voices.Sum(v=>v.volume)+cutter.volume;
+            Assert.That(MusicSources.Sum(v=>v.volume),Is.Zero);Assert.That(effectsOnly,Is.EqualTo(.8f).Within(.0001f));
             yield return null;
         }
         [UnityTest] public IEnumerator MovingRocketLoopUsesPositionAndStopsOnPauseRestoreMute()

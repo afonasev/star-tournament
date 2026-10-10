@@ -7,12 +7,23 @@ namespace StarTournament.ProvingGround
         internal const float DefaultMusicBalanceGain=.32f;
         internal static float MusicBalanceGain(ProvingProfile profile)=>profile.Descriptor("audio.music.balanceGain")==null?DefaultMusicBalanceGain:profile.Get("audio.music.balanceGain");
 
+        internal const float DefaultCombatMusicDuckGain=.25f;
+        internal const float DefaultCombatMusicDuckReleaseSeconds=.3f;
+        internal const float DefaultCombatMusicDuckReferenceGain=.3f;
+        internal static float CombatMusicDuckGain(ProvingProfile profile)=>profile.Descriptor("audio.music.combatDuckGain")==null?DefaultCombatMusicDuckGain:profile.Get("audio.music.combatDuckGain");
+        internal static float CombatMusicDuckReleaseSeconds(ProvingProfile profile)=>profile.Descriptor("audio.music.combatDuckReleaseSeconds")==null?DefaultCombatMusicDuckReleaseSeconds:profile.Get("audio.music.combatDuckReleaseSeconds");
+
+        internal static float CombatMusicDuckReferenceGain(ProvingProfile profile)=>profile.Descriptor("audio.music.combatDuckReferenceGain")==null?DefaultCombatMusicDuckReferenceGain:profile.Get("audio.music.combatDuckReferenceGain");
+
         // round-music-v1 tuning lives in the named proving-ground presentation registry.
         void AddRoundMusicDescriptors()
         {
             void V(string key,string label,string description,string unit,float min,float max,float step,float value)=>Add("audio.music."+key,"music",label,description,unit,min,max,step,value);
             V("gain","Уровень игрового музыкального микса","Уровень музыки до пользовательской громкости; общий микс музыки и эффектов нормализуется без перегрузки.","ratio",0,1,.05f,.55f);
             V("balanceGain","Музыка относительно эффектов","Дополнительный уровень обеих музыкальных тем относительно эффектов; 0.32 снижает музыку примерно на 10 дБ без изменения сохранённых регуляторов.","ratio",0,1,.01f,DefaultMusicBalanceGain);
+            V("combatDuckGain","Музыка во время стрельбы","Минимальная доля уровня музыки под слышимыми выстрелами и резаком; далёкие и тихие эффекты приглушают её слабее. 1 отключает приглушение.","ratio",.1f,1,.05f,DefaultCombatMusicDuckGain);
+            V("combatDuckReferenceGain","Порог приглушения музыки","Уровень слышимого боевого эффекта после пользовательской громкости, при котором музыка достигает минимальной доли; более тихие и дальние эффекты приглушают её пропорционально слабее.","ratio",.05f,1,.05f,DefaultCombatMusicDuckReferenceGain);
+            V("combatDuckReleaseSeconds","Возврат музыки после стрельбы","Время плавного восстановления музыки от максимального приглушения после окончания слышимых боевых эффектов.","seconds",.05f,2,.05f,DefaultCombatMusicDuckReleaseSeconds);
             V("transitionBeats","Плавность музыкального перехода","Длительность перехода в долях текущего темпа; ограничивается доступной длиной петли.","beats",1,8,1,4);
             V("finishSeconds","Хвост завершения музыки","Время затухания при завершении матча.","seconds",.2f,5,.1f,2);
             // menu-music-v1: user selected the four-second comparison, 2026-10-04.

@@ -1,0 +1,13 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=NativeMusicTests;NativeAudioSpatialTests
+lab_history=/Users/eaafonasev/.codex/worktrees/combat-music-mix/star-tournament/unity/../.local/unity-evidence/focused-editmode.TQC5Az/qa-lab-history.json
+revision=ccfd8c1740763f7f55763e58ada7a10ada8da767
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs
+ M Assets/StarTournament/Runtime/NativeGameAudio.cs
+ M Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs
+ M Assets/StarTournament/Tests/PlayMode/ApprovedSpatialAudioTests.cs
+?? ../docs/tasks/46-combat-music-mix.md

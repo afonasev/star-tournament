@@ -32,7 +32,8 @@ namespace StarTournament.ProvingGround
         float[] voiceGain,voiceBaseGain;
         Vector3[] voicePosition;
         int[] voiceParticipant;
-        bool[] voiceFeedback;
+        bool[] voiceFeedback,voiceCombat;
+        float combatMusicGain=1;
         AudioSource[] rocketSources;
         uint[] rocketIds;
         float[] rocketGain;
@@ -105,7 +106,7 @@ namespace StarTournament.ProvingGround
             if(voices!=null&&voices.Length==count)return;
             if(voices!=null)foreach(var voice in voices)if(voice)UnityEngine.Object.Destroy(voice.gameObject);
             if(rocketSources!=null)foreach(var rocket in rocketSources)if(rocket)UnityEngine.Object.Destroy(rocket.gameObject);
-            voices=new AudioSource[count];voiceGain=new float[count];voiceBaseGain=new float[count];voicePosition=new Vector3[count];voiceParticipant=new int[count];voiceFeedback=new bool[count];nextVoice=0;
+            voices=new AudioSource[count];voiceGain=new float[count];voiceBaseGain=new float[count];voicePosition=new Vector3[count];voiceParticipant=new int[count];voiceFeedback=new bool[count];voiceCombat=new bool[count];nextVoice=0;
             rocketSources=new AudioSource[count];rocketIds=new uint[count];rocketGain=new float[count];
             for(int i=0;i<count;i++){rocketSources[i]=Source("rocket-flight-"+i);rocketSources[i].clip=clips["rocket-flight"];rocketSources[i].loop=true;}
             for(int i=0;i<count;i++)voices[i]=Source("voice-"+i);
@@ -134,26 +135,42 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}
         }
         public void SetDiagnosticMute(bool value){muted=value;if(value)StopEffects();UpdateVolume();}
-        public void TickMusic(bool inMenu,bool suspended,float dt){musicScene.Tick(inMenu,session?.Match,musicProfile,suspended,dt);UpdateVolume();}
+        public void TickMusic(bool inMenu,bool suspended,float dt)
+        {
+            musicScene.Tick(inMenu,session?.Match,musicProfile,suspended,dt);
+            if(!suspended)
+            {
+                float floor=ProvingProfile.CombatMusicDuckGain(musicProfile);
+                combatMusicGain=Mathf.MoveTowards(Mathf.Max(floor,combatMusicGain),1,Mathf.Max(0,dt)*(1-floor)/ProvingProfile.CombatMusicDuckReleaseSeconds(musicProfile));
+            }
+            UpdateVolume();
+        }
         public void SuspendMusic(){musicScene.SetSuspended(true);UpdateVolume();}
-        public void StopEffects(){damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
+        public void StopEffects(){combatMusicGain=1;damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
         public void UpdateVolume()
         {
             float volume=EffectsVolume;
             if(volume==0){StopEffects();uiSource.Stop();musicScene.UpdateVolume(muted?0:NativeAudioPreferences.Music(profile)/100f,1);return;}
-            float sum=0;
+            float sum=0,combatStrength=0;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying&&voiceParticipant[i]>=0)
             {var mix=Spatial(voicePosition[i],voiceParticipant[i]);voiceGain[i]=voiceBaseGain[i]*mix.Gain;voices[i].panStereo=mix.Pan;}
             if(uiSource.isPlaying)sum+=uiGain;
             if(damageBonusSource.isPlaying)sum+=damageBonusGain;
-            for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying)sum+=voiceGain[i];
-            for(int i=0;i<beams.Length;i++)if(beams[i].isPlaying)sum+=beamGain[i];
+            for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying)
+            {sum+=voiceGain[i];if(voiceCombat[i])combatStrength=Mathf.Max(combatStrength,voiceGain[i]*volume);}
+            for(int i=0;i<beams.Length;i++)if(beams[i].isPlaying)
+            {sum+=beamGain[i];combatStrength=Mathf.Max(combatStrength,beamGain[i]*volume);}
             for(int i=0;i<rocketSources.Length;i++)if(rocketSources[i].isPlaying)sum+=rocketGain[i];
             // Preserve the previous SFX-only mix, then normalize its budget together with music.
             // Foreground effects stay stronger under load without completely erasing the theme.
             float scale=volume*Mathf.Min(1,1/Mathf.Max(1,sum));
             float musicVolume=muted?0:NativeAudioPreferences.Music(profile)/100f;
-            float musicBudget=musicScene.RequestedVolume(musicVolume);
+            // Audible foreground weapons lower music, weighted by listener distance and user SFX level.
+            // Release uses the music clock; volume refreshes never invent elapsed time.
+            float duckFloor=ProvingProfile.CombatMusicDuckGain(musicProfile);
+            combatMusicGain=Mathf.Clamp(combatMusicGain,duckFloor,1);
+            combatMusicGain=Mathf.Min(combatMusicGain,Mathf.Lerp(1,duckFloor,Mathf.Clamp01(combatStrength/ProvingProfile.CombatMusicDuckReferenceGain(musicProfile))));
+            float musicBudget=musicScene.RequestedVolume(musicVolume)*combatMusicGain;
             float attenuation=musicBudget>0?1/Mathf.Max(1,sum*scale+musicBudget):1;
             scale*=attenuation;
             for(int i=0;i<voices.Length;i++)voices[i].volume=voiceGain[i]*scale;
@@ -179,7 +196,7 @@ namespace StarTournament.ProvingGround
         {
             PlayAt(clip,gain,participant,session!=null&&participant>=0?session.Pose(participant).Position:Vector3.zero,pitch);
         }
-        void PlayAt(AudioClip clip,float baseGain,int participant,Vector3 point,float pitch=1,bool feedback=false)
+        void PlayAt(AudioClip clip,float baseGain,int participant,Vector3 point,float pitch=1,bool feedback=false,bool combat=false)
         {
             if(clip==null||EffectsVolume<=0)return;
             var mix=participant>=0?Spatial(point,participant):new AudioSpatialMix(1,0);
@@ -205,7 +222,7 @@ namespace StarTournament.ProvingGround
             }
             int slot=Array.IndexOf(voices,source);
             source.Stop();source.clip=clip;source.pitch=pitch;source.panStereo=mix.Pan;
-            voiceFeedback[slot]=feedback;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
+            voiceFeedback[slot]=feedback;voiceCombat[slot]=combat;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
         }
         void PlayMovement(string name,float gain,int participant)
         {
@@ -243,11 +260,12 @@ namespace StarTournament.ProvingGround
         }
         void Shot(ShotNotice shot)
         {
+            float gain=ProvingProfile.WeaponAudioGain(profile);
             switch(shot.Weapon)
             {
-                case WeaponId.Rifle:PlayAt(Bank("rifle"),1,shot.Shooter,shot.Origin);break;
-                case WeaponId.Shotgun:PlayAt(Bank("shotgun"),1,shot.Shooter,shot.Origin);break;
-                case WeaponId.RocketLauncher:PlayAt(clips["rocket"],1,shot.Shooter,shot.Origin);break;
+                case WeaponId.Rifle:PlayAt(Bank("rifle"),gain,shot.Shooter,shot.Origin,combat:true);break;
+                case WeaponId.Shotgun:PlayAt(Bank("shotgun"),gain,shot.Shooter,shot.Origin,combat:true);break;
+                case WeaponId.RocketLauncher:PlayAt(clips["rocket"],gain,shot.Shooter,shot.Origin,combat:true);break;
                 // Cutter attack is the ramp of the accepted loop, not an old one-shot.
             }
         }
@@ -280,7 +298,7 @@ namespace StarTournament.ProvingGround
                 if(composition.ParticipantAt(seat)==participant)
                 {PlayAt(clips["weapon-ready"],ProvingProfile.WeaponReadyAudioGain(profile),participant,session.Pose(participant).Position,feedback:true);break;}
         }
-        void Explosion(RocketExplosion explosion)=>PlayAt(clips["explosion"],1,explosion.Rocket.Owner,explosion.Position);
+        void Explosion(RocketExplosion explosion)=>PlayAt(clips["explosion"],1,explosion.Rocket.Owner,explosion.Position,combat:true);
         void DamageBonusSpawn()=>PlayDamageBonus("damage-bonus-spawn",profile.Get("audio.damageBonusSpawnGain"));
         void PlayDamageBonus(string name,float gain)
         {
@@ -324,7 +342,7 @@ namespace StarTournament.ProvingGround
                 if(active)beamMix[i]=Spatial(state.Origin,i,state.Endpoint);
                 var mix=beamMix[i];
                 beamEnvelope[i]=Mathf.MoveTowards(beamEnvelope[i],active?1:0,Time.fixedDeltaTime/(active?.055f:.14f));
-                beamGain[i]=beamEnvelope[i]*mix.Gain*.55f;beam.panStereo=mix.Pan;
+                beamGain[i]=beamEnvelope[i]*mix.Gain*.55f*ProvingProfile.WeaponAudioGain(profile);beam.panStereo=mix.Pan;
                 if(active&&!beam.isPlaying&&beam.clip!=null)beam.Play();
                 if(!active&&beamEnvelope[i]<=0&&beam.isPlaying)beam.Stop();
             }

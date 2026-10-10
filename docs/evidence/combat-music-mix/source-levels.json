@@ -1,0 +1,72 @@
+{
+  "baseline": "ccfd8c17",
+  "scope": "Selected unchanged PCM source clips, first up to five seconds; diagnostic only, not gameplay listening acceptance.",
+  "measurements": [
+    {
+      "resource": "rifle-0",
+      "sampled_first_seconds": 0.421,
+      "peak_dbfs": -8.47776973629491,
+      "loudest_50ms_rms_dbfs": -21.26046291479588
+    },
+    {
+      "resource": "rifle-1",
+      "sampled_first_seconds": 0.421,
+      "peak_dbfs": -6.627668585361138,
+      "loudest_50ms_rms_dbfs": -21.258880507464085
+    },
+    {
+      "resource": "rifle-2",
+      "sampled_first_seconds": 0.421,
+      "peak_dbfs": -6.665843372498731,
+      "loudest_50ms_rms_dbfs": -21.260002460084703
+    },
+    {
+      "resource": "rifle-3",
+      "sampled_first_seconds": 0.421,
+      "peak_dbfs": -7.530319894055885,
+      "loudest_50ms_rms_dbfs": -21.258229861630795
+    },
+    {
+      "resource": "shotgun-0",
+      "sampled_first_seconds": 1.0343541666666667,
+      "peak_dbfs": -0.9155032481583973,
+      "loudest_50ms_rms_dbfs": -11.748155790839084
+    },
+    {
+      "resource": "rocket",
+      "sampled_first_seconds": 0.55,
+      "peak_dbfs": -11.047415486357817,
+      "loudest_50ms_rms_dbfs": -16.63111638895418
+    },
+    {
+      "resource": "cutter-loop",
+      "sampled_first_seconds": 3.97,
+      "peak_dbfs": -10.816002010419917,
+      "loudest_50ms_rms_dbfs": -21.687881322123776
+    },
+    {
+      "resource": "Music/01-orbit-0",
+      "sampled_first_seconds": 5,
+      "peak_dbfs": -12.250456778849102,
+      "loudest_50ms_rms_dbfs": -19.41180504919973
+    },
+    {
+      "resource": "Music/02-reactor-0",
+      "sampled_first_seconds": 5,
+      "peak_dbfs": -1.733995728068346,
+      "loudest_50ms_rms_dbfs": -10.904989844782332
+    },
+    {
+      "resource": "Music/03b-vector-cinematic-0",
+      "sampled_first_seconds": 5,
+      "peak_dbfs": -6.126207978063691,
+      "loudest_50ms_rms_dbfs": -15.169101936507287
+    },
+    {
+      "resource": "Music/04-supernova-0",
+      "sampled_first_seconds": 5,
+      "peak_dbfs": -7.549896228547147,
+      "loudest_50ms_rms_dbfs": -14.75009975022976
+    }
+  ]
+}

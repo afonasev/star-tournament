@@ -1,0 +1,47 @@
+{
+  "baseline": "ccfd8c17",
+  "editmode_passed": 15,
+  "editmode_duration": 43.2991537,
+  "playmode_distinct_passed": 24,
+  "initial_playmode": {
+    "passed": 23,
+    "failed": 1,
+    "duration": 113.3819385
+  },
+  "corrected_playmode": {
+    "passed": 1,
+    "failed": 0,
+    "duration": 22.0042737
+  },
+  "initial_compile": "NotRun (test notice arguments corrected)",
+  "runtime_changed_between_passing_runs": false,
+  "cases": {
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.CombatDuckingReleasesOnMusicClockAndEffectsZeroRestoreLeavesNoGhost": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.CutterAttackSustainAndReleaseFollowLiveBeamWithoutRestart": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.DeathGainBoostsOwnAndNearbyDeathsButKeepsSpatialRangeAndMute": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.DeathSurvivesSaturatedShotPoolAndMixRemainsBounded": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.DistantGunshotsDuckLessAndInaudibleShotsLeaveMusicUnchanged": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.EveryWeaponGetsOneLocalReadyCueOnlyAtTheEndOfItsSwitch": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.HistoricalCombatMixDefaultsWorkWithoutRewritingTheSavedProfile": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.HitsDeathAndPickupUseApprovedBanksAndAudience": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.MovingRocketLoopUsesPositionAndStopsOnPauseRestoreMute": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.NearbyCutterDucksMusicForSustainAndSharedCombatMixStaysBounded": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.OwnAndNearbyGunshotsGainForegroundOverFullVolumeMusic": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.SharedOutputDoesNotMultiplyShotsAndBeamUsesEndpoint": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.SplitScreenWeaponReadyIsEmittedOnceForTheSwitchingSeat": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.WeaponReadyHasNoGhostsFromRestoreDeathEmptyAmmoOrMute": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.WeaponReadyWaitsForExistingTargetCooldownAndPrecedesFirstHeldRifleShot": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.ConfirmedRifleShotSelectsTheChosenRuntimeClip": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.MouseHoverIsSilentButGamepadNavigationStillSounds": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.MovementBanksVaryWithoutRepeatingAndWeaponReuseResetsPitch": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests.HistoricalReleaseWithoutBalanceDescriptorUsesCorrectedMix": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests.MenuLoopsTransitionsFreezeReverseAndCoalesceWithoutAdditionalVoices": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests.MusicBalanceAppliesToMenuRoundAndCrossfadeWithoutChangingUserSliders": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests.PausedOrFinishedRoundReturnsFromSilenceAndNewMatchNeverInheritsOldEnvelope": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRoundMusicTests.MusicIsIndependentOfEffectsAndPauseMuteMenuAndRepeatHaveOneOutput": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRoundMusicTests.ProgressLoopsPauseRestoreOvertimeAndFinishPreserveOneTrack": "Passed"
+  },
+  "no_full_tests": true,
+  "no_player_build": true,
+  "no_deploy": true
+}
