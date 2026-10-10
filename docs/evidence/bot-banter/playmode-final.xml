@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.1141915">
+  <test-suite type="TestSuite" id="1344" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="275" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.114192" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1336" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/bot-banter/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="275" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.108716" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="40623" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1337" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="275" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.107662" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1338" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="275" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.106753" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1339" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="275" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.105786" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1340" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="220" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.104281" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1086" name="BotBanterIntegrationTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests" classname="StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.099828" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1087" name="ActualAttackDamageOrderingAndSnapshotRemainIndependent" fullname="StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests.ActualAttackDamageOrderingAndSnapshotRemainIndependent" methodname="ActualAttackDamageOrderingAndSnapshotRemainIndependent" classname="StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests" runstate="Runnable" seed="329640743" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:49:39Z" duration="0.074147" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1088" name="HudOneToFourViewsPauseRestoreRepeatAndLayout" fullname="StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests.HudOneToFourViewsPauseRestoreRepeatAndLayout" methodname="HudOneToFourViewsPauseRestoreRepeatAndLayout" classname="StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests" runstate="Runnable" seed="566148969" result="Passed" start-time="2026-10-10 09:49:39Z" end-time="2026-10-10 09:50:05Z" duration="26.019472" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: validating history in memory
+Lab startup: history ready in 13.87 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

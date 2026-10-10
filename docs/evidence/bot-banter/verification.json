@@ -1,0 +1,94 @@
+{
+  "baseline": "ccfd8c1740763f7f55763e58ada7a10ada8da767",
+  "checks": [
+    {
+      "artifact": "editmode.xml",
+      "id": "2",
+      "testcasecount": "21",
+      "result": "Passed",
+      "total": "21",
+      "passed": "21",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-10 09:46:28Z",
+      "end-time": "2026-10-10 09:46:28Z",
+      "duration": "0.0401616"
+    },
+    {
+      "artifact": "playmode-initial.xml",
+      "id": "2",
+      "testcasecount": "5",
+      "result": "Passed",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-10 09:47:28Z",
+      "end-time": "2026-10-10 09:48:07Z",
+      "duration": "38.4747791"
+    },
+    {
+      "artifact": "playmode-final.xml",
+      "id": "2",
+      "testcasecount": "2",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-10 09:49:39Z",
+      "end-time": "2026-10-10 09:50:05Z",
+      "duration": "26.1141915"
+    }
+  ],
+  "source_sha256": {
+    "Runtime/Core/BotBanter.cs": "15664cf6715164b7c9141e4ac0d2afaae9ea46e1145346b2742ff8c114ab93a1",
+    "Runtime/NativeBotBanter.cs": "a032e688902fc5bf54e33495a89067405201fcf415787024891c82939fe0786e",
+    "Runtime/ProvingGroundBotBanter.cs": "e8decb71b58640574fa9ae5702d18632611395f5e0dbbe2cef061eebffa4bea1",
+    "Runtime/NativeCombatSession.cs": "68c96f52ab9585543763effa04e196cdba48ef9ba625647fe9f54faec13e7a84",
+    "Runtime/ProvingGround.cs": "98ec2fb167c0abec80ca08fbcf2680c6572dca2b176c982886e0a50fece54813",
+    "Tests/EditMode/BotBanterTests.cs": "10ccdf9b6bbc4fcc1c60a64cfad1d4f50d8abb7f530d1798101955c63cfa723c",
+    "Tests/PlayMode/BotBanterIntegrationTests.cs": "b72642898178484d1f8463c94d6359fdbe562523e0769c2c48cb608bf52dc37d"
+  },
+  "screenshots": "Editor UI-only renders at1920x1080, native HUD1–4 views; not Player/device acceptance",
+  "not_run": [
+    "full suite",
+    "Player build",
+    "release/deployment",
+    "human gameplay/TV acceptance"
+  ],
+  "integration": {
+    "main_before": "b003ac65c0ab8550a67ce003b7063cd27aa2f6ef",
+    "tested_commit": "8db4d69559790a47c3fdf1829a8373ec99af75ed",
+    "filter": "BotBanterIntegrationTests;DamageBonusAlertTests",
+    "artifact": "playmode-integration.xml",
+    "result": {
+      "id": "2",
+      "testcasecount": "3",
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-10 09:52:01Z",
+      "end-time": "2026-10-10 09:52:36Z",
+      "duration": "35.4144906"
+    }
+  }
+}
