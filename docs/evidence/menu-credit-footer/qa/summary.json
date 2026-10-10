@@ -1,0 +1,8 @@
+{
+  "runtime_revision": "93a5644f",
+  "final_fixture_revision": "88c5698e",
+  "ui_gate": "16/16 passed",
+  "affected_graphics": "8/9 initial; single footer scenario passed after decisive results fixture; latest 9/9",
+  "screenshots": "11 actual Canvas captures inspected; all footers visible and no overlap",
+  "build_Player_release_deploy": "deferred"
+}
