@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
         }
         public static NativeMatchComposition Mixed(int humans,bool teams=false)
@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(int humans in new[]{4,1,3,4})
             {
                 ground.StartParticipantReview(Mixed(humans,humans==3));yield return null;yield return new WaitForFixedUpdate();yield return null;
-                Assert.That(ground.Running,Is.True,"Eight-participant placement must succeed");
+                yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Eight-participant placement must succeed");
                 Assert.That(ground.Session.ParticipantCount,Is.EqualTo(8));Assert.That(ground.Composition.ParticipantAt(0),Is.EqualTo(7));
                 Assert.That(InputSystem.devices.Count,Is.EqualTo(devices),"Nonlocal actors have no fake devices");
                 Assert.That(ground.GetComponentsInChildren<CharacterController>().Count(c=>c.enabled),Is.EqualTo(8));
@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.GetComponentsInChildren<TrooperVisual>(true).Count(v=>v.name=="trooper-view"),Is.EqualTo(humans));
                 Assert.That(ground.GetComponentsInChildren<Camera>().First(c=>c.name=="seat-camera-1").rect,Is.EqualTo(LocalSeatLayout.Viewport(humans,0)));
                 var snapshot=JsonUtility.ToJson(ground.Composition.Read());var old=ground.Session;
-                ground.Profile.Set("camera.fieldOfViewDegrees",100);Button("Повторить матч").onClick.Invoke();yield return null;
+                ground.Profile.Set("camera.fieldOfViewDegrees",100);Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
                 Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(snapshot));
                 Assert.That(ground.Session.Match.Read().Standings,Has.Length.EqualTo(8));
                 Assert.That(ground.GetComponentsInChildren<Camera>(true).Length,Is.EqualTo(humans));
@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator SeatZeroInputMovesParticipantSevenAndNonlocalKillerOwnsKillcam()
         {
             yield return Load();pad=InputSystem.AddDevice<Gamepad>();ground.StartParticipantReview(Mixed(1),new InputDevice[]{pad});yield return null;
-            Assert.That(ground.Running,Is.True);ground.PlaceCombatReviewSeat(7,new Vector3(0,0,-8),0);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);ground.PlaceCombatReviewSeat(7,new Vector3(0,0,-8),0);
             yield return new WaitForFixedUpdate();var before=ground.Session.Pose(7).Position;var other=ground.Session.Pose(0).Position;
             InputSystem.QueueStateEvent(pad,new GamepadState{leftStick=Vector2.right});yield return null;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();
             Assert.That(ground.Session.Pose(7).Position.x,Is.GreaterThan(before.x));Assert.That(ground.Session.Pose(0).Position.x,Is.EqualTo(other.x));
@@ -87,7 +87,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>().text,Does.Contain("Invalid"));
                 Assert.That(ground.GetComponentsInChildren<CharacterController>().Length,Is.EqualTo(ground.LocalSeatCount));
                 item.Item1.Set(item.Item2,original);ground.StartParticipantReview(Mixed(1));yield return null;
-                Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ParticipantCount,Is.EqualTo(8));
+                yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ParticipantCount,Is.EqualTo(8));
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,2);yield return null;
             }
         }

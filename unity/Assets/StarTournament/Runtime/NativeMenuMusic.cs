@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround
         bool paused=true;
         public bool Paused=>paused;
         public float GainSum=>weights[0]+weights[1];
-        public void Configure(ProvingProfile profile){gain=profile.Get("audio.music.gain");}
+        public void Configure(ProvingProfile profile){gain=profile.Get("audio.music.gain")*ProvingProfile.MusicBalanceGain(profile);}
         public NativeMenuMusic(Transform parent,ProvingProfile profile)
         {
             var text=Resources.Load<TextAsset>("Audio/Music/menu-manifest");
@@ -29,7 +29,7 @@ namespace StarTournament.ProvingGround
             clip=Resources.Load<AudioClip>(manifest.resource);
             if(clip==null||manifest.loopStart<manifest.loopFadeSeconds||manifest.loopEnd>=clip.length||manifest.loopFadeSeconds<=0)
             {Debug.LogError("Invalid menu music loop");return;}
-            gain=profile.Get("audio.music.gain");
+            gain=profile.Get("audio.music.gain")*ProvingProfile.MusicBalanceGain(profile);
             for(int i=0;i<2;i++)
             {
                 var go=new GameObject("menu-music-"+i);go.transform.SetParent(parent,false);

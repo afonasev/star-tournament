@@ -10,9 +10,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault(),ProvingProfile.CreateIndustrialTunnelsPresentation(),IndustrialTunnelsCatalog.AuthoringProfile(),ProvingProfile.CreateLunarPresentation(),LunarLaboratoryCatalog.AuthoringProfile()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault(),ProvingProfile.CreateIndustrialTunnelsPresentation(),IndustrialTunnelsCatalog.AuthoringProfile(),ProvingProfile.CreateLunarPresentation(),LunarLaboratoryCatalog.AuthoringProfile(),ProvingProfile.CreateHitFeedbackDefault()}};
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [TestCase(13)][TestCase(14)]public void SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(int previousVersion)
+        {
+            var prior=typeof(ProvingProfile).GetMethod(previousVersion==14?"BeforeSmoothGamepadTap":"BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мой LT");
+            var draft=history.Selected.Snapshot;draft.Set("input.gamepadReturnDelay",1.2f);history.Save(draft);
+            var previous=history.Selected;
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadReturnDelay"),Is.EqualTo(1.2f));
+            Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadTapAimSmoothingSeconds"),Is.EqualTo(.18f));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
+        }
         [Test]public void StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation()
         {
             var shipped=Shipped();shipped.Profiles.Insert(14,ProvingProfile.CreateBotEvaluationDefault());
@@ -33,6 +45,30 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(restarted.SelectedProfileName,Is.EqualTo("Сохранённые настройки"));
             Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Hash));
             Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==originalRevision.Number).Hash,Is.EqualTo(originalRevision.Hash));
+        }
+        [Test]public void SerializedBotProfileDefaultsUpgradeWhileCustomValuesRemain()
+        {
+            var prior=typeof(ProvingProfile).GetMethod("BeforeBotCombatMovement",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var profile=(ProvingProfile)prior.Invoke(ProvingProfile.CreateBotBehaviorDefault(),null);profile.Set("bots.hard.jumpChance",.4f);
+            profile.EnsureBotDescriptors();Assert.That(profile.Version,Is.EqualTo(4));Assert.That(profile.Validate(),Is.Empty);
+            Assert.That(profile.Get("bots.easy.jumpChance"),Is.Zero);Assert.That(profile.Get("bots.normal.jumpChance"),Is.EqualTo(.3f));
+            Assert.That(profile.Get("bots.hard.jumpChance"),Is.EqualTo(.4f));Assert.That(profile.Get("bots.hard.surpriseJumpChance"),Is.EqualTo(.9f));
+            profile.EnsureBotDescriptors();Assert.That(profile.Get("bots.hard.jumpChance"),Is.EqualTo(.4f));
+        }
+        [Test]public void BotMovementUpgradePreservesOldHashesCustomTuningAndNewDefaults()
+        {
+            var prior=typeof(ProvingProfile).GetMethod("BeforeBotCombatMovement",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мои боты");var draft=history.Selected.Snapshot;draft.Set("bots.hard.jumpChance",.4f);history.Save(draft);
+            var previous=history.Selected;string original=JsonUtility.ToJson(previous.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped(),releases:LabReleaseCatalog.Factory(old),resetToLatestDefault:true);
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("bots.easy.jumpChance"),Is.Zero);
+            Assert.That(upgraded.Selected.Snapshot.Get("bots.hard.jumpChance"),Is.EqualTo(.55f));
+            var local=upgraded.Profiles.Single(p=>p.Name=="Мои боты");var preserved=local.Revisions.Single(r=>r.Number==previous.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(previous.Hash));Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(original));
+            Assert.That(local.Revisions.Last().Snapshot.Get("bots.hard.jumpChance"),Is.EqualTo(.4f));
+            Assert.That(local.Revisions.Last().Snapshot.Get("bots.hard.surpriseJumpChance"),Is.EqualTo(.9f));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors()
         {

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -35,9 +36,19 @@ namespace StarTournament.ProvingGround
             labSavedIdentity=labHistory.SelectedProfileName+" · "+revision.Label+"\n"+labHistory.SelectedProfileId+"\nSHA256 "+revision.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,HitFeedbackProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
-        void InitializeDesignLab()
+        CancellationTokenSource historyCancellation;
+        Task<DesignLabHistory> historyLoading;
+        void CancelHistoryLoading()
+        {
+            var cancellation=historyCancellation;if(cancellation==null)return;
+            historyCancellation=null;cancellation.Cancel();
+            var pending=historyLoading;historyLoading=null;
+            if(pending==null){cancellation.Dispose();return;}
+            pending.ContinueWith(done=>{var observed=done.Exception;cancellation.Dispose();},TaskScheduler.Default);
+        }
+        IEnumerator InitializeDesignLabAsync()
         {
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
             BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();
@@ -57,7 +68,15 @@ namespace StarTournament.ProvingGround
             // Startup selects the packaged Default; compatibility snapshots are validated
             // in memory. Persist them with the next explicit Lab mutation, not a full history
             // rewrite while the splash screen blocks the player.
-            labHistory=new DesignLabHistory(historyPath,CurrentLabBundle(),releases:LabReleaseCatalog.Load(),resetToLatestDefault:true,persistMigration:false);
+            var shipped=CurrentLabBundle().Clone();
+            var releases=LabReleaseCatalog.Load();
+            var cancellation=new CancellationTokenSource();historyCancellation=cancellation;
+            var token=cancellation.Token;
+            var pending=Task.Run(()=>new DesignLabHistory(historyPath,shipped,releases:releases,resetToLatestDefault:true,persistMigration:false,cancellationToken:token),token);
+            historyLoading=pending;
+            while(!pending.IsCompleted)yield return null;
+            try{labHistory=pending.GetAwaiter().GetResult();}
+            finally{historyCancellation=null;historyLoading=null;cancellation.Dispose();}
             Debug.Log("Lab startup: history ready in "+startupWatch.Elapsed.TotalSeconds.ToString("F2",CultureInfo.InvariantCulture)+" seconds");
             Application.wantsToQuit+=ProtectLabQuit;
             labBaseline=labHistory.Selected.Snapshot;labDraft=labBaseline.Clone();CacheLabIdentity();ApplySavedLabRevision();
@@ -82,6 +101,7 @@ namespace StarTournament.ProvingGround
             {
                 case "tunnel-light":return "Тоннели → Свет";case "tunnel-surface":return "Тоннели → Поверхности";
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
+                case "hit-reaction":return "Оформление → Реакция на попадание";case "hit-body-blood":return "Оформление → Кровь на бойце";case "hit-shield":return "Оформление → Вспышки щита";
                 case "cutter-effects":return "Оружие → Резак · оформление";case "cutter-bots":return "Боты → Резак";case "cutter":return "Оружие → Резак";case "rocket-effects":return "Оружие → Pulse · оформление";case "rocket":return "Оружие → Pulse";case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
                 case "weapon-pickup":return "Бонусы → Оружие";case "full-heal":return "Бонусы → Полное исцеление";case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";
                 case "pickups":return "Бонусы → Подбор";case "combat":return "Игрок → Здоровье";case "motor":return "Игрок → Движение";
@@ -141,7 +161,7 @@ namespace StarTournament.ProvingGround
         void CreateDesignLabUi(Transform parent)
         {
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
-            labBack=LabButton(labScreen.transform,"lab-back","‹ Назад",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
+            labBack=LabButton(labScreen.transform,"lab-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
             Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",21,new Vector2(.18f,.91f),new Vector2(.75f,.96f),TextAnchor.MiddleLeft,MenuGold);
             var clear=LabButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.46f,.785f),new Vector2(.56f,.83f),()=>{ResetLabDraft();RefreshLabWorkspace();});
             labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.34f,.785f),new Vector2(.45f,.83f),()=>LabOperation(()=>labHistory.Save(labDraft),true));

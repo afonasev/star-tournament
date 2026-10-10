@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             directory=Path.Combine(Path.GetTempPath(),"st-lab-ui-"+Guid.NewGuid());Directory.CreateDirectory(directory);
             oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",Path.Combine(directory,"history.json"));
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
             Click("main-action-2");yield return null;
             Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("в клиенте"));
@@ -62,9 +62,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Input("input-rifle.damage").interactable,Is.True,"A local mark does not lock the separate local profile");Click("lab-clear");yield return null;
             Click("lab-back");Click("main-action-0");yield return null;Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));
             Assert.That(ground.GetComponentsInChildren<Text>().Any(t=>t.name=="setup-lab-identity"),Is.False,"Setup does not duplicate the Lab summary");Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
-            ground.StartCombatReview(new[]{pad},true,true);yield return null;Assert.That(ground.Running,Is.True);
+            ground.StartCombatReview(new[]{pad},true,true);yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             var oldSession=ground.Session;var frozen=oldSession.Capture().DesignProfile;Assert.That(frozen,Is.Not.Null);
-            typeof(ProvingGround).GetMethod("OpenDesignLab",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);Assert.That(ground.Running,Is.True,"Lab cannot open while match is running");
+            typeof(ProvingGround).GetMethod("OpenDesignLab",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Lab cannot open while match is running");
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(ground.CombatProfile));
             typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);Click("main-action-2");yield return null;Input("input-rifle.damage").text="34";Click("lab-save");yield return null;
             Assert.That(oldSession.Capture().DesignProfile.Hash,Is.EqualTo(frozen.Hash));
@@ -82,7 +82,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             string historyPath=Path.Combine(directory,"history.json");
             oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",historyPath);
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             var field=typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic);

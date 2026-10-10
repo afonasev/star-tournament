@@ -79,11 +79,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator SetupRepeatResultAndFfaRestoreKeepRosterAndIdentityCoherent()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             ground.TeamProfile.Set("spawn.initialOpponentSeparation",5.1f);
-            Assert.DoesNotThrow(()=>Button("Диагностика четырёх камер · без управления").onClick.Invoke());Assert.That(ground.Running,Is.False);
+            Assert.DoesNotThrow(()=>Button("Диагностика четырёх камер · без управления").onClick.Invoke());yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.False);
             Assert.That(ground.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("Invalid value/step")),Is.True);
             ground.TeamProfile.Set("spawn.initialOpponentSeparation",5);
             ground.SetMatchMode(NativeMatchMode.Teams);for(int i=0;i<4;i++)ground.SetTeam(i,NativeTeam.TeamA);
@@ -92,8 +92,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SetTeam(3,NativeTeam.TeamB);Button("seats-minus").onClick.Invoke();Assert.That(Button("Диагностика четырёх камер · без управления").interactable,Is.False);
             ground.SetTeam(1,NativeTeam.TeamB);
             Assert.That(ground.GetComponentsInChildren<Button>(true).Any(b=>b.name=="team-colors"),Is.False);
-            Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
-            Assert.That(ground.Running,Is.True);Assert.That(ground.Session.Match.Roster.Count,Is.EqualTo(3));
+            Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session.Match.Roster.Count,Is.EqualTo(3));
             var old=ground.Session;var roster=JsonUtility.ToJson(old.Match.Roster.Read());var expected=NativeStandingsView.TeamColor(NativeTeam.TeamA,false);
             AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),expected);AssertIdentity(ground.transform.Find("seat-camera-1/trooper-view"),expected);
             var table=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="persistent-standings");
@@ -105,11 +105,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             while(old.Match.Phase==NativeMatchPhase.Running)old.Tick(new LocalAction[3],1f/ground.Profile.Get("simulation.fixedTickHz"));
             yield return new WaitForFixedUpdate();yield return null;
             Assert.That(ground.GetComponentsInChildren<Text>(true).Any(t=>t.text.StartsWith("ПОБЕДИЛА Team A")),Is.True);
-            Button("Повторить матч").onClick.Invoke();yield return null;
+            Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(JsonUtility.ToJson(ground.Session.Match.Roster.Read()),Is.EqualTo(roster));
             Assert.That(ground.Session.Match.Read().Standings.All(r=>r.Score==0),Is.True);Assert.That(ground.Session.Life(1).Health,Is.EqualTo(100));
             AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),expected);
-            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,3);ground.SetMatchMode(NativeMatchMode.Ffa);Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
+            Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,3);ground.SetMatchMode(NativeMatchMode.Ffa);Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return null;
             Assert.That(ground.Session.Match.Roster.Mode,Is.EqualTo(NativeMatchMode.Ffa));AssertIdentity(ground.transform.Find("player-1/trooper-presentation"),NativeStandingsView.Palette[0]);
             Assert.That(table.GetComponentsInChildren<Text>().Any(t=>t.text=="Team A"||t.text=="Team B"),Is.False);
         }

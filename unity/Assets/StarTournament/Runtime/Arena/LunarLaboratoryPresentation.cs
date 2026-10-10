@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
@@ -14,6 +15,8 @@ namespace StarTournament.ProvingGround
         AmbientMode oldMode;Color oldAmbient;public int LightCount{get;private set;}
         float P(string key)=>p.Get("lunar."+key);
         public void Build(ArenaDefinition d,ProvingProfile profile)
+        { var steps=BuildSteps(d,profile);while(steps.MoveNext()){} }
+        public IEnumerator BuildSteps(ArenaDefinition d,ProvingProfile profile)
         {
             definition=d;p=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=new Color(.85f,.88f,1)*P("fill");
             cube=Primitive(PrimitiveType.Cube);cylinder=Primitive(PrimitiveType.Cylinder);sphere=Primitive(PrimitiveType.Sphere);
@@ -22,8 +25,10 @@ namespace StarTournament.ProvingGround
             ceiling=Mat("Acoustic ceiling / perforated panels",new Color(.94f,.94f,.9f),Texture("Ceiling / perforations and narrow panel joints",3));
             grate=Mat("Grating alloy without aliasing shadows",new Color(.31f,.36f,.39f),panels,.6f);paving=Mat("Dust-grey paving",new Color(.51f,.52f,.5f),panels);
             glass=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Transparent projectile-proof armored glass"};owned.Add(glass);glass.color=new Color(.39f,.66f,.72f,P("glassOpacity"));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",(float)BlendMode.SrcAlpha);glass.SetFloat("_DstBlend",(float)BlendMode.OneMinusSrcAlpha);glass.SetFloat("_ZWrite",0);glass.SetFloat("_Smoothness",.7f);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
+            int decorated=0;
             foreach(var s in d.Solids)
             {
+                if(decorated++%16==0)yield return null;
                 var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
                 renderer.sharedMaterial=s.Id.StartsWith("cargo-")?(s.Position.z>0?blue:ochre):s.Id.Contains("-bar-")?grate:s.Surface=="lunar-glass"?glass:s.Surface=="lunar-sand"?sand:(s.Surface=="lunar-graphite"||s.Surface=="lunar-light")?graphite:s.Material=="metal"||s.Surface=="lunar-step"||s.Surface=="lunar-grate"||s.Id.StartsWith("fence-")||s.Id.StartsWith("rail-")?metal:ivory;
                 if(s.Surface=="lunar-grate") {renderer.enabled=false;continue;}
@@ -45,7 +50,7 @@ namespace StarTournament.ProvingGround
                 if(s.Surface=="lunar-glass")GlassFrame(s);
                 if(s.Surface=="lunar-step")Box(ochre,s.Position+Vector3.up*(s.Size.y*.5f+.006f),new Vector3(s.Size.x,.008f,.07f));
             }
-            Architecture();RoofDetails();Zones();PickupSigns(d);CourtyardDetail();Background();Flush();
+            Architecture();yield return null;RoofDetails();yield return null;Zones();yield return null;PickupSigns(d);yield return null;CourtyardDetail();yield return null;Background();yield return null;Flush();
         }
         Mesh Primitive(PrimitiveType t){var go=GameObject.CreatePrimitive(t);var m=Instantiate(go.GetComponent<MeshFilter>().sharedMesh);DestroyImmediate(go);owned.Add(m);return m;}
         Material Mat(string name,Color c,Texture t=null,float metallic=0,bool emissive=false)

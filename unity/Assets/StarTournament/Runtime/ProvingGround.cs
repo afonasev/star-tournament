@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace StarTournament.ProvingGround
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab, HealPickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab, PulsePrefab, CutterPrefab, RocketProjectilePrefab;
         public AnimationClip[] TrooperClips;
+        public ProvingProfile HitFeedbackProfile = ProvingProfile.CreateHitFeedbackDefault();
         public ProvingProfile BloodProfile = ProvingProfile.CreateBloodDefault();
         public ProvingProfile DeathProfile = ProvingProfile.CreateDeathDefault();
         public ProvingProfile TrooperProfile = ProvingProfile.CreateTrooperDefault();
@@ -23,6 +25,7 @@ namespace StarTournament.ProvingGround
         CharacterMotor[] motors = Array.Empty<CharacterMotor>();
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
         readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount], names = new Text[SeatInputCoordinator.SeatCount];
+        public HitFeedbackPresentation HitFeedbackForReview=>presentation?.HitFeedbackForReview;
         internal RocketPresentation RocketEffectsForReview=>presentation?.RocketEffectsForReview;
         public ProvingProfile RocketEffectsProfile = ProvingProfile.CreateRocketEffectsDefault();
         public ProvingProfile CutterProfile = ProvingProfile.CreateCutterDefault();
@@ -57,7 +60,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile TeamProfile = ProvingProfile.CreateTeamDefault();
         public ProvingProfile MatchProfile = ProvingProfile.CreateMatchDefault();
         public NativeMatchConfiguration Configuration { get; private set; }
-        ProvingProfile frozenRocketEffects, frozenCutter, frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper, frozenDeath, frozenBlood;
+        ProvingProfile frozenRocketEffects, frozenCutter, frozenMovement, frozenLife, frozenCombat, frozenMatch, frozenTrooper, frozenDeath, frozenBlood, frozenHitFeedback;
         ProvingProfile previewMovement,previewLife,previewCombat,previewTrooper;
         NativeMatchConfiguration frozenConfiguration;
         NativeMatchRoster frozenRoster;
@@ -135,13 +138,14 @@ namespace StarTournament.ProvingGround
         GameObject damagePickupVisual;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
-        enum Phase { Setup, Running, Paused, Results, MainMenu, Profiles, Settings, Lab }
+        enum Phase { Loading, Setup, Running, Paused, Results, MainMenu, Profiles, Settings, Lab }
         Phase phase;
         bool diagnostic;
         bool combatReview;
         bool nativeInputReview;
         ProvingArena arena;
         GameObject overlay;
+        RectTransform resultsFrame;
         Text status;
         Button start, resume, rebind, setupBack;
         public string CombatBowlReviewDirectory;
@@ -170,7 +174,18 @@ namespace StarTournament.ProvingGround
         readonly LocalIdentitySession identities = new LocalIdentitySession();
 
         public bool Running => phase == Phase.Running;
-        void Start()
+        void Awake()
+        {
+            phase=Phase.Loading;
+            loadingScreen=NativeLoadingScreen.Create(transform);
+            loadingScreen.ShowStartup();
+        }
+        IEnumerator Start()
+        {
+            yield return null;
+            yield return RunLoadingSteps(InitializeGame(),false);
+        }
+        IEnumerator InitializeGame()
         {
             playerProfiles = new PlayerProfileCatalog(PlayerProfilesPath());
             input.Joined += OnDeviceJoined;
@@ -188,7 +203,7 @@ namespace StarTournament.ProvingGround
             RocketEffectsProfile.EnsureRocketEffectsDescriptors();
             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
-            InitializeDesignLab();
+            yield return InitializeDesignLabAsync();
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
@@ -218,14 +233,14 @@ namespace StarTournament.ProvingGround
             }
 #endif
             arena = Owned("unity-arena").AddComponent<ProvingArena>();
-            BuildSelectedArena();
+            yield return BuildSelectedArenaSteps(true);
             InitializeGraphicsPreferences();
             Composition=HumanComposition(SetupRoster(),false);
-            RebuildActors(Composition);
+            yield return RebuildActorsSteps(Composition);
             Session = new NativeCombatSession(motors, arena, gameObject.scene.GetPhysicsScene(), Profile, LifeProfile, CombatProfile,cutterProfile:CutterProfile);
             gameAudio.Bind(Session,Composition);BindDamageBonusAlerts();
             RebuildPickupVisuals();
-            presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views,deathProfile:DeathProfile,bloodProfile:BloodProfile,rocketPrefab:RocketProjectilePrefab,rocketEffects:RocketEffectsProfile);
+            presentation = new CombatPresentation(Session, Profile, CombatProfile, transform, gameObject.scene.GetPhysicsScene(), cameras, bodies, views,deathProfile:DeathProfile,bloodProfile:BloodProfile,rocketPrefab:RocketProjectilePrefab,rocketEffects:RocketEffectsProfile,hitProfile:HitFeedbackProfile);
             BindShotFeedback();
             int countFlag=Array.IndexOf(args,"-probeCameras");
             if(args.Contains("-diagnostic") && countFlag>=0 && countFlag+1<args.Length && int.TryParse(args[countFlag+1],out int count) && (count==1||count==2||count==4))
@@ -234,6 +249,7 @@ namespace StarTournament.ProvingGround
             }
             CreateInterface();
             phase=Phase.MainMenu;RefreshInterface();Select(mainBattleButton);
+            worldReady=true;IsReady=true;loadingScreen.Hide();
             Debug.Log("STAR_TOURNAMENT_MAIN_MENU_READY");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
             if(!string.IsNullOrEmpty(CombatBowlReviewDirectory))gameObject.AddComponent<NativeCombatBowlReview>();
@@ -454,14 +470,16 @@ namespace StarTournament.ProvingGround
             return new NativeMatchComposition(roster,metadata,Enumerable.Range(0,roster.Count).ToArray());
         }
         void RebuildActors(NativeMatchComposition composition,ProvingProfile movement=null,ProvingProfile trooper=null,bool activate=true)
+        { var steps=RebuildActorsSteps(composition,movement,trooper,activate);while(steps.MoveNext()){} }
+        IEnumerator RebuildActorsSteps(NativeMatchComposition composition,ProvingProfile movement=null,ProvingProfile trooper=null,bool activate=true)
         {
             movement=movement??Profile;trooper=trooper??TrooperProfile;
             localActions=new LocalAction[composition.LocalCount];
             foreach(var motor in motors)if(motor){motor.gameObject.SetActive(false);Destroy(motor.gameObject);}
             for(int s=0;s<cameras.Length;s++)if(cameras[s]){cameras[s].gameObject.SetActive(false);Destroy(cameras[s].gameObject);cameras[s]=null;views[s]=null;}
             damageTinted=new bool[composition.ParticipantCount];motors=new CharacterMotor[composition.ParticipantCount];bodies=new GameObject[motors.Length];hit=new string[motors.Length];
-            for(int p=0;p<motors.Length;p++)CreateActor(p,composition.SeatOf(p),movement,trooper);
-            for(int seat=0;seat<composition.LocalCount;seat++)CreateView(seat,composition.ParticipantAt(seat),movement,trooper);
+            for(int p=0;p<motors.Length;p++){CreateActor(p,composition.SeatOf(p),movement,trooper);yield return null;}
+            for(int seat=0;seat<composition.LocalCount;seat++){CreateView(seat,composition.ParticipantAt(seat),movement,trooper);yield return null;}
             if(activate)foreach(var motor in motors)motor.gameObject.SetActive(true);
         }
         void ApplyIdentity(GameObject root,int seat) => ApplyIdentity(root,NativeStandingsView.Palette[seat]);
@@ -473,6 +491,7 @@ namespace StarTournament.ProvingGround
         static void SetLayer(GameObject root, int layer) { foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer; }
         void Update()
         {
+            if(phase==Phase.Loading)return;
             TickDisplayConfirmation();
             UpdateSettingsBackInput();
             UpdateRosterInput();
@@ -505,6 +524,7 @@ namespace StarTournament.ProvingGround
             UpdateDesignLab();
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
+            UpdateMenuCursor();
             UpdateMenuSelectionAudio();
             bool musicMatch=phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results||
                 (phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused||settingsReturn==Phase.Results));
@@ -544,7 +564,7 @@ namespace StarTournament.ProvingGround
         }
         void LateUpdate()
         {
-            if(Session == null) return;
+            if(Session == null || phase==Phase.Loading || !worldReady) return;
             RenderArmorPickup();RenderSpeedPickup();RenderDamagePickup();RenderHealPickup();RenderWeaponPickups();
             for(int p=0;p<Composition.ParticipantCount;p++)
             {
@@ -595,7 +615,7 @@ namespace StarTournament.ProvingGround
         void OnApplicationFocus(bool focus)
         {
             musicFocused=focus;
-            if(!focus)input.Clear();
+            if(!focus){input.Clear();Session?.ClearInput();}
             if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
@@ -654,12 +674,13 @@ namespace StarTournament.ProvingGround
             if ((!diagnostics && (!input.Ready || !IdentitiesReady())) || !ValidSetup()) return;
             diagnostic = diagnostics;
             try { if(!diagnostics&&!combatReview&&!botReviewEnabled&&reviewComposition==null)ApplySavedLabRevision(); BuildSelectedArena(); CreateMatch(false); } catch(Exception error) when(error is InvalidOperationException || error is ArgumentException) { Menu();setupError=error.Message;RefreshInterface();return; }
-            setupError=null; input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostics && input.HasKeyboard);
+            worldReady=true;setupError=null; input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostics && input.HasKeyboard);
             ApplyMatchFpsPreference();
             if(!diagnostics&&!combatReview&&!botReviewEnabled&&reviewComposition==null&&!nativeInputReview)RememberPlayedMap();
         }
         static ProvingProfile Copy(ProvingProfile p) => JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(p));
-        void BuildSelectedArena()
+        void BuildSelectedArena() { var steps=BuildSelectedArenaSteps(false);while(steps.MoveNext()){} }
+        IEnumerator BuildSelectedArenaSteps(bool asynchronous)
         {
             if(OrbitalLeagueProfile.Id=="orbital-league-v1")OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
@@ -673,11 +694,13 @@ namespace StarTournament.ProvingGround
             if(tunnels)studioLight.intensity=TunnelsPresentation.Get("tunnels.light.key");
             bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
             if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
-            arena.Build(frozen,Profile,lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile);
+            var steps=arena.BuildSteps(frozen,Profile,lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
+            while(steps.MoveNext())yield return steps.Current;
             ApplyShadowPreference();
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
-        void CreateMatch(bool repeating)
+        void CreateMatch(bool repeating) { DrainLoadingSteps(CreateMatchSteps(repeating)); }
+        IEnumerator CreateMatchSteps(bool repeating)
         {
             for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++)input.SetSeatAlive(seat,true);
             if(!repeating)
@@ -705,20 +728,24 @@ namespace StarTournament.ProvingGround
                 foreach(var descriptor in RosterProfile.Descriptors)NativeMatchConfiguration.ValidateValue(RosterProfile,descriptor.Path,RosterProfile.Get(descriptor.Path));
                 frozenRosterProfile=Copy(RosterProfile);
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
-                frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);
+                frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);frozenHitFeedback=Copy(HitFeedbackProfile);
                 FrozenLabIdentity=LabSavedIdentity;
                 var selectedLab=labHistory?.Selected;
                 frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:selectedLab.ReleaseSequence>0?selectedLab.ReleaseNumber:selectedLab.Number,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
+            yield return null;
             Time.fixedDeltaTime=1/frozenMovement.Get("simulation.fixedTickHz");
-            RebuildActors(Composition,frozenMovement,frozenTrooper,false);
+            yield return RebuildActorsSteps(Composition,frozenMovement,frozenTrooper,false);
+            yield return null;
             foreach(var motor in motors)motor.SetAlive(false);
             Physics.SyncTransforms();
             var selector=new SafeSpawnSelector(gameObject.scene.GetPhysicsScene(),arena,frozenMovement,frozenCombat);
-            if(!selector.TryInitial(frozenRoster,frozenTeam.Get("spawn.initialOpponentSeparation"),out var initial,
-                (int)frozenRosterProfile.Get("spawn.initialSearchBudgetNodes"),(int)frozenRosterProfile.Get("spawn.initialCandidateBudget")))
-                throw new InvalidOperationException("Нет безопасного размещения: "+selector.InitialFailure);
+            Vector3[] initial=null;bool placed=false;
+            yield return selector.AllocateInitial(frozenRoster,frozenTeam.Get("spawn.initialOpponentSeparation"),(success,positions)=>{placed=success;initial=positions;},
+                (int)frozenRosterProfile.Get("spawn.initialSearchBudgetNodes"),(int)frozenRosterProfile.Get("spawn.initialCandidateBudget"));
+            if(!placed)throw new InvalidOperationException("Нет безопасного размещения: "+selector.InitialFailure);
+            yield return null;
             for(int p=0;p<motors.Length;p++)
             {
                 motors[p].Initialize(frozenMovement,initial[p]);
@@ -736,16 +763,19 @@ namespace StarTournament.ProvingGround
             actions=new LocalAction[Composition.ParticipantCount];
             ApplyLayout(frozenSeatCount);
             Array.Clear(actions,0,actions.Length); Array.Clear(hit,0,hit.Length);
+            yield return null;
             var match=new NativeMatchState(frozenRoster,frozenConfiguration,frozenMatch,frozenMovement.Get("simulation.fixedTickHz"));
             match.ConfigureAchievementRecipients(Enumerable.Range(0,Composition.ParticipantCount)
                 .Select(p=>Composition.Participant(p).Kind==NativeParticipantKind.LocalHuman).ToArray());
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,match,frozenLabReference,frozenCutter);
+            yield return null;
             RebuildPickupVisuals();
             gameAudio?.Bind(Session,Composition,frozenMovement);BindDamageBonusAlerts();
             NavigationReviewDriver = navigationReviewEnabled ? new NativeNavigationDriver(Session,arena,gameObject.scene.GetPhysicsScene(),
                 frozenMovement,frozenCombat,frozenPerception,frozenNavigation,0) : null;
             BotDriver=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot)?new NativeBotMatchDriver(Session,Composition,arena,gameObject.scene.GetPhysicsScene(),frozenMovement,frozenLife,frozenCombat,frozenPerception,frozenNavigation,frozenBehavior,botSeed):null;
-            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath,bloodProfile:frozenBlood,rocketPrefab:RocketProjectilePrefab,rocketEffects:frozenRocketEffects);
+            yield return null;
+            presentation=new CombatPresentation(Session,frozenMovement,frozenCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(frozenSeatCount).ToArray(),bodies,views.Take(frozenSeatCount).ToArray(),Composition,deathProfile:frozenDeath,bloodProfile:frozenBlood,rocketPrefab:RocketProjectilePrefab,rocketEffects:frozenRocketEffects,hitProfile:frozenHitFeedback);
             Array.Clear(killNoticeText,0,killNoticeText.Length);Array.Clear(killNoticeUntil,0,killNoticeUntil.Length);
             Array.Clear(killNoticeAllied,0,killNoticeAllied.Length);
             for(int seat=0;seat<damageVignettes.Length;seat++)
@@ -757,17 +787,13 @@ namespace StarTournament.ProvingGround
             persistentStandings.SwapTeamColors=results.SwapTeamColors=frozenSwappedColors;
             input.Clear(); Session.ClearInput();
         }
-        void Repeat()
-        {
-            if(!diagnostic && !input.Ready) return;
-            frozenMatchArena.RequireDefinition(arena.Definition);
-            CreateMatch(true); phase=Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); RefreshInterface();
-        }
+        void Repeat() { QueueMatch(diagnostic,true); }
         void Menu()
         {
             NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
             foreach(var vignette in damageVignettes)vignette?.Bind(null,-1,Profile);
-            phase=Phase.Setup; diagnostic=false; combatReview=false; nativeInputReview=false; probeCameraCount=0; Session.Stop(); presentation.Dispose();
+            phase=Phase.Setup; diagnostic=false; combatReview=false; nativeInputReview=false; probeCameraCount=0; Session?.Stop(); presentation?.Dispose();
+            if(!worldReady){setupStep=setupMaxStep=2;input.Clear();SetCursor(false);RefreshInterface();FocusSetupStep();return;}
             bool wasReview=reviewComposition!=null;
             reviewComposition=null;reviewShowStandings=false;if(wasReview&&LocalSeatCount<2)input.SetActiveSeatCount(2);SyncHumanSeats();
             // Setup preview is not a playable roster; preserve invalid drafts for editing.
@@ -782,7 +808,7 @@ namespace StarTournament.ProvingGround
             Session=new NativeCombatSession(motors,arena,gameObject.scene.GetPhysicsScene(),safeMovement,safeLife,safeCombat,cutterProfile:CutterProfile);
             RebuildPickupVisuals();
             gameAudio?.Bind(Session,Composition);BindDamageBonusAlerts();
-            presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile,bloodProfile:BloodProfile,rocketPrefab:RocketProjectilePrefab,rocketEffects:RocketEffectsProfile);
+            presentation=new CombatPresentation(Session,safeMovement,safeCombat,transform,gameObject.scene.GetPhysicsScene(),cameras.Take(LocalSeatCount).ToArray(),bodies,views.Take(LocalSeatCount).ToArray(),Composition,deathProfile:DeathProfile,bloodProfile:BloodProfile,rocketPrefab:RocketProjectilePrefab,rocketEffects:RocketEffectsProfile,hitProfile:HitFeedbackProfile);
             actions=new LocalAction[Composition.ParticipantCount];ApplyLayout(LocalSeatCount);
             setupStep=setupMaxStep=2;
             input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); FocusSetupStep();
@@ -806,7 +832,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<cameras.Length;i++)
             {
                 bool active=i<renderedCount;
-                if(cameras[i])cameras[i].enabled=active;
+                if(cameras[i])cameras[i].enabled=active&&(worldReady||phase!=Phase.Setup);
                 if(viewportRoots[i]) viewportRoots[i].gameObject.SetActive(active);
                 standings[i]?.Root.SetActive(false);
                 if(!active || !cameras[i]) continue;
@@ -883,8 +909,28 @@ namespace StarTournament.ProvingGround
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); FocusSetupStep(); }
         static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
-        static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { UnbindDamageBonusAlerts(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        bool menuGamepadCursor;
+        void UpdateMenuCursor()
+        {
+            if(phase==Phase.Running || phase==Phase.Loading)return;
+            foreach(var pad in Gamepad.all)
+            {
+                if(!pad.enabled)continue;
+                if(pad.leftStick.ReadValue().sqrMagnitude>=.25f || pad.dpad.ReadValue()!=Vector2.zero)
+                    menuGamepadCursor=true;
+                foreach(var control in pad.allControls)
+                    if(control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame)
+                        menuGamepadCursor=true;
+            }
+            // Mouse movement wins when both devices are used in the same frame.
+            // Button releases and small stick drift do not change the cursor mode.
+            var mouse=Mouse.current;
+            if(mouse!=null && mouse.enabled && (mouse.delta.ReadValue()!=Vector2.zero || mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame || mouse.scroll.ReadValue()!=Vector2.zero))
+                menuGamepadCursor=false;
+            Cursor.visible=!menuGamepadCursor;
+        }
+        void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
+        void OnDestroy() { CancelHistoryLoading(); UnbindDamageBonusAlerts(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void RebuildPickupVisuals()
         {
@@ -1040,7 +1086,7 @@ namespace StarTournament.ProvingGround
             Layout((RectTransform)column.transform,new Vector2(.15f,.15f),new Vector2(.85f,.85f));
             var layout=column.GetComponent<VerticalLayoutGroup>(); layout.childControlHeight=true; layout.childForceExpandHeight=true;
             status=TextElement(column.transform,"status","",(int)Profile.Get("ui.headingFontSize")); status.alignment=TextAnchor.MiddleCenter;
-            start=ButtonElement(column.transform,"Начать — четыре игрока",()=>Begin(false));
+            start=ButtonElement(column.transform,"Начать — четыре игрока",()=>QueueMatch(false));
             seatsMinus=ButtonElement(column.transform,"Игроки −",()=>SetSeatCount(LocalSeatCount-1)); seatsMinus.gameObject.name="seats-minus";
             seatsPlus=ButtonElement(column.transform,"Экраны +",()=>SetSeatCount(LocalSeatCount+1)); seatsPlus.gameObject.name="seats-plus";
             modeButton=ButtonElement(column.transform,"Режим",()=>SetMatchMode(SetupMode==NativeMatchMode.Ffa?NativeMatchMode.Teams:NativeMatchMode.Ffa));modeButton.gameObject.name="match-mode";
@@ -1054,7 +1100,7 @@ namespace StarTournament.ProvingGround
             repeat=ButtonElement(column.transform,"Повторить матч",Repeat);
             menu=ButtonElement(column.transform,"В главное меню",ToMainMenu);
             rebind=ButtonElement(column.transform,"Назначить устройства заново",ResetSetup);
-            diagnosticButton=ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>Begin(true));
+            diagnosticButton=ButtonElement(column.transform,"Диагностика четырёх камер · без управления",()=>QueueMatch(true));
             durationButton=ButtonElement(column.transform,"Длительность",()=>StepConfiguration("match.durationMinutes",1));
             durationButton.gameObject.name="duration-plus";
             var durationMinus=ButtonElement(column.transform,"−",()=>StepConfiguration("match.durationMinutes",-1)); durationMinus.gameObject.name="duration-minus";
@@ -1062,9 +1108,12 @@ namespace StarTournament.ProvingGround
             targetButton.gameObject.name="target-toggle";
             targetMinus=ButtonElement(column.transform,"Цель −",()=>StepConfiguration("match.targetPoints",-1));
             targetPlus=ButtonElement(column.transform,"Цель +",()=>StepConfiguration("match.targetPoints",1));
-            results=new NativeStandingsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile){AllowSelection=true};
+            resultsFrame=new GameObject("results-frame",typeof(RectTransform)).GetComponent<RectTransform>();
+            resultsFrame.SetParent(overlay.transform,false);resultsFrame.anchorMin=resultsFrame.anchorMax=resultsFrame.pivot=new Vector2(.5f,.5f);
+            resultsFrame.sizeDelta=new Vector2(1920,1080);
+            results=new NativeStandingsView(resultsFrame,font,(int)Profile.Get("ui.fontSize"),"results-table",new Vector2(.06f,.42f),new Vector2(.94f,.94f),Profile){AllowSelection=true};
             results.Root.SetActive(false);
-            achievementsView=new NativeAchievementsView(overlay.transform,font,(int)Profile.Get("ui.fontSize"));
+            achievementsView=new NativeAchievementsView(resultsFrame,font,(int)Profile.Get("ui.fontSize"));
             var settings = ButtonElement(column.transform,"Настройки · Показывать FPS: вкл",()=>fps.Toggle());
             settings.gameObject.name = "fps-setting";settings.gameObject.SetActive(false);
             fps = canvasObject.AddComponent<FpsDisplay>();
@@ -1269,9 +1318,12 @@ namespace StarTournament.ProvingGround
             mouseSensitivityPlus.GetComponentInChildren<Text>().text=sensitivityDescriptor.Label+": "+sensitivity.ToString("0.00")+" "+sensitivityDescriptor.Unit+"   +";
             durationButton.GetComponentInChildren<Text>().text="Длительность: "+Configuration.DurationMinutes+" мин   +";
             targetButton.GetComponentInChildren<Text>().text="Цель: "+(Configuration.TargetEnabled?Configuration.TargetPoints+" очков":"выключена");
+            var resultMenu=(RectTransform)status.transform.parent;
+            Transform resultParent=phase==Phase.Results?resultsFrame:overlay.transform;
+            if(resultMenu.parent!=resultParent)resultMenu.SetParent(resultParent,false);
             results.Show(phase==Phase.Results,Session.Match?.Read(),diagnostic||combatReview,Composition,phase==Phase.Results?Session.LifeStates:null);
+            achievementsView.ContentLayout=true;
             achievementsView.Show(phase==Phase.Results,Session.Match?.Read(),Composition);
-            achievementsView.PositionResultsTable(results);
             var menuRect=(RectTransform)status.transform.parent;
             Layout(menuRect,new Vector2(phase==Phase.Setup?.04f:.15f,phase==Phase.Results?.11f:.08f),new Vector2(phase==Phase.Setup?.51f:.85f,phase==Phase.Results?.11f:.92f));
             if(seatPanel)
@@ -1311,7 +1363,11 @@ namespace StarTournament.ProvingGround
             RefreshModernMenuUi();
             RefreshSeatPauseUi();
             StyleOperatorPause();
-            if(phase==Phase.Results)achievementsView.AdaptToActions((RectTransform)status.transform.parent,results);
+            if(phase==Phase.Results)
+            {
+                achievementsView.CenterResultsContent(menuRect,results);
+                results.Show(true,Session.Match.Read(),diagnostic||combatReview,Composition,Session.LifeStates);
+            }
             else achievementsView.PositionResultsTable(results);
         }
     }

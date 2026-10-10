@@ -30,7 +30,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 otherPad=InputSystem.AddDevice<Gamepad>();
             }
             else pad=InputSystem.AddDevice<Gamepad>();
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
         }
         void AssertDefault(InputDevice device,int profiles)

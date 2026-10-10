@@ -4,17 +4,30 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal const float DefaultMusicBalanceGain=.32f;
+        internal static float MusicBalanceGain(ProvingProfile profile)=>profile.Descriptor("audio.music.balanceGain")==null?DefaultMusicBalanceGain:profile.Get("audio.music.balanceGain");
+
         // round-music-v1 tuning lives in the named proving-ground presentation registry.
         void AddRoundMusicDescriptors()
         {
             void V(string key,string label,string description,string unit,float min,float max,float step,float value)=>Add("audio.music."+key,"music",label,description,unit,min,max,step,value);
             V("gain","Уровень игрового музыкального микса","Уровень музыки до пользовательской громкости; общий микс музыки и эффектов нормализуется без перегрузки.","ratio",0,1,.05f,.55f);
+            V("balanceGain","Музыка относительно эффектов","Дополнительный уровень обеих музыкальных тем относительно эффектов; 0.32 снижает музыку примерно на 10 дБ без изменения сохранённых регуляторов.","ratio",0,1,.01f,DefaultMusicBalanceGain);
             V("transitionBeats","Плавность музыкального перехода","Длительность перехода в долях текущего темпа; ограничивается доступной длиной петли.","beats",1,8,1,4);
             V("finishSeconds","Хвост завершения музыки","Время затухания при завершении матча.","seconds",.2f,5,.1f,2);
             // menu-music-v1: user selected the four-second comparison, 2026-10-04.
             V("menuTransitionSeconds","Переход меню и матча","Время плавной смены темы меню и матчевой музыки; повторная навигация сохраняет текущую огибающую.","seconds",.2f,8,.1f,4);
             V("developAt","Начало развития музыки","Доля прошедшей длительности раунда для средней фазы.","ratio",.1f,.6f,.01f,.33f);
             V("climaxAt","Начало финальной фазы","Доля прошедшей длительности раунда для насыщенной быстрой фазы; overtime всегда использует её.","ratio",.6f,.9f,.01f,.67f);
+        }
+        internal ProvingProfile BeforeMusicBalance()
+        {
+            const string path="audio.music.balanceGain";
+            if(id!=DefaultId||Descriptor(path)==null)return this;
+            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            copy.descriptors.RemoveAll(d=>d.Path==path);
+            copy.values.RemoveAll(v=>v.Path==path);copy.valueIndex=null;
+            return copy;
         }
         internal ProvingProfile BeforeRoundMusic()
         {

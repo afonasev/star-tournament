@@ -68,7 +68,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator OrdinaryEightAiStartBoostPauseRespawnRepeatAndUiUseFrozenColors()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             B("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             for(int seat=0;seat<4;seat++)ground.SetSeatAi(seat,true);
@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var preview=JsonUtility.ToJson(ground.SetupComposition().Read());
             for(int i=0;i<5;i++)Assert.That(JsonUtility.ToJson(ground.SetupComposition().Read()),Is.EqualTo(preview));
             B("Начать — четыре игрока").onClick.Invoke();yield return null;
-            Assert.That(ground.Running,Is.True);Assert.That(ground.Composition.Read().Participants.Select(p=>p.Color).Distinct().Count(),Is.EqualTo(8));
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Composition.Read().Participants.Select(p=>p.Color).Distinct().Count(),Is.EqualTo(8));
             var frozen=JsonUtility.ToJson(ground.Composition.Read());for(int p=0;p<8;p++)AssertBody(p);for(int seat=0;seat<4;seat++)AssertView(seat);
             var snapshot=ground.Session.Capture();snapshot.DamageRemaining[0]=5;snapshot.DamageRemaining[1]=5;ground.Session.Restore(snapshot);yield return null;
             AssertBody(0);AssertBody(1);AssertView(0);AssertView(1);
@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator MixedReviewHasOwnedMaterialsForEveryParticipant()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             yield return null;ground.StartParticipantReview(NativeParticipantReview.Mixed(1,false));yield return null;
             for(int p=0;p<8;p++)AssertBody(p);AssertView(0);

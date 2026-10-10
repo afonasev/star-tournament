@@ -108,7 +108,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ProfileCopiesAllBehaviorTuningAndDifficultyDefaultsReachWeaponPolicy()
         {
             var profile=ProvingProfile.CreateBotBehaviorDefault(); Assert.That(profile.Validate(), Is.Empty);
-            Assert.That(profile.Descriptors, Has.Count.EqualTo(78));
+            Assert.That(profile.Descriptors, Has.Count.EqualTo(82));
             Assert.That(profile.Descriptors.Any(d=>d.Path.Contains("fieldOfView")||d.Path.Contains("memorySeconds")), Is.False);
             var expected = new[] { new[]{.6f,90f,12f,1.4f}, new[]{.28f,160f,5f,1f}, new[]{.12f,230f,1.5f,.7f} };
             for(int i=0;i<3;i++)
@@ -357,6 +357,57 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             planner.Tick(0,.01f,frame);var action=planner.Tick(3.1,.01f,frame);
             Assert.That(action.Jump,Is.EqualTo(safe));
             Assert.That(planner.Tick(3.8,.01f,frame).Jump,Is.False,"A new grounded manoeuvre cannot skip the jump cooldown");
+        }
+
+        [Test] public void NoviceNeverCombatJumpsEvenWithCustomMaximumChance()
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.easy.jumpChance",1);profile.Set("bots.easy.surpriseJumpChance",1);
+            var planner=Make(behavior:profile);var frame=Frame();frame.Pose.Yaw=90;
+            for(int i=0;i<2000;i++)Assert.That(planner.Tick(i*.02,.02f,frame).Jump,Is.False);
+        }
+        [Test] public void DefaultCadenceSeparatesFighterAndVeteranWithoutContinuousJumps()
+        {
+            int fighter=0,veteran=0;
+            foreach(var difficulty in new[]{NativeBotDifficulty.Normal,NativeBotDifficulty.Hard})
+            {
+                var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.cooperation.personalitySpread",0);
+                for(uint seed=1;seed<=16;seed++)
+                {
+                    var planner=Make(difficulty,seed,profile);var frame=Frame();double last=-100;
+                    for(int i=0;i<3000;i++)if(planner.Tick(i*.02,.02f,frame).Jump)
+                    {
+                        double now=i*.02;Assert.That(now-last,Is.GreaterThanOrEqualTo(profile.Get(difficulty==NativeBotDifficulty.Hard?"bots.hard.jumpCooldownSeconds":"bots.normal.jumpCooldownSeconds")-.001));last=now;
+                        if(difficulty==NativeBotDifficulty.Hard)veteran++;else fighter++;
+                    }
+                }
+            }
+            Assert.That(fighter,Is.GreaterThan(0));Assert.That(veteran,Is.GreaterThan(fighter));Assert.That(veteran,Is.LessThan(16*21));
+        }
+        [Test] public void VeteranSurpriseCanJumpBeforeNextStrafeButCannotBypassCooldown()
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.cooperation.personalitySpread",0);profile.Set("bots.hard.jumpChance",0);profile.Set("bots.hard.surpriseJumpChance",1);
+            var planner=Make(NativeBotDifficulty.Hard,behavior:profile);var frame=Frame(target:-1);planner.Tick(0,.02f,frame);
+            frame=Frame();frame.Pose.Yaw=90;
+            Assert.That(planner.Tick(.12,.02f,frame).Jump,Is.True);
+            frame.Knowledge.Enemies[0].Sighting.Participant=3;
+            Assert.That(planner.Tick(.24,.02f,frame).Jump,Is.False);
+        }
+        [Test] public void EmptyRememberedPositionImmediatelyReturnsToSearchAndFreshSightCanReacquire()
+        {
+            var planner=Make();var frame=Frame(visible:false);planner.Tick(0,.02f,frame);
+            frame.Pose.Position=frame.Knowledge.Enemies[0].Sighting.Position;
+            var action=planner.Tick(.02,.02f,frame);
+            Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Search));Assert.That(action.Move.sqrMagnitude,Is.GreaterThan(0));Assert.That(action.Fire,Is.False);
+            Assert.That(planner.Capture().Target,Is.EqualTo(-1));
+            planner.Tick(.04,.02f,frame);Assert.That(planner.Intent,Is.EqualTo(NativeBotIntent.Search));
+            frame.Knowledge.Enemies[0].Visible=true;frame.Knowledge.Enemies[0].ObservedAt=.5;
+            planner.Tick(.5,.02f,frame);Assert.That(planner.Capture().Target,Is.EqualTo(2));
+        }
+        [Test] public void RememberedCloseTargetUsesLateralMovementWithoutBlindFire()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var action=planner.Tick(0,.02f,Frame(visible:false));
+            var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+            Assert.That(Mathf.Abs(world.x),Is.GreaterThan(.1f));Assert.That(action.Fire||action.FireHeld,Is.False);
         }
 
         [Test] public void DeathAndNewLifeClearPlannerTargetNavigationAndPressedState()

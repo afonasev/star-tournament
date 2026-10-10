@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         IEnumerator Load()
         {
             lastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);priorMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
             for(int i=0;i<2;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
             var config=NativeMatchConfiguration.Default(ground.MatchProfile);config.TargetEnabled=true;config.TargetPoints=1000;ground.ConfigureBotTacticsReview(config);
@@ -40,7 +40,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Select));
-            InputSystem.QueueStateEvent(pads[1],new GamepadState().WithButton(GamepadButton.Select));yield return new WaitForFixedUpdate();yield return null;yield return null;
+            InputSystem.QueueStateEvent(pads[1],new GamepadState().WithButton(GamepadButton.Select));
+            // Apply the queued device event in Dynamic Update before the fixed tick consumes it.
+            yield return null;yield return new WaitForFixedUpdate();yield return null;yield return null;
             var tables=Field<NativeStandingsView[]>("standings");
             Assert.That(tables[0].Root.activeSelf,Is.True);Assert.That(tables[1].Root.activeSelf,Is.True);
             Assert.That(tables[0].PerspectiveParticipant,Is.EqualTo(0));Assert.That(tables[1].PerspectiveParticipant,Is.EqualTo(1));
@@ -85,7 +87,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var repeatRect=Action("Повторить матч").GetComponent<RectTransform>();var menuRect=Action("В главное меню").GetComponent<RectTransform>();
             Assert.That(repeatRect.position.y,Is.EqualTo(menuRect.position.y).Within(1),"results actions use one bottom row");
             Action("Повторить матч").onClick.Invoke();yield return null;
-            Assert.That(ground.Running,Is.True);Assert.That(table.SelectedParticipant,Is.EqualTo(-1),"a repeat clears the old selection");
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(table.SelectedParticipant,Is.EqualTo(-1),"a repeat clears the old selection");
             ground.Session.Match.BeginTick();ground.Session.Match.RecordDamage(1,0,new DamageResult(100,true));ground.Session.Match.EndTick();
             yield return Finish();Assert.That(table.SelectedParticipant,Is.EqualTo(0));
             Action("В главное меню").onClick.Invoke();yield return null;Assert.That(table.Root.activeSelf,Is.False);

@@ -12,6 +12,8 @@ import shutil
 import subprocess
 import zipfile
 
+from windows_dpi import validate_windows_dpi
+
 
 def main():
     p = argparse.ArgumentParser()
@@ -46,6 +48,8 @@ def main():
     subprocess.run([str(a.dotnet.resolve()), 'publish', str(root/'launcher/Launcher.csproj'), '-c', 'Release',
                     '-r', a.runtime, '--self-contained', 'true', '-p:DebugType=None', '-o', str(stage)] +
                    (['-p:OutputType=WinExe'] if a.runtime.startswith('win') else []), check=True, env=env)
+    if a.runtime == 'win-x64':
+        validate_windows_dpi(stage/'StarTournamentLauncher.exe')
     game = stage / 'game'; game.mkdir()
     if a.runtime.startswith('osx'):
         if not a.player.is_dir() or a.player.suffix != '.app': p.error('macOS requires Unity .app')

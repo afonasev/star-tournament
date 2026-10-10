@@ -7,6 +7,51 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class NativeMenuMusicTests
     {
+        [UnityTest] public IEnumerator HistoricalReleaseWithoutBalanceDescriptorUsesCorrectedMix()
+        {
+            float listener=AudioListener.volume;AudioListener.volume=0;
+            var root=new GameObject("historical-music-balance-test");
+            var method=typeof(ProvingProfile).GetMethod("BeforeMusicBalance",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+            var profile=(ProvingProfile)method.Invoke(ProvingProfile.CreateDefault(),null);
+            Assert.That(profile.Descriptor("audio.music.balanceGain"),Is.Null);
+            var music=new NativeMusicCoordinator(root.transform,profile);
+            try
+            {
+                music.Tick(true,null,profile,false,4);music.UpdateVolume(.7f,1);yield return null;
+                Assert.That(music.RequestedVolume(.7f),Is.EqualTo(.7f*.55f*.32f).Within(.0001f));
+                var mp=ProvingProfile.CreateMatchDefault();
+                var match=new NativeMatchState(2,NativeMatchConfiguration.Default(mp),mp,60);
+                music.Tick(false,match,profile,false,4);music.UpdateVolume(.7f,1);
+                Assert.That(music.RequestedVolume(.7f),Is.EqualTo(.7f*.55f*.32f).Within(.0001f));
+            }
+            finally{music.Dispose();Object.Destroy(root);AudioListener.volume=listener;}
+        }
+        [UnityTest] public IEnumerator MusicBalanceAppliesToMenuRoundAndCrossfadeWithoutChangingUserSliders()
+        {
+            float listener=AudioListener.volume;AudioListener.volume=0;
+            var root=new GameObject("music-balance-test");var profile=ProvingProfile.CreateDefault();
+            var music=new NativeMusicCoordinator(root.transform,profile);
+            try
+            {
+                const float user=.7f;
+                float expected=user*.55f*.32f;
+                music.Tick(true,null,profile,false,4);music.UpdateVolume(user,1);yield return null;
+                Assert.That(music.RequestedVolume(user),Is.EqualTo(expected).Within(.0001f));
+                Assert.That(root.GetComponentsInChildren<AudioSource>().Sum(s=>s.volume),Is.EqualTo(expected).Within(.0001f));
+                var mp=ProvingProfile.CreateMatchDefault();
+                var match=new NativeMatchState(2,NativeMatchConfiguration.Default(mp),mp,60);
+                music.Tick(false,match,profile,false,2);music.UpdateVolume(user,1);
+                Assert.That(music.MenuWeight,Is.GreaterThan(0));Assert.That(music.RoundWeight,Is.GreaterThan(0));
+                Assert.That(music.RequestedVolume(user),Is.EqualTo(expected).Within(.0001f));
+                music.Tick(false,match,profile,false,2);music.UpdateVolume(user,1);
+                Assert.That(root.GetComponentsInChildren<AudioSource>().Sum(s=>s.volume),Is.EqualTo(expected).Within(.0001f));
+                music.UpdateVolume(0,1);Assert.That(root.GetComponentsInChildren<AudioSource>().Sum(s=>s.volume),Is.Zero);
+                music.Tick(true,null,profile,false,4);profile.Set("audio.music.balanceGain",1);
+                music.Tick(true,null,profile,false,.02f);music.UpdateVolume(user,1);
+                Assert.That(music.RequestedVolume(user),Is.EqualTo(user*.55f).Within(.0001f));
+            }
+            finally{music.Dispose();Object.Destroy(root);AudioListener.volume=listener;}
+        }
         [UnityTest] public IEnumerator MenuLoopsTransitionsFreezeReverseAndCoalesceWithoutAdditionalVoices()
         {
             float listener=AudioListener.volume;AudioListener.volume=0;

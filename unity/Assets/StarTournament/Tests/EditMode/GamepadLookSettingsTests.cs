@@ -16,10 +16,12 @@ namespace StarTournament.ProvingGround.Tests
                 var p=ProvingProfile.CreateDefault();var c=new PlayerProfileCatalog(path);
                 var first=c.Create("Первый",.12f,true);var second=c.Create("Второй",.2f,false);
                 Assert.That(GamepadLookSettings.Resolve(p,first).AutoLevel,Is.True);
-                c.SetGamepad(first.Id,new GamepadLookSettings{Horizontal=120,Vertical=240,AutoLevel=false});
+                c.SetGamepad(first.Id,new GamepadLookSettings{Horizontal=120,Vertical=240,AutoLevel=false,ReturnDelay=1.25f});
                 var restored=new PlayerProfileCatalog(path);
                 var look=GamepadLookSettings.Resolve(p,restored.Find(first.Id));
-                Assert.That(look.Horizontal,Is.EqualTo(120));Assert.That(look.Vertical,Is.EqualTo(240));Assert.That(look.AutoLevel,Is.False);
+                Assert.That(look.Horizontal,Is.EqualTo(120));Assert.That(look.Vertical,Is.EqualTo(240));Assert.That(look.AutoLevel,Is.False);Assert.That(look.ReturnDelay,Is.EqualTo(1.25f));
+                var legacy=new PlayerProfileRecord{GamepadLookVersion=1,GamepadHorizontal=120,GamepadVertical=240};
+                Assert.That(GamepadLookSettings.Resolve(p,legacy).ReturnDelay,Is.EqualTo(p.Get(GamepadLookSettings.DelayPath)));
                 Assert.That(GamepadLookSettings.Resolve(p,restored.Find(second.Id)).Horizontal,Is.EqualTo(p.Get(GamepadLookSettings.HorizontalPath)));
                 Assert.That(restored.Find(first.Id).MouseDegreesPerPixel,Is.EqualTo(.12f));
             }

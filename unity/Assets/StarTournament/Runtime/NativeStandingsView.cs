@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         public int PerspectiveParticipant { get; set; } = -1;
         public bool AllowSelection { get; set; }
         public bool FitToContent { get; set; }
+        public float ContentHeight { get; private set; }
         public int SelectedParticipant { get; private set; } = -1;
         public event Action<int> ParticipantSelected;
         readonly Button[] rowButtons=new Button[10];
@@ -84,6 +85,14 @@ namespace StarTournament.ProvingGround
                 Rect((RectTransform)line.transform,Vector2.zero,new Vector2(1,0));((RectTransform)line.transform).sizeDelta=new Vector2(0,1);line.GetComponent<Image>().color=new Color32(37,55,75,255);line.GetComponent<Image>().raycastTarget=false;
             }
         }
+        public static void FitResultsFrame(RectTransform frame, float width=1920, float height=1080)
+        {
+            // Scale the whole content block equally on both axes inside 6% screen gutters.
+            var parent=(RectTransform)frame.parent;
+            frame.anchorMin=frame.anchorMax=frame.pivot=new Vector2(.5f,.5f);
+            frame.anchoredPosition=Vector2.zero;frame.sizeDelta=new Vector2(width,height);
+            frame.localScale=Vector3.one*Mathf.Min(parent.rect.width*.88f/width,parent.rect.height*.88f/height);
+        }
         static StandingsIcon Icon(Transform parent,string name,StandingsIcon.Symbol kind)
         {var go=new GameObject(name,typeof(RectTransform),typeof(StandingsIcon));go.transform.SetParent(parent,false);var i=go.GetComponent<StandingsIcon>();i.Kind=kind;i.raycastTarget=false;return i;}
         static Text Text(Transform parent,Font font,string name,int size,TextAnchor alignment)
@@ -111,6 +120,7 @@ namespace StarTournament.ProvingGround
             var rect=(RectTransform)Root.transform;float padding=tuning.Get("ui.standingsPadding");
             float fontSize=tuning.Get("ui.standingsFontSize"), toolbarHeight=fontSize*1.6f, headerHeight=fontSize*1.25f;
             float desiredHeight=TopInset+2*padding+toolbarHeight+headerHeight+entries.Count*fontSize*1.5f;
+            ContentHeight=desiredHeight;
             if(FitToContent)
             {
                 float available=((RectTransform)rect.parent).rect.height*(rect.anchorMax.y-rect.anchorMin.y);

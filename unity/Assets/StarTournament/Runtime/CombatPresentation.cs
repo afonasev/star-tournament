@@ -121,12 +121,14 @@ namespace StarTournament.ProvingGround
         readonly double[] deathTime;
         readonly bool[] tracking;
         bool disposed;
+        readonly HitFeedbackPresentation hitFeedback;
+        public HitFeedbackPresentation HitFeedbackForReview=>hitFeedback;
         readonly List<Corpse> corpses = new List<Corpse>();
         readonly List<PelletEffect> pellets = new List<PelletEffect>();
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
         public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
-            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null,GameObject rocketPrefab=null,ProvingProfile rocketEffects=null)
+            Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null,GameObject rocketPrefab=null,ProvingProfile rocketEffects=null,ProvingProfile hitProfile=null)
         {
             if(bodies.Length!=session.ParticipantCount || views.Length!=cameras.Length ||
                 (composition==null?cameras.Length!=session.ParticipantCount:composition.ParticipantCount!=session.ParticipantCount || composition.LocalCount!=cameras.Length))
@@ -138,6 +140,7 @@ namespace StarTournament.ProvingGround
             weaponSwitches=new FirstPersonWeaponSwitch[views.Length];
             for(int v=0;v<views.Length;v++)
                 if(views[v].GetComponent<TrooperVisual>())weaponSwitches[v]=new FirstPersonWeaponSwitch(views[v],cameras[v]);
+            hitFeedback=new HitFeedbackPresentation(session,bodies,hitProfile??ProvingProfile.CreateHitFeedbackDefault(),bloodProfile??ProvingProfile.CreateBloodDefault());
             bloodPresentation=new BloodPresentation(session,bloodProfile??ProvingProfile.CreateBloodDefault(),owner,physics);
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner,rocketPrefab,rocketEffects);
@@ -234,7 +237,7 @@ namespace StarTournament.ProvingGround
             // so an automatic follow-up cannot freeze the previous shot's animated barrel.
             var visual=source.GetComponent<TrooperVisual>();
             visual?.Fire(session.Time);
-            visual?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+            visual?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
             if(view>=0)weaponSwitches[view]?.Apply(life,session.WeaponSwitchSeconds);
             else source.GetComponent<WeaponModelPresentation>()?.Show(life.SelectedWeapon);
         }
@@ -305,6 +308,7 @@ namespace StarTournament.ProvingGround
         }
         void OnRespawn(int seat)
         {
+            hitFeedback.ClearParticipant(seat);
             foreach(var corpse in corpses)if(corpse.Participant==seat&&corpse.Root)
                 foreach(var t in corpse.Root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=0;
             bodies[seat].SetActive(true);int view=ViewOf(seat);if(view>=0)views[view].SetActive(true);
@@ -314,7 +318,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();cutterPresentation.Dispose();
+            hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -326,6 +330,7 @@ namespace StarTournament.ProvingGround
         void OnDeath(DeathNotice notice)
         {
             int seat=notice.Seat;
+            hitFeedback.ClearParticipant(seat);
             deathFeet[seat]=notice.Pose.Position;
             deathEye[seat]=notice.Pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
             deathTime[seat]=session.Time; tracking[seat]=true;
@@ -403,7 +408,7 @@ namespace StarTournament.ProvingGround
         }
         public void Render()
         {
-            bloodPresentation.Render();
+            hitFeedback.Render();bloodPresentation.Render();
             rocketPresentation.Render();
             foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Render(session.Time);
             foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Render(session.Time);
@@ -425,7 +430,7 @@ namespace StarTournament.ProvingGround
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
                 if(!life.Dead)
                 {
-                    views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life);
+                    views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
                     weaponSwitches[v]?.Apply(life,session.WeaponSwitchSeconds);
                     cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;

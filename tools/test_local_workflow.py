@@ -24,6 +24,28 @@ class LocalWorkflowTests(unittest.TestCase):
                       'check_qa.py full', 'RunWithFixtureEquivalence'):
             self.assertNotIn(token, route)
 
+    def test_player_route_does_not_launch_tests(self):
+        route = self.route('check-player')
+        self.assertIn('tools.sh build', route)
+        for token in ('test-edit', 'test-play', 'check_ui.py', 'check-full'):
+            self.assertNotIn(token, route)
+
+    def test_tooling_route_never_launches_unity(self):
+        route = self.route('check-tooling')
+        self.assertIn('test_unity_tools.py', route)
+        self.assertNotIn('./unity/tools.sh', route)
+        self.assertNotIn('python3 tools/check_ui.py', route)
+
+    def test_full_make_route_requires_confirmation_before_either_suite(self):
+        import os
+        environment = {k: v for k, v in os.environ.items() if k != 'CONFIRM_FULL_TESTS'}
+        for target in ('test', 'test-edit', 'test-play', 'check-full'):
+            result = subprocess.run(['make', target], cwd=ROOT, env=environment,
+                                    text=True, capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('human confirmation', result.stderr)
+            self.assertNotIn('tools.sh test-play', result.stdout if target in ('test', 'check-full') else '')
+
     def test_build_remains_explicit(self):
         route = self.route('build')
         self.assertTrue(any(token in route for token in ('tools.sh build', '--suite build',

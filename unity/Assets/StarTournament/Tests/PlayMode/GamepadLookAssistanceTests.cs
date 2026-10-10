@@ -44,8 +44,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 motor.Tick(new LocalAction{LookDegrees=new Vector2(35,-30),ManualLook=true,GamepadLookAssistance=true},.02f);
                 var initial=motor.State;Assert.That(initial.Pitch,Is.EqualTo(30));
                 var returning=new LocalAction{GamepadLookAssistance=true};
-                for(int i=0;i<10;i++)motor.Tick(returning,.02f);
+                for(int i=0;i<10;i++)motor.Tick(new LocalAction{GamepadLookAssistance=true,HasGamepadReturnDelay=true,GamepadReturnDelay=1f},.02f);
                 Assert.That(motor.State.Pitch,Is.EqualTo(30));
+                for(int i=0;i<35;i++)motor.Tick(new LocalAction{GamepadLookAssistance=true,HasGamepadReturnDelay=true,GamepadReturnDelay=1f},.02f);
+                Assert.That(motor.State.Pitch,Is.EqualTo(30),"personal delay overrides the shorter profile default");
                 for(int i=0;i<100;i++)motor.Tick(returning,.02f);
                 Assert.That(motor.State.Pitch,Is.LessThan(.2f));Assert.That(motor.State.Yaw,Is.EqualTo(35));
                 motor.Tick(new LocalAction{LookDegrees=new Vector2(0,-20),ManualLook=true,GamepadLookAssistance=true},.02f);
@@ -103,7 +105,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(motor.State.Pitch,Is.EqualTo(aimedPitch),"after LT release auto-level waits for the existing delay");
                 var beforeResetYaw=motor.State.Yaw;
                 motor.Tick(new LocalAction{ResetLookPitch=true,GamepadLookAssistance=false},.02f);
-                Assert.That(motor.State.Pitch,Is.Zero,"tap sets world horizon independently of surface assistance");
+                Assert.That(motor.State.Pitch,Is.GreaterThan(0).And.LessThan(aimedPitch),"tap starts a smooth move without teleporting");
+                var halfway=JsonUtility.FromJson<ParticipantState>(JsonUtility.ToJson(motor.State));motor.RestoreState(halfway);
+                for(int tick=0;tick<30;tick++)motor.Tick(default,.02f);
+                Assert.That(motor.State.Pitch,Is.Zero,"tap reaches world horizon without auto-level");
+                motor.Tick(new LocalAction{LookDegrees=new Vector2(0,-32),ManualLook=true},.02f);
+                motor.Tick(new LocalAction{ResetLookPitch=true},.02f);
+                motor.Tick(new LocalAction{LookDegrees=new Vector2(0,-5),ManualLook=true},.02f);
+                var interrupted=motor.State.Pitch;for(int tick=0;tick<30;tick++)motor.Tick(default,.02f);
+                Assert.That(motor.State.Pitch,Is.EqualTo(interrupted),"manual look cancels tap return");
+                motor.Tick(new LocalAction{ResetLookPitch=true},.02f);motor.CancelLookReturn();
+                var cancelled=motor.State.Pitch;for(int tick=0;tick<30;tick++)motor.Tick(default,.02f);
+                Assert.That(motor.State.Pitch,Is.EqualTo(cancelled),"pause/input clear cancels return");
+                motor.Tick(new LocalAction{ResetLookPitch=true,HasGamepadReturnDelay=true},.02f);
+                var disconnected=motor.State.Pitch;motor.Tick(default,.02f);
+                Assert.That(motor.State.Pitch,Is.EqualTo(disconnected),"disconnect cancels a real gamepad transition");
                 Assert.That(motor.State.Yaw,Is.EqualTo(beforeResetYaw));
             }
             finally{Object.Destroy(body);Object.Destroy(floor);}

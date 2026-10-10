@@ -16,6 +16,7 @@ namespace StarTournament.ProvingGround
         public int GamepadLookVersion;
         public float GamepadHorizontal, GamepadVertical;
         public bool GamepadAutoLevel;
+        public float GamepadReturnDelay;
     }
 
     [Serializable]
@@ -66,7 +67,7 @@ namespace StarTournament.ProvingGround
         public void SetGamepad(string id, GamepadLookSettings settings)
         {
             var record=Find(id) ?? throw new ArgumentException("Unknown profile", nameof(id));
-            record.GamepadLookVersion=1;record.GamepadHorizontal=settings.Horizontal;
+            record.GamepadLookVersion=2;record.GamepadReturnDelay=settings.ReturnDelay;record.GamepadHorizontal=settings.Horizontal;
             record.GamepadVertical=settings.Vertical;record.GamepadAutoLevel=settings.AutoLevel;Save();
         }
         static string CleanName(string name)

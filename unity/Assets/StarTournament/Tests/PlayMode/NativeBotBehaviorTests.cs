@@ -28,11 +28,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         IEnumerator Load(NativeMatchComposition composition,uint seed,int fixedTickHz=0)
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             if(fixedTickHz>0)ground.Profile.Set("simulation.fixedTickHz",fixedTickHz);
             ground.StartBotReview(composition,seed);ground.enabled=false;
-            Assert.That(ground.Running,Is.True,string.Join(" | ",ground.GetComponentsInChildren<UnityEngine.UI.Text>(true).Select(x=>x.text)));Assert.That(ground.BotDriver,Is.Not.Null);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,string.Join(" | ",ground.GetComponentsInChildren<UnityEngine.UI.Text>(true).Select(x=>x.text)));Assert.That(ground.BotDriver,Is.Not.Null);
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
@@ -125,7 +125,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SendMessage("Pause","bot lifecycle test");long pausedTick=session.Match.Read().Tick;double pausedTime=session.Time;
             yield return new WaitForFixedUpdate();Assert.That(session.Match.Read().Tick,Is.EqualTo(pausedTick));Assert.That(session.Time,Is.EqualTo(pausedTime));ground.enabled=false;
             Assert.That(ground.Running,Is.False);Assert.That(driver.Planner(0).Capture().Pressed,Is.False);
-            ground.BotBehaviorProfile.Set("bots.easy.reactionSeconds",2);Button("Повторить матч").onClick.Invoke();yield return null;
+            ground.BotBehaviorProfile.Set("bots.easy.reactionSeconds",2);Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.BotDriver,Is.Not.SameAs(driver));Assert.That(ground.BotDriver.Planner(0).Capture().Configuration,Is.EqualTo(frozen));
             Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();yield return null;Assert.That(ground.BotDriver,Is.Null);
         }
@@ -133,7 +133,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator MatchAndRepeatUseFrozenProfileOwnedFixedTickCadence()
         {
             yield return Load(BotsAndHuman(false,1),111,100);Assert.That(Time.fixedDeltaTime,Is.EqualTo(.01f).Within(.000001f));
-            ground.Profile.Set("simulation.fixedTickHz",50);Button("Повторить матч").onClick.Invoke();yield return null;
+            ground.Profile.Set("simulation.fixedTickHz",50);Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(Time.fixedDeltaTime,Is.EqualTo(.01f).Within(.000001f));
         }
 

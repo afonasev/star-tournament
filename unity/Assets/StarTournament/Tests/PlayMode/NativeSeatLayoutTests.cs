@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 // New-match fixture above already clears the previous solo opponent.
                 ground.StartCombatReview(pads.Take(count).ToArray());
                 yield return null;yield return new WaitForFixedUpdate();yield return null;
-                Assert.That(ground.Running,Is.True);
+                yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
                 var panel=ground.transform.Find("native-ui/match-timer-panel").GetComponent<RectTransform>();
                 Assert.That(panel.gameObject.activeSelf,Is.True);
                 Assert.That(panel.Find("match-timer").GetComponent<Text>().text,Does.Match(@"^\d\d:\d\d$"));
@@ -163,7 +163,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.Running,Is.False);double clock=old.Time;
                 yield return new WaitForSecondsRealtime(.1f);Assert.That(old.Time,Is.EqualTo(clock));
                 InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});yield return null;
-                Button("Повторить матч").onClick.Invoke();yield return null;yield return new WaitForFixedUpdate();yield return null;
+                Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return new WaitForFixedUpdate();yield return null;
                 AssertLayout(count);Assert.That(ground.Session.ShotCount,Is.Zero);
                 Assert.That(ground.Session.Match.Read().Standings.All(r=>r.Score==0&&r.Deaths==0),Is.True);
                 Assert.That(old.ApplyDamage(0,1,100).Applied,Is.Zero);
@@ -173,9 +173,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 ground.Session.ApplyDamage(1,1,100,0,1);
                 while(ground.Session.Match.Phase==NativeMatchPhase.Running){ground.Session.Match.BeginTick();ground.Session.Match.EndTick();}
                 yield return new WaitForFixedUpdate();yield return null;
-                var result=ground.transform.Find("native-ui/setup-pause/results-table");
+                var result=ground.transform.Find("native-ui/setup-pause/results-frame/results-table");
                 Assert.That(result.gameObject.activeSelf,Is.True);Assert.That(result.Find("row-4").gameObject.activeSelf,Is.EqualTo(count==4));
-                Button("Повторить матч").onClick.Invoke();yield return null;yield return new WaitForFixedUpdate();yield return null;AssertLayout(count);
+                Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return new WaitForFixedUpdate();yield return null;AssertLayout(count);
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 Assert.That(ground.transform.Find("native-ui/persistent-standings").gameObject.activeSelf,Is.False);
             }
@@ -187,12 +187,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var pair in new[]{new[]{2,3},new[]{4,2}})
             {
                 field.SetValue(ground,pair[0]);
-                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
+                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
                 Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(System.Math.Min(pair[0],ground.LocalSeatCount)));
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 while(ground.LocalSeatCount>pair[1])Button("seats-minus").onClick.Invoke();
                 while(ground.LocalSeatCount<pair[1])Button("seats-plus").onClick.Invoke();
-                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;AssertLayout(pair[1]);
+                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return null;AssertLayout(pair[1]);
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
             }
         }
@@ -211,18 +211,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
             Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-1"),"Gamepad navigation stays on content instead of the footer");
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.Start));yield return null;yield return null;
-            Assert.That(ground.Running,Is.True);yield return null;AssertLayout(2);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);yield return null;AssertLayout(2);
             InputSystem.QueueStateEvent(pads[0],new GamepadState());
             InputSystem.QueueStateEvent(pads[2],new GamepadState{rightTrigger=1,leftStick=Vector2.one}.WithButton(GamepadButton.Start));
-            yield return null;yield return new WaitForFixedUpdate();Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ShotCount,Is.Zero);
-            InputSystem.RemoveDevice(pads[2]);yield return null;Assert.That(ground.Running,Is.True);
+            yield return null;yield return new WaitForFixedUpdate();yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session.ShotCount,Is.Zero);
+            InputSystem.RemoveDevice(pads[2]);yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             InputSystem.RemoveDevice(pads[1]);yield return null;yield return null;
             Assert.That(ground.Running,Is.False);Assert.That(Button("Продолжить").interactable,Is.False);
             var text=ground.transform.Find("native-ui/setup-pause/menu/status").GetComponent<Text>();Assert.That(text.text,Does.Contain("Пауза"));
             var reason=(string)typeof(ProvingGround).GetField("pauseReason",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);Assert.That(reason,Does.Contain("P2"),"The disconnected seat still owns the pause reason");
             InputSystem.AddDevice(pads[1]);yield return null;Assert.That(ground.Running,Is.False);
             Assert.That(Button("Продолжить").interactable,Is.True);
-            Button("Продолжить").onClick.Invoke();yield return null;Assert.That(ground.Running,Is.True);
+            Button("Продолжить").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             ground.SendMessage("OnApplicationFocus",false);Assert.That(ground.Running,Is.False);
         }
     }

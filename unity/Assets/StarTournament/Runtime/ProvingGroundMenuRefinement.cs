@@ -98,9 +98,9 @@ namespace StarTournament.ProvingGround
             Layout((RectTransform)targetPlus.transform,new Vector2(.45f,.28f),new Vector2(.51f,.37f));targetPlus.GetComponentInChildren<Text>().text="+";
             setupRulesPage.transform.Find("target-help").GetComponent<Text>().text="Победа по очкам или по времени. Шаг: 100 очков.";
             setupScreen.transform.Find("setup-description").GetComponent<Text>().text=setupStep==0?
-                "Стрелки — выбрать карту · A / Start — далее · B — меню":setupStep==1?
-                "Стрелки — выбрать настройку · A — изменить · Start — далее · B — назад":
-                "A — изменить участника · X — бот · Y — игрок / команда · Start — начать · B — назад";
+                "Выберите арену для матча.":setupStep==1?
+                "Настройте режим и условия победы.":
+                "Соберите участников матча.";
             setupNext.GetComponentInChildren<Text>().text=setupStep==0?"ДАЛЕЕ · A / Start":"ДАЛЕЕ · Start";
         }
     }

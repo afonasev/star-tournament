@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         GameObject Object(string name)=>ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name==name).gameObject;
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
@@ -41,7 +41,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
             }
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
-            Assert.That(ground.Running,Is.True);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
         }
         IEnumerator Press(int seat,GamepadButton button)
         {
@@ -68,6 +68,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();
             yield return Press(0,GamepadButton.Start);
+            Assert.That(Cursor.visible,Is.False,"Gamepad pause keeps the cursor hidden");
             Assert.That(ground.Running,Is.False);
             Assert.That(Object("seat-pause-0").activeSelf,Is.True);
             Assert.That(Object("seat-pause-1").activeSelf,Is.True,"both viewport backgrounds dim");
@@ -82,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Session.Time,Is.EqualTo(clock));
             Assert.That(Object("pause-action-1-0").activeInHierarchy,Is.True);
             Button("pause-action-1-0").onClick.Invoke();yield return new WaitForFixedUpdate();
-            Assert.That(ground.Running,Is.True);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
             Assert.That(Object("seat-pause-0").activeSelf,Is.False);
         }
         [UnityTest] public IEnumerator PersonalSettingsAndGlobalConfirmationStayScoped()
@@ -118,7 +119,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Running,Is.False);
             var original=ground.Session;
             Button("pause-action-1-2").onClick.Invoke();Button("pause-repeat-yes-1").onClick.Invoke();yield return new WaitForFixedUpdate();
-            Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(original));
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(original));
             Assert.That(Object("seat-pause-0").activeSelf,Is.False);
         }
         [UnityTest] public IEnumerator GamepadNavigationSubmitsOnlyItsOwnViewport()
@@ -200,7 +201,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Running,Is.False);
             InputSystem.AddDevice(pads[1]);yield return null;
             Button("pause-action-0-0").onClick.Invoke();yield return new WaitForFixedUpdate();
-            Assert.That(ground.Running,Is.True);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
         }
     }
 }

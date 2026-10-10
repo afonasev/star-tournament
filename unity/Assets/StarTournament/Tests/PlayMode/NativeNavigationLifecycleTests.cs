@@ -1,3 +1,4 @@
+using StarTournament.ProvingGround.Tests.PlayMode;
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ namespace StarTournament.ProvingGround.Tests
         }
         [UnityTest] public IEnumerator SessionTickPauseDeathAndFrozenRepeatOwnNavigationLifecycle()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             pads=Enumerable.Range(0,3).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);ground.EnableNavigationReview();
             var driver=ground.NavigationReviewDriver;var configuration=driver.Controller.Capture().Configuration;
@@ -33,7 +34,7 @@ namespace StarTournament.ProvingGround.Tests
             yield return new WaitForSecondsRealtime(.1f);Assert.That(ground.Session.Time,Is.EqualTo(time));Assert.That(JsonUtility.ToJson(driver.Controller.Capture()),Is.EqualTo(paused));
             ground.BotNavigationProfile.Set("bots.navigation.stuckSeconds",4);
             ground.BotPerceptionProfile.Set("bots.normal.memorySeconds",10);
-            Button("Повторить матч").onClick.Invoke();yield return null;
+            Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.NavigationReviewDriver,Is.Not.SameAs(driver));Assert.That(ground.NavigationReviewDriver.Controller.Capture().Configuration,Is.EqualTo(configuration));
             Assert.That(ground.NavigationReviewDriver.Controller.Capture().HasGoal,Is.False);
             ground.NavigationReviewDriver.Controller.SetStaticGoal(new Vector3(-13,4,2));

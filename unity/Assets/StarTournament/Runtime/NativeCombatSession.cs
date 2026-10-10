@@ -20,8 +20,10 @@ namespace StarTournament.ProvingGround
         public readonly float HealthLost, ArmorLost;
         public readonly double Time;
         public readonly FatalImpact Impact;
-        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time,FatalImpact impact=default)
-        { Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time;Impact=impact; }
+        // Individual shotgun contacts are transient presentation data, never simulation/snapshot state.
+        public readonly IReadOnlyList<FatalImpact> Contacts;
+        public DamageNotice(int participant,int life,float healthLost,float armorLost,double time,FatalImpact impact=default,IReadOnlyList<FatalImpact> contacts=null)
+        { Participant=participant;Life=life;HealthLost=healthLost;ArmorLost=armorLost;Time=time;Impact=impact;Contacts=contacts; }
     }
     public enum PelletContact { Miss, World, Participant }
     public readonly struct PelletNotice
@@ -220,7 +222,7 @@ namespace StarTournament.ProvingGround
         }
         public void ClearInput()
         {
-            for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); beams[i].Stop(); releaseRequired[i] = true; }
+            for (int i = 0; i < lives.Length; i++) { lives[i].ClearHeldInput(); motors[i].CancelLookReturn(); beams[i].Stop(); releaseRequired[i] = true; }
         }
         public void Tick(LocalAction[] actions, float seconds)
         {
@@ -311,7 +313,14 @@ namespace StarTournament.ProvingGround
             {
                 float applied=0;
                 for(int t=0;t<targets.Length;t++) if(shot.damage[t]>0)
-                    applied+=ApplyDamagePolicy(targets[t].Seat, targets[t].Life, shot.damage[t]/resolver.ProjectileCount(shot.notice.Weapon), shot.shooter, shot.life,false,FatalImpact.FromShot(shot.notice,targets[t].Seat,targets[t].Life)).Applied;
+                {
+                    var target=targets[t];
+                    var contacts=shot.notice.Weapon==WeaponId.Shotgun?Array.AsReadOnly(shot.notice.Pellets
+                        .Where(p=>p.Contact==PelletContact.Participant&&p.TargetSeat==target.Seat&&p.TargetLife==target.Life)
+                        .Select(p=>new FatalImpact(shot.notice.Weapon,shot.notice.Sequence,p.Direction,p.Endpoint)).ToArray()):null;
+                    applied+=ApplyDamagePolicy(target.Seat,target.Life,shot.damage[t]/resolver.ProjectileCount(shot.notice.Weapon),shot.shooter,shot.life,false,
+                        FatalImpact.FromShot(shot.notice,target.Seat,target.Life),contacts).Applied;
+                }
                 if(shot.notice.Weapon==WeaponId.Shotgun||shot.notice.Weapon==WeaponId.Rifle)
                 {
                     int successful=shot.notice.Pellets.Count(p=>p.Contact==PelletContact.Participant&&IsEnemy(shot.shooter,p.TargetSeat));
@@ -489,7 +498,7 @@ namespace StarTournament.ProvingGround
         bool IsEnemy(int attacker,int target)=>attacker>=0&&target>=0&&attacker!=target&&!Allied(attacker,target);
         public DamageResult ApplyDamage(int seat, int life, float damage, int killer = -1, int killerLife = 0)
             => ApplyDamagePolicy(seat,life,damage,killer,killerLife,false);
-        DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket,FatalImpact impact=default)
+        DamageResult ApplyDamagePolicy(int seat,int life,float damage,int killer,int killerLife,bool rocket,FatalImpact impact=default,IReadOnlyList<FatalImpact> contacts=null)
         {
             if(stopped || Match?.Phase==NativeMatchPhase.Finished) return default;
             if(seat<0||seat>=lives.Length||killer < -1||killer>=lives.Length)throw new ArgumentOutOfRangeException();
@@ -503,7 +512,7 @@ namespace StarTournament.ProvingGround
             {
                 // Splash originates at the target capsule centre; lethal physics keeps the explosion centre.
                 var visualImpact=impact.Valid&&impact.Weapon==WeaponId.RocketLauncher?new FatalImpact(impact.Weapon,impact.Sequence,impact.Direction,Pose(seat).Position+Vector3.up*(movement.Get("player.capsule.height")*.5f),impact.ExplosionFraction):impact;
-                Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time,visualImpact));
+                Damaged?.Invoke(new DamageNotice(seat,after.Life,healthLost,armorLost,Time,visualImpact,contacts));
             }
             // Friendly splash can kill, but cannot earn enemy kill/assist rewards.
             int scorer=killer>=0&&killer!=seat&&Allied(killer,seat)?-1:killer;

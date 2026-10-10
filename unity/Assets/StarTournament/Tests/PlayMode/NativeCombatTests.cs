@@ -108,7 +108,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.ApplyDamage(1,1,100,0,1).Applied,Is.Zero,"Old-life damage cannot hit respawn");
         }
         [UnityTest]
-        public IEnumerator LtTapKeepsRtShotAndCameraOnTheSameHorizonDirection()
+        public IEnumerator LtTapKeepsRtShotAndCameraOnTheSameInterpolatedDirection()
         {
             Setup(centeredRifle:true);yield return null;
             var cameras=new Camera[4];var views=new GameObject[4];CombatPresentation presentation=null;
@@ -127,9 +127,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 session.Tick(tapAndFire,.02f);presentation.Render();
                 var pose=session.Pose(0);var bullet=session.RifleBullets.Single(b=>b.Owner==0);
                 Assert.That(session.ShotCount,Is.EqualTo(1),"RT-style fire edge still launches during the LT reset tick");
-                Assert.That(pose.Pitch,Is.Zero);Assert.That(pose.Yaw,Is.EqualTo(27).Within(.001));
+                Assert.That(pose.Pitch,Is.GreaterThan(0).And.LessThan(34));Assert.That(pose.Yaw,Is.EqualTo(27).Within(.001));
                 Assert.That(Vector3.Distance(cameras[0].transform.forward,bullet.Direction),Is.LessThan(.00001f),
                     "the rendered camera and authoritative rifle shot use the same post-LT orientation");
+                for(int tick=0;tick<15;tick++){session.Tick(new LocalAction[4],.02f);presentation.Render();}
+                Assert.That(session.Pose(0).Pitch,Is.Zero);
+                Assert.That(Vector3.Angle(cameras[0].transform.forward,Quaternion.Euler(0,27,0)*Vector3.forward),Is.LessThan(.01f));
             }
             finally{presentation?.Dispose();}
         }
@@ -293,7 +296,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             int listeners=Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Length;
             for(int repeat=0;repeat<2;repeat++)
             {
-                yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+                yield return NativeLoadingTestScene.Load();
                 scene=SceneManager.GetSceneByName("ProvingGround"); yield return null;
                 var ground=Array.Find(Object.FindObjectsByType<ProvingGround>(FindObjectsSortMode.None),g=>g.gameObject.scene==scene);
                 Assert.That(ground,Is.Not.Null);

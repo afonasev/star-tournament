@@ -14,5 +14,7 @@ namespace StarTournament.ProvingGround
         public bool Grounded;
         public float LookNeutralSeconds; // Gameplay clock only; serializable assistance phase.
         public float LookReturnVelocity;
+        public bool TapLookReturning,TapLookRequiresGamepad;
+        public float TapLookStartPitch,TapLookElapsed;
     }
 }

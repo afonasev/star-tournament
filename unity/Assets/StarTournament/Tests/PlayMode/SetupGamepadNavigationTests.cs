@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             if(pad==null||!pad.added)pad=InputSystem.AddDevice<Gamepad>();
@@ -111,7 +111,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();yield return Press(GamepadButton.DpadDown);
             yield return Press(GamepadButton.Start);yield return Press(GamepadButton.Start);yield return Press(GamepadButton.Start);
-            Assert.That(ground.Running,Is.True);Assert.That(PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey),Is.EqualTo(IndustrialTunnelsCatalog.Id));
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey),Is.EqualTo(IndustrialTunnelsCatalog.Id));
             typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null);
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("arena-choice-1"));
             yield return Press(GamepadButton.DpadDown);Assert.That(ground.SelectedMapId,Is.EqualTo(LunarLaboratoryCatalog.Id));
@@ -132,7 +132,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator KeyboardKeepsEnterTransitionsAndGamepadTakesContentFocusWithoutRebinding()
         {
             keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             pad=InputSystem.AddDevice<Gamepad>();EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);
             for(int step=0;step<3;step++)

@@ -46,9 +46,9 @@ namespace StarTournament.ProvingGround
 
         public void ValidateState(ParticipantState value)
         {
-            foreach(var number in new[]{value.Position.x,value.Position.y,value.Position.z,value.Velocity.x,value.Velocity.y,value.Velocity.z,value.Yaw,value.Pitch,value.LookNeutralSeconds,value.LookReturnVelocity})
+            foreach(var number in new[]{value.Position.x,value.Position.y,value.Position.z,value.Velocity.x,value.Velocity.y,value.Velocity.z,value.Yaw,value.Pitch,value.LookNeutralSeconds,value.LookReturnVelocity,value.TapLookStartPitch,value.TapLookElapsed})
                 if(float.IsNaN(number)||float.IsInfinity(number))throw new System.ArgumentException("Invalid participant pose");
-            if(Mathf.Abs(value.Pitch)>profile.Get("camera.maximumPitchDegrees")||value.LookNeutralSeconds<0)throw new System.ArgumentException("Invalid participant look state");
+            if(Mathf.Abs(value.Pitch)>profile.Get("camera.maximumPitchDegrees")||value.LookNeutralSeconds<0||value.TapLookElapsed<0)throw new System.ArgumentException("Invalid participant look state");
         }
         public void RestoreState(ParticipantState value)
         {
@@ -59,7 +59,7 @@ namespace StarTournament.ProvingGround
         public void SetAlive(bool alive)
         {
             controller.enabled = alive;
-            if (!alive) state.Velocity = Vector3.zero;
+            if (!alive) {state.Velocity = Vector3.zero;CancelLookReturn();}
         }
         public void SetHorizontalSpeedMultiplier(float multiplier)
         {
@@ -78,7 +78,18 @@ namespace StarTournament.ProvingGround
             var maximumPitch = profile.Get("camera.maximumPitchDegrees");
             if(!action.GamepadLookLocked)
                 state.Pitch = Mathf.Clamp(state.Pitch - action.LookDegrees.y, -maximumPitch, maximumPitch);
-            if(action.ResetLookPitch)state.Pitch=0f;
+            if((state.TapLookRequiresGamepad&&!action.HasGamepadReturnDelay)||action.GamepadLookLocked||(!action.ResetLookPitch&&(action.ManualLook||action.LookDegrees.sqrMagnitude>0)))
+                CancelLookReturn();
+            if(action.ResetLookPitch)
+            {state.TapLookReturning=true;state.TapLookRequiresGamepad=action.HasGamepadReturnDelay;state.TapLookStartPitch=state.Pitch;state.TapLookElapsed=0;}
+            if(state.TapLookReturning)
+            {
+                state.TapLookElapsed+=dt;
+                float t=Mathf.Clamp01(state.TapLookElapsed/profile.Get("input.gamepadTapAimSmoothingSeconds"));
+                state.Pitch=Mathf.Lerp(state.TapLookStartPitch,0,t*t*(3-2*t));
+                if(t>=1)state.TapLookReturning=false;
+                state.LookNeutralSeconds=0;state.LookReturnVelocity=0;
+            }
             transform.rotation = Quaternion.Euler(0f, state.Yaw, 0f);
 
             var groundedBeforeMove = controller.isGrounded;
@@ -114,17 +125,20 @@ namespace StarTournament.ProvingGround
             state.Position = transform.position;
             state.Velocity = actualVelocity;
             state.Grounded = controller.isGrounded || (collisionFlags & CollisionFlags.Below) != 0;
-            if(action.GamepadLookLocked||action.ResetLookPitch)
+            if(action.GamepadLookLocked||action.ResetLookPitch||state.TapLookReturning)
             {state.LookNeutralSeconds=0;state.LookReturnVelocity=0;return;}
             ApplyLookAssistance(action,dt);
 
         }
+        public void CancelLookReturn()
+        {state.TapLookReturning=false;state.TapLookRequiresGamepad=false;state.TapLookElapsed=0;state.LookNeutralSeconds=0;state.LookReturnVelocity=0;}
         void ApplyLookAssistance(LocalAction action,float dt)
         {
             if(!action.GamepadLookAssistance||action.ManualLook||action.LookDegrees.sqrMagnitude>0f||!state.Grounded||action.Jump)
             {state.LookNeutralSeconds=0;state.LookReturnVelocity=0;return;}
             state.LookNeutralSeconds+=dt;
-            if(state.LookNeutralSeconds<=profile.Get("input.gamepadReturnDelay"))return;
+            float delay=action.HasGamepadReturnDelay?GamepadLookSettings.Snap(profile,GamepadLookSettings.DelayPath,action.GamepadReturnDelay):profile.Get(GamepadLookSettings.DelayPath);
+            if(state.LookNeutralSeconds<=delay)return;
             var origin=state.Position+Vector3.up*profile.Get("player.movement.stepOffset");
             // Capsule contact on an incline can sit above the centre-foot plane by its radius.
             var distance=profile.Get("player.movement.stepOffset")+profile.Get("player.capsule.radius")+profile.Get("player.capsule.skinWidth")*2;

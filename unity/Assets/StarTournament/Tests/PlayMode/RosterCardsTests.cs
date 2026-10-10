@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         void Click(string name){Assert.That(B(name).interactable,Is.True,name);B(name).onClick.Invoke();}
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
             Click("main-action-0");NativeSetupFixture.UnboundHumans(ground);Click("setup-next");Click("setup-next");
         }

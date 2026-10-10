@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
@@ -14,6 +15,8 @@ namespace StarTournament.ProvingGround
         public int LightCount {get;private set;} public int PipeCount {get;private set;}
         float P(string key)=>p.Get("tunnels."+key);
         public void Build(ArenaDefinition definition,ProvingProfile profile)
+        { var steps=BuildSteps(definition,profile);while(steps.MoveNext()){} }
+        public IEnumerator BuildSteps(ArenaDefinition definition,ProvingProfile profile)
         {
             p=profile;if(p.Id!=ProvingProfile.TunnelsArtId||p.Validate().Count>0)throw new ArgumentException("Invalid tunnel art profile");
             oldAmbient=RenderSettings.ambientLight;oldMode=RenderSettings.ambientMode;RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=new Color(1,.91f,.79f)*P("light.fill");
@@ -25,8 +28,10 @@ namespace StarTournament.ProvingGround
             warm=Emissive("Amber service lamp",new Color(1,.56f,.19f));white=Emissive("White base luminaire",new Color(.86f,.94f,1));
             mold=new Material(Shader.Find("StarTournament/TunnelGrime")){name="Lower wall damp / mold"};mold.SetFloat("_Opacity",P("surface.mold"));owned.Add(mold);
             CreateSectorMaterials();
+            int decorated=0;
             foreach(var s in definition.Solids)
             {
+                if(decorated++%16==0)yield return null;
                 var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
                 if(s.Surface=="tunnel-grille")
                 {
@@ -46,7 +51,7 @@ namespace StarTournament.ProvingGround
             foreach(float x in new[]{-10f,0,10f})foreach(int side in new[]{-1,1})Fixture(new Vector3(x,3.8f,side*19),false,false);
             foreach(float z in new[]{-6f,0,6f})foreach(int side in new[]{-1,1})Fixture(new Vector3(side*23,3.8f,z),false,false);
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1}){Fixture(new Vector3(sx*10,3.8f,sz*13),false,false);Fixture(new Vector3(sx*5,3.8f,sz*8),false,false);}
-            Wayfinding();
+            yield return null;Wayfinding();yield return null;
             foreach(var entry in batches)
             {
                 var go=new GameObject(entry.Key.name);go.transform.SetParent(transform,false);var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);

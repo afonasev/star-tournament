@@ -2,15 +2,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal static readonly string[] BotCombatMovementDefaults={"bots.easy.jumpChance","bots.normal.jumpChance","bots.hard.jumpChance","bots.normal.jumpCooldownSeconds"};
         public static ProvingProfile CreateBotBehaviorDefault()
         {
-            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 3 };
+            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 4 };
             string[] ids = { "easy", "normal", "hard" }, labels = { "Салага", "Боец", "Ветеран" };
             float[] reaction = { .6f, .28f, .12f }, decision = { .35f, .2f, .1f };
             float[] aimSpeed = { 90, 160, 230 }, aimError = { 12, 5, 1.5f }, aimPeriod = { 1.4f, 1, .7f };
             float[] fireTolerance = { 18, 12, 8 }, preferredDistance = { 6, 5, 4 };
             float[] strafeSeconds = { 1.8f, 1.1f, .7f }, strafeWeight = { .35f, .65f, .85f };
-            float[] jumpCooldown = { 6, 4, 3 }, jumpChance = { .12f, .18f, .22f };
+            float[] jumpCooldown = { 6, 5, 3 }, jumpChance = { 0, .3f, .55f };
             float[] retreatSeconds = { .7f, 1, 1.2f }, retreatHealth = { .2f, .3f, .35f }, supportChance = { .2f, .45f, .65f };
             for (int i = 0; i < ids.Length; i++)
             {
@@ -26,6 +27,7 @@ namespace StarTournament.ProvingGround
                 p.Add(path+"strafeWeight", "bots", label+"Стрейф", "Вес бокового движения в перестрелке.", "ratio", 0, 1, .05f, strafeWeight[i]);
                 p.Add(path+"jumpCooldownSeconds", "bots", label+"Пауза прыжков", "Минимальная пауза между прыжками.", "seconds", 1, 15, .1f, jumpCooldown[i]);
                 p.Add(path+"jumpChance", "bots", label+"Боевой прыжок", "Вероятность прыжка при смене боевого манёвра и свободном приземлении.", "ratio", 0, 1, .01f, jumpChance[i]);
+                p.Add(path+"surpriseJumpChance", "bots", label+"Прыжок от неожиданности", "Шанс безопасного прыжка при новой угрозе вне окна прицела; 0 отключает реакцию, 1 гарантирует попытку после паузы.", "ratio", 0, 1, .01f, i==2?.9f:0);
                 p.Add(path+"retreatSeconds", "bots", label+"Короткий отход", "Предельное время отхода после обнаружения угрозы при низком здоровье.", "seconds", .1f, 3, .1f, retreatSeconds[i]);
                 p.Add(path+"retreatHealthRatio", "bots", label+"Порог отхода", "Доля здоровья для временного отхода.", "ratio", .05f, .6f, .05f, retreatHealth[i]);
                 p.Add(path+"supportChance", "bots", label+"Поддержка", "Склонность помочь доступному союзнику.", "ratio", 0, 1, .05f, supportChance[i]);
@@ -37,13 +39,25 @@ namespace StarTournament.ProvingGround
             p.Add("bots.tactics.retreatCooldownSeconds", "bots", "Пауза отхода", "Минимальная пауза между тактическими отходами.", "seconds", .1f, 20, .1f, 4);
             p.Add("bots.tactics.supportCooldownSeconds", "bots", "Пауза поддержки", "Минимальная пауза между тактическими действиями поддержки.", "seconds", .1f, 20, .1f, 5);
             p.Add("bots.tactics.probeDistance", "bots", "Дистанция пробы", "Дистанция тактической пробы для выбора безопасного действия.", "meters", .1f, 3, .1f, 1);
+            p.Add("bots.tactics.surpriseWindowSeconds", "bots", "Окно неожиданности", "Время после обнаружения новой угрозы, когда возможен уклоняющий прыжок; минимум ограничивает реакцию первым моментом, максимум продлевает окно.", "seconds", .1f, 5, .1f, 1.5f);
             p.Add("bots.tactics.jumpSamples", "bots", "Пробы прыжка", "Максимум fixed-step проб траектории motor; превышение отклоняет прыжок.", "count", 4, 512, 1, 128);
             p.Add("bots.tactics.coverDistance", "bots", "Дистанция укрытия", "Целевая дистанция до точки краткого укрытия.", "meters", 1, 8, .1f, 3);
             AddBotTactics(p);
             return p;
         }
+        // Preserve the exact v3 registry and defaults for immutable Lab history hashes.
+        internal ProvingProfile BeforeBotCombatMovement()
+        {
+            if(id!="unity-bot-behavior-v1"||version!=4)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=3;
+            p.descriptors.RemoveAll(d=>d.Path.EndsWith(".surpriseJumpChance")||d.Path=="bots.tactics.surpriseWindowSeconds");
+            p.values.RemoveAll(v=>v.Path.EndsWith(".surpriseJumpChance")||v.Path=="bots.tactics.surpriseWindowSeconds");
+            p.RebalanceDefault("bots.easy.jumpChance",.12f);p.RebalanceDefault("bots.normal.jumpChance",.18f);p.RebalanceDefault("bots.hard.jumpChance",.22f);
+            p.RebalanceDefault("bots.normal.jumpCooldownSeconds",4);return p;
+        }
         internal ProvingProfile BeforeBotWeaponEvaluation()
         {
+            if(id=="unity-bot-behavior-v1"&&version==4)return BeforeBotCombatMovement().BeforeBotWeaponEvaluation();
             if(id!="unity-bot-behavior-v1"||version!=3)return this;
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=2;
             p.descriptors.RemoveAll(d=>d.Path=="bots.strategy.weaponTimeSamples"||d.Path=="bots.strategy.weaponSpreadSamples");
@@ -60,8 +74,20 @@ namespace StarTournament.ProvingGround
         public void EnsureBotDescriptors()
         {
             var current=id=="unity-bot-behavior-v1"?CreateBotBehaviorDefault():id=="unity-bot-perception-v1"?CreateBotPerceptionDefault():null;
-            if(current==null)return;valueIndex=null;version=current.version;
+            if(current==null)return;valueIndex=null;
+            if(id=="unity-bot-behavior-v1"&&version<4)
+            {
+                var previous=current.BeforeBotCombatMovement();
+                foreach(string path in BotCombatMovementDefaults)
+                {
+                    // Upgrade shipped scene defaults while retaining custom Lab values.
+                    if(Get(path)==previous.Get(path))Set(path,current.Get(path));
+                    if(FindDescriptor(path)!=null)FindDescriptor(path).DefaultValue=current.Get(path);
+                }
+            }
+            version=current.version;
             foreach(var d in current.descriptors)if(FindDescriptor(d.Path)==null){descriptors.Add(UnityEngine.JsonUtility.FromJson<NumericDescriptor>(UnityEngine.JsonUtility.ToJson(d)));values.Add(new ProvingProfileValue{Path=d.Path,Value=current.Get(d.Path)});}
+            valueIndex=null;
         }
         static void AddBotTactics(ProvingProfile p)
         {

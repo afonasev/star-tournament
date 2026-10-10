@@ -2,7 +2,7 @@
 
 UNITY_TOOLS := ./unity/tools.sh
 
-.PHONY: help check-local check-full check-player prepare test-edit test-play test check check-ui build unity-editor unity-run trooper-help trooper-pipeline trooper-unity-shipping
+.PHONY: help check-tooling check-local check-full check-player prepare test-edit test-play test check check-ui build unity-editor unity-run trooper-help trooper-pipeline trooper-unity-shipping
 
 help: ## Show the supported local Unity workflow.
 	@awk 'BEGIN {FS = ":.*##"; printf "Star Tournament (Unity-only)\n\nUsage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -10,25 +10,31 @@ help: ## Show the supported local Unity workflow.
 prepare: ## Regenerate the proving-ground scene after import changes.
 	$(UNITY_TOOLS) prepare
 
-test-edit: ## Run Unity EditMode tests.
+test-edit: ## Full EditMode; requires separate human confirmation (CONFIRM_FULL_TESTS=1).
 	$(UNITY_TOOLS) test-edit
 
-test-play: ## Run Unity PlayMode tests.
+test-play: ## Full PlayMode; requires separate human confirmation (CONFIRM_FULL_TESTS=1).
 	$(UNITY_TOOLS) test-play
 
-test: test-edit test-play ## Run both Unity test suites.
+test: ## Full suites, sequentially; requires separate human confirmation (CONFIRM_FULL_TESTS=1).
+	$(UNITY_TOOLS) test-edit
+	$(UNITY_TOOLS) test-play
 
 check-ui: ## Run the minimal UI-only automatic gate (no natural bot matches).
 	python3 tools/check_ui.py
 
-check: check-local ## Run the full Unity test suites without building a Player.
+check: check-local ## Run local UI contracts; add affected fixtures, no Player build.
 
-check-full: test ## Run both complete Unity test suites (no Player build).
+check-full: test ## Full tests only after separate human confirmation; no Player build.
 
 check-local: check-ui ## Run UI contracts; add tests for the changed behavior.
 
-check-player: check-full
-	$(MAKE) build ## Explicit full tests and Development Player build; requires a build request.
+check-player: build ## Explicit Development Player build; affected QA selected separately, no implicit full tests.
+
+check-tooling: ## Test QA command routing and XML contracts without Unity.
+	python3 -m unittest discover -s tools -p 'test_unity_tools.py'
+	python3 -m unittest discover -s tools -p 'test_local_workflow.py'
+	python3 -m unittest discover -s tools -p 'test_check_ui.py'
 
 build: ## Build the local macOS Development Player (not a distributable release).
 	$(UNITY_TOOLS) build

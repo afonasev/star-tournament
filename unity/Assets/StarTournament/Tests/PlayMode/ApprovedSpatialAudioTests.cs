@@ -20,7 +20,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnitySetUp] public IEnumerator Setup()
         {
             had=PlayerPrefs.HasKey(Key);prior=PlayerPrefs.GetInt(Key);listener=AudioListener.volume;AudioListener.volume=0;NativeAudioPreferences.SetEffects(80);
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             pads=new[]{InputSystem.AddDevice<Gamepad>()};ground.StartCombatReview(pads,ensureOpponent:true);
             typeof(ProvingGround).GetField("FullHealReviewManualTick",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(ground,true);

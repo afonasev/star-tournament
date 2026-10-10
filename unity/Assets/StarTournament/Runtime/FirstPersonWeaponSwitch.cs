@@ -61,7 +61,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<joints.Length;i++)joints[i].localRotation=sampled[i];
             for(int i=0;i<joints.Length;i++)
                 joints[i].rotation=Quaternion.AngleAxis(-angles[i]*pose.Lift,axis.right)*joints[i].rotation;
-            root.localPosition=rest;model?.Show(pose.Weapon);
+            root.localPosition=rest+visual.WalkOffset;model?.Show(pose.Weapon);
         }
     }
 }

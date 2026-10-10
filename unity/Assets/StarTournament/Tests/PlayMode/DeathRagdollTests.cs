@@ -13,10 +13,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Scene scene;ProvingGround ground;Gamepad pad;
         IEnumerator Load()
         {
-            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();ground.enabled=false;
             pad=InputSystem.AddDevice<Gamepad>();ground.StartCombatReview(new[]{pad},backgroundDiagnostic:true,ensureOpponent:true);
-            Assert.That(ground.Running,Is.True,"Ragdoll QA must start a match rather than exercise setup preview");
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Ragdoll QA must start a match rather than exercise setup preview");
         }
         void Render()=>ground.SendMessage("LateUpdate");
         void Advance(int count){for(int i=0;i<count;i++){ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);Render();}}

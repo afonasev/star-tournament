@@ -29,7 +29,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             priorBackground=InputSystem.settings.backgroundBehavior;
             InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
-            yield return SceneManager.LoadSceneAsync("ProvingGround", LoadSceneMode.Additive);
+            yield return NativeLoadingTestScene.Load();
             scene = SceneManager.GetSceneByName("ProvingGround");
             yield return null;
             ground = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<ProvingGround>()).Single();
@@ -81,7 +81,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             pads = new[] { InputSystem.AddDevice<Gamepad>() };
             yield return Join(pads[0]);
             Button("Начать — четыре игрока").onClick.Invoke(); yield return new WaitForFixedUpdate(); yield return null;
-            Assert.That(ground.Running, Is.True);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running, Is.True);
             Assert.That(ground.Composition.ParticipantAt(2), Is.EqualTo(2));
             Assert.That(ground.Composition.Participant(2).Kind, Is.EqualTo(NativeParticipantKind.LocalHuman));
             Assert.That(ground.GetComponentsInChildren<Camera>(true).Count(camera => camera.enabled), Is.EqualTo(4));
@@ -97,14 +97,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SetTeam(0, NativeTeam.TeamA); ground.SetTeam(1, NativeTeam.TeamB);
             ground.SetTeam(2, NativeTeam.TeamA); ground.SetTeam(3, NativeTeam.TeamB);
             Button("Начать — четыре игрока").onClick.Invoke(); yield return new WaitForFixedUpdate(); yield return null;
-            Assert.That(ground.Running, Is.True); Assert.That(ground.BotDriver, Is.Not.Null);
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running, Is.True); Assert.That(ground.BotDriver, Is.Not.Null);
             Assert.That(ground.GetComponentsInChildren<TrooperVisual>(true).Length, Is.EqualTo(8), "views reuse TrooperVisual rather than a bot-only presentation path");
             var frozen = JsonUtility.ToJson(ground.Composition.Read()); var session = ground.Session; var driver = ground.BotDriver;
             yield return PauseEscape(); var clock = ground.Session.Time; var ticks = driver.Ticks;
             yield return new WaitForSecondsRealtime(.1f);
             Assert.That(ground.Session.Time, Is.EqualTo(clock)); Assert.That(driver.Ticks, Is.EqualTo(ticks));
             Button("Повторить матч").onClick.Invoke(); yield return null;
-            Assert.That(ground.Running, Is.True); Assert.That(ground.Session, Is.Not.SameAs(session)); Assert.That(ground.BotDriver, Is.Not.SameAs(driver));
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running, Is.True); Assert.That(ground.Session, Is.Not.SameAs(session)); Assert.That(ground.BotDriver, Is.Not.SameAs(driver));
             Assert.That(JsonUtility.ToJson(ground.Composition.Read()), Is.EqualTo(frozen));
             yield return PauseEscape(); Button("В главное меню").onClick.Invoke(); yield return null;
             Button("main-action-0").onClick.Invoke();
@@ -122,11 +122,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.SetSeatAi(1, false);
             yield return Join(pads[1]);
             Button("Начать — четыре игрока").onClick.Invoke(); yield return new WaitForFixedUpdate(); yield return null;
-            Assert.That(ground.Running, Is.True, "device released from an AI switch can serve the remaining human");
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running, Is.True, "device released from an AI switch can serve the remaining human");
             Assert.That(ground.Composition.Participant(0).Kind, Is.EqualTo(NativeParticipantKind.Bot));
             Assert.That(ground.Composition.Participant(1).Kind, Is.EqualTo(NativeParticipantKind.LocalHuman));
             var before = ground.Session.Pose(1).Position;
             InputSystem.QueueStateEvent(pads[1], new GamepadState { leftStick = Vector2.right });
+            yield return null; // Capture the new input on a rendered frame before stepping simulation.
             yield return new WaitForFixedUpdate(); yield return new WaitForFixedUpdate();
             Assert.That(Vector3.Distance(ground.Session.Pose(1).Position, before), Is.GreaterThan(.01f), "replacement device owns the switched human seat");
             var disconnected = pads[1];
@@ -138,7 +139,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null; yield return null;
             Assert.That(Button("Продолжить").interactable, Is.True, "the same human device reconnect enables explicit Resume");
             Button("Продолжить").onClick.Invoke(); yield return new WaitForFixedUpdate();
-            Assert.That(ground.Running, Is.True, "a reconnecting human explicitly resumes the paused match");
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running, Is.True, "a reconnecting human explicitly resumes the paused match");
         }
     }
 }
