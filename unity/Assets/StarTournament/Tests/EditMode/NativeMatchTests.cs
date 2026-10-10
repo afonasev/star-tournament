@@ -13,9 +13,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         static NativeStanding Row(NativeMatchState s,int seat) => Array.Find(s.Read().Standings,r=>r.Seat==seat);
         static void Kill(NativeMatchState s,int victim,int killer) => s.RecordDamage(victim,killer,new DamageResult(100,true));
-        [Test] public void ChainAwardsAreCumulativeThenIncrementAndDeathResetsAfterMutualKills()
+        [Test] public void LinearChainAwardsGrowAndDeathResetsAfterMutualKills()
         {
-            var s=Make(); int[] expected={100,300,500,800,1200,1600};
+            var s=Make(); int[] expected={100,300,600,1000,1500,2100};
             foreach(int value in expected) { s.BeginTick();Kill(s,1,0);s.EndTick();Assert.That(Row(s,0).Score,Is.EqualTo(value)); }
             s.BeginTick();Kill(s,0,2);Kill(s,2,0);s.EndTick();
             int before=Row(s,0).Score;s.BeginTick();Kill(s,1,0);s.EndTick();Assert.That(Row(s,0).Score,Is.EqualTo(before+100));
@@ -36,9 +36,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             s.BeginTick();Kill(s,2,-1);Kill(s,3,3);s.EndTick();
             Assert.That(Row(s,2).Deaths,Is.EqualTo(1));Assert.That(Row(s,3).Kills,Is.Zero);
         }
-        [Test] public void ChainContinuesAcrossAnyGapUntilDeathAndPairCountsRemain()
+        [Test] public void LegacyChainContinuesAcrossAnyGapUntilDeathAndPairCountsRemain()
         {
-            var s=Make();s.BeginTick();Kill(s,1,0);s.EndTick();
+            var s=Make(profile:ProvingProfile.CreateLegacyMatchDefault());s.BeginTick();Kill(s,1,0);s.EndTick();
             for(int i=0;i<10;i++){s.BeginTick();if(i==9)Kill(s,1,0);s.EndTick();}
             Assert.That(Row(s,0).Score,Is.EqualTo(300));
             for(int i=0;i<11;i++){s.BeginTick();if(i==10)Kill(s,1,0);s.EndTick();}
@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test] public void FinalTickAppliesAllAwardsAndTargetPrecedesTimeWithFrozenResult()
         {
-            var p=ProvingProfile.CreateMatchDefault();p.Set("score.chainTotal1",1000);p.Set("score.chainTotal2",1000);p.Set("score.chainTotal3",1000);p.Set("score.chainTotal4",1000);
+            var p=ProvingProfile.CreateLegacyMatchDefault();p.Set("score.chainTotal1",1000);p.Set("score.chainTotal2",1000);p.Set("score.chainTotal3",1000);p.Set("score.chainTotal4",1000);
             var s=Make(true,1,p);for(int i=0;i<59;i++){s.BeginTick();s.EndTick();}
             s.BeginTick();Kill(s,2,0);Kill(s,3,1);s.EndTick();
             Assert.That(s.Phase,Is.EqualTo(NativeMatchPhase.Overtime));Assert.That(s.Read().Trigger,Is.EqualTo("score-limit"));
@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test] public void EarlyTargetOvertimeZerosTimerThroughFinish()
         {
-            var p=ProvingProfile.CreateMatchDefault();for(int i=1;i<=4;i++)p.Set("score.chainTotal"+i,1000);
+            var p=ProvingProfile.CreateLegacyMatchDefault();for(int i=1;i<=4;i++)p.Set("score.chainTotal"+i,1000);
             var s=Make(true,50,p);s.BeginTick();Kill(s,2,0);Kill(s,3,1);s.EndTick();
             Assert.That(s.Phase,Is.EqualTo(NativeMatchPhase.Overtime));Assert.That(s.Read().RemainingTicks,Is.Zero);
             s.BeginTick();s.RecordDamage(2,0,new DamageResult(1,false));Kill(s,2,1);s.EndTick();
@@ -87,7 +87,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var p=ProvingProfile.CreateMatchDefault();var c=NativeMatchConfiguration.Default(p);c.TargetPoints=1001;
             Assert.Throws<ArgumentException>(()=>new NativeMatchState(4,c,p,50));
             var s=Make(false,50,p);p.Set("score.chainTotal1",900);s.BeginTick();Kill(s,1,0);s.EndTick();Assert.That(Row(s,0).Score,Is.EqualTo(100));
-            p.Set("score.chainTotal1",301);Assert.Throws<ArgumentException>(()=>Make(false,50,p));
+            p.Set("score.chainTotal1",301);Assert.DoesNotThrow(()=>Make(false,50,p));
+            var legacy=ProvingProfile.CreateLegacyMatchDefault();legacy.Set("score.chainTotal1",301);Assert.Throws<ArgumentException>(()=>Make(false,50,legacy));
         }
     }
 }

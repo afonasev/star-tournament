@@ -5,9 +5,10 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        public static ProvingProfile CreateLegacyMatchDefault()=>CreateMatchDefault().BeforeTimedKillChains();
         public static ProvingProfile CreateMatchDefault()
         {
-            var p = new ProvingProfile { id = "unity-native-match-v1", version = 2 };
+            var p = new ProvingProfile { id = "unity-native-match-v1", version = 3 };
             // Baseline: released prototype-v1@12. Ranges are shared by setup and validation.
             p.Add("match.durationMinutes", "match", "Длительность", "Основное время; равенство запускает overtime.", "minutes", 1, 30, 1, 5);
             p.Add("match.targetPoints", "match", "Цель по очкам", "Используется только при включённой цели.", "points", 1000, 20000, 100, 3000);
@@ -19,6 +20,8 @@ namespace StarTournament.ProvingGround
             for (int i = 0; i < totals.Length; i++)
                 p.Add("score.chainTotal"+(i+1), "scoring", "Итог серии "+(i+1), "Накопительная награда серии без assists.", "points", 0, 20000, 1, totals[i]);
             p.Add("score.chainIncrement", "scoring", "После пятого", "Дополнительная награда за каждое следующее убийство.", "points", 0, 20000, 1, 400);
+            p.Add("score.chainWindowSeconds", "scoring", "Окно серии убийств", "Интервал между соседними убийствами включительно; каждое убийство продлевает окно.", "seconds", 0, 60, .1f, 10);
+            p.Add("score.chainAwardStep", "scoring", "Прирост награды серии", "Каждое следующее убийство приносит на столько очков больше предыдущего.", "points", 0, 20000, 1, 100);
             p.Add("score.friendlyOrSelfKillPenalty", "scoring", "Штраф за убийство себя/союзника", "Вычитание из личного счёта за каждую такую смерть; матч сохраняет выбранное значение.", "points", 0, 20000, 1, 200);
             p.Add("achievement.minimumShots", "match", "Выстрелы для достижений", "Минимум фактических выстрелов для точностных номинаций.", "shots", 1, 1000, 1, 10);
             p.Add("achievement.minimumBeamSeconds", "match", "Время луча для достижений", "Минимальная длительность луча для точностных номинаций.", "seconds", .1f, 60, .1f, 1);

@@ -11,7 +11,8 @@ namespace StarTournament.ProvingGround
         public readonly CombatLifeState Life;
         public readonly ParticipantState Pose;
         public readonly FatalImpact Impact;
-        public DeathNotice(int seat, CombatLifeState life, ParticipantState pose,FatalImpact impact=default) { Seat=seat; Life=life; Pose=pose; Impact=impact; }
+        public readonly KillScoreEvent Score;
+        public DeathNotice(int seat, CombatLifeState life, ParticipantState pose,FatalImpact impact=default,KillScoreEvent score=default) { Seat=seat; Life=life; Pose=pose; Impact=impact; Score=score; }
     }
     /// <summary>Actual post-policy losses; presentation cannot infer armor hits from health alone.</summary>
     public readonly struct DamageNotice
@@ -534,7 +535,7 @@ namespace StarTournament.ProvingGround
             }
             // Friendly splash can kill, but cannot earn enemy kill/assist rewards.
             int scorer=killer>=0&&killer!=seat&&Allied(killer,seat)?-1:killer;
-            Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer);
+            var score=Match?.RecordDamage(seat,scorer,result,killer<0||(!Life(killer).Dead&&Life(killer).Life==killerLife),originalSource:killer)??default;
             if (result.Killed)
             {
                 var deathPose=Pose(seat); // Capture momentum before SetAlive clears motor velocity.
@@ -542,7 +543,7 @@ namespace StarTournament.ProvingGround
                 damageRemaining[seat]=0;speedRemaining[seat]=0;motors[seat].SetHorizontalSpeedMultiplier(1);
                 motors[seat].SetAlive(false);
                 releaseRequired[seat] = true;
-                Died?.Invoke(new DeathNotice(seat, Life(seat), deathPose,impact));
+                Died?.Invoke(new DeathNotice(seat, Life(seat), deathPose,impact,score));
             }
             return result;
         }

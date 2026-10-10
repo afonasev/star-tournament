@@ -263,10 +263,18 @@ namespace StarTournament.ProvingGround
             copy.descriptors.RemoveAll(d=>d.Path=="achievement.minimumShots"||d.Path=="achievement.minimumBeamSeconds");
             copy.values.RemoveAll(v=>v.Path=="achievement.minimumShots"||v.Path=="achievement.minimumBeamSeconds");return copy;
         }
+        internal ProvingProfile BeforeTimedKillChains()
+        {
+            if(id!="unity-native-match-v1"||version<3)return this;
+            var copy=DetachedCopy();copy.version=2;
+            copy.descriptors.RemoveAll(d=>d.Path=="score.chainWindowSeconds"||d.Path=="score.chainAwardStep");
+            copy.values.RemoveAll(v=>v.Path=="score.chainWindowSeconds"||v.Path=="score.chainAwardStep");
+            return copy;
+        }
         public void EnsureMatchDescriptors()
         {
             valueIndex=null;
-            // The old time gap is no longer a gameplay control: a chain ends only on death.
+            // The historical prototype gap is not the v3 adjacent-kill window.
             descriptors.RemoveAll(d=>d.Path=="score.chainGap");values.RemoveAll(v=>v.Path=="score.chainGap");
             var current=CreateMatchDefault();
             version=current.version;
