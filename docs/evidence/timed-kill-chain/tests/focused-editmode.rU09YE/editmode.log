@@ -67,9 +67,9 @@ Successfully changed project path to: /Users/eaafonasev/.codex/worktrees/timed-k
     "memorysetup-temp-allocator-size-gfx=262144"
 Player connection [8436879168]  Target information:
 
-Player connection [8436879168]  * "[IP] 192.168.0.162 [Port] 55507 [Flags] 2 [Guid] 2158373752 [EditorId] 2158373752 [Version] 1048832 [Id] OSXEditor(0,MSK-V4NW2LD6KL.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+Player connection [8436879168]  * "[IP] 192.168.0.162 [Port] 55507 [Flags] 2 [Guid] 2158373752 [EditorId] 2158373752 [Version] 1048832 [Id] OSXEditor(0,MSK-V4NW2LD6KL.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor"
 
-Player connection [8436879168]  * "[IP] 10.9.252.2 [Port] 55507 [Flags] 2 [Guid] 2158373752 [EditorId] 2158373752 [Version] 1048832 [Id] OSXEditor(0,MSK-V4NW2LD6KL.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+Player connection [8436879168]  * "[IP] 10.9.252.2 [Port] 55507 [Flags] 2 [Guid] 2158373752 [EditorId] 2158373752 [Version] 1048832 [Id] OSXEditor(0,MSK-V4NW2LD6KL.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor"
 
 Player connection [8436879168] Host joined multi-casting on [225.0.0.222:54997]...
 Player connection [8436879168] Host joined alternative multi-casting on [225.0.0.222:34997]...
@@ -364,12 +364,12 @@ Total: 6.206375 ms (FindLiveObjects: 0.231708 ms CreateObjectMapping: 0.137333 m
 ##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1791630934999,"processId":1463,"editorVersion":"6000.3.23f1 (09d2ecc7fb28)","branch":"6000.3/staging","buildType":"Release","platform":"OSX"}
 [Licensing::Client] Successfully resolved entitlement details
 Running tests for ExecutionSettings with details:
-targetPlatform = 
+targetPlatform =
 playerHeartbeatTimeout = 600
-filters[0] = 
+filters[0] =
    Filter with settings:
    testMode = EditMode
-   targetPlatform = 
+   targetPlatform =
    testNames = null
    groupNames = DesignLabHistoryTests.InvalidRangeStepAndCrossFieldDraftCannotSave
    categoryNames = null

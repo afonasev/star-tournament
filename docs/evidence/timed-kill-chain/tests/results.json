@@ -62,9 +62,19 @@
       "failed": "0",
       "duration": "28.3136867",
       "ended": "2026-10-10 11:16:34Z"
+    },
+    {
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.m3VP9t/playmode.xml",
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "duration": "52.8580037",
+      "ended": "2026-10-10 11:20:41Z",
+      "source_revision": "5a13e0dd"
     }
   ],
-  "distinct_latest_passed": 54,
+  "distinct_latest_passed": 56,
   "tests": {
     "StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.ScoreboardUpgradePreservesOldValuesAndHashes": {
       "result": "Passed",
@@ -333,8 +343,18 @@
     },
     "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices": {
       "result": "Passed",
-      "ended": "2026-10-10 11:16:34Z",
-      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode-series-render/playmode.xml"
+      "ended": "2026-10-10 11:20:41Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.m3VP9t/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.FourChannelCombinationsHaveOneVoiceAcrossOneAndFourViews": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:20:41Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.m3VP9t/playmode.xml"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.VoiceLifecycleAndEffectsMixNeverReplayOldLines": {
+      "result": "Passed",
+      "ended": "2026-10-10 11:20:41Z",
+      "artifact": "docs/evidence/timed-kill-chain/tests/focused-playmode.m3VP9t/playmode.xml"
     }
   }
 }

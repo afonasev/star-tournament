@@ -1,0 +1,5 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices;BotReactionSettingsTests.FourChannelCombinationsHaveOneVoiceAcrossOneAndFourViews;BotReactionSettingsTests.VoiceLifecycleAndEffectsMixNeverReplayOldLines
+lab_history=/Users/eaafonasev/.codex/worktrees/timed-kill-chain/star-tournament/unity/../.local/unity-evidence/focused-playmode.m3VP9t/qa-lab-history.json
+revision=5a13e0dd8a7270706fcd787f3984325597ccd30b
