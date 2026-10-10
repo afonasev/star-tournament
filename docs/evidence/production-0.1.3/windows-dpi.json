@@ -1,0 +1,20 @@
+{
+  "result": "Passed",
+  "exes": [
+    {
+      "role": "launcher",
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/packages/win-x64/payload-0.1.3/StarTournamentLauncher.exe",
+      "sha256": "311e01485e9f7672525c0610a7fef5e7f92fc6c0920f0e68d0b803300be1d553",
+      "dpiAwareness": "PerMonitorV2, PerMonitor",
+      "dpiAware": "true"
+    },
+    {
+      "role": "unity-player",
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/players/win/StarTournament.exe",
+      "sha256": "0823a0d12feec6993eeacf039a1ebc6d23f08d4d49368aa328fe618c6ea87380",
+      "dpiAwareness": "PerMonitorV2",
+      "dpiAware": "True/PM"
+    }
+  ],
+  "physical_300_percent_acceptance": false
+}

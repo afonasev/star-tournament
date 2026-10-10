@@ -1,0 +1,24 @@
+{
+  "baseline_production": "0.1.2",
+  "baseline_runtime": "4249c096c721394798dc28548a19c63342427b92",
+  "source": "97c42610c1b1667c1d664a3159b90fa2044fec0b",
+  "exclude": "foreign dirty primary ProjectSettings",
+  "reason": "Affected history/profile migrations, bot aim/movement and input settings, contact effects, asynchronous loading/menu/pause/navigation, results/rivalry layout, music and first-person rig. Existing per-feature evidence retained; current integrated affected fixtures exercise interactions. No full suite.",
+  "commands": [
+    {
+      "platform": "EditMode",
+      "filter": "NativeBotPlannerTests;GamepadLookSettingsTests;FirstPersonWalkTests;WeaponSwitchPresentationTests;HitFeedbackProfileTests;HitFeedbackProjectionTests;NativeLoadingHistoryCancellationTests;LabReleaseCatalogTests;NativeMusicTests;DesignLabHistoryTests.StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation;DesignLabHistoryTests.MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots;DesignLabHistoryTests.SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash"
+    },
+    {
+      "platform": "PlayMode (graphics enabled)",
+      "filter": "NativeLoadingScreenTests;NativeMenuPresentationTests;FourPlayerMenuTests;IndependentPauseMenuTests;SettingsGamepadNavigationTests;GamepadLookAssistanceTests;HitFeedbackPresentationTests;NativeBotTacticsRuntimeTests;CombatBowlR7PhysicsTests;TrooperPresentationTests;NativeMenuMusicTests;NativeRoundMusicTests;NativeAchievementsLayoutTests;NativeRivalryPresentationTests"
+    }
+  ],
+  "builds": "User explicitly authorized production: Windows x64 and macOS universal Player; macOS arm64 installer + both signed full updates. Shared autonomous runner.",
+  "additional_checks": [
+    {
+      "filter": "HitFeedbackPresentationTests.CaptureEditorHealthShieldAndDirectionalReaction;HitFeedbackPresentationTests.CaptureFourSeatContactViews;HitFeedbackPresentationTests.CaptureShotgunSeparateContactPositions",
+      "reason": "Initial graphics run explicitly skipped capture scenarios without their environment paths. Run those three with STAR_TOURNAMENT_HIT_CAPTURE and STAR_TOURNAMENT_SHOTGUN_CAPTURE to retained screens directory; no assertion change, other 90 cases not repeated."
+    }
+  ]
+}

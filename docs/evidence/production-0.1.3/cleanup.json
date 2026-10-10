@@ -1,0 +1,86 @@
+{
+  "removed": [
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local",
+      "allocated_bytes": 2985811968,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/unity/Library",
+      "allocated_bytes": 2909097984,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/unity/Logs",
+      "allocated_bytes": 1159168,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/launcher/bin",
+      "allocated_bytes": 156954624,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/launcher/obj",
+      "allocated_bytes": 4571136,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/tests/bin",
+      "allocated_bytes": 1150976,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/tests/obj",
+      "allocated_bytes": 303104,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/maintenance/bin",
+      "allocated_bytes": 85041152,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/maintenance/obj",
+      "allocated_bytes": 11329536,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/__pycache__",
+      "allocated_bytes": 45056,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    },
+    {
+      "path": "/Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/tests/__pycache__",
+      "allocated_bytes": 28672,
+      "owner": "ship-production-0-1-3",
+      "reason": "Transient build/package/test/cache; durable evidence and exact eight immutable artifacts retained"
+    }
+  ],
+  "restored_generated_paths": [
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity",
+    "unity/Assets/StarTournament/Settings/ProvingURP.asset",
+    "unity/Assets/StarTournament/Trooper/TrooperArms.prefab",
+    "unity/Assets/StarTournament/Trooper/TrooperBody.prefab",
+    "unity/Assets/UniversalRenderPipelineGlobalSettings.asset",
+    "unity/ProjectSettings/ProjectSettings.asset",
+    "unity/ProjectSettings/ShaderGraphSettings.asset"
+  ],
+  "retained": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3",
+  "removed_allocated_bytes": 6155493376,
+  "foreign_primary_projectsettings": "preserved",
+  "worktree_archive": {
+    "method": "Codex archive_worktree after evidence integration",
+    "completion_record": "/Users/eaafonasev/Projects/star-tournament-planning/openspec/changes/ship-production-0-1-3/delivery.json evidence.cleanup"
+  }
+}

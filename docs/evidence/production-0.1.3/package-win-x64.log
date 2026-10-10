@@ -1,0 +1,57 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/launcher/Launcher.csproj (in 935 ms).
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/packages/win-x64/payload-0.1.3/
+[13:37:47 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[13:37:47 INF] Velopack CLI 1.2.158, for distributing applications.
+[13:37:47 INF] Beginning to package Velopack release 0.1.3.
+[13:37:47 INF] Releases Directory: /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/packages/win-x64/releases
+[13:37:47 INF] Starting: Pre-process steps
+[13:37:47 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[13:37:47 INF] Shortcuts: None
+[13:37:48 INF] Complete: Pre-process steps
+[13:37:48 INF] Starting: Code-sign application
+[13:37:48 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[13:37:48 INF] Complete: Code-sign application
+[13:37:48 INF] Starting: Building portable package
+[13:37:48 INF] Starting: Building release 0.1.3
+[13:38:03 INF] Complete: Building portable package
+[13:38:03 INF] Complete: Building release 0.1.3
+[13:38:03 INF] Starting: Building setup package
+[13:38:03 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[13:38:03 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[13:38:03 INF] Complete: Building setup package
+[13:38:03 INF] Starting: Post-process steps
+[13:38:03 INF] Complete: Post-process steps
+[13:38:03 INF] Finished in 00:00:15.9751850.
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/maintenance/Maintenance.csproj (in 158 ms).
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/distribution/maintenance/bin/Release/net8.0/win-x64/StarTournamentMaintenance.dll
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/packages/win-x64/windows-layout-0.1.3/maintenance/
+Compiling Windows installer on gfe with Ubuntu NSIS 3.10
+Remote compiler: makensis 3.10 (Ubuntu package)
+Command line defined: "INPUT_DIR=/var/tmp/star-tournament-installer-4f71dfd6425e438c94113c774c1fa265/layout"
+Command line defined: "VERSION=0.1.3"
+Command line defined: "OUTPUT_FILE=/var/tmp/star-tournament-installer-4f71dfd6425e438c94113c774c1fa265/WindowsSetup.exe"
+Processing config: /etc/nsisconf.nsh
+Processing script file: "/var/tmp/star-tournament-installer-4f71dfd6425e438c94113c774c1fa265/installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "/var/tmp/star-tournament-installer-4f71dfd6425e438c94113c774c1fa265/WindowsSetup.exe"
+Install: 4 pages (256 bytes), 1 section (1 required) (4120 bytes), 974 instructions (27272 bytes), 603 strings (32660 bytes), 1 language table (294 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (4120 bytes), 115 instructions (3220 bytes), 130 strings (4874 bytes), 1 language table (254 bytes).
+Datablock optimizer saved 135456 KiB (~23.3%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              481280 / 121344 bytes
+Install code:                          (63018 bytes)
+Install data:                          (433269030 bytes)
+Uninstall code+data:                   (68974378 bytes)
+Compressed data:           146790080 / 502306426 bytes
+CRC (0x370E8723):                  4 / 4 bytes
+
+Total size:                147271364 / 502427774 bytes (29.3%)
+Built /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/packages/win-x64/releases/Star-Tournament-0.1.3-Windows-x64-Setup.exe
+PACKAGED win-x64 0.1.3 /Users/eaafonasev/.codex/worktrees/production-0101/star-tournament/.local/production-013/packages/win-x64/releases

@@ -1,0 +1,8 @@
+{
+  "result": "Passed",
+  "version": "0.1.3",
+  "url": "https://robowar.afonasev.tech/#download",
+  "windows": "https://github.com/afonasev/star-tournament/releases/download/v0.1.3/Star-Tournament-0.1.3-Windows-x64-Setup.exe",
+  "mac": "https://github.com/afonasev/star-tournament/releases/download/v0.1.3/Star-Tournament-0.1.3-macOS-arm64.pkg",
+  "consoleErrors": []
+}

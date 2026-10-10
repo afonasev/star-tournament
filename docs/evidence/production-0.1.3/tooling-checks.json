@@ -1,0 +1,18 @@
+{
+  "dpi_contracts": {
+    "passed": 6,
+    "failed": 0,
+    "seconds": 3.509
+  },
+  "github_publisher_contracts": {
+    "passed": 12,
+    "failed": 0
+  },
+  "launcher_security_contracts": {
+    "passed": 49,
+    "failed": 0,
+    "log": "launcher-contracts.log"
+  },
+  "full_project_tests": false,
+  "nsis_remote_version": "v3.10-2"
+}

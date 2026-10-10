@@ -1,0 +1,10 @@
+{
+  "result": "Passed",
+  "runtimes": [
+    "win-x64",
+    "osx-arm64"
+  ],
+  "version": "0.1.3",
+  "downloaded_authenticated_full_packages": true,
+  "activation_performed": false
+}

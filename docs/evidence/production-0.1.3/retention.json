@@ -1,0 +1,54 @@
+{
+  "reason": "Exact immutable production artifacts for pending Windows/macOS installation, 300 percent DPI and device acceptance",
+  "assets": [
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/tech.afonasev.star-tournament.win-x64-0.1.3-win-x64-full.nupkg",
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.3-win-x64-full.nupkg",
+      "size": 140106310,
+      "sha256": "d78434d9e52cb90d0f88001207209cc9e25ea65fb746210708ce1024b4df1387"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/Star-Tournament-0.1.3-Windows-x64-Setup.exe",
+      "name": "Star-Tournament-0.1.3-Windows-x64-Setup.exe",
+      "size": 147271364,
+      "sha256": "0e947ee89dc2f46e16fd1eda3c07fb26163d63d3fcf955ee795b92dcb0ef4ab0"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/latest-win-x64.json",
+      "name": "latest-win-x64.json",
+      "size": 1405,
+      "sha256": "3b4315e814e7f0111286cdeb585dd4f14b08abf3d97305762bfacba57014ed43"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/identity-win-x64.json",
+      "name": "identity-win-x64.json",
+      "size": 1527,
+      "sha256": "6a74d148f2b53caa0aeb914e0aa7d9b5e8961d7fee92733e05128a0fea40eff1"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/tech.afonasev.star-tournament.osx-arm64-0.1.3-osx-arm64-full.nupkg",
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.3-osx-arm64-full.nupkg",
+      "size": 148634405,
+      "sha256": "e631c11c49e75b697e9fffa7dd51c75f97646d02f060def616ed47ea22a995be"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/Star-Tournament-0.1.3-macOS-arm64.pkg",
+      "name": "Star-Tournament-0.1.3-macOS-arm64.pkg",
+      "size": 148178618,
+      "sha256": "d0a0fd8cef5bd9e37fc9f09c342315678e39519c223e22026433bb2550421784"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/latest-osx-arm64.json",
+      "name": "latest-osx-arm64.json",
+      "size": 1421,
+      "sha256": "f2ef3912deaa27d08282135ea947ca38c7b0e4e384850fd218bbc52520b35468"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.3/identity-osx-arm64.json",
+      "name": "identity-osx-arm64.json",
+      "size": 1550,
+      "sha256": "e2462a89a6355adbfb623b2dd6d7d0f70c3636dbb6bf434cfbb5c3edad797f55"
+    }
+  ],
+  "total_bytes": 584196600
+}

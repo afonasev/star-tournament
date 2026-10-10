@@ -1,0 +1,16 @@
+[
+  {
+    "platform": "windows",
+    "result": "Passed",
+    "marker": "StandaloneWindows64 284554368",
+    "runner_exit_code": 0,
+    "ordinary_release": true
+  },
+  {
+    "platform": "mac",
+    "result": "Passed",
+    "marker": "StandaloneOSX 303879817",
+    "runner_exit_code": 0,
+    "ordinary_release": true
+  }
+]
