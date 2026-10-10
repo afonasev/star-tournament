@@ -43,6 +43,11 @@ namespace StarTournament.ProvingGround
         readonly float[] beamGain;
         readonly AudioSource uiSource;
         readonly AudioSource damageBonusSource;
+        readonly AudioSource botReactionSource;
+        readonly AudioClip botReactionClip;
+        const float BotReactionGain=1;
+        int botReactionSpeaker=-1;
+        public int BotReactionPlayCount { get; private set; }
         float damageBonusGain;
         float uiGain;
         readonly Transform root;
@@ -91,6 +96,9 @@ namespace StarTournament.ProvingGround
             BuildVoicePool();
             musicScene=new NativeMusicCoordinator(root,profile);music=musicScene.Round;musicProfile=profile;
             uiSource=Source("menu-ui");damageBonusSource=Source("damage-bonus-alert");
+            botReactionSource=Source("bot-reaction");
+            botReactionClip=Resources.Load<AudioClip>("Audio/Banter/dazhe-ne-pocarapal-radio");
+            if(botReactionClip==null)Debug.LogError("Missing bot reaction voice clip");
             beams=new AudioSource[NativeMatchRoster.MaximumParticipants];
             beamGain=new float[beams.Length];
             for(int i=0;i<beams.Length;i++){beams[i]=Source("cutter-"+i);beams[i].clip=clips["cutter-loop"];beams[i].loop=true;}
@@ -146,9 +154,18 @@ namespace StarTournament.ProvingGround
             UpdateVolume();
         }
         public void SuspendMusic(){musicScene.SetSuspended(true);UpdateVolume();}
-        public void StopEffects(){combatMusicGain=1;damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
+        public void StopEffects(){StopBotReaction();combatMusicGain=1;damageBonusSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
+        public void StopBotReaction(){botReactionSource.Stop();botReactionSpeaker=-1;}
+        public bool PlayBotReaction(string text,int speaker)
+        {
+            if(!NativeBotReactionPreferences.VoiceEnabled||text!="Даже не поцарапал!"||botReactionClip==null||EffectsVolume<=0||
+                session==null||speaker<0||speaker>=session.ParticipantCount||session.Life(speaker).Dead)return false;
+            StopBotReaction();botReactionSpeaker=speaker;botReactionSource.clip=botReactionClip;
+            botReactionSource.Play();BotReactionPlayCount++;UpdateVolume();return true;
+        }
         public void UpdateVolume()
         {
+            if(!NativeBotReactionPreferences.VoiceEnabled)StopBotReaction();
             float volume=EffectsVolume;
             if(volume==0){StopEffects();uiSource.Stop();musicScene.UpdateVolume(muted?0:NativeAudioPreferences.Music(profile)/100f,1);return;}
             float sum=0,combatStrength=0;
@@ -156,6 +173,7 @@ namespace StarTournament.ProvingGround
             {var mix=Spatial(voicePosition[i],voiceParticipant[i]);voiceGain[i]=voiceBaseGain[i]*mix.Gain;voices[i].panStereo=mix.Pan;}
             if(uiSource.isPlaying)sum+=uiGain;
             if(damageBonusSource.isPlaying)sum+=damageBonusGain;
+            if(botReactionSource.isPlaying)sum+=BotReactionGain;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying)
             {sum+=voiceGain[i];if(voiceCombat[i])combatStrength=Mathf.Max(combatStrength,voiceGain[i]*volume);}
             for(int i=0;i<beams.Length;i++)if(beams[i].isPlaying)
@@ -177,6 +195,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<beams.Length;i++)beams[i].volume=beamGain[i]*scale;
             for(int i=0;i<rocketSources.Length;i++)rocketSources[i].volume=rocketGain[i]*scale;
             uiSource.volume=uiGain*scale;damageBonusSource.volume=damageBonusGain*scale;
+            botReactionSource.volume=BotReactionGain*scale;
             musicScene.UpdateVolume(musicVolume,musicBudget*attenuation);
         }
         public void MenuMove()=>PlayMenu("menu_move",.40f);
@@ -279,6 +298,7 @@ namespace StarTournament.ProvingGround
         }
         void Death(DeathNotice death)
         {
+            if(death.Seat==botReactionSpeaker)StopBotReaction();
             beams[death.Seat].Stop();beamGain[death.Seat]=0;beamEnvelope[death.Seat]=0;
             PlayAt(Bank("death"),ProvingProfile.DeathAudioGain(profile),death.Seat,death.Pose.Position,feedback:true);
         }

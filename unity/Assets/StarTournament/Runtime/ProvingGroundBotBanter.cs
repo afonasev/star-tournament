@@ -13,11 +13,18 @@ namespace StarTournament.ProvingGround
             UnbindBotBanter();
             botBanter=new NativeBotBanter(Session,Composition,gameObject.scene.GetPhysicsScene(),
                 (frozenMovement??Profile).Get("camera.eyeHeight"),(frozenLife??LifeProfile).Get("combat.maximumHealth"),unchecked((int)botSeed));
+            botBanter.Banter.LineSelected+=OnBotBanterLineSelected;
         }
         void UnbindBotBanter()
         {
-            botBanter?.Dispose();botBanter=null;
+            if(botBanter!=null)botBanter.Banter.LineSelected-=OnBotBanterLineSelected;
+            botBanter?.Dispose();botBanter=null;gameAudio?.StopBotReaction();
             foreach(var label in botBanterNotice)if(label)label.text="";
+        }
+        void OnBotBanterLineSelected(BotBanterLine line)
+        {
+            if(phase==Phase.Running&&Session.Match?.Phase!=NativeMatchPhase.Finished)
+                gameAudio?.PlayBotReaction(line.Text,line.Speaker);
         }
         void CreateBotBanterNotice(int seat)
         {
@@ -34,7 +41,7 @@ namespace StarTournament.ProvingGround
         {
             var label=botBanterNotice[seat];if(!label)return;
             var line=botBanter?.Banter.Current;
-            if(phase!=Phase.Running||!line.HasValue||Session.Time>=line.Value.Until||
+            if(!NativeBotReactionPreferences.TextEnabled||phase!=Phase.Running||!line.HasValue||Session.Time>=line.Value.Until||
                 !line.Value.SpeakerMayBeDead&&Session.Life(line.Value.Speaker).Dead)
             { label.text="";return; }
             string speaker=Composition.Participant(line.Value.Speaker).Name;

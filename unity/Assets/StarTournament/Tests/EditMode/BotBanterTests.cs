@@ -97,6 +97,13 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Respawn(0);Die(0,0,220,WeaponId.RocketLauncher);Assert.That(banter.Current.Value.Reason,Is.EqualTo(BotBanterReason.SelfExplosion));
             Respawn(0);Die(0,0,290);Assert.That(banter.Current.Value.Reason,Is.EqualTo(BotBanterReason.SelfExplosion),"Exhausted exact phrase cannot repeat");
         }
+        [Test] public void SelectedLineEventIsOnceAndResetNeverReplaysIt()
+        {
+            Setup();int count=0;BotBanterLine seen=default;banter.LineSelected+=line=>{count++;seen=line;};
+            Duel();Die(1,0);Assert.That(count,Is.EqualTo(1));Assert.That(seen.Text,Is.EqualTo(banter.Current.Value.Text));
+            banter.Reset(lives,21);Assert.That(count,Is.EqualTo(1));
+            Setup(new BotBanterPolicy());banter.LineSelected+=_=>count++;Duel();Die(1,0,1);Assert.That(count,Is.EqualTo(1));
+        }
         [Test] public void DefaultPolicyHasInitialSilenceAndProbabilityCanSkip()
         {Setup(new BotBanterPolicy());Duel();Die(1,0,1);Assert.That(banter.Current,Is.Null);var p=Always();p.Chance=0;Setup(p);Duel();Die(1,0);Assert.That(banter.Current,Is.Null);}
     }

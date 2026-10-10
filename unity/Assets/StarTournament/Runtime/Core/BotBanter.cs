@@ -63,6 +63,7 @@ namespace StarTournament.ProvingGround
         double globalUntil;
         BotBanterReason? lastReason;
         public BotBanterLine? Current { get; private set; }
+        public event Action<BotBanterLine> LineSelected;
         public BotBanter(NativeMatchComposition composition,CombatLifeState[] lives,int seed=0,BotBanterPolicy policy=null)
         {
             this.composition=composition??throw new ArgumentNullException(nameof(composition));
@@ -170,6 +171,7 @@ namespace StarTournament.ProvingGround
             globalUntil=time+Between(policy.GlobalMinimum,policy.GlobalMaximum);
             botUntil[selected.speaker]=time+Between(policy.BotMinimum,policy.BotMaximum);
             Current=new BotBanterLine(selected.speaker,selected.target,selected.reason,text,time+policy.DisplaySeconds,selected.dead);
+            LineSelected?.Invoke(Current.Value);
         }
         double Between(double min,double max)=>min+random.NextDouble()*(max-min);
         public static string[] Lines(BotBanterReason reason)

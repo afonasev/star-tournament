@@ -17,10 +17,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;
         NativeBotBanter observer;
-        float previousVolume;
-        [SetUp] public void Mute(){previousVolume=AudioListener.volume;AudioListener.volume=0;}
+        float previousVolume;bool hadText,hadVoice;int oldText,oldVoice;
+        [SetUp] public void Mute()
+        {
+            previousVolume=AudioListener.volume;AudioListener.volume=0;
+            hadText=PlayerPrefs.HasKey(NativeBotReactionPreferences.TextKey);hadVoice=PlayerPrefs.HasKey(NativeBotReactionPreferences.VoiceKey);
+            oldText=PlayerPrefs.GetInt(NativeBotReactionPreferences.TextKey);oldVoice=PlayerPrefs.GetInt(NativeBotReactionPreferences.VoiceKey);
+            NativeBotReactionPreferences.SetText(true);NativeBotReactionPreferences.SetVoice(false);
+        }
         [UnityTearDown] public IEnumerator Cleanup()
-        {observer?.Dispose();observer=null;if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);AudioListener.volume=previousVolume;}
+        {observer?.Dispose();observer=null;if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);AudioListener.volume=previousVolume;
+            if(hadText)PlayerPrefs.SetInt(NativeBotReactionPreferences.TextKey,oldText);else PlayerPrefs.DeleteKey(NativeBotReactionPreferences.TextKey);
+            if(hadVoice)PlayerPrefs.SetInt(NativeBotReactionPreferences.VoiceKey,oldVoice);else PlayerPrefs.DeleteKey(NativeBotReactionPreferences.VoiceKey);PlayerPrefs.Save();}
         static NativeMatchComposition Composition(int locals=1)
         {
             var roster=NativeMatchRoster.Ffa(locals+1);

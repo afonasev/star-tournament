@@ -1,0 +1,202 @@
+{
+  "baseline": "2446e3f5d0a1d1a7207907a2c4d24fd887ad3580",
+  "tested_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/BotBanter.cs": "e4415214f86292f414830aa49bdc841a34ae48fb0fbd28f8ef424c5622d5c55a",
+    "unity/Assets/StarTournament/Runtime/Core/NativeBotReactionPreferences.cs": "92bd4c04803fb4d1da7b75388597c99b6e5f59c7c107b2cdaa7dc5e9ba88d634",
+    "unity/Assets/StarTournament/Runtime/NativeGameAudio.cs": "0a63f66f358194707c5c3dfcc28a25cc77ade94ba9c321663314408ce579927a",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundBotBanter.cs": "bc5679bdd3cb5e801dbbfe28f1302d4e227fde558c506d36f8dddc8723e364eb",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "59f4487c0f65d36ab0aca2b5752aa672e889173ebd4b07e1d37fe3419f6a6171",
+    "unity/Assets/StarTournament/Tests/EditMode/BotBanterTests.cs": "a04c80a052126dba5fd867904f46246827b48bb65fd1e7b26f01fe9b59b386b6",
+    "unity/Assets/StarTournament/Tests/PlayMode/BotBanterIntegrationTests.cs": "1bbd9487db6ab75ca2f19ad991a9d00f602beb597e68fef424c9bf45dbe33b1c",
+    "unity/Assets/StarTournament/Tests/PlayMode/BotReactionSettingsTests.cs": "8c96b06763e36f43eebfc6f6ff530fe7cbf1f9e809d715063676b5b6319b53ba",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3": "53b51100c7c67396fe475ad82820c915d0fd26b82b832f70b31ba1e863a1b487",
+    "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3.meta": "eb0abaab27bd4d9cf74604c495d6f5a1d3c6dc3fd912f6f4730d7b50957405fd"
+  },
+  "runs": [
+    {
+      "path": "docs/evidence/bot-reaction-settings/editmode.xml",
+      "passed": 22,
+      "failed": 0,
+      "duration_seconds": 0.0456642,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.AboveWeakThresholdDoesNotInsultAccuracyOrDamage",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.AlliesNeverProduceEnemyTaunts",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.AssistedEnvironmentalOrSelfDamagedVictimIsNotACleanDuel(-1)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.AssistedEnvironmentalOrSelfDamagedVictimIsNotACleanDuel(2)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.AssistedEnvironmentalOrSelfDamagedVictimIsNotACleanDuel(1)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.DeadOrPreviousLifeKillerCannotBoast",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.DefaultPolicyHasInitialSilenceAndProbabilityCanSkip",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.GlobalBotCooldownsDropEventsAndNoPhraseOrReasonRepeats",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.KillChainAndItsEndHaveRealThresholds",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.MixedKillersProduceGeneralComplaintAtThresholdOnly",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.NarrowWinMustActuallyBeCausedByThisOpponentRecently",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.NeverShootingDiffersFromShootingElsewhere",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.OldAttemptsOldDamageAndPendingExchangeAreConservative",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.RepeatedDeathsComplainOnceAndFirstRevengeHasPriority",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.ReplyUsesActualShieldAndHealth(0,0,Missed)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.ReplyUsesActualShieldAndHealth(0,1,WeakReply)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.ReplyUsesActualShieldAndHealth(1,0,WeakReply)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.ReplyUsesActualShieldAndHealth(0,10,WeakReply)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.RestoreMakesExistingLivesUnknownUntilRespawn",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.SelectedLineEventIsOnceAndResetNeverReplaysIt",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.SelfDeathUsesActualCause(RocketLauncher,SelfExplosion)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.BotBanterTests.SelfDeathUsesActualCause(Rifle,SelfKill)",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/bot-reaction-settings/playmode-initial.xml",
+      "passed": 6,
+      "failed": 1,
+      "duration_seconds": 73.7165073,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests.ActualAttackDamageOrderingAndSnapshotRemainIndependent",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotBanterIntegrationTests.HudOneToFourViewsPauseRestoreRepeatAndLayout",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.FourChannelCombinationsHaveOneVoiceAcrossOneAndFourViews",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.SettingsDefaultsNavigationAndPersistence",
+          "result": "Failed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.VoiceLifecycleAndEffectsMixNeverReplayOldLines",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AudioSettingsPersistAndRemainGamepadNavigable",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SectionFocusShowsParametersWithoutSubmit",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/bot-reaction-settings/ui-caption-fixed.xml",
+      "passed": 0,
+      "failed": 1,
+      "duration_seconds": 16.2609042,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.SettingsDefaultsNavigationAndPersistence",
+          "result": "Failed"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/bot-reaction-settings/ui-focus-fixed.xml",
+      "passed": 0,
+      "failed": 1,
+      "duration_seconds": 23.3188405,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.SettingsDefaultsNavigationAndPersistence",
+          "result": "Failed"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/bot-reaction-settings/playmode-settings-final.xml",
+      "passed": 3,
+      "failed": 0,
+      "duration_seconds": 57.3197364,
+      "tests": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.FourChannelCombinationsHaveOneVoiceAcrossOneAndFourViews",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.SettingsDefaultsNavigationAndPersistence",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.BotReactionSettingsTests.VoiceLifecycleAndEffectsMixNeverReplayOldLines",
+          "result": "Passed"
+        }
+      ]
+    }
+  ],
+  "conclusion": "22 EditMode and 7 unique affected PlayMode tests passed. Four unchanged integration/neighbor tests retain initial passing evidence; three settings tests repeated after test-only fixes. Runtime source unchanged across all runs.",
+  "visual": "1920x1080 Editor render inspected: captions and focus visible without overlaps",
+  "deferred": [
+    "full suite",
+    "Player build",
+    "release/deployment",
+    "human in-game UI/audio acceptance"
+  ],
+  "review": "Read-only contract review found no concrete defects; automated evidence does not prove audio balance."
+}
