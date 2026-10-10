@@ -113,6 +113,15 @@ namespace StarTournament.ProvingGround
             }
             valueIndex=null;
         }
+        internal const float DefaultDeathAudioGain=2f;
+        internal static float DeathAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.deathGain")==null?DefaultDeathAudioGain:profile.Get("audio.deathGain");
+        internal ProvingProfile BeforeDeathAudioGain()
+        {
+            const string path="audio.deathGain";
+            if(id!=DefaultId||Descriptor(path)==null)return this;
+            var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);
+            return copy;
+        }
         /// <summary>Exact trusted predecessor shared by pre-blood histories from before bonus alerts.</summary>
         public ProvingProfile BeforeDamageBonusAlerts()
         {
@@ -426,6 +435,7 @@ namespace StarTournament.ProvingGround
             profile.Add("audio.maxDistanceMeters", "audio", "Дальность слышимости", "Расстояние, на котором удалённые боевые и двигательные эффекты затухают.", "meters", 5f, 100f, 1f, 28f);
             profile.Add("audio.localGain", "audio", "Свои события", "Относительный уровень важного звука своего local participant до общей пользовательской громкости.", "ratio", 0f, 1f, .05f, .65f);
             profile.Add("audio.remoteGain", "audio", "Другие участники", "Относительный уровень событий остальных участников до затухания по расстоянию.", "ratio", 0f, 1f, .05f, .40f);
+            profile.Add("audio.deathGain", "audio", "Уровень смерти", "Усиление смерти своего и чужого игрока до пространственного затухания и общей нормализации; 2 соответствует +6 дБ до ограничения микса.", "ratio", 0f, 4f, .05f, DefaultDeathAudioGain);
             profile.Add("audio.hitIntervalSeconds", "audio", "Разделение попаданий", "Минимальный интервал повторного звука урона одной цели при частых контактных событиях.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("simulation.fixedTickHz", "simulation", "Fixed tick frequency", "Frequency of native movement and gameplay ticks, independent of rendered FPS.", "Hz", 30f, 120f, 1f, 50f);
             profile.Add("player.capsule.radius", "player-capsule", "Capsule radius", "Collision radius of a participant capsule.", "meters", .2f, 1f, .01f, .55f);

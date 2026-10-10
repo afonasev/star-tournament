@@ -51,6 +51,44 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(root.Find("damage-bonus-alert").GetComponent<AudioSource>().clip.name,Is.EqualTo("damage-bonus-pickup"));Assert.That(Voices.Any(s=>s.clip),Is.False);
             yield return null;
         }
+        [UnityTest] public IEnumerator DeathGainBoostsOwnAndNearbyDeathsButKeepsSpatialRangeAndMute()
+        {
+            var profile=(ProvingProfile)typeof(NativeGameAudio).GetField("profile",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(audio);
+            foreach(int seat in new[]{0,1})
+            {
+                profile.Set("audio.deathGain",1);
+                Invoke(audio,"Death",new DeathNotice(seat,ground.Session.Life(seat),ground.Session.Pose(seat)));
+                float previous=Voices.Single(s=>s.clip).volume;Clear();
+                profile.Set("audio.deathGain",2);
+                Invoke(audio,"Death",new DeathNotice(seat,ground.Session.Life(seat),ground.Session.Pose(seat)));
+                var cue=Voices.Single(s=>s.clip);
+                Assert.That(cue.volume,Is.GreaterThan(previous*1.4f));
+                if(seat==0)Assert.That(cue.panStereo,Is.EqualTo(0));else Assert.That(cue.panStereo,Is.GreaterThan(0));Clear();
+            }
+            ground.PlaceCombatReviewSeat(1,new Vector3(-8+profile.Get("audio.maxDistanceMeters")+1,0,2),0);
+            Invoke(audio,"Death",new DeathNotice(1,ground.Session.Life(1),ground.Session.Pose(1)));
+            Assert.That(Voices.Any(s=>s.clip),Is.False,"Death stays within the existing hearing range");
+            ground.PlaceCombatReviewSeat(1,new Vector3(8,0,2),0);
+            profile.Set("audio.deathGain",0);
+            Invoke(audio,"Death",new DeathNotice(1,ground.Session.Life(1),ground.Session.Pose(1)));
+            Assert.That(Voices.Any(s=>s.clip),Is.False);
+            profile.Set("audio.deathGain",2);audio.SetDiagnosticMute(true);
+            Invoke(audio,"Death",new DeathNotice(0,ground.Session.Life(0),ground.Session.Pose(0)));
+            Assert.That(Voices.Any(s=>s.clip),Is.False);
+            yield return null;
+        }
+        [UnityTest] public IEnumerator DeathSurvivesSaturatedShotPoolAndMixRemainsBounded()
+        {
+            for(int i=0;i<Voices.Length;i++)Invoke(audio,"Play","rifle",1f,0);
+            Assert.That(Voices.All(s=>s.isPlaying),Is.True);
+            Invoke(audio,"Death",new DeathNotice(1,ground.Session.Life(1),ground.Session.Pose(1)));
+            var cue=Voices.Single(s=>s.clip.name.StartsWith("death-"));
+            for(int i=0;i<Voices.Length*2;i++)Invoke(audio,"Play","shotgun",1f,0);
+            Assert.That(cue.isPlaying,Is.True);Assert.That(cue.clip.name,Does.StartWith("death-"));
+            Assert.That(Voices.Sum(s=>s.volume),Is.LessThanOrEqualTo(1.0001f));
+            audio.StopEffects();Assert.That(cue.isPlaying,Is.False);
+            yield return null;
+        }
         [UnityTest] public IEnumerator MovingRocketLoopUsesPositionAndStopsOnPauseRestoreMute()
         {
             var snap=ground.Session.Capture();snap.ShotSequence=1;
