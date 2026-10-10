@@ -257,6 +257,24 @@ namespace StarTournament.ProvingGround
                 var previous=new LabBundle{Profiles=shipped.Profiles.Select(p=>previousVersion==14?p.BeforeSmoothGamepadTap():p.BeforeGamepadTriggerAim()).ToList()};
                 if(RegistryMatches(previous,sought))return new[]{previous};
             }
+            // The first weapon-switch releases are exact linear predecessors, but the general
+            // compatibility search below also explores later additive branches. Recognize these
+            // trusted schemas before expanding that graph: opening an old local Lab profile must
+            // not turn into minutes of metadata-only candidate generation.
+            var preRebalance=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWeaponRebalance()).ToList()};
+            var beforePalette=new LabBundle{Profiles=preRebalance.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};
+            var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};
+            var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};
+            var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};
+            var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};
+            var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};
+            var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};
+            var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
+            var medium=new LabBundle{Profiles=preRebalance.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
+            var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
+            var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
+            foreach(var previous in new[]{medium,low,shoulder,preSwitch,preCutter,preCutterThickness,preCutterThicknessSwitch,prePulse,preHeal})
+                if(RegistryMatches(previous,sought))return new[]{previous};
             // Hash covers gameplay values; metadata is also trusted during migration.
             string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
                 string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
@@ -264,12 +282,7 @@ namespace StarTournament.ProvingGround
             lock(historicalLock)
             {
                 if(historicalCache.TryGetValue(key,out var cached))return cached;
-                var preRebalance=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWeaponRebalance()).ToList()};
-                var beforePalette=new LabBundle{Profiles=preRebalance.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
-                var medium=new LabBundle{Profiles=preRebalance.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
                 var mediumBeforePalette=new LabBundle{Profiles=medium.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};
-                var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
-                var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
                 predecessors=new[]{preRebalance,beforePalette,medium,mediumBeforePalette,new LabBundle{Profiles=mediumBeforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=mediumBeforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
                 // Accept exact prior registries across additive palette and weapon-pickup schema upgrades.
                 var pickupPredecessors=new Dictionary<ProvingProfile,ProvingProfile>();
