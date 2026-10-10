@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.GetComponentsInChildren<TrooperVisual>(true).Count(v=>v.name=="trooper-view"),Is.EqualTo(humans));
                 Assert.That(ground.GetComponentsInChildren<Camera>().First(c=>c.name=="seat-camera-1").rect,Is.EqualTo(LocalSeatLayout.Viewport(humans,0)));
                 var snapshot=JsonUtility.ToJson(ground.Composition.Read());var old=ground.Session;
-                ground.Profile.Set("camera.fieldOfViewDegrees",100);Button("Повторить матч").onClick.Invoke();yield return null;
+                ground.Profile.Set("camera.fieldOfViewDegrees",100);Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
                 Assert.That(ground.Session,Is.Not.SameAs(old));Assert.That(JsonUtility.ToJson(ground.Composition.Read()),Is.EqualTo(snapshot));
                 Assert.That(ground.Session.Match.Read().Standings,Has.Length.EqualTo(8));
                 Assert.That(ground.GetComponentsInChildren<Camera>(true).Length,Is.EqualTo(humans));

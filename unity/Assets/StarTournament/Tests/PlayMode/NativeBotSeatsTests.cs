@@ -127,6 +127,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Composition.Participant(1).Kind, Is.EqualTo(NativeParticipantKind.LocalHuman));
             var before = ground.Session.Pose(1).Position;
             InputSystem.QueueStateEvent(pads[1], new GamepadState { leftStick = Vector2.right });
+            yield return null; // Capture the new input on a rendered frame before stepping simulation.
             yield return new WaitForFixedUpdate(); yield return new WaitForFixedUpdate();
             Assert.That(Vector3.Distance(ground.Session.Pose(1).Position, before), Is.GreaterThan(.01f), "replacement device owns the switched human seat");
             var disconnected = pads[1];

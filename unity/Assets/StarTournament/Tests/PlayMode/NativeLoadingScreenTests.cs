@@ -16,6 +16,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class NativeLoadingScreenTests
     {
         Scene scene;Gamepad pad;
+        bool hadLastMap;string priorLastMap;
+        [SetUp] public void PreserveLastMap()
+        {
+            hadLastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);
+            priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
+            PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
+        }
         static IEnumerator Capture(string name)
         {
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LOADING_SCREENSHOTS");
@@ -23,7 +30,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Directory.CreateDirectory(directory);yield return null;yield return null;
             ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return null;yield return null;
         }
-        [UnityTearDown] public IEnumerator Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
+        [UnityTearDown] public IEnumerator Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+            if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);
+            else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);PlayerPrefs.Save();}
         [UnityTest] public IEnumerator StartupShowsApprovedBrandAndAnimatedIndicatorBeforeReady()
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);
@@ -151,6 +160,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     if(ground.LoadingScreen.AnimationPosition!=last)animated=true;
                     last=ground.LoadingScreen.AnimationPosition;yield return null;
                 }
+                var loaded=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+                Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.Writable,Is.True);
+                Debug.Log("Loading history QA: bytes="+new FileInfo(path).Length+" animation="+animated+" writable="+loaded.Writable+" sha256="+before);
                 Assert.That(animated,Is.True);Assert.That(HashFile(path),Is.EqualTo(before));Assert.That(ground.LoadingScreen.Visible,Is.False);
             }
             finally{Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",priorEnvironment);if(Directory.Exists(directory))Directory.Delete(directory,true);}

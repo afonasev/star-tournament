@@ -34,7 +34,7 @@ namespace StarTournament.ProvingGround.Tests
             yield return new WaitForSecondsRealtime(.1f);Assert.That(ground.Session.Time,Is.EqualTo(time));Assert.That(JsonUtility.ToJson(driver.Controller.Capture()),Is.EqualTo(paused));
             ground.BotNavigationProfile.Set("bots.navigation.stuckSeconds",4);
             ground.BotPerceptionProfile.Set("bots.normal.memorySeconds",10);
-            Button("Повторить матч").onClick.Invoke();yield return null;
+            Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.NavigationReviewDriver,Is.Not.SameAs(driver));Assert.That(ground.NavigationReviewDriver.Controller.Capture().Configuration,Is.EqualTo(configuration));
             Assert.That(ground.NavigationReviewDriver.Controller.Capture().HasGoal,Is.False);
             ground.NavigationReviewDriver.Controller.SetStaticGoal(new Vector3(-13,4,2));

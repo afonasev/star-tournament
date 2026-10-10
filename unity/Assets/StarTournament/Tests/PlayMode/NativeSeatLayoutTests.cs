@@ -163,7 +163,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.Running,Is.False);double clock=old.Time;
                 yield return new WaitForSecondsRealtime(.1f);Assert.That(old.Time,Is.EqualTo(clock));
                 InputSystem.QueueStateEvent(pads[0],new GamepadState{rightTrigger=1});yield return null;
-                Button("Повторить матч").onClick.Invoke();yield return null;yield return new WaitForFixedUpdate();yield return null;
+                Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return new WaitForFixedUpdate();yield return null;
                 AssertLayout(count);Assert.That(ground.Session.ShotCount,Is.Zero);
                 Assert.That(ground.Session.Match.Read().Standings.All(r=>r.Score==0&&r.Deaths==0),Is.True);
                 Assert.That(old.ApplyDamage(0,1,100).Applied,Is.Zero);
@@ -175,7 +175,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 yield return new WaitForFixedUpdate();yield return null;
                 var result=ground.transform.Find("native-ui/setup-pause/results-table");
                 Assert.That(result.gameObject.activeSelf,Is.True);Assert.That(result.Find("row-4").gameObject.activeSelf,Is.EqualTo(count==4));
-                Button("Повторить матч").onClick.Invoke();yield return null;yield return new WaitForFixedUpdate();yield return null;AssertLayout(count);
+                Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);yield return new WaitForFixedUpdate();yield return null;AssertLayout(count);
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 Assert.That(ground.transform.Find("native-ui/persistent-standings").gameObject.activeSelf,Is.False);
             }
@@ -187,12 +187,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var pair in new[]{new[]{2,3},new[]{4,2}})
             {
                 field.SetValue(ground,pair[0]);
-                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;
+                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
                 Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(System.Math.Min(pair[0],ground.LocalSeatCount)));
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
                 while(ground.LocalSeatCount>pair[1])Button("seats-minus").onClick.Invoke();
                 while(ground.LocalSeatCount<pair[1])Button("seats-plus").onClick.Invoke();
-                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;AssertLayout(pair[1]);
+                Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);AssertLayout(pair[1]);
                 Button("В главное меню").onClick.Invoke();Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);yield return null;
             }
         }

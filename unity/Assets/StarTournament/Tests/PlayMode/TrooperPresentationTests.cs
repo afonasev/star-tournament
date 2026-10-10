@@ -115,7 +115,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;double time=view.GetComponent<TrooperVisual>().SampleTime;
             yield return new WaitForSecondsRealtime(.1f);Assert.That(view.GetComponent<TrooperVisual>().SampleTime,Is.EqualTo(time));
             Assert.That(ground.Session.Time,Is.EqualTo(sessionTime));
-            Button("Повторить матч").onClick.Invoke();yield return null;
+            Button("Повторить матч").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.GetComponentsInChildren<TrooperVisual>().Count(v=>v.name.StartsWith("corpse-")),Is.Zero);
             Assert.That(ground.Session.Life(0).Life,Is.EqualTo(1));
         }
