@@ -254,6 +254,14 @@ namespace StarTournament.ProvingGround
         // a saved revision actually needs one, then share the exact immutable registry set.
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
+            // Hash covers gameplay values; metadata is also trusted during migration.
+            string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
+                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
+                string.Join("|",sought.Descriptors.Select(d=>d.Path));
+            // A warm lookup must precede even the linear predecessor probes: those transforms
+            // serialize large unchanged authored-map profiles on every history validation.
+            lock(historicalLock)
+                if(historicalCache.TryGetValue(key,out var warm))return warm;
             // The preceding LT registries lack only the new timing/gesture descriptors.
             // Match the trusted shipped projection first, without expanding all older schemas.
             // Values and metadata still pass the unchanged ValidateFile checks below.
@@ -263,19 +271,28 @@ namespace StarTournament.ProvingGround
                 var previous=new LabBundle{Profiles=shipped.Profiles.Select(p=>previousVersion==14?p.BeforeSmoothGamepadTap():p.BeforeGamepadTriggerAim()).ToList()};
                 if(RegistryMatches(previous,sought))return new[]{previous};
             }
-            // Hash covers gameplay values; metadata is also trusted during migration.
-            string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
-                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
-                string.Join("|",sought.Descriptors.Select(d=>d.Path));
+            // The first weapon-switch releases are exact linear predecessors, but the general
+            // compatibility search below also explores later additive branches. Recognize these
+            // trusted schemas before expanding that graph: opening an old local Lab profile must
+            // not turn into minutes of metadata-only candidate generation.
+            var preRebalance=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWeaponRebalance()).ToList()};
+            var beforePalette=new LabBundle{Profiles=preRebalance.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};
+            var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};
+            var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};
+            var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};
+            var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};
+            var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};
+            var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};
+            var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
+            var medium=new LabBundle{Profiles=preRebalance.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
+            var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
+            var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
+            foreach(var previous in new[]{medium,low,shoulder,preSwitch,preCutter,preCutterThickness,preCutterThicknessSwitch,prePulse,preHeal})
+                if(RegistryMatches(previous,sought))return new[]{previous};
             lock(historicalLock)
             {
                 if(historicalCache.TryGetValue(key,out var cached))return cached;
-                var preRebalance=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWeaponRebalance()).ToList()};
-                var beforePalette=new LabBundle{Profiles=preRebalance.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};var preSwitch=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeWeaponSwitch()).ToList()};var preCutterThickness=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutterThicknessSwitch=new LabBundle{Profiles=preSwitch.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()};var preCutter=new LabBundle{Profiles=beforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var preCutterSwitch=new LabBundle{Profiles=preSwitch.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()};var prePulse=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforePulse()).ToList()};var preHeal=new LabBundle{Profiles=preCutterSwitch.Profiles.Select(p=>p.BeforeFullHeal()).ToList()};
-                var medium=new LabBundle{Profiles=preRebalance.Profiles.Select(p=>p.BeforeMediumWeaponSwitch()).ToList()};
                 var mediumBeforePalette=new LabBundle{Profiles=medium.Profiles.Where(p=>p.Id!=ProvingProfile.ParticipantPaletteId).ToList()};
-                var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
-                var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
                 predecessors=new[]{preRebalance,beforePalette,medium,mediumBeforePalette,new LabBundle{Profiles=mediumBeforePalette.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=mediumBeforePalette.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},low,new LabBundle{Profiles=low.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=low.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()},preSwitch,preCutterThickness,preCutterThicknessSwitch,preCutter,preCutterSwitch,prePulse,preHeal,shoulder,new LabBundle{Profiles=shoulder.Profiles.Select(p=>p.BeforeCutterThickness()).ToList()},new LabBundle{Profiles=shoulder.Profiles.Where(p=>p.Id!="cutter-beam-v1").ToList()}};
                 // Accept exact prior registries across additive palette and weapon-pickup schema upgrades.
                 var pickupPredecessors=new Dictionary<ProvingProfile,ProvingProfile>();
@@ -480,8 +497,11 @@ namespace StarTournament.ProvingGround
                     if(r.Number<1||r.Snapshot==null||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
                     if(!validateSnapshots)continue;
                     var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
-                    var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
-                    if(!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k)))throw new InvalidDataException("Снимок или hash повреждён: missing="+string.Join(",",paths.Except(r.Snapshot.Descriptors.Select(d=>d.Path)))+"; extra="+string.Join(",",r.Snapshot.Descriptors.Select(d=>d.Path).Except(paths)));
+                    if(!RegistryMatches(registry,r.Snapshot))
+                    {
+                        var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
+                        throw new InvalidDataException("Снимок или hash повреждён: missing="+string.Join(",",paths.Except(r.Snapshot.Descriptors.Select(d=>d.Path)))+"; extra="+string.Join(",",r.Snapshot.Descriptors.Select(d=>d.Path).Except(paths)));
+                    }
                     // Metadata is trusted only from the shipped registry, never from the file.
                     var trusted=registry.Clone();foreach(var d in trusted.Descriptors)trusted.Set(d.Path,r.Snapshot.Get(d.Path));
                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
@@ -492,8 +512,16 @@ namespace StarTournament.ProvingGround
             if(release.Hash!=shipped.Hash()&&!HistoricalPredecessors(release.Snapshot).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
         }
-        static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version))
-            && registry.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(bundle.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal));
+        static bool RegistryMatches(LabBundle registry,LabBundle bundle)
+        {
+            if(!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version)))return false;
+            var paths=registry.Descriptors.Select(d=>d.Path).ToArray();
+            var other=bundle.Descriptors.Select(d=>d.Path).ToArray();
+            // Serialized snapshots normally retain trusted descriptor order. Keep the exact
+            // sorted multiset comparison for reordered files, including duplicate paths.
+            return paths.Length==other.Length&&(paths.SequenceEqual(other)||
+                paths.OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(other.OrderBy(p=>p,StringComparer.Ordinal)));
+        }
         bool Current(LabBundle bundle)=>RegistryMatches(shipped,bundle);
         public bool Compatible(LabRevision revision)=>Current(revision.Snapshot);
         void MigrateCompatibility(LabHistoryFile file)
