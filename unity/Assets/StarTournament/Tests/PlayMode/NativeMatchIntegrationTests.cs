@@ -192,7 +192,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             int durationBefore=ground.Configuration.DurationMinutes;
             Button("duration-plus").onClick.Invoke();Assert.That(ground.Configuration.TargetEnabled,Is.True);
             Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(durationBefore+1));
-            Button("Начать — четыре игрока").onClick.Invoke();yield return null;
+            Button("Начать — четыре игрока").onClick.Invoke();yield return null;yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.Session.Match.Configuration.DurationMinutes,Is.EqualTo(durationBefore+1));Assert.That(ground.Session.Match.Configuration.TargetEnabled,Is.True);
             ground.Session.ApplyDamage(1,1,100,0,1);Assert.That(ground.Session.Match.Read().Standings[0].Score,Is.EqualTo(200));
         }
