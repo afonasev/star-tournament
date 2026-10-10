@@ -1,0 +1,24 @@
+{
+  "text": "Хех... Даже не поцарапал!",
+  "voice": "ru-RU-DmitryNeural",
+  "edge_tts_version": "7.2.8",
+  "rate": "+8%",
+  "pitch": "-10Hz",
+  "post_pitch_ratio": 0.88,
+  "post_tempo": 1.136363636,
+  "filter_complex": "[0:a]asetrate=21120,aresample=48000,atempo=1.136363636,highpass=f=180,lowpass=f=3100,equalizer=f=450:t=q:w=0.8:g=3,acompressor=threshold=0.09:ratio=4:attack=3:release=90:makeup=3,volume=1.8,asoftclip=type=tanh:threshold=0.6:output=0.8:oversample=4,lowpass=f=3300[voice];[1:a]highpass=f=800,lowpass=f=5000[noise];[voice][noise]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.84:level=false:latency=true[out]",
+  "noise": "anoisesrc=color=white:sample_rate=48000:amplitude=0.002:seed=42",
+  "duration_seconds": 3.559417,
+  "format": "128k MP3,48000Hz,mono",
+  "metrics_dbfs": {
+    "mean_volume": -24.2,
+    "max_volume": -5.9
+  },
+  "sha256": {
+    "dazhe-ne-pocarapal-radio-source.mp3": "c5989d97333c1eb89923db826d259d9f52fb1b2eaa023b3ca6df5b615602cf33",
+    "dazhe-ne-pocarapal-radio.mp3": "53b51100c7c67396fe475ad82820c915d0fd26b82b832f70b31ba1e863a1b487"
+  },
+  "desired_direction": "Более злой низкий соперник; короткое хех перед насмешкой, эффект рации. Выражение оценивается пользователем.",
+  "acceptance": "pending audition",
+  "game_integration": false
+}
