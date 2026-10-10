@@ -97,6 +97,16 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Respawn(0);Die(0,0,220,WeaponId.RocketLauncher);Assert.That(banter.Current.Value.Reason,Is.EqualTo(BotBanterReason.SelfExplosion));
             Respawn(0);Die(0,0,290);Assert.That(banter.Current.Value.Reason,Is.EqualTo(BotBanterReason.SelfExplosion),"Exhausted exact phrase cannot repeat");
         }
+        [Test] public void DefaultCooldownAllowsNewLinesAtTenSecondsButNeverEarlier()
+        {
+            var policy=new BotBanterPolicy { InitialSilence=0,Chance=1 };
+            Setup(policy);int count=0;banter.LineSelected+=_=>count++;
+            Duel();Die(1,0,20);Assert.That(count,Is.EqualTo(1));
+            Die(2,2,29.999);Assert.That(count,Is.EqualTo(1),"Global ten-second gap applies across bots");
+            Respawn(2);Die(2,2,30);Assert.That(count,Is.EqualTo(2),"A different bot can speak at exactly ten seconds");
+            Respawn(2);Die(2,2,39.999,WeaponId.RocketLauncher);Assert.That(count,Is.EqualTo(2));
+            Respawn(2);Die(2,2,40,WeaponId.RocketLauncher);Assert.That(count,Is.EqualTo(3),"The same bot can speak again after ten seconds");
+        }
         [Test] public void SelectedLineEventIsOnceAndResetNeverReplaysIt()
         {
             Setup();int count=0;BotBanterLine seen=default;banter.LineSelected+=line=>{count++;seen=line;};

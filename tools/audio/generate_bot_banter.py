@@ -18,6 +18,8 @@ VOICE = 'ru-RU-DmitryNeural'
 RATE, PITCH, RATIO = '+12%', '-18Hz', .94
 # Offline asset authoring tempo; runtime AudioSource pitch remains 1.
 SPEECH_TEMPO = 1.2
+# Approved 2026-10-10: +20% amplitude after normalization; do not normalize it away.
+VOICE_LEVEL = 1.2
 FILTER = (f'[0:a]asetrate=22560,aresample=48000,atempo={SPEECH_TEMPO/RATIO:.9f},'
           'highpass=f=130,lowpass=f=3500,equalizer=f=550:t=q:w=0.8:g=2,'
           'equalizer=f=2200:t=q:w=1:g=2,acompressor=threshold=0.075:ratio=3:attack=2:release=75:makeup=2,'
@@ -60,7 +62,7 @@ def process(entry, src):
     normalization = (f"loudnorm=I=-18:TP=-3:LRA=5:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
                      f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:"
                      'linear=true:print_format=json')
-    result = run(*base, '-filter_complex', FILTER + ';[radio]' + normalization + '[out]', '-map', '[out]',
+    result = run(*base, '-filter_complex', FILTER + ';[radio]' + normalization + f',volume={VOICE_LEVEL}[out]', '-map', '[out]',
                  '-ar', '48000', '-ac', '1', '-codec:a', 'libmp3lame', '-b:a', '128k', str(dst))
     meta = Path(str(dst) + '.meta')
     if not meta.exists():
@@ -105,8 +107,8 @@ async def main():
     for entry, src in zip(entries, sources): process(entry, src)
     catalog(entries)
     provenance = {'voice': VOICE, 'provider': 'Microsoft Edge online TTS via edge-tts', 'edge_tts_version': '7.2.8',
-                  'rate': RATE, 'pitch': PITCH, 'pitch_ratio': RATIO, 'speech_tempo': SPEECH_TEMPO, 'filter_complex': FILTER, 'noise': NOISE,
-                  'normalization': 'two-pass loudnorm I=-18 LUFS / TP=-3dBTP / LRA=5; measurements decoded MP3',
+                  'rate': RATE, 'pitch': PITCH, 'pitch_ratio': RATIO, 'speech_tempo': SPEECH_TEMPO, 'voice_level': VOICE_LEVEL, 'filter_complex': FILTER, 'noise': NOISE,
+                  'normalization': 'two-pass loudnorm I=-18 LUFS / TP=-3dBTP / LRA=5; final amplitude multiplied by 1.2 (+20%); measurements decoded MP3',
                   'direction': 'lower rough male, sharper pace and compressed/saturated radio timbre; emotional aggression requires human listening',
                   'acceptance': 'pending human/gameplay listening', 'entries': entries}
     (EVIDENCE / 'generation.json').write_text(json.dumps(provenance, ensure_ascii=False, indent=2) + '\n')
