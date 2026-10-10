@@ -33,9 +33,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var ui=ground.transform.Find("native-ui").gameObject;Check();
             yield return NativeLoadingScreenTests.Capture("menu-main",ui);
             B("main-action-0").onClick.Invoke();Check();yield return NativeLoadingScreenTests.Capture("menu-map",ui);
+            B("seat-identity-0").onClick.Invoke();Check();yield return NativeLoadingScreenTests.Capture("menu-identity",ui);B("identity-cancel").onClick.Invoke();
             B("setup-next").onClick.Invoke();Check();B("setup-next").onClick.Invoke();Check();
             yield return NativeLoadingScreenTests.Capture("menu-roster",ui);
-            B("seat-identity-0").onClick.Invoke();Check();B("identity-cancel").onClick.Invoke();
+            B("roster-card-0").onClick.Invoke();Check();yield return NativeLoadingScreenTests.Capture("menu-roster-editor",ui);B("roster-done").onClick.Invoke();
             B("Назад к главному меню").onClick.Invoke();B("main-action-3").onClick.Invoke();Check();
             yield return NativeLoadingScreenTests.Capture("menu-profiles",ui);B("profiles-back").onClick.Invoke();
             B("main-action-4").onClick.Invoke();
