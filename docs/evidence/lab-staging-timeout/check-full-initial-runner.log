@@ -1,0 +1,9 @@
+./unity/tools.sh test-edit
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/lab-staging-timeout/star-tournament/unity
+unity-run: started shared:3; guardian=73522 pid=73523
+unity-run: finished pid=73523 exit=0; capacity released
+./unity/tools.sh test-play
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/lab-staging-timeout/star-tournament/unity
+unity-run: started shared:3; guardian=79985 pid=79986
+unity-run: finished pid=79986 exit=-15; capacity released
+make: *** [test-play] Error 143

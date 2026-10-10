@@ -1,0 +1,114 @@
+{
+  "base_revision": "bf2f7629a51909759c77cd708e112e6528ba2520",
+  "branch": "codex/lab-staging-timeout",
+  "timeout_ms": 180000,
+  "runs": {
+    "diagnostic_baseline": {
+      "result": "Failed(Child)",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "214.744036",
+      "test_duration": "214.713037",
+      "instrumented": true
+    },
+    "cache_only": {
+      "result": "Failed(Child)",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "182.3242122",
+      "test_duration": "182.293464",
+      "instrumented": false
+    },
+    "focused_final": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "138.0766823",
+      "test_duration": "138.045614",
+      "instrumented": false
+    }
+  },
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "64985e85ebc191f37af79f9d561d7a2234abb21f6b77144a29d6ae05d3b0aade",
+    "unity/Assets/StarTournament/Tests/EditMode/LabReleaseCatalogTests.cs": "7ebd615d21cc0a7646d8b8236d0bf19509478612f0da2ea3f734a6d963b2cfa5"
+  },
+  "full_gate": "Passed: complete EditMode 427/427 plus complete graphics-enabled PlayMode 252/252 on unchanged runtime and EditMode sources; all cases executed, zero skipped.",
+  "player_build": "not run; not required for this fix",
+  "merge_deploy": "not authorized",
+  "full_editmode": {
+    "result": "Passed",
+    "total": "427",
+    "passed": "427",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "949.7526237",
+    "start-time": "2026-10-10 05:26:08Z",
+    "end-time": "2026-10-10 05:41:58Z"
+  },
+  "full_staging_test": {
+    "result": "Passed",
+    "duration": "154.603773"
+  },
+  "headless_full_playmode": {
+    "result": "Failed(Child)",
+    "total": "252",
+    "passed": "247",
+    "failed": "2",
+    "skipped": "3",
+    "duration": "891.9574446"
+  },
+  "playmode_fixture_sha256": {
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeMatchIntegrationTests.cs": "a385103fddc870d25ae1436bc9f9e0dec1e5c00087d5ba4112e7d0db1e52cdd9",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeSeatLayoutTests.cs": "ccff8cdb172fdbdde43068f0f390934fd692f19ddb033e42f6e19f0e00cfb594"
+  },
+  "results_paths_focused": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0
+  },
+  "full_graphics_playmode": {
+    "result": "Passed",
+    "total": "252",
+    "passed": "252",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "989.3559224",
+    "start-time": "2026-10-10 06:19:21Z",
+    "end-time": "2026-10-10 06:35:51Z"
+  },
+  "captures": {
+    "graphics-captures/hit/01-before.png": "6d2be65f08a1cb0131744b6c8b14418ba187489c1e8cd5e60a64079b480b6c87",
+    "graphics-captures/hit/02-health-hit.png": "583bd0a314093211ff66804cb87a8de1f6546d346775b9307469e79976938319",
+    "graphics-captures/hit/03-blood-on-body.png": "f68c258e73daefb9e4e3111532a71aa6d40bfcb92f74380e6fe2ad428fc20087",
+    "graphics-captures/hit/04-shield-hit.png": "1bddb2d736ff9431af22c9025f495aeb8efb0f1ec1972b65a350e2612a6273f3",
+    "graphics-captures/hit/05-shield-expired.png": "d5e3da3d102d1b806724446faa9eed192083370f133171f758fa26b8a06f0d37",
+    "graphics-captures/hit/06-side-hit.png": "61debf85555ab5dadde540b35fcd95bda83ac4c9ee51cb0ad1cb397970ba37ef",
+    "graphics-captures/hit/07-health-seat-1.png": "68c9a96114a370ab327a2eca7a5b01c06c0dd04c0880c00974f4eb755f8b8e0a",
+    "graphics-captures/hit/07-health-seat-2.png": "94e201c8481908e2de9cd2b02b106f4a565e59474382a78e64d1e709fb7e19f0",
+    "graphics-captures/hit/07-health-seat-3.png": "fd60f6f1fcb906a501af55f0b68192b42cf1d4555efd531e8728c389f11cc969",
+    "graphics-captures/hit/07-health-seat-4.png": "a15f39824b5d334fa1a214b2dc8427b2116f6bff4aeebd77769734fbb157cbe8",
+    "graphics-captures/hit/08-shield-seat-1.png": "fbb5d7aa0958f5744e627cb71a9638e6f120fbb4446ee21e94a2a341cfafcb1e",
+    "graphics-captures/hit/08-shield-seat-2.png": "7ee9ad71bb03f0341bf178e169df72e022d5e0ce1f80124fdbfd7a997edfe62b",
+    "graphics-captures/hit/08-shield-seat-3.png": "c0f172e4a8b38bdd7fbbbca979ef725adccb47c9f7fe671c87b288c1f5861b50",
+    "graphics-captures/hit/08-shield-seat-4.png": "b6ceb0db3cd68aab387137f956b9b157f681178067ee84f7e793e29ba3b78a74",
+    "graphics-captures/shotgun/shotgun-health.png": "d543764538e814157001c1580656adb3ebd2f7e121b9f4b972d9e1db068d00c1",
+    "graphics-captures/shotgun/shotgun-shield.png": "bde3120497fa505777346fd98e2ce2917771abc6b9be4c6ec41b8d595e2e527a"
+  },
+  "capture_review": "Inspected health-hit and shield-hit frames; rendered scene and distinct effects visible. Editor evidence, not human/device acceptance.",
+  "commands": {
+    "editmode": "make check-full (completed EditMode stage; first PlayMode stage cancelled for QA history isolation)",
+    "playmode": "unity-run --shared --project \"$PWD/unity\" -- Unity -batchmode -projectPath \"$PWD/unity\" -runTests -testPlatform PlayMode -testResults <playmode-graphics.xml> -logFile <playmode-graphics.log> (no testFilter, graphics enabled)",
+    "playmode_environment": [
+      "STAR_TOURNAMENT_QA_LAB_HISTORY=<owned QA history path>",
+      "STAR_TOURNAMENT_HIT_CAPTURE=<owned hit capture directory>",
+      "STAR_TOURNAMENT_SHOTGUN_CAPTURE=<owned shotgun capture directory>"
+    ]
+  },
+  "no_additional_runs": "No rerun for commit/metadata. Full run explicitly requested in original task; latest 2026-10-10 user policy requires separate full authorization for future work."
+}

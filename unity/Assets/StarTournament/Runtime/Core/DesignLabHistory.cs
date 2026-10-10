@@ -248,6 +248,14 @@ namespace StarTournament.ProvingGround
         // a saved revision actually needs one, then share the exact immutable registry set.
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
+            // Hash covers gameplay values; metadata is also trusted during migration.
+            string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
+                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
+                string.Join("|",sought.Descriptors.Select(d=>d.Path));
+            // A warm lookup must precede even the linear predecessor probes: those transforms
+            // serialize large unchanged authored-map profiles on every history validation.
+            lock(historicalLock)
+                if(historicalCache.TryGetValue(key,out var warm))return warm;
             // The preceding LT registries lack only the new timing/gesture descriptors.
             // Match the trusted shipped projection first, without expanding all older schemas.
             // Values and metadata still pass the unchanged ValidateFile checks below.
@@ -275,10 +283,6 @@ namespace StarTournament.ProvingGround
             var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
             foreach(var previous in new[]{medium,low,shoulder,preSwitch,preCutter,preCutterThickness,preCutterThicknessSwitch,prePulse,preHeal})
                 if(RegistryMatches(previous,sought))return new[]{previous};
-            // Hash covers gameplay values; metadata is also trusted during migration.
-            string key=(shippedCacheKey??(shippedCacheKey=shipped.Hash()+"|"+JsonUtility.ToJson(shipped)))+"|"+
-                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
-                string.Join("|",sought.Descriptors.Select(d=>d.Path));
             lock(historicalLock)
             {
                 if(historicalCache.TryGetValue(key,out var cached))return cached;
@@ -485,8 +489,11 @@ namespace StarTournament.ProvingGround
                     if(r.Number<1||r.Snapshot==null||r.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Снимок или hash повреждён");
                     if(!validateSnapshots)continue;
                     var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
-                    var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
-                    if(!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(r.Snapshot.Profiles.Select(p=>p.Id+"@"+p.Version))||!paths.SequenceEqual(r.Snapshot.Descriptors.Select(d=>d.Path).OrderBy(k=>k)))throw new InvalidDataException("Снимок или hash повреждён: missing="+string.Join(",",paths.Except(r.Snapshot.Descriptors.Select(d=>d.Path)))+"; extra="+string.Join(",",r.Snapshot.Descriptors.Select(d=>d.Path).Except(paths)));
+                    if(!RegistryMatches(registry,r.Snapshot))
+                    {
+                        var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
+                        throw new InvalidDataException("Снимок или hash повреждён: missing="+string.Join(",",paths.Except(r.Snapshot.Descriptors.Select(d=>d.Path)))+"; extra="+string.Join(",",r.Snapshot.Descriptors.Select(d=>d.Path).Except(paths)));
+                    }
                     // Metadata is trusted only from the shipped registry, never from the file.
                     var trusted=registry.Clone();foreach(var d in trusted.Descriptors)trusted.Set(d.Path,r.Snapshot.Get(d.Path));
                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
@@ -497,8 +504,16 @@ namespace StarTournament.ProvingGround
             if(release.Hash!=shipped.Hash()&&!HistoricalPredecessors(release.Snapshot).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
         }
-        static bool RegistryMatches(LabBundle registry,LabBundle bundle)=>registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version))
-            && registry.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(bundle.Descriptors.Select(d=>d.Path).OrderBy(p=>p,StringComparer.Ordinal));
+        static bool RegistryMatches(LabBundle registry,LabBundle bundle)
+        {
+            if(!registry.Profiles.Select(p=>p.Id+"@"+p.Version).SequenceEqual(bundle.Profiles.Select(p=>p.Id+"@"+p.Version)))return false;
+            var paths=registry.Descriptors.Select(d=>d.Path).ToArray();
+            var other=bundle.Descriptors.Select(d=>d.Path).ToArray();
+            // Serialized snapshots normally retain trusted descriptor order. Keep the exact
+            // sorted multiset comparison for reordered files, including duplicate paths.
+            return paths.Length==other.Length&&(paths.SequenceEqual(other)||
+                paths.OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(other.OrderBy(p=>p,StringComparer.Ordinal)));
+        }
         bool Current(LabBundle bundle)=>RegistryMatches(shipped,bundle);
         public bool Compatible(LabRevision revision)=>Current(revision.Snapshot);
         void MigrateCompatibility(LabHistoryFile file)

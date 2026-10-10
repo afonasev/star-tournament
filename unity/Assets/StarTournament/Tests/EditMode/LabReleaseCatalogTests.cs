@@ -158,6 +158,31 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Environment.SetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY",oldEnvironment);
             }
         }
+        [TestCase(false)][TestCase(true)]public void ReorderedRegistryPathsPreserveTrustedReleaseSnapshotsAndSourceHistory(bool historical)
+        {
+            var baseline=Baseline();var original=baseline.Clone();
+            if(historical)
+            {
+                var prior=typeof(ProvingProfile).GetMethod("BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                original.Profiles=original.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            }
+            var local=new DesignLabHistory(path,baseline);local.Create("Local");var source=File.ReadAllBytes(path);
+            var catalog=LabReleaseCatalog.Factory(original);var entry=catalog.Entries.Single();
+            string trusted=UnityEngine.JsonUtility.ToJson(entry.Snapshot);
+            foreach(var profile in entry.Snapshot.Profiles)
+                ((System.Collections.Generic.List<NumericDescriptor>)profile.Descriptors).Reverse();
+            string reordered=UnityEngine.JsonUtility.ToJson(entry.Snapshot);
+            Assert.That(reordered,Is.Not.EqualTo(trusted));Assert.That(entry.Snapshot.Hash(),Is.EqualTo(entry.Hash));
+            var history=new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false);
+            Assert.That(history.StorageError,Is.Null);
+            var preserved=history.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions.Single(r=>r.Hash==entry.Hash&&r.ReleaseSequence==entry.Sequence);
+            Assert.That(UnityEngine.JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(trusted));
+            Assert.That(UnityEngine.JsonUtility.ToJson(entry.Snapshot),Is.EqualTo(reordered),"The caller's catalogue stays detached");
+            Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
+            entry.Snapshot.Set("rifle.damage",999);entry.Hash=entry.Snapshot.Hash();
+            Assert.Throws<InvalidDataException>(()=>new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false));
+            Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
+        }
         [Test]public void ValidationCacheUsesFullTrustedMetadataAndKeepsSnapshotsDetached()
         {
             var baseline=Baseline();var catalogue=LabReleaseCatalog.Factory(baseline);
