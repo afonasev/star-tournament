@@ -47,6 +47,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(footer.gameObject.activeInHierarchy,Is.False);
             ground.SendMessage("Pause","Footer review");Check();yield return NativeLoadingScreenTests.Capture("menu-pause",ui);
             B("Повторить матч").onClick.Invoke();yield return NativeLoadingTestScene.Wait(ground);
+            ground.Session.ApplyDamage(1,ground.Session.Life(1).Life,10000,0,ground.Session.Life(0).Life);
             while(ground.Session.Match.Phase==NativeMatchPhase.Running){ground.Session.Match.BeginTick();ground.Session.Match.EndTick();}
             yield return new WaitForFixedUpdate();yield return null;Check();yield return NativeLoadingScreenTests.Capture("menu-results",ui);
         }
