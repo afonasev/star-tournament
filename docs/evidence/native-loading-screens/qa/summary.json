@@ -1,0 +1,1351 @@
+{
+  "runtime_revision": "f1726cbd",
+  "final_fixture_revision": "e7af528e",
+  "qa_route": "initial complete PlayMode plus affected reruns; no runtime changes during fixes",
+  "resolved_playmode_cases": {
+    "Passed": 258,
+    "Skipped": 3
+  },
+  "skipped": {
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.CaptureEditorHealthShieldAndDirectionalReaction": {
+      "result": "Skipped",
+      "evidence": "full-playmode-initial.xml",
+      "reason": "Visual capture runs separately with graphics enabled"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.CaptureFourSeatContactViews": {
+      "result": "Skipped",
+      "evidence": "full-playmode-initial.xml",
+      "reason": "Visual capture runs separately with graphics enabled"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.CaptureShotgunSeparateContactPositions": {
+      "result": "Skipped",
+      "evidence": "full-playmode-initial.xml",
+      "reason": "Visual capture runs separately with graphics enabled"
+    }
+  },
+  "editmode": {
+    "passed": 62,
+    "evidence": "history-arena-editmode.xml"
+  },
+  "ui_gate": {
+    "passed": 16,
+    "evidence": "ui-gate.json"
+  },
+  "latest_cases": {
+    "StarTournament.ProvingGround.Tests.CombatBowlP4PhysicsTests.BonusEffectsSurviveSnapshotAndDeathClearsBoost": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlP4PhysicsTests.EveryRiseAndStairTraversesThreeLanesBothDirections": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlP4PhysicsTests.SpawnRoutesAndBasementSupportCannotShortcutThroughSlab": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.AllVisibleCandidatesStillProduceAValidFallback": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.BalconyDropLandsOnLowerSupportWithoutDamage": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.CentralFacadeHasNoHorizontalFloorSeamOpening": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.CentralPlinthAndRampUndersidesRejectWalkingEntry": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.EightRegionsAreValidAndAllTwentyEightPairsAreBodyHidden": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.EntireUpperLoopAndBothBridgesAreConnectedWithoutChangingFloor": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.ExteriorCrossStairsSpanAllUsableLanes": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.GratingSupportsActorAndPassesShotsBothDirectionsWhileHallAndWindowBlock": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.IncrementalAllocationMatchesLegacyRecursionIncludingFailureAndBudget": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.IncrementalAllocationPreservesPositionsAndSearchBudget": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.JumpingDownOuterRisesCannotLandAboveCeiling": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.LowerEntriesKeepStandingCapsuleHeadroomInBothDirections": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.LowerSpawnFlanksAreOpenWithoutAddedWallsOrLowCeilings": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.LowerTunnelTraversesEndToEndWithOrdinaryMotor": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.NearbyHiddenCandidateBeatsFartherVisibleCandidate": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.OuterCeilingCavitiesAreSolidUpToShell": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.OuterCorridorToBalconyAllowsDirectWalkingWithoutDetours": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.PickupInstancesKeepIndependentTimersAndRestoreByStableId": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.StationCeilingSealsEveryInteriorAndOuterJunction": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.UpperNorthSouthDividersBlockExtraStraightOpenings": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.WideDiagonalsSupportStraightMotorMovementAcrossFullWidth": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.CombatBowlR7PhysicsTests.WideDiagonalsTraverseBothDirectionsAtNormalAndBoostedSpeed": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.FullHealSessionTests.DelayedCollectionUsesStableSeatOrderPreservesArmorAndRepeat": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.FullHealSessionTests.UpperHallAndDeadParticipantDoNotCollectThroughSlab": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.IndustrialTunnelsPhysicsTests.AllAnchorsConnectedAndAllRampsWalkableBothWays": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests.EveryLabelIsCentredAndBackedByItsSurface": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests.InteriorVolumesAndLampPostsBlockRealCapsules": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests.LowerFloorBypassesBesideBothStairsAdmitActualCapsule": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.LunarLaboratoryPhysicsTests.RoutesStairsGlassAndSpawns": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationLifecycleTests.SessionTickPauseDeathAndFrozenRepeatOwnNavigationLifecycle": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.ChangedGoalDuringTransition_FinishesSelectedDirectionBeforeReturning": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.DisconnectedFloorsRejectPartialNativeRoute": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.ForeignNavMeshCannotReplaceDisabledOwnedSurface": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.GeneratedFamilies_DeclaredTransitions_ThreeLanesBothDirections": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.LivingBlocker_RemainsSolidDuringBoundedRecovery": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.NarrowOccupiedCorridor_TerminatesWithoutPushingOrTeleporting": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.OverlappingFloors_UseDeclaredTransition_AndInvalidGoalIsRejected": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeNavigationPhysicsTests.StairsAndRamp_ThreeLanesBothDirections_WithMidwayRepath": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.NativeVisibilityQueryTests.GlassWallAndSaturationInOwnedPhysicsScene": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.ArtPreservesAllCollisionAndRepeatOwnsItsResources": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.ArtProfileRejectsOutOfRangeAndPublishesCompleteMetadata": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.OverlappingFloorAndHallWallHaveOneVisibleFace": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.RingV3GainsWayfindingWithoutResettingDesignerValues": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.SerializedRingV1UpgradesLightingAndPreservesRingOverrides": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.SerializedRingV2GainsWindowsWithoutResettingLightingOrCustomFrame": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.SerializedRingV4AddsDepthWithoutOverwritingDesignerLighting": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.SerializedV2LightingUpgradesValuesAndRangeTogether": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.SerializedV3LightingKeepsOverridesAndUpgradesOldDefaults": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.SerializedV4FloorKeepsDesignerOverrides": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.WayfindingUsesPlanSidesAndPanelsStayOnOpaqueWalls": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.OrbitalLeaguePresentationTests.WindowsTransmitSeparateDistantSpaceAndRemainSolid": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.CutterAttackSustainAndReleaseFollowLiveBeamWithoutRestart": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.HitsDeathAndPickupUseApprovedBanksAndAudience": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.MovingRocketLoopUsesPositionAndStopsOnPauseRestoreMute": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ApprovedSpatialAudioTests.SharedOutputDoesNotMultiplyShotsAndBeamUsesEndpoint": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ArenaFoundationPlayModeTests.DefinitionBuild_PreservesSupportAfterObjectRename": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ArenaFoundationPlayModeTests.FreezeMismatch_CreatesNoArenaProjectionOrNavigationContext": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ArenaFoundationPlayModeTests.RepresentativeFamilies_UseOneProjectionWithMapIdentity": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.BloodPresentationTests.ActualRifleDamageUsesAuthoritativeImpactAndArmorOnlyHitDoesNotEmit": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.BloodPresentationTests.CapsFreezeRestoreAndExpiryArePresentationOnly": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.BloodPresentationTests.MarksHaveVariedSilhouettesAndTailsFollowSurfaceVelocity": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.BloodPresentationTests.SurfaceMeshStaysOnActualWallAndClipsAtItsEdge": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.CutterSessionTests.BeamPiercesTwoTargetsStopsAtWallAndClearsAtFocusBoundary": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.CutterSessionTests.Digit4AndDpadDownAreSeatLocalPlayerEdges": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DamageBonusAlertTests.GlobalAlertsFollowLifecycleOnceAndRestoreDoesNotReplay": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DeathRagdollTests.AirborneCorpseKeepsPoseMomentumAndFreezesAtMatchClock": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DeathRagdollTests.EveryRealWeaponReportsFatalContextBeforeLaterEffects": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.GamepadEntryUsesSubmittingPadAndBackKeepsDraftButNewMatchResets": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.KeyboardEntryCreatesOnlyOneGuestAndOneBot": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.MouseEntryAssignsKeyboardMouseInsteadOfCurrentGamepad": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.Sn30EntrySelectsSubmittingHidPadWithAnotherGamepadConnected": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.Sn30SubmitIsNotOverriddenByKeyboardNavigationRelease": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DefaultRosterTests.Sn30SubmitIsNotOverriddenByMouseButtonRelease": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests.DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.DesignLabWorkspaceTests.RevisionSelectionKeepsFramesRunningUntilAtomicPublication": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FourGamepadsCanJoinStartPauseAndResumeWithoutMouse": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FpsSettingPersistsAndKeepsSamplingWhilePaused": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FramesStayWithAssignedSeatAndEdgesAreConsumedOnce": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.NewBotsConfirmDefaultDifficultyWithOneSubmit": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.GamepadLookAssistanceTests.ContinuousRampUsesItsActualSurfaceNormal": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.GamepadLookAssistanceTests.LtLocksCurrentPitchKeepsYawAndTapResetsToWorldHorizon": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.GamepadLookAssistanceTests.ReturnIsDelayedManualInputWinsAndDisabledOrAirborneLookStaysPut": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.GamepadLookAssistanceTests.StationaryStairLookFollowsMarchUpDownAndAcross": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.ActualShotgunPreservesIndividualTargetContactsAndSingleDamageNotice": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.ActualWeaponDamageDrivesShieldThenHealthEffects": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.ArmorAndHealthUseSeparateSkinEffectsAndPreserveAuthoritativeState": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.CaptureEditorHealthShieldAndDirectionalReaction": {
+      "result": "Skipped",
+      "evidence": "full-playmode-initial.xml",
+      "reason": "Visual capture runs separately with graphics enabled"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.CaptureFourSeatContactViews": {
+      "result": "Skipped",
+      "evidence": "full-playmode-initial.xml",
+      "reason": "Visual capture runs separately with graphics enabled"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.CaptureShotgunSeparateContactPositions": {
+      "result": "Skipped",
+      "evidence": "full-playmode-initial.xml",
+      "reason": "Visual capture runs separately with graphics enabled"
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.ContactBudgetPauseExpiryAndDeathCloneDoNotLeak": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.ShieldWorksWithBloodDisabledAndFourSeatsShareOneBudget": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.ShotgunPatchesUseSeparatePositionsAndShotLevelRateLimitsWithinBudget": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.HitFeedbackPresentationTests.TorsoReactsDirectionallyWithoutChangingFeetRootOrFrozenPose": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.DisconnectedSeatCannotResumeThroughTheOtherMenu": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GamepadNavigationSubmitsOnlyItsOwnViewport": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PersonalSettingsAndGlobalConfirmationStayScoped": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SplitScreenDrawsOneGlobalFpsCounter": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAccuracyRuntimeTests.CutterCountsEnemyAppliedTimeUnionOnceAcrossAllyAndEnemy": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAccuracyRuntimeTests.DelayedRifleHitUpdatesOnceAndHistoricalPendingBulletDoesNotCount": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAccuracyRuntimeTests.ShotgunCountsEnemyGeometricPelletsAndRocketNeedsAppliedEnemyDamage": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAchievementExplanationTests.EveryCatalogAwardHasAnAuthoredNeutralOrMasculineFullCondition": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAchievementExplanationTests.UnknownAwardKeepsItsSnapshotFactWithoutInventingEligibility": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAchievementSessionTests.ActualMotorFireSwitchAndRestoreCountersExcludeInputAttemptsAndTeleport": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAchievementSessionTests.PhysicalArmorCollectCountsOneBonusAndNoRepeatWhileUnavailable": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAchievementsLayoutTests.CatalogCopyFitsAtResponsiveSizesAndKeepsResultsBoundsAndFrozenIdentity": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.ConfirmedRifleShotSelectsTheChosenRuntimeClip": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.MouseHoverIsSilentButGamepadNavigationStillSounds": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioRoutingTests.MovementBanksVaryWithoutRepeatingAndWeaponReuseResetsPitch": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.CloseVisibleEnemyOnOtherFloorUsesRouteInsteadOfLocalStrafe": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.DefaultEightParticipantAllocatorProducesUnrelocatedBotContactAndDamage": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.EightParticipantFfaProducesActualBotCombatWithinSixtySimulationSeconds": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.EightParticipantTeamsProducesActualBotCombatWithinSixtySimulationSeconds": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.FacingBotUsesRealDriverShotReleaseAndLifecycleKeepsFrozenBehavior": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.MatchAndRepeatUseFrozenProfileOwnedFixedTickCadence": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.NativeTacticsRejectsWallAndLowHeadroomAndAllowsSafeFloorProbe": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.NaturalDefaultEightFfaReachesTerminalWithoutInvalidRuntimeState": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.NaturalDefaultEightTeamsReachesTerminalWithoutInvalidRuntimeState": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.SafeNativeJumpProbeMatchesAnActualMotorAirborneAndLandingCycle": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotBehaviorTests.VisibleTargetKeepsRealStairAndRampTransitionsUnderPlannerControl": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotObservationTests.ActualWallHiddenMovementDeathAndExpiryDoNotLeak": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotObservationTests.ArmoredGlassSeparatesSightFromShotAndKeepsTracking": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotObservationTests.DifficultyFovBoundariesUseHorizontalAngle": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotObservationTests.HorizontalFovReacquisitionAndWorldLayerOcclusion": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotObservationTests.TeamReportComesFromObservedPoseWhileReceiverLooksAway": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotSeatsTests.ChangingSeatKindReleasesDeviceAndSwitchesTheNextHumanOwner": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotSeatsTests.SparseHumanAllAiOperatorAndFrozenLifecycleUseOrdinarySetup": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotSetupTests.OrdinarySoloStartMixedTeamsRepeatPauseAndExit": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotTacticsRuntimeTests.NativeActionsActuallyUnlockWeaponsCollectBonusesAndRestoreWithoutInstantKnowledge": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotTacticsRuntimeTests.RetreatActuallyMovesAwayWhileItsReadyRifleDamagesTheVisiblePursuer": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeBotTacticsRuntimeTests.VeteranPlannerJumpUsesNativeMotorAndLostTargetDoesNotStopSearch": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.AdditiveReloadOwnsAllRuntimeObjects": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.CurrentOccupancyBatchAndInvalidFloorAreSafe": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.DamageNoticeAndViewportPulseFollowActualLossAndLifecycle": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.FreshPressImmediatelyAfterRespawnIsAccepted": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.KillcamTracksOnlyKillerLifeAndAirborneCorpseFindsFloor": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.LtTapKeepsRtShotAndCameraOnTheSameInterpolatedDirection": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.MixedPelletsApplyProportionalDamageThroughSession": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.RealShotKillsDisablesCapsuleAndRespawnsFullLife": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.RespawnPrefersHiddenUpperFloorAndRechecksOccupiedWinner": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.RifleHoldAndSameTickSelectionUseDistinctAuthoritativeShots": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.ScenePhysicsWallBlocksShotAndDeadParticipantDoesNot": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeCombatTests.ShotNoticeCapturesEveryResolvedEndpointWithoutChangingDamage": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.DeviceLostDuringLoadingPausesBeforeFirstTick": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.FailedSpawnKeepsPartialCamerasDisabledDuringRosterEditingAndRetry": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.FocusLostDuringLoadingPausesBeforeFirstTick": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.HistoryRemainsReadOnlyWhileLoadingKeepsUpdating": {
+      "result": "Passed",
+      "evidence": "large-history-final.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.MatchBlocksDuplicateLaunchAndTicksOnlyAfterReady": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.MissingActorAssetRecoversEditableSetupAndCanRetry": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.StartupShowsApprovedBrandAndAnimatedIndicatorBeforeReady": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeLoadingScreenTests.UnloadDuringHistoryOrProjectionDoesNotPublishIntoRemovedScene": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.DisconnectSelectsActiveMenuAndReconnectCanNavigateToResume": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.EnemyKillAfterTeamKillRestoresNormalColorAndPreservesNameColor": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.KillcamViewPauseRepeatAndMenuKeepOneSceneAndFreshLifecycle": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.ResultsRepeatPreservesFrozenSettingsAndSetupCanChangeNextMatch": {
+      "result": "Passed",
+      "evidence": "large-history-final.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.SelfKillAfterTeamKillRestoresNormalColor": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.SelfKillUsesNormalColorAndDoesNotNameSelfAsKiller": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.SnapshotAllowsMutualLethalAndLateSeatForcesOvertime": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMatchIntegrationTests.TeamKillIsRedWithoutEnemyScoreOrStreak": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests.MenuLoopsTransitionsFreezeReverseAndCoalesceWithoutAdditionalVoices": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuMusicTests.PausedOrFinishedRoundReturnsFromSilenceAndNewMatchNeverInheritsOldEnvelope": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.ApprovedMainMenuHasReadableArtworkAndSixPreservedActions": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.CompactControlsDoNotCollapseRosterCardsOrLoseSettingsNavigation": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.FeedbackUsesTopBackSquareChecksAndFullResolutionList": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.GoldStartAndSettingsButtonsUseTheSameFocusFrame": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.KeyboardNavigatesMainMenuAndSubmitsAfterReturningFromSettings": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.NavigationFocusHasGoldGraphicAndHoverCannotCreateASecondFocus": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeMenuPresentationTests.SetupUsesMandatoryModeTargetsAndInheritedBotDifficulty": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeParticipantRosterTests.EightActorsUseOnlyMappedLocalViewsAndRepeatDisposesOldObjects": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeParticipantRosterTests.EightSlotAllocatorHasBoundedAtomicFailure": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeParticipantRosterTests.InvalidDraftRollsBackToSafeSetupAndCanBeCorrected": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeParticipantRosterTests.SeatZeroInputMovesParticipantSevenAndNonlocalKillerOwnsKillcam": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeParticipantRosterTests.TeamTotalUsesFrozenCompositionColors": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.IndependentHeldTabsUseTheirSeatAndResetForARepeat": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryInputTests.ResultsNavigationSelectsRowsWithoutRepeatingAndReturnsToActions": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRivalryPresentationTests.RivalryResultsRenderAndSelectWithoutChangingFrozenData": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRoundMusicTests.MusicIsIndependentOfEffectsAndPauseMuteMenuAndRepeatHaveOneOutput": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeRoundMusicTests.ProgressLoopsPauseRestoreOvertimeAndFinishPreserveOneTrack": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests.CompleteGroupsShareIconAxisAndAllEightTeamRowsFitWithIndependentLifeAndLeaders": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeScoreboardLayoutTests.FfaLeaderKeepsCrownWithoutYellowRowOrStripe": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests.AssignedDpadWeaponChoicesAreSeatLocalAndConsumedOnce": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests.ChangingRosterAndRepeatingCannotLeaveHiddenParticipantsOrStaleRows": {
+      "result": "Passed",
+      "evidence": "remaining-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests.CliProbeOverrideDoesNotLeakIntoNextDiagnosticRoster": {
+      "result": "Passed",
+      "evidence": "remaining-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests.SharedTimerAndPerSeatHudFollowOneToFourViewportLayouts": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeSeatLayoutTests.TwoGamepadsJoinThroughSetupAndThirdDeviceCannotControlOrPauseGame": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTeamsTests.AlliedBodyTakesReducedShotAndBlocksEnemyBehind": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTeamsTests.InitialAllocationCoversEveryNonemptyAssignmentAndOccupancy": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTeamsTests.RespawnCountsVisibleAlliesAndReservesEveryCapsule": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTeamsTests.SetupRepeatResultAndFfaRestoreKeepRosterAndIdentityCoherent": {
+      "result": "Passed",
+      "evidence": "remaining-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeUpdateMenuTests.AutomaticCheckShowsActionOnlyWhenUpdateIsAvailable": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeUpdateMenuTests.ConsentUsesNativeSubmitAndStagingDoesNotChangeInstalledIdentity": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ParticipantColorIdentityTests.MixedReviewHasOwnedMaterialsForEveryParticipant": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ParticipantColorIdentityTests.OrdinaryEightAiStartBoostPauseRespawnRepeatAndUiUseFrozenColors": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.CharacterMotor_FollowsCalculatedNavMeshRouteToUpperSupport": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.FirstIdleTick_PreservesRequestedSpawnXZ": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.LatestPackagedDefault_DrivesPhysicalAccelerationBrakingAndJump": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.MovementBarrierDoesNotOccludeShotsButWindowDoes": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.NavigationRoute_UsesPhysicalTransitionInsteadOfSlabShortcut": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.StairsAndRamp_AreTraversableInBothDirections": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ProvingGroundTests.Wall_Headroom_AndLiveParticipantBlockPhysicalMotion": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.FirstVisibleFlightUsesStrafedMuzzleThenFreezesLaunchOffset": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.InvalidBulletSnapshotsAreRejectedBeforeMutation": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.LaunchDoesNoDamageThenContactAndVisualAreOnceAndSynchronous": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.NoDistanceOrLifetimeCutoffAndCanHitBeyondOldRange": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.PauseRestoreOwnerDeathAndCallbackSnapshotCannotDuplicateDamage": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.TargetCanLeaveAndAnotherTargetCanEnterFlightPath": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RifleBulletSessionTests.ThinWallAndAllyStopHighSpeedBulletWithHalfFriendlyDamage": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketGratingTests.EveryBalconyAndBridgeGapStopsBothSidesWithinOneTickExactlyOnce": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketGratingTests.RifleBulletCrossesGrateAndRebuildDropsOldGratingReferences": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketGratingTests.SplashCrossesGrateAndMotorKeepsSupport": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketGratingTests.WorldAndParticipantBeforeGrateWinAndOtherMovementOnlySurfacePasses": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketPresentationTests.BurstExpiresBySessionClockAndReusesItsBoundedObjects": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketPresentationTests.ConcurrentBurstsRespectAnIndependentLightBudget": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketPresentationTests.CoreLifetimeOutlivesOtherLayersWhenProfileRequestsIt": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketPresentationTests.FlameEnvelopeFollowsFrozenRadiusAndIgnoresLegacySizeAtExtremeShapeSettings": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketPresentationTests.LightAndAtlasFreezeWithSessionTimeAndRestoreDisablesThePooledLight": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketPresentationTests.PauseFreezesParticlesRestoreClearsBurstAndRecreatesFlightWithoutChangingState": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketSessionTests.Digit3AndDpadRightAreSeatLocalPlayerEdges": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketSessionTests.DirectAndSplashUseUniformBoostOnceWithArmor": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketSessionTests.FlightRestoresWithoutDuplicatesSurvivesOwnerDeathAndNewSessionClearsIt": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketSessionTests.FriendlyDirectAndSelfSplashAreHalvedWithoutFriendlyKillAward": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketSessionTests.MultiVictimFriendlySplashAttributesAppliedDamageAndPenaltyOnceThroughRestoreAndRespawn": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RocketSessionTests.ThinWallAndFloorSweepExplodeOnceAndOccludeSplash": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.BotViewRoundtripPreservesRosterDifficultyTeamAndFocus": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.FullUnequalTeamsAllowExplicitTransferAndBlockFurtherAdds": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.GamepadCanEditDifficultyCancelAndReturnToCard": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.GenericJoystickAppearsInPickerButCannotBeAssigned": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.RosterYJoinsThenSwitchesOwnTeamAndXAddsInheritedBot": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.RosterCardsTests.YRestoresProfileWhileEditorRemainsOnSameBot": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AllAiOperatorOpensTheSameSettingsAndReturnsToPause": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AudioSettingsPersistAndRemainGamepadNavigable": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.DevicePageShowsSupportedAndUnsupportedControllers": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.GamepadCanCancelDisplayConfirmation": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SectionFocusShowsParametersWithoutSubmit": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SettingsAreFullyNavigableWithGamepad": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.ShoulderButtonsCycleOnlyAssignedWeaponOnPress": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SetupGamepadNavigationTests.ArrowsChooseMapAEditsRulesStartAdvancesAndBPreservesDraft": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SetupGamepadNavigationTests.KeyboardKeepsEnterTransitionsAndGamepadTakesContentFocusWithoutRebinding": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SetupGamepadNavigationTests.LastPlayedMapSurvivesReentryReloadAndCancelledDraft": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SetupGamepadNavigationTests.MissingSavedMapFallsBackAndMouseChoiceStaysOnMap": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.SetupGamepadNavigationTests.StartHoldAndSimultaneousSubmitCannotSkipSteps": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.ShotOriginTests.WeaponsUseCurrentMuzzlesAcrossStrafeRotationAndBatchedTicks": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.ActualBonesMoveWithoutMovingGameplayAndFreezeAtSameClock": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.DeathRespawnAndRepeatClearViewAndCorpseState": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.ImmediateResetAndDeathKeepActualBonesAtTheSameClock": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.LocalBodyCastsAnAnimatedShadowWithoutRenderingInItsOwnCamera": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.OrbitalGripDoesNotAccumulateAcrossFrozenSamples": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.SeatsShareAssetsButNeverRenderAnotherFirstPersonView": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.TrooperPresentationTests.VectorMuzzlesAndParticlesRespectSeatClockAndLifetime": {
+      "result": "Passed",
+      "evidence": "lifecycle-followup.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.UnifiedDamageSessionTests.MultipliersPrecedeShieldAndFreezeSelectedTuning": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.UnifiedDamageSessionTests.RifleAndShotgunStopAtAllyAndCutterPassesBothParticipants": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.WeaponPickupSessionTests.SixPhysicalAnchorsIndependentTimersRestoreAndFreshSession": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.PlayMode.WorldWeaponMaterialTests.InactiveActorIdentityPreservesEquipmentMaterialsAndBoostRestoresThem": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    },
+    "StarTournament.ProvingGround.Tests.VeteranSliceTests.CasesBlockShotsAndMovementWhilePortalRemainsWalkableBothWays": {
+      "result": "Passed",
+      "evidence": "full-playmode-initial.xml",
+      "reason": null
+    }
+  },
+  "player_build": "deferred",
+  "deployment": "not requested",
+  "behavior_revision": "d83cfd450cc029e396322604244b3647ed98515a",
+  "graphics": {
+    "passed": 8,
+    "source_revision": "f1726cbd",
+    "evidence": "loading-graphics.xml",
+    "capture": "actual native Canvas rendered to 1600x900 RenderTexture in graphics-enabled Editor",
+    "visual_review": "both PNGs inspected after CanvasRenderer/rounded mask/layout correction"
+  }
+}
