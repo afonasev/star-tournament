@@ -1,0 +1,3 @@
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/unity
+unity-run: started shared:1; guardian=55931 pid=56108
+unity-run: finished pid=56108 exit=0; capacity released

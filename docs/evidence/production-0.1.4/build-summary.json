@@ -1,0 +1,16 @@
+[
+  {
+    "platform": "windows",
+    "target": "StandaloneWindows64",
+    "bytes": 285016024,
+    "ordinary_release": true,
+    "result": "Passed"
+  },
+  {
+    "platform": "mac",
+    "target": "StandaloneOSX",
+    "bytes": 304341489,
+    "ordinary_release": true,
+    "result": "Passed"
+  }
+]

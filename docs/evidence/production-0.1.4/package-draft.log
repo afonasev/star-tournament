@@ -1,0 +1,94 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/launcher/Launcher.csproj (in 199 ms).
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/launcher/bin/Release/net8.0/win-x64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/payload-0.1.4/
+[17:06:30 INF] Directive enabled for cross-compiling from OSX (current os) to Windows.
+[17:06:30 INF] Velopack CLI 1.2.158, for distributing applications.
+[17:06:30 INF] Beginning to package Velopack release 0.1.4.
+[17:06:30 INF] Releases Directory: /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases
+[17:06:30 INF] Starting: Pre-process steps
+[17:06:30 WRN] VelopackApp.Run() was found in method 'System.Void Program+<<Main>$>d__0::MoveNext()', which does not look like your application's entry point. It is strongly recommended that you move this to the very beginning of your Main() method. 
+[17:06:30 INF] Shortcuts: None
+[17:06:31 INF] Complete: Pre-process steps
+[17:06:31 INF] Starting: Code-sign application
+[17:06:31 WRN] No signing parameters provided, 326 file(s) will not be signed.
+[17:06:31 INF] Complete: Code-sign application
+[17:06:31 INF] Starting: Building portable package
+[17:06:31 INF] Starting: Building release 0.1.4
+[17:06:44 INF] Complete: Building portable package
+[17:06:44 INF] Complete: Building release 0.1.4
+[17:06:44 INF] Starting: Building setup package
+[17:06:44 INF] Setup bundle created 'tech.afonasev.star-tournament.win-x64-win-x64-Setup.exe'.
+[17:06:44 WRN] No signing parameters provided, 1 file(s) will not be signed.
+[17:06:44 INF] Complete: Building setup package
+[17:06:44 INF] Starting: Post-process steps
+[17:06:44 INF] Complete: Post-process steps
+[17:06:44 INF] Finished in 00:00:13.6562690.
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/maintenance/Maintenance.csproj (in 139 ms).
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/maintenance/bin/Release/net8.0/win-x64/StarTournamentMaintenance.dll
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/windows-layout-0.1.4/maintenance/
+Compiling Windows installer on gfe with Ubuntu NSIS 3.10
+Remote compiler: makensis 3.10 (Ubuntu package)
+Command line defined: "INPUT_DIR=/var/tmp/star-tournament-installer-61e3982131fd40399c7d26db901c7b85/layout"
+Command line defined: "VERSION=0.1.4"
+Command line defined: "OUTPUT_FILE=/var/tmp/star-tournament-installer-61e3982131fd40399c7d26db901c7b85/WindowsSetup.exe"
+Processing config: /etc/nsisconf.nsh
+Processing script file: "/var/tmp/star-tournament-installer-61e3982131fd40399c7d26db901c7b85/installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "/var/tmp/star-tournament-installer-61e3982131fd40399c7d26db901c7b85/WindowsSetup.exe"
+Install: 4 pages (256 bytes), 1 section (1 required) (4120 bytes), 974 instructions (27272 bytes), 603 strings (32660 bytes), 1 language table (294 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (4120 bytes), 115 instructions (3220 bytes), 130 strings (4874 bytes), 1 language table (254 bytes).
+Datablock optimizer saved 135456 KiB (~23.2%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              481280 / 121344 bytes
+Install code:                          (63018 bytes)
+Install data:                          (433730686 bytes)
+Uninstall code+data:                   (68974378 bytes)
+Compressed data:           147215093 / 502768082 bytes
+CRC (0x90C864BD):                  4 / 4 bytes
+
+Total size:                147696377 / 502889430 bytes (29.3%)
+Built /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/Star-Tournament-0.1.4-Windows-x64-Setup.exe
+PACKAGED win-x64 0.1.4 /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/launcher/Launcher.csproj (in 135 ms).
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/launcher/bin/Release/net8.0/osx-arm64/StarTournamentLauncher.dll
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/payload-0.1.4/
+[17:14:11 INF] Velopack CLI 1.2.158, for distributing applications.
+[17:14:11 INF] Beginning to package Velopack release 0.1.4.
+[17:14:11 INF] Releases Directory: /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases
+[17:14:11 INF] Starting: Pre-process steps
+[17:14:11 INF] Generating new '.app' bundle from a directory of application files.
+[17:14:11 INF] Complete: Pre-process steps
+[17:14:11 INF] Starting: Code-sign application
+[17:14:11 INF] No entitlements specified, using default: https://docs.microsoft.com/dotnet/core/install/macos-notarization-issues
+[17:14:11 WRN] Package will not be signed or notarized. Missing the --signAppIdentity and --notaryProfile options.
+[17:14:11 INF] Complete: Code-sign application
+[17:14:11 INF] Starting: Building portable package
+[17:14:11 INF] Starting: Building release 0.1.4
+[17:14:23 INF] Complete: Building portable package
+[17:14:24 INF] Complete: Building release 0.1.4
+[17:14:24 INF] Starting: Building setup package
+[17:14:24 WRN] Package installer (.pkg) will not be Notarized. This is supported with the --signInstallIdentity and --notaryProfile arguments.
+[17:14:24 INF] Creating installer '.pkg' for app at '/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/velopack/temp.1/Star Tournament.app'
+[17:14:37 WRN] No Installer signing identity provided. The '.pkg' will not be signed.
+[17:14:37 INF] Installer created successfully
+[17:14:37 INF] Complete: Building setup package
+[17:14:37 INF] Starting: Post-process steps
+[17:14:38 INF] Complete: Post-process steps
+[17:14:38 INF] Finished in 00:00:27.0458360.
+PACKAGED osx-arm64 0.1.4 /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/tech.afonasev.star-tournament.win-x64-0.1.4-win-x64-full.nupkg", "name": "tech.afonasev.star-tournament.win-x64-0.1.4-win-x64-full.nupkg", "size": 140540418, "sha256": "a7b03604132b15cccb33641919bde8dc6b52ee4812e14ac562bf4b39e50f0f26", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/tech.afonasev.star-tournament.win-x64-0.1.4-win-x64-full.nupkg", "githubAssetId": 627892019, "githubDigest": "sha256:a7b03604132b15cccb33641919bde8dc6b52ee4812e14ac562bf4b39e50f0f26"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/Star-Tournament-0.1.4-Windows-x64-Setup.exe", "name": "Star-Tournament-0.1.4-Windows-x64-Setup.exe", "size": 147696377, "sha256": "036f29f0a57820e1dea00e2424b6081d1b18fe65fbe6d5a430d8206e10c73a0f", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/Star-Tournament-0.1.4-Windows-x64-Setup.exe", "githubAssetId": 627892552, "githubDigest": "sha256:036f29f0a57820e1dea00e2424b6081d1b18fe65fbe6d5a430d8206e10c73a0f"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/latest-win-x64.json", "name": "latest-win-x64.json", "size": 1405, "sha256": "103564e91f6adea3551284233e7381653d6340a6230e30533cdf940526cc0f60", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/latest-win-x64.json", "githubAssetId": 627893375, "githubDigest": "sha256:103564e91f6adea3551284233e7381653d6340a6230e30533cdf940526cc0f60"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/identity-win-x64.json", "name": "identity-win-x64.json", "size": 1530, "sha256": "f0ac224265af52a1a256f9e0ca3c00d0c9e1b391cc5c9a9abe4779340fcb142c", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/identity-win-x64.json", "githubAssetId": 627893400, "githubDigest": "sha256:f0ac224265af52a1a256f9e0ca3c00d0c9e1b391cc5c9a9abe4779340fcb142c"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/tech.afonasev.star-tournament.osx-arm64-0.1.4-osx-arm64-full.nupkg", "name": "tech.afonasev.star-tournament.osx-arm64-0.1.4-osx-arm64-full.nupkg", "size": 149068788, "sha256": "83a4a8514c54ebe41914c76c55866f9da6d1216766d9a845c003ca54aff267f7", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/tech.afonasev.star-tournament.osx-arm64-0.1.4-osx-arm64-full.nupkg", "githubAssetId": 627893427, "githubDigest": "sha256:83a4a8514c54ebe41914c76c55866f9da6d1216766d9a845c003ca54aff267f7"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/Star-Tournament-0.1.4-macOS-arm64.pkg", "name": "Star-Tournament-0.1.4-macOS-arm64.pkg", "size": 148616361, "sha256": "9042e809de0949d51ead06757c494bbfe7b687d9e76d3d55d4289e75899908c0", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/Star-Tournament-0.1.4-macOS-arm64.pkg", "githubAssetId": 627894052, "githubDigest": "sha256:9042e809de0949d51ead06757c494bbfe7b687d9e76d3d55d4289e75899908c0"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/latest-osx-arm64.json", "name": "latest-osx-arm64.json", "size": 1421, "sha256": "d30526bbd7152a419f53f6e3fdc2c7b9b086dcd7a40c4fe76fcdd6857365b51c", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/latest-osx-arm64.json", "githubAssetId": 627894586, "githubDigest": "sha256:d30526bbd7152a419f53f6e3fdc2c7b9b086dcd7a40c4fe76fcdd6857365b51c"}
+{"path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/identity-osx-arm64.json", "name": "identity-osx-arm64.json", "size": 1549, "sha256": "3a45a80fdb6d3488cb1e36a656495831c5c94805ff02e206a7586dec0311f33f", "url": "https://github.com/afonasev/star-tournament/releases/download/untagged-3d9a6c4d08c6c57adbc9/identity-osx-arm64.json", "githubAssetId": 627894605, "githubDigest": "sha256:3a45a80fdb6d3488cb1e36a656495831c5c94805ff02e206a7586dec0311f33f"}
+DRAFT https://github.com/afonasev/star-tournament/releases/tag/untagged-3d9a6c4d08c6c57adbc9

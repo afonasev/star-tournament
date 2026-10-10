@@ -1,0 +1,13 @@
+# Scope before QA
+Frozen main`358fab9a5e6ebd3aea4aee57e68c8666346aa56c`; published0.1.3 runtime baseline97c42610c1b1667c1d664a3159b90fa2044fec0b, publicfd17c8e5. All committed main is included; foreign primary ProjectSettings excluded.
+Diff: bot banter/prefs/full faster20 voice bank, DeathNotice/attack/tick events, timed chain scoring/notices/third-fourth cues, audio weapon-ready/death/combat mix and music tuning, Lab history migrations. Distribution/launcher source unchanged since0.1.3.
+
+Before launch selected:
+- `unity/tools.sh test-edit-filter 'BotBanterTests;BotBanterVoiceCatalogTests;TimedKillChainTests;NativeMatchTests;NativeTeamMatchTests;NativeMusicTests'`: new reducer/catalog, shared FFA/team scores and audio/history migrations.
+- `unity/tools.sh test-play-filter 'BotBanterIntegrationTests;BotReactionSettingsTests;NativeMatchIntegrationTests.SnapshotAllowsMutualLethalAndLateSeatForcesOvertime;NativeMatchIntegrationTests.TimedSeriesShowsEventPointsGoldAndRoutesOnlyThirdAndFourthVoices;NativeMatchIntegrationTests.KillcamViewPauseRepeatAndMenuKeepOneSceneAndFreshLifecycle;ApprovedSpatialAudioTests;DamageBonusAlertTests;NativeRoundMusicTests;NativeAudioRoutingTests.ConfirmedRifleShotSelectsTheChosenRuntimeClip'`: real combat event/score/banter coexistence, all20 clips/flags/settings, music and shared SFX lifecycle/ready/death/mix.
+- Explicitly authorized ordinary Players: `STAR_TOURNAMENT_RELEASE_OUTPUT=... unity/tools.sh build-release-win`, then `... build-release-mac`. Each calls Prepare/Validate/Build/Prepare; no full tests or publication side effects.
+- Existing unchanged paired package publisher validates custody/key/signature/hash/platform/exact eight assets. Smoke exact staged macOS Player, MAIN_MENU_READY, no missing bot assets, original Lab history hash unchanged, shared/muted graphics/batch no physical input. Live anonymous asset/readback + each production SDK verify/download without installing/updating local game.
+
+No full suite. Install/device/physical sensory acceptance remains separate. No local installed application update requested. No new performance benchmark. Tests use isolated Lab history; ordinary Player smoke uses user's actual history unchanged.
+
+Production transport commands (after publication): compile `distribution/tests/Launcher.Contracts.csproj -c Release`, then execute its DLL with `--live <each payload/release.json> <owned SDK download path>`. The early --live branch authenticates metadata and full downloads only; it does not execute the broader contract suite or activate updates. Landing verification uses a real background IAB tab, Latest metadata, rendered version and both links.

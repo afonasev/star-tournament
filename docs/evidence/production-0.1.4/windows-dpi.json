@@ -1,0 +1,12 @@
+{
+  "launcher": {
+    "per_monitor_v2": true,
+    "validator": "launcher exact manifest contract"
+  },
+  "unity_player": {
+    "modern": "PerMonitorV2",
+    "legacy": "True/PM",
+    "per_monitor_v2": true
+  },
+  "note": "Launcher exact validator is not applicable to Unity spelling True/PM; actual PE resource parsed separately. Physical300% acceptance pending."
+}

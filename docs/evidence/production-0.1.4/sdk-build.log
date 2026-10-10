@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  Restored /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/tests/Launcher.Contracts.csproj (in 143 ms).
+  Restored /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/launcher/Launcher.csproj (in 143 ms).
+  Launcher -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/launcher/bin/Release/net8.0/StarTournamentLauncher.dll
+  Launcher.Contracts -> /Users/eaafonasev/.codex/worktrees/production-014/star-tournament/distribution/tests/bin/Release/net8.0/Launcher.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.29

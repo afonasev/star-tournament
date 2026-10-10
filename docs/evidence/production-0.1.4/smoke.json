@@ -1,0 +1,15 @@
+{
+  "app": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/payload-0.1.4/game/Player.app",
+  "source": "358fab9a5e6ebd3aea4aee57e68c8666346aa56c",
+  "ordinary_release": true,
+  "main_menu_ready": true,
+  "missing_audio_assets": false,
+  "history_before": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "history_after": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "history_unchanged": true,
+  "elapsed_seconds": 115.15296787500847,
+  "owned_pid": 63432,
+  "mode": "shared muted batch graphics; original160MB history; no desktop/device input",
+  "failure": null,
+  "physical_acceptance": false
+}

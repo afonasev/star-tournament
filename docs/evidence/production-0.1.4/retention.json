@@ -1,0 +1,67 @@
+{
+  "owner": "01a12508-16b4-76e0-917f-d5273d65ac5f",
+  "change": "ship-production-0-1-4",
+  "runtime_source": "358fab9a5e6ebd3aea4aee57e68c8666346aa56c",
+  "version": "0.1.4",
+  "reason": "Exact installers/full authenticated update packages retained for pending physical install/update/audio/controller acceptance. Raw Players and packaging duplicates are reconstructable from full packages and removed after release gates. Prior retained0.1.1/0.1.2/0.1.3 untouched.",
+  "root": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4",
+  "bytes": 585927849,
+  "assets": [
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/tech.afonasev.star-tournament.win-x64-0.1.4-win-x64-full.nupkg",
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.4-win-x64-full.nupkg",
+      "size": 140540418,
+      "sha256": "a7b03604132b15cccb33641919bde8dc6b52ee4812e14ac562bf4b39e50f0f26",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/tech.afonasev.star-tournament.win-x64-0.1.4-win-x64-full.nupkg"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/Star-Tournament-0.1.4-Windows-x64-Setup.exe",
+      "name": "Star-Tournament-0.1.4-Windows-x64-Setup.exe",
+      "size": 147696377,
+      "sha256": "036f29f0a57820e1dea00e2424b6081d1b18fe65fbe6d5a430d8206e10c73a0f",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/Star-Tournament-0.1.4-Windows-x64-Setup.exe"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/latest-win-x64.json",
+      "name": "latest-win-x64.json",
+      "size": 1405,
+      "sha256": "103564e91f6adea3551284233e7381653d6340a6230e30533cdf940526cc0f60",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/latest-win-x64.json"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/identity-win-x64.json",
+      "name": "identity-win-x64.json",
+      "size": 1530,
+      "sha256": "f0ac224265af52a1a256f9e0ca3c00d0c9e1b391cc5c9a9abe4779340fcb142c",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/win-x64/releases/identity-win-x64.json"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/tech.afonasev.star-tournament.osx-arm64-0.1.4-osx-arm64-full.nupkg",
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.4-osx-arm64-full.nupkg",
+      "size": 149068788,
+      "sha256": "83a4a8514c54ebe41914c76c55866f9da6d1216766d9a845c003ca54aff267f7",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/tech.afonasev.star-tournament.osx-arm64-0.1.4-osx-arm64-full.nupkg"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/Star-Tournament-0.1.4-macOS-arm64.pkg",
+      "name": "Star-Tournament-0.1.4-macOS-arm64.pkg",
+      "size": 148616361,
+      "sha256": "9042e809de0949d51ead06757c494bbfe7b687d9e76d3d55d4289e75899908c0",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/Star-Tournament-0.1.4-macOS-arm64.pkg"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/latest-osx-arm64.json",
+      "name": "latest-osx-arm64.json",
+      "size": 1421,
+      "sha256": "d30526bbd7152a419f53f6e3fdc2c7b9b086dcd7a40c4fe76fcdd6857365b51c",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/latest-osx-arm64.json"
+    },
+    {
+      "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.4/identity-osx-arm64.json",
+      "name": "identity-osx-arm64.json",
+      "size": 1549,
+      "sha256": "3a45a80fdb6d3488cb1e36a656495831c5c94805ff02e206a7586dec0311f33f",
+      "original_path": "/Users/eaafonasev/.codex/worktrees/production-014/star-tournament/.local/production-014/packages/osx-arm64/releases/identity-osx-arm64.json"
+    }
+  ]
+}

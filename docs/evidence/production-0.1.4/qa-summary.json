@@ -1,0 +1,21 @@
+{
+  "source": "358fab9a5e6ebd3aea4aee57e68c8666346aa56c",
+  "baseline": "97c42610c1b1667c1d664a3159b90fa2044fec0b",
+  "scope": "minimum affected, NOT full suite",
+  "runs": [
+    {
+      "xml": "docs/evidence/production-0.1.4/tests/editmode.xml",
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 43.6515131
+    },
+    {
+      "xml": "docs/evidence/production-0.1.4/tests/playmode.xml",
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 180.0624174
+    }
+  ]
+}

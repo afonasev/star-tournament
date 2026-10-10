@@ -1,0 +1,657 @@
+{
+  "baseline": "fd17c8e5c1fc018a88dbfa6282f6e5b492f2700f",
+  "public_commit": "13f082a6a923b1e3006e7465405261d14d0b1967",
+  "private_source": "358fab9a5e6ebd3aea4aee57e68c8666346aa56c",
+  "files": [
+    {
+      "path": "docs/GAME_SPEC.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0da3c2090328a9e863386e4eeeed9739feb2c5f"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d870a79e9f5f940cca8a3247cc937c592344c24a"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/dazhe-ne-pocarapal-radio.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54d3fd282e896ee83b580f6c24cf859696a6f7cf"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/kill-streak-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5db18ddc194c1af45233148f1b6d32d70e464e1a"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/kill-streak-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df8028c46d4bb576f54f65dad59b041cd18dad31"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/losing-streak-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "777bde1ae284d0ec56e7962528e4fbe0dd7d4be3"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/losing-streak-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fffbfb5ea7fbce6b68a0b520803b8674d2f6bb52"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/missed-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3fbfd1944865b6d759089b9cbe6fffffd653c00"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/narrow-win-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e5b8afc2efdf8bf37ad52d6220306bf3bbffc83"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/narrow-win-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "331d39a35776b70070acf4d73c1643616eff3a13"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/no-reply-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39ab93ea05eee0c46671615c251c124ed6797e86"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/repeated-killer-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f0c6223d4dda921a9a564d3e0f03b9795d10faa"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/repeated-killer-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e64a8b36f4b37c75f45a7015ae1eef90e0437ead"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/revenge-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d991ad1f20ff1bc6d00dc784ca4801ef5b249252"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/revenge-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13babd04acf4a7ddaa0711903160a2261f4a99d1"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/self-explosion-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a388ed4dd374cd4c2718aa0a2520626948e11f31"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/self-kill-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f07e7f1758d25b983079329150b7d1deada75882"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/series-ended-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b85be70ece06121355ab7c02c834a45ac0e60ddc"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/series-ended-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1aeb83123be171ca938ce9b476238ba75a81d384"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/weak-reply-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2dc1d9397b9c68ded3de294b317b625bde16cd7"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/weak-reply-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d607daba694c552f6bfcbdca4ac4e8c7ac5d998"
+    },
+    {
+      "path": "docs/evidence/bot-banter-full-voice/source/weak-reply-3.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6cd5017f9dee83152d83ba443824efde7f3e74d5"
+    },
+    {
+      "path": "tools/audio/generate_bot_banter.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "835203a9076697a87dcbbb239a30e0c5d7925b88"
+    },
+    {
+      "path": "tools/prepare-weapon-ready-audio.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0e5b57b696293b4b5980b591baef92070fc6f9e"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f5a24436cf1ddfcc97251b2d7b08dee1a5d4e4e"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3e42e257dbaacd4b1f07c72711dd25c2cda82fc"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/dazhe-ne-pocarapal-radio.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47e811172d33f4d89d493aaf549ba2d8203cf596"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "402d37cf22312a1750bdcf50e93a5471b7103019"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3af27304b9c3d2dedb647c5cd8a175f1290bca2e"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bab7fae006628416cbfa3e80eee9361effd48aee"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/kill-streak-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9067b507b709c54e8e14bdcd9330fbf4ab551a2"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "664674772fb661a79aca16aaac48212786273497"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1002b94565e970f84ee7e40bd8a922545ee53c84"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "064802146616dde7a0cbdaeb9aee95c06ac2a774"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/losing-streak-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b1e3f6d98006f15cf29b188ca6d3bca1635a252"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/missed-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c3a8f1c65a4e7799450c4c8c39ea089588c19d0"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/missed-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7965c1c552bfbbd0b2c979e97cab9dfac6c17bac"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebfa1de25298ff82f05c0e23fdd6696e5dada0ac"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9206e33e26d974820203a1596b8f2435094cdf1a"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c70e7d30bc327aff68cc1b5deb8c5f36cc44220c"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/narrow-win-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7649305895639729ce0a36e2c2bf644fa5639e98"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/no-reply-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d32024699118b35c15f3c500560954df76f05a5"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/no-reply-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "728c9ccdb6e7edaf7772dd3c8b3f840034ad5dfe"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5253f48c11f4514684b9c43f3a986e3891c4019d"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc6e9cba96db9779288190040051613a382392f9"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f92eca1236a92a1a98c4c1652e32b81bcbfa25c8"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/repeated-killer-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc1416648438406df1cdb07b98823321c7eec97d"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56869816870a7e352c9d277e163e9a3f257b2acd"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "365a1ebb5df75a0857f4d9d39e89dc1d1fdf7645"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3986cb6254edc1d2a39bbfa1bf8a8c929dc0707c"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/revenge-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a5e54ad7dd3f0f02e9c65fa860ac270682a7037"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/self-explosion-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d94c593f13a3ab933d92f6fc7ab4f8dc9656f2ec"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/self-explosion-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "439373145e6fb25f780bdb532ef56c3284db6c57"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/self-kill-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7689226b8b950361294a86b9bd6ba2c36a209a63"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/self-kill-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4825f11eee69b388c91d812bfbd521284f4278af"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "742e1c195db7493069ba2bda68264f0857cc5326"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1263533a57933104d9eade026d110c2dbb3c7e6a"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90caa2495bcc27a93f45eca57cd902ea35260d19"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/series-ended-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73e967c785b01c8bc27e6592f7251dfbdaf28033"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-1.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "62f438852d90974f2289dedd4e50f1b80a021f13"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-1.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af899300d4eb6460c3d68bc4f4b7ab364d2e40c3"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-2.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6c39c0497feadce5d1ef72f39de241303c60887"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-2.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "616a9a5b8af2d891337f5c47171a660fe92c7199"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-3.mp3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3f1e71f3996233a0cbc38f28fe210d57a794f5e"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/Banter/weak-reply-3.mp3.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b725494f7d42c312330ab2bb1adbf7ca91e12a0"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/kill-quadruple.wav",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de24977eefb5e1e4ad61c7033d8d8b300fb91a77"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/kill-quadruple.wav.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "963e503770fd4564aa3ff5970d266a09383fd994"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/kill-triple.wav",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c917d723ceb351676ddaa1eaafe7297564ef5b5"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/kill-triple.wav.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bc58699cd05e627dc065e2585e316a703fb3970"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/weapon-ready.wav",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dcf8ea046d22d3a3d7d0231f6f442f2fadc4137f"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/Audio/weapon-ready.wav.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f806f554c22faf65fc1752e89f7de0ec491291a"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/BotBanter.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d343d07e8f426a9736f9cead9a3b765ffb56ed82"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/BotBanter.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c71c58bcc6f78900b87ad0f45660860eefe0ba2c"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2627d6922189d7823afc060f087167c37a34c4b4"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotReactionPreferences.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "763f199aac18f9b2978234a0327b0d414c3fc5e0"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotReactionPreferences.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef31dcf46b7d4e2b67a2969de0b80ca88f2d7623"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchProfile.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c47297697e1e64d0956d99702ca9e13c9326911"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeMatchState.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7144cf43b1f238f576e5a95964f609d5ec668d87"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1fafd247ff033c231e24f40a27c93a74cda8fd5"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/RoundMusicProfile.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c879348b722f9f75357e50cc3062ebbe7b810f4"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotBanter.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6327a92d0105bcecd60002fbac650988b7a14f39"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotBanter.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90cd2fb1888c2a3a7fc31e19d7698732c20676ef"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotBanterVoice.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d0288b29f738d3a3283cba3de1fcec575db5ebde"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeBotBanterVoice.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81a445292dd5cb80d2fe4d647cb482d3388ce375"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeCombatSession.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20559502306a945675cefa0874f8124d48260661"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeGameAudio.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac72c5711e30a12511e10e5e99d99f34134bb2a9"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeKillNotice.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7fa11cb8005079c26c231b68aa88b35eb966bd5"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeKillNotice.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4cd90e74543fff01093f08b98aade9ae6b3de396"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGround.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3aa0224433934fe65cada9b3e13a3543be651620"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundBotBanter.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84b8ae6e6a6659486c3ad11364b9fb896d101a6a"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundBotBanter.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f22b45f3ce581bb3aa61fdebafc437140023640"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cae07bb50d140a5daa04bd7f7cc6c3d0ac047e5c"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/BotBanterTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4090b40148e77ef8dc89574a5a8497b6815ca632"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/BotBanterTests.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80c38abc10ee91dfb3bae390e9fb91879015a86a"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/BotBanterVoiceCatalogTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "142b6b2b04d2811481647abbc780b837e7a061be"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/BotBanterVoiceCatalogTests.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "359333e2e4851a638b181bbc8d1cb7d9bfb1adf0"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff55ca3bda94d4b12aca741aac86ca2e2d1ba9e2"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/NativeMatchTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a841795f196f8f5d26f0fc5c760189dc177192ad"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/NativeMusicTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e798d6d1aac7445d4025bda237eeac13eaa01a8"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/NativeTeamMatchTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49355c14e28a206a55a64f62045317c309cde80b"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/TimedKillChainTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25948503b551a0b15b80107a761b1e8edb60de51"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/TimedKillChainTests.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29e749c8001c4db4b0197b9270ec6ece82e78184"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/ApprovedSpatialAudioTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f765e4889d1bb1cca65ae0a506eea0fe46f0d5c7"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/BotBanterIntegrationTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57831b34e5cff8ceda7f442c192a3f55b4ee3d2b"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/BotBanterIntegrationTests.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80654beccf61555bbc20a525bb0397233bb41081"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/BotReactionSettingsTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7c01f42da3e5deeec9e4c4deba0cd8a4815c689"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/BotReactionSettingsTests.cs.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f08e3522c42ca0123fc37a5942a4201fc55a7b2f"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/NativeMatchIntegrationTests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8bccb305faee16ff26f2cece4df3bb08981dc9e"
+    }
+  ],
+  "verified_source_path_count": 1076,
+  "method": "GitHub Git API exact tracked source blobs; parent tree preserved; non-force FF ref update; no private planning/evidence/dirty ProjectSettings"
+}
