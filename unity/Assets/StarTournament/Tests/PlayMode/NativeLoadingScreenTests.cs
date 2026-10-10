@@ -28,7 +28,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LOADING_SCREENSHOTS");
             if(string.IsNullOrEmpty(directory))yield break;
             Directory.CreateDirectory(directory);yield return null;yield return null;
-            ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return null;yield return null;
+            // Batch Editor does not present a window framebuffer. Render the actual Canvas
+            // into a camera texture, restoring its normal overlay mode immediately.
+            var screen=UnityEngine.Object.FindObjectsByType<NativeLoadingScreen>(FindObjectsSortMode.None).Single();
+            var canvas=screen.GetComponent<Canvas>();var priorMode=canvas.renderMode;var priorCamera=canvas.worldCamera;float priorDistance=canvas.planeDistance;
+            var cameraObject=new GameObject("loading-capture-camera");var camera=cameraObject.AddComponent<Camera>();
+            var target=new RenderTexture(1600,900,24);var pixels=new Texture2D(1600,900,TextureFormat.RGB24,false);
+            var children=screen.GetComponentsInChildren<Transform>(true);var layers=children.Select(t=>t.gameObject.layer).ToArray();var priorTarget=RenderTexture.active;
+            try
+            {
+                foreach(var child in children)child.gameObject.layer=5;
+                camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color32(16,28,41,255);camera.cullingMask=1<<5;camera.orthographic=true;camera.targetTexture=target;
+                canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=10;
+                Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
+                File.WriteAllBytes(Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
+            }
+            finally
+            {
+                canvas.renderMode=priorMode;canvas.worldCamera=priorCamera;canvas.planeDistance=priorDistance;
+                for(int i=0;i<children.Length;i++)children[i].gameObject.layer=layers[i];RenderTexture.active=priorTarget;
+                camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);UnityEngine.Object.Destroy(cameraObject);Canvas.ForceUpdateCanvases();
+            }
+            yield return null;
         }
         [UnityTearDown] public IEnumerator Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
             if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);
