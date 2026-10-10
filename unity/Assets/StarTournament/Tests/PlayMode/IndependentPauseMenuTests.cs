@@ -68,6 +68,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();
             yield return Press(0,GamepadButton.Start);
+            Assert.That(Cursor.visible,Is.False,"Gamepad pause keeps the cursor hidden");
             Assert.That(ground.Running,Is.False);
             Assert.That(Object("seat-pause-0").activeSelf,Is.True);
             Assert.That(Object("seat-pause-1").activeSelf,Is.True,"both viewport backgrounds dim");

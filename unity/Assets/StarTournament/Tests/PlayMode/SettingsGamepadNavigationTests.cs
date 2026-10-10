@@ -16,6 +16,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Scene scene;
         Gamepad pad;
         Joystick unsupported;
+        Mouse cursorMouse;
+        InputSettings.EditorInputBehaviorInPlayMode priorCursorInput;
+        InputSettings.BackgroundBehavior priorCursorBackground;
+        bool cursorInputCaptured;
         ProvingGround ground;
         GamepadLookSettings originalGamepad;
         float originalMouse;
@@ -74,7 +78,47 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(preferencesCaptured){GamepadLookSettings.SaveGeneral(originalGamepad);MouseSensitivityPreference.Set(ground.Profile,originalMouse);preferencesCaptured=false;}
             if(pad!=null && pad.added)InputSystem.RemoveDevice(pad);
             if(unsupported!=null && unsupported.added)InputSystem.RemoveDevice(unsupported);
+            if(cursorMouse!=null && cursorMouse.added)InputSystem.RemoveDevice(cursorMouse);
+            if(cursorInputCaptured)
+            {
+                InputSystem.settings.editorInputBehaviorInPlayMode=priorCursorInput;
+                InputSystem.settings.backgroundBehavior=priorCursorBackground;
+                cursorInputCaptured=false;
+            }
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+        }
+
+        [UnityTest] public IEnumerator MenuCursorFollowsGamepadAndMouseAcrossScreens()
+        {
+            yield return Load();
+            priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;
+            priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            cursorMouse=InputSystem.AddDevice<Mouse>();yield return null;
+            Assert.That(Cursor.visible,Is.True,"Connecting a pad does not hide the cursor");
+            yield return Press(GamepadButton.DpadDown);
+            Assert.That(Cursor.visible,Is.False);
+            Assert.That(Cursor.lockState,Is.EqualTo(CursorLockMode.None));
+            yield return null;Assert.That(Cursor.visible,Is.False,"Idle frames keep gamepad mode");
+            InputSystem.QueueStateEvent(cursorMouse,new MouseState { position=new Vector2(40,40),delta=new Vector2(10,5) });
+            yield return null;yield return null;
+            Assert.That(Cursor.visible,Is.True,"Mouse movement restores the cursor");
+            InputSystem.QueueStateEvent(pad,new GamepadState { leftStick=new Vector2(.05f,0) });
+            yield return null;yield return null;
+            Assert.That(Cursor.visible,Is.True,"Stick drift does not take over from the mouse");
+            yield return MoveStick(Vector2.up);
+            Assert.That(Cursor.visible,Is.False,"Stick navigation hides the cursor again");
+            yield return Press(GamepadButton.East);
+            Assert.That(Focus,Is.EqualTo("main-action-4"));
+            Assert.That(Cursor.visible,Is.False,"Returning to the main menu keeps gamepad mode");
+            Button("main-action-0").onClick.Invoke();yield return null;
+            Assert.That(Cursor.visible,Is.False,"Opening setup keeps gamepad mode");
+            InputSystem.QueueStateEvent(cursorMouse,new MouseState { position=new Vector2(45,45),delta=new Vector2(5,5) });
+            yield return null;yield return null;
+            Assert.That(Cursor.visible,Is.True,"Setup also responds to mouse movement");
+            yield return Press(GamepadButton.Start);
+            Assert.That(Cursor.visible,Is.False,"Setup shortcuts hide the cursor");
         }
 
         [UnityTest] public IEnumerator SettingsAreFullyNavigableWithGamepad()

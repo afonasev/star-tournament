@@ -1,0 +1,27 @@
+{
+  "baseline": "b13997c7",
+  "scope": "menu cursor visibility; no Player build; no full suite",
+  "checks": [
+    {
+      "command": "make check-ui (EditMode portion)",
+      "passed": 3
+    },
+    {
+      "command": "test-play-filter FourPlayerMenuTests;IndependentPauseMenuTests;SettingsGamepadNavigationTests;SetupGamepadNavigationTests",
+      "passed": 25,
+      "failed": 1,
+      "reason": "new synthetic mouse test required Editor focus-independent routing"
+    },
+    {
+      "command": "test-play-filter SettingsGamepadNavigationTests.MenuCursorFollowsGamepadAndMouseAcrossScreens",
+      "passed": 1
+    }
+  ],
+  "interrupted_startup": "first PlayMode attempt stopped during shared user Lab loading; NotRun; task-owned QA history used on retry",
+  "deferred": [
+    "full suite",
+    "Player build",
+    "release/deploy",
+    "physical device acceptance"
+  ]
+}

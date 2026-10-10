@@ -524,6 +524,7 @@ namespace StarTournament.ProvingGround
             UpdateDesignLab();
             if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
+            UpdateMenuCursor();
             UpdateMenuSelectionAudio();
             bool musicMatch=phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results||
                 (phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused||settingsReturn==Phase.Results));
@@ -908,8 +909,28 @@ namespace StarTournament.ProvingGround
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); FocusSetupStep(); }
         static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
-        static void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture; }
-        void OnDestroy() { CancelHistoryLoading(); UnbindDamageBonusAlerts(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        bool menuGamepadCursor;
+        void UpdateMenuCursor()
+        {
+            if(phase==Phase.Running || phase==Phase.Loading)return;
+            foreach(var pad in Gamepad.all)
+            {
+                if(!pad.enabled)continue;
+                if(pad.leftStick.ReadValue().sqrMagnitude>=.25f || pad.dpad.ReadValue()!=Vector2.zero)
+                    menuGamepadCursor=true;
+                foreach(var control in pad.allControls)
+                    if(control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame)
+                        menuGamepadCursor=true;
+            }
+            // Mouse movement wins when both devices are used in the same frame.
+            // Button releases and small stick drift do not change the cursor mode.
+            var mouse=Mouse.current;
+            if(mouse!=null && mouse.enabled && (mouse.delta.ReadValue()!=Vector2.zero || mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame || mouse.scroll.ReadValue()!=Vector2.zero))
+                menuGamepadCursor=false;
+            Cursor.visible=!menuGamepadCursor;
+        }
+        void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
+        void OnDestroy() { CancelHistoryLoading(); UnbindDamageBonusAlerts(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void RebuildPickupVisuals()
         {
