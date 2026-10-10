@@ -23,14 +23,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
         }
-        static IEnumerator Capture(string name)
+        internal static IEnumerator Capture(string name,GameObject root=null)
         {
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LOADING_SCREENSHOTS");
             if(string.IsNullOrEmpty(directory))yield break;
             Directory.CreateDirectory(directory);yield return null;yield return null;
             // Batch Editor does not present a window framebuffer. Render the actual Canvas
             // into a camera texture, restoring its normal overlay mode immediately.
-            var screen=UnityEngine.Object.FindObjectsByType<NativeLoadingScreen>(FindObjectsSortMode.None).Single();
+            var screen=root??UnityEngine.Object.FindObjectsByType<NativeLoadingScreen>(FindObjectsSortMode.None).Single().gameObject;
             var canvas=screen.GetComponent<Canvas>();var priorMode=canvas.renderMode;var priorCamera=canvas.worldCamera;float priorDistance=canvas.planeDistance;
             var cameraObject=new GameObject("loading-capture-camera");var camera=cameraObject.AddComponent<Camera>();
             var target=new RenderTexture(1600,900,24);var pixels=new Texture2D(1600,900,TextureFormat.RGB24,false);

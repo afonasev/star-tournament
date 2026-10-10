@@ -26,6 +26,29 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(x=>x.GetComponentsInChildren<ProvingGround>()).Single();
         }
         [UnityTearDown] public IEnumerator Cleanup(){if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);InputSystem.settings.editorInputBehaviorInPlayMode=priorEditorInput;InputSystem.settings.backgroundBehavior=priorBackground;}
+        [UnityTest] public IEnumerator CreditFooterFollowsEveryMenuAndStaysBelowControls()
+        {
+            var footer=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="menu-credit-footer");
+            void Check(){Canvas.ForceUpdateCanvases();Assert.That(footer.gameObject.activeInHierarchy,Is.True);Assert.That(footer.text,Is.EqualTo(NativeLoadingScreen.Credit));Assert.That(footer.raycastTarget,Is.False);Assert.That(footer.rectTransform.rect.height,Is.GreaterThan(footer.preferredHeight));}
+            var ui=ground.transform.Find("native-ui").gameObject;Check();
+            yield return NativeLoadingScreenTests.Capture("menu-main",ui);
+            B("main-action-0").onClick.Invoke();Check();yield return NativeLoadingScreenTests.Capture("menu-map",ui);
+            B("setup-next").onClick.Invoke();Check();B("setup-next").onClick.Invoke();Check();
+            yield return NativeLoadingScreenTests.Capture("menu-roster",ui);
+            B("seat-identity-0").onClick.Invoke();Check();B("identity-cancel").onClick.Invoke();
+            B("Назад к главному меню").onClick.Invoke();B("main-action-3").onClick.Invoke();Check();
+            yield return NativeLoadingScreenTests.Capture("menu-profiles",ui);B("profiles-back").onClick.Invoke();
+            B("main-action-4").onClick.Invoke();
+            for(int section=0;section<4;section++){B("settings-section-"+section).onClick.Invoke();Check();}
+            yield return NativeLoadingScreenTests.Capture("menu-settings",ui);B("settings-back").onClick.Invoke();
+            B("main-action-2").onClick.Invoke();Check();yield return NativeLoadingScreenTests.Capture("menu-lab",ui);B("lab-back").onClick.Invoke();
+            B("main-action-0").onClick.Invoke();B("Диагностика четырёх камер · без управления").onClick.Invoke();
+            yield return NativeLoadingTestScene.Wait(ground);Assert.That(footer.gameObject.activeInHierarchy,Is.False);
+            ground.SendMessage("Pause","Footer review");Check();yield return NativeLoadingScreenTests.Capture("menu-pause",ui);
+            B("Повторить матч").onClick.Invoke();yield return NativeLoadingTestScene.Wait(ground);
+            while(ground.Session.Match.Phase==NativeMatchPhase.Running){ground.Session.Match.BeginTick();ground.Session.Match.EndTick();}
+            yield return new WaitForFixedUpdate();yield return null;Check();yield return NativeLoadingScreenTests.Capture("menu-results",ui);
+        }
         [UnityTest] public IEnumerator ApprovedMainMenuHasReadableArtworkAndSixPreservedActions()
         {
             var root=ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="main-menu");

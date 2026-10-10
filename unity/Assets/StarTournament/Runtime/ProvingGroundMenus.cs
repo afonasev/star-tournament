@@ -59,9 +59,13 @@ namespace StarTournament.ProvingGround
             button.interactable=enabled;
             return button;
         }
+        Text menuCreditFooter;
         void CreateModernMenuUi(Transform parent)
         {
             oldMenuColumn=parent.Find("menu").gameObject;
+            // A shared footer also survives independent seat-pause menus hiding the overlay.
+            menuCreditFooter=Label(parent.parent,"menu-credit-footer",NativeLoadingScreen.Credit,14,new Vector2(.05f,.001f),new Vector2(.95f,.023f),TextAnchor.MiddleCenter,new Color32(153,173,187,255));
+            var footerCanvas=menuCreditFooter.gameObject.AddComponent<Canvas>();footerCanvas.overrideSorting=true;footerCanvas.sortingOrder=50;
             mainMenuScreen=Panel(parent,"main-menu",Vector2.zero,Vector2.one,MenuInk);
             var left=Panel(mainMenuScreen.transform,"actions",new Vector2(.05f,.13f),new Vector2(.325f,.80f),Color.clear);
             Label(left.transform,"brand","<color=#EFF5F5>STAR</color>\nTOURNAMENT",52,new Vector2(0,.76f),new Vector2(1,.99f),TextAnchor.MiddleLeft,MenuGold).fontStyle=FontStyle.Bold;
@@ -81,7 +85,7 @@ namespace StarTournament.ProvingGround
             var releaseLabel=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
             if(!string.IsNullOrEmpty(releaseLabel))
             {
-                Label(mainMenuScreen.transform,"installed-release",releaseLabel,18,new Vector2(.60f,.02f),new Vector2(.97f,.06f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
+                Label(mainMenuScreen.transform,"installed-release",releaseLabel,18,new Vector2(.60f,.03f),new Vector2(.97f,.07f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
                 var updateStatus=Label(mainMenuScreen.transform,"update-status","",16,new Vector2(.60f,.135f),new Vector2(.97f,.17f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
                 var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Обновить",new Vector2(.80f,.072f),new Vector2(.97f,.13f),()=>{});
                 gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
@@ -490,6 +494,7 @@ namespace StarTournament.ProvingGround
         void RefreshModernMenuUi()
         {
             if(mainMenuScreen==null)return;
+            menuCreditFooter.gameObject.SetActive(phase!=Phase.Running&&phase!=Phase.Loading);
             if(EventSystem.current && phase!=Phase.Running && !(phase==Phase.Paused&&UseSeatPauseMenus))EventSystem.current.sendNavigationEvents=true;
             bool shell=phase==Phase.MainMenu||phase==Phase.Profiles||phase==Phase.Settings||phase==Phase.Lab;
             oldMenuColumn.SetActive(!shell && phase!=Phase.Setup && pendingSeat<0);

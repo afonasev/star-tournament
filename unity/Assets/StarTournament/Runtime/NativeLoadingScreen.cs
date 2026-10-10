@@ -7,6 +7,7 @@ namespace StarTournament.ProvingGround
     // Canvas pixels only. Loading presentation never owns simulation or estimates progress.
     public sealed class NativeLoadingScreen:MonoBehaviour
     {
+        public const string Credit="© 2026 Evgeniy Afonasev · afonasev.tech · Made with Codex";
         static readonly Color32 Gold=new Color32(231,187,114,255),Ink=new Color32(16,28,41,255),Muted=new Color32(168,185,198,255);
         GameObject startup,match;
         Text mapName,modeLabel,participants,target,status;
@@ -47,7 +48,7 @@ namespace StarTournament.ProvingGround
             var icon=Area(startup.transform,"loading-emblem",new Vector2(.4325f,.625f),new Vector2(.5675f,.865f));
             emblem=icon.gameObject.AddComponent<LoadingEmblem>();emblem.raycastTarget=false;
             var brand=Label(startup.transform,"loading-brand","STAR <color=#E7BB72>TOURNAMENT</color>",65,new Vector2(.12f,.53f),new Vector2(.88f,.64f),Color.white);brand.fontStyle=FontStyle.Bold;
-            Label(startup.transform,"loading-credit","© 2026 Evgeniy Afonasev · afonasev.tech · Made with Codex",16,new Vector2(.12f,.47f),new Vector2(.88f,.52f),Muted);
+            Label(startup.transform,"loading-credit",Credit,16,new Vector2(.12f,.47f),new Vector2(.88f,.52f),Muted);
             match=Area(transform,"loading-match",Vector2.zero,Vector2.one).gameObject;
             var small=Label(match.transform,"loading-match-brand","STAR <color=#E7BB72>TOURNAMENT</color>",22,new Vector2(.06f,.875f),new Vector2(.5f,.935f),Color.white,TextAnchor.MiddleLeft);small.fontStyle=FontStyle.Bold;
             var card=Area(match.transform,"loading-match-card",new Vector2(.22f,.355f),new Vector2(.78f,.75f));
@@ -67,6 +68,7 @@ namespace StarTournament.ProvingGround
             Surface(targetGroup.transform,"loading-target-rule",Vector2.zero,new Vector2(.002f,1),Muted);
             Label(targetGroup.transform,"loading-target-title","ЦЕЛЬ",15,new Vector2(.04f,.5f),Vector2.one,Muted,TextAnchor.MiddleLeft);
             target=Label(targetGroup.transform,"loading-target-value","",18,new Vector2(.04f,0),new Vector2(1,.5f),Color.white,TextAnchor.MiddleLeft);
+            Label(match.transform,"loading-match-credit",Credit,14,new Vector2(.05f,.001f),new Vector2(.95f,.023f),Muted);
             Label(match.transform,"loading-auto-start","Матч начнётся автоматически",20,new Vector2(.2f,.155f),new Vector2(.8f,.2f),Muted);
             status=Label(transform,"loading-status","",20,new Vector2(.2f,.225f),new Vector2(.8f,.265f),Color.white);
             var trackImage=Surface(transform,"loading-track",new Vector2(.3f,.205f),new Vector2(.7f,.208f),new Color32(52,68,82,255));
@@ -133,6 +135,7 @@ namespace StarTournament.ProvingGround
     public sealed class LoadingEmblem:MaskableGraphic
     {
         public float Angle;
+        public const string Credit="© 2026 Evgeniy Afonasev · afonasev.tech · Made with Codex";
         static readonly Color32 Gold=new Color32(231,187,114,255);
         protected override void OnPopulateMesh(VertexHelper m)
         {
