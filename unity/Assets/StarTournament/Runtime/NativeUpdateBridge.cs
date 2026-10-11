@@ -32,8 +32,9 @@ namespace StarTournament.ProvingGround
                 case "downloading": return new View(state.progress>=100?"Проверка обновления…":"Загрузка · "+Math.Max(0,Math.Min(100,state.progress))+"%","Обновить","",false);
                 case "staged": return new View("","Перезапустить","restart",true);
                 case "current": return new View("","","",false);
-                case "unavailable": return new View("","","",false);
-                case "error": return new View("Не удалось скачать обновление","Повторить","download",true);
+                case "unavailable": return new View(string.IsNullOrEmpty(state.error)?"Не удалось проверить обновления. Проверьте подключение.":state.error,"Повторить проверку","check",true);
+                case "error": return new View(string.IsNullOrEmpty(state.error)?"Не удалось скачать обновление. Повторите попытку.":state.error,"Повторить","download",true);
+                case "apply-error": return new View(string.IsNullOrEmpty(state.error)?"Предыдущая установка не завершилась. Повторите установку.":state.error,"Повторить установку","restart",true);
                 default: return new View("","","",false);
             }
         }
@@ -42,9 +43,10 @@ namespace StarTournament.ProvingGround
         string statusPath,commandPath,command;
         volatile string latest;
         volatile bool writing;
-        bool restartRequested;
+        volatile bool restartRequested;
         string previous;
         Snapshot shown;
+        volatile string commandError;
         CancellationTokenSource cancellation;
 
         public void Bind(Text status,Button action)
@@ -77,6 +79,7 @@ namespace StarTournament.ProvingGround
         void Activate()
         {
             if(writing||string.IsNullOrEmpty(command)||!button.interactable)return;
+            commandError=null;
             var action=command;writing=true;button.interactable=false;
             if(action=="restart")restartRequested=true;
             _=Task.Run(()=>
@@ -89,8 +92,8 @@ namespace StarTournament.ProvingGround
                     if(File.Exists(commandPath))File.Delete(commandPath);
                     File.Move(next,commandPath);
                 }
-                catch(IOException) { latest="{\"state\":\"error\"}"; }
-                catch(UnauthorizedAccessException) { latest="{\"state\":\"error\"}"; }
+                catch(IOException) { restartRequested=false;commandError="Не удалось передать команду обновления. Проверьте свободное место и повторите попытку."; }
+                catch(UnauthorizedAccessException) { restartRequested=false;commandError="Нет доступа к файлу команды обновления. Проверьте права и повторите попытку."; }
                 finally { writing=false; }
             });
         }
@@ -106,6 +109,9 @@ namespace StarTournament.ProvingGround
             }
             if(shown==null)return;
             var view=Describe(shown);
+            if(!string.IsNullOrEmpty(commandError))view.Message=commandError;
+            message.color=shown.state=="error"||shown.state=="apply-error"||shown.state=="unavailable"||!string.IsNullOrEmpty(commandError)
+                ?new Color32(255,218,184,255):new Color32(153,173,187,255);
             if(message.text!=view.Message)message.text=view.Message;
             message.gameObject.SetActive(!string.IsNullOrEmpty(view.Message));
             if(buttonText.text!=view.Button)buttonText.text=view.Button;
