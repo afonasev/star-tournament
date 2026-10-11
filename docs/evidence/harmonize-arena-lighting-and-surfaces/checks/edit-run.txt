@@ -1,0 +1,5 @@
+FOCUSED EditMode: VisualPolishSettingsTests;DesignLabHistoryTests — affected evidence, NOT a full suite
+Evidence: /Users/eaafonasev/.codex/worktrees/arena-lighting-surfaces/star-tournament/unity/../.local/unity-evidence/focused-editmode.YOLyeJ
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/arena-lighting-surfaces/star-tournament/unity
+unity-run: started shared:1; guardian=11229 pid=11230
+unity-run: finished pid=11230 exit=0; capacity released

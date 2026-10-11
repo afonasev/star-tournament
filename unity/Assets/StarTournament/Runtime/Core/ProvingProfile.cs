@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 17;
+        public const int DefaultVersion = 18;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -111,6 +111,12 @@ namespace StarTournament.ProvingGround
                 if(Mathf.Approximately(Get("audio.footstepDistanceMeters"),1.7f))
                     Set("audio.footstepDistanceMeters",current.Get("audio.footstepDistanceMeters"));
             }
+            if(id==DefaultId&&previousVersion<18)
+                foreach(string path in ArenaVisualPaths)
+                {
+                    FindDescriptor(path).DefaultValue=current.Descriptor(path).DefaultValue;
+                    Set(path,UpgradeArenaVisualValue(path,previousVersion,Get(path),current.Descriptor(path)));
+                }
             valueIndex=null;
         }
         internal const string BotBanterIntervalPath="presentation.botBanterIntervalSeconds";

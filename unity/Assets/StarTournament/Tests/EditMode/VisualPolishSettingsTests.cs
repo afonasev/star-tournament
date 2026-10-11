@@ -31,6 +31,32 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{System.IO.Directory.Delete(directory,true);}
         }
+        [Test] public void ArenaHarmonizationUpgradePreservesHistoryAndCustomTuning()
+        {
+            string directory=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"st-arena-light-history-"+System.Guid.NewGuid());System.IO.Directory.CreateDirectory(directory);
+            string path=System.IO.Path.Combine(directory,"history.json");var current=DesignLabHistoryTests.Shipped();
+            var old=new LabBundle{Profiles=System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(current.Profiles,p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeArenaHarmonization",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)))};
+            try
+            {
+                var original=new DesignLabHistory(path,old);original.Create("Arena custom predecessor");
+                var custom=original.Selected.Snapshot.Clone();custom.Set("visual.fillScale",.6f);custom.Set("visual.metalSmoothness",.9f);custom.Set("visual.LightingPercent",0);
+                original.Save(custom);var hash=original.Selected.Hash;int revisions=original.SelectedProfile.Revisions.Count;
+                var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
+                Assert.That(System.Linq.Enumerable.Any(upgraded.SelectedProfile.Revisions,r=>r.Hash==hash&&r.Snapshot.Hash()==hash),Is.True);
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.fillScale"),Is.EqualTo(.6f));
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.metalSmoothness"),Is.EqualTo(.9f));
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.LightingPercent"),Is.Zero);
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.wallSmoothness"),Is.EqualTo(current.Get("visual.wallSmoothness")));
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.bowlLocalLightScale"),Is.EqualTo(.8f));
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.ambientLift"),Is.EqualTo(.18f));
+                int count=upgraded.SelectedProfile.Revisions.Count;Assert.That(count,Is.GreaterThan(revisions));
+                var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.SelectedProfile.Revisions.Count,Is.EqualTo(count));
+                var direct=old.Profiles[0];direct.Set("visual.fillScale",.6f);direct.EnsureDefaultDescriptors();
+                Assert.That(direct.Version,Is.EqualTo(18));Assert.That(direct.Get("visual.fillScale"),Is.EqualTo(.6f));Assert.That(direct.Get("visual.wallSmoothness"),Is.EqualTo(.08f));
+                foreach(var d in direct.Descriptors)Assert.That(d.Validate(out var reason),Is.True,reason);
+            }
+            finally{System.IO.Directory.Delete(directory,true);}
+        }
         [Test] public void NeutralCurveIsSmoothMonotoneAndIdentityAtZero()
         {
             foreach(float strength in new[]{0f,.5f,1f})

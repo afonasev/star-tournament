@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.9413476">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="489" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.941348" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1593" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/arena-lighting-surfaces/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="489" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.935134" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32677" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1594" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="489" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.932591" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1595" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="489" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.930121" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1596" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="489" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.927546" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1597" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="376" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.924113" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1555" name="VisualPolishSettingsTests" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:20Z" duration="6.920120" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1556" name="AntialiasingPreferencePersistsAValidSharedLevelAndRepairsInvalidValues" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.AntialiasingPreferencePersistsAValidSharedLevelAndRepairsInvalidValues" methodname="AntialiasingPreferencePersistsAValidSharedLevelAndRepairsInvalidValues" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="295254103" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:13Z" duration="0.011005" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1558" name="ArenaHarmonizationUpgradePreservesHistoryAndCustomTuning" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.ArenaHarmonizationUpgradePreservesHistoryAndCustomTuning" methodname="ArenaHarmonizationUpgradePreservesHistoryAndCustomTuning" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1158803704" result="Passed" start-time="2026-10-11 20:39:13Z" end-time="2026-10-11 20:39:16Z" duration="3.791522" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1561" name="ColorAdjustmentsArePersistedClampedAndStepped" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.ColorAdjustmentsArePersistedClampedAndStepped" methodname="ColorAdjustmentsArePersistedClampedAndStepped" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1341544151" result="Passed" start-time="2026-10-11 20:39:16Z" end-time="2026-10-11 20:39:17Z" duration="0.004166" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1562" name="DescriptorsDefineValidSteppedPreferences" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.DescriptorsDefineValidSteppedPreferences" methodname="DescriptorsDefineValidSteppedPreferences" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1193216952" result="Passed" start-time="2026-10-11 20:39:17Z" end-time="2026-10-11 20:39:17Z" duration="0.000380" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1563" name="DisabledKeepsStrengthAndInvalidValuesUseProfileDefault" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.DisabledKeepsStrengthAndInvalidValuesUseProfileDefault" methodname="DisabledKeepsStrengthAndInvalidValuesUseProfileDefault" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1794523039" result="Passed" start-time="2026-10-11 20:39:17Z" end-time="2026-10-11 20:39:17Z" duration="0.002499" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1559" name="NeutralCurveIsSmoothMonotoneAndIdentityAtZero" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.NeutralCurveIsSmoothMonotoneAndIdentityAtZero" methodname="NeutralCurveIsSmoothMonotoneAndIdentityAtZero" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1080871943" result="Passed" start-time="2026-10-11 20:39:17Z" end-time="2026-10-11 20:39:17Z" duration="0.003355" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1560" name="NeutralRegistryUpgradeKeepsVersion16Snapshot" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.NeutralRegistryUpgradeKeepsVersion16Snapshot" methodname="NeutralRegistryUpgradeKeepsVersion16Snapshot" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1899481726" result="Passed" start-time="2026-10-11 20:39:17Z" end-time="2026-10-11 20:39:18Z" duration="1.508532" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1557" name="VisualRegistryUpgradeRetainsImmutableHistoryHashes" fullname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests.VisualRegistryUpgradeRetainsImmutableHistoryHashes" methodname="VisualRegistryUpgradeRetainsImmutableHistoryHashes" classname="StarTournament.ProvingGround.Tests.EditMode.VisualPolishSettingsTests" runstate="Runnable" seed="1432469426" result="Passed" start-time="2026-10-11 20:39:18Z" end-time="2026-10-11 20:39:20Z" duration="1.591482" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

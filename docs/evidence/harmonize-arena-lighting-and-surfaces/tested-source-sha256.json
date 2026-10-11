@@ -1,0 +1,9 @@
+{
+  "unity/Assets/StarTournament/Runtime/NativeVisualPresentation.cs": "6ccb36d9b2685738932fcaddca2b31ad173621397e4eeec107b9b39d356c9ce4",
+  "unity/Assets/StarTournament/Tests/PlayMode/VisualPolishTests.cs": "7c9e351587ce102122f92cc52bbe09b5b2eb2ae7010f0c1317db3b8f4e27e101",
+  "unity/Assets/StarTournament/Tests/EditMode/VisualPolishSettingsTests.cs": "cab1f6460a8b429ea29141180c74d00f3664b17ceb10c468050a37d2b2e7772c",
+  "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs": "d69f0b85eb71e6f33c02be8b184bbb6657c5561d3e5637ac4ee7bee44f60eb12",
+  "unity/Assets/StarTournament/Runtime/Core/VisualPolishProfile.cs": "2a22231dc80e088f6c1fa34f845a64d5b808928c7648c53de48455553fe2bd57",
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "8b57ad3537bd328058d411c74a70a68bf76dbb3d1497976318b98c23f41b54bc",
+  "unity/Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs": "afde78e7bd1da0fbfeed674ff478cd14dfa8f4c9ddd94585b9f4719d2126c975"
+}
