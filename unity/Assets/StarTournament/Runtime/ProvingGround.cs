@@ -97,7 +97,7 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<LocalSeatCount;seat++)input.SetHumanSeat(seat,!botSetup.IsAi(seat));
         }
         public NativeMatchComposition SetupComposition()=>botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
-        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;botSetup.Add(LocalSeatCount);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
+        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;var team=SmallerRosterTeam(LocalSeatCount);botSetup.Add(LocalSeatCount);if(SetupMode==NativeMatchMode.Teams)botSetup.SetTeam(botSetup.Count-1,team);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
         public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();if(setupStep==2)FocusRosterCard(LocalSeatCount+Math.Min(index,botSetup.Count-1));else Select(setupNext);}
         public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);lastBotDifficulty=value;RefreshInterface();}
         public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
@@ -820,6 +820,13 @@ namespace StarTournament.ProvingGround
             setupStep=setupMaxStep=2;
             input.Clear(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); FocusSetupStep();
         }
+        NativeTeam SmallerRosterTeam(int views)
+        {
+            int a=0,b=0;
+            for(int i=0;i<views;i++)if(teamAssignments[i]==NativeTeam.TeamA)a++;else b++;
+            for(int i=0;i<botSetup.Count;i++)if(botSetup.At(i).Team==NativeTeam.TeamA)a++;else b++;
+            return a<=b?NativeTeam.TeamA:NativeTeam.TeamB;
+        }
         void SetSeatCount(int count)
         {
             // Structural product limits; never silently discard configured bots.
@@ -829,6 +836,7 @@ namespace StarTournament.ProvingGround
             if(rosterEditing>=previous)rosterEditing+=count-previous;
             else if(rosterEditing>=count)rosterEditing=-1;
             for(int i=count;i<previous;i++)identities.ClearSeat(i);
+            if(SetupMode==NativeMatchMode.Teams)for(int i=previous;i<count;i++)teamAssignments[i]=SmallerRosterTeam(i);
             input.SetActiveSeatCount(count);SyncHumanSeats();setupError=null; ApplyLayout(count); RefreshInterface();
             // Picker callbacks capture indices. Discard them after a structural roster change.
             if(count!=previous && rosterPicker!=null && rosterPicker.activeSelf)CloseRosterPicker();

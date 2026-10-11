@@ -48,6 +48,58 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.West);Assert.That(ground.SetupComposition().Participant(before).Difficulty,Is.EqualTo(2));
             Assert.That(Field<int>("rosterEditing"),Is.EqualTo(-1));
         }
+        [UnityTest] public IEnumerator NewHumanAndBotsUseActualSmallerTeamAfterManualMoves()
+        {
+            yield return Load();NativeSetupFixture.UnboundHumans(ground,3);ground.SetMatchMode(NativeMatchMode.Teams);
+            for(int i=0;i<3;i++)ground.SetTeam(i,NativeTeam.TeamA);
+            Click("roster-add-human");
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[3],Is.EqualTo(NativeTeam.TeamB));
+            Click("roster-done");ground.AddBot();
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[4],Is.EqualTo(NativeTeam.TeamB));
+            ground.SetBotTeam(0,NativeTeam.TeamA);ground.SetSeatAi(1,true);ground.AddBot();
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[5],Is.EqualTo(NativeTeam.TeamB),"Bots with a view count toward their team");
+            ground.SetBotTeam(0,NativeTeam.TeamB);ground.AddBot();
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[6],Is.EqualTo(NativeTeam.TeamA),"A tie chooses TeamA");
+            ground.RemoveBot(0);ground.AddBot();
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[6],Is.EqualTo(NativeTeam.TeamB));
+        }
+        [UnityTest] public IEnumerator NewYJoinBalancesAndRepeatedYOrReconnectPreservesExplicitChoice()
+        {
+            yield return Load();NativeSetupFixture.UnboundHumans(ground,1);ground.SetMatchMode(NativeMatchMode.Teams);
+            var input=Field<SeatInputCoordinator>("input");Assert.That(input.Assign(0,pad),Is.True);
+            ground.AddBot();ground.SetBotTeam(0,NativeTeam.TeamA);ground.AddBot();ground.SetBotTeam(1,NativeTeam.TeamB);
+            secondPad=InputSystem.AddDevice<Gamepad>();
+            InputSystem.QueueStateEvent(secondPad,new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
+            InputSystem.QueueStateEvent(secondPad,new GamepadState());yield return null;
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(input.DeviceAt(1),Is.SameAs(secondPad));
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[1],Is.EqualTo(NativeTeam.TeamB));
+            InputSystem.QueueStateEvent(secondPad,new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
+            InputSystem.QueueStateEvent(secondPad,new GamepadState());yield return null;
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[1],Is.EqualTo(NativeTeam.TeamA));
+            InputSystem.RemoveDevice(secondPad);secondPad=InputSystem.AddDevice<Gamepad>();
+            InputSystem.QueueStateEvent(secondPad,new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
+            InputSystem.QueueStateEvent(secondPad,new GamepadState());yield return null;
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(input.DeviceAt(1),Is.SameAs(secondPad));
+            Assert.That(ground.SetupComposition().Roster.Read().Teams[1],Is.EqualTo(NativeTeam.TeamA));
+        }
+        [UnityTest] public IEnumerator CompactProfilesShowEightRowsAndScrollToGuestWithoutChoosingBusyProfile()
+        {
+            yield return Load();profilesPath=Path.Combine(Application.temporaryCachePath,"compact-roster-profiles-"+System.Guid.NewGuid()+".json");
+            var profiles=new PlayerProfileCatalog(profilesPath);for(int i=0;i<10;i++)profiles.Create("Профиль "+(i+1),.2f,false);
+            typeof(ProvingGround).GetField("playerProfiles",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(ground,profiles);
+            Field<LocalIdentitySession>("identities").ChooseProfile(1,-101,profiles.Profiles[0].Id,profiles);
+            Click("roster-card-0");Click("roster-identity");yield return null;Canvas.ForceUpdateCanvases();
+            Assert.That(B("roster-choice-profile-"+profiles.Profiles[0].Id).interactable,Is.False);
+            var scroll=Field<ScrollRect>("rosterChoiceScroll");var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds(scroll.viewport,(RectTransform)B("roster-choice-profile-"+profiles.Profiles[7].Id).transform);
+            Assert.That(scroll.viewport.rect.Contains(new Vector2(bounds.center.x,bounds.min.y)),Is.True,"Eighth profile fits in the viewport");
+            string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SETUP_QA_DIR");
+            if(!string.IsNullOrEmpty(directory)){Directory.CreateDirectory(directory);yield return EditorUiCapture.Capture(ground,Path.Combine(directory,"compact-profiles.png"));}
+            EventSystem.current.SetSelectedGameObject(B("roster-choice-guest").gameObject);yield return null;
+            Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(1));
+            Click("roster-choice-guest");Assert.That(Field<LocalIdentitySession>("identities").GuestAt(0),Is.Not.Null);
+            Click("roster-identity");Click("roster-choice-profile-"+profiles.Profiles[9].Id);
+            Assert.That(Field<LocalIdentitySession>("identities").ProfileId(0),Is.EqualTo(profiles.Profiles[9].Id));
+        }
         [UnityTest] public IEnumerator BotViewRoundtripPreservesRosterDifficultyTeamAndFocus()
         {
             yield return Load();Click("roster-card-3");Click("roster-remove");

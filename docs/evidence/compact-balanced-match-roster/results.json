@@ -1,0 +1,31 @@
+{
+  "editmode.xml": {
+    "result": "Passed",
+    "total": "15",
+    "passed": "15",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "0.1636336"
+  },
+  "playmode-initial.xml": {
+    "result": "Failed(Child)",
+    "total": "27",
+    "passed": "26",
+    "failed": "1",
+    "skipped": "0",
+    "duration": "130.4332225"
+  },
+  "playmode-recheck.xml": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "29.8590819"
+  },
+  "runtime_sha256": {
+    "ProvingGround.cs": "c775d557169a21149662b8f6425a49010099b4cfb19e38587659711588b6e7f5",
+    "ProvingGroundMenus.cs": "f47df6a57254665d16f0bc28077ba8455fa1876ed304ac945f3bfc68defd555b",
+    "ProvingGroundRosterCards.cs": "e1827617622b7af57294b6093c3fe7b2b81478e004ac5da53dc8560fbbde0a6e"
+  }
+}
