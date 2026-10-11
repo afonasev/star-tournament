@@ -9,6 +9,9 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround
     {
+        NativeVisualPresentation visualPresentation;
+        void SetVisualEnabled(VisualEffect effect,bool value){NativeVisualPreferences.SetEnabled(effect,value);visualPresentation?.Apply();RefreshSettingsUi();}
+        void SetVisualStrength(VisualEffect effect,float value){NativeVisualPreferences.SetStrength(Profile,effect,value);visualPresentation?.Apply();RefreshSettingsUi();}
         enum SettingsSection { Image, Control, Interface, Audio }
         const string DisplayWidthKey="StarTournament.Graphics.Width";
         const string DisplayHeightKey="StarTournament.Graphics.Height";

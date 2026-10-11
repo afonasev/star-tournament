@@ -23,8 +23,8 @@ namespace StarTournament.ProvingGround
             cube=Cube();tube=Cylinder();owned.Add(cube);owned.Add(tube);
             var texture=Resources.Load<Texture2D>("IndustrialTunnels/steel-panels");if(!texture)throw new InvalidOperationException("Missing industrial-tunnel-panels manifest texture");
             steel=Material("Tunnel worn steel",Color.white*P("surface.wall"),texture);
-            floor=Material("Tunnel dirty graphite floor",new Color(1,.95f,.86f)*P("surface.floor"),texture);
-            trim=Material("Tunnel frame / graphite",new Color(.12f,.135f,.14f));ochre=Material("Tunnel service ochre",new Color(.48f,.30f,.08f));upper=Material("Base upper clean alloy",new Color(.78f,.82f,.81f));
+            floor=Material("Tunnel dirty graphite floor",new Color(1,.95f,.86f)*P("surface.floor"),texture,VisualMaterialRole.Floor);
+            trim=Material("Tunnel frame / graphite",new Color(.12f,.135f,.14f),null,VisualMaterialRole.Metal);ochre=Material("Tunnel service ochre",new Color(.48f,.30f,.08f));upper=Material("Base upper clean alloy",new Color(.78f,.82f,.81f));
             warm=Emissive("Amber service lamp",new Color(1,.56f,.19f));white=Emissive("White base luminaire",new Color(.86f,.94f,1));
             mold=new Material(Shader.Find("StarTournament/TunnelGrime")){name="Lower wall damp / mold"};mold.SetFloat("_Opacity",P("surface.mold"));owned.Add(mold);
             CreateSectorMaterials();
@@ -58,8 +58,8 @@ namespace StarTournament.ProvingGround
                 go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=entry.Key;r.shadowCastingMode=entry.Key==white||entry.Key==warm||entry.Key==mold?ShadowCastingMode.Off:ShadowCastingMode.On;
             }
         }
-        Material Material(string name,Color c,Texture texture=null)
-        {var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=c};m.SetFloat("_Metallic",P("surface.metallic"));m.SetFloat("_Smoothness",P("surface.smoothness"));if(texture)m.SetTexture("_BaseMap",texture);owned.Add(m);return m;}
+        Material Material(string name,Color c,Texture texture=null,VisualMaterialRole role=VisualMaterialRole.Wall)
+        {var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=c};m.SetFloat("_Metallic",P("surface.metallic"));m.SetFloat("_Smoothness",P("surface.smoothness"));if(texture)m.SetTexture("_BaseMap",texture);owned.Add(m);NativeVisualMaterials.Register(this,m,role);return m;}
         Material Emissive(string name,Color c)
         {var m=new Material(Shader.Find("StarTournament/OrbitalSurface")){name=name};m.SetColor("_Color",c*P("light.emission"));owned.Add(m);return m;}
         void Shape(Material mat,Mesh mesh,Vector3 pos,Vector3 scale,Quaternion rotation)

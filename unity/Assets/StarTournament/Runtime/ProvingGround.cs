@@ -234,6 +234,7 @@ namespace StarTournament.ProvingGround
             }
 #endif
             arena = Owned("unity-arena").AddComponent<ProvingArena>();
+            visualPresentation=Owned("native-visual-presentation").AddComponent<NativeVisualPresentation>();
             yield return BuildSelectedArenaSteps(true);
             InitializeGraphicsPreferences();
             Composition=HumanComposition(SetupRoster(),false);
@@ -463,6 +464,7 @@ namespace StarTournament.ProvingGround
             fill.intensity=trooper.Get("view.fillIntensity");fill.range=trooper.Get("view.fillRange");
             fill.cullingMask=1<<(15+index);fill.shadows=LightShadows.None;
             if (index == 0) cameraObject.AddComponent<AudioListener>();
+            visualPresentation?.BindCameras(cameras);
         }
         NativeMatchComposition HumanComposition(NativeMatchRoster roster,bool swapped)
         {
@@ -684,6 +686,7 @@ namespace StarTournament.ProvingGround
         void BuildSelectedArena() { var steps=BuildSelectedArenaSteps(false);while(steps.MoveNext()){} }
         IEnumerator BuildSelectedArenaSteps(bool asynchronous)
         {
+            visualPresentation?.ResetWorld();
             if(OrbitalLeagueProfile.Id=="orbital-league-v1")OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
             studioLight.intensity=OrbitalLeagueProfile.Get("light.studioKey");
@@ -699,6 +702,7 @@ namespace StarTournament.ProvingGround
             var steps=arena.BuildSteps(frozen,Profile,lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
             while(steps.MoveNext())yield return steps.Current;
             ApplyShadowPreference();
+            visualPresentation?.Bind(Profile,arena.transform,studioLight,cameras);
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
         void CreateMatch(bool repeating) { DrainLoadingSteps(CreateMatchSteps(repeating)); }
@@ -945,7 +949,7 @@ namespace StarTournament.ProvingGround
             Cursor.visible=!menuGamepadCursor;
         }
         void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
-        void OnDestroy() { CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { visualPresentation?.ResetWorld(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreShadowQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void RebuildPickupVisuals()
         {

@@ -64,6 +64,26 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(counters.Length,Is.EqualTo(1));Assert.That(counters[0].name,Is.EqualTo("fps-value"));
             var rect=(RectTransform)counters[0].transform.parent;Assert.That(rect.anchorMax,Is.EqualTo(Vector2.one));
         }
+        [UnityTest] public IEnumerator GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            var toggle0=Object("seat-settings-0-settings-visual-Bloom-enabled").GetComponent<Toggle>();
+            var toggle1=Object("seat-settings-1-settings-visual-Bloom-enabled").GetComponent<Toggle>();
+            var slider0=Object("seat-settings-0-settings-visual-Bloom-strength").GetComponent<Slider>();
+            var slider1=Object("seat-settings-1-settings-visual-Bloom-strength").GetComponent<Slider>();
+            string key=NativeVisualPreferences.Key(VisualEffect.Bloom);bool hadStrength=PlayerPrefs.HasKey(key+".Strength"),hadEnabled=PlayerPrefs.HasKey(key+".Enabled");float oldStrength=PlayerPrefs.GetFloat(key+".Strength");int oldEnabled=PlayerPrefs.GetInt(key+".Enabled");
+            var clock=ground.Session.Time;
+            try
+            {
+                slider0.value=60;toggle0.isOn=true;yield return null;
+                Assert.That(slider1.value,Is.EqualTo(60));Assert.That(toggle1.isOn,Is.True);Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled))Assert.That(UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(camera).renderPostProcessing,Is.True);
+                toggle1.isOn=false;yield return null;Assert.That(toggle0.isOn,Is.False);Assert.That(slider0.value,Is.EqualTo(60));
+            }
+            finally
+            {if(hadStrength)PlayerPrefs.SetFloat(key+".Strength",oldStrength);else PlayerPrefs.DeleteKey(key+".Strength");if(hadEnabled)PlayerPrefs.SetInt(key+".Enabled",oldEnabled);else PlayerPrefs.DeleteKey(key+".Enabled");PlayerPrefs.Save();}
+        }
         [UnityTest] public IEnumerator TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses()
         {
             yield return Load();

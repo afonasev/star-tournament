@@ -86,7 +86,7 @@ namespace StarTournament.ProvingGround
             CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
             CheckOrder(issues,"zone.armBottom","zone.armTop",1);
             CheckOrder(issues,"zone.legBottom","zone.legTop",1);
-            for(int i=2;Profile("score.chainTotal1").Version<3&&i<=5;i++)CheckOrder(issues,"score.chainTotal"+(i-1),"score.chainTotal"+i,1,false);
+            for(int i=2;Descriptors.Any(d=>d.Path=="score.chainTotal1")&&Profile("score.chainTotal1").Version<3&&i<=5;i++)CheckOrder(issues,"score.chainTotal"+(i-1),"score.chainTotal"+i,1,false);
             return issues;
         }
         void CheckOrder(List<ProfileValidationIssue> issues,string low,string high,float factor,bool strict=true)
@@ -255,6 +255,8 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
             var shipped=this.shipped;
+            if(!sought.Descriptors.Any(d=>d.Path==NativeVisualPreferences.Path(VisualEffect.Lighting)))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVisualPolish()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-native-match-v1")?.Version??3)<3)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.

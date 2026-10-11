@@ -1,0 +1,90 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+namespace StarTournament.ProvingGround
+{
+    public sealed class NativeVisualPresentation : MonoBehaviour
+    {
+        struct Surface {public Material Material;public VisualMaterialRole Role;public float Metallic,Smoothness;}
+        readonly List<Surface> surfaces=new List<Surface>();
+        readonly Dictionary<GameObject,int> layers=new Dictionary<GameObject,int>();
+        ProvingProfile profile;Light key;float keyIntensity;Color ambient;AmbientMode ambientMode;
+        Volume volume;VolumeProfile volumeProfile;Bloom bloom;ReflectionProbe probe;Transform arena;
+        Camera[] cameras;bool bound;
+        public int SurfaceCount=>surfaces.Count;
+        public ReflectionProbe EnvironmentProbe=>probe;
+        public void Bind(ProvingProfile settings,Transform world,Light studio,Camera[] views)
+        {
+            ResetWorld();profile=settings;arena=world;key=studio;cameras=views;
+            ambient=RenderSettings.ambientLight;ambientMode=RenderSettings.ambientMode;keyIntensity=key.intensity;bound=true;
+            foreach(var registry in world.GetComponentsInChildren<NativeVisualMaterials>(true))
+                foreach(var pair in registry.Roles)
+                    if(pair.Key&&pair.Key.HasProperty("_Metallic")&&pair.Key.HasProperty("_Smoothness"))
+                        surfaces.Add(new Surface{Material=pair.Key,Role=pair.Value,Metallic=pair.Key.GetFloat("_Metallic"),Smoothness=pair.Key.GetFloat("_Smoothness")});
+            // Only collider-free presentation renderers join the existing world rendering layer.
+            // This permits a world-only cubemap capture without participants or first-person arms.
+            foreach(var renderer in world.GetComponentsInChildren<Renderer>(true))
+                if(renderer.gameObject.layer==0&&!renderer.GetComponent<Collider>())
+                {layers[renderer.gameObject]=0;renderer.gameObject.layer=ProvingArena.WorldLayer;}
+            Apply();
+        }
+        public void BindCameras(Camera[] views){cameras=views;if(bound)ApplyCameras();}
+        public void Apply()
+        {
+            if(!bound)return;
+            float light=NativeVisualPreferences.Effective(profile,VisualEffect.Lighting);
+            RenderSettings.ambientLight=ambient*Mathf.Lerp(1,profile.Get("visual.fillScale"),light);
+            key.intensity=keyIntensity*Mathf.Lerp(1,profile.Get("visual.keyScale"),light);
+            float materials=NativeVisualPreferences.Effective(profile,VisualEffect.Materials);
+            foreach(var s in surfaces)if(s.Material)
+            {
+                string role=s.Role==VisualMaterialRole.Wall?"wall":s.Role==VisualMaterialRole.Floor?"floor":"metal";
+                s.Material.SetFloat("_Metallic",Mathf.Lerp(s.Metallic,profile.Get("visual."+role+"Metallic"),materials));
+                s.Material.SetFloat("_Smoothness",Mathf.Lerp(s.Smoothness,profile.Get("visual."+role+"Smoothness"),materials));
+            }
+            float reflection=NativeVisualPreferences.Effective(profile,VisualEffect.Reflections);
+            if(reflection>0&&!probe&&SystemInfo.graphicsDeviceType!=GraphicsDeviceType.Null)
+            {
+                var go=new GameObject("visual-environment-reflection");go.transform.SetParent(transform,false);probe=go.AddComponent<ReflectionProbe>();
+                var bounds=new Bounds(arena.position,Vector3.zero);foreach(var collider in arena.GetComponentsInChildren<Collider>())bounds.Encapsulate(collider.bounds);
+                var projection=arena.GetComponent<ProvingArena>();
+                // An existing walkable spawn is outside walls and slabs; capture from eye height.
+                probe.transform.position=projection.Spawns[0]+Vector3.up*profile.Get("camera.eyeHeight");probe.center=bounds.center-probe.transform.position;probe.size=bounds.size;probe.boxProjection=true;
+                // Fixed 128px capture is a bounded technical resource tier, not artistic tuning.
+                probe.resolution=128;probe.mode=ReflectionProbeMode.Realtime;probe.refreshMode=ReflectionProbeRefreshMode.ViaScripting;
+                probe.timeSlicingMode=ReflectionProbeTimeSlicingMode.NoTimeSlicing;probe.cullingMask=(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer);
+                probe.nearClipPlane=.1f;probe.farClipPlane=bounds.size.magnitude;probe.clearFlags=ReflectionProbeClearFlags.Skybox;probe.RenderProbe();
+            }
+            if(probe){probe.intensity=reflection*profile.Get("visual.reflectionIntensity");probe.enabled=reflection>0;}
+            float glow=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom);
+            if(glow>0&&!volume)
+            {
+                var source=Resources.Load<VolumeProfile>("VisualPolishVolume");
+                if(!source)throw new System.InvalidOperationException("Missing visual polish VolumeProfile");
+                volumeProfile=ScriptableObject.CreateInstance<VolumeProfile>();foreach(var component in source.components)volumeProfile.components.Add(Instantiate(component));
+                volume=gameObject.AddComponent<Volume>();volume.isGlobal=true;volume.priority=100;volume.sharedProfile=volumeProfile;volumeProfile.TryGet(out bloom);
+            }
+            if(volume){volume.enabled=glow>0;bloom.intensity.Override(glow*profile.Get("visual.bloomIntensity"));bloom.threshold.Override(profile.Get("visual.bloomThreshold"));bloom.scatter.Override(profile.Get("visual.bloomScatter"));}
+            ApplyCameras();
+        }
+        void ApplyCameras()
+        {
+            if(cameras==null)return;
+            int renderer=Mathf.RoundToInt(NativeVisualPreferences.Effective(profile,VisualEffect.AmbientOcclusion)*4);
+            bool post=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom)>0;
+            foreach(var camera in cameras)if(camera)
+            {var data=camera.GetUniversalAdditionalCameraData();data.SetRenderer(renderer);data.renderPostProcessing=post;camera.allowHDR=true;}
+        }
+        public void ResetWorld()
+        {
+            if(bound){RenderSettings.ambientLight=ambient;RenderSettings.ambientMode=ambientMode;if(key)key.intensity=keyIntensity;}
+            foreach(var s in surfaces)if(s.Material){s.Material.SetFloat("_Metallic",s.Metallic);s.Material.SetFloat("_Smoothness",s.Smoothness);}surfaces.Clear();
+            foreach(var p in layers)if(p.Key)p.Key.layer=p.Value;layers.Clear();
+            if(probe){probe.enabled=false;DestroyImmediate(probe.gameObject);}probe=null;
+            if(volume){volume.enabled=false;DestroyImmediate(volume);}volume=null;
+            if(volumeProfile){foreach(var c in volumeProfile.components)if(c)DestroyImmediate(c);DestroyImmediate(volumeProfile);}volumeProfile=null;bloom=null;bound=false;
+        }
+        void OnDestroy()=>ResetWorld();
+    }
+}

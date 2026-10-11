@@ -1,0 +1,58 @@
+{
+  "baseline": "5447059799465b31edce2514036c6591edc9acbb",
+  "checks": [
+    {
+      "name": "edit-expanded",
+      "result": "Failed(Child)",
+      "total": "77",
+      "passed": "66",
+      "failed": "11",
+      "duration": "444.0298926"
+    },
+    {
+      "name": "edit-rechecked",
+      "result": "Passed",
+      "total": "14",
+      "passed": "14",
+      "failed": "0",
+      "duration": "4.0726753"
+    },
+    {
+      "name": "play-adjacent",
+      "result": "Failed(Child)",
+      "total": "32",
+      "passed": "31",
+      "failed": "1",
+      "duration": "148.8933598"
+    },
+    {
+      "name": "play-visual",
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "duration": "53.7986233"
+    },
+    {
+      "name": "play-capture-shared",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "duration": "28.8152797"
+    }
+  ],
+  "latest_unique_tests": 111,
+  "latest_non_passed": 0,
+  "full_suite": false,
+  "player_build": false,
+  "publication": false,
+  "screenshots": "Independent camera render composites in Editor; human/device/physical split-screen acceptance pending",
+  "integration": {
+    "baseline": "4e98d46478d6baeda92f51a91650b63136e2480b",
+    "tested_commit": "179fe88feab37c2b7b6fc7981af2b43d4f45e049",
+    "passed": 2,
+    "total": 2,
+    "source_change": "Evidence-only amendment follows; runtime source unchanged"
+  }
+}

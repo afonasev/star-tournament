@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 15;
+        public const int DefaultVersion = 16;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -571,6 +571,7 @@ namespace StarTournament.ProvingGround
             profile.Add("world.minimumSupportHeight","world-query","Lowest support probe","Lower world bound for corpse support queries; does not author geometry.","meters",-100,0,1,-10);
             profile.Add("world.maximumTransitionSegment","world-query","Declared route segment bound","Maximum distance between declared traversal samples.","meters",1,100,.5f,20);
             AddRocketPresentation(profile);
+            VisualPolishDescriptors(profile);
             return profile;
         }
 

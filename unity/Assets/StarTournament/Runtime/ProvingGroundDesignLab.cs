@@ -97,6 +97,7 @@ namespace StarTournament.ProvingGround
         }
         static string GroupLabel(string group)
         {
+            if(group=="visual-polish")return "Графика → Свет и эффекты";
             switch(group)
             {
                 case "tunnel-light":return "Тоннели → Свет";case "tunnel-surface":return "Тоннели → Поверхности";

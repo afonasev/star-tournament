@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
         }
-        internal static IEnumerator Capture(string name,GameObject root=null)
+        internal static IEnumerator Capture(string name,GameObject root=null,Action afterLayout=null)
         {
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LOADING_SCREENSHOTS");
             if(string.IsNullOrEmpty(directory))yield break;
@@ -40,7 +40,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var child in children)child.gameObject.layer=5;
                 camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color32(16,28,41,255);camera.cullingMask=1<<5;camera.orthographic=true;camera.targetTexture=target;
                 canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=10;
-                Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
+                Canvas.ForceUpdateCanvases();afterLayout?.Invoke();Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
                 File.WriteAllBytes(Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
             }
             finally

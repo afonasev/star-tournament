@@ -20,6 +20,9 @@ namespace StarTournament.ProvingGround
             readonly Dictionary<Selectable,GameObject> settingsFocusBorders=new Dictionary<Selectable,GameObject>();
             readonly List<Button> settingsFocusButtons=new List<Button>();
             GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsAudioPage,settingsConfirmation,resolutionPicker;
+            readonly Slider[] visualSliders=new Slider[5];
+            readonly Toggle[] visualToggles=new Toggle[5];
+            ScrollRect graphicsScroll;
             Slider settingsMusicSlider,settingsEffectsSlider;
             Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsConfirmationText;
             Button settingsConfirmButton;
@@ -171,16 +174,29 @@ namespace StarTournament.ProvingGround
                 settingsDescription=Label(content.transform,"settings-description","",21,new Vector2(.05f,.77f),new Vector2(.95f,.87f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
                 settingsImagePage=Panel(content.transform,"settings-image",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
-                Panel(settingsImagePage.transform,"display-mode-card",new Vector2(.02f,.75f),new Vector2(.98f,.98f),MenuCard);
-                settingsDisplayMode=Label(settingsImagePage.transform,"display-mode-label","",25,new Vector2(.04f,.78f),new Vector2(.96f,.96f),TextAnchor.MiddleLeft,Color.white);
-                settingsModeButton=MenuButton(settingsImagePage.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,.78f),new Vector2(.96f,.96f),ChangeDisplayMode);
-                Panel(settingsImagePage.transform,"resolution-card-row",new Vector2(.02f,.47f),new Vector2(.98f,.73f),MenuCard);
-                settingsResolution=Label(settingsImagePage.transform,"resolution-label","",25,new Vector2(.04f,.50f),new Vector2(.96f,.72f),TextAnchor.MiddleLeft,Color.white);
-                settingsResolutionButton=MenuButton(settingsImagePage.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,.51f),new Vector2(.96f,.69f),OpenResolutionPicker);
-                Panel(settingsImagePage.transform,"shadows-card",new Vector2(.02f,.19f),new Vector2(.98f,.45f),MenuCard);
-                settingsShadows=Label(settingsImagePage.transform,"shadows-label","",25,new Vector2(.04f,.22f),new Vector2(.96f,.44f),TextAnchor.MiddleLeft,Color.white);
-                settingsShadowsToggle=BooleanSetting(settingsImagePage.transform,"settings-shadows","Тени",new Vector2(.59f,.24f),new Vector2(.96f,.42f),v=>{if(v!=shadowsEnabled)ToggleShadows();});
-                Label(settingsImagePage.transform,"graphics-help","Графика общая для всех экранов. Новое разрешение нужно подтвердить.",20,new Vector2(.04f,.03f),new Vector2(.96f,.18f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+                var viewport=Panel(settingsImagePage.transform,"graphics-viewport",new Vector2(0,.1f),Vector2.one,Color.clear);
+                viewport.AddComponent<RectMask2D>();
+                var list=Panel(viewport.transform,"graphics-list",Vector2.zero,Vector2.one,Color.clear);
+                var listRect=(RectTransform)list.transform;listRect.anchorMin=new Vector2(0,1);listRect.anchorMax=Vector2.one;listRect.pivot=new Vector2(.5f,1);listRect.sizeDelta=new Vector2(0,1140);
+                graphicsScroll=settingsImagePage.AddComponent<ScrollRect>();graphicsScroll.viewport=(RectTransform)viewport.transform;graphicsScroll.content=listRect;graphicsScroll.horizontal=false;graphicsScroll.movementType=ScrollRect.MovementType.Clamped;graphicsScroll.scrollSensitivity=45;
+                Vector2 Lo(float top,float height)=>new Vector2(.02f,1-(top+height)/1140);
+                Vector2 Hi(float top)=>new Vector2(.98f,1-top/1140);
+                settingsDisplayMode=Label(list.transform,"display-mode-label","",25,Lo(0,92),Hi(0),TextAnchor.MiddleLeft,Color.white);
+                settingsModeButton=MenuButton(list.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,1-88f/1140),new Vector2(.96f,1-8f/1140),ChangeDisplayMode);
+                settingsResolution=Label(list.transform,"resolution-label","",25,Lo(100,92),Hi(100),TextAnchor.MiddleLeft,Color.white);
+                settingsResolutionButton=MenuButton(list.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,1-188f/1140),new Vector2(.96f,1-108f/1140),OpenResolutionPicker);
+                settingsShadows=Label(list.transform,"shadows-label","",25,Lo(200,92),Hi(200),TextAnchor.MiddleLeft,Color.white);
+                settingsShadowsToggle=BooleanSetting(list.transform,"settings-shadows","Тени",new Vector2(.59f,1-288f/1140),new Vector2(.96f,1-208f/1140),v=>{if(v!=shadowsEnabled)ToggleShadows();});
+                void Reveal(Selectable control,RectTransform row=null){var focus=control.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=graphicsScroll;focus.Row=row;}
+                Reveal(settingsModeButton);Reveal(settingsResolutionButton);Reveal(settingsShadowsToggle);
+                for(int i=0;i<5;i++)
+                {
+                    var effect=(VisualEffect)i;float top=300+i*165;
+                    visualToggles[i]=BooleanSetting(list.transform,"settings-visual-"+effect+"-enabled",NativeVisualPreferences.Names[i],Lo(top,62),Hi(top),v=>owner.SetVisualEnabled(effect,v));
+                    visualSliders[i]=NumericSetting(list.transform,"settings-visual-"+effect+"-strength","Сила",Lo(top+65,90),Hi(top+65),Profile.Descriptor(NativeVisualPreferences.Path(effect)),v=>owner.SetVisualStrength(effect,v));
+                    Reveal(visualToggles[i]);Reveal(visualSliders[i],(RectTransform)visualSliders[i].transform.parent);
+                }
+                Label(settingsImagePage.transform,"graphics-help","Общие для всех экранов · 0% — исходный вид · прокрутка ↓",18,Vector2.zero,new Vector2(1,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
                 settingsControlPage=Panel(content.transform,"settings-control",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 settingsMouseSlider=NumericSetting(settingsControlPage.transform,"settings-mouse-sensitivity","Мышь",new Vector2(.02f,.82f),new Vector2(.98f,.99f),MouseSensitivityPreference.Descriptor(Profile),SetMenuMouse);
@@ -315,9 +331,14 @@ namespace StarTournament.ProvingGround
                 Link(settingsSectionButtons[3],settingsSectionButtons[2],settingsBackButton,null,settingsMusicSlider);
                 Link(settingsBackButton,settingsSectionButtons[3],settingsSectionButtons[0],
                     null,FirstSettingsAction());
-                Link(settingsModeButton,settingsShadowsToggle,settingsResolutionButton,settingsSectionButtons[0]);
+                Link(settingsModeButton,visualSliders[4],settingsResolutionButton,settingsSectionButtons[0]);
                 Link(settingsResolutionButton,settingsModeButton,settingsShadowsToggle,settingsSectionButtons[0]);
-                Link(settingsShadowsToggle,settingsResolutionButton,settingsModeButton,settingsSectionButtons[0]);
+                Link(settingsShadowsToggle,settingsResolutionButton,visualToggles[0],settingsSectionButtons[0]);
+                for(int i=0;i<5;i++)
+                {
+                    Link(visualToggles[i],i==0?settingsShadowsToggle:visualSliders[i-1],visualSliders[i],settingsSectionButtons[0]);
+                    Link(visualSliders[i],visualToggles[i],i==4?settingsModeButton:visualToggles[i+1]);
+                }
                 Link(settingsMouseSlider,settingsSectionButtons[1],settingsHorizontalSlider);
                 Link(settingsHorizontalSlider,settingsMouseSlider,settingsVerticalSlider);
                 Link(settingsVerticalSlider,settingsHorizontalSlider,settingsReturnDelaySlider);
@@ -377,7 +398,7 @@ namespace StarTournament.ProvingGround
                 settingsDescription.gameObject.SetActive(!settingsHelpOpen && !settingsDevicesOpen && settingsSection!=SettingsSection.Interface);
                 if(settingsHelpOpen)settingsHeading.text="УПРАВЛЕНИЕ · СПРАВКА";
                 if(settingsDevicesOpen)settingsHeading.text="УПРАВЛЕНИЕ · УСТРОЙСТВА";
-                settingsDescription.text=settingsSection==SettingsSection.Image?"Режим вывода и тени применяются ко всем игровым экранам":
+                settingsDescription.text=settingsSection==SettingsSection.Image?"Графика общая для всех экранов; эффекты можно выключить":
                     settingsSection==SettingsSection.Control?"Личная чувствительность сохраняется в профиле; общая служит начальным значением":
                     settingsSection==SettingsSection.Interface?"Один счётчик справа сверху; виден, если включён у одного из игроков":
                     "Громкость общая для всех игроков";
@@ -385,6 +406,11 @@ namespace StarTournament.ProvingGround
                 settingsDisplayMode.text="РЕЖИМ ЭКРАНА\n"+(EffectiveDisplayMode()==FullScreenMode.Windowed?"Окно":"Полный экран");
                 settingsResolution.text="РАЗРЕШЕНИЕ\n"+Screen.width+" × "+Screen.height;
                 settingsShadows.text="ТЕНИ\n"+(shadowsEnabled?"Вкл":"Выкл");
+                for(int i=0;i<5;i++)
+                {
+                    var effect=(VisualEffect)i;RefreshToggle(visualToggles[i],NativeVisualPreferences.Enabled(effect));
+                    RefreshNumericSetting(visualSliders[i],"Сила",NativeVisualPreferences.Strength(Profile,effect),"%");
+                }
                 var sensitivity=MenuMouseSensitivity();var look=MenuGamepadLook();
                 RefreshNumericSetting(settingsMouseSlider,"Чувствительность мыши",sensitivity,"°/px");
                 RefreshNumericSetting(settingsHorizontalSlider,"Геймпад: горизонталь",look.Horizontal,"°/с");
