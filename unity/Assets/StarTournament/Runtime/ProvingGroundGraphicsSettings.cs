@@ -88,8 +88,8 @@ namespace StarTournament.ProvingGround
             originalShadowQuality=QualitySettings.shadows;
             originalVSyncCount=QualitySettings.vSyncCount;
             int savedVSync=PlayerPrefs.GetInt(VSyncKey,-1);
-            vSyncEnabled=originalVSyncCount>0;
-            if(savedVSync==0||savedVSync==1){vSyncEnabled=savedVSync==1;ApplyVSyncPreference();}
+            vSyncEnabled=savedVSync!=0;
+            ApplyVSyncPreference();
             graphicsPreferencesInitialized=true;
             shadowsEnabled=PlayerPrefs.GetInt(ShadowsKey,1)!=0;
             ApplyShadowPreference();

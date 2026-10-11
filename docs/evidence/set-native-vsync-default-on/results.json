@@ -1,0 +1,12 @@
+{
+  "baseline": "1b0a7ca4",
+  "tested_source_commit": "d339c27b",
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "xml_duration_seconds": 45.9427642,
+  "editor_pngs": 3,
+  "player_build": false,
+  "full_tests": false,
+  "deployment": false
+}

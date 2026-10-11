@@ -1,0 +1,3 @@
+# VSync default on
+Source snapshot d339c27b, baseline 1b0a7ca4. Новый default: без сохранённого значения либо при невалидном значении VSync on/1; явно сохранённый off/0 сохраняется. Исходный vSyncCount при teardown и targetFrameRate неизменны.
+NativeVSyncTests 2/2 passed, failed/skipped 0; shared muted GPU Editor, три PNG просмотрены. Покрытие quality0/2 и no/invalid preference, explicit off reload, UI состояние, engine restoration и limiter invariance. XML включает setup/body/teardown, import/admission отдельно. Player/full/build/deploy не запускались; physical frame pacing и human acceptance открыты.

@@ -24,13 +24,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             QualitySettings.vSyncCount=originalVSync;Application.targetFrameRate=originalTarget;
             if(existed)PlayerPrefs.SetInt(Key,saved);else PlayerPrefs.DeleteKey(Key);PlayerPrefs.Save();
         }
-        [UnityTest] public IEnumerator MissingAndInvalidPreferencesPreserveQualityDefault()
+        [UnityTest] public IEnumerator MissingAndInvalidPreferencesEnableVSyncByDefault()
         {
             foreach(int quality in new[]{0,2})foreach(int preference in new[]{-1,7})
             {
                 QualitySettings.vSyncCount=quality;if(preference==-1)PlayerPrefs.DeleteKey(Key);else PlayerPrefs.SetInt(Key,preference);
-                yield return Load();Assert.That(QualitySettings.vSyncCount,Is.EqualTo(quality));
-                B("main-action-4").onClick.Invoke();B("settings-section-0").onClick.Invoke();Assert.That(Toggle.isOn,Is.EqualTo(quality>0));
+                yield return Load();Assert.That(QualitySettings.vSyncCount,Is.EqualTo(1));
+                B("main-action-4").onClick.Invoke();B("settings-section-0").onClick.Invoke();Assert.That(Toggle.isOn,Is.True);
+                if(quality==0&&preference==-1)yield return NativeLoadingScreenTests.Capture("vsync-default-on",ground.transform.Find("native-ui").gameObject,()=>Toggle.GetComponent<MenuScrollFocus>().Reveal());
                 yield return Unload();Assert.That(QualitySettings.vSyncCount,Is.EqualTo(quality));
             }
         }
