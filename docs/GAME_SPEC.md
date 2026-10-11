@@ -30,6 +30,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 
 ## 2. Утверждённые решения
 
+- Читаемость first-person оборудования (2026-10-12, `improve-first-person-equipment-readability`): существующая подсветка только рук и оружия своего viewport проявляет тёмные крупные формы без новых деталей/геометрии. Сила доступна через `view.fillIntensity` в Balance Lab; встроенная ревизия `unity-trooper-presentation-v1@8` сохраняет старые snapshots/hashes и custom значения. Мир, участники, материалы и gameplay не меняются; Editor сравнения, Player/device/FPS и human acceptance отдельно.
+
 - Сглаживание краёв без новых деталей (2026-10-12, `add-native-antialiasing`): общий сохраняемый выбор URP SMAA Off/Low/Medium/High (Medium по умолчанию) в разделе «Изображение» меню и личной паузы, применяется ко всем 1–4 камерам и сразу обновляет открытые настройки. Не зависит от Bloom, цветокоррекции и выбора AO renderer; HUD/прицел на ScreenSpaceOverlay не проходит через camera AA. Editor-сравнения трёх арен: `docs/evidence/add-native-antialiasing/`; Player/device/FPS и human acceptance отдельно.
 - Вертикальная синхронизация (2026-10-11, `add-native-vsync-setting`): общий сохраняемый checkbox VSync в «Изображение» меню и личной паузы. Явный выбор немедленно включает синхронизацию с каждым обновлением дисплея либо отключает её; без допустимого сохранённого выбора VSync включён по умолчанию; явно сохранённое выключение сохраняется. Frame limiter не меняется. При уничтожении сцены исходный vSyncCount восстанавливается. Mouse/gamepad scroll/focus доступны; реальный frame pacing/tearing проверяется отдельно на Player/устройстве.
 - Нейтральная цветокоррекция (2026-10-11, `neutral-native-color-grading`): общая мягкая RGB-кривая проявляет тени и смягчает белые участки без тонирования палитры. В меню/личной паузе доступны сохраняемые отключение, сила, экспозиция и насыщенность; off/0 возвращает принятый вид без цветокоррекции, Bloom независим. Настройки общие для 1–4 камер, числовые metadata — в `unity-proving-ground-v1@17`/Balance Lab. Registry v16 и прежние Lab snapshots/hashes сохраняются. HUD/geometry/simulation не меняются; Player/device/FPS и поставка отдельно.
@@ -354,6 +356,8 @@ Star Tournament — скоростной first-person 3D arena shooter с чит
 - В Combat Bowl одно красное фасетное сердце Crystal Runes заменяет нижнюю броню на прежнем support/anchor. Именованный профиль `unity-combat-state-v1@4` задаёт delayed first spawn и cooldown после подбора. Живой участник мгновенно лечится до target, ограниченного maximum health; здоровье выше target не снижается, armor не меняется. Полное здоровье расходует бонус, dead participant не подбирает. Shared height tolerance исключает подбор через перекрытие. Таймеры принадлежат simulation, snapshot сохраняет состояние, Repeat начинает initial delay заново. Presentation profile `unity-proving-ground-v1@5` задаёт hover, rotation и scale; renderer-only GLB имеет двусторонний пульс.
 
 ## 11. Журнал изменений
+
+- 2026-10-12: `improve-first-person-equipment-readability` — более читаемые тёмные руки/оружие через существующий локальный свет, с настройкой в Lab и совместимостью истории.
 
 - 2026-10-12: `add-native-antialiasing` — сохраняемое общее SMAA с режимом Off и тремя уровнями качества, доступное в меню и личной паузе; Editor captures сравнивают одинаковые виды трёх арен.
 

@@ -158,6 +158,71 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Time.timeScale=1;ground.SendMessage("Menu");B("main-action-0").onClick.Invoke();
             }
         }
+        [UnityTest] public IEnumerator EquipmentFillComparesAllWeaponsWithoutLightingTheWorld()
+        {
+            B("main-action-0").onClick.Invoke();
+            foreach(var map in new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id})
+            {
+                yield return Begin(map);Time.timeScale=0;
+                foreach(VisualEffect effect in Enum.GetValues(typeof(VisualEffect)))NativeVisualPreferences.SetStrength(ground.Profile,effect,50);
+                NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingMedium);Effects(true);
+                var cameras=ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled).OrderBy(c=>c.name).ToArray();
+                var fills=cameras.Select(c=>c.transform.Find("equipment-fill").GetComponent<Light>()).ToArray();
+                var views=cameras.Select(c=>c.transform.Find("trooper-view").gameObject).ToArray();
+                int meshes=ground.GetComponentsInChildren<MeshFilter>(true).Length,colliders=ground.GetComponentsInChildren<Collider>(true).Length;
+                Assert.That(cameras.Length,Is.EqualTo(4));
+                foreach(var fill in fills)Assert.That(fill.intensity,Is.EqualTo(ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity")));
+                foreach(WeaponId weapon in Enum.GetValues(typeof(WeaponId)))
+                {
+                    var snapshot=ground.Session.Capture();
+                    for(int i=0;i<snapshot.Lives.Length;i++)
+                    {
+                        var life=snapshot.Lives[i];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
+                        life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;life.Ammo=CombatLife.AmmoFor(life,weapon);snapshot.Lives[i]=life;
+                    }
+                    ground.Session.Restore(snapshot);ground.SendMessage("LateUpdate");
+                    var matrices=cameras.Select(c=>c.transform.localToWorldMatrix).ToArray();
+                    double clock=ground.Session.Time;
+                    foreach(var fill in fills)fill.intensity=.05f;
+                    yield return CaptureWorld(map+"-"+weapon+"-before");
+                    if(map==IndustrialTunnelsCatalog.Id&&weapon==WeaponId.Rifle)
+                        foreach(float level in new[]{.65f,.95f})
+                        {
+                            foreach(var fill in fills)fill.intensity=level;
+                            yield return CaptureWorld(map+"-"+weapon+"-candidate-"+level.ToString("F2",System.Globalization.CultureInfo.InvariantCulture));
+                        }
+                    foreach(var fill in fills)fill.intensity=ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity");
+                    yield return CaptureWorld(map+"-"+weapon+"-after");
+                    Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                    for(int i=0;i<cameras.Length;i++)Assert.That(cameras[i].transform.localToWorldMatrix,Is.EqualTo(matrices[i]));
+                    Assert.That(ground.GetComponentsInChildren<MeshFilter>(true).Length,Is.EqualTo(meshes));
+                    Assert.That(ground.GetComponentsInChildren<Collider>(true).Length,Is.EqualTo(colliders));
+                }
+                // With own equipment hidden, its light must not alter world/participant pixels.
+                foreach(var view in views)view.SetActive(false);
+                foreach(var fill in fills)fill.intensity=.05f;
+                var baseline=cameras.Select(RenderWorldPixels).ToArray();
+                foreach(var fill in fills)fill.intensity=ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity");
+                for(int i=0;i<cameras.Length;i++)Assert.That(RenderWorldPixels(cameras[i]),Is.EqualTo(baseline[i]),"Equipment fill must not light the world or another participant");
+                foreach(var view in views)view.SetActive(true);
+                Time.timeScale=1;ground.SendMessage("Menu");B("main-action-0").onClick.Invoke();
+            }
+        }
+        static byte[] RenderWorldPixels(Camera camera)
+        {
+            var target=new RenderTexture(800,450,24,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+            var pixels=new Texture2D(800,450,TextureFormat.RGB24,false);
+            var prior=RenderTexture.active;var old=camera.targetTexture;var rect=camera.rect;
+            try
+            {
+                camera.targetTexture=target;camera.rect=new Rect(0,0,1,1);camera.Render();RenderTexture.active=target;
+                pixels.ReadPixels(new Rect(0,0,800,450),0,0);pixels.Apply();return pixels.GetRawTextureData();
+            }
+            finally
+            {
+                camera.targetTexture=old;camera.rect=rect;RenderTexture.active=prior;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);
+            }
+        }
         [UnityTest] public IEnumerator RenderAllArenasBeforeAndAfterWithFourViewports()
         {
             B("main-action-0").onClick.Invoke();
