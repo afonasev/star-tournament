@@ -1,0 +1,6 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=WellArenaTests;DesignLabHistoryTests.CompleteRegistry
+lab_history=/Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/../.local/unity-evidence/focused-editmode.37vB7h/qa-lab-history.json
+revision=572cdd2fa643aec377c80af0743eb79a7a647510
+ M ../docs/evidence/well-arena/qa-scope.md

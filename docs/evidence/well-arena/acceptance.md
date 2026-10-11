@@ -1,6 +1,6 @@
 # Колодец — проверка игровой версии
 
-Точная версия будет указана в verification.json после QA/commit. Концепт 02 принят 12.10.2026; это отдельное решение от приёмки игровой версии.
+Исходники: commit `572cdd2fa643aec377c80af0743eb79a7a647510` (код лифтов: `f762f8bc`); точные hashes и XML — в verification.json. После интеграции запускать из `/Users/eaafonasev/Projects/star-tournament`. Концепт 02 принят 12.10.2026; это отдельное решение от приёмки игровой версии.
 
 Запуск исходников в Editor: `UNITY_RUN_MODE=shared unity/tools.sh editor`, открыть `Assets/StarTournament/Scenes/ProvingGround.unity`, Play → подготовка матча → «Колодец». Поддерживаются 2–8 участников: 1–4 местных человека плюс боты либо боты в существующем режиме наблюдения.
 
@@ -12,3 +12,5 @@
 6. Проверить оформление, читаемость этажей/предметов, ощущение простора и прострелы в живом матче, включая 1–4 viewport.
 
 Автоматические Editor physics/snapshot и изображения не заменяют human gameplay/visual/device acceptance. Полный набор, Player build, installer/release/deploy в этой задаче не заказаны. Для необходимых физических сценариев достаточно Editor PlayMode; QA Player не строился.
+
+Для ручного QA с общим экраном/вводом нужен `UNITY_RUN_MODE=exclusive unity/tools.sh editor`. Обычные автономные проверки выполнялись в shared. Четыре итоговых вида сохранены в editor-views/; это камеры технической сцены, не human-acceptance игрового HUD.
