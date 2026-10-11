@@ -97,6 +97,34 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             finally
             {if(hadStrength)PlayerPrefs.SetFloat(key+".Strength",oldStrength);else PlayerPrefs.DeleteKey(key+".Strength");if(hadEnabled)PlayerPrefs.SetInt(key+".Enabled",oldEnabled);else PlayerPrefs.DeleteKey(key+".Enabled");PlayerPrefs.Save();}
         }
+        [UnityTest] public IEnumerator AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras()
+        {
+            const string key=NativeVisualPreferences.AntialiasingKey;bool existed=PlayerPrefs.HasKey(key);int saved=PlayerPrefs.GetInt(key);
+            try
+            {
+                NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingOff);
+                yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+                Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+                var first=Button("seat-settings-0-settings-antialiasing");var second=Button("seat-settings-1-settings-antialiasing");
+                var scroll=Object("seat-settings-0-settings-image").GetComponent<ScrollRect>();
+                yield return Press(0,GamepadButton.DpadRight);yield return Press(0,GamepadButton.DpadUp);
+                Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(.2f),"Wrapping to the last image control must reveal it");
+                for(int i=0;i<14;i++)yield return Press(0,GamepadButton.DpadUp);
+                Assert.That(scroll.verticalNormalizedPosition,Is.GreaterThan(.5f),"Gamepad focus must scroll the AA setting back into view");
+                yield return Press(0,GamepadButton.South);
+                Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(NativeVisualPreferences.AntialiasingLow));
+                Assert.That(first.GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingLow]));
+                Assert.That(second.GetComponentInChildren<Text>().text,Is.EqualTo(first.GetComponentInChildren<Text>().text));
+                var cameras=ground.GetComponentsInChildren<Camera>().Where(camera=>camera.enabled).ToArray();Assert.That(cameras.Length,Is.EqualTo(2));
+                foreach(var camera in cameras)
+                {
+                    var data=UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(camera);Assert.That(data.antialiasing,Is.EqualTo(UnityEngine.Rendering.Universal.AntialiasingMode.SubpixelMorphologicalAntiAliasing));
+                    Assert.That(data.antialiasingQuality,Is.EqualTo(UnityEngine.Rendering.Universal.AntialiasingQuality.Low));Assert.That(data.renderPostProcessing,Is.True);
+                }
+                second.onClick.Invoke();yield return null;Assert.That(first.GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingMedium]));
+            }
+            finally{if(existed)PlayerPrefs.SetInt(key,saved);else PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();}
+        }
         [UnityTest] public IEnumerator ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch()
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);

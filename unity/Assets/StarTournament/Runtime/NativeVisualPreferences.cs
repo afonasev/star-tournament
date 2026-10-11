@@ -5,10 +5,20 @@ namespace StarTournament.ProvingGround
     public enum VisualEffect { Lighting, Materials, AmbientOcclusion, Bloom, Reflections, ColorGrading }
     public static class NativeVisualPreferences
     {
+        public const string AntialiasingKey="StarTournament.Graphics.Antialiasing";
+        public const int AntialiasingOff=0,AntialiasingLow=1,AntialiasingMedium=2,AntialiasingHigh=3;
+        public const int DefaultAntialiasing=AntialiasingMedium;
+        public static readonly string[] AntialiasingNames={"Выкл.","SMAA · низкое","SMAA · среднее","SMAA · высокое"};
         public static readonly string[] Names={"Объёмный свет","Отклик материалов","Затемнение стыков (AO)","Свечение (Bloom)","Отражения окружения","Нейтральная цветокоррекция"};
         public const string ExposurePath="visual.ColorGradingExposure";
         public const string SaturationPath="visual.ColorGradingSaturation";
         public static readonly string[] ColorAdjustmentPaths={ExposurePath,SaturationPath};
+        public static int AntialiasingLevel
+        {
+            get{int value=PlayerPrefs.GetInt(AntialiasingKey,DefaultAntialiasing);return value>=AntialiasingOff&&value<=AntialiasingHigh?value:DefaultAntialiasing;}
+        }
+        public static void SetAntialiasingLevel(int value)
+        {PlayerPrefs.SetInt(AntialiasingKey,value>=AntialiasingOff&&value<=AntialiasingHigh?value:DefaultAntialiasing);PlayerPrefs.Save();}
         public static float Adjustment(ProvingProfile profile,string path)
         {
             var d=profile.Descriptor(path);float value=PlayerPrefs.GetFloat("StarTournament.Graphics."+path,profile.Get(path));

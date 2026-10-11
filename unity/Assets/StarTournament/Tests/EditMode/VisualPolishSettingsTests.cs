@@ -4,6 +4,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class VisualPolishSettingsTests
     {
+        [Test] public void AntialiasingPreferencePersistsAValidSharedLevelAndRepairsInvalidValues()
+        {
+            string key=NativeVisualPreferences.AntialiasingKey;bool existed=PlayerPrefs.HasKey(key);int old=PlayerPrefs.GetInt(key);
+            try
+            {
+                PlayerPrefs.DeleteKey(key);Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(NativeVisualPreferences.DefaultAntialiasing));
+                foreach(int level in new[]{NativeVisualPreferences.AntialiasingOff,NativeVisualPreferences.AntialiasingLow,NativeVisualPreferences.AntialiasingMedium,NativeVisualPreferences.AntialiasingHigh})
+                {NativeVisualPreferences.SetAntialiasingLevel(level);Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(level));Assert.That(PlayerPrefs.GetInt(key),Is.EqualTo(level));}
+                PlayerPrefs.SetInt(key,99);Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(NativeVisualPreferences.DefaultAntialiasing));
+                NativeVisualPreferences.SetAntialiasingLevel(99);Assert.That(PlayerPrefs.GetInt(key),Is.EqualTo(NativeVisualPreferences.DefaultAntialiasing));
+            }
+            finally{if(existed)PlayerPrefs.SetInt(key,old);else PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();}
+        }
         [Test] public void VisualRegistryUpgradeRetainsImmutableHistoryHashes()
         {
             string directory=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"st-visual-history-"+System.Guid.NewGuid());System.IO.Directory.CreateDirectory(directory);

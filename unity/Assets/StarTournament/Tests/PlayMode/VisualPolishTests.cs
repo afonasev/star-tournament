@@ -15,11 +15,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class VisualPolishTests
     {
         Scene scene;ProvingGround ground;
+        bool hadAntialiasing;int priorAntialiasing;
         readonly Dictionary<string,Tuple<bool,float,int>> preferences=new Dictionary<string,Tuple<bool,float,int>>();
         Button B(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         T Control<T>(string name) where T:Component=>ground.GetComponentsInChildren<T>(true).Single(c=>c.name==name);
         [UnitySetUp] public IEnumerator Setup()
         {
+            hadAntialiasing=PlayerPrefs.HasKey(NativeVisualPreferences.AntialiasingKey);priorAntialiasing=PlayerPrefs.GetInt(NativeVisualPreferences.AntialiasingKey);
+            NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingOff);
             foreach(VisualEffect effect in Enum.GetValues(typeof(VisualEffect)))
             {
                 string key=NativeVisualPreferences.Key(effect);
@@ -34,7 +37,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
+            Time.timeScale=1;
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+            if(hadAntialiasing)PlayerPrefs.SetInt(NativeVisualPreferences.AntialiasingKey,priorAntialiasing);else PlayerPrefs.DeleteKey(NativeVisualPreferences.AntialiasingKey);PlayerPrefs.Save();
             foreach(var p in preferences){if(!p.Value.Item1)PlayerPrefs.DeleteKey(p.Key);else if(!p.Key.EndsWith(".Enabled"))PlayerPrefs.SetFloat(p.Key,p.Value.Item2);else PlayerPrefs.SetInt(p.Key,p.Value.Item3);}preferences.Clear();PlayerPrefs.Save();
         }
         [OneTimeTearDown] public void RestoreNewKeysFromInterruptedOwnedQa()
@@ -52,6 +57,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator GraphicsControlsPersistAndScrollToLastEffect()
         {
             B("main-action-4").onClick.Invoke();B("settings-section-0").onClick.Invoke();
+            var antialiasing=B("settings-antialiasing");Assert.That(antialiasing.GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingOff]));
+            Assert.That(Control<Toggle>("settings-vsync").navigation.selectOnDown,Is.EqualTo(antialiasing));
+            Assert.That(antialiasing.navigation.selectOnDown,Is.EqualTo(Control<Toggle>("settings-visual-Lighting-enabled")));
+            for(int level=NativeVisualPreferences.AntialiasingLow;level<=NativeVisualPreferences.AntialiasingHigh;level++)
+            {antialiasing.onClick.Invoke();Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(level));Assert.That(antialiasing.GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[level]));}
+            var graphicsScroll=Control<ScrollRect>("settings-image");graphicsScroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();antialiasing.GetComponent<MenuScrollFocus>().Reveal();Canvas.ForceUpdateCanvases();Assert.That(graphicsScroll.verticalNormalizedPosition,Is.GreaterThan(.5f));
+            yield return NativeLoadingScreenTests.Capture("antialiasing-setting",ground.transform.Find("native-ui").gameObject,()=>antialiasing.GetComponent<MenuScrollFocus>().Reveal());
+            antialiasing.onClick.Invoke();Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(NativeVisualPreferences.AntialiasingOff));
             foreach(VisualEffect effect in Enum.GetValues(typeof(VisualEffect)))
             {
                 var toggle=Control<Toggle>("settings-visual-"+effect+"-enabled");var slider=Control<Slider>("settings-visual-"+effect+"-strength");
@@ -66,7 +79,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var scroll=Control<ScrollRect>("settings-image");Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(.2f));
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(last.gameObject);yield return NativeLoadingScreenTests.Capture("graphics-scrolled",ground.transform.Find("native-ui").gameObject,()=>last.GetComponent<MenuScrollFocus>().Reveal());
             scroll.verticalNormalizedPosition=1;yield return NativeLoadingScreenTests.Capture("graphics-top",ground.transform.Find("native-ui").gameObject);
-            B("settings-back").onClick.Invoke();B("main-action-4").onClick.Invoke();Assert.That(last.value,Is.EqualTo(115));Assert.That(Control<Slider>("settings-color-0").value,Is.EqualTo(.3f).Within(.00001f));
+            B("settings-back").onClick.Invoke();B("main-action-4").onClick.Invoke();Assert.That(B("settings-antialiasing").GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingOff]));Assert.That(last.value,Is.EqualTo(115));Assert.That(Control<Slider>("settings-color-0").value,Is.EqualTo(.3f).Within(.00001f));
         }
         [UnityTest] public IEnumerator SwitchingEffectsRestoresBaselineAndKeepsGeometry()
         {
@@ -112,6 +125,102 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.GetComponentsInChildren<Camera>().Count(c=>c.enabled),Is.EqualTo(4));
                 NativeVisualPreferences.SetEnabled(VisualEffect.ColorGrading,false);visual.Apply();yield return CaptureWorld(map+"-neutral-disabled");
                 ground.SendMessage("Menu");B("main-action-0").onClick.Invoke();
+            }
+        }
+        [UnityTest] public IEnumerator AntialiasingIsIndependentAndComparesIdenticalViewsOnAllArenas()
+        {
+            B("main-action-0").onClick.Invoke();
+            foreach(var map in new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id})
+            {
+                yield return Begin(map);Effects(false);var visual=ground.GetComponentInChildren<NativeVisualPresentation>();
+                Assert.That(ground.transform.Find("native-ui").GetComponent<Canvas>().renderMode,Is.EqualTo(RenderMode.ScreenSpaceOverlay),"HUD stays outside the camera post-process pass");
+                Time.timeScale=0;NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingOff);visual.Apply();yield return CaptureWorld(map+"-antialias-none");
+                NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingMedium);visual.Apply();
+                var cameras=ground.GetComponentsInChildren<Camera>().Where(camera=>camera.enabled).ToArray();Assert.That(cameras.Length,Is.EqualTo(4));
+                foreach(var camera in cameras)
+                {
+                    var data=camera.GetUniversalAdditionalCameraData();Assert.That(data.antialiasing,Is.EqualTo(AntialiasingMode.SubpixelMorphologicalAntiAliasing));
+                    Assert.That(data.antialiasingQuality,Is.EqualTo(AntialiasingQuality.Medium));Assert.That(data.renderPostProcessing,Is.True);
+                }
+                Assert.That(visual.GetComponent<Volume>(),Is.Null,"AA must not create or require a volume profile");
+                yield return CaptureWorld(map+"-antialias-smaa-medium");
+                if(map==CombatBowlCatalog.Id)
+                {
+                    foreach(var pair in new[]{Tuple.Create(NativeVisualPreferences.AntialiasingHigh,AntialiasingQuality.High),Tuple.Create(NativeVisualPreferences.AntialiasingLow,AntialiasingQuality.Low)})
+                    {
+                        NativeVisualPreferences.SetAntialiasingLevel(pair.Item1);visual.Apply();
+                        foreach(var camera in cameras)Assert.That(camera.GetUniversalAdditionalCameraData().antialiasingQuality,Is.EqualTo(pair.Item2));
+                    }
+                    NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingMedium);visual.Apply();
+                }
+                NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingOff);visual.Apply();
+                foreach(var camera in cameras){var data=camera.GetUniversalAdditionalCameraData();Assert.That(data.antialiasing,Is.EqualTo(AntialiasingMode.None));Assert.That(data.renderPostProcessing,Is.False);}
+                Time.timeScale=1;ground.SendMessage("Menu");B("main-action-0").onClick.Invoke();
+            }
+        }
+        [UnityTest] public IEnumerator EquipmentFillComparesAllWeaponsWithoutLightingTheWorld()
+        {
+            B("main-action-0").onClick.Invoke();
+            foreach(var map in new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id})
+            {
+                yield return Begin(map);Time.timeScale=0;
+                foreach(VisualEffect effect in Enum.GetValues(typeof(VisualEffect)))NativeVisualPreferences.SetStrength(ground.Profile,effect,50);
+                NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingMedium);Effects(true);
+                var cameras=ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled).OrderBy(c=>c.name).ToArray();
+                var fills=cameras.Select(c=>c.transform.Find("equipment-fill").GetComponent<Light>()).ToArray();
+                var views=cameras.Select(c=>c.transform.Find("trooper-view").gameObject).ToArray();
+                int meshes=ground.GetComponentsInChildren<MeshFilter>(true).Length,colliders=ground.GetComponentsInChildren<Collider>(true).Length;
+                Assert.That(cameras.Length,Is.EqualTo(4));
+                foreach(var fill in fills)Assert.That(fill.intensity,Is.EqualTo(ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity")));
+                foreach(WeaponId weapon in Enum.GetValues(typeof(WeaponId)))
+                {
+                    var snapshot=ground.Session.Capture();
+                    for(int i=0;i<snapshot.Lives.Length;i++)
+                    {
+                        var life=snapshot.Lives[i];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
+                        life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;life.Ammo=CombatLife.AmmoFor(life,weapon);snapshot.Lives[i]=life;
+                    }
+                    ground.Session.Restore(snapshot);ground.SendMessage("LateUpdate");
+                    var matrices=cameras.Select(c=>c.transform.localToWorldMatrix).ToArray();
+                    double clock=ground.Session.Time;
+                    foreach(var fill in fills)fill.intensity=.05f;
+                    yield return CaptureWorld(map+"-"+weapon+"-before");
+                    if(map==IndustrialTunnelsCatalog.Id&&weapon==WeaponId.Rifle)
+                        foreach(float level in new[]{.65f,.95f})
+                        {
+                            foreach(var fill in fills)fill.intensity=level;
+                            yield return CaptureWorld(map+"-"+weapon+"-candidate-"+level.ToString("F2",System.Globalization.CultureInfo.InvariantCulture));
+                        }
+                    foreach(var fill in fills)fill.intensity=ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity");
+                    yield return CaptureWorld(map+"-"+weapon+"-after");
+                    Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                    for(int i=0;i<cameras.Length;i++)Assert.That(cameras[i].transform.localToWorldMatrix,Is.EqualTo(matrices[i]));
+                    Assert.That(ground.GetComponentsInChildren<MeshFilter>(true).Length,Is.EqualTo(meshes));
+                    Assert.That(ground.GetComponentsInChildren<Collider>(true).Length,Is.EqualTo(colliders));
+                }
+                // With own equipment hidden, its light must not alter world/participant pixels.
+                foreach(var view in views)view.SetActive(false);
+                foreach(var fill in fills)fill.intensity=.05f;
+                var baseline=cameras.Select(RenderWorldPixels).ToArray();
+                foreach(var fill in fills)fill.intensity=ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity");
+                for(int i=0;i<cameras.Length;i++)Assert.That(RenderWorldPixels(cameras[i]),Is.EqualTo(baseline[i]),"Equipment fill must not light the world or another participant");
+                foreach(var view in views)view.SetActive(true);
+                Time.timeScale=1;ground.SendMessage("Menu");B("main-action-0").onClick.Invoke();
+            }
+        }
+        static byte[] RenderWorldPixels(Camera camera)
+        {
+            var target=new RenderTexture(800,450,24,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+            var pixels=new Texture2D(800,450,TextureFormat.RGB24,false);
+            var prior=RenderTexture.active;var old=camera.targetTexture;var rect=camera.rect;
+            try
+            {
+                camera.targetTexture=target;camera.rect=new Rect(0,0,1,1);camera.Render();RenderTexture.active=target;
+                pixels.ReadPixels(new Rect(0,0,800,450),0,0);pixels.Apply();return pixels.GetRawTextureData();
+            }
+            finally
+            {
+                camera.targetTexture=old;camera.rect=rect;RenderTexture.active=prior;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);
             }
         }
         [UnityTest] public IEnumerator RenderAllArenasBeforeAndAfterWithFourViewports()
