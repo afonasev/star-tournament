@@ -7,10 +7,10 @@ namespace StarTournament.ProvingGround
     /// <summary>Dynamic transit adapter uses only the planner's known goal and publicly visible lift state.</summary>
     public sealed class WellBotLiftRouter
     {
-        readonly WellLiftSystem lifts;readonly INativeNavigation routes;readonly float range,lead,radius;
+        readonly WellLiftSystem lifts;readonly INativeNavigation routes;readonly float range,lead,radius,skin;
         WellBotLiftIntent intent=new WellBotLiftIntent();
         public WellBotLiftRouter(WellLiftSystem lifts,INativeNavigation routes,ProvingProfile profile,ProvingProfile movement)
-        {this.lifts=lifts;this.routes=routes;range=profile.Get("well.botDockRange");lead=profile.Get("well.botExitLead");radius=movement.Get("player.capsule.radius");}
+        {this.lifts=lifts;this.routes=routes;range=profile.Get("well.botDockRange");lead=profile.Get("well.botExitLead");radius=movement.Get("player.capsule.radius");skin=movement.Get("player.capsule.skinWidth");}
         public WellBotLiftIntent Capture()=>new WellBotLiftIntent{Lift=intent.Lift,Floor=intent.Floor,Boarding=intent.Boarding,Riding=intent.Riding,Exiting=intent.Exiting};
         public void Validate(WellBotLiftIntent s)
         {if(s==null||s.Floor<0||s.Floor>2||!string.IsNullOrEmpty(s.Lift)&&!lifts.Capture().Any(x=>x.Id==s.Lift)||string.IsNullOrEmpty(s.Lift)&&(s.Boarding||s.Riding||s.Exiting)||s.Exiting&&!s.Riding||s.Boarding&&s.Riding)throw new ArgumentException("Invalid bot lift intent");}
@@ -55,7 +55,7 @@ namespace StarTournament.ProvingGround
             }
             intent.Boarding=true;
             // Board close to the lip so the jump to the middle storey has a real, short horizontal clearance.
-            return Move(original,pose,new Vector3(0,state.Height,side*26.2f)-pose.Position,false);
+            return Move(original,pose,new Vector3(d.Center.x,state.Height,d.Center.z-side*(d.Size.z*.5f-radius-skin))-pose.Position,false);
         }
         static LocalAction Move(LocalAction action,ParticipantState pose,Vector3 world,bool jump)
         {

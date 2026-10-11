@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround.Tests
             var actions=new[]{default(LocalAction)};
             for(int i=0;i<180;i++)session.Tick(actions,1/60f);
             var saved=session.Capture();float height=arena.Lifts.Capture()[1].Height;Assert.That(height,Is.GreaterThan(5));Assert.That(motor.State.Position.y,Is.EqualTo(height).Within(.15f));
-            for(int i=0;i<180;i++)session.Tick(actions,1/60f);var final=session.Capture();Assert.That(motor.State.Position.y,Is.EqualTo(10).Within(.15f));
+            for(int i=0;i<180;i++){session.Tick(actions,1/60f);Assert.That(motor.State.Position.y,Is.EqualTo(arena.Lifts.Capture()[1].Height).Within(.15f),"carry tick "+i+" pose="+JsonUtility.ToJson(motor.State));}var final=session.Capture();Assert.That(motor.State.Position.y,Is.EqualTo(10).Within(.15f));
             session.Restore(saved);Assert.That(arena.Lifts.Capture()[1].Height,Is.EqualTo(height));Assert.That(motor.State.Position,Is.EqualTo(saved.Poses[0].Position));
             for(int i=0;i<180;i++)session.Tick(actions,1/60f);Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(JsonUtility.ToJson(final)),"restored continuation");
             for(int i=0;i<300;i++)session.Tick(actions,1/60f);Assert.That(arena.Lifts.Capture()[1].Height,Is.EqualTo(10));

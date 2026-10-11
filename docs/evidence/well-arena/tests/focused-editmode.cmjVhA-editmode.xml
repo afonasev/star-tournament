@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.334379">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="493" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.334379" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1598" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="493" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.326968" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3577" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1599" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="493" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.323247" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1600" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="493" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.319790" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1601" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="493" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.316499" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1602" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="375" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:32Z" duration="0.134768" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1228" name="DesignLabHistoryTests" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="52" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:32Z" duration="0.126276" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1252" name="CompleteRegistryHasUniquePathsAndValidDefaults" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.CompleteRegistryHasUniquePathsAndValidDefaults" methodname="CompleteRegistryHasUniquePathsAndValidDefaults" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="280677326" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:32Z" duration="0.114276" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1143" name="WellArenaTests" fullname="StarTournament.ProvingGround.Tests.WellArenaTests" classname="StarTournament.ProvingGround.Tests.WellArenaTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.175303" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1145" name="AddingWellProfilesPreservesHistoricalLabHashAndEditableValues" fullname="StarTournament.ProvingGround.Tests.WellArenaTests.AddingWellProfilesPreservesHistoricalLabHashAndEditableValues" methodname="AddingWellProfilesPreservesHistoricalLabHashAndEditableValues" classname="StarTournament.ProvingGround.Tests.WellArenaTests" runstate="Runnable" seed="834573353" result="Passed" start-time="2026-10-11 20:26:32Z" end-time="2026-10-11 20:26:35Z" duration="3.137137" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1144" name="AuthoredIdentityGeometryAndLoadoutAreValid" fullname="StarTournament.ProvingGround.Tests.WellArenaTests.AuthoredIdentityGeometryAndLoadoutAreValid" methodname="AuthoredIdentityGeometryAndLoadoutAreValid" classname="StarTournament.ProvingGround.Tests.WellArenaTests" runstate="Runnable" seed="324840313" result="Passed" start-time="2026-10-11 20:26:35Z" end-time="2026-10-11 20:26:35Z" duration="0.026594" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1146" name="ExactDelayEmptyTripTerminalStopAndReboarding" fullname="StarTournament.ProvingGround.Tests.WellArenaTests.ExactDelayEmptyTripTerminalStopAndReboarding" methodname="ExactDelayEmptyTripTerminalStopAndReboarding" classname="StarTournament.ProvingGround.Tests.WellArenaTests" runstate="Runnable" seed="1395710489" result="Passed" start-time="2026-10-11 20:26:35Z" end-time="2026-10-11 20:26:35Z" duration="0.005535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1148" name="InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed" fullname="StarTournament.ProvingGround.Tests.WellArenaTests.InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed" methodname="InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed" classname="StarTournament.ProvingGround.Tests.WellArenaTests" runstate="Runnable" seed="1716793600" result="Passed" start-time="2026-10-11 20:26:35Z" end-time="2026-10-11 20:26:35Z" duration="0.002020" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1147" name="PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding" fullname="StarTournament.ProvingGround.Tests.WellArenaTests.PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding" methodname="PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding" classname="StarTournament.ProvingGround.Tests.WellArenaTests" runstate="Runnable" seed="242591601" result="Passed" start-time="2026-10-11 20:26:35Z" end-time="2026-10-11 20:26:35Z" duration="0.002991" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

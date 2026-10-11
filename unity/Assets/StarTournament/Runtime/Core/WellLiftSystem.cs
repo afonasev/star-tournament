@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround
         public bool OnPlatform(string id,ParticipantState pose)
         {
             var d=Definition(id);var s=states.Single(x=>x.Id==id);
-            return Math.Abs(pose.Position.x-d.Center.x)<d.Size.x*.5f&&Math.Abs(pose.Position.z-d.Center.z)<d.Size.z*.5f&&Math.Abs(pose.Position.y-s.Height)<=tolerance&&pose.Velocity.y<=0;
+            return Math.Abs(pose.Position.x-d.Center.x)<d.Size.x*.5f&&Math.Abs(pose.Position.z-d.Center.z)<d.Size.z*.5f&&Math.Abs(pose.Position.y-s.Height)<=tolerance&&(pose.Grounded||pose.Velocity.y<=0);
         }
         public bool Supports(ParticipantState pose)=>definitions.Any(d=>OnPlatform(d.Id,pose));
         public void Validate(WellLiftState[] snapshot)

@@ -1,0 +1,8 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=WellArenaPhysicsTests;WellArenaMatchTests
+lab_history=/Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/../.local/unity-evidence/focused-playmode.ywsp0E/qa-lab-history.json
+revision=69b4a276ca6b2e6631c14a86c3c468a0f53ee238
+ M ProjectSettings/ShaderGraphSettings.asset
+?? Assets/InitTestScenebd5a6b3c-c3e0-4c1c-b2fe-5a3238775c75.unity
+?? Assets/InitTestScenebd5a6b3c-c3e0-4c1c-b2fe-5a3238775c75.unity.meta
