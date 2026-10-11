@@ -7,6 +7,9 @@ namespace StarTournament.ProvingGround
     public sealed class NativeVisualPresentation : MonoBehaviour
     {
         struct Surface {public Material Material;public VisualMaterialRole Role;public float Metallic,Smoothness;}
+        struct LocalLight {public Light Light;public float Intensity;}
+        readonly List<LocalLight> localLights=new List<LocalLight>();
+        string localLightPath;
         readonly List<Surface> surfaces=new List<Surface>();
         readonly Dictionary<GameObject,int> layers=new Dictionary<GameObject,int>();
         ProvingProfile profile;Light key;float keyIntensity;Color ambient;AmbientMode ambientMode;
@@ -27,6 +30,12 @@ namespace StarTournament.ProvingGround
             foreach(var renderer in world.GetComponentsInChildren<Renderer>(true))
                 if(renderer.gameObject.layer==0&&!renderer.GetComponent<Collider>())
                 {layers[renderer.gameObject]=0;renderer.gameObject.layer=ProvingArena.WorldLayer;}
+            localLightPath=world.GetComponentInChildren<IndustrialTunnelsPresentation>()?"visual.tunnelsLocalLightScale":
+                world.GetComponentInChildren<LunarLaboratoryPresentation>()?"visual.lunarLocalLightScale":
+                world.GetComponentInChildren<OrbitalLeaguePresentation>()?"visual.bowlLocalLightScale":null;
+            // Arena-owned lamps only. Camera-local equipment fill and participant materials stay outside this registry.
+            if(localLightPath!=null)foreach(var lamp in world.GetComponentsInChildren<Light>(true))
+                localLights.Add(new LocalLight{Light=lamp,Intensity=lamp.intensity});
             Apply();
         }
         public void BindCameras(Camera[] views){cameras=views;if(bound)ApplyCameras();}
@@ -34,8 +43,12 @@ namespace StarTournament.ProvingGround
         {
             if(!bound)return;
             float light=NativeVisualPreferences.Effective(profile,VisualEffect.Lighting);
-            RenderSettings.ambientLight=ambient*Mathf.Lerp(1,profile.Get("visual.fillScale"),light);
+            // Preserve each arena's authored tint while establishing a bounded diffuse floor.
+            Color tint=ambient.maxColorComponent>0?ambient/ambient.maxColorComponent:Color.white;
+            RenderSettings.ambientLight=ambient*Mathf.Lerp(1,profile.Get("visual.fillScale"),light)+tint*(profile.Get("visual.ambientLift")*light);
             key.intensity=keyIntensity*Mathf.Lerp(1,profile.Get("visual.keyScale"),light);
+            foreach(var lamp in localLights)if(lamp.Light)
+                lamp.Light.intensity=lamp.Intensity*Mathf.Lerp(1,profile.Get(localLightPath),light);
             float materials=NativeVisualPreferences.Effective(profile,VisualEffect.Materials);
             foreach(var s in surfaces)if(s.Material)
             {
@@ -107,6 +120,7 @@ namespace StarTournament.ProvingGround
         public void ResetWorld()
         {
             if(bound){RenderSettings.ambientLight=ambient;RenderSettings.ambientMode=ambientMode;if(key)key.intensity=keyIntensity;}
+            foreach(var lamp in localLights)if(lamp.Light)lamp.Light.intensity=lamp.Intensity;localLights.Clear();
             foreach(var s in surfaces)if(s.Material){s.Material.SetFloat("_Metallic",s.Metallic);s.Material.SetFloat("_Smoothness",s.Smoothness);}surfaces.Clear();
             foreach(var p in layers)if(p.Key)p.Key.layer=p.Value;layers.Clear();
             if(probe){probe.enabled=false;DestroyImmediate(probe.gameObject);}probe=null;

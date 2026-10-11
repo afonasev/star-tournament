@@ -255,6 +255,8 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
             var shipped=this.shipped;
+            if(!sought.Descriptors.Any(d=>d.Path=="visual.bowlLocalLightScale"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArenaHarmonization()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==NativeVisualPreferences.Path(VisualEffect.ColorGrading)))
@@ -579,6 +581,7 @@ namespace StarTournament.ProvingGround
                         // values and the immutable source revision unchanged.
                         if(d.Path=="blood.drops"&&old.Snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                             value=currentDescriptor.DefaultValue;
+                        value=ProvingProfile.UpgradeArenaVisualValue(d.Path,old.Snapshot.Profile(d.Path).Version,value,currentDescriptor);
                         next.Set(d.Path,value);
                     }
                     // Version3 used the office controls for both floors and stair annexes.
