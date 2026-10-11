@@ -95,9 +95,14 @@ namespace StarTournament.ProvingGround
         {
             if(cameras==null)return;
             int renderer=Mathf.RoundToInt(NativeVisualPreferences.Effective(profile,VisualEffect.AmbientOcclusion)*4);
-            bool post=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom)>0||NativeVisualPreferences.Effective(profile,VisualEffect.ColorGrading)>0;
+            bool antialiasing=NativeVisualPreferences.AntialiasingLevel>NativeVisualPreferences.AntialiasingOff;
+            bool post=antialiasing||NativeVisualPreferences.Effective(profile,VisualEffect.Bloom)>0||NativeVisualPreferences.Effective(profile,VisualEffect.ColorGrading)>0;
             foreach(var camera in cameras)if(camera)
-            {var data=camera.GetUniversalAdditionalCameraData();data.SetRenderer(renderer);data.renderPostProcessing=post;camera.allowHDR=true;}
+            {
+                var data=camera.GetUniversalAdditionalCameraData();data.SetRenderer(renderer);data.renderPostProcessing=post;camera.allowHDR=true;
+                data.antialiasing=antialiasing?AntialiasingMode.SubpixelMorphologicalAntiAliasing:AntialiasingMode.None;
+                data.antialiasingQuality=(AntialiasingQuality)Mathf.Clamp(NativeVisualPreferences.AntialiasingLevel-1,0,2);
+            }
         }
         public void ResetWorld()
         {

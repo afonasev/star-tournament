@@ -13,6 +13,7 @@ namespace StarTournament.ProvingGround
         void SetVisualEnabled(VisualEffect effect,bool value){NativeVisualPreferences.SetEnabled(effect,value);visualPresentation?.Apply();RefreshSettingsUi();}
         void SetVisualStrength(VisualEffect effect,float value){NativeVisualPreferences.SetStrength(Profile,effect,value);visualPresentation?.Apply();RefreshSettingsUi();}
         void SetColorAdjustment(string path,float value){NativeVisualPreferences.SetAdjustment(Profile,path,value);visualPresentation?.Apply();RefreshSettingsUi();}
+        void SetAntialiasingLevel(int value){NativeVisualPreferences.SetAntialiasingLevel(value);visualPresentation?.Apply();RefreshSettingsUi();}
         enum SettingsSection { Image, Control, Interface, Audio }
         const string DisplayWidthKey="StarTournament.Graphics.Width";
         const string DisplayHeightKey="StarTournament.Graphics.Height";
