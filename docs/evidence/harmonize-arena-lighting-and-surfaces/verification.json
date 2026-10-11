@@ -1,0 +1,432 @@
+{
+  "implementation_commit": "64df074b3ab8bc78d46b69ce48e8b142f87b905a",
+  "baseline": "fba20397b4fd019b8b02540e5e99abb29ae21eb6",
+  "profile": "unity-proving-ground-v1@18",
+  "graphics": "Metal / Apple M2 Pro",
+  "results": [
+    {
+      "name": "initial-editmode",
+      "result": "Passed",
+      "total": 60,
+      "passed": 60,
+      "skipped": 0,
+      "xml_duration_seconds_including_fixture_setup_and_teardown": 311.5892268,
+      "cases": [
+        {
+          "name": "AsyncSelectionPreservesSnapshotsAndBlocksConcurrentMutation",
+          "result": "Passed",
+          "duration": "2.844316"
+        },
+        {
+          "name": "AsyncWriteFailureLeavesSelectionAndHistoryIntact",
+          "result": "Passed",
+          "duration": "17.326870"
+        },
+        {
+          "name": "AudioUpgradePreservesOldRevisionHashAndCustomCombatValues",
+          "result": "Passed",
+          "duration": "7.673893"
+        },
+        {
+          "name": "AuditCleanupPreservesOldTechnicalAndModelOverridesAndBlocksNewChanges",
+          "result": "Passed",
+          "duration": "2.961007"
+        },
+        {
+          "name": "AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning",
+          "result": "Passed",
+          "duration": "0.055174"
+        },
+        {
+          "name": "BotMovementUpgradePreservesOldHashesCustomTuningAndNewDefaults",
+          "result": "Passed",
+          "duration": "6.065809"
+        },
+        {
+          "name": "CombinedPulseV1AndPaletteV2UpgradePreservesCustomHistory",
+          "result": "Passed",
+          "duration": "9.430367"
+        },
+        {
+          "name": "CompleteRegistryHasUniquePathsAndValidDefaults",
+          "result": "Passed",
+          "duration": "0.053138"
+        },
+        {
+          "name": "CorruptionIsPreservedAndCannotBeOverwritten",
+          "result": "Passed",
+          "duration": "0.048336"
+        },
+        {
+          "name": "CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(False)",
+          "result": "Passed",
+          "duration": "7.024369"
+        },
+        {
+          "name": "CutterDamageUpgradePreservesHistoryAndRefreshesPublishedBaseline(True)",
+          "result": "Passed",
+          "duration": "4.923849"
+        },
+        {
+          "name": "CutterThicknessUpgradePreservesCustomHistoryAndUpdatesRelease",
+          "result": "Passed",
+          "duration": "11.318548"
+        },
+        {
+          "name": "CutterThicknessUpgradeSelectsNewShippedRevision",
+          "result": "Passed",
+          "duration": "3.811534"
+        },
+        {
+          "name": "DeathImpulseUpgradeKeepsCustomValuesAndOldHashes",
+          "result": "Passed",
+          "duration": "8.082911"
+        },
+        {
+          "name": "DeathProfileUpgradePreservesPriorRevisionHashesAndCustomValues",
+          "result": "Passed",
+          "duration": "7.650082"
+        },
+        {
+          "name": "DefaultDisplayPreservesLegacyHistoryAndUserNames",
+          "result": "Passed",
+          "duration": "6.815511"
+        },
+        {
+          "name": "DescriptorMigrationRefreshesPreviouslyUsedValueIndex",
+          "result": "Passed",
+          "duration": "0.006865"
+        },
+        {
+          "name": "DiscretePanelUpgradePreservesV2SurfaceTuningAndHistory",
+          "result": "Passed",
+          "duration": "10.107623"
+        },
+        {
+          "name": "FootstepMixUpgradeKeepsCustomOldInterval",
+          "result": "Passed",
+          "duration": "8.191273"
+        },
+        {
+          "name": "FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory",
+          "result": "Passed",
+          "duration": "1.752616"
+        },
+        {
+          "name": "GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(False)",
+          "result": "Passed",
+          "duration": "7.014638"
+        },
+        {
+          "name": "GamepadAxesUpgradePreservesLegacyRevisionAndCustomSensitivity(True)",
+          "result": "Passed",
+          "duration": "7.057487"
+        },
+        {
+          "name": "GamepadTapThresholdAppendsCompatibleRevisionAndKeepsPriorSnapshotImmutable",
+          "result": "Passed",
+          "duration": "1.863553"
+        },
+        {
+          "name": "GamepadUpgradePreservesAudioOnlyRevisionHash",
+          "result": "Passed",
+          "duration": "6.931980"
+        },
+        {
+          "name": "IdentitySurfaceUpgradePreservesPaletteRevisionAndCustomColors",
+          "result": "Passed",
+          "duration": "8.647817"
+        },
+        {
+          "name": "InvalidRangeStepAndCrossFieldDraftCannotSave",
+          "result": "Passed",
+          "duration": "0.262319"
+        },
+        {
+          "name": "LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision",
+          "result": "Passed",
+          "duration": "2.080188"
+        },
+        {
+          "name": "LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible",
+          "result": "Passed",
+          "duration": "0.027102"
+        },
+        {
+          "name": "MigrationCacheSeparatesShippedMetadataAndKeepsDetachedHistoricalSnapshots",
+          "result": "Passed",
+          "duration": "30.062432"
+        },
+        {
+          "name": "MovementAudioUpgradePreservesV11HistoryAndCustomMix(False)",
+          "result": "Passed",
+          "duration": "9.748230"
+        },
+        {
+          "name": "MovementAudioUpgradePreservesV11HistoryAndCustomMix(True)",
+          "result": "Passed",
+          "duration": "9.006740"
+        },
+        {
+          "name": "PaletteUpgradePreservesOldRevisionAndAllowsMetadataValidatedTuning",
+          "result": "Passed",
+          "duration": "10.321043"
+        },
+        {
+          "name": "PreCutterHistoryAppendsDefaultsAndPreservesOriginalHash",
+          "result": "Passed",
+          "duration": "5.000274"
+        },
+        {
+          "name": "ProtectedReleaseCannotBeDeletedAndLocalProfileDeletionReturnsToRelease",
+          "result": "Passed",
+          "duration": "0.509176"
+        },
+        {
+          "name": "PulseEffectsAppendCompatibleRevisionAndKeepHistoricalHashAndRocketTuning",
+          "result": "Passed",
+          "duration": "3.416131"
+        },
+        {
+          "name": "PulseV1RevisionMigratesLightMetadataWithoutChangingItsHashOrCustomValues",
+          "result": "Passed",
+          "duration": "4.792137"
+        },
+        {
+          "name": "PulseV2VisibilityUpgradePreservesHistoryAndUsesSelectedScale",
+          "result": "Passed",
+          "duration": "4.783229"
+        },
+        {
+          "name": "SaveFromOldBaseAppendsWithoutMutatingEarlierHashesAndRestarts",
+          "result": "Passed",
+          "duration": "3.291923"
+        },
+        {
+          "name": "ScoreboardUpgradePreservesOldValuesAndHashes",
+          "result": "Passed",
+          "duration": "8.622457"
+        },
+        {
+          "name": "SerializedBotProfileDefaultsUpgradeWhileCustomValuesRemain",
+          "result": "Passed",
+          "duration": "0.004555"
+        },
+        {
+          "name": "SerializedPulseProfileUpgradesAtStartupAndPreservesTuning(1)",
+          "result": "Passed",
+          "duration": "0.001443"
+        },
+        {
+          "name": "SerializedPulseProfileUpgradesAtStartupAndPreservesTuning(2)",
+          "result": "Passed",
+          "duration": "0.000653"
+        },
+        {
+          "name": "SerializedV10ProfileGetsNewStepDefaultsWithoutOverwritingCustomInterval",
+          "result": "Passed",
+          "duration": "0.005196"
+        },
+        {
+          "name": "ShotOriginDescriptorMigratesOldHistoryWithoutChangingSavedValues",
+          "result": "Passed",
+          "duration": "8.540667"
+        },
+        {
+          "name": "SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(13)",
+          "result": "Passed",
+          "duration": "2.807481"
+        },
+        {
+          "name": "SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(14)",
+          "result": "Passed",
+          "duration": "3.224997"
+        },
+        {
+          "name": "StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation",
+          "result": "Passed",
+          "duration": "12.734757"
+        },
+        {
+          "name": "TamperedSnapshotHashFailsWithoutDestroyingFile",
+          "result": "Passed",
+          "duration": "1.023284"
+        },
+        {
+          "name": "TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning",
+          "result": "Passed",
+          "duration": "8.918461"
+        },
+        {
+          "name": "TravelingRiflePreservesPrePulseVersionAndLoadsItsHistory",
+          "result": "Passed",
+          "duration": "16.952789"
+        },
+        {
+          "name": "WeaponPickupUpgradePreservesPreviousReleaseAndUserHistory",
+          "result": "Passed",
+          "duration": "9.050359"
+        },
+        {
+          "name": "WriteFailureLeavesSelectionAndExistingFileIntact",
+          "result": "Passed",
+          "duration": "1.524336"
+        },
+        {
+          "name": "AntialiasingPreferencePersistsAValidSharedLevelAndRepairsInvalidValues",
+          "result": "Passed",
+          "duration": "0.004918"
+        },
+        {
+          "name": "ArenaHarmonizationUpgradePreservesHistoryAndCustomTuning",
+          "result": "Passed",
+          "duration": "3.869491"
+        },
+        {
+          "name": "ColorAdjustmentsArePersistedClampedAndStepped",
+          "result": "Passed",
+          "duration": "0.006886"
+        },
+        {
+          "name": "DescriptorsDefineValidSteppedPreferences",
+          "result": "Passed",
+          "duration": "0.000399"
+        },
+        {
+          "name": "DisabledKeepsStrengthAndInvalidValuesUseProfileDefault",
+          "result": "Passed",
+          "duration": "0.002170"
+        },
+        {
+          "name": "NeutralCurveIsSmoothMonotoneAndIdentityAtZero",
+          "result": "Passed",
+          "duration": "0.007466"
+        },
+        {
+          "name": "NeutralRegistryUpgradeKeepsVersion16Snapshot",
+          "result": "Passed",
+          "duration": "1.628131"
+        },
+        {
+          "name": "VisualRegistryUpgradeRetainsImmutableHistoryHashes",
+          "result": "Passed",
+          "duration": "1.599448"
+        }
+      ]
+    },
+    {
+      "name": "final-editmode",
+      "result": "Passed",
+      "total": 8,
+      "passed": 8,
+      "skipped": 0,
+      "xml_duration_seconds_including_fixture_setup_and_teardown": 6.9413476,
+      "cases": [
+        {
+          "name": "AntialiasingPreferencePersistsAValidSharedLevelAndRepairsInvalidValues",
+          "result": "Passed",
+          "duration": "0.011005"
+        },
+        {
+          "name": "ArenaHarmonizationUpgradePreservesHistoryAndCustomTuning",
+          "result": "Passed",
+          "duration": "3.791522"
+        },
+        {
+          "name": "ColorAdjustmentsArePersistedClampedAndStepped",
+          "result": "Passed",
+          "duration": "0.004166"
+        },
+        {
+          "name": "DescriptorsDefineValidSteppedPreferences",
+          "result": "Passed",
+          "duration": "0.000380"
+        },
+        {
+          "name": "DisabledKeepsStrengthAndInvalidValuesUseProfileDefault",
+          "result": "Passed",
+          "duration": "0.002499"
+        },
+        {
+          "name": "NeutralCurveIsSmoothMonotoneAndIdentityAtZero",
+          "result": "Passed",
+          "duration": "0.003355"
+        },
+        {
+          "name": "NeutralRegistryUpgradeKeepsVersion16Snapshot",
+          "result": "Passed",
+          "duration": "1.508532"
+        },
+        {
+          "name": "VisualRegistryUpgradeRetainsImmutableHistoryHashes",
+          "result": "Passed",
+          "duration": "1.591482"
+        }
+      ]
+    },
+    {
+      "name": "final-playmode",
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "xml_duration_seconds_including_fixture_setup_and_teardown": 36.8333447,
+      "cases": [
+        {
+          "name": "ArenaLightAndSurfaceRolesCompareFrozenZonesAndRestoreSources",
+          "result": "Passed",
+          "duration": "25.995956"
+        },
+        {
+          "name": "GradingAndBloomStayIndependentAndZeroDisablesGrading",
+          "result": "Passed",
+          "duration": "5.428387"
+        },
+        {
+          "name": "SwitchingEffectsRestoresBaselineAndKeepsGeometry",
+          "result": "Passed",
+          "duration": "5.371058"
+        }
+      ]
+    },
+    {
+      "name": "candidate-1-playmode",
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "xml_duration_seconds_including_fixture_setup_and_teardown": 66.624254,
+      "cases": [
+        {
+          "name": "ArenaLightAndSurfaceRolesCompareFrozenZonesAndRestoreSources",
+          "result": "Passed",
+          "duration": "55.929452"
+        },
+        {
+          "name": "GradingAndBloomStayIndependentAndZeroDisablesGrading",
+          "result": "Passed",
+          "duration": "5.248678"
+        },
+        {
+          "name": "SwitchingEffectsRestoresBaselineAndKeepsGeometry",
+          "result": "Passed",
+          "duration": "5.410762"
+        }
+      ]
+    }
+  ],
+  "final_capture_count": 48,
+  "pairs": 24,
+  "maps": 3,
+  "zone_groups_per_map": 2,
+  "weapons": 4,
+  "viewports_per_capture": 4,
+  "source_manifest": "tested-source-sha256.json",
+  "scope": "qa-scope.md",
+  "limits": [
+    "Initial 60 tests ran before additive ambientLift; final 8 metadata/history tests repeat affected visual registry contracts",
+    "No full suite, natural matches, Player/release/build/deploy or FPS benchmark",
+    "Editor images and agent inspection are not human/Player/device acceptance"
+  ],
+  "owned_generated_settings": "Editor-generated ProjectSettings.asset and ShaderGraphSettings.asset restored to the owned baseline after checks; excluded from source commits"
+}
