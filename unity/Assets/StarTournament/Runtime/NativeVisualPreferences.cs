@@ -2,10 +2,27 @@ using System;
 using UnityEngine;
 namespace StarTournament.ProvingGround
 {
-    public enum VisualEffect { Lighting, Materials, AmbientOcclusion, Bloom, Reflections }
+    public enum VisualEffect { Lighting, Materials, AmbientOcclusion, Bloom, Reflections, ColorGrading }
     public static class NativeVisualPreferences
     {
-        public static readonly string[] Names={"Объёмный свет","Отклик материалов","Затемнение стыков (AO)","Свечение (Bloom)","Отражения окружения"};
+        public static readonly string[] Names={"Объёмный свет","Отклик материалов","Затемнение стыков (AO)","Свечение (Bloom)","Отражения окружения","Нейтральная цветокоррекция"};
+        public const string ExposurePath="visual.ColorGradingExposure";
+        public const string SaturationPath="visual.ColorGradingSaturation";
+        public static readonly string[] ColorAdjustmentPaths={ExposurePath,SaturationPath};
+        public static float Adjustment(ProvingProfile profile,string path)
+        {
+            var d=profile.Descriptor(path);float value=PlayerPrefs.GetFloat("StarTournament.Graphics."+path,profile.Get(path));
+            return Validated(profile,d,value);
+        }
+        public static void SetAdjustment(ProvingProfile profile,string path,float value)
+        {
+            PlayerPrefs.SetFloat("StarTournament.Graphics."+path,Validated(profile,profile.Descriptor(path),value));PlayerPrefs.Save();
+        }
+        static float Validated(ProvingProfile profile,NumericDescriptor d,float value)
+        {
+            if(float.IsNaN(value)||float.IsInfinity(value))value=profile.Get(d.Path);
+            return Mathf.Clamp(Mathf.Round(value/d.Step)*d.Step,d.Minimum,d.Maximum);
+        }
         public static string Path(VisualEffect effect)=>"visual."+effect+"Percent";
         public static string Key(VisualEffect effect)=>"StarTournament.Graphics.Visual."+effect;
         public static bool Enabled(VisualEffect effect)=>PlayerPrefs.GetInt(Key(effect)+".Enabled",1)!=0;

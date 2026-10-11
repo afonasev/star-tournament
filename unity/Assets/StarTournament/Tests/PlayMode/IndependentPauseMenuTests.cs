@@ -84,6 +84,31 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             finally
             {if(hadStrength)PlayerPrefs.SetFloat(key+".Strength",oldStrength);else PlayerPrefs.DeleteKey(key+".Strength");if(hadEnabled)PlayerPrefs.SetInt(key+".Enabled",oldEnabled);else PlayerPrefs.DeleteKey(key+".Enabled");PlayerPrefs.Save();}
         }
+        [UnityTest] public IEnumerator ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            var toggle0=Object("seat-settings-0-settings-visual-ColorGrading-enabled").GetComponent<Toggle>();
+            var toggle1=Object("seat-settings-1-settings-visual-ColorGrading-enabled").GetComponent<Toggle>();
+            var slider0=Object("seat-settings-0-settings-visual-ColorGrading-strength").GetComponent<Slider>();
+            var slider1=Object("seat-settings-1-settings-visual-ColorGrading-strength").GetComponent<Slider>();
+            string key=NativeVisualPreferences.Key(VisualEffect.ColorGrading);bool hadStrength=PlayerPrefs.HasKey(key+".Strength"),hadEnabled=PlayerPrefs.HasKey(key+".Enabled");float oldStrength=PlayerPrefs.GetFloat(key+".Strength");int oldEnabled=PlayerPrefs.GetInt(key+".Enabled");
+            var exposure0=Object("seat-settings-0-settings-color-0").GetComponent<Slider>();var exposure1=Object("seat-settings-1-settings-color-0").GetComponent<Slider>();
+            var saturation0=Object("seat-settings-0-settings-color-1").GetComponent<Slider>();var saturation1=Object("seat-settings-1-settings-color-1").GetComponent<Slider>();
+            string exposureKey="StarTournament.Graphics."+NativeVisualPreferences.ExposurePath,saturationKey="StarTournament.Graphics."+NativeVisualPreferences.SaturationPath;
+            bool hadExposure=PlayerPrefs.HasKey(exposureKey),hadSaturation=PlayerPrefs.HasKey(saturationKey);float oldExposure=PlayerPrefs.GetFloat(exposureKey),oldSaturation=PlayerPrefs.GetFloat(saturationKey);
+            var clock=ground.Session.Time;
+            try
+            {
+                slider0.value=60;toggle0.isOn=true;exposure0.value=.3f;saturation0.value=110;yield return null;
+                Assert.That(slider1.value,Is.EqualTo(60));Assert.That(toggle1.isOn,Is.True);Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                Assert.That(exposure1.value,Is.EqualTo(.3f).Within(.00001f));Assert.That(saturation1.value,Is.EqualTo(110));
+                foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled))Assert.That(UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(camera).renderPostProcessing,Is.True);
+                toggle1.isOn=false;yield return null;Assert.That(toggle0.isOn,Is.False);Assert.That(slider0.value,Is.EqualTo(60));
+            }
+            finally
+            {if(hadStrength)PlayerPrefs.SetFloat(key+".Strength",oldStrength);else PlayerPrefs.DeleteKey(key+".Strength");if(hadEnabled)PlayerPrefs.SetInt(key+".Enabled",oldEnabled);else PlayerPrefs.DeleteKey(key+".Enabled");if(hadExposure)PlayerPrefs.SetFloat(exposureKey,oldExposure);else PlayerPrefs.DeleteKey(exposureKey);if(hadSaturation)PlayerPrefs.SetFloat(saturationKey,oldSaturation);else PlayerPrefs.DeleteKey(saturationKey);PlayerPrefs.Save();}
+        }
         [UnityTest] public IEnumerator TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses()
         {
             yield return Load();

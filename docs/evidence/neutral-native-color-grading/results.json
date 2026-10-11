@@ -1,0 +1,62 @@
+{
+  "baseline": "8410a69b95aadcde9b610ab321463c7b19d4cb9a",
+  "tested_source_commit": "6666391f",
+  "latest_unique_tests": 65,
+  "latest_passed": 65,
+  "latest_failed": 0,
+  "runs": [
+    {
+      "id": "compile-notrun",
+      "xml": null,
+      "result": "NotRun",
+      "total": 0
+    },
+    {
+      "id": "editmode",
+      "xml": "tests/editmode.xml",
+      "result": "Passed",
+      "total": "58",
+      "passed": "58",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "296.9773159"
+    },
+    {
+      "id": "playmode-headless",
+      "xml": "tests/playmode-headless.xml",
+      "result": "Failed(Child)",
+      "total": "7",
+      "passed": "6",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "49.4596416"
+    },
+    {
+      "id": "playmode-rendered",
+      "xml": "tests/playmode-rendered.xml",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "55.2430224"
+    },
+    {
+      "id": "playmode-gpu-lifecycle",
+      "xml": "tests/playmode-gpu-lifecycle.xml",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "19.0271382"
+    }
+  ],
+  "images": 11,
+  "physical_screen": false,
+  "player_build": false,
+  "full_tests": false,
+  "deployment": false,
+  "human_acceptance": "pending",
+  "note": "Headless reflection ownership failure is superseded by identical assertions with GPU. No source change or assertion weakening."
+}

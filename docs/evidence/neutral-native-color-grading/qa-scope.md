@@ -1,0 +1,10 @@
+# QA scope
+Baseline: 8410a69b95aadcde9b610ab321463c7b19d4cb9a. Changed: descriptor/profile registry v17, persisted color settings/menu navigation, neutral shared URP curve and ColorAdjustments lifecycle. No simulation changes.
+- `UNITY_RUN_MODE=shared unity/tools.sh test-edit-filter "VisualPolishSettingsTests;DesignLabHistoryTests"`: new curve/validation, exact v16 and previsual hashes, shared historical registry contracts.
+- `UNITY_RUN_MODE=shared unity/tools.sh test-play-filter "VisualPolishTests;IndependentPauseMenuTests.ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch;IndependentPauseMenuTests.GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch"`: volume ownership/off/zero/Bloom, settings scroll/persistence and pause propagation/frozen clock.
+- Shared GPU Editor run with same VisualPolishTests.RenderNeutralGradingOnAllArenas and GraphicsControlsPersistAndScrollToLastEffect filter, screenshot env: three matched before/after/off mosaics + UI. No physical screen, device or FPS claim.
+Full tests / Player builds / release / deploy not requested and deferred. Compile/import/admission tracked separately; skipped/empty XML is NotRun.
+
+Initial import/compile attempt stopped before tests: EditMode test assembly lacked Core RP Runtime for the actual TextureCurve API. Added direct asmdef reference; first attempt NotRun, rerun required. No assertions or runtime contracts changed to bypass this.
+
+Final selected outcomes: EditMode 58/58; headless PlayMode 6/7 (probe intentionally absent on Null GPU); same reflection ownership assertion rerun on GPU 1/1; rendered screenshot/UI 2/2. Latest unique cases 65/65. First import compile attempt NotRun. GPU rerun preserved assertions, no source changes. All runner commands finished and released capacity. Eleven PNGs inspected (three before/after/disabled + top/bottom settings). Mosaics contain independently rendered camera views, not a physical display. Default treatment is intentionally modest; actual capture white regions softened from 255 to about 250 at 50% strength. No GPU/FPS benchmark.

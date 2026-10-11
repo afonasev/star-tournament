@@ -18,6 +18,50 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{System.IO.Directory.Delete(directory,true);}
         }
+        [Test] public void NeutralCurveIsSmoothMonotoneAndIdentityAtZero()
+        {
+            foreach(float strength in new[]{0f,.5f,1f})
+            using(var curve=NativeVisualPresentation.NeutralCurve(strength,.12f,.15f))
+            {
+                float previous=-1;
+                for(int i=0;i<=256;i++)
+                {float x=i/256f,y=curve.Evaluate(x);Assert.That(y,Is.InRange(0f,1f));Assert.That(y,Is.GreaterThanOrEqualTo(previous));if(strength==0)Assert.That(y,Is.EqualTo(x).Within(.00001f));previous=y;}
+                Assert.That(curve.Evaluate(0),Is.Zero);Assert.That(curve.Evaluate(1),Is.EqualTo(1-strength*.15f).Within(.00001f));
+                if(strength>0)Assert.That(curve.Evaluate(.15f),Is.GreaterThan(.15f));
+            }
+        }
+        [Test] public void NeutralRegistryUpgradeKeepsVersion16Snapshot()
+        {
+            string directory=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"st-color-history-"+System.Guid.NewGuid());System.IO.Directory.CreateDirectory(directory);
+            string path=System.IO.Path.Combine(directory,"history.json");var current=DesignLabHistoryTests.Shipped();
+            var old=new LabBundle{Profiles=System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(current.Profiles,p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeNeutralColorGrading",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)))};
+            try
+            {
+                var original=new DesignLabHistory(path,old);original.Create("Neutral predecessor");var hash=original.Selected.Hash;
+                var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
+                Assert.That(System.Linq.Enumerable.Any(upgraded.SelectedProfile.Revisions,r=>r.Hash==hash&&r.Snapshot.Hash()==hash),Is.True);
+                Assert.That(upgraded.Selected.Snapshot.Get(NativeVisualPreferences.Path(VisualEffect.ColorGrading)),Is.EqualTo(50));
+                Assert.That(upgraded.Selected.Snapshot.Get(NativeVisualPreferences.ExposurePath),Is.Zero);
+            }
+            finally{System.IO.Directory.Delete(directory,true);}
+        }
+        [Test] public void ColorAdjustmentsArePersistedClampedAndStepped()
+        {
+            var profile=ProvingProfile.CreateDefault();
+            foreach(string path in NativeVisualPreferences.ColorAdjustmentPaths)
+            {
+                string key="StarTournament.Graphics."+path;bool existed=PlayerPrefs.HasKey(key);float old=PlayerPrefs.GetFloat(key);var d=profile.Descriptor(path);
+                try
+                {
+                    Assert.That(d.Validate(out var reason),Is.True,reason);
+                    NativeVisualPreferences.SetAdjustment(profile,path,d.Maximum+10);Assert.That(NativeVisualPreferences.Adjustment(profile,path),Is.EqualTo(d.Maximum));
+                    NativeVisualPreferences.SetAdjustment(profile,path,d.Minimum-10);Assert.That(NativeVisualPreferences.Adjustment(profile,path),Is.EqualTo(d.Minimum));
+                    NativeVisualPreferences.SetAdjustment(profile,path,d.Minimum+1.4f*d.Step);Assert.That(NativeVisualPreferences.Adjustment(profile,path),Is.EqualTo(d.Minimum+d.Step).Within(.00001f));
+                    PlayerPrefs.SetFloat(key,float.PositiveInfinity);Assert.That(NativeVisualPreferences.Adjustment(profile,path),Is.EqualTo(profile.Get(path)));
+                }
+                finally{if(existed)PlayerPrefs.SetFloat(key,old);else PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();}
+            }
+        }
         [Test] public void DescriptorsDefineValidSteppedPreferences()
         {
             var profile=ProvingProfile.CreateDefault();

@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround
         readonly List<Surface> surfaces=new List<Surface>();
         readonly Dictionary<GameObject,int> layers=new Dictionary<GameObject,int>();
         ProvingProfile profile;Light key;float keyIntensity;Color ambient;AmbientMode ambientMode;
-        Volume volume;VolumeProfile volumeProfile;Bloom bloom;ReflectionProbe probe;Transform arena;
+        Volume volume;VolumeProfile volumeProfile;Bloom bloom;ColorCurves curves;ColorAdjustments color;ReflectionProbe probe;Transform arena;
         Camera[] cameras;bool bound;
         public int SurfaceCount=>surfaces.Count;
         public ReflectionProbe EnvironmentProbe=>probe;
@@ -58,21 +58,44 @@ namespace StarTournament.ProvingGround
             }
             if(probe){probe.intensity=reflection*profile.Get("visual.reflectionIntensity");probe.enabled=reflection>0;}
             float glow=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom);
-            if(glow>0&&!volume)
+            float grading=NativeVisualPreferences.Effective(profile,VisualEffect.ColorGrading);
+            if((glow>0||grading>0)&&!volume)
             {
                 var source=Resources.Load<VolumeProfile>("VisualPolishVolume");
                 if(!source)throw new System.InvalidOperationException("Missing visual polish VolumeProfile");
                 volumeProfile=ScriptableObject.CreateInstance<VolumeProfile>();foreach(var component in source.components)volumeProfile.components.Add(Instantiate(component));
-                volume=gameObject.AddComponent<Volume>();volume.isGlobal=true;volume.priority=100;volume.sharedProfile=volumeProfile;volumeProfile.TryGet(out bloom);
+                volume=gameObject.AddComponent<Volume>();volume.isGlobal=true;volume.priority=100;volume.sharedProfile=volumeProfile;volumeProfile.TryGet(out bloom);volumeProfile.TryGet(out curves);volumeProfile.TryGet(out color);
             }
-            if(volume){volume.enabled=glow>0;bloom.intensity.Override(glow*profile.Get("visual.bloomIntensity"));bloom.threshold.Override(profile.Get("visual.bloomThreshold"));bloom.scatter.Override(profile.Get("visual.bloomScatter"));}
+            if(volume)
+            {
+                volume.enabled=glow>0||grading>0;bloom.active=glow>0;
+                bloom.intensity.Override(glow*profile.Get("visual.bloomIntensity"));bloom.threshold.Override(profile.Get("visual.bloomThreshold"));bloom.scatter.Override(profile.Get("visual.bloomScatter"));
+                curves.active=color.active=grading>0;
+                curves.master.value.Release();curves.master.Override(NeutralCurve(grading,profile.Get("visual.ColorGradingShadowLift"),profile.Get("visual.ColorGradingHighlightCompression")));
+                color.postExposure.Override(grading*NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.ExposurePath));
+                color.saturation.Override(grading*(NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.SaturationPath)-100));
+            }
             ApplyCameras();
+        }
+        public static TextureCurve NeutralCurve(float strength,float shadowLift,float highlightCompression)
+        {
+            // Five uniform samples represent one shared RGB curve. The analytic tangents
+            // keep it smooth and monotone within the descriptor limits; black stays black.
+            var keys=new Keyframe[5];
+            for(int i=0;i<keys.Length;i++)
+            {
+                float x=i/(float)(keys.Length-1),lift=strength*shadowLift,compression=strength*highlightCompression;
+                float y=x+4*lift*x*(1-x)*(1-x)-compression*x*x*x*x;
+                float tangent=1+4*lift*(1-4*x+3*x*x)-4*compression*x*x*x;
+                keys[i]=new Keyframe(x,y,tangent,tangent);
+            }
+            return new TextureCurve(keys,0,false,new Vector2(0,1));
         }
         void ApplyCameras()
         {
             if(cameras==null)return;
             int renderer=Mathf.RoundToInt(NativeVisualPreferences.Effective(profile,VisualEffect.AmbientOcclusion)*4);
-            bool post=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom)>0;
+            bool post=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom)>0||NativeVisualPreferences.Effective(profile,VisualEffect.ColorGrading)>0;
             foreach(var camera in cameras)if(camera)
             {var data=camera.GetUniversalAdditionalCameraData();data.SetRenderer(renderer);data.renderPostProcessing=post;camera.allowHDR=true;}
         }
@@ -83,7 +106,11 @@ namespace StarTournament.ProvingGround
             foreach(var p in layers)if(p.Key)p.Key.layer=p.Value;layers.Clear();
             if(probe){probe.enabled=false;DestroyImmediate(probe.gameObject);}probe=null;
             if(volume){volume.enabled=false;DestroyImmediate(volume);}volume=null;
-            if(volumeProfile){foreach(var c in volumeProfile.components)if(c)DestroyImmediate(c);DestroyImmediate(volumeProfile);}volumeProfile=null;bloom=null;bound=false;
+            if(curves)
+            {
+                foreach(var curve in new[]{curves.master,curves.red,curves.green,curves.blue,curves.hueVsHue,curves.hueVsSat,curves.satVsSat,curves.lumVsSat})curve.value.Release();
+            }
+            if(volumeProfile){foreach(var c in volumeProfile.components)if(c)DestroyImmediate(c);DestroyImmediate(volumeProfile);}volumeProfile=null;bloom=null;curves=null;color=null;bound=false;
         }
         void OnDestroy()=>ResetWorld();
     }

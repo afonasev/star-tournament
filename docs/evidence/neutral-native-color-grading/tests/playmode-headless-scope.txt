@@ -1,0 +1,5 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=VisualPolishTests;IndependentPauseMenuTests.ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch;IndependentPauseMenuTests.GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch
+lab_history=/Users/eaafonasev/.codex/worktrees/neutral-color-grading/star-tournament/unity/../.local/unity-evidence/focused-playmode.sxVFUT/qa-lab-history.json
+revision=6666391f6fcc64a8a42d1aa3bac30dbbb1789dd1

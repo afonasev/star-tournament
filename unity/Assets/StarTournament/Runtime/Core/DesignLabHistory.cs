@@ -255,6 +255,8 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
             var shipped=this.shipped;
+            if(!sought.Descriptors.Any(d=>d.Path==NativeVisualPreferences.Path(VisualEffect.ColorGrading)))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeNeutralColorGrading()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==NativeVisualPreferences.Path(VisualEffect.Lighting)))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVisualPolish()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-native-match-v1")?.Version??3)<3)

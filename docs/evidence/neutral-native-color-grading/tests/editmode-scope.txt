@@ -1,0 +1,19 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=VisualPolishSettingsTests;DesignLabHistoryTests
+lab_history=/Users/eaafonasev/.codex/worktrees/neutral-color-grading/star-tournament/unity/../.local/unity-evidence/focused-editmode.KXTtKN/qa-lab-history.json
+revision=8410a69b95aadcde9b610ab321463c7b19d4cb9a
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Resources/VisualPolishVolume.asset
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/Core/VisualPolishProfile.cs
+ M Assets/StarTournament/Runtime/NativeVisualPreferences.cs
+ M Assets/StarTournament/Runtime/NativeVisualPresentation.cs
+ M Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs
+ M Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs
+ M Assets/StarTournament/Tests/EditMode/StarTournament.ProvingGround.EditMode.asmdef
+ M Assets/StarTournament/Tests/EditMode/VisualPolishSettingsTests.cs
+ M Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs
+ M Assets/StarTournament/Tests/PlayMode/VisualPolishTests.cs
+?? ../docs/evidence/neutral-native-color-grading/

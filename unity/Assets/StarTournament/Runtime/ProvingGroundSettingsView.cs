@@ -20,8 +20,9 @@ namespace StarTournament.ProvingGround
             readonly Dictionary<Selectable,GameObject> settingsFocusBorders=new Dictionary<Selectable,GameObject>();
             readonly List<Button> settingsFocusButtons=new List<Button>();
             GameObject settingsImagePage,settingsControlPage,settingsInterfacePage,settingsAudioPage,settingsConfirmation,resolutionPicker;
-            readonly Slider[] visualSliders=new Slider[5];
-            readonly Toggle[] visualToggles=new Toggle[5];
+            readonly Slider[] visualSliders=new Slider[NativeVisualPreferences.Names.Length];
+            readonly Toggle[] visualToggles=new Toggle[NativeVisualPreferences.Names.Length];
+            readonly Slider[] colorAdjustments=new Slider[NativeVisualPreferences.ColorAdjustmentPaths.Length];
             ScrollRect graphicsScroll;
             Slider settingsMusicSlider,settingsEffectsSlider;
             Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsConfirmationText;
@@ -177,24 +178,31 @@ namespace StarTournament.ProvingGround
                 var viewport=Panel(settingsImagePage.transform,"graphics-viewport",new Vector2(0,.1f),Vector2.one,Color.clear);
                 viewport.AddComponent<RectMask2D>();
                 var list=Panel(viewport.transform,"graphics-list",Vector2.zero,Vector2.one,Color.clear);
-                var listRect=(RectTransform)list.transform;listRect.anchorMin=new Vector2(0,1);listRect.anchorMax=Vector2.one;listRect.pivot=new Vector2(.5f,1);listRect.sizeDelta=new Vector2(0,1140);
+                float graphicsHeight=300+NativeVisualPreferences.Names.Length*165+NativeVisualPreferences.ColorAdjustmentPaths.Length*100;
+                var listRect=(RectTransform)list.transform;listRect.anchorMin=new Vector2(0,1);listRect.anchorMax=Vector2.one;listRect.pivot=new Vector2(.5f,1);listRect.sizeDelta=new Vector2(0,graphicsHeight);
                 graphicsScroll=settingsImagePage.AddComponent<ScrollRect>();graphicsScroll.viewport=(RectTransform)viewport.transform;graphicsScroll.content=listRect;graphicsScroll.horizontal=false;graphicsScroll.movementType=ScrollRect.MovementType.Clamped;graphicsScroll.scrollSensitivity=45;
-                Vector2 Lo(float top,float height)=>new Vector2(.02f,1-(top+height)/1140);
-                Vector2 Hi(float top)=>new Vector2(.98f,1-top/1140);
+                Vector2 Lo(float top,float height)=>new Vector2(.02f,1-(top+height)/graphicsHeight);
+                Vector2 Hi(float top)=>new Vector2(.98f,1-top/graphicsHeight);
                 settingsDisplayMode=Label(list.transform,"display-mode-label","",25,Lo(0,92),Hi(0),TextAnchor.MiddleLeft,Color.white);
-                settingsModeButton=MenuButton(list.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,1-88f/1140),new Vector2(.96f,1-8f/1140),ChangeDisplayMode);
+                settingsModeButton=MenuButton(list.transform,"settings-display-mode","СМЕНИТЬ РЕЖИМ",new Vector2(.59f,1-88f/graphicsHeight),new Vector2(.96f,1-8f/graphicsHeight),ChangeDisplayMode);
                 settingsResolution=Label(list.transform,"resolution-label","",25,Lo(100,92),Hi(100),TextAnchor.MiddleLeft,Color.white);
-                settingsResolutionButton=MenuButton(list.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,1-188f/1140),new Vector2(.96f,1-108f/1140),OpenResolutionPicker);
+                settingsResolutionButton=MenuButton(list.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,1-188f/graphicsHeight),new Vector2(.96f,1-108f/graphicsHeight),OpenResolutionPicker);
                 settingsShadows=Label(list.transform,"shadows-label","",25,Lo(200,92),Hi(200),TextAnchor.MiddleLeft,Color.white);
-                settingsShadowsToggle=BooleanSetting(list.transform,"settings-shadows","Тени",new Vector2(.59f,1-288f/1140),new Vector2(.96f,1-208f/1140),v=>{if(v!=shadowsEnabled)ToggleShadows();});
+                settingsShadowsToggle=BooleanSetting(list.transform,"settings-shadows","Тени",new Vector2(.59f,1-288f/graphicsHeight),new Vector2(.96f,1-208f/graphicsHeight),v=>{if(v!=shadowsEnabled)ToggleShadows();});
                 void Reveal(Selectable control,RectTransform row=null){var focus=control.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=graphicsScroll;focus.Row=row;}
                 Reveal(settingsModeButton);Reveal(settingsResolutionButton);Reveal(settingsShadowsToggle);
-                for(int i=0;i<5;i++)
+                for(int i=0;i<visualSliders.Length;i++)
                 {
                     var effect=(VisualEffect)i;float top=300+i*165;
                     visualToggles[i]=BooleanSetting(list.transform,"settings-visual-"+effect+"-enabled",NativeVisualPreferences.Names[i],Lo(top,62),Hi(top),v=>owner.SetVisualEnabled(effect,v));
                     visualSliders[i]=NumericSetting(list.transform,"settings-visual-"+effect+"-strength","Сила",Lo(top+65,90),Hi(top+65),Profile.Descriptor(NativeVisualPreferences.Path(effect)),v=>owner.SetVisualStrength(effect,v));
                     Reveal(visualToggles[i]);Reveal(visualSliders[i],(RectTransform)visualSliders[i].transform.parent);
+                }
+                for(int i=0;i<colorAdjustments.Length;i++)
+                {
+                    string path=NativeVisualPreferences.ColorAdjustmentPaths[i];var d=Profile.Descriptor(path);float top=300+visualSliders.Length*165+i*100;
+                    colorAdjustments[i]=NumericSetting(list.transform,"settings-color-"+i,d.Label,Lo(top,90),Hi(top),d,v=>owner.SetColorAdjustment(path,v));
+                    Reveal(colorAdjustments[i],(RectTransform)colorAdjustments[i].transform.parent);
                 }
                 Label(settingsImagePage.transform,"graphics-help","Общие для всех экранов · 0% — исходный вид · прокрутка ↓",18,Vector2.zero,new Vector2(1,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
@@ -331,14 +339,16 @@ namespace StarTournament.ProvingGround
                 Link(settingsSectionButtons[3],settingsSectionButtons[2],settingsBackButton,null,settingsMusicSlider);
                 Link(settingsBackButton,settingsSectionButtons[3],settingsSectionButtons[0],
                     null,FirstSettingsAction());
-                Link(settingsModeButton,visualSliders[4],settingsResolutionButton,settingsSectionButtons[0]);
+                Link(settingsModeButton,colorAdjustments[colorAdjustments.Length-1],settingsResolutionButton,settingsSectionButtons[0]);
                 Link(settingsResolutionButton,settingsModeButton,settingsShadowsToggle,settingsSectionButtons[0]);
                 Link(settingsShadowsToggle,settingsResolutionButton,visualToggles[0],settingsSectionButtons[0]);
-                for(int i=0;i<5;i++)
+                for(int i=0;i<visualSliders.Length;i++)
                 {
                     Link(visualToggles[i],i==0?settingsShadowsToggle:visualSliders[i-1],visualSliders[i],settingsSectionButtons[0]);
-                    Link(visualSliders[i],visualToggles[i],i==4?settingsModeButton:visualToggles[i+1]);
+                    Link(visualSliders[i],visualToggles[i],i==visualSliders.Length-1?colorAdjustments[0]:visualToggles[i+1]);
                 }
+                for(int i=0;i<colorAdjustments.Length;i++)
+                    Link(colorAdjustments[i],i==0?visualSliders[visualSliders.Length-1]:colorAdjustments[i-1],i==colorAdjustments.Length-1?settingsModeButton:colorAdjustments[i+1]);
                 Link(settingsMouseSlider,settingsSectionButtons[1],settingsHorizontalSlider);
                 Link(settingsHorizontalSlider,settingsMouseSlider,settingsVerticalSlider);
                 Link(settingsVerticalSlider,settingsHorizontalSlider,settingsReturnDelaySlider);
@@ -406,11 +416,13 @@ namespace StarTournament.ProvingGround
                 settingsDisplayMode.text="РЕЖИМ ЭКРАНА\n"+(EffectiveDisplayMode()==FullScreenMode.Windowed?"Окно":"Полный экран");
                 settingsResolution.text="РАЗРЕШЕНИЕ\n"+Screen.width+" × "+Screen.height;
                 settingsShadows.text="ТЕНИ\n"+(shadowsEnabled?"Вкл":"Выкл");
-                for(int i=0;i<5;i++)
+                for(int i=0;i<visualSliders.Length;i++)
                 {
                     var effect=(VisualEffect)i;RefreshToggle(visualToggles[i],NativeVisualPreferences.Enabled(effect));
                     RefreshNumericSetting(visualSliders[i],"Сила",NativeVisualPreferences.Strength(Profile,effect),"%");
                 }
+                for(int i=0;i<colorAdjustments.Length;i++)
+                {string path=NativeVisualPreferences.ColorAdjustmentPaths[i];var d=Profile.Descriptor(path);RefreshNumericSetting(colorAdjustments[i],d.Label,NativeVisualPreferences.Adjustment(Profile,path),d.Unit);}
                 var sensitivity=MenuMouseSensitivity();var look=MenuGamepadLook();
                 RefreshNumericSetting(settingsMouseSlider,"Чувствительность мыши",sensitivity,"°/px");
                 RefreshNumericSetting(settingsHorizontalSlider,"Геймпад: горизонталь",look.Horizontal,"°/с");
