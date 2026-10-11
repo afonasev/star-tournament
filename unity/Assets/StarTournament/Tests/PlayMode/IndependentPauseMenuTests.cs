@@ -64,6 +64,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(counters.Length,Is.EqualTo(1));Assert.That(counters[0].name,Is.EqualTo("fps-value"));
             var rect=(RectTransform)counters[0].transform.parent;Assert.That(rect.anchorMax,Is.EqualTo(Vector2.one));
         }
+        [UnityTest] public IEnumerator VSyncPropagatesBetweenSeatsWithoutAdvancingMatch()
+        {
+            const string key="StarTournament.Graphics.VSync";bool existed=PlayerPrefs.HasKey(key);int saved=PlayerPrefs.GetInt(key),original=QualitySettings.vSyncCount,target=Application.targetFrameRate;
+            try
+            {
+                PlayerPrefs.SetInt(key,0);yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+                Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+                var first=Object("seat-settings-0-settings-vsync").GetComponent<Toggle>();var second=Object("seat-settings-1-settings-vsync").GetComponent<Toggle>();var clock=ground.Session.Time;
+                first.isOn=true;yield return null;Assert.That(second.isOn,Is.True);Assert.That(QualitySettings.vSyncCount,Is.EqualTo(1));Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                second.isOn=false;yield return null;Assert.That(first.isOn,Is.False);Assert.That(QualitySettings.vSyncCount,Is.Zero);Assert.That(ground.Session.Time,Is.EqualTo(clock));Assert.That(Application.targetFrameRate,Is.EqualTo(target));
+            }
+            finally{if(existed)PlayerPrefs.SetInt(key,saved);else PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();QualitySettings.vSyncCount=original;}
+        }
         [UnityTest] public IEnumerator GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch()
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);

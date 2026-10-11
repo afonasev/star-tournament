@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
             RectTransform helpDiagram;
             bool resolutionPickerOpen;
             Slider settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsReturnDelaySlider;
-            Toggle settingsAutoLevelToggle,settingsFpsToggle,settingsShadowsToggle,settingsBotTextToggle,settingsBotVoiceToggle;
+            Toggle settingsAutoLevelToggle,settingsFpsToggle,settingsShadowsToggle,settingsVSyncToggle,settingsBotTextToggle,settingsBotVoiceToggle;
             GameObject settingsHelpPage;
             Button settingsHelpButton,settingsHelpBack;
             bool settingsHelpOpen;
@@ -178,7 +178,7 @@ namespace StarTournament.ProvingGround
                 var viewport=Panel(settingsImagePage.transform,"graphics-viewport",new Vector2(0,.1f),Vector2.one,Color.clear);
                 viewport.AddComponent<RectMask2D>();
                 var list=Panel(viewport.transform,"graphics-list",Vector2.zero,Vector2.one,Color.clear);
-                float graphicsHeight=300+NativeVisualPreferences.Names.Length*165+NativeVisualPreferences.ColorAdjustmentPaths.Length*100;
+                float graphicsHeight=400+NativeVisualPreferences.Names.Length*165+NativeVisualPreferences.ColorAdjustmentPaths.Length*100;
                 var listRect=(RectTransform)list.transform;listRect.anchorMin=new Vector2(0,1);listRect.anchorMax=Vector2.one;listRect.pivot=new Vector2(.5f,1);listRect.sizeDelta=new Vector2(0,graphicsHeight);
                 graphicsScroll=settingsImagePage.AddComponent<ScrollRect>();graphicsScroll.viewport=(RectTransform)viewport.transform;graphicsScroll.content=listRect;graphicsScroll.horizontal=false;graphicsScroll.movementType=ScrollRect.MovementType.Clamped;graphicsScroll.scrollSensitivity=45;
                 Vector2 Lo(float top,float height)=>new Vector2(.02f,1-(top+height)/graphicsHeight);
@@ -189,18 +189,19 @@ namespace StarTournament.ProvingGround
                 settingsResolutionButton=MenuButton(list.transform,"settings-resolution","ВЫБРАТЬ",new Vector2(.59f,1-188f/graphicsHeight),new Vector2(.96f,1-108f/graphicsHeight),OpenResolutionPicker);
                 settingsShadows=Label(list.transform,"shadows-label","",25,Lo(200,92),Hi(200),TextAnchor.MiddleLeft,Color.white);
                 settingsShadowsToggle=BooleanSetting(list.transform,"settings-shadows","Тени",new Vector2(.59f,1-288f/graphicsHeight),new Vector2(.96f,1-208f/graphicsHeight),v=>{if(v!=shadowsEnabled)ToggleShadows();});
+                settingsVSyncToggle=BooleanSetting(list.transform,"settings-vsync","Вертикальная синхронизация (VSync)",Lo(300,92),Hi(300),owner.SetVSync);
                 void Reveal(Selectable control,RectTransform row=null){var focus=control.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=graphicsScroll;focus.Row=row;}
-                Reveal(settingsModeButton);Reveal(settingsResolutionButton);Reveal(settingsShadowsToggle);
+                Reveal(settingsModeButton);Reveal(settingsResolutionButton);Reveal(settingsShadowsToggle);Reveal(settingsVSyncToggle);
                 for(int i=0;i<visualSliders.Length;i++)
                 {
-                    var effect=(VisualEffect)i;float top=300+i*165;
+                    var effect=(VisualEffect)i;float top=400+i*165;
                     visualToggles[i]=BooleanSetting(list.transform,"settings-visual-"+effect+"-enabled",NativeVisualPreferences.Names[i],Lo(top,62),Hi(top),v=>owner.SetVisualEnabled(effect,v));
                     visualSliders[i]=NumericSetting(list.transform,"settings-visual-"+effect+"-strength","Сила",Lo(top+65,90),Hi(top+65),Profile.Descriptor(NativeVisualPreferences.Path(effect)),v=>owner.SetVisualStrength(effect,v));
                     Reveal(visualToggles[i]);Reveal(visualSliders[i],(RectTransform)visualSliders[i].transform.parent);
                 }
                 for(int i=0;i<colorAdjustments.Length;i++)
                 {
-                    string path=NativeVisualPreferences.ColorAdjustmentPaths[i];var d=Profile.Descriptor(path);float top=300+visualSliders.Length*165+i*100;
+                    string path=NativeVisualPreferences.ColorAdjustmentPaths[i];var d=Profile.Descriptor(path);float top=400+visualSliders.Length*165+i*100;
                     colorAdjustments[i]=NumericSetting(list.transform,"settings-color-"+i,d.Label,Lo(top,90),Hi(top),d,v=>owner.SetColorAdjustment(path,v));
                     Reveal(colorAdjustments[i],(RectTransform)colorAdjustments[i].transform.parent);
                 }
@@ -341,10 +342,11 @@ namespace StarTournament.ProvingGround
                     null,FirstSettingsAction());
                 Link(settingsModeButton,colorAdjustments[colorAdjustments.Length-1],settingsResolutionButton,settingsSectionButtons[0]);
                 Link(settingsResolutionButton,settingsModeButton,settingsShadowsToggle,settingsSectionButtons[0]);
-                Link(settingsShadowsToggle,settingsResolutionButton,visualToggles[0],settingsSectionButtons[0]);
+                Link(settingsShadowsToggle,settingsResolutionButton,settingsVSyncToggle,settingsSectionButtons[0]);
+                Link(settingsVSyncToggle,settingsShadowsToggle,visualToggles[0],settingsSectionButtons[0]);
                 for(int i=0;i<visualSliders.Length;i++)
                 {
-                    Link(visualToggles[i],i==0?settingsShadowsToggle:visualSliders[i-1],visualSliders[i],settingsSectionButtons[0]);
+                    Link(visualToggles[i],i==0?settingsVSyncToggle:visualSliders[i-1],visualSliders[i],settingsSectionButtons[0]);
                     Link(visualSliders[i],visualToggles[i],i==visualSliders.Length-1?colorAdjustments[0]:visualToggles[i+1]);
                 }
                 for(int i=0;i<colorAdjustments.Length;i++)
@@ -415,6 +417,7 @@ namespace StarTournament.ProvingGround
                 if(settingsSection==SettingsSection.Image&&owner.displayConfirmationActive&&!displayConfirmationActive)settingsDescription.text="Другой игрок подтверждает общий режим экрана";
                 settingsDisplayMode.text="РЕЖИМ ЭКРАНА\n"+(EffectiveDisplayMode()==FullScreenMode.Windowed?"Окно":"Полный экран");
                 settingsResolution.text="РАЗРЕШЕНИЕ\n"+Screen.width+" × "+Screen.height;
+                RefreshToggle(settingsVSyncToggle,owner.vSyncEnabled);
                 settingsShadows.text="ТЕНИ\n"+(shadowsEnabled?"Вкл":"Выкл");
                 for(int i=0;i<visualSliders.Length;i++)
                 {

@@ -17,12 +17,15 @@ namespace StarTournament.ProvingGround
         const string DisplayWidthKey="StarTournament.Graphics.Width";
         const string DisplayHeightKey="StarTournament.Graphics.Height";
         const string DisplayModeKey="StarTournament.Graphics.Fullscreen";
+        const string VSyncKey="StarTournament.Graphics.VSync";
         const string ShadowsKey="StarTournament.Graphics.Shadows";
         const float DisplayConfirmationSeconds=12f;
         SettingsView settingsView,displayOwner;
         readonly SettingsView[] seatSettingsViews=new SettingsView[SeatInputCoordinator.SeatCount];
         readonly Dictionary<Light,LightShadows> originalLightShadows=new Dictionary<Light,LightShadows>();
         ShadowQuality originalShadowQuality;
+        int originalVSyncCount;
+        bool vSyncEnabled;
         bool shadowsEnabled=true,graphicsPreferencesInitialized,displayConfirmationActive;
         float displayConfirmationDeadline;
         int displayChangeFrame,oldDisplayWidth,oldDisplayHeight,pendingDisplayWidth,pendingDisplayHeight;
@@ -83,6 +86,10 @@ namespace StarTournament.ProvingGround
         void InitializeGraphicsPreferences()
         {
             originalShadowQuality=QualitySettings.shadows;
+            originalVSyncCount=QualitySettings.vSyncCount;
+            int savedVSync=PlayerPrefs.GetInt(VSyncKey,-1);
+            vSyncEnabled=originalVSyncCount>0;
+            if(savedVSync==0||savedVSync==1){vSyncEnabled=savedVSync==1;ApplyVSyncPreference();}
             graphicsPreferencesInitialized=true;
             shadowsEnabled=PlayerPrefs.GetInt(ShadowsKey,1)!=0;
             ApplyShadowPreference();
@@ -91,6 +98,16 @@ namespace StarTournament.ProvingGround
             if(!SupportedResolutions().Contains(new Vector2Int(width,height)))return;
             var mode=PlayerPrefs.GetInt(DisplayModeKey,1)==0?FullScreenMode.Windowed:FullScreenMode.FullScreenWindow;
             if(Screen.width!=width||Screen.height!=height||EffectiveDisplayMode()!=mode)Screen.SetResolution(width,height,mode);
+        }
+        void SetVSync(bool enabled)
+        {
+            vSyncEnabled=enabled;PlayerPrefs.SetInt(VSyncKey,enabled?1:0);PlayerPrefs.Save();ApplyVSyncPreference();RefreshSettingsUi();
+        }
+        void ApplyVSyncPreference()
+        {
+            // API modes: zero disables synchronization; one presents every display refresh.
+            // These are technical mode identifiers, not artistic Balance Lab tuning.
+            QualitySettings.vSyncCount=vSyncEnabled?1:0;
         }
         void ToggleShadows()
         {
@@ -108,9 +125,9 @@ namespace StarTournament.ProvingGround
                 light.shadows=shadowsEnabled?originalLightShadows[light]:LightShadows.None;
             }
         }
-        void RestoreShadowQuality()
+        void RestoreGraphicsQuality()
         {
-            if(graphicsPreferencesInitialized)QualitySettings.shadows=originalShadowQuality;
+            if(graphicsPreferencesInitialized){QualitySettings.shadows=originalShadowQuality;QualitySettings.vSyncCount=originalVSyncCount;}
         }
     }
 }

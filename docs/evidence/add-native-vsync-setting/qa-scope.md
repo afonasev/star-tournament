@@ -1,0 +1,4 @@
+# QA scope
+Baseline 2e56d2374257f5ec7ba82a7b4a214e7fd5eeba70. Diff: VSync preference/apply/restore and one new graphics checkbox with shifted effects list/focus chain; no profile/registry, shader or simulation changes.
+Affected: NativeVSyncTests (default/invalid, on/off, reload, restore and limiter invariance), IndependentPauseMenuTests.VSyncPropagatesBetweenSeatsWithoutAdvancingMatch (shared state/frozen clock), SettingsGamepadNavigationTests.SettingsAreFullyNavigableWithGamepad and VisualPolishTests.GraphicsControlsPersistAndScrollToLastEffect (adjacent navigation/scroll).
+One shared GPU Editor PlayMode filtered run for these five tests and on/off UI captures, muted audio and isolated QA Lab history. No EditMode logic duplication; actual Unity API/lifecycle executed. No full suite, Player build, release/deploy or FPS benchmark. Real tearing/frame pacing/device acceptance remains open.

@@ -1,0 +1,17 @@
+{
+  "baseline": "2e56d2374257f5ec7ba82a7b4a214e7fd5eeba70",
+  "tested_source_commit": "751afc33",
+  "result": "Passed",
+  "total": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xml_duration_seconds": 61.7600493,
+  "xml_duration_includes_setup_body_teardown": true,
+  "screenshots": 4,
+  "editor_graphics": true,
+  "player_build": false,
+  "full_tests": false,
+  "deployment": false,
+  "physical_tearing_frame_pacing": "pending"
+}

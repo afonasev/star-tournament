@@ -130,6 +130,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("resolution-choice-1"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-resolution"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-shadows"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-vsync"));
+            var vsync=ground.GetComponentsInChildren<Toggle>(true).Single(t=>t.name=="settings-vsync");bool priorVSync=vsync.isOn;
+            const string vsyncKey="StarTournament.Graphics.VSync";bool hadVSync=PlayerPrefs.HasKey(vsyncKey);int savedVSync=PlayerPrefs.GetInt(vsyncKey),qualityVSync=QualitySettings.vSyncCount;
+            try
+            {
+                yield return Press(GamepadButton.South);Assert.That(vsync.isOn,Is.EqualTo(!priorVSync));Assert.That(QualitySettings.vSyncCount,Is.EqualTo(priorVSync?0:1));
+                yield return Press(GamepadButton.South);Assert.That(vsync.isOn,Is.EqualTo(priorVSync));
+            }
+            finally{if(hadVSync)PlayerPrefs.SetInt(vsyncKey,savedVSync);else PlayerPrefs.DeleteKey(vsyncKey);PlayerPrefs.Save();QualitySettings.vSyncCount=qualityVSync;}
+            yield return Press(GamepadButton.DpadUp);Assert.That(Focus,Is.EqualTo("settings-shadows"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-0"));
             yield return MoveStick(Vector2.down);Assert.That(Focus,Is.EqualTo("settings-section-1"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-mouse-sensitivity"));
