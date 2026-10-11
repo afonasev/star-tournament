@@ -1,0 +1,8 @@
+{
+  "baseline": "05c03b72",
+  "source_diff_sha256": "89f2b7d479d775b5414173494db451697b599017a60eb166ec4f42f0a9d8e16d",
+  "menu_preview": "offscreen Editor synthetic; not physical Windows acceptance",
+  "feedback_contracts": 33,
+  "menu_tests": 3,
+  "native_menu_nunit_duration_seconds": 27.5906934
+}
