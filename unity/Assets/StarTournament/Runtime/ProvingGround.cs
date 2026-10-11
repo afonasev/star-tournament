@@ -152,6 +152,8 @@ namespace StarTournament.ProvingGround
         public string CombatBowlReviewDirectory;
         public ProvingProfile OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
         public ProvingProfile CombatBowlAuthoring=CombatBowlCatalog.AuthoringProfile();
+        public ProvingProfile WellProfile=ProvingProfile.CreateWellDefault();
+        [NonSerialized] public ProvingProfile WellAuthoring=WellArenaCatalog.AuthoringProfile();
         public ProvingProfile LunarPresentation=ProvingProfile.CreateLunarPresentation();
         [NonSerialized] public ProvingProfile LunarAuthoring=LunarLaboratoryCatalog.AuthoringProfile();
         public ProvingProfile TunnelsPresentation=ProvingProfile.CreateIndustrialTunnelsPresentation();
@@ -699,7 +701,8 @@ namespace StarTournament.ProvingGround
             if(tunnels)studioLight.intensity=TunnelsPresentation.Get("tunnels.light.key");
             bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
             if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
-            var steps=arena.BuildSteps(frozen,Profile,lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
+            if(SelectedMapId==WellArenaCatalog.Id)studioLight.intensity=WellProfile.Get("well.daylight");
+            var steps=arena.BuildSteps(frozen,Profile,SelectedMapId==WellArenaCatalog.Id?WellProfile:lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
             while(steps.MoveNext())yield return steps.Current;
             ApplyShadowPreference();
             visualPresentation?.Bind(Profile,arena.transform,studioLight,cameras);

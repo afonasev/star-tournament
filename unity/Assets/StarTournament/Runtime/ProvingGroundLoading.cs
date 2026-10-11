@@ -33,7 +33,7 @@ namespace StarTournament.ProvingGround
             // Let the loading Canvas reach rendering before constructing world objects.
             yield return null;
             diagnostic=diagnostics;
-            if(repeating)frozenMatchArena.RequireDefinition(arena.Definition);
+            if(repeating){frozenMatchArena.RequireDefinition(arena.Definition);arena.Lifts?.Reset();}
             else
             {
                 if(!diagnostics&&!combatReview&&!botReviewEnabled&&reviewComposition==null)ApplySavedLabRevision();

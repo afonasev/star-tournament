@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround
         public float Get(string path) => Profile(path).Get(path);
         public void Set(string path,float value) => Profile(path).Set(path,value);
         public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
-        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId||Profile(path).Id=="lunar-laboratory-authoring-v1";
+        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId||Profile(path).Id=="lunar-laboratory-authoring-v1"||Profile(path).Id=="well-authoring-v1";
         public bool IsDiagnostic(string path)=>path.StartsWith("bots.evaluation.")||path=="weapon.probeRange"||path=="weapon.probeCooldown";
         public bool IsLevelAuthoring(string path)
         {
@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
         public static IEnumerable<string> AuditedExcludedPaths=>AuditedExclusions.OrderBy(path=>path,StringComparer.Ordinal);
         public bool IsVisible(string path)=>!(Profile(path).Id=="unity-native-match-v1"&&Profile(path).Version>=3&&((path.StartsWith("score.chainTotal")&&path!="score.chainTotal1")||path=="score.chainIncrement"))&&!IsDiagnostic(path)&&!AuditedExclusions.Contains(path)&&!IsLevelAuthoring(path);
         public bool IsEditable(string path)=>IsVisible(path)&&!IsAuthoring(path);
-        public string Domain(string path)=>path.StartsWith("audio.music.")?"Presentation":IsAuthoring(path)?"Authored map":Profile(path).Descriptor(path).Group=="cutter-effects"||Profile(path).Id==ProvingProfile.RocketEffectsId||Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
+        public string Domain(string path)=>path.StartsWith("well.")&&!IsAuthoring(path)?(Profile(path).Descriptor(path).Group=="well-light"||Profile(path).Descriptor(path).Group=="well-art"?"Presentation":"Gameplay"):path.StartsWith("audio.music.")?"Presentation":IsAuthoring(path)?"Authored map":Profile(path).Descriptor(path).Group=="cutter-effects"||Profile(path).Id==ProvingProfile.RocketEffectsId||Profile(path).Id.Contains("presentation")||path.StartsWith("presentation.")||(path=="camera.fieldOfViewDegrees"||path=="camera.nearClipPlane")||path.StartsWith("ui.")||Profile(path).Id=="orbital-league-ring-v1"?"Presentation":"Gameplay";
         public List<ProfileValidationIssue> Validate()
         {
             var issues=Profiles.SelectMany(p=>p.Validate()).ToList();
@@ -255,6 +255,9 @@ namespace StarTournament.ProvingGround
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
             var shipped=this.shipped;
+            // Exact trusted predecessor: addition of both Well profiles preserves all previous metadata and hashes.
+            if(!sought.Profiles.Any(p=>p.Id=="well-authoring-v1"||p.Id=="well-gameplay-presentation-v1"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="well-authoring-v1"&&p.Id!="well-gameplay-presentation-v1").ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==NativeVisualPreferences.Path(VisualEffect.ColorGrading)))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeNeutralColorGrading()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==NativeVisualPreferences.Path(VisualEffect.Lighting)))

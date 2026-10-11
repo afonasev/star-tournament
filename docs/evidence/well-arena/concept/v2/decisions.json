@@ -1,0 +1,22 @@
+{
+  "revision": 2,
+  "date": "2026-10-11",
+  "accepted_by_user": [
+    "visual direction of concept 01",
+    "elevator completes its trip even after passengers leave",
+    "stairs west/east and lifts north/south outside square",
+    "wide spacious elevators",
+    "wider corridors",
+    "mixed through halls and corridor/closed office wings",
+    "corridors both beside atrium windows and outside away from windows",
+    "topology more complex than one perimeter loop",
+    "2026-10-12: plan 02 accepted as basis for playable implementation in a new session"
+  ],
+  "proposed_not_accepted": [
+    "5–6 m corridors, 10–14 m halls, ~6×6 m lift platform",
+    "rearm after terminal arrival requires empty platform and new boarding"
+  ],
+  "scope": "Concept session handed off to explicitly authorized implementation session",
+  "verification": "SVG render and conceptual spatial inspection, no gameplay validation",
+  "implementation_thread_id": "01a12c6a-d930-7361-a947-8548a3a8ad37"
+}

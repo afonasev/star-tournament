@@ -5,7 +5,7 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     [Serializable] public sealed class NativeBotDriverSnapshot
-    {public int Version=1,Ticks;public uint Seed;public NativeBotPerceptionSnapshot Perception;public NativeBotPickupSnapshot Pickups;public NativeBotPlannerState[] Planners;}
+    {public WellBotLiftIntent[] Lifts;public int Version=1,Ticks;public uint Seed;public NativeBotPerceptionSnapshot Perception;public NativeBotPickupSnapshot Pickups;public NativeBotPlannerState[] Planners;}
     /// <summary>Allowlisted world adapter; all decisions precede the single session tick.</summary>
     public sealed class NativeBotMatchDriver
     {
@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         readonly NativeBotObservationProvider observations;
         readonly NativeBotPlanner[] planners;
         readonly NativeBotTactics[] tactics;
+        readonly WellBotLiftRouter[] liftRoutes;
         public NativeBotPerception Perception {get;}
         public NativeBotPickupKnowledge Pickups {get;}
         public uint Seed {get;}
@@ -32,10 +33,11 @@ namespace StarTournament.ProvingGround
             Pickups=new NativeBotPickupKnowledge(difficulties,perception);
             Perception=new NativeBotPerception(composition.Roster,difficulties,perception);
             observations=new NativeBotObservationProvider(session,composition.Roster,physics,movement,combat);
-            planners=new NativeBotPlanner[difficulties.Length];tactics=new NativeBotTactics[difficulties.Length];
+            liftRoutes=new WellBotLiftRouter[difficulties.Length];planners=new NativeBotPlanner[difficulties.Length];tactics=new NativeBotTactics[difficulties.Length];
             for(int p=0;p<planners.Length;p++)if(composition.Participant(p).Kind==NativeParticipantKind.Bot)
             {
                 var routes=new NativeNavigationProvider(arena,movement,navigation);
+                if(arena.Lifts!=null)liftRoutes[p]=new WellBotLiftRouter(arena.Lifts,routes,arena.WellProfile,movement);
                 tactics[p]=new NativeBotTactics(arena,physics,routes,movement,combat,behavior);
                 // Stable integer seed mixing is an identity protocol, never a balance multiplier.
                 uint participantSeed=seed^((uint)(p+1)*0x9e3779b9u);if(participantSeed==0)participantSeed=1;
@@ -51,14 +53,16 @@ namespace StarTournament.ProvingGround
             if(session.HasDamagePickup){var x=session.DamagePickup;values=values.Append(new NativeBotPickupEvent{Id=x.InstanceId,Kind=NativeBotPickupKind.Damage,Position=x.Anchor,Available=x.Available});}
             return values.ToArray();
         }
-        public NativeBotDriverSnapshot Capture()=>new NativeBotDriverSnapshot{Seed=Seed,Ticks=Ticks,Perception=Perception.Capture(),Pickups=Pickups.Capture(),Planners=planners.Select(p=>p?.Capture()).ToArray()};
+        public NativeBotDriverSnapshot Capture()=>new NativeBotDriverSnapshot{Lifts=liftRoutes.Any(x=>x!=null)?liftRoutes.Select(x=>x?.Capture()).ToArray():null,Seed=Seed,Ticks=Ticks,Perception=Perception.Capture(),Pickups=Pickups.Capture(),Planners=planners.Select(p=>p?.Capture()).ToArray()};
         public void Restore(NativeBotDriverSnapshot s)
         {
             if(s==null||s.Version!=1||s.Seed!=Seed||s.Ticks<0||s.Perception==null||s.Pickups==null||s.Perception.Time!=s.Pickups.Time||s.Perception.Time>session.Time||s.Planners==null||s.Planners.Length!=planners.Length)throw new ArgumentException("Invalid bot driver snapshot");
             for(int i=0;i<planners.Length;i++)if(planners[i]!=null&&(s.Planners[i]==null||s.Planners[i].Time!=s.Perception.Time))throw new ArgumentException("Invalid planner snapshot clock");
+            if(liftRoutes.Any(x=>x!=null)){if(s.Lifts==null||s.Lifts.Length!=liftRoutes.Length)throw new ArgumentException("Missing bot lift intents");for(int i=0;i<liftRoutes.Length;i++){if(liftRoutes[i]==null&&s.Lifts[i]!=null)throw new ArgumentException("Unexpected human lift intent");liftRoutes[i]?.Validate(s.Lifts[i]);}}else if(s.Lifts!=null&&s.Lifts.Any(x=>x!=null))throw new ArgumentException("Unexpected bot lift intents");
             // Validate every owner before any write. Invalid input cannot revalidate/mutate native routes.
             Perception.ValidateSnapshot(s.Perception);Pickups.ValidateSnapshot(s.Pickups);
             for(int i=0;i<planners.Length;i++)planners[i]?.ValidateSnapshot(s.Planners[i]);
+            for(int i=0;i<liftRoutes.Length;i++)liftRoutes[i]?.Restore(s.Lifts[i]);
             Perception.Restore(s.Perception);Pickups.Restore(s.Pickups);for(int i=0;i<planners.Length;i++)planners[i]?.Restore(s.Planners[i]);Ticks=s.Ticks;
         }
         public void Release(){foreach(var p in planners)p?.Release();}
@@ -77,6 +81,7 @@ namespace StarTournament.ProvingGround
                     .Select(i=>new NativeBotAlly{Participant=i,Position=session.Pose(i).Position,Velocity=session.Pose(i).Velocity,Health=session.Life(i).Health,Armor=session.Life(i).Armor,Pickup=pickupIntents[i]}).ToArray();
                 tactics[p].ResetQueries();
                 actions[p]=planners[p].Tick(session.Time,seconds,new NativeBotFrame{Pose=session.Pose(p),Life=session.Life(p),Knowledge=Perception.Read(p),Allies=allies,Pickups=Pickups.Read(p),SpeedRemaining=session.SpeedBoostRemaining(p),DamageRemaining=session.DamageBoostRemaining(p)});
+                if(liftRoutes[p]!=null)actions[p]=liftRoutes[p].Tick(session.Pose(p),planners[p].Goal,planners[p].HasGoal,session.Life(p).Dead,actions[p]);
                 LastQueries+=tactics[p].Queries;
             }
             Ticks++;LastMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-start)*1000.0/System.Diagnostics.Stopwatch.Frequency;

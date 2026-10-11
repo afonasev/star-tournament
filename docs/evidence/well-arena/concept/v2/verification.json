@@ -1,0 +1,18 @@
+{
+  "scope": "Concept revision only",
+  "checks": [
+    "3 individual SVGs and combined SVG parsed",
+    "all local HTML references resolved",
+    "all floor PNGs visually inspected",
+    "annexes wholly outside square floorplate",
+    "updated lift rule recorded without mid-flight empty-platform stop"
+  ],
+  "limitations": [
+    "schematic is not dimensioned geometry",
+    "no gameplay navigation or collision validation",
+    "no Unity, builds or project tests launched",
+    "browser UI not verified; prior file URL policy block respected"
+  ],
+  "preservation": "v1 retained with superseded notice; v2 sources, images and user decisions saved in durable visualization folder",
+  "cleanup": "No task worktree, server, Unity process, temporary build or cache created."
+}

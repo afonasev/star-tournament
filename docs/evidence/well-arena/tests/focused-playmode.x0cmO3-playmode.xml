@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:59Z" duration="18.6710175">
+  <test-suite type="TestSuite" id="1385" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:59Z" duration="18.671018" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1377" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:59Z" duration="18.664089" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34680" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1378" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:59Z" duration="18.661430" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1379" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:59Z" duration="18.658997" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1380" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:59Z" duration="18.656584" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1381" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="248" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:58Z" duration="18.462460" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1373" name="WellArenaMatchTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" classname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:58Z" duration="18.454867" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1374" name="RealMatchPauseDriverRestoreAndRepeatResetLiftState" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests.RealMatchPauseDriverRestoreAndRepeatResetLiftState" methodname="RealMatchPauseDriverRestoreAndRepeatResetLiftState" classname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" runstate="Runnable" seed="650791547" result="Failed" start-time="2026-10-11 19:58:40Z" end-time="2026-10-11 19:58:58Z" duration="18.448867" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected string length 1151604 but was 1151476. Strings differ at index 167476.
+  Expected: "...99998736381531,"NextRepath":0.30000001192092898,"ProgressA..."
+  But was:  "...99998736381531,"NextRepath":0.0,"ProgressAt":0.31999987363..."
+  --------------------------------------------^
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests+<RealMatchPauseDriverRestoreAndRepeatResetLiftState>d__2.MoveNext () [0x00298] in /Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs:25
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: validating history in memory
+Lab startup: history ready in 14.91 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1066" name="WellArenaPhysicsTests" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-11 19:58:58Z" end-time="2026-10-11 19:58:59Z" duration="0.188921" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1068" name="EightParticipantPlacementAndEveryPickupUseTheRealSession" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.EightParticipantPlacementAndEveryPickupUseTheRealSession" methodname="EightParticipantPlacementAndEveryPickupUseTheRealSession" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" seed="1237970574" result="Failed" start-time="2026-10-11 19:58:58Z" end-time="2026-10-11 19:58:59Z" duration="0.187485" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  heal-H real contact/support
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.WellArenaPhysicsTests+<EightParticipantPlacementAndEveryPickupUseTheRealSession>d__9.MoveNext () [0x003c4] in /Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs:52
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

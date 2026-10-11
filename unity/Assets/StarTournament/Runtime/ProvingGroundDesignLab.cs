@@ -36,7 +36,7 @@ namespace StarTournament.ProvingGround
             labSavedIdentity=labHistory.SelectedProfileName+" · "+revision.Label+"\n"+labHistory.SelectedProfileId+"\nSHA256 "+revision.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,HitFeedbackProfile}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
         CancellationTokenSource historyCancellation;
         Task<DesignLabHistory> historyLoading;
@@ -100,6 +100,7 @@ namespace StarTournament.ProvingGround
             if(group=="visual-polish")return "Графика → Свет и эффекты";
             switch(group)
             {
+                case "well-lifts":return "Колодец → Лифты";case "well-bots":return "Колодец → Боты";case "well-light":return "Колодец → Свет";case "well-art":return "Колодец → Оформление";
                 case "tunnel-light":return "Тоннели → Свет";case "tunnel-surface":return "Тоннели → Поверхности";
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
                 case "hit-reaction":return "Оформление → Реакция на попадание";case "hit-body-blood":return "Оформление → Кровь на бойце";case "hit-shield":return "Оформление → Вспышки щита";

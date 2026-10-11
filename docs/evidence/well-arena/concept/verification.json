@@ -1,0 +1,17 @@
+{
+  "status": "discussion concept, not approved specification",
+  "baseline": "4e98d46478d6baeda92f51a91650b63136e2480b",
+  "checks": [
+    "all three floor selector handlers executed offline",
+    "SVG and PNG generated from same diagram source",
+    "floor plan PNG visually inspected",
+    "local image references exist"
+  ],
+  "limitations": [
+    "HTML browser render not verified: file protocol blocked by browser policy",
+    "no Unity execution, gameplay tests or builds",
+    "lift direction and multi-passenger behavior await user decision",
+    "dimensions and player count provisional"
+  ],
+  "resources": "No task worktree, server, Unity process or test process created. Existing project modifications left untouched."
+}

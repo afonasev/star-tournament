@@ -1,0 +1,45 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=WellArenaPhysicsTests.EightParticipantPlacementAndEveryPickupUseTheRealSession;WellArenaMatchTests
+lab_history=/Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/../.local/unity-evidence/focused-playmode.MHH4U5/qa-lab-history.json
+revision=1b0a7ca4ee3b53ddbc99751d0b0fbfb1501a42ab
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Arena/ArenaDefinition.cs
+ M Assets/StarTournament/Runtime/Arena/ArenaDefinitionValidator.cs
+ M Assets/StarTournament/Runtime/Arena/AuthoredArenaCatalog.cs
+ M Assets/StarTournament/Runtime/Arena/ProvingArena.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/NativeBotNavigation.cs
+ M Assets/StarTournament/Runtime/Core/NativeBotPlanner.cs
+ M Assets/StarTournament/Runtime/Motor/CharacterMotor.cs
+ M Assets/StarTournament/Runtime/NativeBotMatchDriver.cs
+ M Assets/StarTournament/Runtime/NativeCombatSession.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Runtime/ProvingGroundLoading.cs
+ M Assets/StarTournament/Runtime/ProvingGroundMenus.cs
+ M Assets/StarTournament/Runtime/ProvingGroundSetupNavigation.cs
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/well-arena/
+?? Assets/InitTestScenebd5a6b3c-c3e0-4c1c-b2fe-5a3238775c75.unity
+?? Assets/InitTestScenebd5a6b3c-c3e0-4c1c-b2fe-5a3238775c75.unity.meta
+?? Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs
+?? Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs.meta
+?? Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs
+?? Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs.meta
+?? Assets/StarTournament/Runtime/Core/WellArenaProfile.cs
+?? Assets/StarTournament/Runtime/Core/WellArenaProfile.cs.meta
+?? Assets/StarTournament/Runtime/Core/WellBotLiftRouter.cs
+?? Assets/StarTournament/Runtime/Core/WellBotLiftRouter.cs.meta
+?? Assets/StarTournament/Runtime/Core/WellLiftSystem.cs
+?? Assets/StarTournament/Runtime/Core/WellLiftSystem.cs.meta
+?? Assets/StarTournament/Tests/EditMode/WellArenaTests.cs
+?? Assets/StarTournament/Tests/EditMode/WellArenaTests.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs
+?? Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs
+?? Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs
+?? Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs.meta

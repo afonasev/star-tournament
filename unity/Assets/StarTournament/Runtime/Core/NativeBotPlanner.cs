@@ -154,6 +154,8 @@ namespace StarTournament.ProvingGround
         static ProvingProfile CopyProfile(ProvingProfile p)=>JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(p));
         float Random(){uint x=state.Random;x^=x<<13;x^=x>>17;x^=x<<5;state.Random=x;return (x>>8)*(1f/16777216f);}
         public void Release(){state.Pressed=false;}
+        public Vector3 Goal=>state.Goal;
+        public bool HasGoal=>state.HasGoal;
         public NativeBotPlannerState Capture()
         {var copy=Copy(state);copy.Navigation=navigation.Capture();return copy;}
         static NativeBotPlannerState Copy(NativeBotPlannerState s)=>JsonUtility.FromJson<NativeBotPlannerState>(JsonUtility.ToJson(s));

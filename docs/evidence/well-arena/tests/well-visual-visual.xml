@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.4652376">
+  <test-suite type="TestSuite" id="1385" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.465238" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1377" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.455493" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="52836" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1378" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.451621" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1379" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.447437" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1380" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="310" result="Failed" site="Child" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.443429" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1073" name="WellArenaVisualTests" fullname="StarTournament.ProvingGround.Tests.WellArenaVisualTests" classname="StarTournament.ProvingGround.Tests.WellArenaVisualTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.437654" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1074" name="SaveEditorViewsForVisualReview" fullname="StarTournament.ProvingGround.Tests.WellArenaVisualTests.SaveEditorViewsForVisualReview" methodname="SaveEditorViewsForVisualReview" classname="StarTournament.ProvingGround.Tests.WellArenaVisualTests" runstate="Runnable" seed="793208042" result="Failed" label="Error" start-time="2026-10-11 20:06:56Z" end-time="2026-10-11 20:06:57Z" duration="0.431449" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[UnityEngine.MissingReferenceException : The object of type 'UnityEngine.Camera' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00064] in /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnityEngineObject.bindings.cs:1071 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/BindingsHelpers.cs:61 
+  at UnityEngine.Camera.set_targetTexture (UnityEngine.RenderTexture value) [0x00006] in <5e6012fd11b14532a5249e11b6b22418>:0 
+  at StarTournament.ProvingGround.Tests.WellArenaVisualTests+<SaveEditorViewsForVisualReview>d__0.<>m__Finally1 () [0x00007] in /Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs:30 
+  at StarTournament.ProvingGround.Tests.WellArenaVisualTests+<SaveEditorViewsForVisualReview>d__0.System.IDisposable.Dispose () [0x00015] in <53a0564e03ed431599689ec66509cd04>:0 
+  at StarTournament.ProvingGround.Tests.WellArenaVisualTests+<SaveEditorViewsForVisualReview>d__0.MoveNext () [0x00474] in /Users/eaafonasev/.codex/worktrees/well-arena/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs:31 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -254,7 +254,7 @@ namespace StarTournament.ProvingGround
             var mapCard=setupMapPage.transform.Find("selected-map");
             mapCard.GetComponentInChildren<ArenaPreviewGraphic>().Show(SelectedMapId);
             mapCard.Find("map-name").GetComponent<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId).ToUpperInvariant();
-            mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
+            mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==WellArenaCatalog.Id?"Лаборатория · три этажа и колодец":SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
             setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"");
             RefreshF2Setup();
             ConfigureSetupNavigation();
