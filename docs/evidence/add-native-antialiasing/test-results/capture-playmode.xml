@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.8518108">
+  <test-suite type="TestSuite" id="1376" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="304" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.851811" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1368" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/native-aa-settings-7680/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="304" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.844863" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16920" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1369" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="304" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.842312" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1370" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="304" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.839933" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1371" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="304" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.837486" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1372" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode" runstate="Runnable" testcasecount="249" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.834849" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1357" name="VisualPolishTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests" classname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.830529" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1362" name="AntialiasingIsIndependentAndComparesIdenticalViewsOnAllArenas" fullname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests.AntialiasingIsIndependentAndComparesIdenticalViewsOnAllArenas" methodname="AntialiasingIsIndependentAndComparesIdenticalViewsOnAllArenas" classname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests" runstate="Runnable" seed="2122861476" result="Passed" start-time="2026-10-11 19:52:01Z" end-time="2026-10-11 19:52:21Z" duration="19.823919" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: validating history in memory
+Lab startup: history ready in 11.93 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
