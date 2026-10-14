@@ -25,6 +25,46 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadTapAimSmoothingSeconds"),Is.EqualTo(.18f));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
         }
+        [Test]public void FourHistoricalSchemasKeepExactCandidatesAfterGlobalCacheEviction()
+        {
+            var shipped=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
+            var owner=new DesignLabHistory(path,shipped,persistMigration:false);
+            var lookup=typeof(DesignLabHistory).GetMethod("HistoricalPredecessors",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var names=new[]{"BeforeSmoothGamepadTap","BeforeGamepadTriggerAim","BeforeNeutralColorGrading","BeforeVisualPolish"};
+            var old=names.Select(name=>new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod(name,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList()}).ToArray();
+            var candidates=old.Select(b=>(LabBundle[])lookup.Invoke(owner,new object[]{b})).ToArray();
+            var bytes=candidates.Select(a=>a.Select(b=>JsonUtility.ToJson(b)).ToArray()).ToArray();
+            for(int i=0;i<4;i++)
+            {
+                var other=shipped.Clone();other.Profiles[0].Descriptors.First().Label="Other trusted metadata "+i;
+                var evictor=new DesignLabHistory(null,other,persistMigration:false);
+                lookup.Invoke(evictor,new object[]{old[i]});
+            }
+            for(int pass=0;pass<3;pass++)for(int i=0;i<old.Length;i++)
+            {
+                var again=(LabBundle[])lookup.Invoke(owner,new object[]{old[i]});
+                Assert.That(again,Is.SameAs(candidates[i]),"Instance working set must survive unrelated global eviction");
+                CollectionAssert.AreEqual(bytes[i],again.Select(b=>JsonUtility.ToJson(b)).ToArray());
+            }
+            var local=(System.Collections.IDictionary)typeof(DesignLabHistory).GetField("historicalForInstance",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(owner);
+            Assert.That(local.Count,Is.EqualTo(4));Assert.That(local.Count,Is.LessThanOrEqualTo(8));
+            var global=(System.Collections.IDictionary)typeof(DesignLabHistory).GetField("historicalCache",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null);
+            Assert.That(global.Count,Is.LessThanOrEqualTo(2));
+        }
+        [Test]public void HistoricalWarmCachePreservesDifferentValuesAndRejectsSelfConsistentInvalidValues()
+        {
+            var shipped=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
+            var transform=typeof(ProvingProfile).GetMethod("BeforeSmoothGamepadTap",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)transform.Invoke(p,null)).ToList()};
+            var original=new DesignLabHistory(path,old);original.Create("Warm values");
+            var draft=original.Selected.Snapshot;draft.Set("rifle.damage",31);original.Save(draft);
+            var loaded=new DesignLabHistory(path,shipped,persistMigration:false);Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
+            draft=original.Selected.Snapshot;draft.Set("rifle.damage",32);original.Save(draft);var valid=File.ReadAllBytes(path);
+            var warm=new DesignLabHistory(path,shipped,persistMigration:false);Assert.That(warm.StorageError,Is.Null);Assert.That(warm.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(32));CollectionAssert.AreEqual(valid,File.ReadAllBytes(path));
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var revision=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+            revision.Snapshot.Set("rifle.damage",1000000);revision.Hash=revision.Snapshot.Hash();File.WriteAllText(path,JsonUtility.ToJson(file,true));var bad=File.ReadAllBytes(path);
+            var rejected=new DesignLabHistory(path,shipped,persistMigration:false);Assert.That(rejected.StorageError,Is.Not.Null);CollectionAssert.AreEqual(bad,File.ReadAllBytes(path));
+        }
         [Test]public void WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting()
         {
             var shipped=Shipped();

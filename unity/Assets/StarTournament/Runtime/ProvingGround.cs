@@ -187,6 +187,14 @@ namespace StarTournament.ProvingGround
         {
             yield return null;
             yield return RunLoadingSteps(InitializeGame(),false);
+            if(IsReady)
+            {
+                Debug.Log("Game startup: menu ready at "+Time.realtimeSinceStartup.ToString("F2")+" seconds; Default "+activeLabReference.Hash);
+                StartCoroutine(LoadDesignLabHistoryInBackground());
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                if(Environment.GetCommandLineArgs().Contains("-labStartupEvidence"))gameObject.AddComponent<NativeLabStartupReview>();
+#endif
+            }
         }
         IEnumerator InitializeGame()
         {
@@ -213,7 +221,7 @@ namespace StarTournament.ProvingGround
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             // Automated reviews are silent. Ordinary Player sessions use the user's effects preference.
             var soundArgs=Environment.GetCommandLineArgs();
-            bool muteReview=(Application.isEditor||Application.isBatchMode||
+            bool muteReview=soundArgs.Contains("-noaudio")||(Application.isEditor||Application.isBatchMode||
                 !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"))||
                 soundArgs.Any(a=>a.EndsWith("Review",StringComparison.Ordinal)||a=="-diagnostic"))&&!soundArgs.Contains("-audioReview");
             AudioListener.volume=muteReview?0:1;
@@ -739,8 +747,7 @@ namespace StarTournament.ProvingGround
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
                 frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);frozenHitFeedback=Copy(HitFeedbackProfile);
                 FrozenLabIdentity=LabSavedIdentity;
-                var selectedLab=labHistory?.Selected;
-                frozenLabReference=labHistory==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":labHistory.SelectedProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:selectedLab.ReleaseSequence>0?selectedLab.ReleaseNumber:selectedLab.Number,Hash=CurrentLabBundle().Hash()};
+                frozenLabReference=activeLabReference==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":activeLabReference.ProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:activeLabReference.Revision,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             yield return null;

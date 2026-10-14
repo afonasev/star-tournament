@@ -182,6 +182,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     if(ground.LoadingScreen.AnimationPosition!=last)animated=true;
                     last=ground.LoadingScreen.AnimationPosition;yield return null;
                 }
+                Assert.That(ground.IsLabHistoryReady,Is.False,"Menu startup must precede local history readiness");
+                var activeBefore=ground.CaptureLabBundle().Hash();var identityBefore=ground.LabSavedIdentity;
+                while(!ground.IsLabHistoryReady)
+                {
+                    Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));
+                    Assert.That(ground.LabHistoryLoadError,Is.Null);
+                    Assert.That(ground.IsReady,Is.True);Assert.That(ground.LoadingScreen.Visible,Is.False);
+                    yield return null;
+                }
+                Assert.That(ground.CaptureLabBundle().Hash(),Is.EqualTo(activeBefore));
+                Assert.That(ground.LabSavedIdentity,Is.EqualTo(identityBefore));
                 var loaded=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
                 Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.Writable,Is.True);
                 Debug.Log("Loading history QA: bytes="+new FileInfo(path).Length+" animation="+animated+" writable="+loaded.Writable+" sha256="+before);

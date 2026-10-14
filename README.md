@@ -57,3 +57,5 @@ target environment and smoke procedure require a separately approved decision.
 ## Download and distribution
 
 Download test Windows/macOS installers from https://robowar.afonasev.tech or the GitHub Releases of https://github.com/afonasev/star-tournament. Windows installation uses Program Files with UAC; both optional Desktop shortcut and launch actions are on the final screen. Updates require explicit user consent and verify an RSA-PSS/SHA256 signed descriptor plus package size/hash. Private signing keys and local build/generated data are excluded from Git. See `distribution/README.md` and `THIRD_PARTY_NOTICES.md`.
+
+Тихий запуск Player на всю сессию без изменения сохранённых настроек: `UNITY_RUN_MODE=shared unity/tools.sh run -noaudio` (для выбранной сборки добавьте `UNITY_PLAYER_APP=/absolute/path/StarTournament.app`). Тихий Editor: `UNITY_RUN_MODE=shared unity/tools.sh editor -noaudio`. Автоматические batch QA/build маршруты передают `-noaudio` с самого старта.

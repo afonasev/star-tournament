@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",Path.Combine(directory,"history.json"));
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
-            Click("main-action-2");yield return null;
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);Click("main-action-2");yield return null;
             Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("в клиенте"));
             Assert.That(Button("lab-release").interactable,Is.False);
             Assert.That(Input("input-rifle.damage").interactable,Is.False);
@@ -66,7 +66,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var oldSession=ground.Session;var frozen=oldSession.Capture().DesignProfile;Assert.That(frozen,Is.Not.Null);
             typeof(ProvingGround).GetMethod("OpenDesignLab",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True,"Lab cannot open while match is running");
             var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(ground.CombatProfile));
-            typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);Click("main-action-2");yield return null;Input("input-rifle.damage").text="34";Click("lab-save");yield return null;
+            typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);yield return NativeLoadingTestScene.WaitLabHistory(ground);Click("main-action-2");yield return null;Input("input-rifle.damage").text="34";Click("lab-save");yield return null;
             Assert.That(oldSession.Capture().DesignProfile.Hash,Is.EqualTo(frozen.Hash));
             var wrong=oldSession.Capture();wrong.DesignProfile.Hash="wrong";Assert.Throws<ArgumentException>(()=>oldSession.Restore(wrong));
             Assert.That(copy.Get("rifle.damage"),Is.EqualTo(33));Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));
@@ -85,6 +85,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             var field=typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic);
             var seed=(DesignLabHistory)field.GetValue(ground);seed.Create("Async UI");
             var draft=seed.Selected.Snapshot;draft.Set("rifle.damage",31);seed.Save(draft);
@@ -98,7 +99,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 File.Replace(temp,destination,null);
             },releases:catalogue);
             Assert.That(history.StorageError,Is.Null);
-            field.SetValue(ground,history);Click("main-action-2");yield return null;
+            field.SetValue(ground,history);yield return NativeLoadingTestScene.WaitLabHistory(ground);Click("main-action-2");yield return null;
             string identity=ground.LabSavedIdentity;
             Click("lab-revision-select");yield return null;Click("revision-1");
             float deadline=Time.realtimeSinceStartup+45;

@@ -1,0 +1,186 @@
+{
+  "file_bytes": 160126874,
+  "compact_json_bytes": 64776346,
+  "profiles": 2,
+  "revisions": 16,
+  "unique_snapshot_hashes": 14,
+  "unique_schemas": 4,
+  "profile_payloads": [
+    {
+      "profile": "combat-bowl-ring-r7-authoring-v1",
+      "copies": 16,
+      "descriptors": 65808,
+      "values": 65808,
+      "compact_bytes": 26374112,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "lunar-laboratory-authoring-v1",
+      "copies": 16,
+      "descriptors": 46416,
+      "values": 46416,
+      "compact_bytes": 20991872,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "industrial-tunnels-authoring-v1",
+      "copies": 16,
+      "descriptors": 30624,
+      "values": 30624,
+      "compact_bytes": 12643696,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "orbital-league-ring-v1",
+      "copies": 16,
+      "descriptors": 4816,
+      "values": 4816,
+      "compact_bytes": 1645792,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-proving-ground-v1",
+      "copies": 16,
+      "descriptors": 1990,
+      "values": 1990,
+      "compact_bytes": 729132,
+      "unique_profiles": 10
+    },
+    {
+      "profile": "unity-bot-behavior-v1",
+      "copies": 16,
+      "descriptors": 1248,
+      "values": 1248,
+      "compact_bytes": 452128,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-native-combat-v1",
+      "copies": 16,
+      "descriptors": 736,
+      "values": 736,
+      "compact_bytes": 245692,
+      "unique_profiles": 2
+    },
+    {
+      "profile": "unity-participant-presentation-v1",
+      "copies": 16,
+      "descriptors": 512,
+      "values": 512,
+      "compact_bytes": 219696,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "pulse-effects-v1",
+      "copies": 16,
+      "descriptors": 592,
+      "values": 592,
+      "compact_bytes": 215360,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-combat-state-v1",
+      "copies": 16,
+      "descriptors": 528,
+      "values": 528,
+      "compact_bytes": 187568,
+      "unique_profiles": 2
+    },
+    {
+      "profile": "industrial-tunnels-presentation-v1",
+      "copies": 16,
+      "descriptors": 336,
+      "values": 336,
+      "compact_bytes": 151136,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-blood-presentation-v1",
+      "copies": 16,
+      "descriptors": 432,
+      "values": 432,
+      "compact_bytes": 146816,
+      "unique_profiles": 2
+    },
+    {
+      "profile": "cutter-beam-v1",
+      "copies": 16,
+      "descriptors": 464,
+      "values": 464,
+      "compact_bytes": 141124,
+      "unique_profiles": 2
+    },
+    {
+      "profile": "lunar-laboratory-presentation-v1",
+      "copies": 16,
+      "descriptors": 304,
+      "values": 304,
+      "compact_bytes": 127104,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-death-presentation-v1",
+      "copies": 16,
+      "descriptors": 352,
+      "values": 352,
+      "compact_bytes": 124448,
+      "unique_profiles": 2
+    },
+    {
+      "profile": "unity-trooper-presentation-v1",
+      "copies": 16,
+      "descriptors": 288,
+      "values": 288,
+      "compact_bytes": 109968,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-native-match-v1",
+      "copies": 16,
+      "descriptors": 228,
+      "values": 228,
+      "compact_bytes": 74000,
+      "unique_profiles": 6
+    },
+    {
+      "profile": "unity-bot-perception-v1",
+      "copies": 16,
+      "descriptors": 160,
+      "values": 160,
+      "compact_bytes": 65072,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-bot-navigation-v1",
+      "copies": 16,
+      "descriptors": 144,
+      "values": 144,
+      "compact_bytes": 57424,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "native-bot-evaluation-v1",
+      "copies": 16,
+      "descriptors": 128,
+      "values": 128,
+      "compact_bytes": 46592,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-native-roster-v1",
+      "copies": 16,
+      "descriptors": 32,
+      "values": 32,
+      "compact_bytes": 15504,
+      "unique_profiles": 1
+    },
+    {
+      "profile": "unity-native-team-v1",
+      "copies": 16,
+      "descriptors": 16,
+      "values": 16,
+      "compact_bytes": 7648,
+      "unique_profiles": 1
+    }
+  ]
+}

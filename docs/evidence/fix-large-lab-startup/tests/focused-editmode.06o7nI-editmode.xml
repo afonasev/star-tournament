@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.7532359">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="496" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.753236" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1601" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/fix-lab-startup/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="496" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.748370" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="40373" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1602" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="496" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.746931" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1603" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="496" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.745659" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1604" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="496" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.744395" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1605" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="378" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.741212" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1311" name="LabReleaseCatalogTests" fullname="StarTournament.ProvingGround.Tests.EditMode.LabReleaseCatalogTests" classname="StarTournament.ProvingGround.Tests.EditMode.LabReleaseCatalogTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.736479" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1312" name="PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning" fullname="StarTournament.ProvingGround.Tests.EditMode.LabReleaseCatalogTests.PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning" methodname="PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning" classname="StarTournament.ProvingGround.Tests.EditMode.LabReleaseCatalogTests" runstate="Runnable" seed="1455188335" result="Passed" start-time="2026-10-14 09:07:37Z" end-time="2026-10-14 09:07:38Z" duration="0.728968" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
