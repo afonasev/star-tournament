@@ -1,6 +1,11 @@
 {
   "source_branch": "codex/fix-lab-startup",
-  "integration": "not merged yet",
+  "integration": {
+    "branch": "main",
+    "verified_commit": "027678b3",
+    "runtime_source_commit": "6adfaa87",
+    "note": "Runtime source integrated; this evidence-only metadata update does not change Player bytes."
+  },
   "history_bytes": 160126874,
   "history_sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
   "original_unchanged": true,
