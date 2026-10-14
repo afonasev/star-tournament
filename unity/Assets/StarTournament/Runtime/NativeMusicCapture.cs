@@ -5,6 +5,7 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     // Review-only listener filter: retain the native mix, then silence the output.
+    // The quiet-startup latch permits listener gain only while this output-zeroing filter is active.
     // The DSP callback does no file I/O, allocation or Unity API calls.
     public sealed class NativeMusicCapture : MonoBehaviour
     {
@@ -13,7 +14,7 @@ namespace StarTournament.ProvingGround
         public void Begin()
         {
             rate=AudioSettings.outputSampleRate;
-            buffer=new float[rate*8*60];recording=true;
+            buffer=new float[rate*8*60];recording=true;NativeAudioStartupMute.SetSilentCaptureActive(true);
         }
         void OnAudioFilterRead(float[] data,int channelCount)
         {
@@ -34,6 +35,7 @@ namespace StarTournament.ProvingGround
         public string Save(string path)
         {
             lock(sync){recording=false;}
+            NativeAudioStartupMute.SetSilentCaptureActive(false);
             if(overflow||channels==0||count<rate*channels)throw new InvalidOperationException("Native audio capture missing, overflowing or changed channel format");
             double peak=0;int clipped=0;
             for(int i=0;i<count;i++)
@@ -52,6 +54,7 @@ namespace StarTournament.ProvingGround
             }
             return "native listener WAV: channels="+channels+" rate="+rate+" seconds="+(count/(double)(rate*channels)).ToString("F3",System.Globalization.CultureInfo.InvariantCulture)+" peak="+peak.ToString("F6",System.Globalization.CultureInfo.InvariantCulture)+" clipped="+clipped;
         }
+        void OnDestroy(){NativeAudioStartupMute.SetSilentCaptureActive(false);}
     }
 }
 #endif

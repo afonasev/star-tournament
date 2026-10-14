@@ -8,6 +8,40 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class NativeMusicTests
     {
+        [Test] public void QuietLaunchWinsBeforeReviewsAndHumanAudioIsAnExplicitOptIn()
+        {
+            Assert.That(NativeAudioStartupMute.ShouldMute(new[]{"-noaudio","-humanAudio","-audioReview"},false,false),Is.True);
+            Assert.That(NativeAudioStartupMute.ShouldMute(new[]{"-muted","-humanAudio"},false,false),Is.True);
+            Assert.That(NativeAudioStartupMute.ShouldMute(new[]{"-noaudio","-musicReview","-audioReview"},false,false),Is.True);
+            Assert.That(NativeAudioStartupMute.ShouldMute(new[]{"-musicReview","-audioReview"},false,false),Is.True);
+            Assert.That(NativeAudioStartupMute.ShouldMute(new[]{"-humanAudio","-musicReview"},false,false),Is.True);
+            Assert.That(NativeAudioStartupMute.ShouldMute(Array.Empty<string>(),false,false),Is.False);
+            Assert.That(NativeAudioStartupMute.ShouldMute(Array.Empty<string>(),true,false),Is.True);
+            Assert.That(NativeAudioStartupMute.ShouldMute(Array.Empty<string>(),false,true),Is.True);
+        }
+        [Test] public void QuietListenerCaptureRetainsFileSamplesAndClearsTheDeviceBuffer()
+        {
+            var host=new GameObject("offline-audio-capture-test");
+            try
+            {
+                var capture=host.AddComponent<NativeMusicCapture>();
+                var type=typeof(NativeMusicCapture);
+                type.GetField("buffer",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(capture,new float[4]);
+                type.GetField("recording",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(capture,true);
+                type.GetField("rate",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(capture,48000);
+                var output=new[]{.25f,-.5f,.75f,-1f};
+                NativeAudioStartupMute.SetSilentCaptureActive(true);
+                type.GetMethod("OnAudioFilterRead",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(capture,new object[]{output,2});
+                var retained=(float[])type.GetField("buffer",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(capture);
+                Assert.That(retained,Is.EqualTo(new[]{.25f,-.5f,.75f,-1f}));
+                Assert.That(output,Is.All.EqualTo(0));
+            }
+            finally
+            {
+                NativeAudioStartupMute.SetSilentCaptureActive(false);
+                UnityEngine.Object.DestroyImmediate(host);
+            }
+        }
         [Test] public void DurationProgressAndOvertimeSelectIntensityWithoutScoreOrSimulationMutation()
         {
             Assert.That(NativeRoundMusic.Intensity(60,60,NativeMatchPhase.Running,.33f,.67f),Is.EqualTo(0));

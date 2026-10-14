@@ -221,13 +221,10 @@ namespace StarTournament.ProvingGround
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
-            // Automated reviews are silent. Ordinary Player sessions use the user's effects preference.
-            var soundArgs=Environment.GetCommandLineArgs();
-            bool muteReview=ShouldMuteStartup(soundArgs,Application.isEditor||Application.isBatchMode||
-                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"))||
-                soundArgs.Any(a=>a.EndsWith("Review",StringComparison.Ordinal)||a=="-diagnostic"));
-            AudioListener.volume=muteReview?0:1;
-            gameAudio=new NativeGameAudio(transform,Profile,muteReview,soundArgs.Contains("-muted"));
+            // Launch policy is latched before this coroutine and cannot be relaxed by review flags.
+            bool muteReview=NativeAudioStartupMute.IsMuted;
+            if(muteReview)AudioListener.volume=0;
+            gameAudio=new NativeGameAudio(transform,Profile,muteReview,NativeAudioStartupMute.IsMuted);
             font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             studioLight = Owned("arena-light").AddComponent<Light>();
             studioLight.type = LightType.Directional; studioLight.intensity = Profile.Get("presentation.lightIntensity");

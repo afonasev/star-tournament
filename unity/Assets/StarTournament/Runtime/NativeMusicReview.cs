@@ -64,7 +64,7 @@ namespace StarTournament.ProvingGround
             Check(sources.Length==4&&sources.Where(s=>s.name.StartsWith("menu-music-")).Sum(s=>s.volume)>0,"main menu: one Arena theme, four shared transport voices");
             yield return Capture("main-menu");
             var menuCapture=ground.GetComponentInChildren<AudioListener>().gameObject.AddComponent<NativeMusicCapture>();
-            menuCapture.Begin();AudioListener.volume=1;yield return new WaitForSecondsRealtime(60);
+            menuCapture.Begin();yield return null;NativeAudioStartupMute.SetListenerVolume(1);yield return new WaitForSecondsRealtime(60);
             Check(audio.MusicScene.MenuWeight==1,"menu: uninterrupted two-loop native capture");
             try{observations.Add("PASS "+menuCapture.Save(Path.Combine(directory,"menu-loop-native.wav")));}
             catch(Exception error){Check(false,error.Message);throw;}
@@ -80,7 +80,7 @@ namespace StarTournament.ProvingGround
                 // Keep this presentation fixture neutral: bot scoring must not finish a synthetic overtime.
                 typeof(ProvingGround).GetProperty("BotDriver").SetValue(ground,null);
                 var capture=ground.GetComponentInChildren<AudioListener>().gameObject.AddComponent<NativeMusicCapture>();
-                capture.Begin();AudioListener.volume=1;
+                capture.Begin();yield return null;NativeAudioStartupMute.SetListenerVolume(1);
                 NativeAudioPreferences.SetMusic(100);NativeAudioPreferences.SetEffects(0);
                 yield return new WaitForSecondsRealtime(.4f);
                 sources=ground.transform.Find("native-game-audio").GetComponentsInChildren<AudioSource>().Where(s=>s.name.Contains("-music-")).ToArray();
@@ -134,7 +134,7 @@ namespace StarTournament.ProvingGround
                 typeof(ProvingGround).GetMethod("Menu",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(ground,null);
                 typeof(ProvingGround).GetField("nativeInputReview",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(ground,true);
                 var returnCapture=ground.GetComponentInChildren<AudioListener>().gameObject.AddComponent<NativeMusicCapture>();
-                returnCapture.Begin();AudioListener.volume=1;yield return new WaitForSecondsRealtime(8);
+                returnCapture.Begin();yield return null;NativeAudioStartupMute.SetListenerVolume(1);yield return new WaitForSecondsRealtime(8);
                 Check(sources.Where(s=>s.name.StartsWith("round-music-")).All(s=>!s.isPlaying&&s.clip==null),seats+" viewports: outgoing round released after return");
                 Check(sources.Where(s=>s.name.StartsWith("menu-music-")).Sum(s=>s.volume)>0,seats+" viewports: menu Arena theme returns");
                 try{observations.Add("PASS "+returnCapture.Save(Path.Combine(directory,label+"-return-native.wav")));}

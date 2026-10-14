@@ -53,12 +53,42 @@ case "${1:-}" in
     case "$1" in build-release-mac) target=OSXUniversal; method=BuildReleaseMac ;; build-release-win) target=Win64; method=BuildReleaseWindows ;; esac
     exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -quit -projectPath "$project_dir" -buildTarget "$target" -executeMethod "StarTournament.ProvingGround.Editor.ProvingGroundBuild.$method" -logFile "$evidence_dir/$1.log"
     ;;
-  editor) mode=${UNITY_RUN_MODE:-exclusive}; shift; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -projectPath "$project_dir" "$@" ;;
+  editor)
+    mode=${UNITY_RUN_MODE:-exclusive}; shift
+    has_noaudio=0; has_muted=0; human_audio=0; automated=0
+    for arg in "$@"; do
+      case "$arg" in
+        -noaudio) has_noaudio=1 ;;
+        -muted) has_muted=1 ;;
+        -humanAudio) human_audio=1 ;;
+        -batchmode|-runTests|-executeMethod|-diagnostic|*Review) automated=1 ;;
+      esac
+    done
+    if [ "$has_noaudio" = 1 ] || [ "$has_muted" = 1 ] || [ "$human_audio" = 0 ] || [ "$automated" = 1 ]; then
+      if [ "$has_noaudio" = 0 ] && [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -noaudio -muted -projectPath "$project_dir" "$@"; fi
+      if [ "$has_noaudio" = 0 ]; then exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -noaudio -projectPath "$project_dir" "$@"; fi
+      if [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -muted -projectPath "$project_dir" "$@"; fi
+    fi
+    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -projectPath "$project_dir" "$@" ;;
   run)
     [ -d "$player_app" ] || { echo "Player is missing: run 'make build' first." >&2; exit 2; }
     mode=${UNITY_RUN_MODE:-exclusive}
     executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$player_app/Contents/Info.plist")
     shift
+    has_noaudio=0; has_muted=0; human_audio=0; automated=0
+    for arg in "$@"; do
+      case "$arg" in
+        -noaudio) has_noaudio=1 ;;
+        -muted) has_muted=1 ;;
+        -humanAudio) human_audio=1 ;;
+        -batchmode|-runTests|-executeMethod|-diagnostic|*Review) automated=1 ;;
+      esac
+    done
+    if [ "$has_noaudio" = 1 ] || [ "$has_muted" = 1 ] || [ "$human_audio" = 0 ] || [ "$automated" = 1 ]; then
+      if [ "$has_noaudio" = 0 ] && [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" -- "$player_app/Contents/MacOS/$executable" -noaudio -muted "$@"; fi
+      if [ "$has_noaudio" = 0 ]; then exec "$runner" "--$mode" -- "$player_app/Contents/MacOS/$executable" -noaudio "$@"; fi
+      if [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" -- "$player_app/Contents/MacOS/$executable" -muted "$@"; fi
+    fi
     exec "$runner" "--$mode" -- "$player_app/Contents/MacOS/$executable" "$@" ;;
   *) echo "Usage: unity/tools.sh prepare|test-edit|test-play|test-edit-filter FILTER|test-play-filter FILTER|build|editor|run" >&2; exit 2 ;;
 esac
