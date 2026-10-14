@@ -61,6 +61,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(JsonUtility.ToJson(Field<ProvingProfile>(ground,"frozenMovement")),Is.EqualTo(frozen));Assert.That(ground.CaptureLabBundle().Hash(),Is.EqualTo(values));
             Assert.That(File.Exists(Path.Combine(directory,"history.json")),Is.False,"Read-only startup must not create a history file");
         }
+        void SaveUi(string name)
+        {
+            var root=ground.transform.Find("native-ui").gameObject;var canvas=root.GetComponent<Canvas>();
+            var mode=canvas.renderMode;var cameraBefore=canvas.worldCamera;float distance=canvas.planeDistance;
+            var cameraObject=new GameObject("Lab startup capture");var camera=cameraObject.AddComponent<Camera>();
+            var target=new RenderTexture(1600,900,24);var pixels=new Texture2D(1600,900,TextureFormat.RGB24,false);
+            var children=root.GetComponentsInChildren<Transform>(true);var layers=children.Select(t=>t.gameObject.layer).ToArray();var active=RenderTexture.active;
+            try
+            {
+                foreach(var child in children)child.gameObject.layer=5;
+                camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color32(16,28,41,255);camera.cullingMask=1<<5;camera.orthographic=true;camera.targetTexture=target;
+                canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=10;Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;
+                pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/fix-large-lab-startup/editor-views"));Directory.CreateDirectory(output);File.WriteAllBytes(Path.Combine(output,name+".png"),pixels.EncodeToPNG());
+            }
+            finally
+            {
+                canvas.renderMode=mode;canvas.worldCamera=cameraBefore;canvas.planeDistance=distance;
+                for(int i=0;i<children.Length;i++)children[i].gameObject.layer=layers[i];RenderTexture.active=active;
+                UnityEngine.Object.Destroy(cameraObject);UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);
+            }
+        }
+        [UnityTest] public IEnumerator SaveDefaultMenuAndLabWaitingEditorViews()
+        {
+            yield return Load();SaveUi("default-menu");B("main-action-2").onClick.Invoke();yield return null;SaveUi("lab-waiting");
+            Assert.That(B("lab-back").interactable,Is.True);Assert.That(B("lab-save").interactable,Is.False);
+        }
         [UnityTest] public IEnumerator InvalidHistoryKeepsDefaultAndLabCannotWriteSource()
         {
             string path=Path.Combine(directory,"history.json");File.WriteAllText(path,"invalid-json");var bytes=File.ReadAllBytes(path);
