@@ -1,0 +1,84 @@
+{
+  "OriginalBytes": 160126874,
+  "CompactBytes": 863917,
+  "OriginalRevisions": 16,
+  "Revisions": 24,
+  "Schemas": 5,
+  "Reload": {
+    "TotalSeconds": 6.297092199907638,
+    "CatalogueSeconds": 0.2693638999480754,
+    "ReadSeconds": 0.0009615999879315495,
+    "ParseSeconds": 0.9763185000047088,
+    "ExistingValidationSeconds": 1.9664646999444813,
+    "MigrationSeconds": 1.171259699971415,
+    "MergeSeconds": 2.1300045773386955e-05,
+    "FinalValidationSeconds": 1.8456006000051275,
+    "HistoricalLookupSeconds": 0.0,
+    "HashSeconds": 1.5890056000789627,
+    "TrustedCopySeconds": 0.48988750006537884,
+    "SnapshotValidationSeconds": 0.8369487997842953,
+    "FileBytes": 863917,
+    "ManagedMemoryDelta": 143851520,
+    "Revisions": 24,
+    "SnapshotHashes": 48,
+    "SnapshotValidations": 48,
+    "RegistryCacheHits": 0,
+    "RegistryCacheMisses": 0,
+    "Gen0Collections": 5,
+    "CachedRegistrySets": 0,
+    "CachedCandidateBundles": 0,
+    "CachedDistinctProfiles": 0,
+    "CachedDescriptors": 0
+  },
+  "compact_sha256": "7f6649317858b6bb61736fcd4e9c8c852fb862560f09ffbeeedb12d9ee7a379d",
+  "original_sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "original_user_file_unchanged": true,
+  "reload_note": "Same Editor process warm cache; not cold Player/device/performance acceptance",
+  "runs": [
+    {
+      "total": "25",
+      "passed": "22",
+      "failed": "3",
+      "skipped": "0",
+      "duration": "305.8429261",
+      "run": "focused-editmode.VAPCKt"
+    },
+    {
+      "total": "87",
+      "passed": "83",
+      "failed": "4",
+      "skipped": "0",
+      "duration": "1541.1640008",
+      "run": "focused-editmode.ytHYz0"
+    },
+    {
+      "total": "14",
+      "passed": "14",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "1.296469",
+      "run": "focused-editmode.NnrWNC"
+    },
+    {
+      "total": "11",
+      "passed": "11",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "360.9764215",
+      "run": "focused-editmode.3SHExw"
+    },
+    {
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "87.9267004",
+      "run": "focused-playmode.J2agq9"
+    }
+  ],
+  "Python": "17/17",
+  "full_tests": false,
+  "Player_build": false,
+  "source_branch": "codex/compact-lab-history",
+  "compact_candidate": "/Users/eaafonasev/Projects/star-tournament/.local/compact-lab-history-2026-10-14/history-schema2-final.json"
+}

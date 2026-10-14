@@ -143,7 +143,7 @@ namespace StarTournament.ProvingGround
         public int CachedRegistrySets,CachedCandidateBundles,CachedDistinctProfiles,CachedDescriptors;
         public override string ToString()=>JsonUtility.ToJson(this);
     }
-    public sealed class DesignLabHistory
+    public sealed partial class DesignLabHistory
     {
         public const string ReleaseId="unity-shipped-release";
         static readonly object historicalLock=new object();
@@ -199,7 +199,7 @@ namespace StarTournament.ProvingGround
                 startupCancellation.ThrowIfCancellationRequested();
                 stage=Clock();startupDiagnostics.FileBytes=new FileInfo(path).Length;var json=File.ReadAllText(path);startupDiagnostics.ReadSeconds=Clock()-stage;
                 startupCancellation.ThrowIfCancellationRequested();
-                stage=Clock();var loaded=JsonUtility.FromJson<LabHistoryFile>(json);startupDiagnostics.ParseSeconds=Clock()-stage;
+                stage=Clock();var loaded=ReadStorage(json);startupDiagnostics.ParseSeconds=Clock()-stage;
                 startupDiagnostics.Revisions=loaded?.Profiles?.Sum(p=>p.Revisions?.Count??0)??0;
                 stage=Clock();ValidateFile(loaded);startupDiagnostics.ExistingValidationSeconds=Clock()-stage;data=loaded;
                 if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))
@@ -292,19 +292,19 @@ namespace StarTournament.ProvingGround
             var canonical=this.shipped.Hash()+"|"+JsonUtility.ToJson(this.shipped);
             using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(canonical))).Replace("-","").ToLowerInvariant();
         }
-        LabBundle[] HistoricalPredecessors(LabBundle sought)
+        LabBundle[] HistoricalPredecessors(LabBundle sought,bool shapeOnly=false)
         {
             double start=Clock();
-            try{return BuildHistoricalPredecessors(sought);}
+            try{return BuildHistoricalPredecessors(sought,shapeOnly);}
             finally{if(collectingStartupDiagnostics)startupDiagnostics.HistoricalLookupSeconds+=Clock()-start;}
         }
-        LabBundle[] BuildHistoricalPredecessors(LabBundle sought)
+        LabBundle[] BuildHistoricalPredecessors(LabBundle sought,bool shapeOnly=false)
         {
             // Compact fingerprint covers the same full trusted values and metadata as before.
             // Only candidate registries are cached: every saved hash/value still validates below.
             string key=(shippedCacheKey??(shippedCacheKey=TrustedRegistryFingerprint()))+"|"+
                 string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
-                string.Join("|",sought.Descriptors.Select(d=>d.Path));
+                string.Join("|",sought.Descriptors.Select(d=>d.Path))+(shapeOnly?"|storage-shape":"");
             if(historicalForInstance.TryGetValue(key,out var local))
             {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return local;}
             LabBundle[] Remember(LabBundle[] registries)
@@ -498,6 +498,7 @@ namespace StarTournament.ProvingGround
                 foreach(var registry in recentGameplay)
                 {
                     if(!RegistryMatches(registry,sought))continue;
+                    if(shapeOnly)return Remember(recentGameplay);
                     // Gameplay hashes omit descriptor metadata. Compare the complete
                     // trusted descriptors separately before taking the recent-schema path.
                     var supplied=sought.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal);
@@ -592,7 +593,7 @@ namespace StarTournament.ProvingGround
                 if(collectingStartupDiagnostics){startupDiagnostics.HashSeconds+=Clock()-hashStart;startupDiagnostics.SnapshotHashes++;}
                 if(r.Number<1||r.Snapshot==null||r.Hash!=actualHash)throw new InvalidDataException("Снимок или hash повреждён");
                     if(!validateSnapshots)continue;
-                    var registry=r.Snapshot==null||Current(r.Snapshot)?shipped:HistoricalPredecessors(r.Snapshot).FirstOrDefault(b=>RegistryMatches(b,r.Snapshot))??shipped;
+                    var registry=StorageRegistry(r.Snapshot);
                     if(!RegistryMatches(registry,r.Snapshot))
                     {
                         var paths=registry.Descriptors.Select(d=>d.Path).OrderBy(k=>k).ToArray();
@@ -608,7 +609,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
-            if(release.Hash!=shipped.Hash()&&!HistoricalPredecessors(release.Snapshot).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
+            if(release.Hash!=shipped.Hash()&&release.Hash!=StorageRegistry(release.Snapshot).Hash()&&!HistoricalPredecessors(release.Snapshot).Any(b=>release.Hash==b.Hash()))throw new InvalidDataException("Shipped release несовместим");
             if(!file.Profiles.Any(p=>p.Id==file.SelectedId&&p.Revisions.Any(r=>r.Number==file.SelectedRevision)))throw new InvalidDataException("Выбор отсутствует");
         }
         static bool RegistryMatches(LabBundle registry,LabBundle bundle)
@@ -701,12 +702,13 @@ namespace StarTournament.ProvingGround
         LabHistoryFile PrepareCommit(Action<LabHistoryFile> mutation)
         {
             var next=data.Clone();mutation(next);ValidateFile(next);
+            string json=VerifiedStorage(next);PreserveLegacyStorage();
             string temp=path+"."+Guid.NewGuid().ToString("N")+".tmp";
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 using(var stream=new FileStream(temp,FileMode.CreateNew,FileAccess.Write,FileShare.None))
-                {byte[] bytes=Encoding.UTF8.GetBytes(JsonUtility.ToJson(next,true));stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
+                {byte[] bytes=Encoding.UTF8.GetBytes(json);stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
                 atomicPublish(temp,path);
                 return next;
             }

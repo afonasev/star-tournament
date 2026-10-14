@@ -60,15 +60,18 @@ class UnityToolsTests(unittest.TestCase):
             self.assertEqual(self.invoke(*command).returncode, 0)
             args = json.loads(self.args_file.read_text())['args']
             self.assertEqual(args.count('-noaudio'), 1)
-        self.assertEqual(self.invoke('editor', '-noaudio').returncode, 0)
+            self.assertEqual(args.count('-muted'), 1)
+        self.assertEqual(self.invoke('editor', '-noaudio', '-muted').returncode, 0)
         self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-noaudio'), 1)
+        self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-muted'), 1)
         import plistlib
         app = self.root / 'fake.app'
         (app / 'Contents').mkdir(parents=True)
         with (app / 'Contents/Info.plist').open('wb') as file:
             plistlib.dump({'CFBundleExecutable': 'Fake Player'}, file)
-        self.assertEqual(self.invoke('run', '-noaudio', env={'UNITY_PLAYER_APP': str(app)}).returncode, 0)
+        self.assertEqual(self.invoke('run', '-noaudio', '-muted', env={'UNITY_PLAYER_APP': str(app)}).returncode, 0)
         self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-noaudio'), 1)
+        self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-muted'), 1)
 
     def test_invalid_focused_arguments_never_launch_unity(self):
         for args in [('test-edit-filter',), ('test-play-filter', ''), ('test-edit-filter', 'fixture', 'extra')]:

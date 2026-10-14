@@ -1,0 +1,26 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabParameterStorageTests;LabReleaseCatalogTests;DesignLabHistoryTests;LunarLaboratoryTests.ReworkRegistryPreservesExistingLunarLabHistory
+lab_history=/Users/eaafonasev/.codex/worktrees/compact-lab-history/star-tournament/unity/../.local/unity-evidence/focused-editmode.ytHYz0/qa-lab-history.json
+revision=21f8f3ec5950314506d1eecb4e7d92a5629bbd6f
+ M ../README.md
+ M ../docs/GAME_SPEC.md
+ M ../tools/test_unity_tools.py
+ M Assets/StarTournament/Editor/LabReleaseBuild.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M Assets/StarTournament/Tests/EditMode/LabReleaseCatalogTests.cs
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+ M tools.sh
+?? ../docs/evidence/compact-lab-history/
+?? ../tools/__pycache__/
+?? Assets/StarTournament/Runtime/Core/LabParameterStorage.cs
+?? Assets/StarTournament/Runtime/Core/LabParameterStorage.cs.meta
+?? Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs.meta

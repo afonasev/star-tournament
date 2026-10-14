@@ -37,9 +37,10 @@ namespace StarTournament.ProvingGround.Editor
             var catalog=JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(CatalogPath));
             var history=new DesignLabHistory(source,Baseline(),releases:catalog,persistMigration:false);
             if(!history.Writable)throw new BuildFailedException(history.StorageError);
-            var sourceNames=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(source)).Profiles.ToDictionary(p=>p.Id,p=>p.Name);
+            var profiles=history.Profiles;
+            var sourceNames=profiles.ToDictionary(p=>p.Id,p=>p.Name);
             int added=0,sequence=catalog.Entries.Max(e=>e.Sequence);
-            foreach(var p in history.Profiles)
+            foreach(var p in profiles)
                 foreach(var r in p.Revisions.Where(r=>r.ReleaseCandidate&&!history.IsShipped(r)).OrderBy(r=>r.Number))
                 {
                     catalog.Entries.Add(new LabReleaseEntry{Sequence=++sequence,ProfileId=p.Id,ProfileName=p.Id==DesignLabHistory.ReleaseId?"Default":sourceNames.TryGetValue(p.Id,out var name)?name:p.Name,

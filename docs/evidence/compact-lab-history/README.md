@@ -1,0 +1,13 @@
+# Parameter-only Lab history
+
+User decision: keep designer configuration, remove duplicated immutable maps/constants/descriptor metadata. Schema2 stores editable path/value pairs, sparse previously configured hidden deviations, deduplicated trusted schema references and full revision identities. Full runtime bundles reconstruct from game code, preserving old hashes and validation.
+
+Exact retained input:160126874bytes,2profiles16revisions. Compact candidate:863917bytes (~185× smaller); all16 source revisions/dates/hashes/designer values remain,8 existing compatibility revisions are appended,5 schemas. No hidden deviations in this input. Candidate: `/Users/eaafonasev/Projects/star-tournament/.local/compact-lab-history-2026-10-14/history-schema2-final.json`. Actual user history stays byte-identical: existing Player cannot read Schema2; build/update is separately authorized. The new runtime reads both schemas and writes Schema2 during authorized Lab mutations, preserving one flushed atomic legacy backup. Explicit CompactStorage verifies lossless roundtrip before publication.
+
+Trusted historical authored definitions include pre-pickup Combat Bowl and prior Lunar variants; manifests carry definition hashes, not geometry. Full source metadata fingerprint separates bounded FIFO8 trusted-only baseline caches; saved validity/results never cached. Default-root validation still rejects forged self-consistent custom roots.
+
+QA: initial25 cases22passed,3failures; expanded87 cases83passed,4failures. Wrong stale-scene fixture/format-key assertion, missing old authored variants, wrong minimal fixture baseline and staging cost were corrected. Final14/14 codec/quiet contracts and11/11 affected failure/reconstruction/exact-history/export cases passed;5/5 PlayMode workspace and startup race/error/cancellation passed; Python17/17. Original timeouts/assertions unchanged. Full game suite and new Player not run. Existing corpus positive cases remain evidence for unchanged validation branches; final reruns cover corrected paths. Every later launch used -noaudio -muted. Quiet mode recognizes -muted before audio construction, cannot be disabled by diagnostic review, preserves saved preferences; wrapper forwards flags.
+
+Same-process compact reload6.30s, including parse/reconstruction0.98s,48 full hash and validation passes. This is warm-cache Editor data, not a cold Player startup claim. Legacy migration133.94s as a complete test; explicit staged-profile export141.58s under unchanged180s timeout. File reduction does not prove eager snapshot memory reduction.
+
+Deferred: explicit Player build/update and human gameplay/device acceptance; installer/release/deploy/full tests.

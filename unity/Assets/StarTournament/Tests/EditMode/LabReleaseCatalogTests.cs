@@ -137,7 +137,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void LocalShippedClaimsAreReboundOnlyFromTheCatalogue()
         {
             var baseline=Baseline();var local=new DesignLabHistory(path,baseline);local.Create("Local");
-            var file=UnityEngine.JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var r=file.Profiles.Last().Revisions[0];
+            var file=DesignLabHistoryTests.ReadFixture(path,Baseline());var r=file.Profiles.Last().Revisions[0];
             r.ReleaseSequence=1;r.ReleaseHash=r.Hash;File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file));
             var history=new DesignLabHistory(path,baseline,releases:LabReleaseCatalog.Factory(baseline),resetToLatestDefault:true);
             Assert.That(history.Profiles.Last().Revisions[0].ReleaseSequence,Is.Zero);

@@ -1,0 +1,16 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabParameterStorageTests;LabReleaseCatalogTests
+lab_history=/Users/eaafonasev/.codex/worktrees/compact-lab-history/star-tournament/unity/../.local/unity-evidence/focused-editmode.VAPCKt/qa-lab-history.json
+revision=21f8f3ec5950314506d1eecb4e7d92a5629bbd6f
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Editor/LabReleaseBuild.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M Assets/StarTournament/Tests/EditMode/LabReleaseCatalogTests.cs
+?? ../docs/evidence/compact-lab-history/
+?? Assets/StarTournament/Runtime/Core/LabParameterStorage.cs
+?? Assets/StarTournament/Runtime/Core/LabParameterStorage.cs.meta
+?? Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs.meta

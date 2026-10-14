@@ -13,6 +13,8 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround : MonoBehaviour
     {
+        internal static bool ShouldMuteStartup(string[] args,bool automated)
+            =>args.Contains("-muted")||args.Contains("-noaudio")||automated&&!args.Contains("-audioReview");
         public GameObject RobotPrefab, WorldWeaponPrefab, ViewWeaponPrefab, ArmorPickupPrefab, SpeedPickupPrefab, DamagePickupPrefab, HealPickupPrefab;
         public GameObject TrooperBodyPrefab, TrooperArmsPrefab, RiflePrefab, PulsePrefab, CutterPrefab, RocketProjectilePrefab;
         public AnimationClip[] TrooperClips;
@@ -221,11 +223,11 @@ namespace StarTournament.ProvingGround
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
             // Automated reviews are silent. Ordinary Player sessions use the user's effects preference.
             var soundArgs=Environment.GetCommandLineArgs();
-            bool muteReview=soundArgs.Contains("-noaudio")||(Application.isEditor||Application.isBatchMode||
+            bool muteReview=ShouldMuteStartup(soundArgs,Application.isEditor||Application.isBatchMode||
                 !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"))||
-                soundArgs.Any(a=>a.EndsWith("Review",StringComparison.Ordinal)||a=="-diagnostic"))&&!soundArgs.Contains("-audioReview");
+                soundArgs.Any(a=>a.EndsWith("Review",StringComparison.Ordinal)||a=="-diagnostic"));
             AudioListener.volume=muteReview?0:1;
-            gameAudio=new NativeGameAudio(transform,Profile,muteReview);
+            gameAudio=new NativeGameAudio(transform,Profile,muteReview,soundArgs.Contains("-muted"));
             font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             studioLight = Owned("arena-light").AddComponent<Light>();
             studioLight.type = LightType.Directional; studioLight.intensity = Profile.Get("presentation.lightIntensity");

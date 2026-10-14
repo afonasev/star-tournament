@@ -88,6 +88,10 @@ namespace StarTournament.ProvingGround
             copy.valueIndex=null;
             return copy;
         }
+        internal static ProvingProfile StorageShape(string profileId,int profileVersion,IEnumerable<string> paths)
+            => new ProvingProfile{id=profileId,version=profileVersion,
+                descriptors=new List<NumericDescriptor>(System.Linq.Enumerable.Select(paths,p=>new NumericDescriptor{Path=p})),
+                values=new List<ProvingProfileValue>()};
         /// <summary>Append-only migration for serialized proving-ground fixtures when a descriptor is introduced.</summary>
         public void EnsureDefaultDescriptors()
         {
