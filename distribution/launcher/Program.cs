@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using Velopack;
 using Velopack.Locators;
@@ -38,6 +39,21 @@ static class Launcher
             qaRunner = args[qaIndex + 1];
             args = args.Where((_, index) => index != qaIndex && index != qaIndex + 1).ToArray();
         }
+        bool qaLaunch = qaRunner != null || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_UNITY_RUNNER"));
+        bool quietLaunch = qaLaunch || args.Contains("-noaudio") || args.Contains("-muted");
+        if (quietLaunch)
+        {
+            if (qaLaunch) args = args.Where(arg => arg != "-humanAudio").ToArray();
+            if (!args.Contains("-noaudio")) args = args.Append("-noaudio").ToArray();
+            if (!args.Contains("-muted")) args = args.Append("-muted").ToArray();
+            if (qaLaunch) restartArguments = restartArguments.Where(arg => arg != "-humanAudio").ToArray();
+            if (!restartArguments.Contains("-noaudio")) restartArguments = restartArguments.Append("-noaudio").ToArray();
+            if (!restartArguments.Contains("-muted")) restartArguments = restartArguments.Append("-muted").ToArray();
+            var qaEnvironmentRunner = Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_UNITY_RUNNER");
+            if (qaLaunch && qaRunner == null && !string.IsNullOrEmpty(qaEnvironmentRunner))
+                restartArguments = restartArguments.Concat(new[] { "--qa-unity-runner", qaEnvironmentRunner }).ToArray();
+        }
+        // Preserve the selected launch mode when staged updates relaunch this Player.
         var baseDir = AppContext.BaseDirectory;
         var logRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StarTournament", "launcher");
         Directory.CreateDirectory(logRoot);
