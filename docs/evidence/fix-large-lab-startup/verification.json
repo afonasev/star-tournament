@@ -1,0 +1,47 @@
+{
+  "baseline": "4eb2edab",
+  "reported_player": "0d3676b6",
+  "original_history": {
+    "bytes": 160126874,
+    "sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+    "copy_sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+    "untouched": true
+  },
+  "diagnosis": "Player log stops before history ready. Original Player reproducible on copied history; owned run stopped after 101s, not a completed timing baseline. No deadlock proven. History validation is expensive.",
+  "source_fix": "Lookup complete trusted registry cache before transformations; cache exact linear predecessor hits as well. All hash/metadata/read-only validation and persistence contracts retained.",
+  "large_copy_editor_startup_seconds": 108.37,
+  "runs": [
+    {
+      "run": "focused-editmode.D6yFVw",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "duration": "27.0132414"
+    },
+    {
+      "run": "focused-editmode.Y9nWtF",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "duration": "31.9316629"
+    },
+    {
+      "run": "focused-editmode.l1Cbps",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "duration": "0.1259344"
+    },
+    {
+      "run": "focused-playmode.fjqiC6",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "duration": "113.9592183"
+    }
+  ],
+  "pending": "User choice: show menu immediately on packaged Default while history loads in background, or continue waiting for whole history. Optimization alone does not provide fast UX.",
+  "player_rebuild": "deferred pending startup-order choice; existing reported Player remains unchanged",
+  "silent_repro": "-noaudio from process start",
+  "runtime_sha256": "3282547fffef015a04387f2ef1cc99d2c3e521ba2672c2f76c68af37957c65c5"
+}

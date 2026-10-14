@@ -254,6 +254,22 @@ namespace StarTournament.ProvingGround
         // a saved revision actually needs one, then share the exact immutable registry set.
         LabBundle[] HistoricalPredecessors(LabBundle sought)
         {
+            // Key the complete trusted registry before any expensive legacy projections.
+            // Saved values/metadata still pass RegistryMatches and ValidateFile on every load.
+            string key=(shippedCacheKey??(shippedCacheKey=this.shipped.Hash()+"|"+JsonUtility.ToJson(this.shipped)))+"|"+
+                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
+                string.Join("|",sought.Descriptors.Select(d=>d.Path));
+            lock(historicalLock)
+                if(historicalCache.TryGetValue(key,out var warm))return warm;
+            LabBundle[] Remember(LabBundle[] registries)
+            {
+                lock(historicalLock)
+                {
+                    if(historicalCache.Count>=2)historicalCache.Clear();
+                    historicalCache[key]=registries;
+                }
+                return registries;
+            }
             var shipped=this.shipped;
             if(!sought.Descriptors.Any(d=>d.Path=="visual.bowlLocalLightScale"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArenaHarmonization()).ToList()};
@@ -281,15 +297,7 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDeathAudioGain()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??7)<7)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSmoothFirstPersonWalk()).ToList()};
-            // Hash covers gameplay values; metadata is also trusted during migration.
-            string key=(shippedCacheKey??(shippedCacheKey=this.shipped.Hash()+"|"+JsonUtility.ToJson(this.shipped)))+"|"+
-                string.Join("|",sought.Profiles.Select(p=>p.Id+"@"+p.Version))+"|"+
-                string.Join("|",sought.Descriptors.Select(d=>d.Path));
-            // A warm lookup must precede even the linear predecessor probes: those transforms
-            // serialize large unchanged authored-map profiles on every history validation.
-            lock(historicalLock)
-                if(historicalCache.TryGetValue(key,out var warm))return warm;
-            if(RegistryMatches(shipped,sought))return new[]{shipped};
+            if(RegistryMatches(shipped,sought))return Remember(new[]{shipped});
             // The preceding LT registries lack only the new timing/gesture descriptors.
             // Match the trusted shipped projection first, without expanding all older schemas.
             // Values and metadata still pass the unchanged ValidateFile checks below.
@@ -297,7 +305,7 @@ namespace StarTournament.ProvingGround
             if(previousVersion==14||previousVersion==13)
             {
                 var previous=new LabBundle{Profiles=shipped.Profiles.Select(p=>previousVersion==14?p.BeforeSmoothGamepadTap():p.BeforeGamepadTriggerAim()).ToList()};
-                if(RegistryMatches(previous,sought))return new[]{previous};
+                if(RegistryMatches(previous,sought))return Remember(new[]{previous});
             }
             // The first weapon-switch releases are exact linear predecessors, but the general
             // compatibility search below also explores later additive branches. Recognize these
@@ -316,7 +324,7 @@ namespace StarTournament.ProvingGround
             var low=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeLowWeaponSwitch()).ToList()};
             var shoulder=new LabBundle{Profiles=beforePalette.Profiles.Select(p=>p.BeforeShoulderSwitch()).ToList()};
             foreach(var previous in new[]{medium,low,shoulder,preSwitch,preCutter,preCutterThickness,preCutterThicknessSwitch,prePulse,preHeal})
-                if(RegistryMatches(previous,sought))return new[]{previous};
+                if(RegistryMatches(previous,sought))return Remember(new[]{previous});
             lock(historicalLock)
             {
                 if(historicalCache.TryGetValue(key,out var cached))return cached;

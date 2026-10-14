@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.1259344">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="495" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.125934" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1600" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/fix-lab-startup/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="495" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.121446" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11205" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1601" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="495" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.120278" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1602" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="495" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.119222" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1603" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="495" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.118102" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1604" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="377" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.115539" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1228" name="DesignLabHistoryTests" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="53" result="Failed" site="Child" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.111121" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1232" name="WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting" methodname="WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="2079409185" result="Failed" label="Error" start-time="2026-10-14 07:36:29Z" end-time="2026-10-14 07:36:29Z" duration="0.102899" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.IO.FileNotFoundException : Could not find file "/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/st-lab-tests-81fc6738-7806-4043-ab6a-8f1e4155850b/history.json"]]></message>
+                    <stack-trace><![CDATA[  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x0019e] in <4ac0ee785b7843ea944af6fc649f4ee5>:0 
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize) [0x00000] in <4ac0ee785b7843ea944af6fc649f4ee5>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,int)
+  at System.IO.File.ReadAllBytes (System.String path) [0x00000] in <4ac0ee785b7843ea944af6fc649f4ee5>:0 
+  at StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting () [0x0006b] in /Users/eaafonasev/.codex/worktrees/fix-lab-startup/star-tournament/unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs:34 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <4ac0ee785b7843ea944af6fc649f4ee5>:0 ]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

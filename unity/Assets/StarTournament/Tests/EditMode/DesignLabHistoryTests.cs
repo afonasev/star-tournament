@@ -25,6 +25,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadTapAimSmoothingSeconds"),Is.EqualTo(.18f));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
         }
+        [Test]public void WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting()
+        {
+            var shipped=Shipped();
+            var prior=typeof(ProvingProfile).GetMethod("BeforeSmoothGamepadTap",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList()};
+            var original=new DesignLabHistory(path,old);original.Create("Warm legacy registry");
+            var before=File.ReadAllBytes(path);
+            var warm=new DesignLabHistory(path,shipped,persistMigration:false);
+            Assert.That(warm.StorageError,Is.Null);
+            CollectionAssert.AreEqual(before,File.ReadAllBytes(path));
+            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var revision=file.Profiles[0].Revisions[0];
+            var authored=revision.Snapshot.Descriptors.First(d=>revision.Snapshot.IsAuthoring(d.Path)).Path;
+            revision.Snapshot.Set(authored,revision.Snapshot.Get(authored)+1);
+            revision.Hash=revision.Snapshot.Hash(); // A self-consistent file hash cannot authorize authored edits.
+            File.WriteAllText(path,JsonUtility.ToJson(file,true));var corrupt=File.ReadAllBytes(path);
+            var rejected=new DesignLabHistory(path,shipped,persistMigration:false);
+            Assert.That(rejected.StorageError,Is.Not.Null);
+            CollectionAssert.AreEqual(corrupt,File.ReadAllBytes(path));
+        }
         [Test]public void StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation()
         {
             var shipped=Shipped();shipped.Profiles.Insert(14,ProvingProfile.CreateBotEvaluationDefault());
