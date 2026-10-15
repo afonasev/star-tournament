@@ -4,6 +4,8 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.SequenceEqual(new[] { "--feedback" })) { await UpdateFeedbackChecks.Run(); return; }
+
 using var rsa = RSA.Create(3072);
 var config = new LauncherConfig("tech.test", "osx", "arm64", "1.0.0", "2026-10-04", "https://fixture.invalid/", "game/Player");
 var bytes = "authenticated package fixture"u8.ToArray();

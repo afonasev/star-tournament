@@ -20,6 +20,8 @@ namespace StarTournament.ProvingGround
         public Vector3 LowerRoutePoint { get; private set; }
         public Vector3 UpperRoutePoint { get; private set; }
         public NavMeshSurface Surface { get; private set; }
+        public WellLiftSystem Lifts { get; private set; }
+        public ProvingProfile WellProfile { get; private set; }
         public ArenaDefinition Definition { get; private set; }
         public ArenaFreezeSnapshot FrozenSnapshot { get; private set; }
         readonly List<Collider> rocketGrating=new List<Collider>();
@@ -70,6 +72,7 @@ namespace StarTournament.ProvingGround
         Material floor, wall, accent;
         public void ClearProjection()
         {
+            Lifts=null;WellProfile=null;
             if (Surface) { if(Surface.navMeshData)NavMeshBuilder.Cancel(Surface.navMeshData); Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
             for(int i=transform.childCount-1;i>=0;i--) DestroyImmediate(transform.GetChild(i).gameObject);
             if(floor)DestroyImmediate(floor);if(wall)DestroyImmediate(wall);if(accent)DestroyImmediate(accent);
@@ -102,9 +105,9 @@ namespace StarTournament.ProvingGround
             settings.buildHeightMesh=true;
             settings.agentRadius=profile.Get("player.capsule.radius"); settings.agentHeight=profile.Get("player.capsule.height");
             // This map has many sharp corridor corners: a named clearance margin keeps baked corners outside the physical capsule.
-            if(Definition.MapId==LunarLaboratoryCatalog.Id)
+            if(Definition.MapId==LunarLaboratoryCatalog.Id||Definition.MapId==WellArenaCatalog.Id)
             {
-                settings.agentRadius+=(artProfile??ProvingProfile.CreateLunarPresentation()).Get("lunar.navigationClearance");
+                settings.agentRadius+=Definition.MapId==LunarLaboratoryCatalog.Id?(artProfile??ProvingProfile.CreateLunarPresentation()).Get("lunar.navigationClearance"):ProvingProfile.CreateLunarPresentation().Get("lunar.navigationClearance");
                 // Eight voxels per physical capsule radius prevent stair/window quantization from inventing shortcuts.
                 settings.overrideVoxelSize=true;settings.voxelSize=profile.Get("player.capsule.radius")/8;
             }
@@ -119,6 +122,13 @@ namespace StarTournament.ProvingGround
             }
             else Surface.navMeshData=NavMeshBuilder.BuildNavMeshData(settings,sources,bakeBounds,Vector3.zero,Quaternion.identity);
             Surface.AddData();
+            if(Definition.MapId==WellArenaCatalog.Id)
+            {
+                WellProfile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(artProfile??ProvingProfile.CreateWellDefault()));
+                Lifts=new WellLiftSystem(Definition.Lifts,WellProfile);
+                foreach(var lift in Definition.Lifts){var go=Box("lift-"+lift.Id,lift.Center+Vector3.up*(lift.InitialHeight-lift.Size.y*.5f),lift.Size,wall);supports[go.GetComponent<Collider>()]="support:lift-"+lift.Id;Lifts.Attach(lift.Id,go.GetComponent<Collider>());}
+                var decoration=new GameObject("Well laboratory presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<WellArenaPresentation>().Build(Definition,WellProfile);
+            }
             if(Definition.Identity==CombatBowlCatalog.Identity)
             {
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);

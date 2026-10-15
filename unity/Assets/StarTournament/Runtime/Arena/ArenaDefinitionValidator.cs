@@ -46,6 +46,12 @@ namespace StarTournament.ProvingGround
                 if(!string.IsNullOrEmpty(solid.Support)) supports.Add(solid.Support);
                 if(solid.Material=="floor" && string.IsNullOrWhiteSpace(solid.Support)) return Reject("ARENA_MISSING_FLOOR_SUPPORT",family,solid.Id,"Walkable floor needs a named support.");
             }
+            if(definition.Lifts!=null)
+            {
+                var liftIds=new HashSet<string>(StringComparer.Ordinal);
+                foreach(var lift in definition.Lifts)
+                    if(lift==null||string.IsNullOrWhiteSpace(lift.Id)||!liftIds.Add(lift.Id)||!Finite(lift.Center)||!Finite(lift.Size)||lift.Size.x<=0||lift.Size.y<=0||lift.Size.z<=0||float.IsNaN(lift.Bottom)||float.IsNaN(lift.Top)||float.IsInfinity(lift.Bottom)||float.IsInfinity(lift.Top)||lift.Top<=lift.Bottom||(lift.InitialHeight!=lift.Bottom&&lift.InitialHeight!=lift.Top))return Reject("ARENA_INVALID_LIFT",family,lift?.Id,"Lift geometry and terminal initial state required.");
+            }
             if(supports.Count==0) return Reject("ARENA_MISSING_SUPPORTS",family,null,"At least one named support is required.");
             for(int i=0;i<definition.Spawns.Length;i++) if(!OnNamedFloor(definition.Spawns[i],definition.Solids,supports)) return Reject("ARENA_INVALID_SPAWN",family,"spawn:"+i,"Spawn must resolve to a named floor support.");
             for(int i=0;i<definition.RouteAnchors.Length;i++) if(!OnNamedFloor(definition.RouteAnchors[i],definition.Solids,supports)) return Reject("ARENA_INVALID_ROUTE_ANCHOR",family,"route-anchor:"+i,"Route anchor must resolve to a named floor support.");

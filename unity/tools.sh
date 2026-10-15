@@ -26,7 +26,7 @@ isolate_test_history() {
 case "${1:-}" in
   lab-stage-releases)
     [ "$#" -eq 2 ] && [ -f "$2" ] || { echo "Usage: unity/tools.sh lab-stage-releases ABSOLUTE_HISTORY_JSON" >&2; exit 2; }
-    STAR_TOURNAMENT_LAB_RELEASE_HISTORY="$2" exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.LabReleaseBuild.PromoteMarked -logFile "$evidence_dir/lab-stage-releases.log" ;;
+    STAR_TOURNAMENT_LAB_RELEASE_HISTORY="$2" exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.LabReleaseBuild.PromoteMarked -logFile "$evidence_dir/lab-stage-releases.log" ;;
   test-edit-filter|test-play-filter)
     [ "$#" -eq 2 ] && [ -n "$2" ] || { echo "Usage: unity/tools.sh $1 '<testFilter>'" >&2; exit 2; }
     case "$1" in test-edit-filter) platform=EditMode; stem=editmode ;; test-play-filter) platform=PlayMode; stem=playmode ;; esac
@@ -41,19 +41,19 @@ case "${1:-}" in
     } > "$focused_dir/scope.txt"
     echo "FOCUSED $platform: $2 — affected evidence, NOT a full suite"
     echo "Evidence: $focused_dir"
-    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform "$platform" -testFilter "$2" -testResults "$focused_dir/$stem.xml" -logFile "$focused_dir/$stem.log"
+    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -nographics -projectPath "$project_dir" -runTests -testPlatform "$platform" -testFilter "$2" -testResults "$focused_dir/$stem.xml" -logFile "$focused_dir/$stem.log"
     ;;
 
-  prepare) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.ProvingGroundBuild.Prepare -logFile "$evidence_dir/prepare.log" ;;
-  test-edit) isolate_test_history "$(mktemp -d "$evidence_dir/full-editmode.XXXXXX")"; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform EditMode -testResults "$evidence_dir/editmode.xml" -logFile "$evidence_dir/editmode.log" ;;
-  test-play) isolate_test_history "$(mktemp -d "$evidence_dir/full-playmode.XXXXXX")"; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -nographics -projectPath "$project_dir" -runTests -testPlatform PlayMode -testResults "$evidence_dir/playmode.xml" -logFile "$evidence_dir/playmode.log" ;;
-  build) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.ProvingGroundBuild.BuildMac -logFile "$evidence_dir/build.log" ;;
+  prepare) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -nographics -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.ProvingGroundBuild.Prepare -logFile "$evidence_dir/prepare.log" ;;
+  test-edit) isolate_test_history "$(mktemp -d "$evidence_dir/full-editmode.XXXXXX")"; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -nographics -projectPath "$project_dir" -runTests -testPlatform EditMode -testResults "$evidence_dir/editmode.xml" -logFile "$evidence_dir/editmode.log" ;;
+  test-play) isolate_test_history "$(mktemp -d "$evidence_dir/full-playmode.XXXXXX")"; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -nographics -projectPath "$project_dir" -runTests -testPlatform PlayMode -testResults "$evidence_dir/playmode.xml" -logFile "$evidence_dir/playmode.log" ;;
+  build) exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.ProvingGroundBuild.BuildMac -logFile "$evidence_dir/build.log" ;;
   build-release-mac|build-release-win)
     [ -n "${STAR_TOURNAMENT_RELEASE_OUTPUT:-}" ] || { echo "Set absolute STAR_TOURNAMENT_RELEASE_OUTPUT" >&2; exit 2; }
     case "$1" in build-release-mac) target=OSXUniversal; method=BuildReleaseMac ;; build-release-win) target=Win64; method=BuildReleaseWindows ;; esac
-    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -quit -projectPath "$project_dir" -buildTarget "$target" -executeMethod "StarTournament.ProvingGround.Editor.ProvingGroundBuild.$method" -logFile "$evidence_dir/$1.log"
+    exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -quit -projectPath "$project_dir" -buildTarget "$target" -executeMethod "StarTournament.ProvingGround.Editor.ProvingGroundBuild.$method" -logFile "$evidence_dir/$1.log"
     ;;
-  editor) mode=${UNITY_RUN_MODE:-exclusive}; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -projectPath "$project_dir" ;;
+  editor) mode=${UNITY_RUN_MODE:-exclusive}; shift; exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -projectPath "$project_dir" "$@" ;;
   run)
     [ -d "$player_app" ] || { echo "Player is missing: run 'make build' first." >&2; exit 2; }
     mode=${UNITY_RUN_MODE:-exclusive}

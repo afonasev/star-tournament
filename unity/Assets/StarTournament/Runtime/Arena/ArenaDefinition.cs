@@ -11,9 +11,11 @@ namespace StarTournament.ProvingGround
     [Serializable] public sealed class ArenaSpawnRegion { public string Id, Support; public Vector3 Center, Size; }
     public enum ArenaPickupKind { Armor, Speed, Damage, FullHeal, Shotgun, Pulse, Cutter }
     [Serializable] public sealed class ArenaPickupDefinition { public string Id, Support; public ArenaPickupKind Kind; public Vector3 Anchor; }
+    [Serializable] public sealed class ArenaLiftDefinition { public string Id; public Vector3 Center, Size; public float Bottom, Top, InitialHeight; }
     [Serializable] public sealed class ArenaDefinition
     {
         public string Revision, MapId, ProfileFingerprint, Identity;
+        public ArenaLiftDefinition[] Lifts;
         public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors;
         public ArenaPickupDefinition[] Pickups;
         public Vector3 ArmorPickupAnchor=>Pickups.First(x=>x.Kind==ArenaPickupKind.Armor).Anchor;

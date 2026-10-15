@@ -15,14 +15,16 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     readonly LauncherConfig config;
     readonly string key;
     readonly HttpClient http;
+    readonly TimeSpan stallTimeout;
     Uri? packageUri;
     public string? Envelope { get; private set; }
     public VelopackAsset? Asset { get; private set; }
     public string? PublicationDate { get; private set; }
 
-    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null)
+    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null)
     {
         this.config = config; this.key = key;
+        this.stallTimeout = stallTimeout ?? TimeSpan.FromSeconds(30);
         if (config.UpdateChannel != null && (config.UpdateChannel is not ("test" or "production") ||
             config.FeedBase != (config.UpdateChannel == "test" ? TestLocator : ProductionBase)))
             throw new CryptographicException("Untrusted GitHub channel configuration");
@@ -97,7 +99,13 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         var target = initial;
         for (var redirects = 0; ; redirects++)
         {
-            var response = await http.GetAsync(target, HttpCompletionOption.ResponseHeadersRead, token);
+            HttpResponseMessage response;
+            using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(token))
+            {
+                deadline.CancelAfter(stallTimeout);
+                try { response = await http.GetAsync(target, HttpCompletionOption.ResponseHeadersRead, deadline.Token); }
+                catch (OperationCanceledException) when (!token.IsCancellationRequested) { throw new TimeoutException("Update response headers stalled"); }
+            }
             if ((int)response.StatusCode is not (301 or 302 or 303 or 307 or 308)) return response;
             var location = response.Headers.Location;
             response.Dispose();
@@ -122,7 +130,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         await using var input = await response.Content.ReadAsStreamAsync(token);
         using var output = new MemoryStream();
         var buffer = new byte[8192]; int count;
-        while ((count = await input.ReadAsync(buffer, token)) > 0)
+        while ((count = await ReadWithDeadline(input, buffer, token)) > 0)
         {
             if (output.Length + count > limit) throw new CryptographicException("Metadata exceeds limit");
             output.Write(buffer, 0, count);
@@ -205,7 +213,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             await using (var output = File.Create(quarantine))
             {
                 var buffer = new byte[128 * 1024]; long received = 0; int count;
-                while ((count = await input.ReadAsync(buffer, cancelToken)) > 0)
+                while ((count = await ReadWithDeadline(input, buffer, cancelToken)) > 0)
                 {
                     received += count;
                     if (received > releaseEntry.Size) throw new CryptographicException("Package exceeds signed size");
@@ -218,6 +226,14 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             progress(100);
         }
         finally { if (File.Exists(quarantine)) File.Delete(quarantine); }
+    }
+
+    async Task<int> ReadWithDeadline(Stream input, byte[] buffer, CancellationToken token)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+        deadline.CancelAfter(stallTimeout);
+        try { return await input.ReadAsync(buffer.AsMemory(), deadline.Token); }
+        catch (OperationCanceledException) when (!token.IsCancellationRequested) { throw new TimeoutException("Update download stalled"); }
     }
 
     public void Dispose() => http.Dispose();

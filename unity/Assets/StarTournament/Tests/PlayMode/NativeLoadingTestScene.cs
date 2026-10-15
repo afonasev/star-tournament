@@ -15,6 +15,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var ground=scene.GetRootGameObjects().SelectMany(x=>x.GetComponentsInChildren<ProvingGround>()).Single();
             yield return Wait(ground);
         }
+        public static IEnumerator WaitLabHistory(ProvingGround ground)
+        {
+            float deadline=Time.realtimeSinceStartup+120;
+            while(!ground.IsLabHistoryReady)
+            {
+                Assert.That(ground.LabHistoryLoadError,Is.Null);
+                Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline),"Lab history did not become ready within 120 seconds");
+                yield return null;
+            }
+        }
         public static IEnumerator Wait(ProvingGround ground)
         {
             float deadline=Time.realtimeSinceStartup+120;

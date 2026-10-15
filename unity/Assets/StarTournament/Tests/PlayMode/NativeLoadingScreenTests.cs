@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
         }
-        internal static IEnumerator Capture(string name,GameObject root=null)
+        internal static IEnumerator Capture(string name,GameObject root=null,Action afterLayout=null)
         {
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LOADING_SCREENSHOTS");
             if(string.IsNullOrEmpty(directory))yield break;
@@ -40,7 +40,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var child in children)child.gameObject.layer=5;
                 camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color32(16,28,41,255);camera.cullingMask=1<<5;camera.orthographic=true;camera.targetTexture=target;
                 canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=10;
-                Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
+                Canvas.ForceUpdateCanvases();afterLayout?.Invoke();Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
                 File.WriteAllBytes(Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
             }
             finally
@@ -182,6 +182,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     if(ground.LoadingScreen.AnimationPosition!=last)animated=true;
                     last=ground.LoadingScreen.AnimationPosition;yield return null;
                 }
+                Assert.That(ground.IsLabHistoryReady,Is.False,"Menu startup must precede local history readiness");
+                var activeBefore=ground.CaptureLabBundle().Hash();var identityBefore=ground.LabSavedIdentity;
+                while(!ground.IsLabHistoryReady)
+                {
+                    Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));
+                    Assert.That(ground.LabHistoryLoadError,Is.Null);
+                    Assert.That(ground.IsReady,Is.True);Assert.That(ground.LoadingScreen.Visible,Is.False);
+                    yield return null;
+                }
+                Assert.That(ground.CaptureLabBundle().Hash(),Is.EqualTo(activeBefore));
+                Assert.That(ground.LabSavedIdentity,Is.EqualTo(identityBefore));
                 var loaded=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
                 Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.Writable,Is.True);
                 Debug.Log("Loading history QA: bytes="+new FileInfo(path).Length+" animation="+animated+" writable="+loaded.Writable+" sha256="+before);

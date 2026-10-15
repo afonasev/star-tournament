@@ -21,9 +21,9 @@ namespace StarTournament.ProvingGround
             definition=d;p=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=new Color(.85f,.88f,1)*P("fill");
             cube=Primitive(PrimitiveType.Cube);cylinder=Primitive(PrimitiveType.Cylinder);sphere=Primitive(PrimitiveType.Sphere);
             var panels=Texture("Ivory ceramic panel / seams, bolts and wear",0);var dust=Texture("Lunar regolith / granular cratered basalt",1);
-            ivory=Mat("Ivory ceramic panels",new Color(.88f,.86f,.76f),panels);graphite=Mat("Graphite floor",new Color(.36f,.39f,.4f),Texture("Resilient floor / fine aggregate and tile joints",2));metal=Mat("Brushed structural alloy",new Color(.31f,.36f,.39f),panels,.6f);ochre=Mat("Matte ochre",new Color(.61f,.43f,.19f));sand=Mat("Grey lunar regolith",new Color(.58f,.59f,.6f),dust);white=Mat("Neutral light diffuser",new Color(.95f,.95f,.87f),null,0,true);blue=Mat("N analysis blue grey",new Color(.39f,.57f,.63f));green=Mat("W communications sage",new Color(.42f,.51f,.4f));purple=Mat("E power grey lavender",new Color(.52f,.46f,.58f));
+            ivory=Mat("Ivory ceramic panels",new Color(.88f,.86f,.76f),panels);graphite=Mat("Graphite floor",new Color(.36f,.39f,.4f),Texture("Resilient floor / fine aggregate and tile joints",2),0,false,VisualMaterialRole.Floor);metal=Mat("Brushed structural alloy",new Color(.31f,.36f,.39f),panels,.6f);ochre=Mat("Matte ochre",new Color(.61f,.43f,.19f));sand=Mat("Grey lunar regolith",new Color(.58f,.59f,.6f),dust);white=Mat("Neutral light diffuser",new Color(.95f,.95f,.87f),null,0,true);blue=Mat("N analysis blue grey",new Color(.39f,.57f,.63f));green=Mat("W communications sage",new Color(.42f,.51f,.4f));purple=Mat("E power grey lavender",new Color(.52f,.46f,.58f));
             ceiling=Mat("Acoustic ceiling / perforated panels",new Color(.94f,.94f,.9f),Texture("Ceiling / perforations and narrow panel joints",3));
-            grate=Mat("Grating alloy without aliasing shadows",new Color(.31f,.36f,.39f),panels,.6f);paving=Mat("Dust-grey paving",new Color(.51f,.52f,.5f),panels);
+            grate=Mat("Grating alloy without aliasing shadows",new Color(.31f,.36f,.39f),panels,.6f);paving=Mat("Dust-grey paving",new Color(.51f,.52f,.5f),panels,0,false,VisualMaterialRole.Floor);
             glass=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Transparent projectile-proof armored glass"};owned.Add(glass);glass.color=new Color(.39f,.66f,.72f,P("glassOpacity"));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",(float)BlendMode.SrcAlpha);glass.SetFloat("_DstBlend",(float)BlendMode.OneMinusSrcAlpha);glass.SetFloat("_ZWrite",0);glass.SetFloat("_Smoothness",.7f);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
             int decorated=0;
             foreach(var s in d.Solids)
@@ -53,9 +53,9 @@ namespace StarTournament.ProvingGround
             Architecture();yield return null;RoofDetails();yield return null;Zones();yield return null;PickupSigns(d);yield return null;CourtyardDetail();yield return null;Background();yield return null;Flush();
         }
         Mesh Primitive(PrimitiveType t){var go=GameObject.CreatePrimitive(t);var m=Instantiate(go.GetComponent<MeshFilter>().sharedMesh);DestroyImmediate(go);owned.Add(m);return m;}
-        Material Mat(string name,Color c,Texture t=null,float metallic=0,bool emissive=false)
+        Material Mat(string name,Color c,Texture t=null,float metallic=0,bool emissive=false,VisualMaterialRole role=VisualMaterialRole.Wall)
         {
-            var m=new Material(Shader.Find(emissive?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=c};m.SetFloat("_Metallic",metallic);m.SetFloat("_Smoothness",.24f);if(t)m.SetTexture("_BaseMap",t);owned.Add(m);return m;
+            var m=new Material(Shader.Find(emissive?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=c};m.SetFloat("_Metallic",metallic);m.SetFloat("_Smoothness",.24f);if(t)m.SetTexture("_BaseMap",t);owned.Add(m);if(!emissive)NativeVisualMaterials.Register(this,m,metallic>0?VisualMaterialRole.Metal:role);return m;
         }
         Texture2D Texture(string name,int kind)
         {

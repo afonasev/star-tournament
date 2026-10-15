@@ -12,6 +12,7 @@ namespace StarTournament.ProvingGround
     public sealed class CharacterMotor : MonoBehaviour
     {
         private CharacterController controller;
+        private bool platformSupported; // Consumed within the same owner tick; never survives snapshot boundaries.
         private ProvingProfile profile;
         private ProvingArena arena;
         private ParticipantState state;
@@ -44,6 +45,11 @@ namespace StarTournament.ProvingGround
             initialized = true;
         }
 
+        public void CarryPlatform(Vector3 displacement)
+        {
+            if(!controller.enabled)return;
+            controller.Move(displacement);state.Position=transform.position;platformSupported=true;
+        }
         public void ValidateState(ParticipantState value)
         {
             foreach(var number in new[]{value.Position.x,value.Position.y,value.Position.z,value.Velocity.x,value.Velocity.y,value.Velocity.z,value.Yaw,value.Pitch,value.LookNeutralSeconds,value.LookReturnVelocity,value.TapLookStartPitch,value.TapLookElapsed})
@@ -54,7 +60,7 @@ namespace StarTournament.ProvingGround
         {
             ValidateState(value);bool enabled=controller.enabled;controller.enabled=false;
             transform.SetPositionAndRotation(value.Position,Quaternion.Euler(0,value.Yaw,0));
-            controller.enabled=enabled;state=value;Physics.SyncTransforms();
+            controller.enabled=enabled;state=value;platformSupported=false;Physics.SyncTransforms();
         }
         public void SetAlive(bool alive)
         {
@@ -92,7 +98,7 @@ namespace StarTournament.ProvingGround
             }
             transform.rotation = Quaternion.Euler(0f, state.Yaw, 0f);
 
-            var groundedBeforeMove = controller.isGrounded;
+            var groundedBeforeMove = controller.isGrounded||platformSupported;platformSupported=false;
             var moveInput = Vector2.ClampMagnitude(action.Move, 1f);
             var desiredDirection = (transform.right * moveInput.x) + (transform.forward * moveInput.y);
             desiredDirection.y = 0f;
@@ -125,6 +131,10 @@ namespace StarTournament.ProvingGround
             state.Position = transform.position;
             state.Velocity = actualVelocity;
             state.Grounded = controller.isGrounded || (collisionFlags & CollisionFlags.Below) != 0;
+            // Native contact recovery differs by micrometres after controller recreation. Canonical lift feet
+            // use a fixed 0.1mm serialization grid (protocol precision, far below collision skin), without
+            // moving the physical capsule or claiming deterministic native physics on other surfaces.
+            if(state.Grounded&&arena&&arena.Lifts!=null&&arena.Lifts.Supports(state))state.Position.y=Mathf.Round(state.Position.y*10000f)/10000f;
             if(action.GamepadLookLocked||action.ResetLookPitch||state.TapLookReturning)
             {state.LookNeutralSeconds=0;state.LookReturnVelocity=0;return;}
             ApplyLookAssistance(action,dt);

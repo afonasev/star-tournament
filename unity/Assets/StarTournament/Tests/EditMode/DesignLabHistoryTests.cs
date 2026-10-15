@@ -10,7 +10,12 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class DesignLabHistoryTests
     {
         string directory,path;
-        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault(),ProvingProfile.CreateIndustrialTunnelsPresentation(),IndustrialTunnelsCatalog.AuthoringProfile(),ProvingProfile.CreateLunarPresentation(),LunarLaboratoryCatalog.AuthoringProfile(),ProvingProfile.CreateHitFeedbackDefault()}};
+        public static LabBundle Shipped()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateTrooperDefault(),ProvingProfile.CreateMatchDefault(),ProvingProfile.CreateTeamDefault(),ProvingProfile.CreateRosterDefault(),ProvingProfile.CreateBotPerceptionDefault(),ProvingProfile.CreateNavigationDefault(),ProvingProfile.CreateBotBehaviorDefault(),ProvingProfile.CreateCombatBowlRingPresentationDefault(),CombatBowlCatalog.AuthoringProfile(),ProvingProfile.CreateCutterDefault(),ProvingProfile.CreateParticipantPaletteDefault(),ProvingProfile.CreateDeathDefault(),ProvingProfile.CreateBloodDefault(),ProvingProfile.CreateRocketEffectsDefault(),ProvingProfile.CreateIndustrialTunnelsPresentation(),IndustrialTunnelsCatalog.AuthoringProfile(),ProvingProfile.CreateLunarPresentation(),LunarLaboratoryCatalog.AuthoringProfile(),ProvingProfile.CreateHitFeedbackDefault(),ProvingProfile.CreateWellDefault(),WellArenaCatalog.AuthoringProfile()}};
+        public static LabHistoryFile ReadFixture(string source,LabBundle baseline=null)
+        {
+            var reader=new DesignLabHistory(null,baseline??Shipped(),persistMigration:false);
+            return (LabHistoryFile)typeof(DesignLabHistory).GetMethod("ReadStorage",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(reader,new object[]{File.ReadAllText(source)});
+        }
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
         [TestCase(13)][TestCase(14)]public void SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(int previousVersion)
@@ -24,6 +29,66 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadReturnDelay"),Is.EqualTo(1.2f));
             Assert.That(upgraded.Selected.Snapshot.Get("input.gamepadTapAimSmoothingSeconds"),Is.EqualTo(.18f));
             Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(previous.Hash));
+        }
+        [Test]public void FourHistoricalSchemasKeepExactCandidatesAfterGlobalCacheEviction()
+        {
+            var shipped=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
+            var owner=new DesignLabHistory(path,shipped,persistMigration:false);
+            var lookup=typeof(DesignLabHistory).GetMethod("HistoricalPredecessors",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var names=new[]{"BeforeSmoothGamepadTap","BeforeGamepadTriggerAim","BeforeNeutralColorGrading","BeforeVisualPolish"};
+            var old=names.Select(name=>new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod(name,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList()}).ToArray();
+            var candidates=old.Select(b=>(LabBundle[])lookup.Invoke(owner,new object[]{b,false})).ToArray();
+            var bytes=candidates.Select(a=>a.Select(b=>JsonUtility.ToJson(b)).ToArray()).ToArray();
+            for(int i=0;i<4;i++)
+            {
+                var other=shipped.Clone();other.Profiles[0].Descriptors.First().Label="Other trusted metadata "+i;
+                var evictor=new DesignLabHistory(null,other,persistMigration:false);
+                lookup.Invoke(evictor,new object[]{old[i],false});
+            }
+            for(int pass=0;pass<3;pass++)for(int i=0;i<old.Length;i++)
+            {
+                var again=(LabBundle[])lookup.Invoke(owner,new object[]{old[i],false});
+                Assert.That(again,Is.SameAs(candidates[i]),"Instance working set must survive unrelated global eviction");
+                CollectionAssert.AreEqual(bytes[i],again.Select(b=>JsonUtility.ToJson(b)).ToArray());
+            }
+            var local=(System.Collections.IDictionary)typeof(DesignLabHistory).GetField("historicalForInstance",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(owner);
+            Assert.That(local.Count,Is.EqualTo(4));Assert.That(local.Count,Is.LessThanOrEqualTo(8));
+            var global=(System.Collections.IDictionary)typeof(DesignLabHistory).GetField("historicalCache",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null);
+            Assert.That(global.Count,Is.LessThanOrEqualTo(2));
+        }
+        [Test]public void HistoricalWarmCachePreservesDifferentValuesAndRejectsSelfConsistentInvalidValues()
+        {
+            var shipped=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
+            var transform=typeof(ProvingProfile).GetMethod("BeforeSmoothGamepadTap",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)transform.Invoke(p,null)).ToList()};
+            var original=new DesignLabHistory(path,old);original.Create("Warm values");
+            var draft=original.Selected.Snapshot;draft.Set("rifle.damage",31);original.Save(draft);
+            var loaded=new DesignLabHistory(path,shipped,persistMigration:false);Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
+            draft=original.Selected.Snapshot;draft.Set("rifle.damage",32);original.Save(draft);var valid=File.ReadAllBytes(path);
+            var warm=new DesignLabHistory(path,shipped,persistMigration:false);Assert.That(warm.StorageError,Is.Null);Assert.That(warm.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(32));CollectionAssert.AreEqual(valid,File.ReadAllBytes(path));
+            var file=ReadFixture(path,shipped);var revision=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+            revision.Snapshot.Set("rifle.damage",1000000);revision.Hash=revision.Snapshot.Hash();File.WriteAllText(path,JsonUtility.ToJson(file,true));var bad=File.ReadAllBytes(path);
+            var rejected=new DesignLabHistory(path,shipped,persistMigration:false);Assert.That(rejected.StorageError,Is.Not.Null);CollectionAssert.AreEqual(bad,File.ReadAllBytes(path));
+        }
+        [Test]public void WarmHistoricalSchemaStillRejectsReadOnlyEditsWithoutWriting()
+        {
+            var shipped=Shipped();
+            var prior=typeof(ProvingProfile).GetMethod("BeforeSmoothGamepadTap",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList()};
+            var original=new DesignLabHistory(path,old);original.Create("Warm legacy registry");
+            var before=File.ReadAllBytes(path);
+            var warm=new DesignLabHistory(path,shipped,persistMigration:false);
+            Assert.That(warm.StorageError,Is.Null);
+            CollectionAssert.AreEqual(before,File.ReadAllBytes(path));
+            var file=ReadFixture(path);
+            var revision=file.Profiles[0].Revisions[0];
+            var authored=revision.Snapshot.Descriptors.First(d=>revision.Snapshot.IsAuthoring(d.Path)).Path;
+            revision.Snapshot.Set(authored,revision.Snapshot.Get(authored)+1);
+            revision.Hash=revision.Snapshot.Hash(); // A self-consistent file hash cannot authorize authored edits.
+            File.WriteAllText(path,JsonUtility.ToJson(file,true));var corrupt=File.ReadAllBytes(path);
+            var rejected=new DesignLabHistory(path,shipped,persistMigration:false);
+            Assert.That(rejected.StorageError,Is.Not.Null);
+            CollectionAssert.AreEqual(corrupt,File.ReadAllBytes(path));
         }
         [Test]public void StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation()
         {
@@ -139,7 +204,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var history=new DesignLabHistory(path,old);history.Create("Мой геймпад");
             // Construct the file written by the former runtime: its shared axis was editable.
             // The current Save contract correctly refuses edits to that obsolete field.
-            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var file=ReadFixture(path);
             var prior=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
             prior.Snapshot.Set("input.gamepadDegreesPerSecond",90);prior.Hash=prior.Snapshot.Hash();
             File.WriteAllText(path,JsonUtility.ToJson(file,true));
@@ -220,7 +285,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         LabRevision SeedLegacyPulseSize(DesignLabHistory history,float value)
         {
             // Simulate a file saved by v1 when this control was editable. Current UI correctly hides it.
-            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+            var file=ReadFixture(path);
             var revision=file.Profiles.Single(p=>p.Id==history.SelectedProfileId).Revisions.Single(r=>r.Number==history.Selected.Number);
             revision.Snapshot.Set("presentation.rocketExplosionSize",value);revision.Hash=revision.Snapshot.Hash();
             File.WriteAllText(path,JsonUtility.ToJson(file));return revision;
@@ -492,7 +557,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void LegacyPlacementOverrideLoadsAndIsPreservedByNewGameplayRevision()
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy");
-            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
+            var file=ReadFixture(path);var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
             old.Snapshot.Set("layout.fill-0.x",1);old.Hash=old.Snapshot.Hash();string oldHash=old.Hash;
             File.WriteAllText(path,JsonUtility.ToJson(file,true));
             var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Null);
@@ -505,7 +570,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void AuditCleanupPreservesOldTechnicalAndModelOverridesAndBlocksNewChanges()
         {
             var history=new DesignLabHistory(path,Shipped());history.Create("Legacy audit overrides");
-            var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
+            var file=ReadFixture(path);var old=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single();
             Assert.That(LabBundle.AuditedExcludedPaths.Count(),Is.EqualTo(30));
             foreach(var key in LabBundle.AuditedExcludedPaths)
             {
@@ -614,6 +679,11 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.Throws<ArgumentException>(()=>upgraded.Save(draft));
         }
         [Test]public void TamperedSnapshotHashFailsWithoutDestroyingFile()
-        {var history=new DesignLabHistory(path,Shipped());history.Create("test");string original=File.ReadAllText(path);File.WriteAllText(path,original.Replace("\"Value\": 30.0","\"Value\": 31.0"));var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Not.Null);}
+        {
+            var history=new DesignLabHistory(path,Shipped());history.Create("test");
+            var legacy=ReadFixture(path);legacy.Profiles.Last().Revisions[0].Snapshot.Set("rifle.damage",31);
+            File.WriteAllText(path,JsonUtility.ToJson(legacy));var bytes=File.ReadAllBytes(path);
+            var restored=new DesignLabHistory(path,Shipped());Assert.That(restored.StorageError,Is.Not.Null);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
     }
 }

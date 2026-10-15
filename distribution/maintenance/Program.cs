@@ -36,7 +36,13 @@ static class Maintenance
                 _ => throw new ArgumentException("Unsupported maintenance command")
             };
         }
-        catch (Exception ex) { Console.Error.WriteLine("Star Tournament maintenance: " + ex.Message); return 1; }
+        catch (Exception ex)
+        {
+            UpdateFeedback.Log("maintenance " + (args.FirstOrDefault() ?? "unknown"), ex);
+            Console.Error.WriteLine("Star Tournament maintenance: " + ex.Message);
+            if (args.FirstOrDefault() == "--activate") UpdateFeedback.Show("Обновление или перезапуск не выполнены. " + UpdateFeedback.Explain(ex));
+            return 1;
+        }
     }
 
     static void ClearRuntimeInjectionEnvironment()
@@ -325,35 +331,47 @@ static class Maintenance
         var caller = new Caller(int.Parse(a[3]), long.Parse(a[4]));
         var restartArgs = JsonSerializer.Deserialize<string[]>(Convert.FromBase64String(a[5])) ?? [];
         ValidateCaller(root, caller);
+        var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
+        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")));
+        source.Admit(ReadBoundedText(Path.Combine(cache, "star-authenticated.json"), 65536));
+        var expected = source.Asset!.Version.ToString();
+        var journal = UpdateAttemptJournal.ForApp(config.AppId);
+        journal.Begin(expected);
+        UpdateFeedback.Log("maintenance-ready target=" + expected);
         Console.WriteLine("STAR_TOURNAMENT_ACTIVATION_READY");
         Console.Out.Flush();
         WaitForExactProcess(caller);
         var broker = Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe");
         int result = -1;
+        string failure = "Установка обновления завершилась с ошибкой. Подробности сохранены в журнале.";
         try
         {
             using var elevated = Process.Start(new ProcessStartInfo(broker) { UseShellExecute = true, Verb = "runas", WorkingDirectory = root,
                 ArgumentList = { "--apply-staged", cache, Environment.ProcessId.ToString() } }) ?? throw new IOException("Could not start protected updater");
             elevated.WaitForExit(); result = elevated.ExitCode;
+            UpdateFeedback.Log("protected-updater-exit code=" + result + " target=" + expected);
         }
-        catch (System.ComponentModel.Win32Exception) { result = 1223; } // UAC was declined.
-        catch { result = 1; }
-        string? expected = null;
-        try
+        catch (System.ComponentModel.Win32Exception ex)
         {
-            var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
-            using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")));
-            source.Admit(ReadBoundedText(Path.Combine(cache, "star-authenticated.json"), 65536));
-            expected = source.Asset!.Version.ToString();
+            result = ex.NativeErrorCode == 1223 ? 1223 : 1;
+            failure = UpdateFeedback.Explain(ex);
+            UpdateFeedback.Log("elevated-start", ex);
         }
-        catch { }
+        catch (Exception ex) { result = 1; failure = UpdateFeedback.Explain(ex); UpdateFeedback.Log("elevated-apply", ex); }
         var current = Path.Combine(root, "current", "release.json");
-        var applied = result == 0 && expected != null && File.Exists(current) &&
-            JsonDocument.Parse(File.ReadAllText(current)).RootElement.GetProperty("version").GetString() == expected;
-        if (!applied && expected != null)
-            File.WriteAllText(Path.Combine(cache, "star-apply-declined.json"), JsonSerializer.Serialize(new { version = expected }));
+        bool applied = false;
+        try { applied = result == 0 && File.Exists(current) && JsonDocument.Parse(File.ReadAllText(current)).RootElement.GetProperty("version").GetString() == expected; }
+        catch (Exception ex) { UpdateFeedback.Log("verify-applied-release", ex); failure = UpdateFeedback.Explain(ex); }
+        if (!applied)
+        {
+            journal.Fail(expected, failure);
+            try { File.WriteAllText(Path.Combine(cache, "star-apply-declined.json"), JsonSerializer.Serialize(new { version = expected })); }
+            catch (Exception ex) { UpdateFeedback.Log("write-declined", ex); }
+            UpdateFeedback.Show("Обновление не установлено. " + failure);
+        }
         else if (applied)
         {
+            journal.ClearIfInstalled(expected);
             var declined = Path.Combine(cache, "star-apply-declined.json"); if (File.Exists(declined)) File.Delete(declined);
         }
         if (restart)
@@ -361,7 +379,17 @@ static class Maintenance
             var stub = Path.Combine(root, "Star Tournament.exe");
             var launch = new ProcessStartInfo(stub) { UseShellExecute = false, WorkingDirectory = root };
             foreach (var arg in restartArgs) launch.ArgumentList.Add(arg);
-            Process.Start(launch);
+            try
+            {
+                UpdateFeedback.Log("restart-stub target=" + expected + " applied=" + applied);
+                using var child = Process.Start(launch) ?? throw new IOException("Restart launcher did not start");
+            }
+            catch (Exception ex)
+            {
+                UpdateFeedback.Log("restart-stub-failed", ex);
+                UpdateFeedback.Show("Не удалось перезапустить игру. " + UpdateFeedback.Explain(ex));
+                return 1;
+            }
         }
         return 0; // The launcher already exited successfully; a failed or declined update keeps the old install usable.
     }

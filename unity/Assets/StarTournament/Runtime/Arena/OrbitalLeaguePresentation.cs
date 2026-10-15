@@ -183,11 +183,11 @@ namespace StarTournament.ProvingGround
                 float v=screw?value*.4f:Mathf.Clamp01(value*shade+noise);
                 pixels[y*TextureSize+x]=new Color(v*.96f,v*.99f,v,1);
             }
-            t.SetPixels(pixels);t.Apply(true,true);m.SetTexture("_BaseMap",t);return m;
+            t.SetPixels(pixels);t.Apply(true,true);m.SetTexture("_BaseMap",t);NativeVisualMaterials.Register(this,m,isFloor?VisualMaterialRole.Floor:VisualMaterialRole.Wall);return m;
         }
         Material Flat(string name,Color color)
         {
-            var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=color};m.SetFloat("_Smoothness",p.Get("surface.detailSmoothness"));owned.Add(m);return m;
+            var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=color};m.SetFloat("_Smoothness",p.Get("surface.detailSmoothness"));owned.Add(m);NativeVisualMaterials.Register(this,m,VisualMaterialRole.Metal);return m;
         }
         void Box(Material material,Vector3 position,Vector3 size,Quaternion rotation)
         {

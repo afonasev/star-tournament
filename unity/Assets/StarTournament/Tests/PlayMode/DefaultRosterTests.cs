@@ -97,6 +97,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pad,neutral);yield return null;
             AssertDefault(pad,profiles);
         }
+        [UnityTest] public IEnumerator GamepadSubmitWinsOverKeyboardNavigationInSameInputUpdate()
+        {
+            yield return Load();int profiles=Field<PlayerProfileCatalog>("playerProfiles").Profiles.Count;
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.RightArrow));yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            AssertDefault(pad,profiles);
+        }
+        [UnityTest] public IEnumerator KeyboardSubmitWinsOverGamepadNavigationInSameInputUpdate()
+        {
+            yield return Load();int profiles=Field<PlayerProfileCatalog>("playerProfiles").Profiles.Count;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadRight));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            AssertDefault(keyboard,profiles);
+        }
         [UnityTest] public IEnumerator KeyboardEntryCreatesOnlyOneGuestAndOneBot()
         {
             yield return Load();int profiles=Field<PlayerProfileCatalog>("playerProfiles").Profiles.Count;

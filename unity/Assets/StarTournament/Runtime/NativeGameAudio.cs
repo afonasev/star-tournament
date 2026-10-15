@@ -68,10 +68,12 @@ namespace StarTournament.ProvingGround
         double[] lastHit;
         int nextVoice;
         bool muted;
+        readonly bool sessionMuted;
+        public bool SessionMuted=>sessionMuted;
 
-        public NativeGameAudio(Transform parent,ProvingProfile profile,bool mute)
+        public NativeGameAudio(Transform parent,ProvingProfile profile,bool mute,bool lockMute=false)
         {
-            this.profile=profile;muted=mute;
+            this.profile=profile;sessionMuted=lockMute;muted=mute||sessionMuted;
             var holder=new GameObject("native-game-audio");holder.transform.SetParent(parent,false);root=holder.transform;
             foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","weapon-ready","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup","kill-triple","kill-quadruple"})
             {
@@ -149,7 +151,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastWeaponState[i]=session.Life(i);weaponReadyPending[i]=false;stepDistance[i]=0;lastHit[i]=double.NegativeInfinity;}
             for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;}
         }
-        public void SetDiagnosticMute(bool value){muted=value;if(value)StopEffects();UpdateVolume();}
+        public void SetDiagnosticMute(bool value){muted=sessionMuted||value;if(muted)StopEffects();UpdateVolume();}
         public void TickMusic(bool inMenu,bool suspended,float dt)
         {
             musicScene.Tick(inMenu,session?.Match,musicProfile,suspended,dt);

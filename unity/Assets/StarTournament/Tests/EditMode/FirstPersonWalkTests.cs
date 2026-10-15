@@ -76,6 +76,45 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             visual.Render(.5,Vector3.zero,100,2);Assert.That(visual.WalkOffset,Is.EqualTo(Vector3.zero));Assert.That(visual.State,Is.EqualTo("aim"));
             visual.BeginDeath(.6);Assert.That(visual.WalkOffset,Is.EqualTo(Vector3.zero));
         }
+        [Test] public void EquipmentReadabilityDefaultKeepsExistingLabControlAndOldRegistry()
+        {
+            Assert.That(profile.Version,Is.EqualTo(8));
+            var control=profile.Descriptor("view.fillIntensity");
+            Assert.That(control.DefaultValue,Is.EqualTo(.35f));Assert.That(control.Group,Is.EqualTo("trooper-view"));
+            Assert.That(control.Minimum,Is.EqualTo(0));Assert.That(control.Maximum,Is.EqualTo(4));Assert.That(control.Step,Is.EqualTo(.05f));
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeEquipmentReadability",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(profile,null);
+            Assert.That(old.Version,Is.EqualTo(7));Assert.That(old.Get("view.fillIntensity"),Is.EqualTo(.05f));
+            Assert.That(old.Descriptor("view.fillIntensity").DefaultValue,Is.EqualTo(.05f));
+            var untouched=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(old));untouched.EnsureTrooperDescriptors();
+            Assert.That(untouched.Get("view.fillIntensity"),Is.EqualTo(.35f),"The old scene's untouched default adopts the readable fill");
+            old.Set("view.fillIntensity",.25f);old.EnsureTrooperDescriptors();
+            Assert.That(old.Version,Is.EqualTo(8));Assert.That(old.Get("view.fillIntensity"),Is.EqualTo(.25f));
+            Assert.That(old.Validate(),Is.Empty);
+        }
+        [TestCase(.05f,.35f)][TestCase(.25f,.25f)][TestCase(0f,0f)]
+        public void EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(float previous,float expected)
+        {
+            var current=DesignLabHistoryTests.Shipped();
+            var predecessor=typeof(ProvingProfile).GetMethod("BeforeEquipmentReadability",BindingFlags.Instance|BindingFlags.NonPublic);
+            var old=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)predecessor.Invoke(p,null)).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),"equipment-history-"+Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,old);history.Create("Моё оборудование");var draft=history.Selected.Snapshot;
+                draft.Set("view.fillIntensity",previous);draft.Set("rifle.damage",31);history.Save(draft);
+                string hash=history.Selected.Hash,id=history.SelectedProfileId;int number=history.Selected.Number;
+                var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
+                Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(number));
+                Assert.That(upgraded.Selected.Snapshot.Get("view.fillIntensity"),Is.EqualTo(expected));
+                Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
+                var original=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==number);
+                Assert.That(original.Hash,Is.EqualTo(hash));Assert.That(original.Snapshot.Hash(),Is.EqualTo(hash));
+                Assert.That(original.Snapshot.Profiles.Single(p=>p.Id=="unity-trooper-presentation-v1").Version,Is.EqualTo(7));
+                var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);
+                Assert.That(reopened.SelectedProfile.Revisions.Count,Is.EqualTo(upgraded.SelectedProfile.Revisions.Count));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void SerializedTrooperUpgradeRefreshesCachedValuesAndPreservesCustomGrip()
         {
             var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeSmoothFirstPersonWalk",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(profile,null);

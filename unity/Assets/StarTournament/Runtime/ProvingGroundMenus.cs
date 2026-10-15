@@ -22,7 +22,8 @@ namespace StarTournament.ProvingGround
         int setupStep, setupMaxStep;
         InputSystemUIInputModule menuInputModule;
         InputAction menuSubmitAction,menuMoveAction,menuClickAction;
-        InputDevice menuDevice;
+        InputDevice menuDevice,menuActivationDevice;
+        int menuActivationFrame=-1;
         Button identitySettingsButton,operatorSettingsButton;
         Button[] seatIdentityButtons = new Button[SeatInputCoordinator.SeatCount];
         string selectedProfileId;
@@ -86,7 +87,9 @@ namespace StarTournament.ProvingGround
             if(!string.IsNullOrEmpty(releaseLabel))
             {
                 Label(mainMenuScreen.transform,"installed-release",releaseLabel,18,new Vector2(.60f,.03f),new Vector2(.97f,.07f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
-                var updateStatus=Label(mainMenuScreen.transform,"update-status","",16,new Vector2(.60f,.135f),new Vector2(.97f,.17f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
+                var updateStatus=Label(mainMenuScreen.transform,"update-status","",18,new Vector2(.53f,.135f),new Vector2(.97f,.26f),TextAnchor.LowerRight,new Color32(153,173,187,255));
+                var updateOutline=updateStatus.gameObject.AddComponent<Outline>();
+                updateOutline.effectColor=new Color32(0,0,0,230);updateOutline.effectDistance=new Vector2(1,-1);
                 var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Обновить",new Vector2(.80f,.072f),new Vector2(.97f,.13f),()=>{});
                 gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
             }
@@ -251,7 +254,7 @@ namespace StarTournament.ProvingGround
             var mapCard=setupMapPage.transform.Find("selected-map");
             mapCard.GetComponentInChildren<ArenaPreviewGraphic>().Show(SelectedMapId);
             mapCard.Find("map-name").GetComponent<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId).ToUpperInvariant();
-            mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
+            mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==WellArenaCatalog.Id?"Лаборатория · три этажа и колодец":SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
             setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"");
             RefreshF2Setup();
             ConfigureSetupNavigation();
@@ -274,7 +277,13 @@ namespace StarTournament.ProvingGround
             if(context.action==menuClickAction && !context.ReadValueAsButton())return;
             var device=context.control?.device;
             if(device is Mouse)device=Keyboard.current;
-            if(device is Keyboard || device is Gamepad)menuDevice=device;
+            if(device is Keyboard || device is Gamepad)
+            {
+                menuDevice=device;
+                // Submission owns the next setup, even if another device navigates later in this frame.
+                if(context.action==menuSubmitAction || context.action==menuClickAction)
+                {menuActivationDevice=device;menuActivationFrame=Time.frameCount;}
+            }
         }
         void OpenSetup()
         {
@@ -284,7 +293,7 @@ namespace StarTournament.ProvingGround
             for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++){identities.ClearSeat(seat);botSetup.SetAi(seat,false);botSetup.SetSeatDifficulty(seat,(int)NativeBotDifficulty.Normal);teamAssignments[seat]=seat%2==0?NativeTeam.TeamA:NativeTeam.TeamB;}
             while(botSetup.Count>0)botSetup.Remove(botSetup.Count-1);
             botSetup.Add(1);SyncHumanSeats();
-            var device=menuDevice;
+            var device=menuActivationFrame==Time.frameCount?menuActivationDevice:menuDevice;
             if(device==null || !device.added || !device.enabled)device=(InputDevice)Keyboard.current??Gamepad.all.FirstOrDefault(p=>p.added&&p.enabled);
             if(input.Assign(0,device) && !identities.TryRestore(0,device.deviceId,playerProfiles))
                 identities.ChooseGuest(0,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);

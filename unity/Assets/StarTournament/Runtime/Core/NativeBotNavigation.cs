@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile profile;
         readonly string configuration;
         NativeNavigationState state;
-        bool routeDirty;
+        bool routeDirty,restoreRevalidation;
         float P(string suffix) => profile.Get("bots.navigation." + suffix);
         public NativeNavigationStatus Status => state.Status;
         public bool InTransition => !string.IsNullOrEmpty(state.ActiveTransition);
@@ -108,7 +108,7 @@ namespace StarTournament.ProvingGround
         {
             state.HasGoal = false; state.Enemy = -1; state.EnemyLife = 0; state.ObservedAt = -1;
             state.Route = Array.Empty<NativeNavigationPoint>(); state.Cursor = 0; state.Status = NativeNavigationStatus.Idle;
-            state.Recoveries = 0; state.Failure = null; routeDirty = false;
+            state.Recoveries = 0; state.Failure = null; routeDirty = false;restoreRevalidation=false;
             // A cleared route has no pending repath throttle; the next goal must plan immediately.
             state.NextRepath = 0;
             state.ActiveTransition = null; state.ExitSupport = null;
@@ -130,9 +130,9 @@ namespace StarTournament.ProvingGround
                 (!snapshot.HasGoal && snapshot.Status != NativeNavigationStatus.Idle) ||
                 (snapshot.Status == NativeNavigationStatus.Recovering && snapshot.RecoveryUntil < snapshot.Time))
                 throw new ArgumentException("Inconsistent navigation state");
-            state = Copy(snapshot); routeDirty = state.HasGoal;
-            // Native routes are revalidated, not restored as authoritative physics handles.
-            state.NextRepath = 0;
+            state = Copy(snapshot); routeDirty = state.HasGoal;restoreRevalidation=state.HasGoal;
+            // Native handles are invalidated separately from the serialized timer. The first advancing
+            // tick still revalidates immediately, while Capture after Restore preserves the exact state.
         }
         public LocalAction Tick(double time, ParticipantState pose, NativeBotKnowledge knowledge, float? aimYaw = null, bool tacticalControl = false)
         {
@@ -171,10 +171,10 @@ namespace StarTournament.ProvingGround
                     return new LocalAction { Move = new Vector2(state.Recoveries % 2 == 1 ? 1 : -1, -1).normalized };
                 routeDirty = true; state.Status = NativeNavigationStatus.Moving; state.ProgressAt = time;
             }
-            if (routeDirty && time >= state.NextRepath && (string.IsNullOrEmpty(state.ActiveTransition) || state.NextRepath == 0))
+            if (restoreRevalidation || (routeDirty && time >= state.NextRepath && (string.IsNullOrEmpty(state.ActiveTransition) || state.NextRepath == 0)))
             {
                 bool firstRoute = state.Route.Length == 0;
-                state.NextRepath = time + P("repathSeconds"); state.Replans++;
+                restoreRevalidation=false;state.NextRepath = time + P("repathSeconds"); state.Replans++;
                 var destination = string.IsNullOrEmpty(state.ActiveTransition) ? state.Goal : state.TransitionExit;
                 if (!navigation.TryRoute(pose.Position, destination, out var route, out var failure) || route == null || route.Length == 0)
                 { state.Status = NativeNavigationStatus.Blocked; state.Failure = failure; return default; }

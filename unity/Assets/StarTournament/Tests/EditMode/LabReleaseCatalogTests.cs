@@ -13,6 +13,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static LabReleaseEntry Entry(int sequence,string id,string name,int number,LabBundle snapshot)=>new LabReleaseEntry{
             Sequence=sequence,ProfileId=id,ProfileName=name,Revision=number,Date="20261007",Hash=snapshot.Hash(),Snapshot=snapshot.Clone()};
         // Run before staging tests, which regenerate the scene and could hide a stale checked-in baseline.
+        [Test]public void PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning()
+        {
+            var baseline=Baseline();var catalogue=LabReleaseCatalog.Factory(baseline);
+            var published=baseline.Clone();published.Set("rifle.damage",40);
+            catalogue.Entries.Add(Entry(4,DesignLabHistory.ReleaseId,"Default",6,published));
+            var alternative=baseline.Clone();alternative.Set("rifle.damage",50);
+            catalogue.Entries.Add(Entry(5,"alternative","Alternative",1,alternative));
+            var local=new DesignLabHistory(path,baseline);local.Create("Local settings");
+            var draft=local.Selected.Snapshot;draft.Set("rifle.damage",60);local.Save(draft);
+            var bytes=File.ReadAllBytes(path);
+            var resolved=DesignLabHistory.ResolvePublishedDefault(baseline,catalogue);
+            Assert.That(resolved.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));
+            Assert.That(resolved.Selected.ReleaseSequence,Is.EqualTo(4));Assert.That(resolved.Selected.ReleaseNumber,Is.EqualTo(6));
+            Assert.That(resolved.Selected.Snapshot.Hash(),Is.EqualTo(published.Hash()));
+            Assert.That(resolved.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(40));
+            Assert.That(resolved.StartupDiagnostics.FileBytes,Is.Zero);
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            var normal=new DesignLabHistory(path,baseline,releases:catalogue,resetToLatestDefault:true,persistMigration:false);
+            Assert.That(normal.Selected.Snapshot.Hash(),Is.EqualTo(resolved.Selected.Snapshot.Hash()));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
         [Test,Order(-1)]public void PackagedSceneAndCatalogPreserveEveryPublishedSnapshot()
         {
             var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene(
@@ -116,7 +137,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test]public void LocalShippedClaimsAreReboundOnlyFromTheCatalogue()
         {
             var baseline=Baseline();var local=new DesignLabHistory(path,baseline);local.Create("Local");
-            var file=UnityEngine.JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var r=file.Profiles.Last().Revisions[0];
+            var file=DesignLabHistoryTests.ReadFixture(path,Baseline());var r=file.Profiles.Last().Revisions[0];
             r.ReleaseSequence=1;r.ReleaseHash=r.Hash;File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file));
             var history=new DesignLabHistory(path,baseline,releases:LabReleaseCatalog.Factory(baseline),resetToLatestDefault:true);
             Assert.That(history.Profiles.Last().Revisions[0].ReleaseSequence,Is.Zero);

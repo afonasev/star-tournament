@@ -186,14 +186,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator SeatsShareAssetsButNeverRenderAnotherFirstPersonView()
         {
             yield return Load(4);
-            foreach(int count in new[]{2,3,4})
+            foreach(int count in new[]{1,2,3,4})
             {
-                ground.StartCombatReview(pads.Take(count).ToArray());yield return null;
-                Assert.That(ground.GetComponentsInChildren<TrooperVisual>().Count(v=>v.gameObject.activeInHierarchy),Is.EqualTo(count*2));
+                ground.SendMessage("Menu");yield return null;
+                NativeSetupFixture.UnboundHumans(ground,count);
+                ground.StartCombatReview(pads.Take(count).ToArray(),ensureOpponent:count==1);yield return NativeLoadingTestScene.Wait(ground);yield return null;
+                Assert.That(ground.GetComponentsInChildren<TrooperVisual>().Count(v=>v.gameObject.activeInHierarchy),Is.EqualTo(ground.Composition.ParticipantCount+count));
                 var cams=ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled).ToArray();
                 var fills=ground.GetComponentsInChildren<Light>().Where(l=>l.name=="equipment-fill").ToArray();
                 Assert.That(fills.Length,Is.EqualTo(count));
-                for(int i=0;i<count;i++)Assert.That(fills[i].cullingMask,Is.EqualTo(1<<(15+i)));
+                for(int i=0;i<count;i++)
+                {
+                    Assert.That(fills[i].cullingMask,Is.EqualTo(1<<(15+i)));
+                    Assert.That(fills[i].intensity,Is.EqualTo(ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity")));
+                    Assert.That(fills[i].shadows,Is.EqualTo(LightShadows.None));
+                    Assert.That(fills[i].type,Is.EqualTo(LightType.Point));
+                }
                 for(int i=0;i<count;i++)for(int j=0;j<count;j++)
                 {
                     Assert.That((cams[i].cullingMask&(1<<(15+j)))!=0,Is.EqualTo(i==j));

@@ -2,10 +2,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeEquipmentReadability()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<8)return this;
+            var p=DetachedCopy();p.version=7;
+            p.FindDescriptor("view.fillIntensity").DefaultValue=.05f;
+            p.Set("view.fillIntensity",.05f);
+            return p;
+        }
         internal ProvingProfile BeforeSmoothFirstPersonWalk()
         {
             if(id!="unity-trooper-presentation-v1"||version<7)return this;
-            var p=DetachedCopy();p.version=6;
+            var p=BeforeEquipmentReadability().DetachedCopy();p.version=6;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.walk"));
             p.values.RemoveAll(v=>v.Path.StartsWith("view.walk"));
             return p;
@@ -59,13 +67,16 @@ namespace StarTournament.ProvingGround
         }
         internal static float SafeSwitchUpgrade(NumericDescriptor old,NumericDescriptor current,float value)
         {
+            // Untouched equipment defaults adopt the revised fill in serialized scenes and Lab;
+            // explicit off and other custom strengths stay unchanged. Historical snapshots are never edited.
+            if(old.Path=="view.fillIntensity")return value==old.DefaultValue?current.DefaultValue:value;
             if(old.Path!="view.switchShoulderDegrees"&&old.Path!="view.switchElbowDegrees")return value;
             // Old authored defaults follow the revised gesture; custom values stay within its safe range.
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=7};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=8};
             p.Add("animation.walkThreshold","trooper-animation","Порог шага","Минимальная фактическая горизонтальная скорость для walk.","meters-per-second",.01f,3,.01f,.1f);
             p.Add("animation.runThreshold","trooper-animation","Порог бега","Фактическая горизонтальная скорость переключения walk на run.","meters-per-second",3,15,.1f,6);
             p.Add("animation.blendSeconds","trooper-animation","Переход позы","Время сглаживания весов только визуальных клипов.","seconds",0,.5f,.01f,.12f);
@@ -86,7 +97,7 @@ namespace StarTournament.ProvingGround
             p.Add("grip.primaryIntermediateCurl","trooper-grip","Средние фаланги правой руки","Добавочный сгиб средних фаланг вокруг рукояти.","degrees",-20,45,1,28);
             p.Add("grip.primaryDistalCurl","trooper-grip","Кончики пальцев правой руки","Добавочный сгиб кончиков пальцев вокруг рукояти.","degrees",-20,40,1,18);
             p.Add("grip.primaryThumbFactor","trooper-grip","Сгиб большого пальца правой руки","Доля сгиба остальных пальцев для оппозиции большого пальца.","ratio",0,1,.05f,.5f);
-            p.Add("view.fillIntensity","trooper-view","Подсветка оборудования","Мягкий свет только на руки своего viewport для читаемости тёмной перчатки.","intensity",0,4,.05f,.05f);
+            p.Add("view.fillIntensity","trooper-view","Подсветка оборудования","Мягкий свет только на руки своего viewport для читаемости тёмной перчатки.","intensity",0,4,.05f,.35f);
             p.Add("view.fillRange","trooper-view","Дальность подсветки","Радиус локального света оборудования; мир исключён маской слоя.","meters",.5f,3,.1f,2);
             return p;
         }

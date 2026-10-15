@@ -27,6 +27,7 @@ namespace StarTournament.ProvingGround
         Button rosterPickerReturn;
         readonly List<Button> rosterChoices=new List<Button>();
         string rosterLastBlocking;
+        float rosterChoiceRowHeight=70;
         static readonly string[] RosterDifficultyNames={"Новичок","Боец","Ветеран"};
         static readonly Color32 RosterMuted=new Color32(153,173,187,255);
         static readonly Color32 RosterBlue=new Color32(106,204,239,255),RosterRed=new Color32(242,128,147,255);
@@ -238,25 +239,27 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Setup||RosterTotal>=8||LocalSeatCount>=4)return;
             int seat=LocalSeatCount;botSetup.SetAi(seat,false);identities.ClearSeat(seat);SetSeatCount(seat+1);OpenRosterEditor(seat);
         }
-        void BeginRosterPicker(string title,Button source)
+        void BeginRosterPicker(string title,Button source,bool compact=false)
         {
+            rosterChoiceRowHeight=compact?42:70;
             rosterPickerReturn=source;rosterPickerHeading.text=title;rosterChoices.Clear();
             foreach(Transform child in rosterPickerContent){child.gameObject.SetActive(false);child.name="retired-"+child.name;Destroy(child.gameObject);}
             rosterPicker.SetActive(true);
             var sourceRect=(RectTransform)source.transform;var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds((RectTransform)rosterPicker.transform.parent,sourceRect);
-            var popup=(RectTransform)rosterPicker.transform;popup.anchorMin=popup.anchorMax=new Vector2(.5f,.5f);popup.pivot=new Vector2(.5f,1);popup.anchoredPosition=new Vector2(bounds.center.x,bounds.min.y);popup.sizeDelta=new Vector2(bounds.size.x,230);
+            var popup=(RectTransform)rosterPicker.transform;popup.anchorMin=popup.anchorMax=new Vector2(.5f,.5f);popup.pivot=new Vector2(.5f,1);popup.anchoredPosition=new Vector2(bounds.center.x,bounds.min.y);popup.sizeDelta=new Vector2(bounds.size.x,compact?336:230);
             rosterPickerHeading.gameObject.SetActive(false);rosterPickerBack.gameObject.SetActive(false);Layout((RectTransform)rosterChoiceScroll.transform,new Vector2(0,0),new Vector2(1,1));
             rosterChoiceScroll.verticalNormalizedPosition=1;
         }
         void AddRosterChoice(string name,string title,UnityEngine.Events.UnityAction choose,bool enabled=true)
         {
             int row=rosterChoices.Count;var b=RosterButton(rosterPickerContent,name,title,Vector2.zero,Vector2.one,()=>{choose();CloseRosterPicker();});
-            var r=(RectTransform)b.transform;r.anchorMin=new Vector2(0,1);r.anchorMax=Vector2.one;r.pivot=new Vector2(.5f,1);r.offsetMin=new Vector2(6,-(row+1)*70+7);r.offsetMax=new Vector2(-6,-row*70-7);
+            var r=(RectTransform)b.transform;r.anchorMin=new Vector2(0,1);r.anchorMax=Vector2.one;r.pivot=new Vector2(.5f,1);float gap=rosterChoiceRowHeight<70?3:7;r.offsetMin=new Vector2(6,-(row+1)*rosterChoiceRowHeight+gap);r.offsetMax=new Vector2(-6,-row*rosterChoiceRowHeight-gap);
+            if(rosterChoiceRowHeight<70){var caption=b.GetComponentInChildren<Text>();caption.fontSize=22;caption.fontStyle=FontStyle.Normal;}
             b.interactable=enabled;rosterChoices.Add(b);b.GetComponent<RosterFocus>().UseScroll=()=>rosterChoiceScroll;
         }
         void FinishRosterPicker()
         {
-            ((RectTransform)rosterPickerContent).sizeDelta=new Vector2(0,Math.Max(1,rosterChoices.Count)*70);
+            ((RectTransform)rosterPickerContent).sizeDelta=new Vector2(0,Math.Max(1,rosterChoices.Count)*rosterChoiceRowHeight);
             ConfigureRosterNavigation();Select(rosterChoices.FirstOrDefault(b=>b.interactable)??rosterPickerBack);
         }
         void CloseRosterPicker()
@@ -266,7 +269,7 @@ namespace StarTournament.ProvingGround
         void OpenRosterIdentityChoices()
         {
             if(rosterEditing<0)return;int p=rosterEditing;bool bot=RosterIsBot(p);
-            BeginRosterPicker(bot?"СЛОЖНОСТЬ":"ПРОФИЛЬ / ГОСТЬ",rosterIdentity);
+            BeginRosterPicker(bot?"СЛОЖНОСТЬ":"ПРОФИЛЬ / ГОСТЬ",rosterIdentity,!bot);
             if(bot)for(int d=0;d<3;d++)
             {
                 int difficulty=d;AddRosterChoice("roster-choice-difficulty-"+d,RosterDifficultyNames[d],()=>{if(p<LocalSeatCount)SetSeatDifficulty(p,difficulty);else SetBotDifficulty(p-LocalSeatCount,difficulty);});

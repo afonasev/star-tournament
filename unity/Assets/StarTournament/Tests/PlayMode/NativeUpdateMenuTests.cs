@@ -83,14 +83,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var state in new[]{"current","unavailable","available","checking","available","current"})
             {
                 File.WriteAllText(status,"{\"state\":\""+state+"\"}");
-                var expected="";
+                var expected=state=="unavailable"?"Не удалось проверить обновления. Проверьте подключение.":"";
+                var hasAction=state=="available"||state=="unavailable";
                 float end=Time.realtimeSinceStartup+5;
                 // Allow the IPC polling loop to observe even transitions with identical empty messages.
                 yield return new WaitForSecondsRealtime(.25f);
-                while((message.text!=expected||button.gameObject.activeSelf!=(state=="available"))&&Time.realtimeSinceStartup<end)yield return null;
+                while((message.text!=expected||button.gameObject.activeSelf!=hasAction)&&Time.realtimeSinceStartup<end)yield return null;
                 Assert.That(message.text,Is.EqualTo(expected));
-                Assert.That(message.gameObject.activeSelf,Is.False,"Idle updates show only the release identity and conditional action");
-                Assert.That(button.gameObject.activeSelf,Is.EqualTo(state=="available"));
+                Assert.That(message.gameObject.activeSelf,Is.EqualTo(state=="unavailable"),"A failed check must remain visible; successful idle states stay quiet");
+                Assert.That(button.gameObject.activeSelf,Is.EqualTo(hasAction));
                 if(state=="available")
                 {
                     Assert.That(button.GetComponentInChildren<Text>().text,Is.EqualTo("Обновить"));
@@ -105,6 +106,51 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     File.WriteAllText(Path.Combine(captureDirectory,state+".txt"),"EDITOR_OFFSCREEN_SYNTHETIC_NOT_PLAYER_ACCEPTANCE\nrevision="+Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_SOURCE_REVISION")+"\nstate="+state+"\nidentity="+label.text+"\n");
                 }
             }
+        }
+        [UnityTest]
+        public IEnumerator ErrorsRemainVisibleAndOfferTheRightRetry()
+        {
+            Assert.That(NativeUpdateBridge.Describe(new NativeUpdateBridge.Snapshot{state="apply-error"}).Message,Does.Contain("Предыдущая установка"));
+            oldStatus=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS");
+            oldCommand=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND");
+            oldRelease=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
+            directory=Path.Combine(Path.GetTempPath(),"star-update-menu-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            var status=Path.Combine(directory,"status.json");var command=Path.Combine(directory,"command.json");
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS",status);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND",command);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","0.1.0 (28.09.2026)");
+            File.WriteAllText(status,"{\"state\":\"error\",\"error\":\"Нет доступа к папке обновления.\"}");
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            var button=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="update-action");
+            var message=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="update-status");
+            foreach(var state in new[]{"error","unavailable","apply-error"})
+            {
+                File.WriteAllText(status,"{\"state\":\""+state+"\",\"error\":\"Нет доступа к папке обновления.\"}");
+                yield return new WaitForSecondsRealtime(.4f);
+                Assert.That(message.text,Is.EqualTo("Нет доступа к папке обновления."));
+                Assert.That(message.gameObject.activeSelf,Is.True);
+                Assert.That(button.interactable,Is.True);
+                Assert.That(button.GetComponentInChildren<Text>().text,Is.EqualTo(state=="apply-error"?"Повторить установку":state=="unavailable"?"Повторить проверку":"Повторить"));
+                yield return new WaitForSecondsRealtime(.3f);
+                Assert.That(message.text,Is.EqualTo("Нет доступа к папке обновления."),"Polling must not hide the failure");
+                Assert.That(File.Exists(command),Is.False,"An error never grants installation consent");
+            }
+            const string longError="Установка отменена: Windows не получила разрешение администратора. Повторите установку и подтвердите запрос Windows.";
+            File.WriteAllText(status,"{\"state\":\"apply-error\",\"error\":\""+longError+"\"}");
+            yield return new WaitForSecondsRealtime(.3f);
+            Canvas.ForceUpdateCanvases();
+            Assert.That(message.preferredHeight,Is.LessThanOrEqualTo(message.rectTransform.rect.height),"Readable errors must fit without clipping");
+            var captures=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_MENU_QA_SCREENSHOTS");
+            if(!string.IsNullOrEmpty(captures))
+            {
+                Directory.CreateDirectory(captures);
+                yield return EditorUiCapture.Capture(ground,Path.Combine(captures,"apply-error.png"));
+            }
+            File.WriteAllText(status,"{\"state\":\"unavailable\",\"error\":\"Проверьте подключение.\"}");
+            yield return new WaitForSecondsRealtime(.3f);button.onClick.Invoke();
+            float end=Time.realtimeSinceStartup+5;while(!File.Exists(command)&&Time.realtimeSinceStartup<end)yield return null;
+            Assert.That(File.ReadAllText(command),Does.Contain("check"));
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {

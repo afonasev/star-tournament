@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 15;
+        public const int DefaultVersion = 18;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -88,6 +88,10 @@ namespace StarTournament.ProvingGround
             copy.valueIndex=null;
             return copy;
         }
+        internal static ProvingProfile StorageShape(string profileId,int profileVersion,IEnumerable<string> paths)
+            => new ProvingProfile{id=profileId,version=profileVersion,
+                descriptors=new List<NumericDescriptor>(System.Linq.Enumerable.Select(paths,p=>new NumericDescriptor{Path=p})),
+                values=new List<ProvingProfileValue>()};
         /// <summary>Append-only migration for serialized proving-ground fixtures when a descriptor is introduced.</summary>
         public void EnsureDefaultDescriptors()
         {
@@ -111,7 +115,22 @@ namespace StarTournament.ProvingGround
                 if(Mathf.Approximately(Get("audio.footstepDistanceMeters"),1.7f))
                     Set("audio.footstepDistanceMeters",current.Get("audio.footstepDistanceMeters"));
             }
+            if(id==DefaultId&&previousVersion<18)
+                foreach(string path in ArenaVisualPaths)
+                {
+                    FindDescriptor(path).DefaultValue=current.Descriptor(path).DefaultValue;
+                    Set(path,UpgradeArenaVisualValue(path,previousVersion,Get(path),current.Descriptor(path)));
+                }
             valueIndex=null;
+        }
+        internal const string BotBanterIntervalPath="presentation.botBanterIntervalSeconds";
+        internal const float DefaultBotBanterIntervalSeconds=10f;
+        internal static float BotBanterIntervalSeconds(ProvingProfile profile)=>profile.Descriptor(BotBanterIntervalPath)==null?DefaultBotBanterIntervalSeconds:profile.Get(BotBanterIntervalPath);
+        internal ProvingProfile BeforeBotBanterInterval()
+        {
+            if(id!=DefaultId||Descriptor(BotBanterIntervalPath)==null)return this;
+            var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path==BotBanterIntervalPath);copy.values.RemoveAll(v=>v.Path==BotBanterIntervalPath);
+            return copy;
         }
         internal const float DefaultWeaponAudioGain=2f;
         internal static float WeaponAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.weaponGain")==null?DefaultWeaponAudioGain:profile.Get("audio.weaponGain");
@@ -462,6 +481,7 @@ namespace StarTournament.ProvingGround
             profile.Add("audio.localGain", "audio", "Свои события", "Относительный уровень важного звука своего local participant до общей пользовательской громкости.", "ratio", 0f, 1f, .05f, .65f);
             profile.Add("audio.remoteGain", "audio", "Другие участники", "Относительный уровень событий остальных участников до затухания по расстоянию.", "ratio", 0f, 1f, .05f, .40f);
             profile.Add("audio.weaponGain", "audio", "Уровень стрельбы", "Усиление выстрелов и непрерывного резака своего и чужого игрока до пространственного затухания и общей нормализации.", "ratio", 0f, 4f, .05f, DefaultWeaponAudioGain);
+            profile.Add(BotBanterIntervalPath, "bot-banter", "Интервал реплик", "Минимальная пауза между любыми репликами ботов и повторной репликой одного бота; общий интервал текста и голоса. Больше значение — реже реплики. Применяется с начала следующего матча.", "s", 10f, 120f, 1f, DefaultBotBanterIntervalSeconds);
             profile.Add("audio.weaponReadyGain", "audio", "Готовность оружия", "Уровень короткого щелчка после смены оружия и завершения его cooldown; сигнал своего локального игрока до общей нормализации.", "ratio", 0f, 4f, .05f, DefaultWeaponReadyAudioGain);
             profile.Add("audio.deathGain", "audio", "Уровень смерти", "Усиление смерти своего и чужого игрока до пространственного затухания и общей нормализации; 2 соответствует +6 дБ до ограничения микса.", "ratio", 0f, 4f, .05f, DefaultDeathAudioGain);
             profile.Add("audio.hitIntervalSeconds", "audio", "Разделение попаданий", "Минимальный интервал повторного звука урона одной цели при частых контактных событиях.", "seconds", .02f, 1f, .01f, .12f);
@@ -561,6 +581,7 @@ namespace StarTournament.ProvingGround
             profile.Add("world.minimumSupportHeight","world-query","Lowest support probe","Lower world bound for corpse support queries; does not author geometry.","meters",-100,0,1,-10);
             profile.Add("world.maximumTransitionSegment","world-query","Declared route segment bound","Maximum distance between declared traversal samples.","meters",1,100,.5f,20);
             AddRocketPresentation(profile);
+            VisualPolishDescriptors(profile);
             return profile;
         }
 
