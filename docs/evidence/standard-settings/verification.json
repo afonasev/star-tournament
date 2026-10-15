@@ -107,5 +107,12 @@
     "Human physical controller/TV/audio acceptance pending. Live playback tests remain NotRun under mandatory startup mute; production mixing verified directly in C#.",
     "Entire template catalog remains in progress: Lab, updater, release history, Windows repair, generic menu hints/text input/help and display compatibility recovery remain separate stages."
   ],
-  "screenshots": "Editor RenderTexture 1920x1080, inspected; not Player/device acceptance."
+  "screenshots": "Editor RenderTexture 1920x1080, inspected; not Player/device acceptance.",
+  "integration": {
+    "tested_commit": "161de54d",
+    "main_baseline": "b9c7cbe8",
+    "result": "2/2 passed",
+    "reason": "Main changed arena presentation and graphics application dependencies; rerun actual reset/display and multi-seat antialiasing paths. No full run.",
+    "evidence": "docs/evidence/standard-settings/integration"
+  }
 }
