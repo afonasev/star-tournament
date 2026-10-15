@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect x="0" y="0" width="1440" height="900" rx="3" fill="#0b1725" stroke="none"/>
+<text x="56" y="43" fill="#e3bd78" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start">STAR TOURNAMENT</text>
+<text x="1384" y="43" fill="#9aaebe" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end">МАКЕТ · НЕ UNITY</text>
+<path d="M56 61 L1384 61" stroke="#304453"/>
+<rect x="56" y="92" width="134" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="123.0" y="123.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">‹ НАЗАД</text>
+<text x="226" y="126" fill="#e3bd78" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="start">ИМЯ ПРОФИЛЯ</text>
+<text x="226" y="165" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Макет ввода с геймпада · пример имени, до 24 символов</text>
+<rect x="156" y="204" width="1128" height="110" rx="3" fill="#102131" stroke="none"/>
+<text x="192" y="244" fill="#9aaebe" font-family="Arial, sans-serif" font-size="17" font-weight="400" text-anchor="start">Новое имя</text>
+<text x="192" y="286" fill="#e3bd78" font-family="Arial, sans-serif" font-size="30" font-weight="700" text-anchor="start">Пилот |</text>
+<text x="1244" y="286" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="end">5 / 24</text>
+<rect x="250.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="292.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">1</text>
+<rect x="344.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="386.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">2</text>
+<rect x="438.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="480.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">3</text>
+<rect x="532.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="574.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">4</text>
+<rect x="626.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="668.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">5</text>
+<rect x="720.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="762.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">6</text>
+<rect x="814.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="856.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">7</text>
+<rect x="908.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="950.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">8</text>
+<rect x="1002.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1044.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">9</text>
+<rect x="1096.0" y="340" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1138.0" y="375.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">0</text>
+<rect x="156.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#e3bd78"/>
+<text x="198.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Й</text>
+<rect x="250.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="292.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ц</text>
+<rect x="344.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="386.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">У</text>
+<rect x="438.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="480.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">К</text>
+<rect x="532.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="574.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Е</text>
+<rect x="626.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="668.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Н</text>
+<rect x="720.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="762.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Г</text>
+<rect x="814.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="856.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ш</text>
+<rect x="908.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="950.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Щ</text>
+<rect x="1002.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1044.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">З</text>
+<rect x="1096.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1138.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Х</text>
+<rect x="1190.0" y="407" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1232.0" y="442.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ъ</text>
+<rect x="203.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="245.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ф</text>
+<rect x="297.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="339.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ы</text>
+<rect x="391.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="433.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">В</text>
+<rect x="485.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="527.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">А</text>
+<rect x="579.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="621.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">П</text>
+<rect x="673.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="715.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Р</text>
+<rect x="767.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="809.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">О</text>
+<rect x="861.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="903.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Л</text>
+<rect x="955.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="997.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Д</text>
+<rect x="1049.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1091.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ж</text>
+<rect x="1143.0" y="474" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1185.0" y="509.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Э</text>
+<rect x="250.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="292.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Я</text>
+<rect x="344.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="386.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ч</text>
+<rect x="438.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="480.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">С</text>
+<rect x="532.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="574.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">М</text>
+<rect x="626.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="668.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">И</text>
+<rect x="720.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="762.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Т</text>
+<rect x="814.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="856.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ь</text>
+<rect x="908.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="950.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Б</text>
+<rect x="1002.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1044.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ю</text>
+<rect x="1096.0" y="541" width="84" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1138.0" y="576.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Ё</text>
+<rect x="156" y="620" width="150" height="52" rx="3" fill="#142638" stroke="#385062"/>
+<text x="231.0" y="653.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">RU / EN</text>
+<rect x="318" y="620" width="150" height="52" rx="3" fill="#142638" stroke="#385062"/>
+<text x="393.0" y="653.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">А / а</text>
+<rect x="480" y="620" width="130" height="52" rx="3" fill="#142638" stroke="#385062"/>
+<text x="545.0" y="653.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">←</text>
+<rect x="622" y="620" width="260" height="52" rx="3" fill="#142638" stroke="#385062"/>
+<text x="752.0" y="653.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Пробел   Y</text>
+<rect x="894" y="620" width="130" height="52" rx="3" fill="#142638" stroke="#385062"/>
+<text x="959.0" y="653.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">→</text>
+<rect x="1036" y="620" width="248" height="52" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1160.0" y="653.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Удалить   X</text>
+<rect x="156" y="731" width="350" height="56" rx="3" fill="#142638" stroke="#385062"/>
+<text x="331.0" y="766.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Отмена   B</text>
+<rect x="934" y="731" width="350" height="56" rx="3" fill="#e3bd78" stroke="#385062"/>
+<text x="1109.0" y="766.0" fill="#0b1725" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Применить   Menu</text>
+<path d="M56 824 L1384 824" stroke="#304453"/>
+<text x="56" y="862" fill="#9aaebe" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start">Xbox: нижняя A вводит выбранный символ; B отменяет черновик. При смене устройства имя и позиция курсора сохраняются.</text>
+</svg>

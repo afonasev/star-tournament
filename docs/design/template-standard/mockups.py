@@ -197,12 +197,35 @@ def remaining_settings():
     s.save()
 
 
+def text_keyboard():
+    s=Screen('15-text-keyboard','ИМЯ ПРОФИЛЯ','Макет ввода с геймпада · пример имени, до 24 символов')
+    s.rect(156,204,1128,110,PANEL)
+    s.text(192,244,'Новое имя',17,MUTED)
+    s.text(192,286,'Пилот |',30,GOLD,True)
+    s.text(1244,286,'5 / 24',18,MUTED,anchor='end')
+    rows=['1234567890','ЙЦУКЕНГШЩЗХЪ','ФЫВАПРОЛДЖЭ','ЯЧСМИТЬБЮЁ']
+    for row,letters in enumerate(rows):
+        x=156+(1128-len(letters)*94)/2
+        for i,c in enumerate(letters):s.button(x+i*94,340+row*67,84,56,c,focus=row==1 and i==0)
+    s.button(156,620,150,52,'RU / EN')
+    s.button(318,620,150,52,'А / а')
+    s.button(480,620,130,52,'←')
+    s.button(622,620,260,52,'Пробел   Y')
+    s.button(894,620,130,52,'→')
+    s.button(1036,620,248,52,'Удалить   X')
+    s.button(156,731,350,56,'Отмена   B')
+    s.button(934,731,350,56,'Применить   Menu',active=True)
+    s.footer('Xbox: нижняя A вводит выбранный символ; B отменяет черновик. При смене устройства имя и позиция курсора сохраняются.')
+    s.save()
+
+
 def main():
-    settings('A');settings('B');update();history();lab();discard();installer();remaining_settings()
+    settings('A');settings('B');update();history();lab();discard();installer();remaining_settings();text_keyboard()
     names=[('01-settings-a','A · Настройки с левой навигацией'),('02-settings-b','B · Настройки с верхними вкладками'),('03-updates','Состояния обновления'),('04-release-history','История версий'),('05-design-lab','Лаборатория'),('06-draft-warning','Защита черновика'),('07-installer-repair','Восстановление Windows')]
     names += [('08-screen','A · Экран'),('09-graphics','A · Графика'),('10-input','A · Управление'),('11-interface','A · Интерфейс'),('12-settings-reset','Общий сброс настроек')]
+    names += [('13-help-keyboard','Справка · клавиатура и мышь'),('14-help-gamepad','Справка · Xbox, эквиваленты PlayStation/Switch рядом в UI'),('15-text-keyboard','Экранная клавиатура · пример Xbox')]
     cards=''.join(f'<section><h2>{escape(title)}</h2><a href="{name}.png"><img src="{name}.png" alt="{escape(title)}"></a></section>' for name,title in names)
-    (OUT/'index.html').write_text('<!doctype html><html lang="ru"><meta charset="utf-8"><title>Star Tournament · Макеты стандарта</title><style>body{margin:40px;background:#0b1725;color:#eef2f5;font:18px Arial}h1,h2{color:#e3bd78}p{max-width:1000px;line-height:1.6}section{margin:40px 0}img{width:100%;max-width:1440px;border:1px solid #385062}a{color:#e3bd78}</style><h1>Star Tournament · Макеты перед реализацией</h1><p>Рекомендация: A, с привычной левой навигацией. B — альтернативная компоновка. Показаны будущие состояния, а не работающий Unity UI. Значения и версии демонстрационные. Для нового оформления справки будет отдельный макет изображения: из существующего нужно убрать инструкции меню и согласовать обозначения устройств.</p>'+cards+'</html>',encoding='utf-8')
+    (OUT/'index.html').write_text('<!doctype html><html lang="ru"><meta charset="utf-8"><title>Star Tournament · Макеты стандарта</title><style>body{margin:40px;background:#0b1725;color:#eef2f5;font:18px Arial}h1,h2{color:#e3bd78}p{max-width:1000px;line-height:1.6}section{margin:40px 0}img{width:100%;max-width:1440px;border:1px solid #385062}a{color:#e3bd78}</style><h1>Star Tournament · Макеты перед реализацией</h1><p>Рекомендация: A, с привычной левой навигацией. B — альтернативная компоновка. Показаны будущие состояния, а не работающий Unity UI. Значения и версии демонстрационные. Макеты 13–15 предложены для согласования: справка содержит только игровые назначения, экранная клавиатура позволяет вводить текст с геймпада. Геймпад на иллюстрации явно Xbox; эквиваленты PlayStation/Switch выводятся рядом средствами UI.</p>'+cards+'</html>',encoding='utf-8')
 
 
 if __name__=='__main__': main()
