@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             var mesh=new Mesh{name="Well joined surfaces",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};
-            mesh.SetVertices(vertices);mesh.SetNormals(normals);mesh.SetUVs(0,uv0);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();return mesh;
+            mesh.SetVertices(vertices);mesh.SetNormals(normals);mesh.SetUVs(0,uv0);mesh.SetTriangles(triangles,0);mesh.RecalculateTangents();mesh.RecalculateBounds();return mesh;
         }
     }
 }

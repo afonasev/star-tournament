@@ -17,6 +17,13 @@ namespace StarTournament.ProvingGround.Tests
             try
             {
                 Assert.That(mesh.uv.Length,Is.EqualTo(mesh.vertexCount));
+                Assert.That(mesh.tangents.Length,Is.EqualTo(mesh.vertexCount),"Normal maps require a tangent on every exposed surface");
+                for(int i=0;i<mesh.vertexCount;i++)
+                {
+                    var tangent=(Vector3)mesh.tangents[i];
+                    Assert.That(tangent.magnitude,Is.EqualTo(1).Within(.001f));
+                    Assert.That(Vector3.Dot(tangent,mesh.normals[i]),Is.EqualTo(0).Within(.001f));
+                }
                 for(int i=0;i<mesh.vertexCount;i++)
                 {
                     var p=mesh.vertices[i];var n=mesh.normals[i];

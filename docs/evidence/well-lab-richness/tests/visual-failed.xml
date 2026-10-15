@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.5437336">
+  <test-suite type="TestSuite" id="1402" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.543734" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1394" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-lab-richness/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.536152" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="73800" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1395" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.533489" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1396" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.530695" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1397" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.528032" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1077" name="WellLabDetailVisualTests" fullname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests" classname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.524829" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1078" name="PreserveAuthoringAndSaveDetailViews" fullname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests.PreserveAuthoringAndSaveDetailViews" methodname="PreserveAuthoringAndSaveDetailViews" classname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests" runstate="Runnable" seed="1333693101" result="Failed" start-time="2026-10-15 15:56:20Z" end-time="2026-10-15 15:56:21Z" duration="1.519109" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Assert] Converting invalid MinMaxAABB'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.Mesh:SetVertices (System.Collections.Generic.List`1<UnityEngine.Vector3>)
+StarTournament.ProvingGround.WellLabDetail:Plants (UnityEngine.Vector3) (at Assets/StarTournament/Runtime/Arena/WellLabDetail.cs:215)
+StarTournament.ProvingGround.WellArenaPresentation:Build (StarTournament.ProvingGround.ArenaDefinition,StarTournament.ProvingGround.ProvingProfile) (at Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs:135)
+StarTournament.ProvingGround.ProvingArena/<BuildSteps>d__49:MoveNext () (at Assets/StarTournament/Runtime/Arena/ProvingArena.cs:130)
+StarTournament.ProvingGround.ProvingArena:Build (StarTournament.ProvingGround.ArenaFreezeSnapshot,StarTournament.ProvingGround.ProvingProfile,StarTournament.ProvingGround.ProvingProfile) (at Assets/StarTournament/Runtime/Arena/ProvingArena.cs:86)
+StarTournament.ProvingGround.Tests.WellLabDetailVisualTests/<PreserveAuthoringAndSaveDetailViews>d__0:MoveNext () (at Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs:19)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Converting invalid MinMaxAABB
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

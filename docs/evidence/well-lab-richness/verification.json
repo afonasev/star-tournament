@@ -1,0 +1,82 @@
+{
+  "baseline": "a8f96e3eee81f7911ea9f083589534a8634b7188",
+  "branch": "codex/well-lab-richness",
+  "change": "enrich-well-laboratory",
+  "checks": [
+    {
+      "name": "editmode",
+      "result": "Passed",
+      "total": "15",
+      "passed": "15",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "44.133001"
+    },
+    {
+      "name": "visual-failed",
+      "result": "Failed(Child)",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "1.5437336"
+    },
+    {
+      "name": "visual-initial",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "8.7011915"
+    },
+    {
+      "name": "visual-palette",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "2.9430732"
+    },
+    {
+      "name": "visual-reviewed",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "2.7660649"
+    }
+  ],
+  "source_sha256": {
+    "Runtime/Arena/WellArenaPresentation.cs": "1e655405f8eef86deba108cd1e80d2a5d7494e8cea835cb4c52dbe6583ae2117",
+    "Runtime/Arena/WellLabDetail.cs": "29b67a0e17a96963e6a4c3491205b8f222c6092dca7698be9cabf2cec93a1f77",
+    "Runtime/Arena/WellSurfaceMesh.cs": "77bd5ea613b724f51a9fd92074af862d3554e5ad520cc5b52d73974851705a7c",
+    "Runtime/Arena/WellArenaCatalog.cs": "43d7e76ca8da654fadd685a78a360912c114c46c90bf7ae6c871ef0294cb574d",
+    "Runtime/Core/WellArenaProfile.cs": "0a80d1491f1eefd0b7149293dcc5ef387787b73a73deadef8d5ca2b3fe1eb017",
+    "Runtime/Core/DesignLabHistory.cs": "fa79eb5ec7a4b9fc724cda32c932208e0be7a1dbfdb2c1b300cb84f8336a0377",
+    "Tests/EditMode/WellSurfaceMeshTests.cs": "7afa781f1a7dd5b624709b9091aa0d4b9c1674de7410b17d1c049e0ba5d4ebb1",
+    "Tests/EditMode/WellArenaTests.cs": "4c5a02bb069889dcc0731ccd0a7d894a83dd931d4463f6b7f0ac44729e312990",
+    "Tests/PlayMode/WellLabDetailVisualTests.cs": "54c94a57200c41847905d134873ea1b1d992c5ebe546c6d7acfd02a71237eb00"
+  },
+  "resources": {
+    "lights": 24,
+    "vertices": 202982,
+    "renderers": 41
+  },
+  "screenshots": 23,
+  "geometry": "WellArenaCatalog unchanged; exact authoring equality and zero decoration colliders asserted. Existing surface union only adds tangents.",
+  "review": "23 Editor captures inspected incl both lift shafts/all floors, stairs, corners, foliage, floor modules; warmer neutral ceramic, framed details, varied shallow modules, curved veined leaves. Concept remains an aspirational material/light reference, not a claimed photorealistic match.",
+  "limitation": "Shared Editor captures are not a benchmark, gameplay/Player/device/human acceptance. Existing angular architecture and some fine edge aliasing remain.",
+  "first_failure": "Invalid MinMaxAABB caused by fractional power of slightly negative sin(pi) at leaf tip; clamped input to zero; reruns passed. Later reruns corrected soil repetition/palette and module camera aim.",
+  "editmode_scope": "15/15; final later changes affect only visual decoration/palette and view poses. Surface union/tangent contract and authored map did not change after this pass.",
+  "silent": "All Unity runs via unity-run shared with -noaudio -muted before startup; no system audio changes.",
+  "gates": {
+    "Player": "Not built; Editor sufficient for current render QA",
+    "full": "Not authorized/not run",
+    "build_release_deploy": "Not authorized/not run",
+    "human": "Pending",
+    "device_performance": "Not measured"
+  }
+}

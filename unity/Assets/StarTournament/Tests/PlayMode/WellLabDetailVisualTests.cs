@@ -26,7 +26,16 @@ namespace StarTournament.ProvingGround.Tests
                 int vertices=0;foreach(var filter in skin.GetComponentsInChildren<MeshFilter>())vertices+=filter.sharedMesh.vertexCount;
                 Assert.That(vertices,Is.LessThan(250000),"Bounded presentation geometry");
                 foreach(var renderer in skin.GetComponentsInChildren<Renderer>())Assert.That(renderer.sharedMaterial.shader.isSupported,Is.True,renderer.sharedMaterial.name);
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-lab-detail/views"));Directory.CreateDirectory(directory);
+                foreach(var renderer in skin.GetComponentsInChildren<Renderer>())
+                {
+                    var material=renderer.sharedMaterial;
+                    if(material.name=="Well ceramic white"||material.name=="Well pale floor"||material.name=="Garden soil")
+                    {
+                        Assert.That(material.GetTexture("_BumpMap"),Is.Not.Null,material.name);
+                        Assert.That(material.IsKeywordEnabled("_NORMALMAP"),Is.True,material.name);
+                    }
+                }
+                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-lab-richness/views"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"arena.json"),JsonUtility.ToJson(arena.Definition,true));
                 Assert.That(arenaObject.GetComponentInChildren<WellArenaPresentation>().GetComponentsInChildren<Collider>(),Is.Empty,"Presentation must not add gameplay blockers");
                 float middle=WellArenaCatalog.Storey,top=2*middle;
@@ -45,6 +54,12 @@ namespace StarTournament.ProvingGround.Tests
                 eyes.Add(new Vector3(7,middle+1.7f,-7));targets.Add(new Vector3(9.6f,middle+4,9.6f));names.Add("physics-gallery");
                 eyes.Add(new Vector3(7,top+1.7f,-7));targets.Add(new Vector3(9.6f,top+4,9.6f));names.Add("electronics-gallery");
                 eyes.Add(new Vector3(20,top+1.7f,21));targets.Add(new Vector3(14,top+2.7f,16));names.Add("electronics-room");
+                for(int f=0;f<3;f++)
+                {
+                    var module=f==0?new Vector3(-24.65f,2.25f,-14.15f):f==1?new Vector3(-14.15f,middle+2.25f,-24.65f):new Vector3(-14.15f,top+2.25f,24.65f);
+                    var inward=f==0?Vector3.right:f==1?Vector3.forward:Vector3.back;
+                    eyes.Add(module+inward*3);targets.Add(module);names.Add("department-module-"+f);
+                }
                 File.WriteAllText(Path.Combine(directory,"resources.json"),"{\"lights\":24,\"vertices\":"+vertices+",\"renderers\":"+skin.GetComponentsInChildren<MeshRenderer>().Length+"}");
                 for(int i=0;i<eyes.Count;i++)
                 {
@@ -52,7 +67,7 @@ namespace StarTournament.ProvingGround.Tests
                     var previous=RenderTexture.active;RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);
                     try{image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();File.WriteAllBytes(Path.Combine(directory,names[i]+".png"),image.EncodeToPNG());}finally{RenderTexture.active=previous;Object.Destroy(image);}
                 }
-                Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(20));
+                Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(23));
             }
             finally{if(visual)visual.ResetWorld();if(camera)camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
         }
