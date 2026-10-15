@@ -105,11 +105,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 NativeVisualPreferences.SetAntialiasingLevel(NativeVisualPreferences.AntialiasingOff);
                 yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
                 Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+                Button("seat-settings-0-settings-section-4").onClick.Invoke();Button("seat-settings-1-settings-section-4").onClick.Invoke();
                 var first=Button("seat-settings-0-settings-antialiasing");var second=Button("seat-settings-1-settings-antialiasing");
-                var scroll=Object("seat-settings-0-settings-image").GetComponent<ScrollRect>();
-                yield return Press(0,GamepadButton.DpadRight);yield return Press(0,GamepadButton.DpadUp);
-                Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(.2f),"Wrapping to the last image control must reveal it");
-                for(int i=0;i<14;i++)yield return Press(0,GamepadButton.DpadUp);
+                var scroll=Object("seat-settings-0-settings-graphics").GetComponent<ScrollRect>();
+                for(int i=0;i<NativeVisualPreferences.Names.Length+1;i++)yield return Press(0,GamepadButton.DpadDown);
+                var last=Object("seat-settings-0-settings-visual-ColorGrading-enabled");var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds(scroll.viewport,last.transform);
+                Assert.That(bounds.min.y,Is.GreaterThanOrEqualTo(scroll.viewport.rect.yMin-.1f),"The last effect must be visible");
+                Assert.That(bounds.max.y,Is.LessThanOrEqualTo(scroll.viewport.rect.yMax+.1f));
+                for(int i=0;i<NativeVisualPreferences.Names.Length+1;i++)yield return Press(0,GamepadButton.DpadUp);
                 Assert.That(scroll.verticalNormalizedPosition,Is.GreaterThan(.5f),"Gamepad focus must scroll the AA setting back into view");
                 yield return Press(0,GamepadButton.South);
                 Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(NativeVisualPreferences.AntialiasingLow));
@@ -232,7 +235,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var view=Object(prefix+"settings-screen");
                 var actual=view.GetComponentsInChildren<Selectable>(true).Select(x=>x.name.Substring(prefix.Length)+":"+x.GetType().Name).OrderBy(x=>x).ToArray();
                 Assert.That(actual,Is.EqualTo(expected),"same complete control set as main menu");
-                foreach(int section in new[]{0,1,2,3})Assert.That(Button(prefix+"settings-section-"+section).interactable,Is.True);
+                foreach(int section in new[]{0,4,3,1,2})Assert.That(Button(prefix+"settings-section-"+section).interactable,Is.True);
                 Assert.That(Object(prefix+"settings-image").activeInHierarchy,Is.True);
                 Button(prefix+"settings-section-1").onClick.Invoke();Button(prefix+"settings-controls-help").onClick.Invoke();
                 var text=Object(prefix+"keyboard-help").GetComponent<Text>();
@@ -250,11 +253,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
             Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
             yield return Press(0,GamepadButton.DpadDown);
-            Assert.That(Object("seat-settings-0-settings-control").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-0-settings-graphics").activeInHierarchy,Is.True);
             Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.False);
             Assert.That(Object("seat-settings-1-settings-image").activeInHierarchy,Is.True);
             yield return Press(0,GamepadButton.DpadRight);
-            Assert.That(Object("seat-settings-0-settings-control").activeInHierarchy,Is.True);
+            Assert.That(Object("seat-settings-0-settings-graphics").activeInHierarchy,Is.True);
             Assert.That(ground.Running,Is.False);
         }
         [UnityTest] public IEnumerator MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose()

@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround
             var area=Panel(track.transform,"handle-area",Vector2.zero,Vector2.one,Color.clear);area.GetComponent<Image>().raycastTarget=false;
             var handle=Panel(area.transform,"handle",Vector2.zero,Vector2.one,Color.white);var rect=(RectTransform)handle.transform;rect.sizeDelta=new Vector2(18,10);
             slider.handleRect=rect;slider.targetGraphic=handle.GetComponent<Image>();
-            slider.onValueChanged.AddListener(v=>{var snapped=GamepadLookSettings.Snap(Profile,d.Path,v);slider.SetValueWithoutNotify(snapped);changed(snapped);});
+            slider.onValueChanged.AddListener(v=>{var snapped=NativeUserPreferences.Snap(d,v);slider.SetValueWithoutNotify(snapped);changed(snapped);});
             return slider;
         }
         Toggle BooleanSetting(Transform parent,string name,string title,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction<bool> changed,int font=22)

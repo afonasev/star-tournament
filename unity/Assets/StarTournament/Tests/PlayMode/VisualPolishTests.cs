@@ -56,30 +56,33 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {ground.SelectAuthoredMap(map);NativeSetupFixture.UnboundHumans(ground);B("Диагностика четырёх камер · без управления").onClick.Invoke();yield return NativeLoadingTestScene.Wait(ground);yield return null;}
         [UnityTest] public IEnumerator GraphicsControlsPersistAndScrollToLastEffect()
         {
-            B("main-action-4").onClick.Invoke();B("settings-section-0").onClick.Invoke();
+            B("main-action-4").onClick.Invoke();B("settings-section-4").onClick.Invoke();
             var antialiasing=B("settings-antialiasing");Assert.That(antialiasing.GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingOff]));
-            Assert.That(Control<Toggle>("settings-vsync").navigation.selectOnDown,Is.EqualTo(antialiasing));
-            Assert.That(antialiasing.navigation.selectOnDown,Is.EqualTo(Control<Toggle>("settings-visual-Lighting-enabled")));
+            Assert.That(Control<Toggle>("settings-vsync").navigation.selectOnDown,Is.EqualTo(B("settings-frame-cap")));
+            Assert.That(antialiasing.navigation.selectOnDown,Is.EqualTo(Control<Toggle>("settings-shadows")));
+            Assert.That(Control<Toggle>("settings-shadows").navigation.selectOnDown,Is.EqualTo(Control<Toggle>("settings-visual-Lighting-enabled")));
             for(int level=NativeVisualPreferences.AntialiasingLow;level<=NativeVisualPreferences.AntialiasingHigh;level++)
             {antialiasing.onClick.Invoke();Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(level));Assert.That(antialiasing.GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[level]));}
-            var graphicsScroll=Control<ScrollRect>("settings-image");graphicsScroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();antialiasing.GetComponent<MenuScrollFocus>().Reveal();Canvas.ForceUpdateCanvases();Assert.That(graphicsScroll.verticalNormalizedPosition,Is.GreaterThan(.5f));
+            var graphicsScroll=Control<ScrollRect>("settings-graphics");graphicsScroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();antialiasing.GetComponent<MenuScrollFocus>().Reveal();Canvas.ForceUpdateCanvases();Assert.That(graphicsScroll.verticalNormalizedPosition,Is.GreaterThan(.5f));
             yield return NativeLoadingScreenTests.Capture("antialiasing-setting",ground.transform.Find("native-ui").gameObject,()=>antialiasing.GetComponent<MenuScrollFocus>().Reveal());
             antialiasing.onClick.Invoke();Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(NativeVisualPreferences.AntialiasingOff));
             foreach(VisualEffect effect in Enum.GetValues(typeof(VisualEffect)))
             {
                 var toggle=Control<Toggle>("settings-visual-"+effect+"-enabled");var slider=Control<Slider>("settings-visual-"+effect+"-strength");
+                Assert.That(toggle.gameObject.activeInHierarchy,Is.True);Assert.That(slider.gameObject.activeInHierarchy,Is.False,"Fine art coefficients are outside ordinary settings");
                 slider.value=75;toggle.isOn=true;Assert.That(NativeVisualPreferences.Strength(ground.Profile,effect),Is.EqualTo(75));
                 toggle.isOn=false;Assert.That(slider.value,Is.EqualTo(75));Assert.That(NativeVisualPreferences.Enabled(effect),Is.False);
             }
             Control<Slider>("settings-color-0").value=.3f;Control<Slider>("settings-color-1").value=115;
-            var last=Control<Slider>("settings-color-1");
-            Assert.That(Control<Slider>("settings-visual-ColorGrading-strength").navigation.selectOnDown,Is.EqualTo(Control<Slider>("settings-color-0")));
-            Assert.That(Control<Slider>("settings-color-0").navigation.selectOnDown,Is.EqualTo(last));Assert.That(last.navigation.selectOnDown,Is.EqualTo(B("settings-display-mode")));
+            var last=Control<Toggle>("settings-visual-ColorGrading-enabled");
+            Assert.That(Control<Slider>("settings-color-0").gameObject.activeInHierarchy,Is.False);
+            Assert.That(Control<Slider>("settings-color-1").gameObject.activeInHierarchy,Is.False);Assert.That(last.navigation.selectOnDown,Is.EqualTo(B("settings-reset-all")));
             last.GetComponent<MenuScrollFocus>().Reveal();Canvas.ForceUpdateCanvases();
-            var scroll=Control<ScrollRect>("settings-image");Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(.2f));
+            var scroll=Control<ScrollRect>("settings-graphics");var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds(scroll.viewport,last.transform);
+            Assert.That(bounds.min.y,Is.GreaterThanOrEqualTo(scroll.viewport.rect.yMin-.1f));Assert.That(bounds.max.y,Is.LessThanOrEqualTo(scroll.viewport.rect.yMax+.1f));
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(last.gameObject);yield return NativeLoadingScreenTests.Capture("graphics-scrolled",ground.transform.Find("native-ui").gameObject,()=>last.GetComponent<MenuScrollFocus>().Reveal());
             scroll.verticalNormalizedPosition=1;yield return NativeLoadingScreenTests.Capture("graphics-top",ground.transform.Find("native-ui").gameObject);
-            B("settings-back").onClick.Invoke();B("main-action-4").onClick.Invoke();Assert.That(B("settings-antialiasing").GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingOff]));Assert.That(last.value,Is.EqualTo(115));Assert.That(Control<Slider>("settings-color-0").value,Is.EqualTo(.3f).Within(.00001f));
+            B("settings-back").onClick.Invoke();B("main-action-4").onClick.Invoke();Assert.That(B("settings-antialiasing").GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.AntialiasingNames[NativeVisualPreferences.AntialiasingOff]));Assert.That(Control<Slider>("settings-color-1").value,Is.EqualTo(115));Assert.That(Control<Slider>("settings-color-0").value,Is.EqualTo(.3f).Within(.00001f));
         }
         [UnityTest] public IEnumerator SwitchingEffectsRestoresBaselineAndKeepsGeometry()
         {

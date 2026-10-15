@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround
         void SetVisualStrength(VisualEffect effect,float value){NativeVisualPreferences.SetStrength(Profile,effect,value);visualPresentation?.Apply();RefreshSettingsUi();}
         void SetColorAdjustment(string path,float value){NativeVisualPreferences.SetAdjustment(Profile,path,value);visualPresentation?.Apply();RefreshSettingsUi();}
         void SetAntialiasingLevel(int value){NativeVisualPreferences.SetAntialiasingLevel(value);visualPresentation?.Apply();RefreshSettingsUi();}
-        enum SettingsSection { Image, Control, Interface, Audio }
+        enum SettingsSection { Image, Control, Interface, Audio, Graphics }
         const string DisplayWidthKey="StarTournament.Graphics.Width";
         const string DisplayHeightKey="StarTournament.Graphics.Height";
         const string DisplayModeKey="StarTournament.Graphics.Fullscreen";
@@ -26,10 +26,12 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<Light,LightShadows> originalLightShadows=new Dictionary<Light,LightShadows>();
         ShadowQuality originalShadowQuality;
         int originalVSyncCount;
+        int originalFrameCap;
         bool vSyncEnabled;
         bool shadowsEnabled=true,graphicsPreferencesInitialized,displayConfirmationActive;
         float displayConfirmationDeadline;
         int displayChangeFrame,oldDisplayWidth,oldDisplayHeight,pendingDisplayWidth,pendingDisplayHeight;
+        bool pendingDisplayAuto;
         FullScreenMode oldDisplayMode,pendingDisplayMode;
 
         void CreateSettingsUi(Transform parent)
@@ -49,12 +51,13 @@ namespace StarTournament.ProvingGround
             result.Sort((a,b)=>a.x*a.y==b.x*b.y?a.x.CompareTo(b.x):(long)a.x*a.y<(long)b.x*b.y?-1:1);
             return result;
         }
-        void BeginDisplayChange(SettingsView view,int width,int height,FullScreenMode mode)
+        void BeginDisplayChange(SettingsView view,int width,int height,FullScreenMode mode,bool auto=false)
         {
             if(displayConfirmationActive)return;
             displayOwner=view;
             oldDisplayWidth=Screen.width;oldDisplayHeight=Screen.height;oldDisplayMode=Screen.fullScreenMode;
             pendingDisplayWidth=width;pendingDisplayHeight=height;pendingDisplayMode=mode;
+            pendingDisplayAuto=auto;
             displayChangeFrame=Time.frameCount;displayConfirmationDeadline=Time.unscaledTime+DisplayConfirmationSeconds;
             displayConfirmationActive=true;Screen.SetResolution(width,height,mode);
             RefreshSettingsUi();view.FinishDisplay();
@@ -66,6 +69,7 @@ namespace StarTournament.ProvingGround
             if(!displayConfirmationActive||displayOwner!=view||Time.frameCount<=displayChangeFrame)return;
             displayConfirmationActive=false;
             PlayerPrefs.SetInt(DisplayWidthKey,Screen.width);PlayerPrefs.SetInt(DisplayHeightKey,Screen.height);
+            PlayerPrefs.SetInt(NativeUserPreferences.AutoKey,pendingDisplayAuto?1:0);
             PlayerPrefs.SetInt(DisplayModeKey,Screen.fullScreenMode==FullScreenMode.Windowed?0:1);PlayerPrefs.Save();
             RefreshSettingsUi();view.FinishDisplay();displayOwner=null;
         }
@@ -83,18 +87,23 @@ namespace StarTournament.ProvingGround
             if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad pad)back|=pad.buttonEast.wasPressedThisFrame;}
             else foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
             if(back){settingsView.Back();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;}
+            else if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad assigned&&assigned.buttonNorth.wasPressedThisFrame)settingsView.ResetShortcut();}
+            else foreach(var pad in Gamepad.all)if(pad.buttonNorth.wasPressedThisFrame){settingsView.ResetShortcut();break;}
         }
         void InitializeGraphicsPreferences()
         {
             originalShadowQuality=QualitySettings.shadows;
             originalVSyncCount=QualitySettings.vSyncCount;
+            originalFrameCap=Application.targetFrameRate;
             int savedVSync=PlayerPrefs.GetInt(VSyncKey,-1);
             vSyncEnabled=savedVSync!=0;
             ApplyVSyncPreference();
             graphicsPreferencesInitialized=true;
             shadowsEnabled=PlayerPrefs.GetInt(ShadowsKey,1)!=0;
             ApplyShadowPreference();
+            Application.targetFrameRate=NativeUserPreferences.FrameCap;
             int width=PlayerPrefs.GetInt(DisplayWidthKey,0),height=PlayerPrefs.GetInt(DisplayHeightKey,0);
+            if(NativeUserPreferences.AutoResolution){var desktop=Screen.currentResolution;width=desktop.width;height=desktop.height;}
             if(width<=0||height<=0)return;
             if(!SupportedResolutions().Contains(new Vector2Int(width,height)))return;
             var mode=PlayerPrefs.GetInt(DisplayModeKey,1)==0?FullScreenMode.Windowed:FullScreenMode.FullScreenWindow;
@@ -128,7 +137,7 @@ namespace StarTournament.ProvingGround
         }
         void RestoreGraphicsQuality()
         {
-            if(graphicsPreferencesInitialized){QualitySettings.shadows=originalShadowQuality;QualitySettings.vSyncCount=originalVSyncCount;}
+            if(graphicsPreferencesInitialized){QualitySettings.shadows=originalShadowQuality;QualitySettings.vSyncCount=originalVSyncCount;Application.targetFrameRate=originalFrameCap;}
         }
     }
 }

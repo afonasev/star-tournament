@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="23" result="Failed(Child)" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.0217152">
+  <test-suite type="TestSuite" id="1404" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.021715" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1396" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.015344" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="81990" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1397" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.013161" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1398" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.011187" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1399" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.009257" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="SetUpFixture" id="1101" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" classname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" runstate="Runnable" testcasecount="258" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 19:00:17Z" duration="129.003912" total="23" passed="17" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1158" name="IndependentPauseMenuTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 18:59:33Z" duration="85.276515" total="12" passed="10" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1162" name="AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras" methodname="AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="559993531" result="Failed" label="Error" start-time="2026-10-15 18:58:08Z" end-time="2026-10-15 18:58:24Z" duration="16.350231" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                    <stack-trace><![CDATA[  at StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests+<AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras>d__14.MoveNext () [0x0018a] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs:111 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 10.95 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 15.29 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.97 seconds; {"TotalSeconds":1.315860699978657,"CatalogueSeconds":0.331442299997434,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.2655345000093803,"MergeSeconds":0.08556800009682775,"FinalValidationSeconds":0.5662919000023976,"HistoricalLookupSeconds":0.14226859994232655,"HashSeconds":0.16002029995433987,"TrustedCopySeconds":0.05158260010648519,"SnapshotValidationSeconds":0.09452729998156429,"FileBytes":0,"ManagedMemoryDelta":66928640,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":3,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1163" name="ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch" methodname="ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="798561056" result="Passed" start-time="2026-10-15 18:58:24Z" end-time="2026-10-15 18:58:30Z" duration="5.956319" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.56 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 21.38 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.91 seconds; {"TotalSeconds":1.29310400004033,"CatalogueSeconds":0.30899769999086859,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.26562960003502669,"MergeSeconds":0.0726946999784559,"FinalValidationSeconds":0.578132800059393,"HistoricalLookupSeconds":0.14661060005892069,"HashSeconds":0.15368410013616086,"TrustedCopySeconds":0.05068079987540841,"SnapshotValidationSeconds":0.08796879998408258,"FileBytes":0,"ManagedMemoryDelta":28819456,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":3,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1170" name="DisconnectedSeatCannotResumeThroughTheOtherMenu" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.DisconnectedSeatCannotResumeThroughTheOtherMenu" methodname="DisconnectedSeatCannotResumeThroughTheOtherMenu" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1606715811" result="Passed" start-time="2026-10-15 18:58:30Z" end-time="2026-10-15 18:58:36Z" duration="5.873647" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.50 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 27.25 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.92 seconds; {"TotalSeconds":1.2825823000166566,"CatalogueSeconds":0.31548809993546458,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.2431660998845473,"MergeSeconds":0.08280060009565205,"FinalValidationSeconds":0.5693988000275567,"HistoricalLookupSeconds":0.16292259993497283,"HashSeconds":0.15202340006362648,"TrustedCopySeconds":0.05202529998496175,"SnapshotValidationSeconds":0.08429899998009205,"FileBytes":0,"ManagedMemoryDelta":160710656,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1166" name="GamepadNavigationSubmitsOnlyItsOwnViewport" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GamepadNavigationSubmitsOnlyItsOwnViewport" methodname="GamepadNavigationSubmitsOnlyItsOwnViewport" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1605743973" result="Passed" start-time="2026-10-15 18:58:36Z" end-time="2026-10-15 18:58:42Z" duration="6.126628" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.53 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 33.18 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.98 seconds; {"TotalSeconds":1.4520480000646786,"CatalogueSeconds":0.32371989998500796,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.24984510010108353,"MergeSeconds":0.07939100009389222,"FinalValidationSeconds":0.7312921000411734,"HistoricalLookupSeconds":0.1560145999537781,"HashSeconds":0.18284870008938015,"TrustedCopySeconds":0.05602670006919652,"SnapshotValidationSeconds":0.09374559985008091,"FileBytes":0,"ManagedMemoryDelta":197062656,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1161" name="GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch" methodname="GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="281230587" result="Passed" start-time="2026-10-15 18:58:42Z" end-time="2026-10-15 18:58:49Z" duration="6.252956" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.54 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 39.36 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 2.13 seconds; {"TotalSeconds":1.7084898999892176,"CatalogueSeconds":0.4796529000159353,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.3423445000080392,"MergeSeconds":0.11568990000523627,"FinalValidationSeconds":0.6629638000158593,"HistoricalLookupSeconds":0.16682210005819798,"HashSeconds":0.18304260005243123,"TrustedCopySeconds":0.08572460012510419,"SnapshotValidationSeconds":0.09304490010254085,"FileBytes":0,"ManagedMemoryDelta":18690048,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":3,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1169" name="MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose" methodname="MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1081541994" result="Passed" start-time="2026-10-15 18:58:49Z" end-time="2026-10-15 18:58:55Z" duration="6.348570" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.65 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 45.81 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.97 seconds; {"TotalSeconds":1.5866557999979705,"CatalogueSeconds":0.30931879999116065,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.41033009998500349,"MergeSeconds":0.07524659996852279,"FinalValidationSeconds":0.7219802000327036,"HistoricalLookupSeconds":0.15071850002277643,"HashSeconds":0.16175869980361314,"TrustedCopySeconds":0.052778400015085939,"SnapshotValidationSeconds":0.08929820021148771,"FileBytes":0,"ManagedMemoryDelta":127053824,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1165" name="PersonalSettingsAndGlobalConfirmationStayScoped" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PersonalSettingsAndGlobalConfirmationStayScoped" methodname="PersonalSettingsAndGlobalConfirmationStayScoped" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1673612905" result="Passed" start-time="2026-10-15 18:58:55Z" end-time="2026-10-15 18:59:02Z" duration="6.697435" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.42 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 52.24 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 2.04 seconds; {"TotalSeconds":1.4023447999497876,"CatalogueSeconds":0.35392400005366655,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.294320399989374,"MergeSeconds":0.07976189989130944,"FinalValidationSeconds":0.5965521999169141,"HistoricalLookupSeconds":0.16531840013340116,"HashSeconds":0.159198300098069,"TrustedCopySeconds":0.053264900110661986,"SnapshotValidationSeconds":0.09020599978975952,"FileBytes":0,"ManagedMemoryDelta":171368448,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1168" name="SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit" methodname="SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="778134620" result="Passed" start-time="2026-10-15 18:59:02Z" end-time="2026-10-15 18:59:08Z" duration="6.364238" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.66 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 58.81 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 2.04 seconds; {"TotalSeconds":1.6433157999999822,"CatalogueSeconds":0.3103582999901846,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.3001451001036912,"MergeSeconds":0.07598219998180866,"FinalValidationSeconds":0.8555176999652758,"HistoricalLookupSeconds":0.15765080007258804,"HashSeconds":0.2010511999251321,"TrustedCopySeconds":0.06717310007661581,"SnapshotValidationSeconds":0.15732380002737046,"FileBytes":0,"ManagedMemoryDelta":18841600,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":3,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1167" name="SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport" methodname="SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="507069099" result="Failed" start-time="2026-10-15 18:59:08Z" end-time="2026-10-15 18:59:14Z" duration="6.375845" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  back only changes its own viewport
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests+<SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport>d__19.MoveNext () [0x00342] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs:245
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 1.49 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 65.20 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 2.02 seconds; {"TotalSeconds":1.537546499981545,"CatalogueSeconds":0.40263930009678008,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.3016300000017509,"MergeSeconds":0.07923959998879582,"FinalValidationSeconds":0.6805153000168502,"HistoricalLookupSeconds":0.15514380007516594,"HashSeconds":0.1933817999670282,"TrustedCopySeconds":0.09034999995492399,"SnapshotValidationSeconds":0.09592169988900423,"FileBytes":0,"ManagedMemoryDelta":22339584,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":3,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1159" name="SplitScreenDrawsOneGlobalFpsCounter" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SplitScreenDrawsOneGlobalFpsCounter" methodname="SplitScreenDrawsOneGlobalFpsCounter" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1436489004" result="Passed" start-time="2026-10-15 18:59:14Z" end-time="2026-10-15 18:59:21Z" duration="6.314258" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.49 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 71.68 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.98 seconds; {"TotalSeconds":1.3515384000493214,"CatalogueSeconds":0.3124843999976292,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.25767700001597407,"MergeSeconds":0.1068807999836281,"FinalValidationSeconds":0.6017072000540793,"HistoricalLookupSeconds":0.15198480000253768,"HashSeconds":0.16038430004846306,"TrustedCopySeconds":0.06328980019316077,"SnapshotValidationSeconds":0.09261059993878007,"FileBytes":0,"ManagedMemoryDelta":104656896,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1164" name="TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses" methodname="TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="717684927" result="Passed" start-time="2026-10-15 18:59:21Z" end-time="2026-10-15 18:59:27Z" duration="6.453705" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.46 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 77.67 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 2.36 seconds; {"TotalSeconds":1.6794450000161306,"CatalogueSeconds":0.3544218000024557,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.32743310008663686,"MergeSeconds":0.3085869000060484,"FinalValidationSeconds":0.6162935000611469,"HistoricalLookupSeconds":0.17123989993706346,"HashSeconds":0.1711302000330761,"TrustedCopySeconds":0.05358810001052916,"SnapshotValidationSeconds":0.09290569997392595,"FileBytes":0,"ManagedMemoryDelta":-109801472,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1160" name="VSyncPropagatesBetweenSeatsWithoutAdvancingMatch" fullname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.VSyncPropagatesBetweenSeatsWithoutAdvancingMatch" methodname="VSyncPropagatesBetweenSeatsWithoutAdvancingMatch" classname="StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests" runstate="Runnable" seed="1904680441" result="Passed" start-time="2026-10-15 18:59:27Z" end-time="2026-10-15 18:59:33Z" duration="6.153192" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.47 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 84.14 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 2.06 seconds; {"TotalSeconds":1.6015833000419662,"CatalogueSeconds":0.3193075000308454,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.47297700005583467,"MergeSeconds":0.07849919993896038,"FinalValidationSeconds":0.6373012999538332,"HistoricalLookupSeconds":0.14876280003227294,"HashSeconds":0.1618953999131918,"TrustedCopySeconds":0.07839259994216263,"SnapshotValidationSeconds":0.10514450003392995,"FileBytes":0,"ManagedMemoryDelta":-259473408,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":3,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1187" name="NativeAudioStartupMuteTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioStartupMuteTests" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioStartupMuteTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-15 18:59:33Z" end-time="2026-10-15 18:59:33Z" duration="0.005945" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1188" name="NoAudioLaunchKeepsListenerMutedAcrossReviewOverrides" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioStartupMuteTests.NoAudioLaunchKeepsListenerMutedAcrossReviewOverrides" methodname="NoAudioLaunchKeepsListenerMutedAcrossReviewOverrides" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeAudioStartupMuteTests" runstate="Runnable" seed="33406820" result="Passed" start-time="2026-10-15 18:59:33Z" end-time="2026-10-15 18:59:33Z" duration="0.001725" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1351" name="SettingsGamepadNavigationTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-15 18:59:33Z" end-time="2026-10-15 19:00:12Z" duration="39.136181" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1359" name="AdditionalPagesKeepPreferencesAndGuardResetShortcut" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AdditionalPagesKeepPreferencesAndGuardResetShortcut" methodname="AdditionalPagesKeepPreferencesAndGuardResetShortcut" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1641282705" result="Passed" start-time="2026-10-15 18:59:33Z" end-time="2026-10-15 18:59:38Z" duration="4.936848" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.50 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 90.37 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1355" name="AllAiOperatorOpensTheSameSettingsAndReturnsToPause" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AllAiOperatorOpensTheSameSettingsAndReturnsToPause" methodname="AllAiOperatorOpensTheSameSettingsAndReturnsToPause" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1837446668" result="Failed" start-time="2026-10-15 18:59:38Z" end-time="2026-10-15 18:59:44Z" duration="6.176598" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests+<AllAiOperatorOpensTheSameSettingsAndReturnsToPause>d__22.MoveNext () [0x001f0] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs:234
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 1.68 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 95.50 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Lab startup: local history complete in 1.87 seconds; {"TotalSeconds":1.3081819000653923,"CatalogueSeconds":0.348455399973318,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.24621739995200188,"MergeSeconds":0.06189880007877946,"FinalValidationSeconds":0.580047000083141,"HistoricalLookupSeconds":0.16455810004845262,"HashSeconds":0.15287089999765159,"TrustedCopySeconds":0.05072949989698827,"SnapshotValidationSeconds":0.08778860000893474,"FileBytes":0,"ManagedMemoryDelta":176812032,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+                </test-case>
+                <test-case id="1360" name="AudioSettingsPersistAndRemainGamepadNavigable" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AudioSettingsPersistAndRemainGamepadNavigable" methodname="AudioSettingsPersistAndRemainGamepadNavigable" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="422325414" result="Passed" start-time="2026-10-15 18:59:44Z" end-time="2026-10-15 18:59:49Z" duration="4.451970" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.72 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 101.65 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1356" name="DevicePageShowsSupportedAndUnsupportedControllers" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.DevicePageShowsSupportedAndUnsupportedControllers" methodname="DevicePageShowsSupportedAndUnsupportedControllers" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="171540093" result="Failed" start-time="2026-10-15 18:59:49Z" end-time="2026-10-15 18:59:53Z" duration="4.001939" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests+<DevicePageShowsSupportedAndUnsupportedControllers>d__23.MoveNext () [0x0011f] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs:251
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 1.63 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 106.11 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1357" name="GamepadCanCancelDisplayConfirmation" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.GamepadCanCancelDisplayConfirmation" methodname="GamepadCanCancelDisplayConfirmation" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="926912251" result="Passed" start-time="2026-10-15 18:59:53Z" end-time="2026-10-15 18:59:57Z" duration="4.067230" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.57 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 110.08 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1352" name="MenuCursorFollowsGamepadAndMouseAcrossScreens" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.MenuCursorFollowsGamepadAndMouseAcrossScreens" methodname="MenuCursorFollowsGamepadAndMouseAcrossScreens" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="87170028" result="Passed" start-time="2026-10-15 18:59:57Z" end-time="2026-10-15 19:00:02Z" duration="5.224691" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 2.03 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 114.80 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1358" name="SectionFocusShowsParametersWithoutSubmit" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SectionFocusShowsParametersWithoutSubmit" methodname="SectionFocusShowsParametersWithoutSubmit" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1129430563" result="Passed" start-time="2026-10-15 19:00:02Z" end-time="2026-10-15 19:00:07Z" duration="4.553619" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.59 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 119.62 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1353" name="SettingsAreFullyNavigableWithGamepad" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SettingsAreFullyNavigableWithGamepad" methodname="SettingsAreFullyNavigableWithGamepad" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1659238511" result="Failed" start-time="2026-10-15 19:00:07Z" end-time="2026-10-15 19:00:12Z" duration="5.713151" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  String lengths are both 18. Strings differ at index 9.
+  Expected: "settings-help-back"
+  But was:  "settings-section-1"
+  --------------------^
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests+<SettingsAreFullyNavigableWithGamepad>d__20.MoveNext () [0x009c0] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs:172
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 1.96 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 124.36 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+                <test-case id="1354" name="ShoulderButtonsCycleOnlyAssignedWeaponOnPress" fullname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.ShoulderButtonsCycleOnlyAssignedWeaponOnPress" methodname="ShoulderButtonsCycleOnlyAssignedWeaponOnPress" classname="StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests" runstate="Runnable" seed="1508567245" result="Passed" start-time="2026-10-15 19:00:12Z" end-time="2026-10-15 19:00:12Z" duration="0.007532" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1381" name="VisualPolishTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests" classname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-15 19:00:12Z" end-time="2026-10-15 19:00:17Z" duration="4.565456" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1382" name="GraphicsControlsPersistAndScrollToLastEffect" fullname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests.GraphicsControlsPersistAndScrollToLastEffect" methodname="GraphicsControlsPersistAndScrollToLastEffect" classname="StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests" runstate="Runnable" seed="215268236" result="Failed" start-time="2026-10-15 19:00:12Z" end-time="2026-10-15 19:00:17Z" duration="4.560318" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: less than 0.200000003f
+  But was:  0.413717061f
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests+<GraphicsControlsPersistAndScrollToLastEffect>d__12.MoveNext () [0x00446] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/VisualPolishTests.cs:81
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 1.98 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 130.19 seconds; Default 4948f9d88fc7c9dc030ec173412416aee16a2fb13fe91eccc5824be7115b1327
+Lab startup: validating local history in background
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

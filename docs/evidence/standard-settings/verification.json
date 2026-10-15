@@ -1,0 +1,111 @@
+{
+  "baseline": "87962403",
+  "template_revision": "0c2d4562683252d54736f294dc1af463050eac17",
+  "scope": "Settings preferences, navigation, personal input, safe reset and shared scrolling; not full suite",
+  "quiet_start": "tools/unity.sh shared -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter <affected cases> -profilesPath <owned run>/profiles.json -testResults <owned run>/playmode.xml -logFile <owned run>/playmode.log",
+  "selection": "16 EditMode cases for actual production preference/mix/profile/input contracts; 23 existing affected UI cases plus one global reset fixture. Failed cases rerun after fixes; shared MenuScrollFocus additionally checked in ordinary and split viewport. No gameplay simulations needed.",
+  "runs": [
+    {
+      "run": "editmode",
+      "evidence": "docs/evidence/standard-settings/editmode",
+      "total": "16",
+      "passed": "16",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.1280004"
+    },
+    {
+      "run": "run2",
+      "evidence": "docs/evidence/standard-settings/run2",
+      "total": "23",
+      "passed": "17",
+      "failed": "6",
+      "skipped": "0",
+      "duration": "129.0217152"
+    },
+    {
+      "run": "run3",
+      "evidence": "docs/evidence/standard-settings/run3",
+      "total": "7",
+      "passed": "6",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "52.3018699"
+    },
+    {
+      "run": "run4",
+      "evidence": "docs/evidence/standard-settings/run4",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "30.0035952"
+    },
+    {
+      "run": "run5",
+      "evidence": "docs/evidence/standard-settings/run5",
+      "result": "NotRun: compile error in new reset fixture (incorrect SetGamepad call), corrected in run6"
+    },
+    {
+      "run": "run6",
+      "evidence": "docs/evidence/standard-settings/run6",
+      "total": "3",
+      "passed": "2",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "27.0753334"
+    },
+    {
+      "run": "run7",
+      "evidence": "docs/evidence/standard-settings/run7",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "18.8575339"
+    }
+  ],
+  "latest_playmode_results": {
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.DisconnectedSeatCannotResumeThroughTheOtherMenu": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GamepadNavigationSubmitsOnlyItsOwnViewport": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PersonalSettingsAndGlobalConfirmationStayScoped": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SplitScreenDrawsOneGlobalFpsCounter": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.VSyncPropagatesBetweenSeatsWithoutAdvancingMatch": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeAudioStartupMuteTests.NoAudioLaunchKeepsListenerMutedAcrossReviewOverrides": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AdditionalPagesKeepPreferencesAndGuardResetShortcut": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AllAiOperatorOpensTheSameSettingsAndReturnsToPause": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.AudioSettingsPersistAndRemainGamepadNavigable": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.DevicePageShowsSupportedAndUnsupportedControllers": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.GamepadCanCancelDisplayConfirmation": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.MenuCursorFollowsGamepadAndMouseAcrossScreens": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SectionFocusShowsParametersWithoutSubmit": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SettingsAreFullyNavigableWithGamepad": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.ShoulderButtonsCycleOnlyAssignedWeaponOnPress": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests.GraphicsControlsPersistAndScrollToLastEffect": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.ConfirmGlobalResetPreservesIdentitiesAndRequiresDisplayConfirmation": "Passed"
+  },
+  "latest_unique_playmode_passed": 24,
+  "latest_unique_playmode_total": 24,
+  "source_cs_sha256": "d2e999b61984b7ea0d5646d28487701b50f8d01899e1123cf4c19f8ddb15ef0f",
+  "attempt_notes": [
+    "run2: 17/23 passed; fixed focus guard closing Help/Devices and stale graphics page navigation/geometry assertions.",
+    "run3: 6/7 passed; actual one-pixel clipping in split viewport fixed by scroll stop and two-unit focus padding.",
+    "run4: 3/3 passed after scrolling fix.",
+    "run5: no tests (reset fixture compile error).",
+    "run6: 2/3 passed; reset worked, unsafe initial display-confirm focus found.",
+    "run7: 1/1 passed after initial focus changed to rollback. Earlier failures remain recorded."
+  ],
+  "pending": [
+    "Player/native build and release/deploy not requested and not run.",
+    "Human physical controller/TV/audio acceptance pending. Live playback tests remain NotRun under mandatory startup mute; production mixing verified directly in C#.",
+    "Entire template catalog remains in progress: Lab, updater, release history, Windows repair, generic menu hints/text input/help and display compatibility recovery remain separate stages."
+  ],
+  "screenshots": "Editor RenderTexture 1920x1080, inspected; not Player/device acceptance."
+}

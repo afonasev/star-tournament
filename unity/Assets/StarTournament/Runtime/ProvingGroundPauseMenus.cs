@@ -159,7 +159,7 @@ namespace StarTournament.ProvingGround
                     submit=keyboard.enterKey.wasPressedThisFrame;back=keyboard.backspaceKey.wasPressedThisFrame;
                 }
                 if(seatPausePages[seat]==SeatPausePage.Settings)
-                {seatSettingsViews[seat].Navigate(right?1:left?-1:0,up?1:down?-1:0,submit,back);continue;}
+                {if(device is Gamepad settingsPad&&settingsPad.buttonNorth.wasPressedThisFrame)seatSettingsViews[seat].ResetShortcut();else seatSettingsViews[seat].Navigate(right?1:left?-1:0,up?1:down?-1:0,submit,back);continue;}
                 if(up)MoveSeatPauseCursor(seat,-1);
                 if(down)MoveSeatPauseCursor(seat,1);
                 if(back){gameAudio?.MenuBack();BackSeatPause(seat);}

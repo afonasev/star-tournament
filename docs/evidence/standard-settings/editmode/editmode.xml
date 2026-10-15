@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Passed" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.1280004">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="538" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.128000" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1652" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="538" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.119814" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="72068" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1653" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="538" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.116433" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1654" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="538" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.113740" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1655" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="538" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.110886" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1656" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="410" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.092333" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1432" name="NativeAudioPreferenceTests" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.031217" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1439" name="EqualChannelsPreserveThePreviousNormalizedMix" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.EqualChannelsPreserveThePreviousNormalizedMix" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.017375" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1436" name="EqualChannelsPreserveThePreviousNormalizedMix(0.0f,0.0f,0.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.EqualChannelsPreserveThePreviousNormalizedMix(0.0f,0.0f,0.0f)" methodname="EqualChannelsPreserveThePreviousNormalizedMix" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="151675509" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.013081" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1437" name="EqualChannelsPreserveThePreviousNormalizedMix(0.4f,0.3f,0.6f)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.EqualChannelsPreserveThePreviousNormalizedMix(0.4f,0.3f,0.6f)" methodname="EqualChannelsPreserveThePreviousNormalizedMix" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="1314986158" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.000812" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1438" name="EqualChannelsPreserveThePreviousNormalizedMix(3.0f,2.0f,0.8f)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.EqualChannelsPreserveThePreviousNormalizedMix(3.0f,2.0f,0.8f)" methodname="EqualChannelsPreserveThePreviousNormalizedMix" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="1663407535" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.000493" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1434" name="FirstEffectsChangePreservesThePreviousSharedVoiceLevel" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.FirstEffectsChangePreservesThePreviousSharedVoiceLevel" methodname="FirstEffectsChangePreservesThePreviousSharedVoiceLevel" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="319500944" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.002002" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1433" name="ReadingDefaultsDoesNotMigrateOrWritePreferences" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.ReadingDefaultsDoesNotMigrateOrWritePreferences" methodname="ReadingDefaultsDoesNotMigrateOrWritePreferences" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="1861209380" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.001331" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1435" name="ZeroAndClampingAreIndependentPersistedPreferences" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.ZeroAndClampingAreIndependentPersistedPreferences" methodname="ZeroAndClampingAreIndependentPersistedPreferences" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="19639924" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.002679" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1440" name="ZeroEffectsLeavesSpeechAndMusicAndMasterScalesTheEntireOutput" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests.ZeroEffectsLeavesSpeechAndMusicAndMasterScalesTheEntireOutput" methodname="ZeroEffectsLeavesSpeechAndMusicAndMasterScalesTheEntireOutput" classname="StarTournament.ProvingGround.Tests.EditMode.NativeAudioPreferenceTests" runstate="Runnable" seed="1361369513" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.002258" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1589" name="StandardUserPreferencesTests" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.044305" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1592" name="FailedProfileResetRestoresPreviousInMemoryPreferences" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.FailedProfileResetRestoresPreviousInMemoryPreferences" methodname="FailedProfileResetRestoresPreviousInMemoryPreferences" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="1185944814" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.007346" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1593" name="PersonalDeadzoneAndInversionAffectLookButDoNotInvertMovement" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.PersonalDeadzoneAndInversionAffectLookButDoNotInvertMovement" methodname="PersonalDeadzoneAndInversionAffectLookButDoNotInvertMovement" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="156204840" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.032291" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1594" name="PreferenceMetadataSnapsInvalidScaleSafely" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.PreferenceMetadataSnapsInvalidScaleSafely" methodname="PreferenceMetadataSnapsInvalidScaleSafely" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="339855930" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.000287" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1591" name="ProfileResetKeepsIdentitiesAndSurvivesReload" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.ProfileResetKeepsIdentitiesAndSurvivesReload" methodname="ProfileResetKeepsIdentitiesAndSurvivesReload" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="1535780474" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.002405" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1590" name="ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay" methodname="ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="1002379900" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:08Z" duration="0.000880" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1051" name="GamepadLookSettingsTests" fullname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests" classname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.004719" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1052" name="LegacyIdentityDefaultsAndNewSettingsPersistWithoutAffectingOtherIdentity" fullname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests.LegacyIdentityDefaultsAndNewSettingsPersistWithoutAffectingOtherIdentity" methodname="LegacyIdentityDefaultsAndNewSettingsPersistWithoutAffectingOtherIdentity" classname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests" runstate="Runnable" seed="740525821" result="Passed" start-time="2026-10-15 18:53:08Z" end-time="2026-10-15 18:53:09Z" duration="0.002135" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="SeparateAxesAndHeldIntentSurviveConsumptionButClearOnPauseAndDisconnect" fullname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests.SeparateAxesAndHeldIntentSurviveConsumptionButClearOnPauseAndDisconnect" methodname="SeparateAxesAndHeldIntentSurviveConsumptionButClearOnPauseAndDisconnect" classname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests" runstate="Runnable" seed="1836226336" result="Passed" start-time="2026-10-15 18:53:09Z" end-time="2026-10-15 18:53:09Z" duration="0.001257" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="SurfacePitchProjectsSlopeOntoYawAndNeverRolls" fullname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests.SurfacePitchProjectsSlopeOntoYawAndNeverRolls" methodname="SurfacePitchProjectsSlopeOntoYawAndNeverRolls" classname="StarTournament.ProvingGround.Tests.GamepadLookSettingsTests" runstate="Runnable" seed="1799069801" result="Passed" start-time="2026-10-15 18:53:09Z" end-time="2026-10-15 18:53:09Z" duration="0.000378" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1113" name="PlayerProfilesTests" fullname="StarTournament.ProvingGround.Tests.PlayerProfilesTests" classname="StarTournament.ProvingGround.Tests.PlayerProfilesTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-15 18:53:09Z" end-time="2026-10-15 18:53:09Z" duration="0.003722" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1114" name="ProfilePersistsWhileGuestAndDevicePreferenceRemainInSession" fullname="StarTournament.ProvingGround.Tests.PlayerProfilesTests.ProfilePersistsWhileGuestAndDevicePreferenceRemainInSession" methodname="ProfilePersistsWhileGuestAndDevicePreferenceRemainInSession" classname="StarTournament.ProvingGround.Tests.PlayerProfilesTests" runstate="Runnable" seed="1379205432" result="Passed" start-time="2026-10-15 18:53:09Z" end-time="2026-10-15 18:53:09Z" duration="0.003161" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

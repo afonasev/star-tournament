@@ -245,15 +245,27 @@
       "id": "SETTINGS-CATALOG-01",
       "title": "Полный применимый каталог",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "summary": "Добавлены Auto/cap, deadzone/invert, scale/contrast; справка и gamepad text input ещё требуют отдельных макетов.",
+        "paths": [
+          "docs/evidence/standard-settings/verification.json",
+          "docs/evidence/standard-audio-settings/verification.json"
+        ]
+      }
     },
     {
       "id": "SETTINGS-GROUPS-01",
       "title": "Смысловые разделы",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "summary": "Пять разделов A реализованы; Editor navigation и PNG. Human/Player pending.",
+        "paths": [
+          "docs/evidence/standard-settings/verification.json",
+          "docs/evidence/standard-audio-settings/verification.json"
+        ]
+      }
     },
     {
       "id": "SETTINGS-SCOPE-01",
@@ -301,8 +313,14 @@
       "id": "SETTINGS-PERSIST-03",
       "title": "Ошибки и совместимость",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "summary": "Ошибки записи показаны в UI; сохранение профиля откатывает память при ошибке. Полная совместимость недоступного display mode ещё не закрыта.",
+        "paths": [
+          "docs/evidence/standard-settings/verification.json",
+          "docs/evidence/standard-audio-settings/verification.json"
+        ]
+      }
     },
     {
       "id": "SETTINGS-DISPLAY-01",
@@ -315,8 +333,14 @@
       "id": "SETTINGS-AUDIO-01",
       "title": "Громкости вместо отдельного mute",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "summary": "Master/Music/Effects/Voice реализованы; C# mix/preferences и UI проверены. Live playback и human audio pending.",
+        "paths": [
+          "docs/evidence/standard-settings/verification.json",
+          "docs/evidence/standard-audio-settings/verification.json"
+        ]
+      }
     },
     {
       "id": "SETTINGS-AUDIO-02",
@@ -329,15 +353,27 @@
       "id": "SETTINGS-RESET-01",
       "title": "Область сброса",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "summary": "Allow-list, personal profiles и guest reset реализованы; isolated storage и Editor confirmation/rollback проверяются в standard-settings evidence.",
+        "paths": [
+          "docs/evidence/standard-settings/verification.json",
+          "docs/evidence/standard-audio-settings/verification.json"
+        ]
+      }
     },
     {
       "id": "SETTINGS-RESET-02",
       "title": "Shortcut геймпада",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "summary": "Верхняя кнопка, modal/open-frame guards и назначенный seat реализованы; Editor navigation. Physical controllers pending.",
+        "paths": [
+          "docs/evidence/standard-settings/verification.json",
+          "docs/evidence/standard-audio-settings/verification.json"
+        ]
+      }
     },
     {
       "id": "SETTINGS-HELP-01",
