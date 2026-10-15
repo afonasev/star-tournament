@@ -49,9 +49,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
         }
-        static void CaptureLtHelp(Canvas canvas)
+        static void CaptureLtHelp(Canvas canvas,string filename="gamepad-lt-help.png",string variable="STAR_TOURNAMENT_LT_QA_IMAGES")
         {
-            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LT_QA_IMAGES");
+            var directory=System.Environment.GetEnvironmentVariable(variable);
             if(string.IsNullOrEmpty(directory))return;
             System.IO.Directory.CreateDirectory(directory);
             var owner=new GameObject("LT help evidence camera");var camera=owner.AddComponent<Camera>();camera.enabled=false;
@@ -63,7 +63,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
                 Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;
                 pixels.ReadPixels(new Rect(0,0,1920,1080),0,0);pixels.Apply();
-                System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,"gamepad-lt-help.png"),pixels.EncodeToPNG());
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,filename),pixels.EncodeToPNG());
             }
             finally
             {
@@ -269,7 +269,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int page=0;page<4;page++)
                     Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(x=>x.name==pages[page]).gameObject.activeInHierarchy,Is.EqualTo(page==section));
             }
-            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-music"));
+            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-master"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-3"));
             yield return MoveStick(Vector2.up);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             Assert.That(ground.GetComponentsInChildren<Toggle>(true).Single(x=>x.name=="settings-fps").gameObject.activeInHierarchy,Is.True);
@@ -279,6 +279,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             const string musicKey="StarTournament.Audio.MusicPercent",effectsKey="StarTournament.Audio.EffectsPercent";
             bool hadMusic=PlayerPrefs.HasKey(musicKey),hadEffects=PlayerPrefs.HasKey(effectsKey);
             int oldMusic=PlayerPrefs.GetInt(musicKey),oldEffects=PlayerPrefs.GetInt(effectsKey);
+            int oldMaster=NativeAudioPreferences.Master,oldVoice=NativeAudioPreferences.Voice(ProvingProfile.CreateDefault());
             try
             {
                 yield return Load();
@@ -286,7 +287,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 yield return Press(GamepadButton.DpadDown);
                 yield return Press(GamepadButton.DpadDown);
                 Assert.That(Focus,Is.EqualTo("settings-section-3"));
-                yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-music"));
+                yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-master"));
+                var masterSlider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-master");
+                masterSlider.value=40;
+                yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-master"));
+                Assert.That(NativeAudioPreferences.Master,Is.EqualTo(45));
+                yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-music"));
                 var musicSlider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-music");
                 musicSlider.value=50;
                 yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-music"));
@@ -296,11 +302,26 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 effectsSlider.value=50;
                 yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-effects"));
                 Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(55));
+                yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-voice"));
+                var voiceSlider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-voice");
+                voiceSlider.value=60;
+                yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-voice"));
+                Assert.That(NativeAudioPreferences.Voice(ground.Profile),Is.EqualTo(65));
+                Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(55));
+                CaptureLtHelp(voiceSlider.GetComponentInParent<Canvas>(),"audio-settings.png","STAR_TOURNAMENT_AUDIO_QA_IMAGES");
+                masterSlider.value=0;voiceSlider.value=0;
+                Assert.That(PlayerPrefs.GetInt(NativeAudioPreferences.MasterKey),Is.Zero);
+                Assert.That(PlayerPrefs.GetInt(NativeAudioPreferences.VoiceKey),Is.Zero);
+                yield return Press(GamepadButton.DpadUp);Assert.That(Focus,Is.EqualTo("settings-effects"));
+                yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-effects"));
+                Assert.That(NativeAudioPreferences.Effects(ground.Profile),Is.EqualTo(50));
+                yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-3"));
             }
             finally
             {
                 if(hadMusic)PlayerPrefs.SetInt(musicKey,oldMusic);else PlayerPrefs.DeleteKey(musicKey);
                 if(hadEffects)PlayerPrefs.SetInt(effectsKey,oldEffects);else PlayerPrefs.DeleteKey(effectsKey);
+                NativeAudioPreferences.SetMaster(oldMaster);NativeAudioPreferences.SetVoice(oldVoice);
                 PlayerPrefs.Save();
             }
         }

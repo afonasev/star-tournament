@@ -1,0 +1,31 @@
+{
+  "baseline": "e5db4745",
+  "branch": "codex/game-standard-alignment",
+  "checks": [
+    {
+      "name": "editmode",
+      "result": "Passed",
+      "passed": "7",
+      "failed": "0",
+      "duration": "0.053673"
+    },
+    {
+      "name": "playmode-initial",
+      "result": "Failed(Child)",
+      "passed": "5",
+      "failed": "1",
+      "duration": "63.2902039"
+    },
+    {
+      "name": "playmode-recheck",
+      "result": "Passed",
+      "passed": "1",
+      "failed": "0",
+      "duration": "19.9919178"
+    }
+  ],
+  "interpretation": "7 EditMode passed; 5 unaffected PlayMode cases passed initially; one navigation test corrected and rerun passed. Initial compiler failure and first red test are not successful runs.",
+  "playback": "NotRun: application session mute prevents live isPlaying routing. Production mix is exercised directly by C# EditMode tests without output.",
+  "build": "not run; not required",
+  "human_audio_device_acceptance": "pending"
+}

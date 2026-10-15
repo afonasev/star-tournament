@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround
             readonly Toggle[] visualToggles=new Toggle[NativeVisualPreferences.Names.Length];
             readonly Slider[] colorAdjustments=new Slider[NativeVisualPreferences.ColorAdjustmentPaths.Length];
             ScrollRect graphicsScroll;
-            Slider settingsMusicSlider,settingsEffectsSlider;
+            Slider settingsMasterSlider,settingsMusicSlider,settingsEffectsSlider,settingsVoiceSlider;
             Text settingsDescription,settingsDisplayMode,settingsResolution,settingsShadows,settingsConfirmationText;
             Button settingsConfirmButton;
             Button[] resolutionChoices;
@@ -225,8 +225,12 @@ namespace StarTournament.ProvingGround
                 Label(settingsInterfacePage.transform,"settings-bot-reactions-help","Реакции ботов общие для всех игроков",20,new Vector2(.04f,.06f),new Vector2(.96f,.20f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
                 settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
-                settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.66f),new Vector2(.98f,.94f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
-                settingsEffectsSlider=NumericSetting(settingsAudioPage.transform,"settings-effects","Эффекты",new Vector2(.02f,.31f),new Vector2(.98f,.59f),Profile.Descriptor("audio.effectsDefaultPercent"),v=>{NativeAudioPreferences.SetEffects(Mathf.RoundToInt(v));owner.RefreshSettingsUi();});
+                void RefreshAudio(){owner.gameAudio?.UpdateVolume();owner.RefreshSettingsUi();}
+                var percent=Profile.Descriptor("audio.effectsDefaultPercent");
+                settingsMasterSlider=NumericSetting(settingsAudioPage.transform,"settings-master","Общая громкость",new Vector2(.02f,.76f),new Vector2(.98f,.98f),percent,v=>{NativeAudioPreferences.SetMaster(Mathf.RoundToInt(v));RefreshAudio();});
+                settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.51f),new Vector2(.98f,.73f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));RefreshAudio();});
+                settingsEffectsSlider=NumericSetting(settingsAudioPage.transform,"settings-effects","Эффекты",new Vector2(.02f,.26f),new Vector2(.98f,.48f),percent,v=>{NativeAudioPreferences.SetEffects(Mathf.RoundToInt(v),Profile);RefreshAudio();});
+                settingsVoiceSlider=NumericSetting(settingsAudioPage.transform,"settings-voice","Речь",new Vector2(.02f,.01f),new Vector2(.98f,.23f),percent,v=>{NativeAudioPreferences.SetVoice(Mathf.RoundToInt(v));RefreshAudio();});
 
                 settingsHelpPage=Panel(content.transform,"settings-help-page",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
                 settingsHelpScroll=ListViewport(settingsHelpPage.transform,"help-viewport",new Vector2(.015f,.12f),new Vector2(.985f,.985f),out helpDiagram);
@@ -333,14 +337,14 @@ namespace StarTournament.ProvingGround
                     selectOnLeft=left,selectOnRight=right };
             }
             Selectable FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
-                settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsFpsToggle:settingsMusicSlider;
+                settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsFpsToggle:settingsMasterSlider;
             void ConfigureSettingsNavigation()
             {
                 Link(settingsSectionButtons[0],settingsBackButton,settingsSectionButtons[1],null,settingsModeButton);
                 Link(settingsSectionButtons[1],settingsSectionButtons[0],
                     settingsSectionButtons[2],null,settingsMouseSlider);
                 Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsSectionButtons[3],null,settingsFpsToggle);
-                Link(settingsSectionButtons[3],settingsSectionButtons[2],settingsBackButton,null,settingsMusicSlider);
+                Link(settingsSectionButtons[3],settingsSectionButtons[2],settingsBackButton,null,settingsMasterSlider);
                 Link(settingsBackButton,settingsSectionButtons[3],settingsSectionButtons[0],
                     null,FirstSettingsAction());
                 Link(settingsModeButton,colorAdjustments[colorAdjustments.Length-1],settingsResolutionButton,settingsSectionButtons[0]);
@@ -370,8 +374,10 @@ namespace StarTournament.ProvingGround
                 Link(settingsFpsToggle,settingsSectionButtons[2],settingsBotTextToggle,settingsSectionButtons[2]);
                 Link(settingsBotTextToggle,settingsFpsToggle,settingsBotVoiceToggle,settingsSectionButtons[2]);
                 Link(settingsBotVoiceToggle,settingsBotTextToggle,settingsBackButton,settingsSectionButtons[2]);
-                Link(settingsMusicSlider,settingsSectionButtons[3],settingsEffectsSlider);
-                Link(settingsEffectsSlider,settingsMusicSlider,settingsBackButton);
+                Link(settingsMasterSlider,settingsSectionButtons[3],settingsMusicSlider,settingsSectionButtons[3]);
+                Link(settingsMusicSlider,settingsMasterSlider,settingsEffectsSlider,settingsSectionButtons[3]);
+                Link(settingsEffectsSlider,settingsMusicSlider,settingsVoiceSlider,settingsSectionButtons[3]);
+                Link(settingsVoiceSlider,settingsEffectsSlider,settingsBackButton,settingsSectionButtons[3]);
                 for(int i=0;i<resolutionChoices.Length;i++)
                     Link(resolutionChoices[i],i==0?resolutionCancelButton:resolutionChoices[i-1],
                         i==resolutionChoices.Length-1?resolutionCancelButton:resolutionChoices[i+1]);
@@ -442,6 +448,8 @@ namespace StarTournament.ProvingGround
                 RefreshToggle(settingsBotVoiceToggle,NativeBotReactionPreferences.VoiceEnabled);
                 RefreshNumericSetting(settingsMusicSlider,"Музыка",NativeAudioPreferences.Music(Profile),"%");
                 RefreshNumericSetting(settingsEffectsSlider,"Эффекты",NativeAudioPreferences.Effects(Profile),"%");
+                RefreshNumericSetting(settingsMasterSlider,"Общая громкость",NativeAudioPreferences.Master,"%");
+                RefreshNumericSetting(settingsVoiceSlider,"Речь",NativeAudioPreferences.Voice(Profile),"%");
                 RefreshConnectedDevices();
                 if(displayConfirmationActive)
                     settingsConfirmationText.text="Подтвердить режим?\n"+pendingDisplayWidth+" × "+pendingDisplayHeight+" · "+

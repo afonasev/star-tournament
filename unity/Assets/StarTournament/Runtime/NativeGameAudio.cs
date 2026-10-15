@@ -9,11 +9,23 @@ namespace StarTournament.ProvingGround
     {
         const string MusicKey="StarTournament.Audio.MusicPercent";
         const string EffectsKey="StarTournament.Audio.EffectsPercent";
+        public const string MasterKey="StarTournament.Audio.MasterPercent";
+        public const string VoiceKey="StarTournament.Audio.VoicePercent";
+        // 100% is the neutral multiplier, not an additional artistic gain.
+        public static int Master=>Read(MasterKey,100);
         public static int Music(ProvingProfile profile)=>Read(MusicKey,profile.Get("audio.musicDefaultPercent"));
         public static int Effects(ProvingProfile profile)=>Read(EffectsKey,profile.Get("audio.effectsDefaultPercent"));
+        public static int Voice(ProvingProfile profile)=>Read(VoiceKey,Effects(profile));
         static int Read(string key,float fallback)=>Mathf.Clamp(PlayerPrefs.GetInt(key,Mathf.RoundToInt(fallback)),0,100);
         public static void SetMusic(int value){PlayerPrefs.SetInt(MusicKey,Mathf.Clamp(value,0,100));PlayerPrefs.Save();}
-        public static void SetEffects(int value){PlayerPrefs.SetInt(EffectsKey,Mathf.Clamp(value,0,100));PlayerPrefs.Save();}
+        public static void SetMaster(int value){PlayerPrefs.SetInt(MasterKey,Mathf.Clamp(value,0,100));PlayerPrefs.Save();}
+        public static void SetVoice(int value){PlayerPrefs.SetInt(VoiceKey,Mathf.Clamp(value,0,100));PlayerPrefs.Save();}
+        public static void SetEffects(int value,ProvingProfile profile=null)
+        {
+            // Freeze the legacy shared level only on a user write, never during startup/read.
+            if(!PlayerPrefs.HasKey(VoiceKey))PlayerPrefs.SetInt(VoiceKey,Voice(profile??ProvingProfile.CreateDefault()));
+            PlayerPrefs.SetInt(EffectsKey,Mathf.Clamp(value,0,100));PlayerPrefs.Save();
+        }
     }
 
     // One shared output for the arena, regardless of the number of local viewports.
@@ -115,7 +127,7 @@ namespace StarTournament.ProvingGround
         AudioSource Source(string name)
         {
             var go=new GameObject(name);go.transform.SetParent(root,false);
-            var source=go.AddComponent<AudioSource>();source.playOnAwake=false;source.spatialBlend=0;return source;
+            var source=go.AddComponent<AudioSource>();source.playOnAwake=false;source.spatialBlend=0;source.volume=0;return source;
         }
         void BuildVoicePool()
         {
@@ -163,11 +175,12 @@ namespace StarTournament.ProvingGround
             UpdateVolume();
         }
         public void SuspendMusic(){musicScene.SetSuspended(true);UpdateVolume();}
-        public void StopEffects(){StopBotReaction();combatMusicGain=1;damageBonusSource.Stop();killSeriesSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
+        void StopSoundEffects(){damageBonusSource.Stop();uiSource.Stop();foreach(var voice in voices)voice.Stop();for(int i=0;i<beams.Length;i++){beams[i].Stop();beamGain[i]=0;beamEnvelope[i]=0;}for(int i=0;i<rocketSources.Length;i++){rocketSources[i].Stop();rocketIds[i]=0;rocketGain[i]=0;}}
+        public void StopEffects(){StopBotReaction();combatMusicGain=1;killSeriesSource.Stop();StopSoundEffects();}
         public void StopBotReaction(){botReactionSource.Stop();botReactionSpeaker=-1;}
         public bool PlayBotReaction(string text,int speaker,bool speakerMayBeDead=false)
         {
-            if(!NativeBotReactionPreferences.VoiceEnabled||text==null||!botReactionClips.TryGetValue(text,out var clip)||EffectsVolume<=0||
+            if(!NativeBotReactionPreferences.VoiceEnabled||text==null||!botReactionClips.TryGetValue(text,out var clip)||VoiceVolume<=0||
                 session==null||speaker<0||speaker>=session.ParticipantCount||!speakerMayBeDead&&session.Life(speaker).Dead)return false;
             StopBotReaction();botReactionSpeaker=speakerMayBeDead?-1:speaker;botReactionSource.clip=clip;
             botReactionSource.Play();BotReactionPlayCount++;UpdateVolume();return true;
@@ -175,15 +188,16 @@ namespace StarTournament.ProvingGround
         public void UpdateVolume()
         {
             if(!NativeBotReactionPreferences.VoiceEnabled)StopBotReaction();
-            float volume=EffectsVolume;
-            if(volume==0){StopEffects();uiSource.Stop();musicScene.UpdateVolume(muted?0:NativeAudioPreferences.Music(profile)/100f,1);return;}
-            float sum=0,combatStrength=0;
+            float volume=EffectsVolume,voiceVolume=VoiceVolume,master=MasterVolume;
+            if(volume==0){StopSoundEffects();combatMusicGain=1;}
+            if(voiceVolume==0){StopBotReaction();killSeriesSource.Stop();}
+            float sum=0,spoken=0,combatStrength=0;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying&&voiceParticipant[i]>=0)
             {var mix=Spatial(voicePosition[i],voiceParticipant[i]);voiceGain[i]=voiceBaseGain[i]*mix.Gain;voices[i].panStereo=mix.Pan;}
             if(uiSource.isPlaying)sum+=uiGain;
-            if(killSeriesSource.isPlaying)sum+=KillSeriesGain;
+            if(killSeriesSource.isPlaying)spoken+=KillSeriesGain;
             if(damageBonusSource.isPlaying)sum+=damageBonusGain;
-            if(botReactionSource.isPlaying)sum+=BotReactionGain;
+            if(botReactionSource.isPlaying)spoken+=BotReactionGain;
             for(int i=0;i<voices.Length;i++)if(voices[i].isPlaying)
             {sum+=voiceGain[i];if(voiceCombat[i])combatStrength=Mathf.Max(combatStrength,voiceGain[i]*volume);}
             for(int i=0;i<beams.Length;i++)if(beams[i].isPlaying)
@@ -191,7 +205,6 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<rocketSources.Length;i++)if(rocketSources[i].isPlaying)sum+=rocketGain[i];
             // Preserve the previous SFX-only mix, then normalize its budget together with music.
             // Foreground effects stay stronger under load without completely erasing the theme.
-            float scale=volume*Mathf.Min(1,1/Mathf.Max(1,sum));
             float musicVolume=muted?0:NativeAudioPreferences.Music(profile)/100f;
             // Audible foreground weapons lower music, weighted by listener distance and user SFX level.
             // Release uses the music clock; volume refreshes never invent elapsed time.
@@ -199,20 +212,22 @@ namespace StarTournament.ProvingGround
             combatMusicGain=Mathf.Clamp(combatMusicGain,duckFloor,1);
             combatMusicGain=Mathf.Min(combatMusicGain,Mathf.Lerp(1,duckFloor,Mathf.Clamp01(combatStrength/ProvingProfile.CombatMusicDuckReferenceGain(musicProfile))));
             float musicBudget=musicScene.RequestedVolume(musicVolume)*combatMusicGain;
-            float attenuation=musicBudget>0?1/Mathf.Max(1,sum*scale+musicBudget):1;
-            scale*=attenuation;
+            var channels=NativeAudioChannelMix.Calculate(sum,spoken,volume,voiceVolume,musicBudget,master);
+            float scale=channels.EffectsScale,spokenScale=channels.VoiceScale;
             for(int i=0;i<voices.Length;i++)voices[i].volume=voiceGain[i]*scale;
             for(int i=0;i<beams.Length;i++)beams[i].volume=beamGain[i]*scale;
             for(int i=0;i<rocketSources.Length;i++)rocketSources[i].volume=rocketGain[i]*scale;
             uiSource.volume=uiGain*scale;damageBonusSource.volume=damageBonusGain*scale;
-            botReactionSource.volume=BotReactionGain*scale;
-            killSeriesSource.volume=KillSeriesGain*scale;
-            musicScene.UpdateVolume(musicVolume,musicBudget*attenuation);
+            botReactionSource.volume=BotReactionGain*spokenScale;
+            killSeriesSource.volume=KillSeriesGain*spokenScale;
+            musicScene.UpdateVolume(musicVolume,channels.MusicBudget);
         }
         public void MenuMove()=>PlayMenu("menu_move",.40f);
         public void MenuConfirm()=>PlayMenu("menu_confirm",.65f);
         public void MenuBack()=>PlayMenu("menu_back",.55f);
         float EffectsVolume=>muted?0:NativeAudioPreferences.Effects(profile)/100f;
+        float VoiceVolume=>muted?0:NativeAudioPreferences.Voice(profile)/100f;
+        float MasterVolume=>muted?0:NativeAudioPreferences.Master/100f;
         void PlayMenu(string name,float gain)
         {
             if(!clips.TryGetValue(name,out var clip)||clip==null||EffectsVolume<=0)return;
@@ -252,7 +267,7 @@ namespace StarTournament.ProvingGround
             }
             int slot=Array.IndexOf(voices,source);
             source.Stop();source.clip=clip;source.pitch=pitch;source.panStereo=mix.Pan;
-            voiceFeedback[slot]=feedback;voiceCombat[slot]=combat;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level;source.Play();UpdateVolume();
+            voiceFeedback[slot]=feedback;voiceCombat[slot]=combat;voiceGain[slot]=gain;voiceBaseGain[slot]=baseGain;voiceParticipant[slot]=participant;voicePosition[slot]=point;source.volume=level*MasterVolume;source.Play();UpdateVolume();
         }
         void PlayMovement(string name,float gain,int participant)
         {
@@ -311,8 +326,8 @@ namespace StarTournament.ProvingGround
         {
             if(death.Seat==botReactionSpeaker)StopBotReaction();
             string cue=NativeKillNotice.Voice(death.Score);
-            if(cue!=null&&composition!=null&&composition.SeatOf(death.Score.Source)>=0&&EffectsVolume>0)
-            {killSeriesSource.clip=clips[cue];killSeriesSource.volume=KillSeriesGain*EffectsVolume;killSeriesSource.Play();}
+            if(cue!=null&&composition!=null&&composition.SeatOf(death.Score.Source)>=0&&VoiceVolume>0)
+            {killSeriesSource.clip=clips[cue];killSeriesSource.volume=KillSeriesGain*VoiceVolume*MasterVolume;killSeriesSource.Play();}
             beams[death.Seat].Stop();beamGain[death.Seat]=0;beamEnvelope[death.Seat]=0;
             PlayAt(Bank("death"),ProvingProfile.DeathAudioGain(profile),death.Seat,death.Pose.Position,feedback:true);
         }
