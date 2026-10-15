@@ -1,0 +1,78 @@
+{
+  "baseline": "973c28773518eebd64bbab4f43ed66821d5770d8",
+  "branch": "codex/well-material-depth",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Resources/WellContactSurface.shader": "f0e775a39738ea2d707afbb3d24a29161dab6551fba7282da7a6cadd6f6f2b99",
+    "unity/Assets/StarTournament/Resources/WellContactSurface.shader.meta": "6c7dd7d0ea33971a19a24c4a86360e0c3f03e0b2b526ffe484ae805c34d57a52",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "54d3fdb822407140e7aa8d1483e0428b626c2e7ea6b345f3997a85c03d3fc6bd",
+    "unity/Assets/StarTournament/Runtime/Arena/WellContactMesh.cs": "4e09c684ce0fc032bb39ec984dd2b63997db284b9260be5c82257a1594155477",
+    "unity/Assets/StarTournament/Runtime/Arena/WellContactMesh.cs.meta": "6c7a7c93b84156535ef99fe23d3191f28d8abf7ee7f106a79793da7b2b52899a",
+    "unity/Assets/StarTournament/Runtime/Arena/WellDetailMesh.cs": "b5a4a6686c9128d06907b49f446189d79ce069052d759d9bb84358fab1ea87f4",
+    "unity/Assets/StarTournament/Runtime/Arena/WellDetailMesh.cs.meta": "3a9759fb2ff72a59445739a2730885f0c168180d2377e2fa73172c5cee8f66a2",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "786be3e5922439ebe6d5ff14a8055c6fa84f966355e7f4f27dfcc4f2c987b0d5",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "51911732dd3d7592fbe2bd908fcf1d00ec2eb4ae68b918cabb7354e7a296f049",
+    "unity/Assets/StarTournament/Runtime/Core/WellArenaProfile.cs": "bf0bd8d6e0bc17531d1e9e11dccf9b7d23f73f62cff40b28a11be32efb64ca0e",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPresentation.cs": "829104594b323168763680fa4379ba684fbf0e7a79566c5d820e1838d78247ab",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "fcd56f82758dd66d6c8b77fff0d5fd0dd7b5ef275c2bf246b77934e8061c3ab1",
+    "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs": "5c0b6d0dd3e4efd621e99fdf6c40d8183c03ed5f8e4529a82abf478dbb9c4d5e",
+    "unity/Assets/StarTournament/Tests/EditMode/WellSurfaceMeshTests.cs": "fcdd3b02557fc6ff53b3511456fe9da51fe15b37b549335e92f90ebe8d53e6b4",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs": "27eefde9d578d9a8b771a2b37abe2255681452aedc4dc84aa9a54db5b0e7c8fe"
+  },
+  "checks": [
+    {
+      "name": "editmode-final",
+      "result": "Passed",
+      "total": "19",
+      "passed": "19",
+      "failed": "0",
+      "duration": "62.962049",
+      "xml": "qa/editmode-final.xml",
+      "log": "qa/editmode-final.log.gz"
+    },
+    {
+      "name": "visual-final",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "duration": "5.097487",
+      "xml": "qa/visual-final.xml",
+      "log": "qa/visual-final.log.gz"
+    },
+    {
+      "name": "visual-and-neighbor",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "duration": "32.8639183",
+      "xml": "qa/visual-and-neighbor.xml",
+      "log": "qa/visual-and-neighbor.log.gz"
+    }
+  ],
+  "captures": {
+    "count": 23,
+    "resolution": "1920x1080",
+    "review": "All 23 final PNGs opened and visually reviewed; comparison against approved concept and baseline. Human acceptance pending."
+  },
+  "resources": {
+    "lights": 24,
+    "vertices": 514724,
+    "renderers": 42
+  },
+  "unchanged_authority": "Exact authored map JSON assertion, no decorative colliders; original routes, items, spawns and lifts preserved.",
+  "limitations": [
+    "Existing fine edge aliasing/light dotted seams remain visible at some distant joints and stripe edges; also visible in baseline.",
+    "Styling and material/light realism remain below concept; no human acceptance.",
+    "Common visual-effects neighbor ran before final Well-only polish and capture-resolution change; common source unchanged afterward."
+  ],
+  "gates": {
+    "full": "Not authorized; not run",
+    "player": "Not required for this Editor material/geometry verification; not built",
+    "release": "Not authorized; not run",
+    "deploy": "Not authorized; not run",
+    "human": "Pending",
+    "device_performance": "NotRun"
+  },
+  "silent": "All automated Editor runs started through unity-run shared with -noaudio -muted."
+}

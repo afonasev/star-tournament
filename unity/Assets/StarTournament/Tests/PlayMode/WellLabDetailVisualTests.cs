@@ -11,32 +11,39 @@ namespace StarTournament.ProvingGround.Tests
         [UnityTest] public IEnumerator PreserveAuthoringAndSaveDetailViews()
         {
             var root=new GameObject("Well visual review");var movement=ProvingProfile.CreateDefault();var arenaObject=new GameObject("Well visual arena");arenaObject.transform.SetParent(root.transform);var arena=arenaObject.AddComponent<ProvingArena>();
-            var rt=new RenderTexture(1280,720,24);var cameraGo=new GameObject("Well review camera");cameraGo.transform.SetParent(root.transform);var camera=cameraGo.AddComponent<Camera>();camera.targetTexture=rt;camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.backgroundColor=new Color(.8f,.87f,.94f);camera.clearFlags=CameraClearFlags.SolidColor;
-            var lightGo=new GameObject("Review daylight");lightGo.transform.SetParent(root.transform);var light=lightGo.AddComponent<Light>();light.type=LightType.Directional;light.intensity=ProvingProfile.CreateWellDefault().Get("well.daylight");lightGo.transform.rotation=Quaternion.Euler(45,-30,0);
+            var rt=new RenderTexture(1920,1080,24);var cameraGo=new GameObject("Well review camera");cameraGo.transform.SetParent(root.transform);var camera=cameraGo.AddComponent<Camera>();camera.targetTexture=rt;camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.backgroundColor=new Color(.8f,.87f,.94f);camera.clearFlags=CameraClearFlags.SolidColor;
+            var lightGo=new GameObject("Review daylight");lightGo.transform.SetParent(root.transform);var light=lightGo.AddComponent<Light>();WellArenaPresentation.ConfigureDaylight(light,ProvingProfile.CreateWellDefault());
             NativeVisualPresentation visual=null;
             try
             {
                 arena.Build(AuthoredArenaCatalog.Freeze(WellArenaCatalog.Id,movement),movement);yield return null;
                 visual=root.AddComponent<NativeVisualPresentation>();visual.Bind(movement,arena.transform,light,new[]{camera});
-                yield return null;
+                yield return null;yield return null;
                 var skin=arenaObject.GetComponentInChildren<WellArenaPresentation>();
+                Assert.That(light.shadows,Is.EqualTo(LightShadows.Soft));
+                Assert.That(light.shadowStrength,Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.daylightShadow")));
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24),"No growth in realtime light count");
                 Assert.That(skin.GetComponentsInChildren<MeshRenderer>().Length,Is.LessThan(64),"Bounded material batches and labels");
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Presentation cannot change authoring");
                 int vertices=0;foreach(var filter in skin.GetComponentsInChildren<MeshFilter>())vertices+=filter.sharedMesh.vertexCount;
-                Assert.That(vertices,Is.LessThan(250000),"Bounded presentation geometry");
+                Assert.That(vertices,Is.LessThan(650000),"Bounded presentation geometry");
                 foreach(var renderer in skin.GetComponentsInChildren<Renderer>())Assert.That(renderer.sharedMaterial.shader.isSupported,Is.True,renderer.sharedMaterial.name);
                 foreach(var renderer in skin.GetComponentsInChildren<Renderer>())
                 {
                     var material=renderer.sharedMaterial;
+                    if(material.name=="Armoured glass")
+                    {Assert.That(material.GetFloat("_Metallic"),Is.Zero);Assert.That(material.GetFloat("_Smoothness"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.glassSmoothness")));}
                     if(material.name=="Well ceramic white"||material.name=="Well pale floor"||material.name=="Garden soil")
                     {
                         Assert.That(material.GetTexture("_BumpMap"),Is.Not.Null,material.name);
                         Assert.That(material.IsKeywordEnabled("_NORMALMAP"),Is.True,material.name);
                     }
                 }
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-lab-richness/views"));Directory.CreateDirectory(directory);
+                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-material-depth/views"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"arena.json"),JsonUtility.ToJson(arena.Definition,true));
+                var settings=new System.Text.StringBuilder();settings.AppendLine("Color space: "+QualitySettings.activeColorSpace);settings.AppendLine("Pipeline: "+UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.name);
+                foreach(VisualEffect effect in System.Enum.GetValues(typeof(VisualEffect)))settings.AppendLine(effect+": "+NativeVisualPreferences.Enabled(effect)+" / "+NativeVisualPreferences.Strength(movement,effect));
+                settings.AppendLine("Daylight: "+light.intensity+" shadow="+light.shadowStrength);settings.AppendLine("Probe: "+(visual.EnvironmentProbe?visual.EnvironmentProbe.transform.position.ToString():"disabled"));settings.AppendLine("Ambient: "+RenderSettings.ambientLight);File.WriteAllText(Path.Combine(directory,"render-state.txt"),settings.ToString());
                 Assert.That(arenaObject.GetComponentInChildren<WellArenaPresentation>().GetComponentsInChildren<Collider>(),Is.Empty,"Presentation must not add gameplay blockers");
                 float middle=WellArenaCatalog.Storey,top=2*middle;
                 var eyes=new System.Collections.Generic.List<Vector3>();var targets=new System.Collections.Generic.List<Vector3>();var names=new System.Collections.Generic.List<string>();

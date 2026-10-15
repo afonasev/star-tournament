@@ -125,6 +125,43 @@ namespace StarTournament.ProvingGround.Tests
                 if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
             }
         }
+        [TestCase(false)][TestCase(true)] public void PreviousWellDepthLoadsWithoutChangingSavedHashes(bool compact)
+        {
+            var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"well-depth-"+Guid.NewGuid()+".json");
+            try
+            {
+                var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
+                var method=typeof(ProvingProfile).GetMethod("BeforeWellDepth",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList();
+                var history=new DesignLabHistory(path,old);history.Create("Колодец 02");var draft=history.Selected.Snapshot;draft.Set("well.liftSpeed",5);draft.Set("well.lamp",9);draft.Set("well.glassOpacity",.4f);history.Save(draft);
+                var prior=history.Selected;string priorHash=prior.Hash;int priorNumber=prior.Number;
+                if(!compact)
+                {
+                    var file=typeof(DesignLabHistory).GetField("data",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(history);
+                    System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
+                }
+                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
+                var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
+                Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
+                Assert.That(preserved.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
+                Assert.That(preserved.Snapshot.Get("well.daylight"),Is.EqualTo(.5f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
+                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));
+                Assert.That(migrated.Selected.Snapshot.Get("well.plantHeight"),Is.EqualTo(.5f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.glassOpacity"),Is.EqualTo(.4f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(.8f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.glassSmoothness"),Is.EqualTo(.85f));
+                var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);
+                Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+                Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber).Hash,Is.EqualTo(priorHash));
+            }
+            finally
+            {
+                if(System.IO.File.Exists(path))System.IO.File.Delete(path);
+                if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
+            }
+        }
         WellLiftSystem Lifts()=>new WellLiftSystem(WellArenaCatalog.Build().Lifts,ProvingProfile.CreateWellDefault());
         int[][] Occupied()=>new[]{Array.Empty<int>(),new[]{0}};
         int[][] Empty()=>new[]{Array.Empty<int>(),Array.Empty<int>()};

@@ -7,18 +7,20 @@ namespace StarTournament.ProvingGround
     {
         readonly Transform parent;readonly List<Object> owned;readonly ProvingProfile profile;
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
-        readonly Mesh cube;
-        readonly Material trim,panel,screen,green,leaf,porcelain,alloy,blue,amber;
+        readonly Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
+        readonly Material trim,panel,screen,green,leaf,porcelain,alloy,blue,amber;readonly Material display;
         // Fixed tessellation/texture resolution are bounded resource tiers, not gameplay tuning.
         const int TextureSize=256;
         public WellLabDetail(Transform parent,List<Object> owned,ProvingProfile profile,Material trim,Material panel,Material screen,Material green)
         {
             this.parent=parent;this.owned=owned;this.profile=profile;this.trim=trim;this.panel=panel;this.screen=screen;this.green=green;
-            cube=WellSurfaceMesh.Build(new[]{new Bounds(Vector3.zero,Vector3.one)});owned.Add(cube);
+            cube=WellSurfaceMesh.Build(new[]{new Bounds(Vector3.zero,Vector3.one)});owned.Add(cube);cylinder=WellDetailMesh.Cylinder();owned.Add(cylinder);
             porcelain=DetailMaterial("Well enamel fittings",new Color(.83f,.84f,.78f),.05f,.34f);
-            alloy=DetailMaterial("Well satin aluminium",new Color(.57f,.60f,.60f),.7f,.42f);
+            alloy=DetailMaterial("Well satin aluminium",new Color(.77f,.79f,.78f),.25f,.52f);
             blue=DetailMaterial("Well physics components",new Color(.14f,.38f,.58f),.35f,.3f);
             amber=DetailMaterial("Well electronics substrate",new Color(.36f,.25f,.09f),.25f,.28f);
+            display=new Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Well diagnostic display",color=Color.white};owned.Add(display);
+            var displayTexture=DisplayTexture();owned.Add(displayTexture);display.SetTexture("_BaseMap",displayTexture);
             leaf=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Well living foliage",color=Color.white};
             var foliage=Texture("leaf",profile);owned.Add(foliage);leaf.SetTexture("_BaseMap",foliage);
             leaf.SetFloat("_Smoothness",.32f);leaf.SetFloat("_Cull",0);owned.Add(leaf);
@@ -40,6 +42,7 @@ namespace StarTournament.ProvingGround
             x=(x%TextureSize+TextureSize)%TextureSize;y=(y%TextureSize+TextureSize)%TextureSize;
             float u=x/(float)TextureSize,v=y/(float)TextureSize;
             float cloud=Mathf.Sin(u*Mathf.PI*4+Mathf.Sin(v*Mathf.PI*6))*Mathf.Cos(v*Mathf.PI*4);
+            if(kind=="floor")return Noise(x,y,32)*.10f+Noise(x,y,8)*.12f+Noise(x,y,2)*.14f+Grain(x,y)*.045f;
             if(kind=="soil")return Noise(x,y,32)*.4f+Noise(x,y,8)*.4f+Noise(x,y,2)*.25f+Grain(x,y)*.18f;
             if(kind=="metal")return Mathf.Sin(y*2.3f)*.05f+Grain(x,y)*.04f;
             int edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
@@ -55,7 +58,7 @@ namespace StarTournament.ProvingGround
                 if(normal)
                 {
                     float dx=Height(kind,x-1,y)-Height(kind,x+1,y),dy=Height(kind,x,y-1)-Height(kind,x,y+1);
-                    var direction=new Vector3(dx*grain*10,dy*grain*10,1).normalized;
+                    var direction=new Vector3(dx*grain*(kind=="floor"?18:10),dy*grain*(kind=="floor"?18:10),1).normalized;
                     // Uncompressed desktop normals use RGB with alpha 1 (URP RG-or-AG multiplies R by A).
                     pixels[y*TextureSize+x]=new Color(direction.x*.5f+.5f,direction.y*.5f+.5f,direction.z*.5f+.5f,1);continue;
                 }
@@ -71,7 +74,7 @@ namespace StarTournament.ProvingGround
                 {
                     int edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
                     if(edge<1)value-=profile.Get("well.jointContrast");else if(edge<2)value+=.025f;
-                    value+=Height(kind,x,y)*grain*(kind=="floor"?3:1);
+                    value+=Height(kind,x,y)*grain*(kind=="floor"?5:1);
                 }
                 if(kind=="metal")value-=.09f*(.5f+.5f*Mathf.Sin(y*2.3f));
                 if(kind=="soil")value=.83f+Height(kind,x,y)*.45f;
@@ -85,6 +88,43 @@ namespace StarTournament.ProvingGround
             batch.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(center,rotation,size)});
         }
         void FaceBox(Material m,Vector3 face,Quaternion rotation,Vector3 local,Vector3 size)=>Box(m,face+rotation*local,size,rotation);
+        void Round(Material m,Vector3 face,Quaternion rotation,Vector3 local,Vector3 size)
+        {
+            if(!bevels.TryGetValue(size,out var mesh)){mesh=WellDetailMesh.Bevel(size);bevels[size]=mesh;owned.Add(mesh);}
+            if(!batches.TryGetValue(m,out var batch))batches[m]=batch=new List<CombineInstance>();
+            batch.Add(new CombineInstance{mesh=mesh,transform=Matrix4x4.TRS(face+rotation*local,rotation,Vector3.one)});
+        }
+        void Turned(Material m,Vector3 face,Quaternion rotation,Vector3 local,float diameter,float length,bool forward=false)
+        {
+            if(!batches.TryGetValue(m,out var batch))batches[m]=batch=new List<CombineInstance>();
+            batch.Add(new CombineInstance{mesh=cylinder,transform=Matrix4x4.TRS(face+rotation*local,rotation*(forward?Quaternion.Euler(90,0,0):Quaternion.identity),new Vector3(diameter,length,diameter))});
+        }
+        static Texture2D DisplayTexture()
+        {
+            const int width=512,height=256;var pixels=new Color[width*height];
+            var bg=new Color(.014f,.037f,.05f);for(int i=0;i<pixels.Length;i++)pixels[i]=bg;
+            void Rect(int x,int y,int w,int h,Color c){for(int b=Mathf.Max(y,0);b<Mathf.Min(y+h,height);b++)for(int a=Mathf.Max(x,0);a<Mathf.Min(x+w,width);a++)pixels[b*width+a]=c;}
+            var grid=new Color(.045f,.12f,.14f);var cyan=new Color(.21f,.83f,.76f);var pale=new Color(.53f,.72f,.72f);
+            for(int x=22;x<350;x+=27)Rect(x,42,1,164,grid);for(int y=42;y<210;y+=24)Rect(22,y,324,1,grid);
+            Rect(20,223,470,2,pale);Rect(20,17,470,1,grid);
+            for(int x=23;x<345;x++){float v=(x-23)/322f;int y=128+Mathf.RoundToInt(35*Mathf.Sin(v*19)+19*Mathf.Sin(v*41));Rect(x,y,2,2,cyan);Rect(x,75+Mathf.RoundToInt(13*Mathf.Sin(v*24)),1,2,new Color(.30f,.47f,.72f));}
+            for(int i=0;i<5;i++){Rect(374,185-i*32,108,4,grid);Rect(374,185-i*32,42+i*11,4,cyan);for(int k=0;k<7;k++)Rect(374+k*9,198-i*32,5,3,pale);}
+            for(int i=0;i<12;i++)Rect(22+i*8,234,5,3,pale);for(int i=0;i<4;i++){Rect(22+i*82,25,52,4,grid);Rect(22+i*82,25,22+i*5,4,cyan);}
+            var texture=new Texture2D(width,height,TextureFormat.RGB24,true){name="Well live diagnostics atlas",filterMode=FilterMode.Trilinear};texture.SetPixels(pixels);texture.Apply(true,true);return texture;
+        }
+        public void Facade(ArenaSolid solid)
+        {
+            if(!solid.Id.Contains("-cap-"))return;
+            bool alongX=solid.Size.x>solid.Size.z;var normal=alongX?Vector3.forward:Vector3.right;
+            int side=Vector3.Dot(normal,solid.Position)>0?-1:1;var rotation=Quaternion.LookRotation(normal*side);
+            var face=solid.Position+normal*side*((alongX?solid.Size.z:solid.Size.x)/2+.004f);
+            // One louvre every second bay, entirely on the opaque fascia above the existing window.
+            int hash=0;foreach(char c in solid.Id)hash=unchecked(hash*31+c);
+            if((hash&1)==0&&Mathf.Abs(alongX?solid.Position.x:solid.Position.z)>6)Vent(face,rotation,1.08f);
+            float bottom=solid.Position.y-solid.Size.y/2;
+            face.y=bottom+.04f;Round(alloy,face,rotation,Vector3.zero,new Vector3(3.19f,.075f,.065f));
+        }
+
         public void Wall(ArenaSolid solid)
         {
             // Only large intact wall segments: no headers, sills, shafts or moving-platform clearance.
@@ -94,7 +134,7 @@ namespace StarTournament.ProvingGround
             var normal=alongX?Vector3.forward:Vector3.right;float depth=alongX?solid.Size.z:solid.Size.x;
             foreach(int side in new[]{-1,1})
             {
-                // Exterior walls receive their interior face only. Decoration projects at most 6 cm.
+                // Exterior walls receive their interior face only. Decoration stays on opaque wall faces.
                 if(solid.Id.Contains("outer-")&&Vector3.Dot(normal*side,solid.Position)>0)continue;
                 var rotation=Quaternion.LookRotation(normal*side);
                 var face=solid.Position+normal*side*(depth/2+.002f);
@@ -102,7 +142,7 @@ namespace StarTournament.ProvingGround
                 int department=Mathf.Clamp(Mathf.FloorToInt(bottom/WellArenaCatalog.Storey),0,2);
                 int hash=0;foreach(char c in solid.Id)hash=unchecked(hash*31+c);
                 int variant=(hash&0x7fffffff)%5;
-                // Authored shallow modules: maximum 6 cm from a solid wall; never over an opening.
+                // Authored shallow modules: bounded by the art profile on a solid wall; never over an opening.
                 face.y=bottom+2.25f;
                 if(variant==0)Service(face,rotation);
                 else if(variant==1)Instrument(face,rotation,department);
@@ -117,21 +157,24 @@ namespace StarTournament.ProvingGround
         }
         void Frame(Vector3 face,Quaternion rotation,float width,float height)
         {
-            FaceBox(trim,face,rotation,Vector3.zero,new Vector3(width,height,.025f));
-            FaceBox(alloy,face,rotation,new Vector3(0,0,.018f),new Vector3(width-.035f,height-.035f,.018f));
-            FaceBox(porcelain,face,rotation,new Vector3(0,0,.03f),new Vector3(width-.10f,height-.10f,.012f));
+            float depth=profile.Get("well.fittingDepth");
+            Round(trim,face,rotation,new Vector3(0,0,depth*.22f),new Vector3(width,height,depth*.44f));
+            Round(alloy,face,rotation,new Vector3(0,0,depth*.45f),new Vector3(width-.035f,height-.035f,depth*.35f));
+            Round(porcelain,face,rotation,new Vector3(0,0,depth*.58f),new Vector3(width-.11f,height-.11f,depth*.15f));
             foreach(int x in new[]{-1,1})foreach(int y in new[]{-1,1})
-                FaceBox(trim,face,rotation,new Vector3(x*(width/2-.055f),y*(height/2-.055f),.04f),new Vector3(.022f,.022f,.008f));
+                Turned(trim,face,rotation,new Vector3(x*(width/2-.055f),y*(height/2-.055f),depth*.65f),.023f,.009f,true);
         }
         void Vent(Vector3 face,Quaternion rotation,float width)
         {
             Frame(face,rotation,width,.62f);
+            face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(trim,face,rotation,new Vector3(0,0,.039f),new Vector3(width-.13f,.46f,.008f));
             for(int row=0;row<7;row++)FaceBox(alloy,face,rotation,new Vector3(0,-.21f+row*.07f,.05f),new Vector3(width-.17f,.025f,.015f));
         }
         void Service(Vector3 face,Quaternion rotation)
         {
             Frame(face,rotation,.9f,1.55f);
+            face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(trim,face,rotation,new Vector3(.29f,0,.046f),new Vector3(.045f,.23f,.012f));
             for(int i=0;i<4;i++)FaceBox(alloy,face,rotation,new Vector3(0,.42f+i*.06f,.044f),new Vector3(.5f,.018f,.008f));
             FaceBox(green,face,rotation,new Vector3(-.22f,-.48f,.046f),new Vector3(.055f,.028f,.01f));
@@ -139,24 +182,34 @@ namespace StarTournament.ProvingGround
         void Instrument(Vector3 face,Quaternion rotation,int department)
         {
             Frame(face,rotation,1.45f,1.25f);
+            face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(screen,face,rotation,new Vector3(-.12f,.12f,.042f),new Vector3(.98f,.66f,.008f));
-            for(int sample=0;sample<24;sample++)
+            // UVs of the bevel front span the display, unlike world-scaled union UVs.
+            Round(display,face,rotation,new Vector3(-.12f,.12f,.05f),new Vector3(.94f,.62f,.006f));
+            for(int row=0;row<3;row++)
             {
-                float x=-.55f+sample*.037f,y=.12f+Mathf.Sin(sample*(department+1)*.4f)*.18f;
-                FaceBox(department==1?blue:green,face,rotation,new Vector3(x,y,.048f),new Vector3(.025f,.022f,.004f));
+                Turned(trim,face,rotation,new Vector3(-.39f+row*.30f,-.4f,.05f),.12f,.025f,true);
+                Turned(alloy,face,rotation,new Vector3(-.39f+row*.30f,-.4f,.067f),.086f,.026f,true);
+                FaceBox(porcelain,face,rotation,new Vector3(-.39f+row*.30f,-.37f,.083f),new Vector3(.009f,.028f,.003f));
             }
-            for(int row=0;row<4;row++)FaceBox(alloy,face,rotation,new Vector3(-.3f+row*.18f,-.4f,.045f),new Vector3(.09f,.055f,.012f));
+            Turned(trim,face,rotation,new Vector3(.54f,.07f,.057f),.18f,.03f,true);
+            Turned(alloy,face,rotation,new Vector3(.54f,.07f,.081f),.13f,.035f,true);
+            FaceBox(porcelain,face,rotation,new Vector3(.54f,.11f,.101f),new Vector3(.012f,.04f,.004f));
+            for(int i=0;i<5;i++)FaceBox(trim,face,rotation,new Vector3(.51f,-.23f-i*.045f,.05f),new Vector3(.22f,.014f,.008f));
             FaceBox(green,face,rotation,new Vector3(.56f,.29f,.046f),new Vector3(.045f,.045f,.008f));
         }
         void Samples(Vector3 face,Quaternion rotation,int department)
         {
             Frame(face,rotation,1.85f,1.65f);
+            face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(screen,face,rotation,new Vector3(0,.08f,.04f),new Vector3(1.61f,1.12f,.008f));
             for(int i=0;i<5;i++)
             {
                 float x=-.61f+i*.305f;
-                FaceBox(alloy,face,rotation,new Vector3(x,.05f,.046f),new Vector3(.20f,.77f,.016f));
-                FaceBox(department==0?green:department==1?blue:amber,face,rotation,new Vector3(x,.07f,.052f),new Vector3(.10f,.43f+(i%2)*.14f,.008f));
+                Turned(alloy,face,rotation,new Vector3(x,.05f,.043f),.11f,.77f);
+                Turned(department==0?blue:department==1?alloy:amber,face,rotation,new Vector3(x,.07f,.052f),.12f,.43f+(i%2)*.14f);
+                Turned(porcelain,face,rotation,new Vector3(x,.43f,.043f),.14f,.08f);
+                Turned(trim,face,rotation,new Vector3(x,-.33f,.043f),.14f,.06f);
                 FaceBox(porcelain,face,rotation,new Vector3(x,-.39f,.054f),new Vector3(.19f,.035f,.01f));
             }
             FaceBox(alloy,face,rotation,new Vector3(0,-.64f,.045f),new Vector3(1.4f,.06f,.012f));
@@ -164,14 +217,34 @@ namespace StarTournament.ProvingGround
         void Circuit(Vector3 face,Quaternion rotation,int department)
         {
             Frame(face,rotation,1.6f,1.4f);
+            face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(department==2?amber:screen,face,rotation,new Vector3(0,.03f,.042f),new Vector3(1.34f,1.11f,.008f));
             for(int i=0;i<6;i++)
             {
                 float x=-.5f+(i%3)*.49f,y=-.23f+(i/3)*.53f;
-                FaceBox(alloy,face,rotation,new Vector3(x,y,.049f),new Vector3(.27f,.32f,.012f));
-                FaceBox(department==0?green:blue,face,rotation,new Vector3(x,y,.054f),new Vector3(.13f,.15f,.004f));
-                FaceBox(green,face,rotation,new Vector3(x+.18f,y+.1f,.052f),new Vector3(.04f,.04f,.008f));
-                FaceBox(alloy,face,rotation,new Vector3(x,y-.21f,.05f),new Vector3(.33f,.015f,.006f));
+                Round(alloy,face,rotation,new Vector3(x,y,.055f),new Vector3(.24f,.28f,.035f));
+                Round(trim,face,rotation,new Vector3(x,y,.078f),new Vector3(.16f,.19f,.023f));
+                for(int pin=0;pin<5;pin++)foreach(int side in new[]{-1,1})
+                    FaceBox(alloy,face,rotation,new Vector3(x+side*.105f,y-.07f+pin*.035f,.086f),new Vector3(.055f,.013f,.008f));
+                FaceBox(green,face,rotation,new Vector3(x+.18f,y+.1f,.075f),new Vector3(.025f,.025f,.016f));
+                FaceBox(alloy,face,rotation,new Vector3(x+.19f,y-.06f,.048f),new Vector3(.009f,.19f,.006f));
+                FaceBox(alloy,face,rotation,new Vector3(x+.13f,y-.155f,.048f),new Vector3(.13f,.009f,.006f));
+            }
+            for(int i=0;i<8;i++)Turned(alloy,face,rotation,new Vector3(-.54f+i*.15f,-.60f,.06f),.05f,.035f,true);
+        }
+        public void Window(ArenaSolid solid)
+        {
+            bool alongX=solid.Size.x>solid.Size.z;var normal=alongX?Vector3.forward:Vector3.right;float width=alongX?solid.Size.x:solid.Size.z;
+            foreach(int side in new[]{-1,1})
+            {
+                var rotation=Quaternion.LookRotation(normal*side);var face=solid.Position+normal*side*.052f;
+                foreach(int edge in new[]{-1,1})
+                {
+                    Round(trim,face,rotation,new Vector3(edge*(width/2-.025f),0,.008f),new Vector3(.10f,solid.Size.y+.08f,.06f));
+                    Round(alloy,face,rotation,new Vector3(edge*(width/2-.025f),0,.038f),new Vector3(.055f,solid.Size.y+.04f,.025f));
+                    Round(trim,face,rotation,new Vector3(0,edge*solid.Size.y/2,.008f),new Vector3(width+.04f,.10f,.06f));
+                    Round(alloy,face,rotation,new Vector3(0,edge*solid.Size.y/2,.038f),new Vector3(width+.02f,.055f,.025f));
+                }
             }
         }
         public void DoorHeaders(ArenaSolid solid)
@@ -183,12 +256,12 @@ namespace StarTournament.ProvingGround
             {
                 if(solid.Id.Contains("outer-")&&Vector3.Dot(normal*side,solid.Position)>0)continue;
                 var rotation=Quaternion.LookRotation(normal*side);var face=solid.Position+normal*side*(depth/2+.003f);face.y=solid.Position.y-solid.Size.y/2+.1f;
-                FaceBox(trim,face,rotation,Vector3.zero,new Vector3(width,.16f,.035f));
-                FaceBox(alloy,face,rotation,new Vector3(0,.015f,.023f),new Vector3(width-.05f,.09f,.018f));
+                Round(trim,face,rotation,Vector3.zero,new Vector3(width+.40f,.20f,.095f));
+                Round(alloy,face,rotation,new Vector3(0,.015f,.055f),new Vector3(width+.34f,.12f,.035f));
                 foreach(int edge in new[]{-1,1})
                 {
-                    FaceBox(trim,face,rotation,new Vector3(edge*(width/2+.06f),-1.65f,0),new Vector3(.12f,3.2f,.035f));
-                    FaceBox(alloy,face,rotation,new Vector3(edge*(width/2+.06f),-1.65f,.023f),new Vector3(.07f,3.2f,.018f));
+                    Round(trim,face,rotation,new Vector3(edge*(width/2+.10f),-1.65f,0),new Vector3(.20f,3.2f,.095f));
+                    Round(alloy,face,rotation,new Vector3(edge*(width/2+.10f),-1.65f,.055f),new Vector3(.13f,3.2f,.035f));
                 }
             }
         }
