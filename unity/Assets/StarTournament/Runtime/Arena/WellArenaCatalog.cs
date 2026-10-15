@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Structure 03; north = +Z. Dimensions are immutable map authoring, not editable balance.</summary>
     public static class WellArenaCatalog
     {
-        public const string Id="well-laboratory-v1", Revision="2", Identity=Id+"@"+Revision;
+        public const string Id="well-laboratory-v1", Revision="3", Identity=Id+"@"+Revision;
         public const float Storey=7.2f, Slab=.8f, ClearHeight=Storey-Slab, Edge=24.8f, Pit=9.6f;
         const float DoorHeight=3.2f, DoorHalf=1.6f, Wall=.3f;
         public static string Support(int floor)=>"support:well-"+floor;
@@ -127,6 +127,7 @@ namespace StarTournament.ProvingGround
             }
             foreach(var floor in solids.Where(s=>s.Id.StartsWith("f2-")&&(s.Id.EndsWith("north")||s.Id.EndsWith("south")||s.Id.EndsWith("west")||s.Id.EndsWith("east"))).ToArray())
                 Box("roof-"+floor.Id,floor.Position+Vector3.up*Storey,floor.Size);
+            solids.AddRange(WellFurniturePlan.Build());
             var items=new List<ArenaPickupDefinition>();
             void Item(string id,ArenaPickupKind kind,float x,float z,int f)=>items.Add(new ArenaPickupDefinition{Id=id,Kind=kind,Anchor=new Vector3(x,f*Storey,z),Support=Support(f)});
             Item("damage-garden",ArenaPickupKind.Damage,0,0,0);

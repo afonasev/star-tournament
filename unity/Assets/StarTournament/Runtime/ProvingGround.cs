@@ -708,7 +708,7 @@ namespace StarTournament.ProvingGround
             if(tunnels)studioLight.intensity=TunnelsPresentation.Get("tunnels.light.key");
             bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
             if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
-            if(SelectedMapId==WellArenaCatalog.Id)studioLight.intensity=WellProfile.Get("well.daylight");
+            if(SelectedMapId==WellArenaCatalog.Id)WellArenaPresentation.ConfigureDaylight(studioLight,WellProfile);
             var steps=arena.BuildSteps(frozen,Profile,SelectedMapId==WellArenaCatalog.Id?WellProfile:lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
             while(steps.MoveNext())yield return steps.Current;
             ApplyShadowPreference();

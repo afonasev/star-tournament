@@ -1,0 +1,120 @@
+{
+  "baseline": "8529129382a844fe964ad92e861c2a57c916bed0",
+  "branch": "codex/well-furniture",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs": "1cfd1900e70655072dd0de2bfda87fe8f5c43ab1a3e98612eae097b7bcb16fcd",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "919b521b304d604d6bc496b7bb88a3f09afce2e4489137572ed95849b07a3f6e",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaRevisionTwo.cs": "7196271695555735036be0c0d601b08bfdeee9c8a1d75008647ef54bc30c7dd8",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaRevisionTwo.cs.meta": "cd3b29930190a2d34efd142464f3d61b8c069c6c7cf77ed48f27f2f845ed4ea4",
+    "unity/Assets/StarTournament/Runtime/Arena/WellFurniturePlan.cs": "3593716e1216cdf2da63ec27d3fddec74e9cf6930241d734e8c0bf09f14cd8d6",
+    "unity/Assets/StarTournament/Runtime/Arena/WellFurniturePlan.cs.meta": "5c3083d965785ec268b149d771885e942ad8a3ae3f97244a9dcbb7f764691139",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "513a4411836237a13416ff0c42bba9e60e333e3fb142079085f3887006b80cdc",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabFurniture.cs": "3c3ebc5d6dd9651016d184536e4f3811b77d7cf3aa1aecf5ad1fbb0693116167",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabFurniture.cs.meta": "cd02b4afd949ab59a677330c6a224246866c67e46baff313e1803451fae1b1e9",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "2548937fb949c72eaa91dbbb176466fa728f0a42d673726745f044b7394faa56",
+    "unity/Assets/StarTournament/Runtime/Core/LabParameterStorage.cs": "037161e99f4fa6c01b8d4ce492f850de07b9e86164499a5c17355dec2e87088e",
+    "unity/Assets/StarTournament/Runtime/Core/WellArenaProfile.cs": "3a629c92d0cbd5193f9ddc1b7ad4e6a43347372fcf9d687e01514ef95a48e0bf",
+    "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs": "db91bc7703499133093964c44b007f7d89d8811674fd2adaf0c5eac83512a6fb",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs": "c6d348b74f16856b7c8cb32e1c6a1e9f20342ffd96887c4ebe07e5199397a6c6",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs": "0574537248c538c678ebe10c23b6e2d6c0f252f8aecf808129a721925f1311c0"
+  },
+  "checks": {
+    "editmode": {
+      "result": "Passed",
+      "total": "22",
+      "passed": "22",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "89.2061913",
+      "start-time": "2026-10-15 18:37:01Z",
+      "end-time": "2026-10-15 18:38:30Z"
+    },
+    "physics": {
+      "result": "Passed",
+      "total": "9",
+      "passed": "9",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "21.610491",
+      "start-time": "2026-10-15 18:39:00Z",
+      "end-time": "2026-10-15 18:39:21Z"
+    },
+    "visual-initial": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "38.6731236",
+      "start-time": "2026-10-15 18:39:52Z",
+      "end-time": "2026-10-15 18:40:31Z"
+    },
+    "visual-final": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "6.113564",
+      "start-time": "2026-10-15 18:41:53Z",
+      "end-time": "2026-10-15 18:41:59Z"
+    }
+  },
+  "final_visual_resources": {
+    "lights": 24,
+    "vertices": 569884,
+    "renderers": 44
+  },
+  "reviewed_final_captures": [
+    "atrium-corner.png",
+    "corner-room.png",
+    "department-module-0.png",
+    "department-module-1.png",
+    "department-module-2.png",
+    "electronics-gallery.png",
+    "electronics-room.png",
+    "gallery-cover-0.png",
+    "gallery-cover-1.png",
+    "gallery-cover-2.png",
+    "garden-detail.png",
+    "lift--1-floor-0-back.png",
+    "lift--1-floor-0-entry.png",
+    "lift--1-floor-1-back.png",
+    "lift--1-floor-1-entry.png",
+    "lift--1-floor-2-back.png",
+    "lift--1-floor-2-entry.png",
+    "lift-1-floor-0-back.png",
+    "lift-1-floor-0-entry.png",
+    "lift-1-floor-1-back.png",
+    "lift-1-floor-1-entry.png",
+    "lift-1-floor-2-back.png",
+    "lift-1-floor-2-entry.png",
+    "physics-gallery.png",
+    "service-workbench.png",
+    "stair-entry.png",
+    "stair-room.png",
+    "workstation-0.png",
+    "workstation-1.png",
+    "workstation-2.png"
+  ],
+  "layout": {
+    "revision": 3,
+    "profile": "well-workstations-v1",
+    "total_solids": 44,
+    "room_solids": 38,
+    "corridor_cover_solids": 6
+  },
+  "verification_notes": [
+    "All 30 final real Editor renders visually reviewed.",
+    "Visual-only furniture body/plinth/cap overlap corrected after initial capture; final visual rerun passed. Authored geometry and collider sources unchanged from passing EditMode and physics runs.",
+    "Original navigation, spawn/pickup, stair, lift and historical authoring hash contracts preserved.",
+    "All autonomous runs used -noaudio -muted, shared admission and isolated QA Lab history. Test XML duration excludes admission/import."
+  ],
+  "deferred": {
+    "human_visual_gameplay_acceptance": "pending",
+    "player_build": "not requested, not required for affected checks",
+    "full_tests": "not authorized",
+    "release_deploy": "not authorized",
+    "device_performance": "not tested"
+  }
+}

@@ -1,0 +1,11 @@
+Color space: Gamma
+Pipeline: ProvingURP
+Lighting: True / 50
+Materials: True / 50
+AmbientOcclusion: True / 50
+Bloom: True / 50
+Reflections: True / 50
+ColorGrading: True / 50
+Daylight: 0.8 shadow=0.45
+Probe: (0.00, 3.20, 0.00)
+Ambient: RGBA(0.500, 0.495, 0.485, 0.500)

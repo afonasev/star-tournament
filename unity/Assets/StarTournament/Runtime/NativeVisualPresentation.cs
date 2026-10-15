@@ -64,10 +64,15 @@ namespace StarTournament.ProvingGround
                 var projection=arena.GetComponent<ProvingArena>();
                 // An existing walkable spawn is outside walls and slabs; capture from eye height.
                 probe.transform.position=projection.Spawns[0]+Vector3.up*profile.Get("camera.eyeHeight");probe.center=bounds.center-probe.transform.position;probe.size=bounds.size;probe.boxProjection=true;
-                // Fixed 128px capture is a bounded technical resource tier, not artistic tuning.
-                probe.resolution=128;probe.mode=ReflectionProbeMode.Realtime;probe.refreshMode=ReflectionProbeRefreshMode.ViaScripting;
+                // Fixed 128/256px captures are bounded technical resource tiers, not artistic tuning.
+                // The Well's multi-storey atrium supplies a representative environment; a corner-room spawn does not.
+                bool well=arena.GetComponentInChildren<WellArenaPresentation>();
+                if(well){probe.transform.position=arena.position+new Vector3(0,3.2f,0);probe.center=bounds.center-probe.transform.position;}
+                probe.resolution=well?256:128;probe.mode=ReflectionProbeMode.Realtime;probe.refreshMode=ReflectionProbeRefreshMode.ViaScripting;
                 probe.timeSlicingMode=ReflectionProbeTimeSlicingMode.NoTimeSlicing;probe.cullingMask=(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer);
-                probe.nearClipPlane=.1f;probe.farClipPlane=bounds.size.magnitude;probe.clearFlags=ReflectionProbeClearFlags.Skybox;probe.RenderProbe();
+                probe.nearClipPlane=.1f;probe.farClipPlane=bounds.size.magnitude;probe.clearFlags=ReflectionProbeClearFlags.Skybox;
+                if(well){probe.clearFlags=ReflectionProbeClearFlags.SolidColor;probe.backgroundColor=new Color(.8f,.87f,.94f);}
+                probe.RenderProbe();
             }
             if(probe){probe.intensity=reflection*profile.Get("visual.reflectionIntensity");probe.enabled=reflection>0;}
             float glow=NativeVisualPreferences.Effective(profile,VisualEffect.Bloom);

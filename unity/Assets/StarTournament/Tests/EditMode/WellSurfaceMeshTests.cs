@@ -11,6 +11,47 @@ namespace StarTournament.ProvingGround.Tests
             for(int i=0;i<t.Length;i+=3)a+=Vector3.Cross(v[t[i+1]]-v[t[i]],v[t[i+2]]-v[t[i]]).magnitude/2;
             return a;
         }
+        [Test] public void MachinedFittingsHaveFiniteOutwardNormalsAndStayInsideTheirEnvelope()
+        {
+            var size=new Vector3(3.6f,.2f,.095f);var bevel=WellDetailMesh.Bevel(size);var cylinder=WellDetailMesh.Cylinder();
+            try
+            {
+                foreach(var mesh in new[]{bevel,cylinder})
+                {
+                    var vertices=mesh.vertices;var normals=mesh.normals;var indices=mesh.triangles;
+                    for(int i=0;i<vertices.Length;i++)
+                    {
+                        Assert.That(float.IsNaN(vertices[i].sqrMagnitude)||float.IsInfinity(vertices[i].sqrMagnitude),Is.False);
+                        Assert.That(normals[i].magnitude,Is.EqualTo(1).Within(.0001f));
+                        Assert.That(Vector3.Dot(vertices[i],normals[i]),Is.GreaterThan(0));
+                    }
+                    for(int i=0;i<indices.Length;i+=3)
+                    {
+                        var normal=Vector3.Cross(vertices[indices[i+1]]-vertices[indices[i]],vertices[indices[i+2]]-vertices[indices[i]]);
+                        Assert.That(Vector3.Dot(normal,normals[indices[i]]),Is.GreaterThan(0),mesh.name+" triangle "+i);
+                    }
+                }
+                Assert.That(bevel.bounds.size.x,Is.EqualTo(size.x).Within(.0001f));
+                Assert.That(bevel.bounds.size.y,Is.EqualTo(size.y).Within(.0001f));
+                Assert.That(bevel.bounds.size.z,Is.EqualTo(size.z).Within(.0001f));
+            }
+            finally{Object.DestroyImmediate(bevel);Object.DestroyImmediate(cylinder);}
+        }
+        [Test] public void ContactVisibilityPreservesExposedGeometryAndRespondsOnlyToNearbyObstruction()
+        {
+            var empty=new Bounds[0];var wall=new[]{new Bounds(new Vector3(.6f,1,0),new Vector3(1,2,4))};
+            Assert.That(WellContactMesh.Visibility(Vector3.zero,Vector3.up,Vector3.right,Vector3.back,empty),Is.EqualTo(1));
+            Assert.That(WellContactMesh.Visibility(Vector3.zero,Vector3.up,Vector3.right,Vector3.back,wall),Is.LessThan(.9f));
+            var original=WellSurfaceMesh.Build(new[]{new Bounds(Vector3.zero,new Vector3(4,2,1))});
+            var shaded=WellContactMesh.Build(original,empty);
+            try
+            {
+                Assert.That(Area(shaded),Is.EqualTo(Area(original)).Within(.001f));Assert.That(shaded.bounds,Is.EqualTo(original.bounds));
+                Assert.That(shaded.colors.All(c=>c.r==1&&c.g==1&&c.b==1),Is.True);
+                Assert.That(shaded.vertexCount,Is.GreaterThan(original.vertexCount));
+            }
+            finally{Object.DestroyImmediate(original);Object.DestroyImmediate(shaded);}
+        }
         [Test] public void JoinedSurfacesUseContinuousWorldMetreUvs()
         {
             var mesh=WellSurfaceMesh.Build(new[]{new Bounds(new Vector3(3,2,1),new Vector3(4,3,2)),new Bounds(new Vector3(5,2,1),new Vector3(2,2,2))});

@@ -333,8 +333,13 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
 
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??3)<3)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDepth()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??2)<2)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDetail()).ToList()};
+
+            if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==2)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellFurniture()).ToList()};
 
             // Revision 1 is code-owned immutable geometry; saved hashes/metadata must remain exact.
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==1)
