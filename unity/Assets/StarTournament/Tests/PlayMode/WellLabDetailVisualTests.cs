@@ -27,19 +27,30 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Presentation cannot change authoring");
                 int vertices=0;foreach(var filter in skin.GetComponentsInChildren<MeshFilter>())vertices+=filter.sharedMesh.vertexCount;
                 Assert.That(vertices,Is.LessThan(650000),"Bounded presentation geometry");
-                foreach(var renderer in skin.GetComponentsInChildren<Renderer>())Assert.That(renderer.sharedMaterial.shader.isSupported,Is.True,renderer.sharedMaterial.name);
+                foreach(var renderer in skin.GetComponentsInChildren<Renderer>())foreach(var material in renderer.sharedMaterials)Assert.That(material.shader.isSupported,Is.True,material.name);
                 foreach(var renderer in skin.GetComponentsInChildren<Renderer>())
+                foreach(var material in renderer.sharedMaterials)
                 {
-                    var material=renderer.sharedMaterial;
                     if(material.name=="Armoured glass")
                     {Assert.That(material.GetFloat("_Metallic"),Is.Zero);Assert.That(material.GetFloat("_Smoothness"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.glassSmoothness")));}
-                    if(material.name=="Well ceramic white"||material.name=="Well pale floor"||material.name=="Garden soil")
+                    if(material.name=="Well ceramic white"||material.name=="Well pale floor"||material.name=="Garden soil"||material.name=="Well technical ceiling")
                     {
                         Assert.That(material.GetTexture("_BumpMap"),Is.Not.Null,material.name);
                         Assert.That(material.IsKeywordEnabled("_NORMALMAP"),Is.True,material.name);
                     }
                 }
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-furniture/views"));Directory.CreateDirectory(directory);
+                foreach(var renderer in skin.GetComponentsInChildren<MeshRenderer>())
+                {
+                    if(renderer.gameObject.name!="Well ceramic white"&&renderer.gameObject.name!="Well pale floor")continue;
+                    Assert.That(renderer.sharedMaterials.Length,Is.EqualTo(3));
+                    Assert.That(renderer.sharedMaterials[1].name,Is.EqualTo("Well ceramic white"));
+                    Assert.That(renderer.sharedMaterials[2].name,Is.EqualTo("Well technical ceiling"));
+                    Assert.That(renderer.sharedMaterials[0].GetTexture("_BaseMap"),Is.Not.SameAs(renderer.sharedMaterials[2].GetTexture("_BaseMap")));
+                    var mesh=renderer.GetComponent<MeshFilter>().sharedMesh;
+                    Assert.That(mesh.subMeshCount,Is.EqualTo(3));
+                    var normals=mesh.normals;foreach(var index in mesh.GetTriangles(2))Assert.That(normals[index].y,Is.LessThan(-.5f));
+                }
+                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-surfaces/views"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"arena.json"),JsonUtility.ToJson(arena.Definition,true));
                 var settings=new System.Text.StringBuilder();settings.AppendLine("Color space: "+QualitySettings.activeColorSpace);settings.AppendLine("Pipeline: "+UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.name);
                 foreach(VisualEffect effect in System.Enum.GetValues(typeof(VisualEffect)))settings.AppendLine(effect+": "+NativeVisualPreferences.Enabled(effect)+" / "+NativeVisualPreferences.Strength(movement,effect));
@@ -70,6 +81,7 @@ namespace StarTournament.ProvingGround.Tests
                 for(int f=0;f<3;f++)
                 {
                     float y=f*WellArenaCatalog.Storey;
+                    eyes.Add(new Vector3(18,y+1.7f,20));targets.Add(new Vector3(21,y+5,23));names.Add("ceiling-"+f);
                     eyes.Add(new Vector3(15.5f,y+1.7f,20.5f));targets.Add(new Vector3(21,y+1.15f,23));names.Add("workstation-"+f);
                     eyes.Add(new Vector3(17,y+1.7f,11.3f));targets.Add(new Vector3(20,y+.9f,14.65f));names.Add("gallery-cover-"+f);
                 }
@@ -81,7 +93,7 @@ namespace StarTournament.ProvingGround.Tests
                     var previous=RenderTexture.active;RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);
                     try{image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();File.WriteAllBytes(Path.Combine(directory,names[i]+".png"),image.EncodeToPNG());}finally{RenderTexture.active=previous;Object.Destroy(image);}
                 }
-                Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(30));
+                Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(33));
             }
             finally{if(visual)visual.ResetWorld();if(camera)camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
         }

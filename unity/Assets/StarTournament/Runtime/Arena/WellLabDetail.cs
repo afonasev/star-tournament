@@ -42,7 +42,16 @@ namespace StarTournament.ProvingGround
             x=(x%TextureSize+TextureSize)%TextureSize;y=(y%TextureSize+TextureSize)%TextureSize;
             float u=x/(float)TextureSize,v=y/(float)TextureSize;
             float cloud=Mathf.Sin(u*Mathf.PI*4+Mathf.Sin(v*Mathf.PI*6))*Mathf.Cos(v*Mathf.PI*4);
-            if(kind=="floor")return Noise(x,y,32)*.10f+Noise(x,y,8)*.12f+Noise(x,y,2)*.14f+Grain(x,y)*.045f;
+            // Authored material motifs in one repeat: floor aggregate, large wall panels, perforated ceiling cassettes.
+            // Their scale and contrast remain controlled by the existing Well art profile.
+            if(kind=="floor")return Noise(x,y,32)*.06f+Noise(x,y,8)*.14f+Noise(x,y,2)*.26f+Grain(x,y)*.08f;
+            if(kind=="ceiling")
+            {
+                int px=x%(TextureSize/2),py=y%(TextureSize/4);
+                int seam=Mathf.Min(px,TextureSize/2-1-px,py,TextureSize/4-1-py);
+                bool hole=seam>8&&x%12<3&&y%12<3;
+                return seam<2?-.15f:hole?-.09f:Grain(x,y)*.008f;
+            }
             if(kind=="soil")return Noise(x,y,32)*.4f+Noise(x,y,8)*.4f+Noise(x,y,2)*.25f+Grain(x,y)*.18f;
             if(kind=="metal")return Mathf.Sin(y*2.3f)*.05f+Grain(x,y)*.04f;
             int edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
@@ -70,11 +79,32 @@ namespace StarTournament.ProvingGround
                     pixels[y*TextureSize+x]=colour*(1+vein*.28f+branch*.14f+n*.06f);continue;
                 }
                 float value=1+n*grain*.4f;
-                if(kind=="ceramic"||kind=="floor")
+                if(kind=="ceramic")
                 {
-                    int edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
-                    if(edge<1)value-=profile.Get("well.jointContrast");else if(edge<2)value+=.025f;
-                    value+=Height(kind,x,y)*grain*(kind=="floor"?5:1);
+                    // Full-height enamel sheets: vertical joints dominate, with a narrow horizontal closure.
+                    int vertical=Mathf.Min(x,TextureSize-1-x),horizontal=Mathf.Min(y,TextureSize-1-y);
+                    if(vertical<2)value-=profile.Get("well.jointContrast");
+                    else if(vertical<4)value+=.035f;
+                    if(horizontal<1)value-=profile.Get("well.jointContrast")*.35f;
+                    value+=Height(kind,x,y)*grain;
+                }
+                if(kind=="floor")
+                {
+                    int cell=TextureSize/2,px=x%cell,py=y%cell;
+                    int edge=Mathf.Min(px,py,cell-1-px,cell-1-py);
+                    if(edge<1)value-=profile.Get("well.jointContrast");else if(edge<2)value+=.035f;
+                    value+=Height(kind,x,y)*grain*6;
+                    // Subtle aggregate flecks and panel-to-panel value changes, never gameplay randomness.
+                    value+=Grain(x/cell,y/cell)*grain*.5f;
+                }
+                if(kind=="ceiling")
+                {
+                    int px=x%(TextureSize/2),py=y%(TextureSize/4);
+                    int seam=Mathf.Min(px,TextureSize/2-1-px,py,TextureSize/4-1-py);
+                    if(seam<2)value-=profile.Get("well.jointContrast")*1.5f;
+                    else if(seam<4)value+=.025f;
+                    else if(seam>8&&x%12<3&&y%12<3)value-=profile.Get("well.jointContrast")*.8f;
+                    value+=Grain(x,y)*grain*.15f;
                 }
                 if(kind=="metal")value-=.09f*(.5f+.5f*Mathf.Sin(y*2.3f));
                 if(kind=="soil")value=.83f+Height(kind,x,y)*.45f;

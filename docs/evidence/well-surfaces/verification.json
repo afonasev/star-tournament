@@ -1,0 +1,88 @@
+{
+  "baseline": "b9c7cbe8ff41c3ce14102ed1c627845b426ba861",
+  "branch": "codex/well-surfaces",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "c9d6268ff764087ba3a2a8963841a63ae21cd37393f0c3c78416ad528e253628",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "ab7d85c0d071cc458080a302e307a44b361b0ebeb02dc80da4c50429ccf14fa4",
+    "unity/Assets/StarTournament/Runtime/Arena/WellSurfaceMesh.cs": "d607100235efb787492a8e1b794a7afca58b74816be166286fb6b9cd6dfb9192",
+    "unity/Assets/StarTournament/Tests/EditMode/WellSurfaceMeshTests.cs": "bf3ea963bd23293d17a1a77e67dbfaa75fc431cdd4e7524d364ac2e47fa0783a",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs": "925775097578dab48662a6de77d000e1457a5dfe5071b5f52f7e716339f0fa9c"
+  },
+  "checks": {
+    "editmode": {
+      "result": "Passed",
+      "total": "8",
+      "passed": "8",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.1118405"
+    },
+    "visual": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "38.8779885"
+    }
+  },
+  "resources": {
+    "lights": 24,
+    "vertices": 569884,
+    "renderers": 44
+  },
+  "authoring": "arena.json byte-identical to furnished baseline @3",
+  "visual_review": {
+    "full_size": [
+      "workstation-0",
+      "ceiling-0",
+      "ceiling-2",
+      "gallery-cover-1"
+    ],
+    "all_captures_reviewed_in_contact_sheets": [
+      "atrium-corner.png",
+      "ceiling-0.png",
+      "ceiling-1.png",
+      "ceiling-2.png",
+      "corner-room.png",
+      "department-module-0.png",
+      "department-module-1.png",
+      "department-module-2.png",
+      "electronics-gallery.png",
+      "electronics-room.png",
+      "gallery-cover-0.png",
+      "gallery-cover-1.png",
+      "gallery-cover-2.png",
+      "garden-detail.png",
+      "lift--1-floor-0-back.png",
+      "lift--1-floor-0-entry.png",
+      "lift--1-floor-1-back.png",
+      "lift--1-floor-1-entry.png",
+      "lift--1-floor-2-back.png",
+      "lift--1-floor-2-entry.png",
+      "lift-1-floor-0-back.png",
+      "lift-1-floor-0-entry.png",
+      "lift-1-floor-1-back.png",
+      "lift-1-floor-1-entry.png",
+      "lift-1-floor-2-back.png",
+      "lift-1-floor-2-entry.png",
+      "physics-gallery.png",
+      "service-workbench.png",
+      "stair-entry.png",
+      "stair-room.png",
+      "workstation-0.png",
+      "workstation-1.png",
+      "workstation-2.png"
+    ],
+    "result": "Distinct surface families; no new missing faces or material bleed observed. Existing wall-joint/light aliasing unchanged."
+  },
+  "material_cost": "one new material and two 256px mipmapped textures; two existing meshes split into three submeshes; geometry/renderer/light counts unchanged. No FPS claim.",
+  "launch": "shared unity-run -noaudio -muted; isolated QA history",
+  "deferred": [
+    "human visual/gameplay acceptance",
+    "Player build",
+    "full tests",
+    "device/performance",
+    "release/deploy"
+  ]
+}
