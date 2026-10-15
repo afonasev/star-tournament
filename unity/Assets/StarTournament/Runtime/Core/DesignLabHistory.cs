@@ -333,6 +333,9 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
 
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??2)<2)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDetail()).ToList()};
+
             // Revision 1 is code-owned immutable geometry; saved hashes/metadata must remain exact.
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==1)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellStructure()).ToList()};
@@ -659,6 +662,7 @@ namespace StarTournament.ProvingGround
                         if(d.Path=="blood.drops"&&old.Snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                             value=currentDescriptor.DefaultValue;
                         value=ProvingProfile.UpgradeArenaVisualValue(d.Path,old.Snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                        value=ProvingProfile.UpgradeWellDetailValue(d.Path,old.Snapshot.Profile(d.Path).Version,value,currentDescriptor);
                         next.Set(d.Path,value);
                     }
                     // Version3 used the office controls for both floors and stair annexes.

@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
         const float Epsilon=.0001f;
         public static Mesh Build(IReadOnlyList<Bounds> boxes,IReadOnlyList<Bounds> occluders=null)
         {
-            var vertices=new List<Vector3>();var normals=new List<Vector3>();var triangles=new List<int>();
+            var uv0=new List<Vector2>();var vertices=new List<Vector3>();var normals=new List<Vector3>();var triangles=new List<int>();
             for(int i=0;i<boxes.Count;i++)for(int axis=0;axis<3;axis++)for(int sign=-1;sign<=1;sign+=2)
             {
                 int u=(axis+1)%3,v=(axis+2)%3;var b=boxes[i];float plane=sign>0?b.max[axis]:b.min[axis];
@@ -37,13 +37,13 @@ namespace StarTournament.ProvingGround
                 {
                     var normal=Vector3.zero;normal[axis]=sign;int start=vertices.Count;
                     foreach(var uv in new[]{new Vector2(r.xMin,r.yMin),new Vector2(r.xMax,r.yMin),new Vector2(r.xMax,r.yMax),new Vector2(r.xMin,r.yMax)})
-                    {var p=Vector3.zero;p[axis]=plane;p[u]=uv.x;p[v]=uv.y;vertices.Add(p);normals.Add(normal);}
+                    {var p=Vector3.zero;p[axis]=plane;p[u]=uv.x;p[v]=uv.y;vertices.Add(p);normals.Add(normal);uv0.Add(axis==1?new Vector2(p.x,p.z):new Vector2(axis==0?p.z:p.x,p.y));}
                     if(sign>0)triangles.AddRange(new[]{start,start+1,start+2,start,start+2,start+3});
                     else triangles.AddRange(new[]{start,start+2,start+1,start,start+3,start+2});
                 }
             }
             var mesh=new Mesh{name="Well joined surfaces",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};
-            mesh.SetVertices(vertices);mesh.SetNormals(normals);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();return mesh;
+            mesh.SetVertices(vertices);mesh.SetNormals(normals);mesh.SetUVs(0,uv0);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();return mesh;
         }
     }
 }

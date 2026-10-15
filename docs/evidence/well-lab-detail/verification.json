@@ -1,0 +1,50 @@
+{
+  "baseline": "5b0a6e95",
+  "branch": "codex/well-lab-detail",
+  "change": "detail-well-laboratory",
+  "checks": [
+    {
+      "name": "editmode",
+      "result": "Passed",
+      "total": "15",
+      "passed": "15",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "40.8299483"
+    },
+    {
+      "name": "visual",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "7.9242326"
+    }
+  ],
+  "source_sha256": {
+    "Runtime/Arena/WellArenaPresentation.cs": "2d093426f56b7826b303acf46ae7f6c643a72b7bed22230c48a6999f1dcf91ca",
+    "Runtime/Arena/WellLabDetail.cs": "ada90e37d2a5bca8cdc648cd9c74cca69df6bd3293b0e25c276bb1086e81a968",
+    "Runtime/Arena/WellSurfaceMesh.cs": "797998911111a27ea73f6bcfa5a06f056da14789fc66e3267086a7e2f2c5227f",
+    "Runtime/Core/WellArenaProfile.cs": "0a80d1491f1eefd0b7149293dcc5ef387787b73a73deadef8d5ca2b3fe1eb017",
+    "Runtime/Core/DesignLabHistory.cs": "fa79eb5ec7a4b9fc724cda32c932208e0be7a1dbfdb2c1b300cb84f8336a0377",
+    "Tests/EditMode/WellArenaTests.cs": "4c5a02bb069889dcc0731ccd0a7d894a83dd931d4463f6b7f0ac44729e312990",
+    "Tests/EditMode/WellSurfaceMeshTests.cs": "37a5ca38c79112c6d2f229e040bb958b130f92a3354941a18eaac3a33b25693b",
+    "Tests/PlayMode/WellLabDetailVisualTests.cs": "119c5ad3b5a5234ad6b3ab1eff190957a168a8d65146389f205b49543f25e6c3"
+  },
+  "resources": {
+    "lights": 24,
+    "vertices": 153478,
+    "renderers": 33
+  },
+  "visual_review": "20 Editor captures inspected; NativeVisualPresentation bound with current local visual preferences. All floors, both lift shafts, stairs, rooms and plants. No introduced occlusion of openings or wall corner gaps observed. Not a Player/gameplay/performance acceptance.",
+  "geometry": "WellArenaCatalog unchanged; exact authoring JSON equality and zero presentation colliders asserted.",
+  "silent": "All Unity processes via unity-run shared, -noaudio -muted. No system volume changes.",
+  "gates": {
+    "Player": "Not built; not necessary for Editor material QA; requires command",
+    "full_tests": "Not authorized/not run",
+    "deploy": "Not authorized/not run",
+    "human_acceptance": "Pending",
+    "reference_device_performance": "Not measured; bounded resources are not FPS evidence"
+  }
+}

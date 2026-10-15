@@ -20,9 +20,24 @@ namespace StarTournament.ProvingGround
                 Add("well.map.lift-"+lift.Id+".initial","geometry","Начальная высота "+lift.Id,"Immutable начальный этаж.","m",0,100,.01f,lift.InitialHeight);
             }
         }
+        internal ProvingProfile BeforeWellDetail()
+        {
+            if(id!="well-gameplay-presentation-v1"||version<2)return this;
+            var copy=DetachedCopy();copy.version=1;
+            var added=new System.Collections.Generic.HashSet<string>{"well.surfaceGrain","well.jointContrast","well.surfaceSmoothness","well.floorSmoothness","well.fixtureGlow","well.plantHeight"};
+            copy.descriptors.RemoveAll(d=>added.Contains(d.Path));copy.values.RemoveAll(v=>added.Contains(v.Path));
+            copy.FindDescriptor("well.fill").DefaultValue=.8f;copy.Set("well.fill",.8f);
+            copy.FindDescriptor("well.lamp").DefaultValue=12;copy.Set("well.lamp",12);
+            return copy;
+        }
+        internal static float UpgradeWellDetailValue(string path,int oldVersion,float value,NumericDescriptor current)
+        {
+            if(oldVersion<2&&((path=="well.fill"&&UnityEngine.Mathf.Approximately(value,.8f))||(path=="well.lamp"&&UnityEngine.Mathf.Approximately(value,12))))return current.DefaultValue;
+            return value;
+        }
         public static ProvingProfile CreateWellDefault()
         {
-            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=1};
+            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=2};
             void V(string key,string group,string label,string desc,string unit,float min,float max,float step,float value)=>p.Add("well."+key,group,label,desc,unit,min,max,step,value);
             V("liftSpeed","well-lifts","Скорость лифта","Быстрый рейс; влияет на окно выхода на втором этаже.","m/s",1,8,.1f,4);
             // Delay = exactly 1 second is the explicit approved rule, not an adjustable balance value.
@@ -35,10 +50,17 @@ namespace StarTournament.ProvingGround
             V("daylight","well-light","Дневной свет","Мягкий верхний свет колодца.","intensity",0,3,.05f,.5f);
             V("spotAngle","well-light","Угол офисного света","Ширина светового пятна.","deg",60,160,5,140);
             V("innerAngle","well-light","Внутренний угол света","Плавность края светового пятна.","deg",10,130,5,100);
-            V("fill","well-light","Рассеянный свет","Светлая офисная лаборатория.","ratio",.1f,1,.05f,.8f);
-            V("lamp","well-light","Офисные светильники","Яркость потолочных источников.","intensity",0,50,.5f,12);
+            V("fill","well-light","Рассеянный свет","Светлая офисная лаборатория.","ratio",.1f,1,.05f,.42f);
+            V("lamp","well-light","Офисные светильники","Яркость потолочных источников.","intensity",0,50,.5f,7);
             V("lampRange","well-light","Радиус светильника","Освещение широких залов.","m",3,20,.5f,12);
             V("glassOpacity","well-art","Непрозрачность стекла","Читаемость непробиваемого окна.","ratio",.1f,.6f,.05f,.25f);
+            // well-research-detail-v1: presentation only; no authored map revision change.
+            V("surfaceGrain","well-art","Фактура материалов","Контраст мелкой фактуры керамики, металла и грунта.","ratio",0,.3f,.01f,.075f);
+            V("jointContrast","well-art","Швы панелей","Контраст тонких швов без геометрических щелей.","ratio",0,.5f,.01f,.22f);
+            V("surfaceSmoothness","well-art","Гладкость керамики","Блик светлых панелей лаборатории.","ratio",0,.8f,.05f,.28f);
+            V("floorSmoothness","well-art","Гладкость пола","Матовый пол без ярких отражений.","ratio",0,.6f,.05f,.18f);
+            V("fixtureGlow","well-light","Свечение диффузоров","Видимая яркость существующих светильников.","ratio",.5f,3,.1f,1.3f);
+            V("plantHeight","well-art","Высота растений","Компактные листья внутри прежних клумб; не меняет физику.","m",.25f,.65f,.05f,.5f);
             return p;
         }
     }

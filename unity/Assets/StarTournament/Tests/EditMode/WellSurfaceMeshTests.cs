@@ -11,6 +11,21 @@ namespace StarTournament.ProvingGround.Tests
             for(int i=0;i<t.Length;i+=3)a+=Vector3.Cross(v[t[i+1]]-v[t[i]],v[t[i+2]]-v[t[i]]).magnitude/2;
             return a;
         }
+        [Test] public void JoinedSurfacesUseContinuousWorldMetreUvs()
+        {
+            var mesh=WellSurfaceMesh.Build(new[]{new Bounds(new Vector3(3,2,1),new Vector3(4,3,2)),new Bounds(new Vector3(5,2,1),new Vector3(2,2,2))});
+            try
+            {
+                Assert.That(mesh.uv.Length,Is.EqualTo(mesh.vertexCount));
+                for(int i=0;i<mesh.vertexCount;i++)
+                {
+                    var p=mesh.vertices[i];var n=mesh.normals[i];
+                    var expected=Mathf.Abs(n.y)>.5f?new Vector2(p.x,p.z):new Vector2(Mathf.Abs(n.x)>.5f?p.z:p.x,p.y);
+                    Assert.That(mesh.uv[i],Is.EqualTo(expected));
+                }
+            }
+            finally{Object.DestroyImmediate(mesh);}
+        }
         [Test] public void AdjacentOverlappingAndDuplicateBoxesHaveOnlyExteriorFaces()
         {
             foreach(float offset in new[]{0f,.5f,1f})

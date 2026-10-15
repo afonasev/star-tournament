@@ -9,9 +9,13 @@ namespace StarTournament.ProvingGround
         readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<Bounds>> batches=new Dictionary<Material,List<Bounds>>();
         UnityEngine.Rendering.AmbientMode oldMode;Color oldAmbient;
         Material fontMaterial;Font signFont;
-        Material white,floor,metal,glass,door,soil;Material[] colours;ProvingProfile profile;
+        Material white,floor,metal,glass,door,soil;WellLabDetail detail;Material[] colours;ProvingProfile profile;
         Material Mat(string name,Color colour,bool unlit=false,VisualMaterialRole role=VisualMaterialRole.Wall)
         {var m=new Material(Shader.Find(unlit?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=colour};m.SetFloat("_Smoothness",.35f);owned.Add(m);if(!unlit)NativeVisualMaterials.Register(this,m,role);return m;}
+        void Texture(Material material,string kind,float metres)
+        {
+            var texture=WellLabDetail.Texture(kind,profile);owned.Add(texture);material.SetTexture("_BaseMap",texture);material.SetTextureScale("_BaseMap",Vector2.one/metres);
+        }
         void Box(Material m,Vector3 centre,Vector3 size)
         {if(!batches.TryGetValue(m,out var b)){b=new List<Bounds>();batches[m]=b;}b.Add(new Bounds(centre,size));}
         void Label(string value,Vector3 position,Quaternion rotation,Color colour,float size=.5f)
@@ -46,6 +50,12 @@ namespace StarTournament.ProvingGround
             this.profile=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;
             white=Mat("Well ceramic white",new Color(.92f,.95f,.96f));floor=Mat("Well pale floor",new Color(.63f,.71f,.74f),role:VisualMaterialRole.Floor);metal=Mat("Well brushed metal",new Color(.25f,.32f,.36f),role:VisualMaterialRole.Metal);metal.SetFloat("_Metallic",.6f);
             door=Mat("Closed office doors",new Color(.42f,.50f,.55f));soil=Mat("Garden soil",new Color(.23f,.15f,.08f));
+            Texture(white,"ceramic",profile.Get("well.panelSize"));Texture(floor,"floor",profile.Get("well.panelSize"));Texture(metal,"metal",1);Texture(soil,"soil",1);
+            white.SetFloat("_Smoothness",profile.Get("well.surfaceSmoothness"));floor.SetFloat("_Smoothness",profile.Get("well.floorSmoothness"));soil.SetFloat("_Smoothness",0);
+            var diffuser=Mat("Well warm diffuser",new Color(1,.94f,.80f)*profile.Get("well.fixtureGlow"),true);
+            var screen=Mat("Well instrument glass",new Color(.035f,.12f,.16f),true);
+            var indicator=Mat("Well instrument readout",new Color(.32f,.75f,.66f),true);
+            detail=new WellLabDetail(transform,owned,profile,metal,door,screen,indicator);
             glass=Mat("Armoured glass",new Color(.35f,.80f,.89f,profile.Get("well.glassOpacity")));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",5);glass.SetFloat("_DstBlend",10);glass.SetFloat("_ZWrite",0);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
             colours=new[]{Mat("01 bio green",new Color(.12f,.62f,.30f)),Mat("02 physics blue",new Color(.08f,.42f,.80f)),Mat("03 electronics yellow",new Color(.90f,.67f,.08f))};
             // Replace the generic physical meshes with material batches, keeping their exact colliders.
@@ -78,6 +88,7 @@ namespace StarTournament.ProvingGround
                         var skin=WallSkin(solid,definition.Solids);var stripe=skin.size;stripe.y=.16f;stripe.x+=.012f;stripe.z+=.012f;Box(colours[f],new Vector3(skin.center.x,stripeY,skin.center.z),stripe);
                     }
                 }
+                detail.Wall(solid);detail.DoorHeaders(solid);
                 if(solid.Material=="equipment")
                 {Box(metal,solid.Position+Vector3.up*(solid.Size.y/2+.02f),new Vector3(solid.Size.x,.05f,solid.Size.z));Box(colours[Mathf.Clamp((int)(solid.Position.y/WellArenaCatalog.Storey),0,2)],solid.Position+Vector3.up*.35f,new Vector3(solid.Size.x+.01f,.12f,solid.Size.z+.01f));}
                 if(solid.Material=="glass")
@@ -97,7 +108,7 @@ namespace StarTournament.ProvingGround
                 foreach(float x in new[]{-18f,0,18f})foreach(float z in new[]{-18f,0,18f})
                 {
                     if(x==0&&z==0)continue;var pos=new Vector3(x,f*WellArenaCatalog.Storey+WellArenaCatalog.ClearHeight-.2f,z);
-                    Box(metal,pos,new Vector3(3,.10f,1));Box(white,pos-Vector3.up*.07f,new Vector3(2.8f,.03f,.8f));
+                    Box(metal,pos,new Vector3(3,.10f,1));Box(diffuser,pos-Vector3.up*.07f,new Vector3(2.8f,.03f,.8f));
                     var go=new GameObject("Office ceiling light");go.transform.SetParent(transform,false);go.transform.localPosition=pos-Vector3.up*.15f;go.transform.localRotation=Quaternion.Euler(90,0,0);
                     var light=go.AddComponent<Light>();light.type=LightType.Spot;light.spotAngle=profile.Get("well.spotAngle");light.innerSpotAngle=Mathf.Min(light.spotAngle,profile.Get("well.innerAngle"));light.intensity=profile.Get("well.lamp");light.range=profile.Get("well.lampRange");light.color=new Color(1,.98f,.93f);light.shadows=LightShadows.None;
                 }
@@ -106,11 +117,9 @@ namespace StarTournament.ProvingGround
             foreach(var centre in new[]{new Vector3(-6,0,-6),new Vector3(6,0,6)})
             {
                 Box(white,centre+Vector3.up*.15f,new Vector3(3,.3f,3));Box(soil,centre+Vector3.up*.31f,new Vector3(2.8f,.05f,2.8f));
-                for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++)Box(colours[0],centre+new Vector3(x,.5f,z),new Vector3(.5f,.4f,.5f));
+                detail.Plants(centre);
             }
-            // Subtle panel joints are cosmetic, and cannot catch the capsule.
-            for(int f=0;f<3;f++)for(float t=-24;t<=24;t+=profile.Get("well.panelSize"))
-            {Box(metal,new Vector3(t,f*WellArenaCatalog.Storey+.006f,17.2f),new Vector3(.015f,.008f,15));Box(metal,new Vector3(t,f*WellArenaCatalog.Storey+.006f,-17.2f),new Vector3(.015f,.008f,15));}
+            detail.Finish();
             foreach(var pair in batches)
             {
                 var blockers=pair.Key==glass?null:batches.Where(p=>p.Key!=pair.Key&&p.Key!=glass).SelectMany(p=>p.Value).ToArray();
