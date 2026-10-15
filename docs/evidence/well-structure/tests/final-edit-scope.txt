@@ -1,0 +1,22 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=WellArenaTests;DesignLabHistoryTests.AuthoringAndDiagnosticMetadataCannotBeSavedAsGameplayTuning;DesignLabHistoryTests.LevelAuthoringIsExcludedWhileGameplayAndReadabilityRemainVisible;LabParameterStorageTests.CompactSavesHaveOnlyParametersAndExactRestartIdentity;LabParameterStorageTests.SelfConsistentCompactTamperingIsRejectedWithoutWriting
+lab_history=/Users/eaafonasev/.codex/worktrees/well-structure/star-tournament/unity/../.local/unity-evidence/focused-editmode.ORATGu/qa-lab-history.json
+revision=81aec1e793d1bfe424b00475a67cf39ab53fc144
+ M ../docs/GAME_SPEC.md
+ M ../docs/evidence/well-structure/proposal.md
+ M Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs
+ M Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/LabParameterStorage.cs
+ M Assets/StarTournament/Runtime/Core/WellArenaProfile.cs
+ M Assets/StarTournament/Tests/EditMode/WellArenaTests.cs
+ M Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs
+ M Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs
+ M Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/well-structure/approved-layout.json
+?? ../docs/evidence/well-structure/qa-scope.md
+?? Assets/StarTournament/Runtime/Arena/WellArenaRevisionOne.cs
+?? Assets/StarTournament/Runtime/Arena/WellArenaRevisionOne.cs.meta

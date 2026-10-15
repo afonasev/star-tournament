@@ -4,10 +4,16 @@
   "baseline": "3fcffe879c77ce8fe20167a1c2778cd410f729d1",
   "branch": "codex/well-structure",
   "worktree": "/Users/eaafonasev/.codex/worktrees/well-structure/star-tournament",
-  "stage": "structural-proposal-awaiting-human-choice",
-  "verification": ["SVG generated and parsed", "PNG rendered and visually inspected after exterior-opening correction", "12 pickups retained: 2 shotgun, 2 rocket, 2 cutter, 2 armor, 2 speed, 1 damage, 1 heal"],
-  "runtime_changes": false,
-  "unity_runs": [],
-  "cleanup": "No Unity/build/server processes or caches created. Retain source generator, SVG/PNG and owned worktree for approved implementation. Foreign main settings and planning edit untouched.",
-  "next": "Resolve Q1 in planning restructure-well-arena, then implement and run affected Editor QA. Full suite, delivery build and publication not authorized."
+  "stage": "verified-implementation",
+  "verification": "verification.json",
+  "runtime_changes": true,
+  "unity_runs": [
+    "initial-edit",
+    "physics",
+    "final-edit",
+    "match-and-visual",
+    "final-visual"
+  ],
+  "cleanup": "Evidence preserved; temporary Editor settings reverted. Owned Library and QA outputs scheduled for removal after integration.",
+  "next": "Human Player/gameplay acceptance after a separately requested build; full/build/publication deferred"
 }

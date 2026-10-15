@@ -2,8 +2,9 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
-        internal void SetIdentityForWell()
-        {id="well-authoring-v1";version=1;foreach(var d in descriptors){d.Path="well.map."+d.Path;d.Description="Колодец, планировка 02: immutable геометрия; изменения требуют новой ревизии и QA.";}foreach(var v in values)v.Path="well.map."+v.Path;}
+        internal void SetIdentityForWell(int revision=2)
+        {id="well-authoring-v1";version=revision;foreach(var d in descriptors){d.Path="well.map."+d.Path;d.Description="Колодец, "+(revision==1?"планировка 02":"структура 03")+": immutable геометрия; изменения требуют новой ревизии и QA.";}foreach(var v in values)v.Path="well.map."+v.Path;}
+        internal ProvingProfile BeforeWellStructure()=>id=="well-authoring-v1"?WellArenaRevisionOne.AuthoringProfile():this;
         internal void AddWellLiftAuthoring(ArenaLiftDefinition[] lifts)
         {
             foreach(var lift in lifts)

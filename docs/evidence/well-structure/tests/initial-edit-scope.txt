@@ -1,0 +1,14 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=WellArenaTests
+lab_history=/Users/eaafonasev/.codex/worktrees/well-structure/star-tournament/unity/../.local/unity-evidence/focused-editmode.xYd7AW/qa-lab-history.json
+revision=81aec1e793d1bfe424b00475a67cf39ab53fc144
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs
+ M Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs
+ M Assets/StarTournament/Runtime/Core/WellArenaProfile.cs
+ M Assets/StarTournament/Tests/EditMode/WellArenaTests.cs
+ M Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs
+ M Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs
+ M Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs
+?? ../docs/evidence/well-structure/qa-scope.md

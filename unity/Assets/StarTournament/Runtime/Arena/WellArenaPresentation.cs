@@ -43,10 +43,15 @@ namespace StarTournament.ProvingGround
                 else Box(m,solid.Position,solid.Size);
                 if(solid.Material=="wall"&&solid.Size.y>2)
                 {
-                    int f=Mathf.Clamp(Mathf.FloorToInt(solid.Position.y/5),0,2);var stripe=solid.Size;stripe.y=.16f;stripe.x+=.012f;stripe.z+=.012f;Box(colours[f],new Vector3(solid.Position.x,f*5+1.1f,solid.Position.z),stripe);
+                    for(int f=0;f<3;f++)
+                    {
+                        float stripeY=f*WellArenaCatalog.Storey+1.1f;
+                        if(stripeY<solid.Position.y-solid.Size.y/2||stripeY>solid.Position.y+solid.Size.y/2)continue;
+                        var stripe=solid.Size;stripe.y=.16f;stripe.x+=.012f;stripe.z+=.012f;Box(colours[f],new Vector3(solid.Position.x,stripeY,solid.Position.z),stripe);
+                    }
                 }
                 if(solid.Material=="equipment")
-                {Box(metal,solid.Position+Vector3.up*(solid.Size.y/2+.02f),new Vector3(solid.Size.x,.05f,solid.Size.z));Box(colours[Mathf.Clamp((int)(solid.Position.y/5),0,2)],solid.Position+Vector3.up*.35f,new Vector3(solid.Size.x+.01f,.12f,solid.Size.z+.01f));}
+                {Box(metal,solid.Position+Vector3.up*(solid.Size.y/2+.02f),new Vector3(solid.Size.x,.05f,solid.Size.z));Box(colours[Mathf.Clamp((int)(solid.Position.y/WellArenaCatalog.Storey),0,2)],solid.Position+Vector3.up*.35f,new Vector3(solid.Size.x+.01f,.12f,solid.Size.z+.01f));}
                 if(solid.Material=="glass")
                 {var frame=solid.Size;frame.y=.06f;frame.x+=.06f;frame.z+=.06f;Box(metal,solid.Position+Vector3.up*solid.Size.y/2,frame);Box(metal,solid.Position-Vector3.up*solid.Size.y/2,frame);}
                 if(solid.Material=="door")
@@ -55,15 +60,15 @@ namespace StarTournament.ProvingGround
             for(int f=0;f<3;f++)
             {
                 string department=new[]{"БИОРАЗРАБОТКИ","ФИЗИКА","ЭЛЕКТРОНИКА"}[f];Color colour=colours[f].color;
-                Label("0"+(f+1)+"  /  "+department,new Vector3(-9,f*5+2.7f,24.63f),Quaternion.identity,colour,.85f);
-                Label("0"+(f+1)+"  /  "+department,new Vector3(9,f*5+2.7f,-24.63f),Quaternion.Euler(0,180,0),colour,.85f);
-                Label("ЛИФТ  /  01 ↕ 03",new Vector3(0,f*5+3.95f,24.58f),Quaternion.identity,colour,.38f);
-                Label("ЛИФТ  /  01 ↕ 03",new Vector3(0,f*5+3.95f,-24.58f),Quaternion.Euler(0,180,0),colour,.38f);
-                foreach(int side in new[]{-1,1})Label("ЛЕСТНИЦА  /  0"+(f+1),new Vector3(side*24.6f,f*5+3.95f,0),Quaternion.Euler(0,side>0?90:-90,0),colour,.38f);
+                Label("0"+(f+1)+"  /  "+department,new Vector3(-9,f*WellArenaCatalog.Storey+2.7f,24.63f),Quaternion.identity,colour,.85f);
+                Label("0"+(f+1)+"  /  "+department,new Vector3(9,f*WellArenaCatalog.Storey+2.7f,-24.63f),Quaternion.Euler(0,180,0),colour,.85f);
+                Label("ЛИФТ  /  01 ↕ 03",new Vector3(0,f*WellArenaCatalog.Storey+3.95f,24.58f),Quaternion.identity,colour,.38f);
+                Label("ЛИФТ  /  01 ↕ 03",new Vector3(0,f*WellArenaCatalog.Storey+3.95f,-24.58f),Quaternion.Euler(0,180,0),colour,.38f);
+                foreach(int side in new[]{-1,1})Label("ЛЕСТНИЦА  /  0"+(f+1),new Vector3(side*24.6f,f*WellArenaCatalog.Storey+3.95f,0),Quaternion.Euler(0,side>0?90:-90,0),colour,.38f);
                 // Authored fixture locations: broad rings of soft overhead light, clear of all passages.
                 foreach(float x in new[]{-18f,0,18f})foreach(float z in new[]{-18f,0,18f})
                 {
-                    if(x==0&&z==0)continue;var pos=new Vector3(x,f*5+4.5f,z);
+                    if(x==0&&z==0)continue;var pos=new Vector3(x,f*WellArenaCatalog.Storey+WellArenaCatalog.ClearHeight-.2f,z);
                     Box(metal,pos,new Vector3(3,.10f,1));Box(white,pos-Vector3.up*.07f,new Vector3(2.8f,.03f,.8f));
                     var go=new GameObject("Office ceiling light");go.transform.SetParent(transform,false);go.transform.localPosition=pos-Vector3.up*.15f;go.transform.localRotation=Quaternion.Euler(90,0,0);
                     var light=go.AddComponent<Light>();light.type=LightType.Spot;light.spotAngle=profile.Get("well.spotAngle");light.innerSpotAngle=Mathf.Min(light.spotAngle,profile.Get("well.innerAngle"));light.intensity=profile.Get("well.lamp");light.range=profile.Get("well.lampRange");light.color=new Color(1,.98f,.93f);light.shadows=LightShadows.None;
@@ -77,7 +82,7 @@ namespace StarTournament.ProvingGround
             }
             // Subtle panel joints are cosmetic, and cannot catch the capsule.
             for(int f=0;f<3;f++)for(float t=-24;t<=24;t+=profile.Get("well.panelSize"))
-            {Box(metal,new Vector3(t,f*5+.006f,17.2f),new Vector3(.015f,.008f,15));Box(metal,new Vector3(t,f*5+.006f,-17.2f),new Vector3(.015f,.008f,15));}
+            {Box(metal,new Vector3(t,f*WellArenaCatalog.Storey+.006f,17.2f),new Vector3(.015f,.008f,15));Box(metal,new Vector3(t,f*WellArenaCatalog.Storey+.006f,-17.2f),new Vector3(.015f,.008f,15));}
             foreach(var pair in batches)
             {
                 var mesh=new Mesh{indexFormat=UnityEngine.Rendering.IndexFormat.UInt32,name="Well material batch"};mesh.CombineMeshes(pair.Value.ToArray());owned.Add(mesh);

@@ -1,3 +1,7 @@
+# Исторический эскиз — заменён уточнениями пользователя 15.10.2026
+
+Актуальное решение: approved-layout.json. Выбран вариант 1; урон перенесён точно в центр; 10 угловых спавнов; ровно 9 предметов; комнаты второго сдвинуты к двору. proposal.png сохраняется как история выбора, не финальный план.
+
 # Переработка структуры Колодца
 
 Follow-up to add-well-arena. Source: user feedback delegated from chat 01a12c6a-d930-7361-a947-8548a3a8ad37 on 2026-10-15. Human-tested release test0.1.5-test.1 / runtime 23b21e95; this is limited map feedback, not general acceptance.

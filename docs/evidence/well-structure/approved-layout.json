@@ -1,0 +1,15 @@
+{
+  "source": "User 2026-10-15: variant 1 with layout corrections; explicit confirmation of only these nine pickup points",
+  "storey": 7.2,
+  "slab": 0.8,
+  "clearHeight": 6.4,
+  "floors": [
+    {"height": 0, "items": [{"kind":"damage","x":0,"z":0},{"kind":"armor","x":0,"z":21},{"kind":"shotgun","x":0,"z":-21}]},
+    {"height": 7.2, "items": [{"kind":"rocket","x":0,"z":0},{"kind":"armor","x":-12.8,"z":6.4},{"kind":"speed","x":12.8,"z":-6.4}]},
+    {"height": 14.4, "items": [{"kind":"heal","x":0,"z":0},{"kind":"cutter","x":21,"z":21},{"kind":"armor","x":-21,"z":-21}]}
+  ],
+  "spawns": "all corner rooms, excluding floor-3 NE and SW; 10 candidates, 8 participants maximum",
+  "floor2": "side rooms moved against courtyard; outside corridors at stair entries remain clear",
+  "centralDrop": "heal, rocket and damage are intentionally vertically aligned by latest explicit user choice",
+  "proposalImage": "proposal.png is historical, superseded by these user corrections; runtime Editor views show the implementation"
+}

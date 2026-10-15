@@ -1,0 +1,89 @@
+{
+  "baseline": "3fcffe879c77ce8fe20167a1c2778cd410f729d1",
+  "identity": "well-laboratory-v1@2",
+  "branch": "codex/well-structure",
+  "checks": [
+    {
+      "name": "initial-edit",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "xmlDurationSeconds": 5.7349415,
+      "xml": "tests/initial-edit.xml",
+      "log": "tests/initial-edit.log.gz"
+    },
+    {
+      "name": "physics",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "xmlDurationSeconds": 16.0667499,
+      "xml": "tests/physics.xml",
+      "log": "tests/physics.log.gz"
+    },
+    {
+      "name": "final-edit",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "xmlDurationSeconds": 22.3019193,
+      "xml": "tests/final-edit.xml",
+      "log": "tests/final-edit.log.gz"
+    },
+    {
+      "name": "match-and-visual",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xmlDurationSeconds": 26.883573,
+      "xml": "tests/match-and-visual.xml",
+      "log": "tests/match-and-visual.log.gz"
+    },
+    {
+      "name": "final-visual",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xmlDurationSeconds": 0.7746422,
+      "xml": "tests/final-visual.xml",
+      "log": "tests/final-visual.log.gz"
+    }
+  ],
+  "sourceSha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs": "43d7e76ca8da654fadd685a78a360912c114c46c90bf7ae6c871ef0294cb574d",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "79ba8e2501092ae27d73e8b472ddd9e3e3a8a859cdcfcb580e6e10c2e544674a",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "ba55fee1eb934ef7ba6f28e371220e5992be0ae1f73807f6e4e0ed504ced80b5",
+    "unity/Assets/StarTournament/Runtime/Core/LabParameterStorage.cs": "c97f28e1d775f136331ae8c44f0400c57f2eb96ea92896230b3ac4fec0c581a6",
+    "unity/Assets/StarTournament/Runtime/Core/WellArenaProfile.cs": "05b7c4e3cbb16e8f8e23c277cf7f4144df746573485bca54d3c74ddc7fa45cc2",
+    "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs": "49a2f4ffcf256383fb0ddca65f27564e58d2ad900150b2169fd9ab59b5149dd6",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs": "44f2ec2294af338126bca58e00bc8fca3a2d153e5982230d9913d9741e559179",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs": "5d8431c90f8eb7cdc61871aec05227de2c8491502912e7bb9920ec91d7e963c6",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellArenaVisualTests.cs": "930958d089243235922700fb6eb61b9697adf2e9fb8794e3a3253cf069c9ec4b",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaRevisionOne.cs": "9ba0f990f82fa256f04626b9170e3ec990f3c696f98b83339e9df148ca235a85"
+  },
+  "finalEvidence": "18 EditMode + 9 physics/match PlayMode + final visual fixture (8 views); real match rerun after Lab compatibility change",
+  "timingNote": "XML duration includes fixture setup/teardown; excludes runner queue and first import/compile. Not a performance measurement.",
+  "visualInspection": [
+    "atrium",
+    "bio-gallery",
+    "physics-bridge",
+    "south-lift",
+    "floor-2-stair-corridor",
+    "corner-room",
+    "garden-centre",
+    "stairs"
+  ],
+  "limits": [
+    "Editor geometry renders, not human gameplay/visual acceptance",
+    "No full suite",
+    "No Player/distribution build",
+    "No publication"
+  ],
+  "quiet": "All Unity invocations through unity-run --shared with -noaudio -muted from startup; no system volume changes",
+  "planning": "restructure-well-arena; approved 2026-10-15 and strict validation passed"
+}
