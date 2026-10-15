@@ -1,0 +1,826 @@
+{
+  "repository": "https://github.com/afonasev/game-spec-templates",
+  "revision": "0c2d4562683252d54736f294dc1af463050eac17",
+  "catalog_version": "0.5.0",
+  "baseline": "973c28773518eebd64bbab4f43ed66821d5770d8",
+  "packages": {
+    "menu-base": "0.1.0",
+    "settings": "0.1.4",
+    "design-lab": "0.2.0",
+    "installer": "0.1.0",
+    "updates": "0.2.1"
+  },
+  "sources": [
+    {
+      "path": "features/menu-base/requirements.md",
+      "sha256": "2c9e2c73549deaca6b4a79313dc57f470d5febfd1e3a555c3ccaa81ae5682f9b"
+    },
+    {
+      "path": "features/menu-base/acceptance.md",
+      "sha256": "f1a319e534817ad0f7a7243a77a4ae24b2eb9741ceab534337a5f8529461ec31"
+    },
+    {
+      "path": "features/settings/requirements.md",
+      "sha256": "b645bcb48bbf9f4ab4878ad1ccfc630f30facf356b940bb18ab1980a22bfc6d1"
+    },
+    {
+      "path": "features/settings/acceptance.md",
+      "sha256": "abe7485f3b1af0614d4247eb613ea90db41c6e0a239832b4ab97828772a9e596"
+    },
+    {
+      "path": "features/settings/options.md",
+      "sha256": "de1ce1eae423a35722b5dad2b260292065ec3f8e08f31ecb5607285da179fcd5"
+    },
+    {
+      "path": "features/settings/controls-help.md",
+      "sha256": "b32ac37d9bda0fe3f5b1b8a8f68a902c80bd089d0254c9d7d8d555e6dc8f0a85"
+    },
+    {
+      "path": "features/design-lab/requirements.md",
+      "sha256": "184031cea05d8e258afc42a24e66a6656f641a401e60b85b87a4984d02be80ce"
+    },
+    {
+      "path": "features/design-lab/acceptance.md",
+      "sha256": "64146ee17b1ddb4a6220883c4db6e0e2babb12cb51cc9eea5b587c87118bff59"
+    },
+    {
+      "path": "features/design-lab/parameter-catalog.md",
+      "sha256": "421340469180cb897144be88fc145ae8c0967895c7e751a24a091a719d3d9383"
+    },
+    {
+      "path": "features/design-lab/configuration-lifecycle.md",
+      "sha256": "34955887b3789a4904ce8f64c95ff045b1681541db2082700fde0074e73ada1b"
+    },
+    {
+      "path": "features/installer/requirements.md",
+      "sha256": "2f52a6aac7990c500096c47c1edb30005ed356af4f8081e30c4b28a5aa3952ff"
+    },
+    {
+      "path": "features/installer/acceptance.md",
+      "sha256": "c54964133f2d83d52280c1c0977685d08d1fbea3da35e16b668e09fd5c6198ff"
+    },
+    {
+      "path": "features/updates/requirements.md",
+      "sha256": "67ed5e519a816e210f3c4b5775fe0573c576e584624160f0a9e274e7a4c2d359"
+    },
+    {
+      "path": "features/updates/acceptance.md",
+      "sha256": "eb318cb5ca434f51fbac814d356d875cb3d8ec587c3653d9358f6adca1408e62"
+    },
+    {
+      "path": "features/updates/release-format.md",
+      "sha256": "2d0dcc50575aeca6d996a0f007ec7d20ac0e576a071299982c5e5cdf59dbe80d"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "MENU-STRUCTURE-01",
+      "title": "Главное меню",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-STRUCTURE-02",
+      "title": "Дополнительные маршруты",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-STRUCTURE-03",
+      "title": "Доступность действий",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-INPUT-01",
+      "title": "Три способа управления",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-INPUT-02",
+      "title": "Значение кнопок геймпада",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-INPUT-03",
+      "title": "Единственный получатель ввода",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-INPUT-04",
+      "title": "Защита переходов",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-INPUT-05",
+      "title": "Поля ввода",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-FOCUS-01",
+      "title": "Видимый и осмысленный фокус",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-FOCUS-02",
+      "title": "Восстановление контекста",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-FOCUS-03",
+      "title": "Раскрытие выбранного элемента",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-DEVICE-01",
+      "title": "Переключение устройства",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-DEVICE-02",
+      "title": "Указатель мыши",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-HINTS-01",
+      "title": "Только геймпад",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-HINTS-02",
+      "title": "Подсказка на экранном действии",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-HINTS-03",
+      "title": "Соответствие поведению",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-LAYOUT-01",
+      "title": "Повторяющиеся действия",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-LAYOUT-02",
+      "title": "Экран без прокрутки",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-LAYOUT-03",
+      "title": "Поддерживаемые размеры",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-STATE-01",
+      "title": "Ошибки в визуальном языке игры",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-STATE-02",
+      "title": "Выполняющиеся операции",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "MENU-PAUSE-01",
+      "title": "Игровое меню и полномочия",
+      "source": "features/menu-base/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-BASE-01",
+      "title": "Наследование базового меню",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-ENTRY-01",
+      "title": "Главное и игровое меню",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-CATALOG-01",
+      "title": "Полный применимый каталог",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-GROUPS-01",
+      "title": "Смысловые разделы",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-SCOPE-01",
+      "title": "Предпочтения отдельно от баланса",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-CONTROL-01",
+      "title": "Тип элемента",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-CONTROL-02",
+      "title": "Контракт параметра",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-CONTROL-03",
+      "title": "Область действия",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-PERSIST-01",
+      "title": "Автоматическое применение и сохранение",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-PERSIST-02",
+      "title": "Отложенное применение",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-PERSIST-03",
+      "title": "Ошибки и совместимость",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-DISPLAY-01",
+      "title": "Безопасная смена экрана",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-AUDIO-01",
+      "title": "Громкости вместо отдельного mute",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-AUDIO-02",
+      "title": "Технический тихий запуск",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-RESET-01",
+      "title": "Область сброса",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-RESET-02",
+      "title": "Shortcut геймпада",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-HELP-01",
+      "title": "Отдельная графическая справка",
+      "source": "features/settings/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-HELP-02",
+      "title": "Страницы устройств",
+      "source": "features/settings/controls-help.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-HELP-03",
+      "title": "Генерируемые изображения",
+      "source": "features/settings/controls-help.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-HELP-04",
+      "title": "Только игровое управление",
+      "source": "features/settings/controls-help.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-HELP-05",
+      "title": "Точность назначений",
+      "source": "features/settings/controls-help.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "SETTINGS-HELP-06",
+      "title": "Читаемость и проверка",
+      "source": "features/settings/controls-help.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-SCOPE-01",
+      "title": "Параметры геймдизайна",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-SCOPE-02",
+      "title": "Осмысленное редактирование",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-GROUPS-01",
+      "title": "Группировка и расширение",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-CATALOG-01",
+      "title": "Контракт параметра",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-CATALOG-02",
+      "title": "Согласованность с runtime",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-FIND-01",
+      "title": "Глобальный поиск",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-EDIT-01",
+      "title": "Точное изменение значения",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-DRAFT-01",
+      "title": "Черновик и diff",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-DRAFT-02",
+      "title": "Предупреждение о потере изменений",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-VALIDATE-01",
+      "title": "Проверка конфигурации",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-PROFILES-01",
+      "title": "Идентичность профиля",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-PROFILES-02",
+      "title": "Переименование и удаление своих профилей",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-VERSIONS-01",
+      "title": "Неизменяемые сохранённые версии",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-VERSIONS-02",
+      "title": "Раздельный выбор",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-DEV-01",
+      "title": "Полномочия автора",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-DEV-02",
+      "title": "Хранение авторских данных в Git",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-PROD-01",
+      "title": "Защищённый пакет и эксперименты игрока",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-RELEASE-01",
+      "title": "Default и состав поставки",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-RELEASE-02",
+      "title": "Стартовый выбор и возврат",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-RELEASE-03",
+      "title": "Отметка не является публикацией",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-ACTIVE-01",
+      "title": "Автоматическая активация выбранной версии",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-MATCH-01",
+      "title": "Граница текущего матча",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-STORAGE-01",
+      "title": "Надёжность записи",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-UPGRADE-01",
+      "title": "Сохранение экспериментов",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-UPGRADE-02",
+      "title": "Несовместимость",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-TEST-01",
+      "title": "Проверка выбранной конфигурации",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-UX-01",
+      "title": "Общий UX",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "LAB-EXTEND-01",
+      "title": "Дополнительные возможности",
+      "source": "features/design-lab/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-PACKAGE-01",
+      "title": "Готовая поставка",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-IDENTITY-01",
+      "title": "Единая иконка",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-FLOW-01",
+      "title": "Понятная установка",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-FLOW-02",
+      "title": "Предварительные проверки",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-RIGHTS-01",
+      "title": "Минимальные права",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-TRUST-01",
+      "title": "Подпись и тестовая поставка",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-CONTENT-01",
+      "title": "Полный состав и точка входа",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-CONTENT-02",
+      "title": "Сведения об установке",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-LAUNCH-01",
+      "title": "Штатный запуск",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-DATA-01",
+      "title": "Разделение приложения и данных",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-REINSTALL-01",
+      "title": "Повторная установка",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-REINSTALL-02",
+      "title": "Работающая игра и каналы",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-RECOVERY-01",
+      "title": "Отмена и сбои",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-REMOVE-01",
+      "title": "Удаление",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-ARGS-01",
+      "title": "Параметры и тихий запуск",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-QA-01",
+      "title": "Проверки по изменениям",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "INSTALLER-RELEASE-01",
+      "title": "Публикация без полного регресса",
+      "source": "features/installer/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-SOURCE-01",
+      "title": "GitHub Releases",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-SELECT-01",
+      "title": "Подходящая версия",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-CHECK-01",
+      "title": "Проверка только при запуске",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-CHECK-02",
+      "title": "Сеть и лимиты",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-CONSENT-01",
+      "title": "Фиксированное поведение без настроек",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-FLOW-01",
+      "title": "Игра и несохранённая работа",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-UI-01",
+      "title": "Состояния в главном меню",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-DOWNLOAD-01",
+      "title": "Отдельная подготовка",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-HISTORY-01",
+      "title": "«Что нового» на языке игры",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-CHANGELOG-01",
+      "title": "Двуязычное описание релиза",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-TRUST-01",
+      "title": "Подлинность и целостность",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-INSTALL-01",
+      "title": "Целостная установка",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-INSTALL-02",
+      "title": "Бесшовное применение",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-DATA-01",
+      "title": "Сохранность данных",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-RECOVERY-01",
+      "title": "Возврат к рабочей версии",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-ARGS-01",
+      "title": "Параметры после обновления",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-RELEASE-01",
+      "title": "Полный и неизменяемый выпуск",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "UPDATES-QA-01",
+      "title": "Приёмка и публикация",
+      "source": "features/updates/requirements.md",
+      "status": "pending",
+      "evidence": null
+    }
+  ]
+}

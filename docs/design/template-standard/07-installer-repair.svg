@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect x="0" y="0" width="1440" height="900" rx="3" fill="#0b1725" stroke="none"/>
+<text x="56" y="43" fill="#e3bd78" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start">STAR TOURNAMENT</text>
+<text x="1384" y="43" fill="#9aaebe" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end">МАКЕТ · НЕ UNITY</text>
+<path d="M56 61 L1384 61" stroke="#304453"/>
+<rect x="56" y="92" width="134" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="123.0" y="123.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">‹ НАЗАД</text>
+<text x="226" y="126" fill="#e3bd78" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="start">УСТАНОВКА И ВОССТАНОВЛЕНИЕ</text>
+<text x="226" y="165" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Схема содержания штатного Windows wizard · оформление мастера остаётся системным</text>
+<rect x="260" y="227" width="920" height="530" rx="3" fill="#f4f5f6" stroke="#83909b"/>
+<rect x="260" y="227" width="920" height="70" rx="3" fill="#ffffff" stroke="none"/>
+<text x="298" y="273" fill="#182838" font-family="Arial, sans-serif" font-size="25" font-weight="700" text-anchor="start">Star Tournament — установка</text>
+<text x="302" y="347" fill="#182838" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="start">Обнаружена установленная игра</text>
+<text x="302" y="394" fill="#3b4c5b" font-family="Arial, sans-serif" font-size="20" font-weight="400" text-anchor="start">C:\Program Files\Star Tournament</text>
+<text x="302" y="449" fill="#182838" font-family="Arial, sans-serif" font-size="21" font-weight="400" text-anchor="start">Установлена та же версия</text>
+<text x="302" y="490" fill="#182838" font-family="Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start">Восстановить файлы приложения.</text>
+<text x="302" y="535" fill="#3b4c5b" font-family="Arial, sans-serif" font-size="20" font-weight="400" text-anchor="start">Настройки, профили и история сохранятся.</text>
+<text x="302" y="580" fill="#3b4c5b" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Для более новой версии здесь будет действие «Обновить».</text>
+<rect x="302" y="668" width="230" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="417.0" y="699.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Отмена</text>
+<rect x="816" y="668" width="320" height="48" rx="3" fill="#e3bd78" stroke="#385062"/>
+<text x="976.0" y="699.0" fill="#0b1725" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Восстановить</text>
+<path d="M56 824 L1384 824" stroke="#304453"/>
+<text x="56" y="862" fill="#9aaebe" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start">Нужные права и занятые файлы проверяются до замены. Этот мастер не появляется при штатном обновлении из игры.</text>
+</svg>
