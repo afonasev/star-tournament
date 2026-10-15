@@ -6,14 +6,14 @@ namespace StarTournament.ProvingGround
     /// <summary>Bright white laboratory skin. All decoration is collider-free; authored solids own obstruction.</summary>
     public sealed class WellArenaPresentation:MonoBehaviour
     {
-        readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
+        readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<Bounds>> batches=new Dictionary<Material,List<Bounds>>();
         UnityEngine.Rendering.AmbientMode oldMode;Color oldAmbient;
         Material fontMaterial;Font signFont;
-        Material white,floor,metal,glass,door,soil;Material[] colours;Mesh cube;ProvingProfile profile;
+        Material white,floor,metal,glass,door,soil;Material[] colours;ProvingProfile profile;
         Material Mat(string name,Color colour,bool unlit=false,VisualMaterialRole role=VisualMaterialRole.Wall)
         {var m=new Material(Shader.Find(unlit?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=colour};m.SetFloat("_Smoothness",.35f);owned.Add(m);if(!unlit)NativeVisualMaterials.Register(this,m,role);return m;}
         void Box(Material m,Vector3 centre,Vector3 size)
-        {if(!batches.TryGetValue(m,out var b)){b=new List<CombineInstance>();batches[m]=b;}b.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(centre,Quaternion.identity,size)});}
+        {if(!batches.TryGetValue(m,out var b)){b=new List<Bounds>();batches[m]=b;}b.Add(new Bounds(centre,size));}
         void Label(string value,Vector3 position,Quaternion rotation,Color colour,float size=.5f)
         {
             var go=new GameObject("Well sign: "+value);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation;
@@ -21,10 +21,29 @@ namespace StarTournament.ProvingGround
             if(!fontMaterial){signFont=text.font;fontMaterial=new Material(Shader.Find("StarTournament/LunarSign"));fontMaterial.mainTexture=signFont.material.mainTexture;owned.Add(fontMaterial);Font.textureRebuilt+=RefreshFont;}
             var renderer=text.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;var bounds=renderer.localBounds;go.transform.localPosition=position-rotation*bounds.center;
         }
+        public static Bounds WallSkin(ArenaSolid solid,IEnumerable<ArenaSolid> solids)
+        {
+            var result=new Bounds(solid.Position,solid.Size);
+            if(solid.Material!="wall")return result;
+            int axis=solid.Size.x>solid.Size.z?0:2,across=axis==0?2:0;
+            if(solid.Size[across]>.31f)return result;
+            var min=result.min;var max=result.max;
+            foreach(var other in solids)
+            {
+                if(other==solid||other.Material!="wall"||other.Size[axis]>.31f||other.Size[across]<=.31f)continue;
+                var b=new Bounds(other.Position,other.Size);
+                if(b.max.y<=result.min.y+.0001f||b.min.y>=result.max.y-.0001f||solid.Position[across]<b.min[across]-.0001f||solid.Position[across]>b.max[across]+.0001f)continue;
+                if(Mathf.Abs(result.min[axis]-other.Position[axis])<.0001f)min[axis]=Mathf.Min(min[axis],b.min[axis]);
+                if(Mathf.Abs(result.max[axis]-other.Position[axis])<.0001f)max[axis]=Mathf.Max(max[axis],b.max[axis]);
+            }
+            // The shaft floor is 30 cm below the terminal; keep its perimeter closed down to that floor.
+            if(solid.Id.StartsWith("shaft-"))min.y=-.3f;
+            result.SetMinMax(min,max);return result;
+        }
         void RefreshFont(Font font){if(font==signFont&&fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;}
         public void Build(ArenaDefinition definition,ProvingProfile profile)
         {
-            this.profile=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;var primitive=GameObject.CreatePrimitive(PrimitiveType.Cube);cube=primitive.GetComponent<MeshFilter>().sharedMesh;DestroyImmediate(primitive);
+            this.profile=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;
             white=Mat("Well ceramic white",new Color(.92f,.95f,.96f));floor=Mat("Well pale floor",new Color(.63f,.71f,.74f),role:VisualMaterialRole.Floor);metal=Mat("Well brushed metal",new Color(.25f,.32f,.36f),role:VisualMaterialRole.Metal);metal.SetFloat("_Metallic",.6f);
             door=Mat("Closed office doors",new Color(.42f,.50f,.55f));soil=Mat("Garden soil",new Color(.23f,.15f,.08f));
             glass=Mat("Armoured glass",new Color(.35f,.80f,.89f,profile.Get("well.glassOpacity")));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",5);glass.SetFloat("_DstBlend",10);glass.SetFloat("_ZWrite",0);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
@@ -40,14 +59,23 @@ namespace StarTournament.ProvingGround
                     for(float x=solid.Position.x-solid.Size.x/2;x<solid.Position.x+solid.Size.x/2;x+=profile.Get("well.grateSpacing"))Box(metal,new Vector3(x,solid.Position.y,solid.Position.z),new Vector3(.055f,solid.Size.y,solid.Size.z));
                     for(float z=solid.Position.z-solid.Size.z/2;z<solid.Position.z+solid.Size.z/2;z+=profile.Get("well.grateSpacing"))Box(metal,new Vector3(solid.Position.x,solid.Position.y,z),new Vector3(solid.Size.x,solid.Size.y,.055f));
                 }
-                else Box(m,solid.Position,solid.Size);
+                else
+                {
+                    var skin=WallSkin(solid,definition.Solids);Box(m,skin.center,skin.size);
+                    // Floor plates end at the wall centreline. Continue the facade across each slab edge.
+                    if(solid.Id.Contains("-outer-"))
+                    {
+                        var seam=skin;seam.center=new Vector3(seam.center.x,Mathf.Floor(solid.Position.y/WellArenaCatalog.Storey)*WellArenaCatalog.Storey+WellArenaCatalog.ClearHeight+WellArenaCatalog.Slab/2,seam.center.z);
+                        seam.size=new Vector3(seam.size.x,WellArenaCatalog.Slab,seam.size.z);Box(white,seam.center,seam.size);
+                    }
+                }
                 if(solid.Material=="wall"&&solid.Size.y>2)
                 {
                     for(int f=0;f<3;f++)
                     {
                         float stripeY=f*WellArenaCatalog.Storey+1.1f;
                         if(stripeY<solid.Position.y-solid.Size.y/2||stripeY>solid.Position.y+solid.Size.y/2)continue;
-                        var stripe=solid.Size;stripe.y=.16f;stripe.x+=.012f;stripe.z+=.012f;Box(colours[f],new Vector3(solid.Position.x,stripeY,solid.Position.z),stripe);
+                        var skin=WallSkin(solid,definition.Solids);var stripe=skin.size;stripe.y=.16f;stripe.x+=.012f;stripe.z+=.012f;Box(colours[f],new Vector3(skin.center.x,stripeY,skin.center.z),stripe);
                     }
                 }
                 if(solid.Material=="equipment")
@@ -85,7 +113,8 @@ namespace StarTournament.ProvingGround
             {Box(metal,new Vector3(t,f*WellArenaCatalog.Storey+.006f,17.2f),new Vector3(.015f,.008f,15));Box(metal,new Vector3(t,f*WellArenaCatalog.Storey+.006f,-17.2f),new Vector3(.015f,.008f,15));}
             foreach(var pair in batches)
             {
-                var mesh=new Mesh{indexFormat=UnityEngine.Rendering.IndexFormat.UInt32,name="Well material batch"};mesh.CombineMeshes(pair.Value.ToArray());owned.Add(mesh);
+                var blockers=pair.Key==glass?null:batches.Where(p=>p.Key!=pair.Key&&p.Key!=glass).SelectMany(p=>p.Value).ToArray();
+                var mesh=WellSurfaceMesh.Build(pair.Value,blockers);owned.Add(mesh);
                 var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;go.AddComponent<MeshRenderer>().sharedMaterial=pair.Key;
             }
             RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=new Color(.9f,.94f,1)*profile.Get("well.fill");

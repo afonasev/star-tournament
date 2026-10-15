@@ -1,0 +1,39 @@
+{
+  "baseline": "46e4608c5b36d8de5d2c347a800ddc4d3a4c61e5",
+  "branch": "codex/well-wall-joints",
+  "feedback": "F1 of restructure-well-arena",
+  "scope": "Collider-free skin only. Union boundaries remove buried/overlapping faces; perpendicular wall endpoints fill square corners; shaft walls meet bottom; exterior walls bridge slab edges. All stripes use same join geometry.",
+  "commands": [
+    "UNITY_RUN_MODE=shared unity/tools.sh test-edit-filter \"WellSurfaceMeshTests;WellArenaTests\"",
+    "unity-run --shared --project <owned>/unity -- Unity -batchmode -noaudio -muted -projectPath <owned>/unity -runTests -testPlatform PlayMode -testFilter WellWallJointVisualTests -testResults <owned>/.local/unity-evidence/joint-visual/playmode.xml -logFile <owned>/.local/unity-evidence/joint-visual/playmode.log"
+  ],
+  "checks": [
+    {
+      "name": "editmode",
+      "total": "12",
+      "passed": "12",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "28.0820917"
+    },
+    {
+      "name": "visual",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "7.8832901"
+    }
+  ],
+  "render_review": "16 actual Editor images inspected: both shaft entries and backs on all 3 floors, corner room, atrium corner, stair room and stair entrance. Wall corner seams continuous. Moving-platform perimeter clearance retained.",
+  "authored_geometry": "WellArenaCatalog unchanged; all 535 solids, 9 pickups, spawn/navigation/lift data unchanged; no presentation colliders.",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "eb9e96b429081ad2a599980c64edabad7dd1d7d2f60dabb3ef34b9e5b7e1cab6",
+    "unity/Assets/StarTournament/Runtime/Arena/WellSurfaceMesh.cs": "9a1b451df75f780143c5141067a5577ab78d389e207b795fe596931c92fff7e2",
+    "unity/Assets/StarTournament/Tests/EditMode/WellSurfaceMeshTests.cs": "83eec87d0a4c6c5b9da336989481ec13f41d875861b2ebc0625cad88b8c8d2c2",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellWallJointVisualTests.cs": "c51e4529fec9b26934c7a9e843373f49c9f23c567f9213a6d3759540a298b3fd"
+  },
+  "Player": "Not rebuilt; prior candidate d6430904 predates this correction. New build/publication requires command.",
+  "full_tests": "Not authorized/not run",
+  "acceptance": "Human acceptance pending; Editor evidence is not Player acceptance."
+}
