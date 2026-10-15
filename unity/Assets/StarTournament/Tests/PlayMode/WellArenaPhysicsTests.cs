@@ -145,6 +145,32 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(motor.State.Position.z,Is.GreaterThanOrEqualTo(13));UnityEngine.Object.DestroyImmediate(motor.gameObject);
             }
         }
+        [UnityTest] public IEnumerator GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround()
+        {
+            yield return null;Physics.SyncTransforms();
+            foreach(var solid in arena.Definition.Solids.Where(s=>s.Id.Contains("gallery-cover")))
+            {
+                float floor=solid.Position.y-solid.Size.y/2;
+                var start=new Vector3(solid.Position.x-3,floor,solid.Position.z);var goal=start+Vector3.right*6;
+                Assert.That(Physics.Raycast(start+Vector3.up*.7f,Vector3.right,out var hit,6,ProvingArena.ShotMask),Is.True,solid.Id);
+                Assert.That(hit.collider.name,Is.EqualTo(solid.Id));
+                Assert.That(Physics.Raycast(start+Vector3.up*(solid.Size.y+.3f),Vector3.right,out _,6,ProvingArena.ShotMask),Is.False,"Fire above low case");
+                var motor=Motor(start);for(int i=0;i<90;i++)Tick(motor,new LocalAction{Move=Vector2.right});
+                Assert.That(motor.State.Position.x,Is.LessThan(solid.Position.x-solid.Size.x/2),"real capsule must not enter case");
+                UnityEngine.Object.DestroyImmediate(motor.gameObject);motor=Motor(start);for(int i=0;i<5;i++)Tick(motor);
+                Assert.That(routes.TryRoute(start,goal,out var points,out var failure),Is.True,solid.Id+" "+failure);
+                int next=0;
+                for(int tick=0;tick<1200&&next<points.Length;tick++)
+                {
+                    var delta=points[next].Position-motor.State.Position;
+                    if(new Vector2(delta.x,delta.z).magnitude<.22f&&Mathf.Abs(delta.y)<.35f){next++;continue;}
+                    delta.y=0;var local=Quaternion.Euler(0,-motor.State.Yaw,0)*delta.normalized;
+                    Tick(motor,new LocalAction{Move=new Vector2(local.x,local.z)});
+                }
+                Assert.That(next,Is.EqualTo(points.Length),solid.Id+" bypass stopped at "+motor.State.Position);
+                Assert.That(Vector3.Distance(motor.State.Position,goal),Is.LessThan(.4f));UnityEngine.Object.DestroyImmediate(motor.gameObject);
+            }
+        }
         [UnityTest] public IEnumerator WindowsBlockFireButNotSightAndGratesPassShots()
         {
             yield return null;

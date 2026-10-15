@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround.Tests
         {
             var d=WellArenaCatalog.Build();Assert.That(ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).IsValid,Is.True,ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).ToString());
             Assert.That(AuthoredArenaCatalog.Name(d.MapId),Is.EqualTo("Колодец"));Assert.That(AuthoredArenaCatalog.Maximum(d.MapId),Is.EqualTo(8));
-            Assert.That(d.Revision,Is.EqualTo("2"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(9));
+            Assert.That(d.Revision,Is.EqualTo("3"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(9));
             Assert.That(d.Pickups.Count(p=>p.Kind==ArenaPickupKind.Armor),Is.EqualTo(3));
             foreach(var kind in new[]{ArenaPickupKind.Speed,ArenaPickupKind.Shotgun,ArenaPickupKind.Pulse,ArenaPickupKind.Cutter,ArenaPickupKind.Damage,ArenaPickupKind.FullHeal})
                 Assert.That(d.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(1),kind.ToString());
@@ -49,6 +49,25 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(Mathf.Abs(transition.OrderedFeet.Last().y-transition.OrderedFeet.First().y),Is.EqualTo(3.6f).Within(.00001f));
             }
         }
+        [Test] public void FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement()
+        {
+            var current=WellArenaCatalog.Build();var previous=WellArenaRevisionTwo.Build();
+            var furniture=current.Solids.Where(WellFurniturePlan.IsFurniture).ToArray();
+            Assert.That(furniture.Length,Is.EqualTo(44));Assert.That(furniture.Count(s=>s.Id.Contains("gallery-cover")),Is.EqualTo(6));
+            Assert.That(current.Solids.Where(s=>!WellFurniturePlan.IsFurniture(s)).Select(JsonUtility.ToJson),Is.EqualTo(previous.Solids.Select(JsonUtility.ToJson)),"Every old structural solid stays exact");
+            Assert.That(current.Spawns,Is.EqualTo(previous.Spawns));Assert.That(current.Pickups.Select(JsonUtility.ToJson),Is.EqualTo(previous.Pickups.Select(JsonUtility.ToJson)));
+            Assert.That(current.Lifts.Select(JsonUtility.ToJson),Is.EqualTo(previous.Lifts.Select(JsonUtility.ToJson)));Assert.That(current.Transitions.Select(JsonUtility.ToJson),Is.EqualTo(previous.Transitions.Select(JsonUtility.ToJson)));
+            foreach(var item in furniture)
+            {
+                Assert.That(item.Layer,Is.EqualTo(ProvingArena.WorldLayer));
+                var bounds=new Bounds(item.Position,item.Size-Vector3.one*.002f);
+                foreach(var other in current.Solids.Where(s=>s.Id!=item.Id))Assert.That(bounds.Intersects(new Bounds(other.Position,other.Size-Vector3.one*.002f)),Is.False,item.Id+" overlaps "+other.Id);
+                foreach(var pos in current.Spawns.Concat(current.Pickups.Select(p=>p.Anchor)))
+                    Assert.That(bounds.SqrDistance(pos+Vector3.up*.7f),Is.GreaterThan(1),item.Id+" obstructs "+pos);
+                if(item.Id.Contains("gallery-cover"))Assert.That(Mathf.Abs(item.Position.z)-item.Size.z/2-WellArenaCatalog.Pit,Is.GreaterThan(3),"wide gallery bypass");
+            }
+            Assert.That(JsonUtility.ToJson(current),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"No randomized layout");
+        }
         [Test] public void AddingWellProfilesPreservesHistoricalLabHashAndEditableValues()
         {
             var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"well-lab-"+Guid.NewGuid()+".json");
@@ -80,6 +99,37 @@ namespace StarTournament.ProvingGround.Tests
                 var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
                 Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
                 Assert.That(preserved.Snapshot.Get("well.map.lift-north.top"),Is.EqualTo(10));
+                Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
+                Assert.That(migrated.Selected.Snapshot.Get("well.map.lift-north.top"),Is.EqualTo(2*WellArenaCatalog.Storey));
+                var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);
+                Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+                Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber).Hash,Is.EqualTo(priorHash));
+            }
+            finally
+            {
+                if(System.IO.File.Exists(path))System.IO.File.Delete(path);
+                if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
+            }
+        }
+        [TestCase(false)][TestCase(true)] public void PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(bool compact)
+        {
+            var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"well-revision-"+Guid.NewGuid()+".json");
+            try
+            {
+                var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
+                var method=typeof(ProvingProfile).GetMethod("BeforeWellFurniture",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList();
+                var history=new DesignLabHistory(path,old);history.Create("Колодец без мебели");var draft=history.Selected.Snapshot;draft.Set("well.liftSpeed",5);history.Save(draft);
+                var prior=history.Selected;string priorHash=prior.Hash;int priorNumber=prior.Number;
+                if(!compact)
+                {
+                    var file=typeof(DesignLabHistory).GetField("data",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(history);
+                    System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
+                }
+                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
+                var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
+                Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
+                Assert.That(preserved.Snapshot.Get("well.map.lift-north.top"),Is.EqualTo(2*WellArenaCatalog.Storey));
                 Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
                 Assert.That(migrated.Selected.Snapshot.Get("well.map.lift-north.top"),Is.EqualTo(2*WellArenaCatalog.Storey));
                 var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);

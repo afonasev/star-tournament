@@ -39,7 +39,7 @@ namespace StarTournament.ProvingGround.Tests
                         Assert.That(material.IsKeywordEnabled("_NORMALMAP"),Is.True,material.name);
                     }
                 }
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-material-depth/views"));Directory.CreateDirectory(directory);
+                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-furniture/views"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"arena.json"),JsonUtility.ToJson(arena.Definition,true));
                 var settings=new System.Text.StringBuilder();settings.AppendLine("Color space: "+QualitySettings.activeColorSpace);settings.AppendLine("Pipeline: "+UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.name);
                 foreach(VisualEffect effect in System.Enum.GetValues(typeof(VisualEffect)))settings.AppendLine(effect+": "+NativeVisualPreferences.Enabled(effect)+" / "+NativeVisualPreferences.Strength(movement,effect));
@@ -67,6 +67,13 @@ namespace StarTournament.ProvingGround.Tests
                     var inward=f==0?Vector3.right:f==1?Vector3.forward:Vector3.back;
                     eyes.Add(module+inward*3);targets.Add(module);names.Add("department-module-"+f);
                 }
+                for(int f=0;f<3;f++)
+                {
+                    float y=f*WellArenaCatalog.Storey;
+                    eyes.Add(new Vector3(15.5f,y+1.7f,20.5f));targets.Add(new Vector3(21,y+1.15f,23));names.Add("workstation-"+f);
+                    eyes.Add(new Vector3(17,y+1.7f,11.3f));targets.Add(new Vector3(20,y+.9f,14.65f));names.Add("gallery-cover-"+f);
+                }
+                eyes.Add(new Vector3(20,1.7f,4.8f));targets.Add(new Vector3(23.9f,1,6.4f));names.Add("service-workbench");
                 File.WriteAllText(Path.Combine(directory,"resources.json"),"{\"lights\":24,\"vertices\":"+vertices+",\"renderers\":"+skin.GetComponentsInChildren<MeshRenderer>().Length+"}");
                 for(int i=0;i<eyes.Count;i++)
                 {
@@ -74,7 +81,7 @@ namespace StarTournament.ProvingGround.Tests
                     var previous=RenderTexture.active;RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);
                     try{image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();File.WriteAllBytes(Path.Combine(directory,names[i]+".png"),image.EncodeToPNG());}finally{RenderTexture.active=previous;Object.Destroy(image);}
                 }
-                Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(23));
+                Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(30));
             }
             finally{if(visual)visual.ResetWorld();if(camera)camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
         }

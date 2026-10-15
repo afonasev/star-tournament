@@ -73,6 +73,8 @@ namespace StarTournament.ProvingGround
             {
                 var tr=transform.parent.Find(solid.Id);if(!tr)continue;tr.GetComponent<Renderer>().enabled=false;
                 Material m=solid.Material=="glass"?glass:solid.Material=="door"?door:solid.Material=="floor"?(solid.Id=="garden"?soil:floor):white;
+                if(WellFurniturePlan.IsFurniture(solid))
+                {detail.Furniture(solid);continue;}
                 if(solid.Surface=="well-grate")
                 {
                     var rail=solid.Size;rail.x=.10f;

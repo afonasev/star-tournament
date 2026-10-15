@@ -3,7 +3,7 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     /// <summary>well-research-detail-v1. Cosmetic mesh authoring, never physics or simulation random.</summary>
-    public sealed class WellLabDetail
+    public sealed partial class WellLabDetail
     {
         readonly Transform parent;readonly List<Object> owned;readonly ProvingProfile profile;
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
