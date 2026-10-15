@@ -1,0 +1,65 @@
+{
+  "baseline": "ea6502dc",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "0c2d4562683252d54736f294dc1af463050eac17",
+  "checks": {
+    "launcher": "21/21 passed; actual production C# state machine and AuthenticatedSource HTTP cancellation",
+    "latest_unique_playmode": "5/5 passed: four NativeUpdateMenuTests + FourPlayerMenuTests.StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld"
+  },
+  "commands": [
+    "/Users/eaafonasev/.dotnet/dotnet restore distribution/tests/Launcher.Contracts.csproj --source /Users/eaafonasev/.nuget/packages --ignore-failed-sources",
+    "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --update-session",
+    "tools/unity.sh shared -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter NativeUpdateMenuTests;FourPlayerMenuTests.StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld -profilesPath <owned>/profiles.json -testResults <owned>/results.xml -logFile <owned>/unity.log"
+  ],
+  "selection": "Updater UI/consent, actual QueueMatch and IPC FIFO correlated drain; neighboring Start roster fixture because loading path touched. No full suite or natural long match.",
+  "runs": [
+    {
+      "run": "play1",
+      "total": "5",
+      "passed": "4",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "37.5386286"
+    },
+    {
+      "run": "play2",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "16.5155149"
+    },
+    {
+      "run": "play3",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "36.1311761"
+    }
+  ],
+  "failed_attempts": [
+    "compile-first: NotRun NETSDK1004 missing obj/project.assets.json; offline restore then selected runner passed",
+    "play1: one new fixture missing release-label env; bridge was intentionally absent. Fixed test environment; actual admission passed play2 and play3. Existing four tests passed play1."
+  ],
+  "source_sha256": {
+    "distribution/launcher/AuthenticatedSource.cs": "6913c81de58e98fb9011d48388cdb54f6427b877c351d32f9cca6537acdc5d72",
+    "distribution/launcher/Program.cs": "53c550de557a64ad332aca5107475046a46bba3a0569817552aa0398a52e50f4",
+    "distribution/tests/Program.cs": "8d812744305215aadc7590d1f3592de9d438deba0d5248431f89d2515f8421d7",
+    "unity/Assets/StarTournament/Runtime/NativeUpdateBridge.cs": "cc3f826a4771274a9bcc4c700d2348aef2b2894a6278760e171b8742f518f829",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "097bcbdb8b8c114252ab3151d5e9a2dc27fff57a79f6a9819a7bd291893d70f7",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundLoading.cs": "be6c91c155870f6995d7c1b19bc3cc03492e3abdd62833ac6f93c9e468984334",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "d8a8294dbcfdb695a029c95168cd05e600f992aada8439eca251313e010002f2",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeUpdateMenuTests.cs": "26ea729e54cc87055dad5210d5a4763760690f30d72280db54d26192c5e6055c",
+    "distribution/launcher/UpdateSession.cs": "881b45854ac34a50344095e95cf41b38af4ed42799695f6d8b13582d82921804",
+    "distribution/tests/UpdateSessionChecks.cs": "b9f73a5efdc6c4593fc8fb5b3cf911e9c298dfe3bd6f6b5a4531efaefc15d4db"
+  },
+  "evidence_type": "C# production-code checks + shared muted Editor PlayMode + offscreen render PNG, not native installed Player acceptance",
+  "temporary_editor_serialization": "Editor-generated ProjectSettings/ShaderGraph serialization diff saved; source versions restored after Editor exit. No release config changes.",
+  "remaining": [
+    "History04 and bilingual changelog",
+    "Startup health rollback",
+    "Actual installed launcher/Player compatibility, Windows/macOS/UAC, physical controller/TV/human acceptance",
+    "Full/build/Player/release/deploy deferred to separate explicit human commands"
+  ]
+}

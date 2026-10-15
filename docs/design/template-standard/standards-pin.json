@@ -771,43 +771,61 @@
       "id": "UPDATES-CHECK-01",
       "title": "Проверка только при запуске",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-update-download-flow/verification.json",
+        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+      }
     },
     {
       "id": "UPDATES-CHECK-02",
       "title": "Сеть и лимиты",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-update-download-flow/verification.json",
+        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+      }
     },
     {
       "id": "UPDATES-CONSENT-01",
       "title": "Фиксированное поведение без настроек",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-update-download-flow/verification.json",
+        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+      }
     },
     {
       "id": "UPDATES-FLOW-01",
       "title": "Игра и несохранённая работа",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-update-download-flow/verification.json",
+        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+      }
     },
     {
       "id": "UPDATES-UI-01",
       "title": "Состояния в главном меню",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-update-download-flow/verification.json",
+        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+      }
     },
     {
       "id": "UPDATES-DOWNLOAD-01",
       "title": "Отдельная подготовка",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-update-download-flow/verification.json",
+        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+      }
     },
     {
       "id": "UPDATES-HISTORY-01",

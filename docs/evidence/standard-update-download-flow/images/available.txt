@@ -1,0 +1,4 @@
+EDITOR_OFFSCREEN_SYNTHETIC_NOT_PLAYER_ACCEPTANCE
+revision=
+state=available
+identity=0.1.0-test.10 (08.10.2026)

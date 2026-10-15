@@ -22,6 +22,7 @@ namespace StarTournament.ProvingGround
         int setupStep, setupMaxStep;
         InputSystemUIInputModule menuInputModule;
         InputAction menuSubmitAction,menuMoveAction,menuClickAction;
+        NativeUpdateBridge updateBridge;
         InputDevice menuDevice,menuActivationDevice;
         int menuActivationFrame=-1;
         Button identitySettingsButton,operatorSettingsButton;
@@ -87,11 +88,13 @@ namespace StarTournament.ProvingGround
             if(!string.IsNullOrEmpty(releaseLabel))
             {
                 Label(mainMenuScreen.transform,"installed-release",releaseLabel,18,new Vector2(.60f,.03f),new Vector2(.97f,.07f),TextAnchor.MiddleRight,new Color32(153,173,187,255));
-                var updateStatus=Label(mainMenuScreen.transform,"update-status","",18,new Vector2(.53f,.135f),new Vector2(.97f,.26f),TextAnchor.LowerRight,new Color32(153,173,187,255));
+                var updateStatus=Label(mainMenuScreen.transform,"update-status","",18,new Vector2(.53f,.15f),new Vector2(.97f,.30f),TextAnchor.LowerRight,new Color32(153,173,187,255));
                 var updateOutline=updateStatus.gameObject.AddComponent<Outline>();
                 updateOutline.effectColor=new Color32(0,0,0,230);updateOutline.effectDistance=new Vector2(1,-1);
                 var updateButton=MenuButton(mainMenuScreen.transform,"update-action","Обновить",new Vector2(.80f,.072f),new Vector2(.97f,.13f),()=>{});
-                gameObject.AddComponent<NativeUpdateBridge>().Bind(updateStatus,updateButton);
+                var progressTrack=Panel(mainMenuScreen.transform,"update-progress",new Vector2(.80f,.138f),new Vector2(.97f,.142f),new Color32(48,68,83,255));
+                var progressFill=Panel(progressTrack.transform,"update-progress-fill",Vector2.zero,Vector2.one,MenuGold);
+                updateBridge=gameObject.AddComponent<NativeUpdateBridge>();updateBridge.Bind(updateStatus,updateButton,progressTrack.GetComponent<Image>(),progressFill.GetComponent<Image>());
             }
 
             CreateSetupUi(parent);

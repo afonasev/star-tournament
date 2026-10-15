@@ -815,6 +815,7 @@ namespace StarTournament.ProvingGround
         void Repeat() { QueueMatch(diagnostic,true); }
         void Menu()
         {
+            updateBridge?.ReturnToMenu();
             NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
             foreach(var vignette in damageVignettes)vignette?.Bind(null,-1,Profile);
             phase=Phase.Setup; diagnostic=false; combatReview=false; nativeInputReview=false; probeCameraCount=0; Session?.Stop(); presentation?.Dispose();

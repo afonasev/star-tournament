@@ -20,6 +20,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public string? Envelope { get; private set; }
     public VelopackAsset? Asset { get; private set; }
     public string? PublicationDate { get; private set; }
+    public CancellationToken CheckCancellationToken { get; set; }
 
     public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null)
     {
@@ -174,7 +175,8 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public async Task<VelopackAssetFeed> GetReleaseFeed(IVelopackLogger logger, string? appId, string channel,
         Guid? stagingId = null, VelopackAsset? latestLocalRelease = null)
     {
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(CheckCancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(10));
         var location = await Discover(timeout.Token);
         var envelope = await ReadBounded(location.Uri, 65536, config.UpdateChannel != null, timeout.Token);
         Admit(envelope);
