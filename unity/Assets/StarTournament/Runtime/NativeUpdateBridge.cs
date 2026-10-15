@@ -18,7 +18,12 @@ namespace StarTournament.ProvingGround
             public int progress;
             public string error;
             public bool restartAcknowledged,matchPaused;
+            public History history;
         }
+        [Serializable] public sealed class HistoryItem { public string version,date,russian,english; public bool installed; }
+        [Serializable] public sealed class History { public string state,error; public HistoryItem[] items; }
+        public History HistoryState {get{ReadSnapshot();return shown?.history;}}
+        public void RequestHistory(){if(enabled)QueueCommand("history");}
         public sealed class View
         {
             public string Message, Button, Action;
@@ -74,7 +79,7 @@ namespace StarTournament.ProvingGround
             {
                 while(!token.IsCancellationRequested)
                 {
-                    try {if(new FileInfo(statusPath).Length<=65536)latest=File.ReadAllText(statusPath);}
+                    try {if(new FileInfo(statusPath).Length<=8*1024*1024)latest=File.ReadAllText(statusPath);}
                     catch(IOException) { } catch(UnauthorizedAccessException) { }
                     try {await Task.Delay(100,token).ConfigureAwait(false);} catch(OperationCanceledException) {break;}
                 }

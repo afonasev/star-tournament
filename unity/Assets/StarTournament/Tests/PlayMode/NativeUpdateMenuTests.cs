@@ -170,6 +170,69 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return new WaitForSecondsRealtime(.3f);
             Assert.That(File.Exists(command),Is.False,"No second metadata check within this session");
         }
+        [UnityTest] public IEnumerator HistorySelectsInstalledReleaseScrollsAndRestoresMenuFocus()
+        {
+            oldStatus=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS");
+            oldCommand=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND");
+            oldRelease=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
+            directory=Path.Combine(Path.GetTempPath(),"star-update-menu-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            var status=Path.Combine(directory,"status.json");var command=Path.Combine(directory,"command.json");
+            File.WriteAllText(status,"{\"state\":\"current\"}");
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS",status);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND",command);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","0.1.0 (28.09.2026)");
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            pad=InputSystem.AddDevice<Gamepad>();
+            typeof(ProvingGround).GetField("menuDevice",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(ground,pad);
+            var open=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="release-history-action");
+            Assert.That(open.gameObject.activeInHierarchy,Is.True,"History remains available at current version");
+            EventSystem.current.SetSelectedGameObject(open.gameObject);
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            float end=Time.realtimeSinceStartup+5;while(!File.Exists(command)&&Time.realtimeSinceStartup<end)yield return null;
+            Assert.That(ground.GetComponentsInChildren<Button>(true).Single(x=>x.name=="release-history-back").gameObject.activeInHierarchy,Is.True,"Native Submit opens history");
+            Assert.That(File.Exists(command),Is.True,"Opening history queues a history request");
+            Assert.That(File.ReadAllText(command),Does.Contain("history"));Assert.That(File.ReadAllText(command),Does.Not.Contain("download"));
+            File.Delete(command);
+            var data=new NativeUpdateBridge.Snapshot{state="current",history=new NativeUpdateBridge.History{state="ready",items=new[]{
+                new NativeUpdateBridge.HistoryItem{version="1.1.0",date="2026-10-16",russian=string.Join("\n",Enumerable.Repeat("Улучшено управление и чтение настроек.",1200)),english="English only"},
+                new NativeUpdateBridge.HistoryItem{version="0.1.0",date="2026-09-28",russian="",english="Older release",installed=true}}}};
+            data.history.items=new[]{data.history.items[0]}.Concat(Enumerable.Range(1,9).Reverse().Select(i=>new NativeUpdateBridge.HistoryItem{version="1.0."+i,date="2026-10-15",russian="Исправления управления."})).Concat(new[]{data.history.items[1]}).ToArray();
+            var json=JsonUtility.ToJson(data);
+            Assert.That(System.Text.Encoding.UTF8.GetByteCount(json),Is.GreaterThan(65536),"History may exceed the old small status-only IPC limit");
+            File.WriteAllText(status,json);yield return new WaitForSecondsRealtime(.4f);
+            Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("release-history-back"),"Background completion must not steal focus");
+            var scroll=ground.GetComponentsInChildren<ScrollRect>(true).Single(x=>x.name=="release-history-scroll");
+            var body=ground.GetComponentsInChildren<Text>(true).Single(x=>x.name=="release-history-description");
+            Assert.That(body.text,Does.Contain("Улучшено"));Assert.That(body.text,Does.Not.Contain("English only"));
+            Assert.That(body.supportRichText,Is.False,"Release descriptions are untrusted plain text");
+            var chunks=scroll.content.GetComponentsInChildren<Text>().OrderBy(x=>x.transform.GetSiblingIndex()).ToArray();
+            Assert.That(chunks.Length,Is.GreaterThan(1),"Long descriptions use bounded text meshes");
+            Assert.That(string.Concat(chunks.Select(x=>x.text)),Is.EqualTo(data.history.items[0].russian),"All notes remain readable without truncation");
+            Assert.That(scroll.content.rect.height,Is.GreaterThan(scroll.viewport.rect.height));
+            InputSystem.QueueStateEvent(pad,new GamepadState{rightStick=Vector2.down});
+            yield return new WaitForSecondsRealtime(.3f);
+            Assert.That(scroll.content.anchoredPosition.y,Is.GreaterThan(10),"Owned right stick scrolls inside long description");
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            yield return Capture(ground,"history-long");
+            var installed=ground.GetComponentsInChildren<Button>(true).Single(x=>x.name=="release-history-version-10");
+            Assert.That(installed.GetComponentInChildren<Text>().text,Does.Contain("Установлена"));
+            foreach(var entry in ground.GetComponentsInChildren<Button>(true).Where(x=>x.name.StartsWith("release-history-version-")))
+            {
+                var text=entry.GetComponentInChildren<Text>();
+                Assert.That(text.preferredHeight,Is.LessThanOrEqualTo(text.rectTransform.rect.height),"Version and publication date fit every row");
+            }
+            installed.onClick.Invoke();yield return null;
+            Assert.That(body.text,Does.Contain("не опубликовано"),"Missing Russian is explicit, not invented or replaced with English");
+            Assert.That(scroll.content.anchoredPosition.y,Is.EqualTo(0).Within(1),"Short description is placed at its top edge");
+            yield return Capture(ground,"history-installed-no-translation");
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            Assert.That(open.gameObject.activeInHierarchy,Is.True);
+            Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(open.gameObject));
+            Assert.That(File.Exists(command),Is.False,"Reading/closing history never grants update consent");
+        }
         [Serializable] sealed class Command { public string action,id; }
         IEnumerator Capture(ProvingGround ground,string name)
         {

@@ -1,0 +1,77 @@
+{
+  "baseline": "c999afef",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "0c2d4562683252d54736f294dc1af463050eac17",
+  "status": "WIP awaiting user design clarification16; not integrated main",
+  "checks": {
+    "production_CSharp": "38 passed: 21 UpdateSession +17 ReleaseHistory, command dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --release-history",
+    "latest_affected_Unity": "5/6 pass; history geometry fails in short Editor viewport; final screenshot 1920x1080 fits, short actual viewport clips date labels"
+  },
+  "runs": [
+    {
+      "run": "play1",
+      "result": "NotRun: own waiting runner cancelled before admission for source corrections; no XML/Unity execution"
+    },
+    {
+      "run": "play2",
+      "result": "NotRun: own waiting runner cancelled before admission for source corrections; no XML/Unity execution"
+    },
+    {
+      "run": "play3",
+      "total": "6",
+      "passed": "5",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "52.2806494"
+    },
+    {
+      "run": "play4",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "17.5817257"
+    },
+    {
+      "run": "play5",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "20.5464135"
+    }
+  ],
+  "attempts": [
+    "play3 history missed initial post-load submit; fixture now waits initial menu frame and asserts actual screen opening/command",
+    "play4 history long IPC/text/scroll/language/focus passed until normalized scroll assertion for non-scrollable content; corrected contract to top-edge position",
+    "play5 eleven-version layout shows dates in Full HD PNG but geometry assertion exposes clipped dates in short Editor viewport; no weakening of assertions/count/depth"
+  ],
+  "open_design": {
+    "mockup": "docs/design/template-standard/16-history-compact.png",
+    "reason": "approved04 says only description scrolls; adding left list scroll in short viewport requires user design approval",
+    "implemented": false
+  },
+  "commands": [
+    "tools/unity.sh shared -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter NativeUpdateMenuTests;FourPlayerMenuTests.StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld -profilesPath <owned>/profiles.json -testResults <owned>/results.xml -logFile <owned>/unity.log",
+    "history-only repeats after related corrections; isolated Lab/profile paths; no Player/full/build/release/deploy"
+  ],
+  "source_sha256": {
+    "distribution/launcher/Program.cs": "59036b23437538c41e30f1639fca48ae06fcecb928bf2ec3783aec3409c390ff",
+    "distribution/launcher/UpdateSession.cs": "188071812d563691de88b9928a20516bedec24b315fb659dc9554839a79073bb",
+    "distribution/tests/Program.cs": "84b349605649e72fe534bf4e61e7c63c54444a09de2f6e3a0f359f9394916774",
+    "unity/Assets/StarTournament/Runtime/NativeUpdateBridge.cs": "c655cbf487435c64c0f08617a3e24beee432225f8412e0bfea20123eeb5b82d3",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "d89b1b401eba7ed437c5c6928728c1cf0cd336c62106ab79610ff711ed391343",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "b207350f7578b43458bd77180eb387c29ca809606b919cdf70b06562e3ba78c0",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeUpdateMenuTests.cs": "3c4dadb2b6c49e87d47e3fb49702968ad6c2fc5ddf39ad00d90592203209ee38",
+    "distribution/launcher/ReleaseHistory.cs": "d5d95cd28b46213f5b2923dd876be33b0a890bf297936cdbd0aeaad95adf02b5",
+    "distribution/tests/ReleaseHistoryChecks.cs": "6c5f5aa7fb74143f6005a6418f6fb887188c0b3cfe1fe67f15cc17a915bcd748",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundReleaseHistory.cs": "43188d7f5cfd19c31847d56a98c6d376cdc4ae87a492ba3b4a446758463d2e6e"
+  },
+  "remaining": [
+    "Required approval16 before changing left-column overflow",
+    "Repair date clipping and prove navigation/Back/short viewport using focused history fixture; inspect PNG",
+    "Git-derived bilingual publication generator",
+    "Startup-health rollback, Lab05/06, Windows07, remaining matrix",
+    "Installed paired launcher/Player, physical/human/TV acceptance"
+  ]
+}

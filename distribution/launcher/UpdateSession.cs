@@ -1,7 +1,7 @@
 namespace StarTournament.Distribution;
 
 public sealed record UpdateSnapshot(string State, int Progress = 0, string Error = "",
-    bool RestartAcknowledged = false, string Version = "", bool MatchPaused = false, string MatchRequest = "");
+    bool RestartAcknowledged = false, string Version = "", bool MatchPaused = false, string MatchRequest = "", ReleaseHistorySnapshot? History = null);
 
 // Owns one launch's discovery, selected target and consent. Unity never owns networking.
 public sealed class UpdateSession : IAsyncDisposable
@@ -12,6 +12,10 @@ public sealed class UpdateSession : IAsyncDisposable
     readonly Func<Action<int>, CancellationToken, Task> download;
     readonly Action stage;
     readonly Action<UpdateSnapshot> publish;
+    readonly Func<CancellationToken, Task<ReleaseHistorySnapshot>>? historyFetch;
+    CancellationTokenSource? historyCancellation;
+    Task historyOperation = Task.CompletedTask;
+    bool historyResume;
     CancellationTokenSource? cancellation;
     Task operation = Task.CompletedTask;
     UpdateSnapshot state;
@@ -21,9 +25,9 @@ public sealed class UpdateSession : IAsyncDisposable
 
     public UpdateSession(Func<CancellationToken, Task<string?>> discover,
         Func<Action<int>, CancellationToken, Task> download, Action stage, Action<UpdateSnapshot> publish,
-        UpdateSnapshot? initial = null)
+        UpdateSnapshot? initial = null, Func<CancellationToken, Task<ReleaseHistorySnapshot>>? historyFetch = null)
     {
-        this.discover = discover; this.download = download; this.stage = stage; this.publish = publish;
+        this.historyFetch = historyFetch; this.discover = discover; this.download = download; this.stage = stage; this.publish = publish;
         state = initial ?? new("checking"); version = state.Version; publish(state);
     }
     void Status(string name, int progress = 0, string error = "")
@@ -80,6 +84,23 @@ public sealed class UpdateSession : IAsyncDisposable
         catch (Exception ex)
         { UpdateFeedback.Log("download-error", ex); lock (gate) if (!closing && !match && consent && !token.IsCancellationRequested) Status("error", error: "Не удалось скачать обновление. " + UpdateFeedback.Explain(ex)); }
     }
+    void BeginHistory()
+    {
+        historyCancellation?.Dispose(); historyCancellation = new();
+        state = state with { History = new("loading", state.History?.Items ?? Array.Empty<ReleaseHistoryItem>()) }; publish(state);
+        historyOperation = FetchHistory(historyCancellation.Token);
+    }
+    async Task FetchHistory(CancellationToken token)
+    {
+        try
+        {
+            var result = await historyFetch!(token);
+            lock (gate) if (!closing && !match && !token.IsCancellationRequested) { state = state with { History = result }; publish(state); }
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+        catch (Exception ex)
+        { UpdateFeedback.Log("history-error", ex); lock (gate) if (!closing && !match && !token.IsCancellationRequested) { state = state with { History = new("error", Array.Empty<ReleaseHistoryItem>(), "Не удалось получить историю версий.") }; publish(state); } }
+    }
     public async Task<bool> CommandAsync(string action, string request = "")
     {
         await commands.WaitAsync();
@@ -94,16 +115,25 @@ public sealed class UpdateSession : IAsyncDisposable
             if (closing) return false;
             if (action == "match")
             {
-                match = true; resume = consent && state.State is "downloading" or "verifying";
+                match = true; historyResume = !historyOperation.IsCompleted;
+                if (historyResume) historyCancellation?.Cancel();
+                resume = consent && state.State is "downloading" or "verifying";
                 state = state with { MatchPaused = false, MatchRequest = request };
-                if (!operation.IsCompleted) { cancellation?.Cancel(); drain = operation; }
+                if (!operation.IsCompleted) cancellation?.Cancel();
+                drain = Task.WhenAll(operation, historyOperation);
             }
             else if (action == "menu")
             {
                 if (request != state.MatchRequest) return false;
                 match = false; state = state with { MatchPaused = false }; publish(state);
+                if (historyResume && historyFetch != null) { historyResume = false; BeginHistory(); }
                 if (resume && consent && version.Length > 0 && operation.IsCompleted) { resume = false; BeginDownload(); }
                 return false;
+            }
+            else if (action == "history")
+            {
+                if (match || historyFetch == null || !historyOperation.IsCompleted || state.History?.State is "ready" or "cached") return false;
+                BeginHistory(); return false;
             }
             else if (action == "cancel")
             {
@@ -138,8 +168,8 @@ public sealed class UpdateSession : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         Task pending;
-        lock (gate) { closing = true; consent = resume = false; cancellation?.Cancel(); pending = operation; }
+        lock (gate) { closing = true; consent = resume = false; cancellation?.Cancel(); historyCancellation?.Cancel(); pending = Task.WhenAll(operation, historyOperation); }
         await pending;
-        lock (gate) { cancellation?.Dispose(); cancellation = null; }
+        lock (gate) { cancellation?.Dispose(); cancellation = null; historyCancellation?.Dispose(); historyCancellation = null; }
     }
 }

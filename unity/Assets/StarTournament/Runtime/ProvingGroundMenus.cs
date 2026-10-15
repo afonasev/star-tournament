@@ -97,6 +97,7 @@ namespace StarTournament.ProvingGround
                 updateBridge=gameObject.AddComponent<NativeUpdateBridge>();updateBridge.Bind(updateStatus,updateButton,progressTrack.GetComponent<Image>(),progressFill.GetComponent<Image>());
             }
 
+            CreateReleaseHistoryUi(parent);
             CreateSetupUi(parent);
 
             profilesScreen=Panel(parent,"profiles-screen",Vector2.zero,Vector2.one,MenuInk);
@@ -273,7 +274,7 @@ namespace StarTournament.ProvingGround
         void RememberMenuDevice(InputAction.CallbackContext context)
         {
             if(phase==Phase.Setup){TrackSetupNavigationInput(context);return;}
-            if(phase!=Phase.MainMenu && phase!=Phase.Profiles && phase!=Phase.Settings && phase!=Phase.Lab)return;
+            if(phase!=Phase.MainMenu && phase!=Phase.Profiles && phase!=Phase.Settings && phase!=Phase.Lab && phase!=Phase.History)return;
             // UI navigation and pointer clicks are PassThrough actions: releases also
             // perform. A release must not replace the device that submitted the menu.
             if(context.action==menuMoveAction && context.ReadValue<Vector2>()==Vector2.zero)return;
@@ -508,9 +509,10 @@ namespace StarTournament.ProvingGround
             if(mainMenuScreen==null)return;
             menuCreditFooter.gameObject.SetActive(phase!=Phase.Running&&phase!=Phase.Loading);
             if(EventSystem.current && phase!=Phase.Running && !(phase==Phase.Paused&&UseSeatPauseMenus))EventSystem.current.sendNavigationEvents=true;
-            bool shell=phase==Phase.MainMenu||phase==Phase.Profiles||phase==Phase.Settings||phase==Phase.Lab;
+            bool shell=phase==Phase.MainMenu||phase==Phase.Profiles||phase==Phase.Settings||phase==Phase.Lab||phase==Phase.History;
             oldMenuColumn.SetActive(!shell && phase!=Phase.Setup && pendingSeat<0);
             mainMenuScreen.SetActive(phase==Phase.MainMenu);
+            historyScreen.SetActive(phase==Phase.History);
             profilesScreen.SetActive(phase==Phase.Profiles);
             settingsScreen.SetActive(phase==Phase.Settings);
             labScreen.SetActive(phase==Phase.Lab);

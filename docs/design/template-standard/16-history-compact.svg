@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="650" viewBox="0 0 1440 650">
+<rect x="0" y="0" width="1440" height="650" rx="4" fill="#0b1725" stroke="none"/>
+<text x="40" y="36" font-family="Arial,sans-serif" font-size="16" fill="#e3bd78">STAR TOURNAMENT</text>
+<text x="960" y="36" font-family="Arial,sans-serif" font-size="14" fill="#9aaebe">УТОЧНЕНИЕ04 · МАКЕТ, НЕ UNITY</text>
+<rect x="40" y="66" width="150" height="48" rx="4" fill="#142638" stroke="#385062"/>
+<text x="60" y="97" font-family="Arial,sans-serif" font-size="20" fill="#eef2f5">‹ НАЗАД · B</text>
+<text x="220" y="99" font-family="Arial,sans-serif" font-size="32" fill="#e3bd78">ЧТО НОВОГО</text>
+<text x="220" y="135" font-family="Arial,sans-serif" font-size="18" fill="#9aaebe">Невысокое окно: строки сохраняют размер, прокручиваются две независимые области</text>
+<rect x="40" y="164" width="340" height="380" rx="4" fill="#102131" stroke="none"/>
+<rect x="404" y="164" width="996" height="380" rx="4" fill="#102131" stroke="none"/>
+<rect x="56" y="180" width="292" height="72" rx="4" fill="#e3bd78" stroke="#385062"/>
+<text x="72" y="208" font-family="Arial,sans-serif" font-size="22" fill="#0b1725">0.1.5</text>
+<text x="72" y="234" font-family="Arial,sans-serif" font-size="17" fill="#0b1725">15.10.2026</text>
+<rect x="56" y="262" width="292" height="72" rx="4" fill="#142638" stroke="#385062"/>
+<text x="72" y="290" font-family="Arial,sans-serif" font-size="22" fill="#eef2f5">0.1.4</text>
+<text x="72" y="316" font-family="Arial,sans-serif" font-size="17" fill="#9aaebe">14.10.2026</text>
+<rect x="56" y="344" width="292" height="72" rx="4" fill="#142638" stroke="#385062"/>
+<text x="72" y="372" font-family="Arial,sans-serif" font-size="22" fill="#eef2f5">0.1.3</text>
+<text x="72" y="398" font-family="Arial,sans-serif" font-size="17" fill="#9aaebe">12.10.2026</text>
+<rect x="56" y="426" width="292" height="72" rx="4" fill="#142638" stroke="#385062"/>
+<text x="72" y="454" font-family="Arial,sans-serif" font-size="22" fill="#eef2f5">0.1.2</text>
+<text x="72" y="480" font-family="Arial,sans-serif" font-size="17" fill="#9aaebe">10.10.2026</text>
+<rect x="362" y="180" width="5" height="332" rx="4" fill="#344a5b" stroke="none"/>
+<rect x="362" y="180" width="5" height="110" rx="4" fill="#e3bd78" stroke="none"/>
+<text x="56" y="533" font-family="Arial,sans-serif" font-size="16" fill="#9aaebe">↓ Ещё версии, включая установленную</text>
+<text x="432" y="204" font-family="Arial,sans-serif" font-size="26" fill="#e3bd78">Версия 0.1.5 · 15.10.2026</text>
+<text x="432" y="254" font-family="Arial,sans-serif" font-size="23" fill="#e3bd78">Новое</text>
+<text x="432" y="289" font-family="Arial,sans-serif" font-size="20" fill="#eef2f5">Описание выбранного релиза на языке меню.</text>
+<text x="432" y="338" font-family="Arial,sans-serif" font-size="23" fill="#e3bd78">Улучшения</text>
+<text x="432" y="373" font-family="Arial,sans-serif" font-size="20" fill="#eef2f5">Текст и список версий не перекрывают друг друга.</text>
+<text x="432" y="423" font-family="Arial,sans-serif" font-size="23" fill="#e3bd78">Исправления</text>
+<text x="432" y="458" font-family="Arial,sans-serif" font-size="20" fill="#eef2f5">Полный текст доступен во внутренней прокрутке.</text>
+<rect x="1380" y="220" width="5" height="300" rx="4" fill="#344a5b" stroke="none"/>
+<rect x="1380" y="220" width="5" height="150" rx="4" fill="#e3bd78" stroke="none"/>
+<text x="40" y="592" font-family="Arial,sans-serif" font-size="18" fill="#9aaebe">↑ ↓  Выбор версии и автопрокрутка списка     A  Читать     Правый стик  Описание     B  Назад</text>
+<text x="40" y="624" font-family="Arial,sans-serif" font-size="16" fill="#9aaebe">Обе области поддерживают колесо мыши. Даты и подписи не уменьшаются, установленная версия остаётся доступна.</text>
+</svg>

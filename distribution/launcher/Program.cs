@@ -156,9 +156,10 @@ static class Launcher
             initial = new(failure == null ? "staged" : "apply-error", 100, failure ?? "", Version: stagedAtStartup.Version.ToString());
         }
         else if (startupError != null) initial = new("error", Error: startupError);
+        using var history = new ReleaseHistory(config, Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(config.AppId) + ".history.json"));
         await using var updates = new UpdateSession(Check, Download,
             () => AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target")),
-            next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial);
+            next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial, history.Fetch);
         updates.Start();
         var executable = Path.GetFullPath(Path.Combine(baseDir, config.GameExecutable));
         if (!executable.StartsWith(Path.GetFullPath(baseDir), StringComparison.Ordinal))

@@ -141,7 +141,7 @@ namespace StarTournament.ProvingGround
         GameObject damagePickupVisual;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
-        enum Phase { Loading, Setup, Running, Paused, Results, MainMenu, Profiles, Settings, Lab }
+        enum Phase { Loading, Setup, Running, Paused, Results, MainMenu, Profiles, Settings, Lab, History }
         Phase phase;
         bool diagnostic;
         bool combatReview;
@@ -507,6 +507,7 @@ namespace StarTournament.ProvingGround
             if(UpdateTextEntry()){UpdateMenuCursor();UpdateTextEntryCursor();UpdateMenuSelectionAudio();TickGameMusic();return;}
             TickDisplayConfirmation();
             UpdateSettingsBackInput();
+            UpdateReleaseHistory();
             UpdateRosterInput();
             if (phase == Phase.Setup)
             {
