@@ -264,7 +264,7 @@ namespace StarTournament.ProvingGround
             var shell=Panel(parent,"profile-name-input",new Vector2(.08f,.67f),new Vector2(.92f,.76f),new Color32(35,51,68,255));
             var input=shell.AddComponent<InputField>();
             var value=Label(shell.transform,"name-value","",26,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,Color.white);
-            input.textComponent=value;input.characterLimit=24;input.contentType=InputField.ContentType.Standard;
+            input.textComponent=value;input.characterLimit=24;input.contentType=InputField.ContentType.Standard;BindTextInput(input);
             return input;
         }
         void RememberMenuDevice(InputAction.CallbackContext context)

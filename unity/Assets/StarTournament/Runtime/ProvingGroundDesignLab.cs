@@ -201,7 +201,7 @@ namespace StarTournament.ProvingGround
         {
             var panel=Panel(parent,name,min,max,new Color32(35,51,68,255));var input=panel.AddComponent<InputField>();
             input.textComponent=Label(panel.transform,"value",text,16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,Color.white);
-            input.text=text;return input;
+            input.text=text;BindTextInput(input,name.StartsWith("input-",StringComparison.Ordinal));return input;
         }
         ScrollRect LabScroll(Transform parent,string name,Vector2 min,Vector2 max,out Transform content)
         {

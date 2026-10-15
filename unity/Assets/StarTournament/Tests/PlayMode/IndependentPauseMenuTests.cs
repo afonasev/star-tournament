@@ -243,6 +243,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Button(prefix+"settings-help-gamepad").onClick.Invoke();Assert.That(text.text,Does.Contain("Правый триггер"));
                 Assert.That(Object(prefix+"help-viewport").GetComponent<ScrollRect>(),Is.Not.Null);
             }
+            string helpEvidence=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_TEXT_QA_IMAGES");
+            if(!string.IsNullOrEmpty(helpEvidence)){System.IO.Directory.CreateDirectory(helpEvidence);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(helpEvidence,"help-split.png"));}
+            Canvas.ForceUpdateCanvases();
+            foreach(var caption in ground.GetComponentsInChildren<Text>().Where(t=>t.name=="help-device-equivalents"))
+                Assert.That(caption.cachedTextGenerator.characterCountVisible,Is.GreaterThanOrEqualTo(caption.text.Count(c=>!char.IsControl(c))),"All controller equivalents must be visible in each viewport");
             yield return Press(0,GamepadButton.East);
             Assert.That(Object("seat-settings-0-settings-control").activeInHierarchy,Is.True);
             Assert.That(Object("seat-settings-1-settings-help-page").activeInHierarchy,Is.True,"back only changes its own viewport");

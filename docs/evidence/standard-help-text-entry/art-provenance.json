@@ -1,0 +1,28 @@
+{
+  "assets": [
+    {
+      "path": "unity/Assets/StarTournament/Resources/UI/help-keyboard.png",
+      "sha256": "539a4412a2d378791291f77a91af745731ad4fb431d1374705eb1b772fccc94c",
+      "source_dimensions": [
+        1536,
+        1024
+      ],
+      "import": "npotScale 0 (None), preserves source dimensions; mipmaps off",
+      "source": "imagegen edit of previously tracked illustration; direction13-14 approved user2026-10-16",
+      "changes": "Remove menu/composition instructions; exact gameplay labels, source input bindings unchanged; keyboard Q/E leader corrected before hookup"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Resources/UI/help-gamepad.png",
+      "sha256": "a1aae9a3428344823ba8cd909137c4df0dcde80bcfd63ba5fb6d5c04cc447f07",
+      "source_dimensions": [
+        1536,
+        1024
+      ],
+      "import": "npotScale 0 (None), preserves source dimensions; mipmaps off",
+      "source": "imagegen edit of previously tracked illustration; direction13-14 approved user2026-10-16",
+      "changes": "Remove menu/composition instructions; exact gameplay labels, source input bindings unchanged; keyboard Q/E leader corrected before hookup"
+    }
+  ],
+  "bindings": "unity/Assets/StarTournament/Runtime/Input/SeatInputCoordinator.cs: Capture keyboard/gamepad mapping; Help text in ProvingGroundControlSettings.cs; no remapping feature added",
+  "generated_sources": "Original generated outputs retained under /Users/eaafonasev/.codex/generated_images/01a13fa0-7787-7662-a70b-582c5888cf1c; final shipped PNGs are tracked project assets"
+}

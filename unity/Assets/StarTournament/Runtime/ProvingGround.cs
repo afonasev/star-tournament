@@ -504,6 +504,7 @@ namespace StarTournament.ProvingGround
         void Update()
         {
             if(phase==Phase.Loading)return;
+            if(UpdateTextEntry()){UpdateMenuCursor();UpdateTextEntryCursor();UpdateMenuSelectionAudio();TickGameMusic();return;}
             TickDisplayConfirmation();
             UpdateSettingsBackInput();
             UpdateRosterInput();
@@ -538,6 +539,10 @@ namespace StarTournament.ProvingGround
             RefreshInterface();
             UpdateMenuCursor();
             UpdateMenuSelectionAudio();
+            TickGameMusic();
+        }
+        void TickGameMusic()
+        {
             bool musicMatch=phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results||
                 (phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused||settingsReturn==Phase.Results));
             bool musicPaused=phase==Phase.Paused||(phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused));
@@ -958,7 +963,7 @@ namespace StarTournament.ProvingGround
             Cursor.visible=!menuGamepadCursor;
         }
         void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
-        void OnDestroy() { visualPresentation?.ResetWorld(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreGraphicsQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { DisposeTextEntry(); visualPresentation?.ResetWorld(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreGraphicsQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void RebuildPickupVisuals()
         {

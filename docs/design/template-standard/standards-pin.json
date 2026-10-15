@@ -126,8 +126,11 @@
       "id": "MENU-INPUT-05",
       "title": "Поля ввода",
       "source": "features/menu-base/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "MENU-FOCUS-01",
@@ -379,43 +382,61 @@
       "id": "SETTINGS-HELP-01",
       "title": "Отдельная графическая справка",
       "source": "features/settings/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "SETTINGS-HELP-02",
       "title": "Страницы устройств",
       "source": "features/settings/controls-help.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "SETTINGS-HELP-03",
       "title": "Генерируемые изображения",
       "source": "features/settings/controls-help.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "SETTINGS-HELP-04",
       "title": "Только игровое управление",
       "source": "features/settings/controls-help.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "SETTINGS-HELP-05",
       "title": "Точность назначений",
       "source": "features/settings/controls-help.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "SETTINGS-HELP-06",
       "title": "Читаемость и проверка",
       "source": "features/settings/controls-help.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-help-text-entry/verification.json",
+        "implementation": "Gameplay-only generated help and gamepad text modal implemented; focused Editor input/geometry/screenshots checked. Physical/TV/small viewport readability and human acceptance remain pending."
+      }
     },
     {
       "id": "LAB-SCOPE-01",

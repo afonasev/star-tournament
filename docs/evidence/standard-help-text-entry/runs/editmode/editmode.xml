@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.065772">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.065772" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1671" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.058758" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="52342" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1672" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.055631" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1673" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.042435" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1674" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.039549" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1675" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="417" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.034904" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1576" name="NativeTextDraftTests" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.029965" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1584" name="FieldSpecificValidatorIsAppliedBeforeInsertion" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.FieldSpecificValidatorIsAppliedBeforeInsertion" methodname="FieldSpecificValidatorIsAppliedBeforeInsertion" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="2144570077" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.007790" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1582" name="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.003239" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1578" name="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;-1,25&quot;,True)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;-1,25&quot;,True)" methodname="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="1008040645" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.001222" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1579" name="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;0.5&quot;,True)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;0.5&quot;,True)" methodname="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="1995147535" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.000081" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1580" name="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;-&quot;,False)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;-&quot;,False)" methodname="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="1379648638" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.000047" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1581" name="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;.&quot;,False)" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber(&quot;.&quot;,False)" methodname="NumericDraftAllowsIntermediateEditingButRequiresFiniteCompleteNumber" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="521121697" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.000041" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1583" name="NumericDraftRejectsLettersDuplicateSeparatorsAndMisplacedSigns" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.NumericDraftRejectsLettersDuplicateSeparatorsAndMisplacedSigns" methodname="NumericDraftRejectsLettersDuplicateSeparatorsAndMisplacedSigns" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="1156187473" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.000198" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1577" name="UnicodeLengthAndCaretEditingStayInsideDraft" fullname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests.UnicodeLengthAndCaretEditingStayInsideDraft" methodname="UnicodeLengthAndCaretEditingStayInsideDraft" classname="StarTournament.ProvingGround.Tests.EditMode.NativeTextDraftTests" runstate="Runnable" seed="1704752483" result="Passed" start-time="2026-10-15 19:25:30Z" end-time="2026-10-15 19:25:30Z" duration="0.000747" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

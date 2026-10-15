@@ -1,0 +1,135 @@
+{
+  "baseline": "36d19768",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "0c2d4562683252d54736f294dc1af463050eac17",
+  "scope": "Approved help13-14 + text entry15, native menu context/field lifecycle, profile and Lab callbacks. No gameplay/physics/network changes.",
+  "commands": [
+    "UNITY_RUN_MODE=shared unity/tools.sh test-edit-filter NativeTextDraftTests",
+    "tools/unity.sh shared -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter <specific methods listed in XML> -profilesPath <owned>/profiles.json -testResults <owned>/playmode.xml -logFile <owned>/playmode.log"
+  ],
+  "environment": [
+    "STAR_TOURNAMENT_QA_LAB_HISTORY=<owned run>/qa-lab-history.json",
+    "STAR_TOURNAMENT_TEXT_QA_IMAGES=<owned run>"
+  ],
+  "selection_reason": "Pure draft contracts plus real InputField/Gamepad/Keyboard ownership and persistence. Existing settings navigation and two-viewport help are affected neighbors. No full suite or match simulation needed. Keyboard fixtures route synthetic input to Game View without desktop focus; restore settings in teardown.",
+  "editmode": "7/7 passed",
+  "latest_unique_playmode_passed": 9,
+  "latest_unique_playmode_total": 9,
+  "latest_playmode_results": {
+    "StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.KeyboardHandoverAndApplyUseExistingProfilePersistence": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.LabSearchCancelAndNumericValidationStayInTopContext": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.OpeningHoldForeignPadAndCancelDoNotMutateTarget": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.ReconnectPreservesDraftAndConsumesClaimPress": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.SettingsGamepadNavigationTests.SettingsAreFullyNavigableWithGamepad": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.GridLanguageCaseCaretAndKeyboardCancelAreFunctional": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.HelpPagesShowGameplayArtWithPreservedAspectAndDeviceEquivalents": "Passed",
+    "StarTournament.ProvingGround.Tests.PlayMode.NativeTextEntryTests.NativeKeyboardEscapeEndsFieldEditingBeforeLeavingLab": "Passed"
+  },
+  "runs": [
+    {
+      "run": "compile-first",
+      "path": "docs/evidence/standard-help-text-entry/runs/compile-first",
+      "result": "NotRun: compile error (InputField.EndEditEvent type), repaired before tests"
+    },
+    {
+      "run": "editmode",
+      "path": "docs/evidence/standard-help-text-entry/runs/editmode",
+      "total": "7",
+      "passed": "7",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.065772"
+    },
+    {
+      "run": "play1",
+      "path": "docs/evidence/standard-help-text-entry/runs/play1",
+      "total": "6",
+      "passed": "5",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "51.2711055"
+    },
+    {
+      "run": "play2",
+      "path": "docs/evidence/standard-help-text-entry/runs/play2",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "25.1514258"
+    },
+    {
+      "run": "play3",
+      "path": "docs/evidence/standard-help-text-entry/runs/play3",
+      "total": "2",
+      "passed": "0",
+      "failed": "2",
+      "skipped": "0",
+      "duration": "23.7529455"
+    },
+    {
+      "run": "play4",
+      "path": "docs/evidence/standard-help-text-entry/runs/play4",
+      "total": "2",
+      "passed": "1",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "24.5048199"
+    },
+    {
+      "run": "play5",
+      "path": "docs/evidence/standard-help-text-entry/runs/play5",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "29.9971994"
+    },
+    {
+      "run": "play6",
+      "path": "docs/evidence/standard-help-text-entry/runs/play6",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "23.0060256"
+    },
+    {
+      "run": "play7",
+      "path": "docs/evidence/standard-help-text-entry/runs/play7",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "40.9746418"
+    },
+    {
+      "run": "play8",
+      "path": "docs/evidence/standard-help-text-entry/runs/play8",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "20.9099634"
+    }
+  ],
+  "changes_and_attempts": [
+    "Compile-first: incorrect old SubmitEvent type corrected to installed EndEditEvent; no tests executed.",
+    "play1:5/6 passed. Lab numeric fixture had no writable parameters in protected Default; changed fixture to create an isolated editable copy, play2 passed.",
+    "play3: both new tests failed due deferred inactive Button copies and incorrect assumption about help arrow; fixed fixture selection and actual arrow semantics.",
+    "play4: help passed, keyboard Escape failed because Editor focus policy dropped synthetic keyboard states; fixtures now use existing project synthetic-input settings with restoration.",
+    "play5:4/4 passed, with controller hints changing on keyboard input; held old pad navigation no longer steals focus.",
+    "play6:2/2 passed after fixing real NPOT import stretch; images now1536x1024, aspect1.5.",
+    "play7:4/4 passed; normal InputField Escape ends editing before Lab exit, Apply/Cancel callbacks verified, all split captions visible.",
+    "play8:1/1 passed on final Lab integration and numeric capture."
+  ],
+  "source_cs_sha256": "1fa99504f81ba716841c7c781d54628dc9d13337023b0c4ad2df4d5b83600cae",
+  "pending": [
+    "No Player/build/full/release/deploy requested or executed.",
+    "Human/physical controller and TV/small viewport readability acceptance pending; 2 virtual seats are not 4 physical controllers.",
+    "Missing-image fallback implemented but not forced in fixture.",
+    "Broad initiative03-07 (Lab/update/history/Windows repair), menu hints and remaining catalog options still pending."
+  ],
+  "screenshots": "Editor 1920x1080 RenderTexture, viewed; not native Player/device acceptance."
+}
