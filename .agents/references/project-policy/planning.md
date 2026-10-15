@@ -4,7 +4,9 @@
 
 ## Shared OpenSpec flow
 
-- Канонические OpenSpec specs, changes, schemas и delivery records живут в shared planning home: `/Users/eaafonasev/Projects/star-tournament-planning` (store ID `star-tournament-planning`). Перед работой читай `workflow/project.json` в этом home; все поддерживаемые вызовы OpenSpec выполняй с `--store star-tournament-planning`.
+- Канонические OpenSpec specs, changes, schemas и delivery records живут в shared planning home: `/Users/eaafonasev/Projects/star-tournament/planning` (store ID `star-tournament-planning`). Перед работой читай `workflow/project.json` в этом home; все поддерживаемые вызовы OpenSpec выполняй с `--store star-tournament-planning`.
+- Planning home находится внутри основного checkout в `planning/`, но остаётся самостоятельным Git-репозиторием со своей историей, веткой и незакоммиченным состоянием. `/planning/` исключён из Git кода; не добавляй его через `git add -f`, submodule или копию в task worktree. Все code worktree используют один абсолютный home выше. Перед коммитом planning запускай `git -C /Users/eaafonasev/Projects/star-tournament/planning status` и добавляй только файлы своей задачи.
+- При переносе checkout обновляй `workflow/project.json`, инструкции и локальную регистрацию store; порядок и проверка описаны в `docs/OPEN_SPEC_PLANNING.md`. Старые абсолютные пути в исторических evidence трактуй по таблице переноса в `planning/workflow/relocation-2026-10-15.md`.
 - `openspec/` в code worktree — исторический snapshot, перенесённый в planning home. Не обновляй его и не создавай в нём новые changes; он сохраняется для воспроизводимых ссылок к старым коммитам. Новые требования, changes и lifecycle records создавай только в planning home.
 - Для discovery используй `.agents/skills/flow-explore/SKILL.md`; для реализации и небольших inline fixes — `flow-apply`; для вопросов, human acceptance и finalization debt — `flow-inbox`. Не редактируй generated upstream skills.
 - В `flow-inbox` нумеруй все предлагаемые пользователю варианты, чтобы на них можно было однозначно сослаться номером.

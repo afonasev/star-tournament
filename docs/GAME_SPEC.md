@@ -1,7 +1,7 @@
 # Star Tournament — утверждённая обзорная спецификация
 
 Точные актуальные OpenSpec requirements, changes и lifecycle records хранятся в
-shared planning home `/Users/eaafonasev/Projects/star-tournament-planning`
+shared planning home `/Users/eaafonasev/Projects/star-tournament/planning`
 (store `star-tournament-planning`). Этот документ сохраняет согласованный
 продуктовый и архитектурный обзор, историю решений и ссылки на них; он не
 создаёт отдельного delivery state. При изменении решения сначала синхронизируй

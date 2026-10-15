@@ -3,7 +3,7 @@ name: flow-explore
 description: Discuss features and recommend quick, standard or initiative OpenSpec routes; capture agreed specifications without implementing until asked.
 ---
 
-Read `/Users/eaafonasev/Projects/star-tournament-planning/workflow/project.json`
+Read `/Users/eaafonasev/Projects/star-tournament/planning/workflow/project.json`
 and existing relevant specs. Remain in exploration until the user authorizes
 implementation; explicit capture creates artifacts, not application code.
 

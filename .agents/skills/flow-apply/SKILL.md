@@ -3,7 +3,7 @@ name: flow-apply
 description: Select and deliver an OpenSpec change or related small batch through verification, integration, authorized publication and cleanup; handle inline fixes.
 ---
 
-Read `/Users/eaafonasev/Projects/star-tournament-planning/workflow/project.json`,
+Read `/Users/eaafonasev/Projects/star-tournament/planning/workflow/project.json`,
 lifecycle.md and delivery.md. Call helper inbox; reconcile unfinished owned
 finalization. If change not explicitly selected, show ready
 candidates/dependencies and ask which to take, even if only one. Offer related

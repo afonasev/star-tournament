@@ -9,7 +9,7 @@ acceptance obligation.
 
 | Location | Contents | Status and handling |
 | --- | --- | --- |
-| `openspec/` | Frozen copy of historical OpenSpec changes, specs, archives and config. | Keep unchanged. The canonical live planning store is `/Users/eaafonasev/Projects/star-tournament-planning` (`star-tournament-planning`); do not create or update changes here. |
+| `openspec/` | Frozen copy of historical OpenSpec changes, specs, archives and config. | Keep unchanged. The canonical live planning store is `/Users/eaafonasev/Projects/star-tournament/planning` (`star-tournament-planning`); do not create or update changes here. |
 | `docs/evidence/`, `docs/qa/`, `docs/AI.md` | Browser-era screenshots, measurements, AI notes and later Unity evidence. | Preserve as evidence/reference. Browser material is not executable proof for Unity. |
 | `docs/tasks/completed/`, `docs/tasks/cancelled/`, `docs/BROWSER_BACKLOG_CLOSURE.md` | Completed, cancelled and superseded handoffs, including the browser backlog decision. | Preserve their recorded result and status; do not reopen cancelled browser work automatically. |
 | `artifacts/` | Historical arena navigation screenshots, JSON reports and pointer-lock notes. | Preserve as historical diagnostics only; they are not Unity assets or runtime configuration. |

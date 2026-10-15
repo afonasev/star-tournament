@@ -4,7 +4,7 @@ description: Collect unanswered human questions, pending acceptance and interrup
 ---
 
 Resolve shared planning root from
-`/Users/eaafonasev/Projects/star-tournament-planning/workflow/project.json`
+`/Users/eaafonasev/Projects/star-tournament/planning/workflow/project.json`
 and call helper inbox. Read lifecycle.md. Present blocking questions first, then
 pending result acceptance, then finalization debt, grouped by initiative and
 required setup. Surface paused work but do not resume it. Build view from all

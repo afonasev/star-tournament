@@ -15,3 +15,6 @@ distribution/**/__pycache__/
 playwright-report/
 test-results/
 .asset-library/
+
+# Independent canonical planning repository (shared by all code worktrees)
+/planning/

@@ -1,6 +1,6 @@
 # 38 — Лунная лаборатория
 
-Canonical change: /Users/eaafonasev/Projects/star-tournament-planning/openspec/changes/add-lunar-laboratory-map
+Canonical change: /Users/eaafonasev/Projects/star-tournament/planning/openspec/changes/add-lunar-laboratory-map
 Owner: 01a1013f-f859-7b42-814f-388d36ecbf22
 Branch/worktree: codex/add-lunar-laboratory-map / /Users/eaafonasev/Projects/star-tournament-moon-lab
 Baseline: 817997efcca0998b8e9cd93c78cfd13b4087c3f0
