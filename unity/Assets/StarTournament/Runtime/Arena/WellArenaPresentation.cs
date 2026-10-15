@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
         readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<Bounds>> batches=new Dictionary<Material,List<Bounds>>();
         UnityEngine.Rendering.AmbientMode oldMode;Color oldAmbient;
         Material fontMaterial;Font signFont;
-        Material white,floor,metal,glass,door,soil;WellLabDetail detail;Material[] colours;ProvingProfile profile;
+        Material white,floor,ceiling,metal,glass,door,soil;WellLabDetail detail;Material[] colours;ProvingProfile profile;
         Material Mat(string name,Color colour,bool unlit=false,VisualMaterialRole role=VisualMaterialRole.Wall,bool register=true)
         {var m=new Material(Shader.Find(unlit?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=colour};m.SetFloat("_Smoothness",.35f);owned.Add(m);if(!unlit&&register)NativeVisualMaterials.Register(this,m,role);return m;}
         void Texture(Material material,string kind,float metres)
@@ -58,10 +58,11 @@ namespace StarTournament.ProvingGround
         {
             this.profile=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;
             white=Mat("Well ceramic white",new Color(.95f,.95f,.93f));floor=Mat("Well pale floor",new Color(.71f,.73f,.71f),role:VisualMaterialRole.Floor);metal=Mat("Well brushed metal",new Color(.64f,.67f,.67f),role:VisualMaterialRole.Metal);metal.SetFloat("_Metallic",.35f);
+            ceiling=Mat("Well technical ceiling",new Color(.86f,.89f,.89f));
             door=Mat("Closed office doors",new Color(.64f,.67f,.65f));soil=Mat("Garden soil",new Color(.23f,.15f,.08f));
-            white.shader=Shader.Find("StarTournament/WellContactSurface");floor.shader=white.shader;white.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));floor.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));
-            Texture(white,"ceramic",profile.Get("well.panelSize"));Texture(floor,"floor",profile.Get("well.panelSize"));Texture(metal,"metal",1);Texture(soil,"soil",4);
-            white.SetFloat("_Smoothness",profile.Get("well.surfaceSmoothness"));floor.SetFloat("_Smoothness",profile.Get("well.floorSmoothness"));soil.SetFloat("_Smoothness",0);
+            white.shader=Shader.Find("StarTournament/WellContactSurface");floor.shader=white.shader;ceiling.shader=white.shader;ceiling.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));white.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));floor.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));
+            Texture(white,"ceramic",profile.Get("well.panelSize"));Texture(floor,"floor",profile.Get("well.panelSize"));Texture(ceiling,"ceiling",profile.Get("well.panelSize"));Texture(metal,"metal",1);Texture(soil,"soil",4);
+            white.SetFloat("_Smoothness",profile.Get("well.surfaceSmoothness"));floor.SetFloat("_Smoothness",profile.Get("well.floorSmoothness"));ceiling.SetFloat("_Smoothness",profile.Get("well.floorSmoothness"));soil.SetFloat("_Smoothness",0);
             var diffuser=Mat("Well warm diffuser",new Color(1,.94f,.80f)*profile.Get("well.fixtureGlow"),true);
             var screen=Mat("Well instrument glass",new Color(.035f,.12f,.16f),true);
             var indicator=Mat("Well instrument readout",new Color(.32f,.75f,.66f),true);
@@ -148,7 +149,10 @@ namespace StarTournament.ProvingGround
                 {
                     var contact=WellContactMesh.Build(mesh,definition.Solids.Where(s=>s.Material!="glass"&&s.Surface!="well-grate").Select(s=>new Bounds(s.Position,s.Size)).ToArray());owned.Add(contact);mesh=contact;
                 }
-                var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=pair.Key;if(pair.Key==glass)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+                var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();if(pair.Key==white||pair.Key==floor)
+                {WellSurfaceMesh.SplitHorizontalMaterials(mesh);renderer.sharedMaterials=new[]{pair.Key,white,ceiling};}
+                else renderer.sharedMaterial=pair.Key;
+                if(pair.Key==glass)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
             RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=new Color(1,.99f,.97f)*profile.Get("well.fill");
         }

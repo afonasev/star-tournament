@@ -7,6 +7,20 @@ namespace StarTournament.ProvingGround
     public static class WellSurfaceMesh
     {
         const float Epsilon=.0001f;
+        /// <summary>Partition the existing triangles only: top, vertical edge, underside. No overlays or new vertices.</summary>
+        public static void SplitHorizontalMaterials(Mesh mesh)
+        {
+            var triangles=mesh.triangles;var normals=mesh.normals;
+            var groups=new[]{new List<int>(),new List<int>(),new List<int>()};
+            for(int i=0;i<triangles.Length;i+=3)
+            {
+                float y=normals[triangles[i]].y;
+                int slot=y>.5f?0:y<-.5f?2:1;
+                groups[slot].Add(triangles[i]);groups[slot].Add(triangles[i+1]);groups[slot].Add(triangles[i+2]);
+            }
+            mesh.subMeshCount=3;
+            for(int i=0;i<groups.Length;i++)mesh.SetTriangles(groups[i],i,false);
+        }
         public static Mesh Build(IReadOnlyList<Bounds> boxes,IReadOnlyList<Bounds> occluders=null)
         {
             var uv0=new List<Vector2>();var vertices=new List<Vector3>();var normals=new List<Vector3>();var triangles=new List<int>();

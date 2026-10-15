@@ -11,6 +11,39 @@ namespace StarTournament.ProvingGround.Tests
             for(int i=0;i<t.Length;i+=3)a+=Vector3.Cross(v[t[i+1]]-v[t[i]],v[t[i+2]]-v[t[i]]).magnitude/2;
             return a;
         }
+        [Test] public void MaterialPartitionPreservesEveryTriangleAndVertexAttribute()
+        {
+            var source=WellSurfaceMesh.Build(new[]{new Bounds(Vector3.zero,new Vector3(4,1,6))});
+            var contact=WellContactMesh.Build(source,new Bounds[0]);
+            try
+            {
+                foreach(var mesh in new[]{source,contact})
+                {
+                    var vertices=mesh.vertices;var normals=mesh.normals;var uv=mesh.uv;var colours=mesh.colors;var tangents=mesh.tangents;
+                    var before=mesh.triangles;var bounds=mesh.bounds;
+                    WellSurfaceMesh.SplitHorizontalMaterials(mesh);
+                    Assert.That(mesh.subMeshCount,Is.EqualTo(3));
+                    Assert.That(mesh.vertices,Is.EqualTo(vertices));Assert.That(mesh.normals,Is.EqualTo(normals));
+                    Assert.That(mesh.uv,Is.EqualTo(uv));Assert.That(mesh.colors,Is.EqualTo(colours));Assert.That(mesh.tangents,Is.EqualTo(tangents));Assert.That(mesh.bounds,Is.EqualTo(bounds));
+                    var actual=new System.Collections.Generic.List<string>();var expected=new System.Collections.Generic.List<string>();
+                    for(int i=0;i<before.Length;i+=3)expected.Add($"{before[i]},{before[i+1]},{before[i+2]}");
+                    float[] areas=new float[3];
+                    for(int slot=0;slot<3;slot++)
+                    {
+                        var t=mesh.GetTriangles(slot);Assert.That(t.Length,Is.GreaterThan(0));
+                        for(int i=0;i<t.Length;i+=3)
+                        {
+                            actual.Add($"{t[i]},{t[i+1]},{t[i+2]}");
+                            Assert.That(normals[t[i]].y,Is.EqualTo(slot==0?1:slot==2?-1:0));
+                            areas[slot]+=Vector3.Cross(vertices[t[i+1]]-vertices[t[i]],vertices[t[i+2]]-vertices[t[i]]).magnitude/2;
+                        }
+                    }
+                    Assert.That(actual,Is.EquivalentTo(expected));
+                    Assert.That(areas[0],Is.EqualTo(24).Within(.001f));Assert.That(areas[1],Is.EqualTo(20).Within(.001f));Assert.That(areas[2],Is.EqualTo(24).Within(.001f));
+                }
+            }
+            finally{Object.DestroyImmediate(source);Object.DestroyImmediate(contact);}
+        }
         [Test] public void MachinedFittingsHaveFiniteOutwardNormalsAndStayInsideTheirEnvelope()
         {
             var size=new Vector3(3.6f,.2f,.095f);var bevel=WellDetailMesh.Bevel(size);var cylinder=WellDetailMesh.Cylinder();
