@@ -226,7 +226,7 @@ namespace StarTournament.ProvingGround
                 }
             }
             catch(OperationCanceledException){throw;}
-            catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
+            catch(Exception e) { data=NewFile();StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
             startupCancellation.ThrowIfCancellationRequested();
             if(this.releases!=null)
             {
@@ -684,30 +684,37 @@ namespace StarTournament.ProvingGround
                 .OrderByDescending(e=>e.Revision).ThenByDescending(e=>e.Sequence).First().Snapshot;
             // The source Default may itself predate the current registry. Its missing
             // fields use registry defaults; all experiment fields use this resolved source.
-            return selected==null?shipped.Clone():Current(selected)?selected.Clone():UpgradeSnapshot(selected,shipped,true,currentDescriptors);
+            return selected==null?shipped.Clone():Current(selected)?selected.Clone():UpgradeSnapshot(selected,shipped,true,currentDescriptors,authoring);
         }
-        LabBundle UpgradeSnapshot(LabBundle snapshot,LabBundle defaults,bool isDefault,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors)
+        LabBundle UpgradeSnapshot(LabBundle snapshot,LabBundle defaults,bool isDefault,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors,bool preserveSavedValues=false)
         {
             var next=defaults.Clone();foreach(var d in snapshot.Descriptors)if(currentDescriptors.TryGetValue(d.Path,out var currentDescriptor))
             {
                 // The compatible revision uses current trusted map/diagnostic metadata.
                 // Previous read-only values remain intact only in their historical revision.
                 if(next.IsAuthoring(d.Path)||next.IsDiagnostic(d.Path))continue;
-                float value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,snapshot.Get(d.Path));
-                // The packaged Default adopts this behavior update. Named local
-                // profiles keep their tuning; original release snapshots stay intact.
-                if(isDefault&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&snapshot.Profile(d.Path).Version<4)
-                    value=currentDescriptor.DefaultValue;
-                // Interpret the untouched v9/v10 step interval as the new shipped default.
-                // Historical snapshots remain byte-for-byte intact with their original hash.
-                if(d.Path=="audio.footstepDistanceMeters"&&snapshot.Profile(d.Path).Version>=9&&snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
-                    value=currentDescriptor.DefaultValue;
-                // Only the old shipped intensity becomes the stronger default. Keep custom
-                // values and the immutable source revision unchanged.
-                if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
-                    value=currentDescriptor.DefaultValue;
-                value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
-                value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                float value=snapshot.Get(d.Path);
+                // Own saved values are intentional, even when equal to an old factory
+                // default. Keep them exact; trusted validation rejects incompatible
+                // values instead of clamping or silently retuning the experiment.
+                if(!preserveSavedValues)
+                {
+                    value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,value);
+                    // The packaged Default adopts this behavior update. Named local
+                    // profiles keep their tuning; original release snapshots stay intact.
+                    if(isDefault&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&snapshot.Profile(d.Path).Version<4)
+                        value=currentDescriptor.DefaultValue;
+                    // Interpret the untouched v9/v10 step interval as the new shipped default.
+                    // Historical snapshots remain byte-for-byte intact with their original hash.
+                    if(d.Path=="audio.footstepDistanceMeters"&&snapshot.Profile(d.Path).Version>=9&&snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
+                        value=currentDescriptor.DefaultValue;
+                    // Only the old shipped intensity becomes the stronger default. Keep custom
+                    // values and the immutable source revision unchanged.
+                    if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
+                        value=currentDescriptor.DefaultValue;
+                    value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                    value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                }
                 next.Set(d.Path,value);
             }
             // Version3 used the office controls for both floors and stair annexes.
@@ -752,7 +759,7 @@ namespace StarTournament.ProvingGround
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
                     startupCancellation.ThrowIfCancellationRequested();
-                    var next=UpgradeSnapshot(old.Snapshot,defaults,p.Id==ReleaseId,currentDescriptors);
+                    var next=UpgradeSnapshot(old.Snapshot,defaults,p.Id==ReleaseId,currentDescriptors,authoring||(p.Id!=ReleaseId&&!IsShipped(old)));
                     string nextHash=next.Hash();
                     bool derived=releases!=null&&p.Id!=ReleaseId&&!IsShipped(old);
                     var previous=views[p.Id].SingleOrDefault(r=>r.CompatibilitySourceNumber==old.Number&&r.CompatibilitySourceHash==old.Hash);
@@ -769,7 +776,7 @@ namespace StarTournament.ProvingGround
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
             var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shippedHash);
             if(latest==null){latest=Revision(shipped,nextNumbers[release.Id]++,DateTime.Now.ToString("yyyyMMdd"));release.Revisions.Add(latest);}
-            if(selectedRelease)file.SelectedRevision=latest.Number;
+            if(selectedRelease&&!authoring)file.SelectedRevision=latest.Number;
         }
         void Commit(Action<LabHistoryFile> mutation)
         {

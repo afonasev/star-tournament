@@ -34,6 +34,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(changed.Maximum,Is.LessThan(descriptor.Maximum));
             Reject(future,h.SelectedProfileId,"v"+h.Selected.Number,"rifle.damage","outside");
         }
+        [TestCase(false)][TestCase(true)]
+        public void LegacyOwnValuesOutsideNewConstraintsAreRefusedWithoutClamping(bool well)
+        {
+            baseline.Profiles.Add(well?ProvingProfile.CreateWellDefault():ProvingProfile.CreateTrooperDefault());
+            var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            var rebalance=typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",flags);
+            var method=typeof(ProvingProfile).GetMethod(well?"BeforeWellDetail":"BeforeLowWeaponSwitch",flags);
+            var previous=new LabBundle{Profiles=baseline.Profiles.Select(p=>(ProvingProfile)method.Invoke(well?p:rebalance.Invoke(p,null),null)).ToList()};
+            var old=new DesignLabHistory(path,previous);old.Create("Saved values");
+            string field=well?"well.fill":"view.switchShoulderDegrees";
+            Assert.That(old.Selected.Snapshot.Get(field),Is.EqualTo(well?.8f:145));
+            Reject(baseline,old.SelectedProfileId,field,well?"шагу":"outside");
+        }
         [TestCase(0)][TestCase(2)]public void UnrecognizedSchemaVersionReportsProfileIdentityAndPreservesSource(int index)
         {
             baseline.Profiles.Add(ProvingProfile.CreateTrooperDefault());
