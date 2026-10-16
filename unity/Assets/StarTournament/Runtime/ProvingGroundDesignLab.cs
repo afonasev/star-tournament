@@ -220,7 +220,7 @@ namespace StarTournament.ProvingGround
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
             labBack=LabButton(labScreen.transform,"lab-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
             Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",21,new Vector2(.18f,.91f),new Vector2(.75f,.96f),TextAnchor.MiddleLeft,MenuGold);
-            var clear=LabButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.46f,.785f),new Vector2(.56f,.83f),()=>{ResetLabDraft();RefreshLabWorkspace();});
+            var clear=LabButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.46f,.785f),new Vector2(.56f,.83f),()=>GuardLabSelection(()=>{ResetLabDraft();RefreshLabWorkspace();}));
             labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.34f,.785f),new Vector2(.45f,.83f),()=>LabOperation(()=>labHistory.Save(labDraft),true));
             labSave.GetComponent<Image>().color=MenuGold;labSave.GetComponentInChildren<Text>().color=MenuInk;
             labHint=Label(labScreen.transform,"lab-hint","",14,new Vector2(.02f,.005f),new Vector2(.98f,.055f),TextAnchor.MiddleLeft,MenuGold);
@@ -229,7 +229,7 @@ namespace StarTournament.ProvingGround
             labRevisionSelector=LabButton(labScreen.transform,"lab-revision-select","Ревизия ▾",new Vector2(.02f,.785f),new Vector2(.32f,.83f),ShowLabRevisions);
             labCreate=LabButton(labScreen.transform,"lab-create","Создать",new Vector2(.34f,.85f),new Vector2(.44f,.895f),()=>LabNameDialog(false));
             labRename=LabButton(labScreen.transform,"lab-rename","Переименовать",new Vector2(.45f,.85f),new Vector2(.59f,.895f),()=>LabNameDialog(true));
-            labDelete=LabButton(labScreen.transform,"lab-delete","Удалить",new Vector2(.60f,.85f),new Vector2(.70f,.895f),()=>LabConfirm("Удалить «"+labHistory.SelectedProfileName+"»?\nРевизий: "+labHistory.SelectedProfile.Revisions.Count,"Удалить профиль",()=>LabOperation(labHistory.DeleteSelected,true)));
+            labDelete=LabButton(labScreen.transform,"lab-delete","Удалить",new Vector2(.60f,.85f),new Vector2(.70f,.895f),()=>GuardLabSelection(()=>LabConfirm("Удалить «"+labHistory.SelectedProfileName+"»?\nРевизий: "+labHistory.SelectedProfile.Revisions.Count,"Удалить профиль",()=>LabOperation(labHistory.DeleteSelected,true))));
             Hint(labDelete.gameObject,"Удаляется целый локальный профиль после подтверждения. Профили со встроенными релизами защищены от удаления.");
             LabButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.57f,.785f),new Vector2(.71f,.83f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
             labIdentity=Label(labScreen.transform,"lab-identity","",12,new Vector2(.02f,.72f),new Vector2(.98f,.745f),TextAnchor.MiddleLeft,Color.white);
@@ -389,7 +389,38 @@ namespace StarTournament.ProvingGround
         }
         void LabConfirm(string title,string confirm,Action action)
         {var card=LabDialog(title);var cancel=LabButton(card,"cancel","Продолжить редактирование",new Vector2(.05f,.10f),new Vector2(.55f,.185f),CloseLabDialog);LabButton(card,"confirm",confirm,new Vector2(.60f,.10f),new Vector2(.95f,.185f),()=>action());Select(cancel);}
-        void ConfirmLabDiscard(Action next)=>LabConfirm("Черновик содержит несохранённые изменения","Отбросить",()=>{ResetLabDraft();CloseLabDialog();next();});
+        void ConfirmLabDiscard(Action next)
+        {
+            var card=LabDialog("Отбросить несохранённые изменения?");
+            Layout((RectTransform)card,new Vector2(.12f,.14f),new Vector2(.88f,.80f));
+            Layout((RectTransform)card.Find("title"),new Vector2(.04f,.87f),new Vector2(.96f,.99f));
+            card.Find("title").GetComponent<Text>().fontSize=28;
+            Label(card,"discard-saved-version","Сохранённая версия "+labSavedRevisionLabel+" и история профиля останутся без изменений.",20,
+                new Vector2(.04f,.78f),new Vector2(.96f,.86f),TextAnchor.MiddleLeft,Color.white);
+            var scroll=LabScroll(card,"discard-changes",new Vector2(.04f,.30f),new Vector2(.96f,.76f),out var list);
+            int index=0;
+            foreach(var descriptor in LabDescriptors().Where(Changed))
+            {
+                var row=LabButton(list,"discard-change-"+descriptor.Path,"",Vector2.zero,Vector2.one,()=>{});
+                PlaceLabRow((RectTransform)row.transform,index++,76);
+                Label(row.transform,"field",GroupLabel(LabGroup(descriptor))+" · "+descriptor.Label,20,
+                    new Vector2(.02f,.04f),new Vector2(.64f,.96f),TextAnchor.MiddleLeft,Color.white);
+                string value=labRaw.TryGetValue(descriptor.Path,out var raw)?raw:LabNumber(labDraft.Get(descriptor.Path));
+                var values=Label(row.transform,"values",LabNumber(labBaseline.Get(descriptor.Path))+" → "+value+" "+descriptor.Unit,20,
+                    new Vector2(.66f,.04f),new Vector2(.98f,.96f),TextAnchor.MiddleRight,MenuGold);
+                values.resizeTextForBestFit=true;values.resizeTextMinSize=14;values.resizeTextMaxSize=20;
+                var focus=row.GetComponent<MenuScrollFocus>()??row.gameObject.AddComponent<MenuScrollFocus>();
+                focus.Scroll=scroll;focus.Row=(RectTransform)row.transform;
+            }
+            ((RectTransform)list).sizeDelta=new Vector2(0,index*76);scroll.verticalNormalizedPosition=1;
+            Label(card,"discard-consequences","Несохранённые изменения будут потеряны.",17,
+                new Vector2(.04f,.20f),new Vector2(.96f,.28f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            var cancel=LabButton(card,"cancel","Продолжить редактирование",new Vector2(.04f,.07f),new Vector2(.52f,.17f),CloseLabDialog);
+            cancel.GetComponentInChildren<Text>().fontSize=20;
+            var confirm=LabButton(card,"confirm","Отбросить и продолжить",new Vector2(.54f,.07f),new Vector2(.96f,.17f),()=>{ResetLabDraft();CloseLabDialog();next();});
+            confirm.GetComponentInChildren<Text>().fontSize=20;
+            Select(cancel);
+        }
         void GuardLabSelection(Action action){if(LabDirty)ConfirmLabDiscard(action);else action();}
         void ShowLabErrors()
         {

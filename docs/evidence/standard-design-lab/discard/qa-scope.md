@@ -1,0 +1,14 @@
+# Lab draft loss warning — affected QA
+Baseline9edd6c35, branch codex/game-standard-alignment. Template pin0c2d4562683252d54736f294dc1af463050eac17, LAB-DRAFT-02 and applicable menu-base. Mockup06 approved by human before implementation.
+
+Runtime diff: scrollable full diff independent of search/group, exact baseline/raw new values, safe initial cancel focus, guard global Clear and Delete in addition to existing leave/selection/quit. Existing test/review script adapts to the newly required Clear confirmation, retaining all original assertions. No balance/simulation/storage changes.
+
+Command: `UNITY_RUN_MODE=shared unity/tools.sh test-play-filter 'LabDiscardWarningTests;DesignLabWorkspaceTests.DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch'`. Three new affected tests plus existing editor state/input/match-boundary fixture. Actual Unity lifecycle, UI/input and offscreen RenderTexture capture require Editor. Shared runner, -noaudio -muted -nographics, fixture-owned history. No Player/installer build, full suite or publication.
+
+Verify hidden cross-group changes and invalid raw text appear in dialog; cancel preserves draft/saved/active/file bytes; confirm performs original navigation; clear/delete cannot bypass discard consent; 25-row diff focus scroll at720p keeps actions available. Render1600x900 and1280x720 PNGs with EditorUiCapture; inspect saved PNGs. These are Editor evidence, not human/native/device acceptance.
+
+First run:3 Passed/1 Failed. The wrapper adds -nographics, so log reports Null Device; saved PNGs are blank and do NOT count as visual evidence. Preserve first-null-device logs/XML/PNGs. Rerun only the two screenshot-producing cases with shared Editor graphics enabled (omit -nographics), retaining -batchmode -noaudio -muted and all assertions. No Player build needed; only the graphics backend changes.
+
+Command: `UNITY_RUN_MODE=shared STAR_TOURNAMENT_QA_LAB_HISTORY=<owned-run>/qa-history.json unity/tools.sh editor -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter 'LabDiscardWarningTests.HiddenAndInvalidChangesAreListedCancelKeepsDraftConfirmOnlyNavigates;LabDiscardWarningTests.LongDiffRevealsFocusedRowsWithoutScrollingAwayActions' -testResults <owned-run>/playmode.xml -logFile <owned-run>/playmode.log`. Owned-run is printed by the command and preserved in scope.txt. Existing workspace and clear/delete tests passed on unchanged runtime; no reason to repeat those cases.
+
+Graphics run passed2/2 and produced inspected PNGs. A narrow rendered refinement removes technical keys from warning rows and increases title/action font sizes to follow approved06. Rerun all three new warning cases with graphics; existing workspace behavior/assertions are unchanged by typography. Preserve original results rather than calling the Null Device run successful.

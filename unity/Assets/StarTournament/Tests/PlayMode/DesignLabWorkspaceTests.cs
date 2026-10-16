@@ -60,6 +60,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("да · локально"));Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
             Input("input-rifle.damage").text="34";yield return null;Assert.That(Button("lab-release").interactable,Is.False);
             Assert.That(Input("input-rifle.damage").interactable,Is.True,"A local mark does not lock the separate local profile");Click("lab-clear");yield return null;
+            Assert.That(Button("confirm"),Is.Not.Null,"Clearing a changed draft requires confirmation");Click("confirm");yield return null;
             Click("lab-back");Click("main-action-0");yield return null;Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));
             Assert.That(ground.GetComponentsInChildren<Text>().Any(t=>t.name=="setup-lab-identity"),Is.False,"Setup does not duplicate the Lab summary");Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
             ground.StartCombatReview(new[]{pad},true,true);yield return null;yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);

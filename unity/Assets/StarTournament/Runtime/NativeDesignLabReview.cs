@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround
             if(!Button("lab-release").GetComponentInChildren<Text>().text.Contains("да · локально"))throw new InvalidOperationException("Local release mark missing");
             Input("input-rifle.damage").text="32";yield return null;Click("lab-save");yield return null;if(!ground.LabSavedIdentity.Contains("v3-"))throw new InvalidOperationException("Save from older base did not append v3");
             Click("lab-rename");yield return null;Input("lab-profile-name").text="QA профиль · переименован";Click("submit");yield return null;
-            Input("input-rifle.damage").text="33";Click("lab-revision-select");yield return null;Click("revision-1");yield return null;yield return Capture("07a-dirty-revision-guard");Click("cancel");yield return null;Click("lab-clear");yield return null;
+            Input("input-rifle.damage").text="33";Click("lab-revision-select");yield return null;Click("revision-1");yield return null;yield return Capture("07a-dirty-revision-guard");Click("cancel");yield return null;Click("lab-clear");yield return null;Click("confirm");yield return null;
             Click("lab-create");yield return null;Input("lab-profile-name").text="QA удалить";Click("submit");yield return null;Click("lab-delete");yield return null;yield return Capture("07b-delete-confirmation");Click("confirm");yield return null;
             if(Button("lab-delete").interactable)throw new InvalidOperationException("Protected release deletion enabled");
             Click("lab-profile-select");yield return null;var qaProfile=ground.GetComponentsInChildren<Button>().Single(b=>b.name.StartsWith("profile-")&&b.GetComponentInChildren<Text>().text=="QA профиль · переименован");qaProfile.onClick.Invoke();yield return null;
