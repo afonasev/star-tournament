@@ -10,6 +10,7 @@ if (args.FirstOrDefault() == "--mac-caller-fixture") { MacRecoveryChecks.Caller(
 if (args.FirstOrDefault() == "--mac-target-fixture") { MacRecoveryChecks.Target(args); return; }
 if (args.FirstOrDefault() == "--mac-orphan-fixture") { MacRecoveryChecks.Orphan(args[1]); return; }
 if (args.SequenceEqual(new[] { "--mac-recovery" })) { await MacRecoveryChecks.Run(); return; }
+if (args.SequenceEqual(new[] { "--windows-recovery" })) { WindowsRecoveryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--startup-health" })) { StartupHealthChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--startup-recovery" })) { StartupRecoveryChecks.Run(); return; }
 if (args.Length == 3 && args[0] == "--payload-crash-fixture") { PayloadRecoveryChecks.CrashFixture(args[1], args[2]); return; }

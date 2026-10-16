@@ -26,13 +26,18 @@ public sealed class PayloadRecovery
     readonly string root;
     readonly RecoveryIdentity identity;
     readonly Action<string> checkpoint;
-    public PayloadRecovery(string store, RecoveryIdentity identity) : this(store, identity, _ => { }) { }
-    internal PayloadRecovery(string store, RecoveryIdentity identity, Action<string> checkpoint)
+    readonly Action<string>? protectedMkdir;
+    readonly Func<string, FileStream>? protectedCreate;
+    public PayloadRecovery(string store, RecoveryIdentity identity) : this(store, identity, _ => { }, null, null) { }
+    public PayloadRecovery(string store, RecoveryIdentity identity, Action<string> mkdir, Func<string, FileStream> create)
+        : this(store, identity, _ => { }, mkdir, create) { }
+    internal PayloadRecovery(string store, RecoveryIdentity identity, Action<string> checkpoint) : this(store, identity, checkpoint, null, null) { }
+    PayloadRecovery(string store, RecoveryIdentity identity, Action<string> checkpoint, Action<string>? mkdir, Func<string, FileStream>? create)
     {
-        root = Absolute(store); this.identity = identity; this.checkpoint = checkpoint;
+        root = Absolute(store); this.identity = identity; this.checkpoint = checkpoint; protectedMkdir = mkdir; protectedCreate = create;
         // Reuse identity validation without creating a journal.
         _ = new StartupRecovery(Path.Combine(root, "identity-check.json"), identity);
-        RegularAncestors(root); Directory.CreateDirectory(root); RegularAncestors(root);
+        RegularAncestors(root); MakeDirectory(root); RegularAncestors(root);
     }
 
     public PayloadSnapshot Capture(string installedPath, string version, string id)
@@ -59,7 +64,7 @@ public sealed class PayloadRecovery
             if (Read<CaptureOwner>(Path.Combine(next, "owner.json")) != owner) throw new IOException("Unowned partial capture");
             Directory.Delete(next, true);
         }
-        Directory.CreateDirectory(next);
+        MakeDirectory(next);
         Write(Path.Combine(next, "owner.json"), owner, createNew: true);
         VerifyRelease(installed, version);
         var before = Inventory(installed);
@@ -266,7 +271,7 @@ public sealed class PayloadRecovery
         }
         if (!Below(current, root) || !Exists(current)) throw new IOException("Payload link is outside the bundle or missing");
     }
-    static void Copy(string source, string destination, PayloadEntry[] entries)
+    void Copy(string source, string destination, PayloadEntry[] entries)
     {
         RegularAncestors(destination);
         if (Exists(destination)) throw new IOException("Fresh snapshot destination required");
@@ -280,12 +285,20 @@ public sealed class PayloadRecovery
             if (copy.ExitCode != 0) throw new IOException("Payload copy failed: " + error);
             return;
         }
-        Directory.CreateDirectory(destination);
+        MakeDirectory(destination);
         foreach (var entry in entries.Where(v => v.Path != ""))
         {
             var target = Path.Combine(destination, entry.Path);
-            if (entry.Kind == "directory") Directory.CreateDirectory(target);
-            else if (entry.Kind == "file") File.Copy(Path.Combine(source, entry.Path), target, overwrite: false);
+            if (entry.Kind == "directory") MakeDirectory(target);
+            else if (entry.Kind == "file")
+            {
+                if (protectedCreate == null) File.Copy(Path.Combine(source, entry.Path), target, overwrite: false);
+                else
+                {
+                    using var input = new FileStream(Path.Combine(source, entry.Path), FileMode.Open, FileAccess.Read, FileShare.Read);
+                    using var output = protectedCreate(target); input.CopyTo(output); output.Flush(true);
+                }
+            }
             else throw new IOException("Managed payload copy does not admit links");
         }
         if (!OperatingSystem.IsWindows())
@@ -308,6 +321,7 @@ public sealed class PayloadRecovery
         catch (Exception ex) when (ex is JsonException or KeyNotFoundException or InvalidOperationException)
         { throw new IOException("Invalid retained release identity", ex); }
     }
+    void MakeDirectory(string path) { if (protectedMkdir != null) protectedMkdir(path); else Directory.CreateDirectory(path); }
     static string Hash(string path)
     { using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read); return Convert.ToHexString(SHA256.HashData(file)); }
     static void Equal(PayloadEntry[] expected, PayloadEntry[] actual)
@@ -320,13 +334,13 @@ public sealed class PayloadRecovery
         try { return JsonSerializer.Deserialize<T>(input, Json) ?? throw new JsonException("Empty recovery metadata"); }
         catch (JsonException ex) { throw new IOException("Invalid recovery metadata", ex); }
     }
-    static void Write<T>(string path, T value, bool createNew = false)
+    void Write<T>(string path, T value, bool createNew = false)
     {
         RegularAncestors(path);
         var next = path + ".write-" + Guid.NewGuid().ToString("N");
         try
         {
-            using (var output = new FileStream(next, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            using (var output = protectedCreate?.Invoke(next) ?? new FileStream(next, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             { JsonSerializer.Serialize(output, value, Json); output.Flush(true); }
             File.Move(next, path, overwrite: !createNew);
         }

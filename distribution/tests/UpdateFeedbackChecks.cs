@@ -10,6 +10,7 @@ static class UpdateFeedbackChecks
     {
         int passed = 0;
         void Check(bool value, string label) { if (!value) throw new Exception(label); passed++; Console.WriteLine("PASS " + label); }
+        Check(UpdateFeedback.Explain(new MaintenanceUpgradeRequiredException()).Contains("новый установщик"), "legacy maintenance upgrade feedback");
         Check(UpdateFeedback.Explain(new UnauthorizedAccessException()).Contains("доступ"), "permission feedback");
         Check(UpdateFeedback.Explain(new Win32Exception(5)).Contains("доступ"), "native Windows permission feedback");
         Check(UpdateFeedback.Explain(new Win32Exception(1223)).Contains("администратора"), "UAC denial feedback");

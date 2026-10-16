@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using Velopack.Locators;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace StarTournament.Distribution;
 
@@ -16,9 +18,60 @@ public static class WindowsInstallation
         var broker = Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe");
         if (!File.Exists(broker)) throw new InvalidOperationException("Installation maintenance is missing; repair with the installer");
         using var contract = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")));
-        if (contract.RootElement.GetProperty("protocol").GetInt32() != 1)
+        if (contract.RootElement.GetProperty("protocol").GetInt32() is not (1 or 2))
             throw new InvalidOperationException("Unsupported installation maintenance; use the new installer");
         return root;
+    }
+
+    public static bool RecoveryNeedsRepair(string root)
+    {
+        var path = Path.Combine(root, "maintenance", "recovery", "state.json");
+        if (!File.Exists(path)) return false;
+        if (new FileInfo(path).Length > 131072 || (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0)
+            throw new IOException("Invalid protected recovery status");
+        using var data = JsonDocument.Parse(File.ReadAllText(path)); var state = data.RootElement;
+        if (state.GetProperty("Schema").GetInt32() != 1 || state.GetProperty("RootId").GetString() != StartupRecovery.InstallationId(root))
+            throw new IOException("Foreign protected recovery status");
+        var attempt = state.GetProperty("Attempt"); if (attempt.ValueKind == JsonValueKind.Null) return false;
+        return attempt.GetProperty("Phase").GetString() switch
+        {
+            "capturing" or "prepared" or "restoring" => true,
+            "installed" or "restored" => false,
+            _ => throw new IOException("Unknown protected recovery phase")
+        };
+    }
+
+    public static void MarkStartupReady(string root, string version)
+    {
+        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
+        var statePath = Path.Combine(root, "maintenance", "recovery", "state.json");
+        if (!File.Exists(statePath)) return;
+        if (new FileInfo(statePath).Length > 131072) throw new IOException("Protected recovery status exceeds limit");
+        using var data = JsonDocument.Parse(File.ReadAllText(statePath)); var state = data.RootElement;
+        if (state.GetProperty("Schema").GetInt32() != 1 || state.GetProperty("RootId").GetString() != StartupRecovery.InstallationId(root)) throw new IOException("Foreign recovery status");
+        var attempt = state.GetProperty("Attempt");
+        if (attempt.ValueKind == JsonValueKind.Null || attempt.GetProperty("Phase").GetString() != "installed") return;
+        if (attempt.GetProperty("Target").GetString() != version) throw new IOException("Startup latch version mismatch");
+        var id = attempt.GetProperty("Id").GetString();
+        if (id == null || id.Length != 32 || id.Any(c => !"0123456789abcdef".Contains(c))) throw new IOException("Invalid protected recovery id");
+        var path = Path.Combine(root, "maintenance", "recovery", id + ".ready");
+        // Only append, never truncate/replace: a normal user can conservatively forbid a
+        // downgrade, but cannot authorize application writes or erase another user's health.
+        var nativePath = path.StartsWith(@"\\?\", StringComparison.Ordinal) ? path : @"\\?\" + Path.GetFullPath(path);
+        using var handle = CreateFileW(nativePath, 0x00100004, 3, IntPtr.Zero, 3, 0x80000080, IntPtr.Zero);
+        if (handle.IsInvalid) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+        using var output = new FileStream(handle, FileAccess.Write); output.WriteByte(1); output.Flush();
+    }
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+    static extern SafeFileHandle CreateFileW(string path, uint access, uint share, IntPtr security, uint disposition, uint flags, IntPtr template);
+
+    public static bool IsBlocked(string root, string version)
+    {
+        var path = Path.Combine(root, "maintenance", "recovery", "state.json"); if (!File.Exists(path)) return false;
+        if (new FileInfo(path).Length > 131072) throw new IOException("Protected recovery status exceeds limit");
+        using var data = JsonDocument.Parse(File.ReadAllText(path)); var state = data.RootElement;
+        if (state.GetProperty("Schema").GetInt32() != 1 || state.GetProperty("RootId").GetString() != StartupRecovery.InstallationId(root)) throw new IOException("Foreign recovery status");
+        return state.GetProperty("Blocked").EnumerateArray().Any(v => v.GetString() == version);
     }
 
     public static bool Declined(string packages, string version)
@@ -33,8 +86,10 @@ public static class WindowsInstallation
         catch (KeyNotFoundException) { return false; }
     }
 
-    public static void Activate(string root, string packages, bool restart, string[] restartArguments)
+    public static void Activate(string root, string packages, bool restart, string[] restartArguments, bool explicitRetry = false)
     {
+        using var contract = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")));
+        if (contract.RootElement.GetProperty("protocol").GetInt32() != 2) throw new MaintenanceUpgradeRequiredException();
         var broker = Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe");
         using var caller = Process.GetCurrentProcess();
         var start = new ProcessStartInfo(broker) { UseShellExecute = false, WorkingDirectory = root, RedirectStandardOutput = true };
@@ -44,6 +99,7 @@ public static class WindowsInstallation
         start.ArgumentList.Add(caller.Id.ToString(System.Globalization.CultureInfo.InvariantCulture));
         start.ArgumentList.Add(caller.StartTime.ToUniversalTime().Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture));
         start.ArgumentList.Add(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(restartArguments))));
+        start.ArgumentList.Add(explicitRetry ? "true" : "false");
         using var supervisor = Process.Start(start) ?? throw new IOException("Maintenance supervisor did not start");
         var ready = supervisor.StandardOutput.ReadLineAsync();
         if (!ready.Wait(TimeSpan.FromSeconds(30)) || ready.Result != "STAR_TOURNAMENT_ACTIVATION_READY")

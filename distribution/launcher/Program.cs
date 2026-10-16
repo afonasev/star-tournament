@@ -89,6 +89,8 @@ static class Launcher
         using var installationLease = machineRoot == null ? null : WindowsInstallLease.TryAcquire(machineRoot);
         if (machineRoot != null && (installationLease == null || Installing()))
         { UpdateFeedback.Show("Установка игры занята другим процессом. Дождитесь завершения установки или обновления и запустите игру снова."); return 1; }
+        if (machineRoot != null && WindowsInstallation.RecoveryNeedsRepair(machineRoot))
+        { UpdateFeedback.Show("Установка прервана. Запустите StarTournamentMaintenance.exe --recover из папки maintenance установленной игры."); return 1; }
         var manager = new UpdateManager(source);
         var packages = locator.PackagesDir ?? throw new InvalidOperationException("Package cache missing");
         string PackagePath(VelopackAsset asset) => Path.Combine(packages, Path.GetFileName(asset.FileName));
@@ -116,11 +118,11 @@ static class Launcher
         }
         var knownHealthy = recovery.Read().HealthyVersion == config.Version;
         string? startupError = null;
-        void Apply(VelopackAsset asset, bool restartGame)
+        void Apply(VelopackAsset asset, bool restartGame, bool explicitRetry = false)
         {
             journal.Begin(asset.Version.ToString());
             UpdateFeedback.Log("apply-handoff target=" + asset.Version);
-            if (machineRoot != null) WindowsInstallation.Activate(machineRoot, packages, restartGame, restartArguments);
+            if (machineRoot != null) WindowsInstallation.Activate(machineRoot, packages, restartGame, restartArguments, explicitRetry);
             else if (macRecovery != null) macRecovery.PrepareAndStart(locator.RootAppDir ?? throw new IOException("Installed bundle missing"),
                 packages, asset, File.ReadAllText(stagedManifest), restartGame, restartArguments);
             else throw new InvalidOperationException("Unsupported recovery platform");
@@ -144,7 +146,7 @@ static class Launcher
         try { stagedAtStartup = await Staged(); }
         catch (Exception ex) { Log(ex); File.Delete(stagedManifest); startupError = "Обновление не установлено. " + UpdateFeedback.Explain(ex); } // Invalid staged bytes are never activated.
         if (knownHealthy && recovery.Read().Attempt == null && stagedAtStartup != null && !recovery.IsBlocked(stagedAtStartup.Version.ToString()) && !journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) &&
-            (machineRoot == null || !WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString())))
+            (machineRoot == null || !WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString()) && !WindowsInstallation.IsBlocked(machineRoot, stagedAtStartup.Version.ToString())))
         {
             try
             {
@@ -174,6 +176,8 @@ static class Launcher
         {
             var previousAttempt = journal.Read();
             var failure = startupError ?? (journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) ? previousAttempt?.Message : null);
+            if (failure == null && machineRoot != null && WindowsInstallation.IsBlocked(machineRoot, stagedAtStartup.Version.ToString()))
+                failure = "Предыдущая попытка завершилась неудачно. Можно продолжить играть или повторить установку вручную.";
             if (failure == null && machineRoot != null && WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString()))
                 failure = "Предыдущая установка отменена или завершилась с ошибкой. Повторите установку и подтвердите запрос Windows.";
             initial = new(failure == null ? "staged" : "apply-error", 100, failure ?? "", Version: stagedAtStartup.Version.ToString());
@@ -207,7 +211,10 @@ static class Launcher
         if (recovery.Read().Attempt is not { Phase: "confirmed" or "restored" })
         {
             startupHealth = new StartupHealthMonitor(recovery, config.Version, Path.Combine(session, "startup-ready.json"), DateTimeOffset.UtcNow,
-                () => { try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
+                () => { if (machineRoot != null)
+                    { try { WindowsInstallation.MarkStartupReady(machineRoot, config.Version); }
+                      catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception) { Log(ex); } }
+                    try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
                     UpdateFeedback.Log("startup-health-confirmed version=" + config.Version); });
             start.Environment["STAR_TOURNAMENT_STARTUP_READY"] = startupHealth.ReadyPath;
             start.Environment["STAR_TOURNAMENT_STARTUP_VERSION"] = startupHealth.Ticket.Version;
@@ -271,12 +278,13 @@ static class Launcher
             {
                 if (restart && recovery.IsBlocked(ready.Version.ToString())) recovery.PermitRetry(ready.Version.ToString());
                 if (recovery.IsBlocked(ready.Version.ToString())) return 0;
+                if (machineRoot != null && !restart && WindowsInstallation.IsBlocked(machineRoot, ready.Version.ToString())) return 0;
                 if (machineRoot != null)
                 {
                     if (restart || (!journal.AlreadyAttempted(ready.Version.ToString()) && !WindowsInstallation.Declined(packages, ready.Version.ToString())))
-                        Apply(ready, restart);
+                        Apply(ready, restart, explicitRetry: restart);
                 }
-                else if (restart || !journal.AlreadyAttempted(ready.Version.ToString())) Apply(ready, restart);
+                else if (restart || !journal.AlreadyAttempted(ready.Version.ToString())) Apply(ready, restart, explicitRetry: restart);
             }
         }
         catch (Exception ex) { Log(ex); UpdateFeedback.Show("Обновление не установлено. " + UpdateFeedback.Explain(ex)); }

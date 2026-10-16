@@ -1,0 +1,32 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(16,28): warning CS8604: Possible null reference argument for parameter 'path' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,17): warning CS8604: Possible null reference argument for parameter 'version' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,72): warning CS8604: Possible null reference argument for parameter 'token' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,54): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,59): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,64): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(89,74): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+PASS complete protected snapshot precedes native callback
+PASS native partial failure restores current and every bootstrap file
+PASS bad installed identity triggers restore
+PASS manual restoration does not require replacement config or executable
+PASS unknown bootstrap bytes are rejected before replacing current
+PASS payload corruption does not activate unverified backup
+PASS unconfirmed installed release cannot authorize cleanup
+PASS healthy target attestation permits cleanup and next transaction
+PASS restored target remains blocked until explicit retry
+PASS new target is eligible after cleanup despite old failure
+PASS successful retry retires the historical failure block
+PASS pending transaction cannot be overwritten
+PASS capturing crash cannot run updater and preserves original
+PASS bootstrap allow-list rejects metadata path traversal
+PASS foreign root and identity state fail closed
+PASS malformed oversized state never becomes empty
+PASS downgrade same-version or foreign-channel target is rejected
+PASS resume cleanup after snapshot disappeared before state acknowledgement
+Unhandled exception. System.Exception: Windows recovery store contract failed
+   at WindowsRecoveryChecks.Require(Boolean value) in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/WindowsRecoveryChecks.cs:line 116
+   at WindowsRecoveryChecks.<>c.<Run>b__2_19(String install, WindowsRecoveryStore store) in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/WindowsRecoveryChecks.cs:line 98
+   at WindowsRecoveryChecks.<Run>g__Test|2_0(String name, Action`2 action, <>c__DisplayClass2_0&) in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/WindowsRecoveryChecks.cs:line 18
+   at WindowsRecoveryChecks.Run() in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/WindowsRecoveryChecks.cs:line 97
+   at Program.<Main>$(String[] args) in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Program.cs:line 13
+   at Program.<Main>(String[] args)

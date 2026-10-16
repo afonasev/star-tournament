@@ -18,3 +18,6 @@ Launcher+Unity health handshake подключён (startup-contract.md):12 .NET
 
 ## Подключён macOS supervisor
 Теперь Mac Apply/watch/manual restore подключены к retained runtime и health journal,9 process fixtures +40 filesystem +12 health +29 journal passed. См. mac-supervisor.md и mac-verification.json. Windows/data/actual native installed acceptance всё ещё открыты; прежние описания not-wired относятся к историческим срезам.
+
+## Windows protected transaction (частично)
+Сохранение/restore current+bootstrap и protected UAC broker подключены; 30 Windows filesystem +40 payload +10 Mac fixtures +34 feedback и16 installer-tooling checks passed. Debug broker compile0 warnings/errors. Автоматический Windows first-start watchdog, реальный UAC/ACL и data compatibility остаются открыты. См. [windows-protected-recovery.md](windows-protected-recovery.md), [windows-verification.json](windows-verification.json).

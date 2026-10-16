@@ -96,7 +96,7 @@ def main():
         subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
                         '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
                         '-p:DebugType=None','-o',str(maintenance)],check=True,env=env)
-        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=1, **config),indent=2)+'\n')
+        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=2, **config),indent=2)+'\n')
         shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
         installer = output/f'Star-Tournament-{a.version}-Windows-x64-Setup.exe'
