@@ -4,6 +4,7 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.SequenceEqual(new[] { "--startup-recovery" })) { StartupRecoveryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--feedback" })) { await UpdateFeedbackChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--release-history" })) { await UpdateSessionChecks.Run(); await ReleaseHistoryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--update-session" })) { await UpdateSessionChecks.Run(); return; }
