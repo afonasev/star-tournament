@@ -186,18 +186,19 @@ namespace StarTournament.ProvingGround
             // Reuse exact trusted catalogue validation and compatibility migration. No user IO.
             return new DesignLabHistory(null,shipped,releases:releases,resetToLatestDefault:true,persistMigration:false);
         }
-        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default)
+        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default,string legacyPath=null)
         {
             double start=Clock(),stage=start;long memory=GC.GetTotalMemory(false);int collections=GC.CollectionCount(0);
             startupCancellation=cancellationToken;startupCancellation.ThrowIfCancellationRequested();
             this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
             data=NewFile();
             stage=Clock();if(this.releases!=null)ValidateReleases();startupDiagnostics.CatalogueSeconds=Clock()-stage;
-            if(File.Exists(path))
+            string source=VersionedUserData.ReadPath(path,legacyPath);
+            if(File.Exists(source))
             try
             {
                 startupCancellation.ThrowIfCancellationRequested();
-                stage=Clock();startupDiagnostics.FileBytes=new FileInfo(path).Length;var json=File.ReadAllText(path);startupDiagnostics.ReadSeconds=Clock()-stage;
+                stage=Clock();startupDiagnostics.FileBytes=new FileInfo(source).Length;var json=File.ReadAllText(source);startupDiagnostics.ReadSeconds=Clock()-stage;
                 startupCancellation.ThrowIfCancellationRequested();
                 stage=Clock();var loaded=ReadStorage(json);startupDiagnostics.ParseSeconds=Clock()-stage;
                 startupDiagnostics.Revisions=loaded?.Profiles?.Sum(p=>p.Revisions?.Count??0)??0;

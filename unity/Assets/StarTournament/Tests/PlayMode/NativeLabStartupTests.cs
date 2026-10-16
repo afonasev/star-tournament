@@ -33,6 +33,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            Assert.That(Field<string>(ground,"historyStartupLegacyPath"),Is.Null,"QA history override must not import production data");
             float deadline=Time.realtimeSinceStartup+120;
             while(!started.IsSet){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             worker=Field<Task<DesignLabHistory>>(ground,"historyLoading");

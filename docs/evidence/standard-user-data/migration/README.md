@@ -1,0 +1,11 @@
+# Preserve prior user-data namespaces
+
+v0.1.2@e497ca6f is verified against live GitHub release and tag-ref APIs (previous-release.json). Its actual reader supports Lab schema1 and a smaller player profile DTO; it cannot read compact schema2 and its profile writer would discard unknown additive fields. Earlier source-equivalence evidence only compared edd095ae and did not establish this release boundary.
+
+The new runtime reads/writes `player-profiles-v2.json` and `design-lab-history-v3.json`. If those destinations do not exist, it imports `player-profiles-v1.json` and `design-lab-history-v2.json` **in memory**; first explicit mutation publishes only to the new namespace. Old bytes remain untouched, including when publication fails. A present invalid destination is authoritative and fails visibly; it cannot silently reset to an older file. After a new namespace exists, changes made by an older Player are not automatically merged. Rolling back the app uses its preserved older files; upgrading again uses the retained newer files.
+
+Lab background loading still uses persistMigration:false; import adds no startup copy or blocking history IO before menu. QA launch path overrides disable legacy production fallback. Same schema1 files can still be explicitly compacted with the existing backup behavior; this is separate from automatic import. Existing scalar PlayerPrefs keys/meaning remain stable and new additive keys are not enumerated/deleted by previous code; this patch does not snapshot native registry/plist or reset user settings.
+
+Already compacted legacy-path files from unpublished development versions remain preserved and may still be incompatible with v0.1.2; no automatic reverse serialization or destructive replacement is attempted. This strategy protects unchanged previous-release data when upgrading from its actual schema1 namespace. Actual installed previous→candidate→failed-startup→previous, OS-specific preference persistence and native/human acceptance remain open. No claim of compatibility with arbitrary older/future versions.
+
+`qa-scope.md` records affected tests and commands. New namespace tests run real production C# and Unity JsonUtility; source excerpts are evidence about the old reader, not execution of the old Player.

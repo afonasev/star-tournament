@@ -1,5 +1,7 @@
 # Data compatibility investigation
 
+Historical audit at613034bf. The later `migration/` directory records the actual v0.1.2 release boundary and the implemented versioned storage strategy; its current source/QA supersedes runtime-unchanged statements below.
+
 Requirement UPDATES-DATA-01, approved template `0c2d4562683252d54736f294dc1af463050eac17`. Scope: current recovery branch versus prior application source `edd095ae`; this is not verification against every installed/published release.
 
 | Storage | Reader/writer and startup behavior | Recovery implications |

@@ -1,0 +1,13 @@
+{
+  "release": {
+    "isDraft": false,
+    "isPrerelease": false,
+    "publishedAt": "2026-10-09T15:32:20Z",
+    "tagName": "v0.1.2",
+    "targetCommitish": "e497ca6f326db6c418a67654827dcd2945fae936",
+    "url": "https://github.com/afonasev/star-tournament/releases/tag/v0.1.2"
+  },
+  "tag_ref": "refs/tags/v0.1.2",
+  "tag_sha": "e497ca6f326db6c418a67654827dcd2945fae936",
+  "verification": "Live read-only GitHub Release and tag-ref API match local source tag; binary execution NotRun"
+}

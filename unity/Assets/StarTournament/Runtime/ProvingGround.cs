@@ -210,7 +210,8 @@ namespace StarTournament.ProvingGround
         }
         IEnumerator InitializeGame()
         {
-            playerProfiles = new PlayerProfileCatalog(PlayerProfilesPath());
+            var profilesPath=PlayerProfilesPath(out var legacyProfilesPath);
+            playerProfiles = new PlayerProfileCatalog(profilesPath,legacyProfilesPath);
             input.Joined += OnDeviceJoined;
             input.JoinRejected += device => {
                 if(phase==Phase.Setup && setupStep==2 && LocalSeatCount<4 && RosterTotal<8)
@@ -340,15 +341,17 @@ namespace StarTournament.ProvingGround
 #endif
 #endif
         }
-        static string PlayerProfilesPath()
+        static string PlayerProfilesPath(out string legacyPath)
         {
-            string path=System.IO.Path.Combine(Application.persistentDataPath,"player-profiles-v1.json");
+            string path=System.IO.Path.Combine(Application.persistentDataPath,VersionedUserData.Profiles);
+            legacyPath=System.IO.Path.Combine(Application.persistentDataPath,VersionedUserData.LegacyProfiles);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-profilesPath");
             if(index>=0)
             {
                 if(index+1>=args.Length || !System.IO.Path.IsPathFullyQualified(args[index+1]))throw new ArgumentException("Absolute profile QA path required");
                 path=args[index+1];
+                legacyPath=null;
             }
 #endif
             return path;

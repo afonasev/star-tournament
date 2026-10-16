@@ -34,10 +34,11 @@ namespace StarTournament.ProvingGround
         readonly string path;
         readonly PlayerProfileDocument document;
         public IReadOnlyList<PlayerProfileRecord> Profiles => document.Profiles;
-        public PlayerProfileCatalog(string path)
+        public PlayerProfileCatalog(string path,string legacyPath=null)
         {
             this.path = path ?? throw new ArgumentNullException(nameof(path));
-            document = File.Exists(path) ? JsonUtility.FromJson<PlayerProfileDocument>(File.ReadAllText(path)) : new PlayerProfileDocument();
+            var source=VersionedUserData.ReadPath(path,legacyPath);
+            document = File.Exists(source) ? JsonUtility.FromJson<PlayerProfileDocument>(File.ReadAllText(source)) : new PlayerProfileDocument();
             if(document == null || document.Version != 1 || document.Profiles == null ||
                 document.Profiles.Any(p => p == null || string.IsNullOrEmpty(p.Id) || string.IsNullOrWhiteSpace(p.Name)) ||
                 document.Profiles.Select(p => p.Id).Distinct().Count() != document.Profiles.Count)

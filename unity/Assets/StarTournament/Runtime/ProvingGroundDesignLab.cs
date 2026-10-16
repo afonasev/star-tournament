@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
         LabBundle activeLabSnapshot,historyStartupBaseline;
         LabReleaseCatalog historyStartupCatalogue;
         LabRevisionReference activeLabReference;
-        string historyStartupPath,historyLoadError;
+        string historyStartupPath,historyStartupLegacyPath,historyLoadError;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         internal static Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> LabHistoryLoaderForTests;
 #endif
@@ -69,17 +69,21 @@ namespace StarTournament.ProvingGround
             BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();
             // Registry v2 adds heal fields and replaces the authored basement armor paths.
             // Keep v1 histories and their immutable hashes intact; v2 starts from the new shipped baseline.
-            string historyPath=Path.Combine(Application.persistentDataPath,"design-lab-history-v2.json");
+            string historyPath=Path.Combine(Application.persistentDataPath,VersionedUserData.LabHistory);
+            bool useLegacyHistory=true;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if(!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY")))historyPath=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");
+            if(!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY")))
+            {historyPath=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");useLegacyHistory=false;}
             var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-labReview");
-            if(flag>=0&&flag+1<args.Length)historyPath=Path.Combine(args[flag+1],"history.json");
+            if(flag>=0&&flag+1<args.Length){historyPath=Path.Combine(args[flag+1],"history.json");useLegacyHistory=false;}
             int colors=Array.IndexOf(args,"-colorIdentityEvidence");
             if(Array.IndexOf(args,"-colorIdentityReview")>=0&&colors>=0&&colors+1<args.Length)
-                historyPath=Path.Combine(args[colors+1],"qa-lab-history.json");
+            {historyPath=Path.Combine(args[colors+1],"qa-lab-history.json");useLegacyHistory=false;}
 #endif
             var startupWatch=System.Diagnostics.Stopwatch.StartNew();
             historyStartupPath=historyPath;
+            historyStartupLegacyPath=useLegacyHistory
+                ?Path.Combine(Application.persistentDataPath,VersionedUserData.LegacyLabHistory):null;
             // Capture trusted baseline before published values change live profile owners.
             historyStartupBaseline=CurrentLabBundle().Clone();
             historyStartupCatalogue=LabReleaseCatalog.Load();
@@ -103,7 +107,7 @@ namespace StarTournament.ProvingGround
 #else
             Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> overrideLoader=null;
 #endif
-            var pending=Task.Run(()=>overrideLoader!=null?overrideLoader(historyStartupPath,historyStartupBaseline,historyStartupCatalogue,token):new DesignLabHistory(historyStartupPath,historyStartupBaseline,releases:historyStartupCatalogue,resetToLatestDefault:true,persistMigration:false,cancellationToken:token),token);
+            var pending=Task.Run(()=>overrideLoader!=null?overrideLoader(historyStartupPath,historyStartupBaseline,historyStartupCatalogue,token):new DesignLabHistory(historyStartupPath,historyStartupBaseline,releases:historyStartupCatalogue,resetToLatestDefault:true,persistMigration:false,cancellationToken:token,legacyPath:historyStartupLegacyPath),token);
             historyLoading=pending;
             Debug.Log("Lab startup: validating local history in background");
             while(!pending.IsCompleted)yield return null;

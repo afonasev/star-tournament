@@ -1,0 +1,45 @@
+{
+  "baseline": "613034bf",
+  "branch": "codex/game-standard-alignment",
+  "previous_release": "v0.1.2",
+  "previous_revision": "e497ca6f326db6c418a67654827dcd2945fae936",
+  "results": [
+    {
+      "run": "preservation",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 2.1617378
+    },
+    {
+      "run": "profile-failure",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.0490628
+    },
+    {
+      "run": "startup",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 19.0264066
+    }
+  ],
+  "total_passed": 18,
+  "tested_source_sha256": {
+    "Runtime/Core/VersionedUserData.cs": "10042fb0127eacf36ef49641fd1bb846ba451a0894231531d5a3753f51e4843d",
+    "Runtime/Core/DesignLabHistory.cs": "fa8ec51f849781f1c1d1590994709e321f46210d40665e3cb960f47024c30df3",
+    "Runtime/PlayerProfiles.cs": "1142e65c29195089f6a0a6fcc9ddc395be218f55c8c43f12570d3ae18a75ba2f",
+    "Runtime/ProvingGround.cs": "cc49ccdf17573d318d594df54e1fe27416f12748cfe711bfbbbd3278e59a8d18",
+    "Runtime/ProvingGroundDesignLab.cs": "b364862ac0e2e95300e76fe249f53c78c23811fb2d577ac8ae528ef4b426fee4",
+    "Tests/EditMode/VersionedUserDataTests.cs": "47f7f9e50f515cc7d06b53e1684b4e60b33850af7b98100d01810d1035974475",
+    "Tests/PlayMode/NativeLabStartupTests.cs": "8dab40352367d720974b23ddbf7b2551fcc266099f8e4da48df551abc4d355e7"
+  },
+  "scope_note": "First run six namespace tests + nine preservation; later added profile failure method executed separately. Runtime source unchanged across all runs.",
+  "mode": "shared -noaudio -muted",
+  "full_suite": false,
+  "player_build": false,
+  "installed_rollback": "NotRun",
+  "native_registry_plist": "NotRun"
+}
