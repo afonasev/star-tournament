@@ -98,6 +98,68 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
             Assert.That(B("lab-save").interactable,Is.True);
         }
+        [UnityTest] public IEnumerator HistoricalSourceIdentityAndPerRowIncompatibilityStayVisibleWithoutActivation()
+        {
+            File.Delete(historyPath);
+            var flags=BindingFlags.NonPublic|BindingFlags.Instance;
+            var before=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",flags);
+            var previous=new LabBundle{Profiles=baseline.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList()};
+            var old=new DesignLabHistory(historyPath,previous,releases:LabReleaseCatalog.Factory(previous),authoring:true);
+            old.Create("Сохранённый баланс");string local=old.SelectedProfileId;
+            var file=(LabHistoryFile)typeof(DesignLabHistory).GetMethod("ReadStorage",flags).Invoke(old,new object[]{File.ReadAllText(historyPath)});
+            var original=file.Profiles.Single(p=>p.Id==local).Revisions.Single();original.Date="20000102";
+            file.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Add(new LabRevision{Number=9,Date="20261017",Hash=baseline.Hash(),Snapshot=baseline.Clone(),ReleaseCandidate=true});
+            var well=typeof(ProvingProfile).GetMethod("BeforeWellDetail",flags);
+            var incompatible=new LabBundle{Profiles=baseline.Profiles.Select(p=>(ProvingProfile)well.Invoke(p,null)).ToList()};
+            var bad=new LabRevision{Number=1,Date="20000103",Hash=incompatible.Hash(),Snapshot=incompatible,ReleaseCandidate=true};
+            file.Profiles.Add(new LabHistoryProfile{Id="legacy-light",Name="Прежний свет",Revisions={bad,new LabRevision{Number=9,Date="20261017",Hash=baseline.Hash(),Snapshot=baseline.Clone()}}});
+            file.Profiles.Add(new LabHistoryProfile{Id="legacy-only",Name="Только прежняя версия",Revisions={bad.Clone()}});
+            File.WriteAllText(historyPath,JsonUtility.ToJson(file));
+            yield return LoadAuthor();Click("main-action-2");yield return null;
+            Click("lab-profile-select");yield return null;Click("profile-"+local);
+            float deadline=Time.realtimeSinceStartup+120;while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
+            var h=Field<DesignLabHistory>("labHistory");var view=h.Selected;
+            Assert.That(view.CompatibilitySourceNumber,Is.EqualTo(1));Assert.That(view.Number,Is.Not.EqualTo(1));
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(1));Assert.That(ground.ActiveLabReference.Hash,Is.EqualTo(view.Hash));
+            Assert.That(ground.LabSavedIdentity,Does.Contain("v1-20000102"));Assert.That(ground.LabSavedIdentity,Does.Contain(original.Hash));
+            Assert.That(B("lab-revision-select").GetComponentInChildren<Text>().text,Does.Contain("v1-20000102"));
+            var bytes=File.ReadAllBytes(historyPath);Click("lab-revision-select");yield return null;
+            Assert.That(B("revision-"+view.Number).GetComponentInChildren<Text>().text,Does.Contain("для текущей игры"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-hash").text,Is.EqualTo("SHA256 "+original.Hash));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/mixed-history"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"saved-source-720p.png"),1280,720);
+            Click("cancel");yield return null;Click("lab-profile-select");yield return null;Click("profile-legacy-light");
+            deadline=Time.realtimeSinceStartup+120;while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
+            var active=ground.ActiveLabReference;var selected=h.Selected;bytes=File.ReadAllBytes(historyPath);
+            Click("lab-revision-select");yield return null;Click("revision-1");yield return null;
+            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-unmark").interactable,Is.True);
+            var reason=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-status");
+            Assert.That(reason.text,Does.Contain("well.fill"));Assert.That(reason.supportRichText,Is.False);
+            Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"incompatible-row-720p.png"),1280,720);
+            Click("revision-unmark");yield return null;
+            Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));
+            var retained=h.Profiles.Single(p=>p.Id=="legacy-light").Revisions.Single(r=>r.Number==1);
+            Assert.That(retained.ReleaseCandidate,Is.False);Assert.That(retained.Hash,Is.EqualTo(bad.Hash));Assert.That(retained.Date,Is.EqualTo(bad.Date));
+            Assert.That(JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(JsonUtility.ToJson(bad.Snapshot)));
+            Click("cancel");yield return null;I("input-rifle.damage").text="33";yield return null;
+            selected=h.Selected;active=ground.ActiveLabReference;bytes=File.ReadAllBytes(historyPath);
+            Click("lab-profile-select");yield return null;Click("profile-legacy-only");yield return null;
+            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-unmark").interactable,Is.True);
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-identity").text,Does.Contain("Только прежняя версия"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-status").text,Does.Contain("well.fill"));
+            Assert.That(h.SelectedProfileId,Is.EqualTo("legacy-light"));Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));
+            Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"old-only-profile-720p.png"),1280,720);
+            Click("revision-unmark");yield return null;
+            var only=h.Profiles.Single(p=>p.Id=="legacy-only").Revisions.Single();Assert.That(only.ReleaseCandidate,Is.False);
+            Assert.That(only.Hash,Is.EqualTo(bad.Hash));Assert.That(only.Date,Is.EqualTo(bad.Date));
+            Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));
+            Click("cancel");yield return null;Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(B("lab-save").interactable,Is.True);
+        }
         [UnityTest] public IEnumerator HistoricalInspectionAndUnmarkPreserveActiveBaseDraftAndOriginal()
         {
             File.Delete(historyPath);var previous=baseline.Clone();previous.Profiles=previous.Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList();

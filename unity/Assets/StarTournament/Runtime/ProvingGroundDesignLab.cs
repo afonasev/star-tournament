@@ -34,11 +34,12 @@ namespace StarTournament.ProvingGround
         {
             selection=selection??labHistory;
             var revision=selection.Selected;
+            var saved=selection.SavedIdentity(selection.SelectedProfileId,revision.Number);
             activeLabSnapshot=revision.Snapshot.Clone();
-            activeLabReference=new LabRevisionReference{ProfileId=selection.SelectedProfileId,Revision=revision.ReleaseSequence>0?revision.ReleaseNumber:revision.Number,Hash=activeLabSnapshot.Hash()};
+            activeLabReference=new LabRevisionReference{ProfileId=selection.SelectedProfileId,Revision=saved.Number,Hash=activeLabSnapshot.Hash()};
             labSavedRevisionLabel=LabRevisionLabel(selection,revision);
             labActiveLabel=LabCompactName(selection.SelectedProfileName)+" · "+labSavedRevisionLabel;
-            labSavedIdentity=selection.SelectedProfileName+" · "+labSavedRevisionLabel+"\n"+selection.SelectedProfileId+"\nSHA256 "+revision.Hash;
+            labSavedIdentity=selection.SelectedProfileName+" · "+labSavedRevisionLabel+"\n"+selection.SelectedProfileId+"\nSHA256 "+saved.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
         LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile}};
@@ -51,7 +52,7 @@ namespace StarTournament.ProvingGround
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();
         }
         public LabBundle CaptureLabAuthoringBaseline(){PrepareLabRegistry();return CurrentLabBundle().Clone();}
-        static string LabRevisionLabel(DesignLabHistory history,LabRevision revision)=>revision.Label;
+        static string LabRevisionLabel(DesignLabHistory history,LabRevision revision,string profileId=null)=>history.SavedIdentity(profileId??history.SelectedProfileId,revision.Number).Label;
         CancellationTokenSource historyCancellation;
         Task<DesignLabHistory> historyLoading;
         LabBundle activeLabSnapshot,historyStartupBaseline;
@@ -508,47 +509,60 @@ namespace StarTournament.ProvingGround
         void ShowLabProfiles()
         {
             var card=LabDropdown(labProfileSelector);var scroll=LabScroll(card,"profile-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
-            foreach(var profile in labHistory.Profiles){var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(p.Id,labHistory.LatestAvailableRevision(p.Id)))));PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;}
+            foreach(var profile in labHistory.Profiles)
+            {
+                var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>
+                {
+                    int number=labHistory.LatestAvailableRevision(p.Id);
+                    if(labHistory.Compatible(p.Revisions.Single(r=>r.Number==number)))GuardLabSelection(()=>StartCoroutine(SelectLabRevision(p.Id,number)));
+                    else InspectLabRevision(number,true,p.Id); // Viewing never discards or activates a draft.
+                });
+                PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;
+            }
             ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void ShowLabRevisions()=>InspectLabRevision(labHistory.Selected.Number,true);
-        void InspectLabRevision(int number,bool focusList=false)
+        void InspectLabRevision(int number,bool focusList=false,string profileId=null)
         {
-            var revision=labHistory.SelectedProfile.Revisions.Single(r=>r.Number==number);
+            profileId=profileId??labHistory.SelectedProfileId;
+            var profile=labHistory.Profiles.Single(p=>p.Id==profileId);
+            var revision=profile.Revisions.Single(r=>r.Number==number);
+            bool selectedProfile=profileId==labHistory.SelectedProfileId;
             var card=LabDialog("СОХРАНЁННЫЕ ВЕРСИИ");
             Layout((RectTransform)card,new Vector2(.04f,.08f),new Vector2(.96f,.90f));
             Layout((RectTransform)card.Find("title"),new Vector2(.03f,.87f),new Vector2(.97f,.98f));
             var scroll=LabScroll(card,"revision-options",new Vector2(.03f,.16f),new Vector2(.36f,.85f),out var list);int i=0;Button inspected=null;
-            var revisions=labHistory.SelectedProfile.Revisions;
+            var revisions=profile.Revisions;
             foreach(var r in revisions.Where(r=>labHistory.IsAuthoring||labHistory.Compatible(r)||!labHistory.IsShipped(r)||!revisions.Any(other=>other.ReleaseSequence==r.ReleaseSequence&&labHistory.Compatible(other))).OrderByDescending(r=>r.Number))
             {
                 int n=r.Number;bool selected=n==number;
-                var row=LabButton(list,"revision-"+n,LabRevisionLabel(labHistory,r)+(r.Number==labHistory.Selected.Number?" · выбранная база":"")+(r.ReleaseCandidate?" · релизная":"")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>InspectLabRevision(n));
+                var row=LabButton(list,"revision-"+n,LabRevisionLabel(labHistory,r,profileId)+(r.IsCompatibilityView?" · для текущей игры":"")+(selectedProfile&&r.Number==labHistory.Selected.Number?" · выбранная база":"")+(r.ReleaseCandidate?" · релизная":"")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>InspectLabRevision(n,false,profileId));
                 PlaceLabRow((RectTransform)row.transform,i++,64);row.GetComponentInChildren<Text>().fontSize=16;
                 if(selected){row.GetComponent<Image>().color=MenuGold;row.GetComponentInChildren<Text>().color=MenuInk;inspected=row;}
                 var focus=row.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=scroll;focus.Row=(RectTransform)row.transform;
             }
             ((RectTransform)list).sizeDelta=new Vector2(0,i*64);
             var detail=Panel(card,"revision-detail",new Vector2(.39f,.16f),new Vector2(.97f,.85f),MenuInk).transform;
-            Label(detail,"revision-identity",labHistory.SelectedProfileName+"\n"+LabRevisionLabel(labHistory,revision),20,new Vector2(.04f,.76f),new Vector2(.96f,.96f),TextAnchor.MiddleLeft,MenuGold);
+            Label(detail,"revision-identity",profile.Name+"\n"+LabRevisionLabel(labHistory,revision,profileId),20,new Vector2(.04f,.76f),new Vector2(.96f,.96f),TextAnchor.MiddleLeft,MenuGold);
             bool compatible=labHistory.Compatible(revision);
-            string status=(revision.Number==labHistory.Selected.Number?"Выбранная сохранённая база":"Просмотр версии · база и черновик не меняются")+"\n"+
+            string status=(selectedProfile&&revision.Number==labHistory.Selected.Number?"Выбранная сохранённая база":"Просмотр версии · база и черновик не меняются")+"\n"+
                 (revision.ReleaseCandidate?"Отмечена для релиза":"Без релизной отметки")+"\n"+
-                (compatible?"Доступна для следующей игры":"Прежняя схема параметров · выбор для игры недоступен. Исходная версия и дата сохранены.");
+                (compatible?(revision.IsCompatibilityView?"Представление исходной версии для текущей игры":"Доступна для следующей игры"):
+                    labHistory.CompatibilityReason(profileId,number)+". Выбор для игры недоступен; исходная версия сохранена.");
             var statusText=Label(detail,"revision-status",status,18,new Vector2(.04f,.39f),new Vector2(.96f,.75f),TextAnchor.UpperLeft,Color.white);statusText.supportRichText=false;
-            var hash=Label(detail,"revision-hash","SHA256 "+revision.Hash,14,new Vector2(.04f,.28f),new Vector2(.96f,.39f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));hash.supportRichText=false;
+            var hash=Label(detail,"revision-hash","SHA256 "+labHistory.SavedIdentity(profileId,number).Hash,14,new Vector2(.04f,.28f),new Vector2(.96f,.39f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));hash.supportRichText=false;
             var mark=LabButton(detail,"revision-unmark","Снять отметку релиза",new Vector2(.04f,.14f),new Vector2(.96f,.25f),()=>
             {
                 try
                 {
-                    labHistory.MarkForRelease(labHistory.SelectedProfileId,number,false);
+                    labHistory.MarkForRelease(profileId,number,false);
                     labWriteMessage="Файл проекта записан · Git commit/push не выполнялся";labError=null;
-                    CloseLabDialog();RefreshLabWorkspace();InspectLabRevision(number);
+                    CloseLabDialog();RefreshLabWorkspace();InspectLabRevision(number,false,profileId);
                 }
                 catch(Exception e){statusText.text=e.Message;}
             });
             mark.interactable=labHistory.IsAuthoring&&labHistory.Writable&&revision.ReleaseCandidate;
-            var choose=LabButton(detail,"revision-select","Выбрать для игры",new Vector2(.04f,.01f),new Vector2(.96f,.12f),()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(labHistory.SelectedProfileId,number))));
+            var choose=LabButton(detail,"revision-select","Выбрать для игры",new Vector2(.04f,.01f),new Vector2(.96f,.12f),()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(profileId,number))));
             choose.interactable=compatible;
             Label(card,"revision-active","Для следующей игры: "+labActiveLabel,16,new Vector2(.03f,.035f),new Vector2(.69f,.12f),TextAnchor.MiddleLeft,Color.white);
             var close=LabButton(card,"cancel","Закрыть · B",new Vector2(.72f,.035f),new Vector2(.97f,.12f),CloseLabDialog);

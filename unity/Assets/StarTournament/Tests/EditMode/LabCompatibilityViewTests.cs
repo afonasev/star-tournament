@@ -75,6 +75,66 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(entry.Revision,Is.EqualTo(number));Assert.That(entry.Snapshot.Get(Interval),Is.EqualTo(30));
             }
         }
+        [TestCase("20000102")][TestCase("")]
+        public void ExecutionViewReportsOriginalSavedIdentityAndExplicitSaveGetsItsOwnIdentity(string date)
+        {
+            var h=Prepare(false);int view=h.Selected.Number;int number=h.Selected.CompatibilitySourceNumber;
+            var file=DesignLabHistoryTests.ReadFixture(path,baseline);var source=file.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);
+            source.Date=date;File.WriteAllText(path,JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(path);
+            var loaded=Open(false);var identity=loaded.SavedIdentity(id,view);
+            Assert.That(identity.Number,Is.EqualTo(number));Assert.That(identity.Date,Is.EqualTo(date));Assert.That(identity.Hash,Is.EqualTo(originalHash));
+            Assert.That(identity.Label,Is.EqualTo("v"+number+"-"+(date==""?"без-даты":date)));
+            Assert.That(loaded.Selected.IsCompatibilityView,Is.True);Assert.That(loaded.Selected.Hash,Is.Not.EqualTo(identity.Hash));
+            Assert.That(loaded.SavedIdentity(id,number).Hash,Is.EqualTo(identity.Hash));CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            var draft=loaded.Selected.Snapshot;draft.Set("rifle.damage",32);loaded.Save(draft);
+            var saved=loaded.SavedIdentity(id,loaded.Selected.Number);
+            Assert.That(saved.Number,Is.EqualTo(loaded.Selected.Number));Assert.That(saved.Hash,Is.EqualTo(loaded.Selected.Hash));
+            Assert.That(loaded.Selected.IsCompatibilityView,Is.False);Assert.That(loaded.SavedIdentity(id,number).Date,Is.EqualTo(date));
+        }
+        [Test]public void PackagedSavedIdentityUsesPublicCatalogueNumberAndUnknownDate()
+        {
+            baseline=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
+            seed=LabReleaseCatalog.Factory(baseline);seed.Entries[0].Revision=7;seed.Entries[0].Date="";
+            var h=DesignLabHistory.ResolvePublishedDefault(baseline,seed);var identity=h.SavedIdentity(h.SelectedProfileId,h.Selected.Number);
+            Assert.That(h.Selected.Number,Is.Not.EqualTo(7));Assert.That(identity.Number,Is.EqualTo(7));
+            Assert.That(identity.Label,Is.EqualTo("v7-без-даты"));Assert.That(identity.Hash,Is.EqualTo(seed.Entries[0].Hash));
+        }
+        [TestCase(false)][TestCase(true)]
+        public void MixedHistoryMigratesEveryCompatibleSourceWithoutBlockingValidSelection(bool incompatible)
+        {
+            baseline=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault(),incompatible?ProvingProfile.CreateTrooperDefault():ProvingProfile.CreateBloodDefault()}};
+            var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            var before=typeof(ProvingProfile).GetMethod(incompatible?"BeforeLowWeaponSwitch":"BeforeBotBanterInterval",flags);
+            var rebalance=typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",flags);
+            var previous=new LabBundle{Profiles=baseline.Profiles.Select(p=>(ProvingProfile)before.Invoke(incompatible?rebalance.Invoke(p,null):p,null)).ToList()};
+            var old=new DesignLabHistory(path,previous);old.Create("Mixed history");id=old.SelectedProfileId;
+            var file=DesignLabHistoryTests.ReadFixture(path,previous);var local=file.Profiles.Single(p=>p.Id==id);var source=local.Revisions.Single();source.Date="20000102";
+            var saved=baseline.Clone();saved.Set("rifle.damage",32);
+            local.Revisions.Add(new LabRevision{Number=9,Date="20261017",Hash=saved.Hash(),Snapshot=saved});
+            file.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Add(new LabRevision{Number=2,Hash=baseline.Hash(),Snapshot=baseline.Clone()});
+            file.SelectedRevision=9;File.WriteAllText(path,JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(path);
+            seed=LabReleaseCatalog.Factory(baseline);var loaded=Open(false);
+            Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.Writable,Is.True);Assert.That(loaded.Selected.Number,Is.EqualTo(9));
+            Assert.That(loaded.Selected.Hash,Is.EqualTo(saved.Hash()));Assert.That(loaded.LatestAvailableRevision(id),Is.EqualTo(9));
+            var original=loaded.SelectedProfile.Revisions.Single(r=>r.Number==source.Number);
+            Assert.That(original.Hash,Is.EqualTo(source.Hash));Assert.That(original.Date,Is.EqualTo(source.Date));
+            Assert.That(JsonUtility.ToJson(original.Snapshot),Is.EqualTo(JsonUtility.ToJson(source.Snapshot)));
+            var views=loaded.SelectedProfile.Revisions.Where(r=>r.CompatibilitySourceNumber==source.Number).ToArray();
+            if(incompatible)
+            {
+                Assert.That(views,Is.Empty);Assert.That(loaded.Compatible(original),Is.False);
+                Assert.That(loaded.CompatibilityReason(id,source.Number),Does.Contain("view.switchShoulderDegrees"));
+                Assert.Throws<InvalidOperationException>(()=>loaded.Select(id,source.Number));
+            }
+            else
+            {
+                Assert.That(views.Length,Is.EqualTo(1));Assert.That(loaded.Compatible(views[0]),Is.True);
+                Assert.That(loaded.SavedIdentity(id,views[0].Number).Label,Is.EqualTo("v1-20000102"));
+                Assert.That(views[0].Snapshot.Get(Interval),Is.EqualTo(baseline.Get(Interval)));
+            }
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            var again=Open(false);Assert.That(again.Selected.Hash,Is.EqualTo(saved.Hash()));Assert.That(again.StorageError,Is.Null);
+        }
         static void WriteEnvelope(string path,LabParameterEnvelope file)
         {
             file.Integrity=(string)typeof(DesignLabHistory).GetMethod("CompatibilityIntegrity",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{file});

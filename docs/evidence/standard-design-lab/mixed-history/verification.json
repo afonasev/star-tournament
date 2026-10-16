@@ -1,0 +1,58 @@
+{
+  "baseline": "dea36812",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "previous_pin": "0c2d4562683252d54736f294dc1af463050eac17",
+  "lab_package_changed": false,
+  "new_menu_delta_implemented": false,
+  "editmode_passed": 27,
+  "playmode_passed": 2,
+  "unique_cases": 29,
+  "full_tests": false,
+  "player_build": false,
+  "deploy": false,
+  "runs": {
+    "editmode.xml": {
+      "total": "27",
+      "passed": "27",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "11.5821021"
+    },
+    "playmode-before-old-only.xml": {
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "127.0609921"
+    },
+    "playmode.xml": {
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "120.7203906"
+    }
+  },
+  "sources": {
+    "docs/GAME_SPEC.md": "5836549a9e676fd19b8f1d406997122ac6e2a65db68f54987137be7afad35610",
+    "docs/evidence/standard-design-lab/requirements-review.md": "7cf504a067ed84abd4f02c893741b2860ff64faff6435c3ca9910eedeb93c12d",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "51c86183ea955ec062f3d17b2808c747fe28bd6b89a305a0d7e964f639d45bd8",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "7beae36783da3ea884de4409275532653950501bc0c57c8dfd0280ac03e4a0e4",
+    "unity/Assets/StarTournament/Tests/EditMode/LabCompatibilityViewTests.cs": "338a6d959848f82ab0ca8ae6119a9a7969bfdc591d65335623a4ff9a84a22771",
+    "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "f55b4e58f218352bf79394564373c738737986d51bd88f75018817061a81b4e1"
+  },
+  "evidence_sha256": {
+    "player-loop-before-old-only.log": "8ae99f7b3faa548c5179951611680240c0f5943365abddc6d66dbddb78c0f367",
+    "incompatible-row-720p.png": "21922caad3347dbfea08ddf48bc64c0873330ac3123d55de945c220ac085c935",
+    "editmode.xml": "b0aae4be40777a795e6d566f691560bdf75f8f0b648264571933dda8dbde9331",
+    "playmode.xml": "122c05bd7dfc36c1582589f3ce01fd8dd8b6947e17f6b074c8c8e1bb61aa29e8",
+    "old-only-profile-720p.png": "d00d39ea5c1eaaaff8350cdaa06ace9fc26803529bf6963501659c307ffbfb61",
+    "saved-source-720p.png": "d5c30272c9d23d5fc18aea49f8659f6d054c730c772a6ad88f2f58eedeec584f",
+    "player-loop.log": "8ac867bdbe2f3713f42d9a4e8c078ab360620f638a6b80b92f251fbba4a0f58e",
+    "playmode-before-old-only.xml": "dc8b8951d1366ac21d8eb4988cfdd9b4aed4653fa1e93b9c26a3021f7908aaf4",
+    "verification.md": "71e5d57357c80e0f1cca2406c03397f45adae19c46fc8c1af2c1d6fa9b7c2416",
+    "editor.log": "f8808c8f1e6d02a1267cb09cd362a94900f0cf4211f79264d38c21b77e401fae",
+    "historical-unmark-neighbor-720p.png": "4937317f6fd71b41454c758519564acfde296eb206ededa2830a0392758a4d00"
+  }
+}

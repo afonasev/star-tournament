@@ -115,11 +115,18 @@ namespace StarTournament.ProvingGround
         public int ReleaseSequence,ReleaseNumber;
         public int CompatibilitySourceNumber;public string CompatibilitySourceHash;
         public string ReleaseHash,ReleaseDate;
+        public bool IsCompatibilityView=>CompatibilitySourceNumber>0||(ReleaseSequence>0&&Hash!=ReleaseHash);
         public string Label => "v"+(ReleaseSequence>0?ReleaseNumber:Number)+"-"+(string.IsNullOrEmpty(ReleaseSequence>0?ReleaseDate:Date)?"без-даты":ReleaseSequence>0?ReleaseDate:Date);
         public LabRevision Clone()=>Snapshot==null?JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this))
             :new LabRevision{Number=Number,Date=Date??"",Hash=Hash??"",Snapshot=Snapshot.Clone(),ReleaseCandidate=ReleaseCandidate,
                 ReleaseSequence=ReleaseSequence,ReleaseNumber=ReleaseNumber,ReleaseHash=ReleaseHash,ReleaseDate=ReleaseDate,
                 CompatibilitySourceNumber=CompatibilitySourceNumber,CompatibilitySourceHash=CompatibilitySourceHash};
+    }
+    public sealed class LabSavedRevisionIdentity
+    {
+        public int Number {get;} public string Date {get;} public string Hash {get;}
+        public string Label=>"v"+Number+"-"+(string.IsNullOrEmpty(Date)?"без-даты":Date);
+        internal LabSavedRevisionIdentity(int number,string date,string hash){Number=number;Date=date??"";Hash=hash;}
     }
     [Serializable] public sealed class LabHistoryProfile
     {
@@ -193,6 +200,16 @@ namespace StarTournament.ProvingGround
         void RequireLocalProfile(){if(SelectedProfileReadOnly)throw new InvalidOperationException("Релизный профиль доступен только для чтения. Создайте копию для своих изменений.");}
         public LabHistoryProfile SelectedProfile=>DisplayProfile(data.Profiles.Single(p=>p.Id==data.SelectedId));
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
+        public LabSavedRevisionIdentity SavedIdentity(string profileId,int revisionNumber)
+        {
+            var profile=data.Profiles.Single(p=>p.Id==profileId);
+            var revision=profile.Revisions.Single(r=>r.Number==revisionNumber);
+            if(revision.CompatibilitySourceNumber>0)
+                revision=profile.Revisions.Single(r=>r.Number==revision.CompatibilitySourceNumber&&r.Hash==revision.CompatibilitySourceHash);
+            return revision.ReleaseSequence>0
+                ?new LabSavedRevisionIdentity(revision.ReleaseNumber,revision.ReleaseDate,revision.ReleaseHash)
+                :new LabSavedRevisionIdentity(revision.Number,revision.Date,revision.Hash);
+        }
         public static DesignLabHistory ResolvePublishedDefault(LabBundle shipped,LabReleaseCatalog releases)
         {
             if(releases==null)throw new ArgumentNullException(nameof(releases));
@@ -217,7 +234,7 @@ namespace StarTournament.ProvingGround
                 stage=Clock();var loaded=ReadStorage(json);startupDiagnostics.ParseSeconds=Clock()-stage;
                 startupDiagnostics.Revisions=loaded?.Profiles?.Sum(p=>p.Revisions?.Count??0)??0;
                 stage=Clock();ValidateFile(loaded);startupDiagnostics.ExistingValidationSeconds=Clock()-stage;data=loaded;
-                if(loaded.Profiles.Any(p=>p.Revisions.Any(r=>r.CompatibilitySourceNumber>0)||p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))
+                if(loaded.Profiles.Any(p=>p.Revisions.Any(r=>r.CompatibilitySourceNumber>0||!Current(r.Snapshot))))
                 {
                     stage=Clock();
                     if(persistMigration&&this.releases==null)Commit(MigrateCompatibility);
@@ -676,6 +693,16 @@ namespace StarTournament.ProvingGround
             if(authoring&&ReleaseError!=null)throw new InvalidOperationException(ReleaseError);
             return CompatibilityDefaults(data,shipped.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal));
         }
+        public string CompatibilityReason(string profileId,int revisionNumber)
+        {
+            var revision=data.Profiles.Single(p=>p.Id==profileId).Revisions.Single(r=>r.Number==revisionNumber);
+            if(Current(revision.Snapshot))return null;
+            var descriptors=shipped.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal);
+            var view=UpgradeSnapshot(revision.Snapshot,CompatibilityDefaults(data,descriptors),profileId==ReleaseId,descriptors,
+                authoring||(profileId!=ReleaseId&&!IsShipped(revision)));
+            var issues=view.Validate();
+            return issues.Count==0?"Прежняя схема параметров · для игры доступно отдельное представление":issues[0].Path+": "+issues[0].Message;
+        }
         LabBundle CompatibilityDefaults(LabHistoryFile file,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors)
         {
             LabBundle selected=null;
@@ -760,6 +787,16 @@ namespace StarTournament.ProvingGround
                 {
                     startupCancellation.ThrowIfCancellationRequested();
                     var next=UpgradeSnapshot(old.Snapshot,defaults,p.Id==ReleaseId,currentDescriptors,authoring||(p.Id!=ReleaseId&&!IsShipped(old)));
+                    var issues=next.Validate();
+                    if(issues.Count!=0)
+                    {
+                        // A trusted historical row can be valid in its own schema but
+                        // impossible to execute now. Keep it inspectable without blocking
+                        // a different valid selection. Never run or substitute that row.
+                        if((file.SelectedId==p.Id&&file.SelectedRevision==old.Number)||(!authoring&&IsShipped(old)))
+                            throw new InvalidDataException("Несовместимый снимок "+p.Id+" v"+old.Number+": "+issues[0].Path+": "+issues[0].Message);
+                        continue;
+                    }
                     string nextHash=next.Hash();
                     bool derived=releases!=null&&p.Id!=ReleaseId&&!IsShipped(old);
                     var previous=views[p.Id].SingleOrDefault(r=>r.CompatibilitySourceNumber==old.Number&&r.CompatibilitySourceHash==old.Hash);
