@@ -100,6 +100,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(B("lab-save").interactable,Is.False);Assert.That(B("lab-create").interactable,Is.False);Assert.That(B("lab-back").interactable,Is.True);
             B("lab-back").onClick.Invoke();yield return null;CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
         }
+        [UnityTest]public IEnumerator IncompatibleRangeShowsPlainReasonKeepsDefaultAndAllowsBack()
+        {
+            yield return Load();string path=Path.Combine(directory,"history.json");
+            var startup=Field<LabBundle>(ground,"historyStartupBaseline");var old=startup.Clone();
+            var history=new DesignLabHistory(path,old);history.Create("Incompatible range");var draft=history.Selected.Snapshot;
+            float maximum=draft.Profile("rifle.damage").Descriptor("rifle.damage").Maximum;draft.Set("rifle.damage",maximum);history.Save(draft);
+            var catalogue=Field<LabReleaseCatalog>(ground,"historyStartupCatalogue");
+            float published=catalogue.Entries.Max(e=>e.Snapshot.Get("rifle.damage"));
+            float limit=Mathf.Max(startup.Get("rifle.damage"),published)+1;Assert.That(limit,Is.LessThan(maximum));
+            startup.Profile("rifle.damage").Descriptor("rifle.damage").Maximum=limit;
+            var bytes=File.ReadAllBytes(path);string before=ground.CaptureLabBundle().Hash();gate.Set();
+            float deadline=Time.realtimeSinceStartup+120;while(ground.IsLabHistoryLoading){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            Assert.That(ground.IsReady,Is.True);Assert.That(ground.IsLabHistoryReady,Is.False);Assert.That(ground.LabHistoryLoadError,Does.Contain("rifle.damage"));
+            B("main-action-2").onClick.Invoke();yield return null;
+            var hint=ground.GetComponentsInChildren<Text>(true).Single(t=>t.name=="lab-hint");
+            Assert.That(hint.supportRichText,Is.False);Assert.That(hint.text,Is.EqualTo(ground.LabHistoryLoadError));
+            using(var viewport=EditorUiCapture.FixedViewport(ground,1280,720))
+            {yield return null;Canvas.ForceUpdateCanvases();Assert.That(hint.preferredHeight,Is.LessThanOrEqualTo(hint.rectTransform.rect.height),"Reason fits at720p");}
+            Assert.That(B("lab-save").interactable,Is.False);Assert.That(B("lab-back").interactable,Is.True);B("lab-back").onClick.Invoke();yield return null;
+            Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);Assert.That(ground.CaptureLabBundle().Hash(),Is.EqualTo(before));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
         [UnityTest] public IEnumerator UnloadCancelsBlockedHistoryWithoutCreatingFile()
         {
             yield return Load();Assert.That(ground.IsLabHistoryLoading,Is.True);

@@ -250,6 +250,7 @@ namespace StarTournament.ProvingGround
             labSave.GetComponent<Image>().color=MenuGold;labSave.GetComponentInChildren<Text>().color=MenuInk;
             labResetRelease=LabButton(labScreen.transform,"lab-reset-release","Сбросить на релизный Default",new Vector2(.02f,.005f),new Vector2(.23f,.055f),()=>GuardLabSelection(()=>LabOperation(labHistory.ResetToRelease,true)));
             labHint=Label(labScreen.transform,"lab-hint","",14,new Vector2(.25f,.005f),new Vector2(.98f,.055f),TextAnchor.MiddleLeft,MenuGold);
+            labHint.supportRichText=false;
             Hint(labResetRelease.gameObject,"Выбрать последнюю отмеченную версию Default из проекта или пакета. История сохраняется.");
             Hint(clear.gameObject,"Очистить: вернуть все поля к выбранной базе; история сохраняется.");Hint(labSave.gameObject,"Сохранить: добавить новую неизменяемую ревизию. Нужен изменённый черновик без ошибок.");
             labProfileSelector=LabButton(labScreen.transform,"lab-profile-select","Профиль ▾",new Vector2(.02f,.85f),new Vector2(.32f,.895f),ShowLabProfiles);

@@ -649,7 +649,7 @@ namespace StarTournament.ProvingGround
                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
                     double validationStart=Clock();var issues=trusted.Validate();
                     if(collectingStartupDiagnostics){startupDiagnostics.SnapshotValidationSeconds+=Clock()-validationStart;startupDiagnostics.SnapshotValidations++;}
-                    if(issues.Count!=0)throw new InvalidDataException("Невалидный снимок");r.Snapshot=trusted;
+                    if(issues.Count!=0)throw new InvalidDataException("Несовместимый снимок "+p.Id+" v"+r.Number+": "+string.Join("; ",issues.Take(1).Select(i=>i.Path+": "+i.Message))+(issues.Count>1?"; ещё ошибок: "+(issues.Count-1):""));r.Snapshot=trusted;
                 }
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
