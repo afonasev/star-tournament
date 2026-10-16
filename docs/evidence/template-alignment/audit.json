@@ -186,10 +186,19 @@
   },
   "actual_unresolved": [
     "Q5-Q8 visual scopes",
-    "quality preset applicability unproven",
+    "quality applicable: texture/LOD consumers, honest level semantics and approved UI pending",
     "macOS PKG vs normative DMG",
-    "minimum OS/component/data admission not fully described/guarded",
+    "macOS first-install preflight and native installed pair/data rollback unverified",
     "native installed/device/human acceptance not run"
   ],
-  "latest_discovery_evidence": "docs/evidence/standard-github-discovery/verification.json"
+  "latest_discovery_evidence": "docs/evidence/standard-github-discovery/verification.json",
+  "quality_applicability": {
+    "status": "applicable-source-consumer-confirmed; UI pending",
+    "evidence": "docs/evidence/standard-graphics-quality/",
+    "native_test": "1 passed/0 failed/0 skipped",
+    "auto_skins": 17,
+    "multi_weight_vertices": 9585,
+    "effective_urp_assets": 1,
+    "remaining": "texture/LOD consumers and honest level semantics, then approved UI/affected QA; no presets invented"
+  }
 }

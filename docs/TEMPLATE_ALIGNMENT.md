@@ -73,7 +73,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | OPT-SCREEN-RESOLUTION | Применима: unique resolutions + Auto; native monitor fallback pending, AUTO copyQ5. |
 | OPT-SCREEN-VSYNC | Применима: VSyncKey/ApplyVSyncPreference, one shared runtime value. |
 | OPT-SCREEN-FPS-LIMIT | Применима: NativeUserPreferences.FrameCaps/targetFrameRate; VSync priority explained. |
-| OPT-GRAPHICS-QUALITY | **Проверить**: шесть Unity quality slots существуют; global URP и runtime per-effect overrides. Нельзя объявить отсутствие meaningful tiers только из-за отсутствия кнопки. Нужно проверить реальные отличия и после этого добавить совместимый selector либо обосновать N/A. |
+| OPT-GRAPHICS-QUALITY | **Применима, UI ещё открыт**: native EditMode probe подтвердил17 Auto skins/9585 multi-weight vertices и skin limits1/2/4/255; все6 slots используют один URP. Нельзя объявить N/A. Low/Medium/High требуют оставшегося texture/LOD consumer audit до честной семантики selector; новый макет до реализации. Evidence standard-graphics-quality/. |
 | OPT-GRAPHICS-AA | Применима: NativeVisualPreferences AntialiasingLevel, per-camera/runtime resolve. |
 | OPT-GRAPHICS-SHADOWS | Применима: global toggle, owned Light originals retained, quality state restores. |
 | OPT-GRAPHICS-EFFECTS | Применима: каждый используемый VisualEffect имеет Enabled; strength stays Lab, no fake channels. |
