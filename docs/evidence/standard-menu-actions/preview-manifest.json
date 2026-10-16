@@ -1,0 +1,31 @@
+{
+  "baseline": "7830e481",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "kind": "proposed mockups, not Unity",
+  "approval": "pending",
+  "old_approved_png_svg_unchanged": true,
+  "files": {
+    "24-screen-actions.png": "2ddb2e3ad1c5e595e2127cc7512e180cdcbe4a313987a33ad33215563adde357",
+    "25-copy-profile.svg": "f2259f2d72ee85488c06579a2456faabe4d7ee99b1b49801cf70d6071c82ac95",
+    "21-release-toggle.png": "606b1bd25f95455504a3ecf32d9bbd316ccbf9cc7810b4a79dc733ac336508ff",
+    "20-lab-short-actions.png": "d1b2a6fc9cf78ee9cd6e28214dc63441675d1d0b25e5588886098cd250667350",
+    "22-historical-marked.png": "4e7fda404afe27972e97e495a679dbe257e3d2c413f02d52a4bfa816543c7496",
+    "22-historical-marked.svg": "e0bc8a8abf7d57c6f32e7b6c22307fd9b024e0ff6998cdacc6b8174da07d12e1",
+    "20-lab-short-actions.svg": "0e46af84db48dbb1a008f5cc24a37d1cb14c2d6d1a7f7b2ba02a0bcf943ee319",
+    "21-release-toggle.svg": "4de7dc4bc1fc89d23816017619276ecc9fa6318d1a4316605d1a398e66e342c1",
+    "25-copy-profile.png": "e75d0254593e7e2093c09d7cb57b17a9bb32ac78a6a4a079f607428ac8a3ccff",
+    "24-screen-actions.svg": "e4e3920cff576d2ffc289efebb4479efe44ec352b0204d3f8349ec24c9804a75",
+    "23-historical-unmarked.svg": "6dba7877188ebc89fba3a4e6d375f5abad95a374d7a9cd517ab20ee354d81f9e",
+    "23-historical-unmarked.png": "47b8b2ffe41dd915740b05d63e543a53e76f70ba62a74bf14024ca903e2b1df7"
+  },
+  "idempotent_rerender": true,
+  "gallery_links_valid": true,
+  "rendered_images_inspected": 6,
+  "source_runtime_changed": false,
+  "generator_sha256": {
+    "menu_actions.py": "33634e18f4ce97368abb499ebb86300240161369cabd9300e556fb7166540f84",
+    "mockups.py": "bbc2aa0786245f6d9408a0b5e74d002435f9f2e6d7b0cf2412de6ec8375805f6",
+    "index.html": "a68f1b448ce9d39ea3fc55414626e760ee11bc670c8dad2f77e989cb04841466"
+  }
+}
