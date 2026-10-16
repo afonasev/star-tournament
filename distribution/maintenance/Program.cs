@@ -323,8 +323,9 @@ static partial class Maintenance
         var restartArgs = JsonSerializer.Deserialize<string[]>(Convert.FromBase64String(a[5])) ?? [];
         ValidateCaller(root, caller);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
-        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")));
+        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root));
         source.Admit(ReadBoundedText(Path.Combine(cache, "star-authenticated.json"), 65536));
+        source.RequireCompatibleTarget();
         var expected = source.Asset!.Version.ToString();
         var frozenEnvelope = source.Envelope!;
         var frozenHash = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(frozenEnvelope)));
@@ -557,8 +558,9 @@ static partial class Maintenance
         if (protectedConfig.GetProperty("protocol").GetInt32() != 2 || protectedConfig.GetProperty("appId").GetString() != config.AppId ||
             protectedConfig.GetProperty("platform").GetString() != config.Platform || protectedConfig.GetProperty("architecture").GetString() != config.Architecture)
             throw new CryptographicException("Protected installation identity mismatch");
-        using var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")));
+        using var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root));
         verifier.Admit(envelope); var asset = verifier.Asset!;
+        verifier.RequireCompatibleTarget();
         var sourcePackage = Path.Combine(cache, Path.GetFileName(asset.FileName));
         if (!File.Exists(sourcePackage)) throw new CryptographicException("Staged package missing");
         verifier.VerifyPackage(sourcePackage, asset).GetAwaiter().GetResult();

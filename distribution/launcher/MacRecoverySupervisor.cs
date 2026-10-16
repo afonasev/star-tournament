@@ -287,6 +287,7 @@ public sealed class MacRecoverySupervisor
             ? Path.Combine(Path.GetDirectoryName(Host(handoff.Id))!, "update-public.pem")
             : Path.Combine(handoff.InstallRoot, "Contents", "MacOS", "update-public.pem");
         using var verifier = new AuthenticatedSource(config, File.ReadAllText(keyPath)); verifier.Admit(handoff.Envelope);
+        verifier.RequireCompatibleTarget();
         var asset = verifier.Asset ?? throw new IOException("Authenticated target missing");
         if (asset.Version.ToString() != handoff.Target) throw new IOException("Frozen recovery target changed");
         verifier.VerifyPackage(Path.Combine(handoff.Packages, asset.FileName), asset).GetAwaiter().GetResult();

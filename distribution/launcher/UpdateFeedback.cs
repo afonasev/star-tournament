@@ -13,6 +13,7 @@ public static class UpdateFeedback
     public static string Explain(Exception error) => error switch
     {
         PlatformNotSupportedException => error.Message,
+        ReleaseCompatibilityException => error.Message,
         MaintenanceUpgradeRequiredException => "Для безопасного обновления требуется новый установщик Star Tournament.",
         UnauthorizedAccessException or Win32Exception { NativeErrorCode: 5 } => "Нет доступа к папке игры или обновления. Проверьте права доступа.",
         CryptographicException => "Пакет обновления не прошёл проверку подлинности. Скачайте обновление заново.",

@@ -135,11 +135,12 @@ public sealed class WindowsInstallerTransaction
         if(WindowsInstallerPlan.Inspect(directory,expected,requireCompleteMetadata:true).InstalledVersion!=expected.Version)throw new IOException("Candidate native version mismatch");
         var configPath=Path.Combine(directory,"current","release.json");if(new FileInfo(configPath).Length>65536)throw new IOException("Candidate config exceeds limit");
         var config=JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(configPath),new JsonSerializerOptions{PropertyNameCaseInsensitive=true});
-        if(config==null||config.AppId!=expected.AppId||config.Platform!="win"||config.Architecture!="x64"||config.Version!=expected.Version||config.UpdateChannel!=expected.UpdateChannel)throw new IOException("Candidate identity mismatch");
+        if(config==null||config.AppId!=expected.AppId||config.Platform!="win"||config.Architecture!="x64"||config.Version!=expected.Version||config.UpdateChannel!=expected.UpdateChannel||(expectedVersion==null&&config.Compatibility!=expected.Compatibility))throw new IOException("Candidate identity mismatch");
         var game=Path.GetFullPath(Path.Combine(directory,"current",config.GameExecutable));
         if(!game.StartsWith(Path.Combine(Path.GetFullPath(directory),"current")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||(!File.Exists(game)||new FileInfo(game).Length==0))throw new IOException("Candidate Player is missing or outside payload");
         var contract=Path.Combine(directory,"maintenance","maintenance.json");if(new FileInfo(contract).Length>65536)throw new IOException("Candidate maintenance metadata exceeds limit");
         using var data=JsonDocument.Parse(File.ReadAllText(contract));var identity=data.RootElement;
+        if(config.Compatibility!=null && WindowsInstallation.MetadataReader(directory)<config.Compatibility.MinimumUpdaterProtocol)throw new IOException("Candidate broker cannot read its release metadata");
         if(identity.GetProperty("protocol").GetInt32()!=2||identity.GetProperty("platform").GetString()!="win"||identity.GetProperty("architecture").GetString()!="x64"||identity.GetProperty("appId").GetString()!=expected.AppId||identity.GetProperty("updateChannel").GetString()!=expected.UpdateChannel||identity.GetProperty("version").GetString()!=expected.Version)throw new IOException("Candidate maintenance contract mismatch");
         using var entry=File.OpenRead(Path.Combine(directory,"Star Tournament.exe"));using var broker=File.OpenRead(Path.Combine(directory,"maintenance","StarTournamentMaintenance.exe"));
         if(!SHA256.HashData(entry).SequenceEqual(SHA256.HashData(broker)))throw new IOException("Candidate stable entry differs from maintenance");

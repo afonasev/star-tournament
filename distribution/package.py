@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import zipfile
 
+from release_compatibility import current as compatibility_requirements, manifest as release_manifest, verify_payload, READER_PROTOCOL
 from windows_dpi import validate_windows_dpi
 from windows_stable_entry import install_stable_entry
 
@@ -41,6 +42,7 @@ def main():
     if a.runtime == 'win-x64' and not a.update_only and not a.nsis_host and (a.makensis is None or not a.makensis.is_file()):
         p.error('Windows packages require --makensis for the installation wizard')
     a.output = a.output.resolve(); a.player = a.player.resolve()
+    compatibility = compatibility_requirements(a.runtime, a.player)
     stage = a.output / ('payload-' + a.version)
     if stage.exists(): p.error('Payload already exists; use an immutable new version/output')
     stage.mkdir(parents=True)
@@ -65,7 +67,7 @@ def main():
         game_exe = 'game/StarTournament.exe'
     app_id = 'tech.afonasev.star-tournament.' + a.runtime
     config = dict(appId=app_id, platform=a.runtime.split('-')[0], architecture=a.runtime.split('-')[1],
-                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel)
+                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel, compatibility=compatibility)
     (stage/'release.json').write_text(json.dumps(config, indent=2)+'\n')
     subprocess.run(['openssl', 'pkey', '-in', str(a.key.resolve()), '-pubout', '-out', str(stage/'update-public.pem')], check=True)
     if (stage/'update-public.pem').read_bytes() != (root/'update-public.pem').read_bytes():
@@ -97,7 +99,7 @@ def main():
         subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
                         '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
                         '-p:DebugType=None','-p:OutputType=WinExe','-o',str(maintenance)],check=True,env=env)
-        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=2, **config),indent=2)+'\n')
+        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=2, metadataReader=READER_PROTOCOL, **config),indent=2)+'\n')
         shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
         install_stable_entry(layout)
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
@@ -110,11 +112,9 @@ def main():
             package.rename(output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.pkg')
     feed = json.loads((output/f'releases.{a.runtime}.json').read_text())
     asset = next(x for x in feed['Assets'] if x['Version'] == a.version and x['Type'] == 'Full')
-    payload = json.dumps(dict(schema=1, channel=a.channel, platform=config['platform'], architecture=config['architecture'],
-                              version=a.version, publicationDate=a.date,
-                              downloadUrl=f'https://github.com/afonasev/star-tournament/releases/download/v{a.version}/{asset["FileName"]}',
-                              publishedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(), feed={'Assets': [asset]}),
+    payload = json.dumps(release_manifest(config, asset, datetime.datetime.now(datetime.timezone.utc).isoformat()),
                          separators=(',', ':'), ensure_ascii=False).encode()
+    verify_payload(output/asset["FileName"], json.loads(payload))
     signed = subprocess.run(['openssl','dgst','-sha256','-sign',str(a.key.resolve()),
                              '-sigopt','rsa_padding_mode:pss','-sigopt','rsa_pss_saltlen:32'], input=payload,
                             capture_output=True, check=True).stdout

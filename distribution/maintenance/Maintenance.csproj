@@ -13,6 +13,7 @@
     <Compile Include="../launcher/AuthenticatedSource.cs" Link="AuthenticatedSource.cs" />
     <Compile Include="../launcher/GitHubDiscovery.cs" Link="GitHubDiscovery.cs" />
     <Compile Include="../launcher/PlatformRequirements.cs" Link="PlatformRequirements.cs" />
+    <Compile Include="../launcher/ReleaseCompatibility.cs" Link="ReleaseCompatibility.cs" />
     <Compile Include="../launcher/PayloadRecovery.cs" Link="PayloadRecovery.cs" />
     <Compile Include="../launcher/StartupRecovery.cs" Link="StartupRecovery.cs" />
     <Compile Include="../launcher/UpdateFeedback.cs" Link="UpdateFeedback.cs" />

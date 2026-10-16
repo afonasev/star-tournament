@@ -140,4 +140,4 @@ Focused actual C# evidence: `docs/evidence/standard-github-discovery/verificatio
 
 Unity6000.3 Player: Windows10 21H1 (сборка19043) или новее, macOS12 или новее. macOS target в проекте —12.0. Launcher проверяет host до discovery/запуска; native activation и Windows installer проверяют до замены файлов. Откат и удаление не блокируются общим launch guard. Detached проверка подписи/пакета не зависит от host. Основание: https://docs.unity3d.com/6000.3/Documentation/Manual/system-requirements.html (Desktop Player, не Editor).
 
-Signed target-specific OS/updater/payload/data requirements ещё не добавлены в schema1; baseline guard не доказывает совместимость произвольного будущего выпуска. Проверки этого этапа: `docs/evidence/standard-release-compatibility/baseline/`.
+Новые выпуски используют signed schema2 с target-specific OS/reader/payload/data requirements и binding к release.json внутри пакета. Старые schema1 неизменны; переход старых readers требует нового installer. Контракт и границы: [COMPATIBILITY.md](COMPATIBILITY.md). Baseline evidence: `docs/evidence/standard-release-compatibility/baseline/`; новый source этап: `signed-target/`.

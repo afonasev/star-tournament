@@ -10,10 +10,10 @@ public static class PlatformRequirements
         _ => throw new PlatformNotSupportedException("Неподдерживаемая платформа игры: " + platform)
     };
 
-    static bool NativeProbe(string platform, Version minimum) => platform switch
+    internal static bool NativeProbe(string platform, Version minimum) => platform switch
     {
         "win" => OperatingSystem.IsWindowsVersionAtLeast(minimum.Major, minimum.Minor, minimum.Build),
-        "osx" => OperatingSystem.IsMacOSVersionAtLeast(minimum.Major, minimum.Minor),
+        "osx" => OperatingSystem.IsMacOSVersionAtLeast(minimum.Major, minimum.Minor, Math.Max(0, minimum.Build)),
         _ => false
     };
 

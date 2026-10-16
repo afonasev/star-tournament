@@ -60,6 +60,7 @@ static class Launcher
         void Log(Exception ex) => UpdateFeedback.Log("launcher", ex);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(baseDir, "release.json")), Json)!;
         PlatformRequirements.RequireSupported(config.Platform);
+        if (config.Compatibility != null) ReleaseCompatibility.Require(config.Compatibility, config.Platform);
         if (config.UpdateChannel is not ("test" or "production"))
             throw new InvalidOperationException("GitHub update channel required");
         FileStream ownership;
@@ -82,9 +83,10 @@ static class Launcher
             File.Delete(playerRecord);
         }
         var key = File.ReadAllText(Path.Combine(baseDir, "update-public.pem"));
-        using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"));
         var locator = VelopackLocator.Current;
         var machineRoot = WindowsInstallation.MachineRoot(locator);
+        var readerProtocol = machineRoot == null ? ReleaseCompatibility.ReaderProtocol : WindowsInstallation.MetadataReader(machineRoot);
+        using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"), readerProtocol: readerProtocol);
         bool Installing() => machineRoot != null && File.Exists(Path.Combine(machineRoot, "maintenance", "installing.flag"));
         if (Installing()) { UpdateFeedback.Show("Установщик изменяет файлы игры. Дождитесь его завершения и запустите игру снова."); return 1; }
         using var installationLease = machineRoot == null ? null : WindowsInstallLease.TryAcquire(machineRoot);
@@ -138,8 +140,9 @@ static class Launcher
         {
             if (!File.Exists(stagedManifest)) return null;
             if (new FileInfo(stagedManifest).Length > 65536) throw new System.Security.Cryptography.CryptographicException("Staged metadata exceeds limit");
-            using var verifier = new AuthenticatedSource(config, key);
+            using var verifier = new AuthenticatedSource(config, key, readerProtocol: readerProtocol);
             verifier.Admit(await File.ReadAllTextAsync(stagedManifest));
+            verifier.RequireCompatibleTarget();
             var asset = verifier.Asset!;
             if (asset.Version <= manager.CurrentVersion) { File.Delete(stagedManifest); return null; }
             await verifier.VerifyPackage(PackagePath(asset), asset);

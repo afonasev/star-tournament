@@ -15,7 +15,7 @@ static class MacRecoveryChecks
     static string Live(string scenario)=>Path.Combine(scenario,"Star Tournament.app");
     static string Exe(string root)=>Path.Combine(root,"Contents","MacOS","StarTournamentLauncher");
     static string ConfigPath(string root)=>Path.Combine(root,"Contents","MacOS","release.json");
-    static LauncherConfig Config(string version)=>new(AppId,"osx","arm64",version,"2026-10-16",AuthenticatedSource.ProductionBase,"fixture-player", "production");
+    static LauncherConfig Config(string version)=>new(AppId,"osx","arm64",version,"2026-10-16",AuthenticatedSource.ProductionBase,"fixture-player", "production", version=="1.1.0"?new ReleaseRequirements("12.0",2,ReleaseCompatibility.PayloadFormat,ReleaseCompatibility.DataPolicy):null);
     static StartupRecovery Journal(string scenario)=>StartupRecovery.ForInstallation(Config("1.0.0"),Logs(scenario),Live(scenario));
     static string Version(string scenario)=>JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(ConfigPath(Live(scenario))),Json)!.Version;
     public static async Task Run()
@@ -29,12 +29,12 @@ static class MacRecoveryChecks
             {
                 var scenario=Path.Combine(root,mode);Directory.CreateDirectory(scenario);Directory.CreateDirectory(Logs(scenario));
                 File.WriteAllText(Path.Combine(scenario,"mode"),mode);Populate(Live(scenario),"1.0.0");
-                var candidate=Path.Combine(scenario,"candidate.app");Populate(candidate,mode=="bad-readback"?"9.9.9":"1.1.0");
+                var candidate=Path.Combine(scenario,"candidate.app");Populate(candidate,"1.1.0");
                 var packages=Path.Combine(scenario,"packages");Directory.CreateDirectory(packages);
                 using var rsa=RSA.Create(3072);
                 foreach(var app in new[]{Live(scenario),candidate})File.WriteAllText(Path.Combine(app,"Contents","MacOS","update-public.pem"),rsa.ExportSubjectPublicKeyInfoPem());
                 const string file="fixture-1.1.0-full.nupkg";var package=Path.Combine(packages,file);ZipFile.CreateFromDirectory(candidate,package);
-                var bytes=File.ReadAllBytes(package);var payload=JsonSerializer.SerializeToUtf8Bytes(new{schema=1,platform="osx",architecture="arm64",channel="production",version="1.1.0",publicationDate="2026-10-16",downloadUrl="https://github.com/afonasev/star-tournament/releases/download/v1.1.0/"+file,feed=new{Assets=new[]{new{PackageId=AppId,Version="1.1.0",Type="Full",FileName=file,SHA256=Convert.ToHexString(SHA256.HashData(bytes)),Size=bytes.Length}}}});
+                var bytes=File.ReadAllBytes(package);var payload=JsonSerializer.SerializeToUtf8Bytes(new{schema=2,compatibility=new{minimumOsVersion="12.0",minimumUpdaterProtocol=2,payloadFormat=ReleaseCompatibility.PayloadFormat,userDataPolicy=ReleaseCompatibility.DataPolicy},platform="osx",architecture="arm64",channel="production",version="1.1.0",publicationDate="2026-10-16",downloadUrl="https://github.com/afonasev/star-tournament/releases/download/v1.1.0/"+file,feed=new{Assets=new[]{new{PackageId=AppId,Version="1.1.0",Type="Full",FileName=file,SHA256=Convert.ToHexString(SHA256.HashData(bytes)),Size=bytes.Length}}}});
                 File.WriteAllText(Path.Combine(packages,"star-authenticated.json"),JsonSerializer.Serialize(new{payload=Convert.ToBase64String(payload),signature=Convert.ToBase64String(rsa.SignData(payload,HashAlgorithmName.SHA256,RSASignaturePadding.Pss))}));
                 using(var caller=Start(Exe(Live(scenario)),"--mac-caller-fixture",scenario))
                 {await Exit(caller);if(caller.ExitCode!=0)throw new Exception("Caller fixture failed: "+caller.StandardError.ReadToEnd());}
@@ -149,6 +149,7 @@ static class MacRecoveryChecks
         if(mode=="updater-error"){File.WriteAllText(Path.Combine(root,"partial"),"failed");Environment.Exit(42);}
         ZipFile.ExtractToDirectory(Arg("--package"),root);
         if(mode=="missing-launcher")File.Delete(Exe(root));
+        if(mode=="bad-readback")File.WriteAllText(ConfigPath(root),JsonSerializer.Serialize(Config("9.9.9"),new JsonSerializerOptions{PropertyNamingPolicy=JsonNamingPolicy.CamelCase}));
     }
     public static void Target(string[] args)
     {

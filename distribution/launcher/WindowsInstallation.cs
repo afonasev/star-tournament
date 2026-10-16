@@ -10,6 +10,18 @@ namespace StarTournament.Distribution;
 /// <summary>The installer owns maintenance outside the replaceable current payload.</summary>
 public static class WindowsInstallation
 {
+    public static int MetadataReader(string root)
+    {
+        var path = Path.Combine(root, "maintenance", "maintenance.json");
+        if (new FileInfo(path).Length > 65536) throw new IOException("Maintenance contract exceeds limit");
+        using var data = JsonDocument.Parse(File.ReadAllText(path));
+        if (data.RootElement.GetProperty("protocol").GetInt32() != 2) return 1;
+        if (!data.RootElement.TryGetProperty("metadataReader", out var reader)) return 1;
+        var protocol = reader.GetInt32();
+        if (protocol < 1) throw new IOException("Invalid metadata reader capability");
+        return Math.Min(protocol, ReleaseCompatibility.ReaderProtocol);
+    }
+
     public static string? MachineRoot(IVelopackLocator locator)
     {
         if (!OperatingSystem.IsWindows() || locator.RootAppDir == null) return null;

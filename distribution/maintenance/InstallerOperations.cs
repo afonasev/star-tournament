@@ -9,7 +9,7 @@ using StarTournament.Distribution;
 static partial class Maintenance
 {
     const string ProductKey=@"Software\Microsoft\Windows\CurrentVersion\Uninstall\StarTournament.Native";
-    static LauncherConfig InstallerConfig(string version,string root)
+    static LauncherConfig InstallerConfig(string version,string root,bool activate)
     {
         if(!IsElevated(Environment.ProcessId))throw new UnauthorizedAccessException("Installer operations require elevation");
         var source=Path.GetDirectoryName(Environment.ProcessPath!)!;
@@ -22,6 +22,11 @@ static partial class Maintenance
         using var data=JsonDocument.Parse(ReadBoundedText(Path.Combine(source,"maintenance.json"),65536));
         var config=JsonSerializer.Deserialize<LauncherConfig>(data.RootElement.GetRawText(),Json)??throw new IOException("Installer identity missing");
         if(data.RootElement.GetProperty("protocol").GetInt32()!=2||config.Platform!="win"||config.Architecture!="x64"||config.Version!=version||config.UpdateChannel is not("production" or "test"))throw new IOException("Installer identity mismatch");
+        if(activate&&config.Compatibility!=null)
+        {
+            var reader=data.RootElement.TryGetProperty("metadataReader",out var declared)?Math.Min(declared.GetInt32(),ReleaseCompatibility.ReaderProtocol):1;
+            ReleaseCompatibility.Require(config.Compatibility,"win",reader);
+        }
         RequireSemVer(version);return config;
     }
     static void CleanupInstallerSources(string current)
@@ -78,7 +83,7 @@ static partial class Maintenance
     static int InstallerOperation(string action,string raw,string version,int ownerPid=0)
     {
         if(action is "plan" or "begin" or "commit")PlatformRequirements.RequireSupported("win");
-        var root=SafeRoot(raw);var config=InstallerConfig(version,root);ValidateInstallParents(root);
+        var root=SafeRoot(raw);var config=InstallerConfig(version,root,action is "plan" or "begin" or "commit");ValidateInstallParents(root);
         using var product=WindowsInstallLease.TryAcquire(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),"StarTournamentInstallerProduct"))??throw new IOException("Another installer is changing the product registration");
         using var lease=WindowsInstallLease.TryAcquire(root)??throw new IOException("Close Star Tournament before installing");CheckNoProcesses(root);
         Caller? caller=null;

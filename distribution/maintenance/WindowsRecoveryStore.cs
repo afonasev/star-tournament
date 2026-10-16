@@ -156,6 +156,8 @@ public sealed partial class WindowsRecoveryStore
         var fields=config.RootElement.EnumerateObject().ToDictionary(p=>p.Name,p=>p.Value.Clone());
         // Older protocol2 producer records omitted this field; their activation route required2.
         fields["protocol"]=JsonSerializer.SerializeToElement(attempt.PreviousProtocol??2);
+        // The retained executable is this broker; playback identity can be older.
+        fields["metadataReader"]=JsonSerializer.SerializeToElement(ReleaseCompatibility.ReaderProtocol);
         try{using(var output=create(next)){JsonSerializer.Serialize(output,fields);output.Flush(true);}File.Move(next,path,true);}finally{File.Delete(next);}
     }
     string ReadyPath(string id) => Path.Combine(store, id + ".ready");

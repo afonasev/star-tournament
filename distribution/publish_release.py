@@ -13,6 +13,7 @@ import tempfile
 import urllib.error
 import urllib.request
 
+from release_compatibility import validate as validate_compatibility, verify_payload
 from upload_github_assets import REPO, upload, tls_context
 from legacy_release_relay import ReleaseRedirects
 from release_changelog import previous_release, resolve, render, validate_body, git
@@ -55,8 +56,9 @@ def verify_manifest(path, version, runtime, channel):
                        input=payload,check=True,stdout=subprocess.DEVNULL)
     data = json.loads(payload)
     platform, arch = runtime.split('-')
-    if (data['schema'],data['version'],data['platform'],data['architecture'],data['channel']) != (1,version,platform,arch,channel):
+    if (data['schema'],data['version'],data['platform'],data['architecture'],data['channel']) != (2,version,platform,arch,channel):
         raise ValueError('Signed release identity mismatch')
+    validate_compatibility(data.get('compatibility'), platform)
     if len(data['feed']['Assets']) != 1: raise ValueError('Full package required')
     package = data['feed']['Assets'][0]
     if (package['PackageId'],package['Version'],package['Type']) != ('tech.afonasev.star-tournament.'+runtime,version,'Full'):
@@ -78,6 +80,7 @@ def collect(output, version, date, channel, source_ref=None):
         full = identity(releases/package['FileName'])
         if (full['size'],full['sha256'].lower()) != (package['Size'],package['SHA256'].lower()):
             raise ValueError('Package changed after signing')
+        verify_payload(releases/package['FileName'], data)
         installer_name = (f'Star-Tournament-{version}-Windows-x64-Setup.exe' if runtime == 'win-x64'
                           else f'Star-Tournament-{version}-macOS-arm64.pkg')
         installer = identity(releases/installer_name)

@@ -74,6 +74,20 @@ static class WindowsInstallerTransactionChecks
                 File.WriteAllText(Path.Combine(root,"maintenance/recovery/state.json"),JsonSerializer.Serialize(new WindowsRecoveryState(1,StartupRecovery.InstallationId(root),Candidate.AppId,[],attempt)));
                 var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.0.0");Stage(t.Stage);Reject(t.Commit);AssertOld(root);Require(t.Read()!.Phase=="extracting");t.Recover();AssertOld(root);
             });
+            Test("schema2 installer candidate requires capable broker before replacing current",root=>
+            {
+                Old(root);var requirements=new ReleaseRequirements("10.0.19043",2,ReleaseCompatibility.PayloadFormat,ReleaseCompatibility.DataPolicy);
+                var candidate=Candidate with{Compatibility=requirements};var t=new WindowsInstallerTransaction(root,candidate);t.Begin("1.0.0");Stage(t.Stage);WriteConfig(t.Stage,candidate);
+                Reject(t.Commit);AssertOld(root);Require(t.Read()!.Phase=="extracting");
+                var path=Path.Combine(t.Stage,"maintenance/maintenance.json");using var document=JsonDocument.Parse(File.ReadAllText(path));var fields=document.RootElement.EnumerateObject().ToDictionary(p=>p.Name,p=>p.Value.Clone());fields["metadataReader"]=JsonSerializer.SerializeToElement(2);File.WriteAllText(path,JsonSerializer.Serialize(fields));
+                t.Commit();Require(WindowsInstallation.MetadataReader(root)==2);t.FinalizeInstall();t.ClearSettled();
+            });
+            Test("schema2 installer can finish cleanup of a committed legacy target",root=>
+            {
+                Old(root);var legacy=new WindowsInstallerTransaction(root,Candidate);legacy.Begin("1.0.0");Stage(legacy.Stage);legacy.Commit();legacy.FinalizeInstall();
+                var candidate=Candidate with{Version="1.2.0",Compatibility=new ReleaseRequirements("10.0.19043",2,ReleaseCompatibility.PayloadFormat,ReleaseCompatibility.DataPolicy)};
+                var next=new WindowsInstallerTransaction(root,candidate);next.Begin(Candidate.Version);Require(next.Read()!.Target=="1.2.0"&&File.Exists(Path.Combine(root,"current/release.json")));next.Recover();next.ClearSettled();
+            });
             Console.WriteLine($"Windows installer transaction: {passed} passed (portable filesystem; Windows ACL/NSIS runtime NotRun)");
         }
         finally{Directory.Delete(home,true);}
