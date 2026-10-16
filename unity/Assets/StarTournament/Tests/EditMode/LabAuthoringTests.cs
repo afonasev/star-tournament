@@ -154,6 +154,46 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(DesignLabHistory.ResolvePublishedDefault(baseline,output).Selected.Hash,Is.EqualTo(h.Selected.Hash));
             Assert.That(File.Exists(path),Is.False);
         }
+        [TestCase(false)][TestCase(true)] public void UpgradeFillsMissingFieldsFromLatestReleaseDefaultAndKeepsZeroFalseAndOriginal(bool author)
+        {
+            baseline=WithBlood();var previous=baseline.Clone();
+            var before=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            previous.Profiles=previous.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();
+            var old=new DesignLabHistory(path,previous);old.Create("Default");string localId=old.SelectedProfileId;
+            var draft=old.Selected.Snapshot;draft.Set("rifle.damage",31);draft.Set("audio.effectsDefaultPercent",0);draft.Set("blood.enabled",0);old.Save(draft);
+            var saved=old.Selected;string original=UnityEngine.JsonUtility.ToJson(saved.Snapshot);
+            var chosen=baseline.Clone();chosen.Set("presentation.botBanterIntervalSeconds",30);
+            var earlier=baseline.Clone();earlier.Set("presentation.botBanterIntervalSeconds",20);
+            seed=LabReleaseCatalog.Factory(baseline);
+            seed.Entries.Add(new LabReleaseEntry{Sequence=2,ProfileId=DesignLabHistory.ReleaseId,ProfileName="Default",Revision=5,Date="20261016",Hash=chosen.Hash(),Snapshot=chosen});
+            seed.Entries.Add(new LabReleaseEntry{Sequence=3,ProfileId=DesignLabHistory.ReleaseId,ProfileName="Default",Revision=2,Date="20261015",Hash=earlier.Hash(),Snapshot=earlier});
+            if(author)
+            {
+                var file=DesignLabHistoryTests.ReadFixture(path,previous);var defaults=file.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId);
+                defaults.Revisions.Add(new LabRevision{Number=5,Date="20261016",Hash=chosen.Hash(),Snapshot=chosen.Clone(),ReleaseCandidate=true});
+                var unmarked=baseline.Clone();unmarked.Set("presentation.botBanterIntervalSeconds",40);
+                defaults.Revisions.Add(new LabRevision{Number=6,Hash=unmarked.Hash(),Snapshot=unmarked});
+                File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file));
+                // Project marks override the package. Do not accidentally pass using seed.
+                seed=LabReleaseCatalog.Factory(earlier);
+            }
+            var bytes=File.ReadAllBytes(path);
+            var upgraded=new DesignLabHistory(path,baseline,releases:seed,persistMigration:false,authoring:author);
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.SelectedProfileId,Is.EqualTo(localId));
+            Assert.That(upgraded.Selected.Snapshot.Get("presentation.botBanterIntervalSeconds"),Is.EqualTo(30));
+            Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.Zero);
+            Assert.That(upgraded.Selected.Snapshot.Get("blood.enabled"),Is.Zero);
+            var preserved=upgraded.Profiles.Single(p=>p.Id==localId).Revisions.Single(r=>r.Number==saved.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(saved.Hash));Assert.That(preserved.Date,Is.EqualTo(saved.Date));
+            Assert.That(UnityEngine.JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(original));
+            Assert.That(File.ReadAllBytes(path),Is.EqualTo(bytes));
+            var full=upgraded.Selected.Snapshot;full.Set("rifle.damage",32);upgraded.Save(full);
+            Assert.That(upgraded.Selected.Snapshot.Get("presentation.botBanterIntervalSeconds"),Is.EqualTo(30));
+            var reloaded=new DesignLabHistory(path,baseline,releases:seed,persistMigration:false,authoring:author);
+            Assert.That(reloaded.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));
+            Assert.That(reloaded.Selected.Snapshot.Get("blood.enabled"),Is.Zero);
+        }
         [Test] public void PackagedDefaultUsesRevisionOrderAndPreservesItsAuthoredName()
         {
             var v3=baseline.Clone();v3.Set("rifle.damage",31);var v2=baseline.Clone();v2.Set("rifle.damage",29);

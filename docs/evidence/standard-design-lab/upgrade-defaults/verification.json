@@ -1,0 +1,28 @@
+{
+  "baseline": "630f8244",
+  "branch": "codex/game-standard-alignment",
+  "affected": {
+    "result": "Passed",
+    "total": "51",
+    "passed": "51",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "138.5622357"
+  },
+  "initial_attempt": "NotRun: internal historical transform unavailable to test assembly; corrected reflection call, no runtime tests on initial attempt",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "61f0861d09f0b2212da3c47cb64352df6d40d81ea06658fe284e66370cc910e9",
+    "unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs": "73dfd5f869207f6ac1ca5f0ef8d191f26b2e76b45c2fc56d10811fd733b408e8"
+  },
+  "pending": [
+    "Persisted generated execution-view lifecycle",
+    "Explicit incompatibility audit",
+    "Full Lab05 and parent matrix",
+    "Player/platform/human gates"
+  ],
+  "not_run": [
+    "Full suite",
+    "Player build",
+    "Release/deploy"
+  ]
+}

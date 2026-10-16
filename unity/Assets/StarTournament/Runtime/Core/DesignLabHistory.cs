@@ -655,59 +655,75 @@ namespace StarTournament.ProvingGround
         }
         bool Current(LabBundle bundle)=>RegistryMatches(shipped,bundle);
         public bool Compatible(LabRevision revision)=>Current(revision.Snapshot);
+        LabBundle CompatibilityDefaults(LabHistoryFile file,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors)
+        {
+            LabBundle selected=null;
+            if(authoring)selected=AuthorDefault(file)?.Snapshot;
+            else if(releases!=null)selected=releases.Entries.Where(e=>e.ProfileId==ReleaseId)
+                .OrderByDescending(e=>e.Revision).ThenByDescending(e=>e.Sequence).First().Snapshot;
+            // The source Default may itself predate the current registry. Its missing
+            // fields use registry defaults; all experiment fields use this resolved source.
+            return selected==null?shipped.Clone():Current(selected)?selected.Clone():UpgradeSnapshot(selected,shipped,true,currentDescriptors);
+        }
+        LabBundle UpgradeSnapshot(LabBundle snapshot,LabBundle defaults,bool isDefault,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors)
+        {
+            var next=defaults.Clone();foreach(var d in snapshot.Descriptors)if(currentDescriptors.TryGetValue(d.Path,out var currentDescriptor))
+            {
+                // The compatible revision uses current trusted map/diagnostic metadata.
+                // Previous read-only values remain intact only in their historical revision.
+                if(next.IsAuthoring(d.Path)||next.IsDiagnostic(d.Path))continue;
+                float value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,snapshot.Get(d.Path));
+                // The packaged Default adopts this behavior update. Named local
+                // profiles keep their tuning; original release snapshots stay intact.
+                if(isDefault&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&snapshot.Profile(d.Path).Version<4)
+                    value=currentDescriptor.DefaultValue;
+                // Interpret the untouched v9/v10 step interval as the new shipped default.
+                // Historical snapshots remain byte-for-byte intact with their original hash.
+                if(d.Path=="audio.footstepDistanceMeters"&&snapshot.Profile(d.Path).Version>=9&&snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
+                    value=currentDescriptor.DefaultValue;
+                // Only the old shipped intensity becomes the stronger default. Keep custom
+                // values and the immutable source revision unchanged.
+                if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
+                    value=currentDescriptor.DefaultValue;
+                value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                next.Set(d.Path,value);
+            }
+            // Version3 used the office controls for both floors and stair annexes.
+            // Preserve that custom stair lighting when the controls become independent.
+            if(currentDescriptors.ContainsKey("lunar.stairLamp")&&currentDescriptors.ContainsKey("lunar.stairFill")
+                &&snapshot.Descriptors.Any(d=>d.Path=="lunar.officeLamp")
+                &&snapshot.Profile("lunar.officeLamp").Version==3)
+            {
+                next.Set("lunar.stairLamp",snapshot.Get("lunar.officeLamp"));
+                next.Set("lunar.stairFill",snapshot.Get("lunar.officeFill"));
+            }
+            foreach(var weapon in new[]{"rifle","shot"})
+                if(snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&currentDescriptors.ContainsKey(weapon+".damage"))
+                    next.Set(weapon+".damage",snapshot.Get(weapon+".torso"));
+            if(!snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath)
+                &&snapshot.Descriptors.Any(d=>d.Path=="input.gamepadDegreesPerSecond")
+                &&currentDescriptors.ContainsKey(GamepadLookSettings.HorizontalPath))
+            {
+                var legacy=snapshot.Get("input.gamepadDegreesPerSecond");
+                next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);
+            }
+            return next;
+        }
         void MigrateCompatibility(LabHistoryFile file)
         {
             bool selectedRelease=file.SelectedId==ReleaseId;
             // Registry metadata is frozen for this migration. Index once instead of scanning the
             // whole (including authored-map) registry for every value in every old revision.
             var currentDescriptors=shipped.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal);
+            var defaults=CompatibilityDefaults(file,currentDescriptors);
             string shippedHash=shipped.Hash();
             // Append current-schema counterparts; keep every old revision number, value and hash intact.
             foreach(var p in file.Profiles)
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
                     startupCancellation.ThrowIfCancellationRequested();
-                    var next=shipped.Clone();foreach(var d in old.Snapshot.Descriptors)if(currentDescriptors.TryGetValue(d.Path,out var currentDescriptor))
-                    {
-                        // The compatible revision uses current trusted map/diagnostic metadata.
-                        // Previous read-only values remain intact only in their historical revision.
-                        if(next.IsAuthoring(d.Path)||next.IsDiagnostic(d.Path))continue;
-                        float value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,old.Snapshot.Get(d.Path));
-                        // The packaged Default adopts this behavior update. Named local
-                        // profiles keep their tuning; original release snapshots stay intact.
-                        if(p.Id==ReleaseId&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&old.Snapshot.Profile(d.Path).Version<4)
-                            value=currentDescriptor.DefaultValue;
-                        // Interpret the untouched v9/v10 step interval as the new shipped default.
-                        // Historical snapshots remain byte-for-byte intact with their original hash.
-                        if(d.Path=="audio.footstepDistanceMeters"&&old.Snapshot.Profile(d.Path).Version>=9&&old.Snapshot.Profile(d.Path).Version<=10&&Mathf.Approximately(value,1.7f))
-                            value=currentDescriptor.DefaultValue;
-                        // Only the old shipped intensity becomes the stronger default. Keep custom
-                        // values and the immutable source revision unchanged.
-                        if(d.Path=="blood.drops"&&old.Snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
-                            value=currentDescriptor.DefaultValue;
-                        value=ProvingProfile.UpgradeArenaVisualValue(d.Path,old.Snapshot.Profile(d.Path).Version,value,currentDescriptor);
-                        value=ProvingProfile.UpgradeWellDetailValue(d.Path,old.Snapshot.Profile(d.Path).Version,value,currentDescriptor);
-                        next.Set(d.Path,value);
-                    }
-                    // Version3 used the office controls for both floors and stair annexes.
-                    // Preserve that custom stair lighting when the controls become independent.
-                    if(currentDescriptors.ContainsKey("lunar.stairLamp")&&currentDescriptors.ContainsKey("lunar.stairFill")
-                        &&old.Snapshot.Descriptors.Any(d=>d.Path=="lunar.officeLamp")
-                        &&old.Snapshot.Profile("lunar.officeLamp").Version==3)
-                    {
-                        next.Set("lunar.stairLamp",old.Snapshot.Get("lunar.officeLamp"));
-                        next.Set("lunar.stairFill",old.Snapshot.Get("lunar.officeFill"));
-                    }
-                    foreach(var weapon in new[]{"rifle","shot"})
-                        if(old.Snapshot.Descriptors.Any(d=>d.Path==weapon+".torso")&&currentDescriptors.ContainsKey(weapon+".damage"))
-                            next.Set(weapon+".damage",old.Snapshot.Get(weapon+".torso"));
-                    if(!old.Snapshot.Descriptors.Any(d=>d.Path==GamepadLookSettings.HorizontalPath)
-                        &&old.Snapshot.Descriptors.Any(d=>d.Path=="input.gamepadDegreesPerSecond")
-                        &&currentDescriptors.ContainsKey(GamepadLookSettings.HorizontalPath))
-                    {
-                        var legacy=old.Snapshot.Get("input.gamepadDegreesPerSecond");
-                        next.Set(GamepadLookSettings.HorizontalPath,legacy);next.Set(GamepadLookSettings.VerticalPath,legacy);
-                    }
+                    var next=UpgradeSnapshot(old.Snapshot,defaults,p.Id==ReleaseId,currentDescriptors);
                     string nextHash=next.Hash();
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash&&(old.ReleaseSequence==0||r.ReleaseSequence==0||r.ReleaseSequence==old.ReleaseSequence));
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
