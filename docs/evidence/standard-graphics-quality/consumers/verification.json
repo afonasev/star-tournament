@@ -1,0 +1,62 @@
+{
+  "baseline": "codex/game-standard-alignment@eca21449",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "final": {
+    "result": "Passed",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "xml_duration": "0.2295563",
+    "editor_exit": 0,
+    "shared": true,
+    "noaudio": true,
+    "muted": true
+  },
+  "stats": {
+    "skins": 17,
+    "multi": 9585,
+    "three_plus": 3713,
+    "max_legacy_weights": 4,
+    "textures": 30,
+    "ignore_mips": 30,
+    "prefab_lod_groups": 0
+  },
+  "source_settings_bytes_restored": true,
+  "preview31": {
+    "AST": true,
+    "SVG_XML": true,
+    "PNG_inspected": true,
+    "idempotent": true,
+    "single_gallery_section": true,
+    "approval": "Q10 pending"
+  },
+  "is_completion_certificate": false,
+  "player_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "sources": {
+    "unity/Assets/StarTournament/Tests/EditMode/GraphicsQualityApplicabilityTests.cs": "e5e1bde92194b8b29222816ee790a069e3ba4fe6bccf62e453ca65d8bc11c6e5",
+    "unity/Assets/StarTournament/Runtime/TrooperIdentityPresentation.cs": "5cd917069c9b301dee68887de06e3cb26185952f8f47208a029966c818042a91",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "ab7d85c0d071cc458080a302e307a44b361b0ebeb02dc80da4c50429ccf14fa4",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPresentation.cs": "829104594b323168763680fa4379ba684fbf0e7a79566c5d820e1838d78247ab",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs": "9c7699876598272b8579f3390c1de6dea3ef456443985b17f8bc69de55b6e4b0",
+    "unity/ProjectSettings/QualitySettings.asset": "176cdf4d902ee22449f47266de27cc856b54932d848b01a68bdde66194f71689",
+    "docs/design/template-standard/graphics_quality.py": "2cb365e33f650dfdfbf19480453bb5a55f05c9b27897b48ae963872f8099b965",
+    "docs/design/template-standard/31-graphics-quality.svg": "89d269db95d0ec295c917656e80bcfed44eee41a2313a1102544c1853c884691",
+    "docs/design/template-standard/31-graphics-quality.png": "1cb93a53de22cb06c0c517dc3a4f82e6b72e12bbac0e88497d4f033421c4cfe3"
+  },
+  "evidence": {
+    "initial-consumer-editmode.xml": "1eaa03e51c4d7c8cbefcd71a614940aee5382cfde0a12be0bbc52e2a29858645",
+    "initial-consumer-probe.json": "f358af9179c61c4f7794c50952b4af32f4a5ab6bf4aa679f5d35b6bd8376c025",
+    "editmode.xml": "9ab074ca5a7f2967065eedefdf7a3eaed65be5625b0201beb5e931be3a46e9ec",
+    "initial-consumer-editor.log": "00a38a1bb3d997e370c4bb6ff5fa0a46b8e1e48ced25f1d7c378fe6d75abbffe",
+    "runner.log": "fb8bfcbc2c7ea56bb96a722abfee700cd518239f245d7131b8705b9ae207394b",
+    "source-before.json": "fd9456d01ff3bf98acc9dddf640f6b8e1a5e06ba6a0f46314c631cd4b472a872",
+    "cleanup.json": "6ec7782d45ef7b53e8667b1f190bd8577439bd20efb86c1065ae5d082411063f",
+    "audit.md": "98c0a4a52db0e2abca7a9b16db6263d9e1f127976cb70f924f019881caca48bb",
+    "initial-consumer-runner.log": "c48627524bee9c038067cb96631f90ded363e9553cc4359e5481c529e52af192",
+    "probe.json": "f358af9179c61c4f7794c50952b4af32f4a5ab6bf4aa679f5d35b6bd8376c025",
+    "editor.log": "4f32adb266f5344159ae290f35b81b799ee4dadb7b6fdf5858814e193bc60451",
+    "plan.md": "4140856ce22c2c1151adc84866ac2bb2fcb5cbffb8d1c6e24855d76b0fdaadfc"
+  }
+}

@@ -73,7 +73,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | OPT-SCREEN-RESOLUTION | Применима: unique resolutions + Auto; native monitor fallback pending, AUTO copyQ5. |
 | OPT-SCREEN-VSYNC | Применима: VSyncKey/ApplyVSyncPreference, one shared runtime value. |
 | OPT-SCREEN-FPS-LIMIT | Применима: NativeUserPreferences.FrameCaps/targetFrameRate; VSync priority explained. |
-| OPT-GRAPHICS-QUALITY | **Применима, UI ещё открыт**: native EditMode probe подтвердил17 Auto skins/9585 multi-weight vertices и skin limits1/2/4/255; все6 slots используют один URP. Нельзя объявить N/A. Low/Medium/High требуют оставшегося texture/LOD consumer audit до честной семантики selector; новый макет до реализации. Evidence standard-graphics-quality/. |
+| OPT-GRAPHICS-QUALITY | **Применима, UI ещё открыт**: native EditMode probe подтвердил17 Auto skins/9585 multi-weight vertices и skin limits1/2/4/255; все6 slots используют один URP. Нельзя объявить N/A. Consumer audit подтвердил3713 vertices с3+ весами и sampled texture ignoreMipmapLimit=true: не обещать VRAM/FPS. Предложены3 native tiers0/2/5 и макет31, Q10 pending; runtime selector ещё не реализован. Evidence standard-graphics-quality/consumers/. |
 | OPT-GRAPHICS-AA | Применима: NativeVisualPreferences AntialiasingLevel, per-camera/runtime resolve. |
 | OPT-GRAPHICS-SHADOWS | Применима: global toggle, owned Light originals retained, quality state restores. |
 | OPT-GRAPHICS-EFFECTS | Применима: каждый используемый VisualEffect имеет Enabled; strength stays Lab, no fake channels. |

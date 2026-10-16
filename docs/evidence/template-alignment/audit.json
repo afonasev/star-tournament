@@ -185,8 +185,8 @@
     "updates/release-format.md": "2d0dcc50575aeca6d996a0f007ec7d20ac0e576a071299982c5e5cdf59dbe80d"
   },
   "actual_unresolved": [
-    "Q5-Q8 visual scopes",
-    "quality applicable: texture/LOD consumers, honest level semantics and approved UI pending",
+    "Q5-Q10 visual scopes",
+    "quality selector31/Q10 pending; source consumers measured, runtime/QA incomplete",
     "macOS PKG vs normative DMG",
     "macOS first-install preflight and native installed pair/data rollback unverified",
     "native installed/device/human acceptance not run"
@@ -194,11 +194,15 @@
   "latest_discovery_evidence": "docs/evidence/standard-github-discovery/verification.json",
   "quality_applicability": {
     "status": "applicable-source-consumer-confirmed; UI pending",
-    "evidence": "docs/evidence/standard-graphics-quality/",
+    "evidence": "docs/evidence/standard-graphics-quality/consumers/",
     "native_test": "1 passed/0 failed/0 skipped",
     "auto_skins": 17,
     "multi_weight_vertices": 9585,
     "effective_urp_assets": 1,
-    "remaining": "texture/LOD consumers and honest level semantics, then approved UI/affected QA; no presets invented"
+    "remaining": "approved selector implementation, ownership/persistence/reset/rendering QA and native acceptance",
+    "three_plus_weight_vertices": 3713,
+    "sampled_textures": 30,
+    "sampled_ignore_mipmap_limit": 30,
+    "proposal": "UI31, tiers0/2/5; parent Q10 pending"
   }
 }

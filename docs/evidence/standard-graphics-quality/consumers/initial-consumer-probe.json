@@ -1,0 +1,510 @@
+{
+    "Unity": "6000.3.23f1",
+    "Slots": [
+        {
+            "Name": "Very Low",
+            "Pipeline": "Assets/StarTournament/Settings/ProvingURP.asset",
+            "Index": 0,
+            "SkinWeights": 1,
+            "LegacyAA": 0,
+            "ShadowDistance": 50.0,
+            "RenderScale": 1.0,
+            "Msaa": 1
+        },
+        {
+            "Name": "Low",
+            "Pipeline": "Assets/StarTournament/Settings/ProvingURP.asset",
+            "Index": 1,
+            "SkinWeights": 2,
+            "LegacyAA": 0,
+            "ShadowDistance": 50.0,
+            "RenderScale": 1.0,
+            "Msaa": 1
+        },
+        {
+            "Name": "Medium",
+            "Pipeline": "Assets/StarTournament/Settings/ProvingURP.asset",
+            "Index": 2,
+            "SkinWeights": 2,
+            "LegacyAA": 0,
+            "ShadowDistance": 50.0,
+            "RenderScale": 1.0,
+            "Msaa": 1
+        },
+        {
+            "Name": "High",
+            "Pipeline": "Assets/StarTournament/Settings/ProvingURP.asset",
+            "Index": 3,
+            "SkinWeights": 2,
+            "LegacyAA": 0,
+            "ShadowDistance": 50.0,
+            "RenderScale": 1.0,
+            "Msaa": 1
+        },
+        {
+            "Name": "Very High",
+            "Pipeline": "Assets/StarTournament/Settings/ProvingURP.asset",
+            "Index": 4,
+            "SkinWeights": 4,
+            "LegacyAA": 2,
+            "ShadowDistance": 50.0,
+            "RenderScale": 1.0,
+            "Msaa": 1
+        },
+        {
+            "Name": "Ultra",
+            "Pipeline": "Assets/StarTournament/Settings/ProvingURP.asset",
+            "Index": 5,
+            "SkinWeights": 255,
+            "LegacyAA": 2,
+            "ShadowDistance": 50.0,
+            "RenderScale": 1.0,
+            "Msaa": 1
+        }
+    ],
+    "Skins": [
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Object_2",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 2798,
+            "MultiWeightVertices": 100,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 2
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Object_3",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 7686,
+            "MultiWeightVertices": 4678,
+            "ThreeOrMoreWeightVertices": 1904,
+            "MaxWeights": 4
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Object_4",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 3963,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Object_5",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 1038,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Object_6",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 2826,
+            "MultiWeightVertices": 1153,
+            "ThreeOrMoreWeightVertices": 231,
+            "MaxWeights": 3
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Object_7",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 1792,
+            "MultiWeightVertices": 202,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 2
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic LeftLowerLeg 0",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic LeftLowerLeg 1",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic LeftUpperArm 3",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic LeftUpperLeg 2",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic RightLowerLeg 0",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic RightLowerLeg 1",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic RightUpperArm 3",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata ceramic RightUpperLeg 2",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 112,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata oxblood LeftUpperArm sleeve",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 120,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperBody.prefab",
+            "Renderer": "Strata oxblood RightUpperArm sleeve",
+            "Mesh": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Quality": 0,
+            "Vertices": 120,
+            "MultiWeightVertices": 0,
+            "ThreeOrMoreWeightVertices": 0,
+            "MaxWeights": 1
+        },
+        {
+            "Prefab": "Assets/StarTournament/Trooper/TrooperArms.prefab",
+            "Renderer": "vector-armored-hands",
+            "Mesh": "Assets/StarTournament/Art/trooper-arms-animated.glb",
+            "Quality": 0,
+            "Vertices": 57378,
+            "MultiWeightVertices": 3452,
+            "ThreeOrMoreWeightVertices": 1578,
+            "MaxWeights": 4
+        }
+    ],
+    "Textures": [
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_2/TECI_helmet/baseColorTexture",
+            "Name": "strata-oxblood-TECI_helmet",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_2/TECI_helmet/normalTexture",
+            "Name": "Image_3",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_2/TECI_helmet/occlusionTexture",
+            "Name": "Image_1",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_2/TECI_helmet/emissiveTexture",
+            "Name": "Image_2",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_3/material/baseColorTexture",
+            "Name": "strata-oxblood-material",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_3/material/normalTexture",
+            "Name": "Image_7",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_3/material/occlusionTexture",
+            "Name": "Image_5",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_3/material/emissiveTexture",
+            "Name": "Image_6",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_4/gear/baseColorTexture",
+            "Name": "Image_8",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_4/gear/normalTexture",
+            "Name": "Image_11",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_4/gear/occlusionTexture",
+            "Name": "Image_9",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_4/gear/emissiveTexture",
+            "Name": "Image_10",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_5/jumpjet/baseColorTexture",
+            "Name": "Image_12",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_5/jumpjet/normalTexture",
+            "Name": "Image_15",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_5/jumpjet/occlusionTexture",
+            "Name": "Image_13",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_5/jumpjet/emissiveTexture",
+            "Name": "Image_14",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_6/pants/baseColorTexture",
+            "Name": "strata-oxblood-pants",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_6/pants/normalTexture",
+            "Name": "Image_19",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_6/pants/occlusionTexture",
+            "Name": "Image_17",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_6/pants/emissiveTexture",
+            "Name": "Image_18",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_7/torso/baseColorTexture",
+            "Name": "Image_20",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_7/torso/normalTexture",
+            "Name": "Image_23",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_7/torso/occlusionTexture",
+            "Name": "Image_21",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Object_7/torso/emissiveTexture",
+            "Name": "Image_22",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 11,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Strata ceramic LeftLowerLeg 0/vector-ceramic/baseColorTexture",
+            "Name": "strata-ceramic-albedo",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 10,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperBody.prefab/Strata ceramic LeftLowerLeg 0/vector-ceramic/normalTexture",
+            "Name": "orbital-ceramic-microfinish",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 9,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperArms.prefab/vector-armored-hands/vector-glove/baseColorTexture",
+            "Name": "vector-woven-glove",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 8,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "Assets/StarTournament/Trooper/TrooperArms.prefab/vector-armored-hands/vector-glove/normalTexture",
+            "Name": "orbital-woven-normal",
+            "Asset": "Assets/StarTournament/Art/trooper-body-animated.glb",
+            "Filter": "Bilinear",
+            "MipCount": 8,
+            "Aniso": 1,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "WellLabDetail.Texture(floor,normal=False)",
+            "Name": "Well floor texture",
+            "Asset": "",
+            "Filter": "Trilinear",
+            "MipCount": 9,
+            "Aniso": 4,
+            "IgnoreMipmapLimit": true
+        },
+        {
+            "Source": "WellLabDetail.Texture(floor,normal=True)",
+            "Name": "Well floor relief",
+            "Asset": "",
+            "Filter": "Trilinear",
+            "MipCount": 9,
+            "Aniso": 4,
+            "IgnoreMipmapLimit": true
+        }
+    ],
+    "PrefabLodGroups": 0
+}
