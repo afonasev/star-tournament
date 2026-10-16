@@ -1,0 +1,13 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabReleaseCatalogTests.ExplicitStagingRetainsProfilesAndPreservesSourceHistory;LabReleaseCatalogTests.Staging;LabReleaseCatalogTests.EquivalentStaging;LabReleaseCatalogTests.MissingMarkedDefault;LabReleaseCatalogTests.FailedAtomicStaging;LabAuthoringTests
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.xMhbPZ/qa-lab-history.json
+revision=f13a9661d5cfa1bd32dd55f9e3056d1c48ecc4ba
+ M Assets/StarTournament/Editor/LabReleaseBuild.cs
+ M Assets/StarTournament/Tests/EditMode/LabReleaseCatalogTests.cs
+ M DesignLab/README.md
+ M tools.sh
+?? ../docs/evidence/standard-design-lab/staging/
+?? ../tools/__pycache__/
+?? Assets/StarTournament/Editor/LabReleaseStaging.cs
+?? Assets/StarTournament/Editor/LabReleaseStaging.cs.meta

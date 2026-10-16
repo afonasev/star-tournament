@@ -1,0 +1,54 @@
+{
+  "baseline": "f13a9661",
+  "branch": "codex/game-standard-alignment",
+  "runs": [
+    {
+      "run": "contracts",
+      "result": "Passed",
+      "total": "24",
+      "passed": "24",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "4.4343312"
+    },
+    {
+      "run": "source-guard",
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "8.3728212"
+    },
+    {
+      "run": "strict-source-errors",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.2812252"
+    }
+  ],
+  "unique_affected_Unity_cases": 27,
+  "python_wrapper_contracts": "11/11 passed",
+  "actual_project": "changed=False; source/catalogue/scene SHA256 before==after",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Editor/LabReleaseStaging.cs": "780685b952b8db46f34e353a7d8d87ee095a9df1480c16dd119dd465c6b6acf9",
+    "unity/Assets/StarTournament/Editor/LabReleaseBuild.cs": "62b855caf95d37d2e2cbaf078417cfe5e7f815a771acb03d21558122854637ae",
+    "unity/Assets/StarTournament/Tests/EditMode/LabReleaseCatalogTests.cs": "f195b4b9cd0339d6238115b0abc25ffc805b1597954ff6586dd1788a88b45fc5",
+    "unity/tools.sh": "65f52f92c6624bb148282811300057fe9687b5e9911f28d50089964f52b959af",
+    "tools/test_unity_tools.py": "17f2cef1486127ae6df737a1b9fd1cf40b779e4e54bee894e156ba47f0e47ca8"
+  },
+  "not_run": [
+    "Player/build/installer",
+    "full suite",
+    "publication/deploy",
+    "human/device acceptance"
+  ],
+  "pending": [
+    "Lab full05/layout and historical-unmark UI",
+    "upgrade compatibility requirements",
+    "broader parent template matrix"
+  ]
+}

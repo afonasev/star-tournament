@@ -12,7 +12,6 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static LabBundle Baseline()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
         static LabReleaseEntry Entry(int sequence,string id,string name,int number,LabBundle snapshot)=>new LabReleaseEntry{
             Sequence=sequence,ProfileId=id,ProfileName=name,Revision=number,Date="20261007",Hash=snapshot.Hash(),Snapshot=snapshot.Clone()};
-        // Run before staging tests, which regenerate the scene and could hide a stale checked-in baseline.
         [Test]public void PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning()
         {
             var baseline=Baseline();var catalogue=LabReleaseCatalog.Factory(baseline);
@@ -143,41 +142,137 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(history.Profiles.Last().Revisions[0].ReleaseSequence,Is.Zero);
             Assert.That(history.Profiles.Last().Protected,Is.False);
         }
+        string Project(out LabBundle baseline,out DesignLabHistory history)
+        {
+            baseline=Baseline();string project=Path.Combine(directory,"project");
+            Directory.CreateDirectory(Path.Combine(project,".git"));
+            Directory.CreateDirectory(Path.Combine(project,"Assets","StarTournament","Resources"));
+            var catalog=LabReleaseCatalog.Factory(baseline);
+            File.WriteAllText(CatalogPath(project),UnityEngine.JsonUtility.ToJson(catalog,true));
+            history=LabProjectStorage.Open(project,baseline,catalog);history.PersistAuthoring();return project;
+        }
+        static string CatalogPath(string project)=>Path.Combine(project,"Assets","StarTournament","Resources","LabReleaseCatalog.json");
+        static LabReleaseCatalog Catalog(string project)=>UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(CatalogPath(project)));
+        static bool Stage(string project,LabBundle baseline,Action<string,string> publish=null)
+        {
+            var type=AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType("StarTournament.ProvingGround.Editor.LabReleaseStaging")).First(t=>t!=null);
+            try{return (bool)type.GetMethod("Stage").Invoke(null,new object[]{project,baseline,publish});}
+            catch(System.Reflection.TargetInvocationException e){System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(e.InnerException).Throw();throw;}
+        }
         [Test]public void ExplicitStagingRetainsProfilesAndPreservesSourceHistory()
         {
-            const string asset="Assets/StarTournament/Resources/LabReleaseCatalog.json";
-            string original=File.ReadAllText(asset),oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY");
+            string project=Project(out var baseline,out var history);
+            history.Create("Первый релизный профиль");string first=history.SelectedProfileId;
+            var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);history.MarkSelectedForRelease(true);
+            history.Create("Второй релизный профиль");string second=history.SelectedProfileId;history.MarkSelectedForRelease(true);
+            var source=File.ReadAllBytes(history.StoragePath);
+            Assert.That(Stage(project,baseline),Is.True);
+            var staged=Catalog(project);
+            Assert.That(staged.Entries.Count,Is.EqualTo(3));
+            Assert.That(staged.Entries.Single(e=>e.ProfileId==first).ProfileName,Is.EqualTo("Первый релизный профиль"));
+            Assert.That(staged.Entries.Single(e=>e.ProfileId==second).ProfileName,Is.EqualTo("Второй релизный профиль"));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+            var clean=new DesignLabHistory(Path.Combine(directory,"new-install.json"),baseline,releases:staged,resetToLatestDefault:true);
+            Assert.That(clean.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));
+            clean.Select(first,2);Assert.Throws<InvalidOperationException>(()=>clean.Rename("Запрещено"));
+            clean.Create("Копия первого профиля");Assert.That(clean.Profiles.Single(p=>p.Id==clean.SelectedProfileId).Protected,Is.False);
+            history=LabProjectStorage.Open(project,baseline,staged);history.Select(first,2);
+            history.Create("Копия первого профиля");string copyId=history.SelectedProfileId;history.Rename("Новое имя первого профиля");
+            var changed=history.Selected.Snapshot;changed.Set("rifle.damage",32);history.Save(changed);history.MarkSelectedForRelease(true);
+            source=File.ReadAllBytes(history.StoragePath);Assert.That(Stage(project,baseline),Is.True);
+            var renamed=Catalog(project).Entries.Single(e=>e.ProfileId==copyId);
+            Assert.That(renamed.ProfileName,Is.EqualTo("Новое имя первого профиля"));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+        }
+        [Test]public void StagingProjectsEveryMarkAndRemovesUnmarkedVersionsWithoutDeletingHistory()
+        {
+            string project=Project(out var baseline,out var history);
+            history.Create("Multiple versions");string id=history.SelectedProfileId;
+            int first=history.Selected.Number;history.MarkSelectedForRelease(true);
+            var draft=history.Selected.Snapshot;draft.Set("rifle.damage",32);history.Save(draft);
+            int second=history.Selected.Number;history.MarkSelectedForRelease(true);
+            draft=history.Selected.Snapshot;draft.Set("rifle.damage",33);history.Save(draft);
+            Assert.That(Stage(project,baseline),Is.True);
+            Assert.That(Catalog(project).Entries.Where(e=>e.ProfileId==id).Select(e=>e.Revision),Is.EquivalentTo(new[]{first,second}));
+            history.MarkForRelease(id,first,false);var source=File.ReadAllBytes(history.StoragePath);
+            Assert.That(Stage(project,baseline),Is.True);
+            Assert.That(Catalog(project).Entries.Where(e=>e.ProfileId==id).Select(e=>e.Revision),Is.EqualTo(new[]{second}));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+            Assert.That(LabProjectStorage.Open(project,baseline,Catalog(project)).Profiles.Single(p=>p.Id==id).Revisions.Count,Is.EqualTo(3));
+        }
+        [Test]public void EquivalentStagingDoesNotRewriteCatalogueOrSource()
+        {
+            string project=Project(out var baseline,out var history);
+            // Whitespace and serialization format are not changes in release selection.
+            File.AppendAllText(CatalogPath(project),"\n\n");
+            var target=File.ReadAllBytes(CatalogPath(project));var source=File.ReadAllBytes(history.StoragePath);
+            Assert.That(Stage(project,baseline,(a,b)=>Assert.Fail("No publication for equivalent catalogue")),Is.False);
+            Assert.That(File.ReadAllBytes(CatalogPath(project)),Is.EqualTo(target));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+        }
+        [Test]public void MissingMarkedDefaultRefusesStagingWithoutWrites()
+        {
+            string project=Project(out var baseline,out var history);history.MarkSelectedForRelease(false);
+            var target=File.ReadAllBytes(CatalogPath(project));var source=File.ReadAllBytes(history.StoragePath);
+            Assert.Throws<InvalidOperationException>(()=>Stage(project,baseline));
+            Assert.That(File.ReadAllBytes(CatalogPath(project)),Is.EqualTo(target));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+        }
+        [Test]public void FailedAtomicStagingKeepsPreviousCatalogueAndSourceAndRemovesTemporaryFile()
+        {
+            string project=Project(out var baseline,out var history);history.Create("New");history.MarkSelectedForRelease(true);
+            var target=File.ReadAllBytes(CatalogPath(project));var source=File.ReadAllBytes(history.StoragePath);bool called=false;
+            Assert.Throws<IOException>(()=>Stage(project,baseline,(temp,destination)=>{
+                called=true;Assert.That(File.Exists(temp),Is.True);Assert.That(destination,Is.EqualTo(CatalogPath(project)));
+                throw new IOException("injected atomic replace failure");}));
+            Assert.That(called,Is.True);Assert.That(File.ReadAllBytes(CatalogPath(project)),Is.EqualTo(target));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+            Assert.That(Directory.GetFiles(Path.GetDirectoryName(CatalogPath(project)),"*.tmp"),Is.Empty);
+        }
+        [Test]public void StagingEntrypointRejectsArbitraryPlayerHistoryBeforeChangingProject()
+        {
+            string old=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY");
             var build=AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType("StarTournament.ProvingGround.Editor.LabReleaseBuild")).First(t=>t!=null);
-            var prepare=AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType("StarTournament.ProvingGround.Editor.ProvingGroundBuild")).First(t=>t!=null);
+            string root=Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath,".."));
+            string source=LabProjectStorage.ResolvePath(root);var sourceBytes=File.ReadAllBytes(source);
+            var targetBytes=File.ReadAllBytes(CatalogPath(root));
+            var scenes=UnityEditor.SceneManagement.EditorSceneManager.sceneCount;
             try
             {
-                prepare.GetMethod("Prepare").Invoke(null,null);
-                var baseline=UnityEngine.Object.FindAnyObjectByType<ProvingGround>().CaptureLabBundle();
-                var history=new DesignLabHistory(path,baseline,releases:UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(original));
-                history.Create("Первый релизный профиль");string first=history.SelectedProfileId;
-                var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);history.MarkSelectedForRelease(true);
-                history.Create("Второй релизный профиль");string second=history.SelectedProfileId;history.MarkSelectedForRelease(true);
-                var source=File.ReadAllBytes(path);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY",path);
-                build.GetMethod("PromoteMarked").Invoke(null,null);
-                var staged=UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(asset));
-                Assert.That(staged.Entries.Count,Is.EqualTo(UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(original).Entries.Count+2));
-                Assert.That(staged.Entries.Single(e=>e.ProfileId==first).ProfileName,Is.EqualTo("Первый релизный профиль"));
-                Assert.That(staged.Entries.Single(e=>e.ProfileId==second).ProfileName,Is.EqualTo("Второй релизный профиль"));
-                Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
-                var clean=new DesignLabHistory(Path.Combine(directory,"new-install.json"),baseline,releases:staged,resetToLatestDefault:true);
-                Assert.That(clean.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));Assert.That(clean.Profiles.Any(p=>p.Id==first),Is.True);
-                var next=new DesignLabHistory(path,baseline,releases:staged);next.Select(first,2);Assert.Throws<InvalidOperationException>(()=>next.Rename("Запрещено"));next.Create("Копия первого профиля");string copyId=next.SelectedProfileId;next.Rename("Новое имя первого профиля");
-                var changed=next.Selected.Snapshot;changed.Set("rifle.damage",32);next.Save(changed);next.MarkSelectedForRelease(true);
-                source=File.ReadAllBytes(path);build.GetMethod("PromoteMarked").Invoke(null,null);
-                var renamed=UnityEngine.JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(asset)).Entries.Last();
-                Assert.That(renamed.ProfileId,Is.EqualTo(copyId));Assert.That(renamed.ProfileName,Is.EqualTo("Новое имя первого профиля"));
-                Assert.That(File.ReadAllBytes(path),Is.EqualTo(source));
+                File.WriteAllText(path,"arbitrary history must not be read");
+                Environment.SetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY",path);
+                var error=Assert.Throws<System.Reflection.TargetInvocationException>(()=>build.GetMethod("PromoteMarked").Invoke(null,null));
+                Assert.That(error.InnerException,Is.TypeOf<UnityEditor.Build.BuildFailedException>());
+                Assert.That(error.InnerException.Message,Does.Contain("only the project author file"));
+                Assert.That(UnityEditor.SceneManagement.EditorSceneManager.sceneCount,Is.EqualTo(scenes));
+                Assert.That(File.ReadAllBytes(source),Is.EqualTo(sourceBytes));
+                Assert.That(File.ReadAllBytes(CatalogPath(root)),Is.EqualTo(targetBytes));
+                Assert.That(File.ReadAllText(path),Is.EqualTo("arbitrary history must not be read"));
             }
-            finally
-            {
-                File.WriteAllText(asset,original);AssetDatabase.ImportAsset(asset,ImportAssetOptions.ForceUpdate);
-                Environment.SetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY",oldEnvironment);
-            }
+            finally{Environment.SetEnvironmentVariable("STAR_TOURNAMENT_LAB_RELEASE_HISTORY",old);}
+        }
+        [TestCase(false)][TestCase(true)]public void StagingRefusesMissingOrCorruptAuthorSourceWithoutReseeding(bool corrupt)
+        {
+            string project=Project(out var baseline,out var history);var target=File.ReadAllBytes(CatalogPath(project));
+            if(corrupt)File.WriteAllText(history.StoragePath,"broken source");else File.Delete(history.StoragePath);
+            byte[] source=corrupt?File.ReadAllBytes(history.StoragePath):null;
+            Assert.Throws<IOException>(()=>Stage(project,baseline));
+            Assert.That(File.ReadAllBytes(CatalogPath(project)),Is.EqualTo(target));
+            if(corrupt)Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
+            else Assert.That(File.Exists(history.StoragePath),Is.False);
+        }
+        [TestCase(false)][TestCase(true)]public void StagingRejectsRewrittenPublishedIdentity(bool dateOnly)
+        {
+            string project=Project(out var baseline,out var history);history.Create("New");history.MarkSelectedForRelease(true);
+            Assert.That(Stage(project,baseline),Is.True);
+            var previous=Catalog(project);var entry=previous.Entries.Single(e=>e.ProfileId==history.SelectedProfileId);
+            if(dateOnly)entry.Date="20000101";
+            else{entry.Snapshot.Set("rifle.damage",51);entry.Hash=entry.Snapshot.Hash();}
+            File.WriteAllText(CatalogPath(project),UnityEngine.JsonUtility.ToJson(previous,true));
+            var target=File.ReadAllBytes(CatalogPath(project));var source=File.ReadAllBytes(history.StoragePath);
+            Assert.Throws<InvalidDataException>(()=>Stage(project,baseline));
+            Assert.That(File.ReadAllBytes(CatalogPath(project)),Is.EqualTo(target));
+            Assert.That(File.ReadAllBytes(history.StoragePath),Is.EqualTo(source));
         }
         [TestCase(false)][TestCase(true)]public void ReorderedRegistryPathsPreserveTrustedReleaseSnapshotsAndSourceHistory(bool historical)
         {
