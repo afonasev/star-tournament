@@ -46,10 +46,40 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         IEnumerator SelectRevision(int number)
         {
-            Click("lab-revision-select");yield return null;Click("revision-"+number);
+            Click("lab-revision-select");yield return null;Click("revision-"+number);yield return null;Click("revision-select");
             float deadline=Time.realtimeSinceStartup+120;
             while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             yield return null;
+        }
+        [UnityTest] public IEnumerator HistoricalInspectionAndUnmarkPreserveActiveBaseDraftAndOriginal()
+        {
+            File.Delete(historyPath);var previous=baseline.Clone();previous.Profiles=previous.Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList();
+            var old=new DesignLabHistory(historyPath,previous,releases:LabReleaseCatalog.Factory(previous),authoring:true,resetToLatestDefault:true,persistMigration:false);
+            old.Rename("Исторический Default");var original=old.Selected;int number=original.Number;
+            var current=Open(false);SaveDamage(current,31);current.MarkSelectedForRelease(true);marked=current.Selected.Number;
+            yield return LoadAuthor();Click("main-action-2");yield return null;
+            I("input-rifle.damage").text="33";yield return null;
+            var active=ground.ActiveLabReference.Clone();var h=Field<DesignLabHistory>("labHistory");var selected=h.Selected;var bytes=File.ReadAllBytes(historyPath);
+            Click("lab-revision-select");yield return null;Click("revision-"+number);yield return null;
+            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-unmark").interactable,Is.True);
+            Assert.That(B("revision-"+marked).GetComponentInChildren<Text>().text,Does.Contain("выбранная база"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-active").text,Does.Contain("v"+marked+"-"));
+            Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/approved-ui"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"19-historical-720p.png"),1280,720);
+            Click("revision-unmark");yield return null;
+            Assert.That(B("revision-unmark").interactable,Is.False);Assert.That(B("revision-select").interactable,Is.False);
+            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject,Is.EqualTo(B("cancel").gameObject));
+            var stored=Open(false);var retained=stored.SelectedProfile.Revisions.Single(r=>r.Number==number);
+            Assert.That(retained.ReleaseCandidate,Is.False);Assert.That(retained.Hash,Is.EqualTo(original.Hash));Assert.That(retained.Date,Is.EqualTo(original.Date));
+            Assert.That(JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(JsonUtility.ToJson(original.Snapshot)));
+            Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));
+            Click("cancel");yield return null;Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(B("lab-save").interactable,Is.True);
+            Click("lab-revision-select");yield return null;Click("revision-"+marked);yield return null;Click("revision-select");yield return null;
+            Assert.That(B("confirm"),Is.Not.Null,"Choosing a compatible base still guards an edited draft");Click("cancel");yield return null;
+            Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
         }
         [UnityTest] public IEnumerator StartupUsesProjectDefaultAndSaveWritesOnlyProjectForNextGame()
         {

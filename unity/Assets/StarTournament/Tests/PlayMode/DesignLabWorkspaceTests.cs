@@ -77,23 +77,60 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.Not.Null,"Search restores focus when the previous row is removed");
             Click("lab-clear");yield return null;Assert.That(Button("lab-save").interactable,Is.False);
         }
-        [UnityTest]public IEnumerator BooleanFractionCannotSaveOrActivateAndValidOffRemainsSaveable()
+        static Rect Bounds(RectTransform transform)
+        {
+            var corners=new Vector3[4];transform.GetWorldCorners(corners);return Rect.MinMaxRect(corners[0].x,corners[0].y,corners[2].x,corners[2].y);
+        }
+        [UnityTest]public IEnumerator BooleanSwitchesKeepDraftSeparateAndSaveOnlyOffOrOn()
         {
             directory=Path.Combine(Path.GetTempPath(),"st-lab-bool-ui-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
             string path=Path.Combine(directory,"history.json");oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",path);
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();yield return NativeLoadingTestScene.WaitLabHistory(ground);
-            Click("main-action-2");yield return null;Click("lab-create");yield return null;Input("lab-profile-name").text="Boolean UI QA";Click("submit");yield return null;
+            Click("main-action-2");yield return null;
+            Input("lab-search").text="blood.enabled";yield return null;
+            Assert.That(Button("bool-off-blood.enabled").interactable,Is.False,"Package controls are protected");
+            Assert.That(Button("bool-on-blood.enabled").interactable,Is.False);
+            Click("lab-create");yield return null;Input("lab-profile-name").text="Очень длинное название профиля для проверки";Click("submit");yield return null;
+            Assert.That(File.Exists(path),Is.True,"Valid profile creation must persist before editing");
             foreach(string key in new[]{"blood.enabled","hit.enabled"})
             {
-                Input("lab-search").text=key;yield return null;var input=Input("input-"+key);Assert.That(input.interactable,Is.True);
+                Input("lab-search").text=key;yield return null;
+                Assert.That(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-"+key),Is.False,"Boolean fields cannot accept fractional text");
                 var before=ground.ActiveLabReference.Clone();var bytes=File.ReadAllBytes(path);
-                input.text="0,5";yield return null;
-                Assert.That(input.text,Is.EqualTo("0,5"),"Invalid input is preserved for correction");Assert.That(Button("lab-save").interactable,Is.False);
-                Assert.That(input.transform.parent.GetComponentsInChildren<Text>().Single(t=>t.name=="error").text,Does.Contain("0 или 1"));
+                Click("bool-off-"+key);yield return null;Assert.That(Button("lab-save").interactable,Is.True);
                 Assert.That(ground.ActiveLabReference.Matches(before),Is.True);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
-                input.text="0";yield return null;Assert.That(Button("lab-save").interactable,Is.True);Click("lab-save");yield return null;
-                Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(before.Revision+1));
+                Assert.That(Button("bool-off-"+key).GetComponent<Image>().color,Is.Not.EqualTo(Button("bool-on-"+key).GetComponent<Image>().color));
+                Click("bool-on-"+key);yield return null;Assert.That(Button("lab-save").interactable,Is.False,"Returning to baseline clears the draft change");
+                if(key=="blood.enabled")
+                {
+                    pad=InputSystem.AddDevice<Gamepad>();EventSystem.current.SetSelectedGameObject(Button("bool-off-"+key).gameObject);
+                    InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadRight));yield return null;yield return null;
+                    InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+                    Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(Button("bool-on-"+key).gameObject));
+                    InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
+                    InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;Assert.That(Button("lab-save").interactable,Is.False);
+                }
+                Click("bool-off-"+key);yield return null;EventSystem.current.SetSelectedGameObject(Button("bool-off-"+key).gameObject);
+                if(key=="blood.enabled")
+                {
+                    foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720),new Vector2Int(1920,650)})
+                    {
+                        using(EditorUiCapture.FixedViewport(ground,size.x,size.y))
+                        {
+                            Canvas.ForceUpdateCanvases();
+                            var toolbar=new[]{"lab-profile-select","lab-revision-select","lab-save","lab-create","lab-rename","lab-delete"}.Select(n=>(RectTransform)Button(n).transform).ToArray();
+                            var search=(RectTransform)Input("lab-search").transform;
+                            for(int j=1;j<toolbar.Length;j++)Assert.That(Bounds(toolbar[j]).xMin,Is.GreaterThan(Bounds(toolbar[j-1]).xMax),"Toolbar controls must not overlap");
+                            Assert.That(Bounds(search).width,Is.GreaterThan(Bounds(toolbar[0]).width*3),"Search spans the workspace");
+                            Assert.That(Bounds(search).yMax,Is.LessThan(Bounds(toolbar[0]).yMin));
+                            Assert.That(Bounds((RectTransform)Button("bool-off-"+key).transform).xMax,Is.LessThan(Bounds((RectTransform)Button("bool-on-"+key).transform).xMin));
+                        }
+                        var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/approved-ui"));Directory.CreateDirectory(output);
+                        yield return EditorUiCapture.Capture(ground,Path.Combine(output,"18-switches-"+size.x+"x"+size.y+".png"),size.x,size.y);
+                    }
+                }
+                Click("lab-save");yield return null;Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(before.Revision+1));
                 var baseline=(LabBundle)typeof(ProvingGround).GetField("historyStartupBaseline",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
                 var saved=new DesignLabHistory(path,baseline,releases:LabReleaseCatalog.Load());Assert.That(saved.StorageError,Is.Null);Assert.That(saved.Selected.Snapshot.Get(key),Is.Zero);
             }
@@ -124,7 +161,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(history.StorageError,Is.Null);
             field.SetValue(ground,history);yield return NativeLoadingTestScene.WaitLabHistory(ground);Click("main-action-2");yield return null;
             string identity=ground.LabSavedIdentity;
-            Click("lab-revision-select");yield return null;Click("revision-1");
+            Click("lab-revision-select");yield return null;Click("revision-1");yield return null;Click("revision-select");
             float deadline=Time.realtimeSinceStartup+45;
             while(!selectionEntered.IsSet&&Time.realtimeSinceStartup<deadline)yield return null;
             Assert.That(selectionEntered.IsSet,Is.True);
