@@ -141,11 +141,12 @@ namespace StarTournament.ProvingGround
                 }
             }
             compact.Integrity=StorageIntegrity(compact);
-            return JsonUtility.ToJson(compact);
+            return WriteCompatibilityEnvelope(compact,file);
         }
         LabHistoryFile ReadStorage(string json)
         {
             var header=JsonUtility.FromJson<LabStorageHeader>(json);
+            if(header?.Schema==3)return ReadCompatibilityEnvelope(json);
             if(header?.Schema==1)return JsonUtility.FromJson<LabHistoryFile>(json);
             if(header?.Schema!=2)throw new InvalidDataException("Unsupported history schema");
             var file=JsonUtility.FromJson<LabParameterFile>(json);

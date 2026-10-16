@@ -476,7 +476,7 @@ namespace StarTournament.ProvingGround
         void ShowLabProfiles()
         {
             var card=LabDropdown(labProfileSelector);var scroll=LabScroll(card,"profile-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
-            foreach(var profile in labHistory.Profiles){var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(p.Id,p.Revisions.Max(r=>r.Number)))));PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;}
+            foreach(var profile in labHistory.Profiles){var p=profile;var b=LabButton(list,"profile-"+p.Id,p.Name,Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(p.Id,labHistory.LatestAvailableRevision(p.Id)))));PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;}
             ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void ShowLabRevisions()

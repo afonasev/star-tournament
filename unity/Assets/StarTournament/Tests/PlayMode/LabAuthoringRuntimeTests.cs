@@ -118,6 +118,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(unmarked));Assert.That(I("input-rifle.damage").text,Is.EqualTo("32"));
             Assert.That(Open(false).Profiles.SelectMany(p=>p.Revisions.Select(r=>p.Id+"/"+r.Number+"/"+r.Hash)),Is.EquivalentTo(hashes));
         }
+        [UnityTest]public IEnumerator ProfileSwitchUsesLatestSavedVersionInsteadOfDerivedCache()
+        {
+            File.Delete(historyPath);
+            var before=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",BindingFlags.Instance|BindingFlags.NonPublic);
+            var previous=new LabBundle{Profiles=baseline.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList()};
+            var old=new DesignLabHistory(historyPath,previous);old.Create("Saved experiment");string id=old.SelectedProfileId;
+            var tuning=old.Selected.Snapshot;tuning.Set("rifle.damage",31);old.Save(tuning);
+            var h=Open(false);Assert.That(h.StorageError,Is.Null);
+            int release=h.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Where(r=>h.Compatible(r)).Max(r=>r.Number);
+            h.Select(DesignLabHistory.ReleaseId,release);h.MarkSelectedForRelease(true);
+            h.Select(id,h.LatestAvailableRevision(id));h.MarkSelectedForRelease(true);int saved=h.Selected.Number;
+            float interval=h.Selected.Snapshot.Get("presentation.botBanterIntervalSeconds");
+            h.Select(DesignLabHistory.ReleaseId,release);var draft=h.Selected.Snapshot;
+            draft.Set("presentation.botBanterIntervalSeconds",interval+10);h.Save(draft);h.MarkSelectedForRelease(true);
+            h.Select(id,saved);
+            yield return LoadAuthor();Click("main-action-2");yield return null;
+            var loaded=Field<DesignLabHistory>("labHistory");
+            Assert.That(loaded.Profiles.Single(p=>p.Id==id).Revisions.Max(r=>r.Number),Is.GreaterThan(saved),"Fixture contains a newer technical view");
+            Click("lab-profile-select");yield return null;Click("profile-"+id);
+            float deadline=Time.realtimeSinceStartup+120;
+            while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            yield return null;
+            Assert.That(ground.ActiveLabReference.ProfileId,Is.EqualTo(id));Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(saved));
+            Assert.That(Field<LabBundle>("labDraft").Get("presentation.botBanterIntervalSeconds"),Is.EqualTo(interval));
+            Assert.That(Open(false).Selected.Number,Is.EqualTo(saved));CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
         [UnityTest] public IEnumerator AuthorHistoryIsCriticalAndUnloadCancelsItsReadWithoutWriting()
         {
             entered=new ManualResetEventSlim();gate=new ManualResetEventSlim();

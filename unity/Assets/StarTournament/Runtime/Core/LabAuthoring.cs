@@ -46,7 +46,11 @@ namespace StarTournament.ProvingGround
             if(!authoring)throw new InvalidOperationException("Отметки авторского каталога доступны только в проекте");
             var saved=data.Profiles.Single(p=>p.Id==profileId).Revisions.Single(r=>r.Number==revision);
             if(marked&&!Current(saved.Snapshot))throw new InvalidOperationException("Несовместимую версию нельзя включить в релиз");
-            Commit(f=>f.Profiles.Single(p=>p.Id==profileId).Revisions.Single(r=>r.Number==revision).ReleaseCandidate=marked);
+            Commit(f=>{
+                var target=f.Profiles.Single(p=>p.Id==profileId).Revisions.Single(r=>r.Number==revision);
+                target.ReleaseCandidate=marked;
+                if(marked)FreezeCompatibilityView(target);
+            });
         }
 
         // A projection for explicit build tooling. This does not write, commit or publish.

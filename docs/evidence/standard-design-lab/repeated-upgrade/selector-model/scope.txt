@@ -1,0 +1,17 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabCompatibilityViewTests
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.hB4MG0/qa-lab-history.json
+revision=3f77c8cdaa5de630c211fc24472e129b50dc7562
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/LabAuthoring.cs
+ M Assets/StarTournament/Runtime/Core/LabParameterStorage.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs
+ M Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/standard-design-lab/repeated-upgrade/
+?? Assets/StarTournament/Runtime/Core/LabCompatibilityViews.cs
+?? Assets/StarTournament/Runtime/Core/LabCompatibilityViews.cs.meta
+?? Assets/StarTournament/Tests/EditMode/LabCompatibilityViewTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabCompatibilityViewTests.cs.meta

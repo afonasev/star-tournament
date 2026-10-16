@@ -112,11 +112,13 @@ namespace StarTournament.ProvingGround
         public int Number; public string Date; public string Hash; public LabBundle Snapshot;
         public bool ReleaseCandidate;
         public int ReleaseSequence,ReleaseNumber;
+        public int CompatibilitySourceNumber;public string CompatibilitySourceHash;
         public string ReleaseHash,ReleaseDate;
         public string Label => "v"+(ReleaseSequence>0?ReleaseNumber:Number)+"-"+(string.IsNullOrEmpty(ReleaseSequence>0?ReleaseDate:Date)?"без-даты":ReleaseSequence>0?ReleaseDate:Date);
         public LabRevision Clone()=>Snapshot==null?JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this))
             :new LabRevision{Number=Number,Date=Date??"",Hash=Hash??"",Snapshot=Snapshot.Clone(),ReleaseCandidate=ReleaseCandidate,
-                ReleaseSequence=ReleaseSequence,ReleaseNumber=ReleaseNumber,ReleaseHash=ReleaseHash,ReleaseDate=ReleaseDate};
+                ReleaseSequence=ReleaseSequence,ReleaseNumber=ReleaseNumber,ReleaseHash=ReleaseHash,ReleaseDate=ReleaseDate,
+                CompatibilitySourceNumber=CompatibilitySourceNumber,CompatibilitySourceHash=CompatibilitySourceHash};
     }
     [Serializable] public sealed class LabHistoryProfile
     {
@@ -176,6 +178,13 @@ namespace StarTournament.ProvingGround
         string DisplayName(LabHistoryProfile profile)=>!authoring&&releases==null&&profile.Id==ReleaseId&&profile.Name=="Опубликованный профиль"?"Default":profile.Name;
         public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(DisplayProfile).ToList();
         public string SelectedProfileId=>data.SelectedId;
+        public int LatestAvailableRevision(string profileId)
+        {
+            var profile=data.Profiles.Single(p=>p.Id==profileId);
+            var saved=profile.Revisions.Where(r=>r.CompatibilitySourceNumber==0).OrderByDescending(r=>r.Number).First();
+            if(Current(saved.Snapshot))return saved.Number;
+            return profile.Revisions.SingleOrDefault(r=>r.CompatibilitySourceNumber==saved.Number&&r.CompatibilitySourceHash==saved.Hash)?.Number??saved.Number;
+        }
         public string SelectedProfileName=>DisplayName(data.Profiles.Single(p=>p.Id==data.SelectedId));
         bool IsProtected(string id)=>id==ReleaseId||(!authoring&&releases!=null&&releases.Entries.Any(e=>e.ProfileId==id));
         public bool SelectedProfileProtected=>IsProtected(data.SelectedId);
@@ -207,10 +216,10 @@ namespace StarTournament.ProvingGround
                 stage=Clock();var loaded=ReadStorage(json);startupDiagnostics.ParseSeconds=Clock()-stage;
                 startupDiagnostics.Revisions=loaded?.Profiles?.Sum(p=>p.Revisions?.Count??0)??0;
                 stage=Clock();ValidateFile(loaded);startupDiagnostics.ExistingValidationSeconds=Clock()-stage;data=loaded;
-                if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))
+                if(loaded.Profiles.Any(p=>p.Revisions.Any(r=>r.CompatibilitySourceNumber>0)||p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))
                 {
                     stage=Clock();
-                    if(persistMigration)Commit(MigrateCompatibility);
+                    if(persistMigration&&this.releases==null)Commit(MigrateCompatibility);
                     else{var next=data.Clone();MigrateCompatibility(next);ValidateFile(next);data=next;}
                     startupDiagnostics.MigrationSeconds+=Clock()-stage;
                 }
@@ -302,7 +311,10 @@ namespace StarTournament.ProvingGround
             RequireLocalProfile();
             if(!authoring&&IsShipped(Selected))throw new InvalidOperationException("Ревизия уже встроена в клиент");
             if(!Current(Selected.Snapshot))throw new InvalidOperationException("Выберите совместимую сохранённую ревизию");
-            Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Revisions.Single(r=>r.Number==f.SelectedRevision).ReleaseCandidate=marked);
+            Commit(f=>{
+                var target=f.Profiles.Single(p=>p.Id==f.SelectedId).Revisions.Single(r=>r.Number==f.SelectedRevision);
+                target.ReleaseCandidate=marked;if(marked)FreezeCompatibilityView(target);
+            });
         }
         // Most matches use the current registry. Generate historical combinations only when
         // a saved revision actually needs one, then share the exact immutable registry set.
@@ -623,6 +635,7 @@ namespace StarTournament.ProvingGround
                     double hashStart=Clock();var actualHash=r.Snapshot?.Hash();
                 if(collectingStartupDiagnostics){startupDiagnostics.HashSeconds+=Clock()-hashStart;startupDiagnostics.SnapshotHashes++;}
                 if(r.Number<1||r.Snapshot==null||r.Hash!=actualHash)throw new InvalidDataException("Снимок или hash повреждён");
+                    ValidateCompatibilitySource(p,r);
                     if(!validateSnapshots)continue;
                     var registry=StorageRegistry(r.Snapshot);
                     if(!RegistryMatches(registry,r.Snapshot))
@@ -713,6 +726,14 @@ namespace StarTournament.ProvingGround
         void MigrateCompatibility(LabHistoryFile file)
         {
             bool selectedRelease=file.SelectedId==ReleaseId;
+            var views=file.Profiles.ToDictionary(p=>p.Id,p=>p.Revisions.Where(r=>r.CompatibilitySourceNumber>0).ToList());
+            var nextNumbers=file.Profiles.ToDictionary(p=>p.Id,p=>p.Revisions.Max(r=>r.Number)+1);
+            foreach(var profile in file.Profiles)
+            {
+                var selected=views[profile.Id].FirstOrDefault(r=>file.SelectedId==profile.Id&&file.SelectedRevision==r.Number);
+                if(selected!=null)file.SelectedRevision=selected.CompatibilitySourceNumber;
+                profile.Revisions.RemoveAll(r=>r.CompatibilitySourceNumber>0);
+            }
             // Registry metadata is frozen for this migration. Index once instead of scanning the
             // whole (including authored-map) registry for every value in every old revision.
             var currentDescriptors=shipped.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal);
@@ -725,14 +746,21 @@ namespace StarTournament.ProvingGround
                     startupCancellation.ThrowIfCancellationRequested();
                     var next=UpgradeSnapshot(old.Snapshot,defaults,p.Id==ReleaseId,currentDescriptors);
                     string nextHash=next.Hash();
-                    var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash&&(old.ReleaseSequence==0||r.ReleaseSequence==0||r.ReleaseSequence==old.ReleaseSequence));
-                    if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
+                    bool derived=releases!=null&&p.Id!=ReleaseId&&!IsShipped(old);
+                    var previous=views[p.Id].SingleOrDefault(r=>r.CompatibilitySourceNumber==old.Number&&r.CompatibilitySourceHash==old.Hash);
+                    var existing=derived?null:p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash&&(old.ReleaseSequence==0||r.ReleaseSequence==0||r.ReleaseSequence==old.ReleaseSequence));
+                    if(existing==null)
+                    {
+                        existing=Revision(next,derived&&previous!=null?previous.Number:nextNumbers[p.Id]++,derived&&previous!=null?previous.Date:DateTime.Now.ToString("yyyyMMdd"));
+                        if(derived){existing.CompatibilitySourceNumber=old.Number;existing.CompatibilitySourceHash=old.Hash;}
+                        p.Revisions.Add(existing);
+                    }
                     if(!authoring&&IsShipped(old))BindRelease(existing,releases.Entries.Single(e=>e.Sequence==old.ReleaseSequence));
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
                 }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
             var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shippedHash);
-            if(latest==null){latest=Revision(shipped,release.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));release.Revisions.Add(latest);}
+            if(latest==null){latest=Revision(shipped,nextNumbers[release.Id]++,DateTime.Now.ToString("yyyyMMdd"));release.Revisions.Add(latest);}
             if(selectedRelease)file.SelectedRevision=latest.Number;
         }
         void Commit(Action<LabHistoryFile> mutation)

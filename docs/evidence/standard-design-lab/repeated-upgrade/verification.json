@@ -1,0 +1,80 @@
+{
+  "baseline": "3f77c8cd",
+  "branch": "codex/game-standard-alignment",
+  "runs": [
+    {
+      "run": "initial-provenance",
+      "result": "Failed(Child)",
+      "total": "71",
+      "passed": "70",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "42.9165783",
+      "failure": "Exact fixture precondition failed (XML Failed); body NotRun: missing environment. Initial metadata format superseded; final envelope coverage uses74 unchanged cases plus exact1."
+    },
+    {
+      "run": "envelope",
+      "result": "Failed(Child)",
+      "total": "75",
+      "passed": "74",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "41.6998839",
+      "failure": "Exact fixture precondition failed (XML Failed); body NotRun: missing environment. Initial metadata format superseded; final envelope coverage uses74 unchanged cases plus exact1."
+    },
+    {
+      "run": "exact-legacy",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "138.4539991"
+    },
+    {
+      "run": "selector-model",
+      "result": "Passed",
+      "total": "15",
+      "passed": "15",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "6.3727977"
+    },
+    {
+      "run": "selector-runtime",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "107.0592862"
+    }
+  ],
+  "final_coverage": "75 unique affected EditMode (74 envelope + exact1; strengthened selector model15 repeated) and2 PlayMode passed",
+  "reuse": "After envelope/large runs only LatestAvailableRevision was added to data class and used in profile menu; unchanged codec/migration paths are covered by those runs; selector model/runtime checked afterwards. No claim of one monolithic final-source full suite.",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "757be268d2d66bf7b8c847bc98eb3ad9c7731a5ec202ff6ac1042a37996b481b",
+    "unity/Assets/StarTournament/Runtime/Core/LabAuthoring.cs": "49cf8cbf2f042b97a5080bbab497ec995396b1b7df7557e0bf41108318b29b56",
+    "unity/Assets/StarTournament/Runtime/Core/LabParameterStorage.cs": "e78b1eaef899285934a8feec248fbd801d6ca904cfab484f703626e574ea3f63",
+    "unity/Assets/StarTournament/Runtime/Core/LabCompatibilityViews.cs": "03d510bacce1e915cf6236593c08569917bed623c710eaa2b4861452af72e707",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "8ff07b68d68aafba38fab349007939fc37d38b647c432832d9a67d9265613039",
+    "unity/Assets/StarTournament/Tests/EditMode/LabCompatibilityViewTests.cs": "ca6887dbb53340c74bdd4102c4e47607406ade064453e3bbe156c32e58b968d2",
+    "unity/Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs": "038be8ed45712141b175fa360fb7e4068eb553e150a6fbc88fa5abc131248f5a",
+    "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "521c96828497dc3818dc9e0b79b3ace94001faada8ed04b49428d42a941a3f10"
+  },
+  "legacy_source_sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "legacy_source_unchanged": true,
+  "legacy_compact_bytes": 1008146,
+  "original_revisions_preserved": 16,
+  "total_with_execution_views": 28,
+  "not_run": [
+    "Player/build/installer",
+    "full suite",
+    "publication/deploy",
+    "human/device/visual acceptance"
+  ],
+  "pending": [
+    "Default/package compatibility and type/range/resource handling audit",
+    "Lab05/full template matrix"
+  ]
+}
