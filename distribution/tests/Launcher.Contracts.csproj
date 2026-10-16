@@ -3,6 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="../launcher/Launcher.csproj" />
     <Compile Include="../../unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs" Link="NativeStartupHealth.cs" />
+    <Compile Include="../maintenance/WindowsInstallerPlan.cs" Link="WindowsInstallerPlan.cs" />
+    <Compile Include="../maintenance/WindowsInstallerTransaction.cs" Link="WindowsInstallerTransaction.cs" />
     <Compile Include="../maintenance/WindowsStartupWatch.cs" Link="WindowsStartupWatch.cs" />
     <Compile Include="../maintenance/WindowsDetachedProcess.cs" Link="WindowsDetachedProcess.cs" />
     <Compile Include="../maintenance/WindowsRecoveryStore.cs" Link="WindowsRecoveryStore.cs" />
