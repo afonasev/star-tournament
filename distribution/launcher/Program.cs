@@ -81,7 +81,7 @@ static class Launcher
             File.Delete(playerRecord);
         }
         var key = File.ReadAllText(Path.Combine(baseDir, "update-public.pem"));
-        using var source = new AuthenticatedSource(config, key);
+        using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"));
         var locator = VelopackLocator.Current;
         var machineRoot = WindowsInstallation.MachineRoot(locator);
         bool Installing() => machineRoot != null && File.Exists(Path.Combine(machineRoot, "maintenance", "installing.flag"));

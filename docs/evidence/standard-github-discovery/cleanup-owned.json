@@ -1,0 +1,26 @@
+[
+  {
+    "path": "distribution/launcher/bin",
+    "created_utc": "2026-10-16T22:48:06.097586+00:00",
+    "bytes": 1086491,
+    "reason": "created by owned current restore/test compilation; no native publish/release output; remove after Git-byte verification"
+  },
+  {
+    "path": "distribution/launcher/obj",
+    "created_utc": "2026-10-16T22:48:05.740752+00:00",
+    "bytes": 1549502,
+    "reason": "created by owned current restore/test compilation; no native publish/release output; remove after Git-byte verification"
+  },
+  {
+    "path": "distribution/tests/bin",
+    "created_utc": "2026-10-16T22:47:49.866555+00:00",
+    "bytes": 1656221,
+    "reason": "created by owned current restore/test compilation; no native publish/release output; remove after Git-byte verification"
+  },
+  {
+    "path": "distribution/tests/obj",
+    "created_utc": "2026-10-16T22:47:49.866757+00:00",
+    "bytes": 687538,
+    "reason": "created by owned current restore/test compilation; no native publish/release output; remove after Git-byte verification"
+  }
+]

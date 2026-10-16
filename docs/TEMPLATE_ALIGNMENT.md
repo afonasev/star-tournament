@@ -104,10 +104,10 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 
 | ID | Состояние и основание / граница |
 | --- | --- |
-| UPDATES-SOURCE-01 | **Разрыв**: test Discover API, production Discover сразу ProductionBase/latest/download. Signed asset admission есть, но API discovery для production отсутствует. |
-| UPDATES-SELECT-01 | Частично: signed identity/version/platform/channel/full package, semantic versions/test drafts filtering; production API shortcut и отсутствующее explicit minimum OS/updater/data compatibility admission требуют исправления/обоснованного contract. |
+| UPDATES-SOURCE-01 | Код/QA: оба pinned канала используют public GitHub Releases API, bounded Link pagination и canonical semantic/channel selection; standard-github-discovery71 actual HTTP/file/RSA checks. Legacy config отдельно сохранён. |
+| UPDATES-SELECT-01 | Частично: API draft/channel/semantic/completeness фильтры исправлены; signed full asset обязан быть в selected release. Existing UpdateManager.CheckForUpdatesAsync сравнивает установленную версию; minimum OS/updater/data admission остаётся открытым. |
 | UPDATES-CHECK-01 | Код/QA: UpdateSession.Start once/started guard, shared IPC result, no manual check/retry. |
-| UPDATES-CHECK-02 | **Разрыв**: discovery ReadBounded без ETag/cache/backoff; ReleaseHistory cache отдельно не закрывает этот контракт. Offline check error unavailable and game remains playable verified. |
+| UPDATES-CHECK-02 | Код/QA: per-page ETag/body/hash/Link cache,304 свежий next-link, Retry-After/reset across launches, successful remaining0 guard, no stale-current on error; actual API→UpdateSession integration once. Cache parsing вне launch path; native installed gate отдельно. |
 | UPDATES-CONSENT-01 | Код/QA: download only after update action, no forced timer/settings/channel control, stage waits normal exit/restart. |
 | UPDATES-FLOW-01 | Код/QA: UpdateSession.Command match drains download/history before ack; NativeUpdateMenu QueueMatch/return/resume, ordinary quit/discard protection. |
 | UPDATES-UI-01 | Код/QA: actual available/downloading/verifying/ready/error/current panels; active version separate from candidate/ready, history17 highlight. Generic glyph/legend gap inherited. |
@@ -161,7 +161,7 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 
 ## Следующее действие
 
-1. Исправить bounded GitHub API discovery обоих каналов с ETag/cache/rate-limit handling; one session check, signed authority, same-candidate download сохраняются. Требуется targeted HTTP/.NET fixtures, не Player.
+1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Следующий source этап — min OS/component/data compatibility, затем platform packaging gaps.
 2. Уточнить min OS/component/data compatibility, устранить Windows OS preflight и Mac PKG/DMG разрыв с отдельным preview. Завершить source audit effective quality slots before deciding OPT-GRAPHICS-QUALITY; не объявлять N/A из удобства и не придумывать пресеты молча.
 3. После human decisions внедрить20–28 и общий device-aware hints direction; новые визуальные изменения сначала saved preview.
 4. После source fixes — affected integration, canonical spec sync и итоговый отчёт. Native build/platform/device/human gates остаются отдельными и не выдаются за успешные.

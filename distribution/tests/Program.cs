@@ -26,6 +26,7 @@ if (args.SequenceEqual(new[] { "--payload-recovery" })) { PayloadRecoveryChecks.
 if (args.SequenceEqual(new[] { "--feedback" })) { await UpdateFeedbackChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--release-history" })) { await UpdateSessionChecks.Run(); await ReleaseHistoryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--update-session" })) { await UpdateSessionChecks.Run(); return; }
+if (args.SequenceEqual(new[] { "--github-discovery" })) { await GitHubDiscoveryChecks.Run(); return; }
 
 using var rsa = RSA.Create(3072);
 var config = new LauncherConfig("tech.test", "osx", "arm64", "1.0.0", "2026-10-04", "https://fixture.invalid/", "game/Player");
@@ -233,13 +234,23 @@ sealed class MetadataTransport(string envelope, string failure = "") : HttpMessa
         if (failure == "rate-limit") return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden));
         if (uri.Host == "api.github.com")
         {
-            var version = failure == "tag-mismatch" ? "1.1.0-test.2" : "1.1.0-test.1";
-            var release = new { tag_name = "v" + version, draft = false, prerelease = true, assets = new[] {
+            using var outer = JsonDocument.Parse(envelope);
+            using var signed = JsonDocument.Parse(Convert.FromBase64String(outer.RootElement.GetProperty("payload").GetString()!));
+            var signedVersion = signed.RootElement.GetProperty("version").GetString()!;
+            var version = failure == "tag-mismatch" ? "1.1.0-test.2" : signedVersion;
+            var fullName = signed.RootElement.GetProperty("feed").GetProperty("Assets")[0].GetProperty("FileName").GetString()!;
+            var release = new { tag_name = "v" + version, draft = false, prerelease = version.Contains('-'), assets = new[] {
                 new { name = "latest-win-x64.json" }, new { name = "latest-osx-arm64.json" },
-                new { name = $"Star-Tournament-{version}-Windows-x64-Setup.exe" }, new { name = $"Star-Tournament-{version}-macOS-arm64.pkg" } } };
+                new { name = $"Star-Tournament-{version}-Windows-x64-Setup.exe" }, new { name = $"Star-Tournament-{version}-macOS-arm64.pkg" }, new { name = fullName }, new { name = "counterpart-full.nupkg" } } };
             var rows = failure == "empty" ? Array.Empty<object>() : failure == "pagination" ? Enumerable.Repeat<object>(release, 100).ToArray() : new object[] { release,
                 new { tag_name = "v99.0.0-test.1", draft = false, prerelease = true, assets = new[] { new { name = "installer-only.exe" } } } };
-            return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new StringContent(JsonSerializer.Serialize(rows)) });
+            var listing = new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = new StringContent(JsonSerializer.Serialize(rows)) };
+            if (failure == "pagination")
+            {
+                int page = int.Parse(uri.Query.Split("page=").Last());
+                listing.Headers.TryAddWithoutValidation("Link", $"<{AuthenticatedSource.TestLocator}?per_page=100&page={page + 1}>; rel=\"next\"");
+            }
+            return Task.FromResult(listing);
         }
         if (uri.Host == "github.com")
         {

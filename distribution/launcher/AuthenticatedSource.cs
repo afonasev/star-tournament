@@ -16,13 +16,14 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     readonly string key;
     readonly HttpClient http;
     readonly TimeSpan stallTimeout;
+    readonly GitHubDiscovery discovery;
     Uri? packageUri;
     public string? Envelope { get; private set; }
     public VelopackAsset? Asset { get; private set; }
     public string? PublicationDate { get; private set; }
     public CancellationToken CheckCancellationToken { get; set; }
 
-    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null)
+    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null)
     {
         this.config = config; this.key = key;
         this.stallTimeout = stallTimeout ?? TimeSpan.FromSeconds(30);
@@ -31,6 +32,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             throw new CryptographicException("Untrusted GitHub channel configuration");
         http = new HttpClient(transport ?? new HttpClientHandler { AllowAutoRedirect = false })
         { Timeout = TimeSpan.FromMinutes(30), MaxResponseContentBufferSize = 65536 };
+        discovery = new GitHubDiscovery(http, this.stallTimeout, discoveryCachePath, discoveryClock);
     }
 
     public const string TestLocator = "https://api.github.com/repos/afonasev/star-tournament/releases";
@@ -139,51 +141,53 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         return System.Text.Encoding.UTF8.GetString(output.ToArray());
     }
 
-    async Task<(Uri Uri, string? Version)> Discover(CancellationToken token)
+    async Task<(Uri Uri, string? Version, HashSet<string>? Assets)> Discover(CancellationToken token)
     {
-        if (config.UpdateChannel == null) return (Remote("latest.json"), null); // Legacy broker/config only.
-        if (config.UpdateChannel == "production") return (new Uri(ProductionBase + ManifestName), null);
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("StarTournament-Updater/1");
-        SemanticVersion? best = null;
-        Uri? bestUri = null;
-        for (var page = 1; page <= 10; page++)
+        if (config.UpdateChannel == null) return (Remote("latest.json"), null, null); // Legacy broker/config only.
+        SemanticVersion? best = null; Uri? bestUri = null; HashSet<string>? bestAssets = null;
+        Uri? next = new(TestLocator + "?per_page=100&page=1"); var visited = new HashSet<string>(StringComparer.Ordinal);
+        for (int page = 0; next != null; page++)
         {
-            using var doc = JsonDocument.Parse(await ReadBounded(new Uri(TestLocator + $"?per_page=100&page={page}"), 2 * 1024 * 1024, false, token));
-            var releases = doc.RootElement;
-            foreach (var release in releases.EnumerateArray())
+            if (page >= 10 || !visited.Add(next.AbsoluteUri)) throw new InvalidOperationException("Release discovery exceeds pagination limit or repeats a page");
+            var result = await discovery.Get(next, token);
+            using var doc = JsonDocument.Parse(result.Body);
+            foreach (var release in doc.RootElement.EnumerateArray())
             {
-                if (release.GetProperty("draft").GetBoolean() || !release.GetProperty("prerelease").GetBoolean()) continue;
+                bool test = config.UpdateChannel == "test";
+                if (release.GetProperty("draft").GetBoolean() || release.GetProperty("prerelease").GetBoolean() != test) continue;
                 var tag = release.GetProperty("tag_name").GetString() ?? "";
-                if (!tag.StartsWith('v') || !SemanticVersion.TryParse(tag[1..], out var version) || !version.IsPrerelease || tag != "v" + version) continue;
-                var names = release.GetProperty("assets").EnumerateArray().Select(x => x.GetProperty("name").GetString()).ToHashSet();
-                if (!names.Contains("latest-win-x64.json") || !names.Contains("latest-osx-arm64.json") ||
+                if (!tag.StartsWith('v') || !SemanticVersion.TryParse(tag[1..], out var version) || version.IsPrerelease != test || tag != "v" + version) continue;
+                var names = release.GetProperty("assets").EnumerateArray().Select(x => x.GetProperty("name").GetString() ?? "").ToHashSet(StringComparer.Ordinal);
+                if (!names.Contains(ManifestName) || !names.Contains("latest-win-x64.json") || !names.Contains("latest-osx-arm64.json") ||
                     !names.Contains($"Star-Tournament-{version}-Windows-x64-Setup.exe") ||
-                    !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg")) continue;
+                    !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg") ||
+                    names.Count(n => n.EndsWith("-full.nupkg", StringComparison.Ordinal)) < 2) continue;
                 if (best == null || version > best)
                 {
-                    best = version;
-                    // Construct the pinned URL; never trust a locator-provided arbitrary URL.
+                    best = version; bestAssets = names;
+                    // Locator data cannot assign a different repository or target URL.
                     bestUri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{ManifestName}");
                 }
             }
-            if (releases.GetArrayLength() < 100)
-                return bestUri == null ? throw new InvalidOperationException("No complete test release") : (bestUri, best!.ToString());
+            next = result.Next;
         }
-        throw new InvalidOperationException("Release discovery exceeds pagination limit");
+        return bestUri == null ? throw new InvalidOperationException("No complete release for this channel") : (bestUri, best!.ToString(), bestAssets);
     }
 
     public async Task<VelopackAssetFeed> GetReleaseFeed(IVelopackLogger logger, string? appId, string channel,
         Guid? stagingId = null, VelopackAsset? latestLocalRelease = null)
     {
+        Envelope = null; Asset = null; PublicationDate = null; packageUri = null;
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(CheckCancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(10));
         var location = await Discover(timeout.Token);
         var envelope = await ReadBounded(location.Uri, 65536, config.UpdateChannel != null, timeout.Token);
+        timeout.Token.ThrowIfCancellationRequested();
         Admit(envelope);
-        if (location.Version != null && Asset!.Version.ToString() != location.Version)
+        if (location.Version != null && (Asset!.Version.ToString() != location.Version || !location.Assets!.Contains(Asset.FileName)))
         {
-            Envelope = null; Asset = null; packageUri = null;
-            throw new CryptographicException("Release discovery version mismatch");
+            Envelope = null; Asset = null; PublicationDate = null; packageUri = null;
+            throw new CryptographicException("Release discovery version or full asset mismatch");
         }
         return new VelopackAssetFeed { Assets = new[] { Asset! } };
     }

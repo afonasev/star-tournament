@@ -52,10 +52,10 @@
     "SETTINGS-HELP-04": "Код/QA: gameplay actions only, corrected leader Q/E and device equivalents; no menu navigation inside art.",
     "SETTINGS-HELP-05": "Код/QA: labels reviewed against SeatInputCoordinator, short/hold/combination semantics; no gameplay remapping feature. Physical controls pending.",
     "SETTINGS-HELP-06": "Частично: actual ratio/NPOT/captions/split-view checked, generated art visually inspected; small viewport/TV/human legibility still pending.",
-    "UPDATES-SOURCE-01": "**Разрыв**: test Discover API, production Discover сразу ProductionBase/latest/download. Signed asset admission есть, но API discovery для production отсутствует.",
-    "UPDATES-SELECT-01": "Частично: signed identity/version/platform/channel/full package, semantic versions/test drafts filtering; production API shortcut и отсутствующее explicit minimum OS/updater/data compatibility admission требуют исправления/обоснованного contract.",
+    "UPDATES-SOURCE-01": "Код/QA: оба pinned канала используют public GitHub Releases API, bounded Link pagination и canonical semantic/channel selection; standard-github-discovery71 actual HTTP/file/RSA checks. Legacy config отдельно сохранён.",
+    "UPDATES-SELECT-01": "Частично: API draft/channel/semantic/completeness фильтры исправлены; signed full asset обязан быть в selected release. Existing UpdateManager.CheckForUpdatesAsync сравнивает установленную версию; minimum OS/updater/data admission остаётся открытым.",
     "UPDATES-CHECK-01": "Код/QA: UpdateSession.Start once/started guard, shared IPC result, no manual check/retry.",
-    "UPDATES-CHECK-02": "**Разрыв**: discovery ReadBounded без ETag/cache/backoff; ReleaseHistory cache отдельно не закрывает этот контракт. Offline check error unavailable and game remains playable verified.",
+    "UPDATES-CHECK-02": "Код/QA: per-page ETag/body/hash/Link cache,304 свежий next-link, Retry-After/reset across launches, successful remaining0 guard, no stale-current on error; actual API→UpdateSession integration once. Cache parsing вне launch path; native installed gate отдельно.",
     "UPDATES-CONSENT-01": "Код/QA: download only after update action, no forced timer/settings/channel control, stage waits normal exit/restart.",
     "UPDATES-FLOW-01": "Код/QA: UpdateSession.Command match drains download/history before ack; NativeUpdateMenu QueueMatch/return/resume, ordinary quit/discard protection.",
     "UPDATES-UI-01": "Код/QA: actual available/downloading/verifying/ready/error/current panels; active version separate from candidate/ready, history17 highlight. Generic glyph/legend gap inherited.",
@@ -158,7 +158,7 @@
     "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs": "9c7699876598272b8579f3390c1de6dea3ef456443985b17f8bc69de55b6e4b0",
     "unity/Assets/StarTournament/Runtime/ProvingGroundBotBanter.cs": "003589b9dd96014ced5178a288ebe2f339b891999251745cc0c4f6fcc9750b60",
     "unity/Assets/StarTournament/Runtime/ProvingTelemetry.cs": "aa5111d15bd7c086deaa7ebaf8831624b1f33b5ead9a2097ec38b42b29dc74db",
-    "distribution/launcher/AuthenticatedSource.cs": "6913c81de58e98fb9011d48388cdb54f6427b877c351d32f9cca6537acdc5d72",
+    "distribution/launcher/AuthenticatedSource.cs": "843ac718655b50ea7ab1629b79b2fb6da27873e99e8a409a95267e112a0af089",
     "distribution/launcher/UpdateSession.cs": "188071812d563691de88b9928a20516bedec24b315fb659dc9554839a79073bb",
     "distribution/launcher/ReleaseHistory.cs": "d5d95cd28b46213f5b2923dd876be33b0a890bf297936cdbd0aeaad95adf02b5",
     "distribution/package.py": "fd9e1b3d48f1733bb20346c4559ce822e70d1c163a413a0b370e3be21e612a0f",
@@ -167,7 +167,10 @@
     "distribution/maintenance/WindowsRecoveryTransfer.cs": "95896e87d35bd9c1813369886ae32884663d3bd6d72562b5178174a93ec49067",
     "unity/ProjectSettings/QualitySettings.asset": "176cdf4d902ee22449f47266de27cc856b54932d848b01a68bdde66194f71689",
     "unity/ProjectSettings/GraphicsSettings.asset": "55743859a3fc2279132da6116b3800df429ee422fa172d35e71e27bd0123567d",
-    "unity/ProjectSettings/ProjectSettings.asset": "45cd41a307e678b95dcfc67438c5e8640985034317d5840bc5737e4d90806f9e"
+    "unity/ProjectSettings/ProjectSettings.asset": "45cd41a307e678b95dcfc67438c5e8640985034317d5840bc5737e4d90806f9e",
+    "distribution/launcher/GitHubDiscovery.cs": "10844a31a171e2ebae7f3c8850b353a16cbde443fa565d1a8518d93d58386559",
+    "distribution/launcher/Program.cs": "14eecf55a31cfe5628a68249bf65eb398cd4b506a30482a1e88fcaf10b5cc744",
+    "distribution/launcher/Launcher.csproj": "fbf9fef04bfb0cee234f5373312727e9c77ce232587610b60ee85489ab7d9784"
   },
   "template_sha256": {
     "menu-base/requirements.md": "db323d89da09de2beb1d5335768a9b53d46b58016790d2475d7c9c1e02ae9125",
@@ -183,10 +186,10 @@
   },
   "actual_unresolved": [
     "Q5-Q8 visual scopes",
-    "production discovery bypasses GitHub API; discovery cache/backoff absent",
     "quality preset applicability unproven",
     "macOS PKG vs normative DMG",
     "minimum OS/component/data admission not fully described/guarded",
     "native installed/device/human acceptance not run"
-  ]
+  ],
+  "latest_discovery_evidence": "docs/evidence/standard-github-discovery/verification.json"
 }

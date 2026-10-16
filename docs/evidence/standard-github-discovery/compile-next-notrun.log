@@ -1,0 +1,3 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/launcher/GitHubDiscovery.cs(138,21): error CS0136: A local or parameter named 'next' cannot be declared in this scope because that name is used in an enclosing local scope to define a local or parameter [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/launcher/Launcher.csproj]
+
+The build failed. Fix the build errors and run again.
