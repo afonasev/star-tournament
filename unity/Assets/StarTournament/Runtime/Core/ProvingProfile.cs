@@ -25,6 +25,13 @@ namespace StarTournament.ProvingGround
         public LabParameterKind Kind => Unit=="boolean"?LabParameterKind.Boolean:
             Step==Math.Truncate(Step)&&DefaultValue==Math.Truncate(DefaultValue)?LabParameterKind.Integer:LabParameterKind.Decimal;
         public LabParameterApplication Application => LabParameterApplication.NextGame;
+        // These settings supply defaults only; a general or identity preference can override them.
+        public bool IsPreferenceDefault => PreferenceDefaults.Contains(Path??"");
+        static readonly HashSet<string> PreferenceDefaults=new HashSet<string>{
+            "input.mouseDegreesPerPixel","input.gamepadHorizontalDegreesPerSecond","input.gamepadVerticalDegreesPerSecond",
+            "input.gamepadReturnDelay","input.deadzone","audio.musicDefaultPercent","audio.effectsDefaultPercent",
+            "visual.LightingPercent","visual.MaterialsPercent","visual.AmbientOcclusionPercent","visual.BloomPercent",
+            "visual.ReflectionsPercent","visual.ColorGradingPercent","visual.ColorGradingExposure","visual.ColorGradingSaturation"};
 
         internal NumericDescriptor DetachedCopy()
         {

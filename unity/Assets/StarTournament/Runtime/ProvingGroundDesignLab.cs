@@ -359,7 +359,7 @@ namespace StarTournament.ProvingGround
             string releaseDefault=labParameterDefaults!=null?LabNumber(labParameterDefaults.Get(d.Path)):"недоступен · "+labParameterDefaultsError;
             string access=labHistory.SelectedProfileReadOnly?"Только чтение · профиль пакета · создайте копию":!editable?"Только чтение":labDraft.Domain(d.Path);
             string hint=access+" · "+d.Description+"\n"+d.Path+" · "+kind+" · "+d.Unit+" · "+LabNumber(d.Minimum)+"…"+LabNumber(d.Maximum)+" · шаг "+LabNumber(d.Step)+" · Релизный Default: "+releaseDefault+
-                "\nПрименение: "+LabApplicationLabel(d.Application);
+                "\nПрименение: "+LabApplicationLabel(d.Application)+(d.IsPreferenceDefault?" · личные настройки имеют приоритет":"");
             foreach(var control in new Selectable[]{input,down,up,off,on,reset})if(control)Hint(control.gameObject,hint);
             if(!editable){var info=LabButton(row.transform,"info-"+d.Path,"Описание",new Vector2(.80f,.02f),new Vector2(.98f,.20f),()=>labHint.text=hint);Hint(info.gameObject,hint);}
             if(labAllChanges){var jump=LabButton(row.transform,"jump-"+d.Path,"К полю",new Vector2(.75f,.035f),new Vector2(.98f,.32f),()=>{labAllChanges=false;labGroup=LabGroup(d);RefreshLabWorkspace();SelectLabControl(labViews[d.Path].Focus);});Hint(jump.gameObject,"Открыть "+GroupLabel(LabGroup(d))+" и выбрать поле "+d.Label);}

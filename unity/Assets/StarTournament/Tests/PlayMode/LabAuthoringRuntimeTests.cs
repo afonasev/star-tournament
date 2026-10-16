@@ -51,6 +51,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             yield return null;
         }
+        [UnityTest] public IEnumerator ConsumerHintsExplainPersonalDefaultsWithoutChangingLabState()
+        {
+            yield return LoadAuthor();Click("main-action-2");yield return null;I("lab-search").text=GamepadLookSettings.HorizontalPath;yield return null;
+            var active=ground.ActiveLabReference.Clone();var bytes=File.ReadAllBytes(historyPath);var before=Field<LabBundle>("labDraft").Hash();
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(I("input-"+GamepadLookSettings.HorizontalPath).gameObject);yield return null;
+            var hint=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-hint");Assert.That(hint.text,Does.Contain("личные настройки имеют приоритет"));
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/consumers"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"preference-default-hint-720p.png"),1280,720);
+            I("lab-search").text="rifle.damage";yield return null;UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(I("input-rifle.damage").gameObject);yield return null;
+            Assert.That(hint.text,Does.Not.Contain("личные настройки имеют приоритет"));Assert.That(Field<LabBundle>("labDraft").Hash(),Is.EqualTo(before));
+            Assert.That(ground.ActiveLabReference.Matches(active),Is.True);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+        }
         [Serializable]sealed class CatalogueReport {public CatalogueField[] Fields;public string[] Excluded;}
         [Serializable]sealed class CatalogueField
         {
