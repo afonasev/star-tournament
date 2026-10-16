@@ -371,7 +371,8 @@ static class Maintenance
         }
         else if (applied)
         {
-            journal.ClearIfInstalled(expected);
+            // Installed files are not proof that the Player reached a working menu.
+            // The normal-user launcher clears its attempt journal after the ready handshake.
             var declined = Path.Combine(cache, "star-apply-declined.json"); if (File.Exists(declined)) File.Delete(declined);
         }
         if (restart)

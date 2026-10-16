@@ -93,7 +93,10 @@ static class Launcher
         string PackagePath(VelopackAsset asset) => Path.Combine(packages, Path.GetFileName(asset.FileName));
         var stagedManifest = Path.Combine(packages, "star-authenticated.json");
         var journal = UpdateAttemptJournal.ForApp(config.AppId);
-        journal.ClearIfInstalled(config.Version);
+        var recovery = new StartupRecovery(Path.Combine(logRoot, config.AppId + ".startup.json"),
+            new(config.AppId, config.Platform, config.Architecture, config.UpdateChannel));
+        recovery.RecoverInterrupted(config.Version);
+        var knownHealthy = recovery.Read().HealthyVersion == config.Version;
         string? startupError = null;
         void Apply(VelopackAsset asset, bool restartGame)
         {
@@ -120,7 +123,7 @@ static class Launcher
         VelopackAsset? stagedAtStartup = null;
         try { stagedAtStartup = await Staged(); }
         catch (Exception ex) { Log(ex); File.Delete(stagedManifest); startupError = "Обновление не установлено. " + UpdateFeedback.Explain(ex); } // Invalid staged bytes are never activated.
-        if (stagedAtStartup != null && !journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) &&
+        if (knownHealthy && recovery.Read().Attempt == null && stagedAtStartup != null && !recovery.IsBlocked(stagedAtStartup.Version.ToString()) && !journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) &&
             (machineRoot == null || !WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString())))
         {
             try
@@ -175,18 +178,33 @@ static class Launcher
         if (!string.IsNullOrEmpty(runner))
         {
             var guarded = new ProcessStartInfo(runner) { UseShellExecute = false, WorkingDirectory = start.WorkingDirectory };
-            guarded.ArgumentList.Add("--exclusive"); guarded.ArgumentList.Add("--"); guarded.ArgumentList.Add(executable);
+            guarded.ArgumentList.Add("--shared"); guarded.ArgumentList.Add("--"); guarded.ArgumentList.Add(executable);
             foreach (var arg in args) guarded.ArgumentList.Add(arg);
             foreach (var pair in start.Environment) guarded.Environment[pair.Key] = pair.Value;
             start = guarded;
         }
+        var startupHealth = new StartupHealthMonitor(recovery, config.Version, Path.Combine(session, "startup-ready.json"), DateTimeOffset.UtcNow,
+            () => { try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
+                UpdateFeedback.Log("startup-health-confirmed version=" + config.Version); });
+        start.Environment["STAR_TOURNAMENT_STARTUP_READY"] = startupHealth.ReadyPath;
+        start.Environment["STAR_TOURNAMENT_STARTUP_VERSION"] = startupHealth.Ticket.Version;
+        start.Environment["STAR_TOURNAMENT_STARTUP_TOKEN"] = startupHealth.Ticket.Token;
         UpdateFeedback.Log("player-start path=" + executable);
-        using var game = Process.Start(start) ?? throw new InvalidOperationException("Player did not start");
+        Process game;
+        try { game = Process.Start(start) ?? throw new InvalidOperationException("Player did not start"); }
+        catch
+        {
+            try { startupHealth.End(DateTimeOffset.UtcNow); }
+            finally { await updates.DisposeAsync(); Directory.Delete(session, true); }
+            throw;
+        }
+        using var ownedGame = game;
         AtomicWrite(playerRecord, JsonSerializer.Serialize(new { pid = game.Id, started = game.StartTime.ToUniversalTime().Ticks }));
         try
         {
             while (!game.HasExited)
             {
+                startupHealth.Poll(DateTimeOffset.UtcNow);
                 if (File.Exists(commandPath))
                 {
                     string? command = null; string request = "";
@@ -207,17 +225,25 @@ static class Launcher
         }
         finally
         {
-            await updates.DisposeAsync();
-            Directory.Delete(session, true);
-            if (game.HasExited) File.Delete(playerRecord);
+            try { startupHealth.End(DateTimeOffset.UtcNow); }
+            finally
+            {
+                await updates.DisposeAsync();
+                Directory.Delete(session, true);
+                if (game.HasExited) File.Delete(playerRecord);
+            }
         }
         UpdateFeedback.Log("player-exit code=" + game.ExitCode);
         if (game.ExitCode != 0) { UpdateFeedback.Show("Игра завершилась с ошибкой (код " + game.ExitCode + "). Обновление не применено. Проверьте журнал запуска игры."); return game.ExitCode; } // A crash is not an explicit update activation.
+        if (!startupHealth.IsHealthy)
+        { UpdateFeedback.Log("startup-health-unconfirmed; staged update retained without activation"); return 0; }
         try
         {
             var ready = await Staged(); // Reauthenticate after the actual Player has finished.
-            if (ready != null)
+            if (ready != null && recovery.Read().Attempt == null)
             {
+                if (restart && recovery.IsBlocked(ready.Version.ToString())) recovery.PermitRetry(ready.Version.ToString());
+                if (recovery.IsBlocked(ready.Version.ToString())) return 0;
                 if (machineRoot != null)
                 {
                     if (restart || (!journal.AlreadyAttempted(ready.Version.ToString()) && !WindowsInstallation.Declined(packages, ready.Version.ToString())))

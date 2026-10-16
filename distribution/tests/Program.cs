@@ -4,6 +4,7 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.SequenceEqual(new[] { "--startup-health" })) { StartupHealthChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--startup-recovery" })) { StartupRecoveryChecks.Run(); return; }
 if (args.Length == 3 && args[0] == "--payload-crash-fixture") { PayloadRecoveryChecks.CrashFixture(args[1], args[2]); return; }
 if (args.SequenceEqual(new[] { "--payload-recovery" })) { PayloadRecoveryChecks.Run(); return; }

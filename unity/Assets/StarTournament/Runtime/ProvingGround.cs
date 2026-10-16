@@ -191,8 +191,18 @@ namespace StarTournament.ProvingGround
             yield return RunLoadingSteps(InitializeGame(),false);
             if(IsReady)
             {
-                Debug.Log("Game startup: menu ready at "+Time.realtimeSinceStartup.ToString("F2")+" seconds; Default "+activeLabReference.Hash);
                 StartCoroutine(LoadDesignLabHistoryInBackground());
+                // Critical profiles/world/UI/input initialized and loading hidden. Allow the
+                // real player loop to run before acknowledging this launcher's challenge.
+                yield return null;
+                yield return null;
+                if(IsReady)
+                {
+                    try{NativeStartupHealth.ReportReady();}
+                    catch(Exception error) when(error is System.IO.IOException||error is UnauthorizedAccessException||error is ArgumentException)
+                    {Debug.LogWarning("Startup readiness could not be reported: "+error.Message);}
+                }
+                Debug.Log("Game startup: menu ready at "+Time.realtimeSinceStartup.ToString("F2")+" seconds; Default "+activeLabReference.Hash);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 if(Environment.GetCommandLineArgs().Contains("-labStartupEvidence"))gameObject.AddComponent<NativeLabStartupReview>();
 #endif

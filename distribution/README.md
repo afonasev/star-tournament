@@ -2,6 +2,8 @@
 
 The launcher is a self-contained .NET 8 application using Velopack 1.2.158. Unity retains company/product identity and all native gameplay/UI. The launcher waits for the actual Player process; it never kills a match or modifies a live payload. Metadata checks are automatic, package downloads require the explicit `download` command from Unity, and `restart` is acknowledged before Unity requests a normal exit. A staged package is verified again after exit and before the next Player starts.
 
+Startup confirmation is separate from installation. The launcher gives each Player a fresh `STAR_TOURNAMENT_STARTUP_READY`, `STAR_TOURNAMENT_STARTUP_VERSION` and `STAR_TOURNAMENT_STARTUP_TOKEN`. Unity atomically reports `menu-ready` after critical initialization and two player-loop frames; background Lab history does not block this signal. The two-minute deadline never kills a live game. Only an exact timely marker clears the apply-attempt journal; exit code zero does not. A first unconfirmed launch cannot auto-apply a staged update, and an unconfirmed exit leaves it staged. The recovery branch still needs stable supervisor/payload activation integration before release; see `docs/evidence/standard-startup-recovery/startup-contract.md`.
+
 `release.json` belongs to each immutable package, and the main menu gets `<version> (dd.MM.yyyy)` from that installed package. The date is its publication day, not device time. The IPC session consists of an atomic status snapshot and a single command file outside replaceable contents. Single-flight download and an installation lock prevent overlapping operations. A recorded orphaned Player PID/start time prevents an accidental replacement after a supervisor crash.
 
 ## Authentication
@@ -71,7 +73,7 @@ Landing JavaScript fetches only CORS-enabled `api.github.com` metadata and uses 
 
 macOS x64 can still be packaged with `package.py --channel ...`, but the paired publisher's agreed supplied macOS platform is arm64. Universal Player bytes do not prove physical Intel Mac acceptance.
 
-Local Unity QA must pass `--qa-unity-runner "$HOME/.local/bin/unity-run"` to the launcher; this argument persists through the updater's restart and executes the real Player through the common exclusive guard. The environment variable `STAR_TOURNAMENT_QA_UNITY_RUNNER` is also supported. On the user's machine no local QA guard is required.
+Local Unity QA must pass `--qa-unity-runner "$HOME/.local/bin/unity-run"` to the launcher; this argument persists through the updater's restart and executes the real Player through the common shared guard. The environment variable `STAR_TOURNAMENT_QA_UNITY_RUNNER` is also supported. On the user's machine no local QA guard is required.
 
 ## Remaining acceptance gates
 

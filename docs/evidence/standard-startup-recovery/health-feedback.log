@@ -1,0 +1,34 @@
+PASS permission feedback
+PASS native Windows permission feedback
+PASS UAC denial feedback
+PASS missing helper is not mislabeled UAC denial
+PASS signature feedback
+PASS timeout feedback
+PASS missing payload feedback
+PASS first launch may apply
+PASS interrupted handoff blocks automatic retry across launches
+PASS precise failure survives restart
+PASS new version can apply
+PASS old installed version does not erase failed attempt
+PASS successful installed version clears failure
+PASS explicit retry records a fresh attempt
+PASS corrupt journal cannot trigger automatic apply loop: broken
+PASS corrupt journal cannot trigger automatic apply loop: {}
+PASS corrupt journal cannot trigger automatic apply loop: null
+PASS corrupt journal cannot trigger automatic apply loop: {"Version":"1.1.0"}
+PASS corrupt journal cannot trigger automatic apply loop: {"Version":"bad","Message":"failure"}
+PASS bounded headers stall
+PASS quarantine cleaned headers
+PASS failed bytes never admitted headers
+PASS bounded body stall
+PASS quarantine cleaned body
+PASS failed bytes never admitted body
+PASS user cancellation remains cancellation
+PASS quarantine cleaned cancel
+PASS failed bytes never admitted cancel
+PASS valid signed bytes complete download
+PASS quarantine cleaned success
+PASS integrity rejection preserved
+PASS quarantine cleaned corrupt
+PASS failed bytes never admitted corrupt
+Feedback contracts: 33 passed

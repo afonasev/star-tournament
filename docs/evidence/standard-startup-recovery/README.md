@@ -12,3 +12,6 @@ Baseline: edd095aedbd5bb695d93088a8ea184f25ce253b8. Реализован actual 
 
 ## Следующий срез: payload retention
 Реализован и проверен snapshot/restore core,34 filesystem checks и29 обновлённых journal checks. См. [payload-recovery.md](payload-recovery.md). Runtime пока не подключён; исходные28 checks относятся к предыдущему snapshot2b582de6.
+
+## Подключён startup health
+Launcher+Unity health handshake подключён (startup-contract.md):12 .NET+33 feedback+4 unique native Editor cases; final3 native tests повторены после cleanup fix. Snapshot/restore activation и stable supervisor всё ещё НЕ подключены. Текущий authoritative протокол описан в startup-contract.md и health-verification.json, не в историческом core-only срезе.

@@ -1,0 +1,5 @@
+FOCUSED PlayMode: NativeStartupHealthTests — affected evidence, NOT a full suite
+Evidence: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-playmode.twJgU2
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+unity-run: started shared:2; guardian=55974 pid=55975
+unity-run: finished pid=55975 exit=0; capacity released
