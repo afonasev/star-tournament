@@ -190,7 +190,10 @@ namespace StarTournament.ProvingGround
         public int LatestAvailableRevision(string profileId)
         {
             var profile=data.Profiles.Single(p=>p.Id==profileId);
-            var saved=profile.Revisions.Where(r=>r.CompatibilitySourceNumber==0).OrderByDescending(SavedVersionNumber)
+            // Packaged profiles keep legacy local rows for explicit inspection/copy.
+            // Those physical keys must never outrank the actual available package.
+            bool packaged=!authoring&&releases!=null&&releases.Entries.Any(e=>e.ProfileId==profileId);
+            var saved=profile.Revisions.Where(r=>r.CompatibilitySourceNumber==0&&(!packaged||IsShipped(r))).OrderByDescending(SavedVersionNumber)
                 .ThenByDescending(r=>Current(r.Snapshot)).ThenByDescending(r=>r.Number).First();
             if(Current(saved.Snapshot))return saved.Number;
             return profile.Revisions.SingleOrDefault(r=>r.CompatibilitySourceNumber==saved.Number&&r.CompatibilitySourceHash==saved.Hash)?.Number??saved.Number;
@@ -820,6 +823,9 @@ namespace StarTournament.ProvingGround
                     if(!authoring&&IsShipped(old))BindRelease(existing,releases.Entries.Single(e=>e.Sequence==old.ReleaseSequence));
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
                 }
+            // A catalogue supplies Default; source->execution mapping above already
+            // preserves selection. The legacy factory tail would silently replace it.
+            if(!authoring&&releases!=null)return;
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
             if(authoring&&release.Revisions.Any(r=>Current(r.Snapshot)))return;
             var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shippedHash);

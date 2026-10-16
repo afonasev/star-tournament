@@ -105,6 +105,48 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             restart.Select(copyId,2);Assert.That(restart.Selected.Hash,Is.EqualTo(changed.Hash()));Assert.That(restart.SelectedProfileReadOnly,Is.False);
             Assert.That(restart.Profiles.Single(p=>p.Id==sourceId).Revisions.Single(r=>r.Number==2).Hash,Is.EqualTo(old.Hash()));
         }
+        [TestCase(false)][TestCase(true)]
+        public void PackageChooserUsesCatalogueInsteadOfHigherLegacyLocalKey(bool useDefault)
+        {
+            var baseline=Baseline();var local=new DesignLabHistory(path,baseline);
+            if(!useDefault)local.Create("Local before package");
+            string id=local.SelectedProfileId;
+            for(int i=2;i<=9;i++){var draft=local.Selected.Snapshot;draft.Set("rifle.damage",30+i);local.Save(draft);}
+            var legacy=local.Selected;
+            var tuned=baseline.Clone();tuned.Set("rifle.damage",50);
+            var catalog=LabReleaseCatalog.Factory(baseline);
+            catalog.Entries.Add(Entry(2,id,"Published",2,tuned));
+            var h=new DesignLabHistory(path,baseline,releases:catalog,resetToLatestDefault:true,persistMigration:false);
+            int latest=h.LatestAvailableRevision(id);
+            h.Select(id,latest);Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(2));Assert.That(h.Selected.Hash,Is.EqualTo(tuned.Hash()));
+            var retained=h.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==legacy.Number);
+            Assert.That(retained.Hash,Is.EqualTo(legacy.Hash));Assert.That(retained.Date,Is.EqualTo(legacy.Date));
+            Assert.That(UnityEngine.JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(UnityEngine.JsonUtility.ToJson(legacy.Snapshot)));
+            h.Select(id,legacy.Number);Assert.That(h.SelectedProfileReadOnly,Is.True);
+            h.Create("Archive copy");string copy=h.SelectedProfileId;Assert.That(h.Selected.Hash,Is.EqualTo(legacy.Hash));
+            Assert.That(h.SelectedProfileReadOnly,Is.False);Assert.That(h.Selected.ReleaseCandidate,Is.False);
+            var next=tuned.Clone();next.Set("rifle.damage",51);catalog.Entries.Add(Entry(3,id,"Published",3,next));
+            var restarted=new DesignLabHistory(path,baseline,releases:catalog,resetToLatestDefault:true,persistMigration:false);
+            restarted.Select(id,restarted.LatestAvailableRevision(id));Assert.That(restarted.Selected.ReleaseNumber,Is.EqualTo(3));
+            Assert.That(restarted.Selected.Hash,Is.EqualTo(next.Hash()));
+            Assert.That(restarted.Profiles.Single(p=>p.Id==copy).Revisions.Single().Hash,Is.EqualTo(legacy.Hash));
+        }
+        [Test]public void RegistryUpgradeKeepsSelectedPackagedSourceInsteadOfFactoryTail()
+        {
+            var baseline=Baseline();var method=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            var tuned=previous.Clone();tuned.Set("rifle.damage",47);
+            var catalog=LabReleaseCatalog.Factory(previous);catalog.Entries.Add(Entry(2,DesignLabHistory.ReleaseId,"Published",7,tuned));
+            var old=new DesignLabHistory(path,previous,releases:catalog,resetToLatestDefault:true);
+            old.Select(DesignLabHistory.ReleaseId,old.Selected.Number);var saved=old.Selected;var bytes=File.ReadAllBytes(path);
+            var h=new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false);
+            Assert.That(h.StorageError,Is.Null);Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(7));
+            Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(47));Assert.That(h.Compatible(h.Selected),Is.True);
+            Assert.That(h.SavedIdentity(DesignLabHistory.ReleaseId,h.Selected.Number).Hash,Is.EqualTo(saved.ReleaseHash));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path),"Read-only migration preserves original file");
+            Assert.That(h.LatestAvailableRevision(DesignLabHistory.ReleaseId),Is.EqualTo(h.Selected.Number));
+            h.ResetToRelease();Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(7));Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(47));
+        }
         [Test]public void MarkingAndSavingDoNotChangeReleaseContentOrInheritTheMark()
         {
             var baseline=Baseline();var catalog=LabReleaseCatalog.Factory(baseline);

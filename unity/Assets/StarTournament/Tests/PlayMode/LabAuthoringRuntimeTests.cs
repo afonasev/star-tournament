@@ -190,6 +190,34 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(B("confirm"),Is.Not.Null,"Choosing a compatible base still guards an edited draft");Click("cancel");yield return null;
             Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
         }
+        [UnityTest] public IEnumerator ProductionProfileChooserReturnsToPackagedDefaultInsteadOfLegacyHighNumber()
+        {
+            var local=new DesignLabHistory(qaHistory,baseline);
+            for(int i=2;i<=9;i++){var draft=local.Selected.Snapshot;draft.Set("rifle.damage",30+i);local.Save(draft);}
+            var legacy=local.Selected;local.Select(DesignLabHistory.ReleaseId,1);local.Create("My independent profile");string own=local.SelectedProfileId;
+            var bytes=File.ReadAllBytes(qaHistory);
+            var expected=DesignLabHistory.ResolvePublishedDefault(baseline,catalog).Selected;
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
+            ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Assert.That(Field<string>("labProjectRoot"),Is.Null);Assert.That(ground.ActiveLabReference.Hash,Is.EqualTo(expected.Hash));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(qaHistory));
+            Click("main-action-2");yield return null;
+            Click("lab-profile-select");yield return null;Click("profile-"+own);
+            float deadline=Time.realtimeSinceStartup+120;
+            while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
+            var h=Field<DesignLabHistory>("labHistory");Assert.That(h.SelectedProfileId,Is.EqualTo(own));
+            Click("lab-profile-select");yield return null;Click("profile-"+DesignLabHistory.ReleaseId);
+            deadline=Time.realtimeSinceStartup+120;
+            while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
+            Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(expected.ReleaseNumber));Assert.That(h.IsShipped(h.Selected),Is.True);
+            Assert.That(h.Selected.Hash,Is.EqualTo(expected.Hash));Assert.That(ground.ActiveLabReference.Hash,Is.EqualTo(expected.Hash));
+            Assert.That(h.SelectedProfileReadOnly,Is.True);Assert.That(B("lab-save").interactable,Is.False);
+            var retained=h.SelectedProfile.Revisions.Single(r=>r.Number==legacy.Number);
+            Assert.That(retained.Hash,Is.EqualTo(legacy.Hash));Assert.That(retained.Date,Is.EqualTo(legacy.Date));
+            Assert.That(JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(JsonUtility.ToJson(legacy.Snapshot)));
+            CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
         [UnityTest] public IEnumerator HistoricalDefaultStartupFlagsAndExplicitFullSavePreserveBalanceAndSource()
         {
             File.Delete(historyPath);
