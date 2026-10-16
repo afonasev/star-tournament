@@ -11,7 +11,7 @@ using StarTournament.Distribution;
 using Velopack;
 
 [SupportedOSPlatform("windows")]
-static class Maintenance
+static partial class Maintenance
 {
     static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true };
     sealed record Marker(int Protocol, string Product, string InstallerVersion);
@@ -31,7 +31,9 @@ static class Maintenance
             {
                 2 when args[0] == "--validate-root" => ValidateRoot(args[1]),
                 2 when args[0] == "--check-idle" => CheckIdle(args[1]),
-                3 when args[0] == "--check-install" => CheckInstall(args[1], args[2]),
+                3 when args[0] == "--check-install" => InstallerOperation("plan",args[1],args[2]),
+                3 when args[0] == "--installed-version" => InstallerOperation("version",args[1],args[2]),
+                5 when args[0] == "--installer" => InstallerOperation(args[1],args[2],args[3],int.Parse(args[4])),
                 2 when args[0] == "--launch-user" => LaunchUser(args[1]),
                 1 when args[0] == "--check-legacy-user" => CheckLegacyUser(),
                 7 when args[0] == "--activate" => Activate(args),
@@ -68,7 +70,7 @@ static class Maintenance
     static string SafeRoot(string root)
     {
         if (!Path.IsPathFullyQualified(root)) throw new InvalidOperationException("Absolute install path required");
-        var full = Path.GetFullPath(root);
+        var full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
         var drive = Path.GetPathRoot(full)!;
         if (string.Equals(full.TrimEnd('\\'), drive.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Drive root cannot be an install");
@@ -163,6 +165,8 @@ static class Maintenance
     static int CheckIdle(string raw)
     {
         var root = SafeRoot(raw);
+        GuardInstallerOwner(root,null);
+        if(WindowsInstallation.InstallerPending(root))throw new IOException("Повторите установщик, чтобы завершить восстановление перед удалением.");
         using var lease = WindowsInstallLease.TryAcquire(root) ?? throw new IOException("Install is in use or lease access is unknown");
         CheckNoProcesses(root);
         return 0;
@@ -170,7 +174,7 @@ static class Maintenance
 
     static void CheckNoProcesses(string root, int allowedPid = 0)
     {
-        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "StarTournament", "Star Tournament", "StarTournamentLauncher", "StarTournamentMaintenance", "Update" };
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "StarTournament", "Star Tournament", "StarTournamentLauncher", "StarTournamentMaintenance", "Update", "Uninstall" };
         foreach (var process in Process.GetProcesses())
         {
             using (process)
@@ -186,27 +190,6 @@ static class Maintenance
                 catch { throw new IOException("Cannot establish whether a matching process is using the install"); }
             }
         }
-    }
-
-    static int CheckInstall(string raw, string version)
-    {
-        var root = SafeRoot(raw); ValidateInstallParents(root); RequireSemVer(version);
-        var marker = Path.Combine(root, ".star-tournament-install.json");
-        if (File.Exists(marker)) ValidateRoot(root);
-        else if (!IsFreshOrInstallLockedTarget(root)) throw new InvalidOperationException("Target is not an empty or marked Star Tournament installation");
-        var currentPath = Path.Combine(root, "current", "release.json");
-        if (!File.Exists(currentPath))
-        {
-            return 0; // Empty first install or a partial marked install repaired by NSIS.
-        }
-        if ((File.GetAttributes(Path.Combine(root, "current")) & FileAttributes.ReparsePoint) != 0 ||
-            (File.GetAttributes(currentPath) & FileAttributes.ReparsePoint) != 0)
-            throw new InvalidOperationException("Installed release metadata path is a reparse point");
-        using var current = JsonDocument.Parse(File.ReadAllText(currentPath));
-        var installed = current.RootElement.GetProperty("version").GetString()!;
-        RequireSemVer(installed);
-        if (CompareSemVer(version, installed) < 0) throw new InvalidOperationException("Downgrades are not allowed");
-        throw new InvalidOperationException("An existing release is present; uninstall it before running this fresh installer");
     }
 
     static bool IsFreshOrInstallLockedTarget(string root)
@@ -421,6 +404,8 @@ static class Maintenance
     {
         if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start the game as the normal user");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        if(!WindowsInstallation.InstallerAllowsLaunch(root))throw new IOException("Finish or repeat the installer before launching");
+        if(File.Exists(Path.Combine(root,"maintenance","installing.flag")))throw new IOException("Installer is changing files; wait for it to finish");
         var identity = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")), Json)!;
         using var watchLease = TryWatchLease(root, identity.AppId); if (watchLease == null) return 0;
         // Read-only routing from protected state, including when current is missing/broken.
@@ -549,6 +534,7 @@ static class Maintenance
         if (!IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Protected apply requires elevation");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
         EnsureProtectedRoot(root); ValidateSupervisor(root, supervisor);
+        if(WindowsInstallation.InstallerPending(root))throw new IOException("Finish or repeat the installer before updating/recovering");
         using var lease = WindowsInstallLease.TryAcquire(root) ?? throw new IOException("Install lease is held");
         CheckNoProcesses(root, supervisor.Pid);
         cache = SafeAbsoluteNonReparsePath(cache);
@@ -647,6 +633,7 @@ static class Maintenance
         if (!IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Protected recovery requires elevation");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
         EnsureProtectedRoot(root); ValidateSupervisor(root, supervisor);
+        if(WindowsInstallation.InstallerPending(root))throw new IOException("Finish or repeat the installer before updating/recovering");
         using var lease = WindowsInstallLease.TryAcquire(root) ?? throw new IOException("Install lease is held");
         CheckNoProcesses(root, supervisor.Pid);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")), Json)!;

@@ -22,7 +22,7 @@ static class WindowsInstallerTransactionChecks
             void Old(string root){Directory.CreateDirectory(root);File.WriteAllText(Path.Combine(root,"old-game"),"old exact bytes");}
             void AssertOld(string root){Require(File.ReadAllText(Path.Combine(root,"old-game"))=="old exact bytes");Require(!File.Exists(Path.Combine(root,"current/release.json")));}
             Test("extraction and cancellation never touch existing files",root=>{Old(root);var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.0.0");File.WriteAllText(Path.Combine(t.Stage,"partial"),"partial");AssertOld(root);t.Recover();AssertOld(root);t.ClearSettled();Require(!Directory.Exists(root+".installer"));});
-            Test("same-version repair replaces exact complete tree without stale files",root=>{Old(root);var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.1.0");Stage(t.Stage);t.Commit();Require(!File.Exists(Path.Combine(root,"old-game")));Require(t.Read()?.Phase=="installed");Require(File.Exists(Path.Combine(root+".installer/previous/old-game")));t.FinalizeInstall();Require(t.Read()?.Phase=="committed"&&!File.Exists(Path.Combine(root,"maintenance/installing.flag")));t.ClearSettled();Require(!Directory.Exists(root+".installer"));});
+            Test("same-version repair replaces exact complete tree without stale files",root=>{Old(root);var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.1.0");Require(WindowsInstallation.InstallerAllowsLaunch(root));Stage(t.Stage);t.Commit();Require(!WindowsInstallation.InstallerAllowsLaunch(root));Require(!File.Exists(Path.Combine(root,"old-game")));Require(t.Read()?.Phase=="installed");Require(File.Exists(Path.Combine(root+".installer/previous/old-game")));t.FinalizeInstall();Require(WindowsInstallation.InstallerAllowsLaunch(root));Require(t.Read()?.Phase=="committed"&&!File.Exists(Path.Combine(root,"maintenance/installing.flag")));t.ClearSettled();Require(!Directory.Exists(root+".installer"));});
             foreach(var point in new[]{"prepared","old-root-moved","saved","new-root-moved","installed"})
                 Test("interrupted "+point+" restores previous root",root=>{Old(root);var t=new WindowsInstallerTransaction(root,Candidate,checkpoint:p=>{if(p==point)throw new IOException("crash");});t.Begin("1.0.0");Stage(t.Stage);Reject(t.Commit);var reopened=new WindowsInstallerTransaction(root,Candidate);reopened.Recover();AssertOld(root);reopened.ClearSettled();Require(!Directory.Exists(root+".installer"));});
             foreach(var point in new[]{"failed-root-retained","previous-restored","restored"})
@@ -59,6 +59,21 @@ static class WindowsInstallerTransactionChecks
                     finally{if(!child.HasExited){child.Kill();child.WaitForExit();}}
                     var reopened=new WindowsInstallerTransaction(root,Candidate);reopened.Recover();AssertOld(root);reopened.ClearSettled();Require(!Directory.Exists(root+".installer"));
                 });
+            Test("trailing separator cannot put installer slot inside original root",root=>{Old(root);var t=new WindowsInstallerTransaction(root+Path.DirectorySeparatorChar,Candidate);Require(t.Stage==Path.Combine(root+".installer","stage"));t.Begin("1.0.0");t.Recover();AssertOld(root);t.ClearSettled();});
+            Test("an external root change cannot advance the prepared journal",root=>{Old(root);var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.0.0");Stage(t.Stage);Directory.Delete(root,true);Reject(t.Commit);Require(t.Read()!.Phase=="extracting"&&Directory.Exists(t.Stage));});
+            Test("settled failed-target history survives installer replacement at the same root",root=>
+            {
+                Old(root);Directory.CreateDirectory(Path.Combine(root,"maintenance/recovery"));
+                File.WriteAllText(Path.Combine(root,"maintenance/recovery/state.json"),JsonSerializer.Serialize(new WindowsRecoveryState(1,StartupRecovery.InstallationId(root),Candidate.AppId,["1.3.0"],null)));
+                var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.0.0");Stage(t.Stage);t.Commit();Require(new WindowsRecoveryStore(root,Candidate).Read().Blocked.SequenceEqual(new[]{"1.3.0"}));t.FinalizeInstall();t.ClearSettled();Require(WindowsInstallation.IsBlocked(root,"1.3.0"));
+            });
+            Test("retained startup backup cannot be silently discarded by the installer",root=>
+            {
+                Old(root);Directory.CreateDirectory(Path.Combine(root,"maintenance/recovery"));
+                var attempt=new WindowsRecoveryAttempt(new string('a',32),Candidate with{Version="1.0.0"},Candidate.Version,"capturing",[]);
+                File.WriteAllText(Path.Combine(root,"maintenance/recovery/state.json"),JsonSerializer.Serialize(new WindowsRecoveryState(1,StartupRecovery.InstallationId(root),Candidate.AppId,[],attempt)));
+                var t=new WindowsInstallerTransaction(root,Candidate);t.Begin("1.0.0");Stage(t.Stage);Reject(t.Commit);AssertOld(root);Require(t.Read()!.Phase=="extracting");t.Recover();AssertOld(root);
+            });
             Console.WriteLine($"Windows installer transaction: {passed} passed (portable filesystem; Windows ACL/NSIS runtime NotRun)");
         }
         finally{Directory.Delete(home,true);}

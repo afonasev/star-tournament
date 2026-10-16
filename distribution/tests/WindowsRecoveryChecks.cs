@@ -153,6 +153,8 @@ static class WindowsRecoveryChecks
             {var a=store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));File.Delete(Path.Combine(install,"maintenance","recovery",a.Id+".ready"));Reject(()=>WindowsInstallation.StartupConfirmed(install,a.Id));Reject(()=>WindowsInstallation.PendingStartup(install,"1.1.0"));});
             Test("watchdog cannot observe another protected attempt",(install,store)=>
             {store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));Reject(()=>WindowsInstallation.StartupConfirmed(install,new string('e',32)));Reject(()=>WindowsInstallation.StartupConfirmed(install,"../escape"));});
+            Test("pending installer blocks only activation including trailing-root form",(install,store)=>
+            {Require(!WindowsInstallation.InstallerPending(install));Directory.CreateDirectory(install+".installer");File.WriteAllText(Path.Combine(install+".installer","state.json"),"{}");Require(WindowsInstallation.InstallerPending(install)&&WindowsInstallation.InstallerPending(install+Path.DirectorySeparatorChar));Require(!WindowsInstallation.RecoveryNeedsRepair(install));});
             Console.WriteLine($"Windows recovery store: {passed} passed (portable filesystem contracts; Windows ACL/UAC NotRun)");
         }
         finally{Directory.Delete(root,true);}

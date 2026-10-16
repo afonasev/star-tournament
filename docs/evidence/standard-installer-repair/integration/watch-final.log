@@ -1,0 +1,11 @@
+PASS healthy live launcher returns without waiting for or replacing Player
+PASS early exit waits for Player before protected restore and relaunch
+PASS late confirmation while orphan exits forbids restore
+PASS durable menu health conservatively forbids rollback after latch IO failure
+PASS declined UAC never retries or relaunches
+PASS unknown process liveness cannot grant rollback
+PASS corrupt orphan identity preserves every payload
+PASS transaction/latch read failure never authorizes downgrade
+PASS real orphan process blocks replacement until actual exit
+PASS Windows argv encodes empty quoted unicode and terminal slashes
+Windows startup watch: 10 passed; native Windows process/handle-list runtime NotRun on non-Windows

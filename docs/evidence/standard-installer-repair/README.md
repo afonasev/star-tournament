@@ -1,3 +1,5 @@
+Historical core slice at `c3a521db`; latest source routing and its remaining limits: [integration/README.md](integration/README.md).
+
 # Windows repair/upgrade — transaction core, not yet wired
 
 Baseline `a8cc926b`, branch `codex/game-standard-alignment`. Approved design07: native system wizard offers **Восстановить** for the same version and **Обновить** for a newer version, retaining user data and ordinary shortcuts. Installer template0.1.0 at pinned game-spec-templates `0c2d4562683252d54736f294dc1af463050eac17`, INSTALLER-REINSTALL-01/02 and INSTALLER-RECOVERY-01 require interruption to preserve the previous working installation. Existing NSIS still writes directly into the old root and rejects an existing complete release; it is intentionally not enabled for overlay until the transaction is integrated.

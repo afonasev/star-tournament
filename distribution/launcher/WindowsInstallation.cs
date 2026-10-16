@@ -20,7 +20,7 @@ public static class WindowsInstallation
         using var contract = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")));
         if (contract.RootElement.GetProperty("protocol").GetInt32() is not (1 or 2))
             throw new InvalidOperationException("Unsupported installation maintenance; use the new installer");
-        return root;
+        return Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
     }
 
     public static bool RecoveryNeedsRepair(string root)
@@ -113,6 +113,28 @@ public static class WindowsInstallation
         if (!ack.Wait(TimeSpan.FromSeconds(30)) || ack.Result != "STAR_TOURNAMENT_STARTUP_WATCH_READY") throw new IOException("Startup supervision was not acknowledged");
     }
 
+    public static bool InstallerAllowsLaunch(string root)
+    {
+        var path=Path.TrimEndingDirectorySeparator(Path.GetFullPath(root))+".installer/state.json";
+        try
+        {
+            using var input=new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read);
+            if(input.Length>131072)throw new IOException("Installer state exceeds limit");
+            using var data=JsonDocument.Parse(input);var state=data.RootElement;
+            if(state.GetProperty("Schema").GetInt32()!=1||state.GetProperty("RootId").GetString()!=StartupRecovery.InstallationId(root))throw new IOException("Foreign installer state");
+            return state.GetProperty("Phase").GetString() switch
+            {
+                "extracting" or "committed" or "restored"=>true,
+                "prepared" or "saved" or "installed" or "restoring"=>false,
+                _=>throw new IOException("Unknown installer state")
+            };
+        }
+        catch(FileNotFoundException){return true;}catch(DirectoryNotFoundException){return true;}
+        catch(Exception error) when(error is JsonException or KeyNotFoundException or InvalidOperationException){throw new IOException("Invalid installer launch state",error);}
+    }
+
+    public static bool InstallerPending(string root) => File.Exists(Path.TrimEndingDirectorySeparator(Path.GetFullPath(root))+".installer/state.json") || Directory.Exists(Path.TrimEndingDirectorySeparator(Path.GetFullPath(root))+".installer/state.json");
+
     public static bool Declined(string packages, string version)
     {
         try
@@ -127,6 +149,7 @@ public static class WindowsInstallation
 
     public static void Activate(string root, string packages, bool restart, string[] restartArguments, bool explicitRetry = false)
     {
+        if(InstallerPending(root))throw new IOException("Завершите или повторите установку перед обновлением игры.");
         using var contract = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")));
         if (contract.RootElement.GetProperty("protocol").GetInt32() != 2) throw new MaintenanceUpgradeRequiredException();
         var broker = Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe");

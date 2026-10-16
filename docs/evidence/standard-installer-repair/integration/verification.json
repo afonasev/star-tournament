@@ -1,0 +1,73 @@
+{
+  "baseline": "c3a521db",
+  "branch": "codex/game-standard-alignment",
+  "main_integration": false,
+  "scope": "NSIS page07 and privileged transactional source routing, retained startup backup transfer still unfinished",
+  "checks": [
+    {
+      "name": "transaction",
+      "passed": 40,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-installer-transaction",
+      "log": "transaction-history.log"
+    },
+    {
+      "name": "registry snapshot/replay",
+      "passed": 13,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-installer-registration",
+      "log": "registration-verified.log"
+    },
+    {
+      "name": "Windows recovery",
+      "passed": 35,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-recovery",
+      "log": "recovery-launch-guard.log"
+    },
+    {
+      "name": "observer",
+      "passed": 10,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-startup-watch",
+      "log": "watch-final.log"
+    }
+  ],
+  "python": {
+    "command": "python3 -m unittest distribution.tests.test_windows_installer",
+    "passed": 19,
+    "exit_code": 0,
+    "log": "nsis-custody.log",
+    "note": "mock compiler/NSIS preprocessor only; unchanged NSIS source since this run"
+  },
+  "compile": {
+    "command": "/Users/eaafonasev/.dotnet/dotnet build --no-restore distribution/maintenance/Maintenance.csproj",
+    "warnings": 0,
+    "errors": 0,
+    "exit_code": 0,
+    "log": "build-history.log"
+  },
+  "reused_checks": "Observer/recovery/snapshot loops unchanged by later broker-only/carry-history edits; passed affected checks reused. No full suite.",
+  "not_run": [
+    "Windows Registry API/ACL/UAC/native source custody",
+    "real NSIS rendering/rename/shortcuts/finish/legacy concurrency",
+    "retained startup backup repair/upgrade transfer (not implemented)",
+    "Unity/full/Player/installer/release build/publication",
+    "human/device acceptance"
+  ],
+  "source_sha256": {
+    "distribution/launcher/Program.cs": "d4027872788ff6c4aa6ef0d0505aad7906994fd91efabb078bf6922b3c9066e6",
+    "distribution/launcher/WindowsInstallation.cs": "90c7846d8dcd9d3e5760bf94be22c3075831dc9db72eabcbe793cc4c1de9558b",
+    "distribution/maintenance/Program.cs": "44fdbc2005ae3f0e47c3a165c895e10783995351bf119dc1655d2e201c4cd1d1",
+    "distribution/maintenance/InstallerOperations.cs": "b39537d325d92f00522dd0ac84b3585a4b9d0406a5c9f7262b33ebe8e1ee217d",
+    "distribution/maintenance/WindowsInstallerTransaction.cs": "2001904a0d7d68dd46bd1c1e475a698e3d4219cd48641e2b998f5c550b318649",
+    "distribution/maintenance/WindowsInstallerRegistration.cs": "d73ef8d0836e5dc84e770750436b964921430d5d3158b7dcf93065e2237ccd7b",
+    "distribution/tests/Launcher.Contracts.csproj": "3bdaf9f4da7dd8365645edbb15c08e27ab288faa0c4c75c1739f2bade099b65c",
+    "distribution/tests/Program.cs": "0136a6933f8d3e0c579b2165b556546ae413aad377351fed7f904d7eba5f9260",
+    "distribution/tests/WindowsInstallerRegistrationChecks.cs": "9833824b58f8228031984128c1cc761b09f461ebd47458261109900943772dd5",
+    "distribution/tests/WindowsInstallerTransactionChecks.cs": "5789b87b5cb398da367795a3da4bfb7dd15f11406f8cbf8dfdbc19ba1f3b47d1",
+    "distribution/tests/WindowsRecoveryChecks.cs": "5268a11b33b7c281c5f1c58359aa6e45414811261af59f50e3b29cbea125f803",
+    "distribution/tests/test_windows_installer.py": "ef935d3d4f12c568edf8f7cfb589a04e957d668eed953947fa4fa09de533cb50",
+    "distribution/windows/installer.nsi": "5cf257873e1bb2276cc0b026cf5fd402527f4a5cf1b817488b5066a6d9975c15"
+  }
+}

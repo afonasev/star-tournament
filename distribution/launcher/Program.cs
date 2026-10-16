@@ -89,6 +89,8 @@ static class Launcher
         using var installationLease = machineRoot == null ? null : WindowsInstallLease.TryAcquire(machineRoot);
         if (machineRoot != null && (installationLease == null || Installing()))
         { UpdateFeedback.Show("Установка игры занята другим процессом. Дождитесь завершения установки или обновления и запустите игру снова."); return 1; }
+        if(machineRoot!=null&&!WindowsInstallation.InstallerAllowsLaunch(machineRoot))
+        {UpdateFeedback.Show("Установка не завершена. Дождитесь мастера или повторите установщик.");return 1;}
         if (machineRoot != null && WindowsInstallation.RecoveryNeedsRepair(machineRoot))
         { UpdateFeedback.Show("Установка прервана. Запустите StarTournamentMaintenance.exe --recover из папки maintenance установленной игры."); return 1; }
         var manager = new UpdateManager(source);

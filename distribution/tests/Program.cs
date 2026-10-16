@@ -12,6 +12,7 @@ if (args.FirstOrDefault() == "--mac-orphan-fixture") { MacRecoveryChecks.Orphan(
 if (args.SequenceEqual(new[] { "--mac-recovery" })) { await MacRecoveryChecks.Run(); return; }
 if (args.Length == 2 && args[0] == "--windows-watch-child") { await WindowsStartupWatchChecks.Child(args[1]); return; }
 if (args.Length == 4 && args[0] == "--installer-crash-fixture") { WindowsInstallerTransactionChecks.Crash(args[1], args[2], args[3]); return; }
+if (args.SequenceEqual(new[] { "--windows-installer-registration" })) { WindowsInstallerRegistrationChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--windows-installer-transaction" })) { WindowsInstallerTransactionChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--windows-startup-watch" })) { await WindowsStartupWatchChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--windows-recovery" })) { WindowsRecoveryChecks.Run(); return; }
