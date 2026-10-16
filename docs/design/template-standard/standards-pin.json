@@ -841,8 +841,11 @@
       "id": "UPDATES-CHANGELOG-01",
       "title": "Двуязычное описание релиза",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-release-changelog/verification.json",
+        "implementation": "Git-bound paired RU/EN renderer/scaffold and publisher early gates, channel/tag/custody checks, immutable body and archived review implemented; focused Python verified. Actual authorized release publication and human editorial/runtime acceptance pending."
+      }
     },
     {
       "id": "UPDATES-TRUST-01",

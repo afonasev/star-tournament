@@ -1,0 +1,25 @@
+test_body_categories_must_match_between_languages (test_release_changelog.ReleaseNotes.test_body_categories_must_match_between_languages) ... ok
+test_body_limit_matches_unity_utf16_reader (test_release_changelog.ReleaseNotes.test_body_limit_matches_unity_utf16_reader) ... ok
+test_channel_selection_semver_draft_and_future (test_release_changelog.ReleaseNotes.test_channel_selection_semver_draft_and_future) ... ok
+test_cli_rejects_incomplete_review_before_packaging_or_uploads (test_release_changelog.ReleaseNotes.test_cli_rejects_incomplete_review_before_packaging_or_uploads) ... ok
+test_cli_scaffold_and_render_are_offline (test_release_changelog.ReleaseNotes.test_cli_scaffold_and_render_are_offline) ... ok
+test_cli_wrong_checkout_rejected_before_api_or_packaging (test_release_changelog.ReleaseNotes.test_cli_wrong_checkout_rejected_before_api_or_packaging) ... ok
+test_control_headers_and_raw_subjects_cannot_replace_player_notes (test_release_changelog.ReleaseNotes.test_control_headers_and_raw_subjects_cannot_replace_player_notes) ... ok
+test_custody_source_must_match_notes_source (test_release_changelog.ReleaseNotes.test_custody_source_must_match_notes_source) ... ok
+test_divergent_and_moved_previous_tag_rejected (test_release_changelog.ReleaseNotes.test_divergent_and_moved_previous_tag_rejected) ... ok
+test_first_release_includes_initial_history (test_release_changelog.ReleaseNotes.test_first_release_includes_initial_history) ... ok
+test_foreign_duplicate_and_overlapping_omissions_fail (test_release_changelog.ReleaseNotes.test_foreign_duplicate_and_overlapping_omissions_fail) ... ok
+test_incomplete_shallow_git_rejected (test_release_changelog.ReleaseNotes.test_incomplete_shallow_git_rejected) ... ok
+test_merge_and_side_branch_commit_not_silently_omitted (test_release_changelog.ReleaseNotes.test_merge_and_side_branch_commit_not_silently_omitted) ... ok
+test_missing_translation_empty_pending_and_uncovered_fail (test_release_changelog.ReleaseNotes.test_missing_translation_empty_pending_and_uncovered_fail) ... ok
+test_paired_categories_no_empty_sections_or_commit_subjects (test_release_changelog.ReleaseNotes.test_paired_categories_no_empty_sections_or_commit_subjects) ... ok
+test_prepare_preserves_notes_identity_on_resume (test_release_changelog.ReleaseNotes.test_prepare_preserves_notes_identity_on_resume) ... ok
+test_previous_tag_remote_identity_and_annotated_peel (test_release_changelog.ReleaseNotes.test_previous_tag_remote_identity_and_annotated_peel) ... ok
+test_scaffold_contains_exact_range_and_pending_evidence (test_release_changelog.ReleaseNotes.test_scaffold_contains_exact_range_and_pending_evidence) ... ok
+test_technical_omissions_explicit_and_not_rendered (test_release_changelog.ReleaseNotes.test_technical_omissions_explicit_and_not_rendered) ... ok
+test_wrong_source_channel_or_baseline_boundaries_fail (test_release_changelog.ReleaseNotes.test_wrong_source_channel_or_baseline_boundaries_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 6.665s
+
+OK

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "source_ref": "4cb907c3c065e79c7223939bdad3adcc4fba37ea",
+  "channel": "test",
+  "previous_release": {
+    "tag": "v1.0.0-test.1",
+    "revision": "3e02f520b20830e3ab530e1b5c3fddf6cc3fd4e5"
+  },
+  "changes": [
+    {
+      "commits": [
+        "e56b770c4e0b71272a2f5178e8ea06c0e8da8b68"
+      ],
+      "category": "added",
+      "ru": "Введите имя с геймпада.",
+      "en": "Enter your name with a controller."
+    },
+    {
+      "commits": [
+        "4cb907c3c065e79c7223939bdad3adcc4fba37ea"
+      ],
+      "category": "fixed",
+      "ru": "Настройки сохраняются после перезапуска.",
+      "en": "Settings persist after restarting."
+    }
+  ],
+  "omitted": [],
+  "pending": []
+}

@@ -1,0 +1,36 @@
+{
+  "baseline": "a6a030c7",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "0c2d4562683252d54736f294dc1af463050eac17",
+  "scope": "Python-only release preparation; Git range/review coverage, paired canonical RU/EN body and immutable notes, publisher channel/tag/source/custody/readback contracts",
+  "selection_reason": "Real temp Git histories including first release, side branch+merge, moved/divergent/shallow tags; paired schema/UTF16 size; publisher failure before packaging/API writes, existing immutable asset tests. Unity/gameplay/render/audio untouched.",
+  "commands": [
+    "python3 -m unittest discover -s distribution/tests -p test_release_changelog.py -v",
+    "python3 -m unittest discover -s distribution/tests -p test_github_publisher.py -v"
+  ],
+  "results": {
+    "release_changelog": "20/20 OK, generator-verified.log",
+    "github_publisher": "16/16 OK, publisher-verified.log"
+  },
+  "failed_attempts": [
+    "generator-final.log: test fixture missing mocked manifest file, Unsafe asset input before intended source mismatch; fixed fixture, existing assertions preserved"
+  ],
+  "fixture_preview": "fixture-notes.md + fixture-review.json/fixture-history.txt from an isolated temporary Git repository, not a production release or review of the859 private-source commits since local v0.1.2",
+  "api_reference": [
+    "https://docs.github.com/en/rest/releases/releases",
+    "https://docs.github.com/en/rest/git/refs#get-a-reference",
+    "https://docs.github.com/en/rest/git/tags#get-a-tag"
+  ],
+  "not_run": [
+    "Actual authorized publication/upload/draft creation",
+    "Player/install/runtime/human editorial release acceptance",
+    "Full suite/build/deploy"
+  ],
+  "editorial_contract": "Preparing agent writes/reviews player-facing pairs against exact Git evidence; generator is not an automatic translator. No pending commits or missing language can publish. Existing published bodies are not retroactively rewritten.",
+  "source_sha256": {
+    "distribution/release_changelog.py": "9f542cdd6c7971bfae4a4e24323794dc0f4a364797efdda43b56c1a59338475e",
+    "distribution/publish_release.py": "abc1948c2604aff3ca963993a9c888751b9b87328e72c25c02047d640f79d80f",
+    "distribution/tests/test_release_changelog.py": "4b25d54db49c673dddb09ea1f1e2c4d694ba04c0935a2329d41d3670e404acdb",
+    "distribution/tests/test_github_publisher.py": "f8b6fe2f9e7b3c9a1635132d2999cf79f95f30de37adf82cc9eb845a4b909204"
+  }
+}

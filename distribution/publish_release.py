@@ -15,6 +15,7 @@ import urllib.request
 
 from upload_github_assets import REPO, upload, tls_context
 from legacy_release_relay import ReleaseRedirects
+from release_changelog import previous_release, resolve, render, validate_body, git
 
 RUNTIMES = ('win-x64', 'osx-arm64')
 ROOT = Path(__file__).resolve().parent
@@ -67,7 +68,7 @@ def verify_manifest(path, version, runtime, channel):
     return data, package
 
 
-def collect(output, version, date, channel):
+def collect(output, version, date, channel, source_ref=None):
     assets = []; dates = set(); revisions = set()
     for runtime in RUNTIMES:
         base = output/runtime; releases = base/'releases'
@@ -83,6 +84,7 @@ def collect(output, version, date, channel):
         custody_path = base/f'{version}.identity.json'; custody = json.loads(custody_path.read_text())
         if (custody['version'],custody['date'],custody['runtime'],custody['channel']) != (version,date,runtime,channel):
             raise ValueError('Package custody mismatch')
+        if custody.get('dirty','').strip(): raise ValueError('Dirty package custody cannot be described by Git history')
         revisions.add(custody['revision'])
         by_name = {x['name']:x for x in custody['packages']}
         for item in (full,installer):
@@ -94,6 +96,7 @@ def collect(output, version, date, channel):
         release_identity.write_bytes(custody_path.read_bytes())
         assets.extend((full,installer,identity(manifest),identity(release_identity)))
     if dates != {date} or len(revisions) != 1: raise ValueError('Paired assets must share date and source revision')
+    if source_ref is not None and revisions != {source_ref}: raise ValueError('Assets do not match changelog source revision')
     return assets
 
 
@@ -136,23 +139,64 @@ def find_release(tag, token):
     raise ValueError('Release lookup exceeds pagination limit')
 
 
-def publish(version, date, channel, assets, token, source_ref, draft_only=False):
+def changelog_baseline(version, channel, token, repo):
+    rows=[]
+    for page in range(1,11):
+        batch=api('GET',f'/releases?per_page=100&page={page}',token);rows.extend(batch)
+        if len(batch)<100: break
+    else: raise ValueError('Release history exceeds pagination limit')
+    tag=previous_release(rows,version,channel)
+    if tag is None: return None
+    remote=api('GET','/git/ref/tags/'+tag,token)['object']
+    for _ in range(5):
+        if remote['type']=='commit': break
+        if remote['type']!='tag': raise ValueError('Unexpected release tag object')
+        remote=api('GET','/git/tags/'+remote['sha'],token)['object']
+    else: raise ValueError('Release tag nesting exceeds limit')
+    local=resolve(repo,'refs/tags/'+tag)
+    if local!=remote['sha']: raise ValueError('Local previous release tag differs from GitHub; fetch exact published tag')
+    return dict(tag=tag,revision=local)
+
+
+def prepare_changelog(review_path, repo, source_ref, version, channel, token, output):
+    previous=changelog_baseline(version,channel,token,repo)
+    review_bytes=review_path.read_bytes()
+    review=json.loads(review_bytes.decode('utf-8'))
+    body=render(review,repo,source_ref,channel,previous)
+    identity=dict(schema=1,version=version,source_ref=source_ref,channel=channel,previous_release=previous,
+                  body_sha256=hashlib.sha256(body.encode()).hexdigest(),
+                  review_sha256=hashlib.sha256(review_bytes).hexdigest())
+    output.mkdir(parents=True,exist_ok=True)
+    files=[('release-notes.md',body.encode('utf-8')),
+           ('release-notes.identity.json',(json.dumps(identity,ensure_ascii=False,sort_keys=True,indent=2)+'\n').encode('utf-8')),
+           ('release-notes.review.json',review_bytes)]
+    for name,value in files:
+        path=output/name
+        if path.exists() and path.read_bytes()!=value: raise ValueError('Existing release notes identity differs; inspect output before resuming')
+    for name,value in files:
+        path=output/name;next_path=output/(name+'.tmp');next_path.write_bytes(value);next_path.replace(path)
+    return body
+
+
+def publish(version, date, channel, assets, token, source_ref, draft_only=False, *, body=None):
+    validate_body(body)
     tag='v'+version
     release=find_release(tag,token)
     if release is None:
         release=api('POST','/releases',token,dict(tag_name=tag,target_commitish=source_ref,name='Star Tournament '+version,
-            body=f'Authenticated {channel} candidate, {date}. Windows/macOS installers and full updates share version and date.\n'
-                 'OS developer signing/notarization and physical Windows/device acceptance remain pending.\n'
-                 'Installers retain Program Files/UAC contract and corrected uninstaller. Test channel does not promote production.',
+            body=body,
             draft=True,prerelease=channel=='test',make_latest='false'))
+    if release.get('body') != body: raise ValueError('Release body differs from reviewed immutable notes')
     if release['draft']:
         upload(release['id'],assets,token)
         release=api('GET',f'/releases/{release["id"]}',token)
         verify_remote(release,assets)
+        if release.get('body') != body: raise ValueError('Draft body changed during upload')
         if draft_only: return release, []
         release=api('PATCH',f'/releases/{release["id"]}',token,dict(draft=False,prerelease=channel=='test',make_latest='true' if channel=='production' else 'false',target_commitish=source_ref))
     else: verify_remote(release,assets)  # Idempotent identical published input; no asset replacement.
     if release['prerelease'] != (channel=='test') or release['draft']: raise ValueError('Published channel mismatch')
+    if release.get('body') != body: raise ValueError('Published body mismatch')
     return release,readback(version,assets)
 
 
@@ -160,6 +204,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('version','date','channel','source-ref'): p.add_argument('--'+name,required=True)
     for name in ('windows-player','mac-player','output','key','dotnet','vpk'): p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--changelog-review',type=Path,required=True,help='Reviewed RU/EN Git coverage JSON from release_changelog.py')
     p.add_argument('--nsis-host',choices=['gfe'],default='gfe')
     p.add_argument('--draft-only',action='store_true',help='Prepare and verify a draft for pre-publication QA')
     p.add_argument('--resume',action='store_true',help='Validate and resume an already packaged exact output')
@@ -169,9 +214,12 @@ def main():
     token=sys.stdin.read(1024).strip()
     if not token: p.error('GitHub credential required on stdin')
     if not re.fullmatch(r'[0-9a-f]{40}',a.source_ref): p.error('Full reviewed public commit SHA required for --source-ref')
+    if resolve(ROOT.parent,'HEAD')!=a.source_ref or git(ROOT.parent,'status','--porcelain'):
+        raise ValueError('Run publication from the clean exact source-ref checkout; keep review/output ignored or outside it')
     commit=api('GET','/commits/'+a.source_ref,token)
     if commit['sha']!=a.source_ref: raise ValueError('Public source identity mismatch')
     a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=True)
+    body=prepare_changelog(a.changelog_review,ROOT.parent,a.source_ref,a.version,a.channel,token,a.output)
     if not a.resume:
         for runtime,player in zip(RUNTIMES,(a.windows_player,a.mac_player)):
             cmd=[sys.executable,str(ROOT/'package.py'),'--runtime',runtime,'--player',str(player.resolve()),
@@ -179,9 +227,9 @@ def main():
                  '--output',str(a.output/runtime),'--dotnet',str(a.dotnet.resolve()),'--vpk',str(a.vpk.resolve())]
             if runtime=='win-x64':cmd+=['--nsis-host',a.nsis_host]
             subprocess.run(cmd,check=True)
-    assets=collect(a.output,a.version,a.date,a.channel)
+    assets=collect(a.output,a.version,a.date,a.channel,a.source_ref)
     (a.output/'asset-manifest.json').write_text(json.dumps(assets,indent=2)+'\n')
-    release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only)
+    release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only,body=body)
     (a.output/'publication.json').write_text(json.dumps(dict(release=release,readback=checks),indent=2)+'\n')
     print('DRAFT' if release['draft'] else 'PUBLISHED',release['html_url'])
 

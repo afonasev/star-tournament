@@ -1,0 +1,21 @@
+test_changed_body_never_mutates_existing_draft_or_published (test_github_publisher.GithubPublication.test_changed_body_never_mutates_existing_draft_or_published) ... ok
+test_changed_local_input_never_uploaded (test_github_publisher.GithubPublication.test_changed_local_input_never_uploaded) ... ok
+test_draft_body_readback_mismatch_never_publishes (test_github_publisher.GithubPublication.test_draft_body_readback_mismatch_never_publishes) ... ok
+test_draft_only_never_publishes (test_github_publisher.GithubPublication.test_draft_only_never_publishes) ... ok
+test_duplicate_drafts_require_identity_review (test_github_publisher.GithubPublication.test_duplicate_drafts_require_identity_review) ... ok
+test_generated_body_used_when_creating_draft (test_github_publisher.GithubPublication.test_generated_body_used_when_creating_draft) ... ok
+test_immutable_collision_never_overwrites (test_github_publisher.GithubPublication.test_immutable_collision_never_overwrites) ... ok
+test_incomplete_draft_never_published (test_github_publisher.GithubPublication.test_incomplete_draft_never_published) ... ok
+test_missing_language_rejected_before_network (test_github_publisher.GithubPublication.test_missing_language_rejected_before_network) ... ok
+test_production_explicit_latest (test_github_publisher.GithubPublication.test_production_explicit_latest) ... ok
+test_publish_only_after_readback (test_github_publisher.GithubPublication.test_publish_only_after_readback) ... ok
+test_published_release_lookup_needs_no_draft_scan (test_github_publisher.GithubPublication.test_published_release_lookup_needs_no_draft_scan) ... ok
+test_published_resume_never_mutates_release (test_github_publisher.GithubPublication.test_published_resume_never_mutates_release) ... ok
+test_resume_finds_draft_without_published_git_tag (test_github_publisher.GithubPublication.test_resume_finds_draft_without_published_git_tag) ... ok
+test_unknown_extra_asset_rejected (test_github_publisher.GithubPublication.test_unknown_extra_asset_rejected) ... ok
+test_wrong_digest_never_published (test_github_publisher.GithubPublication.test_wrong_digest_never_published) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.024s
+
+OK

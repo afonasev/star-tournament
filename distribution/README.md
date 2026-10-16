@@ -27,10 +27,41 @@ DOTNET_ROOT=<sdk-directory> <dotnet> tool install vpk --version 1.2.158 --tool-p
 <dotnet> run --project distribution/tests/Launcher.Contracts.csproj
 STAR_TOURNAMENT_RELEASE_OUTPUT=<absolute Player.app> unity/tools.sh build-release-mac
 STAR_TOURNAMENT_RELEASE_OUTPUT=<absolute windows-directory/StarTournament.exe> unity/tools.sh build-release-win
-gh auth token | python3 distribution/publish_release.py --version <SemVer> --date <yyyy-MM-dd> --channel test --windows-player <exact-windows-Player-directory> --mac-player <exact-Player.app> --output <immutable-output> --key <private-key> --dotnet <dotnet> --vpk <vpk> --source-ref <reviewed-public-mirror-commit> --nsis-host gfe
+gh auth token | python3 distribution/publish_release.py --version <SemVer> --date <yyyy-MM-dd> --channel test --windows-player <exact-windows-Player-directory> --mac-player <exact-Player.app> --output <immutable-output> --key <private-key> --dotnet <dotnet> --vpk <vpk> --source-ref <reviewed-public-mirror-commit> --changelog-review <reviewed-notes.json> --nsis-host gfe
 ```
 
 This single command packages the paired Windows x64/macOS arm64 installers and full updates, signs each `latest-<runtime>.json`, checks custody/signatures/SHA256/size, uploads a draft, verifies the complete eight-asset set, publishes as a prerelease, then streams anonymous real HTTPS download readbacks. Credential is stdin only and never forwarded to download redirects. `--resume` validates the same packaged output and resumes a failed draft/upload/readback; immutable collisions stop without replacement. Keep both Player inputs and the output unchanged during a run. Signing key stays local; `gfe` receives only public installer payload for the pinned NSIS compiler. Existing low-level uploader remains available for historical asset work.
+
+### Git-derived Russian/English release notes
+
+Before an explicitly authorized publication, the preparing agent resolves the previous **published release of the same channel**, fetches its exact tag into the release source checkout, and checks the Git range. Run from the clean exact public source commit used to package the Players; keep review/output outside the checkout or under ignored `.local/`. A private-source SHA and a different public-mirror SHA are not interchangeable.
+
+Offline scaffold and preview (these commands do not publish or build):
+
+```sh
+python3 distribution/release_changelog.py scaffold --source-ref <full-source-SHA> --channel test --previous-tag <previous-published-tag> --output <review.json>
+python3 distribution/release_changelog.py render --source-ref <full-source-SHA> --channel test --previous-tag <same-tag> --review <review.json> --output <preview.md>
+```
+
+Omit `--previous-tag` for a first release. The scaffold's `pending` list is the actual Git history, including merged branch commits. During release preparation, the agent reviews that evidence and replaces it with `changes` (category `added`, `improved` or `fixed`, paired `ru` and `en`, list of full `commits`) and justified `omitted` entries (`commits`, technical `reason`). Clear `pending` only after every commit is covered exactly once. Write player outcomes in both languages; raw commit subjects, internal IDs, promises about unverified behavior and fabricated translations do not replace editorial review. The renderer groups both languages from the same entries and omits empty categories.
+
+The publisher independently resolves the actual prior GitHub Release by channel/SemVer, checks its lightweight or annotated tag SHA against local Git, rejects shallow/divergent history, renders the reviewed range **before packaging/uploads**, and requires package custody to match the same clean source. The body uses `## Русский` / `## English`, matching the game's history parser. A missing translation, uncovered commit or stale range stops preparation without posting a release.
+
+`release-notes.md`, `release-notes.identity.json` and the exact `release-notes.review.json` are preserved in the output with SHA256/source/channel/base identity. Resume requires identical input and GitHub body. Published release text and assets are never silently overwritten. New text for an already published identity requires a new release. The helper does not translate arbitrary Git subjects or certify semantic equivalence; paired player descriptions are authored/reviewed as part of the already authorized release preparation.
+
+```json
+{
+  "schema": 1,
+  "source_ref": "<full-source-SHA>",
+  "channel": "test",
+  "previous_release": {"tag": "<published-vSemVer>", "revision": "<full-base-SHA>"},
+  "pending": [],
+  "changes": [{"commits": ["<full-commit-SHA>"], "category": "improved", "ru": "Понятное изменение для игрока.", "en": "The same player-facing change."}],
+  "omitted": []
+}
+```
+
+For the first release, `previous_release` is `null`; its complete Git history still requires coverage. Generating notes is not permission to publish, build a Player or run the full game suite.
 
 Production uses `--channel production` and a stable SemVer, explicitly marks the release Latest and requires separate production authorization. Test uses a prerelease SemVer and `make_latest=false`; it never turns a test into production. New configurations pin `updateChannel` and GitHub locator, with no VPS fallback. Production: `https://github.com/afonasev/star-tournament/releases/latest/download/latest-<runtime>.json`. Test: pinned public Releases API, bounded pagination, highest SemVer prerelease carrying both platform manifests and both versioned installers. The signed schema-1 payload binds `channel` and exact repository/version/package URL; schema 1 preserves old Windows broker authentication compatibility. Old brokers ignore channel but still verify RSA/identity/hash/size; fresh installers enforce channel too. No automatic channel switch or UI selector is introduced.
 
