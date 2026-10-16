@@ -108,10 +108,15 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test] public void RegistryUpgradePreservesOldMarksAndAllowsExplicitUnmarkWithoutActivatingInvalidVersion()
         {
-            baseline=WithBlood();var previous=baseline.Clone();
-            previous.Profiles=previous.Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList();seed=LabReleaseCatalog.Factory(previous);
-            var old=new DesignLabHistory(path,previous,releases:seed,authoring:true,resetToLatestDefault:true,persistMigration:false);
-            old.Rename("Author Default");string original=old.Selected.Hash;var bytes=File.ReadAllBytes(path);
+            baseline=new LabBundle{Profiles=baseline.Clone().Profiles.Concat(new[]{ProvingProfile.CreateWellDefault()}).ToList()};
+            var method=typeof(ProvingProfile).GetMethod("BeforeWellDetail",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            var old=new DesignLabHistory(path,previous,releases:LabReleaseCatalog.Factory(previous),authoring:true);
+            old.Rename("Author Default");string original=old.Selected.Hash;
+            var file=DesignLabHistoryTests.ReadFixture(path,previous);
+            file.Profiles.Add(new LabHistoryProfile{Id="selected-current",Name="Current",Revisions={new LabRevision{Number=1,Hash=baseline.Hash(),Snapshot=baseline.Clone()}}});
+            file.SelectedId="selected-current";file.SelectedRevision=1;
+            File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(path);seed=LabReleaseCatalog.Factory(baseline);
             var next=Open();Assert.That(next.Writable,Is.True);Assert.That(next.ReleaseError,Is.Not.Null);
             int selectedBeforeMarks=next.Selected.Number;string selectedHash=next.Selected.Hash;
             Assert.That(next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Single(r=>r.Number==1).ReleaseCandidate,Is.True);
@@ -121,7 +126,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var compatible=next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.First(r=>next.Compatible(r));
             next.MarkForRelease(DesignLabHistory.ReleaseId,compatible.Number,true);
             Assert.That(next.Selected.Number,Is.EqualTo(selectedBeforeMarks),"Changing flags does not activate a new version");
-            Assert.That(next.Selected.Hash,Is.EqualTo(selectedHash));
+            Assert.That(next.Selected.Hash,Is.EqualTo(selectedHash));Assert.That(next.SelectedProfileId,Is.EqualTo("selected-current"));
             next.ResetToRelease();Assert.That(next.Selected.Number,Is.EqualTo(compatible.Number));
             Assert.That(next.BuildReleaseCatalog().Entries.Single().Hash,Is.EqualTo(compatible.Hash));
             Assert.That(next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Single(r=>r.Number==1).Hash,Is.EqualTo(original));
@@ -258,6 +263,48 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var original=restarted.SelectedProfile.Revisions.Single(r=>r.Number==2);
             Assert.That(original.Hash,Is.EqualTo(legacy.Hash));Assert.That(original.Date,Is.EqualTo(legacy.Date));
             Assert.That(UnityEngine.JsonUtility.ToJson(original.Snapshot),Is.EqualTo(UnityEngine.JsonUtility.ToJson(legacy.Snapshot)));
+        }
+        [TestCase(false)][TestCase(true)]
+        public void HistoricalMarkedDefaultRunsThroughSourceViewAndFlagsDoNotCreateVersions(bool publicSeven)
+        {
+            var before=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList()};
+            var oldCatalog=LabReleaseCatalog.Factory(previous);if(publicSeven)oldCatalog.Entries[0].Revision=7;
+            var old=new DesignLabHistory(path,previous,releases:oldCatalog,authoring:true);
+            if(publicSeven)old.Rename("Author Default");else{SaveDamage(old,31);old.MarkSelectedForRelease(true);}
+            var original=old.Selected;var bytes=File.ReadAllBytes(path);
+            var h=Open();Assert.That(h.StorageError,Is.Null);Assert.That(h.ReleaseError,Is.Null);
+            Assert.That(h.Selected.CompatibilitySourceNumber,Is.EqualTo(original.Number));Assert.That(h.SelectedReleaseMarked,Is.True);
+            Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(original.Snapshot.Get("rifle.damage")));
+            int view=h.Selected.Number;var identity=h.SavedIdentity(DesignLabHistory.ReleaseId,view);var oldIdentity=old.SavedIdentity(DesignLabHistory.ReleaseId,original.Number);
+            Assert.That(identity.Number,Is.EqualTo(oldIdentity.Number));Assert.That(identity.Date,Is.EqualTo(oldIdentity.Date));Assert.That(identity.Hash,Is.EqualTo(oldIdentity.Hash));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            int count=h.SelectedProfile.Revisions.Count;string effective=h.Selected.Hash;
+            h.MarkSelectedForRelease(false);Assert.That(h.SelectedReleaseMarked,Is.False);Assert.That(h.Selected.Hash,Is.EqualTo(effective));
+            h.MarkSelectedForRelease(true);Assert.That(h.SelectedReleaseMarked,Is.True);Assert.That(h.Selected.Number,Is.EqualTo(view));
+            Assert.That(h.SelectedProfile.Revisions.Count,Is.EqualTo(count));Assert.That(h.Selected.CompatibilitySourceNumber,Is.EqualTo(original.Number));
+            h.ResetToRelease();Assert.That(h.Selected.Number,Is.EqualTo(view));
+            var output=h.BuildReleaseCatalog();Assert.That(output.Entries.Any(e=>e.Revision==oldIdentity.Number&&e.Hash==oldIdentity.Hash),Is.True);
+            Assert.That(DesignLabHistory.ResolvePublishedDefault(baseline,output).Selected.Hash,Is.EqualTo(effective));
+            Assert.That(h.CanMaterializeSelected,Is.True);h.Save(h.Selected.Snapshot);
+            Assert.That(h.Selected.Number,Is.GreaterThanOrEqualTo(publicSeven?8:view+1));Assert.That(h.Selected.IsCompatibilityView,Is.False);
+            Assert.That(h.SelectedReleaseMarked,Is.False);Assert.That(h.Selected.Hash,Is.EqualTo(effective));
+            var preserved=h.SelectedProfile.Revisions.Single(r=>r.Number==original.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(original.Hash));Assert.That(preserved.Date,Is.EqualTo(original.Date));
+        }
+        [Test]public void ProjectionRefusesLegacyRetuneInsteadOfPublishingDifferentAuthorBalance()
+        {
+            baseline=new LabBundle{Profiles=baseline.Clone().Profiles.Concat(new[]{ProvingProfile.CreateBloodDefault()}).ToList()};var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList()};
+            var old=new DesignLabHistory(path,previous,releases:LabReleaseCatalog.Factory(previous),authoring:true);old.Rename("Author blood");
+            seed=LabReleaseCatalog.Factory(baseline);var h=Open();Assert.That(h.ReleaseError,Is.Null);
+            Assert.That(h.Selected.Snapshot.Get("blood.drops"),Is.EqualTo(10));var bytes=File.ReadAllBytes(path);var identity=h.SavedIdentity(h.SelectedProfileId,h.Selected.Number);
+            Assert.That(Assert.Throws<InvalidOperationException>(()=>h.BuildReleaseCatalog()).Message,Does.Contain("Пакет изменит значения"));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            h.Save(h.Selected.Snapshot);int current=h.Selected.Number;h.MarkSelectedForRelease(true);
+            foreach(var source in h.SelectedProfile.Revisions.Where(r=>r.ReleaseCandidate&&r.Number!=current).ToArray())h.MarkForRelease(h.SelectedProfileId,source.Number,false);
+            var output=h.BuildReleaseCatalog();Assert.That(output.Entries.Single().Revision,Is.EqualTo(current));
+            Assert.That(DesignLabHistory.ResolvePublishedDefault(baseline,output).Selected.Snapshot.Get("blood.drops"),Is.EqualTo(10));
+            Assert.That(h.SavedIdentity(h.SelectedProfileId,1).Hash,Is.EqualTo(identity.Hash));
         }
         [TestCase(false)][TestCase(true)] public void ExplicitAuthoredDefaultNameIsNotReplacedByLegacyAlias(bool author)
         {

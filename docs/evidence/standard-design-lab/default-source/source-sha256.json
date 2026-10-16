@@ -1,0 +1,9 @@
+{
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "f86f952aa5e3593f6b5e65d948475ffd48e4ad33a2d549d259487714ea5739f1",
+  "unity/Assets/StarTournament/Runtime/Core/LabAuthoring.cs": "8d5d1432c88b4f19c94e5215debfaf62b9b4c00f28bab9c0618a87ebcc136825",
+  "unity/Assets/StarTournament/Runtime/Core/LabCompatibilityViews.cs": "ba6c956294228f885a778b9d86a041417157fc074f7d1f20969585e6a946c46d",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "592a74e418f1c188a63243a3cba6b7143b6b9c61ed5459ec576ccffab4eba93f",
+  "unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs": "10c5c2fb6456a33aa248db6a3bb7ae7a57ef874519059904beed4f66a45c3b81",
+  "unity/Assets/StarTournament/Tests/EditMode/LabCompatibilityViewTests.cs": "3faf25186dda23e62d692cb78c3d0021b44b77ee97bffa64a2e314026506a9e0",
+  "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "78ee99ebc0f5d638aaeb4c261ff11279e4a4879566cc4228c8f13328610dd59a"
+}

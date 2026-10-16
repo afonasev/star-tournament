@@ -317,8 +317,8 @@ namespace StarTournament.ProvingGround
         {
             if(authoring)
             {
-                var candidate=AuthorDefault(file);
-                if(candidate==null||!Current(candidate.Snapshot))throw new InvalidOperationException("В проекте нет совместимой релизной версии Default");
+                var candidate=AuthorDefaultExecution(file);
+                if(candidate==null)throw new InvalidOperationException("В проекте нет совместимой релизной версии Default");
                 file.SelectedId=ReleaseId;file.SelectedRevision=candidate.Number;return;
             }
             if(releases==null){file.SelectedId=ReleaseId;file.SelectedRevision=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash()).Number;return;}
@@ -331,10 +331,7 @@ namespace StarTournament.ProvingGround
             RequireLocalProfile();
             if(!authoring&&IsShipped(Selected))throw new InvalidOperationException("Ревизия уже встроена в клиент");
             if(!Current(Selected.Snapshot))throw new InvalidOperationException("Выберите совместимую сохранённую ревизию");
-            Commit(f=>{
-                var target=f.Profiles.Single(p=>p.Id==f.SelectedId).Revisions.Single(r=>r.Number==f.SelectedRevision);
-                target.ReleaseCandidate=marked;if(marked)FreezeCompatibilityView(target);
-            });
+            Commit(f=>SetReleaseFlag(f,f.SelectedId,f.SelectedRevision,marked));
         }
         // Most matches use the current registry. Generate historical combinations only when
         // a saved revision actually needs one, then share the exact immutable registry set.
@@ -708,7 +705,7 @@ namespace StarTournament.ProvingGround
         LabBundle CompatibilityDefaults(LabHistoryFile file,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors)
         {
             LabBundle selected=null;
-            if(authoring)selected=AuthorDefault(file)?.Snapshot;
+            if(authoring)selected=AuthorDefaultExecution(file)?.Snapshot??AuthorDefault(file)?.Snapshot;
             else if(releases!=null)selected=releases.Entries.Where(e=>e.ProfileId==ReleaseId)
                 .OrderByDescending(e=>e.Revision).ThenByDescending(e=>e.Sequence).First().Snapshot;
             // The source Default may itself predate the current registry. Its missing
@@ -788,6 +785,17 @@ namespace StarTournament.ProvingGround
                 foreach(var old in p.Revisions.Where(r=>!Current(r.Snapshot)).ToArray())
                 {
                     startupCancellation.ThrowIfCancellationRequested();
+                    // A stored current published interpretation is already authoritative;
+                    // don't invent a second author interpretation of the same package row.
+                    if(authoring&&old.ReleaseSequence>0)
+                    {
+                        var published=p.Revisions.Where(r=>r.ReleaseSequence==old.ReleaseSequence&&r.ReleaseHash==old.ReleaseHash&&Current(r.Snapshot)).ToArray();
+                        if(published.Length==1)
+                        {
+                            if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=published[0].Number;
+                            continue;
+                        }
+                    }
                     var next=UpgradeSnapshot(old.Snapshot,defaults,p.Id==ReleaseId,currentDescriptors,authoring||(p.Id!=ReleaseId&&!IsShipped(old)));
                     var issues=next.Validate();
                     if(issues.Count!=0)
@@ -800,7 +808,7 @@ namespace StarTournament.ProvingGround
                         continue;
                     }
                     string nextHash=next.Hash();
-                    bool derived=releases!=null&&p.Id!=ReleaseId&&!IsShipped(old);
+                    bool derived=authoring||(releases!=null&&p.Id!=ReleaseId&&!IsShipped(old));
                     var previous=views[p.Id].SingleOrDefault(r=>r.CompatibilitySourceNumber==old.Number&&r.CompatibilitySourceHash==old.Hash);
                     var existing=derived?null:p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash&&(old.ReleaseSequence==0||r.ReleaseSequence==0||r.ReleaseSequence==old.ReleaseSequence));
                     if(existing==null)
@@ -813,6 +821,7 @@ namespace StarTournament.ProvingGround
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
                 }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);
+            if(authoring&&release.Revisions.Any(r=>Current(r.Snapshot)))return;
             var latest=release.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==shippedHash);
             if(latest==null){latest=Revision(shipped,nextNumbers[release.Id]++,DateTime.Now.ToString("yyyyMMdd"));release.Revisions.Add(latest);}
             if(selectedRelease&&!authoring)file.SelectedRevision=latest.Number;
@@ -871,7 +880,7 @@ namespace StarTournament.ProvingGround
             var baseline=Selected.Snapshot;
             if(draft.Descriptors.Any(d=>!draft.IsEditable(d.Path)&&draft.Get(d.Path)!=baseline.Get(d.Path)))throw new ArgumentException("Read-only metadata cannot be saved");
             if(draft.Validate().Count!=0)throw new ArgumentException("Черновик содержит ошибки");
-            if(draft.Hash()==Selected.Hash)throw new ArgumentException("Нет изменений");
+            if(draft.Hash()==Selected.Hash&&!CanMaterializeSelected)throw new ArgumentException("Нет изменений");
             Commit(f=>{var p=f.Profiles.Single(x=>x.Id==f.SelectedId);
                 // Public package numbers and technical storage keys need not coincide.
                 // Reserve both: a new authored save must follow every saved version,

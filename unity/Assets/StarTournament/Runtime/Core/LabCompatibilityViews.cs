@@ -49,8 +49,6 @@ namespace StarTournament.ProvingGround
             }
             return restored;
         }
-        static void FreezeCompatibilityView(LabRevision revision)
-        {revision.CompatibilitySourceNumber=0;revision.CompatibilitySourceHash=null;}
         static void ValidateCompatibilitySource(LabHistoryProfile profile,LabRevision view)
         {
             if(view.CompatibilitySourceNumber==0&&string.IsNullOrEmpty(view.CompatibilitySourceHash))return;

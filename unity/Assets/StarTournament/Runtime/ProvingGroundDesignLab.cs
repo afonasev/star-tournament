@@ -254,7 +254,7 @@ namespace StarTournament.ProvingGround
             labHint=Label(labScreen.transform,"lab-hint","",14,new Vector2(.04f,.014f),new Vector2(.96f,.071f),TextAnchor.MiddleLeft,MenuGold);
             labHint.supportRichText=false;
             Hint(labResetRelease.gameObject,"Выбрать последнюю отмеченную версию Default из проекта или пакета. История сохраняется.");
-            Hint(clear.gameObject,"Очистить: вернуть все поля к выбранной базе; история сохраняется.");Hint(labSave.gameObject,"Сохранить: добавить новую неизменяемую ревизию. Нужен изменённый черновик без ошибок.");
+            Hint(clear.gameObject,"Очистить: вернуть все поля к выбранной базе; история сохраняется.");Hint(labSave.gameObject,"Сохранить: добавить новую неизменяемую ревизию. Можно сохранить правки или полную совместимую версию без ошибок.");
             labProfileSelector=LabButton(labScreen.transform,"lab-profile-select","Профиль ▾",new Vector2(.04f,.715f),new Vector2(.233f,.772f),ShowLabProfiles);
             labRevisionSelector=LabButton(labScreen.transform,"lab-revision-select","Ревизия ▾",new Vector2(.243f,.715f),new Vector2(.368f,.772f),ShowLabRevisions);
             labCreate=LabButton(labScreen.transform,"lab-create","Создать",new Vector2(.515f,.715f),new Vector2(.653f,.772f),()=>LabNameDialog(false));
@@ -263,7 +263,7 @@ namespace StarTournament.ProvingGround
             Hint(labDelete.gameObject,"Удаляется целый локальный профиль после подтверждения. Профили со встроенными релизами защищены от удаления.");
             LabButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.663f,.115f),new Vector2(.795f,.169f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
             labIdentity=Label(labScreen.transform,"lab-identity","",16,new Vector2(.04f,.13f),new Vector2(.65f,.195f),TextAnchor.MiddleLeft,Color.white);
-            labRelease=LabButton(labScreen.transform,"lab-release","Релизная: нет",new Vector2(.82f,.785f),new Vector2(.98f,.83f),()=>LabOperation(()=>labHistory.MarkSelectedForRelease(!labHistory.Selected.ReleaseCandidate),false,false));
+            labRelease=LabButton(labScreen.transform,"lab-release","Релизная: нет",new Vector2(.82f,.785f),new Vector2(.98f,.83f),()=>LabOperation(()=>labHistory.MarkSelectedForRelease(!labHistory.SelectedReleaseMarked),false,false));
             labRelease.GetComponentInChildren<Text>().fontSize=14;
             Hint(labRelease.gameObject,"Отметить сохранённую ревизию для будущего выпуска. Отметка локальная; выпуск выполняется отдельно. Правки сначала сохраните.");
             labSearch=LabInput(labScreen.transform,"lab-search","",new Vector2(.04f,.631f),new Vector2(.96f,.693f));
@@ -396,15 +396,15 @@ namespace StarTournament.ProvingGround
                 else {string parent=row.name.Substring(7);row.GetComponent<Text>().text=parent+" · "+LabDescriptors().Count(d=>GroupLabel(LabGroup(d)).StartsWith(parent+" →",StringComparison.Ordinal)&&Changed(d));}
             }
             bool readOnly=labHistory.SelectedProfileReadOnly;labRename.interactable=!readOnly&&labHistory.Writable;labCreate.GetComponentInChildren<Text>().text=readOnly?"Создать копию":"Создать";
-            labSave.interactable=!readOnly&&LabDirty&&issues.Count==0&&labHistory.Writable;labDelete.interactable=!labHistory.SelectedProfileProtected&&labHistory.Writable;
+            labSave.interactable=!readOnly&&(LabDirty||labHistory.CanMaterializeSelected)&&issues.Count==0&&labHistory.Writable;labDelete.interactable=!labHistory.SelectedProfileProtected&&labHistory.Writable;
             var selected=labHistory.Selected;bool shipped=!labHistory.IsAuthoring&&labHistory.IsShipped(selected);
             labRelease.interactable=!readOnly&&!LabDirty&&!shipped&&labHistory.Compatible(selected)&&labHistory.Writable;
-            labRelease.GetComponentInChildren<Text>().text=labHistory.IsAuthoring?"В релиз: "+(selected.ReleaseCandidate?"да":"нет")+" · проект":shipped?"Релизная · в клиенте":selected.ReleaseCandidate?"Релизная: да · локально":"Релизная: нет";
+            labRelease.GetComponentInChildren<Text>().text=labHistory.IsAuthoring?"В релиз: "+(labHistory.SelectedReleaseMarked?"да":"нет")+" · проект":shipped?"Релизная · в клиенте":labHistory.SelectedReleaseMarked?"Релизная: да · локально":"Релизная: нет";
             string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=LabRevisionLabel(labHistory,selected)+" ▾";
             labIdentity.fontSize=16;
             labIdentity.text=(labHistory.IsAuthoring?"Файл проекта: DesignLab/authoring-history-v1.json":"Данные игрока · "+(labHistory.SelectedProfileProtected?"профиль пакета защищён":"свой профиль"))+"\n"+
                 (labProjectRoot!=null&&!authorStartupResolved?"Стартовая версия проекта не выбрана":"Для следующей игры: "+labActiveLabel);
-            labStatus.text=labError??labHistory.StorageError??labHistory.ReleaseError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):labWriteMessage??"Сохранённая ревизия · нет изменений");
+            labStatus.text=labError??labHistory.StorageError??labHistory.ReleaseError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):labWriteMessage??(labHistory.CanMaterializeSelected?"Можно сохранить полную новую версию":"Сохранённая ревизия · нет изменений"));
         }
         IEnumerator SelectLabRevision(string profile,int revision)
         {
@@ -536,7 +536,7 @@ namespace StarTournament.ProvingGround
             foreach(var r in revisions.Where(r=>labHistory.IsAuthoring||labHistory.Compatible(r)||!labHistory.IsShipped(r)||!revisions.Any(other=>other.ReleaseSequence==r.ReleaseSequence&&labHistory.Compatible(other))).OrderByDescending(r=>r.Number))
             {
                 int n=r.Number;bool selected=n==number;
-                var row=LabButton(list,"revision-"+n,LabRevisionLabel(labHistory,r,profileId)+(r.IsCompatibilityView?" · для текущей игры":"")+(selectedProfile&&r.Number==labHistory.Selected.Number?" · выбранная база":"")+(r.ReleaseCandidate?" · релизная":"")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>InspectLabRevision(n,false,profileId));
+                var row=LabButton(list,"revision-"+n,LabRevisionLabel(labHistory,r,profileId)+(r.IsCompatibilityView?" · для текущей игры":"")+(selectedProfile&&r.Number==labHistory.Selected.Number?" · выбранная база":"")+(labHistory.IsMarkedForRelease(profileId,r.Number)?" · релизная":"")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>InspectLabRevision(n,false,profileId));
                 PlaceLabRow((RectTransform)row.transform,i++,64);row.GetComponentInChildren<Text>().fontSize=16;
                 if(selected){row.GetComponent<Image>().color=MenuGold;row.GetComponentInChildren<Text>().color=MenuInk;inspected=row;}
                 var focus=row.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=scroll;focus.Row=(RectTransform)row.transform;
@@ -546,7 +546,7 @@ namespace StarTournament.ProvingGround
             Label(detail,"revision-identity",profile.Name+"\n"+LabRevisionLabel(labHistory,revision,profileId),20,new Vector2(.04f,.76f),new Vector2(.96f,.96f),TextAnchor.MiddleLeft,MenuGold);
             bool compatible=labHistory.Compatible(revision);
             string status=(selectedProfile&&revision.Number==labHistory.Selected.Number?"Выбранная сохранённая база":"Просмотр версии · база и черновик не меняются")+"\n"+
-                (revision.ReleaseCandidate?"Отмечена для релиза":"Без релизной отметки")+"\n"+
+                (labHistory.IsMarkedForRelease(profileId,number)?"Отмечена для релиза":"Без релизной отметки")+"\n"+
                 (compatible?(revision.IsCompatibilityView?"Представление исходной версии для текущей игры":"Доступна для следующей игры"):
                     labHistory.CompatibilityReason(profileId,number)+". Выбор для игры недоступен; исходная версия сохранена.");
             var statusText=Label(detail,"revision-status",status,18,new Vector2(.04f,.39f),new Vector2(.96f,.75f),TextAnchor.UpperLeft,Color.white);statusText.supportRichText=false;
@@ -561,7 +561,7 @@ namespace StarTournament.ProvingGround
                 }
                 catch(Exception e){statusText.text=e.Message;}
             });
-            mark.interactable=labHistory.IsAuthoring&&labHistory.Writable&&revision.ReleaseCandidate;
+            mark.interactable=labHistory.IsAuthoring&&labHistory.Writable&&labHistory.IsMarkedForRelease(profileId,number);
             var choose=LabButton(detail,"revision-select","Выбрать для игры",new Vector2(.04f,.01f),new Vector2(.96f,.12f),()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(profileId,number))));
             choose.interactable=compatible;
             Label(card,"revision-active","Для следующей игры: "+labActiveLabel,16,new Vector2(.03f,.035f),new Vector2(.69f,.12f),TextAnchor.MiddleLeft,Color.white);

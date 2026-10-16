@@ -190,6 +190,45 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(B("confirm"),Is.Not.Null,"Choosing a compatible base still guards an edited draft");Click("cancel");yield return null;
             Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
         }
+        [UnityTest] public IEnumerator HistoricalDefaultStartupFlagsAndExplicitFullSavePreserveBalanceAndSource()
+        {
+            File.Delete(historyPath);
+            var flags=BindingFlags.NonPublic|BindingFlags.Instance;
+            var before=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",flags);
+            var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList()};
+            var old=new DesignLabHistory(historyPath,previous,releases:LabReleaseCatalog.Factory(previous),authoring:true);
+            SaveDamage(old,31);old.MarkSelectedForRelease(true);var source=old.Selected;
+            var bytes=File.ReadAllBytes(historyPath);
+            yield return LoadAuthor();
+            Assert.That(ground.IsReady,Is.True);Assert.That(ground.IsLabHistoryReady,Is.True);
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(source.Number));
+            Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(31));
+            Assert.That(ground.LabSavedIdentity,Does.Contain(source.Hash));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath),"Startup must not rewrite original saved balance");
+            Click("main-action-2");yield return null;
+            var h=Field<DesignLabHistory>("labHistory");var view=h.Selected;
+            Assert.That(view.CompatibilitySourceNumber,Is.EqualTo(source.Number));
+            Assert.That(h.SelectedReleaseMarked,Is.True);Assert.That(h.CanMaterializeSelected,Is.True);
+            Assert.That(B("lab-save").interactable,Is.True,"Explicit complete save needs no numeric edit");
+            var active=ground.ActiveLabReference.Clone();int count=h.SelectedProfile.Revisions.Count;
+            Click("lab-release");yield return null;Assert.That(h.SelectedReleaseMarked,Is.False);
+            Click("lab-release");yield return null;Assert.That(h.SelectedReleaseMarked,Is.True);
+            Assert.That(h.SelectedProfile.Revisions.Count,Is.EqualTo(count));
+            Assert.That(h.Selected.Hash,Is.EqualTo(view.Hash));Assert.That(h.CanMaterializeSelected,Is.True);
+            Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/default-source"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"author-default-source-720p.png"),1280,720);
+            Click("lab-save");yield return null;
+            Assert.That(h.Selected.IsCompatibilityView,Is.False);Assert.That(h.SelectedReleaseMarked,Is.False);
+            Assert.That(h.Selected.Number,Is.GreaterThan(view.Number));Assert.That(h.Selected.Hash,Is.EqualTo(view.Hash));
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(h.Selected.Number));
+            Assert.That(B("lab-save").interactable,Is.False);
+            var retained=Open(false).SelectedProfile.Revisions.Single(r=>r.Number==source.Number);
+            Assert.That(retained.Hash,Is.EqualTo(source.Hash));Assert.That(retained.Date,Is.EqualTo(source.Date));
+            Assert.That(retained.ReleaseCandidate,Is.True);
+            Assert.That(JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(JsonUtility.ToJson(source.Snapshot)));
+            CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
         [UnityTest] public IEnumerator StartupUsesProjectDefaultAndSaveWritesOnlyProjectForNextGame()
         {
             var bytes=File.ReadAllBytes(historyPath);yield return LoadAuthor();

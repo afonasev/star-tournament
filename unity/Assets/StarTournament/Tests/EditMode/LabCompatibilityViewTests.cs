@@ -62,17 +62,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var again=Open(author);Assert.That(again.StorageError,Is.Null);Assert.That(again.SelectedProfile.Revisions.Count,Is.EqualTo(count));
             Assert.That(again.Selected.Snapshot.Get(Interval),Is.EqualTo(save?30:40));
         }
-        [TestCase(false)][TestCase(true)]public void ExplicitMarkFreezesFullViewForFutureRelease(bool author)
+        [TestCase(false)][TestCase(true)]public void MarkChangesOnlySavedSourceFlagWithoutMaterializingOrActivatingView(bool author)
         {
-            var history=Prepare(author);int number=history.Selected.Number;
-            history.MarkSelectedForRelease(true);Assert.That(history.Selected.CompatibilitySourceNumber,Is.Zero);
+            var history=Prepare(author);int number=history.Selected.Number;var identity=history.SavedIdentity(id,number);var hash=history.Selected.Hash;int count=history.SelectedProfile.Revisions.Count;
+            history.MarkSelectedForRelease(true);
+            Assert.That(history.Selected.CompatibilitySourceNumber,Is.GreaterThan(0));Assert.That(history.Selected.Hash,Is.EqualTo(hash));
+            Assert.That(history.SelectedReleaseMarked,Is.True);Assert.That(history.SelectedProfile.Revisions.Count,Is.EqualTo(count));
+            Assert.That(history.SavedIdentity(id,number).Number,Is.EqualTo(identity.Number));Assert.That(history.SavedIdentity(id,number).Hash,Is.EqualTo(identity.Hash));
             NextDefault(history,author,number);var updated=Open(author);Assert.That(updated.StorageError,Is.Null);
-            Assert.That(updated.Selected.Snapshot.Get(Interval),Is.EqualTo(30));Assert.That(updated.Selected.ReleaseCandidate,Is.True);
-            Assert.That(updated.LatestAvailableRevision(id),Is.EqualTo(number),"A newer technical cache cannot shadow an explicitly saved version in the profile selector");
+            Assert.That(updated.Selected.Snapshot.Get(Interval),Is.EqualTo(40),"Missing fields still follow release Default; a flag did not create a complete saved snapshot");
+            Assert.That(updated.SelectedReleaseMarked,Is.True);Assert.That(updated.LatestAvailableRevision(id),Is.EqualTo(number));
             if(author)
             {
                 var entry=updated.BuildReleaseCatalog().Entries.Single(e=>e.ProfileId==id);
-                Assert.That(entry.Revision,Is.EqualTo(number));Assert.That(entry.Snapshot.Get(Interval),Is.EqualTo(30));
+                Assert.That(entry.Revision,Is.EqualTo(identity.Number));Assert.That(entry.Hash,Is.EqualTo(identity.Hash));
+                Assert.That(entry.Snapshot.Descriptors.Any(d=>d.Path==Interval),Is.False);
             }
         }
         [TestCase("20000102")][TestCase("")]

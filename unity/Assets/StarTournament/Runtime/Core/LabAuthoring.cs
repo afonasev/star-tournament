@@ -23,6 +23,47 @@ namespace StarTournament.ProvingGround
         static LabRevision AuthorDefault(LabHistoryFile file)=>file.Profiles.Single(p=>p.Id==ReleaseId).Revisions
             .Where(r=>r.ReleaseCandidate).OrderByDescending(SavedVersionNumber).ThenByDescending(r=>r.Number).FirstOrDefault();
 
+        LabRevision ExecutionView(LabHistoryProfile profile,LabRevision source)
+        {
+            if(Current(source.Snapshot))return source;
+            var view=profile.Revisions.SingleOrDefault(r=>r.CompatibilitySourceNumber==source.Number&&r.CompatibilitySourceHash==source.Hash&&Current(r.Snapshot));
+            if(view!=null)return view;
+            var published=profile.Revisions.Where(r=>source.ReleaseSequence>0&&r.ReleaseSequence==source.ReleaseSequence&&r.ReleaseHash==source.ReleaseHash&&Current(r.Snapshot)).ToArray();
+            return published.Length==1?published[0]:null;
+        }
+        LabRevision AuthorDefaultExecution(LabHistoryFile file)
+        {
+            var source=AuthorDefault(file);
+            return source==null?null:ExecutionView(file.Profiles.Single(p=>p.Id==ReleaseId),source);
+        }
+        LabRevision FlagSource(LabHistoryProfile profile,LabRevision revision)
+        {
+            if(revision.CompatibilitySourceNumber>0)
+                revision=profile.Revisions.Single(r=>r.Number==revision.CompatibilitySourceNumber&&r.Hash==revision.CompatibilitySourceHash);
+            var published=profile.Revisions.Where(r=>revision.ReleaseSequence>0&&r.ReleaseSequence==revision.ReleaseSequence&&r.ReleaseHash==revision.ReleaseHash&&Current(r.Snapshot)).ToArray();
+            return published.Length==1?published[0]:revision;
+        }
+        public bool IsMarkedForRelease(string profileId,int number)
+        {
+            var profile=data.Profiles.Single(p=>p.Id==profileId);
+            var target=FlagSource(profile,profile.Revisions.Single(r=>r.Number==number));
+            return target.ReleaseSequence>0?profile.Revisions.Any(r=>r.ReleaseSequence==target.ReleaseSequence&&r.ReleaseHash==target.ReleaseHash&&r.ReleaseCandidate):target.ReleaseCandidate;
+        }
+        public bool SelectedReleaseMarked=>IsMarkedForRelease(data.SelectedId,data.SelectedRevision);
+        public bool CanMaterializeSelected
+        {
+            get{return !SelectedProfileReadOnly&&data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).IsCompatibilityView;}
+        }
+        void SetReleaseFlag(LabHistoryFile file,string profileId,int number,bool marked)
+        {
+            var profile=file.Profiles.Single(p=>p.Id==profileId);
+            var target=FlagSource(profile,profile.Revisions.Single(r=>r.Number==number));
+            if(marked&&ExecutionView(profile,target)==null)throw new InvalidOperationException("Несовместимую версию нельзя включить в релиз");
+            if(target.ReleaseSequence>0)
+                foreach(var alias in profile.Revisions.Where(r=>r.ReleaseSequence==target.ReleaseSequence&&r.ReleaseHash==target.ReleaseHash))alias.ReleaseCandidate=false;
+            target.ReleaseCandidate=marked;
+        }
+
         public string ReleaseError
         {
             get
@@ -30,7 +71,7 @@ namespace StarTournament.ProvingGround
                 if(!authoring)return null;
                 var revision=AuthorDefault(data);
                 return revision==null?"Отметьте хотя бы одну сохранённую версию Default для релиза":
-                    !Current(revision.Snapshot)?"Последняя отмеченная версия Default несовместима с текущим runtime":null;
+                    AuthorDefaultExecution(data)==null?"Последняя отмеченная версия Default несовместима с текущим runtime":null;
             }
         }
 
@@ -44,13 +85,7 @@ namespace StarTournament.ProvingGround
         public void MarkForRelease(string profileId,int revision,bool marked)
         {
             if(!authoring)throw new InvalidOperationException("Отметки авторского каталога доступны только в проекте");
-            var saved=data.Profiles.Single(p=>p.Id==profileId).Revisions.Single(r=>r.Number==revision);
-            if(marked&&!Current(saved.Snapshot))throw new InvalidOperationException("Несовместимую версию нельзя включить в релиз");
-            Commit(f=>{
-                var target=f.Profiles.Single(p=>p.Id==profileId).Revisions.Single(r=>r.Number==revision);
-                target.ReleaseCandidate=marked;
-                if(marked)FreezeCompatibilityView(target);
-            });
+            Commit(f=>SetReleaseFlag(f,profileId,revision,marked));
         }
 
         // A projection for explicit build tooling. This does not write, commit or publish.
@@ -59,11 +94,12 @@ namespace StarTournament.ProvingGround
             if(!authoring)throw new InvalidOperationException("Релизный каталог создаётся только из авторских данных проекта");
             if(!Writable)throw new IOException(StorageError);
             if(ReleaseError!=null)throw new InvalidOperationException(ReleaseError);
-            var result=new LabReleaseCatalog();int sequence=0;
+            var result=new LabReleaseCatalog();var expected=new Dictionary<int,string>();int sequence=0;
             foreach(var profile in data.Profiles.OrderBy(p=>p.Id,StringComparer.Ordinal))
                 foreach(var revision in profile.Revisions.Where(r=>r.ReleaseCandidate).OrderBy(r=>r.Number))
                 {
-                    if(!Current(revision.Snapshot)||revision.Snapshot.Validate().Count!=0)
+                    var execution=ExecutionView(profile,revision);
+                    if(execution==null||execution.Snapshot.Validate().Count!=0)
                         throw new InvalidOperationException("Несовместимая релизная версия: "+profile.Name+" v"+revision.Number);
                     // Current-schema counterparts are execution views of immutable saved
                     // package versions. Export their original identity/content, not a reused
@@ -76,7 +112,15 @@ namespace StarTournament.ProvingGround
                     result.Entries.Add(new LabReleaseEntry{Sequence=++sequence,ProfileId=profile.Id,ProfileName=profile.Name,
                         Revision=number,Date=original==null?revision.Date:revision.ReleaseDate,
                         Hash=original?.Hash??revision.Hash,Snapshot=(original?.Snapshot??revision.Snapshot).Clone()});
+                    expected.Add(sequence,execution.Hash);
                 }
+            var packaged=ResolvePublishedDefault(shipped,result);
+            foreach(var entry in result.Entries)
+            {
+                var execution=packaged.data.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions.Single(r=>r.ReleaseSequence==entry.Sequence&&Current(r.Snapshot));
+                if(execution.Hash!=expected[entry.Sequence])
+                    throw new InvalidOperationException("Пакет изменит значения версии «"+entry.ProfileName+"» v"+entry.Revision+". Сохраните полную новую версию и снимите прежнюю отметку перед выпуском; исходный снимок сохранён.");
+            }
             return result;
         }
     }
