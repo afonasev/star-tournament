@@ -1,0 +1,62 @@
+{
+  "baseline": "e5c82b1b",
+  "branch": "codex/game-standard-alignment",
+  "runs": [
+    {
+      "label": "initial",
+      "result": "Passed",
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 2.764697
+    },
+    {
+      "label": "dates",
+      "result": "Passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.4547279
+    },
+    {
+      "label": "historical-first",
+      "result": "Failed(Child)",
+      "passed": 21,
+      "failed": 3,
+      "skipped": 0,
+      "xml_duration_seconds": 3.1077367
+    },
+    {
+      "label": "historical-corrected",
+      "result": "Passed",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.5972706
+    },
+    {
+      "label": "names",
+      "result": "Passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.39135
+    }
+  ],
+  "final_unique_affected_cases_passed": 26,
+  "final_runtime_source_unchanged_since_historical_first_run": false,
+  "retry_change": "Only three historical fixtures corrected: complete registry before hash/index; compare selected number/hash before/after marks rather than assume pre-migration revision1. No assertions removed.",
+  "tested_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "b303a9f173bc03316c553d55116a74281126fe86e3222791f2dcf3ecc1cc5a97",
+    "unity/Assets/StarTournament/Runtime/Core/LabAuthoring.cs": "67d2c371d66229e91f55d9e2351aea0a19675ddd27c084c0ab5c2f0cccdd3b17",
+    "unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs": "0fe2e57fe288a97a46a892f1d0016f8812e8d89652806af291b7d6b1dd1b38ee"
+  },
+  "runtime_wiring": "Not yet implemented",
+  "initial_Git_tracked_author_data": "Not yet created",
+  "mode": "shared -noaudio -muted -nographics",
+  "player_build": false,
+  "full_suite": false,
+  "publication": false,
+  "native_human_acceptance": "NotRun",
+  "final_source_delta_after_historical_sequence": "Only display-name alias scope; four affected name/rename cases passed on final source. Other history/model branches unchanged."
+}

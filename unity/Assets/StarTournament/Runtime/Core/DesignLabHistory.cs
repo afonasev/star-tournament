@@ -158,6 +158,9 @@ namespace StarTournament.ProvingGround
         bool collectingStartupDiagnostics=true;
         static double Clock()=>System.Diagnostics.Stopwatch.GetTimestamp()/(double)System.Diagnostics.Stopwatch.Frequency;
         CancellationToken startupCancellation;
+        readonly bool authoring;
+        public bool IsAuthoring=>authoring;
+        public string StoragePath=>path;
         readonly string path; readonly LabBundle shipped; readonly LabReleaseCatalog releases; string shippedCacheKey; LabBundle[] predecessors; readonly Action<string,string> atomicPublish; LabHistoryFile data;
         public string StorageError {get;private set;}
         public bool Writable=>StorageError==null;
@@ -170,13 +173,13 @@ namespace StarTournament.ProvingGround
             copy.Protected=IsProtected(profile.Id);
             return copy;
         }
-        static string DisplayName(LabHistoryProfile profile)=>profile.Id==ReleaseId&&profile.Name=="Опубликованный профиль"?"Default":profile.Name;
+        string DisplayName(LabHistoryProfile profile)=>!authoring&&releases==null&&profile.Id==ReleaseId&&profile.Name=="Опубликованный профиль"?"Default":profile.Name;
         public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(DisplayProfile).ToList();
         public string SelectedProfileId=>data.SelectedId;
         public string SelectedProfileName=>DisplayName(data.Profiles.Single(p=>p.Id==data.SelectedId));
-        bool IsProtected(string id)=>id==ReleaseId||(releases!=null&&releases.Entries.Any(e=>e.ProfileId==id));
+        bool IsProtected(string id)=>id==ReleaseId||(!authoring&&releases!=null&&releases.Entries.Any(e=>e.ProfileId==id));
         public bool SelectedProfileProtected=>IsProtected(data.SelectedId);
-        public bool SelectedProfileReadOnly=>releases!=null&&releases.Entries.Any(e=>e.ProfileId==data.SelectedId);
+        public bool SelectedProfileReadOnly=>!authoring&&releases!=null&&releases.Entries.Any(e=>e.ProfileId==data.SelectedId);
         void RequireLocalProfile(){if(SelectedProfileReadOnly)throw new InvalidOperationException("Релизный профиль доступен только для чтения. Создайте копию для своих изменений.");}
         public LabHistoryProfile SelectedProfile=>DisplayProfile(data.Profiles.Single(p=>p.Id==data.SelectedId));
         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
@@ -186,10 +189,11 @@ namespace StarTournament.ProvingGround
             // Reuse exact trusted catalogue validation and compatibility migration. No user IO.
             return new DesignLabHistory(null,shipped,releases:releases,resetToLatestDefault:true,persistMigration:false);
         }
-        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default,string legacyPath=null)
+        public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default,string legacyPath=null,bool authoring=false)
         {
             double start=Clock(),stage=start;long memory=GC.GetTotalMemory(false);int collections=GC.CollectionCount(0);
             startupCancellation=cancellationToken;startupCancellation.ThrowIfCancellationRequested();
+            this.authoring=authoring;
             this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
             data=NewFile();
             stage=Clock();if(this.releases!=null)ValidateReleases();startupDiagnostics.CatalogueSeconds=Clock()-stage;
@@ -216,10 +220,17 @@ namespace StarTournament.ProvingGround
             startupCancellation.ThrowIfCancellationRequested();
             if(this.releases!=null)
             {
-                stage=Clock();MergeReleases(data);startupDiagnostics.MergeSeconds=Clock()-stage;
-                bool migrated=data.Profiles.Any(p=>p.Revisions.Any(r=>IsShipped(r)&&!Current(r.Snapshot)));
+                bool seedAuthoring=authoring&&!File.Exists(source);
+                stage=Clock();
+                if(seedAuthoring)data=SeedAuthoring();
+                else if(!authoring)MergeReleases(data);
+                startupDiagnostics.MergeSeconds=Clock()-stage;
+                bool migrated=!authoring&&data.Profiles.Any(p=>p.Revisions.Any(r=>IsShipped(r)&&!Current(r.Snapshot)));
                 if(migrated){stage=Clock();MigrateCompatibility(data);startupDiagnostics.MigrationSeconds+=Clock()-stage;}
-                if(resetToLatestDefault)SelectLatestDefault(data);
+                if(seedAuthoring)
+                    foreach(var profile in data.Profiles)
+                        foreach(var revision in profile.Revisions.Where(r=>IsShipped(r)&&Current(r.Snapshot)))revision.ReleaseCandidate=true;
+                if(resetToLatestDefault&&(!authoring||ReleaseError==null))SelectLatestDefault(data);
                 // Existing local snapshots and catalogue snapshots remain fully validated.
                 stage=Clock();ValidateFile(data,migrated);startupDiagnostics.FinalValidationSeconds=Clock()-stage;
             }
@@ -263,7 +274,7 @@ namespace StarTournament.ProvingGround
             {
                 var p=file.Profiles.FirstOrDefault(p=>p.Id==e.ProfileId);
                 if(p==null){p=new LabHistoryProfile{Id=e.ProfileId,Name=e.ProfileName,Protected=e.ProfileId==ReleaseId};file.Profiles.Add(p);}
-                p.Name=e.ProfileId==ReleaseId?"Default":e.ProfileName;
+                p.Name=e.ProfileName;
                 var r=p.Revisions.FirstOrDefault(r=>r.Hash==e.Hash&&r.ReleaseSequence==0);
                 if(r==null)
                 {
@@ -275,14 +286,21 @@ namespace StarTournament.ProvingGround
         }
         void SelectLatestDefault(LabHistoryFile file)
         {
+            if(authoring)
+            {
+                var candidate=AuthorDefault(file);
+                if(candidate==null||!Current(candidate.Snapshot))throw new InvalidOperationException("В проекте нет совместимой релизной версии Default");
+                file.SelectedId=ReleaseId;file.SelectedRevision=candidate.Number;return;
+            }
             if(releases==null){file.SelectedId=ReleaseId;file.SelectedRevision=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>Current(r.Snapshot)&&r.Hash==shipped.Hash()).Number;return;}
-            int sequence=releases.Entries.Where(e=>e.ProfileId==ReleaseId).Max(e=>e.Sequence);
+            int sequence=releases.Entries.Where(e=>e.ProfileId==ReleaseId).OrderByDescending(e=>e.Revision).ThenByDescending(e=>e.Sequence).First().Sequence;
             file.SelectedId=ReleaseId;file.SelectedRevision=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.First(r=>r.ReleaseSequence==sequence&&Current(r.Snapshot)).Number;
         }
         public void MarkSelectedForRelease(bool marked)
         {
+            if(authoring){MarkForRelease(data.SelectedId,data.SelectedRevision,marked);return;}
             RequireLocalProfile();
-            if(IsShipped(Selected))throw new InvalidOperationException("Ревизия уже встроена в клиент");
+            if(!authoring&&IsShipped(Selected))throw new InvalidOperationException("Ревизия уже встроена в клиент");
             if(!Current(Selected.Snapshot))throw new InvalidOperationException("Выберите совместимую сохранённую ревизию");
             Commit(f=>f.Profiles.Single(p=>p.Id==f.SelectedId).Revisions.Single(r=>r.Number==f.SelectedRevision).ReleaseCandidate=marked);
         }
@@ -693,7 +711,7 @@ namespace StarTournament.ProvingGround
                     string nextHash=next.Hash();
                     var existing=p.Revisions.FirstOrDefault(r=>Current(r.Snapshot)&&r.Hash==nextHash&&(old.ReleaseSequence==0||r.ReleaseSequence==0||r.ReleaseSequence==old.ReleaseSequence));
                     if(existing==null){existing=Revision(next,p.Revisions.Max(r=>r.Number)+1,DateTime.Now.ToString("yyyyMMdd"));p.Revisions.Add(existing);}
-                    if(IsShipped(old))BindRelease(existing,releases.Entries.Single(e=>e.Sequence==old.ReleaseSequence));
+                    if(!authoring&&IsShipped(old))BindRelease(existing,releases.Entries.Single(e=>e.Sequence==old.ReleaseSequence));
                     if(file.SelectedId==p.Id&&file.SelectedRevision==old.Number)file.SelectedRevision=existing.Number;
                 }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId);

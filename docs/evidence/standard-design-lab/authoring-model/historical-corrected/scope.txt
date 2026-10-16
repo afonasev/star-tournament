@@ -1,0 +1,12 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabAuthoringTests.ReopeningAuthorDataDoesNotRebindFlagsOnHistoricalReleaseCounterparts;LabAuthoringTests.RegistryUpgradePreservesOldMarksAndAllowsExplicitUnmarkWithoutActivatingInvalidVersion;LabAuthoringTests.HistoricalSeedKeepsDefaultVersionOrderAndOriginalPackageProvenance
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.Yj92km/qa-lab-history.json
+revision=e5c82b1b6a951c11c3d018248cf4745f99c48abd
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/standard-design-lab/authoring-model/
+?? Assets/StarTournament/Runtime/Core/LabAuthoring.cs
+?? Assets/StarTournament/Runtime/Core/LabAuthoring.cs.meta
+?? Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs.meta
