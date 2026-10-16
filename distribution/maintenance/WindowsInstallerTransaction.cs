@@ -17,13 +17,14 @@ public sealed class WindowsInstallerTransaction
     readonly Action<string> mkdir;
     readonly Func<string,FileStream> create;
     readonly Action<string> checkpoint;
+    readonly Func<string,FileStream> ready;
     public string Stage { get; }
-    public WindowsInstallerTransaction(string root, LauncherConfig candidate, Action<string>? mkdir=null, Func<string,FileStream>? create=null, Action<string>? checkpoint=null)
+    public WindowsInstallerTransaction(string root, LauncherConfig candidate, Action<string>? mkdir=null, Func<string,FileStream>? create=null, Action<string>? checkpoint=null,Func<string,FileStream>? createReady=null)
     {
         if(!Path.IsPathFullyQualified(root)||candidate.Platform!="win"||candidate.Architecture!="x64"||!Canonical(candidate.Version)||candidate.UpdateChannel is not("test" or "production")||Velopack.SemanticVersion.Parse(candidate.Version).IsPrerelease!=(candidate.UpdateChannel=="test"))throw new ArgumentException("Absolute Windows x64 install required");
         this.root=Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));this.candidate=candidate;slot=this.root+".installer";
         Stage=Path.Combine(slot,"stage");previous=Path.Combine(slot,"previous");abandoned=Path.Combine(slot,"abandoned");statePath=Path.Combine(slot,"state.json");
-        this.mkdir=mkdir??(p=>Directory.CreateDirectory(p));this.create=create??(p=>new FileStream(p,FileMode.CreateNew,FileAccess.Write,FileShare.None));this.checkpoint=checkpoint??(_=>{});
+        this.mkdir=mkdir??(p=>Directory.CreateDirectory(p));this.create=create??(p=>new FileStream(p,FileMode.CreateNew,FileAccess.Write,FileShare.None));this.checkpoint=checkpoint??(_=>{});this.ready=createReady??this.create;
         Plain(this.root);Plain(slot);
     }
     public InstallerTransactionState? Read()
@@ -58,23 +59,14 @@ public sealed class WindowsInstallerTransaction
         if(state.Phase!="extracting"||state.Target!=candidate.Version)throw new IOException("Wrong installer phase or target");
         if(Directory.Exists(root)!=(state.Previous!=null))throw new IOException("Install root appeared or disappeared while extracting; no root replaced");
         ValidateCandidate(Stage);checkpoint("candidate-verified");
-        CarrySettledStartupHistory();
+        using var transfer=WindowsRecoveryStore.TransferForInstaller(root,candidate,mkdir,create,ready,checkpoint);
         Write(state with{Phase="prepared"});checkpoint("prepared");
         if(state.Previous!=null){Plain(root);Directory.Move(root,previous);checkpoint("old-root-moved");}
         Write(state with{Phase="saved"});checkpoint("saved");
         Directory.Move(Stage,root);checkpoint("new-root-moved");
-        ValidateCandidate(root);Write(state with{Phase="installed"});checkpoint("installed");
-    }
-    void CarrySettledStartupHistory()
-    {
-        var source=Path.Combine(root,"maintenance","recovery","state.json");if(!File.Exists(source))return;
-        var state=new WindowsRecoveryStore(root,candidate,mkdir,create).Read();
-        if(state.Attempt!=null)throw new IOException("Retained startup backup must be transferred before installer replacement; no root changed");
-        // Preserve machine-wide failed targets. The final installation root is unchanged;
-        // never bind this metadata to the temporary Stage path.
-        var directory=Path.Combine(Stage,"maintenance","recovery");Plain(directory);mkdir(directory);
-        var destination=Path.Combine(directory,"state.json");Plain(destination);
-        using var output=create(destination);JsonSerializer.Serialize(output,state,Json);output.Flush(true);
+        ValidateCandidate(root);
+        if(File.Exists(Path.Combine(root,"maintenance","recovery","state.json")))new WindowsRecoveryStore(root,candidate,mkdir,create,ready).CompleteInstallerTransfer();
+        Write(state with{Phase="installed"});checkpoint("installed");
     }
     public void FinalizeInstall()
     {

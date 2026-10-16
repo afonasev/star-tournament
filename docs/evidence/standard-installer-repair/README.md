@@ -1,3 +1,5 @@
+Latest source: [transfer/README.md](transfer/README.md). Earlier core/integration descriptions below are historical snapshots.
+
 Historical core slice at `c3a521db`; latest source routing and its remaining limits: [integration/README.md](integration/README.md).
 
 # Windows repair/upgrade — transaction core, not yet wired

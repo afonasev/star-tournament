@@ -1,3 +1,5 @@
+Historical integration at `a4246020`; retained-backup refusal is now replaced by [transfer](../transfer/README.md).
+
 # Windows07 — NSIS/privileged routing source integration
 
 Baseline `c3a521db`, branch `codex/game-standard-alignment`. This implements the approved system wizard content07 in source and connects the transaction core. It is not an installer build, Windows rendering or device acceptance result.

@@ -484,7 +484,10 @@ static partial class Maintenance
         await WindowsStartupWatch.Observe(alive, () => WindowsInstallation.StartupConfirmed(root, id),
             () => WaitForRecordedPlayer(config.AppId),
             () => journal.Read().HealthyVersion == target,
-            () => { RequestRestore(root, id); UpdateAttemptJournal.ForApp(config.AppId).Fail(target, "Новая версия не подтвердила запуск. Восстановлена предыдущая версия."); return Task.CompletedTask; },
+            () => { RequestRestore(root, id);
+                using var restored=JsonDocument.Parse(ReadBoundedText(Path.Combine(root,"maintenance","maintenance.json"),65536));
+                var retry=restored.RootElement.GetProperty("protocol").GetInt32()==1?" Для повторной попытки используйте новый установщик Star Tournament.":" Повторить попытку можно явно через перезапуск с обновлением.";
+                UpdateAttemptJournal.ForApp(config.AppId).Fail(target, "Новая версия не подтвердила запуск. Восстановлена предыдущая версия."+retry); return Task.CompletedTask; },
             () => { using var child = LaunchCurrent(root, args); });
     }
     static void RequestRestore(string root, string id)

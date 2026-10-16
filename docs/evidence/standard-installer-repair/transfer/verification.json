@@ -1,0 +1,75 @@
+{
+  "baseline": "a4246020",
+  "branch": "codex/game-standard-alignment",
+  "main_integration": false,
+  "scope": "retained startup transfer and first installer upgrade; legacy playback protocol compatibility",
+  "checks": [
+    {
+      "name": "transfer",
+      "passed": 39,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-installer-transfer",
+      "log": "transfer-baseline.log"
+    },
+    {
+      "name": "installer transaction",
+      "passed": 40,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-installer-transaction",
+      "log": "transaction-baseline.log"
+    },
+    {
+      "name": "Windows recovery",
+      "passed": 35,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-recovery",
+      "log": "recovery-baseline.log"
+    },
+    {
+      "name": "shared payload",
+      "passed": 40,
+      "exit_code": 0,
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --payload-recovery",
+      "log": "payload-neighbor.log"
+    }
+  ],
+  "python": {
+    "command": "python3 -m unittest distribution.tests.test_windows_installer",
+    "passed": 19,
+    "exit_code": 0,
+    "log": "nsis-neighbor.log",
+    "note": "mock compiler/NSIS -PPO; NSIS source unchanged"
+  },
+  "compile": {
+    "command": "/Users/eaafonasev/.dotnet/dotnet build --no-restore distribution/maintenance/Maintenance.csproj",
+    "warnings": 0,
+    "errors": 0,
+    "exit_code": 0,
+    "log": "build-retry.log"
+  },
+  "native": {
+    "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-installer-transfer-native",
+    "status": "NotRun",
+    "passed": 0,
+    "reason": "requires Windows; current host macOS",
+    "log": "native-final-notrun.log"
+  },
+  "reused": "Shared payload and NSIS implementations unchanged; earlier selected successful runs reused. New source compatibility and fixture changes rerun transfer/transaction/recovery.",
+  "not_run": [
+    "native Windows file-sharing/rename/append API",
+    "ACL/UAC/Registry/NSIS render/current-user/legacy Player acceptance",
+    "Unity/full/Player/installer/release builds/publication",
+    "real user-data/migration/rollback compatibility (next implementation scope)"
+  ],
+  "source_sha256": {
+    "distribution/maintenance/WindowsRecoveryStore.cs": "55a8407f1b217b4b3f6c327d11bfd3859869f6646fc640e141bc2c54bbb9b338",
+    "distribution/maintenance/WindowsRecoveryTransfer.cs": "95896e87d35bd9c1813369886ae32884663d3bd6d72562b5178174a93ec49067",
+    "distribution/maintenance/WindowsInstallerTransaction.cs": "c818bd24deddc1043472d95560eef9cb8b42f87166bdf13d027191475b1bf761",
+    "distribution/maintenance/InstallerOperations.cs": "3c65357523caa4bf3e98dd0c211db9450b9599e1bd9976f39674c81d3e67dd6f",
+    "distribution/maintenance/Program.cs": "71b2e7a774e5fb3d90e83cd7c306578c08e1e1034d5fb4a7a8a6522e2debabdb",
+    "distribution/tests/WindowsInstallerTransferChecks.cs": "ef1e3a1411421d6da02b7fa1953bff0fceb32d09fa72683f2457885826f53c14",
+    "distribution/tests/WindowsInstallerTransactionChecks.cs": "5138ae6c9f3ee4a80507c7154fa7af1e460becb5b130cb2f07f9af363b4776b5",
+    "distribution/tests/Program.cs": "cdf1dd081e7eddf87258f6f3f8c97728aad781c9ca3560418db1d3a7994cff93",
+    "distribution/tests/Launcher.Contracts.csproj": "745531b523fc3f23a33d5994ca43872f6259c38100b1061b4af6ec8bd3dff796"
+  }
+}

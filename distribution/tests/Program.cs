@@ -13,6 +13,9 @@ if (args.SequenceEqual(new[] { "--mac-recovery" })) { await MacRecoveryChecks.Ru
 if (args.Length == 2 && args[0] == "--windows-watch-child") { await WindowsStartupWatchChecks.Child(args[1]); return; }
 if (args.Length == 4 && args[0] == "--installer-crash-fixture") { WindowsInstallerTransactionChecks.Crash(args[1], args[2], args[3]); return; }
 if (args.SequenceEqual(new[] { "--windows-installer-registration" })) { WindowsInstallerRegistrationChecks.Run(); return; }
+if (args.Length == 3 && args[0] == "--installer-transfer-crash") { WindowsInstallerTransferChecks.Crash(args[1],args[2]); return; }
+if (args.SequenceEqual(new[] { "--windows-installer-transfer-native" })) { WindowsInstallerTransferChecks.Native(); return; }
+if (args.SequenceEqual(new[] { "--windows-installer-transfer" })) { WindowsInstallerTransferChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--windows-installer-transaction" })) { WindowsInstallerTransactionChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--windows-startup-watch" })) { await WindowsStartupWatchChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--windows-recovery" })) { WindowsRecoveryChecks.Run(); return; }

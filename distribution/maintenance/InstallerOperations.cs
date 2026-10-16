@@ -91,12 +91,12 @@ static partial class Maintenance
         }
         if(action is not("plan" or "version")&&caller==null)throw new IOException("Live installer owner required");
         GuardInstallerOwner(root,caller);
-        var transaction=new WindowsInstallerTransaction(root,config,CreateRecoveryDirectory,CreateRecoveryFile);
+        var transaction=new WindowsInstallerTransaction(root,config,CreateRecoveryDirectory,CreateRecoveryFile,checkpoint:p=>{if(p=="transfer-prepared")CheckNoProcesses(root);},createReady:CreateStartupMarker);
         var registration=new WindowsInstallerRegistration(root,CreateRecoveryFile);
         var slot=root+".installer";if(Directory.Exists(slot))InstallerTree(slot);
         if(action=="resume")
         {
-            ResumeInstaller(root,transaction,registration);return 0;
+            ResumeInstaller(root,transaction,registration);ResumeInterruptedUpdate(root,config);return 0;
         }
         RegisteredRoot(root);
         switch(action)
@@ -104,13 +104,8 @@ static partial class Maintenance
             case "plan":case "version":
                 InstallerRoot(root);var plan=WindowsInstallerPlan.Inspect(root,config);Console.Write(action=="plan"?plan.Mode:plan.InstalledVersion??"");return 0;
             case "begin":
-                ResumeInstaller(root,transaction,registration);RegisteredRoot(root);InstallerRoot(root);
+                ResumeInstaller(root,transaction,registration);ResumeInterruptedUpdate(root,config);RegisteredRoot(root);InstallerRoot(root);
                 var current=WindowsInstallerPlan.Inspect(root,config);
-                // Retained startup backups need an explicit transfer before enabling this edge.
-                // Refuse rather than erase an unconfirmed known-good release during installer replacement.
-                var startupState=Path.Combine(root,"maintenance","recovery","state.json");
-                if(File.Exists(startupState))
-                {using var state=JsonDocument.Parse(ReadBoundedText(startupState,131072));if(state.RootElement.GetProperty("Attempt").ValueKind!=JsonValueKind.Null)throw new IOException("В установке сохранена резервная версия после обновления. Повторная установка пока недоступна; файлы не изменены.");}
                 transaction.Begin(current.InstalledVersion);WriteInstallerOwner(root,caller!);
                 using(var machine=RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,RegistryView.Registry64))
                 using(var key=machine.OpenSubKey(ProductKey))
@@ -143,6 +138,13 @@ static partial class Maintenance
                 registration.Remove();RemoveInstallerOwner(root);transaction.ClearSettled();return 0;
             default:throw new ArgumentException("Unknown installer action");
         }
+    }
+    static void ResumeInterruptedUpdate(string root,LauncherConfig config)
+    {
+        if(!File.Exists(Path.Combine(root,"maintenance","recovery","state.json")))return;
+        InstallerTree(root);
+        var recovery=new WindowsRecoveryStore(root,config,CreateRecoveryDirectory,CreateRecoveryFile,CreateStartupMarker);
+        if(recovery.Read().Attempt is {Phase:"capturing" or "prepared" or "restoring"})recovery.Restore();
     }
     static void ResumeInstaller(string root,WindowsInstallerTransaction transaction,WindowsInstallerRegistration registration)
     {
