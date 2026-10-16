@@ -95,7 +95,7 @@ namespace StarTournament.ProvingGround
         void TextEntryCharacter(char c)
         {if(!textEntryPanel||Time.frameCount<=textOpenedFrame||char.IsControl(c))return;textDraft.Insert(c);menuDevice=textKeyboard;textUsingPad=false;textCharacterFrame=Time.frameCount;menuGamepadCursor=false;RefreshTextEntry();}
         void UpdateTextEntryCursor()
-        {if(textEntryPanel){menuGamepadCursor=textUsingPad;Cursor.visible=!textUsingPad;RefreshTextEntry();}}
+        {if(textEntryPanel){if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);}else{menuGamepadCursor=textUsingPad;Cursor.visible=!textUsingPad;}RefreshTextEntry();}}
         void RefreshTextEntry()
         {
             int start=Mathf.Max(0,textDraft.Caret-32),end=Mathf.Min(textDraft.Text.Length,textDraft.Caret+32);

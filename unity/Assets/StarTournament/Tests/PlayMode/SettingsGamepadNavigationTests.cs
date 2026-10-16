@@ -139,6 +139,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Cursor.visible,Is.False);
             Assert.That(Cursor.lockState,Is.EqualTo(CursorLockMode.None));
             yield return null;Assert.That(Cursor.visible,Is.False,"Idle frames keep gamepad mode");
+            var onFocus=typeof(ProvingGround).GetMethod("OnApplicationFocus",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            string beforeFocus=Focus;
+            onFocus.Invoke(ground,new object[]{false});
+            Assert.That(Cursor.visible,Is.True,"Losing window focus immediately releases the menu cursor");
+            Assert.That(Cursor.lockState,Is.EqualTo(CursorLockMode.None));Assert.That(Focus,Is.EqualTo(beforeFocus));
+            InputSystem.QueueStateEvent(pad,new GamepadState { leftStick=Vector2.up });yield return null;yield return null;
+            Assert.That(Cursor.visible,Is.True,"Background pad input cannot hide the released cursor");
+            Assert.That(Cursor.lockState,Is.EqualTo(CursorLockMode.None));
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            onFocus.Invoke(ground,new object[]{true});yield return null;
+            Assert.That(Cursor.visible,Is.True,"Regaining focus alone does not hide the cursor");
+            yield return Press(GamepadButton.DpadDown);Assert.That(Cursor.visible,Is.False,"Real pad navigation can take ownership again");
             InputSystem.QueueStateEvent(cursorMouse,new MouseState { position=new Vector2(40,40),delta=new Vector2(10,5) });
             yield return null;yield return null;
             Assert.That(Cursor.visible,Is.True,"Mouse movement restores the cursor");

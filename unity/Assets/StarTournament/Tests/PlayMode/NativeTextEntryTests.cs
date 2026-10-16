@@ -66,6 +66,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Open,Is.False);Assert.That(field.text,Is.EqualTo("Пилот"));Assert.That(changes,Is.Zero);Assert.That(ends,Is.Zero);
             Assert.That(Focus,Is.EqualTo(field.name));Assert.That(EventSystem.current.sendNavigationEvents,Is.True);
         }
+        [UnityTest] public IEnumerator TextEntryReleasesCursorOnFocusLossWithoutDroppingDraft()
+        {
+            yield return Load();B("main-action-3").onClick.Invoke();var field=F("profile-name-input");field.text="Пилот";
+            yield return Edit(field);yield return Press(pad,GamepadButton.South);
+            Assert.That(Cursor.visible,Is.False);string draft=Draft,focus=Focus;
+            var callback=typeof(ProvingGround).GetMethod("OnApplicationFocus",BindingFlags.Instance|BindingFlags.NonPublic);
+            callback.Invoke(ground,new object[]{false});
+            Assert.That(Cursor.visible,Is.True);Assert.That(Cursor.lockState,Is.EqualTo(CursorLockMode.None));
+            for(int i=0;i<3;i++)yield return null;
+            Assert.That(Cursor.visible,Is.True,"Text-entry cursor ownership must also yield while the window is unfocused");
+            Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo(draft));Assert.That(Focus,Is.EqualTo(focus));Assert.That(field.text,Is.EqualTo("Пилот"));
+            callback.Invoke(ground,new object[]{true});yield return null;
+            Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo(draft));Assert.That(Focus,Is.EqualTo(focus));
+            yield return Press(pad,GamepadButton.East);Assert.That(Open,Is.False);Assert.That(field.text,Is.EqualTo("Пилот"));
+        }
         [UnityTest] public IEnumerator KeyboardHandoverAndApplyUseExistingProfilePersistence()
         {
             yield return Load();B("main-action-3").onClick.Invoke();var field=F("profile-name-input");field.text="";

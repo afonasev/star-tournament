@@ -643,8 +643,8 @@ namespace StarTournament.ProvingGround
         }
         void OnApplicationFocus(bool focus)
         {
-            musicFocused=focus;
-            if(!focus){input.Clear();Session?.ClearInput();}
+            musicFocused=focus;menuWindowFocused=focus;
+            if(!focus){menuGamepadCursor=false;SetCursor(false);input.Clear();Session?.ClearInput();}
             if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
@@ -954,9 +954,10 @@ namespace StarTournament.ProvingGround
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); FocusSetupStep(); }
         static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
-        bool menuGamepadCursor;
+        bool menuGamepadCursor,menuWindowFocused=true;
         void UpdateMenuCursor()
         {
+            if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);return;}
             if(phase==Phase.Running || phase==Phase.Loading)return;
             foreach(var pad in Gamepad.all)
             {
