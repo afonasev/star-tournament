@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace StarTournament.ProvingGround.Editor
@@ -12,6 +13,58 @@ namespace StarTournament.ProvingGround.Editor
     {
         const string CatalogPath="Assets/StarTournament/Resources/LabReleaseCatalog.json";
         static LabBundle Baseline()=>UnityEngine.Object.FindAnyObjectByType<ProvingGround>().CaptureLabBundle();
+        [MenuItem("Star Tournament/Lab/Bootstrap authoring project")]
+        public static void BootstrapAuthoring()
+        {
+            string project=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            string target=LabProjectStorage.ResolvePath(project);
+            if(File.Exists(target)||Directory.Exists(target))throw new BuildFailedException("Author history already exists; never overwrite: "+target);
+            const string scenePath="Assets/StarTournament/Scenes/ProvingGround.unity";
+            var scene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scenePath);bool opened=!scene.isLoaded;
+            if(!opened&&scene.isDirty)throw new BuildFailedException("Save and review the scene before authoring bootstrap");
+            if(opened)scene=EditorSceneManager.OpenScene(scenePath,OpenSceneMode.Additive);
+            try
+            {
+                var owner=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+                var baseline=owner.CaptureLabAuthoringBaseline();var seed=LabReleaseCatalog.Load();
+                var history=LabProjectStorage.Open(project,baseline,seed);
+                if(history.StorageError!=null||history.ReleaseError!=null)throw new BuildFailedException(history.StorageError??history.ReleaseError);
+                if(history.Selected.Hash!=DesignLabHistory.ResolvePublishedDefault(baseline,seed).Selected.Hash)
+                    throw new BuildFailedException("Author seed differs from the reviewed packaged Default");
+                history.PersistAuthoring();
+                var reopened=LabProjectStorage.Open(project,baseline,seed);
+                if(reopened.StorageError!=null||reopened.ReleaseError!=null||reopened.Selected.Hash!=history.Selected.Hash)
+                    throw new BuildFailedException("Author history readback failed; preserve the file for inspection");
+                Debug.Log("STAR_LAB_AUTHORING_BOOTSTRAPPED "+target+" profiles="+history.Profiles.Count+" default="+history.Selected.Number+" hash="+history.Selected.Hash);
+            }
+            finally{if(opened)EditorSceneManager.CloseScene(scene,true);}
+        }
+        [MenuItem("Star Tournament/Lab/Validate authoring project")]
+        public static void ValidateAuthoring()
+        {
+            string project=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            string path=LabProjectStorage.ResolvePath(project);
+            if(!File.Exists(path))throw new BuildFailedException("Missing author history; bootstrap explicitly first");
+            const string scenePath="Assets/StarTournament/Scenes/ProvingGround.unity";
+            var scene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scenePath);bool opened=!scene.isLoaded;
+            if(!opened&&scene.isDirty)throw new BuildFailedException("Save and review the scene before authoring validation");
+            if(opened)scene=EditorSceneManager.OpenScene(scenePath,OpenSceneMode.Additive);
+            try
+            {
+                var owner=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+                var baseline=owner.CaptureLabAuthoringBaseline();var seed=LabReleaseCatalog.Load();
+                var history=LabProjectStorage.Open(project,baseline,seed);var projected=history.BuildReleaseCatalog();
+                foreach(var entry in projected.Entries)
+                {
+                    var published=seed.Entries.FirstOrDefault(e=>e.ProfileId==entry.ProfileId&&e.Revision==entry.Revision);
+                    if(published!=null&&published.Hash!=entry.Hash)throw new BuildFailedException("Published version identity changed: "+entry.ProfileId+" v"+entry.Revision);
+                }
+                var resolved=DesignLabHistory.ResolvePublishedDefault(baseline,projected);
+                if(resolved.Selected.Hash!=history.Selected.Hash)throw new BuildFailedException("Projected Default differs from the author project");
+                Debug.Log("STAR_LAB_AUTHORING_VALIDATED entries="+projected.Entries.Count+" defaultVersion="+resolved.Selected.ReleaseNumber+" effectiveHash="+resolved.Selected.Hash);
+            }
+            finally{if(opened)EditorSceneManager.CloseScene(scene,true);}
+        }
         public static void Bootstrap()
         {
             ProvingGroundBuild.Prepare();

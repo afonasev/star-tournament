@@ -35,6 +35,11 @@ namespace StarTournament.ProvingGround
         }
 
         public void ResetToRelease()=>Commit(SelectLatestDefault);
+        public void PersistAuthoring()
+        {
+            if(!authoring)throw new InvalidOperationException("Сохранение проекта доступно только авторскому клиенту");
+            Commit(_=>{});
+        }
 
         public void MarkForRelease(string profileId,int revision,bool marked)
         {
@@ -56,9 +61,17 @@ namespace StarTournament.ProvingGround
                 {
                     if(!Current(revision.Snapshot)||revision.Snapshot.Validate().Count!=0)
                         throw new InvalidOperationException("Несовместимая релизная версия: "+profile.Name+" v"+revision.Number);
+                    // Current-schema counterparts are execution views of immutable saved
+                    // package versions. Export their original identity/content, not a reused
+                    // public number with different interpreted bytes.
+                    var original=revision.ReleaseSequence>0?profile.Revisions.FirstOrDefault(r=>r.Hash==revision.ReleaseHash):null;
+                    if(revision.ReleaseSequence>0&&original==null)throw new InvalidOperationException("Исходный снимок релизной версии не найден");
+                    int number=original==null?revision.Number:revision.ReleaseNumber;
+                    if(result.Entries.Any(e=>e.ProfileId==profile.Id&&e.Revision==number))
+                        throw new InvalidOperationException("Повтор идентичности релизной версии: "+profile.Name+" v"+number);
                     result.Entries.Add(new LabReleaseEntry{Sequence=++sequence,ProfileId=profile.Id,ProfileName=profile.Name,
-                        Revision=revision.Number,Date=string.IsNullOrEmpty(revision.Date)?revision.ReleaseDate:revision.Date,
-                        Hash=revision.Hash,Snapshot=revision.Snapshot.Clone()});
+                        Revision=number,Date=original==null?revision.Date:revision.ReleaseDate,
+                        Hash=original?.Hash??revision.Hash,Snapshot=(original?.Snapshot??revision.Snapshot).Clone()});
                 }
             return result;
         }
@@ -66,6 +79,23 @@ namespace StarTournament.ProvingGround
 
     public static class LabProjectStorage
     {
+        public static string SelectProject(bool editor,bool development,string unityProjectRoot,string[] args,string qaHistory,string qaProject)
+        {
+            if(!editor&&!development)return null;
+            string selected=qaProject;
+            int index=Array.IndexOf(args,"-labProject");
+            if(string.IsNullOrEmpty(selected)&&index>=0)
+            {
+                if(index+1>=args.Length)throw new ArgumentException("-labProject требует абсолютный путь проекта Unity");
+                selected=args[index+1];
+            }
+            if(string.IsNullOrEmpty(selected))
+            {
+                if(!editor||!string.IsNullOrEmpty(qaHistory)||args.Contains("-labReview")||args.Contains("-colorIdentityReview"))return null;
+                selected=unityProjectRoot;
+            }
+            ResolvePath(selected);return Path.GetFullPath(selected);
+        }
         public static string ResolvePath(string unityProjectRoot)
         {
             if(string.IsNullOrWhiteSpace(unityProjectRoot)||!Path.IsPathFullyQualified(unityProjectRoot))

@@ -1,0 +1,144 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+using UnityEngine.UI;
+namespace StarTournament.ProvingGround.Tests.PlayMode
+{
+    public sealed class LabAuthoringRuntimeTests
+    {
+        Scene scene;ProvingGround ground;string directory,project,historyPath,qaHistory,oldHistory,oldProject;
+        LabBundle baseline;LabReleaseCatalog catalog;int marked,unmarked;byte[] packageBytes;
+        ManualResetEventSlim entered,gate;Task worker;object oldLoader;
+        static readonly FieldInfo Loader=typeof(ProvingGround).GetField("LabHistoryLoaderForTests",BindingFlags.NonPublic|BindingFlags.Static);
+        T Field<T>(string name)=>(T)typeof(ProvingGround).GetField(name,BindingFlags.NonPublic|BindingFlags.Instance).GetValue(ground);
+        Button B(string name)=>ground.GetComponentsInChildren<Button>().Single(b=>b.name==name);
+        InputField I(string name)=>ground.GetComponentsInChildren<InputField>().Single(b=>b.name==name);
+        void Click(string name)=>B(name).onClick.Invoke();
+        string PackagePath=>Path.Combine(Application.dataPath,"StarTournament/Resources/LabReleaseCatalog.json");
+        DesignLabHistory Open(bool reset=true)=>new DesignLabHistory(historyPath,baseline,releases:catalog,authoring:true,resetToLatestDefault:reset,persistMigration:false);
+        static void SaveDamage(DesignLabHistory h,float value){var draft=h.Selected.Snapshot;draft.Set("rifle.damage",value);h.Save(draft);}
+        [UnitySetUp] public IEnumerator Setup()
+        {
+            directory=Path.Combine(Path.GetTempPath(),"st-lab-runtime-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            project=Path.Combine(directory,"project");Directory.CreateDirectory(Path.Combine(project,"Assets","StarTournament"));File.WriteAllText(Path.Combine(directory,".git"),"gitdir: fixture");
+            oldHistory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");oldProject=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_PROJECT");oldLoader=Loader.GetValue(null);
+            qaHistory=Path.Combine(directory,"player-history.json");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",qaHistory);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_PROJECT",null);
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
+            ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Assert.That(Field<string>("labProjectRoot"),Is.Null,"QA history keeps the production path isolated");
+            baseline=Field<LabBundle>("historyStartupBaseline").Clone();catalog=LabReleaseCatalog.Load();packageBytes=File.ReadAllBytes(PackagePath);
+            yield return SceneManager.UnloadSceneAsync(scene);scene=default;ground=null;
+            historyPath=LabProjectStorage.ResolvePath(project);var h=Open();SaveDamage(h,31);marked=h.Selected.Number;h.MarkSelectedForRelease(true);SaveDamage(h,32);unmarked=h.Selected.Number;
+        }
+        IEnumerator LoadAuthor()
+        {
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_PROJECT",project);
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
+            ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+        }
+        IEnumerator SelectRevision(int number)
+        {
+            Click("lab-revision-select");yield return null;Click("revision-"+number);
+            float deadline=Time.realtimeSinceStartup+120;
+            while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            yield return null;
+        }
+        [UnityTest] public IEnumerator StartupUsesProjectDefaultAndSaveWritesOnlyProjectForNextGame()
+        {
+            var bytes=File.ReadAllBytes(historyPath);yield return LoadAuthor();
+            Assert.That(ground.IsReady,Is.True);Assert.That(ground.IsLabHistoryReady,Is.True);Assert.That(ground.IsLabHistoryLoading,Is.False);
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(marked));Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(31));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath),"Startup must not persist a different last selection");
+            Click("main-action-2");yield return null;
+            Assert.That(I("input-rifle.damage").interactable,Is.True);Assert.That(B("lab-delete").interactable,Is.False);Assert.That(B("lab-release").interactable,Is.True);
+            I("input-rifle.damage").text="33";yield return null;Click("lab-save");yield return null;
+            var stored=Open(false);Assert.That(stored.Selected.Number,Is.EqualTo(unmarked+1));Assert.That(stored.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(33));
+            Assert.That(stored.Selected.ReleaseCandidate,Is.False);Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(stored.Selected.Number));
+            Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(31),"Saved version applies to next game, not the current owners mid-edit");
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-identity").text,Does.Contain("DesignLab/authoring-history-v1.json"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-status").text,Does.Contain("Git commit/push не выполнялся"));
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/runtime"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"05-author-save.png"),1600,900);
+            Click("lab-back");yield return null;Click("main-action-0");yield return null;
+            Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(33));Assert.That(Open().Selected.Number,Is.EqualTo(marked));
+            Assert.That(File.Exists(qaHistory),Is.False);CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
+        [UnityTest] public IEnumerator SeededProjectDisplaysOriginalSavedVersionAndDoesNotWriteOnStartup()
+        {
+            File.Delete(historyPath);var expected=DesignLabHistory.ResolvePublishedDefault(baseline,catalog).Selected;
+            yield return LoadAuthor();var selected=Field<DesignLabHistory>("labHistory").Selected;
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(expected.ReleaseNumber));
+            Assert.That(ground.ActiveLabReference.Hash,Is.EqualTo(expected.Hash));Assert.That(File.Exists(historyPath),Is.False);
+            Click("main-action-2");yield return null;
+            Assert.That(B("lab-revision-select").GetComponentInChildren<Text>().text,Does.StartWith("v"+expected.ReleaseNumber+"-"));
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(selected.ReleaseNumber));
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/runtime"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"05-project-startup-saved-identity.png"),1600,900);
+            Assert.That(File.Exists(historyPath),Is.False);
+            CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
+        [UnityTest] public IEnumerator MissingDefaultKeepsLabEditableAndFlagsOrRenameDoNotActivatePreviousExperiment()
+        {
+            var h=Open(false);
+            foreach(var r in h.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Where(r=>r.ReleaseCandidate))h.MarkForRelease(DesignLabHistory.ReleaseId,r.Number,false);
+            h.Create("Previous experiment");string experiment=h.SelectedProfileId;var bytes=File.ReadAllBytes(historyPath);
+            yield return LoadAuthor();var fallback=ground.ActiveLabReference;
+            Assert.That(fallback.ProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));Assert.That(Field<bool>("authorStartupResolved"),Is.False);
+            Click("main-action-0");yield return null;Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Lab"));
+            Assert.That(Field<DesignLabHistory>("labHistory").SelectedProfileId,Is.EqualTo(experiment));
+            Assert.That(I("input-rifle.damage").interactable,Is.True);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-status").text,Does.Contain("Отметьте"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-identity").text,Does.Contain("Стартовая версия проекта не выбрана"));
+            Click("lab-release");yield return null;Click("lab-rename");yield return null;I("lab-profile-name").text="Renamed experiment";Click("submit");yield return null;
+            Assert.That(ground.ActiveLabReference.Matches(fallback),Is.True);Assert.That(Field<bool>("authorStartupResolved"),Is.False);
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/runtime"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"05-missing-default-720p.png"),1280,720);
+            Click("lab-profile-select");yield return null;Click("profile-"+DesignLabHistory.ReleaseId);
+            float deadline=Time.realtimeSinceStartup+120;while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
+            Click("lab-release");yield return null;Assert.That(Field<DesignLabHistory>("labHistory").ReleaseError,Is.Null);
+            Click("lab-reset-release");yield return null;Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(unmarked));
+            Assert.That(Field<bool>("authorStartupResolved"),Is.True);CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
+        [UnityTest] public IEnumerator ReleaseResetGuardsDraftAndPreservesEverySavedRevision()
+        {
+            yield return LoadAuthor();Click("main-action-2");yield return null;
+            yield return SelectRevision(unmarked);Click("lab-release");yield return null;yield return SelectRevision(marked);
+            var before=Open(false);var hashes=before.Profiles.SelectMany(p=>p.Revisions.Select(r=>p.Id+"/"+r.Number+"/"+r.Hash)).ToArray();var bytes=File.ReadAllBytes(historyPath);
+            I("input-rifle.damage").text="33";yield return null;Click("lab-reset-release");yield return null;
+            Assert.That(B("discard-change-rifle.damage"),Is.Not.Null);Click("cancel");yield return null;Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));Click("lab-reset-release");yield return null;Click("confirm");yield return null;
+            Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(unmarked));Assert.That(I("input-rifle.damage").text,Is.EqualTo("32"));
+            Assert.That(Open(false).Profiles.SelectMany(p=>p.Revisions.Select(r=>p.Id+"/"+r.Number+"/"+r.Hash)),Is.EquivalentTo(hashes));
+        }
+        [UnityTest] public IEnumerator AuthorHistoryIsCriticalAndUnloadCancelsItsReadWithoutWriting()
+        {
+            entered=new ManualResetEventSlim();gate=new ManualResetEventSlim();
+            Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> load=(p,b,c,t)=>{entered.Set();gate.Wait(t);return new DesignLabHistory(p,b,releases:c,authoring:true,persistMigration:false);};
+            Loader.SetValue(null,load);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_PROJECT",project);var bytes=File.ReadAllBytes(historyPath);
+            yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");
+            ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+            float deadline=Time.realtimeSinceStartup+120;while(!entered.IsSet){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            Assert.That(ground.IsReady,Is.False);Assert.That(ground.IsLoading,Is.True);worker=Field<Task<DesignLabHistory>>("historyLoading");
+            yield return SceneManager.UnloadSceneAsync(scene);scene=default;
+            while(!worker.IsCompleted){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            Assert.That(worker.IsCanceled,Is.True);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+        }
+        [UnityTearDown]public IEnumerator Cleanup()
+        {
+            if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);
+            gate?.Set();Loader.SetValue(null,oldLoader);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",oldHistory);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_PROJECT",oldProject);
+            if(worker!=null){float deadline=Time.realtimeSinceStartup+120;while(!worker.IsCompleted){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}}
+            gate?.Dispose();entered?.Dispose();worker=null;gate=null;entered=null;
+            if(Directory.Exists(directory))Directory.Delete(directory,true);yield return null;
+        }
+    }
+}

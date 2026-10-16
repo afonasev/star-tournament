@@ -221,11 +221,7 @@ namespace StarTournament.ProvingGround
                 }
                 setupError="Нет свободного места для "+device.displayName; RefreshInterface();
             };
-            MatchProfile.EnsureMatchDescriptors();
-            TrooperProfile.EnsureTrooperDescriptors();
-            ParticipantPaletteProfile.EnsureIdentitySurfaceDescriptors();
-            RocketEffectsProfile.EnsureRocketEffectsDescriptors();
-            Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
+            PrepareLabRegistry();
             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             yield return InitializeDesignLabAsync();
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);

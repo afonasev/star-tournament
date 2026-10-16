@@ -1,5 +1,7 @@
 # Authoring model foundation
 
+Historical foundation at4f4c4379; later `../runtime/` evidence now records actual Editor wiring and Git-tracked initial data. Missing-integration statements below describe that earlier slice.
+
 This slice adds the production C# model and project-path service; it does not yet switch the Editor/Player runtime to author mode or deliver Git-tracked initial author data. Existing production startup continues to use packaged catalogue/local history.
 
 `DesignLabHistory(...authoring:true)` makes saved package/Default profiles editable while Default remains undeletable. The package seeds an absent author file once, importing in version order and keeping original package provenance. Existing author files own names, deletions and flags; reload does not reapply package flags. Automatic in-memory compatibility adaptation does not rebind author flags. Original snapshots/hashes remain in the history.

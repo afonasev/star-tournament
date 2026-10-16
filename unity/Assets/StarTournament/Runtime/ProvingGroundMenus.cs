@@ -291,6 +291,7 @@ namespace StarTournament.ProvingGround
         }
         void OpenSetup()
         {
+            if(labProjectRoot!=null&&!authorStartupResolved){OpenDesignLab();return;}
             ApplySavedLabRevision();Configuration=NativeMatchConfiguration.Default(MatchProfile);fps.RestoreGeneralPreference();
             phase=Phase.Setup;SetupMode=NativeMatchMode.Ffa;ApplyModeTarget();lastBotDifficulty=(int)NativeBotDifficulty.Normal;setupStep=setupMaxStep=0;setupError=null;pendingSeat=-1;rosterEditing=-1;
             input.Reset();input.SetActiveSeatCount(1);

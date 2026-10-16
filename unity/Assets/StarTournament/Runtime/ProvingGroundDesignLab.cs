@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround
     {
         DesignLabHistory labHistory; LabBundle labDraft,labBaseline;
         ScrollRect labTreeScroll,labFieldsScroll; Transform labTree,labFields;
-        Text labIdentity,labStatus,labHint,labFieldsTitle; Button labSave,labDelete,labBack,labProfileSelector,labRevisionSelector,labRelease,labCreate,labRename;
+        Text labIdentity,labStatus,labHint,labFieldsTitle; Button labSave,labDelete,labBack,labProfileSelector,labRevisionSelector,labRelease,labCreate,labRename,labResetRelease;
         InputField labSearch; GameObject labDialog; string labGroup="rifle",labQuery="",labError;
         GameObject labDialogReturn; readonly Dictionary<Selectable,bool> labDialogControls=new Dictionary<Selectable,bool>();
         bool labAllChanges; readonly Dictionary<string,string> labRaw=new Dictionary<string,string>();
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
         sealed class LabFieldView {public InputField Input;public Text Diff,Error;public Image Background;}
         public string FrozenLabIdentity {get;private set;}
         LabRevisionReference frozenLabReference;
-        string labSavedIdentity="",labSavedRevisionLabel="";
+        string labSavedIdentity="",labSavedRevisionLabel="",labActiveLabel="",labWriteMessage;
         NumericDescriptor[] labRegistry=Array.Empty<NumericDescriptor>();
         public string LabSavedIdentity=>labSavedIdentity;
         public bool LabSelectionPending=>labHistory!=null&&labHistory.Busy;
@@ -35,18 +35,29 @@ namespace StarTournament.ProvingGround
             var revision=selection.Selected;
             activeLabSnapshot=revision.Snapshot.Clone();
             activeLabReference=new LabRevisionReference{ProfileId=selection.SelectedProfileId,Revision=revision.ReleaseSequence>0?revision.ReleaseNumber:revision.Number,Hash=activeLabSnapshot.Hash()};
-            labSavedRevisionLabel=revision.Label;
-            labSavedIdentity=selection.SelectedProfileName+" · "+revision.Label+"\n"+selection.SelectedProfileId+"\nSHA256 "+revision.Hash;
+            labSavedRevisionLabel=LabRevisionLabel(selection,revision);
+            labActiveLabel=selection.SelectedProfileName+" · "+labSavedRevisionLabel;
+            labSavedIdentity=selection.SelectedProfileName+" · "+labSavedRevisionLabel+"\n"+selection.SelectedProfileId+"\nSHA256 "+revision.Hash;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
         LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
+        void PrepareLabRegistry()
+        {
+            MatchProfile.EnsureMatchDescriptors();TrooperProfile.EnsureTrooperDescriptors();
+            ParticipantPaletteProfile.EnsureIdentitySurfaceDescriptors();RocketEffectsProfile.EnsureRocketEffectsDescriptors();
+            Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
+            OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();
+        }
+        public LabBundle CaptureLabAuthoringBaseline(){PrepareLabRegistry();return CurrentLabBundle().Clone();}
+        static string LabRevisionLabel(DesignLabHistory history,LabRevision revision)=>revision.Label;
         CancellationTokenSource historyCancellation;
         Task<DesignLabHistory> historyLoading;
         LabBundle activeLabSnapshot,historyStartupBaseline;
         LabReleaseCatalog historyStartupCatalogue;
         LabRevisionReference activeLabReference;
-        string historyStartupPath,historyStartupLegacyPath,historyLoadError;
+        string historyStartupPath,historyStartupLegacyPath,historyLoadError,labProjectRoot;
+        bool authorStartupResolved;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         internal static Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> LabHistoryLoaderForTests;
 #endif
@@ -65,13 +76,17 @@ namespace StarTournament.ProvingGround
         }
         IEnumerator InitializeDesignLabAsync()
         {
-            OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
-            BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();
             // Registry v2 adds heal fields and replaces the authored basement armor paths.
             // Keep v1 histories and their immutable hashes intact; v2 starts from the new shipped baseline.
             string historyPath=Path.Combine(Application.persistentDataPath,VersionedUserData.LabHistory);
             bool useLegacyHistory=true;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            bool editor=false;
+#if UNITY_EDITOR
+            editor=true;
+#endif
+            labProjectRoot=LabProjectStorage.SelectProject(editor,true,Path.GetFullPath(Path.Combine(Application.dataPath,"..")),
+                Environment.GetCommandLineArgs(),Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY"),Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_PROJECT"));
             if(!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY")))
             {historyPath=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");useLegacyHistory=false;}
             var args=Environment.GetCommandLineArgs();int flag=Array.IndexOf(args,"-labReview");
@@ -80,6 +95,7 @@ namespace StarTournament.ProvingGround
             if(Array.IndexOf(args,"-colorIdentityReview")>=0&&colors>=0&&colors+1<args.Length)
             {historyPath=Path.Combine(args[colors+1],"qa-lab-history.json");useLegacyHistory=false;}
 #endif
+            if(labProjectRoot!=null){historyPath=LabProjectStorage.ResolvePath(labProjectRoot);useLegacyHistory=false;}
             var startupWatch=System.Diagnostics.Stopwatch.StartNew();
             historyStartupPath=historyPath;
             historyStartupLegacyPath=useLegacyHistory
@@ -90,15 +106,18 @@ namespace StarTournament.ProvingGround
             var published=DesignLabHistory.ResolvePublishedDefault(historyStartupBaseline,historyStartupCatalogue);
             CacheLabIdentity(published);labBaseline=activeLabSnapshot.Clone();labDraft=labBaseline.Clone();
             ApplySavedLabRevision();
+            if(labProjectRoot!=null)yield return LoadDesignLabHistory(true);
             Application.wantsToQuit+=ProtectLabQuit;
-            Debug.Log("Lab startup: published Default ready in "+startupWatch.Elapsed.TotalSeconds.ToString("F2",CultureInfo.InvariantCulture)+" seconds");
+            Debug.Log("Lab startup: initial configuration resolved in "+startupWatch.Elapsed.TotalSeconds.ToString("F2",CultureInfo.InvariantCulture)+" seconds");
             yield return null;
         }
-        IEnumerator LoadDesignLabHistoryInBackground()
+        IEnumerator LoadDesignLabHistoryInBackground()=>LoadDesignLabHistory(false);
+        IEnumerator LoadDesignLabHistory(bool authorStartup)
         {
-            // The first completed menu frame precedes any local-history IO.
+            // Production defers history IO until the menu. Author startup yields frames
+            // under the loading screen while the project's Default is validated.
             yield return null;
-            if(!IsReady||historyLoading!=null||labHistory!=null)yield break;
+            if((!authorStartup&&(!IsReady||labProjectRoot!=null))||historyLoading!=null||labHistory!=null)yield break;
             var watch=System.Diagnostics.Stopwatch.StartNew();
             var cancellation=new CancellationTokenSource();historyCancellation=cancellation;
             var token=cancellation.Token;
@@ -107,7 +126,7 @@ namespace StarTournament.ProvingGround
 #else
             Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> overrideLoader=null;
 #endif
-            var pending=Task.Run(()=>overrideLoader!=null?overrideLoader(historyStartupPath,historyStartupBaseline,historyStartupCatalogue,token):new DesignLabHistory(historyStartupPath,historyStartupBaseline,releases:historyStartupCatalogue,resetToLatestDefault:true,persistMigration:false,cancellationToken:token,legacyPath:historyStartupLegacyPath),token);
+            var pending=Task.Run(()=>overrideLoader!=null?overrideLoader(historyStartupPath,historyStartupBaseline,historyStartupCatalogue,token):new DesignLabHistory(historyStartupPath,historyStartupBaseline,releases:historyStartupCatalogue,resetToLatestDefault:true,persistMigration:false,cancellationToken:token,legacyPath:historyStartupLegacyPath,authoring:labProjectRoot!=null),token);
             historyLoading=pending;
             Debug.Log("Lab startup: validating local history in background");
             while(!pending.IsCompleted)yield return null;
@@ -116,6 +135,11 @@ namespace StarTournament.ProvingGround
             {
                 var loaded=pending.GetAwaiter().GetResult();
                 if(loaded.StorageError!=null)historyLoadError=loaded.StorageError;
+                else if(labProjectRoot!=null)
+                {
+                    labHistory=loaded;
+                    if(loaded.ReleaseError==null){CacheLabIdentity(loaded);ApplySavedLabRevision();authorStartupResolved=true;}
+                }
                 else if(loaded.Selected.Snapshot.Hash()!=activeLabReference.Hash)
                     historyLoadError="История Lab не соответствует опубликованному Default. Исходный файл сохранён.";
                 else labHistory=loaded;
@@ -127,7 +151,8 @@ namespace StarTournament.ProvingGround
             {
                 if(historyLoading==pending){historyLoading=null;historyCancellation=null;cancellation.Dispose();}
             }
-            // Install history only. Never apply profile values or change a live match/draft here.
+            // Production background loading never applies a match/draft. Author startup
+            // applies project Default before the menu or any match can become ready.
             if(phase==Phase.Lab)
             {
                 SetLabHistoryWaiting(false);
@@ -223,7 +248,9 @@ namespace StarTournament.ProvingGround
             var clear=LabButton(labScreen.transform,"lab-clear","Очистить",new Vector2(.46f,.785f),new Vector2(.56f,.83f),()=>GuardLabSelection(()=>{ResetLabDraft();RefreshLabWorkspace();}));
             labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.34f,.785f),new Vector2(.45f,.83f),()=>LabOperation(()=>labHistory.Save(labDraft),true));
             labSave.GetComponent<Image>().color=MenuGold;labSave.GetComponentInChildren<Text>().color=MenuInk;
-            labHint=Label(labScreen.transform,"lab-hint","",14,new Vector2(.02f,.005f),new Vector2(.98f,.055f),TextAnchor.MiddleLeft,MenuGold);
+            labResetRelease=LabButton(labScreen.transform,"lab-reset-release","Сбросить на релизный Default",new Vector2(.02f,.005f),new Vector2(.23f,.055f),()=>GuardLabSelection(()=>LabOperation(labHistory.ResetToRelease,true)));
+            labHint=Label(labScreen.transform,"lab-hint","",14,new Vector2(.25f,.005f),new Vector2(.98f,.055f),TextAnchor.MiddleLeft,MenuGold);
+            Hint(labResetRelease.gameObject,"Выбрать последнюю отмеченную версию Default из проекта или пакета. История сохраняется.");
             Hint(clear.gameObject,"Очистить: вернуть все поля к выбранной базе; история сохраняется.");Hint(labSave.gameObject,"Сохранить: добавить новую неизменяемую ревизию. Нужен изменённый черновик без ошибок.");
             labProfileSelector=LabButton(labScreen.transform,"lab-profile-select","Профиль ▾",new Vector2(.02f,.85f),new Vector2(.32f,.895f),ShowLabProfiles);
             labRevisionSelector=LabButton(labScreen.transform,"lab-revision-select","Ревизия ▾",new Vector2(.02f,.785f),new Vector2(.32f,.83f),ShowLabRevisions);
@@ -232,8 +259,8 @@ namespace StarTournament.ProvingGround
             labDelete=LabButton(labScreen.transform,"lab-delete","Удалить",new Vector2(.60f,.85f),new Vector2(.70f,.895f),()=>GuardLabSelection(()=>LabConfirm("Удалить «"+labHistory.SelectedProfileName+"»?\nРевизий: "+labHistory.SelectedProfile.Revisions.Count,"Удалить профиль",()=>LabOperation(labHistory.DeleteSelected,true))));
             Hint(labDelete.gameObject,"Удаляется целый локальный профиль после подтверждения. Профили со встроенными релизами защищены от удаления.");
             LabButton(labScreen.transform,"lab-changes","Все изменения",new Vector2(.57f,.785f),new Vector2(.71f,.83f),()=>{labAllChanges=true;labQuery="";labSearch.SetTextWithoutNotify("");RefreshLabWorkspace();});
-            labIdentity=Label(labScreen.transform,"lab-identity","",12,new Vector2(.02f,.72f),new Vector2(.98f,.745f),TextAnchor.MiddleLeft,Color.white);
-            labRelease=LabButton(labScreen.transform,"lab-release","Релизная: нет",new Vector2(.82f,.785f),new Vector2(.98f,.83f),()=>LabOperation(()=>labHistory.MarkSelectedForRelease(!labHistory.Selected.ReleaseCandidate),false));
+            labIdentity=Label(labScreen.transform,"lab-identity","",18,new Vector2(.02f,.71f),new Vector2(.98f,.73f),TextAnchor.MiddleLeft,Color.white);
+            labRelease=LabButton(labScreen.transform,"lab-release","Релизная: нет",new Vector2(.82f,.785f),new Vector2(.98f,.83f),()=>LabOperation(()=>labHistory.MarkSelectedForRelease(!labHistory.Selected.ReleaseCandidate),false,false));
             Hint(labRelease.gameObject,"Отметить сохранённую ревизию для будущего выпуска. Отметка локальная; выпуск выполняется отдельно. Правки сначала сохраните.");
             labSearch=LabInput(labScreen.transform,"lab-search","",new Vector2(.02f,.735f),new Vector2(.47f,.775f));
             labSearch.placeholder=Label(labSearch.transform,"search-placeholder","Поиск по названию, описанию или пути…",16,new Vector2(.04f,0),new Vector2(.96f,1),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
@@ -242,8 +269,8 @@ namespace StarTournament.ProvingGround
             labStatus=Label(labScreen.transform,"lab-status","",14,new Vector2(.49f,.735f),new Vector2(.98f,.775f),TextAnchor.MiddleLeft,MenuGold);
             LabButton(labScreen.transform,"lab-errors","Ошибки",new Vector2(.72f,.785f),new Vector2(.81f,.83f),ShowLabErrors);
             labTreeScroll=LabScroll(labScreen.transform,"lab-tree",new Vector2(.02f,.065f),new Vector2(.22f,.70f),out labTree);
-            labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",18,new Vector2(.24f,.695f),new Vector2(.98f,.718f),TextAnchor.MiddleLeft,MenuGold);
-            labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.24f,.065f),new Vector2(.98f,.69f),out labFields);
+            labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",18,new Vector2(.24f,.685f),new Vector2(.98f,.708f),TextAnchor.MiddleLeft,MenuGold);
+            labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.24f,.065f),new Vector2(.98f,.68f),out labFields);
         }
         void OpenDesignLab(){if(phase!=Phase.MainMenu)return;phase=Phase.Lab;if(IsLabHistoryReady){SetLabHistoryWaiting(false);ResetLabDraft();RefreshLabWorkspace();}else SetLabHistoryWaiting(true);labTreeScroll.verticalNormalizedPosition=1;labFieldsScroll.verticalNormalizedPosition=1;var group=labTree.Find("group-"+labGroup);if(group)RevealLabFocus(group.gameObject);RefreshInterface();Select(labBack);}
         void SetLabHistoryWaiting(bool waiting)
@@ -262,7 +289,7 @@ namespace StarTournament.ProvingGround
         void ResetLabDraft()
         {
             if(!IsLabHistoryReady)return;
-            labBaseline=labHistory.Selected.Snapshot;labDraft=labBaseline.Clone();CacheLabIdentity();labRaw.Clear();labError=null;
+            labBaseline=labHistory.Selected.Snapshot;labDraft=labBaseline.Clone();labRaw.Clear();labError=null;
             labRegistry=labDraft.Descriptors.Where(d=>labDraft.IsVisible(d.Path)).OrderBy(d=>GroupLabel(LabGroup(d)),StringComparer.Ordinal).ThenBy(d=>d.Path,StringComparer.Ordinal).ToArray();
         }
         IEnumerable<NumericDescriptor> LabDescriptors()=>labRegistry;
@@ -337,11 +364,14 @@ namespace StarTournament.ProvingGround
             }
             bool readOnly=labHistory.SelectedProfileReadOnly;labRename.interactable=!readOnly&&labHistory.Writable;labCreate.GetComponentInChildren<Text>().text=readOnly?"Создать копию":"Создать";
             labSave.interactable=!readOnly&&LabDirty&&issues.Count==0&&labHistory.Writable;labDelete.interactable=!labHistory.SelectedProfileProtected&&labHistory.Writable;
-            var selected=labHistory.Selected;bool shipped=labHistory.IsShipped(selected);
+            var selected=labHistory.Selected;bool shipped=!labHistory.IsAuthoring&&labHistory.IsShipped(selected);
             labRelease.interactable=!readOnly&&!LabDirty&&!shipped&&labHistory.Compatible(selected)&&labHistory.Writable;
-            labRelease.GetComponentInChildren<Text>().text=shipped?"Релизная · в клиенте":selected.ReleaseCandidate?"Релизная: да · локально":"Релизная: нет";
-            string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=labSavedRevisionLabel+" ▾";
-            labIdentity.text=labHistory.SelectedProfileProtected?"Стандартный профиль · удаление запрещено":"Локальный профиль";labStatus.text=labError??labHistory.StorageError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):"Сохранённая ревизия · нет изменений");
+            labRelease.GetComponentInChildren<Text>().text=labHistory.IsAuthoring?"В релиз: "+(selected.ReleaseCandidate?"да":"нет")+" · проект":shipped?"Релизная · в клиенте":selected.ReleaseCandidate?"Релизная: да · локально":"Релизная: нет";
+            string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=LabRevisionLabel(labHistory,selected)+" ▾";
+            labIdentity.fontSize=18;
+            labIdentity.text=(labHistory.IsAuthoring?"Файл проекта: DesignLab/authoring-history-v1.json":"Данные игрока · "+(labHistory.SelectedProfileProtected?"профиль пакета защищён":"свой профиль"))+" · "+
+                (labProjectRoot!=null&&!authorStartupResolved?"Стартовая версия проекта не выбрана":"Для следующей игры: "+labActiveLabel);
+            labStatus.text=labError??labHistory.StorageError??labHistory.ReleaseError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):labWriteMessage??"Сохранённая ревизия · нет изменений");
         }
         IEnumerator SelectLabRevision(string profile,int revision)
         {
@@ -354,10 +384,18 @@ namespace StarTournament.ProvingGround
             if(cancel){cancel.interactable=true;Select(cancel);}
             LabOperation(()=>operation.GetAwaiter().GetResult(),true);
         }
-        void LabOperation(Action action,bool reset)
+        void LabOperation(Action action,bool reset,bool activate=true)
         {
             if(!IsLabHistoryReady||labHistory.Busy)return;
-            try{action();if(reset)ResetLabDraft();else CacheLabIdentity();labError=null;CloseLabDialog();RefreshLabWorkspace();}
+            try
+            {
+                action();
+                if(activate){CacheLabIdentity();if(labHistory.IsAuthoring)authorStartupResolved=true;}
+                else if(activeLabReference?.ProfileId==labHistory.SelectedProfileId&&activeLabReference.Hash==labHistory.Selected.Hash)CacheLabIdentity();
+                if(reset)ResetLabDraft();
+                if(labHistory.IsAuthoring)labWriteMessage="Файл проекта записан · Git commit/push не выполнялся";
+                labError=null;CloseLabDialog();RefreshLabWorkspace();
+            }
             catch(Exception e)
             {
                 labError=e.Message;
@@ -395,7 +433,7 @@ namespace StarTournament.ProvingGround
             Layout((RectTransform)card,new Vector2(.12f,.14f),new Vector2(.88f,.80f));
             Layout((RectTransform)card.Find("title"),new Vector2(.04f,.87f),new Vector2(.96f,.99f));
             card.Find("title").GetComponent<Text>().fontSize=28;
-            Label(card,"discard-saved-version","Сохранённая версия "+labSavedRevisionLabel+" и история профиля останутся без изменений.",20,
+            Label(card,"discard-saved-version","Сохранённая версия "+LabRevisionLabel(labHistory,labHistory.Selected)+" и история профиля останутся без изменений.",20,
                 new Vector2(.04f,.78f),new Vector2(.96f,.86f),TextAnchor.MiddleLeft,Color.white);
             var scroll=LabScroll(card,"discard-changes",new Vector2(.04f,.30f),new Vector2(.96f,.76f),out var list);
             int index=0;
@@ -445,11 +483,11 @@ namespace StarTournament.ProvingGround
         {
             var card=LabDropdown(labRevisionSelector);var scroll=LabScroll(card,"revision-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;Button first=null;
             var revisions=labHistory.SelectedProfile.Revisions;
-            foreach(var r in revisions.Where(r=>labHistory.Compatible(r)||!labHistory.IsShipped(r)||!revisions.Any(other=>other.ReleaseSequence==r.ReleaseSequence&&labHistory.Compatible(other))).OrderByDescending(r=>r.Number)){int n=r.Number;var b=LabButton(list,"revision-"+n,r.Label+" · "+r.Hash.Substring(0,12)+(labHistory.IsShipped(r)?" · в клиенте":r.ReleaseCandidate?" · релизная (локально)":" · локальная")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(labHistory.SelectedProfileId,n))));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);if(b.interactable)first=first??b;}
+            foreach(var r in revisions.Where(r=>labHistory.Compatible(r)||!labHistory.IsShipped(r)||!revisions.Any(other=>other.ReleaseSequence==r.ReleaseSequence&&labHistory.Compatible(other))).OrderByDescending(r=>r.Number)){int n=r.Number;var b=LabButton(list,"revision-"+n,LabRevisionLabel(labHistory,r)+" · "+r.Hash.Substring(0,12)+(labHistory.IsAuthoring?(r.ReleaseCandidate?" · в релизе проекта":" · проект"):labHistory.IsShipped(r)?" · в клиенте":r.ReleaseCandidate?" · релизная (локально)":" · локальная")+(labHistory.Compatible(r)?"":" · прежняя схема"),Vector2.zero,Vector2.one,()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(labHistory.SelectedProfileId,n))));b.interactable=labHistory.Compatible(r);PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);if(b.interactable)first=first??b;}
             ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void LabNameDialog(bool rename)
-        {var card=LabDialog(rename?"Переименовать профиль":"Создать от выбранной сохранённой базы");var name=LabInput(card,"lab-profile-name",rename?labHistory.SelectedProfileName:labHistory.SelectedProfileReadOnly?labHistory.SelectedProfileName+" · копия":"Новый профиль",new Vector2(.05f,.52f),new Vector2(.95f,.605f));LabButton(card,"submit",rename?"Переименовать":"Создать",new Vector2(.60f,.15f),new Vector2(.95f,.235f),()=>{string value=name.text;if(rename)LabOperation(()=>labHistory.Rename(value),false);else GuardLabSelection(()=>LabOperation(()=>labHistory.Create(value),true));});LabButton(card,"cancel","Отмена",new Vector2(.05f,.15f),new Vector2(.55f,.235f),CloseLabDialog);SelectLabControl(name);}
+        {var card=LabDialog(rename?"Переименовать профиль":"Создать от выбранной сохранённой базы");var name=LabInput(card,"lab-profile-name",rename?labHistory.SelectedProfileName:labHistory.SelectedProfileReadOnly?labHistory.SelectedProfileName+" · копия":"Новый профиль",new Vector2(.05f,.52f),new Vector2(.95f,.605f));LabButton(card,"submit",rename?"Переименовать":"Создать",new Vector2(.60f,.15f),new Vector2(.95f,.235f),()=>{string value=name.text;if(rename)LabOperation(()=>labHistory.Rename(value),false,false);else GuardLabSelection(()=>LabOperation(()=>labHistory.Create(value),true));});LabButton(card,"cancel","Отмена",new Vector2(.05f,.15f),new Vector2(.55f,.235f),CloseLabDialog);SelectLabControl(name);}
         void UpdateDesignLab()
         {
             if(phase!=Phase.Lab||labHistory?.Busy==true)return;bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;

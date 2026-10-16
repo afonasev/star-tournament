@@ -138,6 +138,22 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(h.Profiles.Single().Revisions.Where(r=>h.Compatible(r)&&h.IsShipped(r)).All(r=>r.ReleaseCandidate),Is.True);
             Assert.That(h.Selected.Hash,Is.EqualTo(DesignLabHistory.ResolvePublishedDefault(baseline,seed).Selected.Hash));
         }
+        [Test] public void HistoricalProjectionKeepsPublishedNumbersSnapshotsAndDates()
+        {
+            baseline=WithBlood();var old=baseline.Clone();old.Profiles=old.Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList();
+            var tuned=old.Clone();tuned.Set("rifle.damage",31);seed=LabReleaseCatalog.Factory(old);seed.Entries[0].Date="20260101";
+            seed.Entries.Add(new LabReleaseEntry{Sequence=2,ProfileId=DesignLabHistory.ReleaseId,ProfileName="Default",Revision=2,Date="20260102",Hash=tuned.Hash(),Snapshot=tuned});
+            var h=Open();var output=h.BuildReleaseCatalog();
+            Assert.That(output.Entries.Select(e=>e.Revision),Is.EquivalentTo(new[]{1,2}));
+            foreach(var entry in seed.Entries)
+            {
+                var projected=output.Entries.Single(e=>e.ProfileId==entry.ProfileId&&e.Revision==entry.Revision);
+                Assert.That(projected.Hash,Is.EqualTo(entry.Hash));Assert.That(projected.Snapshot.Hash(),Is.EqualTo(entry.Snapshot.Hash()));
+                Assert.That(projected.Date,Is.EqualTo(entry.Date));
+            }
+            Assert.That(DesignLabHistory.ResolvePublishedDefault(baseline,output).Selected.Hash,Is.EqualTo(h.Selected.Hash));
+            Assert.That(File.Exists(path),Is.False);
+        }
         [Test] public void PackagedDefaultUsesRevisionOrderAndPreservesItsAuthoredName()
         {
             var v3=baseline.Clone();v3.Set("rifle.damage",31);var v2=baseline.Clone();v2.Set("rifle.damage",29);

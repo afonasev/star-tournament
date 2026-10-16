@@ -1,6 +1,6 @@
 # Lab requirements review
 
-Pin `0c2d4562683252d54736f294dc1af463050eac17` (design-lab0.2.0). Baseline `9edd6c35`; source inspection plus current draft-warning patch. This is a gap inventory, not a completion certificate. Source-review rows require final requirement-matched evidence; test presence is not a Passed result. No native/human/device acceptance inferred.
+Pin `0c2d4562683252d54736f294dc1af463050eac17` (design-lab0.2.0). Baseline `9edd6c35`; source inspection plus current draft-warning patch. Later authoring-model/ and runtime/ evidence supersede the original dev/Sequence/name findings below; updated rows identify actual Editor progress. This remains a gap inventory, not a completion certificate. Source-review rows require final requirement-matched evidence; test presence is not a Passed result. No native/human/device acceptance inferred.
 
 Authority: `Runtime/ProvingGroundDesignLab.cs`, `Core/DesignLabHistory.cs`, `Core/LabParameterStorage.cs`, `Core/LabReleaseCatalog.cs`, `Editor/LabReleaseBuild.cs`. Candidate fixtures: DesignLabWorkspaceTests, DesignLabHistoryTests, LabReleaseCatalogTests; run only affected sets after semantic changes.
 
@@ -17,16 +17,16 @@ Authority: `Runtime/ProvingGroundDesignLab.cs`, `Core/DesignLabHistory.cs`, `Cor
 | LAB-DRAFT-02 | Implemented; affected QA passed | Current patch: full diff06, scroll rows and safe cancel; guard Clear/Delete plus existing selection/leave/quit. See discard/qa-scope.md. |
 | LAB-VALIDATE-01 | Source review | LabIssues combines draft.Validate and raw input; save disabled; ShowLabErrors targets path. Complete relation validation audit pending. |
 | LAB-PROFILES-01 | Source review | DesignLabHistory.Create copies selected saved snapshot into fresh ID/version1 with no release mark. |
-| LAB-PROFILES-02 | Partial | Rename/DeleteSelected protect packaged profiles; deletion selects Default. Dev Default rename needs real dev authority. |
+| LAB-PROFILES-02 | Source + affected QA | Author Default rename and undeletable root; package edit/delete only in author role. Production protected; delete and clear guards preserve draft until consent. Native/device gate open. |
 | LAB-VERSIONS-01 | Source review | Save appends max revision+1, preserves old snapshots. No inherited release mark. Verify empty historical date handling. |
 | LAB-VERSIONS-02 | Partial | Profile chooser uses max revision; revision chooser explicit. Dev startup/reset from current author files missing. |
-| LAB-DEV-01 | Missing runtime mode | Runtime always loads packaged releases; no author mode enabling Default/packaged-profile revisions. |
-| LAB-DEV-02 | Missing | Runtime uses persistentDataPath; no Git-tracked project-authoring source/destination or honest save destination UI. |
+| LAB-DEV-01 | Editor implemented; native pending | Actual project author mode loads before menu; Default edit/rename/protection and package authority covered by model+runtime tests. Compiled dev Player not built/executed. |
+| LAB-DEV-02 | Editor + tracked source | Real unity/DesignLab/authoring-history-v1.json bootstrapped/read back and preserved in task Git; save destination/commit distinction tested. Compiled dev path unit-tested, native gate open. |
 | LAB-PROD-01 | Source review | RequireLocalProfile/SelectedProfileReadOnly and catalog rebinding protect shipped content beyond UI; copies remain local. |
-| LAB-RELEASE-01 | Partial | MarkSelectedForRelease is local-only; LabReleaseBuild.PromoteMarked appends union and cannot remove previously staged marks. Dev invalid/no-marked Default recovery missing. |
-| LAB-RELEASE-02 | Partial | SelectLatestDefault uses catalog Sequence, not explicitly highest marked Default revision. No explicit reset-to-release action; dev source missing. |
-| LAB-RELEASE-03 | Partial | Runtime marks do not publish; explicit staging separate. Need author flags stored in project and complete package generation from current flags. |
-| LAB-ACTIVE-01 | Source review | Selected saved identity cached; next match applies saved snapshot. Error paths preserve prior selection. Audit final activation/error state. |
+| LAB-RELEASE-01 | Projection implemented; staging open | Project flags and missing-Default fix route tested; detached projection preserves original published identities. Actual staging/build tooling still needs replacement of append-only union. |
+| LAB-RELEASE-02 | Editor/prod source verified | Greatest marked project Default loaded critically; highest package Revision for production; reset with discard guard tested. Physical/dev Player acceptance remains open. |
+| LAB-RELEASE-03 | Editor source verified; staging open | UI writes project file only, flags do not activate, no automatic commit/push/build/publication. Explicit package generator integration still pending. |
+| LAB-ACTIVE-01 | Affected Editor QA passed | Save/select/reset activate saved configuration for next game; viewing/cancel/flags/rename preserve active selection. Canonical saved version labels retained for interpreted package views. |
 | LAB-MATCH-01 | Source review | OpenDesignLab rejects match phase; existing workspace test freezes session DesignProfile. No live authoring extension requested. |
 | LAB-STORAGE-01 | Source review | Atomic temp/flush/publish; mutation flag; StorageError disables writes. Single launcher ownership; no multi-process-write feature claimed. |
 | LAB-UPGRADE-01 | Open implementation audit | MigrateCompatibility starts from shipped registry; verify missing values use latest marked Default rather than raw descriptor defaults and zero/false retention. |

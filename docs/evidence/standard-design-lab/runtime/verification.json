@@ -1,0 +1,74 @@
+{
+  "baseline": "4f4c4379",
+  "branch": "codex/game-standard-alignment",
+  "runs": [
+    {
+      "run": "edit",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.4819417
+    },
+    {
+      "run": "first-play",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 227.750582
+    },
+    {
+      "run": "final-spacing",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 111.230552
+    },
+    {
+      "run": "projection",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.7358804
+    },
+    {
+      "run": "saved-identity",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 40.9204476
+    },
+    {
+      "run": "default-error",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 75.0904703
+    }
+  ],
+  "unique_affected_cases_passed": 21,
+  "source_commands": {
+    "bootstrap_exit": 0,
+    "audit_exit": 0,
+    "repeat_bootstrap_expected_exit": 1
+  },
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/LabAuthoring.cs": "a30acf2aac9c1909cfc6425683dceda4330f3e36c4d6ecb29c3e102c20c18b9d",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "ab17bd5ff296513f14ca3ae16a464de50c53908843aa716d5f60cfdbf006837b",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "59c1914d66b6382f79ef469a8a3281d0493b421b58945567c47ae7df655e3db1",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "b72483dddcd272915e17fbc10c9227ab7d9395b2d0d0e0b9d2341dbd82ef2404",
+    "unity/Assets/StarTournament/Editor/LabReleaseBuild.cs": "85d81eb5cc95741e93cd5e507999b8d599c190a3e6b600ebf4dc83275910fb9c",
+    "unity/Assets/StarTournament/Tests/EditMode/LabClientStorageTests.cs": "b5d8e2887a8b8dde7fa59a643f46853136284048b54890cc6b92a7a6bd9f53e2",
+    "unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs": "6aa11aa89741d3e9cc79067ca8f35f5d069dcf18c77c09055e5d8c18d44131d9",
+    "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "1547a72b69bfd3628d5ecd71d5e1e3cec4c60e856bb60758e2460aa5c79df2d4"
+  },
+  "reviewed_png_sha256": {
+    "05-missing-default-720p.png": "d240db05f308115173009bd7c89b90eacff9a150fe427eb21c085ba91d7d6ff8",
+    "05-project-startup-saved-identity.png": "3c2b80bb75a82b69ae46511f3b44ff862b61226aad241416dbf41d679d34e42e",
+    "05-author-save.png": "16b9dcd2ee77812ac39f514adc4b96ed48f40c9b2c9470ccc049fe1134e9ca45"
+  },
+  "verification_deltas": "Initial9Edit+7Play; spacing-only2Play; original-identity projection4Edit+1Play; unresolved-caption-only1Play. No failed tests.",
+  "player_build": false,
+  "full_tests": false,
+  "release_staging_or_publication": false,
+  "compiled_dev_player_and_physical_acceptance": "NotRun"
+}

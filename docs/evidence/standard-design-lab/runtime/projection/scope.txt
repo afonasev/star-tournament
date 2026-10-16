@@ -1,0 +1,19 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabAuthoringTests.HistoricalProjectionKeepsPublishedNumbersSnapshotsAndDates;LabAuthoringTests.ProjectionIncludesAllAndOnlyMarkedSavedVersionsWithoutWritingOrSharingSnapshots;LabAuthoringTests.ProjectionPreservesKnownDatesAndDoesNotInventUnknownDates;LabAuthoringTests.HistoricalSeedKeepsDefaultVersionOrderAndOriginalPackageProvenance
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.F8Bv4O/qa-lab-history.json
+revision=4f4c43798e985b35a9c55f69e5c822f12b061e7f
+ M Assets/StarTournament/Editor/LabReleaseBuild.cs
+ M Assets/StarTournament/Runtime/Core/LabAuthoring.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Runtime/ProvingGroundMenus.cs
+ M Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/standard-design-lab/runtime/
+?? Assets/StarTournament/Tests/EditMode/LabClientStorageTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabClientStorageTests.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs
+?? Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs.meta
+?? DesignLab/

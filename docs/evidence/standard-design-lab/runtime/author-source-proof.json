@@ -1,0 +1,24 @@
+{
+  "path": "unity/DesignLab/authoring-history-v1.json",
+  "bytes": 198579,
+  "sha256": "7d417381749e93602850be2650824533b68736c9e3848cf4246aa90d8b644353",
+  "git_index_blob": "f3de1f17d2c75fc64c8e1ff93268e0e450d66256",
+  "profiles": 1,
+  "schema": 2,
+  "selected_storage_key": 4,
+  "saved_default_version": 2,
+  "effective_default_hash": "1bfe89dca8bfa0a8fe482acba37fea99c82ec1cd4feaf78e1c72c1ac923f4eb1",
+  "original_snapshots": [
+    {
+      "saved_version": 1,
+      "hash": "c1c6487e1915ed13a021756f6ca3f35f728aeb9c89fa97fe63a4472701938fd4"
+    },
+    {
+      "saved_version": 2,
+      "hash": "0ad5f6be72052bfa6f9fa4d301547c1ba9655b00faaa852e33be6d0bfdfad17f"
+    }
+  ],
+  "scene_and_package_unchanged": true,
+  "actual_readonly_source_audit": "Passed,2 entries, saved Default2, same effective configuration",
+  "repeat_bootstrap": "Expected refusal exit1, bytes unchanged"
+}
