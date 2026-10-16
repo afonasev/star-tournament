@@ -19,6 +19,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             file.Integrity=(string)typeof(DesignLabHistory).GetMethod("StorageIntegrity",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{file});
         }
+        [TestCase(0)] [TestCase(3)]
+        public void UnsupportedStorageSchemaPreservesSourceAndDisablesWrites(int schema)
+        {
+            File.WriteAllText(path,"{\"Schema\":"+schema+",\"Profiles\":[]}");
+            var bytes=File.ReadAllBytes(path);
+            var history=new DesignLabHistory(path,Small(),persistMigration:false);
+            Assert.That(history.StorageError,Is.Not.Null.And.Not.Empty);
+            Assert.Throws<IOException>(()=>history.Create("Do not replace unknown data"));
+            Assert.Throws<IOException>(()=>history.CompactStorage());
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            Assert.That(Directory.GetFiles(directory),Has.Length.EqualTo(1));
+        }
+
         [TestCase("-muted")][TestCase("-noaudio")]
         public void SilentStartupFlagDominatesAudioReviewWithoutSavingPreferences(string flag)
         {

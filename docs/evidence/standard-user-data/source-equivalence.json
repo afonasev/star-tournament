@@ -1,0 +1,84 @@
+{
+  "baseline": "edd095ae",
+  "current_runtime_revision": "01ca6df0",
+  "files": [
+    {
+      "path": "unity/Assets/StarTournament/Runtime/PlayerProfiles.cs",
+      "baseline_sha256": "3897c3ea17611f7b5228de664155b108ef221239787f7a60c8812951e89558a7",
+      "current_sha256": "3897c3ea17611f7b5228de664155b108ef221239787f7a60c8812951e89558a7",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/GamepadLookSettings.cs",
+      "baseline_sha256": "cad28d35c079ee90541c88214ea8caeebe115059a5a19613a03d5148cbcb9707",
+      "current_sha256": "cad28d35c079ee90541c88214ea8caeebe115059a5a19613a03d5148cbcb9707",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeUserPreferences.cs",
+      "baseline_sha256": "96ff078af99d2d4cc501bc97b258d4d5cda78e93872a017ba0d1a6387e33f37a",
+      "current_sha256": "96ff078af99d2d4cc501bc97b258d4d5cda78e93872a017ba0d1a6387e33f37a",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeVisualPreferences.cs",
+      "baseline_sha256": "6f8c9e080f20ca392228e63453ecf9ffc05b68e3d2c95e71843ce6f143eddaa7",
+      "current_sha256": "6f8c9e080f20ca392228e63453ecf9ffc05b68e3d2c95e71843ce6f143eddaa7",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/NativeGameAudio.cs",
+      "baseline_sha256": "27d6ffce333c8d7dceb912034d36a6a8c7a4b07ef6ac603ca943164ee06f8c3e",
+      "current_sha256": "27d6ffce333c8d7dceb912034d36a6a8c7a4b07ef6ac603ca943164ee06f8c3e",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs",
+      "baseline_sha256": "9c7699876598272b8579f3390c1de6dea3ef456443985b17f8bc69de55b6e4b0",
+      "current_sha256": "9c7699876598272b8579f3390c1de6dea3ef456443985b17f8bc69de55b6e4b0",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundSetupNavigation.cs",
+      "baseline_sha256": "d1bfff53cfdab4dd7b90454bf1b1e1946a37d7a7e1dbc0cc7fffef25c5264632",
+      "current_sha256": "d1bfff53cfdab4dd7b90454bf1b1e1946a37d7a7e1dbc0cc7fffef25c5264632",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs",
+      "baseline_sha256": "270c503a6003452599a8d9d1fc7e325062843b5ccb6e089d10c5ef95832d9b2a",
+      "current_sha256": "270c503a6003452599a8d9d1fc7e325062843b5ccb6e089d10c5ef95832d9b2a",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/FpsDisplay.cs",
+      "baseline_sha256": "797269a7af1f46475d2d4e01567468d6333ed0fd4ef20da225e59dd08f068b61",
+      "current_sha256": "797269a7af1f46475d2d4e01567468d6333ed0fd4ef20da225e59dd08f068b61",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/MouseSensitivityPreference.cs",
+      "baseline_sha256": "c1a6c2f29f962ab0175bbf840a5c3e8fee8b6b468e49888c4b9898dba62684f3",
+      "current_sha256": "c1a6c2f29f962ab0175bbf840a5c3e8fee8b6b468e49888c4b9898dba62684f3",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs",
+      "baseline_sha256": "2548937fb949c72eaa91dbbb176466fa728f0a42d673726745f044b7394faa56",
+      "current_sha256": "2548937fb949c72eaa91dbbb176466fa728f0a42d673726745f044b7394faa56",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LabParameterStorage.cs",
+      "baseline_sha256": "037161e99f4fa6c01b8d4ce492f850de07b9e86164499a5c17355dec2e87088e",
+      "current_sha256": "037161e99f4fa6c01b8d4ce492f850de07b9e86164499a5c17355dec2e87088e",
+      "identical": true
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/NativeBotReactionPreferences.cs",
+      "baseline_sha256": "92bd4c04803fb4d1da7b75388597c99b6e5f59c7c107b2cdaa7dc5e9ba88d634",
+      "current_sha256": "92bd4c04803fb4d1da7b75388597c99b6e5f59c7c107b2cdaa7dc5e9ba88d634",
+      "identical": true
+    }
+  ]
+}
