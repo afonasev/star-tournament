@@ -68,8 +68,9 @@ public sealed class StartupRecovery
         var state = Read();
         if (state.Attempt is { } attempt && installed != attempt.Previous && installed != attempt.Target)
             throw new IOException("Installed release is outside the recovery transaction");
-        if (state.Attempt is { Phase: "confirmed" } confirmed && installed != confirmed.Target)
-            throw new IOException("Confirmed release no longer matches installed payload; retain backup");
+        if (state.Attempt is { Phase: "confirmed" } confirmed && installed != confirmed.Target ||
+            state.Attempt is { Phase: "restored" } restored && installed != restored.Previous)
+            throw new IOException("Confirmed/restored release no longer matches installed payload; retain backup");
         if (state.Launch != null)
         {
             Fail(state, "Запуск прерван до подтверждения готовности меню.");
@@ -133,16 +134,17 @@ public sealed class StartupRecovery
         var state = Read();
         if (state.Attempt is not { Phase: "recovery-required" } attempt || attempt.Previous != installed || attempt.BackupId != backupId)
             throw new InvalidOperationException("Restore must match the retained snapshot and previous release");
-        Write(state with { HealthyVersion = installed, Attempt = null, Launch = null });
+        Write(state with { HealthyVersion = installed, Attempt = attempt with { Phase = "restored" }, Launch = null });
         // Target stays blocked. Never clear it just because old files were restored.
     }
 
-    /// <summary>Only AFTER successful ready AND deletion of this confirmed backup by the supervisor.</summary>
+    /// <summary>Only AFTER successful ready or verified restore AND deletion of that backup by the supervisor.</summary>
     public void ConfirmBackupRemoved(string backupId)
     {
         var state = Read();
-        if (state.Attempt is not { Phase: "confirmed" } attempt || attempt.BackupId != backupId || state.HealthyVersion != attempt.Target)
-            throw new InvalidOperationException("An unconfirmed backup must be retained");
+        if (state.Attempt is not { } attempt || attempt.Phase is not ("confirmed" or "restored") || attempt.BackupId != backupId ||
+            state.HealthyVersion != (attempt.Phase == "confirmed" ? attempt.Target : attempt.Previous))
+            throw new InvalidOperationException("An unconfirmed/unrestored backup must be retained");
         Write(state with { Attempt = null });
     }
 
@@ -178,11 +180,11 @@ public sealed class StartupRecovery
             {
                 Version(attempt.Previous); Version(attempt.Target);
                 if (SemanticVersion.Parse(attempt.Target) <= SemanticVersion.Parse(attempt.Previous) || !Token(attempt.BackupId) ||
-                    attempt.Phase is not ("prepared" or "starting" or "confirmed" or "recovery-required") ||
+                    attempt.Phase is not ("prepared" or "starting" or "confirmed" or "recovery-required" or "restored") ||
                     attempt.Failure?.Length > 2048) throw new InvalidOperationException();
                 if (attempt.Phase == "starting" ? state.Launch?.Version != attempt.Target : state.Launch != null) throw new InvalidOperationException();
                 if (state.HealthyVersion != (attempt.Phase == "confirmed" ? attempt.Target : attempt.Previous)) throw new InvalidOperationException();
-                if (attempt.Phase == "recovery-required" ? !state.BlockedVersions.Contains(attempt.Target) || string.IsNullOrWhiteSpace(attempt.Failure) : state.BlockedVersions.Contains(attempt.Target) || attempt.Failure != null)
+                if (attempt.Phase is "recovery-required" or "restored" ? !state.BlockedVersions.Contains(attempt.Target) || string.IsNullOrWhiteSpace(attempt.Failure) : state.BlockedVersions.Contains(attempt.Target) || attempt.Failure != null)
                     throw new InvalidOperationException();
             }
         }

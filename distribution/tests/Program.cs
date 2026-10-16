@@ -5,6 +5,8 @@ using Velopack;
 using Velopack.Logging;
 
 if (args.SequenceEqual(new[] { "--startup-recovery" })) { StartupRecoveryChecks.Run(); return; }
+if (args.Length == 3 && args[0] == "--payload-crash-fixture") { PayloadRecoveryChecks.CrashFixture(args[1], args[2]); return; }
+if (args.SequenceEqual(new[] { "--payload-recovery" })) { PayloadRecoveryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--feedback" })) { await UpdateFeedbackChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--release-history" })) { await UpdateSessionChecks.Run(); await ReleaseHistoryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--update-session" })) { await UpdateSessionChecks.Run(); return; }

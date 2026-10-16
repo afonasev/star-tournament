@@ -79,6 +79,8 @@ static class StartupRecoveryChecks
                 Prepare(log); var reopened = new StartupRecovery(path, Identity); reopened.RecoverInterrupted("1.0.0");
                 Require(reopened.IsBlocked("1.1.0")); reopened.MarkRestored("1.0.0", Backup);
                 Require(reopened.IsBlocked("1.1.0") && reopened.Read().HealthyVersion == "1.0.0");
+                Require(reopened.Read().Attempt?.Phase == "restored");
+                reopened.ConfirmBackupRemoved(Backup);
                 Reject(() => reopened.Prepare("1.0.0", "1.1.0", Backup));
                 reopened.Prepare("1.0.0", "1.2.0", Backup); // A different release remains eligible.
             });
@@ -96,7 +98,9 @@ static class StartupRecoveryChecks
                 Reject(() => log.MarkRestored("1.0.0", new string('e',32)));
                 log.MarkRestored("1.0.0", Backup);
                 var reopened = new StartupRecovery(path, Identity);
-                Require(reopened.Read().Attempt == null && reopened.IsBlocked("1.1.0"));
+                Require(reopened.Read().Attempt?.Phase == "restored" && reopened.IsBlocked("1.1.0"));
+                Reject(() => reopened.PermitRetry("1.1.0"));
+                reopened.ConfirmBackupRemoved(Backup);
                 reopened.PermitRetry("1.1.0");
                 reopened.Prepare("1.0.0", "1.1.0", new string('f',32));
             });
@@ -205,7 +209,7 @@ static class StartupRecoveryChecks
             });
             Test("failed target set is retained across subsequent upgrades", (log, _) =>
             {
-                Prepare(log); log.InstallationFailed("1.1.0","error"); log.MarkRestored("1.0.0",Backup);
+                Prepare(log); log.InstallationFailed("1.1.0","error"); log.MarkRestored("1.0.0",Backup); log.ConfirmBackupRemoved(Backup);
                 log.Prepare("1.0.0","1.2.0",Backup); var ticket=log.BeginLaunch("1.2.0",Now.AddMinutes(1));
                 Require(log.AcceptReady(Ready(ticket),Now)); log.ConfirmBackupRemoved(Backup);
                 Require(log.IsBlocked("1.1.0") && !log.IsBlocked("1.2.0"));
@@ -236,6 +240,15 @@ static class StartupRecoveryChecks
                     state with { Launch=new("1.0.0",Backup,long.MaxValue) },
                     state with { BlockedVersions=["1.0.0"] } })
                 { File.WriteAllText(path,JsonSerializer.Serialize(bad)); Reject(() => log.Read()); }
+            });
+            Test("restored backup stays recorded until cleanup acknowledgement", (log,path) =>
+            {
+                Prepare(log);log.InstallationFailed("1.1.0","error");log.MarkRestored("1.0.0",Backup);
+                var reopened=new StartupRecovery(path,Identity);reopened.RecoverInterrupted("1.0.0");
+                Require(reopened.Read().Attempt?.BackupId==Backup&&reopened.Read().Attempt?.Phase=="restored");
+                Reject(()=>reopened.RecoverInterrupted("1.1.0"));
+                Reject(()=>reopened.ConfirmBackupRemoved(new string('f',32)));
+                reopened.ConfirmBackupRemoved(Backup);Require(reopened.Read().Attempt==null&&reopened.IsBlocked("1.1.0"));
             });
             Console.WriteLine($"Startup recovery: {passed} passed");
         }
