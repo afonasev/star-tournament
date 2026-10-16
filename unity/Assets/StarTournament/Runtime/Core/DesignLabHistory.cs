@@ -186,10 +186,12 @@ namespace StarTournament.ProvingGround
         string DisplayName(LabHistoryProfile profile)=>!authoring&&releases==null&&profile.Id==ReleaseId&&profile.Name=="Опубликованный профиль"?"Default":profile.Name;
         public IReadOnlyList<LabHistoryProfile> Profiles=>data.Profiles.Select(DisplayProfile).ToList();
         public string SelectedProfileId=>data.SelectedId;
+        static int SavedVersionNumber(LabRevision revision)=>revision.ReleaseSequence>0?revision.ReleaseNumber:revision.Number;
         public int LatestAvailableRevision(string profileId)
         {
             var profile=data.Profiles.Single(p=>p.Id==profileId);
-            var saved=profile.Revisions.Where(r=>r.CompatibilitySourceNumber==0).OrderByDescending(r=>r.Number).First();
+            var saved=profile.Revisions.Where(r=>r.CompatibilitySourceNumber==0).OrderByDescending(SavedVersionNumber)
+                .ThenByDescending(r=>Current(r.Snapshot)).ThenByDescending(r=>r.Number).First();
             if(Current(saved.Snapshot))return saved.Number;
             return profile.Revisions.SingleOrDefault(r=>r.CompatibilitySourceNumber==saved.Number&&r.CompatibilitySourceHash==saved.Hash)?.Number??saved.Number;
         }
@@ -870,7 +872,11 @@ namespace StarTournament.ProvingGround
             if(draft.Descriptors.Any(d=>!draft.IsEditable(d.Path)&&draft.Get(d.Path)!=baseline.Get(d.Path)))throw new ArgumentException("Read-only metadata cannot be saved");
             if(draft.Validate().Count!=0)throw new ArgumentException("Черновик содержит ошибки");
             if(draft.Hash()==Selected.Hash)throw new ArgumentException("Нет изменений");
-            Commit(f=>{var p=f.Profiles.Single(x=>x.Id==f.SelectedId);int n=p.Revisions.Max(r=>r.Number)+1;
+            Commit(f=>{var p=f.Profiles.Single(x=>x.Id==f.SelectedId);
+                // Public package numbers and technical storage keys need not coincide.
+                // Reserve both: a new authored save must follow every saved version,
+                // even if public v7 was deduplicated into physical row1.
+                int n=Math.Max(p.Revisions.Max(r=>r.Number),p.Revisions.Where(r=>r.CompatibilitySourceNumber==0).Max(SavedVersionNumber))+1;
                 p.Revisions.Add(Revision(draft,n,DateTime.Now.ToString("yyyyMMdd")));f.SelectedRevision=n;});
         }
         public void Create(string name)

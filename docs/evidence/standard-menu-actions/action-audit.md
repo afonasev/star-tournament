@@ -4,8 +4,8 @@ Baseline: codex/game-standard-alignment@7830e481. game-spec-templates@60fe3d2787
 
 | Экран / source | Вывод | Предлагаемое изменение / доказательство |
 | --- | --- | --- |
-| Main, ProvingGroundMenus.CreateMenuUi | Действия различаются: бой, сеть, Lab, профили, настройки, выход. Причина disabled сети указана | Нового визуального изменения для этих подписей не требуется по source review; фактическая полная acceptance отдельно |
-| Lab boolean, CreateLabField | Две кнопки bool-off/bool-on задают один обратимый boolean |20: один checkbox со shape/check и текстом текущего состояния;0/1 и draft-only contract прежние |
+| Main, ProvingGroundMenus.CreateModernMenuUi | Действия различаются: бой, сеть, Lab, профили, настройки, выход. Причина disabled сети указана | Нового визуального изменения для этих подписей не требуется по source review; фактическая полная acceptance отдельно |
+| Lab boolean, BuildLabField | Две кнопки bool-off/bool-on задают один обратимый boolean |20: один checkbox со shape/check и текстом текущего состояния;0/1 и draft-only contract прежние |
 | Lab release toolbar | Уже один toggle action, но длинная/меняющаяся подпись и состояние только в тексте |20: «В релиз» и checkbox; while dirty недоступен с видимой причиной; не переносить отметку на unsaved draft |
 | Lab version inspector | Отдельный unmark-only button ограничивает нормальную симметрию признака |21–23: одна «В релиз» отметка. Compatible позволяет mark/unmark, incompatible marked позволяет только снять, после снятия — unchecked disabled с причиной. Inspected profile отличается от selected, draft/active guard прежний |
 | Lab per-field reset | «Сброс» возвращает selected baseline, а focus hint преимущественно показывает release Default; объект неоднозначен |20: «Вернуть»; объяснить значение выбранной сохранённой версии при фокусе. Не подменять baseline релизным Default |

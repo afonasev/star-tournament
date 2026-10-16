@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.2194566">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="667" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.219457" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1816" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="667" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.214568" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44683" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1817" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="667" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.213162" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1818" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="667" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.211901" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1819" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="667" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.210546" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1820" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="524" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.207667" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1351" name="LabAuthoringTests" fullname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests" classname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.201641" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-suite type="ParameterizedMethod" id="1370" name="MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys" fullname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests.MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys" classname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.198789" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <failure>
+                    <message><![CDATA[One or more child tests had errors]]></message>
+                  </failure>
+                  <test-case id="1368" name="MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests.MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys(False)" methodname="MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys" classname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests" runstate="Runnable" seed="1467921941" result="Failed" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.091045" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  This fixture must reproduce a newer physical key for an older public version
+  Expected: greater than 7
+  But was:  1
+]]></message>
+                      <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests.MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys (System.Boolean author) [0x0023f] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs:220
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                  <test-case id="1369" name="MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests.MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys(True)" methodname="MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys" classname="StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests" runstate="Runnable" seed="1307071408" result="Failed" start-time="2026-10-16 21:31:12Z" end-time="2026-10-16 21:31:12Z" duration="0.102975" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  This fixture must reproduce a newer physical key for an older public version
+  Expected: greater than 7
+  But was:  1
+]]></message>
+                      <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.EditMode.LabAuthoringTests.MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys (System.Boolean author) [0x0023f] in /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs:220
+]]></stack-trace>
+                    </failure>
+                    <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

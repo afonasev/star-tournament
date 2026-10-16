@@ -9,8 +9,8 @@ namespace StarTournament.ProvingGround
     {
         LabHistoryFile SeedAuthoring()
         {
-            // Import in version order so generated compatibility counterparts have the
-            // same ordering. Preserve each entry's original package provenance afterwards.
+            // Import in stable source order; technical counterparts can still use higher keys.
+            // Saved ordering resolves public identities, not those generated storage keys.
             var ordered=releases.Clone();var origins=new Dictionary<int,LabReleaseEntry>();int sequence=0;
             ordered.Entries=ordered.Entries.OrderBy(e=>e.ProfileId,StringComparer.Ordinal).ThenBy(e=>e.Revision).ThenBy(e=>e.Sequence).ToList();
             foreach(var entry in ordered.Entries){origins.Add(++sequence,entry.Clone());entry.Sequence=sequence;}
@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround
         }
 
         static LabRevision AuthorDefault(LabHistoryFile file)=>file.Profiles.Single(p=>p.Id==ReleaseId).Revisions
-            .Where(r=>r.ReleaseCandidate).OrderByDescending(r=>r.Number).FirstOrDefault();
+            .Where(r=>r.ReleaseCandidate).OrderByDescending(SavedVersionNumber).ThenByDescending(r=>r.Number).FirstOrDefault();
 
         public string ReleaseError
         {

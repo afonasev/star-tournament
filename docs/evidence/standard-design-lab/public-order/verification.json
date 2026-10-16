@@ -1,0 +1,61 @@
+{
+  "baseline": "ba7e15b6",
+  "runtime_baseline": "7830e481",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "unique_passed": 43,
+  "menu_visual_approval": "Q5 pending",
+  "runtime_ui_changed": false,
+  "full_tests": false,
+  "player_build": false,
+  "deploy": false,
+  "runs": {
+    "initial.xml": {
+      "total": "42",
+      "passed": "40",
+      "failed": "2",
+      "skipped": "0",
+      "duration": "11.9511251"
+    },
+    "fixture-alias.xml": {
+      "total": "2",
+      "passed": "0",
+      "failed": "2",
+      "skipped": "0",
+      "duration": "0.2194566"
+    },
+    "editmode.xml": {
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.4928637"
+    },
+    "legacy-data.xml": {
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.2777631"
+    }
+  },
+  "source_sha256": {
+    "docs/GAME_SPEC.md": "f1838fedd31813d1f1bb6e93baf30b70ab1516ed3e87ff25801610f7b0b21c3e",
+    "docs/evidence/standard-menu-actions/action-audit.md": "d20204b64eafb9d1f455bc08165f01cec87f8240cef0b1e565690c729131d644",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "4016a972c77ec45c69778819b9564350b91a5a7ec9c8ed04e98bdeaeb8bd1bd9",
+    "unity/Assets/StarTournament/Runtime/Core/LabAuthoring.cs": "73dd716371954f9d86e854b172da6ced1144503c9cd51544056f0535302c4407",
+    "unity/Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs": "cd4d2e4456ed7e86f5660356740deb51c7e5c4cd99e83a1ac8ab152993281858"
+  },
+  "evidence_sha256": {
+    "editmode.xml": "555470aa7c84edc6a5d1c6786f4cba72aa8f98b09784b52688c0aa5de84c6d3c",
+    "remaining-default-audit.md": "2620fe815128d012619d7e3e565e1906bb5689bd3bbda631dcf016b05c70c90a",
+    "legacy-data.log": "c36c327be43e0992fc0e9ea37727ac3da8152bea64cb759abf02ebc41137f80d",
+    "fixture-alias.log": "14e79e1920f2c4b8d68ca78f813528f9766d2c5e3f9484c0736a65dc2628f791",
+    "initial.xml": "a9aa7833c2727d95fbc0e785bb53d4644a57ce45eadea25552f15e9b4608803d",
+    "legacy-data.xml": "b3be4822beac3ecf8d6db80e8c7dfa5546a8aaf8590b0c6f0902f49114e7e1bd",
+    "verification.md": "b65cf520b3bdc219b31bb4cd4897a17ecf2bfb80271b8d89d4f06ac30c87ade4",
+    "fixture-alias.xml": "a8151c485754879f24f944be9a741b707c5ffa7c9a83215b7b4f9c27695a173f",
+    "editor.log": "deaf86a0a883375567c8c963dbb5883ee6967502d587d29f110eab958b24550e",
+    "initial.log": "60f09f7cd2943704409405b18aeb6916085cd3a4ea552ce153a223b8486c8409"
+  }
+}

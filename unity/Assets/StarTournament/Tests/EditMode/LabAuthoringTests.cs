@@ -203,6 +203,62 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var h=new DesignLabHistory(path,baseline,releases:seed,resetToLatestDefault:true,persistMigration:false);
             Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(3));Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));Assert.That(h.SelectedProfileName,Is.EqualTo("Named Default"));
         }
+        [TestCase(false)][TestCase(true)]
+        public void MixedPublishedVersionsUseCanonicalOrderInsteadOfHigherTechnicalKeys(bool author)
+        {
+            var method=typeof(ProvingProfile).GetMethod("BeforeBotBanterInterval",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            float oldDamage=baseline.Get("rifle.damage")+2,latestDamage=baseline.Get("rifle.damage")+4;
+            var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};previous.Set("rifle.damage",oldDamage);
+            var latest=baseline.Clone();latest.Set("rifle.damage",latestDamage);
+            seed=LabReleaseCatalog.Factory(previous);
+            seed.Entries.Add(new LabReleaseEntry{Sequence=2,ProfileId=DesignLabHistory.ReleaseId,ProfileName="Default",Revision=7,Date="20070102",Hash=latest.Hash(),Snapshot=latest});
+            seed.Entries.Add(new LabReleaseEntry{Sequence=3,ProfileId="packaged",ProfileName="Packaged",Revision=1,Date="20000102",Hash=previous.Hash(),Snapshot=previous.Clone()});
+            seed.Entries.Add(new LabReleaseEntry{Sequence=4,ProfileId="packaged",ProfileName="Packaged",Revision=7,Date="20070102",Hash=latest.Hash(),Snapshot=latest.Clone()});
+            var h=new DesignLabHistory(path,baseline,releases:seed,authoring:author,resetToLatestDefault:true,persistMigration:false);
+            Assert.That(h.StorageError,Is.Null);Assert.That(h.ReleaseError,Is.Null);
+            var oldView=h.SelectedProfile.Revisions.Single(r=>r.ReleaseNumber==1&&h.Compatible(r));
+            Assert.That(oldView.Number,Is.GreaterThan(h.Selected.Number),"This fixture must reproduce a newer physical key for an older public version");
+            Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(7));Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(latestDamage));
+            Assert.That(h.ReleaseParameterDefaults().Get("rifle.damage"),Is.EqualTo(latestDamage));
+            Assert.That(h.LatestAvailableRevision(DesignLabHistory.ReleaseId),Is.EqualTo(h.Selected.Number));
+            var packaged=h.Profiles.Single(p=>p.Id=="packaged");var n=h.LatestAvailableRevision(packaged.Id);
+            Assert.That(packaged.Revisions.Single(r=>r.Number==n).ReleaseNumber,Is.EqualTo(7));
+            h.Select(DesignLabHistory.ReleaseId,oldView.Number);h.ResetToRelease();Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(7));
+            if(author)
+            {
+                var output=h.BuildReleaseCatalog();
+                Assert.That(output.Entries.Single(e=>e.ProfileId==DesignLabHistory.ReleaseId&&e.Revision==1).Hash,Is.EqualTo(previous.Hash()));
+                Assert.That(DesignLabHistory.ResolvePublishedDefault(baseline,output).Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(latestDamage));
+            }
+        }
+        [Test]public void NewAuthorSaveFollowsPublicNumberWhenCatalogueUsesEarlierStorageKey()
+        {
+            seed=LabReleaseCatalog.Factory(baseline);seed.Entries[0].Revision=7;seed.Entries[0].Date="20000102";
+            var h=Open();Assert.That(h.Selected.Number,Is.EqualTo(1));Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(7));
+            SaveDamage(h,31);Assert.That(h.Selected.Number,Is.EqualTo(8));h.MarkSelectedForRelease(true);h.ResetToRelease();
+            Assert.That(h.Selected.Number,Is.EqualTo(8));Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
+            var reloaded=Open();Assert.That(reloaded.StorageError,Is.Null);Assert.That(reloaded.Selected.Number,Is.EqualTo(8));
+            Assert.That(reloaded.SavedIdentity(DesignLabHistory.ReleaseId,1).Number,Is.EqualTo(7));
+            Assert.That(reloaded.SavedIdentity(DesignLabHistory.ReleaseId,1).Date,Is.EqualTo("20000102"));
+            Assert.That(reloaded.BuildReleaseCatalog().Entries.Single(e=>e.Revision==7).Hash,Is.EqualTo(baseline.Hash()));
+        }
+        [Test]public void LegacyLowerOwnNumberRemainsImmutableAndCanBeExplicitlySavedAfterPublicVersion()
+        {
+            seed=LabReleaseCatalog.Factory(baseline);seed.Entries[0].Revision=7;
+            var initial=Open();initial.PersistAuthoring();var file=DesignLabHistoryTests.ReadFixture(path,baseline);
+            var own=baseline.Clone();float damage=baseline.Get("rifle.damage")+2;own.Set("rifle.damage",damage);
+            var legacy=new LabRevision{Number=2,Date="20000103",Hash=own.Hash(),Snapshot=own,ReleaseCandidate=true};
+            file.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Add(legacy);file.SelectedRevision=2;
+            File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(path);
+            var h=Open();Assert.That(h.Selected.ReleaseNumber,Is.EqualTo(7),"Startup follows public version order, not previous-session choice");
+            Assert.That(h.SavedIdentity(DesignLabHistory.ReleaseId,2).Hash,Is.EqualTo(legacy.Hash));CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            h.Select(DesignLabHistory.ReleaseId,2);Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(damage));
+            SaveDamage(h,damage+1);Assert.That(h.Selected.Number,Is.EqualTo(8));h.MarkSelectedForRelease(true);
+            var restarted=Open();Assert.That(restarted.Selected.Number,Is.EqualTo(8));
+            var original=restarted.SelectedProfile.Revisions.Single(r=>r.Number==2);
+            Assert.That(original.Hash,Is.EqualTo(legacy.Hash));Assert.That(original.Date,Is.EqualTo(legacy.Date));
+            Assert.That(UnityEngine.JsonUtility.ToJson(original.Snapshot),Is.EqualTo(UnityEngine.JsonUtility.ToJson(legacy.Snapshot)));
+        }
         [TestCase(false)][TestCase(true)] public void ExplicitAuthoredDefaultNameIsNotReplacedByLegacyAlias(bool author)
         {
             seed.Entries[0].ProfileName="Опубликованный профиль";
