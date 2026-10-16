@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using Velopack;
 using Velopack.Locators;
@@ -20,7 +21,6 @@ catch (Exception ex)
 static class Launcher
 {
     static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true };
-    sealed record Snapshot(string State, int Progress = 0, string Error = "", bool RestartAcknowledged = false);
     static void AtomicWrite(string path, string value)
     {
         File.WriteAllText(path + ".tmp", value); File.Move(path + ".tmp", path, true);
@@ -38,6 +38,21 @@ static class Launcher
             qaRunner = args[qaIndex + 1];
             args = args.Where((_, index) => index != qaIndex && index != qaIndex + 1).ToArray();
         }
+        bool qaLaunch = qaRunner != null || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_UNITY_RUNNER"));
+        bool quietLaunch = qaLaunch || args.Contains("-noaudio") || args.Contains("-muted");
+        if (quietLaunch)
+        {
+            if (qaLaunch) args = args.Where(arg => arg != "-humanAudio").ToArray();
+            if (!args.Contains("-noaudio")) args = args.Append("-noaudio").ToArray();
+            if (!args.Contains("-muted")) args = args.Append("-muted").ToArray();
+            if (qaLaunch) restartArguments = restartArguments.Where(arg => arg != "-humanAudio").ToArray();
+            if (!restartArguments.Contains("-noaudio")) restartArguments = restartArguments.Append("-noaudio").ToArray();
+            if (!restartArguments.Contains("-muted")) restartArguments = restartArguments.Append("-muted").ToArray();
+            var qaEnvironmentRunner = Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_UNITY_RUNNER");
+            if (qaLaunch && qaRunner == null && !string.IsNullOrEmpty(qaEnvironmentRunner))
+                restartArguments = restartArguments.Concat(new[] { "--qa-unity-runner", qaEnvironmentRunner }).ToArray();
+        }
+        // Preserve the selected launch mode when staged updates relaunch this Player.
         var baseDir = AppContext.BaseDirectory;
         var logRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StarTournament", "launcher");
         Directory.CreateDirectory(logRoot);
@@ -120,38 +135,32 @@ static class Launcher
         Directory.CreateDirectory(session);
         var statusPath = Path.Combine(session, "status.json");
         var commandPath = Path.Combine(session, "command.json");
-        var stateLock = new object();
-        Snapshot state = new("checking");
         bool restart = false;
-        void Status(Snapshot next)
-        {
-            lock (stateLock) { state = next; AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)); }
-        }
-        Status(state);
-        using var cancellation = new CancellationTokenSource();
         UpdateInfo? available = null;
-        async Task Check()
+        async Task<string?> Check(CancellationToken token)
         {
-            available = null;
-            try
-            {
-                UpdateFeedback.Log("check-begin installed=" + config.Version);
-                available = await manager.CheckForUpdatesAsync();
-                UpdateFeedback.Log("check-complete target=" + available?.TargetFullRelease.Version);
-                Status(new(available == null ? "current" : "available"));
-            }
-            catch (Exception ex) { Log(ex); Status(new("unavailable", Error: "Не удалось проверить обновления. " + UpdateFeedback.Explain(ex))); }
+            source.CheckCancellationToken = token;
+            UpdateFeedback.Log("check-begin installed=" + config.Version);
+            available = await manager.CheckForUpdatesAsync();
+            token.ThrowIfCancellationRequested();
+            UpdateFeedback.Log("check-complete target=" + available?.TargetFullRelease.Version);
+            return available?.TargetFullRelease.Version.ToString();
         }
-        var operation = stagedAtStartup == null && startupError == null ? Check() : Task.CompletedTask;
+        UpdateSnapshot? initial = null;
         if (stagedAtStartup != null)
         {
             var previousAttempt = journal.Read();
             var failure = startupError ?? (journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) ? previousAttempt?.Message : null);
             if (failure == null && machineRoot != null && WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString()))
                 failure = "Предыдущая установка отменена или завершилась с ошибкой. Повторите установку и подтвердите запрос Windows.";
-            Status(failure == null ? new("staged", 100) : new("apply-error", 100, failure));
+            initial = new(failure == null ? "staged" : "apply-error", 100, failure ?? "", Version: stagedAtStartup.Version.ToString());
         }
-        else if (startupError != null) Status(new("error", Error: startupError));
+        else if (startupError != null) initial = new("error", Error: startupError);
+        using var history = new ReleaseHistory(config, Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(config.AppId) + ".history.json"));
+        await using var updates = new UpdateSession(Check, Download,
+            () => AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target")),
+            next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial, history.Fetch);
+        updates.Start();
         var executable = Path.GetFullPath(Path.Combine(baseDir, config.GameExecutable));
         if (!executable.StartsWith(Path.GetFullPath(baseDir), StringComparison.Ordinal))
             throw new InvalidOperationException("Player must be inside release payload");
@@ -180,29 +189,25 @@ static class Launcher
             {
                 if (File.Exists(commandPath))
                 {
-                    Snapshot current; lock (stateLock) current = state;
-                    string? command = null;
-                    try { command = JsonDocument.Parse(await File.ReadAllTextAsync(commandPath)).RootElement.GetProperty("action").GetString(); File.Delete(commandPath); }
+                    string? command = null; string request = "";
+                    try
+                    {
+                        using var data = JsonDocument.Parse(await File.ReadAllTextAsync(commandPath));
+                        command = data.RootElement.GetProperty("action").GetString();
+                        if (data.RootElement.TryGetProperty("id", out var id)) request = id.GetString() ?? "";
+                        File.Delete(commandPath);
+                    }
                     catch (IOException) { }
                     catch (JsonException ex) { Log(ex); File.Delete(commandPath); }
                     catch (KeyNotFoundException ex) { Log(ex); File.Delete(commandPath); }
-                    if (command == "download" && operation.IsCompleted && current.State != "staged")
-                    {
-                        operation = Download();
-                    }
-                    else if (command == "restart" && current.State is "staged" or "apply-error")
-                    {
-                        restart = true; Status(current with { RestartAcknowledged = true });
-                    }
-                    else if (command == "check" && operation.IsCompleted && current.State != "staged") operation = Check();
+                    if (command != null) restart |= await updates.CommandAsync(command, request);
                 }
                 await Task.Delay(100);
             }
         }
         finally
         {
-            cancellation.Cancel();
-            try { await operation; } catch (OperationCanceledException) { }
+            await updates.DisposeAsync();
             Directory.Delete(session, true);
             if (game.HasExited) File.Delete(playerRecord);
         }
@@ -224,29 +229,22 @@ static class Launcher
         catch (Exception ex) { Log(ex); UpdateFeedback.Show("Обновление не установлено. " + UpdateFeedback.Explain(ex)); }
         return 0;
 
-        async Task Download()
+        async Task Download(Action<int> progress, CancellationToken token)
         {
-            try
+            // Only this launch's selected UpdateInfo is retried. No implicit discovery.
+            var selected = available ?? throw new InvalidOperationException("No selected update");
+            var asset = selected.TargetFullRelease;
+            UpdateFeedback.Log("download-begin target=" + asset.Version);
+            var cached = PackagePath(asset);
+            if (File.Exists(cached))
             {
-                if (available == null) { await Check(); if (available == null) return; }
-                var asset = available.TargetFullRelease;
-                UpdateFeedback.Log("download-begin target=" + asset.Version);
-                var cached = PackagePath(asset);
-                // The SDK skips its source when a complete cache file exists.
-                if (File.Exists(cached))
-                {
-                    try { await source.VerifyPackage(cached, asset, cancellation.Token); }
-                    catch (System.Security.Cryptography.CryptographicException) { File.Delete(cached); }
-                }
-                Status(new("downloading"));
-                await manager.DownloadUpdatesAsync(available, value => Status(new("downloading", value)), cancellation.Token);
-                await source.VerifyPackage(cached, asset, cancellation.Token);
-                AtomicWrite(stagedManifest, source.Envelope!);
-                UpdateFeedback.Log("download-authenticated target=" + asset.Version);
-                Status(new("staged", 100));
+                try { await source.VerifyPackage(cached, asset, token); }
+                catch (System.Security.Cryptography.CryptographicException) { File.Delete(cached); }
             }
-            catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
-            catch (Exception ex) { Log(ex); Status(new("error", Error: "Не удалось скачать обновление. " + UpdateFeedback.Explain(ex))); }
+            await manager.DownloadUpdatesAsync(selected, progress, token);
+            await source.VerifyPackage(cached, asset, token);
+            token.ThrowIfCancellationRequested();
+            UpdateFeedback.Log("download-authenticated target=" + asset.Version);
         }
     }
 }

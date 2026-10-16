@@ -17,6 +17,8 @@ namespace StarTournament.ProvingGround
         public float GamepadHorizontal, GamepadVertical;
         public bool GamepadAutoLevel;
         public float GamepadReturnDelay;
+        public float GamepadDeadzone;
+        public bool LookInvertX,LookInvertY;
     }
 
     [Serializable]
@@ -67,8 +69,20 @@ namespace StarTournament.ProvingGround
         public void SetGamepad(string id, GamepadLookSettings settings)
         {
             var record=Find(id) ?? throw new ArgumentException("Unknown profile", nameof(id));
-            record.GamepadLookVersion=2;record.GamepadReturnDelay=settings.ReturnDelay;record.GamepadHorizontal=settings.Horizontal;
+            record.GamepadLookVersion=3;record.GamepadReturnDelay=settings.ReturnDelay;record.GamepadHorizontal=settings.Horizontal;
+            record.GamepadDeadzone=settings.Deadzone;record.LookInvertX=settings.InvertX;record.LookInvertY=settings.InvertY;
             record.GamepadVertical=settings.Vertical;record.GamepadAutoLevel=settings.AutoLevel;Save();
+        }
+        public void ResetPreferences(ProvingProfile defaults)
+        {
+            var previous=JsonUtility.ToJson(document);
+            try
+            {
+                foreach(var p in document.Profiles)
+                {p.MouseDegreesPerPixel=MouseSensitivityPreference.Descriptor(defaults).DefaultValue;p.ShowFps=true;p.GamepadLookVersion=0;}
+                Save();
+            }
+            catch {document.Profiles=JsonUtility.FromJson<PlayerProfileDocument>(previous).Profiles;throw;}
         }
         static string CleanName(string name)
         {
@@ -147,5 +161,7 @@ namespace StarTournament.ProvingGround
             }
             seatProfile[seat]=null; seatGuest[seat]=guest; preferredProfileByDevice.Remove(deviceId); return guest;
         }
+        public void ResetGuestPreferences(ProvingProfile defaults)
+        {foreach(var g in guestByDevice.Values.Concat(seatGuest.Where(g=>g!=null)).Distinct()){g.MouseDegreesPerPixel=MouseSensitivityPreference.Descriptor(defaults).DefaultValue;g.ShowFps=true;g.GamepadLook=GamepadLookSettings.Default(defaults);}}
     }
 }

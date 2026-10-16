@@ -10,12 +10,14 @@ sys.path.insert(0,str(Path(__file__).parents[1]))
 import publish_release as publisher
 import upload_github_assets as uploader
 
+BODY="## Русский\n\n### Исправления\n\n- Исправлено управление.\n\n## English\n\n### Fixed\n\n- Improved controls.\n"
+
 class GithubPublication(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         p=Path(self.temp.name)/'asset.json';p.write_text('exact bytes')
         self.assets=[publisher.identity(p)]
-        self.remote=dict(id=1,draft=True,prerelease=True,assets=[dict(name=p.name,size=p.stat().st_size,digest='sha256:'+self.assets[0]['sha256'],state='uploaded')],html_url='https://github.com/afonasev/star-tournament/releases/tag/v1.0.0-test.1')
+        self.remote=dict(body=BODY,id=1,draft=True,prerelease=True,assets=[dict(name=p.name,size=p.stat().st_size,digest='sha256:'+self.assets[0]['sha256'],state='uploaded')],html_url='https://github.com/afonasev/star-tournament/releases/tag/v1.0.0-test.1')
     def test_resume_finds_draft_without_published_git_tag(self):
         draft=dict(self.remote,tag_name='v1.0.0-test.1')
         with patch.object(publisher,'api',side_effect=[None,[draft]]) as api:
@@ -31,17 +33,17 @@ class GithubPublication(unittest.TestCase):
     def test_publish_only_after_readback(self):
         public=dict(self.remote,draft=False)
         with patch.object(publisher,'find_release',return_value=None),patch.object(publisher,'api',side_effect=[self.remote,self.remote,public]) as api,patch.object(publisher,'upload') as upload,patch.object(publisher,'readback',return_value=[]) as readback:
-            publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main')
+            publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',body=BODY)
             self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=True,make_latest='false',target_commitish='main'))
             upload.assert_called_once();readback.assert_called_once()
     def test_draft_only_never_publishes(self):
         with patch.object(publisher,'find_release',return_value=None),patch.object(publisher,'api',side_effect=[self.remote,self.remote]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback') as readback:
-            release,_=publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',draft_only=True)
+            release,_=publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',draft_only=True,body=BODY)
             self.assertTrue(release['draft']);readback.assert_not_called()
             self.assertFalse(any(c.args[0]=='PATCH' for c in api.call_args_list))
     def test_incomplete_draft_never_published(self):
         with patch.object(publisher,'find_release',return_value=self.remote),patch.object(publisher,'api',side_effect=[dict(self.remote,assets=[])]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback') as readback:
-            with self.assertRaises(ValueError):publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main')
+            with self.assertRaises(ValueError):publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',body=BODY)
             self.assertFalse(any(c.args[0]=='PATCH' for c in api.call_args_list));readback.assert_not_called()
     def test_wrong_digest_never_published(self):
         bad=dict(self.remote,assets=[dict(self.remote['assets'][0],digest='sha256:'+'0'*64)])
@@ -50,13 +52,30 @@ class GithubPublication(unittest.TestCase):
         with self.assertRaises(ValueError):publisher.verify_remote(dict(self.remote,assets=self.remote['assets']+[dict(name='foreign')]),self.assets)
     def test_published_resume_never_mutates_release(self):
         with patch.object(publisher,'find_release',return_value=dict(self.remote,draft=False)),patch.object(publisher,'api') as api,patch.object(publisher,'upload') as upload,patch.object(publisher,'readback',return_value=[]):
-            publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main')
+            publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',body=BODY)
             api.assert_not_called();upload.assert_not_called()
     def test_production_explicit_latest(self):
         public=dict(self.remote,draft=False,prerelease=False)
         with patch.object(publisher,'find_release',return_value=None),patch.object(publisher,'api',side_effect=[self.remote,self.remote,public]) as api,patch.object(publisher,'upload'),patch.object(publisher,'readback',return_value=[]):
-            publisher.publish('1.0.0','2026-10-06','production',self.assets,'fixture','main')
+            publisher.publish('1.0.0','2026-10-06','production',self.assets,'fixture','main',body=BODY)
             self.assertEqual(api.call_args_list[-1].args[-1],dict(draft=False,prerelease=False,make_latest='true',target_commitish='main'))
+    def test_generated_body_used_when_creating_draft(self):
+        with patch.object(publisher,'find_release',return_value=None),patch.object(publisher,'api',side_effect=[self.remote,self.remote]) as api,patch.object(publisher,'upload'):
+            publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',draft_only=True,body=BODY)
+            self.assertEqual(api.call_args_list[0].args[-1]['body'],BODY)
+    def test_missing_language_rejected_before_network(self):
+        with patch.object(publisher,'find_release') as lookup,patch.object(publisher,'upload') as upload:
+            with self.assertRaises(ValueError):publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',body='English only')
+            lookup.assert_not_called();upload.assert_not_called()
+    def test_changed_body_never_mutates_existing_draft_or_published(self):
+        for draft in (True,False):
+            with self.subTest(draft=draft),patch.object(publisher,'find_release',return_value=dict(self.remote,draft=draft,body=BODY+'changed')),patch.object(publisher,'api') as api,patch.object(publisher,'upload') as upload:
+                with self.assertRaises(ValueError):publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',body=BODY)
+                api.assert_not_called();upload.assert_not_called()
+    def test_draft_body_readback_mismatch_never_publishes(self):
+        with patch.object(publisher,'find_release',return_value=self.remote),patch.object(publisher,'api',return_value=dict(self.remote,body=BODY+'changed')) as api,patch.object(publisher,'upload'):
+            with self.assertRaises(ValueError):publisher.publish('1.0.0-test.1','2026-10-06','test',self.assets,'fixture','main',body=BODY)
+            self.assertFalse(any(c.args[0]=='PATCH' for c in api.call_args_list))
     def test_changed_local_input_never_uploaded(self):
         Path(self.assets[0]['path']).write_text('modified')
         with patch.object(uploader,'request',return_value=[]) as remote:

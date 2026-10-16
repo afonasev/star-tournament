@@ -55,23 +55,71 @@ class UnityToolsTests(unittest.TestCase):
             self.assertIn('filter=' + filter_text, (path / 'scope.txt').read_text())
         self.assertEqual(len(set(paths)), 3)
 
-    def test_batch_routes_are_silent_and_interactive_routes_forward_noaudio(self):
+    def test_batch_routes_are_silent_and_wrappers_default_to_silent_with_human_opt_in(self):
         for command in [('prepare',), ('build',), ('test-edit-filter', 'fixture'), ('test-play-filter', 'fixture')]:
             self.assertEqual(self.invoke(*command).returncode, 0)
             args = json.loads(self.args_file.read_text())['args']
             self.assertEqual(args.count('-noaudio'), 1)
             self.assertEqual(args.count('-muted'), 1)
-        self.assertEqual(self.invoke('editor', '-noaudio', '-muted').returncode, 0)
-        self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-noaudio'), 1)
-        self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-muted'), 1)
+        self.assertEqual(self.invoke('editor').returncode, 0)
+        editor_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(editor_args.count('-noaudio'), 1)
+        self.assertEqual(editor_args.count('-muted'), 1)
+        self.assertEqual(self.invoke('editor', '-noaudio', '-humanAudio').returncode, 0)
+        editor_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(editor_args.count('-noaudio'), 1)
+        self.assertEqual(editor_args.count('-muted'), 1)
+        self.assertIn('-humanAudio', json.loads(self.args_file.read_text())['args'])
+        self.assertEqual(self.invoke('editor', '-humanAudio').returncode, 0)
+        editor_args = json.loads(self.args_file.read_text())['args']
+        self.assertNotIn('-noaudio', editor_args)
+        self.assertNotIn('-muted', editor_args)
+        self.assertIn('-humanAudio', editor_args)
+        self.assertEqual(self.invoke('editor', '-humanAudio', '-musicReview').returncode, 0)
+        review_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(review_args.count('-noaudio'), 1)
+        self.assertEqual(review_args.count('-muted'), 1)
         import plistlib
         app = self.root / 'fake.app'
         (app / 'Contents').mkdir(parents=True)
         with (app / 'Contents/Info.plist').open('wb') as file:
             plistlib.dump({'CFBundleExecutable': 'Fake Player'}, file)
-        self.assertEqual(self.invoke('run', '-noaudio', '-muted', env={'UNITY_PLAYER_APP': str(app)}).returncode, 0)
-        self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-noaudio'), 1)
-        self.assertEqual(json.loads(self.args_file.read_text())['args'].count('-muted'), 1)
+        self.assertEqual(self.invoke('run', env={'UNITY_PLAYER_APP': str(app)}).returncode, 0)
+        player_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(player_args.count('-noaudio'), 1)
+        self.assertEqual(player_args.count('-muted'), 1)
+        self.assertEqual(self.invoke('run', '-humanAudio', env={'UNITY_PLAYER_APP': str(app)}).returncode, 0)
+        player_args = json.loads(self.args_file.read_text())['args']
+        self.assertNotIn('-noaudio', player_args)
+        self.assertNotIn('-muted', player_args)
+        self.assertIn('-humanAudio', player_args)
+        self.assertEqual(self.invoke('run', '-humanAudio', '-musicReview', env={'UNITY_PLAYER_APP': str(app)}).returncode, 0)
+        review_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(review_args.count('-noaudio'), 1)
+        self.assertEqual(review_args.count('-muted'), 1)
+
+        direct_editor = self.invoke('shared', direct=True)
+        self.assertEqual(direct_editor.returncode, 0, direct_editor.stderr)
+        direct_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(direct_args.count('-noaudio'), 1)
+        self.assertEqual(direct_args.count('-muted'), 1)
+        direct_human = self.invoke('shared', '-humanAudio', direct=True)
+        self.assertEqual(direct_human.returncode, 0, direct_human.stderr)
+        direct_args = json.loads(self.args_file.read_text())['args']
+        self.assertNotIn('-noaudio', direct_args)
+        self.assertNotIn('-muted', direct_args)
+        self.assertIn('-humanAudio', direct_args)
+        direct_review = self.invoke('shared', '-humanAudio', '-musicReview', direct=True)
+        self.assertEqual(direct_review.returncode, 0, direct_review.stderr)
+        review_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(review_args.count('-noaudio'), 1)
+        self.assertEqual(review_args.count('-muted'), 1)
+
+        player = self.invoke('player', '/fake/player', direct=True)
+        self.assertEqual(player.returncode, 0, player.stderr)
+        player_args = json.loads(self.args_file.read_text())['args']
+        self.assertEqual(player_args.count('-noaudio'), 1)
+        self.assertEqual(player_args.count('-muted'), 1)
 
     def test_invalid_focused_arguments_never_launch_unity(self):
         for args in [('test-edit-filter',), ('test-play-filter', ''), ('test-edit-filter', 'fixture', 'extra')]:

@@ -139,7 +139,8 @@ namespace StarTournament.ProvingGround
                 {
                     a.Move = Vector2.ClampMagnitude(new Vector2((keyboard.dKey.isPressed ? 1 : 0) - (keyboard.aKey.isPressed ? 1 : 0),
                         (keyboard.wKey.isPressed ? 1 : 0) - (keyboard.sKey.isPressed ? 1 : 0)), 1);
-                    a.LookDegrees += pairedMouse.delta.ReadValue() * (mouseDegreesPerPixelOverride ?? profile.Get("input.mouseDegreesPerPixel"));
+                    var mouseLook=gamepadSettings!=null?gamepadSettings(i):GamepadLookSettings.Default(profile);
+                    a.LookDegrees += Vector2.Scale(pairedMouse.delta.ReadValue(),new Vector2(mouseLook.InvertX?-1:1,mouseLook.InvertY?-1:1)) * (mouseDegreesPerPixelOverride ?? profile.Get("input.mouseDegreesPerPixel"));
                     a.Jump |= keyboard.spaceKey.wasPressedThisFrame;
                     CaptureFire(i, ref a, pairedMouse.leftButton.isPressed, pairedMouse.leftButton.wasPressedThisFrame);
                     if(keyboard.digit1Key.wasPressedThisFrame)a.SelectWeapon=WeaponSelection.Rifle;
@@ -153,9 +154,9 @@ namespace StarTournament.ProvingGround
                 }
                 else if (devices[i] is Gamepad pad)
                 {
-                    a.Move = Deadzone(pad.leftStick.ReadValue(), profile.Get("input.deadzone"));
-                    var look=Deadzone(pad.rightStick.ReadValue(),profile.Get("input.deadzone"));
                     var settings=gamepadSettings!=null?gamepadSettings(i):GamepadLookSettings.Default(profile);
+                    a.Move = Deadzone(pad.leftStick.ReadValue(),settings.Deadzone);
+                    var look=Vector2.Scale(Deadzone(pad.rightStick.ReadValue(),settings.Deadzone),new Vector2(settings.InvertX?-1:1,settings.InvertY?-1:1));
                     if(!seatAlive[i])CancelLookGesture(i);
                     bool ltDown=seatAlive[i]&&pad.leftTrigger.isPressed;
                     if(ltReleaseRequired[i])

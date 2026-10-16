@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             priorEditorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorBackground=InputSystem.settings.backgroundBehavior;
             InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
-            foreach(string k in new[]{NativeBotReactionPreferences.TextKey,NativeBotReactionPreferences.VoiceKey,"StarTournament.Audio.EffectsPercent"})
+            foreach(string k in new[]{NativeBotReactionPreferences.TextKey,NativeBotReactionPreferences.VoiceKey,"StarTournament.Audio.EffectsPercent",NativeAudioPreferences.VoiceKey})
                 saved[k]=PlayerPrefs.HasKey(k)?PlayerPrefs.GetInt(k):(int?)null;
             PlayerPrefs.DeleteKey(NativeBotReactionPreferences.TextKey);PlayerPrefs.DeleteKey(NativeBotReactionPreferences.VoiceKey);
             NativeAudioPreferences.SetEffects(100);priorVolume=AudioListener.volume;AudioListener.volume=0;
@@ -132,14 +132,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Audio.PlayBotReaction("Ты хоть попади сначала!",0),Is.True);
             Assert.That(Voice.clip,Is.SameAs(Resources.Load<AudioClip>(NativeBotBanterVoice.Clips["Ты хоть попади сначала!"])));
             Assert.That(Audio.PlayBotReaction("Даже не поцарапал!",0),Is.True);Assert.That(Voice.isPlaying,Is.True);
-            NativeAudioPreferences.SetEffects(50);Audio.MenuConfirm();Audio.UpdateVolume();
+            NativeAudioPreferences.SetVoice(50);NativeAudioPreferences.SetEffects(50);Audio.MenuConfirm();Audio.UpdateVolume();
             Assert.That(Voice.volume,Is.InRange(.001f,.5f));
             var ui=ground.transform.Find("native-game-audio/menu-ui").GetComponent<AudioSource>();
             Assert.That(Voice.volume+ui.volume,Is.LessThanOrEqualTo(.5001f),"Voice participates in the shared SFX budget");
             NativeBotReactionPreferences.SetVoice(false);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.False);Assert.That(ui.isPlaying,Is.True,"Voice OFF stops only reactions");
             NativeBotReactionPreferences.SetVoice(true);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.False);
-            Audio.PlayBotReaction("Даже не поцарапал!",0);NativeAudioPreferences.SetEffects(0);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.False);
-            NativeAudioPreferences.SetEffects(100);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.False);
+            Audio.PlayBotReaction("Даже не поцарапал!",0);NativeAudioPreferences.SetEffects(0);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.True,"Zero effects must not stop the independent speech channel");
+            NativeAudioPreferences.SetVoice(0);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.False);
+            NativeAudioPreferences.SetVoice(100);NativeAudioPreferences.SetEffects(100);Audio.UpdateVolume();Assert.That(Voice.isPlaying,Is.False);
             Audio.PlayBotReaction("Даже не поцарапал!",0);Audio.SetDiagnosticMute(true);Assert.That(Voice.isPlaying,Is.False);Audio.SetDiagnosticMute(false);Assert.That(Voice.isPlaying,Is.False);
             Audio.PlayBotReaction("Даже не поцарапал!",0);count=Audio.BotReactionPlayCount;Call(ground,"FullHealReviewPause");Assert.That(Voice.isPlaying,Is.False);
             Call(ground,"FullHealReviewResume");yield return null;Assert.That(Audio.BotReactionPlayCount,Is.EqualTo(count));Assert.That(Voice.isPlaying,Is.False);

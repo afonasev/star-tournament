@@ -82,28 +82,94 @@ namespace StarTournament.ProvingGround.Tests
             var session=new NativeCombatSession(new[]{motor},arena,Physics.defaultPhysicsScene,movement,ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault());
             var actions=new[]{default(LocalAction)};
             for(int i=0;i<180;i++)session.Tick(actions,1/60f);
-            var saved=session.Capture();float height=arena.Lifts.Capture()[1].Height;Assert.That(height,Is.GreaterThan(5));Assert.That(motor.State.Position.y,Is.EqualTo(height).Within(.15f));
-            for(int i=0;i<180;i++){session.Tick(actions,1/60f);Assert.That(motor.State.Position.y,Is.EqualTo(arena.Lifts.Capture()[1].Height).Within(.15f),"carry tick "+i+" pose="+JsonUtility.ToJson(motor.State));}var final=session.Capture();Assert.That(motor.State.Position.y,Is.EqualTo(10).Within(.15f));
+            var saved=session.Capture();float height=arena.Lifts.Capture()[1].Height;Assert.That(height,Is.GreaterThan(WellArenaCatalog.Storey));Assert.That(motor.State.Position.y,Is.EqualTo(height).Within(.15f));
+            for(int i=0;i<180;i++){session.Tick(actions,1/60f);Assert.That(motor.State.Position.y,Is.EqualTo(arena.Lifts.Capture()[1].Height).Within(.15f),"carry tick "+i+" pose="+JsonUtility.ToJson(motor.State));}var final=session.Capture();Assert.That(motor.State.Position.y,Is.EqualTo(2*WellArenaCatalog.Storey).Within(.15f));
             session.Restore(saved);Assert.That(arena.Lifts.Capture()[1].Height,Is.EqualTo(height));Assert.That(motor.State.Position,Is.EqualTo(saved.Poses[0].Position));
             for(int i=0;i<180;i++)session.Tick(actions,1/60f);Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(JsonUtility.ToJson(final)),"restored continuation");
-            for(int i=0;i<300;i++)session.Tick(actions,1/60f);Assert.That(arena.Lifts.Capture()[1].Height,Is.EqualTo(10));
+            for(int i=0;i<300;i++)session.Tick(actions,1/60f);Assert.That(arena.Lifts.Capture()[1].Height,Is.EqualTo(2*WellArenaCatalog.Storey));
         }
         [UnityTest] public IEnumerator BotBoardsExitsSecondStoreyAndEmptyTripCompletes()
         {
-            yield return null;var motor=Motor(new Vector3(0,0,-23));for(int i=0;i<5;i++)motor.Tick(default,1/60f);
-            var router=new WellBotLiftRouter(arena.Lifts,routes,arena.WellProfile,movement);var goal=new Vector3(0,5,-17);
-            bool boarded=false,exit=false;
-            for(int tick=0;tick<600;tick++)
+            yield return null;
+            foreach(int side in new[]{-1,1})
             {
-                var action=router.Tick(motor.State,goal,true,false,default);Tick(motor,action);
-                boarded|=router.Capture().Riding;exit|=router.Capture().Exiting;
-                if(exit&&motor.State.Grounded&&motor.State.Position.z> -24&&Mathf.Abs(motor.State.Position.y-5)<.2f)break;
+                float start=side<0?0:2*WellArenaCatalog.Storey;
+                var motor=Motor(new Vector3(0,start,side*23));for(int i=0;i<5;i++)motor.Tick(default,1/60f);
+                var router=new WellBotLiftRouter(arena.Lifts,routes,arena.WellProfile,movement);var goal=new Vector3(0,WellArenaCatalog.Storey,side*17);
+                bool boarded=false,exit=false;
+                for(int tick=0;tick<600;tick++)
+                {
+                    var action=router.Tick(motor.State,goal,true,false,default);Tick(motor,action);
+                    boarded|=router.Capture().Riding;exit|=router.Capture().Exiting;
+                    if(exit&&motor.State.Grounded&&side*motor.State.Position.z<24&&Mathf.Abs(motor.State.Position.y-WellArenaCatalog.Storey)<.2f)break;
+                }
+                Assert.That(boarded,Is.True,"boarded "+side);Assert.That(exit,Is.True,"middle exit "+side);
+                Assert.That(motor.State.Position.y,Is.EqualTo(WellArenaCatalog.Storey).Within(.25f),"middle floor "+side);
+                Assert.That(side*motor.State.Position.z,Is.LessThan(24),"exit "+side);
+                for(int i=0;i<300;i++)Tick(motor);
+                Assert.That(arena.Lifts.Capture().Single(l=>l.Id==(side<0?"south":"north")).Height,Is.EqualTo(side<0?2*WellArenaCatalog.Storey:0));
+                UnityEngine.Object.DestroyImmediate(motor.gameObject);
             }
-            Assert.That(boarded,Is.True,"boarded");Assert.That(exit,Is.True,"middle exit");Assert.That(motor.State.Position.y,Is.EqualTo(5).Within(.25f));Assert.That(motor.State.Position.z,Is.GreaterThan(-24));
-            for(int i=0;i<300;i++)Tick(motor);Assert.That(arena.Lifts.Capture()[1].Height,Is.EqualTo(10));
-            // Unavailable south lift must not acquire a waiting intent; stairs remain routable.
-            var bottom=Motor(new Vector3(0,0,-23));var fallback=new WellBotLiftRouter(arena.Lifts,routes,arena.WellProfile,movement);var original=new LocalAction{Move=Vector2.right};
-            Assert.That(fallback.Tick(bottom.State,goal,true,false,original).Move,Is.EqualTo(original.Move));Assert.That(fallback.Capture().Lift,Is.Null);Assert.That(routes.TryRoute(bottom.State.Position,goal,out _,out var failure),Is.True,failure);
+        }
+        [UnityTest] public IEnumerator UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor()
+        {
+            yield return null;
+            var states=arena.Lifts.Capture();foreach(var state in states){state.Height=state.Target=2*WellArenaCatalog.Storey;state.Phase=WellLiftPhase.AwaitEmpty;state.Countdown=0;}arena.Lifts.Restore(states);
+            foreach(int side in new[]{-1,1})
+            {
+                var motor=Motor(new Vector3(side*21,0,0));for(int i=0;i<5;i++)motor.Tick(default,1/60f);
+                var fallback=new WellBotLiftRouter(arena.Lifts,routes,arena.WellProfile,movement);var goal=new Vector3(side*21,WellArenaCatalog.Storey,0);
+                Assert.That(routes.TryRoute(motor.State.Position,goal,out var points,out var failure),Is.True,failure);
+                Assert.That(points.Any(p=>p.Support.StartsWith("transition:stair-"+side)),Is.True,"real stair fallback");
+                int next=0;
+                for(int tick=0;tick<1200&&next<points.Length;tick++)
+                {
+                    var delta=points[next].Position-motor.State.Position;
+                    if(new Vector2(delta.x,delta.z).magnitude<.22f&&Mathf.Abs(delta.y)<.35f){next++;continue;}
+                    delta.y=0;var local=Quaternion.Euler(0,-motor.State.Yaw,0)*delta.normalized;
+                    var original=new LocalAction{Move=new Vector2(local.x,local.z)};var action=fallback.Tick(motor.State,goal,true,false,original);
+                    Assert.That(fallback.Capture().Lift,Is.Null);Assert.That(action.Move,Is.EqualTo(original.Move));Tick(motor,action);
+                }
+                Assert.That(next,Is.EqualTo(points.Length),"stair fallback "+side+" at "+motor.State.Position);
+                Assert.That(Vector3.Distance(motor.State.Position,goal),Is.LessThan(.4f));UnityEngine.Object.DestroyImmediate(motor.gameObject);
+            }
+        }
+        [UnityTest] public IEnumerator SecondFloorOuterCorridorsRemainOpenPastBothStairs()
+        {
+            yield return null;
+            foreach(int side in new[]{-1,1})
+            {
+                var motor=Motor(new Vector3(side*21,WellArenaCatalog.Storey,-13));
+                for(int tick=0;tick<600&&motor.State.Position.z<13;tick++)
+                {motor.Tick(new LocalAction{Move=Vector2.up},1/60f);Physics.SyncTransforms();Assert.That(motor.State.Position.y,Is.EqualTo(WellArenaCatalog.Storey).Within(.15f));}
+                Assert.That(motor.State.Position.z,Is.GreaterThanOrEqualTo(13));UnityEngine.Object.DestroyImmediate(motor.gameObject);
+            }
+        }
+        [UnityTest] public IEnumerator GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround()
+        {
+            yield return null;Physics.SyncTransforms();
+            foreach(var solid in arena.Definition.Solids.Where(s=>s.Id.Contains("gallery-cover")))
+            {
+                float floor=solid.Position.y-solid.Size.y/2;
+                var start=new Vector3(solid.Position.x-3,floor,solid.Position.z);var goal=start+Vector3.right*6;
+                Assert.That(Physics.Raycast(start+Vector3.up*.7f,Vector3.right,out var hit,6,ProvingArena.ShotMask),Is.True,solid.Id);
+                Assert.That(hit.collider.name,Is.EqualTo(solid.Id));
+                Assert.That(Physics.Raycast(start+Vector3.up*(solid.Size.y+.3f),Vector3.right,out _,6,ProvingArena.ShotMask),Is.False,"Fire above low case");
+                var motor=Motor(start);for(int i=0;i<90;i++)Tick(motor,new LocalAction{Move=Vector2.right});
+                Assert.That(motor.State.Position.x,Is.LessThan(solid.Position.x-solid.Size.x/2),"real capsule must not enter case");
+                UnityEngine.Object.DestroyImmediate(motor.gameObject);motor=Motor(start);for(int i=0;i<5;i++)Tick(motor);
+                Assert.That(routes.TryRoute(start,goal,out var points,out var failure),Is.True,solid.Id+" "+failure);
+                int next=0;
+                for(int tick=0;tick<1200&&next<points.Length;tick++)
+                {
+                    var delta=points[next].Position-motor.State.Position;
+                    if(new Vector2(delta.x,delta.z).magnitude<.22f&&Mathf.Abs(delta.y)<.35f){next++;continue;}
+                    delta.y=0;var local=Quaternion.Euler(0,-motor.State.Yaw,0)*delta.normalized;
+                    Tick(motor,new LocalAction{Move=new Vector2(local.x,local.z)});
+                }
+                Assert.That(next,Is.EqualTo(points.Length),solid.Id+" bypass stopped at "+motor.State.Position);
+                Assert.That(Vector3.Distance(motor.State.Position,goal),Is.LessThan(.4f));UnityEngine.Object.DestroyImmediate(motor.gameObject);
+            }
         }
         [UnityTest] public IEnumerator WindowsBlockFireButNotSightAndGratesPassShots()
         {
@@ -113,8 +179,8 @@ namespace StarTournament.ProvingGround.Tests
                 var normal=solid.Size.x<solid.Size.z?Vector3.right:Vector3.forward;
                 Assert.That(Physics.Raycast(solid.Position-normal*.1f,normal,out var hit,.2f,ProvingArena.ShotMask),Is.True);Assert.That(hit.collider.GetComponent<NativeSightTransparent>(),Is.Not.Null,solid.Id);
             }
-            Assert.That(Physics.Raycast(new Vector3(0,6,0),Vector3.down,out var bridgeHit,2,ProvingArena.ShotMask),Is.False,"bridge must pass bullets/rockets");
-            Assert.That(Physics.Raycast(new Vector3(0,6,0),Vector3.down,out _,2,1<<ProvingArena.MovementOnlyLayer),Is.True);
+            Assert.That(Physics.Raycast(new Vector3(0,WellArenaCatalog.Storey+1,0),Vector3.down,out var bridgeHit,2,ProvingArena.ShotMask),Is.False,"bridge must pass bullets/rockets");
+            Assert.That(Physics.Raycast(new Vector3(0,WellArenaCatalog.Storey+1,0),Vector3.down,out _,2,1<<ProvingArena.MovementOnlyLayer),Is.True);
         }
     }
 }

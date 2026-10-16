@@ -81,6 +81,8 @@ namespace StarTournament.ProvingGround
             IEnumerable<ProvingProfile> Candidates()
             {
                 yield return current;
+                if(shape.Id=="well-authoring-v1"&&shape.Version==2)yield return current.BeforeWellFurniture();
+                if(shape.Id=="well-authoring-v1"&&shape.Version==1)yield return current.BeforeWellStructure();
                 if(shape.Id=="combat-bowl-ring-r7-authoring-v1")yield return current.BeforeWeaponPickups();
                 if(shape.Id=="lunar-laboratory-authoring-v1")
                 {

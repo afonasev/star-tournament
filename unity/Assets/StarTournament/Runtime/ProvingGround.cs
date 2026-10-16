@@ -141,7 +141,7 @@ namespace StarTournament.ProvingGround
         GameObject damagePickupVisual;
         float previousFixedDelta;
         string[] hit = Array.Empty<string>();
-        enum Phase { Loading, Setup, Running, Paused, Results, MainMenu, Profiles, Settings, Lab }
+        enum Phase { Loading, Setup, Running, Paused, Results, MainMenu, Profiles, Settings, Lab, History }
         Phase phase;
         bool diagnostic;
         bool combatReview;
@@ -221,13 +221,10 @@ namespace StarTournament.ProvingGround
             Configuration=NativeMatchConfiguration.Default(MatchProfile);
             previousFixedDelta = Time.fixedDeltaTime;
             Time.fixedDeltaTime=1f/Profile.Get("simulation.fixedTickHz");
-            // Automated reviews are silent. Ordinary Player sessions use the user's effects preference.
-            var soundArgs=Environment.GetCommandLineArgs();
-            bool muteReview=ShouldMuteStartup(soundArgs,Application.isEditor||Application.isBatchMode||
-                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_NAVIGATION_EVIDENCE"))||
-                soundArgs.Any(a=>a.EndsWith("Review",StringComparison.Ordinal)||a=="-diagnostic"));
-            AudioListener.volume=muteReview?0:1;
-            gameAudio=new NativeGameAudio(transform,Profile,muteReview,soundArgs.Contains("-muted"));
+            // Launch policy is latched before this coroutine and cannot be relaxed by review flags.
+            bool muteReview=NativeAudioStartupMute.IsMuted;
+            if(muteReview)AudioListener.volume=0;
+            gameAudio=new NativeGameAudio(transform,Profile,muteReview,NativeAudioStartupMute.IsMuted);
             font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             studioLight = Owned("arena-light").AddComponent<Light>();
             studioLight.type = LightType.Directional; studioLight.intensity = Profile.Get("presentation.lightIntensity");
@@ -507,8 +504,10 @@ namespace StarTournament.ProvingGround
         void Update()
         {
             if(phase==Phase.Loading)return;
+            if(UpdateTextEntry()){UpdateMenuCursor();UpdateTextEntryCursor();UpdateMenuSelectionAudio();TickGameMusic();return;}
             TickDisplayConfirmation();
             UpdateSettingsBackInput();
+            UpdateReleaseHistory();
             UpdateRosterInput();
             if (phase == Phase.Setup)
             {
@@ -541,6 +540,10 @@ namespace StarTournament.ProvingGround
             RefreshInterface();
             UpdateMenuCursor();
             UpdateMenuSelectionAudio();
+            TickGameMusic();
+        }
+        void TickGameMusic()
+        {
             bool musicMatch=phase==Phase.Running||phase==Phase.Paused||phase==Phase.Results||
                 (phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused||settingsReturn==Phase.Results));
             bool musicPaused=phase==Phase.Paused||(phase==Phase.Settings&&(settingsReturn==Phase.Running||settingsReturn==Phase.Paused));
@@ -711,7 +714,7 @@ namespace StarTournament.ProvingGround
             if(tunnels)studioLight.intensity=TunnelsPresentation.Get("tunnels.light.key");
             bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
             if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
-            if(SelectedMapId==WellArenaCatalog.Id)studioLight.intensity=WellProfile.Get("well.daylight");
+            if(SelectedMapId==WellArenaCatalog.Id)WellArenaPresentation.ConfigureDaylight(studioLight,WellProfile);
             var steps=arena.BuildSteps(frozen,Profile,SelectedMapId==WellArenaCatalog.Id?WellProfile:lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
             while(steps.MoveNext())yield return steps.Current;
             ApplyShadowPreference();
@@ -813,6 +816,7 @@ namespace StarTournament.ProvingGround
         void Repeat() { QueueMatch(diagnostic,true); }
         void Menu()
         {
+            updateBridge?.ReturnToMenu();
             NavigationReviewDriver = null; navigationReviewEnabled = false; BotDriver=null;botReviewEnabled=false;
             foreach(var vignette in damageVignettes)vignette?.Bind(null,-1,Profile);
             phase=Phase.Setup; diagnostic=false; combatReview=false; nativeInputReview=false; probeCameraCount=0; Session?.Stop(); presentation?.Dispose();
@@ -961,7 +965,7 @@ namespace StarTournament.ProvingGround
             Cursor.visible=!menuGamepadCursor;
         }
         void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
-        void OnDestroy() { visualPresentation?.ResetWorld(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreGraphicsQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { DisposeTextEntry(); visualPresentation?.ResetWorld(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreGraphicsQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void RebuildPickupVisuals()
         {

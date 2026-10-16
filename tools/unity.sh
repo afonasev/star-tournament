@@ -31,12 +31,41 @@ case "${1:-}" in
       fi
     fi
     [ -d "$project_dir" ] || { echo "Missing Unity project: $project_dir" >&2; exit 2; }
+    has_noaudio=0; has_muted=0; human_audio=0; automated=0
+    for arg in "$@"; do
+      case "$arg" in
+        -noaudio) has_noaudio=1 ;;
+        -muted) has_muted=1 ;;
+        -humanAudio) human_audio=1 ;;
+        -batchmode|-runTests|-executeMethod|-diagnostic|*Review) automated=1 ;;
+      esac
+    done
+    if [ "$has_noaudio" = 1 ] || [ "$has_muted" = 1 ] || [ "$human_audio" = 0 ] || [ "$automated" = 1 ]; then
+      if [ "$has_noaudio" = 0 ] && [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -noaudio -muted -projectPath "$project_dir" "$@"; fi
+      if [ "$has_noaudio" = 0 ]; then exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -noaudio -projectPath "$project_dir" "$@"; fi
+      if [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -muted -projectPath "$project_dir" "$@"; fi
+    fi
     exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -projectPath "$project_dir" "$@" ;;
   player)
     shift
     mode=${UNITY_RUN_MODE:-exclusive}
     [ "$mode" = shared ] || [ "$mode" = exclusive ] || exit 2
     [ "$#" -gt 0 ] || { echo "Provide direct Player executable" >&2; exit 2; }
-    exec "$runner" "--$mode" -- "$@" ;;
+    executable=$1; shift
+    has_noaudio=0; has_muted=0; human_audio=0; automated=0
+    for arg in "$@"; do
+      case "$arg" in
+        -noaudio) has_noaudio=1 ;;
+        -muted) has_muted=1 ;;
+        -humanAudio) human_audio=1 ;;
+        -batchmode|-runTests|-executeMethod|-diagnostic|*Review) automated=1 ;;
+      esac
+    done
+    if [ "$has_noaudio" = 1 ] || [ "$has_muted" = 1 ] || [ "$human_audio" = 0 ] || [ "$automated" = 1 ]; then
+      if [ "$has_noaudio" = 0 ] && [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" -- "$executable" -noaudio -muted "$@"; fi
+      if [ "$has_noaudio" = 0 ]; then exec "$runner" "--$mode" -- "$executable" -noaudio "$@"; fi
+      if [ "$has_muted" = 0 ]; then exec "$runner" "--$mode" -- "$executable" -muted "$@"; fi
+    fi
+    exec "$runner" "--$mode" -- "$executable" "$@" ;;
   *) echo "Usage: tools/unity.sh shared|exclusive [Editor arguments] | player EXECUTABLE [arguments]" >&2; exit 2 ;;
 esac
