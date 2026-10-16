@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect x="0" y="0" width="1440" height="900" rx="3" fill="#0b1725" stroke="none"/>
+<text x="56" y="43" fill="#e3bd78" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start">STAR TOURNAMENT</text>
+<text x="1384" y="43" fill="#9aaebe" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end">МАКЕТ · НЕ UNITY</text>
+<path d="M56 61 L1384 61" stroke="#304453"/>
+<text x="56" y="126" fill="#e3bd78" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="start">ИСТОРИЯ ПРОЕКТА НЕДОСТУПНА</text>
+<text x="56" y="165" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Предложение · исходный файл сохранён, запись в Lab заблокирована</text>
+<rect x="56" y="215" width="1328" height="538" rx="8" fill="#102131" stroke="#385062"/>
+<text x="90" y="267" fill="#e3bd78" font-family="Arial, sans-serif" font-size="28" font-weight="700" text-anchor="start">Не удалось открыть авторский баланс</text>
+<text x="90" y="314" fill="#eef2f5" font-family="Arial, sans-serif" font-size="21" font-weight="400" text-anchor="start">Default · версия 2: well.fill не соответствует допустимому шагу.</text>
+<text x="90" y="357" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Файл: DesignLab/authoring-history-v1.json</text>
+<path d="M90 387 L1350 387" stroke="#304453"/>
+<text x="90" y="434" fill="#eef2f5" font-family="Arial, sans-serif" font-size="22" font-weight="400" text-anchor="start">Ваши сохранённые значения, версии и релизные отметки не изменены.</text>
+<text x="90" y="480" fill="#eef2f5" font-family="Arial, sans-serif" font-size="22" font-weight="400" text-anchor="start">Можно вернуться к файлу проекта или продолжить на Default из поставки.</text>
+<text x="90" y="521" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="start">Временный выбор действует только в этой сессии и не заменяет авторскую историю.</text>
+<rect x="90" y="625" width="330" height="54" rx="3" fill="#142638" stroke="#e3bd78"/>
+<text x="255.0" y="659.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Назад</text>
+<rect x="450" y="625" width="525" height="54" rx="3" fill="#142638" stroke="#385062"/>
+<text x="712.5" y="659.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Использовать Default из поставки</text>
+<text x="90" y="721" fill="#9aaebe" font-family="Arial, sans-serif" font-size="17" font-weight="400" text-anchor="start">Обычный старт остаётся заблокирован до явного выбора. После перезапуска выбор повторяется.</text>
+<path d="M56 824 L1384 824" stroke="#304453"/>
+<text x="56" y="862" fill="#9aaebe" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start">Макет состояния ошибки: переход на встроенную конфигурацию требует явного действия; сохранение недоступно.</text>
+</svg>

@@ -264,6 +264,55 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(original.Hash,Is.EqualTo(legacy.Hash));Assert.That(original.Date,Is.EqualTo(legacy.Date));
             Assert.That(UnityEngine.JsonUtility.ToJson(original.Snapshot),Is.EqualTo(UnityEngine.JsonUtility.ToJson(legacy.Snapshot)));
         }
+        [TestCase("BeforeUnifiedBodyDamage")][TestCase("BeforeGamepadLook")][TestCase("BeforeLunarLighting")]
+        public void StructuralMappingsPreserveOwnSourceAcrossLocalAndAuthorRoles(string transform)
+        {
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Public;
+            var current=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateLunarPresentation()}};
+            var baseRegistry=current.Clone();
+            if(transform=="BeforeUnifiedBodyDamage")
+            {
+                var rebalance=typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",flags);
+                baseRegistry=new LabBundle{Profiles=baseRegistry.Profiles.Select(p=>(ProvingProfile)rebalance.Invoke(p,null)).ToList()};
+            }
+            if(transform=="BeforeGamepadLook")
+            {
+                var rebalance=typeof(ProvingProfile).GetMethod("BeforeWeaponRebalance",flags);
+                var trigger=typeof(ProvingProfile).GetMethod("BeforeGamepadTriggerAim",flags);
+                baseRegistry=new LabBundle{Profiles=baseRegistry.Profiles.Select(p=>(ProvingProfile)trigger.Invoke(((ProvingProfile)rebalance.Invoke(p,null)).BeforeFootstepMix(),null)).ToList()};
+            }
+            var method=typeof(ProvingProfile).GetMethod(transform,flags);
+            var previous=new LabBundle{Profiles=baseRegistry.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).Select(p=>transform=="BeforeGamepadLook"?p.BeforeAudio():p).ToList()};
+            for(int mode=0;mode<3;mode++)
+            {
+                string source=Path.Combine(directory,"structural-"+mode+".json");bool author=mode>0;
+                var old=new DesignLabHistory(source,previous,releases:LabReleaseCatalog.Factory(previous),authoring:author);
+                if(mode!=2)old.Create("Historical own profile");
+                var draft=old.Selected.Snapshot;draft.Set("shot.pellets",11);old.Save(draft);
+                var file=DesignLabHistoryTests.ReadFixture(source,previous);
+                var original=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+                // Reconstruct a file saved by the historical editor, including its now-retired editable fields.
+                if(transform=="BeforeUnifiedBodyDamage"){original.Snapshot.Set("rifle.head",44);original.Snapshot.Set("rifle.torso",27);original.Snapshot.Set("shot.torso",81);}
+                if(transform=="BeforeGamepadLook")original.Snapshot.Set("input.gamepadDegreesPerSecond",90);
+                if(transform=="BeforeLunarLighting"){original.Snapshot.Set("lunar.officeLamp",15.5f);original.Snapshot.Set("lunar.officeFill",4.25f);}
+                original.Date="20010203";original.Hash=original.Snapshot.Hash();original.ReleaseCandidate=true;
+                File.WriteAllText(source,UnityEngine.JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(source);
+                var h=new DesignLabHistory(source,current,releases:LabReleaseCatalog.Factory(current),authoring:author,persistMigration:false);
+                Assert.That(h.StorageError,Is.Null,transform+" mode="+mode);
+                var effective=h.Selected.Snapshot;
+                if(transform=="BeforeUnifiedBodyDamage"){Assert.That(effective.Get("rifle.damage"),Is.EqualTo(27));Assert.That(effective.Get("shot.damage"),Is.EqualTo(81));Assert.That(effective.Descriptors.Any(d=>d.Path=="rifle.head"),Is.False);}
+                if(transform=="BeforeGamepadLook"){Assert.That(effective.Get(GamepadLookSettings.HorizontalPath),Is.EqualTo(90));Assert.That(effective.Get(GamepadLookSettings.VerticalPath),Is.EqualTo(90));}
+                if(transform=="BeforeLunarLighting"){Assert.That(effective.Get("lunar.stairLamp"),Is.EqualTo(15.5f));Assert.That(effective.Get("lunar.stairFill"),Is.EqualTo(4.25f));Assert.That(effective.Get("lunar.officeLamp"),Is.EqualTo(15.5f));}
+                Assert.That(effective.Get("shot.pellets"),Is.EqualTo(11));
+                var retained=h.SelectedProfile.Revisions.Single(r=>r.Number==original.Number);
+                Assert.That(retained.Hash,Is.EqualTo(original.Hash));Assert.That(retained.Date,Is.EqualTo(original.Date));
+                Assert.That(UnityEngine.JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(UnityEngine.JsonUtility.ToJson(original.Snapshot)));
+                CollectionAssert.AreEqual(bytes,File.ReadAllBytes(source));
+                h.Save(effective);Assert.That(h.Selected.IsCompatibilityView,Is.False);Assert.That(h.Selected.ReleaseCandidate,Is.False);
+                var restart=new DesignLabHistory(source,current,releases:LabReleaseCatalog.Factory(current),authoring:author,persistMigration:false);
+                Assert.That(restart.StorageError,Is.Null);Assert.That(restart.Selected.Hash,Is.EqualTo(effective.Hash()));
+            }
+        }
         [TestCase(false)][TestCase(true)]
         public void HistoricalMarkedDefaultRunsThroughSourceViewAndFlagsDoNotCreateVersions(bool publicSeven)
         {
