@@ -137,6 +137,15 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         self.assertNotIn("Обновляйте игру из самой игры; для полной переустановки", self.source)
         self.assertIn("--installer commit", self.source)
 
+    def test_os_floor_precedes_broker_extraction_without_blocking_uninstall(self):
+        init = self.source.split('Function .onInit', 1)[1].split('FunctionEnd', 1)[0]
+        self.assertIn('${IfNot} ${AtLeastWin10}', init)
+        self.assertIn('${OrIfNot} ${AtLeastBuild} 19043', init)
+        self.assertLess(init.index('${AtLeastBuild} 19043'), init.index('Call PrepareProtectedBroker'))
+        uninstall = self.source.split('Function un.onInit', 1)[1].split('FunctionEnd', 1)[0]
+        self.assertNotIn('AtLeastBuild', uninstall)
+        self.assertNotIn('AtLeastWin10', uninstall)
+
     def test_repair_and_upgrade_page_matches_the_approved_flow(self):
         self.assertIn('Page custom ExistingInstallPage', self.source)
         page = self.source.split('Function ExistingInstallPage', 1)[1].split('FunctionEnd', 1)[0]

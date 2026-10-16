@@ -4,6 +4,7 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.SequenceEqual(new[] { "--platform-requirements" })) { PlatformRequirementsChecks.Run(); return; }
 if (args.FirstOrDefault() == "--recovery-supervisor") { Environment.ExitCode = await MacRecoveryChecks.Supervisor(args); return; }
 if (Path.GetFileName(Environment.ProcessPath) == "UpdateMac" && args.FirstOrDefault() == "apply") { MacRecoveryChecks.Update(args); return; }
 if (args.FirstOrDefault() == "--mac-caller-fixture") { MacRecoveryChecks.Caller(args[1]); return; }

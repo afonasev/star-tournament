@@ -105,7 +105,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | ID | Состояние и основание / граница |
 | --- | --- |
 | UPDATES-SOURCE-01 | Код/QA: оба pinned канала используют public GitHub Releases API, bounded Link pagination и canonical semantic/channel selection; standard-github-discovery71 actual HTTP/file/RSA checks. Legacy config отдельно сохранён. |
-| UPDATES-SELECT-01 | Частично: API draft/channel/semantic/completeness фильтры исправлены; signed full asset обязан быть в selected release. Existing UpdateManager.CheckForUpdatesAsync сравнивает установленную версию; minimum OS/updater/data admission остаётся открытым. |
+| UPDATES-SELECT-01 | Частично: API draft/channel/semantic/completeness фильтры исправлены; signed full asset обязан быть в selected release. Existing UpdateManager.CheckForUpdatesAsync сравнивает установленную версию; Baseline OS guard добавлен (Windows10/19043+, macOS12+) до launcher discovery/Player и новой native activation; target-specific signed OS/updater/data admission остаётся открытым. |
 | UPDATES-CHECK-01 | Код/QA: UpdateSession.Start once/started guard, shared IPC result, no manual check/retry. |
 | UPDATES-CHECK-02 | Код/QA: per-page ETag/body/hash/Link cache,304 свежий next-link, Retry-After/reset across launches, successful remaining0 guard, no stale-current on error; actual API→UpdateSession integration once. Cache parsing вне launch path; native installed gate отдельно. |
 | UPDATES-CONSENT-01 | Код/QA: download only after update action, no forced timer/settings/channel control, stage waits normal exit/restart. |
@@ -132,7 +132,7 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 | INSTALLER-PACKAGE-01 | Платформа: packaging scripts/release filenames/dependency inclusion exist; current modified Player+installer not built, earlier releases not proof this source. |
 | INSTALLER-IDENTITY-01 | Код/QA + платформа: shared icon inputs/app+installer+shortcut routing, windows-installer-icon evidence; current actual installed shell icon pending. |
 | INSTALLER-FLOW-01 | **Разрыв macOS**: текущий Velopack PKG, не требуемый DMG drag-to-Applications. Windows approved07 normal NSIS wizard/standard locations/repair source; native rendering pending. |
-| INSTALLER-FLOW-02 | **Разрыв OS constraints**: x64/admin/space есть, но .onInit не проверяет minimum Windows version; signed manifest не содержит minimum OS, фактический macOSTargetOSVersion12.0 не отражён в release policy. Нужны объявленные min OS + preflight/admission, затем native QA. |
+| INSTALLER-FLOW-02 | Baseline OS guard: NSIS WinVer preflight до broker extraction; maintenance plan/begin/commit и обе update activation boundaries защищены. Windows10/19043+, macOS12+ сверены с Unity Player6000.3. 12 policy +20 NSIS checks; signed target constraints и native QA остаются открытыми. Evidence standard-release-compatibility/baseline/. |
 | INSTALLER-RIGHTS-01 | Платформа: ordinary root supervisor/Explorer finish launch, only protected broker elevated; source guards/compiled tests, real tokens/ACL pending. |
 | INSTALLER-TRUST-01 | Explicit dev/test unsigned exception documented; no signing/notarization acceptance claimed. Update envelopes remain authenticated. |
 | INSTALLER-CONTENT-01 | Платформа: wrapper/stable entry→launcher→Player and shared runtime packaged; current content completeness requires separately authorized build/readback. |
@@ -161,7 +161,7 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 
 ## Следующее действие
 
-1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Следующий source этап — min OS/component/data compatibility, затем platform packaging gaps.
-2. Уточнить min OS/component/data compatibility, устранить Windows OS preflight и Mac PKG/DMG разрыв с отдельным preview. Завершить source audit effective quality slots before deciding OPT-GRAPHICS-QUALITY; не объявлять N/A из удобства и не придумывать пресеты молча.
+1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Baseline OS guard/maintenance compile исправлены; следующий source этап — signed target OS/component/data compatibility, затем platform packaging gaps.
+2. Уточнить min OS/component/data compatibility, закрыть signed target admission и Mac PKG/DMG разрыв с отдельным preview. Завершить source audit effective quality slots before deciding OPT-GRAPHICS-QUALITY; не объявлять N/A из удобства и не придумывать пресеты молча.
 3. После human decisions внедрить20–28 и общий device-aware hints direction; новые визуальные изменения сначала saved preview.
 4. После source fixes — affected integration, canonical spec sync и итоговый отчёт. Native build/platform/device/human gates остаются отдельными и не выдаются за успешные.

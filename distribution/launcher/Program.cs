@@ -59,6 +59,7 @@ static class Launcher
         Directory.CreateDirectory(logRoot);
         void Log(Exception ex) => UpdateFeedback.Log("launcher", ex);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(baseDir, "release.json")), Json)!;
+        PlatformRequirements.RequireSupported(config.Platform);
         if (config.UpdateChannel is not ("test" or "production"))
             throw new InvalidOperationException("GitHub update channel required");
         FileStream ownership;

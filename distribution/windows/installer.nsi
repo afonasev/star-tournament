@@ -7,6 +7,7 @@ SetCompressorDictSize 32
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "x64.nsh"
+!include "WinVer.nsh"
 !include "nsDialogs.nsh"
 
 !ifndef INPUT_DIR
@@ -213,6 +214,11 @@ Function CreateDesktopShortcut
 FunctionEnd
 
 Function .onInit
+  ${IfNot} ${AtLeastWin10}
+  ${OrIfNot} ${AtLeastBuild} 19043
+    MessageBox MB_ICONSTOP|MB_OK "Для Star Tournament требуется Windows 10 21H1 (сборка 19043) или новее."
+    Abort
+  ${EndIf}
   ${IfNot} ${RunningX64}
     MessageBox MB_ICONSTOP|MB_OK "Для установки Star Tournament требуется 64-разрядная версия Windows."
     Abort

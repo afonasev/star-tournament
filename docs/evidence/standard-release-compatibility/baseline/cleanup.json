@@ -1,0 +1,1399 @@
+{
+  "removed_roots": [
+    "distribution/launcher/bin",
+    "distribution/launcher/obj",
+    "distribution/tests/bin",
+    "distribution/tests/obj",
+    "distribution/maintenance/bin",
+    "distribution/maintenance/obj"
+  ],
+  "removed_bytes": 101419787,
+  "reason": "Owned reproducible .NET compile/test output; terminal QA sessions, no Player/installer candidate",
+  "files": [
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/Velopack.dll",
+      "bytes": 268288,
+      "sha256": "1cc96ee3d1b466739902a15188ec6046744017ab28185bd32cb60ec1537e9174"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/StarTournamentLauncher.deps.json",
+      "bytes": 1906,
+      "sha256": "3ecbef853da911629b10bce2428655c090de8534f804b2fca386c5122ec7a525"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/StarTournamentLauncher.pdb",
+      "bytes": 54544,
+      "sha256": "2752de2d2b4f80d1e06fcbdf2f9400a449dcd8413a19364f4769271df939e781"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/System.Threading.AccessControl.dll",
+      "bytes": 32528,
+      "sha256": "4ba77cd93d65ccfc63669628dbcf9a7d4908b980e30377d01688433a844a71df"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/StarTournamentLauncher",
+      "bytes": 124848,
+      "sha256": "906bbc7605a162c1a492a0bd966933165c89b5c0059a3abb84187096e09c9f3b"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/StarTournamentLauncher.runtimeconfig.json",
+      "bytes": 257,
+      "sha256": "088bcc1a867d80d3923a812855f7ae9297fc8ac3d844cf9a83510bd8d1352af8"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/StarTournamentLauncher.dll",
+      "bytes": 553472,
+      "sha256": "e3f7b1001f4d36f1b4cc4b634e28956d3ffb909d93685be8f61de599373fbb0e"
+    },
+    {
+      "path": "distribution/launcher/bin/Debug/net8.0/runtimes/win/lib/net8.0/System.Threading.AccessControl.dll",
+      "bytes": 51976,
+      "sha256": "325e07acba4cfaaf400ea23ab52903f468e500e0dd80e458653a5abedd8be771"
+    },
+    {
+      "path": "distribution/launcher/obj/Launcher.csproj.nuget.g.targets",
+      "bytes": 149,
+      "sha256": "b14461e0cb1be3f77fcf9fe2fdd62889325ca92523d0f606980ed59eb5c4aa1c"
+    },
+    {
+      "path": "distribution/launcher/obj/Launcher.csproj.nuget.g.props",
+      "bytes": 1131,
+      "sha256": "1d803552f2511824daf97e982edfbc89c112f0ce8c1704166263154b12dc465b"
+    },
+    {
+      "path": "distribution/launcher/obj/project.nuget.cache",
+      "bytes": 468,
+      "sha256": "e25cc42c029d1eb03dcd50a97ce49ddb75c49e6d4061f42a629b1ce90a4e7b3a"
+    },
+    {
+      "path": "distribution/launcher/obj/project.assets.json",
+      "bytes": 5769,
+      "sha256": "ebe6abd6a76bd7467d40f0f3c450bb729884abb71a7e345a2e056addb443ba33"
+    },
+    {
+      "path": "distribution/launcher/obj/Launcher.csproj.nuget.dgspec.json",
+      "bytes": 2450,
+      "sha256": "b37f1adf44633cc1a5f8fb60a582c40b4deefb2c394c42476d7f09dd514bb765"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+      "bytes": 197,
+      "sha256": "3509c0134d01417e72dac88c9162978a33a28868b5b416aa946cabdf0d822198"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.GlobalUsings.g.cs",
+      "bytes": 287,
+      "sha256": "addb143f8c43b95f1bb73a0cba7c793281935c4ab8ccabbdf6b04d3e0f809e0e"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.assets.cache",
+      "bytes": 1903,
+      "sha256": "b5f7b53d28f550005b2278a484f9afcb2359819222435c63b5d8abb707e6caa7"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.csproj.Up2Date",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/apphost",
+      "bytes": 124848,
+      "sha256": "906bbc7605a162c1a492a0bd966933165c89b5c0059a3abb84187096e09c9f3b"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.csproj.CoreCompileInputs.cache",
+      "bytes": 65,
+      "sha256": "e0b436cba34bb32d35735cd095decce0c5d78dd87df7fe626f4dd860159518c6"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.csproj.FileListAbsolute.txt",
+      "bytes": 2929,
+      "sha256": "a981060de53062968d459f1f8e49d442d54a9c6e822eb2fd0fa9b2d076a0303e"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.AssemblyInfo.cs",
+      "bytes": 1018,
+      "sha256": "fc7639291677e6150a5a16fcd2f2264d7387d968a3fb37778aea6b4ed37023f8"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.csproj.AssemblyReference.cache",
+      "bytes": 898,
+      "sha256": "4b439d9316701cbe48d97ec6217734af89032094b60df2f79593376ec20caeb4"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.genruntimeconfig.cache",
+      "bytes": 65,
+      "sha256": "7c1ac090531cb0aa236797b0c3661064c9ff3e2757b63675423a643fa7b1311f"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.sourcelink.json",
+      "bytes": 198,
+      "sha256": "2fdb9b1b3fef4c9c63eb9c1694b90d47cc65322ed7dd940c766616f2c3772418"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/StarTournamentLauncher.pdb",
+      "bytes": 54544,
+      "sha256": "2752de2d2b4f80d1e06fcbdf2f9400a449dcd8413a19364f4769271df939e781"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.AssemblyInfoInputs.cache",
+      "bytes": 65,
+      "sha256": "b7e91f2468255f89131a945519fa5a1a7573767f36922f74580e9ca220c4d7df"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/Launcher.GeneratedMSBuildEditorConfig.editorconfig",
+      "bytes": 630,
+      "sha256": "eb9743850165f7a0f9c4ac0becbabec3af5a326336a90f517c25e4200450d6ff"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/StarTournamentLauncher.dll",
+      "bytes": 553472,
+      "sha256": "e3f7b1001f4d36f1b4cc4b634e28956d3ffb909d93685be8f61de599373fbb0e"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/ref/StarTournamentLauncher.dll",
+      "bytes": 399872,
+      "sha256": "e0c867e061b00573a901dfd3419970a135ea782d6c74a738b28587f1b1c0bd15"
+    },
+    {
+      "path": "distribution/launcher/obj/Debug/net8.0/refint/StarTournamentLauncher.dll",
+      "bytes": 399872,
+      "sha256": "e0c867e061b00573a901dfd3419970a135ea782d6c74a738b28587f1b1c0bd15"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/Launcher.Contracts.dll",
+      "bytes": 349696,
+      "sha256": "788518714ec2091f0a97150b1ce2c302ba1a37a2f6e6dd1aaeab6ba516d4baa7"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/Launcher.Contracts.deps.json",
+      "bytes": 2709,
+      "sha256": "2d105d11cf07e0e9cfe22388ac04b63851e90f3b6d1144f99ecada2e1e45d82d"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/Launcher.Contracts",
+      "bytes": 124848,
+      "sha256": "6d3651f240f00306188808b2312096ce3c43e33103b8f9317559cce1e8cca77a"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/Launcher.Contracts.pdb",
+      "bytes": 96168,
+      "sha256": "204534700109f0b813ec5432a83001fd049ac91f8d8b2da952b892a3811b0770"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/Velopack.dll",
+      "bytes": 268288,
+      "sha256": "1cc96ee3d1b466739902a15188ec6046744017ab28185bd32cb60ec1537e9174"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/Launcher.Contracts.runtimeconfig.json",
+      "bytes": 257,
+      "sha256": "088bcc1a867d80d3923a812855f7ae9297fc8ac3d844cf9a83510bd8d1352af8"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/StarTournamentLauncher.deps.json",
+      "bytes": 1906,
+      "sha256": "3ecbef853da911629b10bce2428655c090de8534f804b2fca386c5122ec7a525"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/StarTournamentLauncher.pdb",
+      "bytes": 54544,
+      "sha256": "2752de2d2b4f80d1e06fcbdf2f9400a449dcd8413a19364f4769271df939e781"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/System.Threading.AccessControl.dll",
+      "bytes": 32528,
+      "sha256": "4ba77cd93d65ccfc63669628dbcf9a7d4908b980e30377d01688433a844a71df"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/StarTournamentLauncher",
+      "bytes": 124848,
+      "sha256": "906bbc7605a162c1a492a0bd966933165c89b5c0059a3abb84187096e09c9f3b"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/StarTournamentLauncher.runtimeconfig.json",
+      "bytes": 257,
+      "sha256": "088bcc1a867d80d3923a812855f7ae9297fc8ac3d844cf9a83510bd8d1352af8"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/StarTournamentLauncher.dll",
+      "bytes": 553472,
+      "sha256": "e3f7b1001f4d36f1b4cc4b634e28956d3ffb909d93685be8f61de599373fbb0e"
+    },
+    {
+      "path": "distribution/tests/bin/Debug/net8.0/runtimes/win/lib/net8.0/System.Threading.AccessControl.dll",
+      "bytes": 51976,
+      "sha256": "325e07acba4cfaaf400ea23ab52903f468e500e0dd80e458653a5abedd8be771"
+    },
+    {
+      "path": "distribution/tests/obj/Launcher.Contracts.csproj.nuget.dgspec.json",
+      "bytes": 4758,
+      "sha256": "57077f8c591148f4a0400f296efaa334febfa00f9c6e0ec58b71a3f73a9d06c8"
+    },
+    {
+      "path": "distribution/tests/obj/project.nuget.cache",
+      "bytes": 475,
+      "sha256": "66e7da4bf0ee497c2a4c4795e170b01824534678465c33f83e1cebaed8aa5d98"
+    },
+    {
+      "path": "distribution/tests/obj/Launcher.Contracts.csproj.nuget.g.targets",
+      "bytes": 149,
+      "sha256": "b14461e0cb1be3f77fcf9fe2fdd62889325ca92523d0f606980ed59eb5c4aa1c"
+    },
+    {
+      "path": "distribution/tests/obj/project.assets.json",
+      "bytes": 6365,
+      "sha256": "51b63e0998e0c55f15b247d3ac734018c512fdf5c68870e204dac6906a092dc5"
+    },
+    {
+      "path": "distribution/tests/obj/Launcher.Contracts.csproj.nuget.g.props",
+      "bytes": 1131,
+      "sha256": "1d803552f2511824daf97e982edfbc89c112f0ce8c1704166263154b12dc465b"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+      "bytes": 197,
+      "sha256": "3509c0134d01417e72dac88c9162978a33a28868b5b416aa946cabdf0d822198"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.dll",
+      "bytes": 349696,
+      "sha256": "788518714ec2091f0a97150b1ce2c302ba1a37a2f6e6dd1aaeab6ba516d4baa7"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.AssemblyInfoInputs.cache",
+      "bytes": 65,
+      "sha256": "1e83610639070f46dc8ef176a124bf55234d13fa90748ca1e14f6add7f01eb13"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.GlobalUsings.g.cs",
+      "bytes": 287,
+      "sha256": "addb143f8c43b95f1bb73a0cba7c793281935c4ab8ccabbdf6b04d3e0f809e0e"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.csproj.CoreCompileInputs.cache",
+      "bytes": 65,
+      "sha256": "7ddd2ce8ce36c6e913dde81f3c972ece4b2bc0a99c7b2f2a88b5f416b3553802"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.pdb",
+      "bytes": 96168,
+      "sha256": "204534700109f0b813ec5432a83001fd049ac91f8d8b2da952b892a3811b0770"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.assets.cache",
+      "bytes": 1581,
+      "sha256": "fcd4fcab293f7d45cdc4b3841fc466e0629a9578614e5f0fee1957b57414c383"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.genruntimeconfig.cache",
+      "bytes": 65,
+      "sha256": "fa5b1c6cf3eabef1c7844e3369ac17ad286986ca165d05541fa05c701ddaf8e1"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/apphost",
+      "bytes": 124848,
+      "sha256": "6d3651f240f00306188808b2312096ce3c43e33103b8f9317559cce1e8cca77a"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.AssemblyInfo.cs",
+      "bytes": 1006,
+      "sha256": "6a4273b36c1ebc9de71eed24a9814a933c100f9bb25f8149a761736b5c61f3d4"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.EF17F326.Up2Date",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.sourcelink.json",
+      "bytes": 198,
+      "sha256": "2fdb9b1b3fef4c9c63eb9c1694b90d47cc65322ed7dd940c766616f2c3772418"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.csproj.AssemblyReference.cache",
+      "bytes": 2903,
+      "sha256": "7389971942011188a486309300928b27a3027c213810167784b4f00c2c28eaa9"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.GeneratedMSBuildEditorConfig.editorconfig",
+      "bytes": 637,
+      "sha256": "c3ac2202992e6fa1da8ffab805bbf460d2e812f8e9e30eb4c997d729c89dfbc9"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/Launcher.Contracts.csproj.FileListAbsolute.txt",
+      "bytes": 3612,
+      "sha256": "ff42341097bad1225a1391c1252b1165140ae0f3a9792917d07eca37414d7a9b"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/ref/Launcher.Contracts.dll",
+      "bytes": 49152,
+      "sha256": "3c82195afa1664392a7f8858c4954d1b3d78b84099676d45341b8dff4c49f8d2"
+    },
+    {
+      "path": "distribution/tests/obj/Debug/net8.0/refint/Launcher.Contracts.dll",
+      "bytes": 49152,
+      "sha256": "3c82195afa1664392a7f8858c4954d1b3d78b84099676d45341b8dff4c49f8d2"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Microsoft.CSharp.dll",
+      "bytes": 1005392,
+      "sha256": "30704c86c4c052ac630e5b5bf9e04aeb1eb0677fe3c5cf8a7df36c8ab78d0b56"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Web.dll",
+      "bytes": 15144,
+      "sha256": "fc90f7d949615646b8d5af798cfb2bd37fbfe21b1c790b6a2e049bea36758e2d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.Contracts.dll",
+      "bytes": 16168,
+      "sha256": "a670f39c589bd9d4a994e75abc2385839649ed91a831a4ca7d9fe4f87834b492"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ServiceModel.Web.dll",
+      "bytes": 16720,
+      "sha256": "059d12d427d2cf95f90f5ca817c30d12d504db13a031cf5dce53bafceacd3800"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.FileVersionInfo.dll",
+      "bytes": 46888,
+      "sha256": "24b0e8ed2ea93b84ff2a26cb1f69f7d6e331f6162eae4fae4446a5556b8a8eee"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Intrinsics.dll",
+      "bytes": 16720,
+      "sha256": "8679a62575619caa282d3fb1a1ead4680417b0384ffed8b73a2c4f7dc102c32b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Security.dll",
+      "bytes": 669520,
+      "sha256": "c957641be9192e7812f209e2120e56a71da0d99b1a8443ca5f7947f38ea4376d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.XPath.XDocument.dll",
+      "bytes": 30544,
+      "sha256": "01f4f51c85b1533eef9ef35fcec4c281565e661a415f7cb10422c3840c5973f7"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.Linq.dll",
+      "bytes": 15656,
+      "sha256": "64cab6d274de20fb8ec0d080b96091e85af0ddfc9619869169e8c41d5c1b02c0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.WebSockets.Client.dll",
+      "bytes": 100136,
+      "sha256": "41836162542928ad88ac7a0176cbdc753f63da986d668688f7fb049b2ef0aee9"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/clrgc.dll",
+      "bytes": 667944,
+      "sha256": "b09898e142791ea3b96fd1b432d0e5c8ad51c81cd99b608accd2981e78a93cdf"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.dll",
+      "bytes": 15656,
+      "sha256": "1ee3349f15c3a20a7394341d8d4ede2ac3d7ddbe4462f43dae828f407f84ff1d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Dynamic.Runtime.dll",
+      "bytes": 16208,
+      "sha256": "f6a93ad11464c19f720d34b92043dcc289885bf959b32549ee3ca24537e8b65a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Serialization.Xml.dll",
+      "bytes": 16680,
+      "sha256": "875ef1fe60647f5bb00a756ad9e7bb0c4a579d35acead8386f27f8c7479ae5e0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Principal.dll",
+      "bytes": 15144,
+      "sha256": "aee0a10edcf634876126b0de882d01f432de3eb7cbfca0565e330efe336d6dc0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.dll",
+      "bytes": 16168,
+      "sha256": "558837b6bcaf55fdbb3e7d8f565f0c04d9b415823d0abe382ac31643db3639de"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.ThreadPool.dll",
+      "bytes": 15656,
+      "sha256": "5758d73199750af708edca8456eed908b0bfdaaccd7cb2083a6c95dad4006fdb"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.dll",
+      "bytes": 17232,
+      "sha256": "c2ddcdff66bbb2595e5bcaca342d600a81c9a2e618ac9b9b1c6977fc4e1d17fc"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Compression.FileSystem.dll",
+      "bytes": 15144,
+      "sha256": "75972527f5c874893f0515fbe6f8d1d484354ac421ccf31af346738aa74cbc07"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.Metadata.dll",
+      "bytes": 1115944,
+      "sha256": "1795022b24ddf1e4db47f63035b685f2a9f3e4468fb277158bb909d3b6ec00a0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/mscordbi.dll",
+      "bytes": 1233800,
+      "sha256": "20140e71ed6dd59e6736e455b7be2784d7ac0b3f43839148a134aec3e7622de0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.Cng.dll",
+      "bytes": 16168,
+      "sha256": "7b6deb57bd6a2f0123527f04be5ccca9a8b30f4f09a97e6f32519b651496a7f6"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ComponentModel.EventBasedAsync.dll",
+      "bytes": 46928,
+      "sha256": "ce813a7cde09eba1bdd7d6661fa39c09057beddc78f554c5476c43766d763ed0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.DiagnosticSource.dll",
+      "bytes": 415568,
+      "sha256": "25c3bf229337a485ceacb82c00f47f2e98de68a279eb5a450550526f9cbf0448"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.CompilerServices.VisualC.dll",
+      "bytes": 30544,
+      "sha256": "b0216c72f28e06bf4ee3c7561b5c483224847e5f40df6d939d2afbe731e2cfd2"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.dll",
+      "bytes": 83752,
+      "sha256": "435c110b598d30f118d0e673068b535b693c5a77fae17398ad46821ce1261aba"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/netstandard.dll",
+      "bytes": 100648,
+      "sha256": "53d854d33c3f0e1bbccff4b5c4b89420daa66fa5f6603f6e5df20d6bbb7e00f4"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Microsoft.VisualBasic.dll",
+      "bytes": 17192,
+      "sha256": "a172fad5b53a27d32b21ba3b18e27046c1daf7451c46bea4f57f515d0eef756a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.UnmanagedMemoryStream.dll",
+      "bytes": 15144,
+      "sha256": "9442d9391ff037cf388a9e15c171845e5436b093e3c928c60350957555393fd0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.FileSystem.AccessControl.dll",
+      "bytes": 104232,
+      "sha256": "6c384ee8c0613a469f9894209f39f154d2e6e8796f9b9c02e3686a42e15d94a6"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.XPath.dll",
+      "bytes": 15696,
+      "sha256": "cd0b232b8b161a4167b77387885b13e6bf938dfce4addfd68a646fa2e5471fcf"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.XmlDocument.dll",
+      "bytes": 15656,
+      "sha256": "48781bea76ddce3732f316bcc01bb375910b18b4d83de62b6570835e09dab363"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/hostfxr.dll",
+      "bytes": 366376,
+      "sha256": "4f5a0500cd2a2439b0d5edbf242950233aec4539ec9a5e7ba9b8a9b0079f63af"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Configuration.dll",
+      "bytes": 19240,
+      "sha256": "39eca0e98d4b206cbff6243a04494f79ec8b19903d3427b44d64d88097d77f65"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Resources.Writer.dll",
+      "bytes": 50984,
+      "sha256": "a09c234e643b0391367f975241592002270eb9bd5516f0d75b31f82be6426dd6"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Console.dll",
+      "bytes": 173864,
+      "sha256": "d38105c5c790fc76ac6e4d99fe9b6c2672e4e250e191bd43593e55ae7d3b2afe"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Sockets.dll",
+      "bytes": 546600,
+      "sha256": "49e95c5a59172d80941992016eb35c965d8fb4bc05b745f85e793b6c010bdc6b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Http.dll",
+      "bytes": 1734440,
+      "sha256": "5102639c2037d77949340d94761c9a4c5053b940b8ae4ba2fbbe3507b8a5ec43"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Web.HttpUtility.dll",
+      "bytes": 59216,
+      "sha256": "351125823b848b8cd9e2541b1e0f13add351b6dd3c34a6acb8c243565e5c6251"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Text.Encoding.Extensions.dll",
+      "bytes": 15656,
+      "sha256": "9ad4679a4005eadc13af6ae025534f22648ded33ab7c1a796c70c8813ee51977"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.NetworkInformation.dll",
+      "bytes": 157480,
+      "sha256": "db21f0c5659d925741f7a08b0b50fc297248b0155f375f0fd7f970dd2e4cd3f0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Microsoft.VisualBasic.Core.dll",
+      "bytes": 1247056,
+      "sha256": "bdcdd4bd2b6e2c0eec9a93187cd57ce9437c9a2324a6c6c20c55a2d1a27823be"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Principal.Windows.dll",
+      "bytes": 186152,
+      "sha256": "aace487981f8c9077620abf9c9d236ce5ef98241cf4222fbb49c717286f2cd0f"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Claims.dll",
+      "bytes": 100176,
+      "sha256": "45171f0ad174047cbf511e7761d7abb2d44988e899f690c36ff3c5bcfbcb2467"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ComponentModel.Primitives.dll",
+      "bytes": 79696,
+      "sha256": "d981af410d4ed7939fdee47a1ee58e3db472c05f17c2b0d48e4b1ebfb2fea0e5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.FileSystem.DriveInfo.dll",
+      "bytes": 55080,
+      "sha256": "3eea221aaa9e6066bffb63218ee292fe499bbb5db434a57225aac1b8531c0b90"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Compression.Brotli.dll",
+      "bytes": 83752,
+      "sha256": "46d228e5ea0e3d25b15e95d6a97a3b80e86dde2660589462f30853eb5a0c40b5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Pipes.AccessControl.dll",
+      "bytes": 16168,
+      "sha256": "fb206a579c16f5750ce10026913a7f16ad686fb37af1fc9bc997f611362b2f2e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/hostpolicy.dll",
+      "bytes": 406824,
+      "sha256": "24f18ccb306d5e614932478471ad276e2b041a723a45e571073db383b37c5120"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.X509Certificates.dll",
+      "bytes": 16680,
+      "sha256": "07643c4b239dd2a9326c0a62491995be666a47d2c85d0455ca7379a1692fa284"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.Primitives.dll",
+      "bytes": 15656,
+      "sha256": "b15b177125f391d1caee193167caffbec4ac2586447f822ac655ace9a6bdff41"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Numerics.dll",
+      "bytes": 329552,
+      "sha256": "d845c2a3d8edc282d5c32fd8020c2233fbeed3eb02b5064ab8637506049cfb70"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.FileSystem.Watcher.dll",
+      "bytes": 87888,
+      "sha256": "21c97f58651ea238a7018ecfa4bb4b3b6b4e682f97163ae14f8d4d145547f3f0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/update-public.pem",
+      "bytes": 625,
+      "sha256": "ac574cb8ac9c6f90daafe542945a46b1b63dcd5d3f44e732c3d4349c0eb42121"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.TraceSource.dll",
+      "bytes": 145232,
+      "sha256": "2b5489bc5a6d65e109dbed6557dc2af3ba9dfb549efd18a64f37fd64255cb756"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.Emit.Lightweight.dll",
+      "bytes": 15656,
+      "sha256": "39cf409e3b41b813c9e715ec4f38bc02748499d62e89f71fd8f4dad6ebba80bb"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Text.Encoding.CodePages.dll",
+      "bytes": 861992,
+      "sha256": "a597e456ac579a3814d4c11cd649cb188df0d4dc27ff9ae59e36664cca0927a9"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Linq.Expressions.dll",
+      "bytes": 3675984,
+      "sha256": "0f99977beddc9272d56a2e16b2581cde37f2afd43e77c8209827197c098dedeb"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Timer.dll",
+      "bytes": 15144,
+      "sha256": "39e1b46a16ba5d4a4d7687dcda0b8838e45198544417d227c7f174c8e15df56d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.InteropServices.dll",
+      "bytes": 96080,
+      "sha256": "1930aea4d91654a4daf13bf95b2daff023d3104a9b3794059ea139e550bcfb5f"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Pipes.dll",
+      "bytes": 165672,
+      "sha256": "35030c28374b6ffa6393c2ab8ae80cf712a2f88e92a16dbbdbf6ae03f0e0d452"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.HttpListener.dll",
+      "bytes": 550696,
+      "sha256": "ad612ae83e313eb7fc2afa59b829533c8e8f36fb76d1d398262a610e85af1ccc"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Formats.Tar.dll",
+      "bytes": 276304,
+      "sha256": "ee3132a84cf9fd170f3ae0899a996adc120a899c51dbc5534b22e8870b5aa137"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/clrjit.dll",
+      "bytes": 1777960,
+      "sha256": "697c09ac310b8fb8118863971955da135aee348116816e3b511bf5957dc6253a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Text.RegularExpressions.dll",
+      "bytes": 1021736,
+      "sha256": "8b3af9e3e0215b46c2dcef1f11c4cdc7ad477140883bcb5c778d04cc051bb0dc"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Serialization.dll",
+      "bytes": 16680,
+      "sha256": "a4a2cd5a396a851e444c5e6ab82c6353a1d83906b65968a15cd8d57540b4f9c3"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Compression.dll",
+      "bytes": 263976,
+      "sha256": "1f7e0ce87b7859c81d793750ea8fc58db6d1fa1b81d3cea1e73c614f66439c3c"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Tasks.Parallel.dll",
+      "bytes": 132904,
+      "sha256": "08ffb9101534e1644c203427bd22b3beecaab021f4ce40f4b162b898e2fa66f7"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/WindowsBase.dll",
+      "bytes": 16208,
+      "sha256": "d2b82fd6347b45b6bc3ff23c60d215a8431906d25b68bf84a2ff6a0b2c46ae9e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Velopack.dll",
+      "bytes": 268288,
+      "sha256": "1cc96ee3d1b466739902a15188ec6046744017ab28185bd32cb60ec1537e9174"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Private.Xml.dll",
+      "bytes": 7997264,
+      "sha256": "f7285c6a22e221784f1d81f884283e9dcd02aa7bfd17c428943d29e00170d749"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Data.DataSetExtensions.dll",
+      "bytes": 15696,
+      "sha256": "d425011a475bb44e6b9acd4c48e8f3b428312a05ca3a649abbcd871f7102decf"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Collections.NonGeneric.dll",
+      "bytes": 104232,
+      "sha256": "b40cdf234652b31b443164350f73e25f98c5edecfd30698789d6dbf9ca456e44"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Collections.Concurrent.dll",
+      "bytes": 276264,
+      "sha256": "ed653ccb5dc40d0bb4ea3429165a0825705f2935a65c584ca67cba45671884c1"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Quic.dll",
+      "bytes": 284456,
+      "sha256": "58f5e4c6f2bbd5320c9797fbead001a99e4d334fa936d5469df82262ac8069da"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Overlapped.dll",
+      "bytes": 15656,
+      "sha256": "739bfb326810706f497df3b66901e5657b9835ad945fdc6728a27bf932cbafaa"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Text.Encodings.Web.dll",
+      "bytes": 132904,
+      "sha256": "94afad93dfdd00e132467753615bfb4bc3fa6633701082a9553d6cb4eaccf2ac"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.Serialization.dll",
+      "bytes": 16168,
+      "sha256": "7823bbfdcb819bd585488adeb6612cab2357dc2df5e4a85e0f2a02079c2ec736"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Handles.dll",
+      "bytes": 15144,
+      "sha256": "9b193371a3e739f81e601e343c60d6214e0b3966833f4eaebdcfb49f8217e97f"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.WebProxy.dll",
+      "bytes": 42792,
+      "sha256": "cfd65e84a782db8180c9bb3bf6eb739f250901e1006d941d66f08d6b6edb0b0e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Text.Json.dll",
+      "bytes": 1501008,
+      "sha256": "9cf2e2ae44376dbea191925e571af703c6d7b53a5c138a0f0f13cd6b8af2c904"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/msquic.dll",
+      "bytes": 536344,
+      "sha256": "b7158d427b01c70483bb3d80c5211e387dd98e9471c8a70e4484d449de9157e8"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ObjectModel.dll",
+      "bytes": 79656,
+      "sha256": "35187a8d7f9dc8896894d1a0a496fbabcd567f2ac0f047632f7178c308ff72f5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Private.CoreLib.dll",
+      "bytes": 13174608,
+      "sha256": "99b168b84597a4f31fda8281efce7d42a14e2df0f4694194735e049dbc0f6418"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.WebHeaderCollection.dll",
+      "bytes": 67368,
+      "sha256": "8db64dd40a80422673f81ec67ee9df921795b0579e5ba6cef09bffce7fef1294"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.InteropServices.RuntimeInformation.dll",
+      "bytes": 15144,
+      "sha256": "c7fdcd989c4732af5d8c5c00a5ce68d48fa6f500dee37aa3fd716fb260b01338"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ComponentModel.TypeConverter.dll",
+      "bytes": 747304,
+      "sha256": "db04940603c749719e133bb567d142d46af3a6f2f37597db398955a3896b84c2"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Mail.dll",
+      "bytes": 431952,
+      "sha256": "8830477bb6b18b181a2495c77038ab8a7c941897c9e46feb06f61b2013ed1c8e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Tasks.Extensions.dll",
+      "bytes": 15656,
+      "sha256": "336e8d8f0e79bfff0c6c38d4a7677384b7951ff66394664bf4fb866ed0bba982"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Linq.Parallel.dll",
+      "bytes": 804648,
+      "sha256": "4ba87321ea950874380628879c3c25332281f7f9a920a090de930570ae8af0ea"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.XDocument.dll",
+      "bytes": 15656,
+      "sha256": "e5a4ef2a7f8c927dc5c587eeb4b5bf1a7264a89825c3d7313082447d3446a11b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.SecureString.dll",
+      "bytes": 15184,
+      "sha256": "a8c666cce29278836fee40d1058ebb55b56631056a26117176fce6adb793187f"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ComponentModel.Annotations.dll",
+      "bytes": 198480,
+      "sha256": "97060d253527bdde94022ac6d22ae4c0474cf67f40bfe8342e9420b7888b3aff"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.InteropServices.JavaScript.dll",
+      "bytes": 50984,
+      "sha256": "7cefe89e6502602a7e0256960f5f587046016cdb9b822a104e0bf961178dcf2a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Private.DataContractSerialization.dll",
+      "bytes": 2082600,
+      "sha256": "f3d2acd4d5adeabb40991cd1c757d05640b64cdd89f59874cffe7bbd6ed38b97"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.FileSystem.Primitives.dll",
+      "bytes": 15184,
+      "sha256": "fb2f15cf3356987e0120d265b7b4fbccc11dccfbae08b334a17b4e830eddc54e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/mscorlib.dll",
+      "bytes": 59216,
+      "sha256": "ee4983e136ab524f29d2f43d01d1deb978f4948eb5ca05b5d6e40be37ec43023"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Http.Json.dll",
+      "bytes": 128808,
+      "sha256": "7c4b39865655dd3b695a305527b8d11092c5dcf1b786d747cd45e6c00cce5249"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/mscordaccore_amd64_amd64_8.0.3126.42015.dll",
+      "bytes": 1348960,
+      "sha256": "a277f63f5722e1ed59a791fc5d30c53ed263abef4adf12d0bf494897d796c3e0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/createdump.exe",
+      "bytes": 71512,
+      "sha256": "beba75ffcd188a0ce594c304c737caf16681e1af19bdd7bb47b3f0eb8636c320"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.Primitives.dll",
+      "bytes": 15696,
+      "sha256": "a214418a0b70a48772e274ccda284d3cfc2392abf4aba55718c70324fb78a239"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Compression.ZipFile.dll",
+      "bytes": 55080,
+      "sha256": "a8624a7c7359c1eb6767c50513a33eb9f09125089044ef0caf9d4d225b33a230"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Windows.dll",
+      "bytes": 15656,
+      "sha256": "113a298c5e1887f9cc2371376e6aeadf631958c1c255ebac18282da7829d3c49"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.Compression.Native.dll",
+      "bytes": 828240,
+      "sha256": "4f892a1f3bdf970e662435bb044b5c5e4d8f7241bce981237f57165ae12cb171"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Linq.Queryable.dll",
+      "bytes": 173864,
+      "sha256": "5e14d4ab3bb2711b0cc4b197f973e9c74955a1e4c77041d5cad65e759c304232"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Resources.ResourceManager.dll",
+      "bytes": 15656,
+      "sha256": "d0db07a7e954edbef7d586907574068ea2764e28acb7f5a64fd6006ee8889d93"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Resources.Reader.dll",
+      "bytes": 15184,
+      "sha256": "34b31e5093ff2564fccde4b43c31330bc4cbc6cf24c38cb929d34f1ffb46d0fb"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/StarTournamentMaintenance.deps.json",
+      "bytes": 27883,
+      "sha256": "350efb53e8998d50c17dd7e7ca71cb61d9dd46b3271c5919bf4f82fb9f02d05e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Collections.dll",
+      "bytes": 259880,
+      "sha256": "c6bb79b8fb32504b6327b516e6ff32017a073669ab749d3c86ed49cd5f2f0c45"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.Emit.ILGeneration.dll",
+      "bytes": 15656,
+      "sha256": "ed892838c6ed6649ab57a436128845ec195329cdf568c99d9cb8e6f4b92c7a01"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Data.Common.dll",
+      "bytes": 2860840,
+      "sha256": "089a74a39dceb113bea92522b227e24c881a618c5eb1e2abb166a6e8c12be0cb"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.NameResolution.dll",
+      "bytes": 112424,
+      "sha256": "e8cc6c2f0d59fb018fdc4a66057e3a56a3aa5ed82fede17b2398cda88da407cd"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ComponentModel.dll",
+      "bytes": 30504,
+      "sha256": "4d9e2e21ed5c16c100221433d1aab01409ec199c9f617e48b9fe1617989bbaa6"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/mscordaccore.dll",
+      "bytes": 1348960,
+      "sha256": "a277f63f5722e1ed59a791fc5d30c53ed263abef4adf12d0bf494897d796c3e0"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Private.Uri.dll",
+      "bytes": 259920,
+      "sha256": "f2a695dcd4073eaba43b4ee26f006c0174bff42673e17b38914450ca7d2547f5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Loader.dll",
+      "bytes": 15696,
+      "sha256": "64ac3644e7fd9279b5410e9c8d31df01f763b4a362e626e6dd96416a9f6755b3"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/coreclr.dll",
+      "bytes": 4995880,
+      "sha256": "bbbcaedb369617695280caaa60cda1aba4fa3c5b557532a89d9f4a9174a5b692"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Microsoft.DiaSymReader.Native.amd64.dll",
+      "bytes": 2377016,
+      "sha256": "70e4b89978ce57ef87b28f4921f3140c383b04aa96e7f3bdb3c4ebb898fd8a72"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.ReaderWriter.dll",
+      "bytes": 21800,
+      "sha256": "7cbf62bea50b44b1350fc241281b8c5bf1373cb9ad03304b10f5b0d4805edb47"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Tasks.dll",
+      "bytes": 16680,
+      "sha256": "d965e3057dca46b1e8d56012e623a4772ab5ab009231450fdb0f4d2f3875c374"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.Tracing.dll",
+      "bytes": 16168,
+      "sha256": "6857ed7ca2c17d38f74639bacc59942599935593f9a0b33b246161c57db27eb3"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.AppContext.dll",
+      "bytes": 15144,
+      "sha256": "c3d2cb89ec473b55fcbf6f0ed601139e46159e0d2834d9d92ed74ed89e2a2879"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Buffers.dll",
+      "bytes": 15184,
+      "sha256": "8cadbc77368593547381f18eafa12dd58216d7b35a60b487b66ca51a2ee3c406"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.Csp.dll",
+      "bytes": 15656,
+      "sha256": "8689e9d5ea215c4e92d8229da7dbc3fabee8997083876fed1927c4d643aef3f9"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.TextWriterTraceListener.dll",
+      "bytes": 67368,
+      "sha256": "0279bba2ab8c1e023d043d802b0b3bbbf8483dd082e305391c6229382452b1c2"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.dll",
+      "bytes": 2049872,
+      "sha256": "1e4c4ce04a46e2a2da8221bf583ebd4f6b5149d4b32792cacc5c33978d0bb121"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Text.Encoding.dll",
+      "bytes": 15656,
+      "sha256": "c0dda0da1aeadba8a3baa8d4704c5e4d9dadc715f72fa11c6a25899a5fa6a35b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Transactions.dll",
+      "bytes": 16168,
+      "sha256": "2203532bf5483e00686b4f26610a6b9070e59da55f5218d4294c2c069c6fdfb9"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Tasks.Dataflow.dll",
+      "bytes": 489256,
+      "sha256": "39def3e572cf7e4bbf11f6565b0a25db2540d8041c2950e48029e24c14e06342"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.MemoryMappedFiles.dll",
+      "bytes": 83752,
+      "sha256": "e3136d19090f173d2ab75c392486a1427060bd149d966cfd58f3df3308546dfd"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.OpenSsl.dll",
+      "bytes": 15144,
+      "sha256": "5d580c0cafc4492dac0c4fa11ae46dd1309835ab12671b326f0b74428539d4b5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.CompilerServices.Unsafe.dll",
+      "bytes": 15144,
+      "sha256": "69edf8cb4bfe291ff998f2ab0cea2f3b7f32664c53e9b9171a35f0664fc047cf"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Microsoft.Win32.Registry.dll",
+      "bytes": 120656,
+      "sha256": "a8cc5503bbba36472d1dd3a8eebc3a8b26f0b2882e770851aab486690b23ead9"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Globalization.dll",
+      "bytes": 15656,
+      "sha256": "88a4c4517972878aebd264ac5150a3822d14ab3f5b9577c8372e1724b0ca8d88"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Collections.Specialized.dll",
+      "bytes": 104272,
+      "sha256": "24022887037bfaad8c89c26642712c920dcc0ababd3396d80d8b2be16637673b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ValueTuple.dll",
+      "bytes": 15144,
+      "sha256": "2079ad867339bd4e2dc4d0e1c9250d9f78e4016da472c25fef3c78756244ac5b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.dll",
+      "bytes": 43304,
+      "sha256": "e8fb5b78dc75b0650520042936fca2165a060cb4afa4b8cce90524c9c9fc3563"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.ServicePoint.dll",
+      "bytes": 46888,
+      "sha256": "8969d0ea32b01b7198030afe6258d85a3021655b4f7e2291cb5521bba1f7e29f"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.XmlSerializer.dll",
+      "bytes": 17744,
+      "sha256": "ea1eb8da8a46bafe8ee7a8628900e5c4a3fe23cabc7d63d5be5eb5edd3fb76fb"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.Extensions.dll",
+      "bytes": 15144,
+      "sha256": "3adaaf6f0dcd0208ab0282a774801486444af53118015ac12e0c6f8623d3f3ce"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Globalization.Extensions.dll",
+      "bytes": 15144,
+      "sha256": "9d57e781afd06f3c6d0a54842467b29079ba2932827a76d9047a327490f1f836"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Extensions.dll",
+      "bytes": 17704,
+      "sha256": "7e7a6460090cf9170b336ca12511ea8d793c281a79ccff9f96db88db74b97ff6"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Data.dll",
+      "bytes": 24912,
+      "sha256": "1efe79c9f164ce5da6542de89dc7f10d1feb1f38216b68f9a6b6a8ca5e3d2ac3"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.dll",
+      "bytes": 49960,
+      "sha256": "173dd55a6d19794fb6eb8c4e4e73510ebf3a7928affe43c21e721861a4250e51"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.Encoding.dll",
+      "bytes": 15696,
+      "sha256": "bad69fae75cc6ea5c8cf0a953489b323857a3c8cba80418f09e98535380a6b8d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.IsolatedStorage.dll",
+      "bytes": 91984,
+      "sha256": "af7c75423c9efdf88850a7197c57e19d588a326678bbe07aa7f0b5ddb3049f59"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/StarTournamentMaintenance.dll",
+      "bytes": 584704,
+      "sha256": "be23cceca8e00844fb69b3cabf1e103738f68dc3bbc00d5c002b862a9e8d4682"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.AccessControl.dll",
+      "bytes": 51976,
+      "sha256": "325e07acba4cfaaf400ea23ab52903f468e500e0dd80e458653a5abedd8be771"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/mscorrc.dll",
+      "bytes": 136488,
+      "sha256": "c0fc4c625ce2c62887a86a5e1d93895836e7c998a3c95169505f8515266160fc"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.AccessControl.dll",
+      "bytes": 231248,
+      "sha256": "149888fd2b8f15b37ba115e2bb3c0577c8db9aed6f91221902ad6c9a61a69a49"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/clretwrc.dll",
+      "bytes": 310568,
+      "sha256": "bc233572d7702ec8d8763c143ec62687c38abc3aad26336fb45c26657bf3a5e7"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.TypeExtensions.dll",
+      "bytes": 42792,
+      "sha256": "191c401d245fbbe8d6e0105a53db610122871168e21ac849be6fbc86bb786048"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Globalization.Calendars.dll",
+      "bytes": 15696,
+      "sha256": "e0974066e338d22097f5c77e47d086bd9c5826c256034a31f21b34c4392fbb7b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Requests.dll",
+      "bytes": 345896,
+      "sha256": "60b7c1595cecc53767c3efcdae74ddd37350ac51f377cac8d7e95428b1f231af"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.WebSockets.dll",
+      "bytes": 190288,
+      "sha256": "1250d5f182a8c3655a81b1e11955d904fd147d7f770191de4004619247178629"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.Emit.dll",
+      "bytes": 128808,
+      "sha256": "51742f48054d452de444da58d4ac69b879a23bbc8841b4b08fc337745d50cb07"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.IO.FileSystem.dll",
+      "bytes": 15656,
+      "sha256": "6005e3ac5cbee19d172cc29e48ca84db8e62dff34cff95e56c3600a0a95cb170"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Serialization.Json.dll",
+      "bytes": 15656,
+      "sha256": "70d7013dcd8aa116954f6efb1643c4db01927f75e362c5807f795e443d1eaa9a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.Cryptography.Algorithms.dll",
+      "bytes": 17192,
+      "sha256": "e1bdf2d837d0c8c582b1f98992511421c3e5130b42603f868ef0b5c8c2609f92"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Thread.dll",
+      "bytes": 15656,
+      "sha256": "34ed4d7d03bf9a5a5df7addc37a5b75759956fc0d949e25df61d878238bc560a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Numerics.Vectors.dll",
+      "bytes": 15656,
+      "sha256": "6e45388834e11d4a8e460f97da371d6889cdf98d7b65b300079c2f2b69ea3faf"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ServiceProcess.dll",
+      "bytes": 15656,
+      "sha256": "41a80e894c84cc938193a95a0c37fc0d3351d3b090e4fc2fe903cc384d55af2a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/StarTournamentMaintenance.exe",
+      "bytes": 10005504,
+      "sha256": "0c488dc8e92a361f5c838e9c0e34b1562a9ed76878a03f4643cba60239e89c1a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Linq.dll",
+      "bytes": 542504,
+      "sha256": "2b375e90fc687967bd95a0f47dbcba44d396923f3c98b7fe5754e34c8e4befaa"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.Process.dll",
+      "bytes": 337744,
+      "sha256": "7083c7046ac4cbed1068b6ae7a777d421eeaf180e5697283fc1c6af731c32a3d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Numerics.dll",
+      "bytes": 15184,
+      "sha256": "adb2dda9bbfc24d694b77e1700f2df0706ff077de8f40dd09ababc92459f2e2b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Xml.dll",
+      "bytes": 23376,
+      "sha256": "0d13174940cbd34ccdb350b2f33037cff214420850cbf5755d9c407ba8a42407"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.Tools.dll",
+      "bytes": 15184,
+      "sha256": "ca4cc511a2204af2a5652c7cf870a6a5eff109f98acc72a8e2a0498f72665507"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Collections.Immutable.dll",
+      "bytes": 837456,
+      "sha256": "6e41c8ba23968f6a9b910e3c33f66761a588f24084c4e3599214805716d6d259"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.Debug.dll",
+      "bytes": 15656,
+      "sha256": "e122bd1046864476252765e356c54d2454e72a6e11bf546907de1468ca0b0cb5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/Microsoft.Win32.Primitives.dll",
+      "bytes": 15184,
+      "sha256": "596160c8491d2110a36ce4cb93c736905b2c83b9b50496369f32e32ad28d2a20"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Serialization.Primitives.dll",
+      "bytes": 38736,
+      "sha256": "65b4fdca2b36d551fa88c1cb8d7646ef9f29097b96487ab08fcf31f5dc9afe86"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Transactions.Local.dll",
+      "bytes": 661328,
+      "sha256": "5428f4bcae83612694e1bec71849ffffe7ef34f62aa46daf3f01250adb019bd8"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Drawing.Primitives.dll",
+      "bytes": 132944,
+      "sha256": "02bd1f5644dd73789b82c3a52c8f86ef726baa1d4cce2a0c64d9dc1c29b9cb02"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Drawing.dll",
+      "bytes": 20304,
+      "sha256": "97562444d2daf928cd78404156665dde55aa5ec71c6fcad705284338e4a36ebe"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Runtime.Serialization.Formatters.dll",
+      "bytes": 309032,
+      "sha256": "10c352dba07e5de49fe362edd9d8a44cfc60cd0136a48eb1a5104da30d2333e5"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Ping.dll",
+      "bytes": 96040,
+      "sha256": "3a9aab851fff6116dee3524177859e051512fadf7e209372e2d2342b51845474"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/StarTournamentMaintenance.pdb",
+      "bytes": 67984,
+      "sha256": "fa1c70257af15506f3544b58437fb0342f73153eeaace497a71bffa4a8310672"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Diagnostics.StackTrace.dll",
+      "bytes": 46888,
+      "sha256": "7b26b1c48d500576994b3153b88fefd1e516680ae4b52cde608b8e869544b37d"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Security.dll",
+      "bytes": 18256,
+      "sha256": "ede7d28de4bfec4192915fb98b35f8979ed1e4a20a7333a7d2aea45e733a9495"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Reflection.DispatchProxy.dll",
+      "bytes": 75560,
+      "sha256": "2f926a9f911d11b98c71e67b7e91f883c58b3b095794a8ac69a5cdbfd37c60c4"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Core.dll",
+      "bytes": 23336,
+      "sha256": "f7414ecfd958fdfb2b4bcdd2f7778a7b26968eb453ca2c03fdf53ba4bb21674f"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.WebClient.dll",
+      "bytes": 169768,
+      "sha256": "2c8ad06a15aee44e700cbff2bdf1da0000fcaa4e8ba5524e9db1b07c3add099e"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Formats.Asn1.dll",
+      "bytes": 243496,
+      "sha256": "61f505f140e2c6417640a5aa47a86d148d4f6dc5317a66a7bfa2266a3ac975bf"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.ComponentModel.DataAnnotations.dll",
+      "bytes": 16720,
+      "sha256": "e5b872cf98bf9f3f565877b21fdee61b569ecc586e6dc48c9199ae5e0cd100b3"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Private.Xml.Linq.dll",
+      "bytes": 403240,
+      "sha256": "5de081135173dd027bdc3f6285beaa31d184cff8d217d681d405e038d1819721"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Memory.dll",
+      "bytes": 157480,
+      "sha256": "84242cce5eacc6963a77163986066bd0a1c2eb698b5f26dbdd5e6706e002fbc7"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Net.Primitives.dll",
+      "bytes": 231248,
+      "sha256": "0f929e8581f09fe85275df7b38549bc51415cd110aadfd89eade53943174511a"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/StarTournamentMaintenance.runtimeconfig.json",
+      "bytes": 342,
+      "sha256": "45e3339643e22dc29d3734ce41d00149616902d221158b150c9ad9abddc2524b"
+    },
+    {
+      "path": "distribution/maintenance/bin/Debug/net8.0/win-x64/System.Threading.Channels.dll",
+      "bytes": 132944,
+      "sha256": "ab05f710069580165c588789e0623e84d213c35594e3e12ae762a6c8265740b6"
+    },
+    {
+      "path": "distribution/maintenance/obj/Maintenance.csproj.nuget.g.props",
+      "bytes": 1738,
+      "sha256": "bc56593480cfdd5052dfb849d095d273aa947cfb8724141160071f878caf9b93"
+    },
+    {
+      "path": "distribution/maintenance/obj/Maintenance.csproj.nuget.g.targets",
+      "bytes": 149,
+      "sha256": "b14461e0cb1be3f77fcf9fe2fdd62889325ca92523d0f606980ed59eb5c4aa1c"
+    },
+    {
+      "path": "distribution/maintenance/obj/Maintenance.csproj.nuget.dgspec.json",
+      "bytes": 3229,
+      "sha256": "e65bc2bea981e09bd6eeffe68b479d36ff5a6cce37a762dd507f9e4470ff9495"
+    },
+    {
+      "path": "distribution/maintenance/obj/project.nuget.cache",
+      "bytes": 1028,
+      "sha256": "ab9cb419a863b7559862f42927c47321867955c2163b9c426d1b966002b17069"
+    },
+    {
+      "path": "distribution/maintenance/obj/project.assets.json",
+      "bytes": 9879,
+      "sha256": "b69e2589c1822567c23416e54d12253e34d4b3bce1d00ef05b9894db72fd4a22"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.sourcelink.json",
+      "bytes": 198,
+      "sha256": "2fdb9b1b3fef4c9c63eb9c1694b90d47cc65322ed7dd940c766616f2c3772418"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+      "bytes": 197,
+      "sha256": "3509c0134d01417e72dac88c9162978a33a28868b5b416aa946cabdf0d822198"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.AssemblyInfoInputs.cache",
+      "bytes": 65,
+      "sha256": "ba1360f730f35b2dfb796feaf77026ccc24e6a51aa7680fb6cb01f6efdbf67c0"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.assets.cache",
+      "bytes": 2127,
+      "sha256": "be0f93922989898c32b0fe1fc811a1558b74cee6323d5e11b32768c261494013"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.GeneratedMSBuildEditorConfig.editorconfig",
+      "bytes": 806,
+      "sha256": "f1cc679e4d57d9d9933933bac195506ce85c2d23d276a350f666c212c0818cd2"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.AssemblyInfo.cs",
+      "bytes": 1027,
+      "sha256": "5565936c1da08fceb4f479b6cd8f37c105f993d012b33c48d39e0f7de4f0ccff"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintena.79DE9192.Up2Date",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.csproj.CoreCompileInputs.cache",
+      "bytes": 65,
+      "sha256": "5b6873b98b013793c267fc4c2f99524ce025b4f9779b7ff592988625fcbaebb4"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.csproj.AssemblyReference.cache",
+      "bytes": 898,
+      "sha256": "4b439d9316701cbe48d97ec6217734af89032094b60df2f79593376ec20caeb4"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.genruntimeconfig.cache",
+      "bytes": 65,
+      "sha256": "1e3646ea7a5af5c8dc8e84d9f467d8363954ce9d8c9122675400a37ddd225a8a"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/StarTournamentMaintenance.dll",
+      "bytes": 584704,
+      "sha256": "be23cceca8e00844fb69b3cabf1e103738f68dc3bbc00d5c002b862a9e8d4682"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.csproj.FileListAbsolute.txt",
+      "bytes": 31147,
+      "sha256": "fd75be4ebe8e075828024c2894c9d65a158756936d53686161cb4a4d82d0ee43"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/Maintenance.GlobalUsings.g.cs",
+      "bytes": 287,
+      "sha256": "addb143f8c43b95f1bb73a0cba7c793281935c4ab8ccabbdf6b04d3e0f809e0e"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/StarTournamentMaintenance.pdb",
+      "bytes": 67984,
+      "sha256": "fa1c70257af15506f3544b58437fb0342f73153eeaace497a71bffa4a8310672"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/singlefilehost.exe",
+      "bytes": 10005504,
+      "sha256": "0c488dc8e92a361f5c838e9c0e34b1562a9ed76878a03f4643cba60239e89c1a"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/ref/StarTournamentMaintenance.dll",
+      "bytes": 403456,
+      "sha256": "2bd52db0630de90843ca2214e02cbbcebcb09f897a72a215ef28d47f867047e6"
+    },
+    {
+      "path": "distribution/maintenance/obj/Debug/net8.0/win-x64/refint/StarTournamentMaintenance.dll",
+      "bytes": 403456,
+      "sha256": "2bd52db0630de90843ca2214e02cbbcebcb09f897a72a215ef28d47f867047e6"
+    }
+  ]
+}

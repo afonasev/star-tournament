@@ -135,3 +135,9 @@ Both pinned channels discover public releases through the GitHub Releases API, f
 `launcher/release-discovery-v1/` under the existing per-user launcher data directory holds bounded atomic API page caches and a server-directed cooldown. ETags are conditional across launches,304 retains or updates pagination links, and errors never turn stale cached data into a successful current-version result. Retry-After and exhausted-quota reset are honored without sleeping/retrying discovery this session. There is no embedded shared GitHub token; the cache is locator data and never grants package trust. Reading/parsing cached pages is off the initial Player launch path. Legacy configuration without a channel keeps its historical compatibility route.
 
 Focused actual C# evidence: `docs/evidence/standard-github-discovery/verification.json` (71 discovery,49 security,21 session checks). This is source/HTTP verification, not installed native acceptance. Minimum OS/component/data admission and macOS DMG packaging remain open in `docs/TEMPLATE_ALIGNMENT.md`; new Player/installer/release builds and publication require a separate human command.
+
+## Минимальные ОС текущего Player
+
+Unity6000.3 Player: Windows10 21H1 (сборка19043) или новее, macOS12 или новее. macOS target в проекте —12.0. Launcher проверяет host до discovery/запуска; native activation и Windows installer проверяют до замены файлов. Откат и удаление не блокируются общим launch guard. Detached проверка подписи/пакета не зависит от host. Основание: https://docs.unity3d.com/6000.3/Documentation/Manual/system-requirements.html (Desktop Player, не Editor).
+
+Signed target-specific OS/updater/payload/data requirements ещё не добавлены в schema1; baseline guard не доказывает совместимость произвольного будущего выпуска. Проверки этого этапа: `docs/evidence/standard-release-compatibility/baseline/`.

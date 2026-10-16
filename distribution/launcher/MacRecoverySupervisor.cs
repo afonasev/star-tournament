@@ -46,6 +46,7 @@ public sealed class MacRecoverySupervisor
 
     public RecoverySupervisorProcess PrepareAndStart(string installed, string packages, VelopackAsset asset, string envelope, bool restart, string[] args)
     {
+        PlatformRequirements.RequireSupported("osx");
         if (journal.Read() is not { Attempt: null, Launch: null } state || state.HealthyVersion != config.Version || journal.IsBlocked(asset.Version.ToString()))
             throw new InvalidOperationException("Confirmed working version required before update handoff");
         var id = Guid.NewGuid().ToString("N");
@@ -164,6 +165,7 @@ public sealed class MacRecoverySupervisor
         bool stageOwned = false;
         try
         {
+            PlatformRequirements.RequireSupported("osx");
             using (var install = Lease(supervisor.appLock))
             {
                 await supervisor.WaitForPlayer();

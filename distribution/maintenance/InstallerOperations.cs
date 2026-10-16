@@ -77,6 +77,7 @@ static partial class Maintenance
     }
     static int InstallerOperation(string action,string raw,string version,int ownerPid=0)
     {
+        if(action is "plan" or "begin" or "commit")PlatformRequirements.RequireSupported("win");
         var root=SafeRoot(raw);var config=InstallerConfig(version,root);ValidateInstallParents(root);
         using var product=WindowsInstallLease.TryAcquire(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),"StarTournamentInstallerProduct"))??throw new IOException("Another installer is changing the product registration");
         using var lease=WindowsInstallLease.TryAcquire(root)??throw new IOException("Close Star Tournament before installing");CheckNoProcesses(root);

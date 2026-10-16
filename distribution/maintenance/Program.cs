@@ -315,6 +315,7 @@ static partial class Maintenance
 
     static int Activate(string[] a)
     {
+        PlatformRequirements.RequireSupported("win");
         if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Update supervision must start from a normal-user launcher");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
         var cache = Path.GetFullPath(a[1]); var restart = bool.Parse(a[2]);
@@ -534,6 +535,7 @@ static partial class Maintenance
     }
     static int ElevatedApply(string cache, Caller supervisor, string frozenHash, bool explicitRetry, string confirmedCurrent)
     {
+        PlatformRequirements.RequireSupported("win");
         if (!IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Protected apply requires elevation");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
         EnsureProtectedRoot(root); ValidateSupervisor(root, supervisor);
