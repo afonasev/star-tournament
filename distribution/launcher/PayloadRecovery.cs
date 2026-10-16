@@ -42,6 +42,7 @@ public sealed class PayloadRecovery
         if (string.IsNullOrEmpty(version) || !Velopack.SemanticVersion.TryParse(version, out var parsed) || parsed.ToString() != version ||
             parsed.IsPrerelease != (identity.Channel == "test")) throw new ArgumentException("Canonical same-channel version required");
         var final = Path.Combine(root, id);
+        if (File.Exists(Path.Combine(root, ".delete-" + id + ".json"))) throw new IOException("Snapshot removal is pending");
         if (Directory.Exists(final))
         {
             var prior = Verify(id, installed);
@@ -88,6 +89,13 @@ public sealed class PayloadRecovery
         Equal(snapshot.Entries, Inventory(Path.Combine(directory, "payload")));
         VerifyRelease(Path.Combine(directory, "payload"), snapshot.Version);
         return snapshot;
+    }
+
+    public void VerifyInstalled(string id, string installedPath)
+    {
+        var snapshot = Verify(id, installedPath);
+        Equal(snapshot.Entries, Inventory(snapshot.InstallPath));
+        VerifyRelease(snapshot.InstallPath, snapshot.Version);
     }
 
     public void Restore(string id, string installedPath)
@@ -152,10 +160,27 @@ public sealed class PayloadRecovery
 
     public void Remove(string id, string installedPath)
     {
-        // Decision authority belongs to StartupRecovery/the stable supervisor, not to this store.
-        Verify(id, installedPath);
+        // Caller authorizes this only after confirmed health or verified restoration.
+        Id(id); var installed = InstallPath(installedPath);
         if (File.Exists(Path.Combine(root, ".restore-" + id + ".json"))) throw new IOException("Restore is still in progress");
-        Directory.Delete(Path.Combine(root, id), true);
+        var directory = Path.Combine(root, id); RegularAncestors(directory);
+        var removal = Path.Combine(root, ".delete-" + id + ".json");
+        if (File.Exists(removal))
+        {
+            var owner = Read<CaptureOwner>(removal);
+            if (owner.Schema != 1 || owner.Id != id || owner.Identity != identity || owner.InstallPath != installed)
+                throw new IOException("Foreign snapshot deletion intent");
+        }
+        else
+        {
+            if (!Directory.Exists(directory)) return; // Removal finished before journal acknowledgement.
+            var snapshot = Verify(id, installed);
+            Write(removal, new CaptureOwner(1, id, identity, snapshot.Version, installed), createNew: true);
+        }
+        checkpoint("snapshot-delete-authorized");
+        if (Directory.Exists(directory)) Directory.Delete(directory, true);
+        checkpoint("snapshot-deleted");
+        File.Delete(removal);
     }
 
     string InstallPath(string value)
@@ -195,10 +220,8 @@ public sealed class PayloadRecovery
                 var relative = Path.GetRelativePath(directory, item.FullName).Replace(Path.DirectorySeparatorChar, '/');
                 if (item.LinkTarget is { } link)
                 {
-                    if (OperatingSystem.IsWindows() || Path.IsPathFullyQualified(link) || link.Split('/', '\\').Any(p => p == ".."))
-                        throw new IOException("Unsafe payload link");
-                    var resolved = item.ResolveLinkTarget(true)?.FullName;
-                    if (resolved == null || !Below(resolved, directory) || !Exists(resolved)) throw new IOException("Payload link escapes or is dangling");
+                    if (OperatingSystem.IsWindows() || Path.IsPathFullyQualified(link)) throw new IOException("Unsafe payload link");
+                    ResolveInside(directory, parent, link);
                     result.Add(new(relative, item is DirectoryInfo ? "directory-link" : "file-link", null, link, 0));
                 }
                 else if ((item.Attributes & FileAttributes.ReparsePoint) != 0) throw new IOException("Unsupported payload reparse point");
@@ -210,6 +233,38 @@ public sealed class PayloadRecovery
         }
         Walk(directory);
         return result.OrderBy(v => v.Path, StringComparer.Ordinal).ToArray();
+    }
+    static void ResolveInside(string root, string parent, string target)
+    {
+        // Resolve each actual link before '..': lexical GetFullPath normalization alone can
+        // hide an escape through an intermediate symlink. Valid sq.version uses ../Resources.
+        var remaining = new LinkedList<string>(target.Split('/'));
+        var current = parent; int expansions = 0;
+        while (remaining.Count != 0)
+        {
+            var part = remaining.First!.Value; remaining.RemoveFirst();
+            if (part is "" or ".") continue;
+            if (part == "..")
+            {
+                current = Path.GetDirectoryName(current) ?? throw new IOException("Payload link escapes root");
+                if (!Below(current, root)) throw new IOException("Payload link escapes root");
+                continue;
+            }
+            var candidate = Path.Combine(current, part);
+            FileSystemInfo item = Directory.Exists(candidate) ? new DirectoryInfo(candidate) : new FileInfo(candidate);
+            if (item.LinkTarget is { } link)
+            {
+                if (++expansions > 40 || Path.IsPathFullyQualified(link)) throw new IOException("Cyclic or absolute payload link");
+                foreach (var component in link.Split('/').Reverse()) remaining.AddFirst(component);
+            }
+            else
+            {
+                if (!Exists(candidate) || (item.Attributes & FileAttributes.ReparsePoint) != 0) throw new IOException("Dangling/unsafe payload link");
+                current = candidate;
+                if (remaining.Count != 0 && !Directory.Exists(current)) throw new IOException("Payload link traverses a file");
+            }
+        }
+        if (!Below(current, root) || !Exists(current)) throw new IOException("Payload link is outside the bundle or missing");
     }
     static void Copy(string source, string destination, PayloadEntry[] entries)
     {

@@ -8,6 +8,7 @@ using StarTournament.Distribution;
 
 try
 {
+    if (args.FirstOrDefault() == "--recovery-supervisor") return await MacRecoverySupervisor.Run(args);
     VelopackApp.Build().SetAutoApplyOnStartup(false).Run();
     return await Launcher.Run(args);
 }
@@ -93,9 +94,26 @@ static class Launcher
         string PackagePath(VelopackAsset asset) => Path.Combine(packages, Path.GetFileName(asset.FileName));
         var stagedManifest = Path.Combine(packages, "star-authenticated.json");
         var journal = UpdateAttemptJournal.ForApp(config.AppId);
-        var recovery = new StartupRecovery(Path.Combine(logRoot, config.AppId + ".startup.json"),
-            new(config.AppId, config.Platform, config.Architecture, config.UpdateChannel));
+        var installedRoot = machineRoot ?? locator.RootAppDir ?? throw new IOException("Installed root missing");
+        var recovery = StartupRecovery.ForInstallation(config, logRoot, installedRoot);
         recovery.RecoverInterrupted(config.Version);
+        var macRecovery = OperatingSystem.IsMacOS() ? new MacRecoverySupervisor(config, logRoot, installedRoot) : null;
+        if (macRecovery != null && recovery.Read().Attempt is { } pending)
+        {
+            if (pending.Phase is "confirmed" or "restored")
+            {
+                // A settled release remains playable if backup cleanup fails.
+                var cleanupDeadline = DateTimeOffset.UtcNow.AddSeconds(30);
+                try { while (!macRecovery.CleanupSettled(config.Version) && DateTimeOffset.UtcNow < cleanupDeadline) await Task.Delay(100); }
+                catch (IOException ex) { Log(ex); }
+            }
+            else if (pending.Phase != "prepared" || config.Version != pending.Target)
+            {
+                if (!macRecovery.IsActive()) macRecovery.StartHost(pending.BackupId, "recover", restartArguments);
+                return 0; // Stable old code waits for this exact launcher, restores, then relaunches.
+            }
+            else if (!macRecovery.IsActive()) macRecovery.StartHost(pending.BackupId, "watch", restartArguments);
+        }
         var knownHealthy = recovery.Read().HealthyVersion == config.Version;
         string? startupError = null;
         void Apply(VelopackAsset asset, bool restartGame)
@@ -103,7 +121,9 @@ static class Launcher
             journal.Begin(asset.Version.ToString());
             UpdateFeedback.Log("apply-handoff target=" + asset.Version);
             if (machineRoot != null) WindowsInstallation.Activate(machineRoot, packages, restartGame, restartArguments);
-            else manager.WaitExitThenApplyUpdates(asset, silent: true, restart: restartGame, restartArgs: restartArguments);
+            else if (macRecovery != null) macRecovery.PrepareAndStart(locator.RootAppDir ?? throw new IOException("Installed bundle missing"),
+                packages, asset, File.ReadAllText(stagedManifest), restartGame, restartArguments);
+            else throw new InvalidOperationException("Unsupported recovery platform");
         }
         if (!manager.IsInstalled || manager.CurrentVersion!.ToString() != config.Version)
             throw new InvalidOperationException("Release identity does not match installed package");
@@ -183,18 +203,23 @@ static class Launcher
             foreach (var pair in start.Environment) guarded.Environment[pair.Key] = pair.Value;
             start = guarded;
         }
-        var startupHealth = new StartupHealthMonitor(recovery, config.Version, Path.Combine(session, "startup-ready.json"), DateTimeOffset.UtcNow,
-            () => { try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
-                UpdateFeedback.Log("startup-health-confirmed version=" + config.Version); });
-        start.Environment["STAR_TOURNAMENT_STARTUP_READY"] = startupHealth.ReadyPath;
-        start.Environment["STAR_TOURNAMENT_STARTUP_VERSION"] = startupHealth.Ticket.Version;
-        start.Environment["STAR_TOURNAMENT_STARTUP_TOKEN"] = startupHealth.Ticket.Token;
+        StartupHealthMonitor? startupHealth = null;
+        if (recovery.Read().Attempt is not { Phase: "confirmed" or "restored" })
+        {
+            startupHealth = new StartupHealthMonitor(recovery, config.Version, Path.Combine(session, "startup-ready.json"), DateTimeOffset.UtcNow,
+                () => { try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
+                    UpdateFeedback.Log("startup-health-confirmed version=" + config.Version); });
+            start.Environment["STAR_TOURNAMENT_STARTUP_READY"] = startupHealth.ReadyPath;
+            start.Environment["STAR_TOURNAMENT_STARTUP_VERSION"] = startupHealth.Ticket.Version;
+            start.Environment["STAR_TOURNAMENT_STARTUP_TOKEN"] = startupHealth.Ticket.Token;
+        }
+        bool cleanupTried = false;
         UpdateFeedback.Log("player-start path=" + executable);
         Process game;
         try { game = Process.Start(start) ?? throw new InvalidOperationException("Player did not start"); }
         catch
         {
-            try { startupHealth.End(DateTimeOffset.UtcNow); }
+            try { startupHealth?.End(DateTimeOffset.UtcNow); }
             finally { await updates.DisposeAsync(); Directory.Delete(session, true); }
             throw;
         }
@@ -204,7 +229,9 @@ static class Launcher
         {
             while (!game.HasExited)
             {
-                startupHealth.Poll(DateTimeOffset.UtcNow);
+                startupHealth?.Poll(DateTimeOffset.UtcNow);
+                if (!cleanupTried && macRecovery != null && recovery.Read().Attempt is { Phase: "confirmed" } && !macRecovery.IsActive())
+                { cleanupTried = true; try { macRecovery.CleanupSettled(config.Version); } catch (IOException ex) { Log(ex); } }
                 if (File.Exists(commandPath))
                 {
                     string? command = null; string request = "";
@@ -225,7 +252,7 @@ static class Launcher
         }
         finally
         {
-            try { startupHealth.End(DateTimeOffset.UtcNow); }
+            try { startupHealth?.End(DateTimeOffset.UtcNow); }
             finally
             {
                 await updates.DisposeAsync();
@@ -235,7 +262,7 @@ static class Launcher
         }
         UpdateFeedback.Log("player-exit code=" + game.ExitCode);
         if (game.ExitCode != 0) { UpdateFeedback.Show("Игра завершилась с ошибкой (код " + game.ExitCode + "). Обновление не применено. Проверьте журнал запуска игры."); return game.ExitCode; } // A crash is not an explicit update activation.
-        if (!startupHealth.IsHealthy)
+        if (!(startupHealth?.IsHealthy ?? knownHealthy))
         { UpdateFeedback.Log("startup-health-unconfirmed; staged update retained without activation"); return 0; }
         try
         {

@@ -4,6 +4,12 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.FirstOrDefault() == "--recovery-supervisor") { Environment.ExitCode = await MacRecoveryChecks.Supervisor(args); return; }
+if (Path.GetFileName(Environment.ProcessPath) == "UpdateMac" && args.FirstOrDefault() == "apply") { MacRecoveryChecks.Update(args); return; }
+if (args.FirstOrDefault() == "--mac-caller-fixture") { MacRecoveryChecks.Caller(args[1]); return; }
+if (args.FirstOrDefault() == "--mac-target-fixture") { MacRecoveryChecks.Target(args); return; }
+if (args.FirstOrDefault() == "--mac-orphan-fixture") { MacRecoveryChecks.Orphan(args[1]); return; }
+if (args.SequenceEqual(new[] { "--mac-recovery" })) { await MacRecoveryChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--startup-health" })) { StartupHealthChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--startup-recovery" })) { StartupRecoveryChecks.Run(); return; }
 if (args.Length == 3 && args[0] == "--payload-crash-fixture") { PayloadRecoveryChecks.CrashFixture(args[1], args[2]); return; }

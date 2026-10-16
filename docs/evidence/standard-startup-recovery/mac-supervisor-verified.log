@@ -1,0 +1,10 @@
+PASS real stable supervisor processes: success
+PASS real stable supervisor processes: exit-before-ready
+PASS real stable supervisor processes: missing-launcher
+PASS real stable supervisor processes: updater-error
+PASS real stable supervisor processes: bad-readback
+PASS real stable supervisor processes: deferred
+PASS real stable supervisor processes: orphan
+PASS real stable supervisor processes: manual-no-host
+PASS failed supervisor handoff preserves playable old payload
+Mac recovery: 9 passed

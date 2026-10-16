@@ -1,0 +1,18 @@
+Applies a staged / prepared update, installing prerequisite runtimes if necessary
+
+Usage: UpdateMac apply [OPTIONS] [-- [EXE_ARGS]...]
+
+Arguments:
+  [EXE_ARGS]...  Arguments to pass to the started executable. Must be preceded by '--'.
+
+Options:
+      --norestart          Do not restart the application after the update
+      --waitPid <PID>      Wait for the specified process to terminate before applying the update
+  -p, --package <FILE>     Update package to apply
+      --verbose            Print debug messages to console / log
+  -s, --silent             Don't show any prompts / dialogs
+      --rootDir <PATH>     Override the default locator root directory
+      --packageDir <PATH>  Override the default packages directory
+  -l, --log <PATH>         Override the default log file location
+  -h, --help               Print help
+

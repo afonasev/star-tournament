@@ -1,0 +1,54 @@
+[
+  {
+    "root": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9",
+    "states": [
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/manual-no-host/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": {
+          "Previous": "1.0.0",
+          "Target": "1.1.0",
+          "BackupId": "849849f0887b4a8192d91fbb92cfcce5",
+          "Phase": "prepared",
+          "Failure": null
+        }
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/success/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.1.0",
+        "attempt": null
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/bad-readback/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": null
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/deferred/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": null
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/exit-before-ready/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": null
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/missing-launcher/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": null
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/orphan/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": null
+      },
+      {
+        "path": ".local/mac-supervision-'quoted-8423c20ccf294436be61be6df78d42d9/updater-error/state/tech.fixture.recovery.startup.json",
+        "healthy": "1.0.0",
+        "attempt": null
+      }
+    ],
+    "bytes": 29771206
+  }
+]

@@ -15,3 +15,6 @@ Baseline: edd095aedbd5bb695d93088a8ea184f25ce253b8. Реализован actual 
 
 ## Подключён startup health
 Launcher+Unity health handshake подключён (startup-contract.md):12 .NET+33 feedback+4 unique native Editor cases; final3 native tests повторены после cleanup fix. Snapshot/restore activation и stable supervisor всё ещё НЕ подключены. Текущий authoritative протокол описан в startup-contract.md и health-verification.json, не в историческом core-only срезе.
+
+## Подключён macOS supervisor
+Теперь Mac Apply/watch/manual restore подключены к retained runtime и health journal,9 process fixtures +40 filesystem +12 health +29 journal passed. См. mac-supervisor.md и mac-verification.json. Windows/data/actual native installed acceptance всё ещё открыты; прежние описания not-wired относятся к историческим срезам.

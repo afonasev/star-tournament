@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Velopack;
@@ -33,6 +35,17 @@ public sealed class StartupRecovery
             throw new ArgumentException("Invalid recovery identity");
         this.path = path; this.identity = identity;
     }
+
+    public static string InstallationId(string installedRoot)
+    {
+        if (!Path.IsPathFullyQualified(installedRoot)) throw new ArgumentException("Absolute installation root required");
+        var path = Path.TrimEndingDirectorySeparator(Path.GetFullPath(installedRoot));
+        if (OperatingSystem.IsWindows()) path = path.ToUpperInvariant();
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(path))).ToLowerInvariant();
+    }
+    public static StartupRecovery ForInstallation(LauncherConfig config, string logs, string installedRoot) =>
+        new(Path.Combine(logs, config.AppId + "." + InstallationId(installedRoot) + ".startup.json"),
+            new(config.AppId, config.Platform, config.Architecture, config.UpdateChannel ?? throw new ArgumentException("Release channel required")));
 
     public RecoveryState Read()
     {

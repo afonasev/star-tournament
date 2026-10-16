@@ -239,6 +239,41 @@ static class PayloadRecoveryChecks
                     var reopened=new PayloadRecovery(Path.Combine(scenario,"store"),Identity);reopened.Restore(Id,live);Restored(live);reopened.Verify(Id,live);
                     Require(!Directory.EnumerateFileSystemEntries(scenario,".star-recovery-*").Any());
                 });
+            foreach(var phase in new[]{"snapshot-delete-authorized","snapshot-deleted"})
+                Test("removal resumes after "+phase,(scenario,live,store)=>
+                {
+                    store.Capture(live,"1.0.0",Id);
+                    var interrupted=new PayloadRecovery(Path.Combine(scenario,"store"),Identity,p=>{if(p==phase)throw new Interrupted();});
+                    Interrupt(()=>interrupted.Remove(Id,live));
+                    new PayloadRecovery(Path.Combine(scenario,"store"),Identity).Remove(Id,live);
+                    Require(!Directory.Exists(Path.Combine(scenario,"store",Id))&&!File.Exists(Path.Combine(scenario,"store",".delete-"+Id+".json")));
+                    store.Remove(Id,live);Restored(live);
+                });
+            Test("VerifyInstalled rejects changed working payload",(_,live,store)=>
+            {store.Capture(live,"1.0.0",Id);store.VerifyInstalled(Id,live);Changed(live);Reject(()=>store.VerifyInstalled(Id,live));});
+            if(OperatingSystem.IsMacOS())
+            {
+                Test("actual Velopack sq.version parent link survives snapshot restore",(_,live,store)=>
+                {
+                    var resource=Path.Combine(live,"Contents","Resources");Directory.CreateDirectory(resource);File.WriteAllText(Path.Combine(resource,"sq.version"),"1.0.0");
+                    var link=Path.Combine(live,"Contents","MacOS","sq.version");File.CreateSymbolicLink(link,"../Resources/sq.version");
+                    store.Capture(live,"1.0.0",Id);Changed(live);store.Restore(Id,live);
+                    Require(new FileInfo(link).LinkTarget=="../Resources/sq.version"&&File.ReadAllText(link)=="1.0.0");
+                });
+                Test("parent escapes through chained internal links are rejected",(scenario,live,store)=>
+                {
+                    Directory.CreateDirectory(Path.Combine(live,"Contents","Resources"));
+                    Directory.CreateSymbolicLink(Path.Combine(live,"Contents","safe"),"Resources");
+                    var outside=Path.Combine(scenario,"outside");File.WriteAllText(outside,"keep");
+                    File.CreateSymbolicLink(Path.Combine(live,"Contents","MacOS","escape"),"../safe/../../../outside");
+                    Reject(()=>store.Capture(live,"1.0.0",Id));Require(File.ReadAllText(outside)=="keep");
+                });
+                Test("cyclic and absolute internal links remain rejected",(_,live,store)=>
+                {
+                    var path=Path.Combine(live,"cycle");File.CreateSymbolicLink(path,"cycle");Reject(()=>store.Capture(live,"1.0.0",Id));File.Delete(path);
+                    File.CreateSymbolicLink(path,Game(live));Reject(()=>store.Capture(live,"1.0.0",Id));File.Delete(path);
+                });
+            }
             Console.WriteLine($"Payload recovery: {passed} passed");
         }
         finally{Directory.Delete(root,true);}
