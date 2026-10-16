@@ -765,6 +765,7 @@ namespace StarTournament.ProvingGround
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             yield return null;
+            ApplySavedHudProfile(frozenMovement);
             Time.fixedDeltaTime=1/frozenMovement.Get("simulation.fixedTickHz");
             yield return RebuildActorsSteps(Composition,frozenMovement,frozenTrooper,false);
             yield return null;
@@ -1245,6 +1246,36 @@ namespace StarTournament.ProvingGround
             value.alignment=TextAnchor.MiddleLeft;value.verticalOverflow=VerticalWrapMode.Overflow;
             value.horizontalOverflow=HorizontalWrapMode.Overflow;value.color=tint;
             return value;
+        }
+        void ApplySavedHudProfile(ProvingProfile movement)
+        {
+            // These objects outlive matches. Retune them only from the selected frozen
+            // match profile, never from a Lab draft or a later mutable runtime profile.
+            int bodySize=(int)movement.Get("ui.fontSize"),headingSize=(int)movement.Get("ui.headingFontSize");
+            int indicatorHeight=(int)movement.Get("ui.indicatorVisualHeight");float padding=bodySize;
+            for(int i=0;i<hud.Length;i++)
+            {
+                if(!hud[i])continue;
+                hud[i].fontSize=bodySize;hud[i].rectTransform.offsetMin=Vector2.one*padding;hud[i].rectTransform.offsetMax=-Vector2.one*padding;
+                names[i].fontSize=(int)movement.Get("ui.nameFontSize");names[i].rectTransform.offsetMin=Vector2.one*padding;names[i].rectTransform.offsetMax=-Vector2.one*padding;
+                crosshair[i].fontSize=headingSize;
+                killNotice[i].fontSize=(int)movement.Get("ui.killNoticeFontSize");
+                Layout(killNotice[i].rectTransform,new Vector2(0,movement.Get("ui.killNoticeBottom")),new Vector2(1,movement.Get("ui.killNoticeTop")));
+                RetuneHudIndicator(health[i],padding,indicatorHeight,padding,false);
+                RetuneHudIndicator(armor[i],padding,indicatorHeight,padding*2+indicatorHeight,false);
+                RetuneHudIndicator(ammo[i],padding,indicatorHeight,padding,true);
+            }
+            if(matchTimer)matchTimer.fontSize=headingSize;
+            if(status)status.fontSize=headingSize;
+            fps?.ApplyFontSize(bodySize);achievementsView?.ApplyFontSize(bodySize);
+        }
+        static void RetuneHudIndicator(Text value,float padding,int height,float bottom,bool right)
+        {
+            if(!value)return;
+            var group=(RectTransform)value.transform.parent;
+            group.anchoredPosition=new Vector2(right?-padding:padding,bottom);group.sizeDelta=new Vector2(height*5,height);
+            var icon=group.GetComponentInChildren<HudIndicatorIcon>(true);if(icon)icon.rectTransform.sizeDelta=Vector2.one*height;
+            value.fontSize=Mathf.RoundToInt(height*1.1f);value.rectTransform.anchoredPosition=new Vector2(height+padding*.5f,0);value.rectTransform.sizeDelta=new Vector2(height*4,height);
         }
         void ResizeHudIndicator(Text value)
         {

@@ -1,0 +1,10 @@
+{
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "f85a85234cc3f5521145df83c182584b3c6a3309f4efc3c3c195911226c9876b",
+  "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "d863500fc1f3447949573a5b02149fe50f0170dc6f6c54c8621286adbadd1125",
+  "unity/Assets/StarTournament/Runtime/FpsDisplay.cs": "79d4f01cc380a3ad9adc773232606429b4c04c0b2bce09aee503a56a0069bb38",
+  "unity/Assets/StarTournament/Runtime/HudIndicatorIcon.cs": "cb9cf96bc567ba39216984ef23e7d5e6e232d6e2167e497cf75d1aef3d0d7a3d",
+  "unity/Assets/StarTournament/Runtime/NativeAchievementsView.cs": "5e2752432ebf27bae6ade5aa064bbe3cae6b41411204547043787faa3a8b4437",
+  "unity/Assets/StarTournament/Tests/EditMode/LabParameterCatalogTests.cs": "0d6087d5eafd504a4759a22b9f2ce34eaff6e737036ab64106ac606e9a468b5a",
+  "unity/Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs": "fca73555c7ed109c39b0f44af041b1f5d5eaeffbab61a5d0dfab68157d4ce5d1",
+  "unity/Assets/StarTournament/Tests/PlayMode/NativeAchievementsLayoutTests.cs": "89e2d40c17a20ce98ff1866aede9f609ce75be03143ea57c360f1d5d2452d4bf"
+}

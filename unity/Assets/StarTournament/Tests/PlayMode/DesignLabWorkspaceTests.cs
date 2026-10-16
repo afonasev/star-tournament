@@ -77,6 +77,58 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.Not.Null,"Search restores focus when the previous row is removed");
             Click("lab-clear");yield return null;Assert.That(Button("lab-save").interactable,Is.False);
         }
+        [UnityTest]public IEnumerator SavedHudTuningAppliesAtNextMatchWithoutRecreatingTheInterface()
+        {
+            directory=Path.Combine(Path.GetTempPath(),"st-lab-hud-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",Path.Combine(directory,"history.json"));
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Text T(string name)=>ground.GetComponentsInChildren<Text>(true).Single(t=>t.name==name);
+            var originalName=T("seat-name-0");int originalSize=originalName.fontSize;
+            var keys=new[]{"ui.fontSize","ui.headingFontSize","ui.indicatorVisualHeight","ui.nameFontSize","ui.killNoticeFontSize","ui.killNoticeBottom","ui.killNoticeTop","ui.standingsFontSize"};
+            var desired=keys.ToDictionary(k=>k,k=>ground.Profile.Get(k)+ground.Profile.Descriptor(k).Step*4);
+            Click("main-action-2");yield return null;Click("lab-create");yield return null;Input("lab-profile-name").text="HUD tuning QA";Click("submit");yield return null;
+            foreach(var key in keys){Input("lab-search").text=key;yield return null;Input("input-"+key).text=desired[key].ToString(System.Globalization.CultureInfo.InvariantCulture);yield return null;}
+            Assert.That(Button("lab-save").interactable,Is.True);Click("lab-save");yield return null;
+            string saved=ground.LabSavedIdentity;Assert.That(originalName.fontSize,Is.EqualTo(originalSize),"Saving must not immediately retune the existing game UI");
+            Click("lab-back");yield return null;Click("main-action-0");yield return null;
+            pad=InputSystem.AddDevice<Gamepad>();ground.StartCombatReview(new[]{pad},true,true);yield return NativeLoadingTestScene.Wait(ground);yield return null;
+            Assert.That(ground.Running,Is.True);Assert.That(ground.Profile.Get("ui.nameFontSize"),Is.EqualTo(desired["ui.nameFontSize"]));
+            Assert.That(ground.FrozenLabIdentity,Is.EqualTo(saved));Assert.That(T("seat-name-0"),Is.SameAs(originalName));
+            {
+                Assert.That(T("seat-name-0").fontSize,Is.EqualTo((int)desired["ui.nameFontSize"]),"name size");
+                Assert.That(T("seat-hud-0").fontSize,Is.EqualTo((int)desired["ui.fontSize"]),"HUD text size");
+                Assert.That(T("crosshair-0").fontSize,Is.EqualTo((int)desired["ui.headingFontSize"]),"crosshair size");
+                Assert.That(T("match-timer").fontSize,Is.EqualTo((int)desired["ui.headingFontSize"]),"timer size");
+                Assert.That(T("fps-value").fontSize,Is.EqualTo((int)desired["ui.fontSize"]),"FPS size");
+                var fpsPanel=(RectTransform)T("fps-value").transform.parent;Assert.That(fpsPanel.sizeDelta.x,Is.EqualTo(desired["ui.fontSize"]*7),"FPS panel grows with text");
+                Assert.That(T("kill-notice-0").fontSize,Is.EqualTo((int)desired["ui.killNoticeFontSize"]),"kill notice size");
+                Assert.That(T("kill-notice-0").rectTransform.anchorMin.y,Is.EqualTo(desired["ui.killNoticeBottom"]).Within(.00001),"kill notice bottom");
+                Assert.That(T("kill-notice-0").rectTransform.anchorMax.y,Is.EqualTo(desired["ui.killNoticeTop"]).Within(.00001),"kill notice top");
+                foreach(var field in new[]{"health-0","armor-0","ammo-0"})
+                {
+                    var group=(RectTransform)T(field).transform.parent;Assert.That(group.sizeDelta.y,Is.EqualTo(desired["ui.indicatorVisualHeight"]),field+" height");
+                    Assert.That(group.GetComponentInChildren<HudIndicatorIcon>().rectTransform.sizeDelta.y,Is.EqualTo(desired["ui.indicatorVisualHeight"]),field+" icon height");
+                }
+            }
+            foreach(var label in ground.GetComponentsInChildren<Text>(true).Where(t=>t.name.StartsWith("seat-name-")))Assert.That(label.fontSize,Is.EqualTo((int)desired["ui.nameFontSize"]),label.name);
+            var tables=(NativeStandingsView[])typeof(ProvingGround).GetField("standings",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                yield return null;Canvas.ForceUpdateCanvases();
+                foreach(var icon in ground.GetComponentsInChildren<HudIndicatorIcon>(true))Assert.That(icon.GetComponent<CanvasRenderer>(),Is.Not.Null,icon.name);
+                var healthIcon=T("health-0").transform.parent.GetComponentInChildren<HudIndicatorIcon>();var iconMesh=healthIcon.canvasRenderer.GetMesh();
+                var meshOutput=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/hud-lifecycle"));Directory.CreateDirectory(meshOutput);
+                File.WriteAllText(Path.Combine(meshOutput,"icon-render-state.txt"),"viewport=1920x1080\nvertices="+(iconMesh?iconMesh.vertexCount:0)+"\nculled="+healthIcon.canvasRenderer.cull+"\n");
+                Assert.That(iconMesh,Is.Not.Null);
+                Assert.That(iconMesh.vertexCount,Is.GreaterThan(0),"Health icon must have render geometry after resizing");
+                Assert.That(healthIcon.canvasRenderer.cull,Is.False,"Resized health icon must not be culled");
+            }
+            tables[0].Show(true,ground.Session.Match.Read(),true);Canvas.ForceUpdateCanvases();
+            Assert.That(tables[0].Root.transform.Find("row-1/cell-7").GetComponent<Text>().fontSize,Is.EqualTo((int)desired["ui.standingsFontSize"]),"Existing table reads current saved tuning at Show");
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/hud-lifecycle"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"saved-hud-tuning-1080p.png"),1920,1080);
+        }
         static Rect Bounds(RectTransform transform)
         {
             var corners=new Vector3[4];transform.GetWorldCorners(corners);return Rect.MinMaxRect(corners[0].x,corners[0].y,corners[2].x,corners[2].y);

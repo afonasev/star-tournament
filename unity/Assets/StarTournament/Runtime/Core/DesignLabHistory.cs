@@ -86,6 +86,7 @@ namespace StarTournament.ProvingGround
             CheckOrder(issues,"player.capsule.radius","player.capsule.height",2);
             CheckOrder(issues,"zone.armBottom","zone.armTop",1);
             CheckOrder(issues,"zone.legBottom","zone.legTop",1);
+            CheckOrder(issues,"ui.killNoticeBottom","ui.killNoticeTop",1);
             for(int i=2;Descriptors.Any(d=>d.Path=="score.chainTotal1")&&Profile("score.chainTotal1").Version<3&&i<=5;i++)CheckOrder(issues,"score.chainTotal"+(i-1),"score.chainTotal"+i,1,false);
             return issues;
         }

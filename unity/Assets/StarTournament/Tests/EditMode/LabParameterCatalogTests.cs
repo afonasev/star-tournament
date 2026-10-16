@@ -21,6 +21,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             string serialized=JsonUtility.ToJson(d);Assert.That(d.Kind,Is.EqualTo(expected));Assert.That(d.Application,Is.EqualTo(LabParameterApplication.NextGame));
             Assert.That(JsonUtility.ToJson(d),Is.EqualTo(serialized));Assert.That(serialized,Does.Not.Contain("Kind").And.Not.Contain("Application"));
         }
+        [TestCase(.34f,.35f,true)][TestCase(.35f,.35f,false)][TestCase(.40f,.35f,false)]
+        public void KillNoticeAreaRequiresOrderedAnchorsAndInvalidDraftCannotPublish(float bottom,float top,bool valid)
+        {
+            var h=new DesignLabHistory(path,baseline);h.Create("Notice area");var bytes=File.ReadAllBytes(path);string selected=h.Selected.Hash;
+            var draft=h.Selected.Snapshot;draft.Set("ui.killNoticeBottom",bottom);draft.Set("ui.killNoticeTop",top);
+            if(valid){Assert.That(draft.Validate(),Is.Empty);h.Save(draft);Assert.That(h.Selected.Snapshot.Get("ui.killNoticeBottom"),Is.EqualTo(bottom));}
+            else
+            {
+                Assert.That(draft.Validate().Any(i=>i.Path=="ui.killNoticeTop"),Is.True);Assert.Throws<ArgumentException>(()=>h.Save(draft));
+                Assert.That(h.Selected.Hash,Is.EqualTo(selected));CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            }
+        }
+        [Test]public void HistoricalInvalidNoticeAreaRemainsUntouchedAndCannotActivate()
+        {
+            var h=new DesignLabHistory(path,baseline);h.Create("Old notice area");var file=DesignLabHistoryTests.ReadFixture(path,baseline);
+            var revision=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
+            revision.Snapshot.Set("ui.killNoticeBottom",.40f);revision.Snapshot.Set("ui.killNoticeTop",.35f);revision.Hash=revision.Snapshot.Hash();
+            File.WriteAllText(path,JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(path);
+            var invalid=new DesignLabHistory(path,baseline,persistMigration:false);Assert.That(invalid.Writable,Is.False);
+            Assert.That(invalid.StorageError,Does.Contain("ui.killNoticeTop"));CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
         [Test]public void PackageDefaultUsesHighestSavedRevisionAndIsDetachedFromSelectedExperiment()
         {
             var catalog=LabReleaseCatalog.Factory(baseline);var tuned=baseline.Clone();tuned.Set("rifle.damage",31);tuned.Set("blood.enabled",0);
