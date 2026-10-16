@@ -2,10 +2,11 @@
   "baseline": "c999afef",
   "branch": "codex/game-standard-alignment",
   "template_revision": "0c2d4562683252d54736f294dc1af463050eac17",
-  "status": "WIP awaiting user design clarification16; not integrated main",
+  "status": "Implemented; focused Editor verified; installed Player/platform/human acceptance pending",
   "checks": {
-    "production_CSharp": "38 passed: 21 UpdateSession +17 ReleaseHistory, command dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --release-history",
-    "latest_affected_Unity": "5/6 pass; history geometry fails in short Editor viewport; final screenshot 1920x1080 fits, short actual viewport clips date labels"
+    "production_CSharp": "38 passed reused with exact unchanged production/test C# hashes from838ffa88",
+    "latest_affected_Unity": "6/6 latest unique: five unchanged neighboring fixtures from prior play3 plus current enhanced history fixture refinement-play4",
+    "history": "All11 rows via native D-pad, fixed1920x650 viewport, auto reveal bounds and resize, native Submit/Back, full >64K text/mesh equality, inner right-stick scroll, missing translation, readable dates, permanent installed badge/frame independent of focus/staged candidate"
   },
   "runs": [
     {
@@ -48,8 +49,9 @@
   ],
   "open_design": {
     "mockup": "docs/design/template-standard/16-history-compact.png",
-    "reason": "approved04 says only description scrolls; adding left list scroll in short viewport requires user design approval",
-    "implemented": false
+    "approved": "User2026-10-16 согласовано, давай текущую версию как-то подсветим тоже",
+    "implemented": true,
+    "highlight_preview": "docs/design/template-standard/17-history-installed.png"
   },
   "commands": [
     "tools/unity.sh shared -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter NativeUpdateMenuTests;FourPlayerMenuTests.StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld -profilesPath <owned>/profiles.json -testResults <owned>/results.xml -logFile <owned>/unity.log",
@@ -68,10 +70,69 @@
     "unity/Assets/StarTournament/Runtime/ProvingGroundReleaseHistory.cs": "43188d7f5cfd19c31847d56a98c6d376cdc4ae87a492ba3b4a446758463d2e6e"
   },
   "remaining": [
-    "Required approval16 before changing left-column overflow",
-    "Repair date clipping and prove navigation/Back/short viewport using focused history fixture; inspect PNG",
     "Git-derived bilingual publication generator",
     "Startup-health rollback, Lab05/06, Windows07, remaining matrix",
-    "Installed paired launcher/Player, physical/human/TV acceptance"
-  ]
+    "Installed paired launcher/Player, physical/human/TV acceptance; full/build/release/deploy separate explicit commands"
+  ],
+  "prior_partial": {
+    "status": "WIP awaiting user design clarification16; not integrated main",
+    "checks": {
+      "production_CSharp": "38 passed: 21 UpdateSession +17 ReleaseHistory, command dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --release-history",
+      "latest_affected_Unity": "5/6 pass; history geometry fails in short Editor viewport; final screenshot 1920x1080 fits, short actual viewport clips date labels"
+    },
+    "attempts": [
+      "play3 history missed initial post-load submit; fixture now waits initial menu frame and asserts actual screen opening/command",
+      "play4 history long IPC/text/scroll/language/focus passed until normalized scroll assertion for non-scrollable content; corrected contract to top-edge position",
+      "play5 eleven-version layout shows dates in Full HD PNG but geometry assertion exposes clipped dates in short Editor viewport; no weakening of assertions/count/depth"
+    ],
+    "open_design": {
+      "mockup": "docs/design/template-standard/16-history-compact.png",
+      "reason": "approved04 says only description scrolls; adding left list scroll in short viewport requires user design approval",
+      "implemented": false
+    }
+  },
+  "refinement_baseline": "838ffa88",
+  "refinement_commands": [
+    "tools/unity.sh shared -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter NativeUpdateMenuTests.HistorySelectsInstalledReleaseScrollsAndRestoresMenuFocus -profilesPath <owned>/profiles.json -testResults <owned>/results.xml -logFile <owned>/unity.log"
+  ],
+  "refinement_runs": [
+    {
+      "run": "play1",
+      "result": "NotRun: test fixture used unsupported GamepadState.dpad initializer; corrected against installed Input System source WithButton(DpadDown)"
+    },
+    {
+      "run": "play2",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "16.0453998"
+    },
+    {
+      "run": "play3",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "16.0162732"
+    },
+    {
+      "run": "play4",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "18.6268744"
+    }
+  ],
+  "refinement_notes": [
+    "play2: original Editor viewport changed after screenshot; fixture now holds a fixed offscreen viewport for entire interaction, preserving reveal assertions",
+    "play3 passed; screenshot resize exposed focus visibility issue, fixed in runtime; play4 passes expanded resize bounds and visual inspection",
+    "find-docs ctx7 library fetch failed; actual installed InputSystem Gamepad.cs WithButton/DpadDown verified"
+  ],
+  "refinement_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGroundReleaseHistory.cs": "f1fac318cdad6691a5b592705565bd1e8813ab53ba3acaf8cd6032d987fa94d1",
+    "unity/Assets/StarTournament/Tests/PlayMode/EditorUiCapture.cs": "a8841e6f465005a16c82a7e762f7a538438dfa330d06e0191ca11f89e62d5cbe",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeUpdateMenuTests.cs": "d3a9c7626199bde32f2434d3d761b6b2a9fceaaa7bc472ce2ab4730e40b95b7d"
+  }
 }

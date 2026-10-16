@@ -183,6 +183,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","0.1.0 (28.09.2026)");
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            using(var fixedViewport=EditorUiCapture.FixedViewport(ground,1920,650))
+            {
+            yield return null;yield return null;
             pad=InputSystem.AddDevice<Gamepad>();
             typeof(ProvingGround).GetField("menuDevice",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(ground,pad);
             var open=ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="release-history-action");
@@ -217,21 +220,56 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             yield return Capture(ground,"history-long");
             var installed=ground.GetComponentsInChildren<Button>(true).Single(x=>x.name=="release-history-version-10");
-            Assert.That(installed.GetComponentInChildren<Text>().text,Does.Contain("Установлена"));
+            var installedBadge=installed.transform.Find("history-installed-badge");
+            Assert.That(installedBadge,Is.Not.Null);
+            Assert.That(installedBadge.GetComponentInChildren<Text>().text,Is.EqualTo("УСТАНОВЛЕНА"));
+            Assert.That(ground.GetComponentsInChildren<Text>(true).Count(t=>t.name=="history-installed-label"),Is.EqualTo(1),"Only the running release receives this badge");
+            var versions=ground.GetComponentsInChildren<ScrollRect>(true).Single(x=>x.name=="release-history-versions");
+            Assert.That(versions.viewport.rect.height,Is.LessThan(700),"Fixture holds a short viewport during navigation");
+            Assert.That(versions.content.rect.height,Is.GreaterThan(versions.viewport.rect.height));
+            var first=ground.GetComponentsInChildren<Button>(true).Single(x=>x.name=="release-history-version-0");
+            EventSystem.current.SetSelectedGameObject(first.gameObject);yield return null;
+            for(int row=1;row<=10;row++)
+            {
+                InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadDown));yield return null;yield return null;
+                InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+                Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("release-history-version-"+row),"D-pad navigates all releases including offscreen rows");
+            }
+            Assert.That(versions.content.anchoredPosition.y,Is.GreaterThan(10),"Navigation reveals installed release below the viewport");
+            var rowBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(versions.viewport,(RectTransform)installed.transform);
+            Assert.That(rowBounds.min.y,Is.GreaterThanOrEqualTo(versions.viewport.rect.yMin-1));
+            Assert.That(rowBounds.max.y,Is.LessThanOrEqualTo(versions.viewport.rect.yMax+1));
             foreach(var entry in ground.GetComponentsInChildren<Button>(true).Where(x=>x.name.StartsWith("release-history-version-")))
             {
                 var text=entry.GetComponentInChildren<Text>();
                 Assert.That(text.preferredHeight,Is.LessThanOrEqualTo(text.rectTransform.rect.height),"Version and publication date fit every row");
             }
-            installed.onClick.Invoke();yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             Assert.That(body.text,Does.Contain("не опубликовано"),"Missing Russian is explicit, not invented or replaced with English");
             Assert.That(scroll.content.anchoredPosition.y,Is.EqualTo(0).Within(1),"Short description is placed at its top edge");
+            var other=ground.GetComponentsInChildren<Button>(true).Single(x=>x.name=="release-history-version-9");
+            EventSystem.current.SetSelectedGameObject(other.gameObject);yield return null;
+            Assert.That(installed.transform.Find("history-installed-frame").gameObject.activeInHierarchy,Is.True,"Installed frame persists without focus");
+            Assert.That(installedBadge.gameObject.activeInHierarchy,Is.True);
+            data.state="staged";data.version="1.1.0";File.WriteAllText(status,JsonUtility.ToJson(data));yield return new WaitForSecondsRealtime(.3f);
+            Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(other.gameObject),"Update completion cannot steal history focus");
+            Assert.That(installedBadge.GetComponentInChildren<Text>().text,Is.EqualTo("УСТАНОВЛЕНА"),"Prepared candidate never replaces installed badge");
             yield return Capture(ground,"history-installed-no-translation");
+            yield return null;yield return null;
+            var focusedBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(versions.viewport,(RectTransform)other.transform);
+            Assert.That(focusedBounds.min.y,Is.GreaterThanOrEqualTo(versions.viewport.rect.yMin-1),"Viewport resize keeps focused version visible");
+            Assert.That(focusedBounds.max.y,Is.LessThanOrEqualTo(versions.viewport.rect.yMax+1));
+            EventSystem.current.SetSelectedGameObject(installed.gameObject);yield return null;
+            EventSystem.current.SetSelectedGameObject(other.gameObject);yield return null;
+            var images=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_MENU_QA_SCREENSHOTS");
+            if(!string.IsNullOrEmpty(images))yield return EditorUiCapture.Capture(ground,Path.Combine(images,"history-installed-short.png"),1920,650);
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             Assert.That(open.gameObject.activeInHierarchy,Is.True);
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(open.gameObject));
             Assert.That(File.Exists(command),Is.False,"Reading/closing history never grants update consent");
+            }
         }
         [Serializable] sealed class Command { public string action,id; }
         IEnumerator Capture(ProvingGround ground,string name)

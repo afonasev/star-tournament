@@ -813,8 +813,8 @@
       "source": "features/updates/requirements.md",
       "status": "partial",
       "evidence": {
-        "path": "docs/evidence/standard-update-download-flow/verification.json",
-        "implementation": "Single discovery/frozen target, cancellation/drain, correlated match admission/FIFO/resume, version/progress/ready UI implemented and focused C#/Editor checked. History04/startup health recovery and paired installed launcher/Player acceptance remain pending; no whole-requirement acceptance claimed."
+        "path": "docs/evidence/standard-release-history/verification.json",
+        "implementation": "History04/approved16 and requested installed highlight17 implemented, independent scrolls/auto reveal/resize, version/date/RU-EN cache and history drain. Focused38 C# unchanged +6 latest unique Editor fixtures verified. Player/physical/human acceptance and bilingual publication generator remain pending."
       }
     },
     {
@@ -831,8 +831,11 @@
       "id": "UPDATES-HISTORY-01",
       "title": "«Что нового» на языке игры",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-release-history/verification.json",
+        "implementation": "History04/approved16 and requested installed highlight17 implemented, independent scrolls/auto reveal/resize, version/date/RU-EN cache and history drain. Focused38 C# unchanged +6 latest unique Editor fixtures verified. Player/physical/human acceptance and bilingual publication generator remain pending."
+      }
     },
     {
       "id": "UPDATES-CHANGELOG-01",
