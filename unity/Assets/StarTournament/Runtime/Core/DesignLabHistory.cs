@@ -668,6 +668,13 @@ namespace StarTournament.ProvingGround
         }
         bool Current(LabBundle bundle)=>RegistryMatches(shipped,bundle);
         public bool Compatible(LabRevision revision)=>Current(revision.Snapshot);
+        // Catalogue defaults follow the same authority as upgrade defaults, never the
+        // selected experiment or a descriptor's factory tuning. Return detached data.
+        public LabBundle ReleaseParameterDefaults()
+        {
+            if(authoring&&ReleaseError!=null)throw new InvalidOperationException(ReleaseError);
+            return CompatibilityDefaults(data,shipped.Descriptors.ToDictionary(d=>d.Path,StringComparer.Ordinal));
+        }
         LabBundle CompatibilityDefaults(LabHistoryFile file,IReadOnlyDictionary<string,NumericDescriptor> currentDescriptors)
         {
             LabBundle selected=null;

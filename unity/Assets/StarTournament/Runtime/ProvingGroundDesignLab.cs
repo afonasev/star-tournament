@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
         public string FrozenLabIdentity {get;private set;}
         LabRevisionReference frozenLabReference;
         string labSavedIdentity="",labSavedRevisionLabel="",labActiveLabel="",labWriteMessage;
+        LabBundle labParameterDefaults;string labParameterDefaultsError;
         NumericDescriptor[] labRegistry=Array.Empty<NumericDescriptor>();
         public string LabSavedIdentity=>labSavedIdentity;
         public bool LabSelectionPending=>labHistory!=null&&labHistory.Busy;
@@ -303,6 +304,8 @@ namespace StarTournament.ProvingGround
         void RefreshLabWorkspace()
         {
             if(!IsLabHistoryReady){if(labScreen)SetLabHistoryWaiting(true);return;}if(labDraft==null)return;var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;string oldFocus=selected?selected.name:null;float treePosition=labTreeScroll.verticalNormalizedPosition,fieldPosition=labFieldsScroll.verticalNormalizedPosition;
+            try{labParameterDefaults=labHistory.ReleaseParameterDefaults();labParameterDefaultsError=null;}
+            catch(InvalidOperationException e){labParameterDefaults=null;labParameterDefaultsError=e.Message;}
             ClearLabContent(labTree);ClearLabContent(labFields);labViews.Clear();
             int i=0;
             foreach(var parentGroup in LabDescriptors().GroupBy(d=>GroupLabel(LabGroup(d)).Split('→')[0].Trim()))
@@ -331,7 +334,7 @@ namespace StarTournament.ProvingGround
             var row=Panel(labFields,"field-"+d.Path,Vector2.zero,Vector2.one,MenuCard);PlaceLabRow((RectTransform)row.transform,index,LabFieldRowHeight);
             Label(row.transform,"label",d.Label,18,new Vector2(.02f,.76f),new Vector2(.56f,.98f),TextAnchor.MiddleLeft,Color.white);
             Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+d.Description,14,new Vector2(.02f,.36f),new Vector2(.56f,.75f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-            bool boolean=d.Unit=="boolean";
+            bool boolean=d.Kind==LabParameterKind.Boolean;
             InputField input=null;Button down=null,up=null,off=null,on=null;
             if(boolean)
             {
@@ -352,10 +355,19 @@ namespace StarTournament.ProvingGround
             foreach(var control in new Selectable[]{input,down,up,off,on,reset})if(control)control.interactable=editable;
             labViews[d.Path]=new LabFieldView{Input=input,Focus=boolean?(Selectable)off:input,Off=off,On=on,Diff=diff,Error=error,Background=row.GetComponent<Image>()};
             if(input)input.onValueChanged.AddListener(value=>{if(labHistory.SelectedProfileReadOnly)return;labRaw[d.Path]=value;if(float.TryParse(value.Replace(',','.'),NumberStyles.Float,CultureInfo.InvariantCulture,out float n)&&!float.IsNaN(n)&&!float.IsInfinity(n)){labDraft.Set(d.Path,n);labRaw.Remove(d.Path);}RefreshLabValues(false);});
-            string hint=(editable?labDraft.Domain(d.Path):"Только чтение · "+CombatBowlCatalog.Identity+" · новая геометрия требует отдельной map revision")+" · "+d.Description+"\n"+d.Path+" · "+d.Unit+" · диапазон "+d.Minimum+"…"+d.Maximum+" · шаг "+d.Step;
+            string kind=d.Kind==LabParameterKind.Boolean?"Переключатель":d.Kind==LabParameterKind.Integer?"Целое число":"Дробное число";
+            string releaseDefault=labParameterDefaults!=null?LabNumber(labParameterDefaults.Get(d.Path)):"недоступен · "+labParameterDefaultsError;
+            string access=labHistory.SelectedProfileReadOnly?"Только чтение · профиль пакета · создайте копию":!editable?"Только чтение":labDraft.Domain(d.Path);
+            string hint=access+" · "+d.Description+"\n"+d.Path+" · "+kind+" · "+d.Unit+" · "+LabNumber(d.Minimum)+"…"+LabNumber(d.Maximum)+" · шаг "+LabNumber(d.Step)+" · Релизный Default: "+releaseDefault+
+                "\nПрименение: "+LabApplicationLabel(d.Application);
             foreach(var control in new Selectable[]{input,down,up,off,on,reset})if(control)Hint(control.gameObject,hint);
             if(!editable){var info=LabButton(row.transform,"info-"+d.Path,"Описание",new Vector2(.80f,.02f),new Vector2(.98f,.20f),()=>labHint.text=hint);Hint(info.gameObject,hint);}
             if(labAllChanges){var jump=LabButton(row.transform,"jump-"+d.Path,"К полю",new Vector2(.75f,.035f),new Vector2(.98f,.32f),()=>{labAllChanges=false;labGroup=LabGroup(d);RefreshLabWorkspace();SelectLabControl(labViews[d.Path].Focus);});Hint(jump.gameObject,"Открыть "+GroupLabel(LabGroup(d))+" и выбрать поле "+d.Label);}
+        }
+        static string LabApplicationLabel(LabParameterApplication application)
+        {
+            if(application==LabParameterApplication.NextGame)return "следующая игра после сохранения или выбора версии";
+            throw new ArgumentOutOfRangeException(nameof(application));
         }
         static void LabBooleanState(Button button,bool selected)
         {
@@ -530,7 +542,8 @@ namespace StarTournament.ProvingGround
                 try
                 {
                     labHistory.MarkForRelease(labHistory.SelectedProfileId,number,false);
-                    labWriteMessage="Файл проекта записан · Git commit/push не выполнялся";labError=null;InspectLabRevision(number);
+                    labWriteMessage="Файл проекта записан · Git commit/push не выполнялся";labError=null;
+                    CloseLabDialog();RefreshLabWorkspace();InspectLabRevision(number);
                 }
                 catch(Exception e){statusText.text=e.Message;}
             });

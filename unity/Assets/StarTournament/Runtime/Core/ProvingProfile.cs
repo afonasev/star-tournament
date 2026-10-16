@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
+    public enum LabParameterKind { Integer, Decimal, Boolean }
+    public enum LabParameterApplication { NextGame }
+
     [Serializable]
     public sealed class NumericDescriptor
     {
@@ -16,6 +19,12 @@ namespace StarTournament.ProvingGround
         public float Maximum;
         public float Step;
         public float DefaultValue;
+
+        // The declared value lattice is anchored at DefaultValue (see LabBundle.Validate).
+        // Derived metadata must not change serialized historical descriptor definitions.
+        public LabParameterKind Kind => Unit=="boolean"?LabParameterKind.Boolean:
+            Step==Math.Truncate(Step)&&DefaultValue==Math.Truncate(DefaultValue)?LabParameterKind.Integer:LabParameterKind.Decimal;
+        public LabParameterApplication Application => LabParameterApplication.NextGame;
 
         internal NumericDescriptor DetachedCopy()
         {

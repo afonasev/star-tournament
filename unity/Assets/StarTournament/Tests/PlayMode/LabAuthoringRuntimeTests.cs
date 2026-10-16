@@ -51,6 +51,41 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             yield return null;
         }
+        [Serializable]sealed class CatalogueReport {public CatalogueField[] Fields;public string[] Excluded;}
+        [Serializable]sealed class CatalogueField
+        {
+            public string Key,Profile,Group,Label,Description,Unit,Kind,Application;
+            public float Minimum,Maximum,Step,FactoryDefault,ReleaseDefault;
+        }
+        [UnityTest] public IEnumerator CatalogueHintsUseMarkedDefaultAndDeclareNextGameWithoutPublishingDraft()
+        {
+            yield return LoadAuthor();Click("main-action-2");yield return null;
+            var history=Field<DesignLabHistory>("labHistory");var defaults=history.ReleaseParameterDefaults();
+            var visible=baseline.Descriptors.Where(d=>baseline.IsVisible(d.Path)).ToArray();
+            foreach(var d in visible)
+            {
+                Assert.That(d.Validate(out var reason),Is.True,d.Path+": "+reason);
+                Assert.That(d.Application,Is.EqualTo(LabParameterApplication.NextGame),d.Path);
+                Assert.That(d.Contains(defaults.Get(d.Path)),Is.True,d.Path+": release Default must respect current range");
+            }
+            var report=new CatalogueReport{Fields=visible.Select(d=>new CatalogueField{Key=d.Path,Profile=baseline.Profile(d.Path).Id,Group=d.Group,Label=d.Label,Description=d.Description,Unit=d.Unit,Kind=d.Kind.ToString(),Application=d.Application.ToString(),Minimum=d.Minimum,Maximum=d.Maximum,Step=d.Step,FactoryDefault=d.DefaultValue,ReleaseDefault=defaults.Get(d.Path)}).ToArray(),Excluded=baseline.Descriptors.Where(d=>!baseline.IsVisible(d.Path)).Select(d=>d.Path).ToArray()};
+            var reportOutput=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/catalogue"));Directory.CreateDirectory(reportOutput);
+            File.WriteAllText(Path.Combine(reportOutput,"actual-catalogue.json"),JsonUtility.ToJson(report,true));
+            I("lab-search").text="rifle.damage";yield return null;
+            I("input-rifle.damage").text="33";yield return null;
+            var active=ground.ActiveLabReference.Clone();var bytes=File.ReadAllBytes(historyPath);
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(I("input-rifle.damage").gameObject);yield return null;
+            var hint=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-hint");
+            Assert.That(hint.text,Does.Contain("Целое число").And.Contain("Релизный Default: 31").And.Contain("Применение: следующая игра"));
+            Assert.That(hint.supportRichText,Is.False);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/catalogue"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"catalogue-hint-720p.png"),1280,720);
+            Click("lab-revision-select");yield return null;Click("revision-unmark");yield return null;Click("cancel");yield return null;
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(I("input-rifle.damage").gameObject);yield return null;
+            Assert.That(hint.text,Does.Contain("Релизный Default: "+baseline.Get("rifle.damage").ToString(System.Globalization.CultureInfo.InvariantCulture)));
+            Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            Assert.That(B("lab-save").interactable,Is.True);
+        }
         [UnityTest] public IEnumerator HistoricalInspectionAndUnmarkPreserveActiveBaseDraftAndOriginal()
         {
             File.Delete(historyPath);var previous=baseline.Clone();previous.Profiles=previous.Profiles.Select(p=>p.BeforeBloodIntensityIncrease()).ToList();
