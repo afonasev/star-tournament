@@ -74,6 +74,45 @@ public static class WindowsInstallation
         return state.GetProperty("Blocked").EnumerateArray().Any(v => v.GetString() == version);
     }
 
+    public static string? PendingStartup(string root, string version)
+    {
+        var path = Path.Combine(root, "maintenance", "recovery", "state.json");
+        if (!File.Exists(path)) return null;
+        if (new FileInfo(path).Length > 131072) throw new IOException("Protected recovery status exceeds limit");
+        using var data = JsonDocument.Parse(File.ReadAllText(path)); var state = data.RootElement;
+        if (state.GetProperty("Schema").GetInt32() != 1 || state.GetProperty("RootId").GetString() != StartupRecovery.InstallationId(root)) throw new IOException("Foreign recovery status");
+        var attempt = state.GetProperty("Attempt");
+        if (attempt.ValueKind == JsonValueKind.Null || attempt.GetProperty("Phase").GetString() != "installed") return null;
+        if (attempt.GetProperty("Target").GetString() != version) throw new IOException("Startup recovery target mismatch");
+        var id = attempt.GetProperty("Id").GetString() ?? "";
+        if (id.Length != 32 || id.Any(c => !"0123456789abcdef".Contains(c))) throw new IOException("Invalid protected recovery id");
+        return StartupConfirmed(root, id) ? null : id;
+    }
+    public static bool StartupConfirmed(string root, string id)
+    {
+        if (id.Length != 32 || id.Any(c => !"0123456789abcdef".Contains(c))) throw new IOException("Invalid protected recovery id");
+        var path = Path.Combine(root, "maintenance", "recovery", "state.json");
+        if (new FileInfo(path).Length > 131072) throw new IOException("Protected recovery status exceeds limit");
+        using var data = JsonDocument.Parse(File.ReadAllText(path)); var state = data.RootElement;
+        if (state.GetProperty("Schema").GetInt32() != 1 || state.GetProperty("RootId").GetString() != StartupRecovery.InstallationId(root) ||
+            state.GetProperty("Attempt").GetProperty("Id").GetString() != id || state.GetProperty("Attempt").GetProperty("Phase").GetString() != "installed")
+            throw new IOException("Startup recovery transaction changed");
+        // FileInfo.Length throws for a lost latch: uncertainty never permits rollback.
+        return new FileInfo(Path.Combine(root, "maintenance", "recovery", id + ".ready")).Length != 0;
+    }
+    public static void WatchStartup(string root, string version, string[] arguments)
+    {
+        var id = PendingStartup(root, version); if (id == null) return;
+        using var caller = Process.GetCurrentProcess();
+        var start = new ProcessStartInfo(Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"))
+        { UseShellExecute = false, RedirectStandardOutput = true, WorkingDirectory = root };
+        foreach (var arg in new[] { "--watch-startup", id, caller.Id.ToString(), caller.StartTime.ToUniversalTime().Ticks.ToString(),
+            Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(arguments))) }) start.ArgumentList.Add(arg);
+        using var watcher = Process.Start(start) ?? throw new IOException("Startup supervisor did not start");
+        var ack = watcher.StandardOutput.ReadLineAsync();
+        if (!ack.Wait(TimeSpan.FromSeconds(30)) || ack.Result != "STAR_TOURNAMENT_STARTUP_WATCH_READY") throw new IOException("Startup supervision was not acknowledged");
+    }
+
     public static bool Declined(string packages, string version)
     {
         try

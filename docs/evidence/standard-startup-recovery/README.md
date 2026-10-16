@@ -21,3 +21,6 @@ Launcher+Unity health handshake подключён (startup-contract.md):12 .NET
 
 ## Windows protected transaction (частично)
 Сохранение/restore current+bootstrap и protected UAC broker подключены; 30 Windows filesystem +40 payload +10 Mac fixtures +34 feedback и16 installer-tooling checks passed. Debug broker compile0 warnings/errors. Автоматический Windows first-start watchdog, реальный UAC/ACL и data compatibility остаются открыты. См. [windows-protected-recovery.md](windows-protected-recovery.md), [windows-verification.json](windows-verification.json).
+
+## Windows first-start observer and stable root entry
+Immediate and deferred first launch are now guarded in source, including an unusable replacement launcher. Protected latch precedes per-user startup confirmation. See [windows-watch.md](windows-watch.md) and [windows-watch-verification.json](windows-watch-verification.json). Native Windows APIs/UAC/runtime, repair07/data/channels and installed acceptance remain open. Earlier pending-watch descriptions above refer to historical source slices.

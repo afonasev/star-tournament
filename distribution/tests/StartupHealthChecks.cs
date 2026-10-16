@@ -103,6 +103,29 @@ static class StartupHealthChecks
                 }
                 finally{for(int i=0;i<names.Length;i++)Environment.SetEnvironmentVariable(names[i],previous[i]);}
             });
+            Test("platform latch is durable before journal health and callback",(journal,directory)=>
+            {
+                bool latched=false,notified=false;
+                var monitor=new StartupHealthMonitor(journal,"1.0.0",Path.Combine(directory,"ready.json"),Now,
+                    ()=>{Require(latched&&journal.Read().HealthyVersion=="1.0.0");notified=true;},
+                    ()=>{Require(journal.Read().HealthyVersion==null);latched=true;return true;});
+                File.WriteAllText(monitor.ReadyPath,JsonSerializer.Serialize(new StartupReady(1,"1.0.0",monitor.Ticket.Token,"menu-ready")));
+                monitor.Poll(Now.AddSeconds(1));Require(monitor.IsHealthy&&latched&&notified);
+            });
+            Test("failed platform persistence leaves health pending and retries same marker",(journal,directory)=>
+            {
+                bool writable=false;int notifications=0;
+                var monitor=new StartupHealthMonitor(journal,"1.0.0",Path.Combine(directory,"ready.json"),Now,()=>notifications++,()=>writable);
+                File.WriteAllText(monitor.ReadyPath,JsonSerializer.Serialize(new StartupReady(1,"1.0.0",monitor.Ticket.Token,"menu-ready")));
+                monitor.Poll(Now.AddSeconds(1));Require(!monitor.IsHealthy&&journal.Read().HealthyVersion==null&&journal.Read().Launch!=null&&notifications==0);
+                writable=true;monitor.Poll(Now.AddSeconds(2));Require(monitor.IsHealthy&&notifications==1);
+            });
+            Test("foreign ready token cannot latch platform success",(journal,directory)=>
+            {
+                int hooks=0;var monitor=new StartupHealthMonitor(journal,"1.0.0",Path.Combine(directory,"ready.json"),Now,()=>{},()=>{hooks++;return true;});
+                File.WriteAllText(monitor.ReadyPath,JsonSerializer.Serialize(new StartupReady(1,"1.0.0","foreign","menu-ready")));
+                monitor.Poll(Now.AddSeconds(1));Require(hooks==0&&!monitor.IsHealthy&&journal.Read().HealthyVersion==null);
+            });
             Console.WriteLine($"Startup health: {passed} passed");
         }
         finally{Directory.Delete(root,true);}

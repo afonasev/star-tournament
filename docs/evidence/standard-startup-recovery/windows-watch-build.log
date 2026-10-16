@@ -1,0 +1,10 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/maintenance/Program.cs(27,17): warning CS8602: Dereference of a possibly null reference. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/maintenance/Maintenance.csproj]
+  Maintenance -> /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/maintenance/bin/Debug/net8.0/win-x64/StarTournamentMaintenance.dll
+
+Build succeeded.
+
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/maintenance/Program.cs(27,17): warning CS8602: Dereference of a possibly null reference. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/maintenance/Maintenance.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.39

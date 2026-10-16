@@ -145,6 +145,14 @@ static class WindowsRecoveryChecks
             {store.Prepare(Config,"1.1.0",false);Changed(install);store.Restore();Require(WindowsInstallation.IsBlocked(install,"1.1.0")&&!WindowsInstallation.IsBlocked(install,"1.2.0"));store.Cleanup("1.0.0");Require(WindowsInstallation.IsBlocked(install,"1.1.0"));});
             Test("recovery freezes exact transaction across elevation",(install,store)=>
             {var attempt=store.Prepare(Config,"1.1.0",false);Changed(install);Reject(()=>store.Restore(new string('a',32)));Require(store.Read().Attempt?.Id==attempt.Id&&File.ReadAllText(Path.Combine(install,"Update.exe"))=="new updater");store.Restore(attempt.Id);Old(install);});
+            Test("deferred startup binds the protected transaction and target",(install,store)=>
+            {Require(WindowsInstallation.PendingStartup(install,"1.0.0")==null);var a=store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));Require(WindowsInstallation.PendingStartup(install,"1.1.0")==a.Id);Require(!WindowsInstallation.StartupConfirmed(install,a.Id));Reject(()=>WindowsInstallation.PendingStartup(install,"9.9.9"));});
+            Test("confirmed transaction needs no new watchdog",(install,store)=>
+            {var a=store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));MarkReady(install,store);Require(WindowsInstallation.PendingStartup(install,"1.1.0")==null&&WindowsInstallation.StartupConfirmed(install,a.Id));});
+            Test("missing latch is uncertainty not permission for startup rollback",(install,store)=>
+            {var a=store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));File.Delete(Path.Combine(install,"maintenance","recovery",a.Id+".ready"));Reject(()=>WindowsInstallation.StartupConfirmed(install,a.Id));Reject(()=>WindowsInstallation.PendingStartup(install,"1.1.0"));});
+            Test("watchdog cannot observe another protected attempt",(install,store)=>
+            {store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));Reject(()=>WindowsInstallation.StartupConfirmed(install,new string('e',32)));Reject(()=>WindowsInstallation.StartupConfirmed(install,"../escape"));});
             Console.WriteLine($"Windows recovery store: {passed} passed (portable filesystem contracts; Windows ACL/UAC NotRun)");
         }
         finally{Directory.Delete(root,true);}

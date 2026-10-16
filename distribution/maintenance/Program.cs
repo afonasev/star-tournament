@@ -24,6 +24,9 @@ static class Maintenance
         {
             if (!OperatingSystem.IsWindows()) throw new InvalidOperationException("Windows only");
             ClearRuntimeInjectionEnvironment();
+            if (string.Equals(Path.GetFileName(Environment.ProcessPath), "Star Tournament.exe", StringComparison.OrdinalIgnoreCase))
+                return ForwardStableEntry(args);
+            if (args.FirstOrDefault() == "--launch-stable") return LaunchStable(args[1..]).GetAwaiter().GetResult();
             return args.Length switch
             {
                 2 when args[0] == "--validate-root" => ValidateRoot(args[1]),
@@ -32,6 +35,7 @@ static class Maintenance
                 2 when args[0] == "--launch-user" => LaunchUser(args[1]),
                 1 when args[0] == "--check-legacy-user" => CheckLegacyUser(),
                 7 when args[0] == "--activate" => Activate(args),
+                5 when args[0] == "--watch-startup" => WatchStartup(args).GetAwaiter().GetResult(),
                 7 when args[0] == "--apply-staged" => ElevatedApply(args[1], new Caller(int.Parse(args[2]), long.Parse(args[3])), args[4], bool.Parse(args[5]), args[6]),
                 0 => RecoverUser(),
                 1 when args[0] == "--recover" => RecoverUser(),
@@ -43,7 +47,7 @@ static class Maintenance
         {
             UpdateFeedback.Log("maintenance " + (args.FirstOrDefault() ?? "unknown"), ex);
             Console.Error.WriteLine("Star Tournament maintenance: " + ex.Message);
-            if (args.Length == 0 || args.FirstOrDefault() is "--activate" or "--recover") UpdateFeedback.Show("Обновление или перезапуск не выполнены. " + UpdateFeedback.Explain(ex));
+            if (args.Length == 0 || args.FirstOrDefault() is "--activate" or "--recover" or "--launch-stable" || string.Equals(Path.GetFileName(Environment.ProcessPath), "Star Tournament.exe", StringComparison.OrdinalIgnoreCase)) UpdateFeedback.Show("Обновление или перезапуск не выполнены. " + UpdateFeedback.Explain(ex));
             return 1;
         }
     }
@@ -344,6 +348,7 @@ static class Maintenance
         var observed = StartupRecovery.ForInstallation(config, UpdateFeedback.LogRoot, root).Read();
         if (observed.HealthyVersion != config.Version || observed.Launch != null)
             throw new InvalidOperationException("Current Player startup must be confirmed before activation");
+        using var watchLease = TryWatchLease(root, config.AppId) ?? throw new IOException("Startup supervision is already active");
         var journal = UpdateAttemptJournal.ForApp(config.AppId);
         journal.Begin(expected);
         UpdateFeedback.Log("maintenance-ready target=" + expected);
@@ -388,22 +393,123 @@ static class Maintenance
         { UpdateFeedback.Show("Установка прервана. Запустите восстановление Star Tournament перед повторным запуском игры."); return 1; }
         if (restart)
         {
-            var stub = Path.Combine(root, "Star Tournament.exe");
-            var launch = new ProcessStartInfo(stub) { UseShellExecute = false, WorkingDirectory = root };
-            foreach (var arg in restartArgs) launch.ArgumentList.Add(arg);
-            try
-            {
-                UpdateFeedback.Log("restart-stub target=" + expected + " applied=" + applied);
-                using var child = Process.Start(launch) ?? throw new IOException("Restart launcher did not start");
-            }
+            WindowsDetachedProcess? launched = null;
+            try { launched = LaunchCurrent(root, restartArgs); }
             catch (Exception ex)
             {
-                UpdateFeedback.Log("restart-stub-failed", ex);
-                UpdateFeedback.Show("Не удалось перезапустить игру. " + UpdateFeedback.Explain(ex));
-                return 1;
+                UpdateFeedback.Log("restart-launcher-failed", ex);
+                if (!applied) { UpdateFeedback.Show("Не удалось перезапустить игру. " + UpdateFeedback.Explain(ex)); return 1; }
+            }
+            using (launched)
+            {
+                if (applied && WindowsInstallation.PendingStartup(root, expected) is { } id)
+                    ObserveStartup(root, config, id, expected, () => launched?.IsAlive() ?? false, restartArgs).GetAwaiter().GetResult();
             }
         }
         return 0; // The launcher already exited successfully; a failed or declined update keeps the old install usable.
+    }
+
+    static int ForwardStableEntry(string[] args)
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start the game as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Environment.ProcessPath!)!);
+        using var child = WindowsDetachedProcess.Start(Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"),
+            new[] { "--launch-stable" }.Concat(args), root);
+        return 0;
+    }
+    static async Task<int> LaunchStable(string[] args)
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start the game as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        var identity = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")), Json)!;
+        using var watchLease = TryWatchLease(root, identity.AppId); if (watchLease == null) return 0;
+        // Read-only routing from protected state, including when current is missing/broken.
+        // Only the UAC store can validate/perform mutations; the normal host creates no protected paths.
+        var statePath = Path.Combine(root, "maintenance", "recovery", "state.json");
+        WindowsRecoveryAttempt? pending = null;
+        if (File.Exists(statePath))
+        {
+            var state = JsonSerializer.Deserialize<WindowsRecoveryState>(ReadBoundedText(statePath, 131072)) ?? throw new IOException("Protected recovery state missing");
+            if (state.Schema != 1 || state.RootId != StartupRecovery.InstallationId(root) || state.AppId != identity.AppId) throw new IOException("Foreign protected recovery state");
+            pending = state.Attempt;
+        }
+        if (pending != null && pending.Phase is not ("installed" or "restored"))
+            throw new IOException("Interrupted installation requires maintenance --recover before launch");
+        bool watch = pending is { Phase: "installed" } && !WindowsInstallation.StartupConfirmed(root, pending.Id);
+        WindowsDetachedProcess? child = null;
+        try { child = LaunchCurrent(root, args); }
+        catch (Exception ex) when (watch) { UpdateFeedback.Log("stable-first-launch-failed", ex); }
+        using (child)
+        {
+            if (watch) await ObserveStartup(root, identity, pending!.Id, pending.Target, () => child?.IsAlive() ?? false, args);
+        }
+        return 0;
+    }
+
+    static FileStream? TryWatchLease(string root, string appId)
+    {
+        Directory.CreateDirectory(UpdateFeedback.LogRoot);
+        var path = Path.Combine(UpdateFeedback.LogRoot, appId + "." + StartupRecovery.InstallationId(root) + ".windows-watch.lock");
+        try { return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+        catch (IOException error) when ((error.HResult & 0xffff) is 32 or 33) { return null; }
+    }
+    static WindowsDetachedProcess LaunchCurrent(string root, string[] args) =>
+        WindowsDetachedProcess.Start(Path.Combine(root, "current", "StarTournamentLauncher.exe"), args, root);
+
+    static async Task<int> WatchStartup(string[] args)
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Startup supervision must run as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        var caller = new Caller(int.Parse(args[2]), long.Parse(args[3])); ValidateCaller(root, caller);
+        var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
+        var id = WindowsInstallation.PendingStartup(root, config.Version);
+        if (id != null && id != args[1]) throw new IOException("Startup transaction changed before supervision");
+        var restartArgs = JsonSerializer.Deserialize<string[]>(Convert.FromBase64String(args[4])) ?? throw new IOException("Restart arguments missing");
+        using var watchLease = TryWatchLease(root, config.AppId);
+        Console.WriteLine("STAR_TOURNAMENT_STARTUP_WATCH_READY"); Console.Out.Flush();
+        // An activation supervisor already holds the lease before launching its exact child.
+        if (id == null || watchLease == null) return 0;
+        await ObserveStartup(root, config, id, config.Version, () => ExactAlive(caller), restartArgs);
+        return 0;
+    }
+    static bool ExactAlive(Caller caller)
+    {
+        try
+        {
+            using var process = Process.GetProcessById(caller.Pid);
+            return !process.HasExited && process.StartTime.ToUniversalTime().Ticks == caller.StartedTicks;
+        }
+        catch (ArgumentException) { return false; }
+        catch (InvalidOperationException) { return false; }
+        // Access failures are not proof of exit. Let the caller fail closed with its backup.
+    }
+    static async Task WaitForRecordedPlayer(string appId)
+    {
+        var path = Path.Combine(UpdateFeedback.LogRoot, appId + ".player.json");
+        if (!File.Exists(path)) return;
+        using var record = JsonDocument.Parse(ReadBoundedText(path, 4096));
+        var player = new Caller(record.RootElement.GetProperty("pid").GetInt32(), record.RootElement.GetProperty("started").GetInt64());
+        if (player.Pid <= 0 || player.StartedTicks <= 0) throw new IOException("Invalid recorded Player identity");
+        while (ExactAlive(player)) await Task.Delay(100);
+        // Do not delete a record another launcher could have replaced while we waited.
+    }
+    static async Task ObserveStartup(string root, LauncherConfig config, string id, string target, Func<bool> alive, string[] args)
+    {
+        var journal = StartupRecovery.ForInstallation(config, UpdateFeedback.LogRoot, root);
+        await WindowsStartupWatch.Observe(alive, () => WindowsInstallation.StartupConfirmed(root, id),
+            () => WaitForRecordedPlayer(config.AppId),
+            () => journal.Read().HealthyVersion == target,
+            () => { RequestRestore(root, id); UpdateAttemptJournal.ForApp(config.AppId).Fail(target, "Новая версия не подтвердила запуск. Восстановлена предыдущая версия."); return Task.CompletedTask; },
+            () => { using var child = LaunchCurrent(root, args); });
+    }
+    static void RequestRestore(string root, string id)
+    {
+        using var self = Process.GetCurrentProcess();
+        var start = new ProcessStartInfo(Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"))
+        { UseShellExecute = true, Verb = "runas", WorkingDirectory = root };
+        foreach (var arg in new[] { "--restore-protected", self.Id.ToString(), self.StartTime.ToUniversalTime().Ticks.ToString(), id }) start.ArgumentList.Add(arg);
+        using var elevated = Process.Start(start) ?? throw new IOException("Protected recovery did not start"); elevated.WaitForExit();
+        if (elevated.ExitCode != 0) throw new IOException("Protected recovery did not complete; inspect the journal");
     }
 
     static void WaitForExactProcess(Caller caller)
@@ -494,6 +600,9 @@ static class Maintenance
                 {
                     using var update = Process.Start(psi) ?? throw new IOException("Protected updater did not start"); update.WaitForExit();
                     if (update.ExitCode != 0) throw new IOException("Protected updater failed with exit code " + update.ExitCode);
+                    // Native apply may replace the root stub. Reinstall the stable entry from
+                    // this protected, still-running maintenance version before committing installed.
+                    RestoreStableEntry(root);
                     ValidateProtectedTree(currentDir);
                 });
             }
@@ -507,6 +616,19 @@ static class Maintenance
         finally { try { Directory.Delete(staging, true); } catch { } }
     }
 
+    static void RestoreStableEntry(string root)
+    {
+        var source = Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe");
+        var destination = Path.Combine(root, "Star Tournament.exe"); var next = destination + ".stable-" + Guid.NewGuid().ToString("N");
+        try
+        {
+            using (var input = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var output = CreateRecoveryFile(next)) { input.CopyTo(output); output.Flush(true); }
+            File.Move(next, destination, true);
+        }
+        finally { File.Delete(next); }
+    }
+
     static int RecoverUser()
     {
         if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start recovery as the normal user");
@@ -517,12 +639,7 @@ static class Maintenance
             throw new IOException("Foreign recovery status");
         var expectedId = state.RootElement.GetProperty("Attempt").GetProperty("Id").GetString() ?? throw new IOException("No recovery transaction");
         if (!Regex.IsMatch(expectedId, "\\A[0-9a-f]{32}\\z")) throw new IOException("Invalid recovery identity");
-        using var self = Process.GetCurrentProcess();
-        var start = new ProcessStartInfo(Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"))
-        { UseShellExecute = true, Verb = "runas", WorkingDirectory = root };
-        foreach (var arg in new[] { "--restore-protected", self.Id.ToString(), self.StartTime.ToUniversalTime().Ticks.ToString(), expectedId }) start.ArgumentList.Add(arg);
-        using var elevated = Process.Start(start) ?? throw new IOException("Protected recovery did not start"); elevated.WaitForExit();
-        if (elevated.ExitCode != 0) throw new IOException("Protected recovery did not complete; inspect the journal");
+        RequestRestore(root, expectedId);
         Console.WriteLine("Предыдущая рабочая версия восстановлена. Запустите игру обычным способом."); return 0;
     }
     static int RestoreProtected(Caller supervisor, string expectedId)

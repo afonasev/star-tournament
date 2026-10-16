@@ -1,0 +1,35 @@
+PASS complete protected snapshot precedes native callback
+PASS native partial failure restores current and every bootstrap file
+PASS bad installed identity triggers restore
+PASS manual restoration does not require replacement config or executable
+PASS unknown bootstrap bytes are rejected before replacing current
+PASS payload corruption does not activate unverified backup
+PASS unconfirmed installed release cannot authorize cleanup
+PASS healthy target attestation permits cleanup and next transaction
+PASS restored target remains blocked until explicit retry
+PASS new target is eligible after cleanup despite old failure
+PASS successful retry retires the historical failure block
+PASS pending transaction cannot be overwritten
+PASS capturing crash cannot run updater and preserves original
+PASS bootstrap allow-list rejects metadata path traversal
+PASS foreign root and identity state fail closed
+PASS malformed oversized state never becomes empty
+PASS downgrade same-version or foreign-channel target is rejected
+PASS resume cleanup after snapshot disappeared before state acknowledgement
+PASS repeat restored operation remains idempotent
+PASS atomic protected file creator is used for metadata and bootstrap
+PASS saturated failure history denies a new attempt before mutation
+PASS frozen consent hash rejects replaced signed-metadata bytes
+PASS interrupted bootstrap restore is completed on next recovery
+PASS launcher blocks unfinished but allows settled protected status
+PASS installed cleanup needs both current attestation and startup latch
+PASS confirmed latch forbids later rollback across users
+PASS manual startup recovery handles installed payload with no launcher config
+PASS lost startup latch never silently permits a downgrade
+PASS failed target block is visible to every normal-user launcher
+PASS recovery freezes exact transaction across elevation
+PASS deferred startup binds the protected transaction and target
+PASS confirmed transaction needs no new watchdog
+PASS missing latch is uncertainty not permission for startup rollback
+PASS watchdog cannot observe another protected attempt
+Windows recovery store: 34 passed (portable filesystem contracts; Windows ACL/UAC NotRun)

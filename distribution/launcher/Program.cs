@@ -116,6 +116,7 @@ static class Launcher
             }
             else if (!macRecovery.IsActive()) macRecovery.StartHost(pending.BackupId, "watch", restartArguments);
         }
+        if (machineRoot != null) WindowsInstallation.WatchStartup(machineRoot, config.Version, restartArguments);
         var knownHealthy = recovery.Read().HealthyVersion == config.Version;
         string? startupError = null;
         void Apply(VelopackAsset asset, bool restartGame, bool explicitRetry = false)
@@ -211,11 +212,14 @@ static class Launcher
         if (recovery.Read().Attempt is not { Phase: "confirmed" or "restored" })
         {
             startupHealth = new StartupHealthMonitor(recovery, config.Version, Path.Combine(session, "startup-ready.json"), DateTimeOffset.UtcNow,
-                () => { if (machineRoot != null)
+                () => { try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
+                    UpdateFeedback.Log("startup-health-confirmed version=" + config.Version); },
+                beforeConfirm: () => {
+                    if (machineRoot != null)
                     { try { WindowsInstallation.MarkStartupReady(machineRoot, config.Version); }
-                      catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception) { Log(ex); } }
-                    try { journal.ClearIfInstalled(config.Version); } catch (IOException ex) { Log(ex); }
-                    UpdateFeedback.Log("startup-health-confirmed version=" + config.Version); });
+                      catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception) { Log(ex); return false; } }
+                    return true;
+                });
             start.Environment["STAR_TOURNAMENT_STARTUP_READY"] = startupHealth.ReadyPath;
             start.Environment["STAR_TOURNAMENT_STARTUP_VERSION"] = startupHealth.Ticket.Version;
             start.Environment["STAR_TOURNAMENT_STARTUP_TOKEN"] = startupHealth.Ticket.Token;

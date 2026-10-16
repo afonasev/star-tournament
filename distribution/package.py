@@ -13,6 +13,7 @@ import subprocess
 import zipfile
 
 from windows_dpi import validate_windows_dpi
+from windows_stable_entry import install_stable_entry
 
 
 def main():
@@ -95,9 +96,10 @@ def main():
         maintenance = layout/'maintenance'; maintenance.mkdir()
         subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
                         '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
-                        '-p:DebugType=None','-o',str(maintenance)],check=True,env=env)
+                        '-p:DebugType=None','-p:OutputType=WinExe','-o',str(maintenance)],check=True,env=env)
         (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=2, **config),indent=2)+'\n')
         shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
+        install_stable_entry(layout)
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
         installer = output/f'Star-Tournament-{a.version}-Windows-x64-Setup.exe'
         compiler = (['--compiler-host',a.nsis_host] if a.nsis_host else ['--makensis',str(a.makensis.resolve())])

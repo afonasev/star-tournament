@@ -106,13 +106,16 @@ public sealed class StartupRecovery
         return ticket;
     }
 
-    public bool AcceptReady(StartupReady ready, DateTimeOffset now)
+    public bool AcceptReady(StartupReady ready, DateTimeOffset now, Func<bool>? beforeCommit = null)
     {
         var state = Read();
         if (state.Launch is not { } launch || ready.Schema != 1 || ready.Phase != "menu-ready" ||
             ready.Version != launch.Version || ready.Token != launch.Token) return false;
         if (now.UtcTicks >= launch.DeadlineUtcTicks)
         { Fail(state, "Истекло время подтверждения готовности меню."); return false; }
+        // A protected platform latch must be durable before per-user confirmation.
+        // False keeps this exact launch pending; invalid tokens never invoke the hook.
+        if (beforeCommit != null && !beforeCommit()) return false;
         Write(state with { HealthyVersion = launch.Version, Launch = null,
             Attempt = state.Attempt is { } attempt ? attempt with { Phase = "confirmed" } : null });
         return true;

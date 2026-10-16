@@ -10,14 +10,15 @@ public sealed class StartupHealthMonitor
     static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true, UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
     readonly StartupRecovery recovery;
     readonly Action confirmed;
+    readonly Func<bool>? beforeConfirm;
     public StartupTicket Ticket { get; }
     public string ReadyPath { get; }
     public bool IsHealthy { get; private set; }
-    public StartupHealthMonitor(StartupRecovery recovery, string version, string readyPath, DateTimeOffset now, Action confirmed)
+    public StartupHealthMonitor(StartupRecovery recovery, string version, string readyPath, DateTimeOffset now, Action confirmed, Func<bool>? beforeConfirm = null)
     {
         if (!Path.IsPathFullyQualified(readyPath) || File.Exists(readyPath) || Directory.Exists(readyPath))
             throw new ArgumentException("A fresh absolute readiness path is required");
-        this.recovery = recovery; this.confirmed = confirmed; ReadyPath = readyPath;
+        this.recovery = recovery; this.confirmed = confirmed; this.beforeConfirm = beforeConfirm; ReadyPath = readyPath;
         Ticket = recovery.BeginLaunch(version, now + StartupTimeout);
     }
     public void Poll(DateTimeOffset now)
@@ -31,7 +32,7 @@ public sealed class StartupHealthMonitor
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException) { }
         // Journal writes are outside the marker-read catch: durable failure is never health.
-        if (report != null && recovery.AcceptReady(report, now))
+        if (report != null && recovery.AcceptReady(report, now, beforeConfirm))
         { IsHealthy = true; confirmed(); return; }
         recovery.Expire(now);
     }
