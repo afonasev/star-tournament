@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.1390463">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="637" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.139046" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1777" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="637" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.134224" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="85491" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1778" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="637" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.132615" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1779" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="637" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.131070" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1780" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="637" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.129495" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1781" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="498" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.126621" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1419" name="LabParameterTypeTests" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.122014" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1430" name="CallerMetadataCannotBypassBooleanStorageValidation" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.CallerMetadataCannotBypassBooleanStorageValidation" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.120103" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1428" name="CallerMetadataCannotBypassBooleanStorageValidation(&quot;blood.enabled&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.CallerMetadataCannotBypassBooleanStorageValidation(&quot;blood.enabled&quot;)" methodname="CallerMetadataCannotBypassBooleanStorageValidation" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="2035512373" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.073186" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1429" name="CallerMetadataCannotBypassBooleanStorageValidation(&quot;hit.enabled&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.CallerMetadataCannotBypassBooleanStorageValidation(&quot;hit.enabled&quot;)" methodname="CallerMetadataCannotBypassBooleanStorageValidation" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="76365079" result="Passed" start-time="2026-10-16 19:12:22Z" end-time="2026-10-16 19:12:22Z" duration="0.042551" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

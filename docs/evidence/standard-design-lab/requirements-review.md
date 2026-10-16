@@ -12,7 +12,7 @@ Authority: `Runtime/ProvingGroundDesignLab.cs`, `Core/DesignLabHistory.cs`, `Cor
 | LAB-CATALOG-01 | Open audit | NumericDescriptor supplies key/group/label/description/unit/bounds/step/default. Audit application timing and all types/consumers. |
 | LAB-CATALOG-02 | Open audit | LabBundle validation/storage/runtime binding exist; do not infer every consumer from registration alone. |
 | LAB-FIND-01 | Source review | RefreshLabWorkspace searches full registry by group/name/description/path; all-changes independent. Affected workspace fixture exercises search. |
-| LAB-EDIT-01 | Source review | LabInput/StepLab/SetLab, labRaw preserve intermediate invalid input. Verify complete typed editors/catalog. |
+| LAB-EDIT-01 | Typed data verified; UI18 pending | typed-values/:19 EditMode +1 PlayMode, explicit boolean0/1, preserved raw0,5/error, no Save/activation, validfalse roundtrip. Current numeric UI remains; real typed controls and complete catalogue await proposed18 approval/audit. |
 | LAB-DRAFT-01 | Source review | labBaseline/labDraft separated from saved/active; Changed and all-changes rows. Current patch preserves raw and exact return behavior. |
 | LAB-DRAFT-02 | Implemented; affected QA passed | Current patch: full diff06, scroll rows and safe cancel; guard Clear/Delete plus existing selection/leave/quit. See discard/qa-scope.md. |
 | LAB-VALIDATE-01 | Source review | LabIssues combines draft.Validate and raw input; save disabled; ShowLabErrors targets path. Complete relation validation audit pending. |

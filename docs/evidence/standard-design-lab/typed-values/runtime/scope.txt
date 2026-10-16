@@ -1,0 +1,12 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=DesignLabWorkspaceTests.BooleanFractionCannotSaveOrActivateAndValidOffRemainsSaveable
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-playmode.49gr85/qa-lab-history.json
+revision=06fd5de9ed521e38b7f3a6cfad38e6218c775be1
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+ M Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/design/template-standard/__pycache__/
+?? ../docs/evidence/standard-design-lab/typed-values/
+?? Assets/StarTournament/Tests/EditMode/LabParameterTypeTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabParameterTypeTests.cs.meta

@@ -77,6 +77,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.Not.Null,"Search restores focus when the previous row is removed");
             Click("lab-clear");yield return null;Assert.That(Button("lab-save").interactable,Is.False);
         }
+        [UnityTest]public IEnumerator BooleanFractionCannotSaveOrActivateAndValidOffRemainsSaveable()
+        {
+            directory=Path.Combine(Path.GetTempPath(),"st-lab-bool-ui-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            string path=Path.Combine(directory,"history.json");oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",path);
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Click("main-action-2");yield return null;Click("lab-create");yield return null;Input("lab-profile-name").text="Boolean UI QA";Click("submit");yield return null;
+            foreach(string key in new[]{"blood.enabled","hit.enabled"})
+            {
+                Input("lab-search").text=key;yield return null;var input=Input("input-"+key);Assert.That(input.interactable,Is.True);
+                var before=ground.ActiveLabReference.Clone();var bytes=File.ReadAllBytes(path);
+                input.text="0,5";yield return null;
+                Assert.That(input.text,Is.EqualTo("0,5"),"Invalid input is preserved for correction");Assert.That(Button("lab-save").interactable,Is.False);
+                Assert.That(input.transform.parent.GetComponentsInChildren<Text>().Single(t=>t.name=="error").text,Does.Contain("0 или 1"));
+                Assert.That(ground.ActiveLabReference.Matches(before),Is.True);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+                input.text="0";yield return null;Assert.That(Button("lab-save").interactable,Is.True);Click("lab-save");yield return null;
+                Assert.That(ground.ActiveLabReference.Revision,Is.EqualTo(before.Revision+1));
+                var baseline=(LabBundle)typeof(ProvingGround).GetField("historyStartupBaseline",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+                var saved=new DesignLabHistory(path,baseline,releases:LabReleaseCatalog.Load());Assert.That(saved.StorageError,Is.Null);Assert.That(saved.Selected.Snapshot.Get(key),Is.Zero);
+            }
+            Assert.That(ground.Running,Is.False);
+        }
         [UnityTest] public IEnumerator RevisionSelectionKeepsFramesRunningUntilAtomicPublication()
         {
             directory=Path.Combine(Path.GetTempPath(),"st-lab-async-"+Guid.NewGuid());Directory.CreateDirectory(directory);

@@ -1,0 +1,10 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabParameterTypeTests;BloodProfileTests.BloodFieldsAreEditablePresentationWithValidMetadataAndSteps;HitFeedbackProfileTests.ContactControlsAreEditablePresentationAndHaveValidMetadata
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.IBfsSu/qa-lab-history.json
+revision=06fd5de9ed521e38b7f3a6cfad38e6218c775be1
+ M Assets/StarTournament/Runtime/Core/ProvingProfile.cs
+?? ../docs/design/template-standard/__pycache__/
+?? ../docs/evidence/standard-design-lab/typed-values/
+?? Assets/StarTournament/Tests/EditMode/LabParameterTypeTests.cs
+?? Assets/StarTournament/Tests/EditMode/LabParameterTypeTests.cs.meta
