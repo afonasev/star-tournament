@@ -4,7 +4,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 
 Обозначения: **Код/QA** — inspected implementation и сохранённые affected проверки; **Разрыв** — подтверждённое невыполненное требование; **Проверить** — доказательств недостаточно; **Платформа** — source/portable fixtures есть, native installed/device acceptance не выполнена; **Макет** — ждёт решения до visual implementation. Наличие реализации/green fixture не выдаётся за установленную игру. Все pending пункты сохраняют исходный scope.
 
-Пути evidence ниже относительно `docs/evidence/`. Исторические отчёты могут содержать уже исправленные pending пункты: используются самые поздние integration/transfer/refinement записи, а не их старые README-вступления. Подписи и новые controls20–28 не приняты автоматически по прежним макетам.
+Пути evidence ниже относительно `docs/evidence/`. Исторические отчёты могут содержать уже исправленные pending пункты: используются самые поздние integration/transfer/refinement записи, а не их старые README-вступления. Макеты20–31 прямо согласованы пользователем17.10.2026; это разрешение реализации, не native acceptance.26–27 уже реализованы и проверены, остальные новые состояния ещё требуют кода/affected QA.
 
 ## Menu-base — 25 требований
 
@@ -13,11 +13,11 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | MENU-STRUCTURE-01 | Код/QA: ProvingGroundMenus main six actions/brand/settings; NativeMenuPresentationTests, отдельный setup. |
 | MENU-STRUCTURE-02 | Код/QA: Lab/profiles/history отдельными routes; network «скоро» недоступна, browser runtime не поставляется. |
 | MENU-STRUCTURE-03 | Код/QA: network «скоро» disabled/no-op и исключена из focus; остальные guards в Settings/Lab/Update states. |
-| MENU-ACTIONS-01 | МакетQ5: короткие Lab/reset/copy/AUTO20–25 ещё не реализованы. Полный audit standard-menu-actions/action-audit.md. |
-| MENU-ACTIONS-02 | МакетQ5: duplicate/state operations20–25; особая greatest-marked Default route описана, не удаляется как обычный latest selector. |
-| MENU-ACTIONS-03 | МакетQ5: boolean Off/On отдельные кнопки ещё нарушают single-toggle; release source flag уже исправлен без нового UI. |
+| MENU-ACTIONS-01 | РеализацияQ5 (макеты согласованы): короткие Lab/reset/copy/AUTO20–25 ещё не реализованы. Полный audit standard-menu-actions/action-audit.md. |
+| MENU-ACTIONS-02 | РеализацияQ5 (макеты согласованы): duplicate/state operations20–25; особая greatest-marked Default route описана, не удаляется как обычный latest selector. |
+| MENU-ACTIONS-03 | РеализацияQ5 (макеты согласованы): boolean Off/On отдельные кнопки ещё нарушают single-toggle; release source flag уже исправлен без нового UI. |
 | MENU-INPUT-01 | Код/QA: InputSystem/UI navigation, SettingsGamepadNavigationTests, NativeMenuPresentation keyboard/NativeTextEntry grid; physical devices pending. |
-| MENU-INPUT-02 | МакетQ8: text keyboard/reset умеют family glyphs, generic Back содержит постоянный B. Device-aware макет29 показан; до ответа runtime UI не менять. |
+| MENU-INPUT-02 | РеализацияQ8 (макет согласован): text keyboard/reset умеют family glyphs, generic Back содержит постоянный B. Device-aware макет29 показан; согласование получено; runtime реализация ещё открыта. |
 | MENU-INPUT-03 | Код/QA: top modal/field/seat ownership, input clear/frozen pause; NativeTextEntry/LabDiscard/IndependentPause tests. |
 | MENU-INPUT-04 | Код/QA: opening frames/wasPressed/async Busy/UpdateSession operation guards; held submit and match drain проверены. |
 | MENU-INPUT-05 | Код/QA: NativeTextEntry draft/grid/keyboard handover/reconnect/cancel, поля защищены от outer navigation; approved15. |
@@ -26,9 +26,9 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | MENU-FOCUS-03 | Код/QA: MenuScrollFocus reveal + history resize/long descriptions + settings split-view fixtures. |
 | MENU-DEVICE-01 | Код/QA: real input/drift gating, shared focus, NativeTextEntry handover; standard-menu-contracts5 focused cases. |
 | MENU-DEVICE-02 | Код/QA: новый window focus guard в menu и text-entry cursor owners;5 actual PlayMode cases, visible/unlocked background. Native focus event still device gate. |
-| MENU-HINTS-01 | МакетQ8: main controls и release-history-controls постоянно показывают keyboard/mouse/pad legend; макет29 показан и ожидает решения. |
-| MENU-HINTS-02 | МакетQ8: general legend вместо привязки к действиям; focused confirm/Back proposal29 ожидает решения. |
-| MENU-HINTS-03 | МакетQ8: fixed A/B/PgUp/Esc в history/Main; text-entry/reset partly correct. Direction29 показан, runtime до ответа не менять. |
+| MENU-HINTS-01 | РеализацияQ8 (макет согласован): main controls и release-history-controls постоянно показывают keyboard/mouse/pad legend; макет29 согласован, реализация открыта. |
+| MENU-HINTS-02 | РеализацияQ8 (макет согласован): general legend вместо привязки к действиям; focused confirm/Back proposal29 согласован, реализация открыта. |
+| MENU-HINTS-03 | РеализацияQ8 (макет согласован): fixed A/B/PgUp/Esc в history/Main; text-entry/reset partly correct. Direction29 согласован; runtime реализация открыта. |
 | MENU-LAYOUT-01 | Код/QA частично: approved A/03–19, top Back и modal consistent внутри контекстов; Q5/Q6/Q7 меняют ещё не принятые состояния. |
 | MENU-LAYOUT-02 | Код/QA: fixed screens + internal scrolls for fields/history/settings; headers/actions outside scroll. |
 | MENU-LAYOUT-03 | Код/QA частично: saved actual1080p/720p/short/split captures; physicalTV/все устройства и новые20–28 pending. |
@@ -73,7 +73,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | OPT-SCREEN-RESOLUTION | Применима: unique resolutions + Auto; native monitor fallback pending, AUTO copyQ5. |
 | OPT-SCREEN-VSYNC | Применима: VSyncKey/ApplyVSyncPreference, one shared runtime value. |
 | OPT-SCREEN-FPS-LIMIT | Применима: NativeUserPreferences.FrameCaps/targetFrameRate; VSync priority explained. |
-| OPT-GRAPHICS-QUALITY | **Применима, UI ещё открыт**: native EditMode probe подтвердил17 Auto skins/9585 multi-weight vertices и skin limits1/2/4/255; все6 slots используют один URP. Нельзя объявить N/A. Consumer audit подтвердил3713 vertices с3+ весами и sampled texture ignoreMipmapLimit=true: не обещать VRAM/FPS. Предложены3 native tiers0/2/5 и макет31, Q10 pending; runtime selector ещё не реализован. Evidence standard-graphics-quality/consumers/. |
+| OPT-GRAPHICS-QUALITY | **Применима, UI ещё открыт**: native EditMode probe подтвердил17 Auto skins/9585 multi-weight vertices и skin limits1/2/4/255; все6 slots используют один URP. Нельзя объявить N/A. Consumer audit подтвердил3713 vertices с3+ весами и sampled texture ignoreMipmapLimit=true: не обещать VRAM/FPS. Предложены3 native tiers0/2/5 и макет31, Q10 согласован17.10; runtime selector ещё не реализован. Evidence standard-graphics-quality/consumers/. |
 | OPT-GRAPHICS-AA | Применима: NativeVisualPreferences AntialiasingLevel, per-camera/runtime resolve. |
 | OPT-GRAPHICS-SHADOWS | Применима: global toggle, owned Light originals retained, quality state restores. |
 | OPT-GRAPHICS-EFFECTS | Применима: каждый используемый VisualEffect имеет Enabled; strength stays Lab, no fake channels. |
@@ -116,7 +116,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | UPDATES-CHANGELOG-01 | Код/QA: Git-derived paired reviewed notes/generator before packaging; standard-release-changelog20+16 targeted Python tests. Actual next release notes not generated without publication command. |
 | UPDATES-TRUST-01 | Код/QA: RSA-PSS admission, pinned identity/channel/asset/version/size/hash, HTTPS bounded redirects, activation reverification; native chain pending. |
 | UPDATES-INSTALL-01 | Платформа: payload snapshots/durable journal/root transaction/restore portable fixtures, Windows registry callbacks compiled; installed crash/UAC/ACL not executed. |
-| UPDATES-INSTALL-02 | **Разрыв legacy перехода**: modern/legacy endpoint routing, подписанный Windows component producer/startup adapter и recoverable full-payload apply source реализованы; это не ретроактивное исправление установленной0.1.5/test.1. First bootstrap issuer/publication, старые native handoff/argv/6arg activation/old Player health и native acceptance OPEN. Child compatibility Q1 спрашивает о разовом installer exception; ответа нет, исходное требование автоматического перехода сохранено. |
+| UPDATES-INSTALL-02 | **Разрыв legacy перехода**: modern/legacy endpoint routing, подписанный Windows component producer/startup adapter и recoverable full-payload apply source реализованы; это не ретроактивное исправление установленной0.1.5/test.1. First bootstrap issuer/publication, старые native handoff/argv/6arg activation/old Player health и native acceptance OPEN. Child compatibility Q1 решён17.10: пользователь подтвердил обязательный automatic transition и ожидание проверки перед выпуском; manual installer exception не принят. |
 | UPDATES-DATA-01 | Платформа: versioned user data preserves actual v0.1.2 namespaces and failed-write paths; installed previous→candidate→failed startup→previous not executed. |
 | UPDATES-RECOVERY-01 | Платформа + source: owned WindowsFullPayload apply не вызывает kill-root native updater; protected rollback сохраняет новый broker/reader2. Cleanup двух транзакций проверена161 affected contracts/8 child exits (rollback-component/). First legacy transition и actual installed menu-ready/restore не доказаны. |
 | UPDATES-ARGS-01 | Платформа + legacy разрыв: текущие normal launcher/supervisor сохраняют argv/-muted/-noaudio; native installed restart acceptance pending. Старый0.1.5 передаёт argv normal supervisor, native apply запускает --norestart и может завершить supervisor. Optional rotating native-stub log не является гарантией восстановления (legacy-handoff/). |
@@ -125,7 +125,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 
 ## Installer — 17 требований
 
-Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. **Разрыв с platforms.md: требуется DMG с переносом в Applications, а package.py/publisher требуют PKG.** DMG preview30 уже показан, Q9 ожидает ответа; runtime/packaging по новому направлению до ответа не менять, build/publication отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
+Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. **Разрыв с platforms.md: требуется DMG с переносом в Applications, а package.py/publisher требуют PKG.** DMG preview30 согласован17.10 (Q9); новая упаковка ещё не реализована, build/publication отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
 
 | ID | Состояние и основание / граница |
 | --- | --- |
@@ -149,21 +149,21 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 
 ## Lab — 28 требований
 
-Все IDs отдельно разобраны в [матрице Lab](evidence/standard-design-lab/requirement-matrix.md). Effective latest source: f38103cc; source-preserving migrations/flags/package ordering/structural mappings verified. Q5 UI20–25, Q6 frozen match identity26–27, Q7 author error fallback28 остаются открытыми; native Development -labProject отдельный gate. Никакие old snapshots/user balance/real author JSON не переписаны этой сверкой.
+Все IDs отдельно разобраны в [матрице Lab](evidence/standard-design-lab/requirement-matrix.md). Effective latest source: f38103cc; source-preserving migrations/flags/package ordering/structural mappings verified. Q5 UI20–25 и Q7 author error fallback28 согласованы, реализация открыта; Q6/26–27 реализованы в21fe689d (4 PlayMode checks/7 PNGs); native Development -labProject отдельный gate. Никакие old snapshots/user balance/real author JSON не переписаны этой сверкой.
 
 ## Дополняющие нормативные документы
 
 - `settings/controls-help.md`: ещё5 SETTINGS-HELP IDs включены выше, не потеряны за root requirements.
-- `settings/options.md`: все30 option IDs перечислены. Quality применима; source consumers/макет31 подтверждены, Q10/runtime/QA OPEN.
+- `settings/options.md`: все30 option IDs перечислены. Quality применима; source consumers/макет31 подтверждены, Q10 согласован; runtime/QA OPEN.
 - `design-lab/parameter-catalog.md`:9 metadata columns, grouping/search/diff/consumer boundary сопоставлены с actual638 registry/inventory и Lab matrix; примеры новых полей не являются требованиями их добавить.
-- `installer/platforms.md`: PKG≠DMG остаётся Q9/open; source OS/target policy реализована, macOS first-install/native checks не закрыты.
+- `installer/platforms.md`: PKG≠DMG остаётся implementation gap после согласованияQ9; source OS/target policy реализована, macOS first-install/native checks не закрыты.
 - `updates/release-format.md`: signature/identity/version/channel/asset/size/hash/body code есть. Новый schema2 задаёт minimumOS/reader/payload/data policy; producer/consumer/publisher/activation и ZIP config binding согласованы, отрицательные fixtures выполнены. Schema1 immutable historical baseline; безопасный автоматический переход старых readers ещё не завершён, installer exception не принят. Native installed acceptance и macOS first-install preflight/DMG остаются OPEN; контракт в distribution/COMPATIBILITY.md.
 
 ## Следующее действие
 
 1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Baseline OS guard/maintenance compile исправлены; signed target compatibility source этап выполнен; выявлен дополнительный обязательный seamless legacy transition: old reader/broker1 bootstrap и protected migration, затем platform packaging/native acceptance.
-2. Закрыть macOS first-install preflight и Mac PKG/DMG разрыв с отдельным preview. Quality consumer audit выполнен; реализовать selector31 только после Q10. MacDMG30 ждёт Q9.
-3. После human decisions внедрить20–28 и общий device-aware hints direction; новые визуальные изменения сначала saved preview.
+2. Закрыть macOS first-install preflight и Mac PKG/DMG разрыв с отдельным preview. Quality consumer audit выполнен; реализовать согласованный selector31 (Q10) и MacDMG30 (Q9).
+3. Внедрить согласованные20–25/28/29/30/31;26–27 уже реализованы. Новые визуальные изменения вне этих макетов сначала показать отдельно.
 4. После source fixes — affected integration, canonical spec sync и итоговый отчёт. Native build/platform/device/human gates остаются отдельными и не выдаются за успешные.
 
 
