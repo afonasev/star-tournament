@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.5650252">
+  <test-suite type="TestSuite" id="1422" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.565025" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1414" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-wall-signs/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.558581" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45405" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1415" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.556200" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1416" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.553962" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1417" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.551772" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1084" name="WellSignPlacementTests" fullname="StarTournament.ProvingGround.Tests.WellSignPlacementTests" classname="StarTournament.ProvingGround.Tests.WellSignPlacementTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.548754" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1085" name="EverySignFitsAnOpaqueFaceAtEverySupportedScale" fullname="StarTournament.ProvingGround.Tests.WellSignPlacementTests.EverySignFitsAnOpaqueFaceAtEverySupportedScale" methodname="EverySignFitsAnOpaqueFaceAtEverySupportedScale" classname="StarTournament.ProvingGround.Tests.WellSignPlacementTests" runstate="Runnable" seed="361454407" result="Passed" start-time="2026-10-17 18:58:38Z" end-time="2026-10-17 18:58:51Z" duration="12.542428" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

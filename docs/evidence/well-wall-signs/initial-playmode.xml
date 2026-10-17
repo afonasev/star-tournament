@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.2752327">
+  <test-suite type="TestSuite" id="1422" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="338" result="Failed" site="Child" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.275233" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1414" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-wall-signs/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="338" result="Failed" site="Child" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.267982" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="40207" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1415" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="338" result="Failed" site="Child" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.265444" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1416" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="338" result="Failed" site="Child" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.262670" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1417" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="338" result="Failed" site="Child" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.259959" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1084" name="WellSignPlacementTests" fullname="StarTournament.ProvingGround.Tests.WellSignPlacementTests" classname="StarTournament.ProvingGround.Tests.WellSignPlacementTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.256509" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1085" name="EverySignFitsAnOpaqueFaceAtEverySupportedScale" fullname="StarTournament.ProvingGround.Tests.WellSignPlacementTests.EverySignFitsAnOpaqueFaceAtEverySupportedScale" methodname="EverySignFitsAnOpaqueFaceAtEverySupportedScale" classname="StarTournament.ProvingGround.Tests.WellSignPlacementTests" runstate="Runnable" seed="482028576" result="Failed" start-time="2026-10-17 18:57:34Z" end-time="2026-10-17 18:57:54Z" duration="20.249422" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  scale=2 #3 ЛЕСТНИЦА  /  01 at (-24.630, 3.504, -3.200) backing=True buried=True
+scale=2 #3 ЛЕСТНИЦА  /  01 at (-24.630, 3.504, 3.200) backing=True buried=True
+scale=2 #7 ЛЕСТНИЦА  /  01 at (24.630, 3.504, 3.200) backing=True buried=True
+scale=2 #7 ЛЕСТНИЦА  /  01 at (24.630, 3.504, -3.200) backing=True buried=True
+scale=2 #19 ЛЕСТНИЦА  /  03 at (-24.630, 17.904, -3.200) backing=True buried=True
+scale=2 #19 ЛЕСТНИЦА  /  03 at (-24.630, 17.904, 3.200) backing=True buried=True
+scale=2 #23 ЛЕСТНИЦА  /  03 at (24.630, 17.904, 3.200) backing=True buried=True
+scale=2 #23 ЛЕСТНИЦА  /  03 at (24.630, 17.904, -3.200) backing=True buried=True
+  Expected: <empty>
+  But was:  < "scale=2 #3 ЛЕСТНИЦА  /  01 at (-24.630, 3.504, -3.200) backing=True buried=True", "scale=2 #3 ЛЕСТНИЦА  /  01 at (-24.630, 3.504, 3.200) backing=True buried=True", "scale=2 #7 ЛЕСТНИЦА  /  01 at (24.630, 3.504, 3.200) backing=True buried=True", "scale=2 #7 ЛЕСТНИЦА  /  01 at (24.630, 3.504, -3.200) backing=True buried=True", "scale=2 #19 ЛЕСТНИЦА  /  03 at (-24.630, 17.904, -3.200) backing=True buried=True", "scale=2 #19 ЛЕСТНИЦА  /  03 at (-24.630, 17.904, 3.200) backing=True buried=True", "scale=2 #23 ЛЕСТНИЦА  /  03 at (24.630, 17.904, 3.200) backing=True buried=True", "scale=2 #23 ЛЕСТНИЦА  /  03 at (24.630, 17.904, -3.200) backing=True buried=True" >
+]]></message>
+                  <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.WellSignPlacementTests+<EverySignFitsAnOpaqueFaceAtEverySupportedScale>d__0.MoveNext () [0x00815] in /Users/eaafonasev/.codex/worktrees/well-wall-signs/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellSignPlacementTests.cs:63
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

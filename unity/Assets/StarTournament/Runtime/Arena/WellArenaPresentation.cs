@@ -19,12 +19,49 @@ namespace StarTournament.ProvingGround
         }
         void Box(Material m,Vector3 centre,Vector3 size)
         {if(!batches.TryGetValue(m,out var b)){b=new List<Bounds>();batches[m]=b;}b.Add(new Bounds(centre,size));}
-        void Label(string value,Vector3 position,Quaternion rotation,Color colour,float size=.5f)
+        void Label(string value,Vector3 position,Quaternion rotation,Color colour,Vector2 available,float size=.5f)
         {
             var go=new GameObject("Well sign: "+value);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation;
             size*=profile.Get("well.signScale");var text=go.AddComponent<TextMesh>();text.text=value;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.fontSize=96;text.fontStyle=value=="КОЛОДЕЦ"?FontStyle.Bold:FontStyle.Normal;text.characterSize=size/8;text.color=colour;
             if(!fontMaterial){signFont=text.font;fontMaterial=new Material(Shader.Find("StarTournament/LunarSign"));fontMaterial.mainTexture=signFont.material.mainTexture;owned.Add(fontMaterial);Font.textureRebuilt+=RefreshFont;}
-            var renderer=text.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;var bounds=renderer.localBounds;go.transform.localPosition=position-rotation*bounds.center;
+            var renderer=text.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;var bounds=renderer.localBounds;
+            // Fit the actual glyph bounds, including accents and both lines, to the clear wall face.
+            // signScale remains a preferred size; it cannot push lettering through a corner or portal.
+            float fit=Mathf.Min(1,available.x/Mathf.Max(bounds.size.x,.0001f),available.y/Mathf.Max(bounds.size.y,.0001f));
+            go.transform.localScale=Vector3.one*fit;go.transform.localPosition=position-rotation*(bounds.center*fit);
+        }
+        void HeaderLabel(string value,ArenaSolid wall,ArenaDefinition definition,Quaternion rotation,Color colour,float size)
+        {
+            var normal=rotation*Vector3.back;bool alongX=wall.Size.x>wall.Size.z;
+            var face=wall.Position+normal*((alongX?wall.Size.z:wall.Size.x)/2+.02f);
+            face.y=wall.Position.y-wall.Size.y/2+.75f;
+            int along=alongX?0:2,across=alongX?2:0;
+            float lo=wall.Position[along]-wall.Size[along]/2,hi=wall.Position[along]+wall.Size[along]/2;
+            foreach(var other in definition.Solids.Where(s=>s.Material=="wall"&&s.Size[along]<=.31f&&s.Size[across]>.31f))
+            {
+                var b=new Bounds(other.Position,other.Size);
+                if(face[across]<b.min[across]||face[across]>b.max[across]||face.y<b.min.y||face.y>b.max.y)continue;
+                if(b.max[along]<face[along])lo=Mathf.Max(lo,b.max[along]);
+                else if(b.min[along]>face[along])hi=Mathf.Min(hi,b.min[along]);
+            }
+            face[along]=(lo+hi)/2;
+            Label(value,face,rotation,colour,new Vector2(hi-lo-.6f,.9f),size);
+        }
+        void AtriumLabel(string value,ArenaDefinition definition,int floor,int side,Color colour,float size)
+        {
+            // Merge adjacent opaque caps, keeping every authored bridge opening as a real gap.
+            var spans=new List<Vector2>();
+            foreach(var cap in definition.Solids.Where(s=>s.Id.StartsWith("f"+floor+"-cap-1"+side)).OrderBy(s=>s.Position.x))
+            {
+                float lo=cap.Position.x-cap.Size.x/2,hi=cap.Position.x+cap.Size.x/2;
+                if(spans.Count>0&&lo<=spans[spans.Count-1].y+.001f)
+                {var previous=spans[spans.Count-1];spans[spans.Count-1]=new Vector2(previous.x,hi);}
+                else spans.Add(new Vector2(lo,hi));
+            }
+            var span=spans.OrderByDescending(s=>s.y-s.x).ThenBy(s=>Mathf.Abs(s.x+s.y)).First();
+            // The high clear band stays above facade ventilation and below the ceiling.
+            Label(value,new Vector3((span.x+span.y)/2,floor*WellArenaCatalog.Storey+5.75f,side*(WellArenaCatalog.Pit-.14f)),
+                Quaternion.Euler(0,side>0?0:180,0),colour,new Vector2(span.y-span.x-.6f,.8f),size);
         }
         public static Bounds WallSkin(ArenaSolid solid,IEnumerable<ArenaSolid> solids)
         {
@@ -109,22 +146,24 @@ namespace StarTournament.ProvingGround
                 {Box(metal,solid.Position+Vector3.up*(solid.Size.y/2+.02f),new Vector3(solid.Size.x,.05f,solid.Size.z));Box(colours[Mathf.Clamp((int)(solid.Position.y/WellArenaCatalog.Storey),0,2)],solid.Position+Vector3.up*.35f,new Vector3(solid.Size.x+.01f,.12f,solid.Size.z+.01f));}
                 if(solid.Material=="glass")detail.Window(solid);
                 if(solid.Material=="door")
-                {char side=solid.Id[solid.Id.Length-1];var normal=side=='N'?Vector3.forward:side=='S'?Vector3.back:side=='E'?Vector3.right:Vector3.left;Label("КАБИНЕТ\nЗАКРЫТ",solid.Position+normal*.14f,Quaternion.LookRotation(-normal),Color.white,.25f);}
+                {char side=solid.Id[solid.Id.Length-1];var normal=side=='N'?Vector3.forward:side=='S'?Vector3.back:side=='E'?Vector3.right:Vector3.left;Label("КАБИНЕТ\nЗАКРЫТ",solid.Position+normal*((Mathf.Abs(normal.x)>.5f?solid.Size.x:solid.Size.z)/2+.02f),Quaternion.LookRotation(-normal),Color.white,new Vector2((Mathf.Abs(normal.x)>.5f?solid.Size.z:solid.Size.x)-.3f,solid.Size.y-.3f),.25f);}
             }
             for(int f=0;f<3;f++)
             {
                 string department=new[]{"БИОРАЗРАБОТКИ","ФИЗИКА","ЭЛЕКТРОНИКА"}[f];Color colour=colours[f].color;
-                // Signs sit on the existing opaque atrium fascia, clear of glass and portal silhouettes.
                 foreach(int side in new[]{-1,1})
                 {
+                    var rotation=Quaternion.Euler(0,side>0?0:180,0);
                     string title=f==0?"КОЛОДЕЦ":"0"+(f+1)+"  /  "+department;
-                    Label(title,new Vector3(0,f*WellArenaCatalog.Storey+4.8f,side*(WellArenaCatalog.Pit-.125f)),Quaternion.Euler(0,side>0?0:180,0),new Color(.17f,.21f,.22f),f==0?1.2f:.8f);
+                    AtriumLabel(title,definition,f,side,new Color(.17f,.21f,.22f),f==0?1.2f:.8f);
+                    // Corridor-facing shell, strictly between the lift and the corner-room partition.
+                    float lo=3.5f+.3f,hi=WellArenaCatalog.Pit-.15f-.3f;
+                    Label("0"+(f+1)+"  /  "+department,new Vector3(-side*(lo+hi)/2,f*WellArenaCatalog.Storey+3.9f,side*(WellArenaCatalog.Edge-.17f)),
+                        rotation,colour,new Vector2(hi-lo,.9f),.85f);
+                    HeaderLabel("ЛИФТ  /  01 ↕ 03",definition.Solids.First(s=>s.Id=="f"+f+"-outer-z"+side+"-header"),definition,rotation,colour,.38f);
+                    HeaderLabel("ЛЕСТНИЦА  /  0"+(f+1),definition.Solids.First(s=>s.Id=="f"+f+"-outer-x"+side+"-header"),definition,
+                        Quaternion.Euler(0,side>0?90:-90,0),colour,.38f);
                 }
-                Label("0"+(f+1)+"  /  "+department,new Vector3(-9,f*WellArenaCatalog.Storey+3.9f,24.63f),Quaternion.identity,colour,.85f);
-                Label("0"+(f+1)+"  /  "+department,new Vector3(9,f*WellArenaCatalog.Storey+3.9f,-24.63f),Quaternion.Euler(0,180,0),colour,.85f);
-                Label("ЛИФТ  /  01 ↕ 03",new Vector3(0,f*WellArenaCatalog.Storey+3.95f,24.58f),Quaternion.identity,colour,.38f);
-                Label("ЛИФТ  /  01 ↕ 03",new Vector3(0,f*WellArenaCatalog.Storey+3.95f,-24.58f),Quaternion.Euler(0,180,0),colour,.38f);
-                foreach(int side in new[]{-1,1})Label("ЛЕСТНИЦА  /  0"+(f+1),new Vector3(side*24.6f,f*WellArenaCatalog.Storey+3.95f,0),Quaternion.Euler(0,side>0?90:-90,0),colour,.38f);
                 // Authored fixture locations: broad rings of soft overhead light, clear of all passages.
                 foreach(float x in new[]{-18f,0,18f})foreach(float z in new[]{-18f,0,18f})
                 {

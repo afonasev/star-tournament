@@ -1,0 +1,19 @@
+{
+  "baseline": "cfce72ba541a2d35003f11367969e2d36366d553",
+  "result": "Passed",
+  "checks": {
+    "PlayMode": 1,
+    "signs": 24,
+    "scale_variants": 3,
+    "rectangular_samples_per_sign": 287,
+    "failures": 0,
+    "skipped": 0
+  },
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "da06adef84b6f129bc3ff9ee9be7d1ed2a4968611e86e44a406b449d9c1ccb67",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellSignPlacementTests.cs": "22b2544d765a8652c8bd4166bafa7c67fe936d2b187ace451ac025de98fc8068"
+  },
+  "commands": "see qa-scope.md",
+  "Player_build": "not requested",
+  "deploy": "not requested"
+}
