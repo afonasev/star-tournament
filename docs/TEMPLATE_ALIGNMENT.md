@@ -125,13 +125,13 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 
 ## Installer — 17 требований
 
-Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. **Разрыв с platforms.md: требуется DMG с переносом в Applications, а package.py/publisher требуют PKG.** DMG preview30 согласован17.10 (Q9); новая упаковка ещё не реализована, build/publication отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
+Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. **Q9 source pipeline реализован:** package.py/modern collector используют DMG с переносом в Applications по согласованному30; historical PKG/bridge сохраняются. Actual DMG/Finder/installed acceptance ещё NotRun, build/publication отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
 
 | ID | Состояние и основание / граница |
 | --- | --- |
 | INSTALLER-PACKAGE-01 | Платформа: packaging scripts/release filenames/dependency inclusion exist; current modified Player+installer not built, earlier releases not proof this source. |
 | INSTALLER-IDENTITY-01 | Код/QA + платформа: shared icon inputs/app+installer+shortcut routing, windows-installer-icon evidence; current actual installed shell icon pending. |
-| INSTALLER-FLOW-01 | **Разрыв macOS**: текущий Velopack PKG, не требуемый DMG drag-to-Applications. Windows approved07 normal NSIS wizard/standard locations/repair source; native rendering pending. |
+| INSTALLER-FLOW-01 | Код/QA Q9: complete portable→DMG, approved30 Finder layout/Applications link и immutable/readback guards;53 Python+11 JS affected checks, native DMG ещё NotRun. Windows approved07 normal NSIS wizard/standard locations/repair source; native rendering pending. |
 | INSTALLER-FLOW-02 | Baseline OS guard: NSIS WinVer preflight до broker extraction; maintenance plan/begin/commit и обе update activation boundaries защищены. Windows10/19043+, macOS12+ сверены с Unity Player6000.3. 12 policy +20 NSIS checks; signed schema2 target constraints реализованы; macOS first-install preflight/DMG и native QA остаются открытыми. Evidence standard-release-compatibility/baseline/. |
 | INSTALLER-RIGHTS-01 | Платформа: ordinary root supervisor/Explorer finish launch, only protected broker elevated; source guards/compiled tests, real tokens/ACL pending. |
 | INSTALLER-TRUST-01 | Explicit dev/test unsigned exception documented; no signing/notarization acceptance claimed. Update envelopes remain authenticated. |
@@ -156,7 +156,7 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 - `settings/controls-help.md`: ещё5 SETTINGS-HELP IDs включены выше, не потеряны за root requirements.
 - `settings/options.md`: все30 option IDs перечислены. Quality применима; source consumers/макет31 подтверждены, Q10 согласован; runtime/QA OPEN.
 - `design-lab/parameter-catalog.md`:9 metadata columns, grouping/search/diff/consumer boundary сопоставлены с actual638 registry/inventory и Lab matrix; примеры новых полей не являются требованиями их добавить.
-- `installer/platforms.md`: PKG≠DMG остаётся implementation gap после согласованияQ9; source OS/target policy реализована, macOS first-install/native checks не закрыты.
+- `installer/platforms.md`: Q9 DMG source producer/collector/landing реализованы; actual installed/native proof остаётся открытым; source OS/target policy реализована, macOS first-install/native checks не закрыты.
 - `updates/release-format.md`: signature/identity/version/channel/asset/size/hash/body code есть. Новый schema2 задаёт minimumOS/reader/payload/data policy; producer/consumer/publisher/activation и ZIP config binding согласованы, отрицательные fixtures выполнены. Schema1 immutable historical baseline; безопасный автоматический переход старых readers ещё не завершён, installer exception не принят. Native installed acceptance и macOS first-install preflight/DMG остаются OPEN; контракт в distribution/COMPATIBILITY.md.
 
 ## Следующее действие
@@ -187,3 +187,5 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 
 ### Уточнение Q8 после source/virtual/render проверки17.10
 Срезы c6eebc62/76b9e43d/9a4e083c и Setup4.1d относятся к реализации согласованного29; старые pending формулировки в исторических evidence не описывают их текущее состояние. Latest local game-spec-templates9cc4415 и origin/main60fe3d2 проверены17.10: после60fe3d2 добавлен только AGENTS.md с визуальными правилами пользователя; normative features/110 IDs/30 options неизменны. Requirements pin60fe3d2 сохраняет те же требования. Остальные Q5–Q10 в ранних строках этой матрицы требуют отдельной актуализации по сохранённым source milestones; это не сертификат завершения.
+
+Q9 evidence: `standard-macos-dmg/integration/README.md` — latest source pipeline,53 Python+11 JS passed; historical foundation report описывает прежний ещё не подключённый этап. Native DMG/first-install и mandatory legacy Windows auto-transition этим не закрыты.

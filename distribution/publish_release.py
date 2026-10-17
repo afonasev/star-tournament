@@ -104,7 +104,7 @@ def collect(output, version, date, channel, source_ref=None, *, legacy_bridge=No
             raise ValueError('Package changed after signing')
         verify_payload(releases/package['FileName'], data)
         installer_name = (f'Star-Tournament-{version}-Windows-x64-Setup.exe' if runtime == 'win-x64'
-                          else f'Star-Tournament-{version}-macOS-arm64.pkg')
+                          else f'Star-Tournament-{version}-macOS-arm64.dmg')
         installer = identity(releases/installer_name)
         custody_path = base/f'{version}.identity.json'; custody = json.loads(custody_path.read_text())
         if (custody['version'],custody['date'],custody['runtime'],custody['channel']) != (version,date,runtime,channel):
@@ -211,7 +211,11 @@ def verify_published_bridge(version, channel, directory, token):
     for runtime, modern_raw, legacy_raw in pairs:
         modern, package = verify_envelope(modern_raw, bridge_version, runtime, channel)
         installer = (f'Star-Tournament-{bridge_version}-Windows-x64-Setup.exe' if runtime == 'win-x64'
-                     else f'Star-Tournament-{bridge_version}-macOS-arm64.pkg')
+                     else f'Star-Tournament-{bridge_version}-macOS-arm64.dmg')
+        # Published bootstrap bytes are immutable. Older bridges used PKG.
+        # Prefer a present DMG strictly; a corrupt DMG must not fall back to PKG.
+        if runtime.startswith('osx') and installer not in by_name:
+            installer = f'Star-Tournament-{bridge_version}-macOS-arm64.pkg'
         for name in (package['FileName'], installer):
             remote = by_name.get(name, {})
             if (remote.get('state') != 'uploaded' or type(remote.get('size')) is not int or remote['size'] <= 0 or

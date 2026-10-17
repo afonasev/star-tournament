@@ -193,6 +193,23 @@ class LegacyBridgePublication(unittest.TestCase):
             self.assertEqual(len(readback.call_args.args[1]),8)
             self.assert_no_outputs()
 
+    def test_published_dmg_bootstrap_is_read_back_without_requiring_a_pkg(self):
+        remote=self.remote_bridge()
+        installer=next(a for a in remote['assets'] if a['name'].endswith('.pkg'))
+        installer['name']=installer['name'][:-4]+'.dmg'
+        with patch.object(publisher,'api',return_value=remote),patch.object(publisher,'readback',return_value=[]) as readback:
+            publisher.verify_published_bridge(self.version,self.channel,self.bridge,'fixture')
+            names={a['name'] for a in readback.call_args.args[1]}
+            self.assertTrue(any(n.endswith('.dmg') for n in names))
+            self.assertFalse(any(n.endswith('.pkg') for n in names))
+
+    def test_present_invalid_bridge_dmg_cannot_fall_back_to_valid_historical_pkg(self):
+        remote=self.remote_bridge();pkg=next(a for a in remote['assets'] if a['name'].endswith('.pkg'))
+        remote['assets'].append(dict(pkg,name=pkg['name'][:-4]+'.dmg',digest='invalid'))
+        with patch.object(publisher,'api',return_value=remote),patch.object(publisher,'readback') as readback:
+            with self.assertRaises(ValueError):publisher.verify_published_bridge(self.version,self.channel,self.bridge,'fixture')
+            readback.assert_not_called()
+
     def test_readback_inputs_are_frozen_even_if_original_directory_changes(self):
         with patch.object(publisher,'api',return_value=self.remote_bridge()),patch.object(publisher,'readback',return_value=[]):
             receipt=publisher.verify_published_bridge(self.version,self.channel,self.bridge,'fixture')
@@ -237,7 +254,7 @@ class LegacyBridgePublication(unittest.TestCase):
             item=publisher.identity(full)
             asset=dict(PackageId=config['appId'],Version=self.version,Type='Full',FileName=full.name,Size=item['size'],SHA256=item['sha256'])
             self.sign(releases/f'latest-v2-{runtime}.json',compatibility.manifest(config,asset,'2026-10-17T00:00:00Z'))
-            name=f'Star-Tournament-{self.version}-Windows-x64-Setup.exe' if runtime=='win-x64' else f'Star-Tournament-{self.version}-macOS-arm64.pkg'
+            name=f'Star-Tournament-{self.version}-Windows-x64-Setup.exe' if runtime=='win-x64' else f'Star-Tournament-{self.version}-macOS-arm64.dmg'
             installer=releases/name;installer.write_bytes(b'fixture not executable')
             (self.output/runtime/f'{self.version}.identity.json').write_text(json.dumps(dict(version=self.version,date='2026-10-17',runtime=runtime,channel=self.channel,revision='a'*40,dirty='',packages=[item,publisher.identity(installer)])))
 
@@ -247,6 +264,15 @@ class LegacyBridgePublication(unittest.TestCase):
         self.assertEqual(len(assets),12)
         names={a['name'] for a in assets}
         self.assertTrue({'latest-v2-win-x64.json','latest-v2-osx-arm64.json','latest-win-x64.json','latest-osx-arm64.json'}<=names)
+        self.assertIn(f'Star-Tournament-{self.version}-macOS-arm64.dmg',names)
+
+    def test_modern_collector_rejects_pkg_substitution_and_changed_dmg_custody(self):
+        self.make_current_packages()
+        image=self.output/'osx-arm64/releases'/f'Star-Tournament-{self.version}-macOS-arm64.dmg'
+        package=image.with_suffix('.pkg');image.rename(package)
+        with self.assertRaisesRegex(ValueError,'Unsafe asset input'):publisher.collect(self.output,self.version,'2026-10-17',self.channel,'a'*40,legacy_bridge=self.bridge)
+        package.rename(image);image.write_bytes(b'changed after custody')
+        with self.assertRaisesRegex(ValueError,'custody changed'):publisher.collect(self.output,self.version,'2026-10-17',self.channel,'a'*40,legacy_bridge=self.bridge)
 
     def test_actual_test_zip_collector_omits_all_old_selector_names(self):
         self.channel='test'; self.bridge_version='1.1.0-test.9'; self.version='1.1.0-test.10'; self.make_bridge(); self.make_current_packages()

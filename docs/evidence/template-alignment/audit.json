@@ -72,7 +72,7 @@
     "UPDATES-QA-01": "Политика соблюдена: affected/reused/native NotRun separate; no full/Player/build/deploy inferred from standard.",
     "INSTALLER-PACKAGE-01": "Платформа: packaging scripts/release filenames/dependency inclusion exist; current modified Player+installer not built, earlier releases not proof this source.",
     "INSTALLER-IDENTITY-01": "Код/QA + платформа: shared icon inputs/app+installer+shortcut routing, windows-installer-icon evidence; current actual installed shell icon pending.",
-    "INSTALLER-FLOW-01": "**Разрыв macOS**: текущий Velopack PKG, не требуемый DMG drag-to-Applications. Windows approved07 normal NSIS wizard/standard locations/repair source; native rendering pending.",
+    "INSTALLER-FLOW-01": "Код/QA Q9: complete portable→DMG, approved30 Finder layout/Applications link и immutable/readback guards;53 Python+11 JS affected checks, native DMG ещё NotRun. Windows approved07 normal NSIS wizard/standard locations/repair source; native rendering pending.",
     "INSTALLER-FLOW-02": "Windows10/19043 NSIS preflight + maintenance OS/new target requirements before plan/begin/commit/activation. macOS12 baseline plus actual target OS in schema2 launcher/apply admission. macOS first-install preflight/DMG and native Windows ACL/UAC/installer runtime OPEN.",
     "INSTALLER-RIGHTS-01": "Платформа: ordinary root supervisor/Explorer finish launch, only protected broker elevated; source guards/compiled tests, real tokens/ACL pending.",
     "INSTALLER-TRUST-01": "Explicit dev/test unsigned exception documented; no signing/notarization acceptance claimed. Update envelopes remain authenticated.",
@@ -187,7 +187,7 @@
   "actual_unresolved": [
     "Q5-Q10 visual scopes",
     "quality selector31/Q10 pending; source consumers measured, runtime/QA incomplete",
-    "macOS PKG vs normative DMG",
+    "macOS actual DMG/Finder/Applications/minimum OS/installed acceptance NotRun (source pipeline implemented)",
     "macOS first-install preflight and native installed pair/data rollback unverified",
     "native installed/device/human acceptance not run",
     "seamless legacy schema1/protocol1 transition: bootstrap pipeline, automatic broker upgrade and legacy recovery unimplemented",
@@ -221,5 +221,12 @@
       "origin_main": "60fe3d2787dfb860722372791ee67dc8453f6f66",
       "feature_diff": "none; only AGENTS.md added locally"
     }
+  },
+  "macos_dmg_source_evidence": {
+    "path": "docs/evidence/standard-macos-dmg/integration/README.md",
+    "scope": "producer/collector/landing/upload source; actual DMG/installed gates NotRun",
+    "python_passed": 53,
+    "js_passed": 11,
+    "upstream": "Velopack1.2.158@3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b"
   }
 }

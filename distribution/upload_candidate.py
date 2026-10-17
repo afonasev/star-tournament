@@ -40,7 +40,7 @@ def main():
     full = files[0]
     if asset['FileName'] != full.name or asset['Size'] != full.stat().st_size or asset['SHA256'].lower() != sha256(full):
         p.error('Package differs from signed manifest')
-    if a.installers: files += [f for f in a.releases.iterdir() if f.suffix in ('.exe','.pkg','.zip')]
+    if a.installers: files += [f for f in a.releases.iterdir() if f.suffix in ('.exe','.pkg','.zip','.dmg')]
     identity = json.loads((a.releases.parent / (a.version+'.identity.json')).read_text())
     if identity['version'] != a.version or identity['runtime'] != a.runtime:
         p.error('Artifact identity target/version mismatch')
@@ -54,7 +54,7 @@ def main():
         if not re.fullmatch(r'[A-Za-z0-9._-]+', local.name): p.error('Unsafe filename')
         digest = sha256(local)
         destination = target
-        if local.suffix in ('.exe','.pkg','.zip'):
+        if local.suffix in ('.exe','.pkg','.zip','.dmg'):
             destination += '/installers/' + a.version
             remote('import pathlib,sys; pathlib.Path(sys.argv[1]).mkdir(parents=True,exist_ok=True)', destination)
         staging = target + '/.upload-' + uuid.uuid4().hex

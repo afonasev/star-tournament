@@ -4,17 +4,96 @@ This module does not build a Player or publish anything. build() is invoked only
 by an explicitly requested installer build, with the packaging Python runtime.
 """
 import json
+import hashlib
 import os
 from pathlib import Path, PurePosixPath
 import plistlib
 import re
+import shutil
+import posixpath
+import stat
+import subprocess
 import tempfile
+import unicodedata
+import zipfile
 
 from release_compatibility import validate as validate_compatibility
 
 APP_NAME = 'Star Tournament.app'
 WINDOW = (1088, 528)
 ICON_LOCATIONS = {APP_NAME: (314, 230), 'Applications': (762, 230)}
+
+
+def outer_plist(config):
+    """Pinned Velopack 1.2.158 defaults, plus the actual Player OS floor."""
+    minimum = validate_compatibility(config['compatibility'], 'osx')['minimumOsVersion']
+    app_id, version = config['appId'], config['version']
+    return dict(CFBundleName='Star Tournament', CFBundleExecutable='StarTournamentLauncher',
+                CFBundleIdentifier='com.'+app_id+'.'+app_id, CFBundlePackageType='APPL',
+                CFBundleShortVersionString=version.split('-')[0], CFBundleVersion=version,
+                CFBundleSignature='????', NSPrincipalClass='NSApplication',
+                NSHighResolutionCapable=True, CFBundleIconFile='app-icon.icns',
+                LSMinimumSystemVersion=minimum)
+
+
+def validate_portable(archive):
+    """Check every ZIP path/link before ditto can write any bundle bytes."""
+    nodes, folded, links, kinds = {}, set(), {}, {}
+    with zipfile.ZipFile(archive) as source:
+        for entry in source.infolist():
+            path = entry.filename.rstrip('/')
+            parts = PurePosixPath(path).parts
+            if (not parts or '\\' in path or '\x00' in path or path.startswith('/') or
+                    '..' in parts or str(PurePosixPath(path)) != path):
+                raise ValueError('Unsafe portable archive path')
+            if parts[0] not in (APP_NAME, '__MACOSX'):
+                raise ValueError('Portable archive must contain exactly the complete outer app')
+            if parts[0] == '__MACOSX' and len(parts)>1 and parts[1] not in (APP_NAME, '._'+APP_NAME):
+                raise ValueError('Resource fork belongs to a different bundle')
+            canonical = unicodedata.normalize('NFC', path).casefold()
+            if canonical in folded: raise ValueError('Duplicate portable archive path')
+            folded.add(canonical)
+            mode = (entry.external_attr >> 16) & 0xffff
+            kind = stat.S_IFMT(mode)
+            if kind not in (0, stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK):
+                raise ValueError('Special filesystem node in portable archive')
+            nodes[path] = entry.is_dir() or kind == stat.S_IFDIR
+            kinds[canonical] = nodes[path]
+            if kind == stat.S_IFLNK:
+                if parts[0] == '__MACOSX' or entry.file_size > 4096:
+                    raise ValueError('Invalid portable symlink')
+                target = source.read(entry).decode('utf-8')
+                if not target or target.startswith('/') or '\\' in target or '\x00' in target:
+                    raise ValueError('Unsafe portable symlink target')
+                links[path] = posixpath.normpath(posixpath.join(posixpath.dirname(path), target))
+        if not any(p.startswith(APP_NAME+'/Contents/') for p in nodes):
+            raise ValueError('Complete app contents missing')
+        for path in nodes:
+            for parent in PurePosixPath(path).parents:
+                name = str(parent)
+                canonical = unicodedata.normalize('NFC', name).casefold()
+                if canonical in kinds and not kinds[canonical]:
+                    raise ValueError('Portable file or symlink cannot own child entries')
+        for path in links:
+            target, seen = path, set()
+            while True:
+                prefixes = [str(p) for p in reversed(PurePosixPath(target).parents)] + [target]
+                link = next((p for p in prefixes if p in links), None)
+                if link is None: break
+                if link in seen: raise ValueError('Portable symlink cycle')
+                seen.add(link)
+                target = posixpath.normpath(links[link]+target[len(link):])
+            if not target.startswith(APP_NAME+'/') or (target not in nodes and not any(p.startswith(target+'/') for p in nodes)):
+                raise ValueError('Portable symlink escapes bundle or is missing')
+
+
+def from_portable(archive, output, runtime, version):
+    validate_portable(archive)
+    output = Path(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.dmg-unpack-', dir=output.parent) as directory:
+        subprocess.run(['/usr/bin/ditto', '-x', '-k', str(Path(archive).resolve()), directory], check=True)
+        return build(Path(directory)/APP_NAME, output, runtime, version)
 
 
 def inspect_app(app, runtime, version):
@@ -42,7 +121,7 @@ def inspect_app(app, runtime, version):
         raise ValueError('Finder minimum OS must match authenticated payload requirements')
     if info.get('CFBundleExecutable') != 'StarTournamentLauncher':
         raise ValueError('Finder must start the launcher, not the nested Player')
-    if info.get('CFBundleShortVersionString') != version:
+    if info.get('CFBundleVersion') != version or info.get('CFBundleShortVersionString') != version.split('-')[0]:
         raise ValueError('Finder release version mismatch')
     player = config.get('gameExecutable', '')
     player_path = PurePosixPath(player)
@@ -90,7 +169,48 @@ def render_background(output, config):
     image.save(output, 'PNG')
 
 
-def build(app, output, runtime, version, *, builder=None):
+def bundle_identity(app):
+    result = {'.': ('directory', stat.S_IMODE(Path(app).stat().st_mode))}
+    for path in Path(app).rglob('*'):
+        relative = path.relative_to(app).as_posix()
+        if path.is_symlink(): result[relative] = ('link', os.readlink(path))
+        elif path.is_file():
+            with path.open('rb') as stream: digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+            result[relative] = ('file', stat.S_IMODE(path.stat().st_mode), digest)
+        elif path.is_dir(): result[relative] = ('directory', stat.S_IMODE(path.stat().st_mode))
+        else: raise ValueError('Unexpected application filesystem node')
+    return result
+
+
+def verify_image(image, app, *, mount_parent=None):
+    """Read back the actual mounted image before releasing its immutable output."""
+    temporary = Path(tempfile.mkdtemp(prefix='.dmg-readback-', dir=mount_parent or Path(image).parent))
+    mount = temporary/'volume'; mount.mkdir()
+    attached = False
+    try:
+        retained_image = temporary/'readback.dmg'
+        os.link(image, retained_image)
+        subprocess.run(['/usr/bin/hdiutil','attach','-readonly','-nobrowse','-mountpoint',str(mount),str(retained_image)], check=True, capture_output=True)
+        attached = True
+        installed = mount/APP_NAME
+        if not installed.is_dir() or installed.is_symlink(): raise ValueError('DMG application missing')
+        target = mount/'Applications'
+        if not target.is_symlink() or os.readlink(target) != '/Applications':
+            raise ValueError('DMG Applications link mismatch')
+        if bundle_identity(installed) != bundle_identity(app):
+            raise ValueError('DMG bundle differs from complete portable input')
+    finally:
+        try:
+            if attached or os.path.ismount(mount):
+                subprocess.run(['/usr/bin/hdiutil','detach',str(mount)], check=True, capture_output=True)
+                attached = False
+        finally:
+            # Failed detach retains the owned mount path for explicit recovery;
+            # never recurse into a volume that may still be mounted.
+            if not attached and not os.path.ismount(mount): shutil.rmtree(temporary)
+
+
+def build(app, output, runtime, version, *, builder=None, verifier=None):
     """Create an unsigned test DMG; retain the intact input app byte-for-byte."""
     app, output = Path(app), Path(output)
     if output.exists() or output.is_symlink():
@@ -110,6 +230,8 @@ def build(app, output, runtime, version, *, builder=None):
         builder(str(candidate), 'Star Tournament · '+version, settings=settings(app.resolve(), background))
         if not candidate.is_file() or candidate.is_symlink() or candidate.stat().st_size == 0:
             raise ValueError('DMG builder produced no disk image')
+        if verifier is not None: verifier(candidate, app)
+        else: verify_image(candidate, app, mount_parent=output.parent)
         # Link gives no-overwrite semantics even if an output appeared mid-build.
         os.link(candidate, output)
     return output

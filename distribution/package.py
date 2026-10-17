@@ -11,11 +11,13 @@ import re
 import shutil
 import subprocess
 import zipfile
+import plistlib
 
 from release_compatibility import current as compatibility_requirements, manifest as release_manifest, verify_payload
 from windows_dpi import validate_windows_dpi
 from windows_stable_entry import install_stable_entry
 from broker_upgrade import seal as seal_broker_upgrade, install_component
+import macos_dmg
 
 
 def write_metadata(output, runtime, version, envelope):
@@ -80,6 +82,9 @@ def main():
     config = dict(appId=app_id, platform=a.runtime.split('-')[0], architecture=a.runtime.split('-')[1],
                   version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel, compatibility=compatibility)
     (stage/'release.json').write_text(json.dumps(config, indent=2)+'\n')
+    if a.runtime.startswith('osx'):
+        outer_info = a.output/'macos-launcher.plist'
+        with outer_info.open('wb') as stream: plistlib.dump(macos_dmg.outer_plist(config), stream)
     subprocess.run(['openssl', 'pkey', '-in', str(a.key.resolve()), '-pubout', '-out', str(stage/'update-public.pem')], check=True)
     if (stage/'update-public.pem').read_bytes() != (root/'update-public.pem').read_bytes():
         raise ValueError('Signing key differs from pinned distribution key')
@@ -97,10 +102,11 @@ def main():
             '--mainExe', launcher, '--runtime', a.runtime, '--channel', a.runtime, '--packTitle', 'Star Tournament',
             '--delta', 'None', '--outputDir', str(output), '--icon', str(root/'branding'/('app-icon.ico' if a.runtime.startswith('win') else 'app-icon.icns'))]
     if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
+    else: cmd += ['--noInst', '--plist', str(outer_info)]
     subprocess.run(cmd, check=True, env=env)
     if a.update_only:
         for first_install in output.iterdir():
-            if first_install.suffix in ('.exe', '.pkg', '.zip'): first_install.unlink()
+            if first_install.suffix in ('.exe', '.pkg', '.zip', '.dmg'): first_install.unlink()
     elif a.runtime == 'win-x64':
         # NSIS owns installation, shortcuts and ARP; preserve the portable marker.
         portable = next(output.glob('*Portable.zip'))
@@ -121,8 +127,10 @@ def main():
         subprocess.run(['python3',str(root/'windows/build_installer.py'),'--layout',str(layout),
                         '--version',a.version,'--output',str(installer)] + compiler,check=True)
     if a.runtime.startswith('osx') and not a.update_only:
-        for package in output.glob('*.pkg'):
-            package.rename(output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.pkg')
+        portable = list(output.glob('*Portable.zip'))
+        if len(portable) != 1: raise ValueError('Exactly one complete macOS portable required')
+        macos_dmg.from_portable(portable[0], output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.dmg', a.runtime, a.version)
+        portable[0].unlink()
     feed = json.loads((output/f'releases.{a.runtime}.json').read_text())
     asset = next(x for x in feed['Assets'] if x['Version'] == a.version and x['Type'] == 'Full')
     payload = json.dumps(release_manifest(config, asset, datetime.datetime.now(datetime.timezone.utc).isoformat()),
@@ -135,7 +143,7 @@ def main():
     write_metadata(output, a.runtime, a.version, envelope)
     files = []
     for f in sorted(output.iterdir()):
-        if f.is_file() and f.suffix in ('.nupkg','.exe','.pkg','.zip'):
+        if f.is_file() and f.suffix in ('.nupkg','.exe','.pkg','.zip','.dmg'):
             with f.open('rb') as stream: digest = hashlib.file_digest(stream, 'sha256').hexdigest()
             files.append(dict(name=f.name, size=f.stat().st_size, sha256=digest))
     revision = subprocess.check_output(['git','rev-parse','HEAD'], cwd=root, text=True).strip()
