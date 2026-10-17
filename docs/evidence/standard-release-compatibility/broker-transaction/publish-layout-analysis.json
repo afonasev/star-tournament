@@ -1,0 +1,18 @@
+{
+  "sdkPlanOnly": true,
+  "publishExecuted": false,
+  "actualCandidateNotBuilt": true,
+  "declaredManagedDlls": 171,
+  "nonmanagedDllInputs": [],
+  "missingInputs": [],
+  "unknownContentInputs": [
+    "update-public.pem"
+  ],
+  "singlefileHost": [
+    {
+      "name": "StarTournamentMaintenance.exe",
+      "bytes": 10005504
+    }
+  ],
+  "actualPublishLayoutGate": "OPEN until future candidate producer produces and verifies its exact native payload"
+}
