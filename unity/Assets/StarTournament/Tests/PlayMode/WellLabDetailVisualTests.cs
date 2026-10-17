@@ -50,7 +50,7 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(mesh.subMeshCount,Is.EqualTo(3));
                     var normals=mesh.normals;foreach(var index in mesh.GetTriangles(2))Assert.That(normals[index].y,Is.LessThan(-.5f));
                 }
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-surfaces/views"));Directory.CreateDirectory(directory);
+                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/full-visual"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"arena.json"),JsonUtility.ToJson(arena.Definition,true));
                 var settings=new System.Text.StringBuilder();settings.AppendLine("Color space: "+QualitySettings.activeColorSpace);settings.AppendLine("Pipeline: "+UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.name);
                 foreach(VisualEffect effect in System.Enum.GetValues(typeof(VisualEffect)))settings.AppendLine(effect+": "+NativeVisualPreferences.Enabled(effect)+" / "+NativeVisualPreferences.Strength(movement,effect));

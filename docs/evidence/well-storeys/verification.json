@@ -1,0 +1,62 @@
+{
+  "baseline": "9874096b79d14cce564f129bb6f24418c49d4a14",
+  "result": "Passed",
+  "final_affected_checks": 4,
+  "skipped": 0,
+  "runtime_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "0a77f39b43652cecc15003185335d38db0de61d061c77e5bcc51dc2519ca68c8",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "4de0293900c000c7d3485c268236aa129a1fb846539ad0c2f93a7ea10b92631f",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabFurniture.cs": "31a8b61d2bd94175547f0e7332006629169a89f14cf7892648a703e5ec1256e3",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellStoreyPresentationTests.cs": "03da0b10a2b31d0728c7d0254c0e210f4d51950a10fde5481a1c9b8823a0801d",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellSignPlacementTests.cs": "045b6faab7bc399bf8d145d67be4706128db413cbd6b9f7393467b14a455c48c",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellCorridorVisualTests.cs": "8c44368b5bfcadbddcb0519ffd5e6786bafade8fa95a51188488c1273340593f",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs": "8f9032ec1ac4914051f0a154aa89e946b950ef2418ee94b0bf98b5bd82c8d904"
+  },
+  "final_test_xml": "final-qa/playmode.xml",
+  "final_test_duration_seconds": "33.6907876",
+  "coverage": {
+    "signs": 30,
+    "sign_scales": [
+      0.5,
+      1,
+      2
+    ],
+    "whole_sign_rectangle_samples": 287,
+    "exact_map": "well-laboratory-v1@4",
+    "furniture": 56,
+    "lights": 24,
+    "cosmetic_colliders": 0,
+    "render_budget": "<64 renderers and <650000 vertices",
+    "department_mesh_vertices": "every diagnostic vertex is inside its own storey"
+  },
+  "remaining_gates": [
+    "human/Player acceptance",
+    "Player build not requested",
+    "full suite not requested",
+    "release/deploy not requested"
+  ],
+  "visual_discovery": "Initial module screenshot exposed float FloorToInt misclassification. Final nearest-storey selection is guarded by diagnostic mesh vertex bounds.",
+  "final_command": {
+    "env": {
+      "STAR_TOURNAMENT_WELL_REVIEW_STAGE": "departments",
+      "STAR_TOURNAMENT_QA_LAB_HISTORY": "<owned>/.local/unity-evidence/well-storeys/lab.json",
+      "UNITY_RUN_MODE": "shared"
+    },
+    "argv": [
+      "unity/tools.sh",
+      "editor",
+      "-batchmode",
+      "-noaudio",
+      "-muted",
+      "-runTests",
+      "-testPlatform",
+      "PlayMode",
+      "-testFilter",
+      "WellStoreyPresentationTests;WellSignPlacementTests;WellCorridorVisualTests;WellLabDetailVisualTests",
+      "-testResults",
+      "<owned>/.local/unity-evidence/well-storeys/final.xml",
+      "-logFile",
+      "<owned>/.local/unity-evidence/well-storeys/final.log"
+    ]
+  }
+}

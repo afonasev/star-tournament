@@ -1,0 +1,10 @@
+stage=departments
+map=well-laboratory-v1@4
+renderers=62
+vertices=589887
+lights=24
+cosmetic_colliders=0
+furniture=56
+Well storey 0 floor colour=RGBA(0.770, 0.730, 0.620, 1.000) texture=Well floor-bio texture
+Well storey 1 floor colour=RGBA(0.620, 0.690, 0.740, 1.000) texture=Well floor-physics texture
+Well storey 2 floor colour=RGBA(0.330, 0.340, 0.320, 1.000) texture=Well floor-electronics texture

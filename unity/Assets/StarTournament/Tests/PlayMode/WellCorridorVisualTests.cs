@@ -40,7 +40,7 @@ namespace StarTournament.ProvingGround.Tests
             {
                 string owner=filter.name;
                 // Architectural batches and doorway trims; furniture is reviewed separately.
-                if(owner!="Well ceramic white"&&owner!="Well pale floor"&&!owner.StartsWith("0")&&owner!="Well details / Well brushed metal"&&owner!="Well details / Well satin aluminium")continue;
+                if(!owner.StartsWith("Well storey ")&&owner!="Well ceramic white"&&owner!="Well pale floor"&&!owner.StartsWith("0")&&owner!="Well details / Well brushed metal"&&owner!="Well details / Well satin aluminium")continue;
                 var mesh=filter.sharedMesh;var vertices=mesh.vertices;var indices=mesh.triangles;
                 for(int i=0;i<indices.Length;i+=3)
                 {
@@ -90,7 +90,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24));
                 var conflicts=Conflicts(skin);
                 Assert.That(arena.Definition.Solids.Count(s=>s.Id.Contains("-corridor-")),Is.EqualTo(12));
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-corridor-cover/views"));Directory.CreateDirectory(directory);
+                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/architecture-audit"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"surface-audit.txt"),conflicts.Count==0?"No overlapping opaque architectural/door-header triangles.\n":string.Join("\n",conflicts));
                 var eyes=new List<Vector3>();var targets=new List<Vector3>();var names=new List<string>();
                 for(int floor=0;floor<3;floor++)

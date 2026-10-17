@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests
     {
         [UnityTest] public IEnumerator EverySignFitsAnOpaqueFaceAtEverySupportedScale()
         {
-            var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-wall-signs/views"));Directory.CreateDirectory(directory);
+            var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/signs"));Directory.CreateDirectory(directory);
             var audit=new List<string>();var failures=new List<string>();
             foreach(float scale in new[]{.5f,1f,2f})
             {
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests
                 {
                     arena.Build(AuthoredArenaCatalog.Freeze(WellArenaCatalog.Id,movement),movement,art);yield return null;yield return null;
                     var skin=arena.GetComponentInChildren<WellArenaPresentation>();var signs=skin.GetComponentsInChildren<TextMesh>();
-                    Assert.That(signs.Length,Is.EqualTo(24),"Audit all eight signs on every storey");
+                    Assert.That(signs.Length,Is.EqualTo(30),"Audit eight wall signs and two floor numbers on every storey");
                     Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Sign placement cannot change gameplay authoring");
                     Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
                     int index=0;
@@ -40,7 +40,7 @@ namespace StarTournament.ProvingGround.Tests
                         {
                             var point=sign.transform.TransformPoint(new Vector3(Mathf.Lerp(bounds.min.x,bounds.max.x,x/40f),Mathf.Lerp(bounds.min.y,bounds.max.y,y/6f),bounds.center.z));
                             var behind=point-normal*.03f;
-                            bool backed=arena.Definition.Solids.Any(s=>s.Material=="wall"&&new Bounds(s.Position,s.Size).Contains(behind));
+                            bool backed=arena.Definition.Solids.Any(s=>(s.Material=="wall"||Mathf.Abs(normal.y)>.9f&&s.Material=="floor")&&new Bounds(s.Position,s.Size).Contains(behind));
                             bool buried=arena.Definition.Solids.Any(s=>s.Material!="glass"&&new Bounds(s.Position,s.Size).Contains(point+normal*.005f));
                             if(!backed||buried){failures.Add("scale="+scale+" #"+index+" "+sign.text+" at "+point.ToString("F3")+" backing="+backed+" buried="+buried);break;}
                         }
@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround.Tests
                 finally{camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
             }
             File.WriteAllLines(Path.Combine(directory,"sign-audit.txt"),audit.Concat(failures));
-            Assert.That(failures,Is.Empty,string.Join("\n",failures));Assert.That(audit.Count,Is.EqualTo(72));
+            Assert.That(failures,Is.Empty,string.Join("\n",failures));Assert.That(audit.Count,Is.EqualTo(90));
         }
     }
 }

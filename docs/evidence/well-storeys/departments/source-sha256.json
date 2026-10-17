@@ -1,0 +1,9 @@
+{
+  "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "0a77f39b43652cecc15003185335d38db0de61d061c77e5bcc51dc2519ca68c8",
+  "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "4de0293900c000c7d3485c268236aa129a1fb846539ad0c2f93a7ea10b92631f",
+  "unity/Assets/StarTournament/Runtime/Arena/WellLabFurniture.cs": "31a8b61d2bd94175547f0e7332006629169a89f14cf7892648a703e5ec1256e3",
+  "unity/Assets/StarTournament/Tests/PlayMode/WellStoreyPresentationTests.cs": "03da0b10a2b31d0728c7d0254c0e210f4d51950a10fde5481a1c9b8823a0801d",
+  "unity/Assets/StarTournament/Tests/PlayMode/WellSignPlacementTests.cs": "045b6faab7bc399bf8d145d67be4706128db413cbd6b9f7393467b14a455c48c",
+  "unity/Assets/StarTournament/Tests/PlayMode/WellCorridorVisualTests.cs": "8c44368b5bfcadbddcb0519ffd5e6786bafade8fa95a51188488c1273340593f",
+  "unity/Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs": "8f9032ec1ac4914051f0a154aa89e946b950ef2418ee94b0bf98b5bd82c8d904"
+}

@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
         readonly Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
         readonly Dictionary<Vector3,Mesh> doorBevels=new Dictionary<Vector3,Mesh>();
-        readonly Material trim,panel,screen,green,leaf,porcelain,alloy,blue,amber;readonly Material display;
+        readonly Material trim,panel,screen,green,leaf,porcelain,alloy,blue,amber,sage;readonly Material[] displays;
         // Fixed tessellation/texture resolution are bounded resource tiers, not gameplay tuning.
         const int TextureSize=256;
         public WellLabDetail(Transform parent,List<Object> owned,ProvingProfile profile,Material trim,Material panel,Material screen,Material green)
@@ -20,8 +20,13 @@ namespace StarTournament.ProvingGround
             alloy=DetailMaterial("Well satin aluminium",new Color(.77f,.79f,.78f),.25f,.52f);
             blue=DetailMaterial("Well physics components",new Color(.14f,.38f,.58f),.35f,.3f);
             amber=DetailMaterial("Well electronics substrate",new Color(.36f,.25f,.09f),.25f,.28f);
-            display=new Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Well diagnostic display",color=Color.white};owned.Add(display);
-            var displayTexture=DisplayTexture();owned.Add(displayTexture);display.SetTexture("_BaseMap",displayTexture);
+            sage=DetailMaterial("Well biology components",new Color(.44f,.55f,.43f),.05f,.28f);
+            displays=new Material[3];
+            for(int department=0;department<3;department++)
+            {
+                displays[department]=new Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Well "+new[]{"biology","physics","electronics"}[department]+" diagnostic display",color=Color.white};owned.Add(displays[department]);
+                var texture=DisplayTexture(department);owned.Add(texture);displays[department].SetTexture("_BaseMap",texture);
+            }
             leaf=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Well living foliage",color=Color.white};
             var foliage=Texture("leaf",profile);owned.Add(foliage);leaf.SetTexture("_BaseMap",foliage);
             leaf.SetFloat("_Smoothness",.32f);leaf.SetFloat("_Cull",0);owned.Add(leaf);
@@ -45,6 +50,13 @@ namespace StarTournament.ProvingGround
             float cloud=Mathf.Sin(u*Mathf.PI*4+Mathf.Sin(v*Mathf.PI*6))*Mathf.Cos(v*Mathf.PI*4);
             // Authored material motifs in one repeat: floor aggregate, large wall panels, perforated ceiling cassettes.
             // Their scale and contrast remain controlled by the existing Well art profile.
+            if(kind=="floor-bio")return Noise(x,y,32)*.04f+Noise(x,y,2)*.25f+(Grain(x/3,y/3)>.28f?.45f:0);
+            if(kind=="floor-physics")return Noise(x,y,32)*.19f+Noise(x,y,8)*.10f+Grain(x,y)*.03f;
+            if(kind=="floor-electronics")
+            {
+                int px=x%32,py=y%32;float r=new Vector2(px-16,py-16).magnitude;
+                return r<7?.11f:r<9?-.05f:Grain(x,y)*.025f;
+            }
             if(kind=="floor")return Noise(x,y,32)*.06f+Noise(x,y,8)*.14f+Noise(x,y,2)*.26f+Grain(x,y)*.08f;
             if(kind=="ceiling")
             {
@@ -68,7 +80,8 @@ namespace StarTournament.ProvingGround
                 if(normal)
                 {
                     float dx=Height(kind,x-1,y)-Height(kind,x+1,y),dy=Height(kind,x,y-1)-Height(kind,x,y+1);
-                    var direction=new Vector3(dx*grain*(kind=="floor"?18:10),dy*grain*(kind=="floor"?18:10),1).normalized;
+                    float relief=kind=="floor-bio"?3:kind.StartsWith("floor")?18:10;
+                    var direction=new Vector3(dx*grain*relief,dy*grain*relief,1).normalized;
                     // Uncompressed desktop normals use RGB with alpha 1 (URP RG-or-AG multiplies R by A).
                     pixels[y*TextureSize+x]=new Color(direction.x*.5f+.5f,direction.y*.5f+.5f,direction.z*.5f+.5f,1);continue;
                 }
@@ -89,12 +102,12 @@ namespace StarTournament.ProvingGround
                     if(horizontal<1)value-=profile.Get("well.jointContrast")*.35f;
                     value+=Height(kind,x,y)*grain;
                 }
-                if(kind=="floor")
+                if(kind.StartsWith("floor"))
                 {
                     int cell=TextureSize/2,px=x%cell,py=y%cell;
                     int edge=Mathf.Min(px,py,cell-1-px,cell-1-py);
                     if(edge<1)value-=profile.Get("well.jointContrast");else if(edge<2)value+=.035f;
-                    value+=Height(kind,x,y)*grain*6;
+                    value+=Height(kind,x,y)*grain*(kind=="floor-bio"?8:kind=="floor-electronics"?3:6);
                     // Subtle aggregate flecks and panel-to-panel value changes, never gameplay randomness.
                     value+=Grain(x/cell,y/cell)*grain*.5f;
                 }
@@ -135,18 +148,53 @@ namespace StarTournament.ProvingGround
             if(!batches.TryGetValue(m,out var batch))batches[m]=batch=new List<CombineInstance>();
             batch.Add(new CombineInstance{mesh=cylinder,transform=Matrix4x4.TRS(face+rotation*local,rotation*(forward?Quaternion.Euler(90,0,0):Quaternion.identity),new Vector3(diameter,length,diameter))});
         }
-        static Texture2D DisplayTexture()
+        static Texture2D DisplayTexture(int department)
         {
             const int width=512,height=256;var pixels=new Color[width*height];
             var bg=new Color(.014f,.037f,.05f);for(int i=0;i<pixels.Length;i++)pixels[i]=bg;
             void Rect(int x,int y,int w,int h,Color c){for(int b=Mathf.Max(y,0);b<Mathf.Min(y+h,height);b++)for(int a=Mathf.Max(x,0);a<Mathf.Min(x+w,width);a++)pixels[b*width+a]=c;}
-            var grid=new Color(.045f,.12f,.14f);var cyan=new Color(.21f,.83f,.76f);var pale=new Color(.53f,.72f,.72f);
-            for(int x=22;x<350;x+=27)Rect(x,42,1,164,grid);for(int y=42;y<210;y+=24)Rect(22,y,324,1,grid);
+            var grid=new Color(.045f,.12f,.14f);var cyan=new[]{new Color(.43f,.78f,.37f),new Color(.21f,.73f,.94f),new Color(.95f,.66f,.18f)}[department];var pale=new Color(.53f,.72f,.72f);
+            void Line(Vector2 a,Vector2 b,int width,Color colour)
+            {
+                int steps=Mathf.CeilToInt(Vector2.Distance(a,b));
+                for(int i=0;i<=steps;i++){var point=Vector2.Lerp(a,b,i/(float)Mathf.Max(1,steps));Rect(Mathf.RoundToInt(point.x),Mathf.RoundToInt(point.y),width,width,colour);}
+            }
             Rect(20,223,470,2,pale);Rect(20,17,470,1,grid);
-            for(int x=23;x<345;x++){float v=(x-23)/322f;int y=128+Mathf.RoundToInt(35*Mathf.Sin(v*19)+19*Mathf.Sin(v*41));Rect(x,y,2,2,cyan);Rect(x,75+Mathf.RoundToInt(13*Mathf.Sin(v*24)),1,2,new Color(.30f,.47f,.72f));}
+            if(department==0)
+            {
+                // Large botanical silhouettes and sample bands, legible as biology at corridor distance.
+                Line(new Vector2(166,42),new Vector2(166,207),3,cyan);
+                for(int branch=0;branch<5;branch++)foreach(int side in new[]{-1,1})
+                {
+                    float y=66+branch*27;var tip=new Vector2(166+side*(70-branch*8),y+24);
+                    Line(new Vector2(166,y),tip,2,cyan);
+                    for(int step=0;step<22;step++)
+                    {
+                        float t=step/21f;var point=Vector2.Lerp(new Vector2(166,y),tip,t);int half=Mathf.RoundToInt(Mathf.Sin(t*Mathf.PI)*(9-branch));
+                        Rect(Mathf.RoundToInt(point.x),Mathf.RoundToInt(point.y)-half,2,half*2+1,cyan*.75f);
+                    }
+                }
+                for(int i=0;i<4;i++){Rect(265,58+i*36,58,4,grid);Rect(265,58+i*36,18+i*8,4,cyan);}
+            }
+            else if(department==1)
+            {
+                // Measuring axes and two distinct oscilloscope traces.
+                for(int x=22;x<350;x+=27)Rect(x,42,1,164,grid);for(int y=42;y<210;y+=24)Rect(22,y,324,1,grid);
+                for(int x=23;x<345;x++){float v=(x-23)/322f;int y=128+Mathf.RoundToInt(35*Mathf.Sin(v*19)+19*Mathf.Sin(v*41));Rect(x,y,2,2,cyan);Rect(x,75+Mathf.RoundToInt(13*Mathf.Sin(v*24)),1,2,new Color(.30f,.47f,.72f));}
+            }
+            else
+            {
+                // A readable PCB/logic topology, rather than the biology or waveform screen recoloured.
+                for(int chip=0;chip<4;chip++)
+                {
+                    int x=55+chip%2*166,y=66+chip/2*92;Rect(x,y,52,36,pale*.4f);Rect(x+6,y+6,40,24,bg);
+                    for(int pin=0;pin<5;pin++)foreach(int side in new[]{-1,1})Rect(x+side*8+(side>0?52:0),y+3+pin*7,8,2,cyan);
+                    Line(new Vector2(x+60,y+17),new Vector2(x+84,y+17),2,cyan);Line(new Vector2(x+84,y+17),new Vector2(x+84,y-20),2,cyan);Line(new Vector2(x+84,y-20),new Vector2(x+110,y-20),2,cyan);
+                }
+            }
             for(int i=0;i<5;i++){Rect(374,185-i*32,108,4,grid);Rect(374,185-i*32,42+i*11,4,cyan);for(int k=0;k<7;k++)Rect(374+k*9,198-i*32,5,3,pale);}
             for(int i=0;i<12;i++)Rect(22+i*8,234,5,3,pale);for(int i=0;i<4;i++){Rect(22+i*82,25,52,4,grid);Rect(22+i*82,25,22+i*5,4,cyan);}
-            var texture=new Texture2D(width,height,TextureFormat.RGB24,true){name="Well live diagnostics atlas",filterMode=FilterMode.Trilinear};texture.SetPixels(pixels);texture.Apply(true,true);return texture;
+            var texture=new Texture2D(width,height,TextureFormat.RGB24,true){name="Well "+new[]{"biology","physics","electronics"}[department]+" diagnostics atlas",filterMode=FilterMode.Trilinear};texture.SetPixels(pixels);texture.Apply(true,true);return texture;
         }
         public void Facade(ArenaSolid solid)
         {
@@ -175,15 +223,18 @@ namespace StarTournament.ProvingGround
                 var rotation=Quaternion.LookRotation(normal*side);
                 var face=solid.Position+normal*side*(depth/2+.002f);
                 float bottom=solid.Position.y-solid.Size.y/2;
-                int department=Mathf.Clamp(Mathf.FloorToInt(bottom/WellArenaCatalog.Storey),0,2);
+                int department=Mathf.Clamp(Mathf.RoundToInt(bottom/WellArenaCatalog.Storey),0,2);
                 int hash=0;foreach(char c in solid.Id)hash=unchecked(hash*31+c);
                 int variant=(hash&0x7fffffff)%5;
                 // Authored shallow modules: bounded by the art profile on a solid wall; never over an opening.
                 face.y=bottom+2.25f;
                 if(variant==0)Service(face,rotation);
-                else if(variant==1)Instrument(face,rotation,department);
-                else if(variant==2)Samples(face,rotation,department);
-                else if(variant==3)Circuit(face,rotation,department);
+                else if(variant<4)
+                {
+                    if(department==0){if(variant==3)Instrument(face,rotation,department);else Samples(face,rotation,department);}
+                    else if(department==1){if(variant==3)Samples(face,rotation,department);else Instrument(face,rotation,department);}
+                    else {if(variant==3)Instrument(face,rotation,department);else Circuit(face,rotation,department);}
+                }
                 // Some walls intentionally stay quiet, with just a high grille and skirting.
                 face.y=bottom+4.8f;
                 if(variant!=2)Vent(face+rotation*Vector3.right*(length>7?1.1f:0),rotation,variant==0?2.1f:1.35f);
@@ -221,7 +272,7 @@ namespace StarTournament.ProvingGround
             face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(screen,face,rotation,new Vector3(-.12f,.12f,.042f),new Vector3(.98f,.66f,.008f));
             // UVs of the bevel front span the display, unlike world-scaled union UVs.
-            Round(display,face,rotation,new Vector3(-.12f,.12f,.05f),new Vector3(.94f,.62f,.006f));
+            Round(displays[department],face,rotation,new Vector3(-.12f,.12f,.05f),new Vector3(.94f,.62f,.006f));
             for(int row=0;row<3;row++)
             {
                 Turned(trim,face,rotation,new Vector3(-.39f+row*.30f,-.4f,.05f),.12f,.025f,true);
@@ -239,11 +290,12 @@ namespace StarTournament.ProvingGround
             Frame(face,rotation,1.85f,1.65f);
             face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(screen,face,rotation,new Vector3(0,.08f,.04f),new Vector3(1.61f,1.12f,.008f));
+            Round(displays[department],face,rotation,new Vector3(0,.08f,.047f),new Vector3(1.56f,1.07f,.006f));
             for(int i=0;i<5;i++)
             {
                 float x=-.61f+i*.305f;
                 Turned(alloy,face,rotation,new Vector3(x,.05f,.043f),.11f,.77f);
-                Turned(department==0?blue:department==1?alloy:amber,face,rotation,new Vector3(x,.07f,.052f),.12f,.43f+(i%2)*.14f);
+                Turned(department==0?sage:department==1?alloy:amber,face,rotation,new Vector3(x,.07f,.052f),.12f,.43f+(i%2)*.14f);
                 Turned(porcelain,face,rotation,new Vector3(x,.43f,.043f),.14f,.08f);
                 Turned(trim,face,rotation,new Vector3(x,-.33f,.043f),.14f,.06f);
                 FaceBox(porcelain,face,rotation,new Vector3(x,-.39f,.054f),new Vector3(.19f,.035f,.01f));
@@ -255,6 +307,7 @@ namespace StarTournament.ProvingGround
             Frame(face,rotation,1.6f,1.4f);
             face+=rotation*Vector3.forward*(profile.Get("well.fittingDepth")*.65f-.035f);
             FaceBox(department==2?amber:screen,face,rotation,new Vector3(0,.03f,.042f),new Vector3(1.34f,1.11f,.008f));
+            Round(displays[department],face,rotation,new Vector3(0,.03f,.048f),new Vector3(1.29f,1.06f,.006f));
             for(int i=0;i<6;i++)
             {
                 float x=-.5f+(i%3)*.49f,y=-.23f+(i/3)*.53f;

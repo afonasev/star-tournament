@@ -9,7 +9,8 @@ namespace StarTournament.ProvingGround
         readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<Bounds>> batches=new Dictionary<Material,List<Bounds>>();
         UnityEngine.Rendering.AmbientMode oldMode;Color oldAmbient;
         Material fontMaterial;Font signFont;
-        Material white,floor,ceiling,metal,glass,door,soil;WellLabDetail detail;Material[] colours;ProvingProfile profile;
+        Material white,floor,ceiling,metal,glass,door,soil;Material[] storeyWalls,storeyFloors,storeyPanels;
+        readonly HashSet<Material> architecture=new HashSet<Material>();WellLabDetail detail;Material[] colours;ProvingProfile profile;
         Material Mat(string name,Color colour,bool unlit=false,VisualMaterialRole role=VisualMaterialRole.Wall,bool register=true)
         {var m=new Material(Shader.Find(unlit?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=colour};m.SetFloat("_Smoothness",.35f);owned.Add(m);if(!unlit&&register)NativeVisualMaterials.Register(this,m,role);return m;}
         void Texture(Material material,string kind,float metres)
@@ -22,7 +23,7 @@ namespace StarTournament.ProvingGround
         void Label(string value,Vector3 position,Quaternion rotation,Color colour,Vector2 available,float size=.5f)
         {
             var go=new GameObject("Well sign: "+value);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation;
-            size*=profile.Get("well.signScale");var text=go.AddComponent<TextMesh>();text.text=value;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.fontSize=96;text.fontStyle=value=="КОЛОДЕЦ"?FontStyle.Bold:FontStyle.Normal;text.characterSize=size/8;text.color=colour;
+            size*=profile.Get("well.signScale");var text=go.AddComponent<TextMesh>();text.text=value;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.fontSize=96;text.fontStyle=value=="КОЛОДЕЦ"||value=="01"||value=="02"||value=="03"?FontStyle.Bold:FontStyle.Normal;text.characterSize=size/8;text.color=colour;
             if(!fontMaterial){signFont=text.font;fontMaterial=new Material(Shader.Find("StarTournament/LunarSign"));fontMaterial.mainTexture=signFont.material.mainTexture;owned.Add(fontMaterial);Font.textureRebuilt+=RefreshFont;}
             var renderer=text.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;var bounds=renderer.localBounds;
             // Fit the actual glyph bounds, including accents and both lines, to the clear wall face.
@@ -63,6 +64,47 @@ namespace StarTournament.ProvingGround
             Label(value,new Vector3((span.x+span.y)/2,floor*WellArenaCatalog.Storey+5.75f,side*(WellArenaCatalog.Pit-.14f)),
                 Quaternion.Euler(0,side>0?0:180,0),colour,new Vector2(span.y-span.x-.6f,.8f),size);
         }
+        void Navigation(int f,Color colour)
+        {
+            float y=f*WellArenaCatalog.Storey,x=f==1?19:11;
+            void Route(float cx,float cz,float width,float depth)=>Box(colours[f],new Vector3(cx,y+.008f,cz),new Vector3(width,.008f,depth));
+            // Follow the actual inner/outer gallery layout; never paint a route through rooms or furniture.
+            foreach(int side in new[]{-1,1})
+            {
+                Route(0,side*12.5f,x*2+.24f,.24f);Route(side*x,0,.24f,24.76f);
+                Route(0,side*18.2f,.24f,11.16f);Route(side*(x+24)/2,0,24-x,.24f);
+                Label("0"+(f+1),new Vector3(side*2.3f,y+.018f,side*18.5f),
+                    Quaternion.LookRotation(Vector3.down,Vector3.forward*side),colour,new Vector2(3,2.4f),2.2f);
+            }
+        }
+        void StoreyMaterials()
+        {
+            storeyWalls=new Material[3];storeyFloors=new Material[3];storeyPanels=new Material[3];
+            var wallColours=new[]{new Color(.96f,.92f,.81f),new Color(.87f,.92f,.96f),new Color(.91f,.88f,.81f)};
+            var floorColours=new[]{new Color(.77f,.73f,.62f),new Color(.62f,.69f,.74f),new Color(.33f,.34f,.32f)};
+            var panelColours=new[]{new Color(.44f,.55f,.43f),new Color(.13f,.30f,.44f),new Color(.30f,.31f,.29f)};
+            for(int f=0;f<3;f++)
+            {
+                Material Variant(Material source,string name,Color colour)
+                {
+                    var m=new Material(source){name=name,color=colour};owned.Add(m);architecture.Add(m);NativeVisualMaterials.Register(this,m,source==floor?VisualMaterialRole.Floor:VisualMaterialRole.Wall);return m;
+                }
+                storeyWalls[f]=Variant(white,"Well storey "+f+" upper wall",wallColours[f]);
+                storeyPanels[f]=Variant(white,"Well storey "+f+" lower panel",panelColours[f]);
+                storeyFloors[f]=Variant(floor,"Well storey "+f+" floor",floorColours[f]);
+                Texture(storeyFloors[f],new[]{"floor-bio","floor-physics","floor-electronics"}[f],profile.Get("well.panelSize"));
+            }
+        }
+        void WallBox(ArenaSolid solid,Bounds skin,Material fallback)
+        {
+            if(!solid.Id.StartsWith("f")||solid.Material!="wall"){Box(fallback,skin.center,skin.size);return;}
+            int f=Mathf.Clamp(Mathf.FloorToInt(solid.Position.y/WellArenaCatalog.Storey),0,2);
+            float split=Mathf.Clamp(f*WellArenaCatalog.Storey+1.3f,skin.min.y,skin.max.y);
+            void Part(float lo,float hi,Material m)
+            {if(hi-lo>.0001f)Box(m,new Vector3(skin.center.x,(lo+hi)/2,skin.center.z),new Vector3(skin.size.x,hi-lo,skin.size.z));}
+            // Partition the exact existing volume; no second skins competing on the wall plane.
+            Part(skin.min.y,split,storeyPanels[f]);Part(split,skin.max.y,storeyWalls[f]);
+        }
         public static Bounds WallSkin(ArenaSolid solid,IEnumerable<ArenaSolid> solids)
         {
             var result=new Bounds(solid.Position,solid.Size);
@@ -100,6 +142,7 @@ namespace StarTournament.ProvingGround
             white.shader=Shader.Find("StarTournament/WellContactSurface");floor.shader=white.shader;ceiling.shader=white.shader;ceiling.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));white.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));floor.SetFloat("_OcclusionStrength",profile.Get("well.contactShade"));
             Texture(white,"ceramic",profile.Get("well.panelSize"));Texture(floor,"floor",profile.Get("well.panelSize"));Texture(ceiling,"ceiling",profile.Get("well.panelSize"));Texture(metal,"metal",1);Texture(soil,"soil",4);
             white.SetFloat("_Smoothness",profile.Get("well.surfaceSmoothness"));floor.SetFloat("_Smoothness",profile.Get("well.floorSmoothness"));ceiling.SetFloat("_Smoothness",profile.Get("well.floorSmoothness"));soil.SetFloat("_Smoothness",0);
+            architecture.Add(white);architecture.Add(floor);StoreyMaterials();
             var diffuser=Mat("Well warm diffuser",new Color(1,.94f,.80f)*profile.Get("well.fixtureGlow"),true);
             var screen=Mat("Well instrument glass",new Color(.035f,.12f,.16f),true);
             var indicator=Mat("Well instrument readout",new Color(.32f,.75f,.66f),true);
@@ -110,7 +153,8 @@ namespace StarTournament.ProvingGround
             foreach(var solid in definition.Solids)
             {
                 var tr=transform.parent.Find(solid.Id);if(!tr)continue;tr.GetComponent<Renderer>().enabled=false;
-                Material m=solid.Material=="glass"?glass:solid.Material=="door"?door:solid.Material=="floor"?(solid.Id=="garden"?soil:floor):white;
+                int storey=Mathf.Clamp(Mathf.RoundToInt((solid.Position.y+solid.Size.y/2)/WellArenaCatalog.Storey),0,2);
+                Material m=solid.Material=="glass"?glass:solid.Material=="door"?door:solid.Material=="floor"?(solid.Id=="garden"?soil:solid.Id.StartsWith("f")?storeyFloors[storey]:floor):white;
                 if(WellFurniturePlan.IsFurniture(solid))
                 {detail.Furniture(solid);continue;}
                 if(solid.Surface=="well-grate")
@@ -124,12 +168,12 @@ namespace StarTournament.ProvingGround
                 }
                 else
                 {
-                    var skin=WallSkin(solid,definition.Solids);Box(m,skin.center,skin.size);
+                    var skin=WallSkin(solid,definition.Solids);WallBox(solid,skin,m);
                     // Floor plates end at the wall centreline. Continue the facade across each slab edge.
                     if(solid.Id.Contains("-outer-"))
                     {
                         var seam=skin;seam.center=new Vector3(seam.center.x,Mathf.Floor(solid.Position.y/WellArenaCatalog.Storey)*WellArenaCatalog.Storey+WellArenaCatalog.ClearHeight+WellArenaCatalog.Slab/2,seam.center.z);
-                        seam.size=new Vector3(seam.size.x,WellArenaCatalog.Slab,seam.size.z);Box(white,seam.center,seam.size);
+                        seam.size=new Vector3(seam.size.x,WellArenaCatalog.Slab,seam.size.z);Box(storeyWalls[Mathf.Clamp(Mathf.FloorToInt(solid.Position.y/WellArenaCatalog.Storey),0,2)],seam.center,seam.size);
                     }
                 }
                 if(solid.Material=="wall"&&solid.Size.y>2)
@@ -164,6 +208,7 @@ namespace StarTournament.ProvingGround
                     HeaderLabel("ЛЕСТНИЦА  /  0"+(f+1),definition.Solids.First(s=>s.Id=="f"+f+"-outer-x"+side+"-header"),definition,
                         Quaternion.Euler(0,side>0?90:-90,0),colour,.38f);
                 }
+                Navigation(f,colour);
                 // Authored fixture locations: broad rings of soft overhead light, clear of all passages.
                 foreach(float x in new[]{-18f,0,18f})foreach(float z in new[]{-18f,0,18f})
                 {
@@ -186,12 +231,13 @@ namespace StarTournament.ProvingGround
                 var blockers=pair.Key==glass?null:batches.Where(p=>p.Key!=pair.Key&&p.Key!=glass).SelectMany(p=>p.Value).ToArray();
                 var mesh=WellSurfaceMesh.Build(pair.Value,blockers,pair.Key==glass?null:surfaceOwners);owned.Add(mesh);
                 if(pair.Key!=glass)surfaceOwners.AddRange(pair.Value);
-                if(pair.Key==white||pair.Key==floor)
+                if(architecture.Contains(pair.Key))
                 {
                     var contact=WellContactMesh.Build(mesh,definition.Solids.Where(s=>s.Material!="glass"&&s.Surface!="well-grate").Select(s=>new Bounds(s.Position,s.Size)).ToArray());owned.Add(contact);mesh=contact;
                 }
-                var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();if(pair.Key==white||pair.Key==floor)
-                {WellSurfaceMesh.SplitHorizontalMaterials(mesh);renderer.sharedMaterials=new[]{pair.Key,white,ceiling};}
+                var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();if(architecture.Contains(pair.Key))
+                {WellSurfaceMesh.SplitHorizontalMaterials(mesh);int floorIndex=System.Array.IndexOf(storeyFloors,pair.Key);
+                    renderer.sharedMaterials=new[]{pair.Key,floorIndex>=0?storeyWalls[floorIndex]:pair.Key==floor?white:pair.Key,ceiling};}
                 else renderer.sharedMaterial=pair.Key;
                 if(pair.Key==glass)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }

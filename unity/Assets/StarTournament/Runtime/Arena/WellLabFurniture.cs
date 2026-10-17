@@ -11,8 +11,8 @@ namespace StarTournament.ProvingGround
             bool acrossX=Mathf.Abs(forward.x)>.5f;
             float w=acrossX?solid.Size.z:solid.Size.x,h=solid.Size.y,d=acrossX?solid.Size.x:solid.Size.z;
             var origin=solid.Position-Vector3.up*h/2;
-            int department=Mathf.Clamp(Mathf.FloorToInt(origin.y/WellArenaCatalog.Storey),0,2);
-            var accent=department==0?porcelain:department==1?blue:amber;
+            int department=Mathf.Clamp(Mathf.RoundToInt(origin.y/WellArenaCatalog.Storey),0,2);
+            var accent=department==0?sage:department==1?blue:amber;
             void Part(Material m,float x,float y,float z,float sx,float sy,float sz)=>FaceBox(m,origin,rotation,new Vector3(x,y,z),new Vector3(sx,sy,sz));
             void Soft(Material m,float x,float y,float z,float sx,float sy,float sz)=>Round(m,origin,rotation,new Vector3(x,y,z),new Vector3(sx,sy,sz));
             // A closed plinth and full carcass correspond to the single authoritative AABB.
@@ -62,7 +62,7 @@ namespace StarTournament.ProvingGround
                 float instrument=-w*.24f;
                 Soft(panel,instrument,h+.24f,-.12f,.64f,.48f,.46f);
                 Soft(trim,instrument,h+.27f,.118f,.54f,.33f,.027f);
-                Round(display,origin,rotation,new Vector3(instrument,h+.27f,.137f),new Vector3(.49f,.28f,.006f));
+                Round(displays[department],origin,rotation,new Vector3(instrument,h+.27f,.137f),new Vector3(.49f,.28f,.006f));
                 for(int i=0;i<3;i++)Turned(alloy,origin,rotation,new Vector3(instrument-.18f+i*.18f,h+.065f,.14f),.055f,.025f,true);
                 Soft(alloy,w*.24f,h+.04f,-.10f,.68f,.08f,.52f);
                 if(department==0)
@@ -70,7 +70,7 @@ namespace StarTournament.ProvingGround
                     for(int i=0;i<3;i++)
                     {
                         var p=new Vector3(w*.24f-.20f+i*.20f,h+.20f,-.10f);
-                        Turned(porcelain,origin,rotation,p,.14f,.28f);Turned(blue,origin,rotation,p+Vector3.up*.16f,.16f,.045f);
+                        Turned(porcelain,origin,rotation,p,.14f,.28f);Turned(sage,origin,rotation,p+Vector3.up*.16f,.16f,.045f);
                     }
                 }
                 else if(department==1)

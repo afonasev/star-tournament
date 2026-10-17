@@ -1,0 +1,1 @@
+No overlapping opaque architectural/door-header triangles.
