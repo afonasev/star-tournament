@@ -1,0 +1,101 @@
+test_different_pinned_key_never_seals (test_broker_upgrade.BrokerProducer.test_different_pinned_key_never_seals) ... ok
+test_installer_copies_identical_bytes_and_preserves_embedded_candidate (test_broker_upgrade.BrokerProducer.test_installer_copies_identical_bytes_and_preserves_embedded_candidate) ... ERROR
+test_installer_rejects_changes_since_signing (test_broker_upgrade.BrokerProducer.test_installer_rejects_changes_since_signing) ... ERROR
+test_payload_identity_and_compatibility_rejected_before_writes (test_broker_upgrade.BrokerProducer.test_payload_identity_and_compatibility_rejected_before_writes) ... ok
+test_real_csharp_consumer_accepts_producer_and_rejects_tampering (test_broker_upgrade.BrokerProducer.test_real_csharp_consumer_accepts_producer_and_rejects_tampering) ... ERROR
+test_real_signature_exact_inventory_and_file_hashes (test_broker_upgrade.BrokerProducer.test_real_signature_exact_inventory_and_file_hashes) ... ERROR
+test_sealed_candidate_cannot_be_overwritten (test_broker_upgrade.BrokerProducer.test_sealed_candidate_cannot_be_overwritten) ... ERROR
+test_symlink_component_rejected (test_broker_upgrade.BrokerProducer.test_symlink_component_rejected) ... ok
+test_unexpected_publish_dependencies_fail_closed (test_broker_upgrade.BrokerProducer.test_unexpected_publish_dependencies_fail_closed) ... ok
+test_first_install_reuses_same_component_once (test_broker_upgrade.PackagingRoute.test_first_install_reuses_same_component_once) ... ok
+test_update_only_embeds_before_pack_without_installer (test_broker_upgrade.PackagingRoute.test_update_only_embeds_before_pack_without_installer) ... ok
+
+======================================================================
+ERROR: test_installer_copies_identical_bytes_and_preserves_embedded_candidate (test_broker_upgrade.BrokerProducer.test_installer_copies_identical_bytes_and_preserves_embedded_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 64, in test_installer_copies_identical_bytes_and_preserves_embedded_candidate
+    frozen=self.seal(); before={p.name:p.read_bytes() for p in self.directory.iterdir()}
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 47, in seal
+    def seal(self): return broker.seal(self.directory, self.config, self.key, self.public)
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 41, in seal
+    plain(directory); plain(pinned_key)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 20, in plain
+    raise ValueError('Broker candidate cannot use symlinks')
+ValueError: Broker candidate cannot use symlinks
+
+======================================================================
+ERROR: test_installer_rejects_changes_since_signing (test_broker_upgrade.BrokerProducer.test_installer_rejects_changes_since_signing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 72, in test_installer_rejects_changes_since_signing
+    frozen=self.seal(); destination=Path(self.local.name)/'maintenance'
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 47, in seal
+    def seal(self): return broker.seal(self.directory, self.config, self.key, self.public)
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 41, in seal
+    plain(directory); plain(pinned_key)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 20, in plain
+    raise ValueError('Broker candidate cannot use symlinks')
+ValueError: Broker candidate cannot use symlinks
+
+======================================================================
+ERROR: test_real_csharp_consumer_accepts_producer_and_rejects_tampering (test_broker_upgrade.BrokerProducer.test_real_csharp_consumer_accepts_producer_and_rejects_tampering)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 115, in test_real_csharp_consumer_accepts_producer_and_rejects_tampering
+    self.seal(); payload=Path(self.local.name)/'release.json'; payload.write_text(json.dumps(self.config))
+    ~~~~~~~~~^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 47, in seal
+    def seal(self): return broker.seal(self.directory, self.config, self.key, self.public)
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 41, in seal
+    plain(directory); plain(pinned_key)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 20, in plain
+    raise ValueError('Broker candidate cannot use symlinks')
+ValueError: Broker candidate cannot use symlinks
+
+======================================================================
+ERROR: test_real_signature_exact_inventory_and_file_hashes (test_broker_upgrade.BrokerProducer.test_real_signature_exact_inventory_and_file_hashes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 50, in test_real_signature_exact_inventory_and_file_hashes
+    self.seal()
+    ~~~~~~~~~^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 47, in seal
+    def seal(self): return broker.seal(self.directory, self.config, self.key, self.public)
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 41, in seal
+    plain(directory); plain(pinned_key)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 20, in plain
+    raise ValueError('Broker candidate cannot use symlinks')
+ValueError: Broker candidate cannot use symlinks
+
+======================================================================
+ERROR: test_sealed_candidate_cannot_be_overwritten (test_broker_upgrade.BrokerProducer.test_sealed_candidate_cannot_be_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 106, in test_sealed_candidate_cannot_be_overwritten
+    self.seal(); envelope=(self.directory/broker.ENVELOPE).read_bytes()
+    ~~~~~~~~~^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_broker_upgrade.py", line 47, in seal
+    def seal(self): return broker.seal(self.directory, self.config, self.key, self.public)
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 41, in seal
+    plain(directory); plain(pinned_key)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/broker_upgrade.py", line 20, in plain
+    raise ValueError('Broker candidate cannot use symlinks')
+ValueError: Broker candidate cannot use symlinks
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.061s
+
+FAILED (errors=5)
+PACKAGED win-x64 1.6.0 /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/star-broker-route-2i93non7/out/releases
+PACKAGED win-x64 1.6.0 /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/star-broker-route-oi7o48j4/out/releases

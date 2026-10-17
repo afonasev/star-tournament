@@ -1,0 +1,7 @@
+# Embedded signed broker producer source verification
+
+Windows package.py publishes maintenance once into payload/broker-upgrade, seals exact3 component files plus RSA-PSS envelope before vpk pack, for both update-only and installer paths. Installer copies the same bytes using frozen signing-time hashes and destination readback. Different pinned keys, unexpected runtime dependencies, symlinks, changed candidate/copy and immutable resealing fail closed.
+
+13 producer/route tests +10 compatibility +23 publication tests passed (46, all processes terminal exit0). Real temporary RSA signing was verified by OpenSSL and the actual C# BrokerUpgradeCandidate consumer; four tampered files were rejected. The fixture exe contains text and is never executed. Recording tools validate dispatch/order and one compilation/reused bytes for both paths; their PACKAGED messages are fixture output, not real build evidence. C# tests compile0 errors with8 preexisting nullable warnings. The initial producer test run failed because macOS /var temp ancestor is a symlink; fixtures now use resolved physical paths, preserving production rejection. Final run has no skips.
+
+No actual self-contained publish/production signed candidate/Player/installer/release build, native UAC/ACL acceptance, full suite or deployment. First legacy bootstrap publication mode and old native handoff/exact argv/activation/rollback integration remain OPEN. No completion certificate.

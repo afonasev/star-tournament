@@ -4,6 +4,12 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.Length == 4 && args[0] == "--verify-produced-broker")
+{
+    var payload=JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(args[2]),new JsonSerializerOptions{PropertyNameCaseInsensitive=true})??throw new IOException("Fixture payload missing");
+    var candidate=BrokerUpgradeCandidate.Load(args[1],File.ReadAllText(args[3]),payload);
+    Console.WriteLine("Verified produced broker: "+candidate.ManifestHash);return;
+}
 if (args.SequenceEqual(new[] { "--broker-startup" })) { await BrokerStartupChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--broker-upgrade" })) { await BrokerUpgradeChecks.Run(); return; }
 if (args.Length == 3 && args[0] == "--broker-upgrade-crash") { BrokerUpgradeChecks.Crash(args[1],args[2]); return; }

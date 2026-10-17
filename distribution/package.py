@@ -12,9 +12,10 @@ import shutil
 import subprocess
 import zipfile
 
-from release_compatibility import current as compatibility_requirements, manifest as release_manifest, verify_payload, READER_PROTOCOL
+from release_compatibility import current as compatibility_requirements, manifest as release_manifest, verify_payload
 from windows_dpi import validate_windows_dpi
 from windows_stable_entry import install_stable_entry
+from broker_upgrade import seal as seal_broker_upgrade, install_component
 
 
 def write_metadata(output, runtime, version, envelope):
@@ -82,6 +83,13 @@ def main():
     subprocess.run(['openssl', 'pkey', '-in', str(a.key.resolve()), '-pubout', '-out', str(stage/'update-public.pem')], check=True)
     if (stage/'update-public.pem').read_bytes() != (root/'update-public.pem').read_bytes():
         raise ValueError('Signing key differs from pinned distribution key')
+    if a.runtime == 'win-x64':
+        # Updates carry the same signed component as first-install, before packing.
+        candidate = stage/'broker-upgrade'
+        subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
+                        '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
+                        '-p:DebugType=None','-p:OutputType=WinExe','-o',str(candidate)],check=True,env=env)
+        sealed_broker = seal_broker_upgrade(candidate, config, a.key.resolve(), root/'update-public.pem')
     output = a.output/'releases'; output.mkdir(exist_ok=True)
     launcher = 'StarTournamentLauncher.exe' if a.runtime.startswith('win') else 'StarTournamentLauncher'
     cmd = [str(a.vpk.resolve())] + (['[win]'] if a.runtime.startswith('win') else [])
@@ -105,12 +113,7 @@ def main():
         if not (layout/'.portable').is_file() or not (layout/'Update.exe').is_file():
             raise ValueError('Expected complete Velopack portable layout')
         shutil.copyfile(root/'branding/app-icon.ico',layout/'app-icon.ico')
-        maintenance = layout/'maintenance'; maintenance.mkdir()
-        subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
-                        '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
-                        '-p:DebugType=None','-p:OutputType=WinExe','-o',str(maintenance)],check=True,env=env)
-        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=2, metadataReader=READER_PROTOCOL, **config),indent=2)+'\n')
-        shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
+        install_component(stage/'broker-upgrade', layout/'maintenance', sealed_broker)
         install_stable_entry(layout)
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
         installer = output/f'Star-Tournament-{a.version}-Windows-x64-Setup.exe'

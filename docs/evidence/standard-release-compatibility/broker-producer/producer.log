@@ -1,0 +1,20 @@
+test_different_pinned_key_never_seals (test_broker_upgrade.BrokerProducer.test_different_pinned_key_never_seals) ... ok
+test_installer_checks_copied_bytes (test_broker_upgrade.BrokerProducer.test_installer_checks_copied_bytes) ... ok
+test_installer_copies_identical_bytes_and_preserves_embedded_candidate (test_broker_upgrade.BrokerProducer.test_installer_copies_identical_bytes_and_preserves_embedded_candidate) ... ok
+test_installer_rejects_changes_since_signing (test_broker_upgrade.BrokerProducer.test_installer_rejects_changes_since_signing) ... ok
+test_payload_identity_and_compatibility_rejected_before_writes (test_broker_upgrade.BrokerProducer.test_payload_identity_and_compatibility_rejected_before_writes) ... ok
+test_real_csharp_consumer_accepts_producer_and_rejects_tampering (test_broker_upgrade.BrokerProducer.test_real_csharp_consumer_accepts_producer_and_rejects_tampering) ... ok
+test_real_signature_exact_inventory_and_file_hashes (test_broker_upgrade.BrokerProducer.test_real_signature_exact_inventory_and_file_hashes) ... ok
+test_sealed_candidate_cannot_be_overwritten (test_broker_upgrade.BrokerProducer.test_sealed_candidate_cannot_be_overwritten) ... ok
+test_symlink_component_rejected (test_broker_upgrade.BrokerProducer.test_symlink_component_rejected) ... ok
+test_test_channel_uses_pinned_discovery_and_canonical_prerelease (test_broker_upgrade.BrokerProducer.test_test_channel_uses_pinned_discovery_and_canonical_prerelease) ... ok
+test_unexpected_publish_dependencies_fail_closed (test_broker_upgrade.BrokerProducer.test_unexpected_publish_dependencies_fail_closed) ... ok
+test_first_install_reuses_same_component_once (test_broker_upgrade.PackagingRoute.test_first_install_reuses_same_component_once) ... ok
+test_update_only_embeds_before_pack_without_installer (test_broker_upgrade.PackagingRoute.test_update_only_embeds_before_pack_without_installer) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.726s
+
+OK
+PACKAGED win-x64 1.6.0 /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/star-broker-route-2rtkl7xp/out/releases
+PACKAGED win-x64 1.6.0 /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/star-broker-route-z41h4smk/out/releases
