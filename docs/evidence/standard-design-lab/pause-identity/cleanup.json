@@ -1,0 +1,11 @@
+{
+  "ownedScratchRemoved": ".local/pause-identity-01a13fa0",
+  "evidenceSaved": "docs/evidence/standard-design-lab/pause-identity",
+  "ownedEditorSerializationRestored": [
+    "ProjectSettings.asset",
+    "ShaderGraphSettings.asset"
+  ],
+  "liveRunner": false,
+  "worktreeLibraryRetained": true,
+  "sharedCachesRetained": true
+}

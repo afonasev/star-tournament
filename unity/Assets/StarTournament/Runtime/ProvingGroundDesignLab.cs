@@ -24,8 +24,9 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<string,LabFieldView> labViews=new Dictionary<string,LabFieldView>();
         sealed class LabFieldView {public InputField Input;public Selectable Focus;public Button Off,On;public Text Diff,Error;public Image Background;}
         public string FrozenLabIdentity {get;private set;}
+        public string FrozenLabPresentation {get;private set;}
         LabRevisionReference frozenLabReference;
-        string labSavedIdentity="",labSavedRevisionLabel="",labActiveLabel="",labWriteMessage;
+        string labSavedIdentity="",labSavedPresentation="",labSavedRevisionLabel="",labActiveLabel="",labWriteMessage;
         LabBundle labParameterDefaults;string labParameterDefaultsError;
         NumericDescriptor[] labRegistry=Array.Empty<NumericDescriptor>();
         public string LabSavedIdentity=>labSavedIdentity;
@@ -40,6 +41,9 @@ namespace StarTournament.ProvingGround
             labSavedRevisionLabel=LabRevisionLabel(selection,revision);
             labActiveLabel=LabCompactName(selection.SelectedProfileName)+" · "+labSavedRevisionLabel;
             labSavedIdentity=selection.SelectedProfileName+" · "+labSavedRevisionLabel+"\n"+selection.SelectedProfileId+"\nSHA256 "+saved.Hash;
+            string date=string.IsNullOrEmpty(saved.Date)?"без даты":saved.Date;
+            if(DateTime.TryParseExact(saved.Date,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var knownDate))date=knownDate.ToString("dd.MM.yyyy",CultureInfo.InvariantCulture);
+            labSavedPresentation="Баланс матча: "+selection.SelectedProfileName+"\nВерсия "+saved.Number+" · "+date;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
         LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile}};

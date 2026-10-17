@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;
         ProvingGround ground;
-        readonly Gamepad[] pads=new Gamepad[2];
+        readonly Gamepad[] pads=new Gamepad[4];
         bool hadLastMap;string priorLastMap;
         [SetUp] public void PreserveLastMap()
         {
@@ -54,6 +54,55 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
             if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.Save();
+        }
+        [UnityTest] public IEnumerator PauseShowsTheFrozenSavedBalanceWithoutChangingMatch()
+        {
+            yield return Load();
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var history=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",flags).GetValue(ground);
+            var saved=history.SavedIdentity(history.SelectedProfileId,history.Selected.Number);
+            string frozen=ground.FrozenLabPresentation,identity=ground.FrozenLabIdentity;
+            Assert.That(frozen,Does.Contain("Баланс матча: "+history.SelectedProfileName));Assert.That(frozen,Does.Contain("Версия "+saved.Number));
+            Assert.That(frozen,Does.Not.Contain("SHA256"));
+            typeof(ProvingGround).GetField("labSavedPresentation",flags).SetValue(ground,"Следующая выбранная конфигурация");
+            yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            for(int seat=0;seat<2;seat++)Assert.That(Object("pause-balance-"+seat).GetComponent<Text>().text,Is.EqualTo(frozen));
+            Assert.That(ground.FrozenLabPresentation,Is.EqualTo(frozen));Assert.That(ground.FrozenLabIdentity,Is.EqualTo(identity));
+            var clock=ground.Session.Time;yield return null;Assert.That(ground.Session.Time,Is.EqualTo(clock));
+            Button("pause-action-0-0").onClick.Invoke();Assert.That(ground.Running,Is.False);
+            Button("pause-action-1-0").onClick.Invoke();yield return new WaitForFixedUpdate();Assert.That(ground.Running,Is.True);
+        }
+        [UnityTest] public IEnumerator BalanceIdentityFitsOneTwoAndFourViewportsAndOperatorPause()
+        {
+            yield return Load();
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            string longIdentity="Баланс матча: Проверка очень длинного имени авторского профиля баланса\nВерсия 128 · 17.10.2026";
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BALANCE_QA_IMAGES");
+            foreach(int count in new[]{1,2,4})
+            {
+                typeof(ProvingGround).GetMethod("ToMainMenu",flags).Invoke(ground,null);Button("main-action-0").onClick.Invoke();
+                while(ground.LocalSeatCount<count)Button("seats-plus").onClick.Invoke();while(ground.LocalSeatCount>count)Button("seats-minus").onClick.Invoke();
+                for(int seat=0;seat<count;seat++){ground.SetSeatAi(seat,false);if(pads[seat]==null)pads[seat]=InputSystem.AddDevice<Gamepad>();}
+                ground.StartCombatReview(pads.Take(count).ToArray(),false,true);yield return NativeLoadingTestScene.Wait(ground);ground.EnableNativeInputReview();
+                typeof(ProvingGround).GetField("<FrozenLabPresentation>k__BackingField",flags).SetValue(ground,longIdentity);
+                for(int seat=0;seat<count;seat++)ground.OpenPauseReviewSeat(seat);yield return null;
+                foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720)})
+                using(EditorUiCapture.FixedViewport(ground,size.x,size.y))
+                {
+                    Canvas.ForceUpdateCanvases();yield return null;
+                    for(int seat=0;seat<count;seat++)
+                    {
+                        var label=Object("pause-balance-"+seat).GetComponent<Text>();Assert.That(label.gameObject.activeInHierarchy,Is.True);
+                        Assert.That(label.text,Is.EqualTo(longIdentity));Assert.That(label.cachedTextGenerator.characterCountVisible,Is.GreaterThanOrEqualTo(label.text.Count(c=>!char.IsControl(c))),"Full profile/version/date visible");
+                        var corners=new Vector3[4];label.rectTransform.GetWorldCorners(corners);float bottom=corners[0].y;
+                        ((RectTransform)Button("pause-action-"+seat+"-0").transform).GetWorldCorners(corners);Assert.That(bottom,Is.GreaterThan(corners[1].y),"Identity does not overlap Continue");
+                    }
+                    if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"pause-"+count+"-"+size.y+".png"),size.x,size.y);
+                }
+            }
+            typeof(ProvingGround).GetField("combatReview",flags).SetValue(ground,true);typeof(ProvingGround).GetMethod("RefreshInterface",flags).Invoke(ground,null);yield return null;
+            var shared=Object("operator-balance").GetComponent<Text>();Assert.That(shared.gameObject.activeInHierarchy,Is.True);Assert.That(shared.text,Is.EqualTo(longIdentity));
+            if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"pause-operator.png"));
         }
         [UnityTest] public IEnumerator SplitScreenDrawsOneGlobalFpsCounter()
         {
